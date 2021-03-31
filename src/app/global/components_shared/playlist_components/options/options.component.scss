@@ -1,0 +1,16 @@
+.position-bottom {
+	position: absolute;
+	bottom: 0;
+	left: 15px;
+}
+
+.feed-url {
+	font-size: 12px;
+    text-decoration: underline !important;
+    color: #8EC641 !important;
+	cursor: pointer;
+	
+	&:hover {
+		opacity: 0.6;
+	}
+}

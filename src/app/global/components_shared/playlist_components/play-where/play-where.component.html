@@ -1,0 +1,24 @@
+<div class="play-where-panel p-2 bg-light">
+    <div *ngIf="content_data">
+        <mat-accordion *ngIf="content_data.host_license; else no_host">
+            <ng-container *ngFor="let h of content_data.host_license" class="mb-2">
+				<app-playlist-host
+				[content_data]="content_data.content"
+				[blocklist_data]="content_data.blocklist"
+				[host_licenses]="h"
+				[toggleEvent]="toggleEvent_child.asObservable()"
+				(blocklist_changes)="blockListing($event)"
+				(whitelisted)="hasWhiteListed($event)">
+                </app-playlist-host>
+            </ng-container>
+        </mat-accordion>
+    </div>
+
+    <ng-template #no_host>
+        <div class="d-flex pt-5 align-items-center">
+            <h4 class="w-100 text-center">
+                Playlist is not used on any screen of a host
+            </h4>
+        </div>
+    </ng-template>
+</div>

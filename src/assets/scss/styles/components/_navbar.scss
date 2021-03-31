@@ -1,0 +1,17 @@
+.navbar {
+    background-color: $light;
+    border-bottom: 1px solid $navbar_border;
+    height: 55px;
+    padding: 10px 20px;
+    z-index: 8;
+    &.sidebar-full {
+        padding-left: 220px;
+    }
+    .navbar-btn {
+        background-color: $transparent;
+        .navbar-btn-label {
+            font-weight: $f_bold;
+            font-size: $md;
+        }
+    }
+}

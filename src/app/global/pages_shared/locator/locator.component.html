@@ -1,0 +1,36 @@
+<div class="theme-container">
+    <div class="title-section">
+        <div class="d-flex">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="text-right d-flex">
+				<div class="button-group mb-4 mr-4">
+					<button mat-button mat-raised-button class="theme-btn" (click)="is_host_view = !is_host_view" [ngClass]="!is_host_view ? '_disabled' : ''">
+						Host View
+					</button>
+					<button *ngIf="!is_dealer" mat-button mat-raised-button class="theme-btn" (click)="is_host_view = !is_host_view" [ngClass]="is_host_view ? '_disabled' : ''">
+						Dealer View
+					</button>
+					<button *ngIf="is_dealer" mat-button mat-raised-button class="theme-btn" (click)="is_host_view = !is_host_view" [ngClass]="is_host_view ? '_disabled' : ''">
+						Advertiser View
+					</button>
+				</div>
+            </div>
+        </div>
+        <hr class="my-4">
+    </div>
+	<div *ngIf="!is_dealer">
+		<app-host-view *ngIf="is_host_view; else dealer_view"></app-host-view>
+	</div>
+	<div *ngIf="is_dealer">
+		<app-host-view *ngIf="is_host_view; else advertiser_view"></app-host-view>
+	</div>
+	
+	<ng-template #dealer_view>
+		<app-dealer-view></app-dealer-view>
+	</ng-template>
+	<ng-template #advertiser_view>
+		<app-advertiser-view></app-advertiser-view>
+	</ng-template>
+</div>

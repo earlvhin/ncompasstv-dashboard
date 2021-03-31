@@ -1,0 +1,18 @@
+.form-logo {
+    width: 205px;
+}
+
+.login-form {
+    padding: 50px 100px;
+    position: relative;
+}
+
+.overlay {
+    background-color: rgba(#fff, 0.7);
+    position: absolute;
+    height: 100%;
+    left: 0;
+    width: 100%;
+    top: 0;
+    z-index: 7;
+}

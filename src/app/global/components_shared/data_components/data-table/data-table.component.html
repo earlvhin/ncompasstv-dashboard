@@ -1,0 +1,251 @@
+<div class="theme-table" *ngIf="!table_data.message; else no_records_found" [ngClass]="paging_details ? 'with-page' : ''">
+	<table class="full-width" *ngIf="table_data.length > 0; else loading">
+		<thead align="left" class="border-bottom">
+			<tr>
+				<th *ngFor="let tc of table_columns" class="p-3" (click)="onSortByColumn(tc.name)" [ngClass]="{ 'clickable' : tc.sortable, 'w-110px' : tc.width && tc.width === '110px' }">
+					{{ !tc.name ? tc : tc.name }} <i id="caret-clickable-{{ tc.name }}" *ngIf="tc.sortable" class="fa fa-caret-down"></i>
+				</th>
+				<th *ngIf="ctrl_column" class="text-right" class="p-3">
+					{{ ctrl_column_label || 'Action' }}
+				</th>
+				<th *ngIf="preview_column" class="text-right" class="p-3">
+					{{ preview_column_label || 'Action' }}
+				</th>
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete" class="text-right" class="p-3">
+					{{ 'Action' }}
+				</th>
+			</tr>
+		</thead>
+
+		<tbody *ngIf="new_table">
+			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
+				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 1) | slice:0:table_columns.length; let i = index" [hidden]="data[d].hidden">
+					<span *ngIf="!data[d].hidden">
+						<span class="text-center" *ngIf="license_status_column && data[d].status">
+							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
+						</span>		
+						<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params">
+							<ng-container>
+								{{ data[d].value }}
+							</ng-container>
+						</a>
+						<ng-template #no_link>
+							<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
+
+								<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultvalue;">
+									{{ data[d].value | date: 'MMM dd, y' }}<br>
+									{{ data[d].value | date: 'hh:mm a' }}
+								</div>
+
+								<ng-template #defaultvalue>
+									{{ data[d].value }}
+								</ng-template>
+								
+							</span>
+						</ng-template>
+					</span>
+					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="onEdit(data[d], data[d].label, data[d].value)">
+						<i class="clickable fa fa-pencil text-gray" title="Edit {{data[d].label}}"></i>
+					</div>
+				</td>		
+				<td class="p-3 control-toggle" *ngIf="ctrl_column">
+					<mat-slide-toggle 
+					*ngIf="ctrl_toggle"
+					(change)="controlToggle(data.license_key.value, $event)"
+					[checked]="data.is_activated.value == 1 ? 'checked' : 'false'">
+					</mat-slide-toggle>
+				</td>
+				<td class="p-3 control-toggle" *ngIf="preview_column">
+					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>	
+				</td>
+				<td class="p-3 control-toggle md-text" *ngIf="feed_controls">
+					<i class="fas fa-play cursor-pointer mx-2 text-primary" title="Preview" *ngIf="feed_preview" (click)="feedPreview_open(data.feed_url)"></i>
+					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" *ngIf="feed_edit" (click)="editFeed(data)"></i>
+					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete" (click)="deleteFeed(data.id.value)"></i>
+				</td>
+				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
+					<i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
+				</td>
+				<td class="p-3 control-toggle" *ngIf="screen_delete">
+					<i class="fas fa-trash cursor-pointer" title="Delete Screen" (click)="deleteScreen(data.screen_id.value)"></i>
+				</td>
+				<td class="p-3 control-toggle" *ngIf="playlist_delete">
+					<i class="fas fa-trash cursor-pointer" title="Delete Playlist" (click)="deletePlaylist(data.playlist_id.value)"></i>
+				</td>
+				<td class="p-3 control-toggle" *ngIf="license_delete">
+					<i *ngIf="data.pi_status.value != 1  && !data.is_assigned.value; else text_disabled" class="fas fa-trash text-danger cursor-pointer" data-toggle="tooltip" title="Delete License" (click)="deleteLicense(data.license_id.value)"></i>
+					<ng-template #text_disabled>
+						<i class="fas fa-trash text-gray cursor-void" data-toggle="tooltip" title="Delete disabled, License is online / assigned"></i>
+					</ng-template>
+				</td>
+			</tr>
+		</tbody>
+
+		<tbody *ngIf="!license_row_url && !same_link_table && !new_table">
+			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
+				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 1) | slice:0:table_columns.length; let i = index">
+					<span *ngIf="table_row_url" >
+						<a class="cursor-pointer table-row-url" 
+							*ngIf="i==1; else no_url;" 
+							[routerLink]="[table_row_url, data[table_row_slug]]"
+							[queryParams]="query_params">
+							<ng-container *ngIf="!column_nocase; else nocase">
+								{{ data[d] | titlecase }}
+							</ng-container>
+							<ng-template #nocase>
+								{{ data[d] }}
+							</ng-template>
+						</a>
+					</span>
+					<span *ngIf="!table_row_url" >
+						<div class="" *ngIf="i==1; else no_url;" >
+							<ng-container *ngIf="!column_nocase; else nocase">
+								{{ data[d] | titlecase }}
+							</ng-container>
+							<ng-template #nocase>
+								{{ data[d] }}
+							</ng-template>
+						</div>
+					</span>
+					<ng-template #no_url>
+						<span>
+							{{ data[d] }}
+						</span>
+					</ng-template>
+				</td>				
+				<td class="text-left pl-3 control-toggle" *ngIf="ctrl_column">
+					<mat-slide-toggle 
+					*ngIf="ctrl_toggle"
+					(change)="controlToggle(data.license_key, $event)"
+					[checked]="data.is_activated == 1 ? 'checked' : 'false'">
+					</mat-slide-toggle>
+				</td>
+				<td class="text-center control-toggle" *ngIf="preview_column">
+					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
+				</td>
+			</tr>
+		</tbody>
+
+		<!-- for double link per table -->
+		<tbody *ngIf="license_row_url && !same_link_table && !new_table">
+			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
+				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 2) | slice:0:table_columns.length; let i = index">
+					<a class="cursor-pointer table-row-url" 
+							*ngIf="i==1;" 
+							[routerLink]="[table_row_url, data[table_row_slug]]"
+							[queryParams]="query_params">
+						<ng-container *ngIf="!column_nocase; else nocase">
+							{{ data[d] | titlecase }}
+						</ng-container>
+						<ng-template #nocase>
+							{{ data[d] }}
+						</ng-template>
+					</a>
+					<div *ngIf="i!=1">
+						<a class="cursor-pointer table-row-url"
+						*ngIf="i==3 && data[license_row_slug] != '--'; else no_url;" 
+						[routerLink]="[license_row_url, data[license_row_slug]]"
+						[queryParams]="query_params">
+						<ng-container *ngIf="!column_nocase; else nocase">
+							{{ data[d] | titlecase }}
+						</ng-container>
+						<ng-template #nocase>
+							{{ data[d] }}
+						</ng-template>
+						</a>
+						<span *ngIf="i > 3 && i == 0">
+							<span>
+								{{ data[d] }}
+							</span>
+						</span>
+						<ng-template #no_url>
+							<span>
+								{{ data[d] }}
+							</span>
+						</ng-template>
+					</div>
+					
+				</td>				
+				<td class="text-center control-toggle" *ngIf="ctrl_column">
+					<mat-slide-toggle 
+						*ngIf="ctrl_toggle"
+						(change)="controlToggle(data.license_key, $event)"
+						[checked]="data.is_activated == 1 ? 'checked' : 'false'">
+					</mat-slide-toggle>
+				</td>
+				<td class="text-center control-toggle" *ngIf="preview_column">
+					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
+				</td>
+			</tr>
+		</tbody>
+
+		<tbody *ngIf="same_link_table && !new_table">
+			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
+				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 1) | slice:0:table_columns.length; let i = index">
+					<span *ngIf="table_row_url" >
+						<a class="cursor-pointer table-row-url" 
+							*ngIf="i==1 || i==2; else no_url;" 
+							[routerLink]="[table_row_url, data[table_row_slug]]"
+							[queryParams]="query_params">
+							<ng-container *ngIf="!column_nocase; else nocase">
+								{{ data[d] | titlecase }}
+							</ng-container>
+							<ng-template #nocase>
+								{{ data[d] }}
+							</ng-template>
+						</a>
+					</span>
+					<span *ngIf="!table_row_url" >
+						<div class="" *ngIf="i==1; else no_url;" >
+							<ng-container *ngIf="!column_nocase; else nocase">
+								{{ data[d] | titlecase }}
+							</ng-container>
+							<ng-template #nocase>
+								{{ data[d] }}
+							</ng-template>
+						</div>
+					</span>
+					<ng-template #no_url>
+						<span>
+							{{ data[d] }}
+						</span>
+					</ng-template>
+				</td>				
+				<td class="text-left pl-3 control-toggle" *ngIf="ctrl_column">
+					<mat-slide-toggle 
+					*ngIf="ctrl_toggle"
+					(change)="controlToggle(data.license_key, $event)"
+					[checked]="data.is_activated == 1 ? 'checked' : 'false'">
+					</mat-slide-toggle>
+				</td>
+				<td class="text-center control-toggle" *ngIf="preview_column">
+					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
+				</td>
+			</tr>
+		</tbody>
+	</table>
+	
+	<ng-template #loading>
+		<div class="loading-wrapper">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
+
+	<div class="row" *ngIf="table_data.length > 0 && !paging_details">
+		<div class="col-lg-12 text-center mt-4">
+			<pagination-controls 
+			(pageChange)="onPageChange($event)" 
+			class="sm-text">
+			</pagination-controls>
+		</div>
+	</div>
+
+	<app-pagination-field
+		[paging_data]="paging_details"
+		(get_page)="getPage($event)">
+	</app-pagination-field>
+</div>
+
+<ng-template #no_records_found>
+	<app-error-message></app-error-message>
+</ng-template>

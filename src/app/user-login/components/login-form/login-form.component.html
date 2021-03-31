@@ -1,0 +1,24 @@
+<div class="card-header p-4 py-3 bg-dark align-center">
+    <img src="/assets/media-files/logo-light.png" class="form-logo" alt="logo">
+</div>
+<div class="card-body position-relative">
+    <div class="overlay d-flex align-items-center justify-content-center" *ngIf="show_overlay">
+        <mat-spinner></mat-spinner>
+    </div>
+    <form class="login-form" [formGroup]="login_form" (ngSubmit)="authUser()">
+        <div class="error-alert p-2 text-center sm-text font-weight-bold mb-4" *ngIf="is_error">
+            {{ error_msg }}
+        </div>
+        <mat-form-field class="full-width mb-0 position-relative" *ngFor="let f of login_form_view">
+            <mat-label>{{ f.label }}</mat-label>
+            <input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" type="{{ f.type }}">
+            <span class="field-error" *ngIf="is_submitted && form[f.control].errors">
+                {{ f.error }}
+            </span>
+        </mat-form-field>
+        <button type="submit" mat-raised-button class="theme-btn mt-4">
+            Sign in
+            <span class="fas fa-long-arrow-alt-right ml-2"></span>
+        </button>
+    </form>
+</div>

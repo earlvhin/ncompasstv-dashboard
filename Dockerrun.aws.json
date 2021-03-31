@@ -1,0 +1,18 @@
+{
+  "AWSEBDockerrunVersion": 2,
+  "containerDefinitions": [
+    {
+      "name": "dashboard",
+      "image": "892444632159.dkr.ecr.us-east-1.amazonaws.com/nc-nvir-dev-test-dashboard-01",
+      "hostname": "dashboard",
+      "essential": true,
+      "memory": 128,
+      "portMappings": [
+        {
+          "hostPort": 0,
+          "containerPort": 80
+        }
+      ],
+    },
+  ]
+}

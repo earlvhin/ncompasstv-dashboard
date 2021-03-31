@@ -1,0 +1,18 @@
+<mat-card class="d-flex align-items-center mb-3">
+    <div class="mr-4">
+        <div class="user-select-icon material-shadow" (click)="formPerRole(1)">
+            <img [src]="image_icon" alt="admin">
+        </div>
+    </div>
+
+    <div class="flex-even">
+        <h5 class="font-weight-bold normal-text">{{ title }}</h5>
+        <p class="sm-text mb-0">{{ description }}</p>
+    </div>
+
+    <div>
+        <button class="go-button" [routerLink]="user_type">
+            <span class="fas fa-angle-right"></span>
+        </button>
+    </div>
+</mat-card>

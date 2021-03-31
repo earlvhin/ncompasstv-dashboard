@@ -1,0 +1,174 @@
+import { EventEmitter, Injectable } from '@angular/core'; 
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import 'rxjs/add/operator/map'
+
+import { AuthService } from '../auth-service/auth.service';
+import { environment } from '../../../../environments/environment';
+import { API_CONTENT } from '../../models/api_content.model';
+
+@Injectable({
+	providedIn: 'root'
+})
+
+export class ContentService {
+
+	token = JSON.parse(localStorage.getItem('tokens'));
+
+	httpOptions = {
+		headers: new HttpHeaders(
+			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}` }
+		)
+	};
+
+	onScheduleChanges = new EventEmitter<string>();
+
+	constructor(
+		private _http: HttpClient,
+		private _auth: AuthService
+	) { }
+
+	get_contents() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`, this.httpOptions);
+	}
+
+	get_contents_temp(page, type, sort, dealerId, key, floating) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=30`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}` +`&search=` + `${key}`+`&floating=` + `${floating}`, this.httpOptions);
+	}
+
+	get_contents_with_page(page, type, sort, dealerId, hostId, advertiserId, key) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=60`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}`+`&hostId=` + `${hostId}`+`&advertiserId=` + `${advertiserId}`+`&search=` + `${key}`, this.httpOptions);
+	}
+	
+	get_contents_total() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total}`, this.httpOptions);
+	}
+
+	get_contents_total_by_dealer(id) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total_by_dealer}${id}`, this.httpOptions);
+	}
+
+	get_content_by_id(data) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_id}${data}`, this.httpOptions).map(data => data.content)
+	}
+
+	get_content_by_advertiser_id(data) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_advertiser_id}${data}`, this.httpOptions);
+	}
+	
+	get_content_by_dealer_id(data, floating?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&floating=${floating}`, this.httpOptions).map(data => data)
+	}
+
+	get_content_count_by_license(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_count_by_license}`, data, this.httpOptions).map(data => data.iContents);
+	}
+
+	get_content_daily_count_by_license(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_hourly_by_license}`, data, this.httpOptions).map(data => data.iContents)
+	} 
+
+	get_content_monthly_count_by_license(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count_by_license}`, data, this.httpOptions).map(data => data.iContents)
+	}
+
+	get_content_yearly_count_by_license(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count_by_license}`, data, this.httpOptions).map(data => data.contentList)
+	}
+
+	get_content_monthly_count(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count}`, data, this.httpOptions).map(data => data.iContent);
+	}
+
+	get_content_daily_count(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_daily_count}`, data, this.httpOptions).map(data => data.iContent);
+	}
+
+	get_content_yearly_count(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions).map(data => data.iContent);
+	}
+
+	get_content_by_license_zone(id) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`, this.httpOptions).map(data => data.screenZonePlaylistsContents);
+	}
+
+	create_content_schedule(data: API_CONTENT[]): Observable<any> {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.content_schedule}`, data, this.httpOptions);
+	}
+
+	update_content_schedule(data: API_CONTENT): Observable<any> {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.content_schedule}`, data, this.httpOptions);		
+	}
+
+	sort_ascending(files) {
+		return files.sort((a, b) => {
+			if (a.content_data) {
+				return a.content_data.date_uploaded.localeCompare(b.content_data.date_uploaded)
+			} else {
+				return a.date_uploaded.localeCompare(b.date_uploaded)
+			}
+		})
+	}
+
+	sort_descending(files) {
+		return files.sort((a, b) => {
+			if (b.content_data) {
+				return b.content_data.date_uploaded.localeCompare(a.date_uploaded)
+			} else {
+				return b.date_uploaded.localeCompare(a.date_uploaded)
+			}
+		})
+	}
+
+	filter_images(files) {
+		return files.filter(
+			(i) => {
+				if (i.content_data) {
+					return i.content_data.file_type != 'webm'
+				} else {
+					return i.file_type != 'webm'
+				}
+			}
+		)
+	}
+
+	filter_videos(files) {
+		return files.filter(
+			(i) => {
+				if (i.content_data) {
+					return i.content_data.file_type == 'webm'
+				} else {
+					return i.file_type == 'webm'
+				}
+			}
+		)
+	}
+
+	search_content(files, keyword) {
+		return files.filter(
+			i => {
+				if (i.content_data && i.content_data.file_name) {
+					return this.removeFilenameHandle(i.content_data.file_name).toLowerCase().includes(keyword.toLowerCase())
+				} else if (i.content_data && i.content_data.title) {
+					return i.content_data.title.toLowerCase().includes(keyword.toLowerCase())
+				} 
+			}
+		)
+	}
+
+	removeFilenameHandle(file_name) {
+		return file_name.substring(file_name.indexOf('_') + 1);
+	}
+
+	remove_content(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_content}`, data, this.httpOptions)
+	}
+
+	search_contents_via_api(key) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?search=`+`${key}`, this.httpOptions);
+	}
+
+	unassign_content(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_content}`, data, this.httpOptions);
+	}
+}

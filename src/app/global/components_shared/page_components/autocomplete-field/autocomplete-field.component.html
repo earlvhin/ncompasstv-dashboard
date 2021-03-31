@@ -1,0 +1,56 @@
+<mat-form-field class="full-width custom-autocomplete p-relative" appearance="standard">
+    <mat-label>{{ label }}</mat-label>
+    <input 
+    type="text"
+    [(ngModel)]="view_value"
+    matInput 
+    [placeholder]="placeholder"
+    (keyup)="search($event)"
+    (blur)="emptySearch()"
+    (click)="initializeSearch($event)"
+    [required]="required"
+    [disabled]="disabled"
+    autocomplete="off" *ngIf="!paging">
+
+    <input 
+    type="text"
+    [(ngModel)]="view_value"
+    matInput 
+    [placeholder]="placeholder"
+    (keyup)="search_by_api($event)"
+    (blur)="emptySearch()"
+    (click)="initializeSearch($event)"
+    [required]="required"
+    [disabled]="disabled"
+    autocomplete="off" *ngIf="paging" appearance="standard">
+
+    <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
+        <div *ngIf="loading_search">
+            <div class="py-4 white-bg">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </div>
+        <div *ngIf="!loading_search && !disabled">
+            <ul class="m-0 p-0 list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
+                <li class="cursor-pointer p-3" *ngFor="let s of search_result" 
+                (click)="dataSelected($event)" 
+                [attr.data-text]="s[primary_keyword]" 
+                [attr.data-value]="s[key_of_value]">
+                    {{ s[primary_keyword] }}
+                </li>
+                <div *ngIf="loading_data">
+                    <div class="py-4 white-bg">
+                        <app-spinner [diameter]="60"></app-spinner>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <ng-template #no_results>
+            <ul class="m-0 p-0 list-unstyled" *ngIf="!old">
+                <li class="p-3">
+                    No results found.
+                </li>
+            </ul>
+        </ng-template>
+    </div>
+</mat-form-field>

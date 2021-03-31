@@ -1,0 +1,12 @@
+.validation-message {
+    position: absolute;
+    right: 20px;
+
+    &.good {
+        color: rgb(140, 202, 68);
+    }
+    
+    &.warning {
+        color: rgb(230, 71, 71);
+    }
+}

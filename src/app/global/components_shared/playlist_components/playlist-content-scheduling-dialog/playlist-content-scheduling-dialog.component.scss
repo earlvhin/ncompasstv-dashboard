@@ -1,0 +1,90 @@
+button.dismiss {
+	position: absolute;
+	top: 15px;
+	right: 15px;
+	padding: 5px;
+	line-height: 14px;
+	min-width: auto;
+}
+
+.frequency {
+
+	h3 {
+		margin-bottom: 5px;
+	}
+
+	p {
+		font-size: 12px;
+		margin-bottom: 20px
+	}
+
+	.mat-radio-button {
+		display: block;
+		margin-bottom: 10px;
+	}
+}
+
+.filler {
+	border-left: 2px solid lightgray;
+	max-width: 2px;
+	height: 320px;
+	padding: 0;
+}
+
+.scheduling {
+	.date-selection {
+		font-size: 12px;
+	}
+	
+	.day-selection {
+		.heading {
+			h3, .mat-slide-toggle {
+				display: inline;
+			}
+	
+			.mat-slide-toggle {
+				float: right;
+			}
+		}
+
+		.checkboxes {
+			margin-top: 15px;
+		}
+	}
+	
+	.playtime {
+		.heading {
+			h3, .mat-slide-toggle {
+				display: inline;
+			}
+	
+			h3 {
+				margin-bottom: 15px;
+			}
+	
+			.mat-slide-toggle {
+				float: right;
+			}
+		}
+
+		.settings {
+			margin-top: 15px;
+
+			.ngx-timepicker {
+				.ngx-timepicker-control {
+					input {
+						font-size: 12px !important;
+					}
+				}
+			}
+		}
+	}
+}
+
+button.submit {
+	position: absolute;
+	bottom: 15px;
+    right: 15px;
+	background: #8EC641;
+	color: #ffffff;
+}

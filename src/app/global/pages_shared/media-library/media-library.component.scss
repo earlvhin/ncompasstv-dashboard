@@ -1,0 +1,13 @@
+.assets-panel {
+    min-height: 600px;
+}
+
+.loading-overlay {
+    background-color: rgba(#000, 0.5);
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 999;
+}

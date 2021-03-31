@@ -1,0 +1,282 @@
+<ng-container>
+    <div *ngIf="dealer; else loading">
+        <app-banner
+        [single_image]="img"
+        [single_name]="dealer.businessName"
+        [single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
+        [editable]="true"
+        [dealer_data]="dealer_user_data"
+        (update_info)="ngOnInit()">
+        </app-banner>
+        
+        <div class="stat-cards margin-top-extra mb-4">
+            <div class="theme-container">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <mat-card class="h-100">
+                            <app-data-card-compare  
+                            *ngIf="license_card"
+                            [compare_basis]="license_card.basis" 
+                            [compare_basis_label]="license_card.basis_label"
+                            [good_value]="license_card.good_value" 
+                            [good_value_label]="license_card.good_value_label"
+                            [bad_value]="license_card.bad_value" 
+                            [bad_value_label]="license_card.bad_value_label">
+                            </app-data-card-compare>
+                        </mat-card>
+                    </div>
+                    <div class="col-lg-4">
+                        <mat-card class="h-100">
+                            <app-data-card-compare
+                            *ngIf="host_card" 
+                            [compare_basis]="host_card.basis" 
+                            [compare_basis_label]="host_card.basis_label"
+                            [good_value]="host_card.good_value" 
+                            [good_value_label]="host_card.good_value_label" 
+                            [bad_value]="host_card.bad_value"
+                            [bad_value_label]="host_card.bad_value_label">
+                            </app-data-card-compare>
+                        </mat-card>
+                    </div>
+                    <div class="col-lg-4">
+                        <mat-card class="h-100">
+                            <app-data-card-compare 
+                            *ngIf="advertiser_card" 
+                            [compare_basis]="advertiser_card.basis" 
+                            [compare_basis_label]="advertiser_card.basis_label"
+                            [good_value]="advertiser_card.good_value" 
+                            [good_value_label]="advertiser_card.good_value_label" 
+                            [bad_value]="advertiser_card.bad_value"
+                            [bad_value_label]="advertiser_card.bad_value_label">
+                            </app-data-card-compare>
+                        </mat-card>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="theme-container pb-5">
+            <div class="row">
+                <div class="col-lg-12">
+                    <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
+                        <mat-tab label="Hosts">
+                            <div *ngIf="!initial_load; else loader">
+                                <div *ngIf="!no_hosts; else no_data">
+                                    <div class="row pt-2">
+                                        <div class="col-lg-8">
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <app-search-field
+                                            *ngIf="!initial_load"
+                                            [form_title]="'Search Host Name, Address, City or Postal Code'"
+                                            [placeholder]="'Example: N-Compass'"
+                                            [data_reference]="host_data"
+                                            [primary_keyword]="'host_name'"
+                                            [secondary_keyword]="'host_name'"
+                                            (searched)="hostFilterData($event)"
+                                            [api_search]="true"
+                                            ></app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching; else loader">
+                                                <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
+                                                    <app-data-table
+                                                    [table_columns]="host_table_col"
+                                                    [table_data]="host_filtered_data"
+                                                    [new_table]="true"
+                                                    [paging_details]="paging_data"
+                                                    (page_triggered)="getDealerHost($event)">
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Advertisers">
+                            <div *ngIf="!initial_load_advertiser; else loader">
+                                <div *ngIf="!no_advertisers; else no_data">
+                                    <div class="row pt-2">
+                                        <div class="col-lg-8">
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <app-search-field
+                                            *ngIf="!initial_load_advertiser"
+                                            [form_title]="'Search Advertiser Name'"
+                                            [placeholder]="'Example: N-Compass'"
+                                            [data_reference]="advertiser_data"
+                                            [primary_keyword]="'name'"
+                                            [secondary_keyword]="'name'"
+                                            (searched)="advertiserFilterData($event)"
+                                            [api_search]="true"
+                                            ></app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load_advertiser">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching_advertiser; else loader">
+                                                <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
+                                                    <app-data-table 
+                                                    [table_columns]="adv_table_col" 
+                                                    [table_data]="advertiser_filtered_data"
+                                                    [new_table]="true"
+                                                    [paging_details]="paging_data_advertiser"
+                                                    (page_triggered)="getDealerAdvertiser($event)"
+                                                    [advertiser_delete]="true"
+                                                    (update_info)="reloadAdvertiser()">
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Licenses">
+                            <div *ngIf="!initial_load_license; else loader">
+                                <div *ngIf="!no_licenses; else no_data">
+									<div class="theme-container mb-3">
+										<div class="row statistics">
+											<div class="col-sm-3">
+												<mat-card id="activityContainer">
+													<mat-spinner *ngIf="loading_statistics.activity"></mat-spinner>
+													<canvas id="activityStatistics" height="150px" style="width: 100%;"></canvas>
+												</mat-card>
+											</div>
+											<div class="col-sm-3">
+												<mat-card id="statusContainer">
+													<mat-spinner *ngIf="loading_statistics.status"></mat-spinner>
+													<canvas id="statusStatistics" height="150px" style="width: 100%;"></canvas>
+												</mat-card>
+											</div>
+											<div class="col-sm-3">
+												<mat-card id="connectionContainer">
+													<mat-spinner *ngIf="loading_statistics.connection"></mat-spinner>
+													<canvas id="connectionStatistics" height="150px" style="width: 100%;"></canvas>
+												</mat-card>
+											</div>
+											<div class="col-sm-3">
+												<mat-card id="screenContainer">
+													<mat-spinner *ngIf="loading_statistics.screen"></mat-spinner>
+													<canvas id="screenStatistics" height="150px" style="width: 100%;"></canvas>
+												</mat-card>
+											</div>
+										</div>
+									</div>
+                                    <div class="row pt-2">
+                                        <div class="col-lg-8">
+                                            <button mat-button mat-raised-button class="theme-btn mt-2 mr-2" (click)="reloadLicense()" [disabled]="searching_license">Reload <i class="fas fa-sync-alt"></i></button>
+                                            
+                                            <mat-menu #orderSort="matMenu">
+                                                <button mat-menu-item (click)="sortList('online')">Online</button>
+                                                <button mat-menu-item (click)="sortList('offline')">Offline</button>
+                                            </mat-menu>
+
+                                            <ng-container *ngIf="show_admin_buttons">
+                                                <button mat-button mat-raised-button 
+                                                *ngIf="!remote_update_disabled; else disabled_remote_update" 
+                                                class="theme-btn pi-control sm-text _primary mr-2" 
+                                                [disabled]="remote_update_disabled" 
+                                                (click)="updateAndRestart()"  
+                                                title="Update System">
+                                                    <span class="fas fa-terminal"></span> 
+                                                    <span class="ml-2 button_text_animation">Update System</span>
+                                                </button>
+                                                <ng-template #disabled_remote_update>
+                                                    <button mat-button mat-raised-button class="theme-btn _warning mr-2" [disabled]="true" [title]="timeout_message">
+                                                        <span class="fas fa-terminal"></span> 
+                                                        <span class="ml-2 button_text_animation">Update System</span>
+                                                    </button>
+                                                </ng-template>
+                                                
+                                                <button mat-button mat-raised-button 
+                                                *ngIf="!remote_reboot_disabled; else disabled_remote_reboot" 
+                                                class="theme-btn pi-control sm-text _caution" 
+                                                [disabled]="remote_reboot_disabled" 
+                                                (click)="rebootPlayers()" 
+                                                title="Reboot Player">
+                                                    <span class="fas fa-power-off"></span> 
+                                                    <span class="ml-2 button_text_animation">Reboot Player</span>
+                                                </button>
+                                                <ng-template #disabled_remote_reboot>
+                                                    <button mat-button mat-raised-button class="theme-btn _caution" [disabled]="true" [title]="timeout_message">
+                                                        <span class="fas fa-power-off"></span> 
+                                                        <span class="ml-2 button_text_animation">Reboot Player</span>
+                                                    </button>
+                                                </ng-template>
+                                            </ng-container>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            
+                                            <app-search-field
+                                                *ngIf="!initial_load_license"
+                                                [form_title]="'Search License Alias or Host Name'"
+                                                [placeholder]="'Example: License #100'"
+                                                [data_reference]="license_data"
+                                                [primary_keyword]="'alias'"
+                                                [secondary_keyword]="'host_name'"
+                                                (searched)="licenseFilterData($event)"
+                                                [api_search]="true"
+                                            ></app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load_license">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching_license; else loader">
+                                                <mat-card *ngIf="license_filtered_data.length > 0; else no_data">
+                                                    <app-data-table 
+                                                    [table_columns]="license_table_columns" 
+                                                    [table_data]="license_filtered_data"
+                                                    [ctrl_column]="true"
+                                                    [ctrl_column_label]="'Activate'"
+                                                    [ctrl_toggle]="true"
+                                                    [column_nocase]="no_case"
+                                                    [new_table]="true"
+                                                    [license_status_column]="true"
+                                                    (toggle_triggered)="toggleActivateDeactivate($event)"
+                                                    (update_info)="reloadLicense()"
+                                                    [license_delete]="true"
+                                                    [paging_details]="paging_data_license"
+                                                    (page_triggered)="getLicensesofDealer($event)">
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <ng-template #no_data>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+            </mat-card>
+        </div>
+    </ng-template>
+
+    <ng-template #loader>
+        <div class="py-4 white-bg h-500">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #loading>
+        <div class="text-center d-flex align-items-center justify-content-center vh-50">
+            <app-spinner></app-spinner>
+        </div>
+	</ng-template>
+	
+</ng-container>

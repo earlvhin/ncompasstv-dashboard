@@ -1,0 +1,16 @@
+.loader-overlay {
+    background-color: rgba(#fff, 0.8);
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    left: 0;
+    top: 0;
+    height: 100%;
+	width: 100%;
+	z-index: 99;
+}
+
+.minim-height {
+	height: 400px !important;
+}

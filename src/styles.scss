@@ -1,0 +1,38 @@
+@import '~@angular/material/theming';
+
+$custom-typography: mat-typography-config($font-family: '"Poppins", sans-serif;');
+@include mat-core($custom-typography);
+
+html {
+    scroll-behavior: smooth;
+}
+
+.selected, .marked {
+	box-shadow: 0 0 10px rgba(147, 202, 20, 0.945), 0 0 10px rgba(151, 209, 17, 0.938);
+}
+
+.mat-slide-toggle-thumb-container {
+	z-index: initial !important;
+}
+
+.no-padding > .mat-dialog-container {
+	padding: 0 !important;
+}
+
+.draggable-content {
+	cursor: move;
+
+	&.dragging {
+		&:before {
+			background-color: rgba(151, 209, 17, 0.2);
+			content: ' ';
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			z-index: 9;
+		}
+
+		cursor: move;
+		opacity: 1;
+	}
+}

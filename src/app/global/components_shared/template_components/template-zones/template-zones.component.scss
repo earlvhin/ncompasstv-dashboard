@@ -1,0 +1,45 @@
+.zone {
+    position: absolute;
+
+    .zone-button {
+        border: 0;
+        background: transparent;
+        display: inline-block;
+        outline: none;
+        height: 100%;
+        width: 100%;
+        &:hover {
+            box-shadow: inset 0 0 10px #000;
+        }
+        &:focus {
+            animation: example 1s infinite;
+        }
+    }
+
+    &.is-focus {
+        animation: example 1s infinite;
+	}
+	
+	&.is-interactive {
+		cursor: pointer;
+
+		&.is-selected, &:hover {
+			background: #8ec641 !important;
+			opacity: 90%;
+		}
+
+	}
+	
+}
+
+@keyframes example {
+    0% {
+        box-shadow: inset 0 0 20px #000;
+      }
+    50% {
+        box-shadow: inset 0 0 50px #000;
+    }
+    100% {
+        box-shadow: inset 0 0 20px #000;
+    }
+}

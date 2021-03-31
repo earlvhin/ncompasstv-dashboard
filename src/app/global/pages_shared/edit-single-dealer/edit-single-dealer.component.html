@@ -1,0 +1,43 @@
+<div class="p-2">
+	<div class="d-flex">
+		<div class="flex-even">
+			<h3 class="p-0 col-lg-12">Dealer Details: </h3>
+			<p class="p-0 sm-text mb-4">You can update dealer details here:</p>
+		</div>
+		<div>
+			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+				<span class="fas fa-times"></span>
+			</button>
+		</div>
+	</div>
+	<div *ngIf="other_users;else loading">
+		<form [formGroup]="dealer_form" (ngSubmit)="updateDealerInfo()" class="text-left" >
+			<div class="row mb-4">
+				<div *ngFor="let field of dealer_form_view" class="{{ field.col }} mb-3">
+					<mat-form-field class="full-width">
+						<mat-label>{{ field.label }}</mat-label> 
+						<span class="validation-message warning sm-text py-1 text-danger" *ngIf="!email_not_valid && has_duplicate_email && field.control == 'email'">
+                            This email is already taken.
+						</span>
+						<span class="validation-message warning sm-text py-1 text-danger" *ngIf="email_not_valid && field.control == 'email'">
+                            The email format is invalid.
+						</span>
+						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}">
+					</mat-form-field>
+				</div>
+			</div>
+			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">
+				Update
+			</button>
+			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
+				Cancel
+			</button>
+		</form>
+	</div>
+
+	<ng-template #loading>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
+</div>

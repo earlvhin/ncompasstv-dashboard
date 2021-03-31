@@ -1,0 +1,20 @@
+<div class="information-modal">
+	<button class="dismiss" mat-button mat-dialog-title [mat-dialog-close]="true"><mat-icon>close</mat-icon></button>
+	<h1 mat-dialog-title class="title">{{ title }}</h1>
+
+	<!-- For textareas -->
+	<div mat-dialog-content *ngIf="isTextArea">
+		<p class="contents" *ngIf="isStringContent">{{ displayContents() }}</p>
+	</div>
+
+	<!-- For lists -->
+	<div mat-dialog-content *ngIf="isList">
+		<div class="business-hours" *ngIf="isBusinessHours">
+			<ul *ngIf="isArrayContent">
+				<li *ngFor="let item of contents; let i = index" [ngClass]="{ 'good': item.selected }">
+					<b>{{ item.day }}: </b> <span *ngFor="let period of item.periods">{{ period }}<br></span>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>

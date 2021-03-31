@@ -1,0 +1,117 @@
+<div class="theme-container single-content">
+    <div class="row mb-4" *ngIf="content$ | async as c">
+        <div class="col-lg-6">
+            <div class="d-flex align-items-center content-wrapper mb-3">
+                <ng-container *ngIf="c.fileType | isvideo">
+                    <video autoplay muted [src]="c.url+c.fileName"></video>
+                </ng-container>
+                <ng-container *ngIf="c.fileType | isimage">
+                    <img [src]="c.url+c.fileName">
+                </ng-container>
+                <ng-container *ngIf="c.fileType == 'feed'">
+                    <div class="frame-wrap">
+                        <iframe class="responsive-iframe" [src]="c.url | sanitize" frameborder="0"></iframe>
+                    </div>
+                </ng-container>
+            </div>
+            <div>
+                <h3 class="mb-2">
+                    <span *ngIf="c.fileType != 'feed'; else feedTitle">
+                        {{ c.fileName | nohandle }}
+                    </span>
+
+                    <ng-template #feedTitle>
+                        <span>{{ c.title }}</span>
+                    </ng-template>
+                </h3>
+                <p class="mb-0 sm-text font-weight-medium">
+                    Created {{ c.dateCreated | date }} by The Amazing Uploader
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <mat-tab-group dynamicHeight>
+                <mat-tab label="Content Analytics">
+                    <div class="row align-items-center mt-4">
+                        <div class="col-lg-4">
+                            <h3 class="mb-0">Report for {{ queried_date | date: 'longDate'}}</h3>
+                        </div>
+                        <div class="col-lg-8 text-right">
+                            <mat-form-field appearance="fill">
+                                <mat-label>Choose a date</mat-label>
+                                <input matInput (dateInput)="OnDateChange($event.value)" [matDatepicker]="picker" [(value)]="queried_date" readonly>
+                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                                <mat-datepicker #picker></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-lg-12 mb-4">
+                            <mat-card>
+                                <ng-container *ngIf="!daily_chart_updating; else loader">
+                                    <app-data-graph
+                                    [data_set]="content_daily_count"
+                                    [graph_title]="'Daily Content Play Analytics'"
+                                    [graph_description]="'Graph shows the play count of this content for this day.'"
+                                    [graph_id]="'daily_graph'"
+                                    [realtime_data_per_content]="realtime_data"
+                                    [update_chart]="update_chart">
+                                    </app-data-graph>
+                                </ng-container>
+                            </mat-card>
+                        </div>
+
+                        <div class="col-lg-12 mb-4">
+                            <mat-card>
+                                <ng-container *ngIf="!monthly_chart_updating; else loader">
+                                    <app-data-graph 
+                                    [date_format]="'monthly'"
+                                    [data_set]="content_monthly_count"
+                                    [graph_title]="'Monthly Content Play Analytics'"
+                                    [graph_description]="'Graph shows the play count of this content for this month.'"
+                                    [graph_id]="'monthly_graph'"
+                                    [realtime_data_per_content]="realtime_data"
+                                    [update_chart]="update_chart">
+                                    </app-data-graph>
+                                </ng-container>
+                            </mat-card>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <mat-card>
+                                <ng-container *ngIf="!yearly_chart_updating; else loader">
+                                    <app-data-graph 
+                                    [date_format]="'yearly'"
+                                    [data_set]="content_yearly_count"
+                                    [graph_title]="'Yearly Content Play Analytics'"
+                                    [graph_description]="'Graph shows the play count of this content for this year.'"
+                                    [graph_id]="'yearly_graph'"
+                                    [realtime_data_per_content]="realtime_data"
+                                    [update_chart]="update_chart">
+                                    </app-data-graph>
+                                </ng-container>
+                            </mat-card>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="In Playlist">
+                    <h1>Coming Soon</h1>
+                </mat-tab>
+                <mat-tab label="Playing Where">
+                    <h1>Coming Soon</h1>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+
+    <ng-template #loader>
+        <div class="loader text-center py-5">
+            <app-spinner></app-spinner>
+            <h3 class="mt-4 mb-2">Please Wait</h3>
+            <p class="sm-text">Getting content logs from database.</p>
+        </div>
+    </ng-template>
+</div>

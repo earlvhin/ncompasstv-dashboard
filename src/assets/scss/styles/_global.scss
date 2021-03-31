@@ -1,0 +1,49 @@
+* {
+    font-family: 'Poppins', sans-serif;
+}
+
+body {
+    background-color: $muted;
+    margin: 0;
+    a {
+        color: $dark;
+        transition: 0.1s linear;
+        text-decoration: none !important;
+        &:hover {
+            color: $primary;
+        }
+    }
+}
+
+//image display
+img {
+    display: inline-block;
+}
+
+//button
+button {
+    cursor: pointer;
+    outline: none !important;
+}
+
+//headings weight
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    font-weight: $f_medium;
+    margin: 0;
+}
+
+//Lines
+hr {
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    box-sizing: content-box;
+    height: 0;
+    overflow: visible;
+}

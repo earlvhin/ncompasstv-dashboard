@@ -1,0 +1,131 @@
+<div class="theme-container" *ngIf="user_data">
+    <div class="row mb-3">
+        <div class="col-lg-6">
+            <mat-card class="p-5">
+                <h3>Change Password</h3>
+                <p class="sm-text mb-4">Change this user's password.</p>
+                <form [formGroup]="change_password" (ngSubmit)="changeUserPassword()">
+                    <mat-form-field class="full-width position-relative">
+                        <mat-label>Current Password</mat-label>
+                        <input formControlName="current_password" matInput type="password" placeholder="Current Password">
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_old_not_match">
+                            {{ current_password_validation_message }}
+                        </span>
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_old_not_match == false">
+                            {{ current_password_validation_message }}
+                        </span>
+                    </mat-form-field>
+                    <mat-form-field class="full-width position-relative">
+                        <mat-label>New Password</mat-label>
+                        <input formControlName="new_password" matInput type="password" placeholder="New Password">
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_invalid">
+                            {{ password_validation_message }}
+                        </span>
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_invalid == false">
+                            {{ password_validation_message }}
+                        </span>
+                    </mat-form-field>
+    
+                    <mat-form-field class="full-width position-relative">
+                        <mat-label>Retype New Password</mat-label>
+                        <input matInput formControlName="re_password" type="password" placeholder="Retype New Password">
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_match == false">
+                            {{ password_is_match }}
+                        </span>
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_match">
+                            {{ password_is_match }}
+                        </span>
+                    </mat-form-field>
+
+                    <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="change_password_form_disabled">
+                        Save New Password
+                    </button>
+                </form>
+            </mat-card>
+        </div>
+        <!-- <div class="col-lg-6">
+            <mat-card class="p-5">
+                <h3>Other Settings</h3>
+                <form>
+                    <div class="mt-3 mb-3">Receive email notifications:</div>
+                    <div class="col-lg-12 mb-2 flex">
+                        <div class="col-lg-8 p-0">
+                            <mat-label>News and Events</mat-label>
+                        </div>
+                        <div class="col-lg-4 p-0 text-right">
+                            <mat-slide-toggle>
+                            </mat-slide-toggle>
+                        </div>
+                    </div>     
+                    <div class="col-lg-12 mb-2 flex">
+                        <div class="col-lg-8 p-0">
+                            <mat-label>Activation Request</mat-label>
+                        </div>
+                        <div class="col-lg-4 p-0 text-right">
+                            <mat-slide-toggle>
+                            </mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2 flex">
+                        <div class="col-lg-8 p-0">
+                            <mat-label>When a device is offline</mat-label>
+                        </div>
+                        <div class="col-lg-4 p-0 text-right">
+                            <mat-slide-toggle>
+                            </mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2 flex">
+                        <div class="col-lg-8 p-0">
+                            <mat-label>New Dealer/Host/Advertiser</mat-label>
+                        </div>
+                        <div class="col-lg-4 p-0 text-right">
+                            <mat-slide-toggle>
+                            </mat-slide-toggle>
+                        </div>
+                    </div>
+                    <div class="col-lg-12 mb-2 flex">
+                        <div class="col-lg-8 p-0">
+                            <mat-label>New Sub-account</mat-label>
+                        </div>
+                        <div class="col-lg-4 p-0 text-right">
+                            <mat-slide-toggle>
+                            </mat-slide-toggle>
+                        </div>
+                    </div>                      
+                </form>
+            </mat-card>
+        </div> -->
+    </div>
+    <!-- <div class="row">
+        <div class="col-lg-6">
+            <mat-card class="p-5 full-width">
+                <h3>Filestack Credentials</h3>
+                <form class="example-form">
+                    <div class="col-lg-12 pl-0">
+                        <div class="mt-3">Google Drive</div>
+                        <mat-form-field class="full-width">
+                            <mat-label>Email Address</mat-label>
+                            <input matInput type="email" placeholder="Ex. pat@example.com">
+                        </mat-form-field>
+                        <mat-form-field class="full-width">
+                            <mat-label>Password</mat-label>
+                            <input matInput type="password" placeholder="Ex. pat@example.com">
+                        </mat-form-field>
+                    </div>
+                    <div class="col-lg-12 pl-0">
+                        <div class="mt-3">Dropbox</div>
+                        <mat-form-field class="full-width">
+                            <mat-label>Email Address</mat-label>
+                            <input matInput type="email" placeholder="Ex. pat@example.com">
+                        </mat-form-field>
+                        <mat-form-field class="full-width">
+                            <mat-label>Password</mat-label>
+                            <input matInput type="password" placeholder="Ex. pat@example.com">
+                        </mat-form-field>
+                    </div>
+                  </form>
+            </mat-card>
+        </div>
+    </div> -->
+</div>

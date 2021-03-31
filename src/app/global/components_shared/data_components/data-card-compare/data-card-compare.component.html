@@ -1,0 +1,21 @@
+<div class="h-100 d-flex align-items-center">
+	<div class="p-3 w-100">
+		<h2 class="mb-2">
+			<span class="text-primary font-weight-medium mr-2">{{ compare_basis }}</span>
+			<span class="normal-text font-weight-medium">{{ compare_basis_label }}</span>
+		</h2>
+		<h3>
+			<span class="text-primary font-weight-medium mr-2">{{ good_value }}</span>
+			<span class="sm-text font-weight-medium">{{ good_value_label }}</span>
+			/
+			<span class="font-weight-medium mr-2" [ngClass]="is_green ? 'text-primary' : 'text-danger '">{{ bad_value }}</span>
+			<span class="sm-text font-weight-medium">{{ bad_value_label }}</span>
+
+			<ng-container *ngIf="additional_value && additional_value_label">
+				/
+				<span class="text-primary font-weight-medium mr-2">{{ additional_value }}</span>
+				<span class="sm-text font-weight-medium">{{ additional_value_label }}</span>
+			</ng-container>
+		</h3>
+	</div>
+</div>

@@ -1,0 +1,34 @@
+ {
+    "path": "./node_modules/cz-conventional-changelog",
+    "disableScopeLowerCase": false,
+    "disableSubjectLowerCase": false,
+    "maxHeaderWidth": 100,
+    "maxLineWidth": 100,
+    "defaultType": "",
+    "defaultScope": "",
+    "defaultSubject": "",
+    "defaultBody": "",
+    "defaultIssues": "",
+    "types": {
+        "feat": {
+            "description": "A new feature",
+            "title": "Features"
+        },
+        "bug": {
+            "description": "Bug fix",
+            "title": "Bug"
+        },
+        "doc": {
+            "description": "Change in Documentation",
+            "title": "Documentation"
+        },
+        "minor": {
+            "description": "Minor Issue Fix",
+            "title": "Minor Issues"
+        },
+        "hotfix": {
+            "description": "Hotfix or Patch",
+            "title": "Hotfix"
+        }
+    }
+}

@@ -1,0 +1,276 @@
+<div class="dealer-table">
+	<div *ngIf="!initial_load; else loading">
+		<div class="row" *ngIf="!no_dealer; else no_data">
+			<div class="col-lg-9"></div>
+			<div class="col-lg-3">
+				<app-search-field *ngIf="!initial_load"
+				[form_title]="'Search Dealer Alias or Business Name'"
+				[placeholder]="'Example: N-Compass'"
+				[data_reference]="dealers_data"
+				[primary_keyword]="'business_name'"
+				[secondary_keyword]="'dealer_id_alias'"
+				(searched)="filterData($event)"
+                [api_search]="true"
+                (reset_search)="getDealers()"
+				></app-search-field>
+			</div>
+
+			<div class="col-lg-12">
+				<ng-container *ngIf="!searching; else loading">
+					<mat-card class="theme-table with-page-dealer" *ngIf="filtered_data.length > 0; else nodata">
+					<ng-container>
+						<table class="full-width">
+							<thead align="left" class="text-center">
+								<!-- Needs Optimization -->
+								<tr>
+									<th class="border-right border-bottom p-3" 
+									scope="col" 
+									rowspan="2">#</th>
+	
+									<th class="border-right border-bottom p-3" 
+									scope="col" 
+									rowspan="2" 
+									[attr.data-column]="'dealerIdAlias'">
+										Dealer Alias
+									</th>
+					
+									<th class="border-right border-bottom p-3" 
+									scope="col" 
+									rowspan="2" 
+									[attr.data-column]="'businessName'">
+										Business Name
+									</th>
+					
+									<th class="border-right border-bottom p-3" 
+									scope="col" 
+									rowspan="2" 
+									[attr.data-column]="'contactPerson'">
+										Contact Person
+									</th>
+					
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'DateCreated' ? 'tab-active': ''"
+									scope="col" 
+									rowspan="2" 
+									[attr.data-column]="'monthAsDealer'">
+										Age
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('DateCreated', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+					
+									<th class="border-right border-bottom p-3" 
+									colspan="4" 
+									scope="col" [ngClass]="active_filter_tab == 'totalLicenses' ? 'tab-active': ''">
+										Licenses
+										<div ngbDropdown class="float-right d-inline-block">
+											<button class="hidden-button" id="dropdownMenu1" ngbDropdownToggle>
+												<i class="float-right cursor-pointer text-right fas fa-filter" data-toggle="tooltip" title="{{selected_filter.filter_column == 'totalLicenses' ? tooltip : 'Click to Filter Licenses' }}"></i>
+											</button>
+												<div class="dropdown-menu" aria-labelledby="dropdownMenu1" ngbDropdownMenu>
+													<button class="dropdown-item md-text" *ngFor="let count of filter" (click)="filterByColumnName('totalLicenses', count.min_value, count.max_value)">
+														{{count.viewValue}} Licenses
+													</button>
+												</div>
+										</div>
+									</th>
+					
+									<th class="border-right border-bottom p-3" 
+									colspan="3" 
+									scope="col" [ngClass]="active_filter_tab == 'totalHosts' ? 'tab-active': ''">
+										Hosts
+										<div ngbDropdown class="float-right d-inline-block">
+											<button class="hidden-button" id="dropdownMenu2" ngbDropdownToggle>
+												<i class="float-right cursor-pointer text-right fas fa-filter" data-toggle="tooltip" title="{{selected_filter.filter_column == 'totalHosts' ? tooltip : 'Click to Filter Hosts' }}"></i>
+											</button>
+												<div class="dropdown-menu" aria-labelledby="dropdownMenu2" ngbDropdownMenu>
+													<button class="dropdown-item md-text" *ngFor="let count of filter; let last = last" (click)="filterByColumnName('totalHosts', count.min_value, count.max_value)" [ngClass]="{'last-child': last}">
+														{{count.viewValue}} Hosts
+													</button>
+												</div>
+										</div>
+									</th>
+									<th class="border-bottom p-3" 
+									colspan="2" 
+									scope="col">Advertisers</th>
+								</tr>
+									<!--Upper Row End-->
+					
+								<tr>
+									<!-- Licenses -->
+									<th 
+									class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicenses' ? 'tab-active': ''"
+									valign="middle" 
+									[attr.data-column]="'licenses'" 
+									[attr.data-column-child]="'quantity'"
+									[attr.data-number]="true">
+										Total
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicenses', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+					
+									<!-- NO DATA AVAILABLE -->
+									<th 
+									class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesInactive' ? 'tab-active': ''"
+									rowspan="2"
+									valign="middle">
+										Inactive 
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesInactive', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+									<!-- NO DATA AVAILABLE -->
+					
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesOnline' ? 'tab-active': ''"
+									rowspan="2" 
+									[attr.data-column]="'licenses'" 
+									[attr.data-column-child]="'online'" 
+									[attr.data-number]="true"
+									valign="middle">
+										Online
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesOnline', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+					
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesOffline' ? 'tab-active': ''"
+									rowspan="2" 
+									[attr.data-column]="'licenses'" 
+									[attr.data-column-child]="'offline'" 
+									[attr.data-number]="true"
+									valign="middle">
+										Offline
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesOffline', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+									<!-- Licenses -->
+					
+									<!-- Hosts -->
+									<th class="border-right border-bottom p-3" 
+									rowspan="2" 
+									valign="middle" 
+									[attr.data-column]="'forInstallationHost'"
+									[attr.data-number]="true">
+										Scheduled
+									</th>
+					
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalHosts' ? 'tab-active': ''"
+									rowspan="2" 
+									align="left" 
+									valign="middle"
+									[attr.data-column]="'totalHost'"
+									[attr.data-number]="true">
+										Total
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalHosts', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+					
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalHostsActive' ? 'tab-active': ''"
+									rowspan="2" 
+									valign="middle"
+									[attr.data-column]="'activeHost'"
+									[attr.data-number]="true">
+										Active
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalHostsActive', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+									<!-- Hosts -->
+					
+									<!-- Advertisers NO DATA AVAILABLE -->
+									<th class="border-right border-bottom p-3"  [ngClass]="active_tab == 'totalAdvertisers' ? 'tab-active': ''"
+									rowspan="2" 
+									valign="middle">
+										Total
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalAdvertisers', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+					
+									<th
+									class="border-bottom" [ngClass]="active_tab == 'totalAdvertisersActive' ? 'tab-active': ''"
+									rowspan="2" 
+									valign="middle">
+										Active
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalAdvertisersActive', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+									<!-- Advertisers -->
+								</tr>
+								<!--Lower Row End-->
+							</thead>
+							<tbody>
+								<tr class="route-table-row" *ngFor="let i = index; let d of filtered_data | paginate:{ itemsPerPage: items_per_page, currentPage:pagination }">
+									<td class="xsm-text border-right text-center p-3">
+										{{ i+1 }}
+									</td>
+									<td class="xsm-text border-right p-3">
+										<a [routerLink]="[d.dealer_id]">{{ d.dealer_id_alias}}</a>
+									</td>
+									<td class="xsm-text border-right p-3">
+										<a [routerLink]="[d.dealer_id]">{{ d.business_name | titlecase}}</a>
+									</td>
+									<td class="xsm-text border-right p-3">
+										{{ d.contact_person }}
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.months_as_dealer }} month(s)
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.l_total }}
+									</td>
+									<td class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
+										{{ d.l_inactive }}
+									</td>
+									<td class="xsm-text border-right text-center p-3 text-primary font-weight-bold">
+										{{ d.l_online }}
+									</td>
+									<td class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
+										{{ d.l_offline }}
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.h_scheduled }}
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.h_total }}
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.h_active }}
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.a_total }}
+									</td>
+									<td class="xsm-text text-center p-3">
+										{{ d.a_active }}
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					
+						<app-pagination-field
+						[paging_data]="paging_data"
+						(get_page)="pageRequested($event)">
+						</app-pagination-field>
+					</ng-container>
+					</mat-card>
+				</ng-container>
+			</div>
+		</div>
+	</div>
+
+	<ng-template #loading>
+		<div class="vh-50 white-bg">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
+	
+	<ng-template #no_data>
+		<mat-card class="p-5">
+			<h3>This is sad.</h3>
+			<p class="sm-text mb-3">
+				There are no available dealers at the moment.
+			</p>
+			<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
+				Add Dealer
+				<span class="fas fa-plus ml-2 sm-text"></span>
+			</button>
+		</mat-card>
+	</ng-template>
+
+	<ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+            </mat-card>
+        </div>
+    </ng-template>
+</div>

@@ -1,0 +1,20 @@
+.playlist-content-thumb {
+	cursor: move; /* fallback if grab cursor is unsupported */
+	cursor: grab;
+	cursor: -moz-grab;
+	cursor: -webkit-grab;
+
+	&:active {
+		cursor: grabbing;
+		cursor: -moz-grabbing;
+		cursor: -webkit-grabbing;
+	}
+}
+
+.future-schedule {
+	border: 1px orange solid;
+}
+
+.inactive-schedule {
+	border: 1px blue solid;
+}

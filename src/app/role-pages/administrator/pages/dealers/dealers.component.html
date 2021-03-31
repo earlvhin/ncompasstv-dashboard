@@ -1,0 +1,68 @@
+<div class="theme-container">
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
+                    Add Dealer
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/create-host']">
+                    Add Host Place
+				    <span class="fas fa-map-marker ml-2 sm-text"></span>
+                </button>
+                <button mat-button mat-raised-button class="theme-btn" (click)="openGenerateLicenseModal()">
+                    <span class="button-label">
+                        Generate License
+                    </span>
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4">
+    </div>
+
+    <div class="content-section">
+        <div class="row">
+            <div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-compare *ngIf="dealer_stats; else loader"
+                    [compare_basis]="dealer_stats.basis"
+                    [compare_basis_label]="dealer_stats.basis_label"
+                    [good_value]="dealer_stats.good_value"
+                    [good_value_label]="dealer_stats.good_value_label"
+                    [bad_value]="dealer_stats.bad_value || 0"
+                    [bad_value_label]="dealer_stats.bad_value_label">
+                    </app-data-card-compare>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg dealer-card">
+                <mat-card class="h-100">
+                    <app-data-card-count *ngIf="dealer_stats; else loader"
+                    [data_value]="dealer_stats.this_week_value"
+                    [data_label]="dealer_stats.this_week_value_label"
+                    [data_description]="dealer_stats.this_week_value_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg dealer-card">
+                <mat-card class="h-100">
+                    <app-data-card-count *ngIf="dealer_stats; else loader"
+                    [data_value]="dealer_stats.last_week_value"
+                    [data_label]="dealer_stats.last_week_value_label"
+                    [data_description]="dealer_stats.last_week_value_description">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
+        <ng-template #loader>
+            <div class="py-4">
+				<app-spinner [diameter]="60"></app-spinner>
+			</div>
+        </ng-template>
+        <hr class="my-4">
+        <app-dealers-table [update_info]="update_info"></app-dealers-table>
+    </div>
+</div>

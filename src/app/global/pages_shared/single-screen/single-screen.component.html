@@ -1,0 +1,165 @@
+<div class="theme-container" *ngIf="screen">
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ screen.screen_title}}</h1>
+            </div>
+            <div class="text-right">
+                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="cloneScreen()">
+                    Clone Screen
+                    <span class="fas fa-copy ml-2 sm-text"></span>
+                </button>
+
+                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="deleteScreen()">
+                    Delete Screen
+                    <span class="fas fa-trash ml-2 sm-text"></span>
+                </button>
+
+                <button mat-button mat-raised-button class="theme-btn" [disabled]="no_changes" (click)="editScreenInfo()">
+                    Save
+                    <span class="fas fa-edit ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4">
+    </div>
+
+    <div class="content-section">
+        <div class="row">
+            <div class="col-lg-6">
+                <!-- Screen Demo-->
+                <div class="mb-4">
+                    <div class="screen-demo-panel">
+                        <app-screen-demo [screen_data]="screen.screen_zone_playlist"></app-screen-demo>
+                    </div>
+                </div>
+                <!-- Screen Demo -->
+
+                <!-- Screen Zone and Playlist -->
+                <h3>{{ screen.assigned_template }} Template</h3>
+                <p class="mb-3 sm-text">Below are the zones of {{ screen.assigned_template }} template. Click a zone to edit its playlist.</p>
+                <mat-accordion>
+                    <mat-expansion-panel *ngFor="let z of screen.screen_zone_playlist">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title class="font-weight-medium">
+                                {{ z.screen_template.name | titlecase }} Zone
+                            </mat-panel-title>
+                            <mat-panel-description class="align-items-center" *ngIf="z.screen_template.playlist_id">
+                                Playlist: <a [ngClass]="{'text-danger': playlist_id === z.screen_template.playlist_id}" [routerLink]="[playlist_route, z.screen_template.playlist_id]" class="sm-text font-weight-bold ml-2 text-primary">{{ z.screen_template.playlist_name }}</a>
+                            </mat-panel-description>
+                        </mat-expansion-panel-header>
+                        <mat-form-field [ngClass]="(playlist_id === z.screen_template.playlist_id)?'col-lg-11':'full-width'">
+                            <mat-label>Select Playlist for {{ z.screen_template.name }}</mat-label>
+                            <mat-select [(value)]="z.screen_template.playlist_id">
+                                <mat-option 
+                                    *ngFor="let p of dealer_playlist$ | async"
+                                    [attr.data-zone-id]="p.playlistId"
+                                    [value]="p.playlist.playlistId"
+                                    (click)="playlistSelected(p.playlist.playlistId, z.screen_template.zone_id)">
+                                    {{ p.playlist.playlistName }} - <span class="text-danger">{{p.contents.length}} Contents</span>
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                        <div *ngIf="playlist_id === z.screen_template.playlist_id" class="col-lg-1">
+                            <i class="pt-3 cursor-pointer fa fa-times text-danger" data-toggle="tooltip" title="Unassign Playlist" (click)="unassignPlaylist(z.screen_template.zone_id)"></i>
+                        </div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+                <!-- Screen Zone and Playlist -->
+            </div>
+            <div class="col-lg-6">
+                <!-- Screen Info -->
+                <mat-card class="p-5">
+                    <h3>Screen Information</h3>
+                    <p class="mb-4 sm-text">Edit basic screen data here.</p>
+                    <form [formGroup]="screen_info">
+                        <div class="row">
+                            <div *ngFor="let s of screen_form" class="{{ s.width }}">
+                                <mat-form-field class="full-width">
+                                    <mat-label>{{ s.label }}</mat-label>
+                                    <input *ngIf="!s.type" matInput formControlName="{{ s.control }}">
+                                    <textarea *ngIf="s.type === 'textarea'" formControlName="{{ s.control }}" matInput></textarea>
+
+                                    <mat-select *ngIf="s.type === 'dropdown'" formControlName="{{ s.control }}" [(ngModel)]='screen.type'>
+                                        <mat-option *ngFor="let type of screen_types" [value]="type.screenTypeId">{{type.description}}</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </form>
+                    <!-- <div class="row">
+                        <div class="col-lg-6">
+                            <app-autocomplete-field
+                                [data_reference]="dealer_hosts"
+                                [disabled]="true"
+                                [primary_keyword]="'name'"
+                                [key_of_value]="'hostId'"
+                                (data_value)="hostSelected($event)"
+                                [required]="true"
+                                [label]="'Type in a Host Name'"
+                                [initial_value]="screen.assigned_host">
+                            </app-autocomplete-field>
+                        </div>
+
+                        <div class="col-lg-6">
+                            <app-autocomplete-field
+                                (data_value)="templateSelected($event)"
+                                [disabled]="true"
+                                [data_reference]="templates"
+                                [primary_keyword]="'template_name'"
+                                [key_of_value]="'template_id'"
+                                [required]="true"
+                                [label]="'Type in a Template Name'"
+                                [initial_value]="screen.assigned_template">
+                            </app-autocomplete-field>
+                        </div>
+                    </div> -->
+                </mat-card>
+                <!-- Screen Info -->
+
+                <!-- Screen Licenses -->
+                <mat-card class="p-4 mt-4">
+                    <div class="d-flex">
+                        <div class="flex-even">
+                            <h5 class="normal-text">{{ screen.assigned_host }}</h5>
+                            <p class="sm-text font-weight-medium">
+                                Playing in {{ screen.screen_license.length }} license(s)
+                            </p>
+                        </div>
+                        <div>
+							<button mat-button mat-raised-button class="theme-btn mr-2" (click)="unassignLicenseModal_open()">
+								Unassign License
+								<span class="sm-text fas fa-minus ml-2"></span>
+							</button>
+							
+                            <button mat-button mat-raised-button class="theme-btn" (click)="assignLicenseModal_open()">
+								Assign License
+								<span class="sm-text fas fa-plus ml-2"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <mat-card-content class="mt-3">
+                        <hr class="mb-0">
+                        <app-data-table
+                        *ngIf="screen.screen_license.length != 0; else no_record"
+                        [table_columns]="license_column"
+                        [table_row_slug]="license_tbl_row_slug"
+                        [table_row_url]="license_tbl_row_url"
+                        [table_data]="screen.screen_license"
+                        [column_nocase]="no_case"
+                        [ctrl_column]="true"
+                        [new_table]="true"
+                        [license_status_column]="true"
+                        [ctrl_toggle]="true"
+                        (toggle_triggered)="toggleActivateDeactivate($event)">
+                        </app-data-table>
+                        <ng-template #no_record>
+                            <app-error-message></app-error-message>
+                        </ng-template>
+                    </mat-card-content>
+                </mat-card>
+                <!-- Screen Licenses -->
+            </div>
+        </div>
+    </div>
+</div>

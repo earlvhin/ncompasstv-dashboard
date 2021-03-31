@@ -1,0 +1,55 @@
+<div class="theme-container">
+	<div class="title-section">
+		<h1 class="page-title">{{ title }}</h1>
+		<p class="sm-text">This is a danger zone, actions done in this page may result to breaking changes.</p>
+        <hr class="my-4">
+	</div>
+	
+	<div class="row">
+		<div class="col-lg-6">
+			<mat-card class="p-4 mb-3">
+				<div class="d-flex align-items-center">
+					<div class="flex-even">
+						<h4>Update and Reboot Players</h4>
+						<p class="sm-text mb-0">
+							This will do a system update and then reboot all online players.
+						</p>
+					</div>
+					<div class="text-right">
+						<button mat-button mat-raised-button class="theme-btn _warning" (click)="remoteUpdateAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_update">
+							Update and Reboot
+						</button>
+
+						<ng-template #disabled_remote_update>
+							<button mat-button mat-raised-button class="theme-btn _warning" [disabled]="remote_update_disabled" [title]="timeout_message">
+								Update and Reboot
+							</button>
+						</ng-template>
+					</div>
+				</div>
+			</mat-card>
+
+			<mat-card class="p-4">
+				<div class="d-flex align-items-center">
+					<div class="flex-even">
+						<h4>Reboot Players</h4>
+						<p class="sm-text mb-0">
+							This will reboot all online players.
+						</p>
+					</div>
+					<div class="text-right">
+						<button mat-button mat-raised-button class="theme-btn _caution" (click)="remoteRebootAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
+							Reboot Players
+						</button>
+
+						<ng-template #disabled_remote_reboot>
+							<button mat-button mat-raised-button class="theme-btn _caution" [disabled]="remote_reboot_disabled" [title]="timeout_message">
+								Reboot Players
+							</button>
+						</ng-template>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+	</div>
+</div>

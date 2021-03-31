@@ -1,0 +1,9 @@
+<mat-list class="pb-3">
+    <ng-container *ngFor="let d of list_data">
+        <mat-list-item>
+            <h5 class="flex-even font-weight-md">{{ d.title }}</h5>
+            <h4 class="text-primary">{{ d.value }}</h4>
+        </mat-list-item>
+        <mat-divider></mat-divider>
+    </ng-container>
+</mat-list>

@@ -1,0 +1,11 @@
+<div>
+    <div class="row mb-4">
+        <div class="col-lg-12 p-3 text-center" *ngIf="graph_title">
+            <h3 class="mb-1">{{ graph_title }}</h3>
+            <p class="sm-text">{{ graph_description }}</p>
+        </div>
+    </div>
+    <div style="height: 250px;">
+        <canvas id="{{ graph_id }}"></canvas>
+    </div>
+</div>

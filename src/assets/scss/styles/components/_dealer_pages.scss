@@ -1,0 +1,13 @@
+.gray-back {
+    background: $gray;
+    padding: 5px;
+    margin-top: 10px;
+}
+.dealer-card {
+    app-data-card-count {
+        mat-card {
+            box-shadow: none !important;
+            padding: 0px;
+        }
+    }
+}

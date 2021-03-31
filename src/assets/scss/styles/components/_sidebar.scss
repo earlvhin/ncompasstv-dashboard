@@ -1,0 +1,59 @@
+@media screen {
+    .sidebar {
+        background-color: $dark;
+        z-index: 8;
+        transition: width .5s;
+        .logo {
+            padding: 15px 20px;
+            img {
+                width: 140px;
+            }
+        }
+        .menu {
+            a {
+                color: $light;
+                display: inline-block;
+                padding: 10px 20px;
+                font-size: $md;
+                transition: 0.1s linear;
+                &:hover {
+                    background-color: $primary;
+                    padding-left: 30px;
+                }
+                &.is-active {
+                    background-color: $primary;
+                }
+            }
+        }
+        .sidebar-toggle-button {
+            background-color: $primary;
+            color: $light;
+            height: 25px;
+            right: -12px;
+            top: 15px;
+            width: 25px;
+        }
+    }
+
+    .sidebar-menu {
+        width: 200px;
+    }
+    
+    .sidebar-icons-only {
+        width: 50px;
+        .logo {
+            position: relative;
+            left: -15px;
+            img{
+                width: 35px;
+            }
+        }
+        .menu {
+            a {
+                &:hover {
+                    padding-left: 20px;
+                }
+            }
+        }
+    }
+}

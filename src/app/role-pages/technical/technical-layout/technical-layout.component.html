@@ -1,0 +1,5 @@
+<app-navbar></app-navbar>
+<app-sidebar (toggleEvent)="receiveToggle($event)"></app-sidebar>
+<div class="page" [ngClass]=" toggle ? 'sidebar-fully' : 'sidebar-full'">
+    <router-outlet></router-outlet>
+</div>

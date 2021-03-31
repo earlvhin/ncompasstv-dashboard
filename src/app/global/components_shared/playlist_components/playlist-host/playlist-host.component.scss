@@ -1,0 +1,26 @@
+.mat-expansion-custom-toggle {
+    background-color: rgb(156, 156, 156);
+    border: none;
+    border-radius: 100%;
+    color: #ffffff;
+    padding-top: 1px;
+    height: 20px;
+    width: 20px;
+    transition: 0.1s linear;
+
+    &.expanded {
+        background-color: rgb(143, 192, 64);
+    }
+}
+
+.disable-pointer-event {
+    pointer-events: none;
+}
+
+.option-license-list {
+	margin-bottom: 5px;
+
+	&:last-child {
+		margin-bottom: 0;
+	}
+}

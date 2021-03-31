@@ -1,0 +1,95 @@
+// Create Host Component
+
+.ng-form-field {
+    position: relative;
+}
+
+.location-candidates {
+    max-height: 400px;
+    position: absolute;
+    width: 100%;
+    left: 0;
+    top: 100%;   
+    z-index: 7;
+    overflow: hidden;
+    overflow-y: auto;
+    ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        li {
+            cursor: pointer;
+            background-color: $light;
+            border-bottom: 1px solid $muted;
+            padding: 15px;
+            &:hover {
+                background-color: $muted;
+            }
+        }
+    }
+}
+
+.map-wrapper {
+    border: 1px solid $gray_border;
+    height: 650px;
+}
+
+.round-label  {
+    background-color: rgb(172, 172, 172);
+    border-radius: 100%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    transition: 0.2s linear; 
+
+    span {
+        font-size: 12px;
+    }
+
+    &.active {
+        background-color: rgb(144, 189, 61);
+        color: #fff;
+    }
+}
+
+.time-picker {
+    display: inline-block;
+    max-width: 40%;
+    input {
+        border: none;
+        border-bottom: 1px solid #eaeaea;
+        width: 100%;
+    }
+}
+
+.input-border-bottom {
+    border-bottom: 1px solid #ccc !important;
+}
+
+.add-hours-btn {
+    color: rgb(144, 189, 61);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 10px;
+    transition: 0.2s linear;
+
+    &:hover {
+        background-color: #e0e0e0;
+    }
+}
+
+.remove-hours-btn {
+    color: rgb(207, 65, 77);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 5px 10px;
+    transition: 0.2s linear;
+
+    &:hover {
+        background-color: #e0e0e0;
+    }
+}

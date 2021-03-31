@@ -1,0 +1,98 @@
+.app-media-viewer-dialog {
+    width: 65vw;
+}
+
+.media-viewer {
+    background-color: $muted;
+    display: flex;
+    height: 50vh;
+    overflow-x: hidden;
+    .media-viewer-cont {
+        border: 1px solid $gray2;
+        border-left: none;
+        border-right: none;
+    }
+    .media-asset {
+        background-color: $black;
+        width: 70%;
+        position: relative;
+        video {
+            background-color: $black;
+        }
+        img {
+            background-color: $black;
+            object-fit: contain;
+        }
+    }
+    .media-info {
+        font-size: 14px;
+        background-color: $muted;
+        width: 30%;
+        border-left: 1px solid $gray2;
+        p {
+            overflow-wrap: break-word;
+            padding-top: 3px;
+        }
+        mat-tab-group {
+            background-color: $muted;
+        }
+        .details {
+            background-color: $muted;
+        }
+        .mat-tab-labels {
+            background-color: $gray2;
+        }
+    }
+}
+
+.example-handle {
+    top: 30%;
+    left: 43%;
+    color: $example_handle;
+    width: 20px;
+    height: 20px;
+}
+
+.media-navigation {
+    height: 50px;
+    background-color: $light_gray;
+    margin: 0px;
+    .title {
+        padding-top: 12px;
+        padding-left: 20px;
+    }
+    h3 {
+        font-weight: 400;
+    }
+    button {
+        height: 50px;
+        width: 50px;
+        font-size: 20px;
+        border: 1px solid $gray_table_border;
+        padding: 0px 10px;
+        border-top: none;
+        border-bottom: none;
+    }
+    .navi {
+        color: $button_gray;
+        &:hover {
+            background-color: $gray2;
+            border-color: $gray_border;
+            color: $black;
+        }
+    }
+    .close {
+        color: $error;
+        font-size: 25px;
+        &:hover {
+            background-color: $gray2;
+            border-color: $gray_border;
+        }
+    }
+    button[disabled] {
+        cursor: not-allowed;
+        &:hover {
+            color: $button_gray;
+        }
+    }
+}

@@ -1,0 +1,18 @@
+@media screen {
+    .template-drawing-board {
+        border: 1px dashed rgb(143, 143, 143);
+        margin-bottom: 20px;
+        padding-top: 56.25%;
+        position: relative;
+        overflow: hidden;
+        width: 100%;
+    }
+
+    .zone-name {
+        font : {
+            size: 15px;
+            weight: 500;
+            text-shadow: 0 0 0 #000;
+        }
+    }
+}

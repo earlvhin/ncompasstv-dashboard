@@ -1,0 +1,106 @@
+<div>
+	<div class="media-component" *ngIf="!no_content; else no_data">
+		<div class="row mb-3">
+			<div class="col-lg-12">
+				<app-media-library-options 
+				(filetype)="sortByFiletype($event)"
+				(sortAscend)="sortAscendingOrder($event)"
+				(sortDescend)="sortDescendingOrder($event)"
+				(sortUser)="filterByUser($event)"
+				(searchKeyword)="searchContent($event)"
+				[empty_s]="empty_search">
+				</app-media-library-options>
+			</div>
+		</div>
+		
+		<div class="row mb-3">
+			<div class="col-lg-12">
+				<app-filter-labels [filters]="filters" (clear_filter)="clearFilter($event)"></app-filter-labels>
+			</div>
+		</div>
+
+		<div class="col-lg-12 p-0">
+			<div class="flex-even text-right ml-3 p-0">
+				<mat-slide-toggle 
+				*ngIf="!no_content"
+				(change)="controlToggle($event)"
+				[checked]="enable_multiple_delete ? 'checked' : 'false'"
+				>
+				</mat-slide-toggle>
+				<span class="ml-3 text-gray">
+					Multiple Delete
+				</span>
+				<button mat-button mat-raised-button 
+                    (click)="deleteMultiple()"
+					*ngIf="enable_multiple_delete"
+					[disabled] = "temp.length == 0" 
+                    class="theme-btn ml-3">
+                        Delete Contents
+                </button>
+			</div>
+		</div>
+	
+		<div class="media-container mb-4" *ngIf="!no_search_result; else nodata">
+			<div class="no-gutters" *ngIf="!searching; else loading">
+				<div class="row flex no-gutters" *ngIf="filtered_content_data.length != 0; else nodata">
+					<div class="p-2" *ngFor="let a of filtered_content_data; let i = index" [ngClass]="sm_view ? 'col-lg-2' : 'col-lg-1'">
+						<div (click)="mediaViewer_open(a, filtered_content_data, i)">
+							<app-thumbnail-card
+							[image_uri]="a.thumbnail"
+							[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
+							[content_id]="a.content_id"
+							[filetype]="a.file_type"
+							[is_converted]="a.is_converted"
+							[dealer]="a.dealer_id"
+							(deleted)="isDeleted($event)"
+							[uuid]="a.uuid"
+							[multiple_delete]="enable_multiple_delete"
+							(content_to_delete)="multipleDelete($event)"
+							[is_checked]="checkChecking(a.content_id)">
+							</app-thumbnail-card>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<ng-container *ngIf="!no_search_result">
+			<app-pagination-field
+				[paging_data]="paging_data"
+				(get_page)="pageRequested($event, false)"
+				[media_lib]="true">
+			</app-pagination-field>
+		</ng-container>
+		
+		<ng-template #loading>
+			<div class="d-flex align-items-center justify-content-center vh-50">
+				<app-spinner></app-spinner>
+			</div>
+		</ng-template>
+	</div>
+	
+	<ng-template #no_data>
+		<div class="row">
+			<div class="col-lg-12">
+				<mat-card class="p-5">
+					<h3>Nothing here.</h3>
+					<p class="sm-text mb-0">
+						There are no uploaded content. Click Upload Media to get started.
+					</p>
+				</mat-card>
+			</div>
+		</div>
+	</ng-template>
+
+	<ng-template #nodata>
+		<div class="col-lg-12 pl-0 pr-0">
+			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
+				<div class="mb-4">
+					<i class="text-gray fa-5x far fa-file-alt"></i>
+				</div>
+				<h3 class="text-gray col-lg-12">No Results Found.</h3>
+				<span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
+			</mat-card>
+		</div>
+	</ng-template>
+</div>

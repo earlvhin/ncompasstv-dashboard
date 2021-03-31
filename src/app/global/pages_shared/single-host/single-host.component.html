@@ -1,0 +1,109 @@
+<app-banner
+*ngIf="single_host_data"
+[single_image]="img"
+[single_name]="d_name"
+[single_desc]="d_desc"
+[single_host_data]="single_host_data"
+[host_data]="host_data"
+[single_host_controls]="true"
+(single_host_assign_license)="openAssignLicenseModal()"
+(toggle_margin_top)="toggledHours($event)"
+(toggle_margin_top_notes)="toggledNotes($event)"
+[editable]="true"
+(update_info)="ngOnInit()">
+</app-banner>
+<div class="stat-cards margin-top-extra mb-4" [ngClass]="{'margin-top-extra-toggle': margin_more, 'margin-top-extra-notes' : margin_notes, 'double-margin-top-extra' : didToggleNotesAndHours() }">
+    <div class="theme-container">
+        <div class="row">
+            <div class="col-lg-12">
+                <mat-card class="p-1" style="height: 400px;">
+                    <agm-map [latitude]="lat" [longitude]="long" 
+                    [maxZoom]="20" [fitBounds]="true">
+                        <agm-marker 
+                        [latitude]="lat" 
+                        [longitude]="long"
+                        [agmFitBounds]="true">
+                        </agm-marker>
+                    </agm-map>
+                </mat-card>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="theme-container">
+    <div class="content-section">
+        <div class="row">
+            <div class="col-lg-12">
+                <mat-tab-group dynamicHeight>
+                    <mat-tab label="Licenses">
+                        <div class="theme-container pt-4" *ngIf="host_license.length != 0 || no_record; else loader">
+                            <div class="row" *ngIf="!no_record; else no_data">
+                                <div class="col-lg-8">
+									<button mat-button mat-raised-button class="theme-btn sm-text mr-2" (click)="reloadLicense()"><i class="fas fa-sync-alt mr-2"></i> Reload</button>
+									<button mat-button mat-raised-button class="theme-btn sm-text mr-2 _danger" (click)="unassignHostLicense()" [disabled]="host_license.length == 0"><i class="fas fa-times mr-2"></i> Unassign Licenses</button>
+									<button mat-button mat-raised-button class="theme-btn sm-text mr-2 _cool" [disabled]="pi_updating" (click)="pushUpdate()"><span class="fas fa-upload mr-2"></span>Content Update</button>
+									<button mat-button mat-raised-button class="theme-btn sm-text _primary" (click)="updateAndRestart()" [disabled]="pi_updating"><i class="fas fa-terminal mr-2"></i>{{ update_btn }}</button>
+                                </div>
+                                <div class="col-lg-4">
+                                    <app-search-field
+                                    [form_title]="'Search License Key or Alias'"
+                                    [placeholder]="'Example: N-Compass'"
+                                    [data_reference]="host_license"
+                                    [primary_keyword]="'alias'"
+                                    [secondary_keyword]="'license_key'"
+									(searched)="filterData($event)">
+									</app-search-field>
+                                </div>
+                                <div class="col-lg-12" *ngIf="host_license.length != 0">
+                                    <mat-card  *ngIf="filtered_data.length > 0;else nodata">
+                                        <app-data-table
+                                        [table_columns]="host_license_table_col"
+                                        [table_data]="filtered_data"
+                                        [data_status]="has_records"
+                                        [new_table]="true"
+                                        [license_status_column]="true"
+                                        (update_info)="ngOnInit()">
+                                        </app-data-table>
+                                    </mat-card>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    </div>
+    <ng-template #no_data>
+        <mat-card class="p-5">
+            <h3>What the!?</h3>
+            <p class="sm-text mb-3">
+                There are no available licenses at the moment.
+            </p>
+        </mat-card>
+    </ng-template>
+
+    <ng-template #nodata>
+        <div class="col-lg-12 pl-0 pr-0">
+            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+            </mat-card>
+        </div>
+    </ng-template>
+
+    <ng-template #loader>
+        <div class="py-4 white-bg h-500">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #small_loader>
+        <div class="py-4 white-bg">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </ng-template>
+</div>

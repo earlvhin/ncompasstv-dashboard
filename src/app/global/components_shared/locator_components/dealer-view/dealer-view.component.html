@@ -1,0 +1,146 @@
+<div class="content-section">
+	<div class="row">
+		<div class="col-lg-6">
+			<ng-container *ngIf="!loading_hosts; else loader">
+				<app-autocomplete-field
+				[data_reference]="dealers_data"
+				[primary_keyword]="'businessName'"
+				[key_of_value]="'dealerId'"
+				(data_value)="dealerSelected($event)"
+				[required]="true"
+				[label]="'Type in a Dealer business name here'"
+				[paging]="paging"
+                (call_next_page)="searchBoxTrigger($event)"
+                [loading_data]="loading_data"
+				(searched)="searchData($event)"
+				[loading_search]="loading_search">
+				</app-autocomplete-field>
+
+				<div class="search-result" *ngIf="selected_dealer_hosts; else no_record">
+					<mat-accordion>
+						<div class="row">
+							<div class="col-lg-12" *ngFor="let h of selected_dealer_hosts" >
+								<mat-expansion-panel 
+								class="mb-3" 
+								hideToggle 
+								(click)="hostExpansionClicked(h.hostId); onMarkerClick(h, null)"
+								[expanded]='h.hostId == clicked_marker_id'>
+									<mat-expansion-panel-header [ngClass]="h.hostId == clicked_marker_id ? 'bg-primary' : null">
+										<mat-panel-title [ngClass]="h.hostId == clicked_marker_id ? 'text-light' : null">
+											{{ h.name }}
+										</mat-panel-title>
+										<mat-panel-description class="sm-text" [ngClass]="h.hostId == clicked_marker_id ? 'text-light' : null">
+											{{ h.address}} {{ h.city}} {{ h.state }} {{ h.postalCode }}
+										</mat-panel-description>
+									</mat-expansion-panel-header>
+									<div class="pt-4">
+										<p>This is the primary content of the panel.</p>
+									</div>
+								</mat-expansion-panel>
+							</div>
+						</div>
+					</mat-accordion>
+				</div>
+			</ng-container>
+		</div>
+		<div class="col-6 col-lg">
+			<mat-card class="mb-4" *ngIf="host_license; else no_host_selected">
+				<ng-container *ngIf="!loading_license_count; else loader_sm">
+					<app-data-card-compare  
+					*ngIf="license_card"
+					[compare_basis]="license_card.basis" 
+					[compare_basis_label]="license_card.basis_label"
+					[good_value]="license_card.good_value" 
+					[good_value_label]="license_card.good_value_label"
+					[bad_value]="license_card.bad_value" 
+					[bad_value_label]="license_card.bad_value_label">
+					</app-data-card-compare>
+				</ng-container>
+			</mat-card>
+			<div class="row mb-4">
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/online_all.png" alt="online-all">
+						<p class="sm-text ml-2">All licenses are online</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/online_many.png" alt="online-all">
+						<p class="sm-text ml-2">More than 75% of licenses are online</p>
+					</div>
+				</div>
+				
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/online_few.png" alt="online-all">
+						<p class="sm-text ml-2">Less than 75% of licenses are online</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/offline.png" alt="online-all">
+						<p class="sm-text ml-2">All licenses are offline</p>
+					</div>
+				</div>
+			</div>
+			<agm-map class="vh-60" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
+				<agm-marker
+				*ngFor="let h of map_marker"
+				id="{{ h.hostId }}"
+				(markerClick)="onMarkerClick(h, window)"
+				[latitude]="h.latitude"
+				[longitude]="h.longitude"
+				[agmFitBounds]="true"
+				[iconUrl]="h.icon_url">
+					<agm-info-window
+					[isOpen]="expansion_id == h.hostId"
+					#window>
+						<h4>{{ h.name }}</h4>
+						<h6>Longitude: {{h.longitude}}</h6>
+						<h6>Latitude: {{h.latitude}}</h6>
+				  	</agm-info-window>
+				</agm-marker>
+			</agm-map>
+			<p class="sm-text mt-3 bg-info p-3 text-white">Note: If host is displayed but no marker is shown please check the coordinates of that host.</p>
+		</div>
+	</div>
+
+	<ng-template #loader>
+        <div class="vh-50 d-flex align-items-center justify-content-center">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-template>
+
+    <ng-template #loader_sm>
+		<div class="text-center py-4">
+			<app-spinner [diameter]="65"></app-spinner>
+			<h5 class="mt-3">Getting License Information. Please Wait.</h5>
+        </div>
+    </ng-template>
+
+    <ng-template #no_record>
+        <mat-card class="vh-50 p-5">
+            <div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
+                <div class="text-center w-100">
+                    <span class="fas fa-map fa-2x text-primary mb-3"></span>
+                    <h3>Welcome to Locator</h3>
+                    <p class="sm-text">Enter a Host name above to start</p>
+                </div>
+            </div>
+        </mat-card>
+    </ng-template>
+
+    <ng-template #no_host_selected>
+        <mat-card class="p-3 mb-4">
+            <div class="border-dashed d-flex align-items-center h-100 p-4 w-100">
+                <div class="text-center w-100">
+                    <h3>No Host Selected</h3>
+                    <p class="sm-text">Search a Host to get license count</p>
+                </div>
+            </div>
+        </mat-card>
+    </ng-template>
+</div>

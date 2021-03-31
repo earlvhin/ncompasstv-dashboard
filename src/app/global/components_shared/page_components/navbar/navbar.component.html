@@ -1,0 +1,37 @@
+<nav class="navbar left-0 top-0 full-width sidebar-full p-fixed">
+    <div class="container-fluid d-flex justify-content-end p-0">
+		<!-- <div class="notification-area">
+			<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="notif">
+				<span class="fas fa-bell mr-2"></span>
+				<span class="navbar-btn-label inline-block mr-1">Notifications</span>
+				<span class="fas fa-angle-down"></span>
+			</button>
+			<mat-menu #notif="matMenu" class="mat-menu-custom-width">
+				<div class="notification-panel">
+					<div class="notification-item">
+						<h5>Notification Title 1</h5>
+						<p class="sm-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit...</p>
+					</div>
+					<div class="notification-item">
+						<h5>Notification Title 2</h5>
+						<p class="sm-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit...</p>
+					</div>
+				</div>
+			</mat-menu>
+		</div> -->
+        <div class="navbar-menu">
+			<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="menu">
+				<span class="navbar-btn-label inline-block mr-1">{{ current_username }}</span>
+				<span class="fas fa-angle-down"></span>
+			</button>
+			<mat-menu #menu="matMenu">
+				<button mat-menu-item [routerLink]="['user-profile', current_userid]">
+					User Profile</button>
+				<button *ngIf="is_dealer" mat-menu-item [routerLink]="['dealer-profile', current_userid]">
+					Dealer Profile</button>
+				<button mat-menu-item [routerLink]="['user-account-setting', current_userid]">Account Settings</button>
+				<button mat-menu-item (click)="logOut()">Logout</button>
+			</mat-menu>
+        </div>
+    </div>
+</nav>

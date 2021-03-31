@@ -1,0 +1,57 @@
+<div class="theme-container" *ngIf="user$ | async as u">
+    <div class="row">
+        <div class="col-lg-12">`
+            <h2>{{ u.firstName }} {{ u.lastName }}</h2>
+            <p class="sm-text mb-4">Create {{ u.dateCreated | date }} by {{ u.creatorName }}</p>
+        </div>
+        <div class="col-lg-6">
+            <mat-card class="p-5">
+                <form [formGroup]="update_user" (ngSubmit)="updateUserInfo()">
+                    <h3>Edit User Info</h3>
+                    <p class="sm-text mb-4">Modify Basic User Info and Save Changes.</p>
+                    <mat-form-field class="full-width" *ngFor="let f of form_fields_view">
+                        <mat-label>{{ f.label }}</mat-label>
+                        <input matInput formControlName="{{ f.control }}" [type]="f.type" [placeholder]="f.placeholder">
+                    </mat-form-field>
+    
+                    <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="update_info_form_disabled">
+                        Save Changes
+                    </button>
+                </form>
+            </mat-card>
+        </div>
+        <div class="col-lg-6">
+            <mat-card class="p-5">
+                <h3>Change Password</h3>
+                <p class="sm-text mb-4">Change this user's password.</p>
+                <form [formGroup]="change_password" (ngSubmit)="changeUserPassword()">
+                    <mat-form-field class="full-width position-relative">
+                        <mat-label>New Password</mat-label>
+                        <input formControlName="new_password" matInput type="password" placeholder="New Password">
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_invalid">
+                            {{ password_validation_message }}
+                        </span>
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_invalid == false">
+                            {{ password_validation_message }}
+                        </span>
+                    </mat-form-field>
+    
+                    <mat-form-field class="full-width position-relative">
+                        <mat-label>Retype New Password</mat-label>
+                        <input matInput formControlName="re_password" type="password" placeholder="Retype New Password">
+                        <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_match == false">
+                            {{ password_is_match }}
+                        </span>
+                        <span class="validation-message good sm-text px-3 py-1" *ngIf="password_match">
+                            {{ password_is_match }}
+                        </span>
+                    </mat-form-field>
+
+                    <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="change_password_form_disabled">
+                        Save New Password
+                    </button>
+                </form>
+            </mat-card>
+        </div>
+    </div>
+</div>

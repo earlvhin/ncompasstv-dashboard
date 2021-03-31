@@ -1,0 +1,95 @@
+<div class="option-modal p-3" [@.disabled]="disable_animation">
+	<div class="d-flex mb-4">
+		<div class="flex-even">
+			<h3>Playlist Content Options - #{{ content_data.index }}</h3>
+			<p class="sm-text">
+				Here you can set duration, display mode, and choose where host and licenses this content should play.
+			</p>
+		</div>
+		<div>
+			<button class="naked-btn" (click)="undoChanges()">
+				<span class="fas fa-times"></span>
+			</button>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-lg-6">
+			<div class="content-holder mb-3">
+				<ng-container *ngIf="content_data.content.fileType | isvideo">
+					<video muted [src]="content_data.content.url+content_data.content.fileName" controls class="w-100"></video>
+				</ng-container>
+				<ng-container *ngIf="content_data.content.fileType | isimage">
+					<img [src]="content_data.content.url+content_data.content.fileName">
+				</ng-container>
+				<ng-container *ngIf="content_data.content.fileType == 'feed'">
+					<div class="frame-wrap">
+						<iframe class="responsive-iframe" [src]="content_data.content.url | sanitize" frameborder="0"></iframe>
+					</div>
+				</ng-container>
+			</div>
+
+			<div class="mb-4">
+				<!-- <h4 class="word-break mb-1" [attr.title]="content_data.content.fileType != 'feed' ? removeFilenameHandle(content_data.content.fileName) : content_data.content.title"> -->
+				<h4 class="word-break mb-1">
+					<span *ngIf="content_data.content.fileType != 'feed'; else feed">
+						{{ removeFilenameHandle(content_data.content.fileName) }}
+					</span>
+
+					<ng-template #feed>
+						<span>{{ content_data.content.title }}</span><br>
+						<a class="feed-url" href="{{ content_data.content.url }}" matTooltip="{{ content_data.content.url }}" matTooltipClass="prevent-tooltip-truncate" target="_blank">{{ feed_url }}</a>
+					</ng-template>
+				</h4>
+				<p class="sm-text">
+					Date Created: {{ content_data.content.dateCreated | date }}
+				</p>
+				<hr>
+				<mat-slide-toggle
+				(change)="toggleFullscreen($event)"
+				[checked]="content_data.content.isFullScreen == 1 ? true : false">
+					<h5 class="mb-0">Set to Fullscreen</h5>
+				</mat-slide-toggle>
+			</div>
+
+			<div *ngIf="!(content_data.content.fileType | isvideo)">
+				<mat-form-field class="w-100">
+					<mat-label>Set Content Duration</mat-label>
+					<input matInput type="number" placeholder="Ex: 100" 
+					[(ngModel)]="content_data.content.duration"
+					(blur)="setDuration()"
+					(change)="setDuration()"
+					min="5" max="100">
+				</mat-form-field>
+				<p class="sm-text">
+					Content duration is applicable to feeds and images only. Minimum is 5 seconds.
+				</p>
+			</div>
+
+			<button mat-button mat-raised-button class="theme-btn position-bottom" [disabled]="unchanged_playlist" [mat-dialog-close]="playlist_changes_data">
+				Save Options
+				<span class="fas fa-save ml-2"></span>
+			</button>
+		</div>
+		<div class="col-lg-6">
+			<div class="d-flex">
+				<div class="flex-even">
+					<h4>Play Where</h4>
+					<p class="sm-text mb-4">Choose which host and license you want this content displayed.</p>
+				</div>
+				<div class="ml-2" *ngIf="content_data.host_license.length > 0">
+					<mat-slide-toggle class="sm-text"
+					(change)="toggleAll($event)"
+					[checked]="toggle_all">
+						<strong>Toggle All</strong>
+					</mat-slide-toggle>
+				</div>
+			</div>
+			<app-play-where
+			[toggleEvent]="toggleEvent.asObservable()"
+			[content_data]="content_data"
+			(whitelisted)="hasWhiteListed($event)"
+			(blocklist_changes_saved)="saveBlocklistChanges($event)">
+			</app-play-where>
+		</div>
+	</div>
+</div>

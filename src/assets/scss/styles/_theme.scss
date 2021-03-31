@@ -1,0 +1,486 @@
+.auto-complete-selected {
+    background-color: $primary;
+    display: inline-block;
+    position: relative;
+    button {
+        background-color: transparent;
+        border: 0;
+        color: $light;
+        display: inline-block;
+        padding: 0;
+    }
+}
+
+.bg-dark {
+    background-color: $dark;
+}
+
+.bg-gray {
+    background-color: $gray !important;
+}
+
+.bg-gray-2 {
+    background-color: $gray2
+}
+
+.bg-white {
+    background-color: $light;
+}
+
+.tab-active {
+    background: $green_light;
+}
+
+.chart-thumbnail {
+    height: 50px;
+    width: 50px;
+
+    img {
+        object-fit: cover;
+        height: 100%;
+        width: 100%;
+    }
+}
+
+.error-alert {
+    background-color: $danger;
+    color: $light;
+}
+
+.field-error {
+    background-color: $danger;
+    border-radius: 5px;
+    color: $light;
+    font-size: 10px;
+    right: 0;
+    top: -5px;
+    padding: 5px;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.form-field {
+    position: relative;
+    .fas {
+        font-size: $md;
+        top: 10px;
+        position: absolute;
+        right: 10px;
+    }
+}
+
+.loading-wrapper {
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    height: 50vh;
+    width: 100%;
+}
+
+.pill {
+	background-color: $primary;
+	border-radius: 5px;
+	color: $light;
+	display: inline-block;
+	font-size: 12px;
+	padding: 7px 15px;
+	margin-right: 5px;
+}
+
+.pill-round {
+	background-color: $primary;
+	border-radius: 999px;
+	color: $light;
+	display: inline-block;
+	font-size: 10px;
+	padding: 5px 10px;
+}
+
+.input-field {
+    border-bottom: 1px solid $gray;
+    font-size: $md;
+    height: 35px;
+	max-width: 300px;
+	width: 100%;
+    transition: 0.1s linear;
+    &:focus {
+        border-bottom: 1px solid $primary;
+    }
+}
+
+.ng-form-field {
+    position: relative;    
+}
+
+.ng-input-form {
+    border-bottom: 1px solid $lighten_white;
+    font-size: 14px;
+    height: 50px;
+    padding: 0 15px;
+    transition: 0.2s linear;
+    &:focus {
+        border-bottom: 1px solid $green_border;
+    }
+}
+
+.ng-scrape-form-btn {
+    background: $green_border;
+    color: $light;
+    height: 50px;
+    padding: 0 20px;
+    position: absolute;
+    transition: 0.1s linear;
+    &.disabled {
+        background-color: $disabled !important;
+    }
+    &:hover {
+        background-color: $primary_focus;
+    }
+}
+
+.map-wrapper {
+    border: 1px solid $gray_border;
+    height: 650px;
+}
+
+.material-shadow {
+	box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+.page-title {
+    color: $dark;
+    font-size: $xlg;
+}
+
+.section-title {
+    color: $dark;
+    font-size: $normal;
+    margin-bottom: 15px;
+}
+
+.table-row-url {
+    transition: 0.1s linear;
+    &:hover {
+        color: $primary;
+    }
+}
+
+.theme-btn {
+    background-color: $dark;
+    border: 0;
+    border-radius: 4px;
+    color: $light;
+    min-width: 40px !important;
+	padding: 3px 10px;
+	transition: 0.1s linear;
+
+    &:hover {
+        background-color: #6a6e71;
+    }
+
+    &._danger {
+        background-color: $danger !important;
+	}
+	
+	&._caution {
+		background-color: #ce5109;
+	}
+
+    &._teal {
+        background-color: #00b496;
+	}
+
+    &._warning {
+        background-color: #771c8a;
+	}
+	
+	&._primary {
+		background-color: $primary;
+	}
+
+	&._cool {
+		background-color: rgb(11, 96, 136);
+	}
+
+	&._info {
+		background-color: rgb(32, 131, 189);
+	}
+
+    .button-label {
+        font-size: $md;
+        font-weight: 500;
+        margin-right: 10px;
+	}
+	
+	&._disabled {
+		background-color: #bbb;
+		color: #777;
+	}
+}
+
+.user-form {
+    .user-icon {
+        width: 70px;
+    }
+    form {
+        position: relative;
+    }
+}
+
+.with-page {
+    min-height: 400px;
+    height: auto;
+    padding-bottom: 50px;
+}
+
+.with-page-dealer {
+    min-height: 950px;
+}
+
+.hidden-button {
+    border: none;
+}
+
+.dropdown-menu {
+    box-shadow: 0 8px 6px -6px $shadow;
+    button {
+        &:hover {
+            background: $trow_gray;
+        }
+        &:active {
+            color: $black;
+            background: $trow_gray;
+        }
+        &:last-child {
+            border-top: 1px solid $button_gray;
+            margin-top: 10px;
+        }
+    }
+
+    
+}
+
+.dropdown-toggle {
+    &:after {
+        display:none !important;
+    }
+     
+}
+
+.theme-table {
+    border-radius: 4px;
+    overflow: hidden;
+    thead {
+        background: $muted;
+        // box-shadow: 0 8px 6px -6px $shadow;
+        th {
+            border-right: 1px solid $gray_table_border;
+            &:last-child {
+                border: none;
+            }
+        }
+    }
+    th {
+        font : {
+            size: $sm;
+            weight: 600;
+        }
+    }
+
+    tbody {
+        td {
+            border-bottom: 1px solid #dee2e6;
+            font : {
+                size: $xsm;
+                weight: $f_medium;
+            }
+        }
+        tr:last-child {
+            // box-shadow: 0 8px 6px -6px $shadow;
+            border-bottom: 1px solid #e4e4e4;
+            
+            td {
+                border-bottom: none;
+            }
+        }
+        tr:nth-of-type(even) {
+            background: $trow_gray;
+        }
+    }
+}
+
+.sort {
+    &:hover {
+        color: $primary;
+    }
+}
+
+.new-paging-container {
+    position: absolute;
+    bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    left: 0;
+    right: 0;
+    text-align: center;
+    .data-table-page {
+        .pagination {
+            display: inline-flex;
+            .page-item {
+                .page-link {
+                    font-size: 11px;
+                    margin: 3px;
+                }
+            }
+            .active {
+                .page-link {
+                    background-color: $primary;
+                    border: 1px solid $primary;
+                }
+                &:hover {
+                    color: $light;
+                }
+            }
+        }
+    }
+}
+
+.media-lib-paging {
+    bottom: auto;
+}
+
+.media-container {
+    min-height: 665px;
+}
+
+.page {
+    padding: 75px 0 20px 0;
+    transition: padding-left .5s;
+    &.sidebar-full {
+        padding-left: 200px;
+    }
+    &.sidebar-fully {
+        padding-left: 70px;
+    }
+}
+
+.thumbnail-card {
+    border: 1px solid $silver;
+    cursor: pointer;
+    margin-bottom: 15px;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+    img {
+        background-color: $black;
+        height: 100px;
+        object-fit: contain;
+        object-position: center;
+        width: 100%;
+        padding-bottom: 10px;
+    }
+    .thumbnail-title {
+        background-color: rgba($light, 0.95);
+        border-top: 1px solid #aaa;
+        bottom: 0;
+        font-size: $xsm;
+        padding: 5px;
+        position: absolute;
+        text-align: center;
+        word-wrap: break-word;
+        width: 100%;
+    }
+    &:hover {
+        box-shadow: 0 7px 14px rgba(0,0,0,0.25), 0 5px 5px rgba(0,0,0,0.22);
+    }
+}
+
+.validation_msg {
+    position: absolute;
+    right: 0;
+    top: 5px;
+    &.success {
+        color: $success;
+    }
+    &.error {
+        color: $error;
+    }
+}
+
+.custom-board {
+    box-shadow: 0 3px 1px -2px rgba(0,0,0,.2), 0 2px 2px 0 rgba(0,0,0,.14), 0 1px 5px 0 rgba(0,0,0,.12);
+    background: $light;
+    padding: 15px;
+    border-radius: 4px;
+}
+
+.naked-btn {
+	background: none;
+	border: none;
+	color: #bbb;
+}
+
+.assign-license-modal {
+    min-width: 400px;
+}
+
+.license-list {
+	max-height: 300px;
+	min-height: 150px;
+    margin-bottom: 20px;
+    min-width: 400px;
+    overflow-y: scroll;
+}
+
+.border-dashed {
+    border: 1px dashed rgb(187, 187, 187);
+}
+
+.text-gray {
+    color: $gray_dark;
+}
+
+.text-gray-with-hover {
+    color: $gray_dark;
+    &:hover {
+        color: $black;
+    }
+}
+
+.float-right {
+    float: right;
+}
+
+.white-bg {
+    background: $light;
+}
+
+.disabled a {
+    pointer-events:none; 
+    opacity:0.6;
+}
+
+.h-500 {
+    height: 500px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.not-clickable {
+    pointer-events: none;
+}
+
+.select-icon {
+    mat-checkbox {
+        margin-right: 10px;
+    }
+    label {
+        background: white;
+    }
+}
+
+.list-container {
+    max-height: 150px;
+    overflow-y: auto;
+}

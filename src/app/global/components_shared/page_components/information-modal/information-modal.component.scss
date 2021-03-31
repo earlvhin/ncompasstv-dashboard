@@ -1,0 +1,28 @@
+.good {
+	color: #8EC641;
+}
+
+.bad {
+	color: #EE5454;
+}
+
+.information-modal {
+	.contents {
+		text-align: justify;
+	}
+
+	button.dismiss {
+		position: absolute;
+		top: 15px;
+		right: 15px;
+		padding: 5px;
+		line-height: 14px;
+		min-width: auto;
+	}
+
+	.business-hours {
+		ul {
+			list-style: none;
+		}
+	}
+}

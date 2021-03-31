@@ -1,0 +1,23 @@
+.notification-panel {
+	max-height: 400px;
+}
+
+.notification-item {
+	border-bottom: 1px solid #f0f0f0;
+	cursor: pointer;
+	padding: 15px;
+	width: 100%;
+	transition: 0.2s linear;
+
+	&:last-child {
+		border-bottom: none;
+	}
+
+	&:hover {
+		background: #eaeaea;
+	}
+}
+
+.mat-menu-custom-width {
+	width: 340px;
+}

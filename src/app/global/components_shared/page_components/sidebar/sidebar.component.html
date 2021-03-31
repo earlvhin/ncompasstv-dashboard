@@ -1,0 +1,20 @@
+<aside class="sidebar height-100 p-fixed top-0" [ngClass]="icons_only ? 'sidebar-icons-only' : 'sidebar-menu'">
+    <button class="sidebar-toggle-button material-shadow no-border br-100 p-absolute" (click)="toggleSideBar()">
+        <span *ngIf="!icons_only" class="fas fa-angle-left text-green"></span>
+        <span *ngIf="icons_only" class="fas fa-angle-right text-green"></span>
+    </button>
+
+    <div class="logo">
+        <img class="logo-image" *ngIf="!icons_only" src="assets/media-files/logo-light.png" alt="logo">
+        <img class="logo-image" *ngIf="icons_only" src="assets/media-files/icon-logo.png" alt="logo">
+    </div>
+
+    <ul class="menu list-unstyled m-0 p-0">
+        <li class="menu-item full-width mb-1" *ngFor="let r of routes">
+            <a [routerLink]="r.path" routerLinkActive="is-active" class="full-width">
+                <span class="{{r.icon}} inline-block"></span>
+                <span class="url-text ml-2" *ngIf="!icons_only">{{r.label}}</span>
+            </a>
+        </li>
+    </ul>
+</aside>
