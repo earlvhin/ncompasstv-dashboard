@@ -4,6 +4,4 @@ services:
     container_name: dashboard
     build:
       context: .
-    image: 892444632159.dkr.ecr.us-east-1.amazonaws.com/nc-nvir-dev-test-dashboard-01
-    environment:
-      VIRTUAL_HOST: dashboard.ourimage.biz
+    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/nc-nvir-dev-test-dashboard-01
