@@ -3,6 +3,6 @@
   
     // Environment variables
     window["env"]["apiUrl"] = "https://apiecs.ourimage.biz/api/";
-    window["env"]["socketUrl"] = "https://socketecs.ourimage.biz";
+    window["env"]["socketUrl"] = "https://socketecs.ourimage.biz/socket.io";
     window["env"]["debug"] = true;
   })(this);
