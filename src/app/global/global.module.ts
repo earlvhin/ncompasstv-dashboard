@@ -136,7 +136,8 @@ import { WarningAnimationComponent } from './components_shared/page_components/w
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
 
-const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
+//const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
+const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false, transports: ['websocket'] }};
 
 // Material Theme Module
 import { 
