@@ -1,0 +1,45 @@
+<mat-card class="theme-table">
+	<table class="full-width">
+		<thead align="left" class="text-center">
+			<tr>
+				<th class="border-right border-bottom p-3" scope="col" rowspan="2" *ngFor="let column of table_data.columns">{{ column.name }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let row of table_data.rows">
+				<td class="xsm-text border-right text-center p-3" *ngIf="!row.license_url; else license_url_row">{{ row.license_key }}</td>
+				<td class="xsm-text border-right text-center p-3" *ngIf="!row.host_url; else host_url_row">{{ row.host }}</td>
+				<td class="xsm-text border-right text-center p-3" *ngIf="!row.dealer_url; else dealer_url_row">{{ row.business }}</td>
+				<td class="xsm-text border-right text-center p-3">{{ row.license_type }}</td>
+				<td class="xsm-text border-right text-center p-3" *ngIf="!row.screen_url; else screen_url_row">{{ row.screen }}</td>
+				<td class="xsm-text border-right text-center p-3">{{ row.installation_date }}</td>
+
+				<ng-template #license_url_row>
+					<td class="xsm-text border-right text-center p-3">
+						<a [routerLink]="row.license_url">{{ row.license_key }}</a>
+					</td>
+				</ng-template>
+
+				<ng-template #host_url_row>
+					<td class="xsm-text border-right text-center p-3">
+						<a [routerLink]="row.host_url">{{ row.host }}</a>
+					</td>
+				</ng-template>
+
+				<ng-template #dealer_url_row>
+					<td class="xsm-text border-right text-center p-3">
+						<a [routerLink]="row.dealer_url">{{ row.business }}</a>
+					</td>
+				</ng-template>
+
+				<ng-template #screen_url_row>
+					<td class="xsm-text border-right text-center p-3">
+						<a [routerLink]="row.screen_url">{{ row.screen }}</a>
+					</td>
+				</ng-template>
+			</tr>
+		</tbody>
+	</table>
+</mat-card>
+
+

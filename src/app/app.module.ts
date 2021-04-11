@@ -13,6 +13,7 @@ import { AdvertiserModule } from './role-pages/advertiser/advertiser.module';
 import { TechnicalModule } from './role-pages/technical/technical.module';
 import { AuthService } from './global/services/auth-service/auth.service';
 import { AuthGuard } from './global/guards/auth/auth.guard';
+import { InstallationsModule } from './role-pages/administrator/pages/installations/installations.module';
 
 @NgModule({
 	declarations: [
@@ -30,6 +31,7 @@ import { AuthGuard } from './global/guards/auth/auth.guard';
 		TechnicalModule,
 		UserLoginModule,
 		AppRoutingModule,
+		InstallationsModule
 	],
 	providers: [AuthService, AuthGuard],
 	bootstrap: [AppComponent]

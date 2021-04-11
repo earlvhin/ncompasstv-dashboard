@@ -17,30 +17,21 @@ import { UI_TABLE_DEALERS_REPORT } from '../../../../global/models/ui_table_deal
 })
 
 export class DashboardComponent implements OnInit {
-
-	title: string = "Dashboard";
-
-	// Dealer Chart
-	dealer_report_chart: any;
-	loading_dealer_report_chart: boolean = true;
-
-	// Host Chart
-	host_report_chart: any;
-	loading_host_report_chart: boolean = true;
-
-	// Advertiser Chart
 	advertiser_report_chart: any;
-	loading_advertiser_report_chart: boolean = true;
-	
-	// License Chart
-	license_report_chart: any;
-	loading_license_report_chart: boolean = true;
-
-	// Latest Added Dealers
+	dealer_report_chart: any;
+	host_report_chart: any;
 	latest_dealers: API_DEALER[];
+	license_report_chart: any;
+	loading_advertiser_report_chart: boolean = true;
+	loading_dealer_report_chart: boolean = true;
+	loading_host_report_chart: boolean = true;
+	loading_license_report_chart: boolean = true;
 	no_dealers: boolean;
+	subscription: Subscription = new Subscription;
+	title: string = "Dashboard";
+	
 	latest_dealer_col = [
-		'#',
+		'#', 
 		'Business Name', 
 		'Owner',
 		'Contact Person',
@@ -48,8 +39,6 @@ export class DashboardComponent implements OnInit {
 		'State', 
 		'Date Created'
 	]
-
-	subscription: Subscription = new Subscription;
 
 	constructor(
 		private _auth: AuthService,
@@ -119,7 +108,6 @@ export class DashboardComponent implements OnInit {
 		this.subscription.add(
 			this._host.get_host_report(filter).subscribe(
 				data => {
-					console.log('getHostReport', data);
 					let host_report = data.list[0].monthly.filter(i => i.total > 0);
 
 					if (host_report.length > 0) {
@@ -264,14 +252,14 @@ export class DashboardComponent implements OnInit {
 			return data.map(
 				dealer => {
 					return new UI_TABLE_DEALERS_REPORT(
-						dealer.dealerId,
-						count++,
-						dealer.businessName,
-						dealer.owner,
-						dealer.contactPerson,
-						dealer.region,
-						dealer.state,
-						this._date.transform(dealer.dateCreated, 'MMM dd, y')
+						{ value: dealer.dealerId, link: null , editable: false, hidden: true},
+						{ value: count++, link: null , editable: false, hidden: false},
+						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false},
+						{ value: dealer.owner, link: null , editable: false, hidden: false},
+						{ value: dealer.contactPerson, link: null , editable: false, hidden: false},
+						{ value: dealer.region, link: null , editable: false, hidden: false},
+						{ value: dealer.state, link: null , editable: false, hidden: false},
+						{ value: this._date.transform(dealer.dateCreated, 'MMM dd, y'), link: null , editable: false, hidden: false},	
 					)
 				}
 			)

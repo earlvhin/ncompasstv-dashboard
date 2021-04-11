@@ -42,6 +42,11 @@ export class LicenseService {
 
 	get_all_licenses() {}
 
+	get_licenses_by_install_date(installDate: string): Observable<any> {
+		const data = { installDate };
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.all_license_by_install_date}${installDate}`, data, this.httpOptions);
+	}
+
 	get_licenses_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total}`, this.httpOptions);
 	}
@@ -55,6 +60,11 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
+	sort_license_by_dealer_id(id, page, key, column, order) {
+		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order })
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+	}
+
 	get_license_by_host_id(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_by_host}${id}`, this.httpOptions);
 	}
@@ -65,6 +75,10 @@ export class LicenseService {
 
 	get_license_report(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_license_report}`, data, this.httpOptions);
+	}
+
+	get_license_to_export(id) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealer_licenses}${id}`, this.httpOptions);
 	}
 
 	get_license_total_per_dealer(id) {

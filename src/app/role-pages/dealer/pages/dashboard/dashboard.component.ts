@@ -282,14 +282,14 @@ export class DashboardComponent implements OnInit {
 			return data.map(
 				host => {
 					return new UI_TABLE_HOSTS(
-						host.hostId,
-						count++,
-						host.name,
-						host.address,
-						host.region != null ? host.region : '--',
-						host.city,
-						host.state,
-						this._date.transform(host.dateCreated, 'MMM dd, y')
+						{ value: host.hostId, link: null , editable: false, hidden: true},
+						{ value: count++, link: null , editable: false, hidden: false},
+						{ value: host.name, link: '/dealer/hosts/' + host.hostId , editable: false, hidden: false},
+						{ value: host.address, link: null , editable: false, hidden: false},
+						{ value: host.region != null ? host.region : '--', link: null , editable: false, hidden: false},
+						{ value: host.city, link: null , editable: false, hidden: false},
+						{ value: host.state, link: null , editable: false, hidden: false},
+						{ value: this._date.transform(host.dateCreated, 'MMM dd, y'), link: null , editable: false, hidden: false},	
 					)
 				}
 			)

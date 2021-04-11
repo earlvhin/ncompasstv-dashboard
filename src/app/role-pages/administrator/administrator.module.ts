@@ -32,7 +32,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
-
 @NgModule({
 	declarations: [
 		AdministratorLayoutComponent, 

@@ -1,0 +1,68 @@
+<div class="theme-container">
+	<div class="title-section">
+		<div class="d-flex align-items-center">
+			<div class="flex-even">
+				<h1 class="page-title">Installations</h1>
+				<!-- <p class="sm-text mb-0" *ngIf="description">{{ description }}</p> -->
+			</div>
+			<div class="flex-even text-right">
+				<form [formGroup]="form">
+					<mat-form-field appearance="fill" appDefaultDateFormat>
+						<mat-label>Current Date</mat-label>
+						<input matInput formControlName="date" (dateInput)="onSelectDate($event.value)" [matDatepicker]="datePicker" readonly>
+						<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+						<mat-datepicker #datePicker></mat-datepicker>
+					</mat-form-field>
+				</form>
+			</div>
+		</div>
+		<hr>
+	</div>
+
+	<div class="content-section">
+		<div class="row">
+			<div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-count *ngIf="is_ready.statistics; else loading"
+                    [data_value]="total.overall"
+                    [data_label]="'Scheduled Installation(s)'"
+                    [data_description]="''">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-count *ngIf="is_ready.statistics; else loading"
+                    [data_value]="total.this_month"
+                    [data_label]="'This Month of ' + current_month"
+                    [data_description]="''">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-count *ngIf="is_ready.statistics; else loading"
+                    [data_value]="total.next_month"
+                    [data_label]="'Next month of ' + next_month"
+                    [data_description]="''">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+		</div>
+		<br>
+		<app-installations-table [table_data]="table_data" *ngIf="is_ready.licenses; else loading"></app-installations-table>
+
+	</div>
+</div>
+
+<ng-template #loading>
+	<div class="py-4">
+		<mat-card>
+			<app-spinner [diameter]="60" *ngIf="!data_none; else no_data"></app-spinner>
+		</mat-card>
+	</div>
+</ng-template>
+
+<ng-template #no_data>
+	<mat-card><h1>No data</h1></mat-card>
+</ng-template>

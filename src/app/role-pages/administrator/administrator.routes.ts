@@ -15,6 +15,7 @@ import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user
 import { DashboardComponent } from  './pages/dashboard/dashboard.component';
 import { DealersComponent } from './pages/dealers/dealers.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
+import { InstallationsComponent } from './pages/installations/installations.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
 import { MediaLibraryComponent } from '../../global/pages_shared/media-library/media-library.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
@@ -60,6 +61,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 			{ path: 'feeds', component: FeedsComponent},
             { path: 'hosts', component: HostsComponent},
             { path: 'hosts/:data', component: SingleHostComponent},
+            { path: 'installations', component: InstallationsComponent },
             { path: 'licenses', component: LicensesComponent},
             { path: 'licenses/:data', component: SingleLicenseComponent},
             { path: 'locator', component: LocatorComponent },

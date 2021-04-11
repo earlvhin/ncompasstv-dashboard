@@ -12,7 +12,7 @@ import { UI_TABLE_DEALERS } from '../../models/ui_table_dealers.model';
 
 export class DealersTableComponent implements OnInit {
 
-	active_tab: string;
+	active_tab: string ="DateCreated";
 	active_filter_tab: string;
 	dealers_data: UI_TABLE_DEALERS[];
 	no_dealer: boolean = false;
@@ -25,7 +25,7 @@ export class DealersTableComponent implements OnInit {
 	initial_load: boolean = true;
 	search_data: string = "";
 	sortColumn: string = "";
-	sortOrder: string = "";
+	sortOrder: string = "desc";
 	tooltip: string = "";
 
 	filter = [
@@ -49,7 +49,7 @@ export class DealersTableComponent implements OnInit {
 
 	ngOnInit() {
 		this.getDealers();
-		this.sortByColumnName('DateCreated', 'desc');
+		// this.sortByColumnName('DateCreated', 'desc');
 	}
 
 	ngOnChanges() {
@@ -106,7 +106,7 @@ export class DealersTableComponent implements OnInit {
 			dealer => {
 				
 				//Formula for Offline Licenses
-				let inactive_count = (dealer.licenses.length - dealer.licenses.filter(i => i.hostId == null).length) -  dealer.licenses.filter(i => i.piStatus == 1).length;
+				// let inactive_count = (dealer.licenses.length - dealer.licenses.filter(i => i.hostId == null).length) -  dealer.licenses.filter(i => i.piStatus == 1).length;
 				
 				return new UI_TABLE_DEALERS(
 					dealer.dealerId,
@@ -118,15 +118,15 @@ export class DealersTableComponent implements OnInit {
 					dealer.region,
 					dealer.state,
 					dealer.monthAsDealer,
-					dealer.licenses.length > 0 ? dealer.licenses.length : 0,
-					dealer.licenses.length > 0 ? dealer.licenses.filter(i => i.hostId == null).length : 0,
-					dealer.licenses.length > 0 ? dealer.licenses.filter(i => i.piStatus == 1).length : 0,
-					inactive_count,
+					dealer.dealerStats.totalLicenses,
+					dealer.dealerStats.totalLicensesInactive,
+					dealer.dealerStats.totalLicensesOnline,
+					dealer.dealerStats.totalLicensesOffline,
 					0,
-					dealer.totalHost,
-					dealer.activeHost,
-					dealer.advertisers.length,
-					dealer.advertisers.length > 0 ? dealer.advertisers.filter(i => i.status == 'A').length : 0,
+					dealer.dealerStats.totalHosts,
+					dealer.dealerStats.totalHostsActive,
+					dealer.dealerStats.totalAdvertisers,
+					dealer.dealerStats.totalAdvertisersActive,
 				)
 			}
 		)
