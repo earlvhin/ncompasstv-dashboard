@@ -143,10 +143,7 @@
                         <app-data-table
                         *ngIf="screen.screen_license.length != 0; else no_record"
                         [table_columns]="license_column"
-                        [table_row_slug]="license_tbl_row_slug"
-                        [table_row_url]="license_tbl_row_url"
                         [table_data]="screen.screen_license"
-                        [column_nocase]="no_case"
                         [ctrl_column]="true"
                         [new_table]="true"
                         [license_status_column]="true"

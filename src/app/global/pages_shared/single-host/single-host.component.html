@@ -43,7 +43,14 @@
 									<button mat-button mat-raised-button class="theme-btn sm-text mr-2" (click)="reloadLicense()"><i class="fas fa-sync-alt mr-2"></i> Reload</button>
 									<button mat-button mat-raised-button class="theme-btn sm-text mr-2 _danger" (click)="unassignHostLicense()" [disabled]="host_license.length == 0"><i class="fas fa-times mr-2"></i> Unassign Licenses</button>
 									<button mat-button mat-raised-button class="theme-btn sm-text mr-2 _cool" [disabled]="pi_updating" (click)="pushUpdate()"><span class="fas fa-upload mr-2"></span>Content Update</button>
-									<button mat-button mat-raised-button class="theme-btn sm-text _primary" (click)="updateAndRestart()" [disabled]="pi_updating"><i class="fas fa-terminal mr-2"></i>{{ update_btn }}</button>
+									<button mat-button mat-raised-button class="theme-btn sm-text _primary mr-2" (click)="updateAndRestart()" [disabled]="pi_updating"><i class="fas fa-terminal mr-2"></i>{{ update_btn }}</button>
+                                    <button mat-button mat-raised-button 
+                                    class="theme-btn sm-text _dark" 
+                                    (click)="updateToVersion2()" 
+                                    title="Update to Version 2">
+                                        <span class="font-weight-bold">2.0</span> 
+                                        <span class="ml-2">Upgrade to version 2</span>
+                                    </button>
                                 </div>
                                 <div class="col-lg-4">
                                     <app-search-field
@@ -60,7 +67,6 @@
                                         <app-data-table
                                         [table_columns]="host_license_table_col"
                                         [table_data]="filtered_data"
-                                        [data_status]="has_records"
                                         [new_table]="true"
                                         [license_status_column]="true"
                                         (update_info)="ngOnInit()">

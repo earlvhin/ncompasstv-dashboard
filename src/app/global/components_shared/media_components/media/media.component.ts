@@ -7,8 +7,6 @@ import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.mod
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { MediaViewerComponent } from '../media-viewer/media-viewer.component';
 import { MatDialog } from '@angular/material/dialog';
-import { Socket } from 'ngx-socket-io'
-import { environment } from '../../../../../environments/environment';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -69,10 +67,11 @@ export class MediaComponent implements OnInit {
 		if (this.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.is_dealer = true;
 		}
+		console.log("RELOAD",this.reload)
 		this.reload.subscribe(
 			i =>  {
-				// this.clearFilter(true);
-				// this.searchContent("")
+				this.clearFilter(true);
+				this.searchContent("")
 				this.empty_search = true;
 				this.sendStatCardsData();
 			}
@@ -388,6 +387,7 @@ export class MediaComponent implements OnInit {
 		})
 
 		dialog.afterClosed().subscribe(result => {
+			console.log("RESULT", result)
 			this.ngOnInit();
 		});
 	}

@@ -1,0 +1,16 @@
+<div class="view-schedules-dialog">
+	<button class="dismiss" mat-button mat-dialog-title [mat-dialog-close]="true"><mat-icon>close</mat-icon></button>
+	<h1 mat-dialog-title class="title"><h2><b>{{ title }}</b></h2></h1>
+
+	<div class="theme-container">
+		<div class="card-container">
+			<app-content-schedule-card class="card"
+				*ngFor="let card of _dialog.contents; let i = index"
+				[class.future-schedule]="card.scheduleStatus === 'future'" 
+				[class.inactive-schedule]="card.scheduleStatus === 'inactive'"
+				[content]="card"
+				[index]="i">
+			</app-content-schedule-card>
+		</div>
+	</div>
+</div>

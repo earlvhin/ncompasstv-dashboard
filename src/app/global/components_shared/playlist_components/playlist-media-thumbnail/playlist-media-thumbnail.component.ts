@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import * as io from 'socket.io-client';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { environment } from '../../../../../environments/environment';
 
@@ -14,20 +14,28 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 	@Input() show_fullscreen_status: boolean;
 	@Output() converted = new EventEmitter;
 	is_converted: number = 0;
+	_socket: any;
 
-	constructor(
-		private _socket: Socket,
-	) { 
-		this._socket.ioSocket.io.uri = environment.socket_server;
+	constructor() { 
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket']
+		});
 	}
 
 	ngOnInit() {
-		this._socket.connect();
 		this._socket.on('video_converted', data => {
 			if (data == this.content.uuid) {
 				this.is_converted = 1;
 				this.converted.emit(data);
 			}
+		})
+
+		this._socket.on('connect', () => {
+			console.log('#PlaylistMediaThumbnailComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#PlaylistMediaThumbnailComponent - Disconnnected to Socket Server');
 		})
 	}
 

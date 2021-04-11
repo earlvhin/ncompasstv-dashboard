@@ -35,6 +35,7 @@ export class PlaylistContentComponent implements OnInit {
 				return a.host.name.localeCompare(b.host.name)
 			})
 		}
+
 	}
 
 	optionsModal() {

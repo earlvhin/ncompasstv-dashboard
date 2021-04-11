@@ -1,6 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material'
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
+
+import { API_CONTENT } from 'src/app/global/models/api_content.model';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -11,33 +14,30 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 
 export class OptionsComponent implements OnInit {
 
-	blocklist_changes: any = {
-		status: false
-	};
+	blocklist_changes = { status: false };
 	content_data: any;
 	disable_animation = true;
 	feed_url = '';
-	playlist_changes_data: any = {
-		content: null,
-		blocklist: null
-	};
-	unchanged_playlist: boolean = true;
+	has_schedule = false;
+	playlist_changes_data = { content: null, blocklist: null };
+	schedule = { date: '', days: '', time: '' };
 	timeout: any;
 	toggle_all: boolean;
 	toggleEvent: Subject<void> = new Subject<void>();
+	unchanged_playlist: boolean = true;
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { content: API_CONTENT },
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<OptionsComponent>
-	) { 
-		localStorage.setItem('playlist_data', JSON.stringify(this._dialog_data.content));
-	}
-
+	) { }
+	
 	ngOnInit() {
+		localStorage.setItem('playlist_data', JSON.stringify(this._dialog_data.content));
 		this.content_data = this._dialog_data;
 		console.log('#matdialog', this._dialog_data.content);
 		if (this.isFeedContent()) this.setFeedUrl();
+		this.setSchedule(this._dialog_data.content);
 	}
 
 	ngOnDestroy() {
@@ -132,9 +132,86 @@ export class OptionsComponent implements OnInit {
 		return true;
 	}
 
+	private setDays(data: string): string {
+
+		const sum = data.split(',').reduce((a, b) => {
+			const result = parseInt(a) + parseInt(b);
+			return `${result}`;
+		});
+
+		if (data === '1,2,3,4,5,6,7' || sum === '28') return 'Everyday';
+
+		const result = [];
+
+		const daysArr = data.split(',');
+
+		daysArr.forEach(numeric => {
+
+			switch (numeric) {
+				case '1':
+					result.push('Mon');
+					break;
+				case '2':
+					result.push('Tue');
+					break;
+				case '3':
+					result.push('Wed');
+					break;
+				case '4':
+					result.push('Thu');
+					break;
+				case '5':
+					result.push('Fri');
+					break;
+				case '6':
+					result.push('Sat');
+					break;
+				default:
+					result.push('Sun');
+			}
+
+		});
+
+		return result.join(', ');
+
+	}
+
 	private setFeedUrl(): void {
 		const url = this.content_data.content.url;
 		if (url && url.length > 60) this.feed_url = `${url.substr(0, 57)}...`;
 		else this.feed_url = url;
+	}
+
+	private setSchedule(content: API_CONTENT): void {
+
+		if (!content.playlistContentsSchedule) return;
+
+		let { from, to, days, playTimeStart, playTimeEnd, type } = content.playlistContentsSchedule;
+
+
+		switch (type) {
+			case 2:
+				const NO_PLAY = 'Do Not Play';
+				this.schedule.date = NO_PLAY;
+				this.schedule.days = NO_PLAY;
+				this.schedule.time = NO_PLAY;
+				break;
+
+			case 3:
+				this.schedule.date = `${moment(from).format('MMM DD, YYYY')} - ${moment(to).format('MMM DD, YYYY')}`;
+				this.schedule.days = this.setDays(days);
+				this.schedule.time = (playTimeStart == '12:00 AM' && playTimeEnd == '11:59 PM') ? 'All Day' : `${playTimeStart} - ${playTimeEnd}`;
+				break;
+
+			default:
+				const DEFAULT = 'Default';
+				this.schedule.date = DEFAULT;
+				this.schedule.days = DEFAULT;
+				this.schedule.time = DEFAULT;
+
+		}
+
+		this.has_schedule = true;		
+
 	}
 }

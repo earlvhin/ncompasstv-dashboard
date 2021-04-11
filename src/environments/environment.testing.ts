@@ -90,6 +90,8 @@ export const environment = {
 		api_search_dealer_getall: 'dealer/getall?search=',
 		api_apps: 'playerapp/getapp',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
+		all_license_by_install_date: 'license/GetAllLicenseByInstallDate?installDate=',
+		export_dealer_licenses: 'license/exportbydealer?dealerid='
 	},
 	create: {
 		api_new_admin: 'admin/create',

@@ -1,10 +1,11 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material'
-import { Socket } from 'ngx-socket-io';
+import * as io from 'socket.io-client';
 import { Subscription } from 'rxjs';
 import { API_LICENSE_PROPS } from 'src/app/global/models/api_license.model';
 import { ScreenService } from '../../../../global/services/screen-service/screen.service';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
 	selector: 'app-unassign-license',
@@ -20,24 +21,37 @@ export class UnassignLicenseComponent implements OnInit {
 	no_selected_license:boolean = true;
 	subscription: Subscription = new Subscription();
 	display_warning: boolean;
+	_socket: any;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		private _screen: ScreenService,
 		private _dialog: MatDialog,
 		public dialogRef: MatDialogRef<UnassignLicenseComponent>,
-		private _socket: Socket,
-	) { }
+	) { 
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket']
+		});
+	}
 
 	ngOnInit() {
 		console.log(this._dialog_data);
 		this.licenses = this._dialog_data.licenses;
-		this._socket.connect();
+		
+		this._socket.on('connect', () => {
+			console.log('#UnassignLicenseComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#UnassignLicenseComponent - Disconnnected to Socket Server');
+		})
+		
 	}
 
 	ngOnDestroy() {
 		this.to_unassign = [];
 		this.subscription.unsubscribe();
+		this._socket.disconnect();
 	}
 
 	licenseSelected(e, licenseId) {

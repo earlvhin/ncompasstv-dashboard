@@ -45,15 +45,17 @@
 			</div>
 		</div>
 		<div class="text-right">
-			<!-- <button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onSetSchedule()" [disabled]="!can_set_schedule">
+			<!-- SET SCHEDULE BUTTON -->
+			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onSetSchedule()" [ngClass]="{ 'hidden' : !can_set_schedule }">
 				Set Schedule
 				<span class="fas fa-calendar ml-2 sm-text"></span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onUpdateSchedule()" [disabled]="!can_update_schedule">
-				Update Schedule
+			<!-- VIEW SCHEDULES BUTTON -->
+			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onViewSchedule()">
+				View Schedules
 				<span class="fas fa-calendar ml-2 sm-text"></span>
-			</button> -->
+			</button>
 
 			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="selectAllContents()" [disabled]="!is_marking">
 				Select All

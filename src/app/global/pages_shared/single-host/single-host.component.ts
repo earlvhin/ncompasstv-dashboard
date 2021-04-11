@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { UpperCasePipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { Router } from '@angular/router';
-import { Socket } from 'ngx-socket-io';
+import * as io from 'socket.io-client';
 import { HostService } from '../../services/host-service/host.service';
 import { LicenseService } from '../../services/license-service/license.service';
 import { API_SINGLE_HOST } from '../../models/api_host.model';
@@ -62,6 +62,8 @@ export class SingleHostComponent implements OnInit {
 	pi_updating: boolean;
 	update_btn: string = "Update System and Restart";
 
+	_socket: any;
+
 	private business_hours_update_sub: Subscription;
 
 	constructor(
@@ -71,15 +73,22 @@ export class SingleHostComponent implements OnInit {
 		private _license: LicenseService,
 		private _auth: AuthService,
 		private _allcaps: UpperCasePipe,
-		private _router: Router,
 		private _date: DatePipe,
-		private _titlecase: TitleCasePipe,
-		private _socket: Socket
-	) { }
+		private _titlecase: TitleCasePipe
+	) { 
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket']
+		});
+	}
 
 	ngOnInit() {
-		this._socket.ioSocket.io.uri = environment.socket_server;
-		this._socket.connect();
+		this._socket.on('connect', () => {
+			console.log('#SingleHostComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#SingleHostComponent - Disconnnected to Socket Server');
+		})
 		
 		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.is_dealer = true;
@@ -115,6 +124,7 @@ export class SingleHostComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 		this.business_hours_update_sub.unsubscribe();
+		this._socket.disconnect();
 	}
 
 	openAssignLicenseModal(): void {
@@ -207,6 +217,10 @@ export class SingleHostComponent implements OnInit {
 		this.warningModal('warning', 'Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to push updates for this license', 'system_update');
 	}
 
+	updateToVersion2() {
+		this.warningModal('warning', 'Upgrade Players to Version 2', 'Upgrade players with licenses below  to version 2?', 'Click OK to apply updates to licences below', 'upgrade_to_v2')
+	}
+
 	pushUpdate() {
 		this.warningModal('warning', 'Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
 	}
@@ -247,7 +261,14 @@ export class SingleHostComponent implements OnInit {
 
 				this.pi_updating = true;
 				this.update_btn = 'Ongoing Content Update';
-			} 
+			}  else if(result === 'upgrade_to_v2') {
+				this.host_license_api.forEach(
+					(i: any) => {
+						console.log('D_upgrade_to_v2_by_license:', i.licenseId)
+						this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
+					}
+				)
+			}
 		});
 	}
 
@@ -274,10 +295,9 @@ export class SingleHostComponent implements OnInit {
 					this.host_license_api.forEach(
 						(license: any) => {
 							console.log('System Update Emitted:', license.licenseId);
-							this._socket.emit('D_system_update_by_license', license.licenseId);
+							this._socket.emit('D_update_player', license.licenseId);
 						}
 					);
-
 				}
 			}
 		);

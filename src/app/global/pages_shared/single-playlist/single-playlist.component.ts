@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { API_CONTENT_BLACKLISTED_CONTENTS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST } from '../../models/api_single-playlist.model';
 import { API_SINGLE_SCREEN } from '../../models/api_single-screen.model';
+import { UI_PLAYLIST_SCREENS_NEW } from '../../models/ui_single-playlist.model';
 import { API_LICENSE_PROPS } from '../../models/api_license.model';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
@@ -9,10 +10,12 @@ import { Observable, Subscription } from 'rxjs';
 import { ClonePlaylistComponent } from '../../components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Socket } from 'ngx-socket-io';
+import * as io from 'socket.io-client';
 import { environment } from '../../../../environments/environment';
 import { RoleService } from '../../services/role-service/role.service';
 import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-single-playlist',
@@ -23,8 +26,11 @@ import { PlaylistDemoComponent } from '../../components_shared/playlist_componen
 export class SinglePlaylistComponent implements OnInit {
 
 	@Input() reload: Observable<void>;
+
 	description: string;
+	host_url: string;
 	license_to_update = [];
+	license_url: string;
 	playlist: API_SINGLE_PLAYLIST;
 	playlist_content_and_blacklist: API_CONTENT_BLACKLISTED_CONTENTS[];
 	playlist_host_and_license: any;
@@ -33,12 +39,10 @@ export class SinglePlaylistComponent implements OnInit {
 	playlist_screen_table: any;
 	playlist_updating: boolean = true;
 	subscription: Subscription = new Subscription;
-	screen_tbl_row_url: string;
-	screen_tbl_row_slug: string = 'screenId';
 	title: string;
-	host_url: string;
-	license_url: string;
 
+	_socket: any;
+	
 	screen_table_column = [
 		'#',
 		'Screen Title'
@@ -48,13 +52,12 @@ export class SinglePlaylistComponent implements OnInit {
 		private _params: ActivatedRoute,
 		private _playlist: PlaylistService,
 		private _dialog: MatDialog,
-		private _socket: Socket,
-		private _role: RoleService
+		private _role: RoleService,
+		private _auth: AuthService,
 	) {}
 
 	ngOnInit() {
 		localStorage.removeItem('playlist_data');
-		
 		this.playlistRouteInit();
 
 		// If changes made
@@ -66,15 +69,25 @@ export class SinglePlaylistComponent implements OnInit {
 			)
 		}
 
-		this.screen_tbl_row_url = `/${this._role.get_user_role()}/screens/`
 		this.host_url = `/${this._role.get_user_role()}/hosts/`
 		this.license_url = `/${this._role.get_user_role()}/licenses/`
-		this._socket.ioSocket.io.uri = environment.socket_server;
-		this._socket.connect();
+		
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket']
+		});
+
+		this._socket.on('connect', () => {
+			console.log('#SinglePlaylistComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#SinglePlaylistComponent - Disconnnected to Socket Server');
+		})
 	}
 	
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
+		this._socket.disconnect();
 	}
 
 	addToLicenseToPush(e, licenseId) {
@@ -85,8 +98,6 @@ export class SinglePlaylistComponent implements OnInit {
 				return i.licenseId !== licenseId;
 			})
 		}
-
-		console.log('TO UPDATE LICENSES', this.license_to_update);
 	}
 
 	clonePlaylist() {
@@ -94,10 +105,6 @@ export class SinglePlaylistComponent implements OnInit {
 			width: '600px',
 			data: this.playlist
 		})
-
-		// this.subscription.add(
-		// 	dialog.afterClosed().subscribe((data: any) => this.reloadPlaylist())
-		// )
 	}
 
 	getPlaylistData(id) {
@@ -105,7 +112,6 @@ export class SinglePlaylistComponent implements OnInit {
 		this.subscription.add(
 			this._playlist.get_playlist_by_id(id).subscribe(
 				data => {
-					console.log("#getPlaylistData", data);
 					this.playlist = data;
 					this.title = this.playlist.playlist.playlistName;
 					this.description = this.playlist.playlist.playlistDescription;
@@ -113,15 +119,10 @@ export class SinglePlaylistComponent implements OnInit {
 					this.playlist_screens = this.playlist.screens;
 					this.playlist_host_and_license = this.playlist.hostLicenses;
 					this.playlist_updating = false;
-
 					this.screensMapToTable(this.playlist_screens);
-					console.log('PLAYLIST PRIMARY DATA', this.playlist.playlist);
-					console.log('PLAYLIST BLOCKLIST AND CONTENTS', this.playlist_content_and_blacklist);
-					console.log('PLAYLIST LICENSE', this.playlist.licenses);
-					console.log('PLAYLIST SCREENS', this.playlist_screens);
 				},
 				error => {
-					console.log('#getPlaylistData', error);
+					// console.log('#getPlaylistData', error);
 				}
 			)
 		)
@@ -134,7 +135,6 @@ export class SinglePlaylistComponent implements OnInit {
 		})
 
 		dialog.afterClosed().subscribe((data: any) => {
-			console.log('#openUpdatePlaylistInfoModal');
 			this.ngOnInit();
 		})
 	}
@@ -160,7 +160,6 @@ export class SinglePlaylistComponent implements OnInit {
 
 	openPlaylistDemo(e) {
 		if(e) {
-			console.log(this.playlist.playlist.playlistId)
 			let dialogRef = this._dialog.open(PlaylistDemoComponent, {
 				data: this.playlist.playlist.playlistId,
 				width: '768px',
@@ -182,15 +181,16 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	screensMapToTable(screens) {
-		let index = 1;
+		let counter = 1;
+		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		if (screens) {
 			this.playlist_screen_table = screens.map(
-				(i: API_SCREEN_OF_PLAYLIST) => {
-					return {
-						screenId: i.screenId,
-						index: index++,
-						screenTitle: i.screenName
-					}
+				i => {
+					return new UI_PLAYLIST_SCREENS_NEW(
+						{ value: i.screenId, link: null , editable: false, hidden: true},
+						{ value: counter++, link: null , editable: false, hidden: false},
+						{ value: i.screenName, link: `/${route}/screens/` + i.screenId, editable: false, hidden: false},
+					)
 				}
 			)
 		} else {
@@ -234,7 +234,6 @@ export class SinglePlaylistComponent implements OnInit {
 				licenses.forEach(
 					p => {
 						this._socket.emit('D_update_player', p.licenseId);
-						console.log('Pushed Update to', p.licenseId)
 					}
 				)
 

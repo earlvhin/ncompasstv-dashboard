@@ -1,6 +1,5 @@
-<ng-container>
-    <div *ngIf="advertiser">
-        <app-banner
+<div class="container" *ngIf="advertiser; else loading">
+    <app-banner 
         [single_image]="img"
         [single_name]="advertiser.name"
         [single_desc]="advertiser.state + ' ' + (advertiser.region ? advertiser.region : '')  + '  -  ' + 'Advertiser since ' + (advertiser.dateCreated | date)"
@@ -8,15 +7,11 @@
         [single_advertiser]="advertiser_id"
         [advertiser_data]="advertiser"
         (update_info)="ngOnInit()">
-        </app-banner>
+    </app-banner>
 
-        <div class="content-section mt-5">
-            <div class="row">
-                <br /><br /><br /><br /><br />
-            </div>
-        </div>
-        
-        <div class="container pb-5 mt-5">
+            
+    <div class="margin-top-extra-notes">
+        <div class="content-section">
             <div class="row">
                 <div class="col-lg-12">
                     <mat-tab-group dynamicHeight [selectedIndex]="selected_index">
@@ -24,14 +19,13 @@
                             <div class="container pt-4 pl-0 pr-0 pb-4" *ngIf="array_to_preview.length > 0; else nodata">
                                 <mat-card>
                                     <app-data-table
-                                    [table_columns]="content_table_col"
-                                    [table_data]="content_data"
-                                    [table_row_url]=""
-                                    [media_array]="array_to_preview"
-                                    [preview_column]="true">
+                                        [table_columns]="content_table_col"
+                                        [table_data]="content_data"
+                                        [media_array]="array_to_preview"
+                                        [preview_column]="true"
+                                        [new_table]="true">
                                     </app-data-table>
                                 </mat-card>
-                                <!-- Coming Soon ... -->
                             </div>
                             <ng-template #nodata>
                                 <div class="container pt-4 pl-0 pr-0 pb-4">
@@ -46,10 +40,11 @@
             </div>
         </div> 
     </div>
+</div>
+
     
-    <ng-template #loading>
-        <div class="text-center d-flex align-items-center justify-content-center vh-50">
-            <app-spinner></app-spinner>
-        </div>
-    </ng-template>
-</ng-container>
+<ng-template #loading>
+    <div class="text-center d-flex align-items-center justify-content-center vh-50">
+        <app-spinner></app-spinner>
+    </div>
+</ng-template>

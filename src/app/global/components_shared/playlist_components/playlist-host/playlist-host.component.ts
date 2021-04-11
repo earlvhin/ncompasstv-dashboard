@@ -23,7 +23,6 @@ export class PlaylistHostComponent implements OnInit {
 	constructor() { }
 
 	ngOnInit() {
-		console.log('#PlaylistHostComponent', this.blocklist_data, this.host_licenses);
 
 		if(this.blocklist_data) {
 			this.blocklist_data.forEach(i => {

@@ -2,13 +2,13 @@ import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
 import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { Subject } from 'rxjs';
+import { forkJoin, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { Moment } from 'moment';
 import * as moment from 'moment';
 
 import { ContentService } from 'src/app/global/services/content-service/content.service';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { PlaylistContentSchedule } from 'src/app/global/models/playlist-content-schedule.model';
+import { PlaylistContentScheduleDialog } from 'src/app/global/models/playlist-content-schedule-dialog.model';
 
 @Component({
 	selector: 'app-playlist-content-scheduling-dialog',
@@ -25,7 +25,6 @@ import { API_CONTENT } from 'src/app/global/models/api_content.model';
 })
 export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnInit {
 
-	
 	days_list = [
 		{ value: 1, name: 'Mon', checked: false },
 		{ value: 2, name: 'Tue', checked: false },
@@ -59,6 +58,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	is_ready = false;
 	selected_days: any[] = [];
 	title = 'Set Schedule';
+	warning_text = '';
 
 	private _days: AbstractControl = this.form.get('days');
 	private _type: AbstractControl = this.form.get('type');
@@ -69,13 +69,14 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public dialog_data: { mode: string, content_ids: string[], content: API_CONTENT },
+		@Inject(MAT_DIALOG_DATA) public dialog_data: PlaylistContentScheduleDialog,
 		private _content: ContentService,
 		private dialog_reference: MatDialogRef<PlaylistContentSchedulingDialogComponent>,
 		private form_builder: FormBuilder) { }
 	
 	ngOnInit() {
 		this.setInitialFormValues();
+		this.setWarningText();
 		this.subscribeToFormChanges();
 	}
 
@@ -144,7 +145,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		this._type.setValue(data);
 	}
 
-	onSelectDate(value: Moment, type: string): void {
+	onSelectDate(value: moment.Moment, type: string): void {
 
 		if (!type) return;
 
@@ -208,50 +209,92 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 	onSubmit(): void {
 		
-		let result: any;
-
+		let forCreate: PlaylistContentSchedule[] = [];
+		let forUpdate: PlaylistContentSchedule[] = [];
 		const { days, from, to, type, playTimeStart, playTimeEnd } = this.form.value;
 		
 		// for creating schedule
 
 		if (this.dialog_data.mode === 'create') {
 
-			result = this.dialog_data.content_ids.map(id => {
+			if (this.dialog_data.content_ids && this.dialog_data.content_ids.length > 0) {
 
-				let schedule: any;
-
-				if (this.is_custom_play) {
-					schedule = {
-						days,
-						playTimeStart,
-						playTimeEnd,
-						from: moment(from).format('YYYY-MM-DD'),
-						to: moment(to).format('YYYY-MM-DD'),
-						type: this.getTypeValue(type.name),
-						playlistContentId: id,
-					};
-				} else {
-					schedule = {
-						days: '0',
-						playTimeStart: null,
-						playTimeEnd: null,
-						from: null,
-						to: null,
-						type: this.getTypeValue(type.name),
-						playlistContentId: id
+				forCreate = this.dialog_data.content_ids.map(id => {
+	
+					let schedule = {} as PlaylistContentSchedule;
+	
+					if (this.is_custom_play) {
+						schedule = {
+							days,
+							playTimeStart,
+							playTimeEnd,
+							from: moment(from).format('YYYY-MM-DD'),
+							to: moment(to).format('YYYY-MM-DD'),
+							type: this.getTypeValue(type.name),
+							playlistContentId: id,
+						};
+					} else {
+						schedule = {
+							days: '0',
+							playTimeStart: null,
+							playTimeEnd: null,
+							from: null,
+							to: null,
+							type: this.getTypeValue(type.name),
+							playlistContentId: id
+						}
 					}
-				}
+	
+					return schedule;
+	
+				});
+				
+			}
 
-				return schedule;
+			if (this.dialog_data.schedules && this.dialog_data.schedules.length > 0) {
 
-			});
+				forUpdate = this.dialog_data.schedules.map(schedule => {
 
-			this.createSchedule(result);
+					let playlistSchedule = {} as PlaylistContentSchedule;
+	
+					if (this.is_custom_play) {
+						playlistSchedule = {
+							playlistContentsScheduleId: schedule.id,
+							days,
+							playTimeStart,
+							playTimeEnd,
+							from: moment(from).format('YYYY-MM-DD'),
+							to: moment(to).format('YYYY-MM-DD'),
+							type: this.getTypeValue(type.name),
+							playlistContentId: schedule.content_id
+						};
+					} else {
+						playlistSchedule = {
+							playlistContentsScheduleId: schedule.id,
+							days: '0',
+							playTimeStart: null,
+							playTimeEnd: null,
+							from: null,
+							to: null,
+							type: this.getTypeValue(type.name),
+							playlistContentId: schedule.content_id
+						}
+					}
+	
+					return playlistSchedule;
+	
+				});
+
+			}
+
+			this.submitAll(forCreate, forUpdate);
+
 			return;
 		}
 
 		// for updating schedule
 
+		let result = {} as PlaylistContentSchedule;
 		const { playlistContentId, playlistContentsSchedule } = this.dialog_data.content;
 
 		if (this.is_custom_play) {
@@ -282,16 +325,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 		this.updateSchedule(result);
 		return;		
-	}
-
-	private createSchedule(data: API_CONTENT[]): void {
-
-		this._content.create_content_schedule(data).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.dialog_reference.close('create'),
-				error => console.log('Error creating content schedule', error)
-			);
-
 	}
 
 	private getTypeValue(data: string): number {
@@ -347,11 +380,11 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	private setInitialFormValues(): void {
 
 		const dialog = this.dialog_data;
-		const { content, mode } = dialog;
+		const { content, mode, content_ids } = dialog;
 
 		// for create
 
-		if (mode === 'create') {
+		if (mode === 'create' || content_ids.length > 1) {
 			this.type = this.types.filter(type => type.name == 'Default Play')[0];
 			this.start_date = new Date();
 			this.end_date = moment().add(5, 'years');
@@ -378,9 +411,44 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 	}
 
+	private setWarningText(): void {
+
+		if (this.dialog_data.schedules && this.dialog_data.schedules.length > 0) this.warning_text = 'Note: Saving will override content with existing schedules*';
+
+	}
+
 	private setPlayTimeToAllDay(): void {
 		this.start_time = '12:00 AM';
 		this.end_time = '11:59 PM';
+	}
+
+	private submitAll(create: PlaylistContentSchedule[], update: PlaylistContentSchedule[]): void {
+
+		console.log('for create', create);
+		console.log('for update', update);
+
+		let message = 'create';
+		let observables: Observable<any>[] = [];
+		
+		if (update.length > 0) message = 'update';
+
+		if (create.length > 0) observables.push(this._content.create_content_schedule(create));
+		
+		update.forEach(data => {
+			observables.push(this._content.update_content_schedule(data));
+		});
+
+		console.log('observables', observables);
+
+		forkJoin(observables).pipe(takeUntil(this._unsubscribe)).subscribe(
+			response => {
+				console.log('submit all ', response);
+				this.dialog_reference.close(message);
+			},
+			error => console.log('Error submitting create/update schedules', error)
+		);
+
+
 	}
 
 	private subscribeToFormChanges(): void {
@@ -394,7 +462,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			);
 	}
 
-	private updateSchedule(data: API_CONTENT): void {
+	private updateSchedule(data: PlaylistContentSchedule): void {
 
 		this._content.update_content_schedule(data).pipe(takeUntil(this._unsubscribe))
 			.subscribe(

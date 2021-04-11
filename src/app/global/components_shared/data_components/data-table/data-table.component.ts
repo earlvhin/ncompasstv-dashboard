@@ -21,17 +21,14 @@ import { ContentService } from 'src/app/global/services/content-service/content.
 
 export class DataTableComponent implements OnInit {
 
+	@Input() active_tab: string;
 	@Input() advertiser_delete: boolean;
-	@Input() column_nocase: boolean;
 	@Input() ctrl_column_label: string;
 	@Input() ctrl_column: boolean;
 	@Input() ctrl_toggle: boolean;
-	@Input() data_status: boolean;
 	@Input() license_delete: boolean;
-	@Input() license_row_slug: string;
-	@Input() license_row_url: string;
 	@Input() license_status_column: boolean;
-	@Input() license_table: boolean;
+	@Input() multiple_delete: boolean;
 	@Input() media_array: any;
 	@Input() new_table: boolean;
 	@Input() paging_details: any;
@@ -39,13 +36,11 @@ export class DataTableComponent implements OnInit {
 	@Input() preview_column: boolean;
 	@Input() preview_column_label: string;
 	@Input() query_params: string;
-	@Input() same_link_table: boolean;
 	@Input() screen_delete: boolean;
-	@Input() slice_val: number;
+	@Input() sort_column: string;
+	@Input() sort_order: string;
 	@Input() table_columns: any;
 	@Input() table_data: any;
-	@Input() table_row_slug: string;
-	@Input() table_row_url: string;
 	
 	// Feed Controls
 	@Input() feed_controls: boolean;
@@ -61,15 +56,15 @@ export class DataTableComponent implements OnInit {
 	@Output() reload_page = new EventEmitter;
 	@Output() toggle_triggered = new EventEmitter;
 	@Output() update_info = new EventEmitter;
+	@Output() delete_selected = new EventEmitter;
+	@Output() to_sort_column = new EventEmitter;
 
-	edit_value: string;
-	item_per_page: number = 25;
-	pages: any;
+	
+	active_table: string;
+	selected_array: any = [];
 	pagination: number;
+	selectAll: boolean = false;
 	subscription: Subscription = new Subscription();
-
-	private sort = { alias: 'desc', host: 'desc', install_date: 'desc', license_key: 'desc', last_online: 'desc', last_push: 'desc', connection_type: 
-		'desc', anydesk: 'desc', template: 'desc' };
 
 	constructor(
 		public _advertiser: AdvertiserService,
@@ -81,7 +76,17 @@ export class DataTableComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-
+		console.log("table_data", this.table_columns)
+		// console.log("ACTIVE TAB", this.active_tab)
+		this.table_data.map (
+			data => {
+				Object.keys(data).forEach(key => {
+					if(data[key].table) {
+						this.active_table = data[key].table;
+					}
+				})
+			}
+		)
 	}
 
 	onPageChange(page: number) {
@@ -94,7 +99,9 @@ export class DataTableComponent implements OnInit {
 	}
 
 	getPage(e): void {
+		this.selected_array = [];
 		this.page_triggered.emit(e);
+		this.delete_selected.emit(this.selected_array);
 		this.ngOnInit();
 	}
 
@@ -106,7 +113,6 @@ export class DataTableComponent implements OnInit {
 	mediaViewer_open(i): void {
 		//prepare data to comply to media viewer component (because json structure is not the same as media library)
 		this.media_array[i].file_name === this.media_array.fileName;
-		
 		this.media_array.map(
 			i => {
 				i.file_name = i.fileName;
@@ -129,13 +135,10 @@ export class DataTableComponent implements OnInit {
 	
 	feedPreview_open(i): void {
 		let top = window.screen.height - 500;
-		top = top > 0 ? top/2 : 0;
-					
+		top = top > 0 ? top/2 : 0;		
 		let left = window.screen.width - 800;
 		left = left > 0 ? left/2 : 0;
-
 		let uploadWin = window.open(i.link, "_blank", "width=800, height=500" + ",top=" + top + ",left=30%" + left);
-
 		uploadWin.moveTo(left, top);
     	uploadWin.focus();
 	}
@@ -156,11 +159,7 @@ export class DataTableComponent implements OnInit {
 	deleteAdvertiser(id) {
 		this._content.get_content_by_advertiser_id(id).subscribe(
 			data => {
-				if(data.message) {
-					this.warningModal('warning', 'Delete Advertiser', 'Are you sure you want to delete this advertiser?','','advertiser_delete', id)
-				} else {
-					this.warningModal('warning', 'Delete Advertiser', 'This advertiser has assigned contents. If you wish to continue, the contents of the advertiser will be unassigned.','','advertiser_delete_force', id)
-				}
+				this.warningModal('warning', 'Delete Advertiser', data.message ? 'Are you sure you want to delete this advertiser?' : 'This advertiser has assigned contents. If you wish to continue, the contents of the advertiser will be unassigned.','', data.message ? 'advertiser_delete' : 'advertiser_delete_force', id)
 			}
 		)
 		
@@ -171,16 +170,11 @@ export class DataTableComponent implements OnInit {
 	}
 
 	deletePlaylist(id): void {
-		
 		this._playlist.get_playlist_by_id(id).subscribe(
 			data => {
-				if(data.screens.length > 0) {
-					this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?','','playlist_delete', id)
-				} else {
-					this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?','','playlist_delete_normal', id)
-				}
+				this.warningModal('warning', 'Delete Playlist', 'Are you sure you want to delete this playlist?','', data.screens.length ? 'playlist_delete' : 'playlist_delete_normal', id)
 			},
-			error => console.log('Errir retrieving playlist by ID', error)
+			error => console.log('Error retrieving playlist by ID', error)
 		);
 	}
 
@@ -196,25 +190,33 @@ export class DataTableComponent implements OnInit {
 		});
 
 		dialogRef.afterClosed().subscribe(result => {
-			if (result == 'screen_delete') {
-				var array_to_delete = [];
-				array_to_delete.push(id);
-				this.postDeleteScreen(array_to_delete)
-			} else if (result == 'feed_delete') {
-				this.postDeleteFeed(id)
-			} else if (result == 'license_delete') {
-				var array_to_delete = [];
-				array_to_delete.push(id);
-				this.licenseDelete(array_to_delete);
-			} else if (result == 'playlist_delete' || result == 'playlist_delete_normal') {
-				this.playlistDelete(id);
-			} else if (result == 'advertiser_delete' || result == 'advertiser_delete_force') {
-				if(result == 'advertiser_delete') {
+			switch(result) {
+				case 'screen_delete': 
+					var array_to_delete = [];
+					array_to_delete.push(id);
+					this.postDeleteScreen(array_to_delete);
+					break;
+				case 'feed_delete':
+					this.postDeleteFeed(id)
+					break;
+				case 'license_delete':
+					var array_to_delete = [];
+					array_to_delete.push(id);
+					this.licenseDelete(array_to_delete);
+					break;
+				case 'playlist_delete':
+					this.playlistDelete(id);
+					break;
+				case 'playlist_delete_normal':
+					this.playlistDelete(id);
+					break;
+				case 'advertiser_delete':
 					this.advertiserDelete(id, 0);
-				} else {
+					break;
+				case 'advertiser_delete_force':
 					this.advertiserDelete(id, 1);
-				}
-				
+					break;
+				default:
 			}
 		});
 	}
@@ -239,7 +241,6 @@ export class DataTableComponent implements OnInit {
 				}
 			)
 		)
-		console.log("ID", id)
 	}
 
 	playlistDelete(id) {
@@ -275,58 +276,60 @@ export class DataTableComponent implements OnInit {
 		);
 	}
 
-	onEdit(fields: any, label: string, value: any): void {
-		console.log('fields', fields);
-
+	editField (fields: any, label: string, value: any): void {
 		let width = '500px';
-		
-		if (label && label.includes('Date')) width = '350px';
-
-		const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
-		
-		if (fields.dropdown_edit) dialogParams.height = '220px';
-
+		const dialogParams: any = { 
+			width, 
+			data: { status: fields, message: label, data: value } 
+		};
+		if (fields.dropdown_edit) {
+			dialogParams.height = '220px';
+		}
 		const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
+		const close = dialog.afterClosed().subscribe(
+			(response: string) => {
+				close.unsubscribe();
+				if (!response || response === '--') return;
 
-		const close = dialog.afterClosed()
-			.subscribe(
-				(response: string) => {
-					close.unsubscribe();
-
-					if (!response || response === '--') return;
-
-					switch (label) {
-						case 'License Alias':
-							this.subscription.add(this._license.update_alias({ licenseId: fields.id, alias: response }).subscribe(
-								() => this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully'), 
-								error => console.log('Error updating license alias', error)
-							));
-							break;
-
-						case 'Install Date':
-							this.subscription.add(this._license.update_install_date(fields.id, response).subscribe(
-								() => this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!'),
-								error => console.log('Error updating license install date ', error)
-							));
-							break;
-
-						case 'Screen Type':
-							const filter_screen = { screen: { screentypeid: response, screenid: fields.id, screenname: fields.name }}
-							this.subscription.add(this._screen.edit_screen(filter_screen).subscribe(
-								() => this.openConfirmationModal('success', 'Success!', 'Screen Type changed succesfully'),
-								error => console.log('Error editing screen', error)
-							));
-
-						default:
-							console.log('Preparing the switch statement in case more fields become editable');
-							
-					}
-
-				},
-				error => console.log('Error on dialog after closing', error)
-
-			);	
-
+				switch (label) {
+					case 'License Alias':
+						this.subscription.add ( 
+							this._license.update_alias({ licenseId: fields.id, alias: response }).subscribe(
+								() => 
+									this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully'), 
+									error => console.log('Error updating license alias', error)
+							)
+						);
+						break;
+					case 'Install Date':
+						this.subscription.add (
+							this._license.update_install_date(fields.id, response).subscribe(
+								() => 
+									this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!'),
+									error => console.log('Error updating license install date ', error)
+							)
+						);
+						break;
+					case 'Screen Type':
+						const filter_screen = { 
+							screen: { 
+								screentypeid: response, 
+								screenid: fields.id, 
+								screenname: fields.name 
+							}
+						}
+						this.subscription.add (
+							this._screen.edit_screen(filter_screen).subscribe(
+								() => 
+									this.openConfirmationModal('success', 'Success!', 'Screen Type changed succesfully'),
+									error => console.log('Error editing screen', error)
+							)
+						);
+					default:		
+				}
+			},
+			error => console.log('Error on dialog after closing', error)
+		);	
 	}
 
 	deletePlaylistModal(value) {
@@ -346,203 +349,6 @@ export class DataTableComponent implements OnInit {
 		)
 	}
 
-	editField(allfield, field, value): void {
-		if(allfield.dropdown_edit) {
-			var height_var = '300px';
-		} else {
-			var height_var = '100px';
-		}
-		var dialogRef = this._dialog.open(EditableFieldModalComponent, {
-			width:'500px',
-			height: height_var,
-			data:  {
-				status: allfield,
-				message: field,
-				data: value
-			}
-		})
-
-		dialogRef.afterClosed().subscribe(r => {
-			if(field ==='License Alias') {
-				var filter = {
-					licenseId: allfield.id,
-					alias: r
-				}
-				this.subscription.add(
-					this._license.update_alias(filter).subscribe(
-						data => {
-							this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully');
-						}, 
-						error => {
-							// console.log('error', error);
-						}
-					)
-				)
-			} else if(field ==='Screen Type') {
-				var filter_screen = {
-					screen: {
-						screentypeid: r,
-						screenid: allfield.id,
-						screenname: allfield.name,
-					}
-				}
-				if(r) {
-					this.subscription.add(
-						this._screen.edit_screen(filter_screen).subscribe(
-							data => {
-								if(data) {
-									this.openConfirmationModal('success', 'Success!', 'Screen Type changed succesfully');
-								}
-								
-							}, 
-							error => {
-								// console.log('error', error);
-							}
-						)
-					)
-				}
-			}
-		});
-		
-	}
-
-	onSortByColumn(name: string): void {
-
-		if (!name) return;
-
-		let order = '';
-		const caret = document.getElementById(`caret-clickable-${name}`);
-		const up = 'fa-caret-up';
-		const down = 'fa-caret-down';
-		name = name.toLowerCase();
-
-		if (name == 'alias') {
-
-			if (this.sort.alias === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.alias = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.alias = 'desc';
-			}
-
-			order = this.sort.alias;
-		}
-
-		if (name == 'anydesk') {
-
-			if (this.sort.anydesk === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.anydesk = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.anydesk = 'desc';
-			}
-
-			order = this.sort.anydesk;
-		}
-
-		if (name == 'connection type') {
-
-			if (this.sort.connection_type === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.connection_type = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.connection_type = 'desc';
-			}
-
-			order = this.sort.connection_type;
-		}
-
-		if (name == 'host') {
-
-			if (this.sort.host === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.host = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.host = 'desc';
-			}
-
-			order = this.sort.host;
-
-		}
-
-		if (name == 'install date') {
-
-			if (this.sort.install_date === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.install_date = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.install_date = 'desc';
-			}
-
-			order = this.sort.install_date;
-
-		}
-
-		if (name == 'last online') {
-
-			if (this.sort.last_online === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.last_online = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.last_online = 'desc';
-			}
-
-			order = this.sort.last_online;
-
-		}
-
-		if (name == 'last push') {
-
-			if (this.sort.last_push === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.last_push = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.last_push = 'desc';
-			}
-
-			order = this.sort.last_push;
-
-		}
-
-		if (name == 'license key') {
-
-			if (this.sort.license_key === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.license_key = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.license_key = 'desc';
-			}
-
-			order = this.sort.license_key;
-
-		}
-
-		if (name == 'template') {
-
-			if (this.sort.template === 'desc') {
-				caret.classList.replace(down, up);
-				this.sort.template = 'asc';
-			} else {
-				caret.classList.replace(up, down);
-				this.sort.template = 'desc';
-			}
-
-			order = this.sort.template;
-
-		}
-
-		this._license.onSortLicenseByColumn.emit({ column: name, order });
-
-	}
-
 	openConfirmationModal(status, message, data): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
@@ -553,4 +359,72 @@ export class DataTableComponent implements OnInit {
 		dialog.afterClosed().subscribe(() => this.update_info.emit(true));
 	}
 
+	OnCheckboxSelect(id, event, data) {
+		if(!event) {
+			var index = this.selected_array.indexOf(id);
+			if (index !== -1) {
+				this.selected_array.splice(index, 1);
+			}
+		} else {
+			this.selected_array.push(id);
+		}
+		this.delete_selected.emit(this.selected_array);
+	}
+
+	updateCheck(){
+		if(this.selectAll === true){
+			this.table_data.map(
+				data => {
+					if(!this.checkIfDisabled(data)) {
+						data.checked=true;
+						Object.keys(data).forEach(key => {
+							if(data[key].key) {
+								var d = data[key];
+								this.selected_array.push(d.value)
+							}
+						})
+					}
+		  		}
+			);
+		}else {
+			this.table_data.map(
+				data => {
+					data.checked=false;
+					this.selected_array = [];
+		  		}
+			);
+		}
+		this.delete_selected.emit(this.selected_array);
+	}
+
+	checkIfDisabled(data){
+		switch(this.active_table) {
+			case 'license':
+				if(data.pi_status.value == 1 || data.is_assigned.value) {
+					return true;
+				} else {
+					return false;
+				}
+				break;
+			default:
+		}
+	}
+
+	sortByColumnName(column, order) {
+		// this.active_tab = column;
+		// this.sortColumn = column;
+		// this.sortOrder = order;
+		// this.pageRequested(1);
+		// this.active_tab = column;
+		// console.log("ACTIVE TAB", this.active_tab)
+		// this.sortColumn = column;
+		// this.sortOrder = order;
+		var filter = {
+			column: column,
+			order: order
+		}
+
+		
+		this.to_sort_column.emit(filter);
+	}
 }

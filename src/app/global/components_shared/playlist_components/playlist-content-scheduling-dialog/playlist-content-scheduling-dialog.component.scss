@@ -81,10 +81,18 @@ button.dismiss {
 	}
 }
 
+.warning {
+	color: red;
+	width: 500px;
+    font-size: 13px;
+    margin-top: 30px;
+    position: absolute;
+}
+
 button.submit {
 	position: absolute;
 	bottom: 15px;
-    right: 15px;
+	right: 15px;
 	background: #8EC641;
 	color: #ffffff;
 }

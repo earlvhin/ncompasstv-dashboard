@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+import * as io from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -18,15 +18,30 @@ export class ToolsComponent implements OnInit {
 	timeout_duration: number;
 	timeout_message: string;
 
+	_socket: any;
+
 	constructor(
-		private _socket: Socket,
 		private _dialog: MatDialog
-	) { }
+	) { 
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket']
+		});
+	}
 
 	ngOnInit() {
-		this._socket.ioSocket.io.uri = environment.socket_server;
-		this._socket.connect();
+		this._socket.on('connect', () => {
+			console.log('#ToolsComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#ToolsComponent - Disconnnected to Socket Server');
+		})
+		
 		this.disableTimeoutChecker();
+	}
+
+	ngOnDestroy() {
+		this._socket.disconnect();
 	}
 
 	disableTimeoutChecker() {

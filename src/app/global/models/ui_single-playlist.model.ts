@@ -43,6 +43,18 @@ export class UI_PLAYLIST_SCREENS {
     }
 }
 
+export class UI_PLAYLIST_SCREENS_NEW {
+    screen_id: object;
+    index: object;
+    title: object;
+    
+    constructor(id: object, index: object, title: object) {
+        this.screen_id = id;
+        this.index = index;
+        this.title = title;
+    }
+}
+
 export class UI_BLOCKLIST_CONTENT {
     block_id: string;
     license_id: string;

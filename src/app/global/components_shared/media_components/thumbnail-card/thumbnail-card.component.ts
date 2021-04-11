@@ -3,7 +3,7 @@ import { AuthService } from '../../../services/auth-service/auth.service';
 import { Observable, Subscription } from 'rxjs';
 import { environment } from '../../../../../environments/environment';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
-import { Socket } from 'ngx-socket-io';
+import * as io from 'socket.io-client';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { ContentService } from '../../../services/content-service/content.service';
@@ -26,6 +26,7 @@ export class ThumbnailCardComponent implements OnInit {
 	@Input() zone_content: boolean;
 	@Input() is_fullscreen: number;
 	@Input() multiple_delete: boolean;
+	@Input() disconnect_to_socket: boolean;
 	@Output() converted: EventEmitter<boolean> = new EventEmitter();
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Output() content_to_delete = new EventEmitter;
@@ -34,29 +35,47 @@ export class ThumbnailCardComponent implements OnInit {
 	role: string;
 	route: string;
 	return_mes: string;
+	
+	_socket: any;
 
 	constructor(
 		private _auth: AuthService,
-		private _socket: Socket,
 		private _dialog: MatDialog,
 		private _content: ContentService
 	) { 
-		this._socket.ioSocket.io.uri = environment.socket_server;
+		
 	}
 
 	ngOnInit() {
 		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.route = `/${this.role}/media-library/`
-		this._socket.connect();
-		this._socket.on('video_converted', data => {
-			if (data == this.uuid) {
-				this.is_converted = 1;
-				this.converted.emit(true)
-			}
-		})
+
+		if (!this.disconnect_to_socket) {
+			this._socket = io(environment.socket_server, {
+				transports: ['websocket']
+			});
+
+			this._socket.on('connect', () => {
+				console.log('#ThumbnailCardComponent - Connected to Socket Server');
+			})
+
+			this._socket.on('disconnect', () => {
+				console.log('#ThumbnailCardComponent - Disconnnected to Socket Server');
+			})
+
+			this._socket.on('video_converted', data => {
+				if (data == this.uuid) {
+					this.is_converted = 1;
+					this.converted.emit(true)
+				}
+			})
+		}
 	}
 
-	ngOnChanges() {
+	ngOnDestroy() {
+		if (this._socket) {
+			this._socket.disconnect();
+		}
 	}
 	
 	removeFilenameHandle(e) {

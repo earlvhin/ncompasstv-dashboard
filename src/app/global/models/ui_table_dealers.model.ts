@@ -47,21 +47,21 @@ export class UI_TABLE_DEALERS {
 }
 
 export class UI_TABLE_DEALERS_REPORT {
-	dealer_id: string;
-	index: number;
-    business_name: string;
-    business_owner: string;
-    contact_person: string;
-    region: string;
-	state: string;
-	dateCreated: string;
+	dealer_id: object;
+    index: object;
+    business_name: object;
+    business_owner: object;
+    contact_person: object;
+    region: object;
+	state: object;
+	dateCreated: object;
 	
 	constructor(
-        dealer_id: string, index: number, business_name: string, business_owner: string,
-        contact_person: string, region: string, state: string, date: string
+        dealer_id: object, index: object, business_name: object, business_owner: object,
+        contact_person: object, region: object, state: object, date: object
     ) {
 		this.dealer_id = dealer_id;
-		this.index = index;
+        this.index = index;
         this.business_name = business_name;
         this.business_owner = business_owner;
         this.contact_person = contact_person;

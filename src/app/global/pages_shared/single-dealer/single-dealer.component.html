@@ -21,7 +21,11 @@
                             [good_value]="license_card.good_value" 
                             [good_value_label]="license_card.good_value_label"
                             [bad_value]="license_card.bad_value" 
-                            [bad_value_label]="license_card.bad_value_label">
+                            [bad_value_label]="license_card.bad_value_label"
+                            [online_value]="license_card.online_value"
+                            [online_value_label]="license_card.online_value_label"
+                            [offline_value]="license_card.offline_value"
+                            [offline_value_label]="license_card.offline_value_label">
                             </app-data-card-compare>
                         </mat-card>
                     </div>
@@ -168,11 +172,27 @@
 									</div>
                                     <div class="row pt-2">
                                         <div class="col-lg-8">
-                                            <button mat-button mat-raised-button class="theme-btn mt-2 mr-2" (click)="reloadLicense()" [disabled]="searching_license">Reload <i class="fas fa-sync-alt"></i></button>
+                                            <!-- <button mat-button mat-raised-button class="theme-btn mt-2 mr-2" (click)="reloadLicense()" [disabled]="searching_license"> <i class="fas fa-sync-alt"></i></button> -->
                                             
+                                            <button mat-button mat-raised-button 
+                                                class="theme-btn pi-control sm-text mr-2" 
+                                                [disabled]="searching_license" 
+                                                (click)="reloadLicense()"  
+                                                title="Reload">
+                                                    <span class="fas fa-sync-alt"></span> 
+                                                    <span class="ml-2 button_text_animation">Reload</span>
+                                            </button>
+
+                                            <button mat-button mat-raised-button 
+                                                class="theme-btn pi-control _cool sm-text mr-2" 
+                                                [matMenuTriggerFor]="orderSort" 
+                                                title="Order by License Status">
+                                                <span class="fas fa-sort"></span> 
+                                                <span class="ml-2 button_text_animation">Order by License Status</span>
+                                            </button>
                                             <mat-menu #orderSort="matMenu">
-                                                <button mat-menu-item (click)="sortList('online')">Online</button>
-                                                <button mat-menu-item (click)="sortList('offline')">Offline</button>
+                                                <button mat-menu-item (click)="sortList('desc')">Online</button>
+                                                <button mat-menu-item (click)="sortList('asc')">Offline</button>
                                             </mat-menu>
 
                                             <ng-container *ngIf="show_admin_buttons">
@@ -186,34 +206,84 @@
                                                     <span class="ml-2 button_text_animation">Update System</span>
                                                 </button>
                                                 <ng-template #disabled_remote_update>
-                                                    <button mat-button mat-raised-button class="theme-btn _warning mr-2" [disabled]="true" [title]="timeout_message">
+                                                    <button mat-button mat-raised-button class="theme-btn pi-control sm-text _warning mr-2" [disabled]="true" [title]="timeout_message">
                                                         <span class="fas fa-terminal"></span> 
                                                         <span class="ml-2 button_text_animation">Update System</span>
                                                     </button>
                                                 </ng-template>
+
+                                                <button mat-button mat-raised-button 
+                                                *ngIf="!remote_reboot_disabled; else disabled_remote_reboot" 
+                                                class="theme-btn pi-control sm-text _warning mr-2" 
+                                                [disabled]="remote_reboot_disabled" 
+                                                (click)="rebootPlayer()" 
+                                                title="Reboot Player">
+                                                    <span class="fas fa-power-off"></span> 
+                                                    <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+                                                </button>
                                                 
                                                 <button mat-button mat-raised-button 
                                                 *ngIf="!remote_reboot_disabled; else disabled_remote_reboot" 
-                                                class="theme-btn pi-control sm-text _caution" 
+                                                class="theme-btn pi-control sm-text _caution mr-2" 
                                                 [disabled]="remote_reboot_disabled" 
-                                                (click)="rebootPlayers()" 
-                                                title="Reboot Player">
+                                                (click)="rebootPi()" 
+                                                title="Reboot Pi">
                                                     <span class="fas fa-power-off"></span> 
-                                                    <span class="ml-2 button_text_animation">Reboot Player</span>
+                                                    <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
                                                 </button>
+
+                                                <button mat-button mat-raised-button 
+                                                class="theme-btn pi-control sm-text _dark mr-2" 
+                                                (click)="updateToVersion2()" 
+                                                title="Update to Version 2">
+                                                    <span class="font-weight-bold">2.0</span> 
+                                                    <span class="ml-2 button_text_animation">Upgrade to version 2</span>
+                                                </button>
+
                                                 <ng-template #disabled_remote_reboot>
-                                                    <button mat-button mat-raised-button class="theme-btn _caution" [disabled]="true" [title]="timeout_message">
+                                                    <button mat-button mat-raised-button 
+                                                    class="theme-btn pi-control sm-text _warning mr-2" 
+                                                    [disabled]="true" 
+                                                    [title]="timeout_message">
                                                         <span class="fas fa-power-off"></span> 
-                                                        <span class="ml-2 button_text_animation">Reboot Player</span>
+                                                        <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
                                                     </button>
                                                 </ng-template>
+
+                                                <ng-template #disabled_remote_reboot>
+                                                    <button mat-button mat-raised-button 
+                                                    class="theme-btn pi-control sm-text _caution mr-2" 
+                                                    [disabled]="true" 
+                                                    [title]="timeout_message">
+                                                        <span class="fas fa-power-off"></span> 
+                                                        <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+                                                    </button>
+                                                </ng-template>
+
+                                                <button mat-button mat-raised-button 
+                                                class="theme-btn pi-control sm-text mr-2" [ngClass]="array_to_delete.length > 0 ? '_danger':''" 
+                                                [disabled]="array_to_delete.length == 0" 
+                                                (click)="multipleDeleteLicense()"  
+                                                title="Multiple Delete">
+                                                    <span class="fas fa-trash-alt"></span> 
+                                                    <span class="ml-2 button_text_animation">Multiple Delete <span class="xsm-text" *ngIf="array_to_delete.length > 0">( {{array_to_delete.length}} licenses )</span></span>
+                                                </button>
+
+                                                <button mat-button mat-raised-button
+                                                class="theme-btn pi-control sm-text _primary mr-2" 
+                                                (click)="exportTable()"
+                                                [disabled]="workbook_generation"  
+                                                title="Export to CSV">
+                                                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                                                    <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                                                </button>
                                             </ng-container>
                                         </div>
                                         <div class="col-lg-4">
                                             
                                             <app-search-field
                                                 *ngIf="!initial_load_license"
-                                                [form_title]="'Search License Alias or Host Name'"
+                                                [form_title]="'Search License Alias, Host Name or Anydesk'"
                                                 [placeholder]="'Example: License #100'"
                                                 [data_reference]="license_data"
                                                 [primary_keyword]="'alias'"
@@ -233,14 +303,19 @@
                                                     [ctrl_column]="true"
                                                     [ctrl_column_label]="'Activate'"
                                                     [ctrl_toggle]="true"
-                                                    [column_nocase]="no_case"
                                                     [new_table]="true"
                                                     [license_status_column]="true"
                                                     (toggle_triggered)="toggleActivateDeactivate($event)"
                                                     (update_info)="reloadLicense()"
                                                     [license_delete]="true"
                                                     [paging_details]="paging_data_license"
-                                                    (page_triggered)="getLicensesofDealer($event)">
+                                                    (page_triggered)="getLicensesofDealer($event)"
+                                                    [multiple_delete]="true"
+                                                    (delete_selected)="getMultipleDeleteData($event)"
+                                                    (to_sort_column)="getColumnsAndOrder($event)"
+                                                    [active_tab]="sort_column"
+                                                    [sort_column]="sort_column"
+                                                    [sort_order]="sort_order">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>

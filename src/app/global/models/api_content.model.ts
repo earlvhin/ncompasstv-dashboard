@@ -1,3 +1,5 @@
+import { PlaylistContentSchedule } from "./playlist-content-schedule.model";
+
 export class API_CONTENT {
     contentPlaysListCount?: API_CONTENT_PLAY_COUNT[];
     playlistContentId: string;
@@ -25,8 +27,10 @@ export class API_CONTENT {
 	isActive: number;
     isConverted: number;
     title: string;
-	playlistContentsSchedule?: any;
-	scheduleStatus?: any
+	playlistContentsSchedule?: PlaylistContentSchedule;
+	scheduleStatus?: any;
+	uploaded_by?: any;
+	classification?: string;
 }
 
 export class API_CONTENT_PLAY_COUNT {

@@ -7,6 +7,7 @@ import { UI_PLAYLIST_HOST_LICENSE } from './ui_playlist-host-license.model';
 export class UI_CONTENT {
 	advertiser_id: string;
     playlist_content_id: string;
+	classification: string;
     created_by: string;
     created_by_name: string;
     content_id: string;
@@ -28,13 +29,10 @@ export class UI_CONTENT {
     uploaded_by: string;
 
     constructor(
-        playlist_content_id: string, 
-        created_by: string, 
-        content_id: string, created_by_name: string, dealer_id: string, duration: number, 
-		host_id: string, advertiser_id: string, filename: string, file_url: string, 
-		file_type: string, handler_id: string, date_uploaded: string, is_fullscreen: number,
-        file_size: number, thumbnail: string, is_active: number, is_converted: number, uuid: string, 
-        title?: string, uploaded_by?: string
+        playlist_content_id: string, created_by: string, content_id: string, created_by_name: string, dealer_id: string, 
+		duration: number, host_id: string, advertiser_id: string, filename: string, file_url: string, file_type: string, 
+		handler_id: string, date_uploaded: string, is_fullscreen: number, file_size: number, thumbnail: string, is_active: number, 
+		is_converted: number, uuid: string, title?: string, uploaded_by?: string, classification?: string
     ) {
         this.playlist_content_id = playlist_content_id;
         this.created_by = created_by;
@@ -57,6 +55,7 @@ export class UI_CONTENT {
         this.uuid = uuid;
         this.title = title;
         this.uploaded_by = uploaded_by;
+		this.classification = classification;
     }
 }
 

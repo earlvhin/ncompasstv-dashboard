@@ -15,6 +15,10 @@ export class DataCardCompareComponent implements OnInit {
 	@Input() bad_value_label: string; 
 	@Input() additional_value: number;
 	@Input() additional_value_label: string;
+	@Input() online_value: number;
+	@Input() online_value_label: string;
+	@Input() offline_value: number;
+	@Input() offline_value_label: string;
 	@Input() is_green: boolean;
 
 	constructor() { }

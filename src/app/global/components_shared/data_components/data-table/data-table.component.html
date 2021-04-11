@@ -2,12 +2,18 @@
 	<table class="full-width" *ngIf="table_data.length > 0; else loading">
 		<thead align="left" class="border-bottom">
 			<tr>
-				<th *ngFor="let tc of table_columns" class="p-3" (click)="onSortByColumn(tc.name)" [ngClass]="{ 'clickable' : tc.sortable, 'w-110px' : tc.width && tc.width === '110px' }">
-					{{ !tc.name ? tc : tc.name }} <i id="caret-clickable-{{ tc.name }}" *ngIf="tc.sortable" class="fa fa-caret-down"></i>
+				<th *ngIf="multiple_delete" class="text-right" class="p-3">
+					<mat-checkbox class="example-margin" (change)="updateCheck()" [(ngModel)]="selectAll"></mat-checkbox>
 				</th>
+				<th *ngFor="let tc of table_columns" class="p-3" [ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''">
+					{{ !tc.name ? tc : tc.name }} 
+					<i *ngIf="tc.sortable" class="sort cursor-pointer ml-2 fas fa-angle-{{sort_order == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sort_order == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+				</th>
+				<!-- For activate toggle [[DEALER LICENSE TABLE]] -->
 				<th *ngIf="ctrl_column" class="text-right" class="p-3">
 					{{ ctrl_column_label || 'Action' }}
 				</th>
+				<!-- For preview column [[SINGLE ADVERTISER PAGE]] -->
 				<th *ngIf="preview_column" class="text-right" class="p-3">
 					{{ preview_column_label || 'Action' }}
 				</th>
@@ -18,8 +24,11 @@
 		</thead>
 
 		<tbody *ngIf="new_table">
-			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
-				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 1) | slice:0:table_columns.length; let i = index" [hidden]="data[d].hidden">
+			<tr *ngFor="let data of table_data; let j=index" >
+				<td class="p-3" *ngFor="let d of data | objectKeys; let i = index" [hidden]="data[d].hidden && !data[d].key">
+					<span *ngIf="data[d].hidden && data[d].key">
+						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="OnCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
+					</span>
 					<span *ngIf="!data[d].hidden">
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
 							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
@@ -44,11 +53,11 @@
 							</span>
 						</ng-template>
 					</span>
-					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="onEdit(data[d], data[d].label, data[d].value)">
+					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
 						<i class="clickable fa fa-pencil text-gray" title="Edit {{data[d].label}}"></i>
 					</div>
 				</td>		
-				<td class="p-3 control-toggle" *ngIf="ctrl_column">
+				<td class="p-3 control-toggle text-center" *ngIf="ctrl_column">
 					<mat-slide-toggle 
 					*ngIf="ctrl_toggle"
 					(change)="controlToggle(data.license_key.value, $event)"
@@ -72,154 +81,8 @@
 				<td class="p-3 control-toggle" *ngIf="playlist_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Playlist" (click)="deletePlaylist(data.playlist_id.value)"></i>
 				</td>
-				<td class="p-3 control-toggle" *ngIf="license_delete">
-					<i *ngIf="data.pi_status.value != 1  && !data.is_assigned.value; else text_disabled" class="fas fa-trash text-danger cursor-pointer" data-toggle="tooltip" title="Delete License" (click)="deleteLicense(data.license_id.value)"></i>
-					<ng-template #text_disabled>
-						<i class="fas fa-trash text-gray cursor-void" data-toggle="tooltip" title="Delete disabled, License is online / assigned"></i>
-					</ng-template>
-				</td>
-			</tr>
-		</tbody>
-
-		<tbody *ngIf="!license_row_url && !same_link_table && !new_table">
-			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
-				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 1) | slice:0:table_columns.length; let i = index">
-					<span *ngIf="table_row_url" >
-						<a class="cursor-pointer table-row-url" 
-							*ngIf="i==1; else no_url;" 
-							[routerLink]="[table_row_url, data[table_row_slug]]"
-							[queryParams]="query_params">
-							<ng-container *ngIf="!column_nocase; else nocase">
-								{{ data[d] | titlecase }}
-							</ng-container>
-							<ng-template #nocase>
-								{{ data[d] }}
-							</ng-template>
-						</a>
-					</span>
-					<span *ngIf="!table_row_url" >
-						<div class="" *ngIf="i==1; else no_url;" >
-							<ng-container *ngIf="!column_nocase; else nocase">
-								{{ data[d] | titlecase }}
-							</ng-container>
-							<ng-template #nocase>
-								{{ data[d] }}
-							</ng-template>
-						</div>
-					</span>
-					<ng-template #no_url>
-						<span>
-							{{ data[d] }}
-						</span>
-					</ng-template>
-				</td>				
-				<td class="text-left pl-3 control-toggle" *ngIf="ctrl_column">
-					<mat-slide-toggle 
-					*ngIf="ctrl_toggle"
-					(change)="controlToggle(data.license_key, $event)"
-					[checked]="data.is_activated == 1 ? 'checked' : 'false'">
-					</mat-slide-toggle>
-				</td>
-				<td class="text-center control-toggle" *ngIf="preview_column">
-					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
-				</td>
-			</tr>
-		</tbody>
-
-		<!-- for double link per table -->
-		<tbody *ngIf="license_row_url && !same_link_table && !new_table">
-			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
-				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 2) | slice:0:table_columns.length; let i = index">
-					<a class="cursor-pointer table-row-url" 
-							*ngIf="i==1;" 
-							[routerLink]="[table_row_url, data[table_row_slug]]"
-							[queryParams]="query_params">
-						<ng-container *ngIf="!column_nocase; else nocase">
-							{{ data[d] | titlecase }}
-						</ng-container>
-						<ng-template #nocase>
-							{{ data[d] }}
-						</ng-template>
-					</a>
-					<div *ngIf="i!=1">
-						<a class="cursor-pointer table-row-url"
-						*ngIf="i==3 && data[license_row_slug] != '--'; else no_url;" 
-						[routerLink]="[license_row_url, data[license_row_slug]]"
-						[queryParams]="query_params">
-						<ng-container *ngIf="!column_nocase; else nocase">
-							{{ data[d] | titlecase }}
-						</ng-container>
-						<ng-template #nocase>
-							{{ data[d] }}
-						</ng-template>
-						</a>
-						<span *ngIf="i > 3 && i == 0">
-							<span>
-								{{ data[d] }}
-							</span>
-						</span>
-						<ng-template #no_url>
-							<span>
-								{{ data[d] }}
-							</span>
-						</ng-template>
-					</div>
-					
-				</td>				
-				<td class="text-center control-toggle" *ngIf="ctrl_column">
-					<mat-slide-toggle 
-						*ngIf="ctrl_toggle"
-						(change)="controlToggle(data.license_key, $event)"
-						[checked]="data.is_activated == 1 ? 'checked' : 'false'">
-					</mat-slide-toggle>
-				</td>
-				<td class="text-center control-toggle" *ngIf="preview_column">
-					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
-				</td>
-			</tr>
-		</tbody>
-
-		<tbody *ngIf="same_link_table && !new_table">
-			<tr *ngFor="let data of table_data | paginate:{ itemsPerPage: item_per_page, currentPage:pagination }; let j=index" >
-				<td class="p-3" *ngFor="let d of (data | objectKeys | slice: slice_val || 1) | slice:0:table_columns.length; let i = index">
-					<span *ngIf="table_row_url" >
-						<a class="cursor-pointer table-row-url" 
-							*ngIf="i==1 || i==2; else no_url;" 
-							[routerLink]="[table_row_url, data[table_row_slug]]"
-							[queryParams]="query_params">
-							<ng-container *ngIf="!column_nocase; else nocase">
-								{{ data[d] | titlecase }}
-							</ng-container>
-							<ng-template #nocase>
-								{{ data[d] }}
-							</ng-template>
-						</a>
-					</span>
-					<span *ngIf="!table_row_url" >
-						<div class="" *ngIf="i==1; else no_url;" >
-							<ng-container *ngIf="!column_nocase; else nocase">
-								{{ data[d] | titlecase }}
-							</ng-container>
-							<ng-template #nocase>
-								{{ data[d] }}
-							</ng-template>
-						</div>
-					</span>
-					<ng-template #no_url>
-						<span>
-							{{ data[d] }}
-						</span>
-					</ng-template>
-				</td>				
-				<td class="text-left pl-3 control-toggle" *ngIf="ctrl_column">
-					<mat-slide-toggle 
-					*ngIf="ctrl_toggle"
-					(change)="controlToggle(data.license_key, $event)"
-					[checked]="data.is_activated == 1 ? 'checked' : 'false'">
-					</mat-slide-toggle>
-				</td>
-				<td class="text-center control-toggle" *ngIf="preview_column">
-					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
+				<td class="p-3 control-toggle text-center" *ngIf="license_delete">
+					<i class="fas fa-trash {{data.pi_status.value != 1  && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'}}" data-toggle="tooltip" title="{{data.pi_status.value != 1  && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'}}" (click)="deleteLicense(data.license_id.value)"></i>
 				</td>
 			</tr>
 		</tbody>

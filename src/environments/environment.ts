@@ -1,8 +1,8 @@
 export const environment = {
 	production: false,
-	base_uri: window["env"]["apiUrl"],
-	base_uri_old: window["env"]["apiUrlV1"],
-	socket_server: window["env"]["socketUrl"],
+	base_uri: 'https://apiecs.ourimage.biz/api/',
+	base_uri_old: 'https://apiecs.ourimage.biz/api/',
+	socket_server: 'http://192.168.100.16:3000',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
 	auth: {
@@ -89,7 +89,9 @@ export const environment = {
 		api_search_host: 'dealer/getdealerswithhost?search=',
 		api_search_dealer_getall: 'dealer/getall?search=',
 		api_apps: 'playerapp/getapp',
-		api_apps_version: 'playerapp/getlatestversion?appid='
+		api_apps_version: 'playerapp/getlatestversion?appid=',
+		all_license_by_install_date: 'license/GetAllLicenseByInstallDate?installDate=',
+		export_dealer_licenses: 'license/exportbydealer?dealerid='
 	},
 	create: {
 		api_new_admin: 'admin/create',

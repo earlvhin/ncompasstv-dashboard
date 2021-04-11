@@ -1,12 +1,13 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { fromEvent, Observable } from 'rxjs';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { fromEvent, Observable } from 'rxjs';
 import { Sortable } from "sortablejs";
 import * as moment from 'moment-timezone';
 
 import { API_BLOCKLIST_CONTENT } from 'src/app/global/models/api_blocklist-content.model';
+import { API_CONTENT } from 'src/app/global/models/api_content.model';
 import { API_CONTENT_BLACKLISTED_CONTENTS } from '../../../../global/models/api_single-playlist.model';
 import { API_UPDATED_PLAYLIST_CONTENT, API_UPDATE_PLAYLIST_CONTENT } from 'src/app/global/models/api_update-playlist-content.model';
 import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
@@ -14,7 +15,7 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 @Component({
 	selector: 'app-playlist-content-panel',
 	templateUrl: './playlist-content-panel.component.html',
@@ -128,6 +129,8 @@ export class PlaylistContentPanelComponent implements OnInit {
 
 		if (this.is_marking == false) {
 			this.selected_contents = [];
+			this.can_set_schedule = false;
+			this.can_update_schedule = false;
 		}
 
 	}
@@ -248,13 +251,9 @@ export class PlaylistContentPanelComponent implements OnInit {
 		)
 	}
 
-	selectAllContents() {
-		this.playlist_content.forEach(
-			i => {
-				
-				this.selected_contents.push(i.content.playlistContentId);
-			}
-		)
+	selectAllContents(): void {
+		this.playlist_content.forEach(i => this.selected_contents.push(i.content.playlistContentId));
+		this.can_set_schedule = true;
 	}
 
 	getAssetCount() {
@@ -301,9 +300,8 @@ export class PlaylistContentPanelComponent implements OnInit {
 		this.showContentScheduleDialog();
 	}
 
-	onUpdateSchedule(): void {
-		const update = true;
-		this.showContentScheduleDialog(update);
+	onViewSchedule(): void {
+		this.showViewSchedulesDialog();
 	}
 
 	optionsSaved(e) {
@@ -458,7 +456,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 
 		const onStart = () => {
 			if (this.playlist_content.length < this.playlist_content_backup.length) {
-				this.playlist_content = this.playlist_content_backup
+				this.playlist_content = this.playlist_content_backup;
 			}
 
 			if (localStorage.getItem('playlist_order')) {
@@ -503,34 +501,12 @@ export class PlaylistContentPanelComponent implements OnInit {
 		
 		if (this.selected_contents.length === 0) {
 			this.can_set_schedule = false;
-			this.can_update_schedule = false;
 			return;
 		}
 
-		// gave me a headache
-		// can be improved
 		if (this.bulk_toggle) {
-			const contents = this.selected_contents;
-			const idsWithSchedules = this.contents_with_schedules.map(content => content.playlistContentId);
-			
-			if (contents.length > 1) {
-				this.can_update_schedule = false;
-
-				if (contents.some(id => idsWithSchedules.includes(id))) this.can_set_schedule = false;
-				else this.can_set_schedule = true;
-			}
-
-			if (contents.length === 1) {
-				const idsWithoutSchedules = this.contents_without_schedules.map(content => content.playlistContentId);
-
-				if (idsWithSchedules.includes(contents[0])) this.can_update_schedule = true;
-				else this.can_update_schedule = false;
-
-				if (idsWithoutSchedules.includes(contents[0])) this.can_set_schedule = true;
-				else this.can_set_schedule = false;
-
-			}
-
+			const contents = this.selected_contents;			
+			if (contents.length >= 1) this.can_set_schedule = true;
 		}
 
 	}
@@ -604,7 +580,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 			i => {
 				return id == i.content.playlistContentId;
 			}
-		)[0]
+		)[0];
 	}
 
 	saveOrderChanges() {
@@ -642,38 +618,64 @@ export class PlaylistContentPanelComponent implements OnInit {
 			let status = 'inactive';
 
 			if (content.playlistContentsSchedule) {
+				const schedule = content.playlistContentsSchedule;
 				const currentDate = moment();
-				const startDate = moment(content.playlistContentsSchedule.from);
-				const endDate = moment(content.playlistContentsSchedule.to);
+				const startDate = moment(schedule.from);
+				const endDate = moment(schedule.to);
 				if (currentDate.isBefore(startDate)) status = 'future';
-				if (currentDate.isBetween(startDate, endDate) ) status = 'active';
+				if (currentDate.isBetween(startDate, endDate) || schedule.type === 1) status = 'active';
 			}
 
 			content.scheduleStatus = status;
 			return content;
 		});
 
-		console.log('updated playlist contents', this.playlist_contents);
 	}
 
-	private showContentScheduleDialog(update = false): void {
+	private showContentScheduleDialog(): void {
 
 		let content: any;
 		let message = 'Success!';
 		let mode = 'create';
-		const content_ids: any = this.selected_contents;
+		let schedules: { id: string, content_id: string }[] = [];
+		const content_ids: string[] = []
 
-		if (update) {
-			mode = 'update';
+		if (this.selected_contents.length === 1) mode = 'update';
+
+		if (mode === 'update') {
 			const selectedForUpdateId = this.selected_contents[0];
 			content = this.contents_with_schedules.filter(content => content.playlistContentId === selectedForUpdateId)[0];
 		}
+
+		if (!content) mode = 'create';
+
+		this.selected_contents.forEach(id => {
+
+			this.playlist_contents.forEach(content => {
+
+				if (content.playlistContentId === id) {
+
+					if (!content.playlistContentsSchedule) {
+						content_ids.push(id);
+					} else {
+						const schedule = { 
+							id: content.playlistContentsSchedule.playlistContentsScheduleId, 
+							content_id: content.playlistContentId
+						};
+						schedules.push(schedule);
+					};
+
+				}
+
+			});
+
+		});
 
 		const dialog = this._dialog.open(PlaylistContentSchedulingDialogComponent, {
 			width: '950px',
 			height: '470px',
 			panelClass: 'position-relative',
-			data: { mode, content_ids, content },
+			data: { mode, content_ids, content, schedules },
 			autoFocus: false
 		});
 
@@ -707,5 +709,19 @@ export class PlaylistContentPanelComponent implements OnInit {
 			},
 			error => console.log('Error on success dialog close', error)
 		);
+	}
+
+	private showViewSchedulesDialog(): void {
+
+		const width = '1150px';
+		const contents = this.playlist_contents;
+
+		this._dialog.open(ViewSchedulesComponent, {
+			width,
+			panelClass: 'position-relative',
+			data: { contents },
+			autoFocus: false
+		});
+
 	}
 }

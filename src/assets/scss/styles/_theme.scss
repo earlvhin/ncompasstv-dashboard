@@ -216,6 +216,10 @@
 		background-color: #bbb;
 		color: #777;
 	}
+
+    &._dark {
+        background-color: #2c3e50;
+    }
 }
 
 .user-form {
@@ -483,4 +487,49 @@
 .list-container {
     max-height: 150px;
     overflow-y: auto;
+}
+
+.theme-btn.pi-control {
+	transition: all 1.5s cubic-bezier(.25,.8,.25,1);
+	width: 50px;
+	height: 45px;
+}
+
+.button_text_animation {
+	display: none;
+	opacity: 0;
+}
+
+.theme-btn.pi-control:hover {
+	width: 200px;
+
+	.button_text_animation {
+		color: #EBEBEB;
+		display: inline;
+		opacity: 1;
+	}
+}
+
+.w-40 {
+    width: 40%;
+}
+
+.margin-top-extra {
+    margin-top: 165px;
+}
+
+.margin-top-extra-toggle {
+    margin-top: 300px;
+}
+
+.margin-top-extra-notes {
+    margin-top: 270px;
+}
+
+.double-margin-top-extra {
+    margin-top: 400px;
+}
+
+agm-map {
+    height: 100%;
 }

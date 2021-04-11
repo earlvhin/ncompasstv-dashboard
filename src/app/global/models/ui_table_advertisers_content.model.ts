@@ -1,14 +1,14 @@
 export class UI_TABLE_ADVERTISERS_CONTENT {
-    id: string;
-    index: number;
-    name: string;
-    type: string;
-    playing_where: string;
-    uploaded_by: string;
+    id: object;
+    index: object;
+    name: object;
+    type: object;
+    playing_where: object;
+    uploaded_by: object;
 
     constructor(
-        id: string, index: number, name: string, 
-        type: string, playing_where: string, uploaded_by: string
+        id: object, index:object, name: object, 
+        type: object, playing_where: object, uploaded_by: object
     ) {
         this.id = id;
         this.index = index;

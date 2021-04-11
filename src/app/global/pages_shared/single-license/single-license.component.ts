@@ -1,10 +1,11 @@
-import { Component, OnInit, EventEmitter } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
-import { Socket } from 'ngx-socket-io';
-import { MatDialog } from '@angular/material';
 import { DatePipe } from '@angular/common';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Subscription, Observable, Subject } from 'rxjs';
+import { Chart } from 'chart.js';
+import * as io from 'socket.io-client';
 import * as moment from 'moment-timezone';
 
 import { API_CONTENT } from '../../models/api_content.model';
@@ -32,14 +33,14 @@ import { UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE, UI_SINGLE
 	providers: [DatePipe]
 })
 
-export class SingleLicenseComponent implements OnInit {
+export class SingleLicenseComponent implements OnInit, OnDestroy {
 	anydesk_id: string;
 	anydesk_restarting: boolean = false;
 	apps: any;
 	background_zone_selected: boolean = false;
 	business_hours: { day: string, periods: string[], selected: boolean }[] = [];
+	charts: any[] = [];
 	clear_screenshots: boolean = false;
-	content: any;
 	content_count$: Observable<API_CONTENT[]>;
 	content_counter = 0;
 	content_id: string;
@@ -47,6 +48,7 @@ export class SingleLicenseComponent implements OnInit {
 	content_play_count: API_CONTENT[] = [];
 	content_time_update: string;
 	contents_array: any = [];
+	content_statistics: any;
 	current_operation: { day: string, period: string };
 	current_month = new Date().getMonth() + 1;
 	current_year = new Date().getFullYear();
@@ -62,13 +64,18 @@ export class SingleLicenseComponent implements OnInit {
 	host: API_HOST;
 	host_notes = '';
 	host_route: string;
+	initial_load_charts = true;
+	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A',  date: 'N/A' };
+	is_dealer: boolean = false;
 	is_new_standard_template = false;
 	license_data: any;
 	license_id: string;
 	license_key: string;
+	minimap_width = '400px';
 	monthly_chart_updating = true;
 	monthly_content_count: API_CONTENT[] = [];
 	no_screen_assigned = false;
+	number_of_contents: any;
 	pi_status: boolean;
 	pi_updating: boolean;
 	player_status: boolean;
@@ -104,6 +111,9 @@ export class SingleLicenseComponent implements OnInit {
 	yearly_content_count: API_CONTENT[] = [];
 	zone_playlists: UI_ZONE_PLAYLIST[];
 
+	_socket: any;
+	thumb_no_socket: boolean = true;
+
 	display_mode = [
 		{value: 'daily', viewValue: 'Daily'},
 		{value: 'monthly', viewValue: 'Monthly'},
@@ -125,18 +135,6 @@ export class SingleLicenseComponent implements OnInit {
 		{value: `${this.current_year}-12`, viewValue: 'December'}
 	];
 
-	internet_connection: {
-		downloadMbps: string,
-		uploadMbps: string,
-		ping: string,
-		date: string
-	} = {
-		downloadMbps: 'N/A',
-		uploadMbps: 'N/A',
-		ping: 'N/A', 
-		date: 'N/A'
-	};
-
 	constructor(
 		private _auth: AuthService,
 		private _content: ContentService,
@@ -147,15 +145,21 @@ export class SingleLicenseComponent implements OnInit {
 		private _params: ActivatedRoute,
 		private _router: Router,
 		private _screen: ScreenService,
-		private _socket: Socket,
 		private _template: TemplateService
-	) { }
+	) { 
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket']
+		});
+	}
+
+	@HostListener('window:resize', ['$event'])
+	onResize(event: any) {
+		this.adjustMinimapWidth();
+	}
 
 	ngOnInit() {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
-		this._socket.ioSocket.io.uri = environment.socket_server;
-		this._socket.connect();
 		this.getLicenseInfo();
 		this.socket_piPlayerStatus();
 		this.socket_screenShotFailed();
@@ -167,17 +171,31 @@ export class SingleLicenseComponent implements OnInit {
 		this.socket_deadUI();
 		this.socket_licenseOnline();
 		this.onInitTasks();
+		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+			this.is_dealer = true;
+		}
+
+		this._socket.on('connect', () => {
+			console.log('#SingleLicenseComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#SingleLicenseComponent - Disconnnected to Socket Server');
+		})
+		
 	}
 
 	ngAfterViewInit() {
 		this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
 		this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
 		this.getContentReport_yearly();
+		this.adjustMinimapWidth();
 	}
 
 	ngOnDestroy() {
 		this.subscriptions.unsubscribe();
 		this._socket.disconnect();
+		this.destroyCharts();
 	}
 
 	OnDateChange(e): void {
@@ -278,27 +296,53 @@ export class SingleLicenseComponent implements OnInit {
 		});
 	}
 
-	// Send Reload Signal to Child Component after Upload
-	emitReloadMedia(e): void {
-		if (e.index == 1) {
-			this.eventsSubject.next();
-			this.monthSelected(this.default_selected_month);
+	tabSelected(event: { index: number }): void {
+
+		if (event.index === 1) {
+			this.emitReloadMedia();
+
+			if (this.initial_load_charts) {
+
+				const contents = this.content_per_zone;
+				this.initial_load_charts = false;
+
+				if (contents && contents.length > 0) {
+					setTimeout(() => {
+						this.generateContentStatisticsChart();
+	
+						// get all chartjs instances and store them in an array
+						// used later for destroying the instances when leaving the page
+						Object.entries(Chart.instances).forEach(entries => {
+							entries.forEach(chartData => {
+								if (typeof chartData === 'object') this.charts.push(chartData);
+							})
+						});
+	
+					}, 1000);
+				}
+
+			}
+			
 		}
+
 	}
 
-	getContentByZone(id): void {
+	getContentByLicenseId(id): void {
 		this.subscriptions.add(
-			this._content.get_content_by_license_zone(id).subscribe(
+			this._content.get_content_by_license_id(id).subscribe(
 				data => {
 					if (data) {
-						console.log('#getContentByZone', data);
+						
 						this.content_per_zone = this.zoneContent_mapToUI(data);
+						this.breakdownContents();
+
 						this.screen_zone = {
 							playlistName : data[0].screenTemplateZonePlaylist.playlistName,
 							playlistId: data[0].screenTemplateZonePlaylist.playlistId,
 							dateCreated: data[0].screenTemplateZonePlaylist.dateCreated,
-						}
-						this.content = this.contents_array[0];
+						};
+						
+						this.number_of_contents = this.contents_array[0];
 
 						if (this.content_per_zone[0].zone_name && this.content_per_zone[0].zone_name === 'Background') {
 							this.current_zone_selected = 'Background';
@@ -428,7 +472,7 @@ export class SingleLicenseComponent implements OnInit {
 					this.license_id = this._params.snapshot.params.data;
 					this.getLicenseById(this.license_id);
 					this.getScreenshots(this.license_id);
-					this.getContentByZone(this.license_id);
+					this.getContentByLicenseId(this.license_id);
 				}
 			)
 		);
@@ -439,7 +483,7 @@ export class SingleLicenseComponent implements OnInit {
 			this._screen.get_screen_by_id(id, licenseId).subscribe(
 				(response: { contents, createdBy, dealer, host, licenses, screen, screenZonePlaylistsContents, template, timezone, message }) => {
 
-					console.log('SCREEN', response);
+					console.log('getScreenById 📺', response);
 
 					if (response.message) {
 						this.no_screen_assigned = true;
@@ -452,8 +496,6 @@ export class SingleLicenseComponent implements OnInit {
 					this.setPlaylists(response.screenZonePlaylistsContents);
 					this.setRoutes();
 					this.screen_loading = false;
-					console.log('######getScreenById', response);
-					console.log('#getScreenById', this.screen);
 
 				},
 				error => {
@@ -597,7 +639,9 @@ export class SingleLicenseComponent implements OnInit {
 					c.isActive,
 					c.isConverted,
 					c.uuid,
-					c.title
+					c.title,
+					c.uploaded_by,
+					c.classification
 				)
 			}
 		);
@@ -703,19 +747,15 @@ export class SingleLicenseComponent implements OnInit {
 		}
 	}
 
-	// Zone Contents Tab
 	zoneSelected(name: string): void {
 		this.content_per_zone.map(
 			i => {
 				if (i.zone_name == name) {
 					this.selected_zone = i.zone_order;
-					this.screen_zone = { 
-						playlistName : i.playlist_name,
-						playlistId: i.playlist_id,
-						zone: name
-					};
-					this.content = this.contents_array[this.selected_zone];
-					console.log("CONTENT", this.content);
+					this.breakdownContents();
+					this.updateCharts();
+					this.screen_zone = { playlistName : i.playlist_name, playlistId: i.playlist_id, zone: name };
+					this.number_of_contents = this.contents_array[this.selected_zone];
 					this.playlist_route = "/" + this.routes + "/playlists/" + this.screen_zone.playlistId;
 				}
 			}
@@ -829,11 +869,11 @@ export class SingleLicenseComponent implements OnInit {
 			const { license_id, pingLatency, downloadMbps, uploadMbps, date, status } = data;
 
 			if (this.license_id === license_id) {
-				this.internet_connection.downloadMbps = `${downloadMbps.toFixed(2)} Mbps`
-				this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`,
-				this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`
+				this.internet_connection.downloadMbps = `${downloadMbps.toFixed(2)} Mbps`;
+				this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
+				this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
 				this.internet_connection.date = date;
-				this.license_data.internetSpeed = downloadMbps > 5 ? 'Fast' : 'Slow';
+				this.license_data.internetSpeed = downloadMbps > 7 ? 'Fast' : 'Slow';
 				this.speedtest_running = false;
 			
 				this._license.update_internet_info(
@@ -903,6 +943,10 @@ export class SingleLicenseComponent implements OnInit {
 		this.warningModal('warning', 'Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to update this license', 'system_update');
 	}
 
+	upgradeToV2(): void {
+		this.warningModal('warning', 'Update System to Version 2 and Restart', 'Are you sure you want to upgrade the software to version 2 and restart the pi?', 'Click OK to upgrade', 'system_upgrade');
+	}
+
 	warningModal(status, message, data, return_msg, action): void {
 		this._dialog.closeAll();
 
@@ -946,8 +990,59 @@ export class SingleLicenseComponent implements OnInit {
 				this.pi_status = false;
 				this.pi_updating = true;
 				this.update_btn = 'Player Restarting';
+			} else if(result === 'system_upgrade') {
+				this._socket.emit('D_upgrade_to_v2_by_license', this.license_id);
+				this.pi_status = false;
+				this.pi_updating = true;
+				this.update_btn = 'Ongoing System Update';
 			}
 		});
+	}
+
+	private adjustMinimapWidth(): void {
+		
+		if (window.innerWidth <= 1039) {
+			this.minimap_width = '100%';
+		} else {
+			this.minimap_width = '400px';
+		}
+
+	}
+
+	private breakdownContents(): void {
+		const contents: UI_CONTENT[] = this.content_per_zone[this.selected_zone].contents;
+
+		const breakdown = { hosts: 0, advertisers: 0, fillers: 0, feeds: 0, others: 0 };
+
+		contents.forEach(content => {
+			const { advertiser_id, classification, file_type, host_id,  } = content;
+
+			if (file_type === 'feed') {
+
+				if (classification && classification === 'filler') breakdown.fillers++;
+				else breakdown.feeds++;
+
+			} else {
+
+				if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others++;
+				if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers++;
+				if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts++;
+
+			}
+		});
+
+		this.content_statistics = breakdown;
+
+	}
+
+	private destroyCharts(): void {
+		if (this.charts.length <= 0) return;
+		this.charts.forEach(chart => chart.destroy());
+	}
+
+	private emitReloadMedia(): void {
+		this.eventsSubject.next();
+		this.monthSelected(this.default_selected_month)
 	}
 
 	private getHostTimezoneDay(): string {
@@ -981,6 +1076,42 @@ export class SingleLicenseComponent implements OnInit {
 				}, 
 				error => console.log('Error retrieving template data', error)
 			);
+	}
+
+	private generateContentStatisticsChart(): void {
+
+		const statistics = this.content_statistics;
+		const { advertisers, feeds, fillers, hosts, others } = statistics;
+		const labels = [ `Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}` ];
+		const data = [ hosts, advertisers, fillers, feeds, others ];
+		const title = 'Assets Breakdown';
+		const canvas = document.getElementById('contentStatistics');
+
+		// colors
+		const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
+		const advertiserColor = { background: 'rgba(147, 103, 188, 0.8)', border: 'rgba(147, 103, 188, 1)' };
+		const fillerColor = { background: 'rgba(31, 119, 182, 0.8)', border: 'rgba(31, 119, 182, 1)' };
+		const feedColor = { background: 'rgba(254, 128, 12, 0.8)', border: 'rgba(254, 128, 12, 1)' };
+		const otherColor = { background: 'rgba(43, 160, 43, 0.8)', border: 'rgba(43, 160, 43, 1)' };
+		const backgroundColor = [ hostColor.background, advertiserColor.background, fillerColor.background, feedColor.border, otherColor.background ];
+		const borderColor = [ hostColor.border, advertiserColor.border, fillerColor.border, feedColor.border, otherColor.border ];
+
+		new Chart(canvas, {
+			type: 'doughnut',
+			data: { labels, datasets: [{ data, backgroundColor, borderColor, }], },
+			options: {
+				tooltips: false,
+				title: { text: title, display: true },
+				legend: { labels: { boxWidth: 12 } },
+				responsive: true,
+				maintainAspectRatio: false
+			}
+		});
+
+	}
+
+	private isBlank(value: string): boolean {
+		return !value || value.trim().length <= 0;
 	}
 
 	private setBusinessHours(data: UI_OPERATION_DAYS[]): { day: string, periods: string[], selected: boolean }[] {
@@ -1087,6 +1218,20 @@ export class SingleLicenseComponent implements OnInit {
 				error => console.log('Error selecting zone', error)
 			)
 		);
+	}
+
+	private updateCharts(): void {
+		
+		setTimeout(() => {
+			const config = { duration: 800, easing: 'easeOutBounce' };
+			const contentChart = this.charts.filter(chart => chart.canvas.id === 'contentStatistics')[0];
+			const { advertisers, feeds, fillers, hosts, others } = this.content_statistics;
+
+			contentChart.data.labels = [ `Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}` ];
+			contentChart.data.datasets[0].data = [ hosts, advertisers, fillers, feeds, others ];
+			contentChart.update(config);
+		}, 1000);
+
 	}
 
 }

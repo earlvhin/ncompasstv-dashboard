@@ -27,6 +27,10 @@
         background-color: rgba($primary, 0.54) !important;
     }
 
+    .mat-slide-toggle-bar {
+        width: 30px !important;
+    }
+
     .mat-progress-spinner circle, .mat-spinner circle {
          stroke: #8EC641 !important;
     }
@@ -129,14 +133,18 @@
 	
 	.prevent-tooltip-truncate {
 		word-break: break-all !important;
-		  white-space: normal !important;
+		white-space: normal !important;
+		max-width: unset !important;
 	}
+
 	.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle { 
         border-color: $primary !important;
     }
+
     .mat-radio-inner-circle {
         background-color: $primary !important;
     }
+
 	.mat-expansion-panel-body {
         display: flex;
     }

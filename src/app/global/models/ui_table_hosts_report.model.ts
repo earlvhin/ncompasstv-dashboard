@@ -1,16 +1,16 @@
 export class UI_TABLE_HOSTS {
-    hostId: string;
-    index: number;
-    business_name: string;
-    address: string;
-    region: string;
-    city: string;
-    state: string;
-    dateCreated: string;
+    hostId: object;
+    index: object;
+    business_name: object;
+    address: object;
+    region: object;
+    city: object;
+    state: object;
+    dateCreated: object;
 
     constructor(
-        hostId:string, index: number, business_name: string,
-        address: string, region: string, city: string, state: string, dateCreated: string
+        hostId:object, index: object, business_name: object,
+        address: object, region: object, city: object, state: object, dateCreated: object
     ) {
         this.hostId = hostId;
         this.index = index;

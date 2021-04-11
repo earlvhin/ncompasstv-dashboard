@@ -189,7 +189,7 @@ export class MediaLibraryComponent implements OnInit {
 							}
 						})
 					} else {
-						resolve();
+						resolve({});
 					}
 				});
 			},

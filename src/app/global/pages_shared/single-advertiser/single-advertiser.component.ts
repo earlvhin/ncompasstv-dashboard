@@ -18,15 +18,16 @@ import { MatDialog } from '@angular/material/dialog';
 })
 
 export class SingleAdvertiserComponent implements OnInit {
-	d_desc: string = "Dealer since January 25, 2019";
-	d_name: string = "Business Name";
-	img: string = "assets/media_files/admin-icon.png";
+	
+	array_to_preview: any = [];
 	advertiser: any;
 	advertiser_id: string;
 	content_data: any = [];
+	img: string = "assets/media_files/admin-icon.png";
 	selected_index: number;
 	subscription: Subscription = new Subscription;
-	array_to_preview: any = [];
+	
+	
 	content_table_col = [
 		'#',
 		'Name',
@@ -45,12 +46,6 @@ export class SingleAdvertiserComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		// if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-		// 	this.advertiser_tbl_row_url = "/dealer/advertisers/"
-		// } else {
-		// 	this.advertiser_tbl_row_url = "/administrator/advertisers/"
-		// }
-
 		this.subscription.add(
 			this._params.paramMap.subscribe(
 				data => {
@@ -82,12 +77,8 @@ export class SingleAdvertiserComponent implements OnInit {
 	}
 
 	getContents(id) {
-		// this.content_data = this.contentTable_mapToUI(this.dummy_content);
 		this._content.get_content_by_advertiser_id(id).subscribe(
 			val => {
-				// this.advertiser = val;
-				
-				console.log("this", this.array_to_preview )
 				if(!val.message) {
 					this.array_to_preview = val;
 					this.content_data = this.contentTable_mapToUI(val);
@@ -99,14 +90,14 @@ export class SingleAdvertiserComponent implements OnInit {
 	contentTable_mapToUI(data: any) {
 		let count = 1;
 		return data.map(
-			(h: any) => {
+			h => {
 				return new UI_TABLE_ADVERTISERS_CONTENT(
-					"",
-					count++,
-					h.fileName,
-					h.fileType == 'jpeg' || h.fileType == 'jfif' || h.fileType == 'jpg' || h.fileType == 'png' ? 'Image' : 'Video',
-					h.playing_where ? h.playing_where : '--',
-					h.createdByName ? h.createdByName : '--'
+					{ value: h.advertiserId, link: null , editable: false, hidden: true},
+					{ value: count++, link: null , editable: false, hidden: false},
+					{ value: h.fileName, link: null , editable: false, hidden: false},
+					{ value: h.fileType == 'jpeg' || h.fileType == 'jfif' || h.fileType == 'jpg' || h.fileType == 'png' ? 'Image' : 'Video', link: null , editable: false, hidden: false},
+					{ value: h.playing_where ? h.playing_where : '--', link: null , editable: false, hidden: false},
+					{ value:h.createdByName ? h.createdByName : '--', link: null , editable: false, hidden: false},
 				)
 			}
 		)

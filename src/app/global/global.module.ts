@@ -4,8 +4,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
-import { RouterModule } from '@angular/router'; 
-import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
+import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
@@ -20,6 +19,7 @@ import { CloneScreenComponent } from './components_shared/screen_components/clon
 import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmTemplateModalComponent } from './components_shared/template_components/confirm-template-modal/confirm-template-modal.component';
 import { ConfirmationModalComponent } from './components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
 import { CreateHostComponent } from './pages_shared/create-host/create-host.component';
@@ -132,12 +132,12 @@ import { UserAccountSettingComponent } from './pages_shared/user-account-setting
 import { UserProfileComponent } from './pages_shared/user-profile/user-profile.component';
 import { UserSortModalComponent } from './components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { UserTypeComponent } from './components_shared/user_components/user-type/user-type.component';
+import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
 
-//const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
-const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false, transports: ['websocket'] }};
+// const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
 // Material Theme Module
 import { 
@@ -180,6 +180,7 @@ const ngComponents = [
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
+	ContentScheduleCardComponent,
 	CreateAdvertiserComponent,
 	CreateFeedComponent,
 	CreateHostComponent,
@@ -292,11 +293,12 @@ const ngComponents = [
 	UserSortModalComponent,
 	UserSortModalComponent,
 	UserTypeComponent,
+	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
 	ZoneListComponent
-]
+];
 
 const MaterialModules = [
 	MatAutocompleteModule,
@@ -322,13 +324,16 @@ const MaterialModules = [
 	MatNativeDateModule,
 	MatProgressBarModule,
 	MatTooltipModule
-]
+];
+
+const DIRECTIVES = [
+	DefaultDateFormatDirective
+];
 
 @NgModule({
 	declarations: [
 		ngComponents,
-		DefaultDateFormatDirective,
-		DeletePlaylistComponent
+		DIRECTIVES
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -364,6 +369,7 @@ const MaterialModules = [
 		UnassignHostLicenseComponent,
 		UnassignLicenseComponent,
 		UserSortModalComponent,
+		ViewSchedulesComponent,
 		WarningPopupComponent
 	],
 	imports: [
@@ -385,12 +391,13 @@ const MaterialModules = [
 		RouterModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
-		}),
-		SocketIoModule.forRoot(config)
+		})
 	],
 	exports: [
 		ngComponents,
-		DefaultDateFormatDirective,
+		MaterialModules,
+		ReactiveFormsModule,
+		DIRECTIVES,
 	],
 	providers: [
 		MatDatepickerModule,
