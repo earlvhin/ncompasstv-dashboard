@@ -4,4 +4,4 @@ services:
     container_name: dashboard
     build:
       context: .
-    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/ncompasstv-dashboard
+    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/ncompasstv-dashboard:$BUILD_ENV
