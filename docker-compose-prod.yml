@@ -4,4 +4,4 @@ services:
     container_name: dashboard
     build:
       context: .
-    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/nc-nvir-dev-test-dashboard-01
+    image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/ncompasstv-dashboard

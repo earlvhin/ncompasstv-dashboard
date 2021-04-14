@@ -4,7 +4,7 @@ services:
     container_name: dashboard
     build:
       context: .
-    image: 892444632159.dkr.ecr.us-east-1.amazonaws.com/nc-nvir-dev-test-dashboard-01
+    image: 892444632159.dkr.ecr.us-east-1.amazonaws.com/ncompasstv-dashboard
     environment:
       VIRTUAL_HOST: dashboarddev.ourimage.biz
       
