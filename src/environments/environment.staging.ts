@@ -1,8 +1,8 @@
 export const environment = {
 	production: false,
-	base_uri: 'http://3.212.225.229:82/api/',
-	base_uri_old: 'http://3.212.225.229:82/api/',
-	socket_server: 'http://3.212.225.229:83',
+	base_uri: 'https://apistg.ourimage.biz/',
+	base_uri_old: 'https://apistg.ourimage.biz/',
+	socket_server: 'https://socketstg.ourimage.biz/',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
 	auth: {

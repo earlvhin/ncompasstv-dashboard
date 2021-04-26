@@ -4,8 +4,10 @@
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
-        "build": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build",
-        "build_prod": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --prod --aot --output-hashing=all",
+        "build": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build --aot --output-hashing=all",
+        "build_prod": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build --prod --aot --output-hashing=all",
+        "build_preprod": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build --configuration=preprod --aot --output-hashing=all",
+        "build_staging": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build --configuration=staging --aot --output-hashing=all",
         "test": "ng test",
         "lint": "ng lint",
         "e2e": "ng e2e"

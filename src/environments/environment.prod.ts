@@ -1,8 +1,8 @@
 export const environment = {
 	production: true,
-	base_uri: window["env"]["apiUrl"],
-	base_uri_old: window["env"]["apiUrlV1"],
-	socket_server: window["env"]["socketUrl"],
+	base_uri: 'https://api.n-compass.online',
+	base_uri_old: 'https://api.n-compass.online',
+	socket_server: 'https://socket.n-compass.online',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
 	auth: {
