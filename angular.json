@@ -54,13 +54,42 @@
               "budgets": [
                 {
                   "type": "initial",
-                  "maximumWarning": "10mb",
-                  "maximumError": "10mb"
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
                 },
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb",
-                  "maximumError": "10kb"
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
+                }
+              ]
+            },
+            "preprod": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.preprod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
                 }
               ]
             },
@@ -70,13 +99,26 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.staging.ts"
                 }
-              ]
-            },
-            "testing": {
-              "fileReplacements": [
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "aot": true,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "buildOptimizer": true,
+              "budgets": [
                 {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.testing.ts"
+                  "type": "initial",
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "100mb",
+                  "maximumError": "100mb"
                 }
               ]
             }
@@ -94,8 +136,8 @@
             "staging": {
               "browserTarget": "dashboard-material:build:staging"
             },
-            "testing": {
-              "browserTarget": "dashboard-material:build:testing"
+            "preprod": {
+              "browserTarget": "dashboard-material:build:preprod"
             }
           }
         },

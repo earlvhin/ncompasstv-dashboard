@@ -1,8 +1,8 @@
 export const environment = {
 	production: false,
-	base_uri: 'http://3.212.225.229:92/api/',
-	base_uri_old: window["env"]["apiUrlV1"],
-	socket_server: 'http://3.212.225.229:93',
+	base_uri: 'http://3.212.225.229:30082/api/',
+	base_uri_old: 'http://3.212.225.229:30082/api/',
+	socket_server: 'http://3.212.225.229:30083',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
 	auth: {
