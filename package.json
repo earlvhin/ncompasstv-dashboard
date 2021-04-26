@@ -1,5 +1,5 @@
 {
-    "name": "ncompasstv-dashboard",
+    "name": "dashboard-v2",
     "version": "0.0.0",
     "scripts": {
         "ng": "ng",
