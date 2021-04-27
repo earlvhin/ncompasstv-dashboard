@@ -4,7 +4,7 @@ WORKDIR /app
 COPY . .
 RUN npx npm-force-resolutions
 RUN npm install
-RUN npm run $BUILD_ENV
+RUN npm run build_staging
 RUN ls /app/dist/dashboard-material
 
 # stage 2
