@@ -47,4 +47,3 @@ testem.log
 Thumbs.db
 .vscode/settings.json
 debug.log
-node_modules
