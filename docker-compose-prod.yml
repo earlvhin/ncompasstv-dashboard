@@ -3,5 +3,6 @@ services:
   dashboard:
     container_name: dashboard
     build:
-      dockerfile: Dockerfile_$BUILD_ENV
+      context: .
+      dockerfile: Dockerfile-$BUILD_ENV
     image: $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/ncompasstv-dashboard:$BUILD_ENV
