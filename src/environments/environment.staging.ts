@@ -1,7 +1,7 @@
 export const environment = {
 	production: false,
-	base_uri: 'https://apistg.ourimage.biz/',
-	base_uri_old: 'https://apistg.ourimage.biz/',
+	base_uri: 'https://apistg.ourimage.biz/api/',
+	base_uri_old: 'https://apistg.ourimage.biz/api/',
 	socket_server: 'https://socketstg.ourimage.biz/',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
