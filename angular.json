@@ -64,14 +64,6 @@
                 }
               ]
             },
-            "preprod": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.preprod.ts"
-                }
-              ]
-            },
             "staging": {
               "fileReplacements": [
                 {
@@ -93,9 +85,6 @@
             },
             "staging": {
               "browserTarget": "dashboard-material:build:staging"
-            },
-            "preprod": {
-              "browserTarget": "dashboard-material:build:preprod"
             }
           }
         },
