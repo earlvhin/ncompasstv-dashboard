@@ -20,22 +20,35 @@
                 <div class="{{ f.width }}" *ngIf="!f.is_dealer">
                     <mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
                         <mat-label>{{ f.label }}</mat-label>
-                        <input 
-                        formControlName="{{ f.control }}"
-                        matInput type="{{ f.type }}"
-                        placeholder="{{ f.placeholder }}">
-                        
-                        <ng-container *ngIf="f.password_field">
-                            <span class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
-                                {{ password_is_valid_msg }}
-                            </span>
-                        </ng-container>
-                        <ng-container *ngIf="f.re_password_field">
-                            <span class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
-                                {{ password_match_msg }}
-                            </span>
-                        </ng-container>
+                        <input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" matInput type="{{ f.type }}" placeholder="{{ f.placeholder }}">
+
+						<ng-template #passwordField>
+							<div class="password-container" *ngIf="f.control === 'password'">
+								<div class="field">
+									<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
+									<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+								</div>
+							</div>
+
+							<div class="password-container" *ngIf="f.control === 're_password'">
+								<div class="field">
+									<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_retype_password_field_type ? 'password' : 'text'">
+									<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+								</div>
+							</div>
+						</ng-template>
+						
                     </mat-form-field>
+
+					<div class="validation" *ngIf="f.type === 'password'">
+						<span *ngIf="f.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
+							{{ password_is_valid_msg }}
+						</span>
+
+						<span *ngIf="f.re_password_field" class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
+							{{ password_match_msg }}
+						</span>
+					</div>
 
                     <ng-template #autocomplete>
 						<app-autocomplete-field

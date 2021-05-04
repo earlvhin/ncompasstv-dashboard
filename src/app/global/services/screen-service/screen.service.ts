@@ -34,8 +34,8 @@ export class ScreenService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_screen}`, data, this.httpOptions);
 	}
 
-	get_screens(page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_screens(page, key, column, order) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 
 	get_screens_search(key) {

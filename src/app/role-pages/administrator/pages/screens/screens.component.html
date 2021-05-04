@@ -77,7 +77,11 @@
 								[paging_details]="paging_data"
                                 (page_triggered)="pageRequested($event)"
                                 [screen_delete]="true"
-                                (update_info)="fromDelete()">
+                                (update_info)="fromDelete()"
+                                (to_sort_column)="getColumnsAndOrder($event)"
+                                [active_tab]="sort_column"
+                                [sort_column]="sort_column"
+                                [sort_order]="sort_order">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

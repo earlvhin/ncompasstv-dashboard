@@ -26,6 +26,7 @@ export class DataTableComponent implements OnInit {
 	@Input() ctrl_column_label: string;
 	@Input() ctrl_column: boolean;
 	@Input() ctrl_toggle: boolean;
+	@Input() is_dealer: boolean;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
 	@Input() multiple_delete: boolean;
@@ -52,6 +53,7 @@ export class DataTableComponent implements OnInit {
 
 	@Output() delete_license = new EventEmitter;
 	@Output() delete_screen = new EventEmitter;
+	@Output() export_playlist = new EventEmitter;
 	@Output() page_triggered = new EventEmitter;
 	@Output() reload_page = new EventEmitter;
 	@Output() toggle_triggered = new EventEmitter;
@@ -76,8 +78,6 @@ export class DataTableComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log("table_data", this.table_columns)
-		// console.log("ACTIVE TAB", this.active_tab)
 		this.table_data.map (
 			data => {
 				Object.keys(data).forEach(key => {
@@ -86,7 +86,7 @@ export class DataTableComponent implements OnInit {
 					}
 				})
 			}
-		)
+		);
 	}
 
 	onPageChange(page: number) {
@@ -176,6 +176,10 @@ export class DataTableComponent implements OnInit {
 			},
 			error => console.log('Error retrieving playlist by ID', error)
 		);
+	}
+
+	exportPlaylist(data): void {
+		this.export_playlist.emit(data)
 	}
 
 	deleteLicense(id): void {

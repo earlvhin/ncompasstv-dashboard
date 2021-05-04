@@ -124,10 +124,11 @@ export class BannerComponent implements OnInit {
 			panelClass: 'app-edit-single-advertiser',
 			disableClose: true,
 			data: this.dealer_data 
-		})
+		});
 
-		dialogRef.afterClosed().subscribe(r => {
-			if(!r) {
+		dialogRef.afterClosed().subscribe(response => {
+			
+			if (!response) {
 				this.update_info.emit(true);
 			}
 			

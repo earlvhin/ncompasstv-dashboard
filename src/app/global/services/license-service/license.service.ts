@@ -35,6 +35,7 @@ export class LicenseService {
 
 	onSortLicenseByColumn = new EventEmitter<{ column: string, order: string }>();
 	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } })
+	
 	constructor(
 		private _http: HttpClient,
 		private _auth: AuthService
@@ -42,9 +43,8 @@ export class LicenseService {
 
 	get_all_licenses() {}
 
-	get_licenses_by_install_date(installDate: string): Observable<any> {
-		const data = { installDate };
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.all_license_by_install_date}${installDate}`, data, this.httpOptions);
+	get_licenses_by_install_date(page, installDate, column, order) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.all_license_by_install_date}`+'?page='+`${page}`+'&installDate='+`${installDate}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 
 	get_licenses_total() {
@@ -57,12 +57,12 @@ export class LicenseService {
 	
 	get_license_by_dealer_id(id, page, key, arrangement) {
 		const params = this.httpParams({ dealerId: id,page, search: key, arrangement })
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
 	sort_license_by_dealer_id(id, page, key, column, order) {
 		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order })
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
 	get_license_by_host_id(id) {

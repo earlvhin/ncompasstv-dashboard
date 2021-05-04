@@ -7,7 +7,9 @@
                 <form [formGroup]="change_password" (ngSubmit)="changeUserPassword()">
                     <mat-form-field class="full-width position-relative">
                         <mat-label>Current Password</mat-label>
-                        <input formControlName="current_password" matInput type="password" placeholder="Current Password">
+						<input formControlName="current_password" matInput [type]="is_password_field_type ? 'password' : 'text'" placeholder="Current Password">
+						<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+
                         <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_old_not_match">
                             {{ current_password_validation_message }}
                         </span>
@@ -17,7 +19,9 @@
                     </mat-form-field>
                     <mat-form-field class="full-width position-relative">
                         <mat-label>New Password</mat-label>
-                        <input formControlName="new_password" matInput type="password" placeholder="New Password">
+						<input formControlName="new_password" matInput [type]="is_new_password_field_type ? 'password' : 'text'" placeholder="New Password">
+						<mat-icon class="pw-visibility" matSuffix (click)="toggleNewPasswordFieldType()">{{ is_new_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+
                         <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_invalid">
                             {{ password_validation_message }}
                         </span>
@@ -28,7 +32,9 @@
     
                     <mat-form-field class="full-width position-relative">
                         <mat-label>Retype New Password</mat-label>
-                        <input matInput formControlName="re_password" type="password" placeholder="Retype New Password">
+						<input formControlName="re_password" matInput [type]="is_retype_password_field_type ? 'password' : 'text'" placeholder="Retype New Password">
+						<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+
                         <span class="validation-message warning sm-text px-3 py-1" *ngIf="password_match == false">
                             {{ password_is_match }}
                         </span>

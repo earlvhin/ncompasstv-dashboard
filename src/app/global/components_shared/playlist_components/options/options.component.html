@@ -41,7 +41,7 @@
 					</ng-template>
 				</h4>
 				<p class="sm-text">
-					Date Created: {{ content_data.content.dateCreated | date }}
+					Creation Date: {{ content_data.content.dateCreated | date }}
 				</p>
 				<hr>
 				<mat-slide-toggle
@@ -51,17 +51,17 @@
 				</mat-slide-toggle>
 			</div>
 
-			<div *ngIf="!(content_data.content.fileType | isvideo)">
+			<div>
 				<mat-form-field class="w-100">
 					<mat-label>Set Content Duration</mat-label>
 					<input matInput type="number" placeholder="Ex: 100" 
 					[(ngModel)]="content_data.content.duration"
 					(blur)="setDuration()"
 					(change)="setDuration()"
-					min="5" max="100">
+					min="5" max="100" [disabled]="content_data.content.fileType | isvideo">
 				</mat-form-field>
 				<p class="sm-text">
-					Content duration is applicable to feeds and images only. Minimum is 5 seconds.
+					Setting of Content duration is applicable to feeds and images only. Minimum is 5 seconds.
 				</p>
 			</div>
 

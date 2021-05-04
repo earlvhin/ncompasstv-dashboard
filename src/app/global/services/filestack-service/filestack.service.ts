@@ -23,10 +23,11 @@ export class FilestackService {
 	convert_videos(data):any {
 		return new Promise((resolve, reject) => {
 			// Pass data to Backend then Convert Video
-			console.log('#convert_videos', data);
 			let handle = data.handle;
-			let filename = data.key.split('.')[0];
+			let filename = data.key.substring(0, data.key.lastIndexOf("."));
 			let originalName = data.filename;
+
+			console.log('#convert_videos', filename);
 
 			this.subscription.add(
 				// 1280×720 
@@ -53,8 +54,10 @@ export class FilestackService {
 				// Change mp4 filetype/filename to webm
 				if (file.mimetype === 'video/mp4') {
 					console.log('is', file.mimetype);
-					filename = `${file.key.split('.')[0] }.webm`;
+					filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.webm`;
+
 					let convert_data = await this.convert_videos(file);
+
 					const upload_data = {
 						'hostid': users ? users.host : '',
 						'dealerid': users ? users.dealer : '',

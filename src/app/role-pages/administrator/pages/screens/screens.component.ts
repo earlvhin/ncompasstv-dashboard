@@ -26,19 +26,24 @@ export class ScreensComponent implements OnInit {
 	screen_details: any = {};
 	paging_data : any;
 	searching: boolean = false;
-	tbl_screen_columns = [
-		'#',
-		'Screen Name',
-		// 'Description',
-		'Dealer',
-		'Hosts',
-		'Type',
-		'Template',
-		'Date Created', 
-		'Last Update',
-		'Created By',
-		'Action'
-	]
+	sort_column: string = "";
+	sort_order: string = "";
+
+	//Documentation for columns:
+	//Name = Column Name, Sortable: If Sortable, Column: For BE Key to sort, Key: Column to be exported as per API, No_export: Dont Include to Export
+	tbl_screen_columns = [ 
+		{ name: '#', sortable: false, no_export: true},
+		{ name: 'Screeen Name', sortable: true, column:'ScreenName', no_export: true},
+		{ name: 'Dealer', sortable: true, column:'BusinessName', no_export: true},
+		{ name: 'Hosts', sortable: true, column:'HostName', no_export: true},
+		{ name: 'Type', sortable: true, column:'ScreenTypeName', no_export: true},
+		{ name: 'Template', sortable: true, column:'TemplateName', no_export: true},
+		{ name: 'Creation Date', sortable: true, column:'DateCreated', no_export: true},
+		{ name: 'Last Update', sortable: true, column:'DateUpdated', no_export: true},
+		{ name: 'Created By', sortable: true, column:'CreatedBy',  no_export: true},
+		{ name: 'Action', sortable: false, no_export: true},
+	];
+
 	initial_load: boolean = true;
 	search_data: string = "";
 
@@ -84,11 +89,11 @@ export class ScreensComponent implements OnInit {
 	pageRequested(e) {
 		this.searching = true;
 		this.screens = [];
-		this._screen.get_screens(e, this.search_data).subscribe(
+		this._screen.get_screens(e, this.search_data,  this.sort_column, this.sort_order).subscribe(
 			data => {
-				if (data.piContents.length > 0) {
-					this.screens = this.screen_mapToUI(data.piContents);
-					this.filtered_data = this.screen_mapToUI(data.piContents);
+				if (data.paging.entities) {
+					this.screens = this.screen_mapToUI(data.paging.entities);
+					this.filtered_data = this.screen_mapToUI(data.paging.entities);
 				} else {
 					if(this.search_data == "") {
 						this.no_screen = true;
@@ -102,22 +107,27 @@ export class ScreensComponent implements OnInit {
 		)
 	}
 
+	getColumnsAndOrder(data) {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.pageRequested(1);
+	}
+
 	screen_mapToUI(data) {
 		let counter = 1;
 		return data.map(
 			s => {
 				return new UI_TABLE_SCREEN (
-					{ value: s.screen.screenId, link: null , editable: false, hidden: true},
+					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.screen.screenName), link: '/administrator/screens/' +  s.screen.screenId, editable: false, hidden: false},
-					// { value: this._titlecase.transform(s.screen.description) || 'No Description', link: null, editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.dealer.businessName), link: '/administrator/dealers/' + s.dealer.dealerId, editable: false, hidden: false},
-					{ value: s.host ? this._titlecase.transform(s.host.name) : '--', link: s.host ? '/administrator/hosts/' + s.host.hostId : null, editable: false, hidden: false},
-					{ value: s.screenType.screenTypeId ? this._titlecase.transform(s.screenType.name) : '--', link: null, editable: true, dropdown_edit: true, label:'Screen Type', id: s.screen.screenId, name: s.screen.screenName, hidden: false},
-					{ value: s.template ? this._titlecase.transform(s.template.name) : null, link: null, editable: false, hidden: false},
-					{ value: this._date.transform(s.screen.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
-					{ value: this._date.transform(s.screen.dateUpdated, 'MMM d, y, h:mm a') || '--', link: null, editable: false, hidden: false},
-					{ value: s.createdBy ? this._titlecase.transform(`${s.createdBy.firstName} ${s.createdBy.lastName}`) : '--', link: '/administrator/users/' + s.createdBy.userId, editable: false, hidden: false},	
+					{ value: this._titlecase.transform(s.screenName), link: '/administrator/screens/' +  s.screenId, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.businessName), link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false},
+					{ value: s.hostName != null ? this._titlecase.transform(s.hostName) : '--', link: s.hostName ? '/administrator/hosts/' + s.hostId : null, editable: false, hidden: false},
+					{ value: s.screenTypeName != '' ? this._titlecase.transform(s.screenTypeName) : '--', link: null, editable: true, dropdown_edit: true, label:'Screen Type', id: s.screenId, name: s.screenName, hidden: false},
+					{ value: s.templateName != '' ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},
+					{ value: this._date.transform(s.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
+					{ value: this._date.transform(s.dateUpdated, 'MMM d, y, h:mm a') || '--', link: null, editable: false, hidden: false},
+					{ value: s.createdBy ? this._titlecase.transform(s.createdBy) : '--', link: '/administrator/users/' + s.createdById, editable: false, hidden: false},	
 				)
 			}
 		)

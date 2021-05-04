@@ -76,7 +76,8 @@
 								[paging_details]="paging_data"
 								(page_triggered)="pageRequested($event)"
                                 [playlist_delete]="true"
-                                (update_info)="fromDelete()">
+                                (update_info)="fromDelete()"
+                                (export_playlist)="exportPlaylist($event)">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

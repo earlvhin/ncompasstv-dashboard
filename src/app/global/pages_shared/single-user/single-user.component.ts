@@ -16,16 +16,19 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 
 export class SingleUserComponent implements OnInit {
 
-	subscription: Subscription = new Subscription;
-	update_user: FormGroup;
 	change_password: FormGroup;
-	user_data: API_USER_DATA;
-	update_info_form_disabled: boolean = true;
 	change_password_form_disabled: boolean = true;
+	is_password_field_type = true;
+	is_retype_password_field_type = true;
 	password_invalid: boolean;
-	password_match: boolean;
 	password_is_match: string;
+	password_match: boolean;
 	password_validation_message: string;
+	update_info_form_disabled: boolean = true;
+	update_user: FormGroup;
+	user_data: API_USER_DATA;
+	subscription: Subscription = new Subscription;
+
 	form_fields_view = [
 		{
 			label: 'Firstname',
@@ -216,5 +219,13 @@ export class SingleUserComponent implements OnInit {
 				data: data
 			}
 		})
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
 }

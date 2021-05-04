@@ -8,14 +8,12 @@ export class UI_TABLE_SCREEN {
     template: object;
     created_by: object;
     date_created: object;
-    // description: object;
     last_update: object;
 
     constructor(id: object, count: object, name: object, dealer: object, host: object, type: object, template: object, user: object, date: object, last_update: object) {
         this.screen_id = id;
         this.counter = count;
         this.screen_name = name;
-        // this.description = desc;
         this.dealer_name = dealer;
         this.host_name = host;
         this.type = type;

@@ -31,6 +31,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FeedsComponent } from './pages/feeds/feeds.component';
+import { InstallationsComponent } from './pages/installations/installations.component';
 import { UpdateComponent } from './pages/update/update.component';
 @NgModule({
 	declarations: [
@@ -50,6 +51,7 @@ import { UpdateComponent } from './pages/update/update.component';
 		RolesComponent,
 		UsersComponent,
 		FeedsComponent,
+		InstallationsComponent,
 		UpdateComponent,
 	],
 	imports: [

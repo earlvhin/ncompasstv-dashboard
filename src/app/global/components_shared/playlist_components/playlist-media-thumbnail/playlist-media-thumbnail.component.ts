@@ -16,27 +16,29 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 	is_converted: number = 0;
 	_socket: any;
 
-	constructor() { 
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
-		});
-	}
+	constructor() { }
 
 	ngOnInit() {
-		this._socket.on('video_converted', data => {
-			if (data == this.content.uuid) {
-				this.is_converted = 1;
-				this.converted.emit(data);
-			}
-		})
+		if (this.content.fileType === 'webm' && this.content.isConverted === 0) {
+			this._socket = io(environment.socket_server, {
+				transports: ['websocket']
+			});
 
-		this._socket.on('connect', () => {
-			console.log('#PlaylistMediaThumbnailComponent - Connected to Socket Server');
-		})
-		
-		this._socket.on('disconnect', () => {
-			console.log('#PlaylistMediaThumbnailComponent - Disconnnected to Socket Server');
-		})
+			this._socket.on('video_converted', data => {
+				if (data == this.content.uuid) {
+					this.is_converted = 1;
+					this.converted.emit(data);
+				}
+			})
+	
+			this._socket.on('connect', () => {
+				console.log('#PlaylistMediaThumbnailComponent - Connected to Socket Server');
+			})
+			
+			this._socket.on('disconnect', () => {
+				console.log('#PlaylistMediaThumbnailComponent - Disconnnected to Socket Server');
+			})
+		}
 	}
 
 	removeFilenameHandle(file_name) {

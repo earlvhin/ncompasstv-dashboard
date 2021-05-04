@@ -1,12 +1,13 @@
 import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
 import { Subscription, Observable } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { API_UPDATE_DEALER_PROFILE_BY_ADMIN } from '../../models/api_update-user-info.model';
 import { API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN } from '../../models/api_update-user-info.model';
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { UserService } from '../../services/user-service/user.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
 
 @Component({
 	selector: 'app-edit-single-dealer',
@@ -35,7 +36,7 @@ export class EditSingleDealerComponent implements OnInit {
 		{
 			label: 'Dealer Id',
 			control: 'dealer_id',
-			col: 'col-lg-6',
+			col: 'col-lg-6 p-0',
 		},	
 		{
 			label: 'Dealer Alias',
@@ -46,7 +47,7 @@ export class EditSingleDealerComponent implements OnInit {
 			label: 'Owner Firstname',
 			control: 'owner_f_name',
 			placeholder: 'Ex. John',
-			col: 'col-lg-6'
+			col: 'col-lg-6 p-0'
 		},
 		{
 			label: 'Owner Lastname',
@@ -58,7 +59,7 @@ export class EditSingleDealerComponent implements OnInit {
 			label: 'Email Address',
 			control: 'email',
 			placeholder: 'Ex. dealer@mail.com',
-			col: 'col-lg-6',
+			col: 'col-lg-6 p-0',
 			type: 'email'
 		},
 		{
@@ -71,7 +72,7 @@ export class EditSingleDealerComponent implements OnInit {
 			label: 'Contact Person',
 			control: 'c_person',
 			placeholder: 'Ex. John Doe',
-			col: 'col-lg-6'
+			col: 'col-lg-6 p-0'
 		},
 		{
 			label: 'Address',
@@ -83,7 +84,7 @@ export class EditSingleDealerComponent implements OnInit {
 			label: 'City',
 			control: 'city',
 			placeholder: 'Ex. St. Peter',
-			col: 'col-lg-6',
+			col: 'col-lg-6 p-0',
 		},
 		{
 			label: 'State',
@@ -95,16 +96,16 @@ export class EditSingleDealerComponent implements OnInit {
 			label: 'Region',
 			control: 'region',
 			placeholder: 'Ex. MW',
-			col: 'col-lg-6',
+			col: 'col-lg-6 p-0',
 		}
-	]
-
+	];
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dealer_data: any,
 		private _form: FormBuilder,
 		private _user: UserService,
 		private _dialog: MatDialog,
+		public _dialogRef: MatDialogRef<EditSingleDealerComponent>,
 		private _dealer: DealerService
 	) { }
 
@@ -187,7 +188,6 @@ export class EditSingleDealerComponent implements OnInit {
 			this.subscription.add(
 				this._user.get_users_by_page(e, "").subscribe(
 					data => {
-						console.log("DATA", data)
 						this.other_users = data.users;
 						if(data.paging.hasNextPage) {
 							this.getOtherUsers(data.paging.page + 1)
@@ -241,17 +241,33 @@ export class EditSingleDealerComponent implements OnInit {
 
 	updateDealerInfo() {
 		this._user.update_user(this.mapUserInfoChanges()).subscribe(
-			data => {
-				this._dealer.update_dealer(this.mapDealerInfoChanges()).subscribe(
-					data => {
-						this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully');
-					}, 
-					error => {
-						console.log('error', error);
-					}
-				)
+			() => this._dealer.update_dealer(this.mapDealerInfoChanges()).subscribe(
+				() => this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully'), 
+				error => console.log('Error updating dealer info', error)
+			));
+	}
+
+	onReassignDealer(): void {
+		const editDialog = this._dialogRef;
+		const width = '350px';
+		
+		// old height
+		// const height = '450px';
+
+		// temporary height
+		const height = '400px';
+
+		editDialog.close('reassign-dealer');
+
+		editDialog.afterClosed().subscribe(
+			() => this._dialog.open(ReassignDealerComponent, {
+				width,
+				height,
+				panelClass: 'position-relative',
+				autoFocus: false,
+				data: { dealer_id: this.dealer_form.get('dealer_id').value }
 			}
-		)
+		));
 	}
 
 	openConfirmationModal(status, message, data): void {

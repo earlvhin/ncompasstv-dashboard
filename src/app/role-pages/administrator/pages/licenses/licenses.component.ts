@@ -22,7 +22,7 @@ export class LicensesComponent implements OnInit {
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	subscription: Subscription = new Subscription();
 	title: string = "Licenses";
-	tab: any = { tab: 2 };
+	tab: any = { tab: 0 };
 	licenses_details: any;
 	paging_data: any;
 	searching: boolean = false;

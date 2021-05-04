@@ -27,7 +27,7 @@ export class FeedsComponent implements OnInit {
 		'Feed Title',
 		'Type',
 		'Created By',
-		'Date Created',
+		'Creation Date',
 		'Action'
 	];
 	filtered_data: any = [];
@@ -95,7 +95,6 @@ export class FeedsComponent implements OnInit {
 	}
 
 	pageRequested(e) {
-		console.log("EE", e)
 		this.feed_data = [];
 		this.subscription.add(
 			this._feed.get_feeds_by_dealer(this._auth.current_user_value.roleInfo.dealerId, e, this.search_data).subscribe(

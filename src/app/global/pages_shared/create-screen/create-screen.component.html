@@ -15,7 +15,7 @@
                         <ng-template matStepLabel>Screen Information</ng-template>
                         <div class="row justify-content-center"  style="height: 450px;">
                             <div class="col-lg-8 py-4">
-                                <form [formGroup]="new_screen_form" *ngIf="dealers_data.length > 0; else loader">
+                                <form [formGroup]="new_screen_form" *ngIf="dealers.length > 0; else loader">
                                     <div class="row">
                                         <div *ngFor="let f of new_screen_form_view" class="{{ f.width }}">
                                             <mat-form-field class="full-width">
@@ -25,11 +25,7 @@
                                         </div>
                                     </div>
                                 </form>
-                                <ng-template #loader>
-                                    <div class="vh-50 d-flex align-items-center justify-content-center">
-                                        <app-spinner></app-spinner>
-                                    </div>
-                                </ng-template>
+
                                 <div class="row">
                                     <div [ngClass]="screen_selected == null ? 'col-lg-12' : 'col-lg-11'">
                                         <app-autocomplete-field
@@ -39,9 +35,6 @@
                                             (data_value)="setScreenType($event)"
                                             [required]="true"
                                             [label]="'Click to select a Screen Type'"
-                                            (searched)="searchData($event)"
-                                            [loading_data]="loading_data"
-                                            [loading_search]="loading_search"
                                             [reset_value]="reset_screen">
                                         </app-autocomplete-field>
                                     </div>
@@ -70,7 +63,7 @@
                                             [paging]="paging"
                                             (call_next_page)="searchBoxTrigger($event)"
                                             (searched)="searchData($event)"
-                                            [loading_data]="loading_data"
+											[loading_data]="loading_data"
                                             [loading_search]="loading_search">
                                             </app-autocomplete-field>
                                         </ng-template>
@@ -114,18 +107,20 @@
                         <ng-template matStepLabel>Assign Playlist</ng-template>
                         <div class="row justify-content-center" *ngIf="!no_chosen_template; else no_template">
                             <div class="col-lg-7">
-                                <div class="mb-4 mt-5" *ngIf="template$ | async as template; else loading">
-                                    <ng-container *ngFor="let t of template">
-                                        <app-template-minimap
-                                        [larger]="true"
-                                        [zone_focus]="zone"
-                                        [is_text_displayed]="true"
-                                        [template_data]="t" >
-                                        </app-template-minimap>
-                                    </ng-container>
+                                <div class="mb-4 mt-5">
+									<div *ngIf="template$ | async as template; else loading">
+										<ng-container *ngFor="let t of template">
+											<app-template-minimap
+											[larger]="true"
+											[zone_focus]="zone"
+											[is_text_displayed]="true"
+											[template_data]="t" >
+											</app-template-minimap>
+										</ng-container>
+									</div>
 
-                                    <form [formGroup]="zone_playlist_form" class="mt-4">
-                                        <ng-container formArrayName="screenZonePlaylist" *ngIf="playlist.length > 0;else no_playlist">
+                                    <form [formGroup]="zone_playlist_form" class="mt-4" *ngIf="!loading_playlist; else loadingPlaylists">
+                                        <ng-container formArrayName="screenZonePlaylist" *ngIf="!no_playlist_data; else noPlaylist">
                                             <mat-form-field class="full-width"
                                                 *ngFor="let z of zone_playlist_form.get('screenZonePlaylist')['controls']; let i = index" [formGroupName]="i">
                                                 <mat-label>Select Playlist for {{ z.controls['templateName'].value }}</mat-label>
@@ -140,26 +135,25 @@
                                             </mat-form-field>
                                         </ng-container>
                                     </form>
-                                    <ng-template #no_playlist>
-                                        <div class="pt-5 text-left">
-                                            <h3>Aw Sorry!</h3>
-                                            <p class="sm-text mb-3">
-                                                The selected dealer has no available playlist(s) at the moment.
-                                            </p>
-                                            <button mat-button mat-raised-button class="theme-btn mr-2" (click)="addPlaylistButton()">
-                                                Add Playlist
-                                                <span class="fas fa-plus ml-2 sm-text"></span>
-                                            </button>
-                                        </div>
-                                    </ng-template>
-                                    <button mat-button mat-raised-button matStepperNext class="theme-btn mt-4">
+
+									<ng-template #noPlaylist>
+										<div class="text-left">
+											<h3>Aw Sorry!</h3>
+											<p class="sm-text mb-3">
+												The selected dealer has no available playlist(s) at the moment.
+											</p>
+											<button mat-button mat-raised-button class="theme-btn mr-2" (click)="addPlaylistButton()">
+												Add Playlist
+												<span class="fas fa-plus ml-2 sm-text"></span>
+											</button>
+										</div>
+									</ng-template>
+                                    
+                                    <button mat-button mat-raised-button matStepperNext class="theme-btn mt-4" [disabled]="loading_playlist">
                                         Next <span class="fas fa-long-arrow-alt-right ml-2"></span>
                                     </button>
                                 </div>
                                 
-                                <ng-template #loading>
-                                    <app-spinner></app-spinner>
-                                </ng-template>
                             </div>
                         </div>
 						<ng-template #no_template>
@@ -167,7 +161,9 @@
                                 <h2 class="mb-2">Please Choose a Template</h2>
                                 <p>Please go back to <strong>Step 2</strong> and choose your desired template.</p>
                             </div>
-                        </ng-template>                    </mat-step>
+                        </ng-template>                    
+					</mat-step>
+
                     <mat-step>
                         <ng-template matStepLabel>Assign to Host</ng-template>
                         <div class="row justify-content-center mt-5" *ngIf="!screen_info_error && !no_chosen_template; else assign_to_host_error">
@@ -271,6 +267,7 @@
                                 <button *ngIf="hostid" mat-button mat-raised-button matStepperNext class="theme-btn mt-4" (click)="publishScreen()" [disabled]="creating_screen">
                                     Publish Screen
                                 </button>
+
                             </div>
                         </div>
                         <ng-template #assign_to_host_error>
@@ -288,3 +285,22 @@
         </div>
     </div>
 </div>
+
+<ng-template #loading>
+	<app-spinner></app-spinner>
+</ng-template>
+
+<ng-template #loader>
+	<div class="vh-50 d-flex align-items-center justify-content-center">
+		<app-spinner></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #loadingPlaylists>
+	<div class="d-flex align-items-center justify-content-center w-100 h-100 py-5">
+		<div class="py-5">
+			<app-spinner></app-spinner>
+			<h5 class="mt-4 text-center">Loading playlists...</h5>
+		</div>
+	</div>
+</ng-template>

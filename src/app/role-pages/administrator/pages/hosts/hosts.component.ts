@@ -18,7 +18,7 @@ export class HostsComponent implements OnInit {
 	hosts$: Observable<API_HOST[]>;
 	no_dealer: boolean = false;
 	subscription: Subscription = new Subscription();
-	tab: any = { tab: 0 };
+	tab: any = { tab: 1 };
 	title: string = "Hosts by Dealer";
 	host_details : any;
 	paging_data: any;

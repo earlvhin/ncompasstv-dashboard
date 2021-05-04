@@ -1,13 +1,15 @@
 import { DatePipe, Location, TitleCasePipe } from '@angular/common'
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, OnDestroy, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { Chart } from 'chart.js';
+import { take } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as io from 'socket.io-client';
+
 import { API_DEALER } from '../../models/api_dealer.model';
 import { API_HOST } from '../../models/api_host.model';
 import { API_LICENSE } from '../../models/api_license.model';
@@ -25,8 +27,6 @@ import { UserService } from '../../services/user-service/user.service';
 import { RoleService } from '../../services/role-service/role.service';
 import { environment } from '../../../../environments/environment';
 import { SubstringPipe } from '../../pipes/substring.pipe';
-
-
 @Component({
 	selector: 'app-single-dealer',
 	templateUrl: './single-dealer.component.html',
@@ -34,10 +34,11 @@ import { SubstringPipe } from '../../pipes/substring.pipe';
 	providers: [DatePipe, TitleCasePipe, SubstringPipe]
 })
 
-export class SingleDealerComponent implements OnInit, OnDestroy {
+export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	advertiser_card: any;
 	advertiser_data:any = [];
 	advertiser_filtered_data: any = [];
+	apps: any;
 	array_to_delete: any = [];
 	combined_data: API_HOST[];
 	current_tab = 'hosts';
@@ -51,6 +52,7 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	host_data: any = [];
 	host_data_api: API_HOST[];
 	host_filtered_data: any = [];
+	hosts_to_export: any = [];
 	img: string = "assets/media_files/admin-icon.png";
 	initial_load = true;
 	initial_load_advertiser = true;
@@ -60,7 +62,7 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	license_card:any;
 	license_count: number;
 	license_data: any = [];
-	license_data_api: API_LICENSE[];
+	license_data_api: any;
 	license_filtered_data: any = [];
 	license_row_slug: string = "host_id";
 	license_row_url: string = "/dealer/hosts";
@@ -112,19 +114,22 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		'Assigned User'
 	];
 
+	//Documentation for columns:
+	//Name = Column Name, Sortable: If Sortable, Column: For BE Key to sort, Key: Column to be exported as per API, No_export: Dont Include to Export
 	host_table_col = [ 
-		'#',
-		'Hostname',
-		'Address',
-		'City',
-		'Postal Code',
-		'License Count',
-		'Status'
+		{ name: '#', sortable: false, no_export: true},
+		{ name: 'Host Name', sortable: false, column:'name', key: 'name'},
+		{ name: 'Address', sortable: false, column:'address', key: 'address'},
+		{ name: 'City', sortable: false, column:'city', key: 'city'},
+		{ name: 'Postal Code', sortable: false, column:'postalCode', key: 'postalCode'},
+		{ name: 'License Count', sortable: false, column:'totalLicenses', key: 'totalLicenses'},
+		{ name: 'Status', sortable: false, no_export: true},
 	];
 
 	license_table_columns = [
+		{ name: 'Screenshot', sortable: false, no_export: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
-		{ name: 'Type', sortable: false, key: 'screenType'},
+		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName'},
 		{ name: 'Alias', sortable: true, column:'Alias', key: 'alias'},
 		{ name: 'Last Push', sortable: true, column:'ContentsUpdated', key:'contentsUpdated'},
@@ -132,14 +137,17 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		{ name: 'Connection Type', sortable: true, column:'InternetType', key:'internetType'},
 		{ name: 'Connection Speed', sortable: false, key:'internetSpeed'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId'},
-		{ name: 'Screen', sortable: false, column:'Screen', key:'screenName' },
-		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},
+		{ name: 'Server Version', sortable: false, key:'server'},
+		{ name: 'UI Version', sortable: false, key:'ui'},
+		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
+		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},		
 		{ name: 'Install Date', sortable: true, column:'InstallDate', key:'installDate'},
-		{ name: 'Create Date', sortable: false, key:'dateCreated'},
+		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
 
 	constructor(
 		private _advertiser: AdvertiserService,
+		private _change_detector: ChangeDetectorRef,
 		private _date: DatePipe,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
@@ -149,13 +157,14 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		private _params: ActivatedRoute,
 		private _role: RoleService,
 		private _titlecase: TitleCasePipe,
-		private _substring: SubstringPipe,
 		private _user: UserService
 	) { 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket']
 		});
 	}
+
+	@ViewChildren('canvas') canvasses: QueryList<HTMLCanvasElement>;
 
 	ngOnInit() {
 		this._socket.on('connect', () => {
@@ -169,6 +178,8 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		if (this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator) {
 			this.show_admin_buttons = true;
 		}
+
+		this.setCurrentTabOnLoad();
 
 		this.subscription.add(
 			this._params.paramMap.subscribe(
@@ -195,7 +206,35 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 				error => console.log('Error on query params subscription', error)
 			)
 		);
-		// this.subscribeToLicenseSort();
+
+		this.subscribeToReassignSuccess();
+
+	}
+
+	ngAfterViewInit() {
+
+		this.subscription.add(
+			this.canvasses.changes.pipe(take(1)).subscribe(
+				() => {
+
+					if (this.initial_load_charts && this.current_tab === 'licenses') {
+						setTimeout(() => {
+							this.generateCharts();
+		
+							Object.entries(Chart.instances).forEach(entries => {
+								entries.forEach(chartData => {
+									if (typeof chartData === 'object') this.license_statistics_charts.push(chartData);
+								})
+							});
+		
+							this._change_detector.detectChanges();
+						}, 1000);
+					}
+				},
+				error => console.log('Error on canvas subscription', error)
+			)
+		);
+
 	}
 
 	ngOnDestroy() {
@@ -207,7 +246,8 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	activateLicense(e): void {
 		this.subscription.add(
 			this._license.activate_license(e).subscribe(
-				() => console.log('License is Activated -', e),
+				() => 
+				this.warningModal('success', 'License Activated', 'License successfully activated.', '', ''),
 				error => console.log('Error activating license', error)
 			)
 		);
@@ -264,7 +304,8 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	deactivateLicense(e): void {
 		this.subscription.add(
 			this._license.deactivate_license(e).subscribe(
-				() => console.log('License is Deactivated -', e),
+				() => 
+					this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
 				error => console.log('Error deactivating license', error)
 			)
 		);
@@ -391,26 +432,28 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		this.subscription.add(
 			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order).subscribe(
 				(response: { licenses, paging, statistics, message? }) => {	
+
 					if (response.message) {
 						if (this.search_data_license == "") {
 							this.no_licenses = true;
 						}
 						this.license_data = [];
 						this.license_filtered_data = [];
-					} else {
+					} else {				
 						this.license_data_api = response.licenses;
+
+						this.license_data_api.map(
+							i => {
+								if(i.license.appVersion) {
+									i.license.apps = JSON.parse(i.license.appVersion);
+								} else {
+									i.license.apps = null;
+								}	
+							}
+						);
+
+						console.log('licenses', this.license_data_api);
 						this.statistics = response.statistics;
-						if (this.isLicenseTabOnLoad && this.initial_load_charts) {
-							setTimeout(() => {
-								this.generateCharts();
-								Object.entries(Chart.instances).forEach(entries => {
-									entries.forEach(chartData => {
-										if (typeof chartData === 'object') this.license_statistics_charts.push(chartData);
-									})
-								});
-			
-							}, 1000);
-						}
 
 						if (reload) this.updateCharts();
 						const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
@@ -420,9 +463,10 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 					}
 
 					this.initial_load_license = false;
-					this.searching_license = false;
+					this.searching_license = false; 
 				},
 				error => {
+					console.log('Error retrieving licenses', error);
 					this.no_licenses = true;
 					this.license_data = [];
 					this.license_filtered_data = [];
@@ -478,7 +522,7 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 					{ value: h.postalCode, link: null, editable: false, hidden: false},
 					{ value: h.totalLicenses, link: null, editable: false, hidden: false},
 					{ value: h.status, link: null, editable: false, hidden: false},
-					{ value: this._date.transform(h.installDate), link: null, editable: false, hidden: false},	
+					// { value: this._date.transform(h.installDate), link: null, editable: false, hidden: false},	
 				)
 			}
 		);
@@ -500,6 +544,13 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 			(l: any) => {
 				const table = new UI_DEALER_LICENSE(
 					{ value: l.license.licenseId, link: null , editable: false, hidden: true, key: true, table: 'license'},
+					{ 
+						value: l.license.screenshotUrl ? `${environment.base_uri_old}${l.license.screenshotUrl.replace("/API/", "")}` : null,
+						link: l.license.screenshotUrl ? `${environment.base_uri_old}${l.license.screenshotUrl.replace("/API/", "")}` : null, 
+						editable: false, 
+						hidden: false, 
+						isImage: true
+					},
 					{ value: l.license.licenseKey, link: '/administrator/licenses/' + l.license.licenseId, editable: false, hidden: false, status: true},
 					{ value: l.screenType && l.screenType.name ? this._titlecase.transform(l.screenType.name) : '--', editable: false, hidden: false },
 					{ value: l.host ? l.host.name : '--', link: l.host ? '/administrator/hosts/' + l.host.hostId : null, editable: false, hidden: false },
@@ -509,13 +560,15 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 					{ value: l.license.internetType ? this.getInternetType(l.license.internetType) : '--', link: null, editable: false, hidden: false },
 					{ value: l.license.internetSpeed ? (l.license.internetSpeed == 'Fast' ? 'Good' : l.license.internetSpeed) : '--', link: null, editable: false, hidden: false },
 					{ value: l.license.anydeskId ? l.license.anydeskId : '--', link: null, editable: false, hidden: false },
+					{ value: l.license.apps && l.license.apps.server ? l.license.apps.server : '1.0.0', link: null, editable: false, hidden: false },
+					{ value: l.license.apps && l.license.apps.ui ? l.license.apps.ui : '1.0.0', link: null, editable: false, hidden: false },
+					{ value: l.screen.screenName ? l.screen.screenName : '--', link: `/administrator/screens/${l.screen.screenId}` , editable: false },
 					{ value: l.screen.templateName ? l.screen.templateName : '--', link: null, editable: false, hidden: false },
 					{ value: l.license.installDate && !l.license.installDate.includes('Invalid') ? this._date.transform(l.license.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.license.licenseId },
-					{ value: l.license.createDate ? this._date.transform(l.license.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
+					{ value: l.license.dateCreated ? this._date.transform(l.license.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 					{ value: l.license.isActivated, link: null , editable: false, hidden: true },
 					{ value: l.host ? true : false, link: null , editable: false, hidden: true },
 					{ value: l.license.piStatus, link: null , editable: false, hidden: true },
-					{ value: l.screen.screenName ? l.screen.screenName : '--', link: `/administrator/screens/${l.screen.screenId}` , editable: false },
 				);
 				return table;
 			}
@@ -523,15 +576,27 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	}
 
 	onSelectTab(event: { index: number }): void {
+
+		console.log('index', event.index);
+
 		switch (event.index) {
 			case 1:
+				this.current_tab = 'hosts';
+				break;
+
+			case 2:
 				this.current_tab = 'advertisers';
 				break;
-			case 2:
+
+			default:
+
 				this.current_tab = 'licenses';
+
 				if (!this.no_licenses && this.initial_load_charts) {
+
 					setTimeout(() => {
 						this.generateCharts();
+						
 						Object.entries(Chart.instances).forEach(entries => {
 							entries.forEach(chartData => {
 								if (typeof chartData === 'object') this.license_statistics_charts.push(chartData);
@@ -540,9 +605,7 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	
 					}, 1000);	
 				}
-				break;
-			default:
-				this.current_tab = 'hosts';
+
 		}
 
 	}
@@ -575,6 +638,10 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	reloadLicense(): void {
 		if (this.searching_license) return;
 		this.license_data = [];
+		this.sort_column = "";
+		this.sort_order = "";
+		this.array_to_delete = [];
+		this.getLicenseTotalCount(this.dealer_id);
 		this.getLicensesofDealer(1, true);
 	}
 
@@ -624,6 +691,7 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 					this.subscription.add(
 						this._license.delete_license(this.array_to_delete).subscribe(
 							data => {
+								this.warningModal('success', 'License Deleted', 'License successfully deleted.', '', ''),
 								this.reloadLicense();
 							}
 						)
@@ -647,8 +715,12 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private get isLicenseTabOnLoad(): boolean {
+	private get isAdvertisersTabOnLoad(): boolean {
 		return this._location.path().includes('tab=2');
+	}
+
+	private get isHostsTabOnLoad(): boolean {
+		return this._location.path().includes('tab=1');
 	}
 
 	private compare(a: any, b: any, type = 'asc'): number {
@@ -667,6 +739,7 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 	}
 
 	private generateCharts(): void {
+		if (!this.statistics) return;
 		this.initial_load_charts = false;
 		this.generatePieChart('activity');
 		this.generatePieChart('connection');
@@ -755,6 +828,22 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	private setCurrentTabOnLoad(): void {
+
+		if (this.isHostsTabOnLoad) {
+			this.current_tab = 'hosts';
+			return;
+		}
+
+		if (this.isAdvertisersTabOnLoad) {
+			this.current_tab = 'advertisers';
+			return;
+		}
+
+		this.current_tab = 'licenses';
+
+	}
+
 	private updateCharts(): void {
 		setTimeout(() => {
 			const config = { duration: 800, easing: 'easeOutBounce' };
@@ -762,27 +851,30 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 			const connectionChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'connectionStatistics')[0];
 			const screenChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'screenStatistics')[0];
 			const statusChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'statusStatistics')[0];
-	
 			const { activityActive, activityInactive, connectionTypeLan, connectionTypeWifi, screenTypeAd, screenTypeClosed, screenTypeMenu, 
 				statusOffline, statusOnline } = this.statistics;
-	
 			activityChart.data.labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
 			activityChart.data.datasets[0].data = [ parseInt(activityActive), parseInt(activityInactive) ];
-	
 			connectionChart.data.labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
 			connectionChart.data.datasets[0].data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
-	
 			screenChart.data.labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ];
 			screenChart.data.datasets[0].data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
-	
 			statusChart.data.labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
 			statusChart.data.datasets[0].data = [ parseInt(statusOnline), parseInt(statusOffline) ];
-				
 			activityChart.update(config);
 			connectionChart.update(config);
 			screenChart.update(config);
 			statusChart.update(config);
 		}, 1000);
+	}
+
+	private subscribeToReassignSuccess(): void {
+		this.subscription.add(
+			this._dealer.onSuccessReassigningDealer.subscribe(
+				() => this.ngOnInit(),
+				error => console.log('Error on reassign success subscription', error)
+			)
+		);
 	}
 
 	getMultipleDeleteData(data) {
@@ -804,60 +896,99 @@ export class SingleDealerComponent implements OnInit, OnDestroy {
 		this.getLicensesofDealer(1);
 	}
 
-	getDataForExport(id): void {
-		this.subscription.add(
-			this._license.get_license_to_export(id).subscribe(
-				data => {
-					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-					this.licenses_to_export = data.licenses;
-					this.licenses_to_export.forEach((item, i) => {
-						this.modifyItem(item);
-						this.worksheet.addRow(item).font ={
-							bold: false
-						};
-					});
-					let rowIndex = 1;
-					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-					}
-					this.workbook.xlsx.writeBuffer()
-						.then((file: any) => {
-							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = this.dealer_user_data.businessName	+ '.xlsx';
-							FileSaver.saveAs(blob, filename);
+	getDataForExport(id, tab): void {
+		switch(tab) {
+			case 'Licenses': 
+				this.subscription.add(
+					this._license.get_license_to_export(id).subscribe(
+						data => {
+							this.licenses_to_export = data.licenses;
+							this.licenses_to_export.forEach((item, i) => {
+								this.modifyItem(item, tab);
+								this.worksheet.addRow(item).font ={
+									bold: false
+								};
+							});
+							this.generateExcel(tab);
 						}
-					);
-					this.workbook_generation = false;
-				}
-			)
-		);
+					)
+				)
+				break;
+			case 'Hosts':
+				this.subscription.add(
+					this._host.export_host(id).subscribe(
+						data => {
+							this.hosts_to_export = data.hosts;
+							this.hosts_to_export.forEach((item, i) => {
+								this.worksheet.addRow(item).font ={
+									bold: false
+								};
+							});
+							this.generateExcel(tab);
+						}
+					)
+				)
+				break;
+		}
 	}
 
-	modifyItem(item) {
-		item.screenType =  this._titlecase.transform(item.screenType);
-		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
-		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
-		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
-		item.createDate = this._date.transform(item.createDate, 'MMM dd, yyyy');
-		item.internetType = this.getInternetType(item.internetType);
-		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
-		item.isActivated = item.isActivated == 0 ? 'No' : 'Yes'
+	generateExcel(tab) {
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+		let rowIndex = 1;
+		for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+			this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+		}
+		this.workbook.xlsx.writeBuffer().then((file: any) => {
+			const blob = new Blob([file], { type: EXCEL_TYPE });
+			const filename = this.dealer_user_data.businessName	+ '-' + tab +  '.xlsx';
+			FileSaver.saveAs(blob, filename);
+		});
+		this.workbook_generation = false;
 	}
 
-	exportTable() {
+	modifyItem(item, tab) {
+		switch(tab) {
+			case 'Licenses':
+				item.screenType =  this._titlecase.transform(item.screenType);
+				item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
+				item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
+				item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
+				item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
+				item.internetType = this.getInternetType(item.internetType);
+				item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
+				item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
+				var parse_version = JSON.parse(item.appVersion);
+				item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
+				item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
+				break;
+		}	
+	}
+
+	exportTable(tab) {
 		this.workbook_generation = true;
 		const header = [];
 		this.workbook = new Excel.Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet('Licenses');
-		Object.keys(this.license_table_columns).forEach(key => {
-			if(this.license_table_columns[key].name) {
-				header.push({ header: this.license_table_columns[key].name, key: this.license_table_columns[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
-			}
-		});
-		header.push({ header: 'Activated', key: 'isActivated', width: 30, style: { font: { name: 'Arial', bold: true, color: '8EC641' }}});
+		this.worksheet = this.workbook.addWorksheet(tab);
+		switch(tab) {
+			case 'Licenses':
+				Object.keys(this.license_table_columns).forEach(key => {
+					if(this.license_table_columns[key].name && !this.license_table_columns[key].no_export) {
+						header.push({ header: this.license_table_columns[key].name, key: this.license_table_columns[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+					}
+				});
+				header.push({ header: 'Activated', key: 'isActivated', width: 30, style: { font: { name: 'Arial', bold: true, color: '8EC641' }}});
+				break;
+			case 'Hosts':
+				Object.keys(this.host_table_col).forEach(key => {
+					if(this.host_table_col[key].name && !this.host_table_col[key].no_export) {
+						header.push({ header: this.host_table_col[key].name, key: this.host_table_col[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+					}
+				});
+				break;
+		}
 		this.worksheet.columns = header;
-		this.getDataForExport(this.dealer_id);		
+		this.getDataForExport(this.dealer_id, tab);		
 	}
 }
