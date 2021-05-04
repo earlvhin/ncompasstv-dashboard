@@ -29,7 +29,7 @@ export class AdvertisersComponent implements OnInit {
 	searching_advertiser: boolean = false;
 	search_data_advertiser: string = "";
 	subscription: Subscription = new Subscription;
-	tab: any = { tab: 1 };
+	tab: any = { tab: 2 };
 	title: string = "Advertisers";
 	
 	constructor(

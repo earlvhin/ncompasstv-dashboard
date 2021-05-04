@@ -25,6 +25,8 @@ export class NewHostUserComponent implements OnInit {
 	server_error: string;
 	host_loading: boolean = true;
 	hosts: API_HOST[] = [];
+	is_password_field_type = true;
+	is_retype_password_field_type = true;
 	new_host_form: FormGroup;
 	no_host_place: boolean = false;
 	password_is_match: boolean;
@@ -171,10 +173,10 @@ export class NewHostUserComponent implements OnInit {
 				data => {
 					if (this.f.password.value == this.f.re_password.value) {
 						this.password_is_match = true;
-						this.password_match_msg = "Password is match"
+						this.password_match_msg = "Password matches"
 					} else {
 						this.password_is_match = false;
-						this.password_match_msg = "Password not match"
+						this.password_match_msg = "Password does not match"
 					}
 				}
 			)
@@ -312,6 +314,14 @@ export class NewHostUserComponent implements OnInit {
 		if(this.paging.hasNextPage || this.is_search) {
 			this.getHostPlaces(event.page);
 		}
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
 
 	createNewHost(formDirective) {

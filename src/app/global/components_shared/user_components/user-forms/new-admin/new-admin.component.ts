@@ -25,6 +25,8 @@ export class NewAdminComponent implements OnInit {
 	password_is_valid_msg: string;
 	server_error: string;
 	is_submitted: boolean;
+	is_password_field_type = true;
+	is_retype_password_field_type = true;
 
 	form_fields_view = [
 		{
@@ -126,10 +128,10 @@ export class NewAdminComponent implements OnInit {
 				data => {
 					if (this.f.password.value == this.f.re_password.value) {
 						this.password_is_match = true;
-						this.password_match_msg = "Password is match"
+						this.password_match_msg = "Password matches"
 					} else {
 						this.password_is_match = false;
-						this.password_match_msg = "Password not match"
+						this.password_match_msg = "Password does not match"
 					}
 				}
 			)
@@ -184,5 +186,13 @@ export class NewAdminComponent implements OnInit {
 			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 			this._router.navigate([`/${route}/users/`]);
 		})
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
 }

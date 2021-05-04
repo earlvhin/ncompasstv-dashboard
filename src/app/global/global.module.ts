@@ -33,7 +33,7 @@ import { DataCardComponent } from './components_shared/data_components/data-card
 import { DataCardCountComponent } from './components_shared/data_components/data-card-count/data-card-count.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
-import { DefaultDateFormatDirective } from './directives/default-date-format.directive';
+import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
 import { DealerDetailsTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-details-tab/dealer-details-tab.component';
 import { DealerHistoryTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-history-tab/dealer-history-tab.component';
@@ -73,6 +73,7 @@ import { MediaModalComponent } from './components_shared/media_components/media-
 import { MediaPlaywhereComponent } from './components_shared/playlist_components/media-playwhere/media-playwhere.component';
 import { MediaViewerComponent } from './components_shared/media_components/media-viewer/media-viewer.component';
 import { MomentDateModule } from '@angular/material-moment-adapter';
+import { MonthDayFormatDirective } from './directives/month-day-format/month-day-format.directive';
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
@@ -327,13 +328,14 @@ const MaterialModules = [
 ];
 
 const DIRECTIVES = [
-	DefaultDateFormatDirective
+	DefaultDateFormatDirective,
+	MonthDayFormatDirective,
 ];
 
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES
+		DIRECTIVES,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -370,7 +372,7 @@ const DIRECTIVES = [
 		UnassignLicenseComponent,
 		UserSortModalComponent,
 		ViewSchedulesComponent,
-		WarningPopupComponent
+		WarningPopupComponent,
 	],
 	imports: [
 		BrowserAnimationsModule,

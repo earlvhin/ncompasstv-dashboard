@@ -21,7 +21,7 @@
         <app-warning-animation></app-warning-animation>
         <h3 class="mb-1 mt-2">{{ message }}</h3>
         <p class="mb-4 sm-text font-weight-md text-warning">{{ data }}</p>
-        <button mat-button mat-raised-button class="theme-btn mr-2" [mat-dialog-close]="false" *ngIf="!rename">Cancel</button>
+        <button mat-button mat-raised-button class="theme-btn mr-2 bg-danger" [mat-dialog-close]="false" *ngIf="!rename">Cancel</button>
         <button mat-button mat-raised-button class="theme-btn" (click)="displaySuccess()" *ngIf="!rename && action != 'playlist_delete'">Continue</button>
 
         <button mat-button mat-raised-button class="theme-btn" (click)="deletePlaylist()" *ngIf="!rename && action == 'playlist_delete'">Continue</button>

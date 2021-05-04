@@ -7,9 +7,9 @@ export class UI_DEALER_HOST {
     postal_code:object;
     license_count: object;
     status: object;
-    install_date: object;
+    // install_date: object;
 
-    constructor(id: object, i: object, name: object, address: object, city: object, postal_code: object, license_count: object, status: object, install_date: object) {
+    constructor(id: object, i: object, name: object, address: object, city: object, postal_code: object, license_count: object, status: object) {
         this.host_id = id;
         this.index = i;
         this.host_name = name;
@@ -18,6 +18,6 @@ export class UI_DEALER_HOST {
         this.postal_code = postal_code;
         this.license_count = license_count;
         this.status = status;
-        this.install_date = install_date;
+        // this.install_date = install_date;
     }
 }

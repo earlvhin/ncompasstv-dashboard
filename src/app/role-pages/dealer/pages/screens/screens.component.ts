@@ -30,7 +30,7 @@ export class ScreensComponent implements OnInit {
 		'Type',
 		'Hosts',
 		'Template',
-		'Date Created', 
+		'Creation Date', 
 		// 'Last Update',
 		'Created By',
 		'Action'

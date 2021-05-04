@@ -37,7 +37,7 @@ export class DashboardComponent implements OnInit {
 		'Contact Person',
 		'Region',
 		'State', 
-		'Date Created'
+		'Creation Date'
 	]
 
 	constructor(

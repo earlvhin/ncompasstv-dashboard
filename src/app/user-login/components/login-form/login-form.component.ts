@@ -20,6 +20,7 @@ export class LoginFormComponent implements OnInit {
 	auth_error: boolean;
 	error_msg: string;
 	is_error: boolean;
+	is_password_field_type = true;
 	is_submitted: boolean;
 	show_overlay: boolean;
 
@@ -138,5 +139,9 @@ export class LoginFormComponent implements OnInit {
 				role = 'login'
 		}
 		this._router.navigate([role]);
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
 	}
 }

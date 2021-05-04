@@ -30,7 +30,7 @@ export class AdvertisersComponent implements OnInit {
 	no_advertiser: boolean = false;
 	dealers_with_advertiser: any = [];
 	subscription: Subscription = new Subscription;
-	tab: any = { tab: 1 };
+	tab: any = { tab: 2 };
 	filtered_data: any = [];
 	searching: boolean = false;
 	initial_load: boolean = true;
@@ -116,7 +116,7 @@ export class AdvertisersComponent implements OnInit {
 				return new UI_DEALER_ADVERTISERS(
 					{ value: i.dealerId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: i.dealerIdAlias ? i.dealerIdAlias : '--',  link: '/administrator/dealers/' + i.dealerId,  query: '1', editable: false, hidden: false},
+					{ value: i.dealerIdAlias ? i.dealerIdAlias : '--',  link: '/administrator/dealers/' + i.dealerId,  query: '2', editable: false, hidden: false},
 					{ value: i.businessName, link: '/administrator/dealers/' + i.dealerId , editable: false, hidden: false},
 					{ value: i.contactPerson, link: null , editable: false, hidden: false},
 					// { value: i.region, link: null , editable: false, hidden: false},

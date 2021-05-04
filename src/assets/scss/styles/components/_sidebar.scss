@@ -16,12 +16,21 @@
                 padding: 10px 20px;
                 font-size: $md;
                 transition: 0.1s linear;
+
+				.count {
+					background-color: $primary;					
+				}
+
                 &:hover {
                     background-color: $primary;
                     padding-left: 30px;
                 }
                 &.is-active {
                     background-color: $primary;
+
+					.count {
+						background-color: $dark;
+					}
                 }
             }
         }

@@ -2,6 +2,7 @@ export class UI_TABLE_LICENSE_BY_HOST {
     license_id: object;
     host_id: object;
     index: object;
+    screenshot: object;
     license_key: object;
     alias: object;
     screen_type: object;
@@ -19,13 +20,14 @@ export class UI_TABLE_LICENSE_BY_HOST {
     pi_status: object;
 
     constructor(
-        license_id: object, host_id: object, index: object, license_key: object, alias: object, screen_type: object,
+        license_id: object, host_id: object, index: object, screenshot: object, license_key: object, alias: object, screen_type: object,
         name: object, category: object, region: object, city: object, state: object, connection_type: object, screen: object, 
 		create_date: object, install_date: object, contents_updated: object, status: object, pi_status: object
     ) {
         this.license_id = license_id;
         this.host_id = host_id;
         this.index = index;
+        this.screenshot = screenshot;
         this.license_key = license_key;
         this.alias = alias;
         this.screen_type = screen_type;

@@ -22,7 +22,7 @@ export class PlaylistsComponent implements OnInit {
 		'#',
 		'Name',
 		'Description',
-		'Date Created',
+		'Creation Date',
 		// 'Last Update'
 	]
 	subscription: Subscription = new Subscription;

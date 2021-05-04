@@ -1,0 +1,41 @@
+.reassign-dealer-page {
+	.assets-selection {
+		.selection {
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 10px;
+		
+			mat-slide-toggle {
+				margin-right: 100px;
+			}
+		}
+
+		p, ul {
+			font-size: 14px;
+		}
+
+		ul {
+			margin-bottom: 0;
+
+			li {
+				margin-left: 50px;
+			}
+		}
+
+	}
+
+	.spinner {
+		margin-top: 9vh;
+		flex-direction: column;
+
+		p {
+			margin-top: 15px;
+			text-align: center;
+		}
+	}
+
+	button.bg-danger {
+		margin-left: 12px;
+	}
+
+}

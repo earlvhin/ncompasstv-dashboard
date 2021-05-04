@@ -11,14 +11,23 @@
         </div>
         <mat-form-field class="full-width mb-0 position-relative" *ngFor="let f of login_form_view">
             <mat-label>{{ f.label }}</mat-label>
-            <input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" type="{{ f.type }}">
-            <span class="field-error" *ngIf="is_submitted && form[f.control].errors">
-                {{ f.error }}
-            </span>
+
+			<input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" type="{{ f.type }}">
+
+			<ng-template #passwordField>
+				<div class="password-container">
+					<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
+					<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+				</div>
+			</ng-template>
+
+			<span class="field-error" *ngIf="is_submitted && form[f.control].errors">{{ f.error }}</span>
+
         </mat-form-field>
         <button type="submit" mat-raised-button class="theme-btn mt-4">
             Sign in
             <span class="fas fa-long-arrow-alt-right ml-2"></span>
         </button>
+
     </form>
 </div>

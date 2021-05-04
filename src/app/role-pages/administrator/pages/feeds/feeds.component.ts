@@ -27,7 +27,7 @@ export class FeedsComponent implements OnInit {
 		'Business Name',
 		'Type',
 		'Created By',
-		'Date Created',
+		'Creation Date',
 		'Action'
 	];
 	filtered_data: any = [];

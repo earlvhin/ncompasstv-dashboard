@@ -1,29 +1,23 @@
-export class Installation {
-	license_id: string;
-	license_key: string;
-	host: string;
-	business: string;
-	license_type: string;
-	screen: string;
-	installation_date: string;
-	host_url?: string;
-	dealer_url?: string;
-	license_url?: string;
-	screen_url?: string;
+export class INSTALLATION {
+	license_id: object;
+	index: object;
+	license_key: object;
+	host: object;
+	dealer_alias: object;
+	dealer_name: object;
+	license_type: object;
+	screen: object;
+	installation_date: object;
 
 	constructor(
-		id: string, 
-		key: string,
-		host: string,
-		business: string,
-		license_type: string,
-		screen: string,
-		installation_date: string
+		id: object, index: object, key: object, host: object, dealer_alias: object, dealer_name: object, license_type: object, screen: object, installation_date: object
 	) {
 		this.license_id = id;
+		this.index = index;
 		this.license_key = key;
-		this.business = business;
 		this.host = host;
+		this.dealer_alias = dealer_alias;
+		this.dealer_name = dealer_name;
 		this.license_type = license_type;
 		this.screen = screen;
 		this.installation_date = installation_date;

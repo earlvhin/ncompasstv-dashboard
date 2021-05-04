@@ -18,16 +18,20 @@ import { AuthService } from '../../services/auth-service/auth.service';
 
 export class UserAccountSettingComponent implements OnInit {
 
-	subscription: Subscription = new Subscription;
 	change_password: FormGroup;
-	user_data: API_USER_DATA;
 	change_password_form_disabled: boolean = true;
-	password_invalid: boolean;
-	password_old_not_match: boolean;
-	password_match: boolean = false;
-	password_is_match: string;
-	password_validation_message: string;
 	current_password_validation_message: string;
+	is_password_field_type = true;
+	is_new_password_field_type = true;
+	is_retype_password_field_type = true;
+	password_invalid: boolean;
+	password_is_match: string;
+	password_match: boolean = false;
+	password_old_not_match: boolean;
+	password_validation_message: string;
+	subscription: Subscription = new Subscription;
+	user_data: API_USER_DATA;
+
 
 	role: string;
 	route: string;
@@ -154,5 +158,17 @@ export class UserAccountSettingComponent implements OnInit {
 			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 			this._router.navigate([`/${route}/dashboard/`]);
 		})
-	}	
+	}
+
+	toggleNewPasswordFieldType(): void {
+		this.is_new_password_field_type = !this.is_new_password_field_type;
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
 }

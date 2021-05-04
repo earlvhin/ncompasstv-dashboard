@@ -44,8 +44,8 @@
                         <p><span class="sm-text font-weight-bold">Owner:</span> {{ file_data.selected.owner_name }}</p>
                         <p><span class="sm-text font-weight-bold">Role:</span> {{ file_data.selected.owner_type }}</p>
                         <p><span class="sm-text font-weight-bold">Type:</span> {{ file_data.selected.file_type }}</p>
-                        <p *ngIf="!file_data.selected.file_type | isFeed"><span class="sm-text font-weight-bold">Size:</span> {{ file_data.selected.file_size != null ? file_data.selected.file_size : '--' }}</p>
-                        <p *ngIf="(file_data.selected.file_type | isimage) || (file_data.selected.file_type | isFeed)"><span class="sm-text font-weight-bold">Duration:</span> {{file_data.selected.duration != null ? file_data.selected.duration : '--' }}</p>
+                        <p *ngIf="!(file_data.selected.file_type | isFeed)"><span class="sm-text font-weight-bold">Size:</span> {{ file_data.selected.file_size != null ? file_data.selected.file_size : '--' }}</p>
+                        <p><span class="sm-text font-weight-bold">Duration:</span> {{file_data.selected.duration != null ? file_data.selected.duration : '0' }} s</p>
                     </div> 
                 </mat-tab>
                 <!-- <mat-tab label="Playing Where"> 

@@ -33,24 +33,41 @@
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
 							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
 						</span>		
-						<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params">
-							<ng-container>
-								{{ data[d].value }}
-							</ng-container>
-						</a>
-						<ng-template #no_link>
-							<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
 
-								<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultvalue;">
-									{{ data[d].value | date: 'MMM dd, y' }}<br>
-									{{ data[d].value | date: 'hh:mm a' }}
-								</div>
-
-								<ng-template #defaultvalue>
+						<ng-container *ngIf="!data[d].isImage; else isImage;">
+							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params">
+								<ng-container>
 									{{ data[d].value }}
-								</ng-template>
-								
-							</span>
+								</ng-container>
+							</a>
+							
+							<ng-template #no_link>
+								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
+
+									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultvalue;">
+										{{ data[d].value | date: 'MMM dd, y' }}<br>
+										{{ data[d].value | date: 'hh:mm a' }}
+									</div>
+
+									<ng-template #defaultvalue>
+										{{ data[d].value }}
+									</ng-template>
+								</span>
+							</ng-template>
+						</ng-container>
+
+						<ng-template #isImage>
+							<ng-container *ngIf="data[d].value; else noImage">
+								<a [href]="data[d].value" target="_blank">
+									<img [src]="data[d].value" alt="screenshot" style="width: 50px; margin-bottom: 5px;">
+								</a>
+								<br>
+								<span>{{ data[d].value | screenshot }}</span>
+							</ng-container>
+
+							<ng-template #noImage>
+								<span>--</span>
+							</ng-template>
 						</ng-template>
 					</span>
 					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
@@ -79,7 +96,8 @@
 					<i class="fas fa-trash cursor-pointer" title="Delete Screen" (click)="deleteScreen(data.screen_id.value)"></i>
 				</td>
 				<td class="p-3 control-toggle" *ngIf="playlist_delete">
-					<i class="fas fa-trash cursor-pointer" title="Delete Playlist" (click)="deletePlaylist(data.playlist_id.value)"></i>
+					<i class="fas fa-trash cursor-pointer mx-3 text-danger" title="Delete Playlist" (click)="deletePlaylist(data.playlist_id.value)"></i>
+					<i *ngIf="!is_dealer" class="fas fa-file-excel" [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer': 'text-gray cursor-void'"  title="{{data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.'}}" (click)="exportPlaylist({id: data.playlist_id.value, name: data.name.value})"></i>
 				</td>
 				<td class="p-3 control-toggle text-center" *ngIf="license_delete">
 					<i class="fas fa-trash {{data.pi_status.value != 1  && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'}}" data-toggle="tooltip" title="{{data.pi_status.value != 1  && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'}}" (click)="deleteLicense(data.license_id.value)"></i>

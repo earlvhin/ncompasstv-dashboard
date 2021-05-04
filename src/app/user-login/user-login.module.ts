@@ -12,16 +12,17 @@ import {
 	MatInputModule, 
 	MatProgressSpinnerModule, 
 	MatCardModule, 
-	MatButtonModule 
+	MatButtonModule,
+	MatIconModule,
 } from '@angular/material';
 
 const MaterialModule = [
 	MatInputModule, 
 	MatProgressSpinnerModule, 
 	MatCardModule, 
-	MatButtonModule 
-]
-
+	MatButtonModule,
+	MatIconModule
+];
 @NgModule({
 	declarations: [
 		LoginComponent, 

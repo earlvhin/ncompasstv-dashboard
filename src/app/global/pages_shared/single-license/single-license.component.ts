@@ -46,9 +46,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	content_id: string;
 	content_per_zone: UI_CONTENT_PER_ZONE[];
 	content_play_count: API_CONTENT[] = [];
+	content_statistics: any;
 	content_time_update: string;
 	contents_array: any = [];
-	content_statistics: any;
 	current_operation: { day: string, period: string };
 	current_month = new Date().getMonth() + 1;
 	current_year = new Date().getFullYear();
@@ -61,6 +61,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	eventsSubject: Subject<void> = new Subject<void>();
 	filters: any;
 	has_background_zone = false;
+	has_playlist = false;
 	host: API_HOST;
 	host_notes = '';
 	host_route: string;
@@ -95,7 +96,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	screen_type: any = {};
 	selected_display_mode: string = 'monthly';
 	selected_month = this.default_selected_month;
-	selected_zone: number = 0;
+	selected_zone_index = 0;
 	speedtest_running: boolean = false;
 	show_hours = false;
 	show_popup = false;
@@ -109,6 +110,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	update_btn: string = 'Content Update';
 	yearly_chart_updating = true;
 	yearly_content_count: API_CONTENT[] = [];
+	zone_order: number = 0;
 	zone_playlists: UI_ZONE_PLAYLIST[];
 
 	_socket: any;
@@ -332,22 +334,22 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this._content.get_content_by_license_id(id).subscribe(
 				data => {
 					if (data) {
-						
 						this.content_per_zone = this.zoneContent_mapToUI(data);
-						this.breakdownContents();
 
 						this.screen_zone = {
 							playlistName : data[0].screenTemplateZonePlaylist.playlistName,
 							playlistId: data[0].screenTemplateZonePlaylist.playlistId,
 							dateCreated: data[0].screenTemplateZonePlaylist.dateCreated,
 						};
-						
-						this.number_of_contents = this.contents_array[0];
 
 						if (this.content_per_zone[0].zone_name && this.content_per_zone[0].zone_name === 'Background') {
 							this.current_zone_selected = 'Background';
 							this.background_zone_selected = true;
 						}
+						
+						this.has_playlist = true;
+						this.breakdownContents();
+						this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
 
 						this.playlist_route = "/" + this.routes + "/playlists/" + this.screen_zone.playlistId;
 					}
@@ -429,8 +431,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(
 			this._license.get_license_by_id(id).subscribe(
 				(data: any) => {
-					console.log("LICENSE", data);
-
 					this.title = data.license.alias;
 					this.license_key = data.license.licenseKey;
 					this.license_data = data.license;
@@ -617,7 +617,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	// Playlist Contents and Properties Map to UI
 	playlistContent_mapToUI(data: API_CONTENT[]): UI_CONTENT[] {
-		return data.map(
+
+		const content = data.map(
 			(c: API_CONTENT) => {
 				return new UI_CONTENT(
 					c.playlistContentId,
@@ -640,11 +641,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					c.isConverted,
 					c.uuid,
 					c.title,
+					c.playlistContentSchedule,
 					c.uploaded_by,
 					c.classification
 				)
 			}
 		);
+
+		return content.filter(content => {
+
+			if (content.playlist_content_schedule) {
+				const schedule = content.playlist_content_schedule;
+				return schedule && schedule.type === 1 || (schedule.type === 3 && !moment().isAfter(moment(schedule.to)));
+			}
+
+		});
 	}
 
 	// Get Licenses where THIS screen is playing
@@ -748,19 +759,27 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	zoneSelected(name: string): void {
-		this.content_per_zone.map(
-			i => {
-				if (i.zone_name == name) {
-					this.selected_zone = i.zone_order;
-					this.breakdownContents();
-					this.updateCharts();
-					this.screen_zone = { playlistName : i.playlist_name, playlistId: i.playlist_id, zone: name };
-					this.number_of_contents = this.contents_array[this.selected_zone];
-					this.playlist_route = "/" + this.routes + "/playlists/" + this.screen_zone.playlistId;
-				}
-			}
-		);
-	}
+
+		this.breakdownContents();
+		this.updateCharts();
+		this.selected_zone_index = this.content_per_zone.findIndex(content => content.zone_name === name);
+
+		if (this.selected_zone_index === -1) {
+			this.screen_zone = { playlistName: 'No Playlist', playlistId: null, zone: name };
+			this.has_playlist = false;
+			return;
+		}
+
+		const selectedZone = this.content_per_zone.filter(content => content.zone_name === name)[0];
+		this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
+
+		const { zone_order, zone_name, playlist_name, playlist_id } = selectedZone;
+		this.zone_order = zone_order;
+		this.screen_zone = { playlistName: playlist_name, playlistId: playlist_id, zone: zone_name };
+		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
+		this.has_playlist = true;
+
+	} 
 
 	// Zone Properties Map to UI
 	zonePlaylist_mapToUI(data: API_SCREEN_TEMPLATE_ZONE): UI_ZONE_PLAYLIST {
@@ -873,7 +892,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
 				this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
 				this.internet_connection.date = date;
-				this.license_data.internetSpeed = downloadMbps > 7 ? 'Fast' : 'Slow';
+				this.license_data.internetSpeed = downloadMbps > 7 ? 'Good' : 'Slow';
 				this.speedtest_running = false;
 			
 				this._license.update_internet_info(
@@ -1004,15 +1023,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		if (window.innerWidth <= 1039) {
 			this.minimap_width = '100%';
 		} else {
-			this.minimap_width = '400px';
+			this.minimap_width = '300px';
 		}
 
 	}
 
 	private breakdownContents(): void {
-		const contents: UI_CONTENT[] = this.content_per_zone[this.selected_zone].contents;
-
 		const breakdown = { hosts: 0, advertisers: 0, fillers: 0, feeds: 0, others: 0 };
+		const zone = this.content_per_zone.filter(zone => zone.zone_name === this.current_zone_selected)[0];
+
+		if (!zone || !zone.contents || zone.contents.length <= 0) {
+			this.content_statistics = breakdown;
+			return
+		}
+
+		const contents: UI_CONTENT[] = zone.contents;
 
 		contents.forEach(content => {
 			const { advertiser_id, classification, file_type, host_id,  } = content;
@@ -1066,11 +1091,26 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 						// workaround for the New Standard Template (NST)
 						// needs update if ever the NST has additional zones
-						if (this.template_data.template.name === 'New Standard Template') this.is_new_standard_template = true;
+						if (this.template_data.template.name === 'New Standard Template') {
+							this.is_new_standard_template = true;
+						}
 						
 						this.subscribeToZoneSelect();
-						const backgroundZone = this.template_data.templateZones.filter(zone => zone.name === 'Background');
-						if (backgroundZone && backgroundZone.length > 0) this.has_background_zone = true;							
+						const backgroundTemplateZone = this.template_data.templateZones.filter(zone => zone.name === 'Background');
+						const backgroundZone = this.content_per_zone.filter(content => content.zone_name === 'Background')[0];
+						
+						if (backgroundTemplateZone && backgroundTemplateZone.length > 0) {
+
+							this.current_zone_selected = 'Background';
+							
+							this.screen_zone = {
+								playlistName : backgroundZone.playlist_name,
+								playlistId: backgroundZone.playlist_id,
+								zone: backgroundZone.zone_name,
+							};
+							
+							this.has_background_zone = true;
+						}							
 					}
 
 				}, 
@@ -1208,12 +1248,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(
 			this._template.onSelectZone.subscribe(
 				(name: string) => {
-					this.zoneSelected(name);
 
+					if (name === this.current_zone_selected) {
+						console.log('Same zone selected!');
+						return;
+					}
+
+					console.log('Zone selected!');
+					this.current_zone_selected = name;
+					this.zoneSelected(name);
 					if (name === 'Background') this.background_zone_selected = true;
 					else this.background_zone_selected = false;
-
-					this.current_zone_selected = name;
 				},
 				error => console.log('Error selecting zone', error)
 			)
