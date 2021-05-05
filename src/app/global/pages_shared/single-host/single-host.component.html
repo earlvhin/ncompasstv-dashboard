@@ -40,16 +40,47 @@
                         <div class="theme-container pt-4" *ngIf="host_license.length != 0 || no_record; else loader">
                             <div class="row" *ngIf="!no_record; else no_data">
                                 <div class="col-lg-8">
-									<button mat-button mat-raised-button class="theme-btn sm-text mr-2" (click)="reloadLicense()"><i class="fas fa-sync-alt mr-2"></i> Reload</button>
-									<button mat-button mat-raised-button class="theme-btn sm-text mr-2 _danger" (click)="unassignHostLicense()" [disabled]="host_license.length == 0"><i class="fas fa-times mr-2"></i> Unassign Licenses</button>
-									<button mat-button mat-raised-button class="theme-btn sm-text mr-2 _cool" [disabled]="pi_updating" (click)="pushUpdate()"><span class="fas fa-upload mr-2"></span>Content Update</button>
-									<button mat-button mat-raised-button class="theme-btn sm-text _primary mr-2" (click)="updateAndRestart()" [disabled]="pi_updating"><i class="fas fa-terminal mr-2"></i>{{ update_btn }}</button>
                                     <button mat-button mat-raised-button 
-                                    class="theme-btn sm-text _dark" 
+                                        class="theme-btn pi-control sm-text mr-2" 
+                                        (click)="reloadLicense()"  
+                                        title="Reload">
+                                        <span class="fas fa-sync-alt"></span> 
+                                        <span class="ml-2 button_text_animation">Reload</span>
+                                    </button>
+
+                                    <button mat-button mat-raised-button 
+                                        class="theme-btn pi-control _danger sm-text mr-2" 
+                                        [disabled]="host_license.length == 0" 
+                                        (click)="unassignHostLicense()"  
+                                        title="Unassign Licenses">
+                                        <span class="fas fa-times"></span> 
+                                        <span class="ml-2 button_text_animation">Unassign Licenses</span>
+                                    </button>
+
+                                    <button mat-button mat-raised-button 
+                                        class="theme-btn pi-control _warning sm-text mr-2" 
+                                        [disabled]="pi_updating" 
+                                        (click)="pushUpdate()"  
+                                        title="Content Update">
+                                        <span class="fas fa-upload"></span> 
+                                        <span class="ml-2 button_text_animation">Content Update</span>
+                                    </button>
+
+                                    <button mat-button mat-raised-button 
+                                        class="theme-btn pi-control _primary sm-text mr-2" 
+                                        [disabled]="pi_updating" 
+                                        (click)="updateAndRestart()"  
+                                        title='{{ update_btn }}'>
+                                        <span class="fas fa-terminal"></span> 
+                                        <span class="ml-2 button_text_animation">{{ update_btn }}</span>
+                                    </button>
+
+                                    <button mat-button mat-raised-button 
+                                    class="theme-btn pi-control sm-text _dark" 
                                     (click)="updateToVersion2()" 
                                     title="Update to Version 2">
                                         <span class="font-weight-bold">2.0</span> 
-                                        <span class="ml-2">Upgrade to version 2</span>
+                                        <span class="ml-2 button_text_animation">Upgrade to version 2</span>
                                     </button>
                                 </div>
                                 <div class="col-lg-4">
@@ -69,7 +100,7 @@
                                         [table_data]="filtered_data"
                                         [new_table]="true"
                                         [license_status_column]="true"
-                                        (update_info)="ngOnInit()">
+                                        (update_info)="reloadLicense()">
                                         </app-data-table>
                                     </mat-card>
                                 </div>

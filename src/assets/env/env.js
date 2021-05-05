@@ -2,8 +2,7 @@
     window["env"] = window["env"] || {};
   
     // Environment variables
-    window["env"]["apiUrl"] = "https://apistg.ourimage.biz/api/";
-    window["env"]["apiUrlV1"] = "https://apistg.ourimage.biz/api/";
-    window["env"]["socketUrl"] = "https://socketstg.ourimage.biz";
+    window["env"]["apiUrl"] = "http://3.212.225.229:72/api/";
+    window["env"]["socketUrl"] = "http://3.212.225.229:73";
     window["env"]["debug"] = true;
   })(this);

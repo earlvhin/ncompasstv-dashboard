@@ -64,61 +64,11 @@
                 }
               ]
             },
-            "preprod": {
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.preprod.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "100mb",
-                  "maximumError": "100mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "100mb",
-                  "maximumError": "100mb"
-                }
-              ]
-            },
             "staging": {
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.staging.ts"
-                }
-              ],
-              "optimization": true,
-              "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
-              "namedChunks": false,
-              "aot": true,
-              "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "100mb",
-                  "maximumError": "100mb"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "100mb",
-                  "maximumError": "100mb"
                 }
               ]
             }
@@ -135,9 +85,6 @@
             },
             "staging": {
               "browserTarget": "dashboard-material:build:staging"
-            },
-            "preprod": {
-              "browserTarget": "dashboard-material:build:preprod"
             }
           }
         },

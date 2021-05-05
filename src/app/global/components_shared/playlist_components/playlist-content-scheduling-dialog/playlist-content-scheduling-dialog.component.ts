@@ -380,7 +380,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	private setInitialFormValues(): void {
 
 		const dialog = this.dialog_data;
-		const { content, mode, content_ids } = dialog;
+		const { content, mode, content_ids, schedules } = dialog;
 
 		// for create
 
@@ -399,8 +399,15 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		this.type = this.types.filter(t => t.value == type)[0];
 
 		if (typeof content.playlistContentsSchedule !== 'undefined' && content.playlistContentsSchedule) {
+
 			this.start_date = from;
 			this.end_date = to;
+
+			if (schedules.length > 1) {
+				this.start_date = new Date();
+				this.end_date = moment().add(5, 'years');
+			}
+
 			this.days = days;
 			this.setDaysForUpdate(days);
 			this.start_time = playTimeStart;
@@ -424,9 +431,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 	private submitAll(create: PlaylistContentSchedule[], update: PlaylistContentSchedule[]): void {
 
-		console.log('for create', create);
-		console.log('for update', update);
-
 		let message = 'create';
 		let observables: Observable<any>[] = [];
 		
@@ -438,16 +442,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			observables.push(this._content.update_content_schedule(data));
 		});
 
-		console.log('observables', observables);
-
 		forkJoin(observables).pipe(takeUntil(this._unsubscribe)).subscribe(
-			response => {
-				console.log('submit all ', response);
-				this.dialog_reference.close(message);
-			},
+			() => this.dialog_reference.close(message),
 			error => console.log('Error submitting create/update schedules', error)
 		);
-
 
 	}
 

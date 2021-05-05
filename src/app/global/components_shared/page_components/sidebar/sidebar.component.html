@@ -10,11 +10,19 @@
     </div>
 
     <ul class="menu list-unstyled m-0 p-0">
-        <li class="menu-item full-width mb-1" *ngFor="let r of routes">
-            <a [routerLink]="r.path" routerLinkActive="is-active" class="full-width">
-                <span class="{{r.icon}} inline-block"></span>
-                <span class="url-text ml-2" *ngIf="!icons_only">{{r.label}}</span>
+        <li class="menu-item full-width mb-1" *ngFor="let route of routes">
+            <a [routerLink]="route.path" routerLinkActive="is-active" class="full-width" *ngIf="route.label != 'Installations'; else installationsRoute">
+                <span class="{{ route.icon }} inline-block"></span>
+                <span class="url-text ml-2" *ngIf="!icons_only">{{ route.label }}</span>
             </a>
+
+			<ng-template #installationsRoute>
+				<a [routerLink]="route.path" routerLinkActive="is-active" class="full-width installations-row">
+					<span class="{{ route.icon }} inline-block"></span>
+					<span class="url-text ml-2" *ngIf="!icons_only">{{ route.label }}</span>
+					<span class="url-text ml-2 count" *ngIf="!icons_only">{{ installations_count }}</span>
+				</a>
+			</ng-template>
         </li>
     </ul>
 </aside>

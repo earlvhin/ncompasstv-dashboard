@@ -1,23 +1,29 @@
-import { Injectable } from '@angular/core';
-import 'rxjs/add/operator/map'
+import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
+import 'rxjs/add/operator/map'
+
 import { API_DEALER } from '../../models/api_dealer.model';
+import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
-  encodeKey(key: string): string {
-    return encodeURIComponent(key);
-  }
-  encodeValue(value: string): string {
-    return encodeURIComponent(value);
-  }
-  decodeKey(key: string): string {
-    return decodeURIComponent(key);
-  }
-  decodeValue(value: string): string {
-    return decodeURIComponent(value);
-  }
+
+	encodeKey(key: string): string {
+		return encodeURIComponent(key);
+	}
+
+	encodeValue(value: string): string {
+		return encodeURIComponent(value);
+	}
+
+	decodeKey(key: string): string {
+		return decodeURIComponent(key);
+	}
+
+	decodeValue(value: string): string {
+		return decodeURIComponent(value);
+	}
+
 }
 
 @Injectable({
@@ -27,14 +33,9 @@ export class CustomHttpParamEncoder implements HttpParameterCodec {
 export class DealerService {
 	
 	token = JSON.parse(localStorage.getItem('tokens'));
-
-	httpOptions = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}`}
-		)
-	};
-
-	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } })
+	httpOptions = { headers: new HttpHeaders( { 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}`} )};
+	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } });
+	onSuccessReassigningDealer = new EventEmitter<null>();
 
 	constructor(
 		private _http: HttpClient,
@@ -43,6 +44,10 @@ export class DealerService {
 	
 	add_dealer(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_dealer}`, data);
+	}
+
+	export_dealers() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealers}`, this.httpOptions).map(data => data.dealers);
 	}
 
 	get_dealers() {
@@ -58,8 +63,7 @@ export class DealerService {
 	}
 	
 	get_dealers_with_license(page, key) {
-		const params = this.httpParams({ page, search: key })
-
+		const params = this.httpParams({ page, search: key });
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_license}`, { ...this.httpOptions, params });
 	}
 
@@ -75,7 +79,7 @@ export class DealerService {
 		return this._http.get<API_DEALER>(`${environment.base_uri}${environment.getters.api_get_dealer_by_id}${id}`, this.httpOptions).map(data => data.dealer);
 	}
 	
-	get_search_dealer(key: string) {
+	get_search_dealer(key: number | string) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_search_dealer}${key}`, this.httpOptions);
 	}
 
@@ -93,5 +97,10 @@ export class DealerService {
 
 	update_dealer(data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_dealer}`, data, this.httpOptions);
+	}
+
+	reassign_dealer(old_id: string, new_id: string) {
+		const data = { oldDealerId: old_id, newDealerId: new_id };
+		return this._http.post(`${environment.base_uri}${environment.update.reassign_dealer}`, data, this.httpOptions);
 	}
 }

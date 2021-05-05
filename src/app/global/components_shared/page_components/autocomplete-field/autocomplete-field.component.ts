@@ -95,7 +95,7 @@ export class AutocompleteFieldComponent implements OnInit {
 					if(this.view_value.length == 0) {
 						this.search_via_api = true;
 						this.paging = true;
-						this.call_next_page.emit({page: 1, is_search: true})
+						this.call_next_page.emit({page: 1, is_search: true, no_keyword: true})
 					}
 				}
 			}, this.timeOutDuration);

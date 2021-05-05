@@ -63,82 +63,7 @@
             <div class="row">
                 <div class="col-lg-12">
                     <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
-                        <mat-tab label="Hosts">
-                            <div *ngIf="!initial_load; else loader">
-                                <div *ngIf="!no_hosts; else no_data">
-                                    <div class="row pt-2">
-                                        <div class="col-lg-8">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <app-search-field
-                                            *ngIf="!initial_load"
-                                            [form_title]="'Search Host Name, Address, City or Postal Code'"
-                                            [placeholder]="'Example: N-Compass'"
-                                            [data_reference]="host_data"
-                                            [primary_keyword]="'host_name'"
-                                            [secondary_keyword]="'host_name'"
-                                            (searched)="hostFilterData($event)"
-                                            [api_search]="true"
-                                            ></app-search-field>
-                                        </div>
-                                    </div>
-                                    <div class="row" *ngIf="!initial_load">
-                                        <div class="col-lg-12">
-                                            <ng-container *ngIf="!searching; else loader">
-                                                <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
-                                                    <app-data-table
-                                                    [table_columns]="host_table_col"
-                                                    [table_data]="host_filtered_data"
-                                                    [new_table]="true"
-                                                    [paging_details]="paging_data"
-                                                    (page_triggered)="getDealerHost($event)">
-                                                    </app-data-table>
-                                                </mat-card>
-                                            </ng-container>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </mat-tab>
-                        <mat-tab label="Advertisers">
-                            <div *ngIf="!initial_load_advertiser; else loader">
-                                <div *ngIf="!no_advertisers; else no_data">
-                                    <div class="row pt-2">
-                                        <div class="col-lg-8">
-                                        </div>
-                                        <div class="col-lg-4">
-                                            <app-search-field
-                                            *ngIf="!initial_load_advertiser"
-                                            [form_title]="'Search Advertiser Name'"
-                                            [placeholder]="'Example: N-Compass'"
-                                            [data_reference]="advertiser_data"
-                                            [primary_keyword]="'name'"
-                                            [secondary_keyword]="'name'"
-                                            (searched)="advertiserFilterData($event)"
-                                            [api_search]="true"
-                                            ></app-search-field>
-                                        </div>
-                                    </div>
-                                    <div class="row" *ngIf="!initial_load_advertiser">
-                                        <div class="col-lg-12">
-                                            <ng-container *ngIf="!searching_advertiser; else loader">
-                                                <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
-                                                    <app-data-table 
-                                                    [table_columns]="adv_table_col" 
-                                                    [table_data]="advertiser_filtered_data"
-                                                    [new_table]="true"
-                                                    [paging_details]="paging_data_advertiser"
-                                                    (page_triggered)="getDealerAdvertiser($event)"
-                                                    [advertiser_delete]="true"
-                                                    (update_info)="reloadAdvertiser()">
-                                                    </app-data-table>
-                                                </mat-card>
-                                            </ng-container>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </mat-tab>
+						<!-- LICENSES TAB -->
                         <mat-tab label="Licenses">
                             <div *ngIf="!initial_load_license; else loader">
                                 <div *ngIf="!no_licenses; else no_data">
@@ -146,26 +71,34 @@
 										<div class="row statistics">
 											<div class="col-sm-3">
 												<mat-card id="activityContainer">
-													<mat-spinner *ngIf="loading_statistics.activity"></mat-spinner>
-													<canvas id="activityStatistics" height="150px" style="width: 100%;"></canvas>
+													<div class="spinner-wrapper">
+														<mat-spinner *ngIf="loading_statistics.activity" mode="indeterminate" [diameter]="48"></mat-spinner>
+													</div>
+													<canvas id="activityStatistics" height="250px"></canvas>
 												</mat-card>
 											</div>
 											<div class="col-sm-3">
 												<mat-card id="statusContainer">
-													<mat-spinner *ngIf="loading_statistics.status"></mat-spinner>
-													<canvas id="statusStatistics" height="150px" style="width: 100%;"></canvas>
+													<div class="spinner-wrapper">
+														<mat-spinner *ngIf="loading_statistics.status" mode="indeterminate" [diameter]="48"></mat-spinner>
+													</div>
+													<canvas id="statusStatistics" height="250px"></canvas>
 												</mat-card>
 											</div>
 											<div class="col-sm-3">
 												<mat-card id="connectionContainer">
-													<mat-spinner *ngIf="loading_statistics.connection"></mat-spinner>
-													<canvas id="connectionStatistics" height="150px" style="width: 100%;"></canvas>
+													<div class="spinner-wrapper">
+														<mat-spinner *ngIf="loading_statistics.connection" mode="indeterminate" [diameter]="48"></mat-spinner>
+													</div>
+													<canvas id="connectionStatistics" height="250px"></canvas>
 												</mat-card>
 											</div>
 											<div class="col-sm-3">
 												<mat-card id="screenContainer">
-													<mat-spinner *ngIf="loading_statistics.screen"></mat-spinner>
-													<canvas id="screenStatistics" height="150px" style="width: 100%;"></canvas>
+													<div class="spinner-wrapper">
+														<mat-spinner *ngIf="loading_statistics.screen" mode="indeterminate" [diameter]="48"></mat-spinner>
+													</div>
+													<canvas id="screenStatistics" height="250px"></canvas>
 												</mat-card>
 											</div>
 										</div>
@@ -271,7 +204,7 @@
 
                                                 <button mat-button mat-raised-button
                                                 class="theme-btn pi-control sm-text _primary mr-2" 
-                                                (click)="exportTable()"
+                                                (click)="exportTable('Licenses')"
                                                 [disabled]="workbook_generation"  
                                                 title="Export to CSV">
                                                     <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
@@ -324,6 +257,96 @@
                                 </div>
                             </div>
                         </mat-tab>
+						
+						<!-- HOSTS TAB -->
+                        <mat-tab label="Hosts">
+                            <div *ngIf="!initial_load; else loader">
+                                <div *ngIf="!no_hosts; else no_data">
+                                    <div class="row pt-3">
+                                        <div class="col-lg-8">
+                                            <button mat-button mat-raised-button
+                                            class="theme-btn pi-control sm-text _primary mr-2" 
+                                            (click)="exportTable('Hosts')"
+                                            [disabled]="workbook_generation"  
+                                            title="Export to CSV">
+                                                <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                                                <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <app-search-field
+                                            *ngIf="!initial_load"
+                                            [form_title]="'Search Host Name, Address, City or Postal Code'"
+                                            [placeholder]="'Example: N-Compass'"
+                                            [data_reference]="host_data"
+                                            [primary_keyword]="'host_name'"
+                                            [secondary_keyword]="'host_name'"
+                                            (searched)="hostFilterData($event)"
+                                            [api_search]="true"
+                                            ></app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching; else loader">
+                                                <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
+                                                    <app-data-table
+                                                    [table_columns]="host_table_col"
+                                                    [table_data]="host_filtered_data"
+                                                    [new_table]="true"
+                                                    [paging_details]="paging_data"
+                                                    (page_triggered)="getDealerHost($event)">
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+
+						<!-- ADVERTISERS TAB -->
+                        <mat-tab label="Advertisers">
+                            <div *ngIf="!initial_load_advertiser; else loader">
+                                <div *ngIf="!no_advertisers; else no_data">
+                                    <div class="row pt-2">
+                                        <div class="col-lg-8">
+                                        </div>
+                                        <div class="col-lg-4">
+                                            <app-search-field
+                                            *ngIf="!initial_load_advertiser"
+                                            [form_title]="'Search Advertiser Name'"
+                                            [placeholder]="'Example: N-Compass'"
+                                            [data_reference]="advertiser_data"
+                                            [primary_keyword]="'name'"
+                                            [secondary_keyword]="'name'"
+                                            (searched)="advertiserFilterData($event)"
+                                            [api_search]="true"
+                                            ></app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load_advertiser">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching_advertiser; else loader">
+                                                <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
+                                                    <app-data-table 
+                                                    [table_columns]="adv_table_col" 
+                                                    [table_data]="advertiser_filtered_data"
+                                                    [new_table]="true"
+                                                    [paging_details]="paging_data_advertiser"
+                                                    (page_triggered)="getDealerAdvertiser($event)"
+                                                    [advertiser_delete]="true"
+                                                    (update_info)="reloadAdvertiser()">
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+
+						
                     </mat-tab-group>
                 </div>
             </div>

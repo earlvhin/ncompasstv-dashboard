@@ -29,7 +29,7 @@ export class UsersComponent implements OnInit {
 		'Email Address',
 		'Contact Number',
 		'Role',
-		'Date Created',
+		'Creation Date',
 		'Created By'
 	]
 	initial_load: boolean = true;

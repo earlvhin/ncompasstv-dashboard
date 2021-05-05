@@ -41,6 +41,10 @@ export class PlaylistService {
 		return this._http.post<API_BLOCKLIST_CONTENT[]>(`${environment.base_uri}${environment.update.api_blocklist_content}`, data, this.httpOptions)
 	}
 
+	export_playlist(id) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_content_playlist}${id}`, this.httpOptions);
+	}
+
 	get_playlists(page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}

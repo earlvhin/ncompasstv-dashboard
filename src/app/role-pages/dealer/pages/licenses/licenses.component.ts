@@ -10,6 +10,7 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-licenses',
@@ -49,6 +50,7 @@ export class LicensesComponent implements OnInit {
 
 	license_table_columns = [
 		{ name: '#', sortable: false, key: 'licenseKey', hidden: true},
+		{ name: 'Screenshot', sortable: false, no_export: true},
 		{ name: 'License Key', sortable: false, key: 'licenseKey'},
 		{ name: 'Alias', sortable: false, key: 'alias'},
 		{ name: 'Type', sortable: false, key: 'screenType'},
@@ -59,7 +61,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'State', sortable: false, key: 'state'},
 		{ name: 'Connection Type', sortable: false, key:'internetType'},
 		{ name: 'Screen', sortable: false, key:'screenName'},
-		{ name: 'Create Date', sortable: false, key:'dateCreated'},
+		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 		{ name: 'Install Date', sortable: false, key:'installDate'},
 		{ name: 'Last Push', sortable: false, key:'contentsUpdated'},
 		{ name: 'Status', sortable: false, key:'isActivated'},
@@ -169,6 +171,13 @@ export class LicensesComponent implements OnInit {
 					{ value: license.licenseId, link: null , editable: false, hidden: true },
 					{ value: host ? host.hostId : '--', link: null , editable: false, hidden: true },
 					{ value: count++, link: null , editable: false, hidden: false },
+					{ 
+						value: license.screenshotUrl ? `${environment.base_uri_old}${license.screenshotUrl.replace("/API/", "")}` : null,
+						link: license.screenshotUrl ? `${environment.base_uri_old}${license.screenshotUrl.replace("/API/", "")}` : null, 
+						editable: false, 
+						hidden: false, 
+						isImage: true
+					},
 					{ value: license.licenseKey, link: '/dealer/licenses/' + license.licenseId, editable: false, hidden: false, status: true },
 					{ value: license.alias ? license.alias : '--', link: '/dealer/licenses/' + license.licenseId, editable: true, label: 'License Alias', id: license.licenseId, hidden: false },
 					{ value: screen.screenTypeId ? this._title.transform(screenType.name) : '--', link: null, editable:false, hidden: false },

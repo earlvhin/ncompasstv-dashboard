@@ -2,6 +2,7 @@ import { API_CONTENT } from './api_content.model';
 import { API_HOST } from './api_host.model';
 import { API_LICENSE, API_LICENSE_PROPS } from './api_license.model';
 import { BLACKLISTED_CONTENT } from './api_single-playlist.model';
+import { PlaylistContentSchedule } from './playlist-content-schedule.model';
 import { UI_PLAYLIST_HOST_LICENSE } from './ui_playlist-host-license.model';
 
 export class UI_CONTENT {
@@ -27,12 +28,13 @@ export class UI_CONTENT {
     uuid: string;
     title: string;
     uploaded_by: string;
+	playlist_content_schedule: PlaylistContentSchedule;
 
     constructor(
         playlist_content_id: string, created_by: string, content_id: string, created_by_name: string, dealer_id: string, 
 		duration: number, host_id: string, advertiser_id: string, filename: string, file_url: string, file_type: string, 
 		handler_id: string, date_uploaded: string, is_fullscreen: number, file_size: number, thumbnail: string, is_active: number, 
-		is_converted: number, uuid: string, title?: string, uploaded_by?: string, classification?: string
+		is_converted: number, uuid: string, title?: string, playlist_content_schedule?: any, uploaded_by?: string, classification?: string
     ) {
         this.playlist_content_id = playlist_content_id;
         this.created_by = created_by;
@@ -56,6 +58,7 @@ export class UI_CONTENT {
         this.title = title;
         this.uploaded_by = uploaded_by;
 		this.classification = classification;
+		this.playlist_content_schedule = playlist_content_schedule;
     }
 }
 

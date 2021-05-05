@@ -16,6 +16,7 @@ import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-sc
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
+import { ViewContentListComponent } from '../view-content-list/view-content-list.component';
 @Component({
 	selector: 'app-playlist-content-panel',
 	templateUrl: './playlist-content-panel.component.html',
@@ -298,6 +299,10 @@ export class PlaylistContentPanelComponent implements OnInit {
 
 	onSetSchedule(): void {
 		this.showContentScheduleDialog();
+	}
+
+	onViewContentList(): void {
+		this.showViewContentListDialog();
 	}
 
 	onViewSchedule(): void {
@@ -711,9 +716,23 @@ export class PlaylistContentPanelComponent implements OnInit {
 		);
 	}
 
+	private showViewContentListDialog(): void {
+
+		const width = '1180px';
+		const contents = this.playlist_contents;
+
+		this._dialog.open(ViewContentListComponent, {
+			width,
+			panelClass: 'position-relative',
+			data: { contents },
+			autoFocus: false
+		});
+
+	}
+
 	private showViewSchedulesDialog(): void {
 
-		const width = '1150px';
+		const width = '1180px';
 		const contents = this.playlist_contents;
 
 		this._dialog.open(ViewSchedulesComponent, {
@@ -724,4 +743,5 @@ export class PlaylistContentPanelComponent implements OnInit {
 		});
 
 	}
+
 }

@@ -282,7 +282,7 @@ export class SingleHostComponent implements OnInit {
 		dialog.afterClosed().subscribe(
 			data => {
 				if (data) {
-					this.ngOnInit();
+					this.reloadLicense();
 				}
 			}
 		);

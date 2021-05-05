@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
 		'Region',
 		'City',
 		'State', 
-		'Date Created'
+		'Creation Date'
 	]
 
 	subscription: Subscription = new Subscription();

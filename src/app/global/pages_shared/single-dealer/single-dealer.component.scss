@@ -4,4 +4,15 @@
 
 .statistics {
 	margin-top: 25px;
+
+	canvas {
+		display: block;
+		margin: 0 auto;
+	}
+}
+
+.spinner-wrapper {
+	position: absolute;
+	left: 42%;
+	top: 32%;
 }

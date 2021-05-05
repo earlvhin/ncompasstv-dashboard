@@ -18,19 +18,21 @@ import { Router } from '@angular/router';
 
 export class NewAdvertiserComponent implements OnInit {
 
+	back_btn: string;
+	dealers: API_DEALER[] = [];
 	form_fields_view: any;
 	form_invalid: boolean = true;
+	is_dealer: boolean = false;
+	is_password_field_type = true;
+	is_retype_password_field_type = true;
 	is_submitted: boolean;
-	server_error: string;
-	dealers: API_DEALER[] = [];
 	new_advertiser_form: FormGroup;	
 	password_is_match: boolean;
 	password_match_msg: string;
 	password_is_valid: boolean;
 	password_is_valid_msg: string;
+	server_error: string;
 	subscription: Subscription = new Subscription;
-	back_btn: string;
-	is_dealer: boolean = false;
 
 	constructor(
 		private _auth: AuthService,
@@ -146,10 +148,10 @@ export class NewAdvertiserComponent implements OnInit {
 				data => {
 					if (this.f.password.invalid) {
 						this.password_is_valid = false;
-						this.password_is_valid_msg = "Must be atleast 8 characters"
+						this.password_is_valid_msg = "Must be at least 8 characters"
 					} else {
 						this.password_is_valid = true;
-						this.password_is_valid_msg = "Password is valid"
+						this.password_is_valid_msg = "Password is valid";
 					}
 				}
 			)
@@ -160,10 +162,10 @@ export class NewAdvertiserComponent implements OnInit {
 				data => {
 					if (this.f.password.value == this.f.re_password.value) {
 						this.password_is_match = true;
-						this.password_match_msg = "Password is match"
+						this.password_match_msg = "Passwords match";
 					} else {
 						this.password_is_match = false;
-						this.password_match_msg = "Password not match"
+						this.password_match_msg = "Passwords do not match";
 					}
 				}
 			)
@@ -225,6 +227,14 @@ export class NewAdvertiserComponent implements OnInit {
 				this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
 			}
 		)
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
 
 }

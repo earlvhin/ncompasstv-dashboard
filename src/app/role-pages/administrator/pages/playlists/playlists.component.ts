@@ -4,6 +4,8 @@ import { DatePipe } from '@angular/common';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
 import { API_PLAYLIST } from '../../../../global/models/api_playlists.model';
 import { UI_TABLE_PLAYLIST } from 'src/app/global/models/ui_table-playlist.model';
+import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 @Component({
 	selector: 'app-playlists',
@@ -26,10 +28,23 @@ export class PlaylistsComponent implements OnInit {
 		'Publish Date',
 		'Assigned To'
 	]
+	playlist_to_export: any = [];
 	search_data: string = "";
 	searching: boolean = false;
 	subscription: Subscription = new Subscription;
-	title: string = "Playlists"
+	title: string = "Playlists";
+	workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
+
+	playlist_table_column_for_export = [
+		{ name: 'Host Name', key: 'hostName'},
+		{ name: 'Content Title', key: 'title'},
+		{ name: 'Screen Name', key: 'screenName'},
+		{ name: 'Template', key: 'templateName'},
+		{ name: 'Zone', key: 'zoneName'},
+	]
+
 
 	constructor(
 		private _playlist: PlaylistService,
@@ -94,7 +109,7 @@ export class PlaylistsComponent implements OnInit {
 		)
 	}
 
-	playlist_mapToUI(data: API_PLAYLIST[]): UI_TABLE_PLAYLIST[] {
+	playlist_mapToUI(data) {
 		let count = 1;
 		return data.map(
 			p => {
@@ -102,9 +117,9 @@ export class PlaylistsComponent implements OnInit {
 					{ value: p.playlistId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
 					{ value: p.playlistName, link: '/administrator/playlists/' +  p.playlistId, editable: false, hidden: false},
-					// { value: p.playlistDescription || 'No Description', link: null, editable: false, hidden: false},
 					{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
 					{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false},
+					{ value: p.totalContents > 0 ? true: false, link: null, hidden: true}
 				)
 			}
 		)
@@ -118,5 +133,54 @@ export class PlaylistsComponent implements OnInit {
 			this.search_data = "";
 			this.pageRequested(1);
 		}
+	}
+
+	getDataForExport(data): void {
+		var filter = data;
+		this.subscription.add(
+			this._playlist.export_playlist(filter.id).subscribe(
+				data => {
+					if(!data.message) {
+						const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+						this.playlist_to_export = data.playlistContents;
+						this.playlist_to_export.forEach((item, i) => {
+							// this.modifyItem(item);
+							this.worksheet.addRow(item).font ={
+								bold: false
+							};
+						});
+						let rowIndex = 1;
+						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+						}
+						this.workbook.xlsx.writeBuffer()
+							.then((file: any) => {
+								const blob = new Blob([file], { type: EXCEL_TYPE });
+								const filename = filter.name +'.xlsx';
+								FileSaver.saveAs(blob, filename);
+							}
+						);
+						this.workbook_generation = false;
+					}
+				}
+			)
+		);
+	}
+
+	exportPlaylist(data) {
+		this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Excel.Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet('Dealers');
+		Object.keys(this.playlist_table_column_for_export).forEach(key => {
+			if(this.playlist_table_column_for_export[key].name && !this.playlist_table_column_for_export[key].no_export) {
+				header.push({ header: this.playlist_table_column_for_export[key].name, key: this.playlist_table_column_for_export[key].key, width: 50, style: { font: { name: 'Arial', bold: true}}});
+			}
+		});
+		this.worksheet.columns = header;
+		this.getDataForExport(data);		
 	}
 }

@@ -164,9 +164,8 @@ export class MediaLibraryComponent implements OnInit {
 							if(med.fileName != null) {
 								med.fileName = this.removeFilenameHandle(med.fileName);
 								var name_no_index = this.removeIndexes(med.fileName);
-								med.fileName = name_no_index + med.fileName.substring(med.fileName.indexOf('.'));
+								med.fileName = name_no_index + med.fileName.substring(0, med.fileName.lastIndexOf('.'));
 							}
-							
 						}
 					)
 					this.duplicate_files = this.all_media.filter( 
@@ -184,7 +183,7 @@ export class MediaLibraryComponent implements OnInit {
 								this.all_media.push({ fileName: this.modified_data[0].filename })
 							} else {
 								this.renameModal().then(name => {
-									resolve({ filename: name + this.data_to_upload[0].filename.substring(this.data_to_upload[0].filename.indexOf('.')) })
+									resolve({ filename: name + this.data_to_upload[0].filename.substring(0, this.data_to_upload[0].filename.lastIndexOf('.')) })
 								});
 							}
 						})
@@ -277,13 +276,15 @@ export class MediaLibraryComponent implements OnInit {
 				if(duplicateArray) {
 					var name_of_file = this.removeIndexes(i.filename)
 					var index_to_set = duplicateArray.length + 1;
-					i.filename = name_of_file + "(" + index_to_set + ")" + i.filename.substring(i.filename.indexOf('.'))
+					i.filename = name_of_file + "(" + index_to_set + ")" + i.filename.substring(0, i.filename.lastIndexOf('.'))
 					delete i.fileName;
 				}
 			}
 		)
 		this.modified_data = data;
 		if (upload) {
+			console.log('DATA TO BE UPLOADED', data);
+
 			this.subscription.add(
 				this._filestack.post_content_info(data).subscribe(
 					data => {

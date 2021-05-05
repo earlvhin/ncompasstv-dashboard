@@ -25,6 +25,8 @@ export class NewDealerComponent implements OnInit {
 	form_fields_view: any[];
 	form_invalid: boolean = true;
 	form_title: string = "New Dealer";
+	is_password_field_type = true;
+	is_retype_password_field_type = true;
 	is_submitted: boolean;
 	new_dealer_form: FormGroup;	
 	password_is_match: boolean;
@@ -209,10 +211,10 @@ export class NewDealerComponent implements OnInit {
 				data => {
 					if (this.f.password.value == this.f.re_password.value) {
 						this.password_is_match = true;
-						this.password_match_msg = "Password is match"
+						this.password_match_msg = "Password matches"
 					} else {
 						this.password_is_match = false;
-						this.password_match_msg = "Password not match"
+						this.password_match_msg = "Password does not match"
 					}
 				}
 			)
@@ -276,5 +278,13 @@ export class NewDealerComponent implements OnInit {
 			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 			this._router.navigate([`/${route}/dealers/`]);
 		})
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
 }

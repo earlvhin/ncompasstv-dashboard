@@ -359,12 +359,15 @@
 
 .page {
     padding: 75px 0 20px 0;
-    transition: padding-left .5s;
+    // transition: padding-left .5s;
     &.sidebar-full {
         padding-left: 200px;
     }
     &.sidebar-fully {
         padding-left: 70px;
+        .theme-container{
+            max-width: 1800px;
+        }
     }
 }
 
