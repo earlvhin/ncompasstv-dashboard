@@ -57,6 +57,14 @@ export class ScreenService {
 	get_screen_by_dealer_id(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer}${id}`, this.httpOptions);
 	}
+	
+	api_get_screen_by_dealer_table(page, id, key) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer_table}`+'?page='+`${page}`+'&dealerid='+`${id}`+'&search='+`${key}`, this.httpOptions);
+	}
+
+	// get_screen_by_dealer_id_v2(id) {
+	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer_table}${id}`, this.httpOptions);
+	// }
 
 	get_screen_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_total}`, this.httpOptions);

@@ -95,16 +95,16 @@
 		<div class="row no-gutters" #draggables id="draggables">
 			<div class="col-lg-1"
 			*ngFor="let content of playlist_content; let i = index" 
-			[attr.data-id]="content.content.playlistContentId"
-			id="{{ 'drg_' + content.content.playlistContentId }}"
-			[ngClass]="selected_contents.includes(content.content.playlistContentId) ? 'marked' : null">
+			[attr.data-id]="content.playlistContentId"
+			id="{{ 'drg_' + content.playlistContentId }}"
+			[ngClass]="selected_contents.includes(content.playlistContentId) ? 'marked' : null">
 				<app-playlist-content
 				[playlist_host_license]="playlist_host_license"
 				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[dealer]="content.content.dealerId"
+				[dealer]="content.dealerId"
 				[content]="content"
 				[is_marking]="false"
-				[schedule_status]="content.content.scheduleStatus"
+				[schedule_status]="content.scheduleStatus"
 				(options_saved)="optionsSaved($event)"
 				(reset_playlist_content)="reloadPlaylist($event)"
 				(remove_playlist_content)="removePlaylistContent($event)">
@@ -117,20 +117,20 @@
 		<div class="row no-gutters">
 			<div class="col-lg-1"
 			*ngFor="let content of playlist_content; let i = index" 
-			[attr.data-id]="content.content.playlistContentId"
-			id="{{ 'drg_' + content.content.playlistContentId }}"
-			[class.future-schedule]="content.content.scheduleStatus === 'future'"
-			[class.inactive-schedule]="content.content.scheduleStatus === 'inactive'"
-			[ngClass]="selected_contents.includes(content.content.playlistContentId) ? 'marked' : null">
+			[attr.data-id]="content.playlistContentId"
+			id="{{ 'drg_' + content.playlistContentId }}"
+			[class.future-schedule]="content.scheduleStatus === 'future'"
+			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+			[ngClass]="selected_contents.includes(content.playlistContentId) ? 'marked' : null">
 				<app-playlist-content
 				[playlist_host_license]="playlist_host_license"
 				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
 				[content]="content"
-				[dealer]="content.content.dealerId"
+				[dealer]="content.dealerId"
 				[is_marking]="true"
-				[schedule_status]="content.content.scheduleStatus"
+				[schedule_status]="content.scheduleStatus"
 				(options_saved)="optionsSaved($event)"
-				(click)="selectedContent(content.content.playlistContentId)"
+				(click)="selectedContent(content.playlistContentId)"
 				(reset_playlist_content)="reloadPlaylist($event)"
 				(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>

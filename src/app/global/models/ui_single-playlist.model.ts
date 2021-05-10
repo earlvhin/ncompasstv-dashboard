@@ -47,11 +47,21 @@ export class UI_PLAYLIST_SCREENS_NEW {
     screen_id: object;
     index: object;
     title: object;
+    dealer: any;
+    host: any;
+    type: any;
+    template: any;
+    createdby: any;
     
-    constructor(id: object, index: object, title: object) {
+    constructor(id: object, index: object, title: object, dealer: any, host: any, type: any, template: any, created: any) {
         this.screen_id = id;
         this.index = index;
         this.title = title;
+        this.dealer = dealer;
+        this.host = host;
+        this.type = type;
+        this.template = template;
+        this.createdby = created;
     }
 }
 
