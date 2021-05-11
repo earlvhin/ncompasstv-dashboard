@@ -93,3 +93,16 @@
         background-color: #e0e0e0;
     }
 }
+
+.dealer-picker {
+    display: flex;
+    flex-wrap: nowrap;
+    position: absolute;
+    right: 0;
+    z-index: 9;
+    padding-right: 26px;
+    flex-direction: column;
+    .dealer-field {
+        margin-left: auto;
+    }
+}
