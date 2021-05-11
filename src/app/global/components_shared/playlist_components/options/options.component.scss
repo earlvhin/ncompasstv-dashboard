@@ -14,3 +14,15 @@
 		opacity: 0.6;
 	}
 }
+
+.overlayer {
+	position: relative;
+
+	.overlay {
+		background: rgba(#fff, 0.7);
+		height: 100%;
+		width: 100%;
+		left: 0;
+		top: 0;
+	}
+}

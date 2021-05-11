@@ -50,33 +50,36 @@
             </div>
         </div>
         <hr class="my-4">
-        <div *ngIf="screens.length != 0 || no_screen; else loader">
+        <div *ngIf="!initial_load; else loader">
             <div *ngIf="!no_screen; else no_data">
-                <div class="row">
-                    <div class="col-lg-8"></div>
+                <div class="row justify-content-end">
                     <div class="col-lg-4">
                         <app-search-field
-                        *ngIf="screens.length != 0"
+                        *ngIf="!initial_load"
                         [form_title]="'Search Screen Name'"
                         [placeholder]="'Example: N-Compass'"
                         [data_reference]="screens"
                         [primary_keyword]="'screen_name'"
                         [secondary_keyword]="'host_name'"
                         (searched)="filterData($event)"
-                        ></app-search-field>
+                        [api_search]="true"></app-search-field>
                     </div>
                 </div>
-                <div class="row" *ngIf="screens.length != 0">
+                <div class="row" *ngIf="!initial_load">
                     <div class="col-lg-12">
-                        <mat-card *ngIf="filtered_data.length > 0;else nodata">
-                            <app-data-table 
-                            [table_data]="filtered_data"
-                            [table_columns]="tbl_screen_columns"
-                            [new_table]="true"
-                            [screen_delete]="true"
-                            (update_info)="getAllScreens()">
-                            </app-data-table>
-                        </mat-card>
+                        <ng-container *ngIf="!searching; else loader">
+                            <mat-card *ngIf="filtered_data.length > 0;else nodata">
+                                <app-data-table 
+                                [table_data]="filtered_data"
+                                [table_columns]="tbl_screen_columns"
+                                [new_table]="true"
+                                [screen_delete]="true"
+                                (update_info)="getAllScreens(1)"
+                                [paging_details]="paging_data"
+                                (page_triggered)="getAllScreens($event)">
+                                </app-data-table>
+                            </mat-card>
+                        </ng-container>
                     </div>
                 </div>
             </div>

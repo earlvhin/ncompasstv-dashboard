@@ -3,6 +3,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA } from '@angular/material'
 import { Subscription } from 'rxjs/internal/Subscription';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { PlaylistService } from 'src/app/global/services/playlist-service/playlist.service';
 
 @Component({
 	selector: 'app-bulk-options',
@@ -23,9 +24,11 @@ export class BulkOptionsComponent implements OnInit {
 	whitelisting = [];
 	blocklisting = [];
 	to_whitelist = [];
+	blocklist_ids = [];
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
+		private _playlist: PlaylistService 
 	) { }
 
 	ngOnInit() {
@@ -35,9 +38,16 @@ export class BulkOptionsComponent implements OnInit {
 		this.host_licenses = this._dialog_data.host_licenses;
 		this.selected_contents.forEach(
 			i => {
-				this.selected_content_backup.push(i.content)
+				console.log('test', i)
+				this.selected_content_backup.push(i)
 			}
 		)
+
+		// this.selected_content_backup.map(
+		// 	i => {
+		// 		this.getBlacklistIdOfSelectedContents(i.playlistContentId)
+		// 	}
+		// )
 
 		console.log(this.selected_contents);
 
@@ -51,8 +61,8 @@ export class BulkOptionsComponent implements OnInit {
 				console.log('#d', data);
 				if (data >= 5) {
 					this.selected_contents.forEach(i => {
-						if (i.content.fileType !== 'webm') {
-							i.content.duration = data;
+						if (i.fileType !== 'webm') {
+							i.duration = data;
 						}
 					})
 				} else if(data == null  || data == undefined || data == '') {
@@ -60,9 +70,9 @@ export class BulkOptionsComponent implements OnInit {
 						i => {
 							this.selected_contents.map(
 								j => {
-									if (i.playlistContentId == j.content.playlistContentId) {
-										console.log('Changed', j.content.duration, i.duration)
-										j.content.duration = i.duration;
+									if (i.playlistContentId == j.playlistContentId) {
+										console.log('Changed', j.duration, i.duration)
+										j.duration = i.duration;
 									}
 								}
 							)
@@ -70,8 +80,8 @@ export class BulkOptionsComponent implements OnInit {
 					)
 				} else {
 					this.selected_contents.forEach(i => {
-						if (i.content.fileType !== 'webm') {
-							i.content.duration = 5;
+						if (i.fileType !== 'webm') {
+							i.duration = 5;
 						}
 					})
 				}
@@ -88,6 +98,16 @@ export class BulkOptionsComponent implements OnInit {
 		this.blocklisting = e;
 		console.log('#blackListing', this.blocklisting);
 	}
+
+	// getBlacklistIdOfSelectedContents(id) {
+	// 	this._playlist.get_blacklisted_by_id(id).subscribe(
+	// 		(data: any[]) => {
+	// 			console.log(data);
+	// 			this.blocklist_ids.push(data.map(i => i.blacklistedContentId))
+	// 			console.log(this.blocklist_ids);
+	// 		}
+	// 	)
+	// }
 
 	whiteListing(e) {
 		// Data from Child via Output()
@@ -126,9 +146,9 @@ export class BulkOptionsComponent implements OnInit {
 				i => {
 					this.selected_contents.map(
 						j => {
-							if (i.playlistContentId == j.content.playlistContentId) {
-								console.log('Changed', j.content.isFullScreen, i.isFullScreen)
-								j.content.isFullScreen = i.isFullScreen;
+							if (i.playlistContentId == j.playlistContentId) {
+								console.log('Changed', j.isFullScreen, i.isFullScreen)
+								j.isFullScreen = i.isFullScreen;
 							}
 						}
 					)
@@ -144,11 +164,11 @@ export class BulkOptionsComponent implements OnInit {
 	toggleFullscreen(e) {
 		if (e.checked) {
 			this.selected_contents.forEach(i => {
-				i.content.isFullScreen = 1
+				i.isFullScreen = 1
 			})
 		} else {
 			this.selected_contents.forEach(i => {
-				i.content.isFullScreen = 0
+				i.isFullScreen = 0
 			})
 		}
 	}

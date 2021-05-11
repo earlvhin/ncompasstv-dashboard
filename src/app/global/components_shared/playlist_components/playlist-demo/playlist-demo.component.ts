@@ -107,7 +107,7 @@ export class PlaylistDemoComponent implements OnInit {
 		this.subscription.add(
 			this._playlist.get_playlist_by_id(this.playlist_id).subscribe(
 				(data: API_SINGLE_PLAYLIST) => {
-					this.playlist_content = this.playlist_mapToUI(data.blacklistedIContents);
+					this.playlist_content = this.playlist_mapToUI(data.playlistContents);
 					this.checkFileType(this.count);
 				}
 			)
@@ -176,30 +176,30 @@ export class PlaylistDemoComponent implements OnInit {
 		return this.playlist_content[i].is_fullscreen;
 	}
 
-	playlist_mapToUI(data: API_CONTENT_BLACKLISTED_CONTENTS[]): UI_CONTENT[] {
+	playlist_mapToUI(data: any[]): UI_CONTENT[] {
 		if (data) {
 			return data.map(
-				(p: API_CONTENT_BLACKLISTED_CONTENTS) => {
+				(p: any) => {
 					return new UI_CONTENT(
-						p.content.playlistContentId,
-						p.content.createdBy,
-						p.content.contentId,
-						p.content.createdByName,
-						p.content.dealerId,
-						p.content.duration,
-						p.content.hostId,
-						p.content.advertiserId,
-						p.content.fileName,
-						p.content.url,
-						p.content.fileType,
-						p.content.handlerId,
-						p.content.dateCreated,
-						p.content.isFullScreen,
-						p.content.filesize,
-						p.content.thumbnail,
-						p.content.isActive,
-						p.content.isConverted,
-						p.content.uuid
+						p.playlistContentId,
+						p.createdBy,
+						p.contentId,
+						p.createdByName,
+						p.dealerId,
+						p.duration,
+						p.hostId,
+						p.advertiserId,
+						p.fileName,
+						p.url,
+						p.fileType,
+						p.handlerId,
+						p.dateCreated,
+						p.isFullScreen,
+						p.filesize,
+						p.thumbnail,
+						p.isActive,
+						p.isConverted,
+						p.uuid
 					)
 				}
 			)

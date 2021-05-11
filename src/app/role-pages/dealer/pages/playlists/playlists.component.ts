@@ -15,9 +15,12 @@ import { DatePipe, TitleCasePipe } from '@angular/common';
 export class PlaylistsComponent implements OnInit {
 	playlist_details: any;
 	dealers_info;
+	dealer_id: string;
+	initial_load: boolean = true;
 	playlist_data: UI_DEALER_PLAYLIST[] = [];
 	filtered_data: any = [];
 	no_playlist: boolean = false;
+	paging_data: any;
 	playlist_table_column = [
 		'#',
 		'Name',
@@ -25,6 +28,8 @@ export class PlaylistsComponent implements OnInit {
 		'Creation Date',
 		// 'Last Update'
 	]
+	search_data: string = "";
+	searching: boolean = false;
 	subscription: Subscription = new Subscription;
 
 	constructor(
@@ -35,8 +40,9 @@ export class PlaylistsComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.getPlaylist(this._auth.current_user_value.roleInfo.dealerId);
-		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId)
+		this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+		this.getPlaylist(1);
+		this.getTotalCount(this.dealer_id)
 		this.dealers_info = this._auth.current_user_value.roleInfo.businessName;
 	}
 
@@ -63,17 +69,26 @@ export class PlaylistsComponent implements OnInit {
 		)
 	}
 
-	getPlaylist(id) {
+	getPlaylist(page) {
+		this.searching = true;
+		this.playlist_data = [];
 		this.subscription.add(
-			this._playlist.get_playlist_by_dealer_id(id).subscribe(
-				(data: API_SINGLE_PLAYLIST[]) => {
-					if (data.length > 0) {
-						this.playlist_data = this.playlist_mapToUI(data)
-						this.filtered_data = this.playlist_mapToUI(data)
+			this._playlist.get_playlist_by_dealer_id_table(page, this.dealer_id, this.search_data).subscribe(
+				data => {
+					this.initial_load = false;
+					if (data.playlists.length > 0) {
+						this.playlist_data = this.playlist_mapToUI(data.playlists)
+						this.filtered_data = this.playlist_mapToUI(data.playlists)
 					} else {
-						this.no_playlist = true;
-						this.filtered_data = { message: 'no record found'}
+						if(this.search_data.length > 0) {
+							this.filtered_data = [];
+							this.no_playlist = false;
+						} else {
+							this.no_playlist = true;
+						}
 					}
+					this.paging_data = data.paging;
+					this.searching = false;
 				}
 			)
 		)
@@ -95,7 +110,13 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	filterData(data) {
-		this.filtered_data = data;
+		if (data) {
+			this.search_data = data;
+			this.getPlaylist(1);
+		} else {
+			this.search_data = "";
+			this.getPlaylist(1);
+		}
 	}
 
 	fromDelete() {

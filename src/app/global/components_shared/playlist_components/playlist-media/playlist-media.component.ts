@@ -1,6 +1,9 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material'
+import { Subscription } from 'rxjs';
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { ContentService } from '../../../../global/services/content-service/content.service';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
 import { PlayWhereComponent } from '../play-where/play-where.component';
@@ -13,40 +16,75 @@ import { PlayWhereComponent } from '../play-where/play-where.component';
 
 export class PlaylistMediaComponent implements OnInit {
 	
-	media_files: API_CONTENT[];
+	media_files: API_CONTENT[] = [];
 	media_files_no_floating: API_CONTENT[] = [];
 	selected_contents: any = [];
-	media_files_backup: API_CONTENT[];
+	media_files_backup: API_CONTENT[] = [];
 	file_not_found: boolean = false;
 	show_floating: boolean = false;
+	page: number = 1;
+	paging: any;
+	isDealer: boolean;
+	isGettingData: boolean = true;
+	subscription: Subscription = new Subscription();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		private _dialog: MatDialog,
-		private _content: ContentService
+		private _content: ContentService,
+		private _auth: AuthService
 	) { }
 
 	ngOnInit() {
 		this.getDealerContent(this._dialog_data.dealer_id);
+		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.dealer) {
+			this.isDealer = true;
+		}
+	}
+
+	ngOnDestroy() {
+		this.subscription.unsubscribe();
 	}
 
 	getDealerContent(dealer) {
-		this._content.get_content_by_dealer_id(dealer, true).subscribe(
-			(data: API_CONTENT[]) => {
-				console.log(data);
-				this.media_files = data;
-				this.media_files_backup = data;
+		/**
+		 * @params 
+		 * dealerId: string, 
+		 * floating: boolean, 
+		 * page: number, 
+		 * pageSize: number
+		*/
 
-				data.map(
-					i => {
-						if(i.dealerId !== null && i.dealerId !== "") {
-							this.media_files_no_floating.push(i)
-						}
+		this.subscription.add(
+			this._content.get_content_by_dealer_id(dealer, false, this.page++, 60).subscribe(
+				(data: any) => {
+					if (data) {
+						this.media_files.push(data.contents);
+						this.media_files_backup.push(data.contents);
+						
+						this.media_files = [].concat.apply([], this.media_files)
+						this.media_files_backup = [].concat.apply([], this.media_files_backup)
+	
+						this.paging = data.paging
+	
+						data.contents.map(
+							i => {
+								if(i.dealerId !== null && i.dealerId !== "") {
+									this.media_files_no_floating.push(i)
+								}
+							}
+						)
+					} else {
+						this.file_not_found = true;
 					}
-				)
-
-				console.log('#getDealerContent', this.media_files);
-			}
+	
+					if (this.page <= data.paging.pages) {
+						this.getDealerContent(dealer)
+					} else {
+						this.isGettingData = false;
+					}
+				}
+			)
 		)
 	}
 
@@ -131,6 +169,7 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	addToMarked(e) {
+		console.log(e);
 		if (this.selected_contents.includes(e)) {
 			this.selected_contents = this.selected_contents.filter(i => {
 				return i !== e;

@@ -20,7 +20,7 @@ export class ClonePlaylistComponent implements OnInit {
 
 	clone_playlist_form: FormGroup;
 	clone_success: boolean = false;
-	cloned_playlist: API_CREATE_PLAYLIST;
+	cloned_playlist: any;
 	cloned_playlist_content: API_CREATE_PLAYLIST_CONTENT[];
 	form_submitted: boolean = false;
 	form_valid: boolean = true;
@@ -50,8 +50,6 @@ export class ClonePlaylistComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		//console.log(this.playlist_data);
-
 		this.clone_playlist_form = this._form.group(
 			{
 				playlist_title: ['', Validators.required],
@@ -80,29 +78,34 @@ export class ClonePlaylistComponent implements OnInit {
 		let counter = 0;
 		this.form_submitted = true;
 		
-		this.cloned_playlist_content = this.playlist_data.blacklistedIContents.map(
-			(c: any) => {
-				return new API_CREATE_PLAYLIST_CONTENT(
-					c.content.contentId,
-					c.content.handlerId,
-					counter++,
-					c.content.isFullScreen
-				)
-			}
-		)
+		// this.cloned_playlist_content = this.playlist_data.playlistContents.map(
+		// 	(c: any) => {
+		// 		return new API_CREATE_PLAYLIST_CONTENT(
+		// 			c.contentId,
+		// 			c.handlerId,
+		// 			counter++,
+		// 			c.isFullScreen
+		// 		)
+		// 	}
+		// )
 
-		this.cloned_playlist = new API_CREATE_PLAYLIST(
-			this.playlist_data.playlist.dealerId,
-			this.f.playlist_title.value,
-			this.playlist_data.playlist.playlistType,
-			this.f.playlist_description.value,
-			this.cloned_playlist_content
-		)
+		// this.cloned_playlist = new API_CREATE_PLAYLIST(
+		// 	this.playlist_data.playlist.dealerId,
+		// 	this.f.playlist_title.value,
+		// 	this.playlist_data.playlist.playlistType,
+		// 	this.f.playlist_description.value,
+		// 	this.cloned_playlist_content
+		// )
+
+		this.cloned_playlist = {
+			playlistId: this.playlist_data.playlist.playlistId,
+			playlistName: this.f.playlist_title.value,
+			playlistDescription: this.f.playlist_description.value
+		}
 
 		this.subscription.add(
-			this._playlist.create_playlist(this.cloned_playlist).subscribe(
+			this._playlist.clone_playlist(this.cloned_playlist).subscribe(
 				data => {
-					console.log('#CLONING', data)
 					this.form_submitted = false;
 					this.clone_success = true;
 					this.redirectToClonedPlaylist(data.playlistId);

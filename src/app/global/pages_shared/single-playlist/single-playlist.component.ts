@@ -32,7 +32,7 @@ export class SinglePlaylistComponent implements OnInit {
 	license_to_update = [];
 	license_url: string;
 	playlist: API_SINGLE_PLAYLIST;
-	playlist_content_and_blacklist: API_CONTENT_BLACKLISTED_CONTENTS[];
+	playlist_content_and_blacklist: any[];
 	playlist_host_and_license: any;
 	playlist_licenses: API_LICENSE_PROPS[] = [];
 	playlist_screens: API_SCREEN_OF_PLAYLIST[] = [];
@@ -45,7 +45,12 @@ export class SinglePlaylistComponent implements OnInit {
 	
 	screen_table_column = [
 		'#',
-		'Screen Title'
+		'Screen Title',
+		'Dealer',
+		'Host',
+		'Type',
+		'Template',
+		'Created By'
 	]
 	
 	constructor(
@@ -101,7 +106,7 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	clonePlaylist() {
-		let dialog = this._dialog.open(ClonePlaylistComponent, {
+		this._dialog.open(ClonePlaylistComponent, {
 			width: '600px',
 			data: this.playlist
 		})
@@ -115,14 +120,24 @@ export class SinglePlaylistComponent implements OnInit {
 					this.playlist = data;
 					this.title = this.playlist.playlist.playlistName;
 					this.description = this.playlist.playlist.playlistDescription;
-					this.playlist_content_and_blacklist = this.playlist.blacklistedIContents;
-					this.playlist_screens = this.playlist.screens;
+					this.playlist_content_and_blacklist = this.playlist.playlistContents;
 					this.playlist_host_and_license = this.playlist.hostLicenses;
 					this.playlist_updating = false;
+				},
+				error => {
+					console.log('#getPlaylistData', error);
+				}
+			)
+		)
+
+		this.subscription.add(
+			this._playlist.get_screens_of_playlist(id).subscribe(
+				data => {
+					this.playlist_screens = data.screens;
 					this.screensMapToTable(this.playlist_screens);
 				},
 				error => {
-					// console.log('#getPlaylistData', error);
+					console.log(error);
 				}
 			)
 		)
@@ -190,6 +205,11 @@ export class SinglePlaylistComponent implements OnInit {
 						{ value: i.screenId, link: null , editable: false, hidden: true},
 						{ value: counter++, link: null , editable: false, hidden: false},
 						{ value: i.screenName, link: `/${route}/screens/` + i.screenId, editable: false, hidden: false},
+						{ value: i.businessName, link: null, editable: false, hidden: false},
+						{ value: i.hostName, link: null, editable: false, hidden: false},
+						{ value: i.screenTypeName || '--', link: null, editable: false, hidden: false},
+						{ value: i.templateName, link: null, editable: false, hidden: false},
+						{ value: i.createdBy, link: null, editable: false, hidden: false}
 					)
 				}
 			)
