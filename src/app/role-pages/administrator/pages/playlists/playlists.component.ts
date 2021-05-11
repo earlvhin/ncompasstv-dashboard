@@ -68,7 +68,7 @@ export class PlaylistsComponent implements OnInit {
 		this.searching = true;
 		this.playlist_data = [];
 		this.subscription.add(
-			this._playlist.get_playlists(page, this.search_data).subscribe(
+			this._playlist.get_all_playlists(page, this.search_data).subscribe(
 				data => {
 					this.initial_load = false;
 					if (data.paging.entities.length > 0) {
@@ -122,7 +122,7 @@ export class PlaylistsComponent implements OnInit {
 					{ value: p.name, link: '/administrator/playlists/' +  p.playlistId, editable: false, hidden: false},
 					{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
 					{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false},
-					{ value: p.screenTemplateZonePlaylistId != null ? true: false, link: null, hidden: true}
+					{ value: p.totalScreens > 0 ? true: false, link: null, hidden: true}
 				)
 			}
 		)
