@@ -3,7 +3,8 @@ export enum UI_ROLE_DEFINITION {
     tech = 'bb7a09ca-495c-11ea-b77f-2e728ce88125',
     dealer = 'bb7a0ca4-495c-11ea-b77f-2e728ce88125',
     host = 'bb7a0e02-495c-11ea-b77f-2e728ce88125',
-    advertiser = 'bb7a0f2e-495c-11ea-b77f-2e728ce88125'
+    advertiser = 'bb7a0f2e-495c-11ea-b77f-2e728ce88125',
+    sub_dealer = '12345'
 }
 
 export enum UI_ROLE_DEFINITION_TEXT {
@@ -11,5 +12,6 @@ export enum UI_ROLE_DEFINITION_TEXT {
     tech = 'tech',
     dealer = 'dealer',
     host = 'host',
-    advertiser = 'advertiser'
+    advertiser = 'advertiser',
+    sub_dealer = 'sub_dealer'
 }

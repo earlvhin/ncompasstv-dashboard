@@ -50,6 +50,12 @@ export class CreateUserComponent implements OnInit {
 				is_dealer: this.is_dealer
 			},
 			{
+				role_name: 'Sub-Dealer',
+				role_description: 'Dealer account with access to only a max of 5 sub accounts',
+				role_icon: 'assets/media-files/dealer-icon.png',
+				role: UI_ROLE_DEFINITION_TEXT.dealer,
+			},
+			{
 				role_name: 'Host',
 				role_description: 'View access to data of Ads played in their workplace.',
 				role_icon: 'assets/media-files/host-icon.png',
