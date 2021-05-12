@@ -16,14 +16,16 @@ export class SCREEN_INFO {
     hostid: string;
     templateid: string;
     createdby: string;
+    screenTypeId: string;
 
-    constructor(title: string, description: string, dealerid: string, hostid: string, templateid: string, createdby: string) {
+    constructor(title: string, description: string, dealerid: string, hostid: string, templateid: string, createdby: string, screenTypeId: string) {
         this.screenName = title;
         this.description = description;
         this.dealerid = dealerid;
         this.hostid = hostid;
         this.templateid = templateid;
         this.createdby = createdby;
+        this.screenTypeId = screenTypeId;
     } 
 }
 
