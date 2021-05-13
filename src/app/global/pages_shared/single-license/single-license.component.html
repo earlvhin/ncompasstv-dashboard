@@ -495,7 +495,7 @@
 						<div class="container-fluid">
 							<div class="row">
 								<!-- Playlist Info -->
-								<div class="col-lg-4">
+								<div class="col-lg-3">
 									<div class="playlist-details">
 										<div><h2>{{ current_zone_selected }} Section</h2></div>
 										<div class="row">
@@ -503,9 +503,33 @@
 												<a class="playlist-name" [routerLink]="playlist_route">{{ screen_zone.playlistName }}</a>
 											</div>
 										</div>
-			
 										<div class="description">
-											<span class="sm-text" *ngIf="has_playlist; else no_playlist">This playlist has <strong>{{ number_of_contents }}</strong> items on <strong>{{ screen_zone.zone ? screen_zone.zone : content_per_zone[0].zone_name }}</strong> zone.</span>
+											<span class="sm-text" *ngIf="has_playlist; else no_playlist">
+												This playlist has <strong>{{ number_of_contents }}</strong> items on <strong>{{ screen_zone.zone ? screen_zone.zone : content_per_zone[0].zone_name }}</strong> zone.<br>
+												Total playtime of <b>{{ duration_breakdown_text.total }}</b>.
+											</span>
+										</div>
+										<br>
+										<div>
+											<span class="sm-text"><b>Duration Breakdown</b></span>
+										</div>
+										<!-- <div class="total-duration">
+											<span class="sm-text">Total {{ current_zone_selected }}: {{ duration_breakdown_text.total }}</span>
+										</div> -->
+										<div class="hosts-duration">
+											<span class="sm-text">Hosts: {{ duration_breakdown_text.hosts }}</span>
+										</div>
+										<div class="advertisers-duration">
+											<span class="sm-text">Advertisers: {{ duration_breakdown_text.advertisers }}</span>
+										</div>
+										<div class="fillers-duration">
+											<span class="sm-text">Filler: {{ duration_breakdown_text.fillers }}</span>
+										</div>
+										<div class="feeds-duration">
+											<span class="sm-text">Feeds: {{ duration_breakdown_text.feeds }}</span>
+										</div>
+										<div class="others-duration">
+											<span class="sm-text">Other: {{ duration_breakdown_text.others }}</span>
 										</div>
 										<ng-template #no_playlist>
 											<span class="sm-text">No playlist for this zone</span>
@@ -514,7 +538,7 @@
 								</div>
 		
 								<!-- Minimap -->
-								<div class="col-lg-4">
+								<div class="col-lg-3">
 									<div class="minimap">
 										<app-template-minimap
 										*ngIf="template_data else loader"
@@ -536,9 +560,18 @@
 									</div>
 								</div>
 	
-								<!-- Graphs -->
-								<div class="col-lg-4">
-									<canvas id="contentStatistics"></canvas>
+								<!-- Assets Breakdown -->
+								<div class="col-lg-3">
+									<div class="assets-chart-container">
+										<canvas id="assetsBreakdown"></canvas>
+									</div>
+								</div>
+
+								<!-- Duration Breakdown -->
+								<div class="col-lg-3">
+									<div class="duration-chart-container">
+										<canvas id="durationBreakdown"></canvas>
+									</div>
 								</div>
 	
 							</div>

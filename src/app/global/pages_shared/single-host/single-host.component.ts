@@ -166,6 +166,8 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	getLicenseByHostId(id) {
+		this.host_license = [];
+		this.no_record = false;
 		this.subscription.add(
 			this._license.get_license_by_host_id(id).subscribe(
 				(data: any) => {

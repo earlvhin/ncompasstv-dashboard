@@ -16,6 +16,17 @@
             </div>
 
             <div *ngIf="!is_dealer">
+                <div class="col-12 p-0">
+                    <app-autocomplete-field
+                        [data_reference]="screen_types"
+                        [primary_keyword]="'description'"
+                        [key_of_value]="'screenTypeId'"
+                        (data_value)="setScreenType($event)"
+                        [required]="true"
+                        [label]="'Click to select a Screen Type'">
+                    </app-autocomplete-field>
+                </div>
+
                 <app-autocomplete-field
                 *ngIf="no_dealer_selected; else dealer_selected"
                 (data_value)="dealerSelected($event)"
