@@ -18,11 +18,13 @@ export class API_CREATE_PLAYLIST_CONTENT {
     handlerId: string;
     seq: number;
 	isFullScreen: number;
+    duration: number;
 
-    constructor(contentId: string, handler: string, seq: number, fullscreen: number) {
+    constructor(contentId: string, handler: string, seq: number, fullscreen: number, duration: number) {
         this.contentId = contentId;
         this.handlerId = handler;
         this.seq = seq;
         this.isFullScreen = fullscreen;
+        this.duration = duration;
     }
 }

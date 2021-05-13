@@ -15,7 +15,7 @@ import { OptionsComponent } from '../options/options.component';
 export class PlaylistContentComponent implements OnInit {
 
 	@Input() array_index: number;
-	@Input() content: API_CONTENT_BLACKLISTED_CONTENTS;
+	@Input() content: any;
 	@Input() playlist_host_license: any;
 	@Input() is_marking: boolean;
 	@Input() dealer: string;
@@ -30,6 +30,7 @@ export class PlaylistContentComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+
 		if (this.playlist_host_license) {
 			this.playlist_host_license = this.playlist_host_license.sort((a, b) => {
 				return a.host.name.localeCompare(b.host.name)
@@ -41,8 +42,7 @@ export class PlaylistContentComponent implements OnInit {
 	optionsModal() {
 		let content_data = {
 			index: this.array_index,
-			content: this.content.content,
-			blocklist: this.content.blacklistedContents,
+			content: this.content,
 			host_license: this.playlist_host_license
 		} 
 

@@ -35,6 +35,7 @@ import { UnassignLicenseComponent } from '../../components_shared/screen_compone
 export class SingleScreenComponent implements OnInit {
 
 	dealer_playlist$: Observable<API_SINGLE_PLAYLIST[]>;
+	dealer_playlist: any[] = [];
 	dealer_hosts: API_HOST[] = [];
 	edit_screen_info: EDIT_SCREEN_INFO;
 	edit_screen_zone_playlist: EDIT_SCREEN_ZONE_PLAYLIST[];
@@ -333,7 +334,23 @@ export class SingleScreenComponent implements OnInit {
 
 	// Get Playlist By Dealer ID
 	getPlaylistByDealer(id) {
-		this.dealer_playlist$ = this._playlist.get_playlist_by_dealer_id(id);
+		// this.dealer_playlist$ = this._playlist.get_playlist_by_dealer_id_v2(id);
+
+		// this.dealer_playlist$.subscribe(
+		// 	data => {
+		// 		console.log('DEALER PLAYLISTS', data)
+		// 	}
+		// )
+
+		this._playlist.get_playlist_by_dealer_id_v2(id).subscribe(
+			data => {
+				this.dealer_playlist = data.playlists;
+				console.log('DEALER PLAYLIST', data);
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
 	}
 
 	hostSearchBoxTrigger (event) {

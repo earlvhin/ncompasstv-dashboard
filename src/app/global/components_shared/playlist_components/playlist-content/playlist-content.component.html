@@ -1,19 +1,19 @@
 <div class="bg-white border m-1 playlist-content-thumb"
-[attr.title]="content.content.fileType !== 'feed' ? removeFilenameHandle(content.content.fileName) : content.content.title">
+[attr.title]="content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title">
     <div class="h-100 w-100" [class.future-schedule]="schedule_status === 'future'" [class.inactive-schedule]="schedule_status === 'inactive'">
     <!-- <div class="h-100 w-100"> -->
         <div class="content-thumbnail inline-block">
-            <img [src]="content.content.thumbnail" alt="thumbnail" class="full-width height-100 border-bottom">
+            <img [src]="content.thumbnail" alt="thumbnail" class="full-width height-100 border-bottom">
             <p class="number-overlay mb-0 xsm-text font-weight-bold">
 				<i class="fas fa-user-circle mr-2" [ngClass]="dealer == null || dealer == '' ? 'text-gray' : 'text-primary'" 
 					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'"></i>
 
-                <span *ngIf="content.content.fileType !== 'feed'; else feed">
-                    {{ content.content.fileName | filename }}
+                <span *ngIf="content.fileType !== 'feed'; else feed">
+                    {{ content.fileName | filename }}
 				</span>
 
                 <ng-template #feed>
-                    <span>{{ content.content.title }}</span>
+                    <span>{{ content.title }}</span>
                 </ng-template>
             </p>
         </div>
@@ -21,24 +21,24 @@
             <div class="d-flex align-items-center">
                 <p class="xsm-text flex-even">
 					<span *ngIf="array_index">{{ array_index }} - </span>
-					<span *ngIf="content.content.fileType !== 'webm' && content.content.fileType !== 'feed'">
+					<span *ngIf="content.fileType !== 'webm' && content.fileType !== 'feed'">
 						image
 					</span>
 
-					<span *ngIf="content.content.fileType === 'webm'">
+					<span *ngIf="content.fileType === 'webm'">
 						video
 					</span>
 
-					<span *ngIf="content.content.fileType === 'feed'">
+					<span *ngIf="content.fileType === 'feed'">
 						feed
 					</span>
 				</p>
 
-				<p class="sm-text text-primary mr-1" *ngIf="content.content.isFullScreen == 1">
+				<p class="sm-text text-primary mr-1" *ngIf="content.isFullScreen == 1">
 					<i class="fas fa-expand"></i>
 				</p>
 
-				<p (click)="removeContentToPlaylistModal(content.content.playlistContentId)" class="sm-text mb-0 cursor-pointer text-danger mx-1" *ngIf="!is_marking">
+				<p (click)="removeContentToPlaylistModal(content.playlistContentId)" class="sm-text mb-0 cursor-pointer text-danger mx-1" *ngIf="!is_marking">
 					<span class="fas fa-trash"></span>
 				</p>
 

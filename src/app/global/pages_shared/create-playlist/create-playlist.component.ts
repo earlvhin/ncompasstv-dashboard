@@ -147,7 +147,8 @@ export class CreatePlaylistComponent implements OnInit {
 					c.content_data.content_id,
 					c.content_data.handler_id,
 					sequence++,
-					c.content_data.is_fullscreen
+					c.content_data.is_fullscreen,
+					c.content_data.file_type === 'webm' ? c.content_data.duration : 20
 				)
 			}
 		)

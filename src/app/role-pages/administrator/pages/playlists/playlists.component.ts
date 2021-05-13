@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { DatePipe } from '@angular/common';
+import { DatePipe, TitleCasePipe } from '@angular/common';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
 import { API_PLAYLIST } from '../../../../global/models/api_playlists.model';
 import { UI_TABLE_PLAYLIST } from 'src/app/global/models/ui_table-playlist.model';
@@ -11,7 +11,7 @@ import * as FileSaver from 'file-saver';
 	selector: 'app-playlists',
 	templateUrl: './playlists.component.html',
 	styleUrls: ['./playlists.component.scss'],
-	providers: [DatePipe]
+	providers: [DatePipe, TitleCasePipe]
 })
 export class PlaylistsComponent implements OnInit {
 
@@ -43,12 +43,15 @@ export class PlaylistsComponent implements OnInit {
 		{ name: 'Screen Name', key: 'screenName'},
 		{ name: 'Template', key: 'templateName'},
 		{ name: 'Zone', key: 'zoneName'},
+		{ name: 'Duration', key: 'duration'},
+		{ name: 'File Type', key: 'fileType'},
 	]
 
 
 	constructor(
 		private _playlist: PlaylistService,
-		private _date: DatePipe
+		private _date: DatePipe,
+		private _titlecase: TitleCasePipe,
 	) { }
 
 	ngOnInit() {
@@ -65,12 +68,12 @@ export class PlaylistsComponent implements OnInit {
 		this.searching = true;
 		this.playlist_data = [];
 		this.subscription.add(
-			this._playlist.get_playlists(page, this.search_data).subscribe(
+			this._playlist.get_all_playlists(page, this.search_data).subscribe(
 				data => {
 					this.initial_load = false;
-					if (data.playlists.length > 0) {
-						this.playlist_data = this.playlist_mapToUI(data.playlists)
-						this.filtered_data = this.playlist_mapToUI(data.playlists)
+					if (data.paging.entities.length > 0) {
+						this.playlist_data = this.playlist_mapToUI(data.paging.entities)
+						this.filtered_data = this.playlist_mapToUI(data.paging.entities)
 					} else {
 						if(this.search_data.length > 0) {
 							this.filtered_data = [];
@@ -116,10 +119,10 @@ export class PlaylistsComponent implements OnInit {
 				return new UI_TABLE_PLAYLIST(
 					{ value: p.playlistId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: p.playlistName, link: '/administrator/playlists/' +  p.playlistId, editable: false, hidden: false},
+					{ value: p.name, link: '/administrator/playlists/' +  p.playlistId, editable: false, hidden: false},
 					{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
 					{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false},
-					{ value: p.totalContents > 0 ? true: false, link: null, hidden: true}
+					{ value: p.totalScreens > 0 ? true: false, link: null, hidden: true}
 				)
 			}
 		)
@@ -144,7 +147,7 @@ export class PlaylistsComponent implements OnInit {
 						const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 						this.playlist_to_export = data.playlistContents;
 						this.playlist_to_export.forEach((item, i) => {
-							// this.modifyItem(item);
+							this.modifyItem(item);
 							this.worksheet.addRow(item).font ={
 								bold: false
 							};
@@ -165,6 +168,11 @@ export class PlaylistsComponent implements OnInit {
 				}
 			)
 		);
+	}
+
+	modifyItem(item) {
+		item.duration = item.duration != null ? item.duration + " s" : "20 s";
+		item.fileType = this._titlecase.transform(item.fileType);
 	}
 
 	exportPlaylist(data) {

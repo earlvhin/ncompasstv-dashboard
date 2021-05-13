@@ -18,9 +18,13 @@ import { TitleCasePipe, DatePipe } from '@angular/common'
 
 export class ScreensComponent implements OnInit {
 	filtered_data: any = [];
+	initial_load: boolean = true;
+	paging_data : any;
 	screens: any = [];
 	subscription: Subscription = new Subscription;
 	title: string = "Screens";
+	search_data: string = "";
+	searching: boolean = false;
 	screen_details: any;
 	no_screen: boolean = false;
 
@@ -44,12 +48,18 @@ export class ScreensComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.getAllScreens();
+		this.getAllScreens(1);
 		this.getTotalScreens(this._auth.current_user_value.roleInfo.dealerId)
 	}
 
-	filterData(data) {
-		this.filtered_data = data;
+	filterData(e) {
+		if (e) {
+			this.search_data = e;
+			this.getAllScreens(1);
+		} else {
+			this.search_data = "";
+			this.getAllScreens(1);
+		}
 	}
 
 	getTotalScreens(id) {
@@ -75,36 +85,40 @@ export class ScreensComponent implements OnInit {
 		)
 	}
 
-
-	getAllScreens() {
-		this._screen.get_screen_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId).subscribe(
-			(data: API_SINGLE_SCREEN[]) => {
-				if (data.length > 0) {
-					this.screens = this.screen_mapToUI(data);
-					this.filtered_data = this.screen_mapToUI(data);
+	getAllScreens(e) {
+		this.searching = true;
+		this.screens = [];
+		this._screen.api_get_screen_by_dealer_table(e, this._auth.current_user_value.roleInfo.dealerId, this.search_data).subscribe(
+			data => {
+				if (data.paging.entities.length > 0) {
+					this.screens = this.screen_mapToUI(data.paging.entities);
+					this.filtered_data = this.screen_mapToUI(data.paging.entities);
 				} else {
-					this.screens = { message: 'no record found'}
-					this.no_screen = true;
-					this.filtered_data = [];
+					if(this.search_data == "") {
+						this.no_screen = true;
+					}
+					this.filtered_data = []
 				}
+				this.initial_load = false;
+				this.paging_data = data.paging;
+				this.searching = false;
 			}
 		)
 	}
 
 	screen_mapToUI(data: any) {
 		let counter = 1;
-		console.log(data)
 		return data.map(
 			s => {
 				return new UI_DEALER_TABLE_SCREEN (
-					{ value: s.screen.screenId, link: null , editable: false, hidden: true},
+					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.screen.screenName), link: '/dealer/screens/' +  s.screen.screenId, editable: false, hidden: false},
-					{ value: s.screenType ? this._titlecase.transform(s.screenType.name) : '--', link: '/dealer/hosts/' +  s.host.hostId, editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.host.name), link: '/dealer/hosts/' +  s.host.hostId, editable: false, hidden: false},
-					{ value: s.template ? this._titlecase.transform(s.template.name) : null, link: null, editable: false, hidden: false},
-					{ value: this._date.transform(s.screen.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
-					{ value: this._titlecase.transform(`${s.createdBy.firstName} ${s.createdBy.lastName}`), link: null, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.screenName), link: '/dealer/screens/' +  s.screenId, editable: false, hidden: false},
+					{ value: s.screenTypeName ? this._titlecase.transform(s.screenTypeName) : '--', link: '/dealer/hosts/' +  s.hostId, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.hostName), link: '/dealer/hosts/' +  s.hostId, editable: false, hidden: false},
+					{ value: s.templateId ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},
+					{ value: this._date.transform(s.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.createByName), link: null, editable: false, hidden: false},
 				)
 			}
 		)

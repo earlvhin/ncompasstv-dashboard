@@ -1,6 +1,13 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
+import { timeStamp } from 'console';
 import { Subject, Observable } from 'rxjs';
 import { API_BLOCKLIST_CONTENT } from 'src/app/global/models/api_blocklist-content.model';
+import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { API_HOST } from 'src/app/global/models/api_host.model';
+import { API_LICENSE_PROPS } from 'src/app/global/models/api_license.model';
+import { UI_HOST_LICENSE } from 'src/app/global/models/ui_host-license.model';
+import { UI_PLAYLIST_HOST_LICENSE } from 'src/app/global/models/ui_playlist-host-license.model';
+import { PlaylistService } from 'src/app/global/services/playlist-service/playlist.service';
 import { UI_PLAYLIST_BLOCKLIST_HOST_LICENSE } from '../../../../global/models/ui_content.model';
 
 @Component({
@@ -15,126 +22,148 @@ export class PlayWhereComponent implements OnInit {
 	@Input() toggleEvent: Observable<void>;
 	@Output() blocklist_changes_saved = new EventEmitter;
 	@Output() whitelisted = new EventEmitter;
+	@Output() blacklist_data_ready = new EventEmitter;
 	toggleEvent_child: Subject<void> = new Subject<void>();
-	incoming_blocklist = [];
+	add_in_blocklist = [];
 	remove_in_blocklist = [];
 	license_count: number = 0;
+	blacklist_data: any[];
+	content: API_CONTENT;
+	host_licenses: [{ host: API_HOST, licenses: API_LICENSE_PROPS[] }];
 	
-	constructor() {}
+	constructor(
+		private _playlist: PlaylistService,
+	) {}
 
 	ngOnInit() {
-		console.log('#PlayWhereComponent', this.content_data);
-		
+		if (this.content_data) {
+			this.content = this.content_data.content;
+			this.host_licenses = this.content_data.host_license.length > 0 ? this.content_data.host_license : undefined;
+		}
+
 		this.toggleEvent.subscribe(
 			data => {
 				this.toggleEvent_child.next(data);
 			}
 		)
 
-		if (this.content_data.host_license.length > 0) {
-			this.content_data.host_license.forEach(i => {
-				if (i.licenses) {
-					i.licenses.forEach(j => {
-						if (this.inBlockList(new API_BLOCKLIST_CONTENT(j.licenseId, this.content_data.content.contentId, this.content_data.content.playlistContentId)).length == 0) {
-							this.license_count += 1;
-						}
-					})
-				}
-			})
-	
-			console.log('LICENSE_COUNT', this.license_count)
-		}
-	}
-
-	hasWhiteListed(e) {
-		if (!e && this.incoming_blocklist.length == this.license_count && this.remove_in_blocklist.length == 0) {
-			this.whitelisted.emit(false);
+		if (this.host_licenses && this.host_licenses.length > 0) {
+			this.getBlacklistProperties();
 		} else {
-			this.whitelisted.emit(true);
+			this.blacklist_data_ready.emit(true);
+			this.blacklist_data = [];
 		}
-	}
 
-	blockListing(e) {
-		if (e.status == false) {
-			// Adding to blocklist
-			if (this.inBlockList(e.blocklist_data).length == 0 && this.inIncomingBlocklist(e.blocklist_data) == 0) {
-				this.incoming_blocklist.push(e.blocklist_data);
-			} else if (this.inBlockList(e.blocklist_data).length > 0 && this.inToRemoveBlocklist(this.getBlocklistId(e.blocklist_data)) > 0) {
-				this.removeInRemoveToBlocklist(this.getBlocklistId(e.blocklist_data));
+		this.toggleEvent.subscribe(
+			data => {
+				this.toggleEvent_child.next(data)
 			}
-		} else {
-			// Removing from blocklist
-			if (this.inBlockList(e.blocklist_data).length > 0 && this.inToRemoveBlocklist(this.getBlocklistId(e.blocklist_data)) == 0) {
-				this.remove_in_blocklist.push({blacklistedContentId: this.getBlocklistId(e.blocklist_data)});
-			} else if (this.inBlockList(e.blocklist_data).length == 0 && this.inToRemoveBlocklist(this.getBlocklistId(e.blocklist_data)) == 0) {
-				this.removeInAddToBlocklist(e.blocklist_data);
+		)
+	}
+
+	/**
+	 * Important
+	 * Put SCHEMA/MODEL of @param e
+	*/
+	blacklistToggle(e) {
+		// If Toggle is TRUE
+		if  (e.status == true) {
+			
+			// Add to blacklist array
+			if (this.inBlacklistData(e.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId) == 0) {
+				this.remove_in_blocklist.push({blacklistedContentId: this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId})
+				console.log('remove_in_blocklist array:', this.remove_in_blocklist);
+			}
+
+			if (this.In_add_in_blocklist(e.blocklist_data)) {
+				this.RemoveIn_add_in_blocklist(e.blocklist_data);
+				console.log('add_in_blocklist_array_truthy', this.add_in_blocklist);
+			}
+
+		}
+
+		// If Toggle is FALSE
+		if (e.status == false) {
+
+			// Remove in remove_in_blocklist
+			if (this.inBlacklistData(e.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId) > 0) {
+				this.RemoveIn_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId)
+				console.log('remove_in_blocklist array:', this.remove_in_blocklist);
+			}
+
+			// Add in add_in_blocklist
+			if (this.inBlacklistData(e.blocklist_data).length == 0) {
+				this.add_in_blocklist.push(e.blocklist_data);
+				console.log('add_in_blocklist_array_falsy', this.add_in_blocklist);
 			}
 		}
 
 		this.checkBlocklistData();
 	}
 
-	inIncomingBlocklist(e) {
-		return this.incoming_blocklist.filter(i => { 
-			return i.licenseId == e.licenseId 
+	checkBlocklistData() {
+		let blocklist_data = {
+			incoming: this.add_in_blocklist,
+			removing: this.remove_in_blocklist,
+			status: this.add_in_blocklist.length > 0 || this.remove_in_blocklist.length > 0 ? true : false
+		}
+
+		this.blocklist_changes_saved.emit(blocklist_data);
+	}
+
+	getBlacklistProperties() {
+		this._playlist.get_blacklisted_by_id(this.content_data.content.playlistContentId).subscribe(
+			data => {
+				this.blacklist_data = data.blacklistsContents || [];
+				this.blacklist_data_ready.emit(true)
+			}
+		)
+	}
+
+	hasWhiteListed(e) {
+		if (!e && this.add_in_blocklist.length == this.license_count && this.remove_in_blocklist.length == 0) {
+			this.whitelisted.emit(false);
+		} else {
+			this.whitelisted.emit(true);
+		}
+	}
+
+	inBlacklistData(data: API_BLOCKLIST_CONTENT) {
+		if (this.blacklist_data) {
+			return this.blacklist_data.filter(
+				i => {
+					if (i.licenseId == data.licenseId && i.contentId == data.contentId) {
+						return i
+					}
+				}
+			)
+		}
+		
+		console.log('Not Found:', data)
+		return [];
+	}
+
+	In_add_in_blocklist(e) {
+		return this.add_in_blocklist.filter(i => {
+			return i.playlistContentId == e.playlistContentId
 		}).length
 	}
 
-	inToRemoveBlocklist(e) {
+	In_remove_in_blocklist(e) {
 		return this.remove_in_blocklist.filter(i => {
 			return i.blacklistedContentId == e
 		}).length
 	}
 
-	getBlocklistId(e) {
-		if (this.content_data.blocklist) {
-			const bli =  this.content_data.blocklist.filter(
-				i => {
-					return e.licenseId == i.licenseId && e.contentId == i.contentId
-				}
-			)
-	
-			if (bli.length > 0) {
-				return bli[0].blacklistedContentId
-			} else {
-				return [];
-			}
-		}
-	}
-
-	inBlockList(blocklist_data: API_BLOCKLIST_CONTENT) {
-		if (this.content_data.blocklist) {
-			return this.content_data.blocklist.filter(
-				i => {
-					if (i.licenseId == blocklist_data.licenseId && blocklist_data.contentId) {
-						return i
-					}
-				}
-			)
-		} else {
-			return [];
-		}
-	}
-	
-	removeInRemoveToBlocklist(e) {
+	RemoveIn_remove_in_blocklist(e) {
 		this.remove_in_blocklist = this.remove_in_blocklist.filter(i => {
-			return i.blacklistedContentId != e
-		})
-	}
-	
-	removeInAddToBlocklist(e) {
-		this.incoming_blocklist = this.incoming_blocklist.filter(i => {
-			return i.licenseId != e.licenseId && i.contentId == e.contentId
+			return i.blacklistedContentId !== e
 		})
 	}
 
-	checkBlocklistData() {
-		let blocklist_data = {
-			incoming: this.incoming_blocklist,
-			removing: this.remove_in_blocklist,
-			status: this.incoming_blocklist.length > 0 || this.remove_in_blocklist.length > 0 ? true : false
-		}
-
-		this.blocklist_changes_saved.emit(blocklist_data);
+	RemoveIn_add_in_blocklist(e) {
+		this.add_in_blocklist = this.add_in_blocklist.filter(i => {
+			return i.licenseId !== e.licenseId && i.playlistContentId == e.playlistContentId
+		})
 	}
 }

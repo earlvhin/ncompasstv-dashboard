@@ -45,8 +45,16 @@ export class PlaylistService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_content_playlist}${id}`, this.httpOptions);
 	}
 
+	get_blacklisted_by_id(playlist_content_id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_blacklisted_by_id}${playlist_content_id}`, this.httpOptions)
+	}
+
 	get_playlists(page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	}
+	
+	get_all_playlists(page, key) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_all_playlist}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 	
 	// search_playlists(key) {
@@ -65,12 +73,32 @@ export class PlaylistService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist_by_dealer_id}${id}`, this.httpOptions)
 	}
 
+	get_playlist_by_dealer_id_table(page, id, key) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist_by_dealer_id_table}`+'?page='+`${page}`+'&dealerid='+`${id}`+'&search='+`${key}`, this.httpOptions)
+	}
+
+	get_playlist_by_dealer_id_v2(id) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist_by_dealer_id_table}?dealerId=${id}&pageSize=0`, this.httpOptions)
+	}
+
 	get_playlist_by_id(id) {
-		return this._http.get<API_SINGLE_PLAYLIST>(`${environment.base_uri}${environment.getters.api_get_playlist_by_id}${id}`, this.httpOptions);
+		return this._http.get<API_SINGLE_PLAYLIST>(`${environment.base_uri}${environment.getters.api_get_playlists_by_id}${id}`, this.httpOptions);
+	}
+
+	get_screens_of_playlist(id) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_of_playlist}${id}`, this.httpOptions);
 	}
 
 	create_playlist(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_playlist}`, data, this.httpOptions);
+	}
+
+	clone_playlist(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_clone_playlist}`, data, this.httpOptions);
+	}
+
+	bulk_whitelist(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_bulk_remove_in_blacklist}`, data, this.httpOptions);
 	}
 
 	remove_playlist(id, force) {

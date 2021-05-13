@@ -52,33 +52,37 @@
         </div>
     </div>
     <hr class="my-4">
-    <div *ngIf="playlist_data.length != 0 || no_playlist; else loader">
+    <div *ngIf="!initial_load; else loader">
         <div *ngIf="!no_playlist; else no_data">
-            <div class="row">
-                <div class="col-lg-8"></div>
+            <div class="row justify-content-end">
                 <div class="col-lg-4">
                     <app-search-field 
-                    *ngIf="playlist_data.length != 0"
                     [form_title]="'Search Playlist Name'"
                     [placeholder]="'Example: N-Compass'" 
                     [data_reference]="playlist_data" 
-                    [primary_keyword]="'playlist_name'" 
-                    [secondary_keyword]="'playlist_desc'"
-                    (searched)="filterData($event)"></app-search-field>
+                    [primary_keyword]="'name'" 
+                    [secondary_keyword]="'description'"
+                    (searched)="filterData($event)"
+                    [api_search]="true"
+                    (reset_search)="ngOnInit()"></app-search-field>
                 </div>
             </div>
-            <div class="row" *ngIf="playlist_data.length != 0">
+            <div class="row">
                 <div class="col-lg-12">
-                    <mat-card *ngIf="filtered_data.length > 0;else nodata">
-                        <app-data-table 
-                        [table_data]="filtered_data"
-                        [table_columns]="playlist_table_column"
-                        [new_table]="true"
-                        [playlist_delete]="true"
-                        (update_info)="fromDelete()"
-                        [is_dealer]="true">
-                        </app-data-table>
-                    </mat-card>
+                    <ng-container *ngIf="!searching; else loader">
+                        <mat-card *ngIf="filtered_data.length > 0;else nodata">
+                            <app-data-table 
+                                [table_data]="filtered_data"
+                                [table_columns]="playlist_table_column"
+                                [new_table]="true"
+                                [paging_details]="paging_data"
+                                (page_triggered)="getPlaylist($event)"
+                                [playlist_delete]="true"
+                                (update_info)="fromDelete()"
+                                [is_dealer]="true">
+                            </app-data-table>
+                        </mat-card>
+                    </ng-container>
                 </div>
             </div>
         </div>

@@ -75,8 +75,6 @@ export class PlaylistHostComponent implements OnInit {
 				this.blocklisting(e, i.licenseId)
 			})
 		}
-
-		console.log('#blockingListingAll', this.incoming_blocklist);
 	}
 
 	hasActiveLicenses() {
@@ -106,12 +104,9 @@ export class PlaylistHostComponent implements OnInit {
 	}
 
 	blocklisting(e, licenseId) {
-		console.log('Triggered');
-
 		if (e.checked == true || e == true) {
 			if (!this.remove_in_blocklist.includes(licenseId)) {
 				this.remove_in_blocklist.push(licenseId);
-				console.log(1)
 			}
 		} else {
 			if (this.remove_in_blocklist.includes(licenseId)) {
@@ -119,16 +114,13 @@ export class PlaylistHostComponent implements OnInit {
 					i => i !== licenseId
 				)
 
-				console.log(2)
-
 				if(!this.incoming_blocklist.includes(licenseId)) {
 					this.incoming_blocklist.push(licenseId);
-					console.log(3)
 				}
 			}
 		}
 
-		console.log(this.remove_in_blocklist, this.incoming_blocklist);
+		// console.log(this.remove_in_blocklist, this.incoming_blocklist);
 
 		let incoming_blocklist_data = {
 			blocklist_data: new API_BLOCKLIST_CONTENT(

@@ -34,7 +34,7 @@
         "@sam-1994/ngx-drag-and-drop-grid": "^1.0.0",
         "@types/file-saver": "^2.0.1",
         "angular2-jwt": "^0.2.3",
-        "chart.js": "^2.9.3",
+        "chart.js": "^2.9.4",
         "chartjs-plugin-datalabels": "^0.7.0",
         "exceljs": "^4.2.1",
         "file-saver": "^2.0.5",
@@ -50,7 +50,7 @@
         "rxjs-compat": "^6.5.4",
         "socket.io-client": "^2.4.0",
         "sortablejs": "^1.12.0",
-        "tslib": "^1.10.0",
+        "tslib": "^1.14.1",
         "uuid": "^7.0.3",
         "zone.js": "~0.9.1"
     },

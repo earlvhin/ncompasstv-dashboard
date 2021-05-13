@@ -15,10 +15,13 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 export class OptionsComponent implements OnInit {
 
 	blocklist_changes = { status: false };
+	blacklist_ready: boolean = false;
 	content_data: any;
+	host_license: any;
 	disable_animation = true;
 	feed_url = '';
 	has_schedule = false;
+	c_index: number;
 	playlist_changes_data = { content: null, blocklist: null };
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
@@ -27,15 +30,16 @@ export class OptionsComponent implements OnInit {
 	unchanged_playlist: boolean = true;
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: { content: API_CONTENT },
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: any, content: API_CONTENT, host_license: any },
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<OptionsComponent>
 	) { }
 	
 	ngOnInit() {
 		localStorage.setItem('playlist_data', JSON.stringify(this._dialog_data.content));
-		this.content_data = this._dialog_data;
-		console.log('#matdialog', this._dialog_data.content);
+		this.c_index = this._dialog_data.index;
+		this.content_data = this._dialog_data.content;
+		this.host_license = this._dialog_data.host_license;
 		if (this.isFeedContent()) this.setFeedUrl();
 		this.setSchedule(this._dialog_data.content);
 	}
@@ -50,9 +54,8 @@ export class OptionsComponent implements OnInit {
 
 	hasWhiteListed(e) {
 		setTimeout(() => {
-			console.log('#hasWhiteListed', e);
 			this.toggle_all = e;
-		}, 100)
+		}, 0)
 	}
 
 	onClose(): void {
@@ -60,20 +63,20 @@ export class OptionsComponent implements OnInit {
 	}
 
 	toggleFullscreen(e) {
-		this.content_data.content.isFullScreen = e.checked == true ? 1 : 0;
+		this.content_data.isFullScreen = e.checked == true ? 1 : 0;
 		this.contentDataChanged();
 	}
 
 	setDuration() {
-		this.content_data.content.duration = this.content_data.content.duration < 5 ? 5 : this.content_data.content.duration;
+		this.content_data.duration = this.content_data.duration < 5 ? 5 : this.content_data.duration;
 		this.contentDataChanged();
 	}
 
 	contentDataChanged() {
-		if (JSON.stringify(this.content_data.content) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
+		if (JSON.stringify(this.content_data) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
 			this.unchanged_playlist = true;
 		} else {
-			this.playlist_changes_data.content = this.content_data.content;
+			this.playlist_changes_data.content = this.content_data;
 			this.unchanged_playlist = false;
 		}
 	}
@@ -83,10 +86,9 @@ export class OptionsComponent implements OnInit {
 	}
 
 	saveBlocklistChanges(e) {
-		console.log('#saveBlocklistChanges', e);
 		this.blocklist_changes = e;
 		
-		if (JSON.stringify(this.content_data.content) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
+		if (JSON.stringify(this.content_data) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
 			this.unchanged_playlist = true;
 		} else {
 			this.unchanged_playlist = false;
@@ -109,7 +111,6 @@ export class OptionsComponent implements OnInit {
 			dialogRef.afterClosed().subscribe(
 				data => {
 					if (data) {
-						console.log('#undoChanges', data);
 						if (this.unchanged_playlist) {
 							this._dialog_ref.close();
 						} else {
@@ -128,7 +129,7 @@ export class OptionsComponent implements OnInit {
 	}
 
 	private isFeedContent(): boolean {
-		if (this.content_data.content.fileType != 'feed') return false;
+		if (this.content_data.fileType != 'feed') return false;
 		return true;
 	}
 
@@ -177,7 +178,7 @@ export class OptionsComponent implements OnInit {
 	}
 
 	private setFeedUrl(): void {
-		const url = this.content_data.content.url;
+		const url = this.content_data.url;
 		if (url && url.length > 60) this.feed_url = `${url.substr(0, 57)}...`;
 		else this.feed_url = url;
 	}
@@ -210,8 +211,6 @@ export class OptionsComponent implements OnInit {
 				this.schedule.time = DEFAULT;
 
 		}
-
 		this.has_schedule = true;		
-
 	}
 }
