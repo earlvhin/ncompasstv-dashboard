@@ -578,7 +578,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					},
 					{ value: l.license.licenseKey, link: '/administrator/licenses/' + l.license.licenseId, editable: false, hidden: false, status: true},
 					{ value: l.screenType && l.screenType.name ? this._titlecase.transform(l.screenType.name) : '--', editable: false, hidden: false },
-					{ value: l.host ? l.host.name : '--', link: l.host ? '/administrator/hosts/' + l.host.hostId : null, editable: false, hidden: false },
+					{ value: l.host ? l.host.name : '--', link: l.host ? '/administrator/hosts/' + l.host.hostId : null, editable: false, hidden: false, business_hours: true, business_hours_label: this.getLabel(l) },
 					{ value: l.license.alias ? l.license.alias : '--', link: '/administrator/licenses/' + l.license.licenseId, editable: true, label: 'License Alias', id: l.license.licenseId, hidden: false },
 					{ value: l.license.contentsUpdated ? l.license.contentsUpdated : '--', label: 'Last Push', hidden: false },
 					{ value: l.license.timeIn ? this._date.transform(l.license.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
@@ -598,6 +598,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				return table;
 			}
 		);
+	}
+
+	getLabel(data) {
+		var now = new Date().getDay() - 1 > 0  ? new Date().getDay() - 1 : new Date().getDay();
+		var storehours = JSON.parse(data.host.storeHours)
+		console.log({storehours, now})
+		var modified_label = {
+			date : this._date.transform(new Date(), 'MMM dd, yyyy'),
+			address: data.host.address,
+			schedule: storehours[now].periods[0].open + "-" + storehours[now].periods[0].close
+		}
+		return modified_label;
 	}
 
 	onSelectTab(event: { index: number }): void {
