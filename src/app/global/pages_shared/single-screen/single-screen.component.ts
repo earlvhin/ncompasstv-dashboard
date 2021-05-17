@@ -325,11 +325,22 @@ export class SingleScreenComponent implements OnInit {
 			this._screen.edit_screen(final_screen_info).subscribe(
 				data => {
 					this.no_changes = true;
-					this.ngOnInit();
+					this.openConfirmationModal('success', 'Success!', 'Screen successfully updated!');
+					// this.ngOnInit();
 					// console.log('editScreenInfo', data);
 				}
 			)
 		)
+	}
+
+	openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width:'500px',
+			height: '350px',
+			data:  { status, message, data }
+		})
+
+		dialog.afterClosed().subscribe(() => this.ngOnInit());
 	}
 
 	// Get Playlist By Dealer ID
