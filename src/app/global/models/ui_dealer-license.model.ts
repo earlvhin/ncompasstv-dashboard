@@ -13,7 +13,6 @@ export class UI_DEALER_LICENSE {
     anydesk: object;
 	server_version: object;
 	ui_version: object;
-	server: object;
 	screen: object;
 	template: object;
 	date_installed: object;
@@ -23,7 +22,7 @@ export class UI_DEALER_LICENSE {
 	pi_status: object;
 
     constructor(id: object, key: object, screenshot: object, type: object, host: object, alias: object, last_push: object, last_online: object, 
-		connection_type: object, connection_speed: object, anydesk: object, server: object, ui: object, server_con: object, screen: object, template: object, date_installed: object, 
+		connection_type: object, connection_speed: object, anydesk: object, server: object, ui: object, screen: object, template: object, date_installed: object, 
 		date_created: object, is_activated: object, is_assigned: object,  pi_status: object) {
 		this.license_id = id;
         this.license_key = key;
@@ -38,7 +37,6 @@ export class UI_DEALER_LICENSE {
 		this.anydesk = anydesk;
 		this.server_version = server;
 		this.ui_version = ui;
-		this.server = server_con;
 		this.screen = screen;
 		this.template = template;
 		this.date_installed = date_installed;
