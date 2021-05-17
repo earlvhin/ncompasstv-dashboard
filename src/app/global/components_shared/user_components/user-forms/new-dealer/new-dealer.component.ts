@@ -49,16 +49,17 @@ export class NewDealerComponent implements OnInit {
 
 	ngOnInit() {
 		this._location.get_cities().subscribe(
-			(data: any[]) => {
-				this.city_state = data.map(
-					c => {
+			(response: any[]) => {
+
+				this.city_state = response.map(
+					city => {
 						return new City(
-							c.city,
-							`${c.city}, ${c.state}`,
-							c.state
-						)
+							city.city,
+							`${city.city}, ${city.state}`,
+							city.state
+						);
 					}
-				)
+				);
 
 				this.createForm();
 			}
