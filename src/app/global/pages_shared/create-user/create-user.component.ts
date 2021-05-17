@@ -53,7 +53,7 @@ export class CreateUserComponent implements OnInit {
 				role_name: 'Sub-Dealer',
 				role_description: 'Dealer account with access to only a max of 5 sub accounts',
 				role_icon: 'assets/media-files/dealer-icon.png',
-				role: UI_ROLE_DEFINITION_TEXT.dealer,
+				role: UI_ROLE_DEFINITION_TEXT['sub-dealer'],
 			},
 			{
 				role_name: 'Host',
@@ -67,7 +67,7 @@ export class CreateUserComponent implements OnInit {
 				role_icon: 'assets/media-files/advertiser-icon.png',
 				role: UI_ROLE_DEFINITION_TEXT.advertiser
 			},
-		]
+		];
 
 	}
 

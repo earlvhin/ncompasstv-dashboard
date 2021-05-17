@@ -49,14 +49,18 @@ export class UserService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_user_by_id}${data}`, this.httpOptions).map(data => data);
 	}
 
-	create_new_user(role, data) {
+	create_new_user(role: string, data: any) {
 		let url: string;
+
 		switch (role)  {
 			case UI_ROLE_DEFINITION.administrator:
 				url = environment.create.api_new_admin
 				break;
 			case UI_ROLE_DEFINITION.dealer:
 				url = environment.create.api_new_dealer
+				break;
+			case UI_ROLE_DEFINITION['sub-dealer']:
+				//  add sub-dealer URL here
 				break;
 			case UI_ROLE_DEFINITION.host:
 				url = environment.create.api_new_host
