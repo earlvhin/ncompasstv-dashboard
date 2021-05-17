@@ -578,7 +578,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					},
 					{ value: l.license.licenseKey, link: '/administrator/licenses/' + l.license.licenseId, editable: false, hidden: false, status: true},
 					{ value: l.screenType && l.screenType.name ? this._titlecase.transform(l.screenType.name) : '--', editable: false, hidden: false },
-					{ value: l.host ? l.host.name : '--', link: l.host ? '/administrator/hosts/' + l.host.hostId : null, editable: false, hidden: false, business_hours: true, business_hours_label: this.getLabel(l) },
+					{ value: l.host ? l.host.name : '--', link: l.host ? '/administrator/hosts/' + l.host.hostId : null, editable: false, hidden: false, business_hours: l.host ? true : false, business_hours_label: l.host ? this.getLabel(l) : null },
 					{ value: l.license.alias ? l.license.alias : '--', link: '/administrator/licenses/' + l.license.licenseId, editable: true, label: 'License Alias', id: l.license.licenseId, hidden: false },
 					{ value: l.license.contentsUpdated ? l.license.contentsUpdated : '--', label: 'Last Push', hidden: false },
 					{ value: l.license.timeIn ? this._date.transform(l.license.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
