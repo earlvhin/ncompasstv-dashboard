@@ -18,7 +18,7 @@ export class AppComponent {
 		this.subscription = router.events.subscribe((event) => {
 			if (event instanceof NavigationStart) {
 				browserRefresh = !router.navigated;
-				console.log('NAVIGATED', browserRefresh);
+				/// console.log('NAVIGATED', browserRefresh);
 				localStorage.removeItem('playlist_data');
 				localStorage.removeItem('playlist_order');
 				localStorage.removeItem('to_blocklist');
