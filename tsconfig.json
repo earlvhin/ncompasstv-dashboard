@@ -9,9 +9,9 @@
     "experimentalDecorators": true,
     "module": "esnext",
     "moduleResolution": "node",
-	"importHelpers": true,
-	"skipLibCheck": true,
-    "target": "es5",
+    "importHelpers": true,
+    "skipLibCheck": true,
+    "target": "es2015",
     "resolveJsonModule": true,
     "typeRoots": [
       "node_modules/@types"
