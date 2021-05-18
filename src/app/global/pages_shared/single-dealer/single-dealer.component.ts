@@ -14,6 +14,7 @@ import { API_DEALER } from '../../models/api_dealer.model';
 import { API_HOST } from '../../models/api_host.model';
 import { API_LICENSE } from '../../models/api_license.model';
 import { API_LICENSE_STASTICS } from '../../models/api_license_statistics.model';
+import { AuthService } from '../../services/auth-service/auth.service';
 import { UI_DEALER_HOST } from '../../models/ui_dealer-host.model';
 import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
 import { DEALER_UI_TABLE_ADVERTISERS } from '../../models/ui_table_advertisers.model';
@@ -84,6 +85,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	no_hosts = false;
 	no_licenses = false;
 	no_record: boolean = false;
+	now: any;
 	paging: any;
 	paging_data: any;
 	paging_data_advertiser: any;
@@ -160,6 +162,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	constructor(
 		private _advertiser: AdvertiserService,
+		private _auth: AuthService,
 		private _change_detector: ChangeDetectorRef,
 		private _date: DatePipe,
 		private _dealer: DealerService,
@@ -475,8 +478,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 								}	
 							}
 						);
-
-						console.log('licenses', this.license_data_api);
 						this.statistics = response.statistics;
 
 						if (reload) this.updateCharts();
@@ -601,21 +602,23 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getLabel(data) {
-		var now = new Date().getDay() - 1 > 0  ? new Date().getDay() - 1 : new Date().getDay();
+		this.now = moment().format('d');
+		this.now = this.now - 1;
 		var storehours = JSON.parse(data.host.storeHours)
-		console.log({storehours, now})
 		var modified_label = {
-			date : this._date.transform(new Date(), 'MMM dd, yyyy'),
+			date : moment().format('LL'),
 			address: data.host.address,
-			schedule: storehours[now].periods[0].open + "-" + storehours[now].periods[0].close
+			schedule: storehours[this.now].status ? (
+				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
+				? "Open 24 Hours" : storehours[this.now].periods.map(
+					i => {
+						return i.open + " - " + i.close
+					})) : "Closed"
 		}
 		return modified_label;
 	}
 
 	onSelectTab(event: { index: number }): void {
-
-		console.log('index', event.index);
-
 		switch (event.index) {
 			case 1:
 				this.current_tab = 'hosts';
