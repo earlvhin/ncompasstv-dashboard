@@ -9,6 +9,7 @@ import { ContentService } from 'src/app/global/services/content-service/content.
 import { MediaViewerComponent } from '../media-viewer/media-viewer.component';
 import { UI_CONTENT } from 'src/app/global/models/ui_content.model';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
+import { SelectOwnerComponent } from '../../user_components/select-owner/select-owner.component';
 @Component({
 	selector: 'app-media',
 	templateUrl: './media.component.html',
@@ -274,6 +275,24 @@ export class MediaComponent implements OnInit, OnDestroy {
 		}
 
 		this.mediaViewer_open(content, this.filtered_content_data, index);
+
+	}
+
+	onSelectReassign(): void {
+
+		const dialog = this._dialog.open(SelectOwnerComponent, {
+			width: '500px',
+			data: this.selected_content_ids
+		});
+
+		dialog.afterClosed().subscribe(
+			(response: { host: { id, name }, dealer: { id, name }, advertiser: { id, name } }) => {
+				console.log('selected owner', response);
+
+				// API CALL HERE
+			},
+			error => console.log('Error closing owner select modal', error)
+		);
 
 	}
 

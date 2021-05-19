@@ -108,6 +108,7 @@ import { ScreenDemoComponent } from './components_shared/screen_components/scree
 import { ScreenItemComponent } from './components_shared/screen_components/screen-item/screen-item.component';
 import { ScreenLicenseComponent } from './components_shared/screen_components/screen-license/screen-license.component';
 import { ScreenshotPipe } from './pipes/screenshot.pipe';
+import { SelectOwnerComponent } from './components_shared/user_components/select-owner/select-owner.component';
 import { SearchFieldComponent } from './components_shared/page_components/search-field/search-field.component';
 import { SidebarComponent } from './components_shared/page_components/sidebar/sidebar.component';
 import { SingleAdvertiserComponent } from './pages_shared/single-advertiser/single-advertiser.component';
@@ -267,6 +268,7 @@ const ngComponents = [
 	ScreenItemComponent,
 	ScreenLicenseComponent,
 	ScreenshotPipe,
+	SelectOwnerComponent,
 	SearchFieldComponent,
 	SearchFieldComponent,
 	SidebarComponent,
