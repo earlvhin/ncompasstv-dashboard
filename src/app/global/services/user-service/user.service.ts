@@ -60,7 +60,7 @@ export class UserService {
 				url = environment.create.api_new_dealer
 				break;
 			case UI_ROLE_DEFINITION['sub-dealer']:
-				//  add sub-dealer URL here
+				url = environment.create.sub_dealer_account;
 				break;
 			case UI_ROLE_DEFINITION.host:
 				url = environment.create.api_new_host

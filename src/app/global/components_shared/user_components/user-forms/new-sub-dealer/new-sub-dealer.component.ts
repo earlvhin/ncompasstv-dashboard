@@ -141,7 +141,7 @@ export class NewSubDealerComponent implements OnInit {
 				width: 'col-lg-6',
 				re_password_field: true
 			},
-		]
+		];
 
 		this.subscription.add(
 			this.f.password.valueChanges.subscribe(
@@ -201,18 +201,6 @@ export class NewSubDealerComponent implements OnInit {
 		});
 	}
 
-	// {
-	// 	"id": null,
-	// 	"firstName": "Natzi",
-	// 	"lastName": "Decorion",
-	// 	"contactNo": "09177",
-	// 	"parentId": "178e982c-f331-4540-8ab0-131b688258d0",
-	// 	"roleId": "00f0248e-fc37-4c29-9a1e-b413641d8bde",
-	// 	"email": "natzi@test.com",
-	// 	"password": "jonathan",
-	// 	"createdBy": "a68b7580-968e-11e9-8fdb-27ea5156c50c"
-	// }
-
 	onSubmit(form: FormGroupDirective): boolean | void {
 		console.log('form value', form.value);
 
@@ -229,21 +217,21 @@ export class NewSubDealerComponent implements OnInit {
 		const { firstName, lastName, contactNo, parentId, roleId, email, password, createdBy } = form.value;
 		const data = { firstName, lastName, contactNo, parentId, roleId, email, password, createdBy };
 
-		// this._user.create_new_user(this.f.roleid.value, data).subscribe(
-		// 	() => {
-		// 		this.openConfirmationModal('success', 'Account creation successful!', 'Advertiser account has been added to database.');
-		// 		form.resetForm();
-		// 		this.is_submitted = false;
-		// 		this.form_invalid = false;
-		// 		this.form.reset();
-		// 		this.ngOnInit();
-		// 	},
-		// 	error => {
-		// 		this.is_submitted = false; 
-		// 		this.form_invalid = false;
-		// 		this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
-		// 	}
-		// );
+		this._user.create_new_user(this.f.roleId.value, data).subscribe(
+			() => {
+				this.openConfirmationModal('success', 'Account creation successful!', 'Advertiser account has been added to database.');
+				form.resetForm();
+				this.is_submitted = false;
+				this.form_invalid = false;
+				this.form.reset();
+				this.ngOnInit();
+			},
+			error => {
+				this.is_submitted = false; 
+				this.form_invalid = false;
+				this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+			}
+		);
 
 	}
 

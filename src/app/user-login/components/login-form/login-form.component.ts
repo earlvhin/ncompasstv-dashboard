@@ -80,6 +80,7 @@ export class LoginFormComponent implements OnInit {
 
 		this._auth.authenticate_user(this.login_form.value).pipe(first()).subscribe(
 			(data: USER_LOGIN) => {
+				console.log('log in response', data);
 				const user_data = {
 					user_id: data.userId,
 					firstname: data.firstName,
@@ -90,7 +91,8 @@ export class LoginFormComponent implements OnInit {
 						token: data.token,
 						refreshToken: data.refreshToken
 					}
-				}
+				};
+
 				localStorage.setItem('current_user', JSON.stringify(user_data));
 				localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
 				this.refreshToken(data.userRole.roleId);
@@ -116,7 +118,7 @@ export class LoginFormComponent implements OnInit {
 		}
 	}
 
-	redirectToPage(role_data) {
+	async redirectToPage(role_data) {
 		let role: string;
 
 		switch (role_data) {
@@ -125,6 +127,9 @@ export class LoginFormComponent implements OnInit {
 				break;
 			case UI_ROLE_DEFINITION.dealer:
 				role = UI_ROLE_DEFINITION_TEXT.dealer
+				break;
+			case UI_ROLE_DEFINITION['sub-dealer']:
+				role = UI_ROLE_DEFINITION_TEXT['sub-dealer'];
 				break;
 			case UI_ROLE_DEFINITION.host:
 				role = UI_ROLE_DEFINITION_TEXT.host
@@ -138,7 +143,11 @@ export class LoginFormComponent implements OnInit {
 			default:
 				role = 'login'
 		}
-		this._router.navigate([role]);
+
+		console.log('navigate role', role);
+
+		const navigate = await this._router.navigate([role]);
+		console.log('navigate result', navigate);
 	}
 
 	togglePasswordFieldType(): void {
