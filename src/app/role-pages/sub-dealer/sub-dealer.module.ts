@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SubDealerComponent } from './sub-dealer.component';
+import { SubDealerLayoutComponent } from './sub-dealer-layout/sub-dealer-layout.component';
 import { GlobalModule } from 'src/app/global/global.module';
 import { RouterModule } from '@angular/router';
 import { SUB_DEALER_ROUTES } from './sub-dealer.routes';
@@ -9,7 +9,7 @@ import { AuthGuard } from 'src/app/global/guards/auth/auth.guard';
 
 
 @NgModule({
-	declarations: [ SubDealerComponent, DashboardComponent ],
+	declarations: [ DashboardComponent, SubDealerLayoutComponent ],
 	imports: [
 		CommonModule,
 		GlobalModule,

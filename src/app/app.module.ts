@@ -31,10 +31,10 @@ import { SubDealerModule } from './role-pages/sub-dealer/sub-dealer.module';
 		HostOwnerModule,
 		AdvertiserModule,
 		TechnicalModule,
+        SubDealerModule,
 		UserLoginModule,
 		AppRoutingModule,
 		ReassignDealerModule,
-		SubDealerModule,
 		ViewContentListModule
 	],
 	providers: [AuthService, AuthGuard],
