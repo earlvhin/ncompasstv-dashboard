@@ -80,17 +80,14 @@ export class LoginFormComponent implements OnInit {
 
 		this._auth.authenticate_user(this.login_form.value).pipe(first()).subscribe(
 			(data: USER_LOGIN) => {
-				console.log('log in response', data);
+				
 				const user_data = {
 					user_id: data.userId,
 					firstname: data.firstName,
 					lastname: data.lastName,
 					role_id: data.userRole.roleId,
 					roleInfo: data.roleInfo,
-					jwt: {
-						token: data.token,
-						refreshToken: data.refreshToken
-					}
+					jwt: { token: data.token, refreshToken: data.refreshToken }
 				};
 
 				localStorage.setItem('current_user', JSON.stringify(user_data));
@@ -101,7 +98,7 @@ export class LoginFormComponent implements OnInit {
 				this.show_overlay = false;
 				this.is_error = true;
 				this.error_msg = `${error.error.message}`;
-				console.log('#onSubmit - Error', error);
+				console.log('Error authenticating user', error);
 			}
 		)
 	}
@@ -118,10 +115,10 @@ export class LoginFormComponent implements OnInit {
 		}
 	}
 
-	async redirectToPage(role_data) {
+	async redirectToPage(role_definition: string): Promise<void> {
 		let role: string;
 
-		switch (role_data) {
+		switch (role_definition) {
 			case UI_ROLE_DEFINITION.administrator:
 				role = UI_ROLE_DEFINITION_TEXT.administrator
 				break;
@@ -141,13 +138,11 @@ export class LoginFormComponent implements OnInit {
 				role = UI_ROLE_DEFINITION_TEXT.tech
 				break;
 			default:
-				role = 'login'
+				role = 'login';
 		}
 
-		console.log('navigate role', role);
 
-		const navigate = await this._router.navigate([role]);
-		console.log('navigate result', navigate);
+		await this._router.navigate([role]);
 	}
 
 	togglePasswordFieldType(): void {
