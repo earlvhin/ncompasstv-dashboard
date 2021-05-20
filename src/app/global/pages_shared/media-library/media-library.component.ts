@@ -52,12 +52,15 @@ export class MediaLibraryComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		const roleId = this._auth.current_user_value.role_id;
+
+		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
 			this.is_dealer = true;
-			this.getDealerContents(this._auth.current_user_value.roleInfo.dealerId);
+			this.getDealerContents(this._auth.current_user_value.roleInfo.dealerId, 1, 60);
 		} else {
 			this.getContents();
 		}
+		
 	}
 
 	// Upload Modal
@@ -131,16 +134,16 @@ export class MediaLibraryComponent implements OnInit {
 	}
 	
 	//Dealer Contents
-	getDealerContents(id) {
+	getDealerContents(id: string, page: number, pageSize: number) {
 		this.subscription.add(
-			this._content.get_content_by_dealer_id(id, false).subscribe(
+			this._content.get_content_by_dealer_id(id, false, page, pageSize).subscribe(
 				(data: any) => {
 					if(!data.message) {
 						this.all_media = data;
 					}
 				}
 			)
-		)
+		);
 	}
 
 	// Filestack

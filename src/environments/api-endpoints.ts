@@ -113,6 +113,8 @@ export const API_ENDPOINTS = {
 		api_new_app_version: 'playerapp/addversion',
 		api_new_app: 'playerapp/create',
 		content_schedule: 'PlaylistContentsSchedule/Create',
+		sub_dealer_account: 'account/CreateSubAccount',
+
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
