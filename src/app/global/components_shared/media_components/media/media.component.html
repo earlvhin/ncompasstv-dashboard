@@ -30,14 +30,14 @@
 				<span class="ml-3 text-gray">Bulk Select</span>
 
 				<button mat-button mat-raised-button
+					class="theme-btn ml-3 danger"
                     (click)="deleteMultiple()"
-					[disabled]="selected_content_ids.length === 0" 
-                    class="theme-btn ml-3 danger">Delete
+					[disabled]="selected_content_ids.length === 0">Delete
                 </button>
 
 				<button mat-button mat-raised-button 
+					class="theme-btn ml-3"
 					[disabled]="selected_content_ids.length === 0" 
-                    class="theme-btn ml-3"
 					(click)="onSelectReassign()">Reassign
                 </button>
 			</div>

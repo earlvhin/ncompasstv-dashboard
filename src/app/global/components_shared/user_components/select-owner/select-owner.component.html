@@ -3,6 +3,18 @@
 		<div class="sort-by-dealer" *ngIf="dealers; else loader_sm">
 			<h3 class="mb-1">Select Owner For Reassignment</h3>
 
+			<div class="type-selection">
+				<span>Owner Type:</span>
+				<mat-radio-group name="opList" fxLayout="column" [(ngModel)]="owner_type">
+					<mat-radio-button name="onwer_type_list" class="mr-2 md-text text-gray" 
+						*ngFor="let option of owner_types"
+						 [value]="option.type"
+						 (change)="onSelectOwnerType($event)"
+						 >{{ option.name }}
+					</mat-radio-button>
+				</mat-radio-group>
+			</div>
+
 			<div class="dealer-field">
 				<app-autocomplete-field
 					(data_value)="dealerSelected($event)"
@@ -19,7 +31,9 @@
 					[initial_value]="dealer_name"
 					[disabled]="is_dealer"
 					[loading_data]="loading_data"
-					[loading_search]="loading_search">
+					[loading_search]="loading_search"
+					[type]="'dealer'"
+					[disabled]="is_floating_selected || !owner_type">
 				</app-autocomplete-field>
 			</div>
 
@@ -39,7 +53,9 @@
 					(searched)="searchHostData($event)"
 					[loading_data]="loading_data_host"
 					[loading_search]="loading_search_host"
-					[initial_load]="initial_load">
+					[initial_load]="initial_load"
+					[type]="'host'"
+					[disabled]="!is_host_field_selected || is_floating_selected">
 				</app-autocomplete-field>
 
 				<ng-template #no_dealer_host>
@@ -62,7 +78,9 @@
 					(searched)="searchAdvertiserData($event)"
 					[loading_data]="loading_data_advertiser"
 					[loading_search]="loading_search_advertiser"
-					[initial_load]="initial_load_advertiser">
+					[initial_load]="initial_load_advertiser"
+					[type]="'advertiser'"
+					[disabled]="!is_advertiser_field_selected || is_floating_selected">
 				</app-autocomplete-field>
 
 				<ng-template #no_dealer_adv>
@@ -72,7 +90,7 @@
 
 			<button mat-button mat-raised-button 
 				[mat-dialog-close]="filter_data" class="theme-btn mt-4 mr-2" 
-				[disabled]="dealer_id === undefined">Submit
+				[disabled]="!isValidForm">Submit
 			</button>
 			
 			<button mat-button mat-raised-button mat-dialog-close class="theme-btn mt-4 bg-danger">
