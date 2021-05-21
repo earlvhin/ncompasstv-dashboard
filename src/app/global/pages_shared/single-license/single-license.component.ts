@@ -37,6 +37,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	anydesk_id: string;
 	anydesk_restarting: boolean = false;
 	apps: any;
+	assets_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0 };
 	background_zone_selected: boolean = false;
 	business_hours: { day: string, periods: string[], selected: boolean }[] = [];
 	charts: any[] = [];
@@ -46,8 +47,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	content_id: string;
 	content_per_zone: UI_CONTENT_PER_ZONE[];
 	content_play_count: API_CONTENT[] = [];
-	content_statistics: any;
 	content_time_update: string;
+	contents: API_CONTENT[] = [];
 	contents_array: any = [];
 	current_operation: { day: string, period: string };
 	current_month = new Date().getMonth() + 1;
@@ -57,6 +58,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	daily_content_count: API_CONTENT[] = [];
 	dealer_route: string;
 	default_selected_month: string = this._date.transform(`${this.current_year}-${this.current_month}`, 'y-MM');
+	duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
+	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' }; 
 	enable_edit_alias: boolean = false;
 	eventsSubject: Subject<void> = new Subject<void>();
 	filters: any;
@@ -310,7 +313,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 				if (contents && contents.length > 0) {
 					setTimeout(() => {
-						this.generateContentStatisticsChart();
+						this.generateAssetsBreakdownChart();
+						this.generateDurationBreakdownChart();
 	
 						// get all chartjs instances and store them in an array
 						// used later for destroying the instances when leaving the page
@@ -349,6 +353,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						
 						this.has_playlist = true;
 						this.breakdownContents();
+						this.breakdownDuration();
 						this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
 
 						this.playlist_route = "/" + this.routes + "/playlists/" + this.screen_zone.playlistId;
@@ -761,6 +766,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	zoneSelected(name: string): void {
 
 		this.breakdownContents();
+		this.breakdownDuration();
 		this.updateCharts();
 		this.selected_zone_index = this.content_per_zone.findIndex(content => content.zone_name === name);
 
@@ -1033,14 +1039,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const zone = this.content_per_zone.filter(zone => zone.zone_name === this.current_zone_selected)[0];
 
 		if (!zone || !zone.contents || zone.contents.length <= 0) {
-			this.content_statistics = breakdown;
+			this.assets_breakdown = breakdown;
 			return
 		}
 
 		const contents: UI_CONTENT[] = zone.contents;
 
 		contents.forEach(content => {
-			const { advertiser_id, classification, file_type, host_id,  } = content;
+			const { advertiser_id, classification, file_type, host_id } = content;
 
 			if (file_type === 'feed') {
 
@@ -1056,8 +1062,66 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		this.content_statistics = breakdown;
+		this.assets_breakdown = breakdown;
 
+	}
+
+	private calculateTime(duration: number): string {
+
+		if (duration < 60) {
+			return `${duration}s`;
+		}
+
+		if (duration === 60) {
+			return '1m';
+		}
+
+		const minutes = Math.floor(duration / 60);
+		const seconds = Math.round(duration - minutes * 60);
+
+		return `${minutes}m ${seconds}s`;
+
+	}
+
+	private breakdownDuration(): void {
+		const breakdown = { hosts: 0, advertisers: 0, fillers: 0, feeds: 0, others: 0, total: 0 };
+		const zone = this.content_per_zone.filter(zone => zone.zone_name === this.current_zone_selected)[0];
+
+		if (!zone || !zone.contents || zone.contents.length <= 0) {
+			this.assets_breakdown = breakdown;
+			return
+		}
+
+		const contents: UI_CONTENT[] = zone.contents;
+
+		contents.forEach(content => {
+			const { advertiser_id, classification, file_type, host_id, duration } = content;
+
+			if (file_type === 'feed') {
+
+				if (classification && classification === 'filler') breakdown.fillers += duration;
+				else breakdown.feeds += duration;
+
+			} else {
+
+				if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others += duration;
+				if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers += duration;
+				if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts += duration;
+
+			}
+
+			breakdown.total += duration;
+
+		});
+
+		this.duration_breakdown = breakdown;
+
+		Object.entries(breakdown).forEach(
+			([key, value]) => {
+				this.duration_breakdown_text[key] = this.calculateTime(value);
+			}
+		);
+		
 	}
 
 	private destroyCharts(): void {
@@ -1118,14 +1182,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	private generateContentStatisticsChart(): void {
+	private generateAssetsBreakdownChart(): void {
 
-		const statistics = this.content_statistics;
-		const { advertisers, feeds, fillers, hosts, others } = statistics;
+		const breakdown = this.assets_breakdown;
+		const { advertisers, feeds, fillers, hosts, others } = breakdown;
 		const labels = [ `Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}` ];
 		const data = [ hosts, advertisers, fillers, feeds, others ];
 		const title = 'Assets Breakdown';
-		const canvas = document.getElementById('contentStatistics');
+		const canvas = document.getElementById('assetsBreakdown');
 
 		// colors
 		const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
@@ -1142,7 +1206,47 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			options: {
 				tooltips: false,
 				title: { text: title, display: true },
-				legend: { labels: { boxWidth: 12 } },
+				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center', fullSize: true  },
+				responsive: true,
+				maintainAspectRatio: false
+			}
+		});
+
+	}
+
+	private generateDurationBreakdownChart(): void {
+
+		const breakdown = this.duration_breakdown;
+		const { advertisers, feeds, fillers, hosts, others } = breakdown;
+
+		const labels = [
+			`Hosts: ${this.calculateTime(hosts)}`,
+			`Advertisers: ${this.calculateTime(advertisers)}`,
+			`Fillers: ${this.calculateTime(fillers)}`, 
+			`Feeds: ${this.calculateTime(fillers)}`,
+			`Others: ${this.calculateTime(others)}` 
+		];
+
+		const data = [ hosts, advertisers, fillers, feeds, others ];
+		const title = 'Duration Breakdown';
+		const canvas = document.getElementById('durationBreakdown');
+
+		// colors
+		const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
+		const advertiserColor = { background: 'rgba(147, 103, 188, 0.8)', border: 'rgba(147, 103, 188, 1)' };
+		const fillerColor = { background: 'rgba(31, 119, 182, 0.8)', border: 'rgba(31, 119, 182, 1)' };
+		const feedColor = { background: 'rgba(254, 128, 12, 0.8)', border: 'rgba(254, 128, 12, 1)' };
+		const otherColor = { background: 'rgba(43, 160, 43, 0.8)', border: 'rgba(43, 160, 43, 1)' };
+		const backgroundColor = [ hostColor.background, advertiserColor.background, fillerColor.background, feedColor.border, otherColor.background ];
+		const borderColor = [ hostColor.border, advertiserColor.border, fillerColor.border, feedColor.border, otherColor.border ];
+
+		new Chart(canvas, {
+			type: 'doughnut',
+			data: { labels, datasets: [{ data, backgroundColor, borderColor, }], },
+			options: {
+				tooltips: false,
+				title: { text: title, display: true },
+				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center', fullSize: true  },
 				responsive: true,
 				maintainAspectRatio: false
 			}
@@ -1268,15 +1372,36 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private updateCharts(): void {
 		
 		setTimeout(() => {
-			const config = { duration: 800, easing: 'easeOutBounce' };
-			const contentChart = this.charts.filter(chart => chart.canvas.id === 'contentStatistics')[0];
-			const { advertisers, feeds, fillers, hosts, others } = this.content_statistics;
-
-			contentChart.data.labels = [ `Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}` ];
-			contentChart.data.datasets[0].data = [ hosts, advertisers, fillers, feeds, others ];
-			contentChart.update(config);
+			this.updateAssetsChart();
+			this.updateDurationChart();
 		}, 1000);
 
+	}
+
+	private updateAssetsChart(): void {
+		const config = { duration: 800, easing: 'easeOutBounce' };
+		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0];
+		const { advertisers, feeds, fillers, hosts, others } = this.assets_breakdown;
+		chart.data.labels = [ `Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}` ];
+		chart.data.datasets[0].data = [ hosts, advertisers, fillers, feeds, others ];
+		chart.update(config);
+	}
+
+	private updateDurationChart(): void {
+		const config = { duration: 800, easing: 'easeOutBounce' };
+		const chart = this.charts.filter(chart => chart.canvas.id === 'durationBreakdown')[0];
+		const { advertisers, feeds, fillers, hosts, others } = this.duration_breakdown;
+		
+		chart.data.labels = [
+			`Hosts: ${this.calculateTime(hosts)}`,
+			`Advertisers: ${this.calculateTime(advertisers)}`,
+			`Fillers: ${this.calculateTime(fillers)}`, 
+			`Feeds: ${this.calculateTime(fillers)}`,
+			`Others: ${this.calculateTime(others)}` 
+		];
+
+		chart.data.datasets[0].data = [ hosts, advertisers, fillers, feeds, others ];
+		chart.update(config);
 	}
 
 }

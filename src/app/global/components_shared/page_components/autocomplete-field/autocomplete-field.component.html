@@ -10,19 +10,19 @@
     (click)="initializeSearch($event)"
     [required]="required"
     [disabled]="disabled"
-    autocomplete="off" *ngIf="!paging">
+    autocomplete="nope" *ngIf="!paging">
 
     <input 
     type="text"
     [(ngModel)]="view_value"
-    matInput 
+    matInput
     [placeholder]="placeholder"
     (keyup)="search_by_api($event)"
     (blur)="emptySearch()"
     (click)="initializeSearch($event)"
     [required]="required"
     [disabled]="disabled"
-    autocomplete="off" *ngIf="paging" appearance="standard">
+    autocomplete="nope" *ngIf="paging" appearance="standard">
 
     <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
         <div *ngIf="loading_search">
