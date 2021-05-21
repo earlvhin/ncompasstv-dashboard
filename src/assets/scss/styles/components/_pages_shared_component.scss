@@ -106,3 +106,16 @@
         margin-left: auto;
     }
 }
+
+#outer-mat {
+    > .mat-expansion-panel-content {
+        background: $gray;
+        padding-top: 10px;
+    }
+}
+
+#directory-paging {
+    .new-paging-container {
+        position: relative;
+    }
+}
