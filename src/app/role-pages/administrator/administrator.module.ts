@@ -13,6 +13,7 @@ import { BillingsComponent } from './pages/billings/billings.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DealersComponent } from './pages/dealers/dealers.component';
+import { DirectoryComponent } from './pages/directory/directory.component';
 import { CreateTemplateComponent } from './pages/create-template/create-template.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
@@ -41,6 +42,7 @@ import { UpdateComponent } from './pages/update/update.component';
 		CategoriesComponent,
 		DashboardComponent,
 		DealersComponent,
+		DirectoryComponent,
 		CreateTemplateComponent,
 		HostsComponent,
 		LicensesComponent,

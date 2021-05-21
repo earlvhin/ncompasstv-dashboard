@@ -21,12 +21,12 @@ export class UI_DEALER_LICENSE {
     is_assigned: object;
 	pi_status: object;
 
-    constructor(id: object, key: object, screenshot: object, type: object, host: object, alias: object, last_push: object, last_online: object, 
+    constructor(id: object, screenshot: object, key: object, type: object, host: object, alias: object, last_push: object, last_online: object, 
 		connection_type: object, connection_speed: object, anydesk: object, server: object, ui: object, screen: object, template: object, date_installed: object, 
 		date_created: object, is_activated: object, is_assigned: object,  pi_status: object) {
 		this.license_id = id;
+		this.screenshot = screenshot;
         this.license_key = key;
-		this.screenshot = screenshot
 		this.type = type;
         this.host_name = host;
 		this.alias = alias;

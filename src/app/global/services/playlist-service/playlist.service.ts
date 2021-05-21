@@ -53,8 +53,8 @@ export class PlaylistService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 	
-	get_all_playlists(page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_all_playlist}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_all_playlists(page, key, column?, order?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_all_playlist}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 	
 	// search_playlists(key) {

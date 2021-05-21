@@ -105,7 +105,7 @@ export class DataTableComponent implements OnInit {
 		this.ngOnInit();
 	}
 
-	controlToggle(data, e): void {
+	controlToggle(data, e) {
 		const license_status = { id: data, status: e.checked }
 		this.toggle_triggered.emit(license_status);
 	}

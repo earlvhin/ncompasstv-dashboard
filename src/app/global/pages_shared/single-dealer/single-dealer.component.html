@@ -1,5 +1,5 @@
 <ng-container>
-    <div *ngIf="dealer; else loading">
+    <div *ngIf="dealer && loaded; else loading">
         <app-banner
         [single_image]="img"
         [single_name]="dealer.businessName"
@@ -61,6 +61,26 @@
         
         <div class="theme-container pb-5">
             <div class="row">
+                <div *ngIf="dealers; else loader_sm" class="dealer-picker col-lg-3">
+                    <div class="dealer-field full-width">
+                        <app-autocomplete-field
+                            (data_value)="dealerSelected($event)"
+                            [key_of_value]="'dealerId'"
+                            [placeholder]="'N-Compass TV'"
+                            [label]="'Selected Dealer'"
+                            [data_reference]="dealers_data"
+                            [search_keyword]="'businessName'"
+                            [primary_keyword]="'businessName'"
+                            [paging]="paging"
+                            (call_next_page)="searchBoxTrigger($event)"
+                            (searched)="searchData($event)"
+                            [new_value]="dealer_name"
+                            [initial_value]="dealer_name"
+                            [loading_data]="loading_data"
+                            [loading_search]="loading_search">
+                        </app-autocomplete-field>
+                    </div>
+                </div>
                 <div class="col-lg-12">
                     <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
 						<!-- LICENSES TAB -->
@@ -377,5 +397,11 @@
             <app-spinner></app-spinner>
         </div>
 	</ng-template>
+
+    <ng-template #loader_sm>
+        <div class="dealer-picker col-lg-3 text-center">
+            <app-spinner [diameter]="25"></app-spinner>
+        </div>
+    </ng-template>
 	
 </ng-container>

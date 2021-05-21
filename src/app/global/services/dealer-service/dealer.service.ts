@@ -53,6 +53,10 @@ export class DealerService {
 	get_dealers() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers}`, this.httpOptions).map(data => data.dealers);
 	}
+	
+	get_dealers_directory(page, key, searchKey) { 
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_directory}`+'?page='+`${page}`+'&search='+`${key}`+'&searchBy='+`${searchKey}`, this.httpOptions);
+	}
 
 	get_dealers_with_host(page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_host}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
