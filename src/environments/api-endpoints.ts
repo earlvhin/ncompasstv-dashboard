@@ -146,6 +146,7 @@ export const API_ENDPOINTS = {
 		install_date: 'license/UpdateInstallDate',
 		install_date_list: 'license/UpdateInstallDateList',
 		api_update_internet_info: 'license/UpdateInternetInfo',
+		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
 	},
 	delete: {

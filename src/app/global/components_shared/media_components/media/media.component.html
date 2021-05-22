@@ -22,20 +22,23 @@
 		<div class="col-lg-12 p-0">
 			<div class="flex-even text-right ml-3 p-0">
 				<mat-slide-toggle 
-				*ngIf="!no_content"
-				(change)="controlToggle($event)"
-				[checked]="enable_multiple_delete ? 'checked' : 'false'"
-				>
+					*ngIf="!no_content"
+					(change)="controlToggle($event)"
+					[checked]="is_bulk_select ? 'checked' : 'false'">
 				</mat-slide-toggle>
-				<span class="ml-3 text-gray">
-					Multiple Delete
-				</span>
-				<button mat-button mat-raised-button 
+
+				<span class="ml-3 text-gray">Bulk Select</span>
+
+				<button mat-button mat-raised-button
+					class="theme-btn ml-3 danger"
                     (click)="deleteMultiple()"
-					*ngIf="enable_multiple_delete"
-					[disabled] = "temp.length == 0" 
-                    class="theme-btn ml-3">
-                        Delete Contents
+					[disabled]="selected_content_ids.length === 0">Delete
+                </button>
+
+				<button mat-button mat-raised-button 
+					class="theme-btn ml-3"
+					[disabled]="!can_reassign || selected_content_ids.length === 0" 
+					(click)="onSelectReassign()">Reassign
                 </button>
 			</div>
 		</div>
@@ -43,20 +46,20 @@
 		<div class="media-container mb-4" *ngIf="!no_search_result; else nodata">
 			<div class="no-gutters" *ngIf="!searching; else loading">
 				<div class="row flex no-gutters" *ngIf="filtered_content_data.length != 0; else nodata">
-					<div class="p-2" *ngFor="let a of filtered_content_data; let i = index" [ngClass]="sm_view ? 'col-lg-2' : 'col-lg-1'">
-						<div (click)="mediaViewer_open(a, filtered_content_data, i)">
+					<div class="p-2" *ngFor="let content of filtered_content_data; let i = index" [ngClass]="sm_view ? 'col-lg-2' : 'col-lg-1'">
+						<div (click)="onSelectContent(content, i)" [class.selected]="selected_content_ids.includes(content.content_id)">
 							<app-thumbnail-card
-							[image_uri]="a.thumbnail"
-							[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
-							[content_id]="a.content_id"
-							[filetype]="a.file_type"
-							[is_converted]="a.is_converted"
-							[dealer]="a.dealer_id"
-							(deleted)="isDeleted($event)"
-							[uuid]="a.uuid"
-							[multiple_delete]="enable_multiple_delete"
-							(content_to_delete)="multipleDelete($event)"
-							[is_checked]="checkChecking(a.content_id)">
+								[image_uri]="content.thumbnail"
+								[filename]="content.file_type !== 'feed' ? content.file_name : content.title"
+								[content_id]="content.content_id"
+								[filetype]="content.file_type"
+								[is_converted]="content.is_converted"
+								[dealer]="content.dealer_id"
+								[uuid]="content.uuid"
+								[zone_content]="is_zone_content"
+								[multiple_delete]="is_bulk_select"
+								(deleted)="isDeleted($event)"
+								(content_to_delete)="multipleDelete($event)">
 							</app-thumbnail-card>
 						</div>
 					</div>

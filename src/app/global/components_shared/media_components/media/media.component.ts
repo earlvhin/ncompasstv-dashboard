@@ -1,59 +1,58 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, Host } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { Subscription, Observable } from 'rxjs';
 
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { ContentService } from 'src/app/global/services/content-service/content.service';
-import { MatDialog } from '@angular/material/dialog';
 import { MediaViewerComponent } from '../media-viewer/media-viewer.component';
 import { UI_CONTENT } from 'src/app/global/models/ui_content.model';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
-
+import { SelectOwnerComponent } from '../../user_components/select-owner/select-owner.component';
 @Component({
 	selector: 'app-media',
 	templateUrl: './media.component.html',
 	styleUrls: ['./media.component.scss']
 })
 
-export class MediaComponent implements OnInit {
+export class MediaComponent implements OnInit, OnDestroy {
 	@Input() reload: Observable<void>;
 	@Input() sm_view: boolean;
-	@Output() send_stats = new EventEmitter;
 	@Output() empty = new EventEmitter;
+	@Output() send_stats = new EventEmitter;
 
-	content_data: UI_CONTENT[];
-	enable_multiple_delete = false;
+	can_reassign = false;
 	empty_search = false;
-	feed_data: UI_CONTENT[];
-	filter_data: any;
 	filtered_content_data: UI_CONTENT[];
-	is_dealer = false;
-	key = '';
+	is_bulk_select = false;
+	is_zone_content = false;
 	no_content: boolean;
-	no_refresh = false;
 	no_search_result = false;
 	paging_data: any;
-	role_id: string;
 	searching = false;
-	sort_order: boolean;
-	stats: any;
-	subscription = new Subscription;
-	temp = [];
-	type_filter_data: any;
-	user_filtered_data: any;
+	selected_content_ids: string[] = [];
 
 	filters: any = {
-		filetype: "",
-		order: "",
+		filetype: '',
+		order: '',
 		user: {
-			dealer: "",
-			host: "",
-			advertiser: ""
+			dealer: '',
+			host: '',
+			advertiser: ''
 		}
 	};
 
+	private content_data: UI_CONTENT[];
 	private eventsSubscription: Subscription;
+	private is_dealer = false;
+	private key = '';
+	private no_refresh = false;
+	private role_id: string;
+	private sort_order: boolean;
+	private stats : any;
+	private subscription = new Subscription;
+	private temp: any = [];
 
 	constructor(
 		private _auth: AuthService,
@@ -62,14 +61,14 @@ export class MediaComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-
 		this.role_id = this._auth.current_user_value.role_id;
+
 		if (this.role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
 
 		this.reload.subscribe(
 			() =>  {
 				this.clearFilter(true);
-				this.searchContent("")
+				this.searchContent('');
 				this.empty_search = true;
 				this.sendStatCardsData();
 			}
@@ -84,110 +83,248 @@ export class MediaComponent implements OnInit {
 		this.subscription.unsubscribe();
 	}
 
-	// Clear Filter
-	clearFilter(value: boolean): void {
+	clearFilter(e: any): void {
 
 		this.filters = {
-			filetype: "",
-			order: "",
+			filetype: '',
+			order: '',
 			user: {
-				dealer: "",
-				host: "",
-				advertiser: "",
+				dealer: '',
+				host: '',
+				advertiser: '',
 			}
 		};
 
-		if (!this.no_refresh && value) this.getContents();
-	}
-
-	// Get All Media Files
-	getContents(): void {
-
-		if (this.filters.filetype == '') this.filters.filetype_label = '';
-		
-		if (this.filters.order == '') this.filters.order_label = '';
-
-		if (this.filters.user.dealer == '') this.filters.user.dealer_label = '';
-
-		if (this.filters.user.host == '') this.filters.user.host_label = '';
-
-		if (this.filters.user.advertiser == '') this.filters.user.advertiser_label = '';
-
-		this.pageRequested(1, false);
+		if (!this.no_refresh && e) this.getContents();
 
 	}
 
-	controlToggle(event: any): void {
-		this.enable_multiple_delete = event.checked;
-	}
+	checkChecking(id: string): boolean {
+		const index = this.temp.indexOf(id);
 
-	multipleDelete(event: any): void {
-
-		if (event.toadd) {
-			this.temp.push(event.id)
+		if (index !== -1) {
+			return true;
 		} else {
-			const index = this.temp.indexOf(event.id);
-			if (index !== -1) this.temp.splice(index, 1);
+			return false;
 		}
 
-		this.checkChecking(event.id);
+	}
+
+	controlToggle(event: { checked: boolean }): void {
+		this.is_bulk_select = event.checked;
+		if (this.is_bulk_select) this.is_zone_content = true;
+
+		if (!this.is_bulk_select) {
+			this.is_zone_content = false;
+			this.selected_content_ids = [];
+		}
 
 	}
 
 	deleteMultiple(): void {
-		this.warningModal('warning', 'Delete Content', 'Are you sure you want to delete this content','','delete', this.temp);
+		const ids = this.selected_content_ids;
+		this.showWarningModal('warning', 'Delete Content', 'Are you sure you want to delete this content', '', 'delete', ids);
 	}
 
-	checkChecking(id: any): boolean {
-		const index = this.temp.indexOf(id);
-		if (index !== -1) return true; 
-		else return false;
+	filterByUser(event: any): void {
+
+		if (event.dealer.id && event.host.id && event.advertiser.id) { // by dealer, host, and advertiser
+			this.filters.user.dealer = event.dealer.name;
+			this.filters.user.host = event.host.name;
+			this.filters.user.advertiser = event.advertiser.name;
+			this.filters.user.dealer_label = event.dealer.id;
+			this.filters.user.host_label = event.host.id;
+			this.filters.user.advertiser_label = event.advertiser.id;
+			this.can_reassign = false;
+		} else if (event.dealer.id && event.host.id) { // by host
+			this.filters.user.dealer = event.dealer.name;
+			this.filters.user.host = event.host.name;
+			this.filters.user.dealer_label = event.dealer.id;
+			this.filters.user.host_label = event.host.id;
+			this.can_reassign = false;
+		} else if (event.dealer.id && event.advertiser.id) { // by advertiser
+			this.filters.user.dealer = event.dealer.name;
+			this.filters.user.advertiser = event.advertiser.name;
+			this.filters.user.dealer_label = event.dealer.id;
+			this.filters.user.advertiser_label = event.advertiser.id;
+			this.can_reassign = false;
+		} else { // by dealer
+			this.filters.user.dealer = event.dealer.name;
+			this.filters.user.dealer_label = event.dealer.id;
+			this.can_reassign = true;
+		}
+
+		this.getPage(1);
+
 	}
 
-	pageRequested(page: any, filter: any): void {
+	getContents(): void {
+
+		if (this.filters.filetype == '') {
+			this.filters.filetype_label = '';
+		}
+
+		if (this.filters.order == '') {
+			this.filters.order_label = '';
+		}
+
+		if (this.filters.user.dealer == '') {
+			this.filters.user.dealer_label = '';
+		}
+
+		if (this.filters.user.host == '') {
+			this.filters.user.host_label = '';
+		}
+
+		if (this.filters.user.advertiser == '') {
+			this.filters.user.advertiser_label = '';
+		}
+
+		this.pageRequested(1, false);
+	}
+
+	getPage(page: number): void {
+		this.filtered_content_data = [];
+		this.pageRequested(page, true);
+	}
+
+	isDeleted(value: boolean): void {
+		if (value) this.getPage(1);
+	}
+
+	multipleDelete(e: any): void {
+
+		if (e.toadd) {
+			this.temp.push(e.id);
+		} else {
+			const index = this.temp.indexOf(e.id);
+			if (index !== -1) this.temp.splice(index, 1);
+		}
+
+		this.checkChecking(e.id);
+
+	}
+
+	onSelectContent(content: UI_CONTENT, index: number): void {
+
+		const id = content.content_id;
+
+		if (this.is_bulk_select) {
+
+			if (!this.selected_content_ids.includes(id)) this.selected_content_ids.push(id);
+			else this.selected_content_ids.splice(this.selected_content_ids.indexOf(id), 1);
+			return;
+			
+		}
+
+		this.openMediaViewer(content, this.filtered_content_data, index);
+
+	}
+
+	onSelectReassign(): void {
+
+		const dealerId = this.filters.user.dealer_label;
+		const dealerName = this.filters.user.dealer;
+		const data = { dealerId, dealerName };
+		const dialog = this._dialog.open(SelectOwnerComponent, { width: '500px', data });
+
+		dialog.afterClosed().subscribe(
+			(response: { dealer: { id, name }, host: { id, name }, advertiser: { id, name }, type: number }) => {
+				let toId = '';
+				const { host, advertiser } = response;
+
+				switch (response.type) {
+					case 2:
+						toId = host.id;
+						break;
+					case 3:
+						toId = advertiser.id;
+						break;
+					default:
+						toId = '0';
+				} 
+
+				const data = { type: response.type, toId, contentIds: this.selected_content_ids };
+				this.reassignContent(data);
+
+			},
+			error => console.log('Error closing owner select modal', error)
+		);
+
+	}
+
+	openMediaViewer(content: UI_CONTENT, contents: UI_CONTENT[], i: number): void {
+
+		const dialog = this._dialog.open(MediaViewerComponent, {
+			panelClass: 'app-media-viewer-dialog',
+			data: {
+				index: i,
+				content_array: contents,
+				selected: content,
+			}
+		});
+
+		dialog.afterClosed().subscribe(() => this.ngOnInit());
+	}
+
+	pageRequested(page: number, filter: boolean): void {
 
 		this.no_search_result = false;
 		this.searching = true;
 		if (this.is_dealer) this.filters.user.dealer_label = this._auth.current_user_value.roleInfo.dealerId;
 
+		const labels = {
+			filetype: this.filters.filetype_label,
+			order: this.filters.order_label,
+			dealer: this.filters.user.dealer_label,
+			host: this.filters.user.host_label,
+			advertiser: this.filters.user.advertiser_label
+		};
+
 		this.subscription.add(
-			this._content.get_contents_with_page(page, this.filters.filetype_label, this.filters.order_label, this.filters.user.dealer_label, this.filters.user.host_label, this.filters.user.advertiser_label, this.key).subscribe(
-				data => {
-					this.searching = false;
+			this._content.get_contents_with_page(page, labels.filetype, labels.order, labels.dealer, labels.host, labels.advertiser, this.key)
+				.subscribe(
+					data => {
+						this.searching = false;
 
-					if (data.iContents && data.iContents.length > 0) {
+						if (data.iContents && data.iContents.length > 0) {
 
-						this.no_search_result = false;
-						this.content_data = this.media_mapToUI(data.iContents);
-						this.filtered_content_data = this.content_data;
-						if (!filter) this.no_content = false;
+							this.no_search_result = false;
+							this.content_data = this.mapContentsToUI(data.iContents);
+							this.filtered_content_data = this.content_data;
+							if (!filter) this.no_content = false;
 
-					} else {
+						} else {
 
-						if (!filter && this.key == "") this.no_content = true; 
-						else this.no_search_result = true;
-						
+							if (!filter && this.key == '') this.no_content = true; 
+							else this.no_search_result = true;
+
+						}
+
+						if (data.paging) this.paging_data = data.paging;
+
 					}
-
-					if (data.paging) this.paging_data = data.paging;
-
-				}
-			)
+				)
 		);
 
 	}
 
-	getPage(value: number): void {
-		this.filtered_content_data = [];
-		this.pageRequested(value, true);
-	}
+	searchContent(keyword: string): void {
+		this.no_refresh = false;
+		this.clearFilter(false);
 
-	isDeleted(event: any): void {
-		if (event) this.getPage(1);
+		if (keyword.length >= 3) {
+			this.key = keyword;
+			this.getContents();
+		} else {
+			this.key = '';
+			this.no_search_result = false;
+			this.getContents();
+		}
+		
 	}
-
-	// Structure Stat Cards Data and Send to Parent
-	sendStatCardsData(): void {
+	
+	private sendStatCardsData(): void {
 
 		if (this.role_id === UI_ROLE_DEFINITION.dealer) {
 
@@ -206,7 +343,6 @@ export class MediaComponent implements OnInit {
 			);
 
 		} else {
-
 			this.subscription.add(
 				this._content.get_contents_total().subscribe(
 					data => {
@@ -220,13 +356,45 @@ export class MediaComponent implements OnInit {
 					}
 				)
 			);
-
 		}
-
 	}
 
-	// Map Media FIles Data to UI
-	media_mapToUI(data: API_CONTENT[]): UI_CONTENT[] {
+	sortAscendingOrder(value: boolean): void {
+		this.sort_order = value;
+		this.filters.order = 'Ascending'
+		this.filters.order_label = 'asc'
+		if (value) this.getPage(1);
+	}
+
+	sortByFiletype(type: string): void {
+
+		switch (type) {
+			case 'image':
+				this.filters.filetype = 'Images';
+				this.filters.filetype_label = 'image';
+				break;
+			case 'video':
+				this.filters.filetype = 'Videos';
+				this.filters.filetype_label = 'video';
+				break;
+			default:
+				this.filters.filetype = 'Feeds';
+				this.filters.filetype_label = 'feed';
+				break;
+		}
+
+		this.getPage(1);
+
+	}
+	
+	sortDescendingOrder(value: boolean): void {
+		this.sort_order = value;
+		this.filters.order = 'Descending';
+		this.filters.order_label = 'desc';
+		if (value) this.getPage(1);
+	}
+
+	private mapContentsToUI(data: API_CONTENT[]): UI_CONTENT[] {
 
 		const media_content = data.map(
 			(m: API_CONTENT) => {
@@ -259,124 +427,29 @@ export class MediaComponent implements OnInit {
 
 		if (this.role_id === UI_ROLE_DEFINITION.dealer) {
 			return media_content.filter(content => this._auth.current_user_value.roleInfo.dealerId == content.dealer_id);
+			
 		} else {
 			return media_content;
 		}
+	}
+
+	private reassignContent(data: { type: number, toId: string, contentIds: string[] }): void {
+
+		this.subscription.add(
+			this._content.reassignContent(data)
+				.subscribe(
+					() => {
+						console.log('Content reassigned!');
+						this.controlToggle({ checked: false });
+						this.ngOnInit();
+					},
+					error => console.log('Error reassigning content', error)
+				)
+		);
 
 	}
 
-	// Sort By Order Ascending
-	sortAscendingOrder(event: any): void {
-		this.sort_order = event;
-		this.filters.order = 'Ascending';
-		this.filters.order_label = 'asc';
-		if (event) this.getPage(1);
-	}
-
-	// Sort By Order Descending
-	sortDescendingOrder(event: any): void {
-		this.sort_order = event;
-		this.filters.order = 'Descending';
-		this.filters.order_label = 'desc';
-		if (event) this.getPage(1);
-	}
-
-	// Sort By Filetype Dropdown
-	sortByFiletype(event: any): void {
-
-		if (event === 'image') {
-
-			this.filters.filetype = 'Images';
-			this.filters.filetype_label = 'image';
-			this.getPage(1);
-
-		} else if(event === 'video'){
-
-			this.filters.filetype = 'Videos';
-			this.filters.filetype_label = 'video';
-			this.getPage(1);
-
-		} else {
-
-			this.filters.filetype = 'Feeds';
-			this.filters.filetype_label = 'feed';
-			this.getPage(1);
-
-		}
-
-	}
-	
-	// Filter By User Modal Trigger
-	filterByUser(event: any): void {
-
-		if (event.dealer.id && event.host.id && event.advertiser.id) {
-
-			this.filters.user.dealer = event.dealer.name;
-			this.filters.user.host = event.host.name;
-			this.filters.user.advertiser = event.advertiser.name;
-			this.filters.user.dealer_label = event.dealer.id;
-			this.filters.user.host_label = event.host.id;
-			this.filters.user.advertiser_label = event.advertiser.id;
-			this.getPage(1);
-
-		} else if (event.dealer.id && event.host.id) {
-
-			this.filters.user.dealer = event.dealer.name;
-			this.filters.user.host = event.host.name;
-			this.filters.user.dealer_label = event.dealer.id;
-			this.filters.user.host_label = event.host.id;
-			this.getPage(1);
-
-		} else if (event.dealer.id && event.advertiser.id) {
-
-			this.filters.user.dealer = event.dealer.name;
-			this.filters.user.advertiser = event.advertiser.name;
-			this.filters.user.dealer_label = event.dealer.id;
-			this.filters.user.advertiser_label = event.advertiser.id;
-			this.getPage(1);
-
-		} else {
-
-			this.filters.user.dealer = event.dealer.name;
-			this.filters.user.dealer_label =event.dealer.id;
-			this.getPage(1);
-
-		}
-
-	}
-
-	// Search Content Field
-	searchContent(event: any): void {
-
-		this.no_refresh = false;
-		this.clearFilter(false);
-		
-		if (event.length >= 3) {
-			this.key = event;
-			this.getContents();
-		} else {
-			this.key = '';
-			this.no_search_result = false;
-			this.getContents();
-		}
-		
-	}
-
-	// Media File Viewer
-	mediaViewer_open(content: any, filteredContents: any[], i: number): void {
-
-		this._dialog.open(MediaViewerComponent, {
-			panelClass: 'app-media-viewer-dialog',
-			data: {
-				index: i,
-				content_array: filteredContents,
-				selected: content,
-			}
-		});
-		
-	}
-
-	warningModal(status: string, message: string, data: any, return_msg: string, action: any, contents: any[]): void {
+	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string, array: any[]): void {
 
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
@@ -395,19 +468,22 @@ export class MediaComponent implements OnInit {
 
 				if (result == 'delete') {
 
-					contents = contents.map(content => {
-						return { 'contentid': content };
-					});
+					array = array.map(
+						id => {
+							return { contentid: id };
+						}
+					);
 
 					this.subscription.add(
-						this._content.remove_content(contents).subscribe(
+						this._content.remove_content(array).subscribe(
 							() => {
 								this._dialog.closeAll();
-								this.enable_multiple_delete = false;
+								this.is_bulk_select = false;
 								this.getPage(1);
 							}
 						)
 					);
+
 				}
 			}
 		);
