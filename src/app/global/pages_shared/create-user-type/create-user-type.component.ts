@@ -22,7 +22,7 @@ export class CreateUserTypeComponent implements OnInit {
 	ngOnInit() {
 		this.subscription.add(
 			this._params.paramMap.subscribe(
-				data => {
+				() => {
 					this.user_type = this._params.snapshot.params.data;
 
 					switch (UI_ROLE_DEFINITION[this.user_type]) {
@@ -41,10 +41,13 @@ export class CreateUserTypeComponent implements OnInit {
 						case UI_ROLE_DEFINITION.advertiser:
 							this.current_role = UI_ROLE_DEFINITION_TEXT.advertiser
 							break;
+						case UI_ROLE_DEFINITION['sub-dealer']:
+							this.current_role = UI_ROLE_DEFINITION_TEXT['sub-dealer'];
+							break;
 					}
 				}
 			)
-		)
+		);
 	}
 
 	get userRole() {

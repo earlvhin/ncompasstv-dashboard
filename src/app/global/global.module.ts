@@ -167,6 +167,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -338,6 +339,7 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		NewSubDealerComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

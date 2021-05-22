@@ -112,6 +112,7 @@ export class UsersComponent implements OnInit {
 	}
 
 	mapToUIFormat(data) {
+		console.log('users', data);
 		let count = 1;
 		return data.map(
 			u => {

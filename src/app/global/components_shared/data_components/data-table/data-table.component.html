@@ -40,7 +40,23 @@
 									{{ data[d].value }}
 								</ng-container>
 							</a>
+							<span *ngIf="data[d].business_hours" >
+								<span class="fas fa-clock cursor-pointer text-gray-with-hover"  placement="right" [ngbTooltip]="testing"></span>
+							</span>
 							
+							<!-- "Business Hours Today &#013;{{data[d].business_hours_label.date}}&#013;&#013;{{data[d].business_hours_label.address}}&#013;{{data[d].business_hours_label.schedule}}" -->
+							<ng-template #testing>
+								<div class="text-left">
+									<span class="sm-text"><b>Business Hours Today</b></span><br />
+									<span class="xsm-text">{{data[d].business_hours_label.date}}</span><br /><br />
+									<span class="pt-2 xsm-text">
+										<i class="fas fa-map-marker-alt"></i> {{data[d].business_hours_label.address}}
+									</span><br />
+									<span class="pt-2 xsm-text">
+										<i class="fas fa-clock"></i> {{data[d].business_hours_label.schedule}}
+									</span>
+								</div>
+							  </ng-template>
 							<ng-template #no_link>
 								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
 

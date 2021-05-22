@@ -34,6 +34,7 @@ export class CloneScreenComponent implements OnInit {
 	form_valid: boolean = true;
 	no_dealer: boolean = true;
 	no_host_available: boolean = false;
+	screen_types: Array<any> = [];
 	selected_dealer: API_DEALER[];
 	selected_host: API_HOST[];
 	subscription: Subscription = new Subscription;
@@ -82,12 +83,14 @@ export class CloneScreenComponent implements OnInit {
 
 	ngOnInit() {
 		this.getDealers(1);
+		this.getScreenType();
 		this.clone_screen_form = this._form.group(
 			{
 				screen_title: ['', Validators.required],
 				screen_description: ['', Validators.required],
 				dealer_id: ['', Validators.required],
 				host_id: ['', Validators.required],
+				type: ['', Validators.required],
 			}
 		)
 		
@@ -110,6 +113,17 @@ export class CloneScreenComponent implements OnInit {
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			this.setToDealer(this.dealer_id);
 		}
+	}
+
+	getScreenType() {
+		this.subscription.add(
+			this._screen.get_screens_type().subscribe(
+				data => {
+					this.screen_types = data;
+					console.log("Screen Type", data)
+				}
+			)
+		)
 	}
 
 	searchData(e) {
@@ -178,11 +192,19 @@ export class CloneScreenComponent implements OnInit {
 		}
 	}
 	
+	setScreenType(e) {
+		if (e) {
+			this.f.type.setValue(e);
+		}
+	}
+	
 	get f() {
 		return this.clone_screen_form.controls;
 	}
 
 	cloneScreen(e) {
+		console.log("E",e)
+		console.log("F",this.f)
 		this.form_submitted = true;
 		const screen = new API_NEW_SCREEN (
 			new SCREEN_INFO (
@@ -192,6 +214,7 @@ export class CloneScreenComponent implements OnInit {
 				this.f.host_id.value,
 				this.screen_data.assigned_template_id,
 				this._auth.current_user_value.user_id,
+				this.f.type.value,
 			),
 			this.zonePlaylist_mapToUI(),
 			[]
@@ -248,8 +271,6 @@ export class CloneScreenComponent implements OnInit {
 		this.no_dealer_selected = false;
 		
 		this.selected_dealer = this.selectedDealer(id) || id;
-		console.log("SELECTED", this.selected_dealer)
-		
 		this.getHostByDealer(1);
 	}
 

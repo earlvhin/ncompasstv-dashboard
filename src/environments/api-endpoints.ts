@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
 		api_get_content_total_by_dealer: 'content/gettotal?dealerid=',
 		api_get_dealer_by_id: 'dealer/getbyid?dealer_id=',
 		api_get_dealers: 'dealer/getall',
+		api_get_dealers_directory: 'dealer/getdirectorytree',
 		api_get_dealers_with_sort: 'dealer/fetchallsorttotal',
 		api_get_dealers_with_host: 'dealer/getdealerswithhost',
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
@@ -113,6 +114,8 @@ export const API_ENDPOINTS = {
 		api_new_app_version: 'playerapp/addversion',
 		api_new_app: 'playerapp/create',
 		content_schedule: 'PlaylistContentsSchedule/Create',
+		sub_dealer_account: 'account/CreateSubAccount',
+
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
