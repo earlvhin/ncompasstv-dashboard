@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { AdvertiserService } from '../../../services/advertiser-service/advertiser.service';
@@ -10,6 +10,7 @@ import { DealerService } from '../../../services/dealer-service/dealer.service';
 import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { HostService } from '../../../services/host-service/host.service';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
 	selector: 'app-select-owner',
@@ -28,7 +29,7 @@ export class SelectOwnerComponent implements OnInit {
 	initial_load = false;
 	initial_load_advertiser = false;
 	is_advertiser_field_selected: boolean;
-	is_dealer = false;
+	is_dealer = true;
 	is_floating_selected: boolean;
 	is_host_field_selected: boolean;
 	loading_data = true;
@@ -66,6 +67,7 @@ export class SelectOwnerComponent implements OnInit {
 	private subscription: Subscription = new Subscription;
 
 	constructor(
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { dealerId: string, dealerName: string },
 		private _dealer: DealerService,
 		private _helper: HelperService,
 		private _host: HostService,
@@ -74,14 +76,7 @@ export class SelectOwnerComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.is_dealer = true;
-			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-			this.dealerSelected(this.dealer_id);
-		}
-
+		this.setDealer();
 		this.getDealers(1);
 	}
 
@@ -440,6 +435,13 @@ export class SelectOwnerComponent implements OnInit {
 				this._helper.onResetAutocompleteField.emit('dealer');
 		}
 
+	}
+
+	private setDealer(): void {
+		const { dealerId, dealerName } = this._dialog_data;
+		this.dealer_id = dealerId;
+		this.dealer_name = dealerName;
+		this.dealerSelected(dealerId);
 	}
 	
 }

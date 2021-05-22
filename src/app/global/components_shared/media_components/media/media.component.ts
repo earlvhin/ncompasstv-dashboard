@@ -22,6 +22,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 	@Output() empty = new EventEmitter;
 	@Output() send_stats = new EventEmitter;
 
+	can_reassign = false;
 	empty_search = false;
 	filtered_content_data: UI_CONTENT[];
 	is_bulk_select = false;
@@ -127,26 +128,30 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	filterByUser(event: any): void {
 
-		if (event.dealer.id && event.host.id && event.advertiser.id) {
+		if (event.dealer.id && event.host.id && event.advertiser.id) { // by dealer, host, and advertiser
 			this.filters.user.dealer = event.dealer.name;
 			this.filters.user.host = event.host.name;
 			this.filters.user.advertiser = event.advertiser.name;
 			this.filters.user.dealer_label = event.dealer.id;
 			this.filters.user.host_label = event.host.id;
 			this.filters.user.advertiser_label = event.advertiser.id;
-		} else if (event.dealer.id && event.host.id) {
+			this.can_reassign = false;
+		} else if (event.dealer.id && event.host.id) { // by host
 			this.filters.user.dealer = event.dealer.name;
 			this.filters.user.host = event.host.name;
 			this.filters.user.dealer_label = event.dealer.id;
 			this.filters.user.host_label = event.host.id;
-		} else if (event.dealer.id && event.advertiser.id) {
+			this.can_reassign = false;
+		} else if (event.dealer.id && event.advertiser.id) { // by advertiser
 			this.filters.user.dealer = event.dealer.name;
 			this.filters.user.advertiser = event.advertiser.name;
 			this.filters.user.dealer_label = event.dealer.id;
 			this.filters.user.advertiser_label = event.advertiser.id;
-		} else {
+			this.can_reassign = false;
+		} else { // by dealer
 			this.filters.user.dealer = event.dealer.name;
-			this.filters.user.dealer_label =event.dealer.id;
+			this.filters.user.dealer_label = event.dealer.id;
+			this.can_reassign = true;
 		}
 
 		this.getPage(1);
@@ -218,7 +223,10 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	onSelectReassign(): void {
 
-		const dialog = this._dialog.open(SelectOwnerComponent, { width: '500px' });
+		const dealerId = this.filters.user.dealer_label;
+		const dealerName = this.filters.user.dealer;
+		const data = { dealerId, dealerName };
+		const dialog = this._dialog.open(SelectOwnerComponent, { width: '500px', data });
 
 		dialog.afterClosed().subscribe(
 			(response: { dealer: { id, name }, host: { id, name }, advertiser: { id, name }, type: number }) => {

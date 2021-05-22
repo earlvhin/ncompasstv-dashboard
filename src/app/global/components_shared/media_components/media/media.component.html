@@ -37,7 +37,7 @@
 
 				<button mat-button mat-raised-button 
 					class="theme-btn ml-3"
-					[disabled]="selected_content_ids.length === 0" 
+					[disabled]="!can_reassign || selected_content_ids.length === 0" 
 					(click)="onSelectReassign()">Reassign
                 </button>
 			</div>
