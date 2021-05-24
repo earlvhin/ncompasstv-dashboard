@@ -23,10 +23,14 @@ export class NewSubDealerComponent implements OnInit {
 	form_fields_view: any;
 	form_invalid: boolean = true;
 	is_dealer: boolean = false;
+	is_loading_dealers = false;
 	is_password_field_type = true;
+	is_search = false;
+	is_searching_dealers = false;
 	is_retype_password_field_type = true;
 	is_submitted: boolean;
-	form: FormGroup;	
+	form: FormGroup;
+	paging = 1;
 	password_is_match: boolean;
 	password_match_msg: string;
 	password_is_valid: boolean;
@@ -44,9 +48,8 @@ export class NewSubDealerComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		if (this._auth.current_user_value.roleInfo.dealerId) {
-			this.is_dealer = true;
-		}
+
+		if (this._auth.current_user_value.roleInfo.dealerId) this.is_dealer = true;
 
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.back_btn = '/dealer/users/create-user';
@@ -70,7 +73,8 @@ export class NewSubDealerComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealers().subscribe(
 				data => {
-					this.dealers = data
+					console.log('get dealers response', data);
+					this.dealers = data;
 				}
 			)
 		);
@@ -170,6 +174,8 @@ export class NewSubDealerComponent implements OnInit {
 				}
 			)
 		);
+
+		this.getDealers(1);
 	}
 
 	ngOnDestroy() {
@@ -180,12 +186,13 @@ export class NewSubDealerComponent implements OnInit {
 		return this.form.controls;
 	}
 
-	dealerSelected(e) {
+	dealerSelected(e): void {
 		this.f.parentId.setValue(e);
 	}
 	
-	openConfirmationModal(status, message, data): void {
-		var dialog = this._dialog.open(ConfirmationModalComponent, {
+	openConfirmationModal(status: string, message: string, data: any): void {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
 			data:  {
@@ -202,7 +209,6 @@ export class NewSubDealerComponent implements OnInit {
 	}
 
 	onSubmit(form: FormGroupDirective): boolean | void {
-		console.log('form value', form.value);
 
 		this.is_submitted = true;
 		this.form_invalid = true;
@@ -217,22 +223,52 @@ export class NewSubDealerComponent implements OnInit {
 		const { firstName, lastName, contactNo, parentId, roleId, email, password, createdBy } = form.value;
 		const data = { firstName, lastName, contactNo, parentId, roleId, email, password, createdBy };
 
-		this._user.create_new_user(this.f.roleId.value, data).subscribe(
-			() => {
-				this.openConfirmationModal('success', 'Account creation successful!', 'Advertiser account has been added to database.');
-				form.resetForm();
-				this.is_submitted = false;
-				this.form_invalid = false;
-				this.form.reset();
-				this.ngOnInit();
-			},
-			error => {
-				this.is_submitted = false; 
-				this.form_invalid = false;
-				this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
-			}
+		this.subscription.add(
+			this._user.create_new_user(this.f.roleId.value, data).subscribe(
+				() => {
+					this.openConfirmationModal('success', 'Account creation successful!', 'Sub-Dealer account has been saved');
+					form.resetForm();
+					this.is_submitted = false;
+					this.form_invalid = false;
+					this.form.reset();
+					this.ngOnInit();
+				},
+				error => {
+					this.is_submitted = false; 
+					this.form_invalid = false;
+					console.log('Error creating sub-dealer', error);
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+				}
+			)
 		);
 
+	}
+
+	searchBoxTrigger(event: { page: number, is_search: boolean }): void {
+		this.is_search = event.is_search;
+		this.getDealers(event.page);		
+	}
+
+	searchDealer(key: string): void {
+		this.is_searching_dealers = true;
+
+		this.subscription.add(
+			this._dealer.get_search_dealer(key).subscribe(
+				data => {
+
+					if (data.paging.entities.length > 0) {
+						this.dealers = data.paging.entities;
+						this.dealers = data.paging.entities;
+						this.is_searching_dealers = false;
+					} else {
+						this.dealers = [];
+						this.is_searching_dealers = false;
+					}
+
+					this.paging = data.paging;
+				}
+			)
+		);
 	}
 
 	togglePasswordFieldType(): void {
@@ -241,6 +277,46 @@ export class NewSubDealerComponent implements OnInit {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
+
+	private getDealers(page: number): void {
+		this.is_loading_dealers = true;
+
+		if (page > 1) {
+			this.subscription.add(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
+					data => {
+						data.dealers.map(dealer => this.dealers.push(dealer));
+						this.paging = data.paging;
+						this.is_loading_dealers = false;
+					},
+					error => {
+						console.log('Error getting dealers with page', error);
+						this.is_loading_dealers = false;
+					}
+				)
+			);
+
+		} else {
+
+			if (this.is_search) this.is_searching_dealers = true;
+			
+			this.subscription.add(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
+					data => {
+						this.dealers = data.dealers;
+						this.paging = data.paging;
+						this.is_loading_dealers = false;
+						this.is_searching_dealers = false;
+					},
+					error => {
+						console.log('Error getting dealers with page', error);
+						this.is_loading_dealers = false;
+						this.is_searching_dealers = false;
+					}
+				)
+			);
+		}
 	}
 	
 }

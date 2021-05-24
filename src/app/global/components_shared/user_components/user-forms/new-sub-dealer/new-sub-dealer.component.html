@@ -51,16 +51,22 @@
 					</div>
 
                     <ng-template #autocomplete>
-						<app-autocomplete-field
-                        (data_value)="dealerSelected($event)"
-                        [key_of_value]="'dealerId'"
-                        [placeholder]="f.placeholder"
-                        [label]="f.label"
-                        [data_reference]="dealers"
-                        [search_keyword]="'businessName'"
-                        [primary_keyword]="'businessName'">
-						</app-autocomplete-field>
+                        <app-autocomplete-field
+							(data_value)="dealerSelected($event)"
+							[data_reference]="dealers"
+							[key_of_value]="'dealerId'"
+							[label]="'Dealer'"
+							[placeholder]="'Search Dealers...'"
+							[primary_keyword]="'businessName'"
+							[search_keyword]="'dealer'"
+							[paging]="paging"
+							(call_next_page)="searchBoxTrigger($event)"
+							(searched)="searchDealer($event)"
+							[loading_data]="is_loading_dealers"
+							[loading_search]="is_searching_dealers">							
+							</app-autocomplete-field>
                     </ng-template>
+                    
                 </div>
             </ng-container>
         </div>
