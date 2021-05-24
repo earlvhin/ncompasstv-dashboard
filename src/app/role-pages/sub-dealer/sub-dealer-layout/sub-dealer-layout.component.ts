@@ -1,11 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
   selector: 'app-sub-dealer-layout',
   templateUrl: './sub-dealer-layout.component.html',
   styleUrls: ['./sub-dealer-layout.component.scss']
 })
-export class SubDealerLayoutComponent implements OnInit {
+export class SubDealerLayoutComponent implements OnInit, OnDestroy {
 
     toggle: boolean;
 
@@ -22,13 +27,30 @@ export class SubDealerLayoutComponent implements OnInit {
 		{ path: 'users', label: 'Users', icon: 'fas fa-users'},
 	];
 
-	receiveToggle(event) {
-		this.toggle = event
-	}
+	private current_role: string;
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor() { }
+	constructor(
+		private _auth: AuthService,
+		private _activated_route: ActivatedRoute) { }
 
 	ngOnInit() {
+		this._activated_route.data.pipe(takeUntil(this._unsubscribe)).subscribe(
+			data => {
+				this.current_role = data.role[0];
+				if (this._auth.current_user_value.role_id === this.current_role) return true;
+				else this._auth.logout();
+			}
+		);
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	receiveToggle(event: any): void {
+		this.toggle = event
 	}
 
 }

@@ -22,8 +22,6 @@ import { MediaLibraryComponent } from 'src/app/global/pages_shared/media-library
 import { SingleContentComponent } from 'src/app/global/pages_shared/single-content/single-content.component';
 import { ScreensComponent } from './pages/screens/screens.component';
 import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
-import { BillingsComponent } from './pages/billings/billings.component';
-import { ReportsComponent } from './pages/reports/reports.component';
 import { UsersComponent } from './pages/users/users.component';
 import { CreateUserComponent } from 'src/app/global/pages_shared/create-user/create-user.component';
 import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
@@ -58,8 +56,6 @@ export const SUB_DEALER_ROUTES: Routes = [
 			{ path: 'media-library/:data', component: SingleContentComponent },
 			{ path: 'screens', component: ScreensComponent },
 			{ path: 'screens/:data', component: SingleScreenComponent },
-			{ path: 'billings', component: BillingsComponent },
-			{ path: 'reports', component: ReportsComponent },
 			{ path: 'users', component: UsersComponent },
 			{ path: 'users/create-user', component: CreateUserComponent },
 			{ path: 'users/:data', component: SingleUserComponent },

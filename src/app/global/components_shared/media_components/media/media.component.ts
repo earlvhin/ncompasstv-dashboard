@@ -258,7 +258,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	openMediaViewer(content: UI_CONTENT, contents: UI_CONTENT[], i: number): void {
 
-		const dialog = this._dialog.open(MediaViewerComponent, {
+		this._dialog.open(MediaViewerComponent, {
 			panelClass: 'app-media-viewer-dialog',
 			data: {
 				index: i,
@@ -267,7 +267,6 @@ export class MediaComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		dialog.afterClosed().subscribe(() => this.ngOnInit());
 	}
 
 	pageRequested(page: number, filter: boolean): void {
