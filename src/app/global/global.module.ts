@@ -372,6 +372,7 @@ const DIRECTIVES = [
 		RenameModalComponent,
 		ScreenCreatedModalComponent,
 		ScreenLicenseComponent,
+		SelectOwnerComponent,
 		UnassignHostLicenseComponent,
 		UnassignLicenseComponent,
 		UserSortModalComponent,

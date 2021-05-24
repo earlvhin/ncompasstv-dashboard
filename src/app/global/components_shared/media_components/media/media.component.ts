@@ -230,6 +230,9 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe(
 			(response: { dealer: { id, name }, host: { id, name }, advertiser: { id, name }, type: number }) => {
+				
+				if (typeof response === 'undefined' || !response) return;
+
 				let toId = '';
 				const { host, advertiser } = response;
 
