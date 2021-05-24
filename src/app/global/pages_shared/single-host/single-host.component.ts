@@ -106,7 +106,7 @@ export class SingleHostComponent implements OnInit {
 		this.subscription.add(
 			this._host.get_host_by_id(this.host_id).subscribe(
 				(data: any) => {
-					console.log('#GET_HOST_BY_ID', data)
+					// console.log('#GET_HOST_BY_ID', data)
 					this.host_data = data;
 					this.single_host_data = { dealer_id: data.dealer.dealerId, host_id: this.host_id };
 					this.d_name = data.host.name;

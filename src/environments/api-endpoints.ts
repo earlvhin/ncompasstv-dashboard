@@ -146,6 +146,7 @@ export const API_ENDPOINTS = {
 		install_date: 'license/UpdateInstallDate',
 		install_date_list: 'license/UpdateInstallDateList',
 		api_update_internet_info: 'license/UpdateInternetInfo',
+		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
 	},
 	delete: {
@@ -161,6 +162,7 @@ export const API_ENDPOINTS = {
 		api_remove_license: 'license/removebylicenseid',
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
-		api_remove_host_licenses: 'license/unassignhost?force=1'
+		api_remove_host_licenses: 'license/unassignhost?force=1',
+		host: 'host/delete'
 	}
 };

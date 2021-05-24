@@ -33,6 +33,11 @@ export class HostService {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_host_place}`, data, this.httpOptions);
 	}
 
+	delete_host(hostIds: string[]) {
+		const data = { hostIds };
+		return this._http.post(`${environment.base_uri}${environment.delete.host}`, data, this.httpOptions);
+	}
+
 	export_host(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
 	}

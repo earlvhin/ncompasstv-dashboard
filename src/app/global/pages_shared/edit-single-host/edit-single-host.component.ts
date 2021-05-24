@@ -1,33 +1,33 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { HostService } from '../../services/host-service/host.service';
-import { DealerService } from '../../services/dealer-service/dealer.service';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { Subscription, Observable } from 'rxjs';
+import * as uuid from 'uuid';
+
 import { API_DEALER } from '../../models/api_dealer.model';
-import { API_UPDATE_HOST } from '../../models/api_update-host.model';
 import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
+import { API_SINGLE_HOST } from '../../models/api_host.model';
+import { API_UPDATE_HOST } from '../../models/api_update-host.model';
+import { AuthService } from '../../services/auth-service/auth.service';
 import { CategoryService } from '../../services/category-service/category.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { DealerService } from '../../services/dealer-service/dealer.service';
+import { HostService } from '../../services/host-service/host.service';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { Router } from '@angular/router';
-import * as uuid from 'uuid';
 import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation-hours.model';
-import { API_SINGLE_HOST } from '../../models/api_host.model';
 
 @Component({
-  selector: 'app-edit-single-host',
-  templateUrl: './edit-single-host.component.html',
-  styleUrls: ['./edit-single-host.component.scss'],
-  providers: [TitleCasePipe]
+	selector: 'app-edit-single-host',
+	templateUrl: './edit-single-host.component.html',
+	styleUrls: ['./edit-single-host.component.scss'],
+	providers: [TitleCasePipe]
 })
 
 export class EditSingleHostComponent implements OnInit {
 	categories_data: Observable<API_PARENTCATEGORY[]>;
 	host_data:  any = [];
-	// business_hours:  any;
 	subscription: Subscription = new Subscription();
 	dealer_name: string;
 	initial_dealer: string;
@@ -42,6 +42,8 @@ export class EditSingleHostComponent implements OnInit {
 	current_dealer: any;
 	paging: any;
 	closed_without_edit: boolean = false;
+	timezones: any;
+	host_timezone: { id: string; name: string; status: string; };
 
 	private initial_business_hours: any;
 
@@ -115,7 +117,7 @@ export class EditSingleHostComponent implements OnInit {
 			type: 'textarea',
 			col: 'col-lg-12'
 		}
-	]
+	];
 
 	google_business_hours = [
 		{
@@ -167,27 +169,23 @@ export class EditSingleHostComponent implements OnInit {
 			periods: [],
 			status: false,
 		}
-	]
-	timezones: any;
-	host_timezone: { id: string; name: string; status: string; };
+	];
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _host_data: any,
-		private _host: HostService,
-		private _form: FormBuilder,
-		private _titlecase: TitleCasePipe,
-		private _dealer: DealerService,
-		private _categories: CategoryService,
 		private _auth: AuthService,
+		private _categories: CategoryService,
+		private _dealer: DealerService,
 		private _dialog: MatDialog,
+		private _dialogRef: MatDialogRef<EditSingleHostComponent>,
+		private _form: FormBuilder,
+		private _host: HostService,
 		private _router: Router,
+		private _titlecase: TitleCasePipe,
 	) { }
 
 	ngOnInit() {
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.is_dealer = true;
-		}
-
+		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
 		this.getDealers(1);
 		this.getHostData(this._host_data);
 
@@ -251,17 +249,14 @@ export class EditSingleHostComponent implements OnInit {
 	}
 
 	searchData(e) {
-		console.log("E")
 		this.subscription.add(
 			this._dealer.get_search_dealer(e).subscribe(
 				data => {
-					console.log("DATA", data)
 					if (data.paging.entities.length > 0) {
 						this.dealers_data = data.paging.entities;
 					} else {
 						this.dealers_data = [];
 					}
-					console.log("DEALERS DATA SEARCHED", this.dealers_data)
 					this.paging = data.paging;
 				}
 			)
@@ -269,7 +264,6 @@ export class EditSingleHostComponent implements OnInit {
 	}
 
 	getDealers(e) {
-		console.log("E", e);
 
 		if (e > 1) {
 			this.subscription.add(
@@ -288,7 +282,6 @@ export class EditSingleHostComponent implements OnInit {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(e, "").subscribe(
 					data => {
-						console.log("DATA", data)
 						this.dealers_data = data.dealers;
 						this.paging = data.paging
 					}
@@ -379,14 +372,51 @@ export class EditSingleHostComponent implements OnInit {
 		});
 	}
 
+	onDeleteHost(): void {
+		const status = 'warning';
+		const message = 'Delete Host';
+		const data = 'Are you sure want to delete this host?';
+		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		const hostId = this._host_data;
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialog.afterClosed().subscribe(
+			(response: boolean) => {
+				if (typeof response === 'undefined' || !response) return;
+
+				this.subscription.add(
+					this._host.delete_host([ hostId ])
+						.subscribe(
+							() => {
+								console.log('Host Deleted');
+								this._dialogRef.close('delete-host');
+								this._router.navigate([`/${route}/hosts`]);
+							},
+							error => console.log('Error deleting host', error)
+						)
+				);
+
+			},
+			error => console.log('Error closing confirmation modal', error)
+		);
+
+	}
+
 	operationDays(data) {
 		data.periods.length = 0;
+
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
 			open: '',
 			close: '',
-		}
+		};
+		
 		data.status = !data.status;
 		data.periods.push(hours)
 	}
@@ -425,7 +455,6 @@ export class EditSingleHostComponent implements OnInit {
 	}
 
 	setDealer(e) {
-		console.log("EE", e)
 		this.f.dealerId.setValue(e);
 		var filtered = this.dealers_data.filter(
 			i => {
