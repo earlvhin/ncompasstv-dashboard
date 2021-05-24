@@ -15,7 +15,6 @@ import { HostsComponent } from './pages/hosts/hosts.component';
 import { SingleHostComponent } from 'src/app/global/pages_shared/single-host/single-host.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
 import { SingleLicenseComponent } from 'src/app/global/pages_shared/single-license/single-license.component';
-import { LocatorComponent } from './pages/locator/locator.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { CreatePlaylistComponent } from 'src/app/global/pages_shared/create-playlist/create-playlist.component';
 import { SinglePlaylistComponent } from 'src/app/global/pages_shared/single-playlist/single-playlist.component';
@@ -30,6 +29,7 @@ import { CreateUserComponent } from 'src/app/global/pages_shared/create-user/cre
 import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user-type/create-user-type.component';
+import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
 
 export const SUB_DEALER_ROUTES: Routes = [
     {

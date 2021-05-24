@@ -12,7 +12,6 @@ import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.co
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
-import { LocatorComponent } from './pages/locator/locator.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { ScreensComponent } from './pages/screens/screens.component';
 import { UsersComponent } from './pages/users/users.component';
@@ -30,7 +29,6 @@ import { PlaylistsComponent } from './pages/playlists/playlists.component';
 		FeedsComponent,
 		HostsComponent,
 		LicensesComponent,
-		LocatorComponent,
 		ReportsComponent,
 		ScreensComponent,
 		UsersComponent,

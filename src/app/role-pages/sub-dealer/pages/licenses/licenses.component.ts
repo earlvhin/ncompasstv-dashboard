@@ -49,22 +49,20 @@ export class LicensesComponent implements OnInit {
 	worksheet: any;
 
 	license_table_columns = [
-		{ name: '#', sortable: false, key: 'licenseKey', hidden: true},
-		{ name: 'Screenshot', sortable: false, no_export: true},
-		{ name: 'License Key', sortable: false, key: 'licenseKey'},
-		{ name: 'Alias', sortable: false, key: 'alias'},
-		{ name: 'Type', sortable: false, key: 'screenType'},
-		{ name: 'Host', sortable: false, key: 'hostName'},
-		{ name: 'Category', sortable: false, key: 'category'},
-		{ name: 'Region', sortable: false, key: 'region'},
-		{ name: 'City', sortable: false, key: 'city'},
-		{ name: 'State', sortable: false, key: 'state'},
-		{ name: 'Connection Type', sortable: false, key:'internetType'},
-		{ name: 'Screen', sortable: false, key:'screenName'},
-		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
-		{ name: 'Install Date', sortable: false, key:'installDate'},
-		{ name: 'Last Push', sortable: false, key:'contentsUpdated'},
-		{ name: 'Status', sortable: false, key:'isActivated'},
+		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
+		{ name: 'Screenshot', sortable: false, no_export: true },
+		{ name: 'License Key', sortable: false, key: 'licenseKey' },
+		{ name: 'Alias', sortable: false, key: 'alias' },
+		{ name: 'Type', sortable: false, key: 'screenType' },
+		{ name: 'Host', sortable: false, key: 'hostName' },
+		{ name: 'Category', sortable: false, key: 'category' },
+		{ name: 'Connection Type', sortable: false, key:'internetType' },
+		{ name: 'Screen', sortable: false, key:'screenName' },
+		{ name: 'Template', sortable: false, key:'template' },
+		{ name: 'Creation Date', sortable: false, key:'dateCreated' },
+		{ name: 'Install Date', sortable: false, key:'installDate' },
+		{ name: 'Last Push', sortable: false, key:'contentsUpdated' },
+		{ name: 'Status', sortable: false, key:'isActivated' },
 	];
 
 	constructor(
@@ -84,10 +82,6 @@ export class LicensesComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
-
-	filterData(data) {
-		this.filtered_data = data;
-	  }
 	  
 	getTotalCount(id) {
 		this.subscription.add(
@@ -163,9 +157,8 @@ export class LicensesComponent implements OnInit {
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
 		let count: number = 1;
-		console.log("DATA", data)
-		return data.map(
-			
+
+		return data.map(	
 			({ license, host, screen, screenType }) => {
 				return new UI_TABLE_LICENSE_BY_HOST(
 					{ value: license.licenseId, link: null , editable: false, hidden: true },
@@ -185,12 +178,13 @@ export class LicensesComponent implements OnInit {
 					{ value: host ? (host.category ? this._title.transform(host.category) : 'None') : '--', link: null, editable: false, hidden: false },
 					{ value: license.internetType ? this.getInternetType(license.internetType) : '--', link: null, editable: false, hidden: false },
 					{ value: screen ? (screen.screenName != null ? screen.screenName : '--') : '--', link: screen ? (screen.screenId != null ? '/dealer/screens/' + screen.screenId : null) : null, editable: false, hidden: false },
+					{ value: screen && screen.templateName ? screen.templateName : '--', editable: false, hidden: false },
 					{ value: license.dateCreated ? this._date.transform(license.dateCreated) : '--', link: null, editable: false, hidden: false },
 					{ value: license.installDate ? this._date.transform(license.installDate) : '--', link: null, editable: false, hidden: false },
 					{ value: license.contentsUpdated ? this._date.transform(license.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 					{ value: license.isActivated ? 'Active' : 'Inactive', link: null, editable: false, hidden: false },	
 					{ value: license.piStatus, link: null, editable: false, hidden: true },	
-				)
+				);
 			}
 		);
 	}

@@ -86,24 +86,15 @@
                         </button>
                     </div>
                     <div class="col-lg-4">
-                        <!-- <app-search-field
-                        [form_title]="'Search Host or License Alias'"
-                        [placeholder]="'Example: N-Compass'"
-                        [data_reference]="license_data"
-                        [primary_keyword]="'alias'"
-                        [secondary_keyword]="'name'"
-                        (searched)="filterData($event)"
-                        ></app-search-field> -->
-
                         <app-search-field
-                        *ngIf="!initial_load_license"
-                        [form_title]="'Search License Alias or Host Name'"
-                        [placeholder]="'Example: License #100'"
-                        [data_reference]="license_data"
-                        [primary_keyword]="'alias'"
-                        [secondary_keyword]="'host_name'"
-                        (searched)="licenseFilterData($event)"
-                        [api_search]="true"
+                            *ngIf="!initial_load_license"
+                            [form_title]="'Search License Alias or Host Name'"
+                            [placeholder]="'Example: License #100'"
+                            [data_reference]="license_data"
+                            [primary_keyword]="'alias'"
+                            [secondary_keyword]="'host_name'"
+                            (searched)="licenseFilterData($event)"
+                            [api_search]="true"
                         ></app-search-field>
                     </div>
                 </div>
@@ -112,13 +103,13 @@
                         <ng-container *ngIf="!searching_license; else loader">
                             <mat-card *ngIf="license_filtered_data.length > 0; else nodata">
                                 <app-data-table 
-                                [table_data]="filtered_data"
-                                [table_columns]="license_table_columns"
-                                [new_table]="true"
-                                (update_info)="ngOnInit()"
-                                [license_status_column]="true"
-                                [paging_details]="paging_data_license"
-                                (page_triggered)="getLicenses($event)">
+                                    [table_data]="filtered_data"
+                                    [table_columns]="license_table_columns"
+                                    [new_table]="true"
+                                    (update_info)="ngOnInit()"
+                                    [license_status_column]="true"
+                                    [paging_details]="paging_data_license"
+                                    (page_triggered)="getLicenses($event)">
                                 </app-data-table>
                             </mat-card>
                         </ng-container>
