@@ -86,7 +86,7 @@ export class NewDealerComponent implements OnInit {
 				type: 'text'
 			},
 			{
-				label: 'Dealer Alias',
+				label: 'Dealer ID',
 				control: 'generatedid',
 				placeholder: 'Ex: D.001',
 				width: 'col-lg-3',
