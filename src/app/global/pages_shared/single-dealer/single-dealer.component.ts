@@ -28,6 +28,7 @@ import { UserService } from '../../services/user-service/user.service';
 import { RoleService } from '../../services/role-service/role.service';
 import { environment } from '../../../../environments/environment';
 import { SubstringPipe } from '../../pipes/substring.pipe';
+
 @Component({
 	selector: 'app-single-dealer',
 	templateUrl: './single-dealer.component.html',
@@ -65,6 +66,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	initial_load_license = true;
 	is_search: boolean = false;
 	license$: Observable<API_LICENSE[]>;
+	licenses: any[];
 	license_card:any;
 	license_count: number;
 	license_data: any = [];
@@ -149,10 +151,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Alias', sortable: true, column:'Alias', key: 'alias'},
 		{ name: 'Last Push', sortable: true, column:'ContentsUpdated', key:'contentsUpdated'},
 		{ name: 'Last Online', sortable: true, column:'TimeIn', key:'timeIn'},
-		{ name: 'Connection Type', sortable: true, column:'InternetType', key:'internetType'},
-		{ name: 'Connection Speed', sortable: false, key:'internetSpeed'},
+		{ name: 'Net Type', sortable: true, column:'InternetType', key:'internetType'},
+		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId'},
-		{ name: 'Server Version', sortable: false, key:'server'},
+		{ name: 'PS Version', sortable: false, key:'server'},
 		{ name: 'UI Version', sortable: false, key:'ui'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
 		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},		
@@ -184,7 +186,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	ngOnInit() {
 		this._socket.on('connect', () => {
-			console.log('#SingleDealerComponent - Connected to Socket Server');
+			// console.log('#SingleDealerComponent - Connected to Socket Server');
 		})
 		
 		this._socket.on('disconnect', () => {
@@ -196,6 +198,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}
 
 		this.setCurrentTabOnLoad();
+
 
 		this.subscription.add(
 			this._params.paramMap.subscribe(
@@ -213,6 +216,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getAdvertiserTotalCount(this.dealer_id);
 					this.getHostTotalCount(this.dealer_id);
 					this.adminButton();
+					this.getDealerLicenses();
 				},
 				error => {
 					console.log('Error on paramMap subscription', error)
@@ -479,7 +483,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							}
 						);
 						this.statistics = response.statistics;
-
 						if (reload) this.updateCharts();
 						const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
 						this.license_data = mappedLicenses;
@@ -772,23 +775,23 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		dialogRef.afterClosed().subscribe(result => {
 			switch(result) {
 				case 'system_update':
-					this.license_data_api.forEach(
+					this.licenses.forEach(
 						i => {
-							this._socket.emit('D_system_update_by_license', i.license.licenseId);
+							this._socket.emit('D_system_update_by_license', i.licenseId);
 						}
 					)
 					break;
 				case 'reboot':
-					this.license_data_api.forEach(
+					this.licenses.forEach(
 						i => {
-							this._socket.emit('D_pi_restart', i.license.licenseId);
+							this._socket.emit('D_pi_restart', i.licenseId);
 						}
 					)
 					break;
 				case 'reboot_player':
-					this.license_data_api.forEach(
+					this.licenses.forEach(
 						i => {
-							this._socket.emit('D_player_restart', i.license.licenseId);
+							this._socket.emit('D_player_restart', i.licenseId);
 						}
 					)
 					break;
@@ -803,9 +806,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					);
 					break;
 				case 'upgrade_to_v2': 
-					this.license_data_api.forEach(
+					this.licenses.forEach(
 						i => {
-							this._socket.emit('D_upgrade_to_v2_by_license', i.license.licenseId);
+							this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
 						}
 					)
 					break;
@@ -999,6 +1002,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
 		this.getLicensesofDealer(1);
+	}
+
+	getDealerLicenses() {
+		this.subscription.add(
+			this._license.get_license_to_export(this.dealer_id).subscribe(
+				data => {
+					// console.log('getDealerLicenses', data);
+					this.licenses = data.licenses;
+				}
+			)
+		)
 	}
 
 	getDataForExport(id, tab): void {

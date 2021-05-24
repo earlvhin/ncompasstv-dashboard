@@ -152,7 +152,7 @@
                                                 <button mat-button mat-raised-button 
                                                 *ngIf="!remote_update_disabled; else disabled_remote_update" 
                                                 class="theme-btn pi-control sm-text _primary mr-2" 
-                                                [disabled]="remote_update_disabled" 
+                                                [disabled]="remote_update_disabled || !licenses" 
                                                 (click)="updateAndRestart()"  
                                                 title="Update System">
                                                     <span class="fas fa-terminal"></span> 
@@ -168,7 +168,7 @@
                                                 <button mat-button mat-raised-button 
                                                 *ngIf="!remote_reboot_disabled; else disabled_remote_reboot" 
                                                 class="theme-btn pi-control sm-text _warning mr-2" 
-                                                [disabled]="remote_reboot_disabled" 
+                                                [disabled]="remote_reboot_disabled || !licenses" 
                                                 (click)="rebootPlayer()" 
                                                 title="Reboot Player">
                                                     <span class="fas fa-power-off"></span> 
@@ -176,16 +176,17 @@
                                                 </button>
                                                 
                                                 <button mat-button mat-raised-button 
-                                                *ngIf="!remote_reboot_disabled; else disabled_remote_reboot" 
-                                                class="theme-btn pi-control sm-text _caution mr-2" 
-                                                [disabled]="remote_reboot_disabled" 
-                                                (click)="rebootPi()" 
+                                                *ngIf="!remote_reboot_disabled; else disabled_remote_reboot"
+                                                class="theme-btn pi-control sm-text _caution mr-2"
+                                                [disabled]="remote_reboot_disabled || !licenses"
+                                                (click)="rebootPi()"
                                                 title="Reboot Pi">
                                                     <span class="fas fa-power-off"></span> 
                                                     <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
                                                 </button>
 
-                                                <button mat-button mat-raised-button 
+                                                <button mat-button mat-raised-button
+                                                [disabled]="remote_reboot_disabled || !licenses"
                                                 class="theme-btn pi-control sm-text _dark mr-2" 
                                                 (click)="updateToVersion2()" 
                                                 title="Update to Version 2">
