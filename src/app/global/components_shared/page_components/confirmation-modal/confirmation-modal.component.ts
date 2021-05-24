@@ -15,6 +15,7 @@ export class ConfirmationModalComponent implements OnInit {
 	rename: boolean;
 	return_msg: string;
 	status: string;
+	is_selection?: boolean;
 	
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
@@ -28,6 +29,7 @@ export class ConfirmationModalComponent implements OnInit {
 		this.return_msg = this._dialog_data.return_msg;
 		this.action = this._dialog_data.action;
 		this.rename = this._dialog_data.rename;
+		this.is_selection = typeof this._dialog_data.is_selection !== 'undefined' ? this._dialog_data.is_selection : false; 
 	}
 
 	displaySuccess() {

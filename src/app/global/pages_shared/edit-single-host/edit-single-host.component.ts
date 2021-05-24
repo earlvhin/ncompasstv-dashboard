@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Subscription, Observable } from 'rxjs';
 import * as uuid from 'uuid';
 
+import { API_CONTENT } from '../../models/api_content.model';
 import { API_DEALER } from '../../models/api_dealer.model';
 import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
 import { API_SINGLE_HOST } from '../../models/api_host.model';
@@ -35,6 +36,7 @@ export class EditSingleHostComponent implements OnInit {
 	disable_business_name: boolean = true;
 	category_selected: string;
 	new_host_form: FormGroup;
+	has_content = false;
 	host_id: string;
 	dealers_data: API_DEALER[] = [];
 	operation_hours: UI_OPERATION_HOURS[];
@@ -44,9 +46,7 @@ export class EditSingleHostComponent implements OnInit {
 	closed_without_edit: boolean = false;
 	timezones: any;
 	host_timezone: { id: string; name: string; status: string; };
-
-	private initial_business_hours: any;
-
+	
 	host_form_view = [
 		{
 			label: 'Host Business Name',
@@ -171,6 +171,8 @@ export class EditSingleHostComponent implements OnInit {
 		}
 	];
 
+	private initial_business_hours: any;
+
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _host_data: any,
 		private _auth: AuthService,
@@ -186,8 +188,20 @@ export class EditSingleHostComponent implements OnInit {
 
 	ngOnInit() {
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
+
 		this.getDealers(1);
 		this.getHostData(this._host_data);
+
+		this.subscription.add(
+			this._host.get_content_by_host_id(this._host_data)
+				.subscribe(
+					(response: { contents: API_CONTENT[] }) => {	
+						if (response && response.contents && response.contents.length  > 0) return this.has_content = true;
+						this.has_content = false;
+					},
+					error => console.log('Error retrieving content by host', error)
+				)
+		);
 
 		this.subscription.add(
 			this._categories.get_parent_categories().subscribe(
@@ -234,7 +248,7 @@ export class EditSingleHostComponent implements OnInit {
 
 	get f() { return this.new_host_form.controls; }
 
-	getHostData(id) {
+	getHostData(id: string): void {
 		this.subscription.add(
 			this._host.get_host_by_id(id).subscribe(
 				(data: API_SINGLE_HOST) => {
@@ -248,7 +262,7 @@ export class EditSingleHostComponent implements OnInit {
 		);
 	}
 
-	searchData(e) {
+	searchData(e): void {
 		this.subscription.add(
 			this._dealer.get_search_dealer(e).subscribe(
 				data => {
@@ -263,11 +277,11 @@ export class EditSingleHostComponent implements OnInit {
 		);
 	}
 
-	getDealers(e) {
+	getDealers(page: number): void {
 
-		if (e > 1) {
+		if (page > 1) {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
 						data.dealers.map (
 							i => {
@@ -280,7 +294,7 @@ export class EditSingleHostComponent implements OnInit {
 			);
 		} else {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
 						this.dealers_data = data.dealers;
 						this.paging = data.paging
@@ -290,7 +304,7 @@ export class EditSingleHostComponent implements OnInit {
 		}
 	}
 	  
-	setTimezone(e) {
+	setTimezone(e): void {
 		this.f.timezone.setValue(e);
 	}
 
@@ -310,15 +324,15 @@ export class EditSingleHostComponent implements OnInit {
 		this.f.notes.setValue(data.notes);
 	}
 
-	getTimezones() {
+	getTimezones(): void {
 		this._host.get_time_zones().subscribe(
 			data => {
 				this.timezones = data
 			},
 			error => {
-				console.log(error);
+				console.log('Error retrieving time zones', error);
 			}
-		)
+		);
 	}
 
 	newHostPlace(): void {
@@ -356,8 +370,9 @@ export class EditSingleHostComponent implements OnInit {
 		);
 	}
 
-	confirmationModal(status, message, data, id): void {
-		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+	confirmationModal(status: string, message: string, data: any, id: string): void {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: {
@@ -365,32 +380,36 @@ export class EditSingleHostComponent implements OnInit {
 				message: message,
 				data: data
 			}
-		})
-
-		dialogRef.afterClosed().subscribe(result => {
-			this.ngOnInit() 
 		});
+
+		dialog.afterClosed().subscribe(() => this.ngOnInit());
 	}
 
 	onDeleteHost(): void {
+		let isForceDelete = false;
 		const status = 'warning';
-		const message = 'Delete Host';
-		const data = 'Are you sure want to delete this host?';
 		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		const hostId = this._host_data;
+		let data: any = { status, message: 'Delete Host', data: 'Are you sure about this?' };
+
+
+		if (this.has_content) {
+			data = { status, message: 'Force Delete', data: 'This host has content. Delete those as well?', is_selection: true };
+		}
 
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
-			data: { status, message, data }
+			data
 		});
 
 		dialog.afterClosed().subscribe(
-			(response: boolean) => {
+			(response: boolean | string) => {
 				if (typeof response === 'undefined' || !response) return;
+				if (this.has_content && response !== 'no') isForceDelete = true;
 
 				this.subscription.add(
-					this._host.delete_host([ hostId ])
+					this._host.delete_host([ hostId ], isForceDelete)
 						.subscribe(
 							() => {
 								console.log('Host Deleted');
@@ -407,7 +426,7 @@ export class EditSingleHostComponent implements OnInit {
 
 	}
 
-	operationDays(data) {
+	operationDays(data: { periods: any[], status: boolean, id: string }): void {
 		data.periods.length = 0;
 
 		const hours = {
@@ -418,52 +437,56 @@ export class EditSingleHostComponent implements OnInit {
 		};
 		
 		data.status = !data.status;
-		data.periods.push(hours)
+		data.periods.push(hours);
 	}
 
-	addHours(data) {
+	addHours(data: { periods: any[], id: string }): void {
+
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
 			open: '',
 			close: '',
-		}
-		data.periods.push(hours)
+		};
+
+		data.periods.push(hours);
 	}
 
-	removeHours(data, i) {
-		data.periods.splice(i, 1);
+	removeHours(data: { periods: any[] }, index: number): void {
+		data.periods.splice(index, 1);
 	}
 
-	setToCategory(e) {
-		if(e != null) {
-			e = e.replace(/_/g," ");
-			this.category_selected = this._titlecase.transform(e);
-			this.f.category.setValue(e);
+	setToCategory(event: string): void {
+
+		if (event != null) {
+			event = event.replace(/_/g," ");
+			this.category_selected = this._titlecase.transform(event);
+			this.f.category.setValue(event);
 		}
+
 	}
   
-	editBusinessName(e) {
-		if(e == true) {
-			this.setDealer(this.initial_dealer)
+	editBusinessName(event: boolean): void {
+
+		if (event == true) {
+			this.setDealer(this.initial_dealer);
 			this.closed_without_edit = true;
 		} else {
 			this.closed_without_edit = false;
 		}
 		
-		this.disable_business_name = e;
+		this.disable_business_name = event;
 	}
 
-	setDealer(e) {
-		this.f.dealerId.setValue(e);
-		var filtered = this.dealers_data.filter(
-			i => {
-				return i.dealerId == e;
-			}
-		)
-		if(filtered.length == 0) {
+	setDealer(event: string): void {
+
+		this.f.dealerId.setValue(event);
+
+		const filtered = this.dealers_data.filter(dealer => dealer.dealerId == event);
+
+		if (filtered.length == 0) {
 			this.subscription.add(
-				this._dealer.get_dealer_by_id(e).subscribe(
+				this._dealer.get_dealer_by_id(event).subscribe(
 					data => {
 						this.current_dealer = data;
 						this.dealers_data.push(this.current_dealer);
