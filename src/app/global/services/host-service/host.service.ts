@@ -33,13 +33,17 @@ export class HostService {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_host_place}`, data, this.httpOptions);
 	}
 
-	delete_host(hostIds: string[]) {
-		const data = { hostIds };
+	delete_host(hostIds: string[], forceDelete: boolean) {
+		const data = { hostIds, forceDelete };
 		return this._http.post(`${environment.base_uri}${environment.delete.host}`, data, this.httpOptions);
 	}
 
 	export_host(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
+	}
+
+	get_content_by_host_id(id: string) {
+		return this._http.get(`${environment.base_uri}${environment.getters.content_by_host_id}?hostId=${id}`, this.httpOptions);
 	}
 
 	get_host() {

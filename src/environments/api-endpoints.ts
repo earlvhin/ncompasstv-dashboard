@@ -92,6 +92,7 @@ export const API_ENDPOINTS = {
 		api_apps: 'playerapp/getapp',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
+		content_by_host_id: 'content/GetByHostId',
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/ExportDealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
