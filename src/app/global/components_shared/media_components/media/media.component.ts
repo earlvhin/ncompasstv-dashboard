@@ -62,8 +62,10 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.role_id = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
-		if (this.role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
+		if (this.role_id === dealerRole || this.role_id === subDealerRole) this.is_dealer = true;
 
 		this.reload.subscribe(
 			() =>  {

@@ -20,7 +20,6 @@ export class NavbarComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log('current user value', this._auth.current_user_value);
 		this.current_username = this._auth.current_user_value.firstname;
 		this.current_userid = this._auth.current_user_value.user_id;
 

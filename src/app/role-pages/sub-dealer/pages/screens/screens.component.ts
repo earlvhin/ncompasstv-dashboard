@@ -113,9 +113,9 @@ export class ScreensComponent implements OnInit {
 				return new UI_DEALER_TABLE_SCREEN (
 					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.screenName), link: '/dealer/screens/' +  s.screenId, editable: false, hidden: false},
-					{ value: s.screenTypeName ? this._titlecase.transform(s.screenTypeName) : '--', link: '/dealer/hosts/' +  s.hostId, editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.hostName), link: '/dealer/hosts/' +  s.hostId, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.screenName), link: '/sub-dealer/screens/' +  s.screenId, editable: false, hidden: false},
+					{ value: s.screenTypeName ? this._titlecase.transform(s.screenTypeName) : '--', link: '/sub-dealer/hosts/' +  s.hostId, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.hostName), link: '/sub-dealer/hosts/' +  s.hostId, editable: false, hidden: false},
 					{ value: s.templateId ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},
 					{ value: this._date.transform(s.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
 					{ value: this._titlecase.transform(s.createByName), link: null, editable: false, hidden: false},

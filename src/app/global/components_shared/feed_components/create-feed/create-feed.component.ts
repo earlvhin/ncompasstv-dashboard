@@ -99,13 +99,20 @@ export class CreateFeedComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			this.setDealerId(this.dealer_id);
 		}
+
 		this.getDealers(1);
+		
 	}
 
 	createFeedForm() {

@@ -106,7 +106,7 @@ export class AdvertisersComponent implements OnInit {
 				return new UI_TABLE_ADVERTISERS(
 					{ value: i.id, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: i.name, link: '/dealer/advertisers/' + i.id, editable: false, hidden: false},
+					{ value: i.name, link: '/sub-dealer/advertisers/' + i.id, editable: false, hidden: false},
 					{ value: i.region ? i.region : '--', link: null, editable: false, hidden: false},
 					{ value: i.city ? i.city : '--', link: null, editable: false, hidden: false},
 					{ value: i.state ? i.state : '--', link: null, editable: false, hidden: false},

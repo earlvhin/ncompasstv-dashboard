@@ -48,10 +48,15 @@ export class NewAdvertiserComponent implements OnInit {
 			this.is_dealer = true;
 		}
 
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		const roleId = this._auth.current_user_value.role_id;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.back_btn = '/dealer/users/create-user';
 		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator){
 			this.back_btn = '/administrator/users/create-user';
+		} else if (roleId === subDealerRole) {
+			this.back_btn = '/sub-dealer/users/create-user';
 		}
 		
 		this.new_advertiser_form = this._form.group({

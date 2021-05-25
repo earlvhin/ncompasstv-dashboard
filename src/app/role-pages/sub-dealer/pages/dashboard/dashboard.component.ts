@@ -283,7 +283,7 @@ export class DashboardComponent implements OnInit {
 					return new UI_TABLE_HOSTS(
 						{ value: host.hostId, link: null , editable: false, hidden: true},
 						{ value: count++, link: null , editable: false, hidden: false},
-						{ value: host.name, link: '/dealer/hosts/' + host.hostId , editable: false, hidden: false},
+						{ value: host.name, link: '/sub-dealer/hosts/' + host.hostId , editable: false, hidden: false},
 						{ value: host.address, link: null , editable: false, hidden: false},
 						{ value: host.region != null ? host.region : '--', link: null , editable: false, hidden: false},
 						{ value: host.city, link: null , editable: false, hidden: false},

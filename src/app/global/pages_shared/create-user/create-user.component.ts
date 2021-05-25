@@ -22,8 +22,12 @@ export class CreateUserComponent implements OnInit {
 	user_type = []
 
 	ngOnInit() {
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 		
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 		}
 

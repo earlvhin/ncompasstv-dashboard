@@ -19,7 +19,7 @@ export class UsersComponent implements OnInit {
 	title: string = "Users";
 	filtered_data: any = [];
 	subscription: Subscription = new Subscription;
-	row_url: string = "/dealer/users/";
+	row_url: string = "/sub-dealer/users/";
 	row_slug: string = "user_id";
 	users: UI_TABLE_USERS[] = [];
 	loading_data: boolean = true;
@@ -114,7 +114,7 @@ export class UsersComponent implements OnInit {
 				return new UI_TABLE_USERS(
 					{ value: u.userId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: u.firstName + " " + u.lastName, link: '/dealer/users/' +  u.userId, editable: false, hidden: false},
+					{ value: u.firstName + " " + u.lastName, link: '/sub-dealer/users/' +  u.userId, editable: false, hidden: false},
 					{ value: u.email, link: null, editable: false, hidden: false},
 					{ value: u.contactNumber, link: null, editable: false, hidden: false},
 					{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false},

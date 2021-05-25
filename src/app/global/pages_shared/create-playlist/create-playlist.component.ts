@@ -6,7 +6,6 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { API_CONTENT } from '../../models/api_content.model';
-import { API_DEALER } from '../../../global/models/api_dealer.model';
 import { ContentService } from '../../services/content-service/content.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { PlaylistService } from '../../services/playlist-service/playlist.service';
@@ -14,7 +13,7 @@ import { PlaylistCreatedModalComponent } from '../../../global/components_shared
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 import { API_CREATE_PLAYLIST_CONTENT, API_CREATE_PLAYLIST } from '../../models/api_create-playlist.model';
 import { UI_PLAYLIST_CONTENT, UI_CONTENT } from '../../models/ui_content.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-create-playlist',
@@ -22,7 +21,7 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 	styleUrls: ['./create-playlist.component.scss']
 })
 export class CreatePlaylistComponent implements OnInit {
-	title: string = "Create Playlist";
+	title: string = 'Create Playlist';
 	creating_playlist: boolean = false;
 	dealer_no_content: boolean = false;
 	dealers: Array<any> = [];
@@ -84,14 +83,18 @@ export class CreatePlaylistComponent implements OnInit {
 
 	ngOnInit() {
 
-		//check if dealer user
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		// check if dealer user
 		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator) {
 			this.is_admin = true;
-		} else if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		} else if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-		} else {}
+		}
 
 		this.getDealers(1);
 		this.getAllContents();
@@ -114,10 +117,10 @@ export class CreatePlaylistComponent implements OnInit {
 					}
 				}
 			)
-		)
+		);
 
 		//Autofill for dealer
-		if(this.is_dealer) {	
+		if (this.is_dealer) {	
 			this.setToDealer(this.dealerid);
 		}
 	}

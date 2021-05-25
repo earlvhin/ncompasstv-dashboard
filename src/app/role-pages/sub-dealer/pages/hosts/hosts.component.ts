@@ -8,7 +8,6 @@ import { UI_DEALER_HOSTS } from '../../../../global/models/ui_dealer_hosts.model
 import { UserService } from '../../../../global/services/user-service/user.service';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { TitleCasePipe } from '@angular/common'
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 
 @Component({
 	selector: 'app-hosts',
@@ -165,7 +164,7 @@ export class HostsComponent implements OnInit {
 				return new UI_DEALER_HOSTS(
 					{ value: hosts.hostId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: hosts.name, link: '/dealer/hosts/' + hosts.hostId, editable: false, hidden: false},
+					{ value: hosts.name, link: '/sub-dealer/hosts/' + hosts.hostId, editable: false, hidden: false},
 					{ value: hosts.address, link: null, editable: false, hidden: false},
 					{ value: hosts.city, link: null, editable: false, hidden: false},
 					{ value: hosts.postalCode, link: null, editable: false, hidden: false},

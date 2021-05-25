@@ -3,7 +3,6 @@ import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { API_LICENSE } from '../../../../global/models/api_license.model';
 import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
 import { UI_TABLE_LICENSE_BY_HOST } from '../../../../global/models/ui_table-license-by-host.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
@@ -27,10 +26,10 @@ export class LicensesComponent implements OnInit {
 	license_data_api: any;
 	filtered_data: UI_TABLE_LICENSE_BY_HOST[] = [];
 	row_slug: string = "license_id";
-	row_url: string = "/dealer/licenses";
+	row_url: string = "/sub-dealer/licenses";
 	license_filtered_data: any = [];
 	license_row_slug: string = "host_id";
-	license_row_url: string = "/dealer/hosts";
+	license_row_url: string = "/sub-dealer/hosts";
 	licenses_to_export: any = [];
 	no_licenses: boolean = false;
 	paging_data_license: any;
@@ -171,13 +170,13 @@ export class LicensesComponent implements OnInit {
 						hidden: false, 
 						isImage: true
 					},
-					{ value: license.licenseKey, link: '/dealer/licenses/' + license.licenseId, editable: false, hidden: false, status: true },
-					{ value: license.alias ? license.alias : '--', link: '/dealer/licenses/' + license.licenseId, editable: true, label: 'License Alias', id: license.licenseId, hidden: false },
+					{ value: license.licenseKey, link: '/sub-dealer/licenses/' + license.licenseId, editable: false, hidden: false, status: true },
+					{ value: license.alias ? license.alias : '--', link: '/sub-dealer/licenses/' + license.licenseId, editable: true, label: 'License Alias', id: license.licenseId, hidden: false },
 					{ value: screen.screenTypeId ? this._title.transform(screenType.name) : '--', link: null, editable:false, hidden: false },
-					{ value: host ? host.name: '--', link: host ? '/dealer/hosts/' + host.hostId : null, editable: false, hidden: false },
+					{ value: host ? host.name: '--', link: host ? '/sub-dealer/hosts/' + host.hostId : null, editable: false, hidden: false },
 					{ value: host ? (host.category ? this._title.transform(host.category) : 'None') : '--', link: null, editable: false, hidden: false },
 					{ value: license.internetType ? this.getInternetType(license.internetType) : '--', link: null, editable: false, hidden: false },
-					{ value: screen ? (screen.screenName != null ? screen.screenName : '--') : '--', link: screen ? (screen.screenId != null ? '/dealer/screens/' + screen.screenId : null) : null, editable: false, hidden: false },
+					{ value: screen ? (screen.screenName != null ? screen.screenName : '--') : '--', link: screen ? (screen.screenId != null ? '/sub-dealer/screens/' + screen.screenId : null) : null, editable: false, hidden: false },
 					{ value: screen && screen.templateName ? screen.templateName : '--', editable: false, hidden: false },
 					{ value: license.dateCreated ? this._date.transform(license.dateCreated) : '--', link: null, editable: false, hidden: false },
 					{ value: license.installDate ? this._date.transform(license.installDate) : '--', link: null, editable: false, hidden: false },

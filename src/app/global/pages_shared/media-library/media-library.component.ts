@@ -47,14 +47,15 @@ export class MediaLibraryComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _auth: AuthService,
 		private _content: ContentService,
-	) { 
-		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
-	}
-
+	) { }
+	
 	ngOnInit() {
+		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
 		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
-		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.getDealerContents(this._auth.current_user_value.roleInfo.dealerId, 1, 60);
 		} else {

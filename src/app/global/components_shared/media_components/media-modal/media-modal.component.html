@@ -22,22 +22,22 @@
             </div>
             <!-- Dealer -->
             <app-autocomplete-field
-            (data_value)="dealerSelected($event)"
-            [disabled]="is_floating || dealers.length == 0 || is_dealer"
-            [data_reference]="dealers_data"
-            [key_of_value]="'dealerId'"
-            [label]="'Choose A Dealer'"
-            [placeholder]="'Choose A Dealer'"
-            [primary_keyword]="'businessName'"
-            [search_keyword]="'dealer'"
-            [initial_value]="dealer_name"
-            [disabled]="is_dealer"
-            [paging]="paging"
-            (call_next_page)="searchBoxTrigger($event)"
-            (searched)="searchData($event)"
-            [loading_data]="loading_data"
-            [loading_search]="loading_search"
-            [new_value]="dealer_name">
+                (data_value)="dealerSelected($event)"
+                [disabled]="is_floating || dealers.length == 0 || is_dealer"
+                [data_reference]="dealers_data"
+                [key_of_value]="'dealerId'"
+                [label]="'Choose A Dealer'"
+                [placeholder]="'Choose A Dealer'"
+                [primary_keyword]="'businessName'"
+                [search_keyword]="'dealer'"
+                [initial_value]="dealer_name"
+                [disabled]="is_dealer"
+                [paging]="paging"
+                (call_next_page)="searchBoxTrigger($event)"
+                (searched)="searchData($event)"
+                [loading_data]="loading_data"
+                [loading_search]="loading_search"
+                [new_value]="dealer_name">
             </app-autocomplete-field>
     
             <!-- Host -->

@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
 import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
 import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
@@ -22,11 +23,7 @@ import { MediaLibraryComponent } from 'src/app/global/pages_shared/media-library
 import { SingleContentComponent } from 'src/app/global/pages_shared/single-content/single-content.component';
 import { ScreensComponent } from './pages/screens/screens.component';
 import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
-import { UsersComponent } from './pages/users/users.component';
-import { CreateUserComponent } from 'src/app/global/pages_shared/create-user/create-user.component';
-import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
-import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user-type/create-user-type.component';
 import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
 
 export const SUB_DEALER_ROUTES: Routes = [
@@ -56,12 +53,8 @@ export const SUB_DEALER_ROUTES: Routes = [
 			{ path: 'media-library/:data', component: SingleContentComponent },
 			{ path: 'screens', component: ScreensComponent },
 			{ path: 'screens/:data', component: SingleScreenComponent },
-			{ path: 'users', component: UsersComponent },
-			{ path: 'users/create-user', component: CreateUserComponent },
-			{ path: 'users/:data', component: SingleUserComponent },
 			{ path: 'user-profile/:data', component: UserProfileComponent },
 			{ path: 'dealer-profile/:data', component: DealerProfileComponent },
-			{ path: 'users/create-user/:data', component: CreateUserTypeComponent },
 			{ path: 'user-account-setting/:data', component: UserAccountSettingComponent }
         ],
     }

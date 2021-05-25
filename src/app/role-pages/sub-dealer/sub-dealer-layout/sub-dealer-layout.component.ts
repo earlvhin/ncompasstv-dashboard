@@ -24,7 +24,6 @@ export class SubDealerLayoutComponent implements OnInit, OnDestroy {
 		{ path: 'feeds', label: 'Feeds', icon: 'fas fa-newspaper'},
 		{ path: 'playlists', label: 'Playlists', icon: 'fas fa-play'},
 		{ path: 'screens', label: 'Screens', icon: 'fas fa-tv'},
-		{ path: 'users', label: 'Users', icon: 'fas fa-users'},
 	];
 
 	private current_role: string;

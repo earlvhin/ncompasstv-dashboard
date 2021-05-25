@@ -30,21 +30,21 @@
 							</mat-autocomplete> -->
 
 							<app-autocomplete-field
-							(data_value)="setDealerId($event)"
-							[data_reference]="dealers_data"
-							[key_of_value]="'dealerId'"
-							[label]="'Choose A Dealer'"
-							[placeholder]="'Choose A Dealer'"
-							[primary_keyword]="'businessName'"
-							[search_keyword]="'dealer'"
-							[paging]="paging"
-							(call_next_page)="searchBoxTrigger($event)"
-							(searched)="searchData($event)"
-							[loading_data]="loading_data"
-							[initial_value]="dealer_name"
-                            [new_value]="dealer_name"
-                            [disabled]="is_dealer"
-							[loading_search]="loading_search">							
+								(data_value)="setDealerId($event)"
+								[data_reference]="dealers_data"
+								[key_of_value]="'dealerId'"
+								[label]="'Choose A Dealer'"
+								[placeholder]="'Choose A Dealer'"
+								[primary_keyword]="'businessName'"
+								[search_keyword]="'dealer'"
+								[paging]="paging"
+								(call_next_page)="searchBoxTrigger($event)"
+								(searched)="searchData($event)"
+								[loading_data]="loading_data"
+								[initial_value]="dealer_name"
+								[new_value]="dealer_name"
+								[disabled]="is_dealer"
+								[loading_search]="loading_search">							
 							</app-autocomplete-field>
 							
 							<!-- <div class="form-error position-absolute" *ngIf="dealer_not_found">

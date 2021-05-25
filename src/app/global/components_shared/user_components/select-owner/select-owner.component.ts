@@ -5,11 +5,9 @@ import { AdvertiserService } from '../../../services/advertiser-service/advertis
 import { API_ADVERTISER } from 'src/app/global/models/api_advertiser.model';
 import { API_DEALER } from '../../../models/api_dealer.model';
 import { API_HOST } from 'src/app/global/models/api_host.model';
-import { AuthService } from '../../../services/auth-service/auth.service';
 import { DealerService } from '../../../services/dealer-service/dealer.service';
 import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { HostService } from '../../../services/host-service/host.service';
-import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
@@ -72,7 +70,6 @@ export class SelectOwnerComponent implements OnInit {
 		private _helper: HelperService,
 		private _host: HostService,
 		private _advertiser: AdvertiserService,
-		private _auth: AuthService
 	) { }
 
 	ngOnInit() {
