@@ -328,41 +328,6 @@ export class MediaComponent implements OnInit, OnDestroy {
 		
 	}
 	
-	private sendStatCardsData(): void {
-
-		if (this.role_id === UI_ROLE_DEFINITION.dealer) {
-
-			this.subscription.add(
-				this._content.get_contents_total_by_dealer(this._auth.current_user_value.roleInfo.dealerId).subscribe(
-					data => {
-						this.stats = {
-							all: data.total,
-							videos: data.totalVideos,
-							images: data.totalImages,
-							feeds: data.totalFeeds,
-						}
-						this.send_stats.emit(this.stats);
-					}
-				)
-			);
-
-		} else {
-			this.subscription.add(
-				this._content.get_contents_total().subscribe(
-					data => {
-						this.stats = {
-							all: data.total,
-							videos: data.totalVideos,
-							images: data.totalImages,
-							feeds: data.totalFeeds,
-						}
-						this.send_stats.emit(this.stats);
-					}
-				)
-			);
-		}
-	}
-
 	sortAscendingOrder(value: boolean): void {
 		this.sort_order = value;
 		this.filters.order = 'Ascending'
@@ -451,6 +416,41 @@ export class MediaComponent implements OnInit, OnDestroy {
 				)
 		);
 
+	}
+
+	private sendStatCardsData(): void {
+
+		if (this.role_id === UI_ROLE_DEFINITION.dealer || this.role_id === UI_ROLE_DEFINITION['sub-dealer']) {
+
+			this.subscription.add(
+				this._content.get_contents_total_by_dealer(this._auth.current_user_value.roleInfo.dealerId).subscribe(
+					data => {
+						this.stats = {
+							all: data.total,
+							videos: data.totalVideos,
+							images: data.totalImages,
+							feeds: data.totalFeeds,
+						}
+						this.send_stats.emit(this.stats);
+					}
+				)
+			);
+
+		} else {
+			this.subscription.add(
+				this._content.get_contents_total().subscribe(
+					data => {
+						this.stats = {
+							all: data.total,
+							videos: data.totalVideos,
+							images: data.totalImages,
+							feeds: data.totalFeeds,
+						}
+						this.send_stats.emit(this.stats);
+					}
+				)
+			);
+		}
 	}
 
 	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string, array: any[]): void {
