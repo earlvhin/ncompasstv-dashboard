@@ -16,9 +16,9 @@
             </div>
 
             <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">
-                Done
+                Submit
             </button>
-            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
+            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
                 Cancel
             </button>
         </form>
@@ -34,7 +34,7 @@
     <ng-container *ngIf="clone_success">
         <div class="py-4 text-center">
             <app-success-animation></app-success-animation>
-            <h3 class="mb-1">Screen Cloned Successfully!</h3>
+            <h3 class="mb-1">Playlist Cloned Successfully!</h3>
             <p class="mb-0 sm-text font-weight-md">Click the button below to continue</p>
             <button mat-button mat-raised-button class="theme-btn mt-4" mat-dialog-close>
 				Continue

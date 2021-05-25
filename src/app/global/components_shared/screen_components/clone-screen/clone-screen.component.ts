@@ -84,6 +84,7 @@ export class CloneScreenComponent implements OnInit {
 	ngOnInit() {
 		this.getDealers(1);
 		this.getScreenType();
+
 		this.clone_screen_form = this._form.group(
 			{
 				screen_title: ['', Validators.required],
@@ -92,7 +93,7 @@ export class CloneScreenComponent implements OnInit {
 				host_id: ['', Validators.required],
 				type: ['', Validators.required],
 			}
-		)
+		);
 		
 		this.subscription.add(
 			this.clone_screen_form.valueChanges.subscribe(
@@ -104,15 +105,27 @@ export class CloneScreenComponent implements OnInit {
 					}
 				}
 			)
-		)
+		);
 
 		// for dealer_users auto fill
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		const roleId = this._auth.current_user_value.role_id; 
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+			this.f.type.setValidators([]);
+			this.f.type.updateValueAndValidity();
 			this.setToDealer(this.dealer_id);
 		}
+
+		this.clone_screen_form.valueChanges.subscribe(
+			() => {
+				console.log('form updated', this.clone_screen_form);
+			}
+		);
 	}
 
 	getScreenType() {

@@ -28,22 +28,22 @@
                 </div>
 
                 <app-autocomplete-field
-                *ngIf="no_dealer_selected; else dealer_selected"
-                (data_value)="dealerSelected($event)"
-                [key_of_value]="'dealerId'"
-                [placeholder]="'Select A Dealer'"
-                [label]="'Select A Dealer'"
-                [data_reference]="dealers_data"
-                [search_keyword]="'businessName'"
-                [primary_keyword]="'businessName'"
-                [initial_value]="dealer_name"
-                [new_value]="dealer_name"
-                [disabled]="is_dealer"
-                [paging]="paging"
-                (call_next_page)="searchBoxTrigger($event)"
-                (searched)="searchData($event)"
-                [loading_data]="loading_data"
-                [loading_search]="loading_search">
+                    *ngIf="no_dealer_selected; else dealer_selected"
+                    (data_value)="dealerSelected($event)"
+                    [key_of_value]="'dealerId'"
+                    [placeholder]="'Select A Dealer'"
+                    [label]="'Select A Dealer'"
+                    [data_reference]="dealers_data"
+                    [search_keyword]="'businessName'"
+                    [primary_keyword]="'businessName'"
+                    [initial_value]="dealer_name"
+                    [new_value]="dealer_name"
+                    [disabled]="is_dealer"
+                    [paging]="paging"
+                    (call_next_page)="searchBoxTrigger($event)"
+                    (searched)="searchData($event)"
+                    [loading_data]="loading_data"
+                    [loading_search]="loading_search">
                 </app-autocomplete-field>
 
                 <ng-container *ngIf="no_host_available">
@@ -107,9 +107,9 @@
             </div> 
 
             <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">
-                Done
+                Submit
             </button>
-            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
+            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
                 Cancel
             </button>
         </form>

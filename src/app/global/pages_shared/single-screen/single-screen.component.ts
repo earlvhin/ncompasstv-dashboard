@@ -136,7 +136,12 @@ export class SingleScreenComponent implements OnInit {
 	]
 
 	ngOnInit() {
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 		}
 
@@ -193,7 +198,7 @@ export class SingleScreenComponent implements OnInit {
 						{
 							screen_title: [this.screen.screen_title, Validators.required],
 							description: [this.screen.description],
-							type: [{ value: this.screen.type ? this.screen.type : null, disabled: this.is_dealer ? true:false}],
+							type: [{ value: this.screen.type ? this.screen.type : null, disabled: this.is_dealer ? true : false}],
 							published_by: [{ value: this.screen.created_by, disabled: true }, Validators.required],
 							business_name: [{ value: this.screen.assigned_dealer, disabled: true }, Validators.required],
 							assigned_host: [{value: this.screen.assigned_host, disabled: true}, Validators.required],
