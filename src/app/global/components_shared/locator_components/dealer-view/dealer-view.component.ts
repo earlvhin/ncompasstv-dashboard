@@ -53,7 +53,6 @@ export class DealerViewComponent implements OnInit {
 	}
 
 	searchData(e) {
-		console.log('#SEARCHDATA')
 		this.loading_search = true;
 		this.subscription.add(
 			this._dealer.get_search_dealer_with_host(e).subscribe(
