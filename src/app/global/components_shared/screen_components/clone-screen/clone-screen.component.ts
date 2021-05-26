@@ -1,18 +1,19 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { AuthService } from '../../../services/auth-service/auth.service';
-import { DealerService } from '../../../services/dealer-service/dealer.service';
-import { HostService } from '../../../services/host-service/host.service';
-import { ScreenService } from  '../../../services/screen-service/screen.service';
-import { UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_SCREEN_LICENSE } from '../../../../global/models/ui_single-screen.model';
-import { SCREEN_INFO, API_NEW_SCREEN, SCREEN_ZONE_PLAYLIST, SCREEN_LICENSE } from 'src/app/global/models/api_new-screen.model';
+import { Subscription } from 'rxjs';
+
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';
 import { API_HOST } from 'src/app/global/models/api_host.model';
-import { API_SINGLE_SCREEN } from 'src/app/global/models/api_single-screen.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models/ui_role-definition.model';
+import { API_SCREENTYPE } from 'src/app/global/models/api_screentype.model';
+import { AuthService } from '../../../services/auth-service/auth.service';
+import { DealerService } from '../../../services/dealer-service/dealer.service';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { HostService } from '../../../services/host-service/host.service';
+import { ScreenService } from  '../../../services/screen-service/screen.service';
+import { SCREEN_INFO, API_NEW_SCREEN, SCREEN_ZONE_PLAYLIST } from 'src/app/global/models/api_new-screen.model';
+import { UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST } from '../../../../global/models/ui_single-screen.model';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-clone-screen',
@@ -22,31 +23,31 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/mode
 
 export class CloneScreenComponent implements OnInit {
 
-	clone_screen_form: FormGroup;
-	cloned_screen_id; string;
-	clone_success: boolean = false;
-	dealers$: Observable<any>;
 	all_dealers: API_DEALER[];
-	dealers_data: Array<any> = [];
-	no_dealer_selected: boolean = true;
-	no_host_selected: boolean = true;
+	clone_screen_form: FormGroup;
+	clone_success = false;
+	dealers_data: any[] = [];
+	dealer_name: string;
 	hosts: API_HOST[] = [];
-	form_valid: boolean = true;
-	no_dealer: boolean = true;
-	no_host_available: boolean = false;
-	screen_types: Array<any> = [];
+	initial_load = false;
+	is_dealer = false;
+	form_submitted = false;
+	form_valid = true;
+	hosts_data: any[] = [];
+	loading_data = true;
+	loading_data_host = true;
+	loading_search = false;
+	loading_search_host = false;
+	no_dealer = true;
+	no_dealer_selected = true;
+	no_host_available = false;
+	no_host_selected = true;
+	paging: any;
+	paging_host: any;
+	screen_types: API_SCREENTYPE[] = [];
 	selected_dealer: API_DEALER[];
 	selected_host: API_HOST[];
-	subscription: Subscription = new Subscription;
-	form_submitted: boolean = false;
-	is_dealer: boolean = false;
-	dealer_id: string;
-	dealer_name: string;
-	paging: any;
-	loading_data: boolean = true;
-	role: string;
-	loading_search: boolean = false;
-	is_search: boolean = false;
+	screen_type: API_SCREENTYPE;
 
 	form_fields_view = [
 		{
@@ -61,164 +62,39 @@ export class CloneScreenComponent implements OnInit {
 			placeholder: 'Ex: This screen is for the Department Store',
 			type: 'text'
 		}
-	]
+	];
 
-	paging_host: any;
-	hosts_data: Array<any> = [];
-	search_host_data: string = "";
-	loading_data_host: boolean = true;
-	initial_load: boolean = false;
-	loading_search_host: boolean = false;
+	private cloned_screen_id: string;
+	private dealer_id: string;
+	private is_search: boolean = false;
+	private role: string;
+	private search_host_data = '';
+	private subscription: Subscription = new Subscription;
 
 	constructor(
+		@Inject(MAT_DIALOG_DATA) public screen_data: UI_SINGLE_SCREEN,
 		private _auth: AuthService,
 		private _dealer: DealerService,
-		private _host: HostService,
-		private _form: FormBuilder,
-		private _screen: ScreenService,
-		private _router: Router,
 		private _dialog_ref: MatDialogRef<CloneScreenComponent>,
-		@Inject(MAT_DIALOG_DATA) public screen_data: UI_SINGLE_SCREEN
+		private _form: FormBuilder,
+		private _host: HostService,
+		private _router: Router,
+		private _screen: ScreenService,
 	) { }
 
 	ngOnInit() {
 		this.getDealers(1);
-		this.getScreenType();
-
-		this.clone_screen_form = this._form.group(
-			{
-				screen_title: ['', Validators.required],
-				screen_description: ['', Validators.required],
-				dealer_id: ['', Validators.required],
-				host_id: ['', Validators.required],
-				type: ['', Validators.required],
-			}
-		);
-		
-		this.subscription.add(
-			this.clone_screen_form.valueChanges.subscribe(
-				data => {
-					if (this.clone_screen_form.valid) {
-						this.form_valid = false;
-					} else {
-						this.form_valid = true;
-					}
-				}
-			)
-		);
-
-		// for dealer_users auto fill
-		const roleId = this._auth.current_user_value.role_id; 
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-		if (roleId === dealerRole || roleId === subDealerRole) {
-			this.is_dealer = true;
-			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-			this.f.type.setValidators([]);
-			this.f.type.updateValueAndValidity();
-			this.setToDealer(this.dealer_id);
-		}
-
-		this.clone_screen_form.valueChanges.subscribe(
-			() => {
-				console.log('form updated', this.clone_screen_form);
-			}
-		);
+		this.getScreenTypes();
+		this.initializeForm();
+		this.subscribeToCloneScreenFormChanges();
+		this.checkIfDealer(); // auto-fill if dealer
 	}
 
-	getScreenType() {
-		this.subscription.add(
-			this._screen.get_screens_type().subscribe(
-				data => {
-					this.screen_types = data;
-					console.log("Screen Type", data)
-				}
-			)
-		)
-	}
-
-	searchData(e) {
-		this.loading_search = true;
-		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe(
-				data => {
-					console.log("DATA", data)
-					if (data.paging.entities.length > 0) {
-						this.all_dealers = data.paging.entities;
-						this.dealers_data = data.paging.entities;
-						this.loading_search = false;
-					} else {
-						this.dealers_data = [];
-						this.loading_search = false;
-					}
-					this.paging = data.paging;
-				}
-			)
-		)
-	}
-
-	getDealers(e) {
-		this.loading_data = true;
-		if(e > 1) {
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
-					data => {
-						data.dealers.map (
-							i => {
-								this.all_dealers.push(i)
-							}
-						)
-						this.paging = data.paging;
-						this.loading_data = false;
-					}
-				)
-			)
-		} else {
-			if(this.is_search) {
-				this.loading_search = true;
-			}
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
-					data => {
-						this.all_dealers = data.dealers;
-						this.dealers_data = data.dealers;
-						this.paging = data.paging;
-						this.loading_data = false;
-						this.loading_search = false;
-					}
-				)
-			)
-		}
-	}
-
-	searchBoxTrigger (event) {
-		this.is_search = event.is_search;
-		this.getDealers(event.page);
-	}
-
-	setToDealer(e) {
-		if (e) {
-			this.dealerSelected(e);
-			this.f.dealer_id.setValue(e);
-		}
-	}
-	
-	setScreenType(e) {
-		if (e) {
-			this.f.type.setValue(e);
-		}
-	}
-	
-	get f() {
-		return this.clone_screen_form.controls;
-	}
-
-	cloneScreen(e) {
-		console.log("E",e)
-		console.log("F",this.f)
+	cloneScreen(): void {
 		this.form_submitted = true;
+		let screenTypeId = this.screen_type.screenTypeId;
+		if (!this.is_dealer) screenTypeId = this.f.type.value;
+
 		const screen = new API_NEW_SCREEN (
 			new SCREEN_INFO (
 				this.f.screen_title.value,
@@ -227,146 +103,36 @@ export class CloneScreenComponent implements OnInit {
 				this.f.host_id.value,
 				this.screen_data.assigned_template_id,
 				this._auth.current_user_value.user_id,
-				this.f.type.value,
+				screenTypeId
 			),
 			this.zonePlaylist_mapToUI(),
 			[]
-		)
+		);
 
-		//console.log('Structured New Screen', screen);
+		this.form_submitted = false;
+
 		this.subscription.add(
 			this._screen.create_screen(screen).subscribe(
 				(data: any) => {
-					//console.log(data);
 					this.form_submitted = false;
 					this.clone_success = true;
 					this.cloned_screen_id = data.screenId;
 				},
 				error => {
-					console.log(error);
+					console.log('Error creating cloned screen', error);
 				}
 			)
-		)
+		);
 	}
-
-
-	redirectToClonedScreen() {
-		this._dialog_ref.close();
-		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${this.role}/screens/`, this.cloned_screen_id]);
-	}
-
-	zonePlaylist_mapToUI() {
-		return this.screen_data.screen_zone_playlist.map(
-			(z: UI_SCREEN_ZONE_PLAYLIST) => {
-				return new SCREEN_ZONE_PLAYLIST(
-					z.screen_template.template_id,
-					z.screen_template.zone_id,
-					z.screen_template.playlist_id
-				)
-			}
-		)
-	}
-
-	screenLicense_mapToUI() {
-		return this.screen_data.screen_license.map(
-			(l: UI_SCREEN_LICENSE) => {
-				return new SCREEN_LICENSE(
-					l.license_id
-				)
-			}
-		)
-	}
-
-	dealerSelected(id) {
-		//console.log(id)
+	
+	dealerSelected(id: any): void {
 		this.f.dealer_id.setValue(id);
 		this.no_dealer_selected = false;
-		
 		this.selected_dealer = this.selectedDealer(id) || id;
 		this.getHostByDealer(1);
 	}
 
-	hostSearchBoxTrigger (event) {
-		this.is_search = event.is_search;
-		if(this.is_search) {
-			this.search_host_data = "";
-		}
-		this.getHostByDealer(event.page);
-	}
-
-	searchHostData(e) {
-		this.search_host_data = e;
-		this.getHostByDealer(1);
-	}
-
-	getHostByDealer(e) {
-		this.loading_data_host = true;
-		if(e > 1) {
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId, e, this.search_host_data).subscribe(
-					data => {
-						console.log("#getHostByDealer1", data)
-						console.log(data);
-						data.hosts.map (
-							i => {
-								this.hosts.push(i.host);
-								this.hosts_data.push(i.host);
-							}
-						)
-						this.paging_host = data.paging;
-						this.loading_data_host = false;
-					}
-				)
-			)
-		} else {
-			this.hosts_data = [];
-			this.initial_load = false;
-			if(this.is_search || this.search_host_data != "") {
-				this.loading_search_host = true;
-			}
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId || this.selected_dealer, e, this.search_host_data).subscribe(
-					data => {
-						console.log("#getHostByDealer2", data)
-						if(!data.message) {
-							if(this.search_host_data == "") {
-								data.hosts.map (
-									i => {
-										this.hosts.push(i.host);
-										this.hosts_data.push(i.host);
-									}
-								)
-							} else {
-								if (data.paging.entities.length > 0) {
-									this.hosts_data = data.paging.entities;
-									this.loading_search = false;
-								}
-							}
-							this.paging_host = data.paging;
-						} else {
-							this.selected_host = [];
-							if(this.search_host_data != "") {
-								this.hosts_data = [];
-								this.loading_search = false;
-							}
-						}
-						this.loading_data_host = false;
-						this.loading_search_host = false;
-					}
-				)
-			)
-		}
-	}
-
-	selectedDealer(id) {
-		if(!this.is_dealer) {
-			console.log("THIS", this.all_dealers)
-			return this.all_dealers.filter(dealer => dealer.dealerId == id);
-		}
-	}
-
-	deselectDealer() {
+	deselectDealer(): void {
 		this.no_host_available = false;
 		this.f.dealer_id.reset();
 		this.f.host_id.reset();
@@ -376,18 +142,263 @@ export class CloneScreenComponent implements OnInit {
 		this.getDealers(1);
 	}
 
-	hostSelected(id) {
+	deselectHost(): void {
+		this.f.host_id.reset();
+		this.no_host_selected = true;
+	}
+
+	getDealers(page: number): void {
+		this.loading_data = true;
+
+		if (page > 1) {
+
+			this.subscription.add(
+				this._dealer.get_dealers_with_page(page, '')
+					.subscribe(
+						data => {
+							data.dealers.map (dealer => this.all_dealers.push(dealer));
+							this.paging = data.paging;
+							this.loading_data = false;
+						},
+						error => console.log('Error retrieving dealers', error)
+					)
+				);
+
+		} else {
+
+			if (this.is_search) this.loading_search = true;
+
+			this.subscription.add(
+				this._dealer.get_dealers_with_page(page, '')
+					.subscribe(
+						data => {
+							this.all_dealers = data.dealers;
+							this.dealers_data = data.dealers;
+							this.paging = data.paging;
+							this.loading_data = false;
+							this.loading_search = false;
+						},
+						error => console.log('Error searching for dealers ', error)
+					)
+			);
+		}
+	}
+
+	hostSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
+		this.is_search = event.is_search;
+		if(this.is_search) this.search_host_data = '';
+		this.getHostByDealer(event.page);
+	}
+
+	hostSelected(id: string): void {
 		this.no_host_selected = false;
 		this.f.host_id.setValue(id);
 		this.selected_host = this.selectedHost(id);
 	}
 
-	selectedHost(id) {
+	redirectToClonedScreen(): void {
+		this._dialog_ref.close();
+		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		this._router.navigate([`/${this.role}/screens/`, this.cloned_screen_id]);
+	}
+
+	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
+		this.is_search = event.is_search;
+		this.getDealers(event.page);
+	}
+
+	searchData(event: string | number): void {
+		this.loading_search = true;
+
+		this.subscription.add(
+			this._dealer.get_search_dealer(event).subscribe(
+				data => {
+
+					if (data.paging.entities.length > 0) {
+						this.all_dealers = data.paging.entities;
+						this.dealers_data = data.paging.entities;
+						this.loading_search = false;
+					} else {
+						this.dealers_data = [];
+						this.loading_search = false;
+					}
+
+					this.paging = data.paging;
+				}
+			)
+		);
+	}
+
+	searchHostData(event: string): void {
+		this.search_host_data = event;
+		this.getHostByDealer(1);
+	}
+
+	
+	selectedDealer(id: string): API_DEALER[] | void {
+
+		if (!this.is_dealer) {
+			return this.all_dealers.filter(dealer => dealer.dealerId == id);
+		}
+
+	}
+
+	selectedHost(id: string): API_HOST[] {
 		return this.hosts.filter(host => host.hostId == id);
 	}
 
-	deselectHost() {
-		this.f.host_id.reset();
-		this.no_host_selected = true;
+	setScreenType(event: any): void {
+		this.f.type.setValue(event);
 	}
+
+	private get f() {
+		return this.clone_screen_form.controls;
+	}
+
+	private checkIfDealer(): void {
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
+			this.is_dealer = true;
+			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+			this.setToDealer(this.dealer_id);
+		}
+	}
+
+	private getHostByDealer(page: number): void {
+
+		this.loading_data_host = true;
+
+		if (page > 1) {
+
+			this.subscription.add(
+				this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId, page, this.search_host_data)
+					.subscribe(
+						(data: { hosts: any[], paging: number }) => {
+
+							data.hosts.map (
+								host => {
+									this.hosts.push(host.host);
+									this.hosts_data.push(host.host);
+								}
+							);
+							
+							this.paging_host = data.paging;
+							this.loading_data_host = false;
+						},
+						error => console.log('Error retrieving hosts by dealer', error)
+					)
+			);
+
+		} else {
+
+			this.hosts_data = [];
+			this.initial_load = false;
+			
+			if (this.is_search || this.search_host_data != '') this.loading_search_host = true;
+
+			this.subscription.add(
+				this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId || this.selected_dealer, page, this.search_host_data)
+					.subscribe(
+						data => {
+
+							if (!data.message) {
+
+								if (this.search_host_data == '') {
+
+									data.hosts.map (
+										host => {
+											this.hosts.push(host.host);
+											this.hosts_data.push(host.host);
+										}
+									)
+								} else {
+									if (data.paging.entities.length > 0) {
+										this.hosts_data = data.paging.entities;
+										this.loading_search = false;
+									}
+								}
+								this.paging_host = data.paging;
+							} else {
+								this.selected_host = [];
+								if(this.search_host_data != "") {
+									this.hosts_data = [];
+									this.loading_search = false;
+								}
+							}
+							this.loading_data_host = false;
+							this.loading_search_host = false;
+						}
+					)
+				)
+		}
+	}
+
+	private getScreenTypes(): void {
+
+		const screenTypeId = this.screen_data.type;
+
+		this.subscription.add(
+			this._screen.get_screens_type().subscribe(
+				(data: API_SCREENTYPE[]) => {
+					this.screen_types = data;
+					this.screen_type = data.filter(type => type.screenTypeId === screenTypeId)[0];
+				},
+				error => console.log('Error retrieving screen types', error)
+			)
+		);
+
+	}
+
+	private initializeForm(): void {
+		this.clone_screen_form = this._form.group(
+			{
+				screen_title: ['', Validators.required],
+				screen_description: ['', Validators.required],
+				dealer_id: ['', Validators.required],
+				host_id: ['', Validators.required],
+			}
+		);
+
+		// add control to type if user logged in is not a dealer
+		if (!this.is_dealer) {
+			this.clone_screen_form.addControl('type', new FormControl('', Validators.required));
+		}
+	}
+
+	private setToDealer(e: any): void {
+
+		if (e) {
+			this.dealerSelected(e);
+			this.f.dealer_id.setValue(e);
+		}
+
+	}
+
+	private subscribeToCloneScreenFormChanges(): void {
+		this.subscription.add(
+			this.clone_screen_form.valueChanges.subscribe(
+				() => {
+					if (this.clone_screen_form.valid) this.form_valid = false; 
+					else this.form_valid = true;
+				}
+			)
+		);
+	}
+
+	private zonePlaylist_mapToUI(): SCREEN_ZONE_PLAYLIST[] {
+		return this.screen_data.screen_zone_playlist.map(
+			(z: UI_SCREEN_ZONE_PLAYLIST) => {
+				return new SCREEN_ZONE_PLAYLIST(
+					z.screen_template.template_id,
+					z.screen_template.zone_id,
+					z.screen_template.playlist_id
+				);
+			}
+		);
+	}
+
 }
