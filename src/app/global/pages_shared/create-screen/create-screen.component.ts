@@ -212,19 +212,15 @@ export class CreateScreenComponent implements OnInit {
 		this.reset_screen = true;
 	}
 
-	getDealers(e): void {
+	getDealers(page: number): void {
 		this.loading_data = true;
 
-		if (e > 1) {
+		if (page > 1) {
 
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
-						data.dealers.map (
-							i => {
-								this.dealers.push(i)
-							}
-						)
+						data.dealers.map(dealer => this.dealers.push(dealer));
 						this.paging = data.paging;
 						this.loading_data = false;
 					},
@@ -242,7 +238,7 @@ export class CreateScreenComponent implements OnInit {
 			}
 
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, '').subscribe(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
 						this.dealers = data.dealers;
 						this.paging = data.paging;
