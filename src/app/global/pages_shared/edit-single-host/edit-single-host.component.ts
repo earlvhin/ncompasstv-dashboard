@@ -27,25 +27,27 @@ import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation
 })
 
 export class EditSingleHostComponent implements OnInit {
+
+	business_hours: UI_OPERATION_DAYS[];
 	categories_data: Observable<API_PARENTCATEGORY[]>;
-	host_data:  any = [];
-	subscription: Subscription = new Subscription();
+	category_selected: string;
+	closed_without_edit: boolean = false;
+	current_dealer: any;
+	dealer_id: string;
 	dealer_name: string;
+	dealers_data: API_DEALER[] = [];
+	disable_business_name: boolean = true;
+	has_content = false;
+	host_data:  any = [];
 	initial_dealer: string;
 	is_dealer: boolean = false;
-	disable_business_name: boolean = true;
-	category_selected: string;
-	new_host_form: FormGroup;
-	has_content = false;
 	host_id: string;
-	dealers_data: API_DEALER[] = [];
-	operation_hours: UI_OPERATION_HOURS[];
-	business_hours: UI_OPERATION_DAYS[];
-	current_dealer: any;
-	paging: any;
-	closed_without_edit: boolean = false;
-	timezones: any;
 	host_timezone: { id: string; name: string; status: string; };
+	new_host_form: FormGroup;
+	operation_hours: UI_OPERATION_HOURS[];
+	paging: any;
+	subscription: Subscription = new Subscription();
+	timezones: any;
 	
 	host_form_view = [
 		{
@@ -252,6 +254,7 @@ export class EditSingleHostComponent implements OnInit {
 		this.subscription.add(
 			this._host.get_host_by_id(id).subscribe(
 				(data: API_SINGLE_HOST) => {
+					this.dealer_id = data.host.dealerId;
 					this.host_data = data.host;
 					this.host_timezone = data.timezone;
 					this.initial_business_hours = JSON.parse(this.host_data.storeHours);
@@ -414,7 +417,7 @@ export class EditSingleHostComponent implements OnInit {
 							() => {
 								console.log('Host Deleted');
 								this._dialogRef.close('delete-host');
-								this._router.navigate([`/${route}/hosts`]);
+								this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
 							},
 							error => console.log('Error deleting host', error)
 						)

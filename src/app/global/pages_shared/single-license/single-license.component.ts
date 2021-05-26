@@ -1194,7 +1194,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const labels = [ `Hosts: ${hosts}`, `Advertisers: ${advertisers}`, `Fillers: ${fillers}`, `Feeds: ${feeds}`, `Others: ${others}` ];
 		const data = [ hosts, advertisers, fillers, feeds, others ];
 		const title = 'Assets Breakdown';
-		const canvas = document.getElementById('assetsBreakdown');
+		const canvas = document.getElementById('assetsBreakdown') as HTMLCanvasElement;
 
 		// colors
 		const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
@@ -1211,7 +1211,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			options: {
 				tooltips: false,
 				title: { text: title, display: true },
-				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center', fullSize: true  },
+				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center' },
 				responsive: true,
 				maintainAspectRatio: false
 			}
@@ -1234,7 +1234,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		const data = [ hosts, advertisers, fillers, feeds, others ];
 		const title = 'Duration Breakdown';
-		const canvas = document.getElementById('durationBreakdown');
+		const canvas = document.getElementById('durationBreakdown') as HTMLCanvasElement;
 
 		// colors
 		const hostColor = { background: 'rgba(215, 39, 39, 0.8)', border: 'rgba(215, 39, 39, 1)' };
@@ -1251,7 +1251,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			options: {
 				tooltips: false,
 				title: { text: title, display: true },
-				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center', fullSize: true  },
+				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center' },
 				responsive: true,
 				maintainAspectRatio: false
 			}
