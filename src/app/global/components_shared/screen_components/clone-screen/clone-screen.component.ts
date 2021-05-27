@@ -86,8 +86,8 @@ export class CloneScreenComponent implements OnInit {
 		this.getDealers(1);
 		this.getScreenTypes();
 		this.initializeForm();
-		this.subscribeToCloneScreenFormChanges();
 		this.checkIfDealer(); // auto-fill if dealer
+		this.subscribeToCloneScreenFormChanges();
 	}
 
 	cloneScreen(): void {
@@ -266,6 +266,11 @@ export class CloneScreenComponent implements OnInit {
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			this.setToDealer(this.dealer_id);
 		}
+
+		// add control to type if user logged in is not a dealer
+		if (!this.is_dealer) {
+			this.clone_screen_form.addControl('type', new FormControl('', Validators.required));
+		}
 	}
 
 	private getHostByDealer(page: number): void {
@@ -362,11 +367,6 @@ export class CloneScreenComponent implements OnInit {
 				host_id: ['', Validators.required],
 			}
 		);
-
-		// add control to type if user logged in is not a dealer
-		if (!this.is_dealer) {
-			this.clone_screen_form.addControl('type', new FormControl('', Validators.required));
-		}
 	}
 
 	private setToDealer(e: any): void {
