@@ -47,15 +47,14 @@ export class MediaLibraryComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _auth: AuthService,
 		private _content: ContentService,
-	) { }
-	
-	ngOnInit() {
+	) { 
 		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
-		const roleId = this._auth.current_user_value.role_id;
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+	}
 
-		if (roleId === dealerRole || roleId === subDealerRole) {
+	ngOnInit() {
+		const roleId = this._auth.current_user_value.role_id;
+
+		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
 			this.is_dealer = true;
 			this.getDealerContents(this._auth.current_user_value.roleInfo.dealerId, 1, 60);
 		} else {
@@ -162,9 +161,8 @@ export class MediaLibraryComponent implements OnInit {
 				this.data_to_upload = [];
 				return new Promise((resolve, reject) => {
 					// Do something async
-					this.all_media.map (
+					this.all_media.contents.map (
 						med => {
-							// med.
 							if(med.fileName != null) {
 								med.fileName = this.removeFilenameHandle(med.fileName);
 								var name_no_index = this.removeIndexes(med.fileName);
@@ -172,10 +170,11 @@ export class MediaLibraryComponent implements OnInit {
 							}
 						}
 					)
-					this.duplicate_files = this.all_media.filter( 
-						media => 
-							media.fileName === e.filename
+
+					this.duplicate_files = this.all_media.contents.filter( 
+						media => media.fileName === e.filename
 					);
+
 					if(this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
 						this.warningModal('warning', 'Duplicate Filename', 'Are you sure you want to continue upload?','','rename')
@@ -184,7 +183,7 @@ export class MediaLibraryComponent implements OnInit {
 								this.postContentInfo(this.duplicate_files, this.data_to_upload, false)
 								resolve({ filename: this.modified_data[0].filename })
 								//temporarily add recently uploaded to array
-								this.all_media.push({ fileName: this.modified_data[0].filename })
+								this.all_media.contents.push({ fileName: this.modified_data[0].filename })
 							} else {
 								this.renameModal().then(name => {
 									resolve({ filename: name + this.data_to_upload[0].filename.substring(0, this.data_to_upload[0].filename.lastIndexOf('.')) })
