@@ -139,7 +139,7 @@ export class MediaLibraryComponent implements OnInit {
 			this._content.get_content_by_dealer_id(id, false, page, pageSize).subscribe(
 				(data: any) => {
 					if(!data.message) {
-						this.all_media = data;
+						this.all_media = data.contents;
 					}
 				}
 			)
@@ -161,7 +161,7 @@ export class MediaLibraryComponent implements OnInit {
 				this.data_to_upload = [];
 				return new Promise((resolve, reject) => {
 					// Do something async
-					this.all_media.contents.map (
+					this.all_media.map (
 						med => {
 							if(med.fileName != null) {
 								med.fileName = this.removeFilenameHandle(med.fileName);
@@ -171,7 +171,7 @@ export class MediaLibraryComponent implements OnInit {
 						}
 					)
 
-					this.duplicate_files = this.all_media.contents.filter( 
+					this.duplicate_files = this.all_media.filter( 
 						media => media.fileName === e.filename
 					);
 
@@ -183,7 +183,7 @@ export class MediaLibraryComponent implements OnInit {
 								this.postContentInfo(this.duplicate_files, this.data_to_upload, false)
 								resolve({ filename: this.modified_data[0].filename })
 								//temporarily add recently uploaded to array
-								this.all_media.contents.push({ fileName: this.modified_data[0].filename })
+								this.all_media.push({ fileName: this.modified_data[0].filename })
 							} else {
 								this.renameModal().then(name => {
 									resolve({ filename: name + this.data_to_upload[0].filename.substring(0, this.data_to_upload[0].filename.lastIndexOf('.')) })
