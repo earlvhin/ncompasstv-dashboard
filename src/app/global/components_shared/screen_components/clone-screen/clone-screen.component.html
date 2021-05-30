@@ -3,7 +3,7 @@
         <h3>You are cloning {{ screen_data.screen_title }}</h3>
         <p class="sm-text mb-4">Fill the basic information to continue with the cloning process.</p>
 
-        <form [formGroup]="clone_screen_form" (ngSubmit)="cloneScreen($event)">
+        <form [formGroup]="clone_screen_form" (ngSubmit)="cloneScreen()">
             <div *ngFor="let f of form_fields_view">
                 <mat-form-field class="full-width">
                     <mat-label>{{ f.label }}</mat-label>
@@ -16,23 +16,34 @@
             </div>
 
             <div *ngIf="!is_dealer">
+                <div class="col-12 p-0">
+                    <app-autocomplete-field
+                        [data_reference]="screen_types"
+                        [primary_keyword]="'description'"
+                        [key_of_value]="'screenTypeId'"
+                        (data_value)="setScreenType($event)"
+                        [required]="true"
+                        [label]="'Click to select a Screen Type'">
+                    </app-autocomplete-field>
+                </div>
+
                 <app-autocomplete-field
-                *ngIf="no_dealer_selected; else dealer_selected"
-                (data_value)="dealerSelected($event)"
-                [key_of_value]="'dealerId'"
-                [placeholder]="'Select A Dealer'"
-                [label]="'Select A Dealer'"
-                [data_reference]="dealers_data"
-                [search_keyword]="'businessName'"
-                [primary_keyword]="'businessName'"
-                [initial_value]="dealer_name"
-                [new_value]="dealer_name"
-                [disabled]="is_dealer"
-                [paging]="paging"
-                (call_next_page)="searchBoxTrigger($event)"
-                (searched)="searchData($event)"
-                [loading_data]="loading_data"
-                [loading_search]="loading_search">
+                    *ngIf="no_dealer_selected; else dealer_selected"
+                    (data_value)="dealerSelected($event)"
+                    [key_of_value]="'dealerId'"
+                    [placeholder]="'Select A Dealer'"
+                    [label]="'Select A Dealer'"
+                    [data_reference]="dealers_data"
+                    [search_keyword]="'businessName'"
+                    [primary_keyword]="'businessName'"
+                    [initial_value]="dealer_name"
+                    [new_value]="dealer_name"
+                    [disabled]="is_dealer"
+                    [paging]="paging"
+                    (call_next_page)="searchBoxTrigger($event)"
+                    (searched)="searchData($event)"
+                    [loading_data]="loading_data"
+                    [loading_search]="loading_search">
                 </app-autocomplete-field>
 
                 <ng-container *ngIf="no_host_available">
@@ -51,39 +62,51 @@
             <!-- for display only -->
             <div *ngIf="is_dealer">
                 <app-autocomplete-field
-                (data_value)="dealerSelected($event)"
-                [key_of_value]="'dealerId'"
-                [placeholder]="'Select A Dealer'"
-                [label]="'Select A Dealer'"
-                [data_reference]="all_dealers"
-                [search_keyword]="'businessName'"
-                [primary_keyword]="'businessName'"
-                [initial_value]="dealer_name"
-                [new_value]="dealer_name"
-                [disabled]="is_dealer"
-                [paging]="paging"
-                (call_next_page)="getDealers($event)"
-                (searched)="searchData($event)"
-                [loading_data]="loading_data">
+                    (data_value)="dealerSelected($event)"
+                    [key_of_value]="'dealerId'"
+                    [placeholder]="'Select A Dealer'"
+                    [label]="'Select A Dealer'"
+                    [data_reference]="all_dealers"
+                    [search_keyword]="'businessName'"
+                    [primary_keyword]="'businessName'"
+                    [initial_value]="dealer_name"
+                    [new_value]="dealer_name"
+                    [disabled]="is_dealer"
+                    [paging]="paging"
+                    (call_next_page)="getDealers($event)"
+                    (searched)="searchData($event)"
+                    [loading_data]="loading_data">
                 </app-autocomplete-field>
+
+                <div class="col-12 p-0">
+                    <app-autocomplete-field
+                        [data_reference]="screen_types"
+                        [primary_keyword]="'description'"
+                        [key_of_value]="'screenTypeId'"
+                        [label]="'Screen Type'"
+                        [initial_value]="screen_type.description"
+                        [new_value]="screen_type.description"
+                        [disabled]="true">
+                    </app-autocomplete-field>
+                </div>
             </div>
 
             <div *ngIf="!no_dealer_selected && hosts.length > 0">
                 <app-autocomplete-field
-                *ngIf="no_host_selected; else host_selected"
-                (data_value)="hostSelected($event)"
-                [key_of_value]="'hostId'"
-                [placeholder]="'Select A Host'"
-                [label]="'Select A Host'"
-                [data_reference]="hosts_data"
-                [search_keyword]="'name'"
-                [primary_keyword]="'name'"
-                [paging]="paging_host"
-                (call_next_page)="hostSearchBoxTrigger($event)"
-                (searched)="searchHostData($event)"
-                [loading_data]="loading_data_host"
-                [loading_search]="loading_search_host"
-                [initial_load]="initial_load">
+                    *ngIf="no_host_selected; else host_selected"
+                    (data_value)="hostSelected($event)"
+                    [key_of_value]="'hostId'"
+                    [placeholder]="'Select A Host'"
+                    [label]="'Select A Host'"
+                    [data_reference]="hosts_data"
+                    [search_keyword]="'name'"
+                    [primary_keyword]="'name'"
+                    [paging]="paging_host"
+                    (call_next_page)="hostSearchBoxTrigger($event)"
+                    (searched)="searchHostData($event)"
+                    [loading_data]="loading_data_host"
+                    [loading_search]="loading_search_host"
+                    [initial_load]="initial_load">
                 </app-autocomplete-field>
 
                 <ng-template #host_selected>
@@ -96,9 +119,9 @@
             </div> 
 
             <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">
-                Done
+                Submit
             </button>
-            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
+            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
                 Cancel
             </button>
         </form>
@@ -114,12 +137,12 @@
     </ng-template>
 
     <ng-container *ngIf="clone_success">
-        <div class="py-4 text-center">
+        <div class="py-4 text-center success-container">
             <app-success-animation></app-success-animation>
             <h3 class="mb-1">Screen Cloned Successfully!</h3>
             <p class="mb-0 sm-text font-weight-md">Click the button below to continue</p>
             <button mat-button mat-raised-button class="theme-btn mt-4" (click)="redirectToClonedScreen()">
-              Continue
+                Continue
             </button>
         </div>
     </ng-container>

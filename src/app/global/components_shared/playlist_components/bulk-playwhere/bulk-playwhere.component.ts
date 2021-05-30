@@ -23,7 +23,7 @@ export class BulkPlaywhereComponent implements OnInit {
 		console.log(this.host_licenses);
 		this.host_licenses.forEach(
 			i => {
-				i.licenses .forEach(j => {
+				i.licenses.forEach(j => {
 					this.addToBlocklistLicense({checked: true}, j.licenseId)
 				});
 			}

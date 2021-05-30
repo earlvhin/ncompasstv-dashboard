@@ -15,12 +15,15 @@ export class AuthGuard implements CanActivate {
 	) {}
 
 	canActivate(): boolean {
+
 		if(!this._auth.token_life()) {
 			localStorage.removeItem('tokens');
 			localStorage.removeItem('currentUser');
 			this._router.navigate(['/login']);
+			console.log('can activate? false');
 			return false;
 		}
+		console.log('can activate? true');
 		return true;
 	}
 }

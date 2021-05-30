@@ -35,7 +35,8 @@ import { FeedsComponent } from './pages/feeds/feeds.component';
 		BillingsComponent, 
 		ReportsComponent, 
 		UsersComponent, 
-		DealerProfileComponent, FeedsComponent
+		DealerProfileComponent,
+		FeedsComponent
 	],
 	imports: [
 		CommonModule,

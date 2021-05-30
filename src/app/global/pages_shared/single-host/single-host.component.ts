@@ -90,7 +90,7 @@ export class SingleHostComponent implements OnInit {
 			console.log('#SingleHostComponent - Disconnnected to Socket Server');
 		})
 		
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.is_dealer = true;
 		}
 
@@ -106,7 +106,7 @@ export class SingleHostComponent implements OnInit {
 		this.subscription.add(
 			this._host.get_host_by_id(this.host_id).subscribe(
 				(data: any) => {
-					console.log('#GET_HOST_BY_ID', data)
+					// console.log('#GET_HOST_BY_ID', data)
 					this.host_data = data;
 					this.single_host_data = { dealer_id: data.dealer.dealerId, host_id: this.host_id };
 					this.d_name = data.host.name;

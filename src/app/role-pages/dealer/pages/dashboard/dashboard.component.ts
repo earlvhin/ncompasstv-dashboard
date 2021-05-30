@@ -44,7 +44,7 @@ export class DashboardComponent implements OnInit {
 		'City',
 		'State', 
 		'Creation Date'
-	]
+	];
 
 	subscription: Subscription = new Subscription();
 	displayedColumns_2: string[] = ['position', 'name'];
@@ -59,6 +59,7 @@ export class DashboardComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		console.log('dealer dashboard');
 		this.title = `Hello Dealer ${this._auth.current_user_value.firstname}!`;
 		this.getStatTable(this._auth.current_user_value.roleInfo.dealerId);
 		this.getAdvertiserReport();

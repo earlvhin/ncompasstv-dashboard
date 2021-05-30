@@ -263,7 +263,11 @@ export class CreateHostComponent implements OnInit {
 		)
 
 		// for dealer_users auto fill
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
@@ -277,7 +281,7 @@ export class CreateHostComponent implements OnInit {
 					this.timezone = data;
 				}
 			)
-		)
+		);
 
 		this.watchCategoryField();
 	}
@@ -406,15 +410,10 @@ export class CreateHostComponent implements OnInit {
 		)
 	}
 
-	formatTime(data) {
-		let time = new Date(`January 1, 1990 ${data.slice(0,2)}:${data.slice(2,4)}`)
-		let options = {
-			hour: 'numeric',
-			minute: 'numeric',
-			hour12: true
-		};
-
-		return time.toLocaleString('en-US', options)
+	formatTime(data): string {
+		let time = new Date(`January 1, 1990 ${data.slice(0,2)}:${data.slice(2,4)}`);
+		let options = { hour: 'numeric', minute: 'numeric', hour12: true } as Intl.DateTimeFormatOptions;
+		return time.toLocaleString('en-US', options);
 	}
 
 

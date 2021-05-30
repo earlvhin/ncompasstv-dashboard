@@ -80,7 +80,7 @@ export class BannerComponent implements OnInit {
 		}
 
 		// To avoid this.now == -1
-		this.now = new Date().getDay() - 1 > 0  ? new Date().getDay() - 1 : new Date().getDay();
+		// this.now = new Date().getDay() - 1 > 0  ? new Date().getDay() - 1 : new Date().getDay();
 		// console.log('#BUSINESS_HOURS', this.business_hours, this.now)
 	}
 
@@ -189,7 +189,9 @@ export class BannerComponent implements OnInit {
 
 		const hostData = this.host_data;
 		const businessHours: any[] = this.business_hours;
-		this.current_business_day = moment.tz(hostData.timezone.name).format('dddd');
+		this.current_business_day = this.now;
+		// this.current_business_day = moment.tz(hostData.timezone.name).format('dddd');
+		this.current_business_day = moment().format('dddd');
 
 		businessHours.forEach(
 			operation => {

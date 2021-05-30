@@ -4,7 +4,6 @@ import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { UI_ROLE_DEFINITION } from '../../../../models/ui_role-definition.model';
 import { AuthService } from '../../../../services/auth-service/auth.service';
-import { DealerService } from '../../../../services/dealer-service/dealer.service';
 import { HostService } from '../../../../services/host-service/host.service';
 import { API_HOST } from '../../../../models/api_host.model';
 import { UserService } from '../../../../services/user-service/user.service';
@@ -47,7 +46,6 @@ export class NewHostUserComponent implements OnInit {
 
 	constructor(
 		private _auth: AuthService,
-		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _host: HostService,
@@ -57,10 +55,15 @@ export class NewHostUserComponent implements OnInit {
 
 	ngOnInit() {
 
+		const roleId = this._auth.current_user_value.role_id;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
 		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.back_btn = '/dealer/users/create-user';
 		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator){
 			this.back_btn = '/administrator/users/create-user';
+		} else if (roleId === subDealerRole) {
+			this.back_btn = '/sub-dealer/users/create-user';
 		}
 
 		this.new_host_form = this._form.group(
@@ -78,7 +81,7 @@ export class NewHostUserComponent implements OnInit {
 				re_password: ['', Validators.required],
 				createdBy: [this._auth.current_user_value.user_id]
 			}
-		)
+		);
 
 		this.form_fields_view = [
 			{

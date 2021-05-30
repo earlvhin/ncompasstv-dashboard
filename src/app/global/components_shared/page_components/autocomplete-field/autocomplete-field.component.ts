@@ -1,5 +1,9 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
+import { Subject } from 'rxjs';
+
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
+import { takeUntil } from 'rxjs/operators';
 @HostListener('scroll', ['$event'])
 
 @Component({
@@ -9,7 +13,7 @@ import { TitleCasePipe } from '@angular/common';
 	providers: [TitleCasePipe]
 })
 
-export class AutocompleteFieldComponent implements OnInit {
+export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	@Output() data_value = new EventEmitter;
 	@Output() change_value = new EventEmitter;
 	@Output() call_next_page = new EventEmitter;
@@ -32,19 +36,28 @@ export class AutocompleteFieldComponent implements OnInit {
 	@Input() old: boolean = false;
 	@Input() initial_load: boolean;
 	@Input() reset_value: boolean;
+	@Input()  type?: string;
+
 	view_value: string;
 	search_result: Array<any>;
 	search_via_api : boolean = false;
-
 	timeOut;
 	timeOutDuration = 1000;
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
-		private _titlecase: TitleCasePipe
+		private _helper: HelperService
 	) { }
 
 	ngOnInit() {
 		this.view_value = this.initial_value;
+		this.subscribeToResetField();
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	dataSelected(data) {
@@ -133,4 +146,17 @@ export class AutocompleteFieldComponent implements OnInit {
 			}
 		}
 	}
+
+	private subscribeToResetField(): void {
+
+		this._helper.onResetAutocompleteField.pipe(takeUntil(this._unsubscribe)).subscribe(
+			(response: string) => {
+				console.log('reset this component for', response);
+				if (response === this.type) this.ngOnInit();
+			},
+			error => console.log('Error on reset auto complete subscription', error)
+		);
+
+	}
+
 }

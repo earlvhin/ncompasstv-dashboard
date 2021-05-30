@@ -37,29 +37,38 @@ export class MediaViewerComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _content: ContentService,
 		private _auth: AuthService,
-	) {
+	) { }
+
+	ngOnInit() {
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
+			this.is_dealer = true;
+		}
+
 		this.file_data = this._dialog_data;
+		this.setSettings(this.file_data.selected);
+		
+		// for cycling through content withing the media viewer
 		this.file_data.content_array.map(
 			(data, index) => {
-				if(data.content_data) {
+
+				if (data.content_data) {
 					data.content_data.index = index
 					data = data.content_data
 				} else {
 					data.index = index; 
 				}
+				
 			}
-		)
+		);
+
 	}
 
-	ngOnInit() {
-		console.log(this.file_data)
-		this.setSettings(this.file_data.selected)
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.is_dealer = true;
-		}
-	}
-
-	getOwner (selected) {
+	getOwner(selected): void {
 		if(selected.advertiser_id != "" && selected.advertiser_id != null) {
 			selected.owner_type = 'Advertiser';
 			this.getAdvertiser(selected.advertiser_id);
@@ -75,14 +84,14 @@ export class MediaViewerComponent implements OnInit {
 		}
 	}
 
-	getDealer(id) {
+	getDealer(id): void {
 		this.subscription.add(
 			this._dealer.get_dealer_by_id(id).subscribe(
 				(data: any) => {
 					this.file_data.selected.owner_name = data.businessName;
 				}
 			)
-		)
+		);
 	}
 
 	getAdvertiser(id) {

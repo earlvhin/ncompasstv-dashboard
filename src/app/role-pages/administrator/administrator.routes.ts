@@ -14,6 +14,7 @@ import { CreateUserComponent } from '../../global/pages_shared/create-user/creat
 import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user-type/create-user-type.component';
 import { DashboardComponent } from  './pages/dashboard/dashboard.component';
 import { DealersComponent } from './pages/dealers/dealers.component';
+import { DirectoryComponent } from './pages/directory/directory.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
 import { InstallationsComponent } from './pages/installations/installations.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
@@ -58,6 +59,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
             { path: 'dashboard', component: DashboardComponent},
             { path: 'dealers', component: DealersComponent, },
 			{ path: 'dealers/:data', component: SingleDealerComponent},
+			{ path: 'directory', component: DirectoryComponent},
 			{ path: 'feeds', component: FeedsComponent},
             { path: 'hosts', component: HostsComponent},
             { path: 'hosts/:data', component: SingleHostComponent},

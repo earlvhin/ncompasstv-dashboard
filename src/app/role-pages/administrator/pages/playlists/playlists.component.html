@@ -77,7 +77,11 @@
 								(page_triggered)="pageRequested($event)"
                                 [playlist_delete]="true"
                                 (update_info)="fromDelete()"
-                                (export_playlist)="exportPlaylist($event)">
+                                (export_playlist)="exportPlaylist($event)"
+                                (to_sort_column)="getColumnsAndOrder($event)"
+                                [active_tab]="sort_column"
+                                [sort_column]="sort_column"
+                                [sort_order]="sort_order">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

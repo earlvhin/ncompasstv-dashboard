@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 export class HostLayoutComponent implements OnInit {
 
   public toggle: boolean;
+  
 	receiveToggle($event) {
 		this.toggle = $event
   }

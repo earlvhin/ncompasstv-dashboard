@@ -153,7 +153,11 @@ export class CreateScreenComponent implements OnInit {
 		this.getTemplates();
 
 		// for dealer_users auto fill
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
@@ -208,19 +212,15 @@ export class CreateScreenComponent implements OnInit {
 		this.reset_screen = true;
 	}
 
-	getDealers(e): void {
+	getDealers(page: number): void {
 		this.loading_data = true;
 
-		if (e > 1) {
+		if (page > 1) {
 
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
-						data.dealers.map (
-							i => {
-								this.dealers.push(i)
-							}
-						)
+						data.dealers.map(dealer => this.dealers.push(dealer));
 						this.paging = data.paging;
 						this.loading_data = false;
 					},
@@ -238,7 +238,7 @@ export class CreateScreenComponent implements OnInit {
 			}
 
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, '').subscribe(
+				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
 						this.dealers = data.dealers;
 						this.paging = data.paging;

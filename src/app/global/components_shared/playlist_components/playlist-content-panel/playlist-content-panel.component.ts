@@ -54,6 +54,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 	structured_updated_playlist: any;
 	structured_incoming_blocklist = [];
 	structured_remove_in_blocklist = [];
+	structured_bulk_remove_in_blocklist = [];
 	feed_count: number;
 	image_count: number;
 	video_count: number;
@@ -150,20 +151,20 @@ export class PlaylistContentPanelComponent implements OnInit {
 			this.subscription.add(
 				this._playlist.blocklist_content(data).subscribe(
 					data => {
-						//console.log('#addToBlocklist_result', data);
 						localStorage.removeItem('to_blocklist');
 						this.structured_incoming_blocklist = [];
-						if (this.structured_remove_in_blocklist.length > 0) {
-							//console.log('has structured_remove_in_blocklist')
-							this.removeToBlocklist();
-						} else if (this.incoming_blacklist_licenses.length > 0) {
-							//console.log('has incoming_blacklist_licenses')
-							this.incoming_blacklist_licenses = [];
-							this.getPlaylistById();
+						if (this.structured_bulk_remove_in_blocklist.length > 0){
+							this.bulkWhitelist(this.structured_bulk_remove_in_blocklist);
 						} else {
-							//console.log('no incoming_blacklist_licenses')
-							this.getPlaylistById();
-							this.playlist_unchanged = true;
+							if (this.structured_remove_in_blocklist.length > 0) {
+								this.removeToBlocklist();
+							} else if (this.incoming_blacklist_licenses.length > 0) {
+								this.incoming_blacklist_licenses = [];
+								this.getPlaylistById();
+							} else {
+								this.getPlaylistById();
+								this.playlist_unchanged = true;
+							}
 						}
 					}, 
 					error => {
@@ -220,7 +221,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 
 		bulk_option_dialog.afterClosed().subscribe(
 			data => {
-				console.log(data);
+				// console.log('BULK MODIFY CLOSED', data);
 
 				if (data) {
 					data.content_props.forEach(c => {
@@ -237,15 +238,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 					}
 
 					if (data.whitelist.length > 0) {
-						data.whitelist.map(
-							i => {
-								this.structured_remove_in_blocklist.push(
-									{
-										blacklistedContentId: i
-									}
-								)
-							}
-						)
+						this.structured_bulk_remove_in_blocklist = data.whitelist;
 					}
 
 					this.savePlaylistChanges(this.structureUpdatedPlaylist());
@@ -313,7 +306,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 	}
 
 	optionsSaved(e) {
-		console.log('#optionsSaved', e);
+		// console.log('#optionsSaved', e);
 		this.playlist_changes_data = e;
 
 		if (this.playlist_changes_data.content) {
@@ -348,7 +341,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 		playlist_content_dialog.afterClosed().subscribe(
 			data => {
 				if (data) {
-					console.log('#openPlaylistMedia_afterClosed', data);
+					// console.log('#openPlaylistMedia_afterClosed', data);
 					if (localStorage.getItem('to_blocklist')) {
 						this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
 						//console.log('#incoming blocklist from media: ', this.incoming_blacklist_licenses);
@@ -546,18 +539,21 @@ export class PlaylistContentPanelComponent implements OnInit {
 						this.playlist_content_backup = this.playlist_content;
 
 						if (this.incoming_blacklist_licenses.length > 0) {
-							//console.log('Has Blocklist Items')
+							console.log('Has Blocklist Items')
 							this.structureAddedContentBlocklist(data.playlistContentsAdded);
+						} else if (this.structured_bulk_remove_in_blocklist.length > 0) {
+							console.log('Has Bulk Whitelist Items');
+							this.bulkWhitelist(this.structured_bulk_remove_in_blocklist);
 						} else {
-							//console.log('No Blocklist Items')
+							console.log('No Blocklist Items')
 							this.getPlaylistById();
 						}
 						
 						if (this.structured_incoming_blocklist.length > 0) {
-							//console.log('has structured_incoming_blocklist')
+							console.log('has structured_incoming_blocklist')
 							this.addToBlocklist(this.structured_incoming_blocklist);
 						} else {
-							//console.log('no structured_incoming_blocklist')
+							console.log('no structured_incoming_blocklist')
 							this.removeToBlocklist();
 						}
 					},
@@ -575,6 +571,20 @@ export class PlaylistContentPanelComponent implements OnInit {
 		}
 
 		this.search_control.setValue('');
+	}
+
+	bulkWhitelist(data: any[]) {
+		this._playlist.bulk_whitelist(data).subscribe(
+			data => {
+				console.log(data);
+				this.getPlaylistById();
+				this.playlist_unchanged = true;
+				this.structured_bulk_remove_in_blocklist = [];
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
 	}
 
 	structureAddedPlaylistContent(incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[]) {

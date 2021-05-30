@@ -156,6 +156,10 @@ export class ContentService {
 		)
 	}
 
+	reassignContent(data: { type: number, toId: string, contentIds: string[] }) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.reassign_content}`, data, this.httpOptions);
+	}
+
 	removeFilenameHandle(file_name) {
 		return file_name.substring(file_name.indexOf('_') + 1);
 	}

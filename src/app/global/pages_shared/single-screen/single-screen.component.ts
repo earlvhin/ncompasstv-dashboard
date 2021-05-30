@@ -35,6 +35,7 @@ import { UnassignLicenseComponent } from '../../components_shared/screen_compone
 export class SingleScreenComponent implements OnInit {
 
 	dealer_playlist$: Observable<API_SINGLE_PLAYLIST[]>;
+	dealer_playlist: any[] = [];
 	dealer_hosts: API_HOST[] = [];
 	edit_screen_info: EDIT_SCREEN_INFO;
 	edit_screen_zone_playlist: EDIT_SCREEN_ZONE_PLAYLIST[];
@@ -135,7 +136,12 @@ export class SingleScreenComponent implements OnInit {
 	]
 
 	ngOnInit() {
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 		}
 
@@ -192,7 +198,7 @@ export class SingleScreenComponent implements OnInit {
 						{
 							screen_title: [this.screen.screen_title, Validators.required],
 							description: [this.screen.description],
-							type: [{ value: this.screen.type ? this.screen.type : null, disabled: this.is_dealer ? true:false}],
+							type: [{ value: this.screen.type ? this.screen.type : null, disabled: this.is_dealer ? true : false}],
 							published_by: [{ value: this.screen.created_by, disabled: true }, Validators.required],
 							business_name: [{ value: this.screen.assigned_dealer, disabled: true }, Validators.required],
 							assigned_host: [{value: this.screen.assigned_host, disabled: true}, Validators.required],
@@ -324,16 +330,43 @@ export class SingleScreenComponent implements OnInit {
 			this._screen.edit_screen(final_screen_info).subscribe(
 				data => {
 					this.no_changes = true;
-					this.ngOnInit();
+					this.openConfirmationModal('success', 'Success!', 'Screen successfully updated!');
+					// this.ngOnInit();
 					// console.log('editScreenInfo', data);
 				}
 			)
 		)
 	}
 
+	openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width:'500px',
+			height: '350px',
+			data:  { status, message, data }
+		})
+
+		dialog.afterClosed().subscribe(() => this.ngOnInit());
+	}
+
 	// Get Playlist By Dealer ID
 	getPlaylistByDealer(id) {
-		this.dealer_playlist$ = this._playlist.get_playlist_by_dealer_id(id);
+		// this.dealer_playlist$ = this._playlist.get_playlist_by_dealer_id_v2(id);
+
+		// this.dealer_playlist$.subscribe(
+		// 	data => {
+		// 		console.log('DEALER PLAYLISTS', data)
+		// 	}
+		// )
+
+		this._playlist.get_playlist_by_dealer_id_v2(id).subscribe(
+			data => {
+				this.dealer_playlist = data.playlists;
+				console.log('DEALER PLAYLIST', data);
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
 	}
 
 	hostSearchBoxTrigger (event) {

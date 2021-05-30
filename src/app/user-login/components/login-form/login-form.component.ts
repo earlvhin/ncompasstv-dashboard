@@ -80,17 +80,16 @@ export class LoginFormComponent implements OnInit {
 
 		this._auth.authenticate_user(this.login_form.value).pipe(first()).subscribe(
 			(data: USER_LOGIN) => {
+				
 				const user_data = {
 					user_id: data.userId,
 					firstname: data.firstName,
 					lastname: data.lastName,
 					role_id: data.userRole.roleId,
 					roleInfo: data.roleInfo,
-					jwt: {
-						token: data.token,
-						refreshToken: data.refreshToken
-					}
-				}
+					jwt: { token: data.token, refreshToken: data.refreshToken }
+				};
+
 				localStorage.setItem('current_user', JSON.stringify(user_data));
 				localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
 				this.refreshToken(data.userRole.roleId);
@@ -99,7 +98,7 @@ export class LoginFormComponent implements OnInit {
 				this.show_overlay = false;
 				this.is_error = true;
 				this.error_msg = `${error.error.message}`;
-				console.log('#onSubmit - Error', error);
+				console.log('Error authenticating user', error);
 			}
 		)
 	}
@@ -116,15 +115,18 @@ export class LoginFormComponent implements OnInit {
 		}
 	}
 
-	redirectToPage(role_data) {
+	async redirectToPage(role_definition: string): Promise<void> {
 		let role: string;
 
-		switch (role_data) {
+		switch (role_definition) {
 			case UI_ROLE_DEFINITION.administrator:
 				role = UI_ROLE_DEFINITION_TEXT.administrator
 				break;
 			case UI_ROLE_DEFINITION.dealer:
 				role = UI_ROLE_DEFINITION_TEXT.dealer
+				break;
+			case UI_ROLE_DEFINITION['sub-dealer']:
+				role = UI_ROLE_DEFINITION_TEXT['sub-dealer'];
 				break;
 			case UI_ROLE_DEFINITION.host:
 				role = UI_ROLE_DEFINITION_TEXT.host
@@ -136,9 +138,11 @@ export class LoginFormComponent implements OnInit {
 				role = UI_ROLE_DEFINITION_TEXT.tech
 				break;
 			default:
-				role = 'login'
+				role = 'login';
 		}
-		this._router.navigate([role]);
+
+
+		await this._router.navigate([role]);
 	}
 
 	togglePasswordFieldType(): void {

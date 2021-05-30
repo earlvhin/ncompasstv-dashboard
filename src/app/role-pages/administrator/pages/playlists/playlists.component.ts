@@ -22,15 +22,16 @@ export class PlaylistsComponent implements OnInit {
 	playlist_data: UI_TABLE_PLAYLIST[] = [];
 	playlists_details: any;
 	playlist_table_column = [
-		'#',
-		'Playlist Name',
-		// 'Playlist Description',
-		'Publish Date',
-		'Assigned To'
+		{ name: '#', sortable: false, no_export: true},
+		{ name: 'Playlist Name', sortable: true, column:'Name'},
+		{ name: 'Publish Date', sortable: true, column:'DateCreated'},
+		{ name: 'Assigned To', sortable: true, column:'BusinessName'},
 	]
 	playlist_to_export: any = [];
 	search_data: string = "";
 	searching: boolean = false;
+	sort_column: string = "";
+	sort_order: string = "";
 	subscription: Subscription = new Subscription;
 	title: string = "Playlists";
 	workbook: any;
@@ -68,7 +69,7 @@ export class PlaylistsComponent implements OnInit {
 		this.searching = true;
 		this.playlist_data = [];
 		this.subscription.add(
-			this._playlist.get_playlists(page, this.search_data).subscribe(
+			this._playlist.get_all_playlists(page, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
 					this.initial_load = false;
 					if (data.paging.entities.length > 0) {
@@ -87,6 +88,12 @@ export class PlaylistsComponent implements OnInit {
 				}
 			)
 		)
+	}
+
+	getColumnsAndOrder(data) {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.pageRequested(1);
 	}
 
 	getTotalPlaylist() {
@@ -122,7 +129,7 @@ export class PlaylistsComponent implements OnInit {
 					{ value: p.name, link: '/administrator/playlists/' +  p.playlistId, editable: false, hidden: false},
 					{ value: this._date.transform(p.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
 					{ value: p.businessName, link: '/administrator/dealers/' + p.dealerId, editable: false, hidden: false},
-					{ value: p.screenTemplateZonePlaylistId != null ? true: false, link: null, hidden: true}
+					{ value: p.totalScreens > 0 ? true: false, link: null, hidden: true}
 				)
 			}
 		)

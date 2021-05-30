@@ -81,7 +81,7 @@ export class DataTableComponent implements OnInit {
 		this.table_data.map (
 			data => {
 				Object.keys(data).forEach(key => {
-					if(data[key].table) {
+					if (data[key].table) {
 						this.active_table = data[key].table;
 					}
 				})
@@ -105,7 +105,7 @@ export class DataTableComponent implements OnInit {
 		this.ngOnInit();
 	}
 
-	controlToggle(data, e): void {
+	controlToggle(data, e) {
 		const license_status = { id: data, status: e.checked }
 		this.toggle_triggered.emit(license_status);
 	}

@@ -85,14 +85,19 @@ export class MediaModalComponent implements OnInit {
 	
 	ngOnInit() {
 		this.getDealers(1);
-		if(this.data_before_modal) {
+
+		if (this.data_before_modal) {
 			this._is_edit = this.data_before_modal[0].is_edit;
 		} else {
 			this._is_edit = false;
 		}
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 		
 		// for dealer_users auto fill
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;

@@ -1,15 +1,15 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { UI_ROLE_DEFINITION } from '../../../../models/ui_role-definition.model';
+
 import { AuthService } from '../../../../services/auth-service/auth.service';
-import { DealerService } from '../../../../services/dealer-service/dealer.service';
-import { UserService } from 'src/app/global/services/user-service/user.service';
-import { LocationService } from '../../../../services/data-service/location.service';
 import { City, State } from '../../../../models/ui_city_state_region.model';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
-import { Router } from '@angular/router';
+import { LocationService } from '../../../../services/data-service/location.service';
+import { UI_ROLE_DEFINITION } from '../../../../models/ui_role-definition.model';
+import { UserService } from 'src/app/global/services/user-service/user.service';
 
 @Component({
 	selector: 'app-new-dealer',
@@ -41,7 +41,6 @@ export class NewDealerComponent implements OnInit {
 		private _auth: AuthService,
 		private _form: FormBuilder,
 		private _location: LocationService,
-		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _user: UserService,
 		private _router: Router,
@@ -49,16 +48,17 @@ export class NewDealerComponent implements OnInit {
 
 	ngOnInit() {
 		this._location.get_cities().subscribe(
-			(data: any[]) => {
-				this.city_state = data.map(
-					c => {
+			(response: any[]) => {
+
+				this.city_state = response.map(
+					city => {
 						return new City(
-							c.city,
-							`${c.city}, ${c.state}`,
-							c.state
-						)
+							city.city,
+							`${city.city}, ${city.state}`,
+							city.state
+						);
 					}
-				)
+				);
 
 				this.createForm();
 			}
@@ -88,8 +88,15 @@ export class NewDealerComponent implements OnInit {
 			{
 				label: 'Dealer ID',
 				control: 'generatedid',
+				placeholder: 'Ex: D.001',
+				width: 'col-lg-3',
+				type: 'text'
+			},
+			{
+				label: 'Dealer Alias',
+				control: 'dealerIdAlias',
 				placeholder: 'Ex: NCMPS-BLUEIGUANA-9921',
-				width: 'col-lg-6',
+				width: 'col-lg-3',
 				type: 'text'
 			},
 			{
@@ -170,7 +177,8 @@ export class NewDealerComponent implements OnInit {
 				password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
 				re_password: ['', Validators.required],
 				contactNumber: ['', Validators.required],
-				generatedid: ['', Validators.required],
+				generatedid: [ '', Validators.required ],
+				dealerIdAlias: [ '', Validators.required ],
 				businessName: ['', Validators.required],
 				contactPerson: ['', Validators.required],
 				city: ['', Validators.required],
@@ -178,11 +186,11 @@ export class NewDealerComponent implements OnInit {
 				region: [{value: '', disabled: true}, Validators.required],
 				createdby: [this._auth.current_user_value.user_id]
 			}
-		)
+		);
 
 		this.subscription.add(
 			this.new_dealer_form.valueChanges.subscribe(
-				data => {
+				() => {
 					if (this.new_dealer_form.valid && this.f.password.value === this.f.re_password.value) {
 						this.form_invalid = false;
 					} else {
@@ -190,11 +198,11 @@ export class NewDealerComponent implements OnInit {
 					}
 				}
 			)
-		)
+		);
 
 		this.subscription.add(
 			this.f.password.valueChanges.subscribe(
-				data => {
+				() => {
 					if (this.f.password.invalid) {
 						this.password_is_valid = false;
 						this.password_is_valid_msg = "Must be atleast 8 characters"
@@ -204,11 +212,11 @@ export class NewDealerComponent implements OnInit {
 					}
 				}
 			)
-		)
+		);
 
 		this.subscription.add(
 			this.f.re_password.valueChanges.subscribe(
-				data => {
+				() => {
 					if (this.f.password.value == this.f.re_password.value) {
 						this.password_is_match = true;
 						this.password_match_msg = "Password matches"
@@ -218,7 +226,7 @@ export class NewDealerComponent implements OnInit {
 					}
 				}
 			)
-		)
+		);
 	}
 
 	createNewDealer(formDirective) {	
@@ -287,4 +295,5 @@ export class NewDealerComponent implements OnInit {
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
+
 }

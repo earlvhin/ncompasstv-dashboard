@@ -2,7 +2,7 @@
     <div class="title-section">
         <div class="d-flex align-items-center">
             <div class="flex-even">
-                <h1 class="page-title">{{ screen.screen_title}}</h1>
+                <h1 class="page-title">{{ screen.screen_title }}</h1>
             </div>
             <div class="text-right">
                 <button mat-button mat-raised-button class="theme-btn mr-2" (click)="cloneScreen()">
@@ -52,11 +52,12 @@
                             <mat-label>Select Playlist for {{ z.screen_template.name }}</mat-label>
                             <mat-select [(value)]="z.screen_template.playlist_id">
                                 <mat-option 
-                                    *ngFor="let p of dealer_playlist$ | async"
+                                    *ngFor="let p of dealer_playlist"
                                     [attr.data-zone-id]="p.playlistId"
-                                    [value]="p.playlist.playlistId"
-                                    (click)="playlistSelected(p.playlist.playlistId, z.screen_template.zone_id)">
-                                    {{ p.playlist.playlistName }} - <span class="text-danger">{{p.contents.length}} Contents</span>
+                                    [value]="p.playlistId"
+                                    (click)="playlistSelected(p.playlistId, z.screen_template.zone_id)">
+                                    {{ p.name }}
+                                     <!-- - <span class="text-danger">{{ p.contents.length }} Contents</span> -->
                                 </mat-option>
                             </mat-select>
                         </mat-form-field>

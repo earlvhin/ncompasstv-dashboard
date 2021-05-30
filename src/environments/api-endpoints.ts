@@ -32,6 +32,7 @@ export const API_ENDPOINTS = {
 		api_get_content_total_by_dealer: 'content/gettotal?dealerid=',
 		api_get_dealer_by_id: 'dealer/getbyid?dealer_id=',
 		api_get_dealers: 'dealer/getall',
+		api_get_dealers_directory: 'dealer/getdirectorytree',
 		api_get_dealers_with_sort: 'dealer/fetchallsorttotal',
 		api_get_dealers_with_host: 'dealer/getdealerswithhost',
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
@@ -58,6 +59,7 @@ export const API_ENDPOINTS = {
 		api_get_licenses_total_by_dealer: 'license/gettotal?dealerid=',
 		api_get_notifications: 'notification/getbyreceiverid?receiver_id=',
 		api_get_playlist: 'playlists/getall',
+		api_get_all_playlist: 'playlists/getplaylistswithscreens',
 		api_get_playlist_by_dealer_id: 'playlists/GetPlaylistByDealerId?dealerId=',
 		api_get_playlist_by_dealer_id_table: 'playlists/getplaylistsbydealerid',
 		api_get_playlist_by_id: 'playlists/getplaylistbyid?playlistid=',
@@ -90,6 +92,7 @@ export const API_ENDPOINTS = {
 		api_apps: 'playerapp/getapp',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
+		content_by_host_id: 'content/GetByHostId',
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/ExportDealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
@@ -112,6 +115,8 @@ export const API_ENDPOINTS = {
 		api_new_app_version: 'playerapp/addversion',
 		api_new_app: 'playerapp/create',
 		content_schedule: 'PlaylistContentsSchedule/Create',
+		sub_dealer_account: 'account/CreateSubAccount',
+
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
@@ -142,6 +147,7 @@ export const API_ENDPOINTS = {
 		install_date: 'license/UpdateInstallDate',
 		install_date_list: 'license/UpdateInstallDateList',
 		api_update_internet_info: 'license/UpdateInternetInfo',
+		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
 	},
 	delete: {
@@ -153,9 +159,11 @@ export const API_ENDPOINTS = {
 		api_remove_playlist_contents: 'playlists/removecontents',
 		api_remove_screenshots: 'pi/removefiles?licenseid=',
 		api_remove_in_blacklist: 'blacklistedcontents/delete',
+		api_bulk_remove_in_blacklist: 'blacklistedcontents/bulkdelete',
 		api_remove_license: 'license/removebylicenseid',
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
-		api_remove_host_licenses: 'license/unassignhost?force=1'
+		api_remove_host_licenses: 'license/unassignhost?force=1',
+		host: 'host/delete'
 	}
 };

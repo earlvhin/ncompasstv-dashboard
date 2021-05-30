@@ -22,8 +22,12 @@ export class CreateUserComponent implements OnInit {
 	user_type = []
 
 	ngOnInit() {
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 		
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 		}
 
@@ -50,6 +54,12 @@ export class CreateUserComponent implements OnInit {
 				is_dealer: this.is_dealer
 			},
 			{
+				role_name: 'Sub-Dealer',
+				role_description: 'Dealer account with access to only a max of 5 sub accounts',
+				role_icon: 'assets/media-files/dealer-icon.png',
+				role: UI_ROLE_DEFINITION_TEXT['sub-dealer'],
+			},
+			{
 				role_name: 'Host',
 				role_description: 'View access to data of Ads played in their workplace.',
 				role_icon: 'assets/media-files/host-icon.png',
@@ -61,7 +71,7 @@ export class CreateUserComponent implements OnInit {
 				role_icon: 'assets/media-files/advertiser-icon.png',
 				role: UI_ROLE_DEFINITION_TEXT.advertiser
 			},
-		]
+		];
 
 	}
 
