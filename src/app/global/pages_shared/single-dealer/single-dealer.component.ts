@@ -611,7 +611,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		var modified_label = {
 			date : moment().format('LL'),
 			address: data.host.address,
-			schedule: storehours[this.now].status ? (
+			schedule: storehours[this.now] && storehours[this.now].status ? (
 				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
 				? "Open 24 Hours" : storehours[this.now].periods.map(
 					i => {
