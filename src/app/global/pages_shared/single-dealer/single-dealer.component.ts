@@ -606,8 +606,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	getLabel(data) {
 		this.now = moment().format('d');
-		this.now = this.now - 1;
+		this.now = this.now;
 		var storehours = JSON.parse(data.host.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
 		var modified_label = {
 			date : moment().format('LL'),
 			address: data.host.address,
