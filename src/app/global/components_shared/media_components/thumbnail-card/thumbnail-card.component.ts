@@ -52,7 +52,8 @@ export class ThumbnailCardComponent implements OnInit {
 
 		if (!this.disconnect_to_socket && this.filetype == 'webm' && this.is_converted == 0) {
 			this._socket = io(environment.socket_server, {
-				transports: ['websocket']
+				transports: ['websocket'],
+				query: 'client=Dashboard__ThumbnailCardComponent',
 			});
 
 			this._socket.on('connect', () => {

@@ -153,7 +153,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _template: TemplateService
 	) { 
 		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
+			transports: ['websocket'],
+            query: 'client=Dashboard__SingleLicenseComponent',
 		});
 	}
 

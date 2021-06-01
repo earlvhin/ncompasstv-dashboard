@@ -186,7 +186,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
+			transports: ['websocket'],
+			query: 'client=Dashboard__SingleDealerComponent'
 		});
 
 		this._socket.on('connect', () => {

@@ -78,7 +78,8 @@ export class SinglePlaylistComponent implements OnInit {
 		this.license_url = `/${this._role.get_user_role()}/licenses/`
 		
 		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
+			transports: ['websocket'],
+			query: 'client=Dashboard__SinglePlaylistComponent'
 		});
 
 		this._socket.on('connect', () => {
