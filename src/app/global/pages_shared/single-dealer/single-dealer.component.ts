@@ -1,33 +1,33 @@
 import { DatePipe, Location, TitleCasePipe } from '@angular/common'
-import { ChangeDetectorRef, Component, OnInit, OnDestroy, ViewChildren, QueryList, AfterViewInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { Observable, Subscription } from 'rxjs';
 import { Chart } from 'chart.js';
-import { take } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as io from 'socket.io-client';
 
+import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
 import { API_DEALER } from '../../models/api_dealer.model';
 import { API_HOST } from '../../models/api_host.model';
 import { API_LICENSE } from '../../models/api_license.model';
 import { API_LICENSE_STASTICS } from '../../models/api_license_statistics.model';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { UI_DEALER_HOST } from '../../models/ui_dealer-host.model';
-import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
-import { DEALER_UI_TABLE_ADVERTISERS } from '../../models/ui_table_advertisers.model';
-import { UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
-import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DealerService } from '../../services/dealer-service/dealer.service';
+import { DEALER_UI_TABLE_ADVERTISERS } from '../../models/ui_table_advertisers.model';
+import { environment } from '../../../../environments/environment';
 import { HostService } from '../../services/host-service/host.service';
 import { LicenseService } from '../../services/license-service/license.service';
-import { UserService } from '../../services/user-service/user.service';
 import { RoleService } from '../../services/role-service/role.service';
-import { environment } from '../../../../environments/environment';
 import { SubstringPipe } from '../../pipes/substring.pipe';
+import { UI_DEALER_HOST } from '../../models/ui_dealer-host.model';
+import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
+import { UserService } from '../../services/user-service/user.service';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -43,6 +43,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	apps: any;
 	array_to_delete: any = [];
 	combined_data: API_HOST[];
+	current_role: string;
 	current_tab = 'hosts';
 	dealer: API_DEALER;
 	dealers: API_DEALER[];
@@ -163,6 +164,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	];
 
 	constructor(
+		public _router: Router,
 		private _advertiser: AdvertiserService,
 		private _auth: AuthService,
 		private _change_detector: ChangeDetectorRef,
@@ -176,34 +178,35 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		private _role: RoleService,
 		private _titlecase: TitleCasePipe,
 		private _user: UserService
-	) { 
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
-		});
-	}
+	) { }
 
 	@ViewChildren('canvas') canvasses: QueryList<HTMLCanvasElement>;
 
 	ngOnInit() {
+		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__SingleDealerComponent'
+		});
+
 		this._socket.on('connect', () => {
 			// console.log('#SingleDealerComponent - Connected to Socket Server');
-		})
+		});
 		
 		this._socket.on('disconnect', () => {
-			console.log('#SingleDealerComponent - Disconnnected to Socket Server');
+			// console.log('#SingleDealerComponent - Disconnnected to Socket Server');
 		})
 
-		if (this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator) {
-			this.show_admin_buttons = true;
-		}
+		if (this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator) this.show_admin_buttons = true;
 
 		this.setCurrentTabOnLoad();
-
 
 		this.subscription.add(
 			this._params.paramMap.subscribe(
 				() => {
-					if(!this.from_change) {
+
+					if (!this.from_change) {
 						this.dealer_id = this._params.snapshot.params.data;
 					} else {
 						this.dealer_id = this.dealer_id;
@@ -236,12 +239,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
+
 		this.subscription.add(
 			this.canvasses.changes.pipe(take(1)).subscribe(
 				() => {
+					console.log('Canvasses ready');	
+									
 					if (this.initial_load_charts && this.current_tab === 'licenses') {
-						this.callCharts();
+						this.getLicenseStatisticsByDealer(this.dealer_id);
 					}
+
 				},
 				error => console.log('Error on canvas subscription', error)
 			)
@@ -249,22 +256,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	}
 
-	callCharts() {
-		setTimeout(() => {
-			this.generateCharts();
-			Object.entries(Chart.instances).forEach(entries => {
-				entries.forEach(chartData => {
-					if (typeof chartData === 'object') this.license_statistics_charts.push(chartData);
-				})
-			});
-			this._change_detector.detectChanges();
-		}, 1000);
-	}
-
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 		this.destroyCharts();
 		this._socket.disconnect();
+	}
+
+	callCharts(): void {
+
+		setTimeout(() => {
+			this.generateCharts();
+			this._change_detector.detectChanges();
+
+		}, 1000);
+
 	}
 
 	activateLicense(e): void {
@@ -458,21 +463,25 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		);
 	}
 
-	getLicensesofDealer(page: number, reload = false): void {
+	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
 		this.subscription.add(
 			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order).subscribe(
 				(response: { paging, statistics, message }) => {	
 
 					if (response.message) {
+
 						if (this.search_data_license == "") {
 							this.no_licenses = true;
 						}
+
 						this.license_data = [];
 						this.license_filtered_data = [];
+
 					} else {				
 						this.license_data_api = response.paging.entities;
 						this.no_licenses = false;
+
 						this.license_data_api.map(
 							i => {
 								if(i.appVersion) {
@@ -482,13 +491,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 								}	
 							}
 						);
-						this.statistics = response.statistics;
-						if (reload) this.updateCharts();
+
 						const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
 						this.license_data = mappedLicenses;
 						this.license_filtered_data = mappedLicenses;
 						this.paging_data_license = response.paging;
-						if(this.from_change) this.callCharts();
 					}
 
 					this.initial_load_license = false;
@@ -636,7 +643,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.current_tab = 'licenses';
 
 				if (!this.no_licenses && this.initial_load_charts) {
-					this.callCharts();
+					this.getLicenseStatisticsByDealer(this.dealer_id);
 				}
 
 		}
@@ -686,45 +693,74 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}
 	}
 
-	dealerSelected(e) {
-		this.subscription.add(
-			this._dealer.get_dealer_by_id(e).subscribe(
-				data => {
-					this.dealer_id = data.dealerId;
-					this.dealer_name = data.businessName;
-					this.from_change = true;
-					this.loaded = false;
-					this.ngOnInit();
-				}
-			)
-		)
-		this.initial_load = true;
+	async dealerSelected(id: string): Promise<void> {
+		// this.destroyCharts();
+		// this.loading_statistics = { activity: true, status: true, connection: true, screen: true };
+
+		// this.subscription.add(
+		// 	this._dealer.get_dealer_by_id(e).subscribe(
+		// 		data => {
+		// 			this.dealer_id = data.dealerId;
+		// 			this.dealer_name = data.businessName;
+		// 			this.from_change = true;
+		// 			this.loaded = false;
+		// 			this.ngOnInit();
+		// 		}
+		// 	)
+		// )
+		// this.initial_load = true;
+
+		await this._router.navigate([`/${this.current_role}/dealers/${id}`]);
+		this.getLicenseStatisticsByDealer(id, true);
 	}
 
-	searchBoxTrigger (event) {
+	searchBoxTrigger(event) {
 		this.is_search = event.is_search;
-		if(this.paging.hasNextPage || this.is_search) {
-			this.getDealers(event.page);	
-		}
+		if (this.paging.hasNextPage || this.is_search) this.getDealers(event.page);
 	}
 
-	searchData(e) {
+	searchData(e: any): void {
 		this.loading_search = true;
+
 		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe(
-				data => {
-					if (data.paging.entities.length > 0) {
-						this.dealers = data.paging.entities;
-						this.dealers_data = data.paging.entities;
-						this.loading_search = false;
-					} else {
-						this.dealers_data = [];
-						this.loading_search = false;
+			this._dealer.get_search_dealer(e)
+				.map(
+					(response: { paging: { entities: any[] } }) => {
+						
+						const dealers = response.paging.entities;
+	
+						if (response.paging.entities.length > 0) {
+
+							dealers.forEach(
+								(dealer, index) => {
+									if (dealer.dealerId === this.dealer_id) response.paging.entities.splice(index, 1)
+								}
+							);
+
+						}
+	
+						return response;
+
 					}
-					this.paging = data.paging;
-				}
-			)
-		)
+				).subscribe(
+					response => {
+	
+						if (response.paging.entities.length > 0) {
+							this.dealers = response.paging.entities;
+							this.dealers_data = response.paging.entities;
+							this.loading_search = false;
+						} else {
+							this.dealers_data = [];
+							this.loading_search = false;
+						}
+	
+						this.paging = response.paging;
+	
+					},
+					error => console.log('Error searching for dealers', error)
+				)
+		);
+
 	}
 
 	toggleActivateDeactivate(e): void {
@@ -750,7 +786,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.sort_order = "";
 		this.array_to_delete = [];
 		this.getLicenseTotalCount(this.dealer_id);
-		this.getLicensesofDealer(1, true);
+		this.getLicensesofDealer(1);
+		this.getLicenseStatisticsByDealer(this.dealer_id, true);
 	}
 
 	updateAndRestart(): void {
@@ -821,168 +858,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.remote_reboot_disabled = true;
 			this.remote_update_disabled = true;
 		});
-	}
-
-	private get isAdvertisersTabOnLoad(): boolean {
-		return this._location.path().includes('tab=2');
-	}
-
-	private get isHostsTabOnLoad(): boolean {
-		return this._location.path().includes('tab=1');
-	}
-
-	private compare(a: any, b: any, type = 'asc'): number {
-		if (a === b) return 0;
-		if (!a) return 1;
-		if (!b) return -1;
-		if (typeof a === 'string') a = a.toLowerCase();
-		if (typeof b === 'string') b = b.toLowerCase();
-		if (type === 'asc') return a < b ? -1 : 1;
-		return a < b ? 1 : -1;
-	}
-
-	private destroyCharts(): void {
-		if (this.license_statistics_charts.length <= 0) return;
-		this.license_statistics_charts.forEach(chart => chart.destroy());
-	}
-
-	private generateCharts(): void {
-		if (!this.statistics) return;
-		this.initial_load_charts = false;
-		this.generatePieChart('activity');
-		this.generatePieChart('connection');
-		this.generatePieChart('screen');
-		this.generatePieChart('status');
-	}
-
-	private generatePieChart(type: string): void {
-		if (!type) return;
-		type = type.toLowerCase();
-		let canvasId: string;
-		let data: number[];
-		let labels: string[];
-		let title: string;
-
-		switch (type) {
-			case 'activity':
-				const { activityActive, activityInactive } = this.statistics;
-				canvasId = 'activityStatistics';
-				data = [ parseInt(activityActive), parseInt(activityInactive) ];
-				labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
-				title = 'Activity';
-				this.loading_statistics.activity = false;
-				break;
-
-			case 'connection':
-				const { connectionTypeLan, connectionTypeWifi } = this.statistics;
-				canvasId = 'connectionStatistics';
-				data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
-				labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
-				title = 'Connection Type';
-				this.loading_statistics.connection = false;
-				break;
-
-			case 'screen':
-				const { screenTypeAd, screenTypeMenu, screenTypeClosed } = this.statistics;
-				canvasId = 'screenStatistics';
-				data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
-				labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ]
-				title = 'Screen Type';
-				this.loading_statistics.screen = false;
-				break;
-
-			default:
-				const { statusOffline, statusOnline } = this.statistics;
-				canvasId = 'statusStatistics';
-				data = [ parseInt(statusOnline), parseInt(statusOffline) ];
-				labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
-				title = 'Status';
-				this.loading_statistics.status = false;
-
-		}
-
-		const canvas = document.getElementById(canvasId);
-		if (!canvas) return;
-
-		new Chart(canvas, {
-			type: 'doughnut',
-			data: {
-				labels: labels,
-				datasets: [{
-					data: data,
-					backgroundColor: [ 'rgba(91, 155, 213, 0.8)', 'rgba(237, 125, 49, 0.8)', ],
-					borderColor: [ 'rgba(91, 155, 213, 1)', 'rgba(237, 125, 49, 1)', ],
-				}],
-			},
-			options: {
-				tooltips: false,
-				title: { text: title, display: true },
-				responsive: true,
-				maintainAspectRatio: false
-			}
-		});
-
-	}
-
-	private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
-	}
-
-	private setCurrentTabOnLoad(): void {
-
-		if (this.isHostsTabOnLoad) {
-			this.current_tab = 'hosts';
-			return;
-		}
-
-		if (this.isAdvertisersTabOnLoad) {
-			this.current_tab = 'advertisers';
-			return;
-		}
-
-		this.current_tab = 'licenses';
-
-	}
-
-	private updateCharts(): void {
-		setTimeout(() => {
-			const config = { duration: 800, easing: 'easeOutBounce' };
-			const activityChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'activityStatistics')[0];
-			const connectionChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'connectionStatistics')[0];
-			const screenChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'screenStatistics')[0];
-			const statusChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'statusStatistics')[0];
-			const { activityActive, activityInactive, connectionTypeLan, connectionTypeWifi, screenTypeAd, screenTypeClosed, screenTypeMenu, 
-				statusOffline, statusOnline } = this.statistics;
-			activityChart.data.labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
-			activityChart.data.datasets[0].data = [ parseInt(activityActive), parseInt(activityInactive) ];
-			connectionChart.data.labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
-			connectionChart.data.datasets[0].data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
-			screenChart.data.labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ];
-			screenChart.data.datasets[0].data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
-			statusChart.data.labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
-			statusChart.data.datasets[0].data = [ parseInt(statusOnline), parseInt(statusOffline) ];
-			activityChart.update(config);
-			connectionChart.update(config);
-			screenChart.update(config);
-			statusChart.update(config);
-		}, 1000);
-	}
-
-	private subscribeToReassignSuccess(): void {
-		this.subscription.add(
-			this._dealer.onSuccessReassigningDealer.subscribe(
-				() => this.ngOnInit(),
-				error => console.log('Error on reassign success subscription', error)
-			)
-		);
 	}
 
 	getMultipleDeleteData(data) {
@@ -1110,4 +985,197 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.worksheet.columns = header;
 		this.getDataForExport(this.dealer_id, tab);		
 	}
+
+	private get isAdvertisersTabOnLoad(): boolean {
+		return this._location.path().includes('tab=2');
+	}
+
+	private get isHostsTabOnLoad(): boolean {
+		return this._location.path().includes('tab=1');
+	}
+
+	private destroyCharts(): void {
+		if (this.license_statistics_charts.length <= 0) return;
+		this.license_statistics_charts.forEach(chart => chart.destroy());
+		this.license_statistics_charts = [];
+	}
+
+	private generateCharts(): void {
+		if (!this.statistics) return;
+		this.initial_load_charts = false;
+		this.generatePieChart('activity');
+		this.generatePieChart('connection');
+		this.generatePieChart('screen');
+		this.generatePieChart('status');
+	}
+
+	private generatePieChart(type: string): void {
+		if (!type) return;
+		type = type.toLowerCase();
+		let canvasId: string;
+		let data: number[];
+		let labels: string[];
+		let title: string;
+
+		switch (type) {
+			case 'activity':
+				const { activityActive, activityInactive } = this.statistics;
+				canvasId = 'activityStatistics';
+				data = [ parseInt(activityActive), parseInt(activityInactive) ];
+				labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
+				title = 'Activity';
+				break;
+
+			case 'connection':
+				const { connectionTypeLan, connectionTypeWifi } = this.statistics;
+				canvasId = 'connectionStatistics';
+				data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
+				labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
+				title = 'Connection Type';
+				break;
+
+			case 'screen':
+				const { screenTypeAd, screenTypeMenu, screenTypeClosed } = this.statistics;
+				canvasId = 'screenStatistics';
+				data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
+				labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ]
+				title = 'Screen Type';
+				break;
+
+			default:
+				const { statusOffline, statusOnline } = this.statistics;
+				canvasId = 'statusStatistics';
+				data = [ parseInt(statusOnline), parseInt(statusOffline) ];
+				labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
+				title = 'Status';
+
+		}
+
+		const canvas = document.getElementById(canvasId);
+
+		if (!canvas) return;
+
+		const chart = new Chart(canvas, {
+			type: 'doughnut',
+			data: {
+				labels: labels,
+				datasets: [{
+					data: data,
+					backgroundColor: [ 'rgba(91, 155, 213, 0.8)', 'rgba(237, 125, 49, 0.8)', ],
+					borderColor: [ 'rgba(91, 155, 213, 1)', 'rgba(237, 125, 49, 1)', ],
+				}],
+			},
+			options: {
+				tooltips: false,
+				title: { text: title, display: true },
+				responsive: true,
+				maintainAspectRatio: false
+			}
+		});
+
+		this.license_statistics_charts.push(chart);
+		this.loading_statistics[type] = false;
+
+	}
+
+	private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
+	}
+
+	private getLicenseStatisticsByDealer(id: string, reload = false): void {
+		this.subscription.add(
+			this._license.get_statistics_by_dealer(id)
+				.subscribe(
+					(response: API_LICENSE_STASTICS) => {
+						let hasNull = false;
+
+						for (let [key, value] of Object.entries(response)) {
+							if (value == null) {
+								hasNull = true;
+								break;
+							} 
+						}
+
+						if (hasNull) {
+							response = {
+								activityActive: '0',
+								activityInactive: '0', 
+								connectionTypeLan: '0', 
+								connectionTypeWifi: '0', 
+								screenTypeAd: '0', 
+								screenTypeClosed: '0', 
+								screenTypeMenu: '0',
+								statusOffline: '0',
+								statusOnline: '0'
+							}
+						} 
+						
+						this.statistics = response;
+
+						if (reload) this.updateCharts();
+						else this.callCharts();
+
+					},
+					error => console.log('Error retrieving license statistics by dealer', error)
+				)
+		);
+	}
+
+	private setCurrentTabOnLoad(): void {
+
+		if (this.isHostsTabOnLoad) {
+			this.current_tab = 'hosts';
+			return;
+		}
+
+		if (this.isAdvertisersTabOnLoad) {
+			this.current_tab = 'advertisers';
+			return;
+		}
+
+		this.current_tab = 'licenses';
+
+	}
+
+	private subscribeToReassignSuccess(): void {
+		this.subscription.add(
+			this._dealer.onSuccessReassigningDealer.subscribe(
+				() => this.ngOnInit(),
+				error => console.log('Error on reassign success subscription', error)
+			)
+		);
+	}
+
+	private updateCharts(): void {
+		setTimeout(() => {
+			const config = { duration: 800, easing: 'easeOutBounce' };
+			const activityChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'activityStatistics')[0];
+			const connectionChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'connectionStatistics')[0];
+			const screenChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'screenStatistics')[0];
+			const statusChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'statusStatistics')[0];
+			const { activityActive, activityInactive, connectionTypeLan, connectionTypeWifi, screenTypeAd, screenTypeClosed, screenTypeMenu, 
+				statusOffline, statusOnline } = this.statistics;
+			activityChart.data.labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
+			activityChart.data.datasets[0].data = [ parseInt(activityActive), parseInt(activityInactive) ];
+			connectionChart.data.labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
+			connectionChart.data.datasets[0].data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
+			screenChart.data.labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ];
+			screenChart.data.datasets[0].data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
+			statusChart.data.labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
+			statusChart.data.datasets[0].data = [ parseInt(statusOnline), parseInt(statusOffline) ];
+			activityChart.update(config);
+			connectionChart.update(config);
+			screenChart.update(config);
+			statusChart.update(config);
+		}, 1000);
+	}
+	
 }

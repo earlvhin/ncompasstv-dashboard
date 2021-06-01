@@ -61,7 +61,7 @@
         
         <div class="theme-container pb-5">
             <div class="row">
-                <div *ngIf="dealers; else loader_sm" class="dealer-picker col-lg-3">
+                <div class="dealer-picker col-lg-3">
                     <div class="dealer-field full-width">
                         <app-autocomplete-field
                             (data_value)="dealerSelected($event)"
@@ -85,44 +85,47 @@
                     <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
 						<!-- LICENSES TAB -->
                         <mat-tab label="Licenses">
-                            <div *ngIf="!initial_load_license; else loader">
+                            <div>
+                                <!-- PIE CHARTS -->
+                                <div class="theme-container mb-3">
+                                    <div class="row statistics">
+                                        <div class="col-sm-3">
+                                            <mat-card id="activityContainer">
+                                                <div class="spinner-wrapper">
+                                                    <mat-spinner *ngIf="loading_statistics.activity" mode="indeterminate" [diameter]="48"></mat-spinner>
+                                                </div>
+                                                <canvas id="activityStatistics" height="250px"></canvas>
+                                            </mat-card>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <mat-card id="statusContainer">
+                                                <div class="spinner-wrapper">
+                                                    <mat-spinner *ngIf="loading_statistics.status" mode="indeterminate" [diameter]="48"></mat-spinner>
+                                                </div>
+                                                <canvas id="statusStatistics" height="250px"></canvas>
+                                            </mat-card>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <mat-card id="connectionContainer">
+                                                <div class="spinner-wrapper">
+                                                    <mat-spinner *ngIf="loading_statistics.connection" mode="indeterminate" [diameter]="48"></mat-spinner>
+                                                </div>
+                                                <canvas id="connectionStatistics" height="250px"></canvas>
+                                            </mat-card>
+                                        </div>
+                                        <div class="col-sm-3">
+                                            <mat-card id="screenContainer">
+                                                <div class="spinner-wrapper">
+                                                    <mat-spinner *ngIf="loading_statistics.screen" mode="indeterminate" [diameter]="48"></mat-spinner>
+                                                </div>
+                                                <canvas id="screenStatistics" height="250px"></canvas>
+                                            </mat-card>
+                                        </div>
+                                    </div>
+                                </div>
+                                
                                 <div *ngIf="!no_licenses; else no_data">
-									<div class="theme-container mb-3">
-										<div class="row statistics">
-											<div class="col-sm-3">
-												<mat-card id="activityContainer">
-													<div class="spinner-wrapper">
-														<mat-spinner *ngIf="loading_statistics.activity" mode="indeterminate" [diameter]="48"></mat-spinner>
-													</div>
-													<canvas id="activityStatistics" height="250px"></canvas>
-												</mat-card>
-											</div>
-											<div class="col-sm-3">
-												<mat-card id="statusContainer">
-													<div class="spinner-wrapper">
-														<mat-spinner *ngIf="loading_statistics.status" mode="indeterminate" [diameter]="48"></mat-spinner>
-													</div>
-													<canvas id="statusStatistics" height="250px"></canvas>
-												</mat-card>
-											</div>
-											<div class="col-sm-3">
-												<mat-card id="connectionContainer">
-													<div class="spinner-wrapper">
-														<mat-spinner *ngIf="loading_statistics.connection" mode="indeterminate" [diameter]="48"></mat-spinner>
-													</div>
-													<canvas id="connectionStatistics" height="250px"></canvas>
-												</mat-card>
-											</div>
-											<div class="col-sm-3">
-												<mat-card id="screenContainer">
-													<div class="spinner-wrapper">
-														<mat-spinner *ngIf="loading_statistics.screen" mode="indeterminate" [diameter]="48"></mat-spinner>
-													</div>
-													<canvas id="screenStatistics" height="250px"></canvas>
-												</mat-card>
-											</div>
-										</div>
-									</div>
+                                    <!-- BUTTONS ROW -->
                                     <div class="row pt-2">
                                         <div class="col-lg-8">
                                             <!-- <button mat-button mat-raised-button class="theme-btn mt-2 mr-2" (click)="reloadLicense()" [disabled]="searching_license"> <i class="fas fa-sync-alt"></i></button> -->
@@ -247,7 +250,7 @@
                                             ></app-search-field>
                                         </div>
                                     </div>
-                                    <div class="row" *ngIf="!initial_load_license">
+                                    <div class="row" *ngIf="!initial_load_license && dealers; else loader_sm">
                                         <div class="col-lg-12">
                                             <ng-container *ngIf="!searching_license; else loader">
                                                 <mat-card *ngIf="license_filtered_data.length > 0; else no_data">
@@ -366,7 +369,6 @@
                                 </div>
                             </div>
                         </mat-tab>
-
 						
                     </mat-tab-group>
                 </div>

@@ -24,7 +24,8 @@ export class ToolsComponent implements OnInit {
 		private _dialog: MatDialog
 	) { 
 		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
+			transports: ['websocket'],
+			query: 'client=Dashboard__ToolsComponent',
 		});
 	}
 

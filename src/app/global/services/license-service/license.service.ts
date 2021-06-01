@@ -85,6 +85,10 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions)
 	}
 
+	get_statistics_by_dealer(id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.license_statistics}?dealerId=${id}`, this.httpOptions)
+	}
+
 	activate_license(id) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_activate_license}${id}`, null, this.httpOptions);
 	}

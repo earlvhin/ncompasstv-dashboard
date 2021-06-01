@@ -21,7 +21,8 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 	ngOnInit() {
 		if (this.content.fileType === 'webm' && this.content.isConverted === 0) {
 			this._socket = io(environment.socket_server, {
-				transports: ['websocket']
+				transports: ['websocket'],
+				query: 'client=Dashboard__PlaylistMediaThumbnailComponent',
 			});
 
 			this._socket.on('video_converted', data => {
