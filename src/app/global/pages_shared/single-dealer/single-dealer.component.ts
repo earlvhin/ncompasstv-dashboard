@@ -643,7 +643,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.current_tab = 'licenses';
 
 				if (!this.no_licenses && this.initial_load_charts) {
-					this.callCharts();
+					this.getLicenseStatisticsByDealer(this.dealer_id);
 				}
 
 		}
@@ -995,18 +995,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	private destroyCharts(): void {
-
 		if (this.license_statistics_charts.length <= 0) return;
-
 		this.license_statistics_charts.forEach(chart => chart.destroy());
 		this.license_statistics_charts = [];
-
-		Object.entries(Chart.instances).forEach(entries => {
-			entries.forEach((chartData: any) => {
-				chartData.destroy();
-			})
-		});
-
 	}
 
 	private generateCharts(): void {
@@ -1131,7 +1122,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 						if (reload) this.updateCharts();
 						else this.callCharts();
-						
+
 					},
 					error => console.log('Error retrieving license statistics by dealer', error)
 				)
