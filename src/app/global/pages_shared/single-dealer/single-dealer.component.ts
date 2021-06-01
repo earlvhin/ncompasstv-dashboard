@@ -462,7 +462,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.searching_license = true;
 		this.subscription.add(
 			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order).subscribe(
-				(response: { licenses, paging, statistics, message }) => {	
+				(response: { paging, statistics, message }) => {	
 
 					if (response.message) {
 						if (this.search_data_license == "") {
@@ -471,14 +471,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						this.license_data = [];
 						this.license_filtered_data = [];
 					} else {				
-						this.license_data_api = response.licenses;
+						this.license_data_api = response.paging.entities;
 						this.no_licenses = false;
 						this.license_data_api.map(
 							i => {
-								if(i.license.appVersion) {
-									i.license.apps = JSON.parse(i.license.appVersion);
+								if(i.appVersion) {
+									i.apps = JSON.parse(i.appVersion);
 								} else {
-									i.license.apps = null;
+									i.apps = null;
 								}	
 							}
 						);
@@ -572,32 +572,32 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return data.map(
 			(l: any) => {
 				const table = new UI_DEALER_LICENSE(
-					{ value: l.license.licenseId, link: null , editable: false, hidden: true, key: true, table: 'license'},
+					{ value: l.licenseId, link: null , editable: false, hidden: true, key: true, table: 'license'},
 					{ 
-						value: l.license.screenshotUrl ? `${environment.base_uri_old}${l.license.screenshotUrl.replace("/API/", "")}` : null,
-						link: l.license.screenshotUrl ? `${environment.base_uri_old}${l.license.screenshotUrl.replace("/API/", "")}` : null, 
+						value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace("/API/", "")}` : null,
+						link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace("/API/", "")}` : null, 
 						editable: false, 
 						hidden: false, 
 						isImage: true
 					},
-					{ value: l.license.licenseKey, link: '/administrator/licenses/' + l.license.licenseId, editable: false, hidden: false, status: true},
-					{ value: l.screenType && l.screenType.name ? this._titlecase.transform(l.screenType.name) : '--', editable: false, hidden: false },
-					{ value: l.host ? l.host.name : '--', link: l.host ? '/administrator/hosts/' + l.host.hostId : null, editable: false, hidden: false, business_hours: l.host ? true : false, business_hours_label: l.host ? this.getLabel(l) : null },
-					{ value: l.license.alias ? l.license.alias : '--', link: '/administrator/licenses/' + l.license.licenseId, editable: true, label: 'License Alias', id: l.license.licenseId, hidden: false },
-					{ value: l.license.contentsUpdated ? l.license.contentsUpdated : '--', label: 'Last Push', hidden: false },
-					{ value: l.license.timeIn ? this._date.transform(l.license.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
-					{ value: l.license.internetType ? this.getInternetType(l.license.internetType) : '--', link: null, editable: false, hidden: false },
-					{ value: l.license.internetSpeed ? (l.license.internetSpeed == 'Fast' ? 'Good' : l.license.internetSpeed) : '--', link: null, editable: false, hidden: false },
-					{ value: l.license.anydeskId ? l.license.anydeskId : '--', link: null, editable: false, hidden: false },
-					{ value: l.license.apps && l.license.apps.server ? l.license.apps.server : '1.0.0', link: null, editable: false, hidden: false },
-					{ value: l.license.apps && l.license.apps.ui ? l.license.apps.ui : '1.0.0', link: null, editable: false, hidden: false },
-					{ value: l.screen.screenName ? l.screen.screenName : '--', link: `/administrator/screens/${l.screen.screenId}` , editable: false },
-					{ value: l.screen.templateName ? l.screen.templateName : '--', link: null, editable: false, hidden: false },
-					{ value: l.license.installDate && !l.license.installDate.includes('Invalid') ? this._date.transform(l.license.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.license.licenseId },
-					{ value: l.license.dateCreated ? this._date.transform(l.license.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
-					{ value: l.license.isActivated, link: null , editable: false, hidden: true },
+					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, editable: false, hidden: false, status: true},
+					{ value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
+					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false, business_hours: l.host ? true : false, business_hours_label: l.host ? this.getLabel(l) : null },
+					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false },
+					{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
+					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
+					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
+					{ value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--', link: null, editable: false, hidden: false },
+					{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false },
+					{ value: l.apps && l.apps.server ? l.apps.server : '1.0.0', link: null, editable: false, hidden: false },
+					{ value: l.apps && l.apps.ui ? l.apps.ui : '1.0.0', link: null, editable: false, hidden: false },
+					{ value: l.screenName ? l.screenName : '--', link: `/administrator/screens/${l.screenId}` , editable: false },
+					{ value: l.templateName ? l.templateName : '--', link: null, editable: false, hidden: false },
+					{ value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.licenseId },
+					{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
+					{ value: l.isActivated, link: null , editable: false, hidden: true },
 					{ value: l.host ? true : false, link: null , editable: false, hidden: true },
-					{ value: l.license.piStatus, link: null , editable: false, hidden: true },
+					{ value: l.piStatus, link: null , editable: false, hidden: true },
 				);
 				return table;
 			}
