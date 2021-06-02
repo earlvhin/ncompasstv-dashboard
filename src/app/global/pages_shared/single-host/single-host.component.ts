@@ -77,7 +77,8 @@ export class SingleHostComponent implements OnInit {
 		private _titlecase: TitleCasePipe
 	) { 
 		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
+			transports: ['websocket'],
+			query: 'client=Dashboard__SingleHostComponent'
 		});
 	}
 

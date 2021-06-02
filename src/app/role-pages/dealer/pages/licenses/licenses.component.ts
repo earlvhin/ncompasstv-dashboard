@@ -126,7 +126,7 @@ export class LicensesComponent implements OnInit {
 					this.initial_load_license = false;
 					this.searching_license = false;
 					if(!data.message) {
-						this.license_data_api = data.licenses;
+						this.license_data_api = data.paging.entities;
 						this.license_data = this.licenseTable_mapToUI(this.license_data_api);
 						this.filtered_data = this.licenseTable_mapToUI(this.license_data_api);
 						this.license_filtered_data = this.licenseTable_mapToUI(this.license_data_api);
@@ -162,32 +162,31 @@ export class LicensesComponent implements OnInit {
 		let count: number = 1;
 		console.log("DATA", data)
 		return data.map(
-			
-			({ license, host, screen, screenType }) => {
+			i => {
 				return new UI_TABLE_LICENSE_BY_HOST(
-					{ value: license.licenseId, link: null , editable: false, hidden: true },
-					{ value: host ? host.hostId : '--', link: null , editable: false, hidden: true },
+					{ value: i.licenseId, link: null , editable: false, hidden: true },
+					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
 					{ value: count++, link: null , editable: false, hidden: false },
 					{ 
-						value: license.screenshotUrl ? `${environment.base_uri_old}${license.screenshotUrl.replace("/API/", "")}` : null,
-						link: license.screenshotUrl ? `${environment.base_uri_old}${license.screenshotUrl.replace("/API/", "")}` : null, 
+						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null,
+						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null, 
 						editable: false, 
 						hidden: false, 
 						isImage: true
 					},
-					{ value: license.licenseKey, link: '/dealer/licenses/' + license.licenseId, editable: false, hidden: false, status: true },
-					{ value: license.alias ? license.alias : '--', link: '/dealer/licenses/' + license.licenseId, editable: true, label: 'License Alias', id: license.licenseId, hidden: false },
-					{ value: screen.screenTypeId ? this._title.transform(screenType.name) : '--', link: null, editable:false, hidden: false },
-					{ value: host ? host.name: '--', link: host ? '/dealer/hosts/' + host.hostId : null, editable: false, hidden: false },
-					{ value: host ? (host.category ? this._title.transform(host.category) : 'None') : '--', link: null, editable: false, hidden: false },
-					{ value: license.internetType ? this.getInternetType(license.internetType) : '--', link: null, editable: false, hidden: false },
-					{ value: screen ? (screen.screenName != null ? screen.screenName : '--') : '--', link: screen ? (screen.screenId != null ? '/dealer/screens/' + screen.screenId : null) : null, editable: false, hidden: false },
-					{ value: screen && screen.templateName ? screen.templateName : '--', editable: false, hidden: false },
-					{ value: license.dateCreated ? this._date.transform(license.dateCreated) : '--', link: null, editable: false, hidden: false },
-					{ value: license.installDate ? this._date.transform(license.installDate) : '--', link: null, editable: false, hidden: false },
-					{ value: license.contentsUpdated ? this._date.transform(license.contentsUpdated) : '--', link: null, editable: false, hidden: false },
-					{ value: license.isActivated ? 'Active' : 'Inactive', link: null, editable: false, hidden: false },	
-					{ value: license.piStatus, link: null, editable: false, hidden: true },	
+					{ value: i.licenseKey, link: '/dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
+					{ value: i.alias ? i.alias : '--', link: '/dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
+					{ value: i.screenTypeId ? this._title.transform(i.screenName) : '--', link: null, editable:false, hidden: false },
+					{ value: i.hostId ? i.hostName: '--', link: i.hostId ? '/dealer/hosts/' + i.hostId : null, editable: false, hidden: false },
+					{ value: i.hostId ? (i.category ? this._title.transform(i.category) : 'None') : '--', link: null, editable: false, hidden: false },
+					{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
+					{ value: i.screenId ? (i.screenName != null ? i.screenName : '--') : '--', link: screen ? (i.screenId != null ? '/dealer/screens/' + i.screenId : null) : null, editable: false, hidden: false },
+					{ value: i.screenId && i.templateName ? i.templateName : '--', editable: false, hidden: false },
+					{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
+					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
+					{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
+					{ value: i.isActivated ? 'Active' : 'Inactive', link: null, editable: false, hidden: false },	
+					{ value: i.piStatus, link: null, editable: false, hidden: true },	
 				);
 			}
 		);
