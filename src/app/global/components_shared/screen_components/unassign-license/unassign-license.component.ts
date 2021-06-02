@@ -30,7 +30,8 @@ export class UnassignLicenseComponent implements OnInit {
 		public dialogRef: MatDialogRef<UnassignLicenseComponent>,
 	) { 
 		this._socket = io(environment.socket_server, {
-			transports: ['websocket']
+			transports: ['websocket'],
+			query: 'client=Dashboard__UnassignLicenseComponent',
 		});
 	}
 
