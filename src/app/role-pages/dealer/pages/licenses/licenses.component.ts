@@ -59,7 +59,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Screen', sortable: false, key:'screenName' },
 		{ name: 'Template', sortable: false, key:'template' },
 		{ name: 'Creation Date', sortable: false, key:'dateCreated' },
-		{ name: 'Install Date', sortable: false, key:'installDate' },
+		{ name: 'Installation Date', sortable: false, key:'installDate' },
 		{ name: 'Last Push', sortable: false, key:'contentsUpdated' },
 		{ name: 'Status', sortable: false, key:'isActivated' },
 	];

@@ -53,7 +53,7 @@ export class SingleHostComponent implements OnInit {
 		'Last Push Update',
 		'Last Online Status',
 		'Last Offline Status',
-		'Install Date'
+		'Installation Date'
 	];
 
 	lat: string;
@@ -203,7 +203,7 @@ export class SingleHostComponent implements OnInit {
 					{ value: l.contentsUpdated ? this._date.transform(l.contentsUpdated): '--', link: null , editable: false, hidden: false},
 					{ value: l.timeIn ? this._date.transform(l.timeIn): '--', link: null , editable: false, hidden: false},
 					{ value: l.timeOut ? this._date.transform(l.timeOut): '--', link: null , editable: false, hidden: false},
-					{ value: l.installDate ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.licenseId },
+					{ value: l.installDate ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Installation Date', hidden: false, id: l.licenseId },
 					{ value: l.piStatus, link: null , editable: false, hidden: true },
 				)
 			}

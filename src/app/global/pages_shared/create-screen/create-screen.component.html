@@ -227,8 +227,8 @@
                                     <div class="text-left" *ngIf="!licenses.message; else no_license">
 										<div class="licenses-heading">
 											<h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
-											<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onBulkSetInstallDate()" [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
-												Bulk Set Install Date
+											<button mat-button mat-raised-button class="col-lg-6 theme-btn flex-even mx-1" (click)="onBulkSetInstallDate()" [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
+												Bulk Set Installation Date
 												<span class="fas fa-calendar ml-2 sm-text"></span>
 											</button>
 										</div>

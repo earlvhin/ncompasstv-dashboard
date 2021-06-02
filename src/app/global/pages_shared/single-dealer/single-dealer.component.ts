@@ -159,7 +159,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'UI Version', sortable: false, key:'ui'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
 		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},		
-		{ name: 'Install Date', sortable: true, column:'InstallDate', key:'installDate'},
+		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
 
@@ -600,7 +600,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: l.license.apps && l.license.apps.ui ? l.license.apps.ui : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.screen.screenName ? l.screen.screenName : '--', link: `/administrator/screens/${l.screen.screenId}` , editable: false },
 					{ value: l.screen.templateName ? l.screen.templateName : '--', link: null, editable: false, hidden: false },
-					{ value: l.license.installDate && !l.license.installDate.includes('Invalid') ? this._date.transform(l.license.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.license.licenseId },
+					{ value: l.license.installDate && !l.license.installDate.includes('Invalid') ? this._date.transform(l.license.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Installation Date', hidden: false, id: l.license.licenseId },
 					{ value: l.license.dateCreated ? this._date.transform(l.license.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 					{ value: l.license.isActivated, link: null , editable: false, hidden: true },
 					{ value: l.host ? true : false, link: null , editable: false, hidden: true },
@@ -613,8 +613,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	getLabel(data) {
 		this.now = moment().format('d');
-		this.now = this.now - 1;
+		this.now = this.now;
 		var storehours = JSON.parse(data.host.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
 		var modified_label = {
 			date : moment().format('LL'),
 			address: data.host.address,
