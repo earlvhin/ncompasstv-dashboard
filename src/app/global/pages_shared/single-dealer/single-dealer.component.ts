@@ -239,7 +239,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-
 		this.subscription.add(
 			this.canvasses.changes.pipe(take(1)).subscribe(
 				() => {
@@ -253,7 +252,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				error => console.log('Error on canvas subscription', error)
 			)
 		);
-
 	}
 
 	ngOnDestroy() {
@@ -263,13 +261,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	callCharts(): void {
-
 		setTimeout(() => {
 			this.generateCharts();
 			this._change_detector.detectChanges();
 
 		}, 1000);
-
 	}
 
 	activateLicense(e): void {
@@ -788,6 +784,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getLicenseTotalCount(this.dealer_id);
 		this.getLicensesofDealer(1);
 		this.getLicenseStatisticsByDealer(this.dealer_id, true);
+
+		if (this.licenses) {
+			this.resyncSocketConnection();
+		}
 	}
 
 	updateAndRestart(): void {
@@ -883,10 +883,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._license.get_license_to_export(this.dealer_id).subscribe(
 				data => {
-					// console.log('getDealerLicenses', data);
 					this.licenses = data.licenses;
+					this.resyncSocketConnection();
 				}
 			)
+		)
+	}
+
+	resyncSocketConnection() {
+		this.licenses.forEach(
+			i => {
+				this._socket.emit('D_resync', i.licenseId);
+			}
 		)
 	}
 
@@ -1177,5 +1185,4 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			statusChart.update(config);
 		}, 1000);
 	}
-	
 }
