@@ -49,12 +49,13 @@ export class AssignLicenseModalComponent implements OnInit {
 		this.subscription.add(
 			this._license.get_license_by_dealer_id(this._dialog_data.dealer_id, page, '', 'online').subscribe(
 				data => {
+                    console.log("DATA", data)
 					// Save page count returned from API
 					if(!data.message) {
 						const page_count = data.paging.pages;
 
 						// available_licenses - are filtered licenses returned from API where hostId is null 
-						const available_licenses = data.licenses.filter(i => i.host === null);
+						const available_licenses = data.paging.entities.filter(i => i.hostId === null);
 						
 						// If "available_licenses" is more than 0, loop thru it then store
 						// each of its items to "licenses" array which is being used on the html side
@@ -78,7 +79,7 @@ export class AssignLicenseModalComponent implements OnInit {
 							// meaning there's no available license with host == null
 							this.no_available_licenses = this.licenses.length > 0 ? false : true;
 						}
-						console.log('current_page:',page, 'returned_licenses:',data.licenses.length, 'unassigned_found:',available_licenses.length);
+						// console.log('current_page:',page, 'returned_licenses:',data.paging.entitites.length, 'unassigned_found:',available_licenses.length);
 					} else {
 						this.no_available_licenses = true;
 					}
