@@ -97,7 +97,8 @@ export const API_ENDPOINTS = {
 		export_dealers: 'dealer/ExportDealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
-		license_statistics: 'license/GetStatisticsByDealerId'
+		license_statistics: 'license/GetStatisticsByDealerId',
+		license_statistics_by_install_date: 'license/GetLicenseStatisticsByInstallDate?installDate='
 	},
 	create: {
 		api_new_admin: 'admin/create',
