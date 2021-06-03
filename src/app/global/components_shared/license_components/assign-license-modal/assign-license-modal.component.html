@@ -6,7 +6,7 @@
                 <p class="sm-text mb-4">Check the licenses you wish to assign.</p>
                 <ul class="list-unstyled text-left license-list">
                     <li *ngFor="let l of licenses; let i = index" class="mb-2">
-                        <mat-checkbox (change)="licenseAssigned(l.license.licenseId, $event)">
+                        <mat-checkbox (change)="licenseAssigned(l.licenseId, $event)">
                             <span class="xsm-text mr-2">{{ i + 1 }}</span>
                             <strong class="sm-text">
                                 {{ l.alias || l.licenseKey }}
