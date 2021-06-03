@@ -41,8 +41,8 @@ export class LicensesComponent implements OnInit {
   	licenses_status: any;
 	search_data_license: string = "";
 	searching_license: boolean = false;
-	sort_column: string = "PiStatus";
-	sort_order: string = "desc";
+	sort_column: string;
+	sort_order: string;
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
@@ -50,18 +50,18 @@ export class LicensesComponent implements OnInit {
 	license_table_columns = [
 		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
-		{ name: 'License Key', sortable: false, key: 'licenseKey' },
-		{ name: 'Alias', sortable: false, key: 'alias' },
-		{ name: 'Type', sortable: false, key: 'screenType' },
-		{ name: 'Host', sortable: false, key: 'hostName' },
-		{ name: 'Category', sortable: false, key: 'category' },
-		{ name: 'Connection Type', sortable: false, key:'internetType' },
-		{ name: 'Screen', sortable: false, key:'screenName' },
-		{ name: 'Template', sortable: false, key:'template' },
-		{ name: 'Creation Date', sortable: false, key:'dateCreated' },
-		{ name: 'Installation Date', sortable: false, key:'installDate' },
-		{ name: 'Last Push', sortable: false, key:'contentsUpdated' },
-		{ name: 'Status', sortable: false, key:'isActivated' },
+		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey'},
+		{ name: 'Alias', sortable: true, key: 'alias', column:'Alias' },
+		{ name: 'Type', sortable: true, key: 'screenType', column:'ScreenType'},
+		{ name: 'Host', sortable: true, key: 'hostName', column:'HostName' },
+		{ name: 'Category', sortable: true, key: 'category', column:'Category'},
+		{ name: 'Connection Type', sortable: true, key:'internetType', column: 'InternetType'},
+		{ name: 'Screen', sortable: true, key:'screenName', column:'ScreenName' },
+		{ name: 'Template', sortable: true, key:'template', column: 'TemplateName' },
+		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated' },
+		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate' },
+		{ name: 'Last Push', sortable: true, key:'contentsUpdated', column:'ContentsUpdated' },
+		{ name: 'Status', sortable: true, key:'isActivated', column:'IsActivated' },
 	];
 
 	constructor(
@@ -74,6 +74,7 @@ export class LicensesComponent implements OnInit {
 
 	ngOnInit() {
 		this.dealers_name = this._auth.current_user_value.roleInfo.businessName;
+        this.sortList('desc')
 		this.getLicenses(1);
 		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
 	}
@@ -125,6 +126,7 @@ export class LicensesComponent implements OnInit {
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
+                    this.paging_data_license = data.paging;
 					if(!data.message) {
 						this.license_data_api = data.paging.entities;
 						this.license_data = this.licenseTable_mapToUI(this.license_data_api);
@@ -137,7 +139,6 @@ export class LicensesComponent implements OnInit {
 						this.license_data=[];
 						this.license_filtered_data = [];
 					}
-					this.paging_data_license = data.paging;
 				}
 			)
 		)
@@ -154,9 +155,20 @@ export class LicensesComponent implements OnInit {
 	}
 
 	sortList(order): void {
-		this.sort_order = order;
+		var filter = {
+			column: 'PiStatus',
+			order: order
+		}
+		this.getColumnsAndOrder(filter)
+	}
+
+    getColumnsAndOrder(data) {
+        console.log("DD", data)
+		this.sort_column = data.column;
+		this.sort_order = data.order;
 		this.getLicenses(1);
 	}
+
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
 		let count: number = 1;
@@ -166,7 +178,7 @@ export class LicensesComponent implements OnInit {
 				return new UI_TABLE_LICENSE_BY_HOST(
 					{ value: i.licenseId, link: null , editable: false, hidden: true },
 					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false },
+					{ value: this.getIndexCount(count++, this.paging_data_license.pageSize, this.paging_data_license.page), link: null , editable: false, hidden: false },
 					{ 
 						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null,
 						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null, 
@@ -191,6 +203,18 @@ export class LicensesComponent implements OnInit {
 			}
 		);
 	}
+
+    getIndexCount(num, size, page) {
+        if(page > 1) {
+            let count: number = size;
+           for (var i = 0 ; i < page; i++) {
+               count = count + size;
+           }
+           return count++; 
+        } else {
+            return num;
+        }
+    }
 
 	openGenerateLicenseModal(): void {
 		this._dialog.open(LicenseModalComponent, {

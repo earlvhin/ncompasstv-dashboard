@@ -423,6 +423,7 @@ export class DataTableComponent implements OnInit {
 		// console.log("ACTIVE TAB", this.active_tab)
 		// this.sortColumn = column;
 		// this.sortOrder = order;
+        console.log(column, order)
 		var filter = {
 			column: column,
 			order: order
