@@ -585,7 +585,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					},
 					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
-					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false, business_hours: l.host ? true : false, business_hours_label: l.host ? this.getLabel(l) : null },
+					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false, business_hours: l.hostId ? true : false, business_hours_label: l.hostId ? this.getLabel(l) : null },
 					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false },
 					{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
@@ -610,10 +610,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getLabel(data) {
 		this.now = moment().format('d');
 		this.now = this.now - 1;
-		var storehours = JSON.parse(data.host.storeHours)
+		var storehours = JSON.parse(data.storeHours)
 		var modified_label = {
 			date : moment().format('LL'),
-			address: data.host.address,
+			address: data.hostAddress,
 			schedule: storehours[this.now] && storehours[this.now].status ? (
 				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
 				? "Open 24 Hours" : storehours[this.now].periods.map(
