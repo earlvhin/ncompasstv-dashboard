@@ -6,11 +6,11 @@
 			</div>
 			<div class="flex-even text-right">
 				<form [formGroup]="form">
-					<mat-form-field appearance="fill" monthDayFormat>
+					<mat-form-field appearance="fill" appDefaultDateFormat>
 						<mat-label>Current / Selected Date</mat-label>
-						<input formControlName="date" matInput [matDatepicker]="datePicker" readonly>
+						<input formControlName="date" (dateInput)="onSelectDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
 						<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-						<mat-datepicker #datePicker startView="year" (monthSelected)="onSelectDate($event)"></mat-datepicker>
+						<mat-datepicker #datePicker></mat-datepicker>
 					</mat-form-field>
 				</form>
 			</div>

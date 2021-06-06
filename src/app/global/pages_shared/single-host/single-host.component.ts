@@ -47,13 +47,14 @@ export class SingleHostComponent implements OnInit {
 		'License Key',
 		'License Alias',
 		'Type',
+        'Screen',
 		'Mac Address',
 		'Internet Type',
 		'Internet Speed',
 		'Last Push Update',
 		'Last Online Status',
 		'Last Offline Status',
-		'Install Date'
+		'Installation Date'
 	];
 
 	lat: string;
@@ -198,13 +199,14 @@ export class SingleHostComponent implements OnInit {
 					{ value: l.licenseKey, link: `/${route}/licenses/` + l.licenseId, editable: false, hidden: false, status: true},
 					{ value: l.alias ? l.alias : '--', link: `/${route}/licenses/` + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false},
 					{ value: l.screenTypeId != null ? this._titlecase.transform(l.screenTypeName) : '--', link: null , editable: false, hidden: false},
+					{ value: l.screenId != null ? this._titlecase.transform(l.screenName) : '--', link: l.screenId != null ? `/${route}/screens/` + l.screenId : null , editable: false, hidden: false},
 					{ value: l.macAddress ? this._allcaps.transform(l.macAddress) : '--', link: null , editable: false, hidden: false},
 					{ value: l.internetType ? l.internetType : '--', link: null , editable: false, hidden: false},
 					{ value: l.internetSpeed ? l.internetSpeed: '--', link: null , editable: false, hidden: false},	
 					{ value: l.contentsUpdated ? this._date.transform(l.contentsUpdated): '--', link: null , editable: false, hidden: false},
 					{ value: l.timeIn ? this._date.transform(l.timeIn): '--', link: null , editable: false, hidden: false},
 					{ value: l.timeOut ? this._date.transform(l.timeOut): '--', link: null , editable: false, hidden: false},
-					{ value: l.installDate ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.licenseId },
+					{ value: l.installDate ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Installation Date', hidden: false, id: l.licenseId },
 					{ value: l.piStatus, link: null , editable: false, hidden: true },
 				)
 			}

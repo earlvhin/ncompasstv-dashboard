@@ -161,7 +161,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'UI Version', sortable: false, key:'ui'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
 		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},		
-		{ name: 'Install Date', sortable: true, column:'InstallDate', key:'installDate'},
+		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
 
@@ -610,11 +610,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	getLabel(data) {
 		this.now = moment().format('d');
-		this.now = this.now - 1;
-		var storehours = JSON.parse(data.storeHours)
+		this.now = this.now;
+        var storehours = JSON.parse(data.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
 		var modified_label = {
 			date : moment().format('LL'),
-			address: data.address,
+			address: data.hostAddress,
 			schedule: storehours[this.now] && storehours[this.now].status ? (
 				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
 				? "Open 24 Hours" : storehours[this.now].periods.map(
@@ -785,6 +786,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getLicenseTotalCount(this.dealer_id);
 		this.getLicensesofDealer(1);
 		this.getLicenseStatisticsByDealer(this.dealer_id, true);
+
+		if (this.licenses) {
+			this.resyncSocketConnection();
+		}
 	}
 
 	updateAndRestart(): void {
@@ -888,8 +893,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				data => {
 					// console.log('getDealerLicenses', data);
 					this.licenses = data.licenses;
+					this.resyncSocketConnection();
 				}
 			)
+		)
+	}
+
+	resyncSocketConnection() {
+		this.licenses.forEach(
+			i => {
+				this._socket.emit('D_resync', i.licenseId);
+			}
 		)
 	}
 

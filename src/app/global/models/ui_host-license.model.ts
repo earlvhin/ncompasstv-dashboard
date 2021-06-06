@@ -4,6 +4,7 @@ export class UI_HOST_LICENSE {
     license_key: object;
     alias: object;
     type: object;
+    screen: object;
     mac_address: object;
     internet_type: object;
     internet_speed: object;
@@ -14,7 +15,7 @@ export class UI_HOST_LICENSE {
 	install_date: object;
 
     constructor(
-        license_id: object, index: object, license_key: object, alias: object, type: object, mac_address: object, 
+        license_id: object, index: object, license_key: object, alias: object, type: object, screen: object, mac_address: object, 
 		internet_type: object, internet_speed: object, last_push_update: object, online_status: object, offline_status: object,
 		install_date: object, pi_status: object, 
     ) {
@@ -23,6 +24,7 @@ export class UI_HOST_LICENSE {
         this.license_key = license_key;
         this.alias = alias;
         this.type = type;
+        this.screen = screen;
         this. mac_address = mac_address;
         this.internet_type = internet_type;
         this.internet_speed = internet_speed;
