@@ -61,6 +61,10 @@ export class HostService {
 	get_host_by_dealer_id(id, page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
+
+    get_host_by_dealer_id_with_sort(id, page, key, column, order) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_id_optimized}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+	}
 	
 	get_host_for_dealer_id(id) {
 		return this._http.get<API_HOST[]>(`${environment.base_uri}${environment.getters.api_get_host_for_dealer}${id}`, this.httpOptions);

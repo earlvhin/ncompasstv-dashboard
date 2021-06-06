@@ -47,6 +47,7 @@ export const API_ENDPOINTS = {
 		api_get_host_total: 'host/gettotal',
 		api_get_host_total_per_dealer: 'host/gettotal?dealerid=',
 		api_get_host_by_id: 'host/getbyid?hostid=',
+		api_get_host_by_id_optimized: 'host/getbydealerwithtotal?dealerid=',
 		api_get_host_report: 'host/getaddedreport',
 		api_get_hosts: 'host/getall',
 		api_get_licenses: 'license/getall',

@@ -319,7 +319,11 @@
                                                     [table_data]="host_filtered_data"
                                                     [new_table]="true"
                                                     [paging_details]="paging_data"
-                                                    (page_triggered)="getDealerHost($event)">
+                                                    (page_triggered)="getDealerHost($event)"
+                                                    (to_sort_column)="getHostsColumnsAndOrder($event)"
+                                                    [active_tab]="sort_column_hosts"
+                                                    [sort_column]="sort_column_hosts"
+                                                    [sort_order]="sort_order_hosts">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
