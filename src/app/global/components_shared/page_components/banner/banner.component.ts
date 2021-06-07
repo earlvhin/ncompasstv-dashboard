@@ -26,6 +26,7 @@ export class BannerComponent implements OnInit {
 	@Input() dealer_data: any;
 	@Input() host_data: any;
 	@Input() advertiser_data: any;
+    @Input() refresh_banner: boolean;
 	@Input() single_host_data: any;
 	@Input() single_advertiser: any;
 	@Input() single_host_controls: boolean;
@@ -53,35 +54,30 @@ export class BannerComponent implements OnInit {
 
 	ngOnInit() {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-
 		if (this.host_data && this.host_data.host) {
 			this.category = this._titlecase.transform(this.host_data.host.category);
-				
 			if (this.host_data.host.storeHours) {
 				this.business_hours = JSON.parse(this.host_data.host.storeHours);
-
 				for (let i = 0; i < this.business_hours.length; i++) {
 
 					if (this.business_hours[i].periods.length > 0) {
 						this.count = this.count + 1;
 					}
 				}
-
 				if (this.count == 0) {
 					this.business_hours = null;
 				}
-
 				this.setCurrentBusinessDay();
-
 			}
-
 		} else if(this.advertiser_data) {
 			this.category = this._titlecase.transform(this.advertiser_data.category);
 		}
+	}
 
-		// To avoid this.now == -1
-		// this.now = new Date().getDay() - 1 > 0  ? new Date().getDay() - 1 : new Date().getDay();
-		// console.log('#BUSINESS_HOURS', this.business_hours, this.now)
+    ngOnChanges() {
+		if(this.refresh_banner) {
+			this.ngOnInit();
+		}
 	}
 
 	checkRoute (id1, id2) {
@@ -181,31 +177,23 @@ export class BannerComponent implements OnInit {
 	}
 
 	private setCurrentBusinessDay(): void {
-
 		if (!this.business_hours) {
 			this.current_business_day = 'CLOSED';
 			return;
 		}
-
 		const hostData = this.host_data;
 		const businessHours: any[] = this.business_hours;
 		this.current_business_day = this.now;
-		// this.current_business_day = moment.tz(hostData.timezone.name).format('dddd');
 		this.current_business_day = moment().format('dddd');
-
 		businessHours.forEach(
 			operation => {
 				let period = '';
-
 				if (operation.day === this.current_business_day) {
-
 					if (!operation.periods || !operation.status) period = 'CLOSED';
-
 					else {
 						if (!operation.periods[0].open && !operation.periods[0].close) period = 'Open 24 hours';
 						else period = `${operation.periods[0].open} - ${operation.periods[0].close}`;
 					}
-					
 					this.current_operations = { day: this.current_business_day, period };
 				}
 
@@ -213,5 +201,4 @@ export class BannerComponent implements OnInit {
 		);
 
 	}
-
 }
