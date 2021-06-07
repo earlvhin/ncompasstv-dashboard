@@ -902,7 +902,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	resyncSocketConnection() {
 		this.licenses.forEach(
 			i => {
-				this._socket.emit('D_resync', i.licenseId);
+				this._socket.emit('D_is_electron_running', i.licenseId);
 			}
 		)
 	}
