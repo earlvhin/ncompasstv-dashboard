@@ -28,6 +28,7 @@ export const API_ENDPOINTS = {
 		api_get_content_daily_count_by_license: 'contentplays/getdailytotalbylicense',
 		api_get_content_by_license_zone: 'content/getcontentbylicenseid?licenseid=',
 		api_get_content_hourly_by_license: 'contentplayshourly/getdailytotalbylicense',
+		api_get_content_playing_where: 'content/getplayingwherebycontentsid',
 		api_get_content_total: 'content/gettotal',
 		api_get_content_total_by_dealer: 'content/gettotal?dealerid=',
 		api_get_dealer_by_id: 'dealer/getbyid?dealer_id=',
