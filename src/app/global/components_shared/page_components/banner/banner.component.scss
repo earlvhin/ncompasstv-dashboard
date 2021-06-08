@@ -16,6 +16,22 @@
         }
     }
 
+	.status {
+		margin-left: 15px;
+		font-size: 12px;
+		color: #ffffff;
+		border-radius: 5px;
+		padding: 2px 4px;
+
+		&.active {
+			background-color: #8EC641;
+		}
+
+		&.inactive {
+			background-color: red;
+		}
+	}
+
     .settings-btn {
         background-color: transparent;
         border: none;

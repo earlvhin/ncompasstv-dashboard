@@ -2,13 +2,13 @@ import { DatePipe, Location, TitleCasePipe } from '@angular/common'
 import { ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { take } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as io from 'socket.io-client';
+import { take } from 'rxjs/operators';
 
 import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
 import { API_DEALER } from '../../models/api_dealer.model';
@@ -28,6 +28,7 @@ import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { HelperService } from '../../services/helper-service/helper.service';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -167,6 +168,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
 		public _router: Router,
 		private _advertiser: AdvertiserService,
@@ -264,6 +267,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.unsubscribe();
 		this.destroyCharts();
 		this._socket.disconnect();
+		this._unsubscribe.next();
+        this._unsubscribe.complete();
 	}
 
 	callCharts(): void {
@@ -439,7 +444,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._user.get_user_alldata_by_id(id).subscribe(
 				data =>  {
-					this.dealer_user_data = Object.assign({},data.user, data.dealer[0]),
+					this.dealer_user_data = Object.assign({},data.user, data.dealer[0]);
 					this.loaded = true;
 				},
 				error => console.log('Error retrieving dealer user data', error)
@@ -698,22 +703,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	async dealerSelected(id: string): Promise<void> {
-		// this.destroyCharts();
-		// this.loading_statistics = { activity: true, status: true, connection: true, screen: true };
-
-		// this.subscription.add(
-		// 	this._dealer.get_dealer_by_id(e).subscribe(
-		// 		data => {
-		// 			this.dealer_id = data.dealerId;
-		// 			this.dealer_name = data.businessName;
-		// 			this.from_change = true;
-		// 			this.loaded = false;
-		// 			this.ngOnInit();
-		// 		}
-		// 	)
-		// )
-		// this.initial_load = true;
-
 		await this._router.navigate([`/${this.current_role}/dealers/${id}`]);
 		this.getLicenseStatisticsByDealer(id, true);
 	}

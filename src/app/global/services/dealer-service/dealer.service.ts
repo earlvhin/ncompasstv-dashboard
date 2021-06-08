@@ -103,8 +103,27 @@ export class DealerService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_dealer}`, data, this.httpOptions);
 	}
 
+	update_status(id: string, status: string) {
+		const requestUrl = `${this.baseUri}${this.update.dealer_status}`;
+		const data = { dealerId: id, status };
+		const options = {
+			headers: new HttpHeaders({ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}`}),
+			responseType: 'text' as 'json'
+		};
+		return this._http.post(requestUrl, data, options);
+
+	}
+
 	reassign_dealer(old_id: string, new_id: string) {
 		const data = { oldDealerId: old_id, newDealerId: new_id };
 		return this._http.post(`${environment.base_uri}${environment.update.reassign_dealer}`, data, this.httpOptions);
+	}
+
+	protected get baseUri() {
+		return `${environment.base_uri}`;
+	}
+
+	protected get update() {
+		return environment.update;
 	}
 }
