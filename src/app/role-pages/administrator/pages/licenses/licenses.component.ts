@@ -104,7 +104,8 @@ export class LicensesComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealers_with_license(e, this.search_data).subscribe(
 				data => {
-					if (data.dealers) {
+                    this.paging_data = data.paging;
+                    if (data.dealers) {
 						this.dealers_data = this.dealers_mapToUIFormat(data.dealers);
 						this.filtered_data = this.dealers_mapToUIFormat(data.dealers);
 					} else {
@@ -113,7 +114,6 @@ export class LicensesComponent implements OnInit {
 						}
 						this.filtered_data = [];
 					}
-					this.paging_data = data.paging;
 					this.initial_load = false;
 					this.searching = false;
 				}
@@ -122,7 +122,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	dealers_mapToUIFormat(data): UI_TABLE_LICENSE_BY_DEALER[] {
-		let count: number = 1;
+		let count = this.paging_data.pageStart;
 		return data.filter(
 			i => i.licenses.length > 0
 		).map(

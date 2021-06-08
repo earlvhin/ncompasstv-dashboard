@@ -147,6 +147,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	];
 
 	license_table_columns = [
+		{ name: '#', sortable: false, no_export: true},
+        { name: null, sortable: false, no_export: true, hidden: true},
 		{ name: 'Screenshot', sortable: false, no_export: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
@@ -316,7 +318,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	advertiser_mapToUI(data: any[]): DEALER_UI_TABLE_ADVERTISERS[] {
-		let count = 1;
+		let count = this.paging_data_advertiser.pageStart;
 		return data.map(
 			i => {
 				return new DEALER_UI_TABLE_ADVERTISERS(
@@ -367,7 +369,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
-
+                    this.paging_data_advertiser = data.paging;
 					if (!data.message) {
 						this.advertiser_data = this.advertiser_mapToUI(data.advertisers);
 						this.advertiser_filtered_data = this.advertiser_mapToUI(data.advertisers);
@@ -379,8 +381,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						this.advertiser_data=[];
 						this.advertiser_filtered_data = [];
 					}
-
-					this.paging_data_advertiser = data.paging;
 				},
 				error => console.log('Error retrieving advertisers by dealer', error)
 			)
@@ -398,6 +398,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.initial_load = false;
 					this.searching = false;
                     this.temp_array = data.paging.entities;
+                    this.paging_data = data.paging;
 					if(!data.message) {
 						this.host_data = this.hostTable_mapToUI(this.temp_array);
 						this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
@@ -409,7 +410,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						this.host_data=[];
 						this.host_filtered_data = [];
 					}
-					this.paging_data = data.paging;
+					
 				},
 				error => console.log('Error retrieving dealer host', error)
 			)
@@ -488,11 +489,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 								}	
 							}
 						);
-
+                        this.paging_data_license = response.paging;
 						const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
 						this.license_data = mappedLicenses;
 						this.license_filtered_data = mappedLicenses;
-						this.paging_data_license = response.paging;
+						
 					}
 
 					this.initial_load_license = false;
@@ -543,7 +544,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	hostTable_mapToUI(data: any[]): UI_DEALER_HOST[] {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			(h: any) => {
 				return new UI_DEALER_HOST(
@@ -572,10 +573,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
-		let count = 1;
+		let count = this.paging_data_license.pageStart;
 		return data.map(
 			(l: any) => {
 				const table = new UI_DEALER_LICENSE(
+                    { value: count++, link: null , editable: false, hidden: false},
 					{ value: l.licenseId, link: null , editable: false, hidden: true, key: true, table: 'license'},
 					{ 
 						value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace("/API/", "")}` : null,

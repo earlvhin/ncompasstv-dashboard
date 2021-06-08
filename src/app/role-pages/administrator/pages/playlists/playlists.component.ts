@@ -72,6 +72,7 @@ export class PlaylistsComponent implements OnInit {
 			this._playlist.get_all_playlists(page, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
 					this.initial_load = false;
+                    this.paging_data = data.paging;
 					if (data.paging.entities.length > 0) {
 						this.playlist_data = this.playlist_mapToUI(data.paging.entities)
 						this.filtered_data = this.playlist_mapToUI(data.paging.entities)
@@ -83,7 +84,6 @@ export class PlaylistsComponent implements OnInit {
 							this.no_playlist = true;
 						}
 					}
-					this.paging_data = data.paging;
 					this.searching = false;
 				}
 			)
@@ -120,7 +120,7 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	playlist_mapToUI(data) {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			p => {
 				return new UI_TABLE_PLAYLIST(

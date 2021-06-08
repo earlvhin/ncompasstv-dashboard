@@ -57,9 +57,9 @@ export class UsersComponent implements OnInit {
 			this._user.get_users_by_page(e, this.search_data).subscribe(
 				data => {
 					if(data.users) {
-						this.users = this.mapToUIFormat(data.users);
-						this.filtered_data = this.mapToUIFormat(data.users);
 						this.paging_data = data.paging;
+                        this.users = this.mapToUIFormat(data.users);
+						this.filtered_data = this.mapToUIFormat(data.users);
 					} else {
 						if(this.search_data == "") {
 							this.no_user = true;
@@ -80,7 +80,6 @@ export class UsersComponent implements OnInit {
 		this.subscription.add(
 			this._user.get_user_total().subscribe(
 				data => {
-					console.log("TOTAL", data)
 					this.user_details = {
 						basis: data.totalUsers,
 						basis_label: 'User(s)',
@@ -95,7 +94,6 @@ export class UsersComponent implements OnInit {
 						total_tech: data.totalTech,
 						total_tech_label: 'Tech(s)'
 					}
-					console.log("UTOTAL", data)
 				}
 			)
 		)
@@ -112,8 +110,7 @@ export class UsersComponent implements OnInit {
 	}
 
 	mapToUIFormat(data) {
-		console.log('users', data);
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			u => {
 				return new UI_TABLE_USERS(

@@ -91,6 +91,7 @@ export class ScreensComponent implements OnInit {
 		this.screens = [];
 		this._screen.get_screens(e, this.search_data,  this.sort_column, this.sort_order).subscribe(
 			data => {
+                this.paging_data = data.paging;
 				if (data.paging.entities) {
 					this.screens = this.screen_mapToUI(data.paging.entities);
 					this.filtered_data = this.screen_mapToUI(data.paging.entities);
@@ -101,7 +102,6 @@ export class ScreensComponent implements OnInit {
 					this.filtered_data = []
 				}
 				this.initial_load = false;
-				this.paging_data = data.paging;
 				this.searching = false;
 			}
 		)
@@ -114,7 +114,7 @@ export class ScreensComponent implements OnInit {
 	}
 
 	screen_mapToUI(data) {
-		let counter = 1;
+		let counter = this.paging_data.pageStart;
 		return data.map(
 			s => {
 				return new UI_TABLE_SCREEN (
