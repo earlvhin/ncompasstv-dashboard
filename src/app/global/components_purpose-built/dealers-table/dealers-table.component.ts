@@ -73,6 +73,7 @@ export class DealersTableComponent implements OnInit {
 			this._dealer.get_dealers_with_sort(e, this.search_data, this.sortColumn, this.sortOrder, this.selected_filter.filter_column, this.selected_filter.min_value, this.selected_filter.max_value).subscribe(
 				data => {
 					this.initial_load = false;
+                    this.paging_data = data.paging;
 					if (data.dealers) {
 						this.dealers_data = this.mapToUIFormat(data.dealers);
 						this.filtered_data = this.mapToUIFormat(data.dealers);
@@ -80,7 +81,6 @@ export class DealersTableComponent implements OnInit {
 						this.no_dealer = true;
 						this.filtered_data = [];
 					}
-					this.paging_data = data.paging;
 					this.searching = false;
 				}
 			)
@@ -102,6 +102,7 @@ export class DealersTableComponent implements OnInit {
 	}
 
 	mapToUIFormat(data): UI_TABLE_DEALERS[] {
+        let count = this.paging_data.pageStart;
 		return data.map(
 			dealer => {
 				
@@ -109,6 +110,7 @@ export class DealersTableComponent implements OnInit {
 				// let inactive_count = (dealer.licenses.length - dealer.licenses.filter(i => i.hostId == null).length) -  dealer.licenses.filter(i => i.piStatus == 1).length;
 				
 				return new UI_TABLE_DEALERS(
+                    count++,
 					dealer.dealerId,
 					dealer.userId,
 					dealer.dealerIdAlias ? dealer.dealerIdAlias : '--',

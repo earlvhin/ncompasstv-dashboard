@@ -99,6 +99,7 @@ export class FeedsComponent implements OnInit {
 				data => {
 					this.initial_load = false;
 					this.searching = false;
+                    this.paging_data = data.paging;
 					if(!data.message) {
 						this.feed_data = this.feeds_mapToUIFormat(data.cFeeds);
 						this.filtered_data = this.feeds_mapToUIFormat(data.cFeeds);
@@ -108,9 +109,7 @@ export class FeedsComponent implements OnInit {
 						}
 						this.feed_data=[];
 						this.filtered_data = [];
-					}
-					this.paging_data = data.paging;
-					
+					}					
 				},	
 				error => {
 					console.log('#getFeeds', error);
@@ -130,7 +129,7 @@ export class FeedsComponent implements OnInit {
 	}
 
 	feeds_mapToUIFormat(data) {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			i => {
 				return new UI_TABLE_FEED(
