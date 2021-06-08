@@ -420,7 +420,12 @@ export class EditSingleHostComponent implements OnInit {
 							() => {
 								console.log('Host Deleted');
 								this._dialogRef.close('delete-host');
-								this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
+                                if(!this.is_dealer) {
+                                    this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
+                                } else {
+                                    this._router.navigate([`/${route}/hosts`]);
+                                }
+								
 							},
 							error => console.log('Error deleting host', error)
 						)

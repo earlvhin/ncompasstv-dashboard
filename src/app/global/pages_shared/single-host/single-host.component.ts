@@ -121,6 +121,7 @@ export class SingleHostComponent implements OnInit {
 		);
 
 		if (!this.business_hours_update_sub) this.subscribeToBusinessHoursUpdate();
+        console.log("CALLED")
 	}
 
 	ngOnDestroy() {

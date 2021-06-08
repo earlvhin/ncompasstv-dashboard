@@ -4,6 +4,9 @@ import { DatePipe } from '@angular/common';
 import { ContentService } from '../../services/content-service/content.service';
 import { Subscription, Observable } from 'rxjs';
 import { API_CONTENT, API_CONTENT_PLAY_COUNT } from '../../models/api_content.model';
+import { UI_PLAYINGWHERE_CONTENT } from 'src/app/global/models/ui_content.model';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-single-content',
@@ -28,6 +31,7 @@ export class SingleContentComponent implements OnInit {
 	content_yearly_count_label: Array<string> = [];
 	content_yearly_count_value: Array<number> = [];
 	
+    playing_where: any = [];
 	subscription: Subscription = new Subscription;
 	realtime_data: EventEmitter<any> = new EventEmitter();
 	current_date: string = this._date.transform(new Date(), 'y-MMM-dd');
@@ -37,10 +41,17 @@ export class SingleContentComponent implements OnInit {
 	yearly_chart_updating: boolean = true;
 	monthly_chart_updating: boolean = true;
 
+    playing_where_columns = [
+		'#',
+		'License Alias',
+        'Screen Name'
+    ]
+
 	constructor(
 		private _content: ContentService,
 		private _date: DatePipe,
-		private _params: ActivatedRoute
+		private _params: ActivatedRoute,
+        private _auth: AuthService,
 	) { }
 
 	ngOnInit() {
@@ -66,6 +77,7 @@ export class SingleContentComponent implements OnInit {
 					this.getDailyStats(this.content_id, this.current_date);
 					this.getYearlyStats(this.content_id, this.current_date);
 					this.getContentInfo(this.content_id);
+					this.getPlayWhere(this.content_id);
 				},
 				error => {
 					console.log(error)
@@ -73,6 +85,32 @@ export class SingleContentComponent implements OnInit {
 			)
 		)
 	}
+
+    getPlayWhere(id) {
+        this.subscription.add(
+			this._content.get_contents_playing_where(id).subscribe(
+                data => {
+                    this.playing_where = this.playwhere_mapToUI(data.licenses);
+                }
+            )
+        )
+    }
+
+    playwhere_mapToUI(data): any[] {
+        let count: number = 1;
+        const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		return data.map(
+            i => {
+				return new UI_PLAYINGWHERE_CONTENT(
+					{ value: i.licenseId, link: null , editable: false, hidden: true },
+                    { value: count++, link: null , editable: false, hidden: false},
+					{ value: i.licenseAlias ? i.licenseAlias : i.licenseId, link: i.licenseId ? `/${route}/licenses/` +  i.licenseId : null , hidden: false },
+					{ value: i.screenId ? i.screenId : '--', link: null , hidden: true },
+					{ value: i.screenName ? i.screenName : '--', link: i.licenseId ? `/${route}/screens/` +  i.screenId : null , hidden: false },
+                )
+                }
+        )
+    }
 
 	getMonthlyStats(content_id, date) {
 		let monthly_stat = {
@@ -124,5 +162,14 @@ export class SingleContentComponent implements OnInit {
 
 	getContentInfo(data) {
 		this.content$ = this._content.get_content_by_id(data);
+	}
+
+    getFileSize(bytes, decimals = 2) {
+		if (bytes === 0 || bytes === null) return '0 Bytes';
+		const k = 1024;
+		const dm = decimals < 0 ? 0 : decimals;
+		const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+		const i = Math.floor(Math.log(bytes) / Math.log(k));
+		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 	}
 }
