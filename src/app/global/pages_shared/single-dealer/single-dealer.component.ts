@@ -392,22 +392,26 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.host_data = [];
 		this.host_filtered_data = [];
 		this.temp_array = [];
+
 		this.subscription.add(
 			this._host.get_host_by_dealer_id_with_sort(this.dealer_id, page, this.search_data, this.sort_column_hosts, this.sort_order_hosts).subscribe(
 				data => {
 					this.initial_load = false;
 					this.searching = false;
-                    this.temp_array = data.paging.entities;
                     this.paging_data = data.paging;
-					if(!data.message) {
+					
+					if (!data.message) {
+						this.temp_array = data.paging.entities;
 						this.host_data = this.hostTable_mapToUI(this.temp_array);
 						this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
 						this.no_hosts = false;
 					} else {
-						if(this.search_data == "") {
+
+						if (this.search_data == "") {
 							this.no_hosts = true;
 						}
-						this.host_data=[];
+
+						this.host_data = [];
 						this.host_filtered_data = [];
 					}
 					
@@ -893,12 +897,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._license.get_license_to_export(this.dealer_id).subscribe(
 				data => {
-					// console.log('getDealerLicenses', data);
 					this.licenses = data.licenses;
-					this.resyncSocketConnection();
+					if (this.licenses) this.resyncSocketConnection();
 				}
 			)
-		)
+		);
 	}
 
 	resyncSocketConnection() {
