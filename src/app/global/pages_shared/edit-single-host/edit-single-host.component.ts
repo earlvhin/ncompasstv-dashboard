@@ -12,6 +12,7 @@ import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
 import { API_SINGLE_HOST } from '../../models/api_host.model';
 import { API_UPDATE_HOST } from '../../models/api_update-host.model';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { CategoryService } from '../../services/category-service/category.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DealerService } from '../../services/dealer-service/dealer.service';
@@ -37,6 +38,7 @@ export class EditSingleHostComponent implements OnInit {
 	dealer_name: string;
 	dealers_data: API_DEALER[] = [];
 	disable_business_name: boolean = true;
+	has_bulk_selected_business_hours = false;
 	has_content = false;
 	host_data:  any = [];
 	initial_dealer: string;
@@ -259,6 +261,7 @@ export class EditSingleHostComponent implements OnInit {
 					this.host_timezone = data.timezone;
 					this.initial_business_hours = JSON.parse(this.host_data.storeHours);
 					this.business_hours = JSON.parse(this.host_data.storeHours);
+					console.log('business hours', this.business_hours);
 					this.fillForm(this.host_data, this.host_timezone);
 				}
 			)
@@ -479,6 +482,24 @@ export class EditSingleHostComponent implements OnInit {
 		}
 		
 		this.disable_business_name = event;
+	}
+
+	onBulkEditHours(): void {
+		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
+			width: '550px',
+			height: '450px',
+			panelClass: 'position-relative',
+			data: { },
+			autoFocus: false
+		});
+
+		dialog.afterClosed().subscribe(
+			response => {
+				if (response) this.business_hours = response
+			},
+			error => console.log('Error on closing bulk edit hours', error)
+		);
+		
 	}
 
 	setDealer(event: string): void {
