@@ -72,8 +72,18 @@
                                     </ng-template>
                                 </div>
 								<div class="col-lg-12">
-                                    <h3 class="mb-1">Operation Hours</h3>
-                                    <p class="mb-4 sm-text">Set business operation hours by clicking the initial of day inside the gray circle.</p>
+
+									<div class="d-flex align-items-center justify-content-between">
+										<div class="heading">
+											<h3 class="mb-1">Operation Hours</h3>
+											<p class="mb-4 sm-text">Set business operation hours by clicking the initial of day inside the gray circle.</p>
+										</div>
+
+										<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" 
+											(click)="onBulkAddHours()">Bulk Add
+										</button>
+									</div>
+
                                     <div class="d-flex mb-4" *ngFor="let h of operation_days">
                                         <div class="round-label mr-3" (click)="operationDays(h)" [ngClass]="h.status ? 'active' : ''">
                                             <span class="font-weight-bold">{{ h.label }}</span>

@@ -11,6 +11,7 @@ import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
+import { BulkEditBusinessHoursComponent } from './components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
@@ -79,6 +80,7 @@ import { NewAdminComponent } from './components_shared/user_components/user-form
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
+import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
 import { NewZoneModalComponent } from './components_shared/zone_components/new-zone-modal/new-zone-modal.component';
@@ -167,7 +169,6 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
-import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -176,6 +177,7 @@ const ngComponents = [
 	AutocompleteFieldComponent,
 	AutocompleteFieldComponent,
 	BannerComponent,
+	BulkEditBusinessHoursComponent,
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
 	CategoryModalComponent,
@@ -340,6 +342,7 @@ const DIRECTIVES = [
 		ngComponents,
 		DIRECTIVES,
 		NewSubDealerComponent,
+		BulkEditBusinessHoursComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
