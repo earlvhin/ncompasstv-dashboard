@@ -22,9 +22,23 @@ export class UI_TABLE_LICENSE_BY_HOST {
     template?: object;
 
     constructor(
-        license_id: object, host_id: object, index: object, screenshot: object, license_key: object, alias: object, screen_type: object,
-        name: object, category: object, connection_type: object, screen: object, create_date: object, install_date: object, contents_updated: object, 
-        status: object, pi_status: object, template?: object
+        license_id: object, 
+        host_id: object, 
+        index: object, 
+        screenshot: object, 
+        license_key: object, 
+        alias: object, 
+        screen_type: object,
+        name: object, 
+        category: object, 
+        connection_type: object, 
+        screen: object, 
+        template: object,
+        create_date: object, 
+        install_date: object, 
+        contents_updated: object, 
+        status: object, 
+        pi_status: object
     ) {
         this.license_id = license_id;
         this.host_id = host_id;
