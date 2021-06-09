@@ -19,7 +19,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 	current_month = '';
 	filtered_data = [];
-	form = this._form.group({ date: [ '', Validators.required ], });
 	initial_load: boolean = true;
 	installations: INSTALLATION[] = [];
 	installation_count: any;
@@ -31,19 +30,25 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	selected_date: any;
 	sort_column: string = '';
 	sort_order: string = '';
+	view = '';
+
+	form = this._form_builder.group({ 
+		date: [ '', Validators.required ],
+		view: [ '' ]
+	});
 
 	private _date = this.form.get('date');
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
 		private _dates: DatePipe,
-		private _form: FormBuilder,
+		private _form_builder: FormBuilder,
 		private _license: LicenseService,
 		private _titlecase: TitleCasePipe
 	) { }
 	
 	ngOnInit() {
-		this.selected_date = moment().format('MM/DD/YYYYY');
+		this.selected_date = moment().format('MM-DD-YYYY');
 		this.getLicenses(1);
 		this.getLicenseStatistics();
 		this.date = new Date();
@@ -79,6 +84,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	}
 
 	onSelectDate(value: moment.Moment): void {
+		this.view = 'default';
 		this.sort_column = '';
 		this.sort_order = '';
 		this.date = value;
@@ -86,7 +92,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.current_month = moment(value).format('MMMM');
 		this.next_month = moment(value).add(1, 'month').format('MMMM');
 		this.datePicker.close();
-		this.selected_date = value.format('MM/DD/YYYYY');
+		this.selected_date = value.format('MM-DD-YYYY');
 		this.installation_count = null;
 		this.getLicenseStatistics();
 		this.getLicenses(1);
@@ -102,12 +108,12 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.getLicenses(1);
 	}
 	
-	getLicenses(page: number): void {
+	getLicenses(page: number, type = 0): void {
 
 		this.searching = true;
 		this.installations = [];
 
-		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order)
+		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, type)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { message?: string, paging }) => {
@@ -135,6 +141,33 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 					this.searching = false;
 				}
 			);
+
+	}
+
+	onSelectView(value = 'default'): void {
+
+		if (this.searching) return;
+
+		let type = 0;
+		this.view = value;
+
+		switch (value) {
+
+			case 'day':
+				type = 1;
+				break;
+			case 'month':
+				type = 2;
+				break;
+			case 'year':
+				type = 3;
+				break;
+			default:
+				type = 0;			
+
+		}
+
+		this.getLicenses(1, type);
 
 	}
 

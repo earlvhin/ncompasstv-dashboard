@@ -43,8 +43,10 @@ export class LicenseService {
 
 	get_all_licenses() {}
 
-	get_licenses_by_install_date(page, installDate, column, order) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.all_license_by_install_date}`+'?page='+`${page}`+'&installDate='+`${installDate}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0) {
+		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;
+		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}`;
+		return this._http.get<any>(endpoint, this.httpOptions);
 	}
 
 	get_licenses_total() {
@@ -172,5 +174,13 @@ export class LicenseService {
 	*/
 	update_internet_info(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_internet_info}`, data, this.httpOptions);
+	}
+
+	protected get baseUri() {
+		return `${environment.base_uri}`;
+	}
+
+	protected get getters() {
+		return environment.getters;
 	}
 }

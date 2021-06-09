@@ -4,16 +4,31 @@
 			<div class="flex-even">
 				<h1 class="page-title">Installations</h1>
 			</div>
-			<div class="flex-even text-right">
-				<form [formGroup]="form">
+			<form [formGroup]="form">
+				<div class="d-flex flex-column align-items-end">
 					<mat-form-field appearance="fill" appDefaultDateFormat>
 						<mat-label>Current / Selected Date</mat-label>
 						<input formControlName="date" (dateInput)="onSelectDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
-						<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+						<mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
 						<mat-datepicker #datePicker></mat-datepicker>
 					</mat-form-field>
-				</form>
-			</div>
+
+					<div class="btn-group btn-group-toggle mode-selection" ngbRadioGroup name="radioView" formControlName="view">
+						<label ngbButtonLabel class="btn-primary" [class.active]="view === 'day'" (click)="onSelectView('day')">
+							<input ngbButton type="radio" [disabled]="searching"> Day
+						</label>
+						<label ngbButtonLabel class="btn-primary" [class.active]="view === 'month'" (click)="onSelectView('month')">
+							<input ngbButton type="radio" [disabled]="searching"> Month
+						</label>
+						<label ngbButtonLabel class="btn-primary" [class.active]="view === 'year'" (click)="onSelectView('year')">
+							<input ngbButton type="radio" [disabled]="searching"> Year
+						</label>
+						<label ngbButtonLabel class="btn-primary" (click)="onSelectView()" [class.disabled]="searching">
+							<span class="fas fa-times"></span> 
+						</label>
+					</div>
+				</div>
+			</form>
 		</div>
 		<hr>
 	</div>
