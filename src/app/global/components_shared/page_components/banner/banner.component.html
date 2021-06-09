@@ -7,7 +7,12 @@
                         <img src="assets/media-files/admin-icon.png" alt="admin">
                     </div>
                     <div class="single-info flex-even">
-                        <h3 class="text-white mb-0" *ngIf="single_name != null">{{ single_name | titlecase }}</h3>
+						<div class="d-flex align-items-center">
+							<h3 class="text-white mb-0" *ngIf="single_name != null">{{ single_name | titlecase }}</h3>
+							<div class="status" [ngClass]="status === 'active' ? 'active' : 'inactive'" *ngIf="view === 'dealer'">
+								<span>{{ status | titlecase }}</span>
+							</div>
+						</div>
                         <h5 class="text-white font-italic sm-text mb-0" *ngIf="dealer_data && dealer_data.dealerIdAlias">Dealer Alias: {{ dealer_data.dealerIdAlias }}</h5>
                         <h4 class="d-inline-block sm-text mb-0 font-italic text-white" *ngIf="host_data && host_data.dealer && isAdmin()">
                             <a class="text-white" [routerLink]="['/'+routes+'/dealers', host_data.dealer.dealerId]">{{ host_data.dealer.businessName }}</a><span class="mx-2">|</span>

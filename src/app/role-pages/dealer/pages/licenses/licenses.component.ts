@@ -198,7 +198,7 @@ export class LicensesComponent implements OnInit {
 					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 					{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 					{ value: i.isActivated ? 'Active' : 'Inactive', link: null, editable: false, hidden: false },	
-					{ value: i.piStatus, link: null, editable: false, hidden: true },	
+					{ value: i.piStatus, link: null, editable: false, hidden: true }
 				);
 			}
 		);

@@ -148,6 +148,7 @@ export const API_ENDPOINTS = {
 		api_update_content: 'content/unassigndealer',
 		api_update_user: 'user/update',
 		content_schedule: 'PlaylistContentsSchedule/Update',
+		dealer_status: 'dealer/updateStatus',
 		install_date: 'license/UpdateInstallDate',
 		install_date_list: 'license/UpdateInstallDateList',
 		api_update_internet_info: 'license/UpdateInternetInfo',

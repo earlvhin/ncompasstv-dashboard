@@ -342,10 +342,10 @@ const DIRECTIVES = [
 		ngComponents,
 		DIRECTIVES,
 		NewSubDealerComponent,
-		BulkEditBusinessHoursComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
+		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
 		CategoryModalComponent,
 		ClonePlaylistComponent,
