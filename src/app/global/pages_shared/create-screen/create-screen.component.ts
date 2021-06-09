@@ -454,7 +454,7 @@ export class CreateScreenComponent implements OnInit {
 
 		if (!this.assigned_licenses.includes(licenseId) && !multiple) return;
 
-		const label = !multiple ? 'Install Date' : 'Bulk Install Date';
+		const label = !multiple ? 'Installation Date' : 'Bulk Installation Date';
 		const message = label;
 		const width = '350px';
 		const dialogParams: any = { width, data: { status: { label, dropdown_edit: false }, message, data: installDate } };
@@ -502,7 +502,7 @@ export class CreateScreenComponent implements OnInit {
 				this.licenses[index].installDate = date;
 
 			},
-			error => console.log('Error closing install date dialog ', error)
+			error => console.log('Error closing installation date dialog ', error)
 		);
 
 	}
@@ -563,7 +563,7 @@ export class CreateScreenComponent implements OnInit {
 
 		if (this.creating_screen) {
 
-			// if install dates are set
+			// if installation dates are set
 			if (this.queued_install_dates.length > 0) {
 				const publish = {
 					screen: this._screen.create_screen(created_screen),

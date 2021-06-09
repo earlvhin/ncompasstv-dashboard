@@ -305,12 +305,12 @@ export class DataTableComponent implements OnInit {
 							)
 						);
 						break;
-					case 'Install Date':
+					case 'Installation Date':
 						this.subscription.add (
 							this._license.update_install_date(fields.id, response).subscribe(
 								() => 
 									this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!'),
-									error => console.log('Error updating license install date ', error)
+									error => console.log('Error updating license installation date ', error)
 							)
 						);
 						break;
@@ -423,6 +423,7 @@ export class DataTableComponent implements OnInit {
 		// console.log("ACTIVE TAB", this.active_tab)
 		// this.sortColumn = column;
 		// this.sortOrder = order;
+        console.log(column, order)
 		var filter = {
 			column: column,
 			order: order

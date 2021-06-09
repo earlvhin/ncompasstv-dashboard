@@ -89,6 +89,11 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.license_statistics}?dealerId=${id}`, this.httpOptions)
 	}
 
+	get_statistics_by_installation(date: string) {
+		const url = `${environment.base_uri}${environment.getters.license_statistics_by_install_date}${date}`;
+		return this._http.get<any>(url, this.httpOptions);
+	}
+
 	activate_license(id) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_activate_license}${id}`, null, this.httpOptions);
 	}

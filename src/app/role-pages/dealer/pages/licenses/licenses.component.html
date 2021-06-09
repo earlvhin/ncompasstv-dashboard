@@ -118,7 +118,11 @@
                                 (update_info)="ngOnInit()"
                                 [license_status_column]="true"
                                 [paging_details]="paging_data_license"
-                                (page_triggered)="getLicenses($event)">
+                                (page_triggered)="getLicenses($event)"
+                                (to_sort_column)="getColumnsAndOrder($event)"
+                                [active_tab]="sort_column"
+                                [sort_column]="sort_column"
+                                [sort_order]="sort_order">
                                 </app-data-table>
                             </mat-card>
                         </ng-container>
