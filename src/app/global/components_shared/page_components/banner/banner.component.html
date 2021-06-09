@@ -9,7 +9,7 @@
                     <div class="single-info flex-even">
 						<div class="d-flex align-items-center">
 							<h3 class="text-white mb-0" *ngIf="single_name != null">{{ single_name | titlecase }}</h3>
-							<div class="status" [ngClass]="status === 'active' ? 'active' : 'inactive'" *ngIf="view === 'dealer'">
+							<div class="status" [ngClass]="status === 'active' ? 'active' : 'inactive'">
 								<span>{{ status | titlecase }}</span>
 							</div>
 						</div>
