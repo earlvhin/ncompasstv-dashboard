@@ -75,6 +75,7 @@ export class PlaylistsComponent implements OnInit {
 			this._playlist.get_playlist_by_dealer_id_table(page, this.dealer_id, this.search_data).subscribe(
 				data => {
 					this.initial_load = false;
+                    this.paging_data = data.paging;
 					if (data.playlists.length > 0) {
 						this.playlist_data = this.playlist_mapToUI(data.playlists)
 						this.filtered_data = this.playlist_mapToUI(data.playlists)
@@ -86,7 +87,6 @@ export class PlaylistsComponent implements OnInit {
 							this.no_playlist = true;
 						}
 					}
-					this.paging_data = data.paging;
 					this.searching = false;
 				}
 			)
@@ -94,7 +94,7 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	playlist_mapToUI(data): UI_DEALER_PLAYLIST[] {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			({playlist}) => {
 				return new UI_DEALER_PLAYLIST(

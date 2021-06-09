@@ -121,6 +121,7 @@ export class LicensesComponent implements OnInit {
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
+                    this.paging_data_license = data.paging;
 					if(!data.message) {
 						this.license_data_api = data.paging.entities;
 						this.license_data = this.licenseTable_mapToUI(this.license_data_api);
@@ -133,7 +134,6 @@ export class LicensesComponent implements OnInit {
 						this.license_data=[];
 						this.license_filtered_data = [];
 					}
-					this.paging_data_license = data.paging;
 				}
 			)
 		)
@@ -155,7 +155,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
-		let count: number = 1;
+		let count = this.paging_data_license.pageStart;
 
 		return data.map(	
 			i => {

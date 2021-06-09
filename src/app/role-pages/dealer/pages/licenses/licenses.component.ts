@@ -171,14 +171,14 @@ export class LicensesComponent implements OnInit {
 
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
-		let count: number = 1;
+		let count = this.paging_data_license.pageStart;
 		console.log("DATA", data)
 		return data.map(
 			i => {
 				return new UI_TABLE_LICENSE_BY_HOST(
 					{ value: i.licenseId, link: null , editable: false, hidden: true },
 					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
-					{ value: this.getIndexCount(count++, this.paging_data_license.pageSize, this.paging_data_license.page), link: null , editable: false, hidden: false },
+					{ value: count++, link: null , editable: false, hidden: false },
 					{ 
 						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null,
 						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null, 
@@ -203,18 +203,6 @@ export class LicensesComponent implements OnInit {
 			}
 		);
 	}
-
-    getIndexCount(num, size, page) {
-        if(page > 1) {
-            let count: number = size;
-           for (var i = 0 ; i < page; i++) {
-               count = count + size;
-           }
-           return count++; 
-        } else {
-            return num;
-        }
-    }
 
 	openGenerateLicenseModal(): void {
 		this._dialog.open(LicenseModalComponent, {

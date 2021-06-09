@@ -113,6 +113,7 @@ export class HostsComponent implements OnInit {
 				data => {
 					this.initial_load = false;
 					this.searching = false;
+                    this.paging_data = data.paging;
 					if(!data.message) {
 						data.hosts.map (
 							i => {
@@ -130,7 +131,6 @@ export class HostsComponent implements OnInit {
 						this.host_data=[];
 						this.host_filtered_data = [];
 					}
-					this.paging_data = data.paging;
 				}
 			)
 		)
@@ -158,7 +158,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	hosts_mapToUIFormat(data) {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			(hosts: any) => {
 				return new UI_DEALER_HOSTS(
