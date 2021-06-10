@@ -47,6 +47,7 @@ export class ThumbnailCardComponent implements OnInit {
 	}
 
 	ngOnInit() {
+        console.log("indexOf('_')", this.filename)
 		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.route = `/${this.role}/media-library/`
 
@@ -80,9 +81,9 @@ export class ThumbnailCardComponent implements OnInit {
 	}
 	
 	removeFilenameHandle(e) {
-		if (this.filetype !== 'feed') {
-			return e.substring(e.indexOf('_') + 1);
-		}
+		// if (this.filetype !== 'feed') {
+		// 	return e.substring(e.indexOf('_') + 1);
+		// }
 		return e;
 	}
 
