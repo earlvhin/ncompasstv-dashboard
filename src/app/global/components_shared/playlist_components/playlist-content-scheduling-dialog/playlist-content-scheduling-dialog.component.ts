@@ -182,13 +182,24 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	}
 
 	onSelectDay(event: { checked: boolean }, index: number): void {
+
+		let count = 0;
 		this.days_list[index].checked = event.checked;
 		this.has_selected_all_days = false;
 
 		this.days = this.days_list.reduce((filtered, day) => {
-			if (day.checked) filtered.push(day.value);
+
+			if (day.checked) {
+				filtered.push(day.value);
+				count++;
+			}
+
 			return filtered;
+
 		}, []).join(',');
+
+		if (count === 7) this.has_selected_all_days = true;
+
 	}
 
 	onSelectTime(value: string, type: string): void {
@@ -228,8 +239,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							days,
 							playTimeStart,
 							playTimeEnd,
-							from: moment(from).format('YYYY-MM-DD'),
-							to: moment(to).format('YYYY-MM-DD'),
+							from: `${moment(from).format('YYYY-MM-DD')} 00:00:00`,
+							to: `${moment(to).format('YYYY-MM-DD')} 22:59:59`,
 							type: this.getTypeValue(type.name),
 							playlistContentId: id,
 						};
@@ -263,8 +274,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							days,
 							playTimeStart,
 							playTimeEnd,
-							from: moment(from).format('YYYY-MM-DD'),
-							to: moment(to).format('YYYY-MM-DD'),
+							from: `${moment(from).format('YYYY-MM-DD')} 00:00:00`,
+							to: `${moment(to).format('YYYY-MM-DD')} 22:59:59`,
 							type: this.getTypeValue(type.name),
 							playlistContentId: schedule.content_id
 						};
@@ -305,8 +316,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				playTimeEnd,
 				playlistContentId,
 				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId,
-				from: moment(from).format('YYYY-MM-DD'),
-				to: moment(to).format('YYYY-MM-DD'),
+				from: `${moment(from).format('YYYY-MM-DD')} 00:00:00`,
+				to: `${moment(to).format('YYYY-MM-DD')} 22:59:59`,
 				type: this.getTypeValue(type.name),
 			};
 
@@ -367,13 +378,19 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	}
 
 	private setDaysForUpdate(days: string): void {
+		let dayCount = 0;
 		const list = this.days_list;
 
 		list.forEach(
 			(day, index) => {
-				if (days.includes(`${day.value}`)) this.days_list[index].checked = true;
+				if (days.includes(`${day.value}`)) {
+					this.days_list[index].checked = true;
+					dayCount++;
+				}
 			}
 		);
+
+		if (dayCount === 7) this.has_selected_all_days = true;
 		
 	}
 
@@ -414,14 +431,14 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			this.end_time = playTimeEnd;
 			this.has_selected_all_day_long = (playTimeStart == '12:00 AM' && playTimeEnd == '11:59 PM') ? true : false;
 			this.invalid_form = false;
+
 		}
 
 	}
 
 	private setWarningText(): void {
-
-		if (this.dialog_data.schedules && this.dialog_data.schedules.length > 0) this.warning_text = 'Note: Saving will override content with existing schedules*';
-
+		const schedules = this.dialog_data.schedules;
+		if (schedules && schedules.length > 0) this.warning_text = 'Note: Saving will override content with existing schedules*';
 	}
 
 	private setPlayTimeToAllDay(): void {

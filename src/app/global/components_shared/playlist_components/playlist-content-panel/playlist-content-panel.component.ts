@@ -1,9 +1,9 @@
-import { Component, ElementRef, Input, OnInit, ViewChild, EventEmitter, Output } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs/internal/Subscription';
-import { fromEvent, Observable } from 'rxjs';
-import { Sortable } from "sortablejs";
+import { takeUntil } from 'rxjs/operators';
+import { fromEvent, Observable, Subject } from 'rxjs';
+import { Sortable } from 'sortablejs';
 import * as moment from 'moment-timezone';
 
 import { API_BLOCKLIST_CONTENT } from 'src/app/global/models/api_blocklist-content.model';
@@ -23,7 +23,7 @@ import { ViewContentListComponent } from '../view-content-list/view-content-list
 	styleUrls: ['./playlist-content-panel.component.scss']
 })
 
-export class PlaylistContentPanelComponent implements OnInit {
+export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Input() dealer_id: string;
@@ -42,7 +42,6 @@ export class PlaylistContentPanelComponent implements OnInit {
 	button_click_event: string;
 	has_selected_content_with_schedule = false;
 	is_marking: boolean = false;
-	subscription: Subscription = new Subscription();
 	updated_playlist_content: API_UPDATED_PLAYLIST_CONTENT[];
 	playlist_order: string[] = [];
 	playlist_changes_data: any;
@@ -63,6 +62,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 	bulk_toggle: boolean;
 
 	private playlist_contents: API_CONTENT[] = [];
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
 		private _dialog: MatDialog,
@@ -70,46 +70,37 @@ export class PlaylistContentPanelComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		//console.log('PLAYLIST', this.playlist_content)
-
 		this.getAssetCount();
 		this.playlist_content_backup = this.playlist_content;
 		this.playlist_saving = false;
 		this.selected_contents = [];
 		this.bulk_toggle = false;
 		this.is_marking = false;
-		
-		// if (localStorage.getItem('playlist_order')) {
-		// 	console.log('Has Existing Order');
-		// 	this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','))
-		// }
 
-		this.search_control.valueChanges.subscribe(
-			data => {
-				if (data !== '') {
-					this.playlist_content = this.playlist_content_backup.filter(
-						i => {
-							if (i) {
-								if (i.fileName) {
-									return i.fileName.toLowerCase().includes(data.toLowerCase())
-								} else {
-									return i.title.toLowerCase().includes(data.toLowerCase())
+		this.search_control.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => {
+					if (data !== '') {
+						this.playlist_content = this.playlist_content_backup.filter(
+							i => {
+								if (i) {
+									if (i.fileName) {
+										return i.fileName.toLowerCase().includes(data.toLowerCase())
+									} else {
+										return i.title.toLowerCase().includes(data.toLowerCase())
+									}
 								}
 							}
+						)
+					} else {
+						this.playlist_content = this.playlist_content_backup;
+
+						if (localStorage.getItem('playlist_order')) {
+							this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','))
 						}
-					)
-				} else {
-					this.playlist_content = this.playlist_content_backup;
-					if (localStorage.getItem('playlist_order')) {
-						// console.log('Has Existing Order');
-						this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','))
 					}
 				}
-			}
-		);
-
-		// this.playlist_contents = this.playlist_content.map(content => content.content);
-		// const contents = this.playlist_contents;
+			);
 
 		this.playlist_contents = this.playlist_content;
 
@@ -126,12 +117,18 @@ export class PlaylistContentPanelComponent implements OnInit {
 		this.setScheduleStatus();
 	}
 
+	ngOnDestroy() {
+		this._unsubscribe.next();
+        this._unsubscribe.complete();
+	}
+
 	ngAfterViewInit() {
 		this.sortableJSInit();
 	}
 
-	isMarking(e) {
-		this.is_marking = e.checked;
+	isMarking(event: { checked: boolean }): void {
+
+		this.is_marking = event.checked;
 
 		if (this.is_marking == false) {
 			this.selected_contents = [];
@@ -141,46 +138,55 @@ export class PlaylistContentPanelComponent implements OnInit {
 
 	}
 
-	openPlaylistDemo() {
-		this.playlist_demo.emit(true)
+	openPlaylistDemo(): void {
+		this.playlist_demo.emit(true);
 	}
 
-	addToBlocklist(data) {
-		// console.log('#ADDTOBLOCKLIST', data)
+	addToBlocklist(data: any[]): void {
+
 		if (data.length > 0) {
-			this.subscription.add(
-				this._playlist.blocklist_content(data).subscribe(
-					data => {
+
+			this._playlist.blocklist_content(data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					() => {
 						localStorage.removeItem('to_blocklist');
 						this.structured_incoming_blocklist = [];
-						if (this.structured_bulk_remove_in_blocklist.length > 0){
+
+						if (this.structured_bulk_remove_in_blocklist.length > 0) {
 							this.bulkWhitelist(this.structured_bulk_remove_in_blocklist);
+
 						} else {
+
 							if (this.structured_remove_in_blocklist.length > 0) {
 								this.removeToBlocklist();
+
 							} else if (this.incoming_blacklist_licenses.length > 0) {
+
 								this.incoming_blacklist_licenses = [];
 								this.getPlaylistById();
+
 							} else {
+
 								this.getPlaylistById();
 								this.playlist_unchanged = true;
+
 							}
+
 						}
 					}, 
-					error => {
-						console.log('#addToBlocklist', error)
-					}
-				)
-			)
+					error => console.log('Error blocklisting content', error)
+				);
+
 		} else {
+
 			if (this.structured_remove_in_blocklist.length > 0) {
-				//console.log('1')
 				this.removeToBlocklist();
 			}
+
 		}
 	}
 
-	bulkContentRemove() {
+	bulkContentRemove(): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
@@ -191,62 +197,61 @@ export class PlaylistContentPanelComponent implements OnInit {
 			}
 		});
 
-		const close = dialog.afterClosed().subscribe(
-			data => {
-				close.unsubscribe();
-				//console.log('#removeContentPlaylist', data);
-				if (data) {
-					this.removePlaylistContents(this.selected_contents);
-				}
-			}
-		);
+		dialog.afterClosed()
+			.subscribe(
+				data => {
+					if (data) this.removePlaylistContents(this.selected_contents);
+				},
+				error => console.log('Error closing remove content dialog', error)
+			);
 	}
 
-	bulkModify() {
-		let content_data = []
+	bulkModify(): void {
+		let content_data = [];
 		
 		this.playlist_content.filter(
-			i => {
-				if (this.selected_contents.includes(i.playlistContentId)) {
-					content_data.push(i)
-				}
+			content => {
+				if (this.selected_contents.includes(content.playlistContentId)) content_data.push(content);
 			}
-		)
+		);
 
 		let bulk_option_dialog = this._dialog.open(BulkOptionsComponent, {
 			data: {contents: content_data, host_licenses: this.playlist_host_license},
 			width: '1024px',
 			height: '760px'
-		})
+		});
 
-		bulk_option_dialog.afterClosed().subscribe(
-			data => {
-				// console.log('BULK MODIFY CLOSED', data);
+		bulk_option_dialog.afterClosed()
+			.subscribe(
+				data => {
 
-				if (data) {
-					data.content_props.forEach(c => {
-						this.playlist_content.filter(i => {
-							if (i.playlistContentId == c.playlistContentId) {
-								i = c;
-							}
-						})
-					});
+					if (data) {
+						data.content_props.forEach(c => {
 
-					if (data.blacklist.length > 0) {
-						this.incoming_blacklist_licenses = data.blacklist
-						this.structureBulkBlacklisting(data.content_props)
+							this.playlist_content.filter(content => {
+								if (content.playlistContentId == c.playlistContentId) content = c;
+							});
+
+						});
+
+						if (data.blacklist.length > 0) {
+							this.incoming_blacklist_licenses = data.blacklist;
+							this.structureBulkBlacklisting(data.content_props);
+						}
+
+						if (data.whitelist.length > 0) {
+							this.structured_bulk_remove_in_blocklist = data.whitelist;
+						}
+
+						this.savePlaylistChanges(this.structureUpdatedPlaylist());
+
+					} else {
+						this.getPlaylistById();
 					}
 
-					if (data.whitelist.length > 0) {
-						this.structured_bulk_remove_in_blocklist = data.whitelist;
-					}
-
-					this.savePlaylistChanges(this.structureUpdatedPlaylist());
-				} else {
-					this.getPlaylistById();
 				}
-			}
-		)
+			);
+
 	}
 
 	selectAllContents(): void {
@@ -254,7 +259,8 @@ export class PlaylistContentPanelComponent implements OnInit {
 		this.can_set_schedule = true;
 	}
 
-	getAssetCount() {
+	getAssetCount(): void {
+
 		this.video_count = this.playlist_content.filter(
 			i => {
 				return i.fileType === 'webm';
@@ -272,9 +278,10 @@ export class PlaylistContentPanelComponent implements OnInit {
 				return i.fileType === 'feed';
 			}
 		).length;
+
 	}
 
-	getPlaylistById() {
+	getPlaylistById(): void {
 		this.reload_playlist.emit(true);	
 	}
 
@@ -282,7 +289,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 		return this.selected_contents.includes(playlistContentId);
 	}
 
-	mapIncomingContent(data) {
+	mapIncomingContent(data: any[]): any[] {
 		return data.map(
 			i => {
 				return {
@@ -290,7 +297,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 					blacklistedContents: []
 				}
 			}
-		)
+		);
 	}
 
 	onSetSchedule(): void {
@@ -305,18 +312,16 @@ export class PlaylistContentPanelComponent implements OnInit {
 		this.showViewSchedulesDialog();
 	}
 
-	optionsSaved(e) {
-		// console.log('#optionsSaved', e);
+	optionsSaved(e: any): void {
 		this.playlist_changes_data = e;
 
 		if (this.playlist_changes_data.content) {
+
 			this.playlist_content.forEach(
 				i => {
-					if (i.playlistContentId == e.playlistContentId) {
-						i = e;
-					}
+					if (i.playlistContentId == e.playlistContentId) i = e;
 				}
-			)
+			);
 			
 			this.structured_updated_playlist = this.structureUpdatedPlaylist();
 		}
@@ -327,44 +332,45 @@ export class PlaylistContentPanelComponent implements OnInit {
 		this.savePlaylistChanges(this.structured_updated_playlist);
 	}
 
-	openPlaylistMedia() {
+	openPlaylistMedia(): void {
+
 		const data = {
 			playlist_host_license: this.playlist_host_license,
 			dealer_id: this.dealer_id
-		}
+		};
 
-		let playlist_content_dialog = this._dialog.open(PlaylistMediaComponent, {
+		const playlist_content_dialog = this._dialog.open(PlaylistMediaComponent, {
 			data: data,
 			width: '1100px'
 		});
 
-		playlist_content_dialog.afterClosed().subscribe(
-			data => {
-				if (data) {
-					// console.log('#openPlaylistMedia_afterClosed', data);
-					if (localStorage.getItem('to_blocklist')) {
-						this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
-						//console.log('#incoming blocklist from media: ', this.incoming_blacklist_licenses);
-						this.structureAddedPlaylistContent(data);
+		playlist_content_dialog.afterClosed()
+			.subscribe(
+				data => {
+					if (data) {
+						if (localStorage.getItem('to_blocklist')) {
+							this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
+							this.structureAddedPlaylistContent(data);
+						} else {
+							this.structureAddedPlaylistContent(data);
+						}
 					} else {
-						this.structureAddedPlaylistContent(data);
+						localStorage.removeItem('to_blocklist');
 					}
-				} else {
-					localStorage.removeItem('to_blocklist');
-				}
-			}
-		)
+				},
+				error => console.log('Error closing playlist content dialog', error)
+			);
 	}
 
-	rearrangePlaylistContents(incoming_order) {
-		let updated_playlist_content_order = [];
+	rearrangePlaylistContents(incoming_order): void {
+		const updated_playlist_content_order = [];
 		
 		// Rearrange Playlist Content
 		incoming_order.forEach(
 			i => {
-				updated_playlist_content_order.push(this.searchPlaylistContent(i))
+				updated_playlist_content_order.push(this.searchPlaylistContent(i));
 			}
-		)
+		);
 
 		if (JSON.stringify(this.playlist_content_backup) != JSON.stringify(updated_playlist_content_order)) {
 			this.playlist_content = updated_playlist_content_order;
@@ -375,84 +381,71 @@ export class PlaylistContentPanelComponent implements OnInit {
 		}
 	}
 	
-	removeToBlocklist() {
-		//console.log('removeToBlocklist_data', this.structured_remove_in_blocklist);
+	removeToBlocklist(): void {
+
 		if (this.structured_remove_in_blocklist.length > 0) {
-			this.subscription.add(
-				this._playlist.remove_in_blocklist(this.structured_remove_in_blocklist).subscribe(
-					data => {
-						console.log('#removeToBlocklist_result', data);
+
+			this._playlist.remove_in_blocklist(this.structured_remove_in_blocklist).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					() => {
 						this.getPlaylistById();
 						this.playlist_unchanged = true;
 						this.structured_remove_in_blocklist = [];
 					},
-					error => {
-						console.log('#removeToBlocklist', error)
-					}
-				)
-			)
-		} 
-		// else {
-		// 	console.log('I AM THE ONE CALLING YOU')
-		// 	this.playlist_changes_saved.emit(true);
-		// 	this.playlist_unchanged = true;
-		// 	this.playlist_saving = false;
-		// }
+					error => console.log('Error removing in blocklist', error)
+				);
+
+		}
+
 	}
 
-	reloadPlaylist(e) {
-		//console.log('#reloadPlaylist', e);
+	reloadPlaylist(): void {
 		this.getPlaylistById();
 	}
 
-	removePlaylistContent(e) {
-		//console.log('#removePlaylistContent', e);
+	removePlaylistContent(data: any): void {
 		this.playlist_saving = true;
-		this.subscription.add(
-			this._playlist.remove_playlist_content(this.playlist_id, e).subscribe(
-				data => {
-					this.getPlaylistById();
-					//console.log('#removePlaylistContent', data);
-				}
-			)
-		)
+
+		this._playlist.remove_playlist_content(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.getPlaylistById(),
+				error => console.log('Error removing playlist content', error)
+			);
+
 	}
 
-	removePlaylistContents(e) {
-		//console.log('#removePlaylistContents', e);
+	removePlaylistContents(data: any): void {
 		this.playlist_saving = true;
-		this.subscription.add(
-			this._playlist.remove_playlist_contents(this.playlist_id, e).subscribe(
-				data => {
-					this.getPlaylistById();
-					//console.log('#removePlaylistContents', data);
-				}
-			)
-		)
+
+		this._playlist.remove_playlist_contents(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.getPlaylistById(),
+				error => console.log('Error removing playlist contents', error)
+			);
+
 	}
 
-	sortableJSInit() {
+	sortableJSInit(): void {
+
 		const onDeselect = (e) => {
 			this.selected_content_count = e.newIndicies.length
+
 			setTimeout(() => {
-				// console.log('ONDESELECT', this.button_click_event)
 				if (this.button_click_event == "edit-marked" || this.button_click_event == "delete-marked") {
-					console.log('Valid')
+					console.log('Valid');
 				} else {
 					this.selected_contents = [];
 				}
-			}, 0)
+			}, 0);
 		}
 
 		const onSelect = (e) => {
-			// console.log('selected content!', e.target);
-			this.selected_content_count = e.newIndicies.length
-			
+			this.selected_content_count = e.newIndicies.length;
 		}
 
 		const set = (sortable) => {
 			this.rearrangePlaylistContents(sortable.toArray());
-			localStorage.setItem('playlist_order', sortable.toArray())
+			localStorage.setItem('playlist_order', sortable.toArray());
 		}
 
 		const onStart = () => {
@@ -461,8 +454,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 			}
 
 			if (localStorage.getItem('playlist_order')) {
-				console.log('Has Existing Order');
-				this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','))
+				this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
 			}
 		}
 
@@ -482,9 +474,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 			forceFallback: true,
 			group: 'playlist_content',
 			fallbackTolerance: 10,
-			store: {
-				set
-			},
+			store: { set },
 			onSelect,
 			onDeselect,
 			onStart,
@@ -512,57 +502,50 @@ export class PlaylistContentPanelComponent implements OnInit {
 
 	}
 
-	structureAddedContentBlocklist(data) {
+	structureAddedContentBlocklist(data: any[]): void {
 		let to_block = [];
-		data.map(i => this.incoming_blacklist_licenses.map(j => to_block.push(new API_BLOCKLIST_CONTENT(j, i.contentId, i.playlistContentId))))
-		//console.log('#structureAddedContentBlocklist', data)
+		data.map(i => this.incoming_blacklist_licenses.map(j => to_block.push(new API_BLOCKLIST_CONTENT(j, i.contentId, i.playlistContentId))));
 		this.addToBlocklist(to_block);
 	}
 
-	structureBulkBlacklisting(data) {
+	structureBulkBlacklisting(data: any[]): void {
 		let to_block = [];
-		data.map(i => this.incoming_blacklist_licenses.map(j => to_block.push(new API_BLOCKLIST_CONTENT(j, i.contentId, i.playlistContentId))))
-		//console.log('#structureBulkBlacklisting', to_block);
+		data.map(i => this.incoming_blacklist_licenses.map(j => to_block.push(new API_BLOCKLIST_CONTENT(j, i.contentId, i.playlistContentId))));
 		this.addToBlocklist(to_block);
 	}
 
-	savePlaylistChanges(data) {
+	savePlaylistChanges(data: any): void {
 		this.playlist_saving = true;
 		this.is_marking = false;
+
 		if (data) {
-			this.subscription.add(
-				this._playlist.update_playlist_contents(data).subscribe(
+
+			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					(data: any) => {
 						localStorage.removeItem('playlist_order');
 						localStorage.removeItem('playlist_data');
-						//console.log('#savePlaylistChanges_result', data);
 						this.playlist_content_backup = this.playlist_content;
 
 						if (this.incoming_blacklist_licenses.length > 0) {
-							console.log('Has Blocklist Items')
 							this.structureAddedContentBlocklist(data.playlistContentsAdded);
 						} else if (this.structured_bulk_remove_in_blocklist.length > 0) {
-							console.log('Has Bulk Whitelist Items');
 							this.bulkWhitelist(this.structured_bulk_remove_in_blocklist);
 						} else {
-							console.log('No Blocklist Items')
 							this.getPlaylistById();
 						}
 						
 						if (this.structured_incoming_blocklist.length > 0) {
-							console.log('has structured_incoming_blocklist')
 							this.addToBlocklist(this.structured_incoming_blocklist);
 						} else {
-							console.log('no structured_incoming_blocklist')
 							this.removeToBlocklist();
 						}
 					},
-					error => {
-						console.log('#savePlaylistChanges', error);
-					}
-				)
-			)
+					error => console.log('Error updating playlist contents', error)
+				);
+
 		} else {
+
 			if (this.structured_incoming_blocklist.length > 0) {
 				this.addToBlocklist(this.structured_incoming_blocklist);
 			} else {
@@ -573,35 +556,34 @@ export class PlaylistContentPanelComponent implements OnInit {
 		this.search_control.setValue('');
 	}
 
-	bulkWhitelist(data: any[]) {
-		this._playlist.bulk_whitelist(data).subscribe(
-			data => {
-				console.log(data);
-				this.getPlaylistById();
-				this.playlist_unchanged = true;
-				this.structured_bulk_remove_in_blocklist = [];
-			}, 
-			error => {
-				console.log(error);
-			}
-		)
+	bulkWhitelist(data: any[]): void {
+
+		this._playlist.bulk_whitelist(data).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.getPlaylistById();
+					this.playlist_unchanged = true;
+					this.structured_bulk_remove_in_blocklist = [];
+				}, 
+				error => console.log('Error whitelisting by bulk', error)
+			);
+
 	}
 
-	structureAddedPlaylistContent(incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[]) {
-		// Merge incoming playlist content to current playlist content
+	structureAddedPlaylistContent(incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[]): void {
 		this.playlist_content = incoming_playlist_content.concat(this.playlist_content);
 		this.savePlaylistChanges(this.structureUpdatedPlaylist());
 	}
 
-	searchPlaylistContent(id) {
+	searchPlaylistContent(id: string): any {
 		return this.playlist_content.filter(
-			i => {
-				return id == i.playlistContentId;
+			content => {
+				return id == content.playlistContentId;
 			}
 		)[0];
 	}
 
-	saveOrderChanges() {
+	saveOrderChanges(): void {
 		this.savePlaylistChanges(this.structureUpdatedPlaylist());
 	}
 
@@ -639,7 +621,7 @@ export class PlaylistContentPanelComponent implements OnInit {
 				const startDate = moment(schedule.from);
 				const endDate = moment(schedule.to);
 				if (currentDate.isBefore(startDate)) status = 'future';
-				if (currentDate.isBetween(startDate, endDate) || schedule.type === 1) status = 'active';
+				if (currentDate.isBetween(startDate, endDate, undefined, '[]') || schedule.type === 1) status = 'active';
 			}
 
 			content.scheduleStatus = status;
@@ -694,36 +676,35 @@ export class PlaylistContentPanelComponent implements OnInit {
 			autoFocus: false
 		});
 
-		const close = dialog.afterClosed().subscribe(
-			(response: string | boolean) => {
-				close.unsubscribe();
+		dialog.afterClosed()
+			.subscribe(
+				(response: string | boolean) => {
 
-				if (typeof response === 'string') {
-					if (response === 'create') message += ' Schedule has been created';
-					else message += ' Schedule has been updated'
-					this.showSuccessDialog(message);
-				}
+					if (typeof response === 'string') {
+						if (response === 'create') message += ' Schedule has been created';
+						else message += ' Schedule has been updated'
+						this.showSuccessDialog(message);
+					}
 
-			},
-			error => console.log('Error after closing content schedule dialog', error)
-		);
+				},
+				error => console.log('Error after closing content schedule dialog', error)
+			);
 
 	}
 
 	private showSuccessDialog(message: string): void {
+
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
 			data:  { status: 'success', message }
 		});	
 
-		const close = dialog.afterClosed().subscribe(
-			() => {
-				close.unsubscribe();
-				this.getPlaylistById();
-			},
-			error => console.log('Error on success dialog close', error)
-		);
+		dialog.afterClosed()
+			.subscribe(
+				() => this.getPlaylistById(),
+				error => console.log('Error on success dialog close', error)
+			);
 	}
 
 	private showViewContentListDialog(): void {
