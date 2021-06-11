@@ -5,7 +5,7 @@
 				<h1 class="page-title">Installations</h1>
 			</div>
 			<form [formGroup]="form">
-				<div class="d-flex flex-column align-items-end">
+				<div class="d-flex flex-column">
 					<mat-form-field appearance="fill" appDefaultDateFormat>
 						<mat-label>Current / Selected Date</mat-label>
 						<input formControlName="date" (dateInput)="onSelectDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
@@ -13,19 +13,15 @@
 						<mat-datepicker #datePicker></mat-datepicker>
 					</mat-form-field>
 
-					<div class="btn-group btn-group-toggle mode-selection" ngbRadioGroup name="radioView" formControlName="view">
-						<label ngbButtonLabel class="btn-primary" [class.active]="view === 'day'" (click)="onSelectView('day')">
-							<input ngbButton type="radio" [disabled]="searching"> Day
-						</label>
-						<label ngbButtonLabel class="btn-primary" [class.active]="view === 'month'" (click)="onSelectView('month')">
-							<input ngbButton type="radio" [disabled]="searching"> Month
-						</label>
-						<label ngbButtonLabel class="btn-primary" [class.active]="view === 'year'" (click)="onSelectView('year')">
-							<input ngbButton type="radio" [disabled]="searching"> Year
-						</label>
-						<label ngbButtonLabel class="btn-primary" (click)="onSelectView()" [class.disabled]="searching">
-							<span class="fas fa-times"></span> 
-						</label>
+					<div class="col-lg-12 p-0 btn-group btn-group-toggle mode-selection" ngbRadioGroup name="radioView" formControlName="view">
+                        <div *ngFor="let view of views" class="p-0 black-bg" [ngClass]="view.index == 2 ? 'col-lg-4': (view.index == 0 ? 'col-lg-2' : 'col-lg-3')">
+                            <label ngbButtonLabel class="theme-btn no_border_radius text-center" [ngClass]="activeIndex == view.index && view.index != 0 ? '_primary' : '_neutral' " (click)="onSelectView(view.index)">
+                                <input class="hidden" *ngIf="view.index != 0; else closebutton" ngbButton type="radio" [disabled]="searching">{{view.name}}
+                                <ng-template #closebutton> 
+                                    <span class="fas fa-times" data-toggle="tooltip" title="Clear Filter"></span> 
+                                </ng-template>
+                            </label>
+                        </div>
 					</div>
 				</div>
 			</form>
@@ -75,6 +71,16 @@
 
 		
 	<hr class="my-4">
+        <div class="mb-3">
+            <button mat-button mat-raised-button
+                class="theme-btn pi-control sm-text _primary mr-2" 
+                (click)="exportTable()"
+                [disabled]="workbook_generation"  
+                title="Export to CSV">
+                <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+            </button>
+        </div>
         <div *ngIf="!initial_load; else loader">
             <div>
 				<div class="row" *ngIf="!initial_load">
