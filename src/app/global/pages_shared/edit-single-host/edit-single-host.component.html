@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	
-	<div *ngIf="dealers_data.length > 0 && categories_data as categories; else loading">
+	<div *ngIf="dealers_data.length > 0 && dealer_name != '' && categories_data as categories; else loading">
 		<form [formGroup]="new_host_form" (ngSubmit)="newHostPlace()" class="text-left">
 			<div class="row mb-4">
 				<div class="col-lg-11 mb-3" *ngIf="!is_dealer">

@@ -35,7 +35,7 @@ export class EditSingleHostComponent implements OnInit {
 	closed_without_edit: boolean = false;
 	current_dealer: any;
 	dealer_id: string;
-	dealer_name: string;
+	dealer_name: string = '';
 	dealers_data: API_DEALER[] = [];
 	disable_business_name: boolean = true;
 	has_bulk_selected_business_hours = false;
@@ -261,7 +261,6 @@ export class EditSingleHostComponent implements OnInit {
 					this.host_timezone = data.timezone;
 					this.initial_business_hours = JSON.parse(this.host_data.storeHours);
 					this.business_hours = JSON.parse(this.host_data.storeHours);
-					console.log('business hours', this.business_hours);
 					this.fillForm(this.host_data, this.host_timezone);
 				}
 			)
@@ -418,7 +417,6 @@ export class EditSingleHostComponent implements OnInit {
 					this._host.delete_host([ hostId ], isForceDelete)
 						.subscribe(
 							() => {
-								console.log('Host Deleted');
 								this._dialogRef.close('delete-host');
                                 if(!this.is_dealer) {
                                     this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
@@ -507,15 +505,12 @@ export class EditSingleHostComponent implements OnInit {
 		
 	}
 
-	setDealer(event: string): void {
-
-		this.f.dealerId.setValue(event);
-
-		const filtered = this.dealers_data.filter(dealer => dealer.dealerId == event);
-
+	setDealer(id) {
+		this.f.dealerId.setValue(id);
+		const filtered = this.dealers_data.filter(dealer => dealer.dealerId == id);
 		if (filtered.length == 0) {
 			this.subscription.add(
-				this._dealer.get_dealer_by_id(event).subscribe(
+				this._dealer.get_dealer_by_id(id).subscribe(
 					data => {
 						this.current_dealer = data;
 						this.dealers_data.push(this.current_dealer);

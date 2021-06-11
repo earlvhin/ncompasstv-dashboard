@@ -53,7 +53,7 @@
 				<span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _danger" (click)="deleteLicense()" title="Delete License" *ngIf="!pi_status">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _danger" (click)="onDeleteLicense()" title="Delete License" *ngIf="!pi_status">
 				<span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
 			</button>
         </div>
@@ -504,10 +504,10 @@
 											</div>
 										</div>
 										<div class="description">
-											<span class="sm-text" *ngIf="has_playlist; else no_playlist">
+											<!-- <span class="sm-text" *ngIf="has_playlist; else no_playlist">
 												This playlist has <strong>{{ number_of_contents }}</strong> items on <strong>{{ screen_zone.zone ? screen_zone.zone : content_per_zone[0].zone_name }}</strong> zone.<br>
 												Total playtime of <b>{{ duration_breakdown_text.total }}</b>.
-											</span>
+											</span> -->
 										</div>
 										<br>
 										<div>
@@ -563,14 +563,14 @@
 								<!-- Assets Breakdown -->
 								<div class="col-lg-3">
 									<div class="assets-chart-container">
-										<canvas id="assetsBreakdown"></canvas>
+										<canvas id="assetsBreakdown" height="250"></canvas>
 									</div>
 								</div>
 
 								<!-- Duration Breakdown -->
 								<div class="col-lg-3">
 									<div class="duration-chart-container">
-										<canvas id="durationBreakdown"></canvas>
+										<canvas id="durationBreakdown" height="250"></canvas>
 									</div>
 								</div>
 	
@@ -585,7 +585,7 @@
 							*ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
 								<div class="mr-2">
 									<app-thumbnail-card
-									(click)="mediaViewer_open(a, content_per_zone[selected_zone_index].contents, i)"
+									(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
 									[image_uri]="a.file_type !== 'feed' ?  a.thumbnail : a.thumbnail+a.file_url"
 									[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
 									[content_id]="a.content_id"
@@ -630,7 +630,7 @@
 	
 								<mat-form-field appearance="fill" *ngIf="selected_display_mode == 'daily'">
 									<mat-label>Choose a date</mat-label>
-									<input matInput (dateInput)="OnDateChange($event.value)" [matDatepicker]="picker" [(value)]="queried_date" readonly>
+									<input matInput (dateInput)="onDateChange($event.value)" [matDatepicker]="picker" [(value)]="queried_date" readonly>
 									<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 									<mat-datepicker #picker></mat-datepicker>
 								</mat-form-field>

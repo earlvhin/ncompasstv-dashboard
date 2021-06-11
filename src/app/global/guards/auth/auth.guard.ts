@@ -6,9 +6,6 @@ import { AuthService } from '../../services/auth-service/auth.service';
 
 export class AuthGuard implements CanActivate {
 
-	currentUser: any;
-	currentRole: any;
-
 	constructor(
 		private _auth: AuthService,
 		private _router: Router
@@ -16,14 +13,15 @@ export class AuthGuard implements CanActivate {
 
 	canActivate(): boolean {
 
-		if(!this._auth.token_life()) {
+		if (!this._auth.token_life()) {
 			localStorage.removeItem('tokens');
 			localStorage.removeItem('currentUser');
 			this._router.navigate(['/login']);
-			console.log('can activate? false');
 			return false;
 		}
-		console.log('can activate? true');
+
 		return true;
+
 	}
+
 }

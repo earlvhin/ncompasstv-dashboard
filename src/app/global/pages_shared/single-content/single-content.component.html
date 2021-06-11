@@ -25,12 +25,9 @@
                         File Name: 
                     </span>
                     <span>
-                        <span *ngIf="c.fileType != 'feed'; else feedTitle">
-                            {{ c.fileName}}
+                        <span>
+                            {{ c.title }}
                         </span>
-                        <ng-template #feedTitle>
-                            <span>{{ c.title }}</span>
-                        </ng-template>
                     </span>
                 </div>
                 <div class="col-lg-12 p-0">
