@@ -221,7 +221,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getDealerInfo(this.dealer_id);
 					this.getDealerAdvertiser(1);
 					this.getDealerHost(1);
-					this.getLicensesofDealer(1);
+                    this.sortList('desc');
 					this.getLicenseTotalCount(this.dealer_id);
 					this.getAdvertiserTotalCount(this.dealer_id);
 					this.getHostTotalCount(this.dealer_id);
