@@ -206,6 +206,10 @@
 		background-color: rgb(32, 131, 189);
 	}
 
+    &._neutral {
+        background-color: $black;
+    }
+
     .button-label {
         font-size: $md;
         font-weight: 500;
@@ -457,6 +461,10 @@
     float: right;
 }
 
+.black-bg {
+    background: $black;
+}
+
 .white-bg {
     background: $light;
 }
@@ -566,4 +574,10 @@ agm-map {
 }
 .prevent-click {
     pointer-events: none;
+}
+.hidden {
+    display: none;
+}
+.no_border_radius {
+    border-radius: 0px !important;
 }

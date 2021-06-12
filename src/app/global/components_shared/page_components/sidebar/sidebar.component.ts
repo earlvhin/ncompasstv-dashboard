@@ -1,9 +1,12 @@
 import { Component, OnInit, EventEmitter, Output, Input, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 import * as moment from 'moment';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
+import { Router, ActivatedRoute, NavigationEnd } from '@angular/router';
+import { url } from 'inspector';
 
 @Component({
 	selector: 'app-sidebar',
@@ -21,8 +24,21 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		private _auth: AuthService,
-		private _license: LicenseService
-	) { }
+		private _license: LicenseService,
+        private route:ActivatedRoute,
+        private router: Router
+	) {
+        router.events.pipe(
+            filter(event => event instanceof NavigationEnd)  
+        ).subscribe((event: NavigationEnd) => {
+            if(event.url.match(/dealers.*/)) {
+                this.icons_only = true;
+                this.toggleEvent.emit(this.icons_only);
+            }
+        });
+    }
+
+    
 		
 	ngOnInit() {
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
@@ -42,7 +58,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
 	getInstallations() {
 		this.subscription.add(
-			this._license.get_licenses_by_install_date(1, moment().format('MM/DD/YYYYY'), "", "").subscribe(
+			this._license.get_statistics_by_installation(moment().format('MM/DD/YYYYY')).subscribe(
 				data => {
 					if(!data.message) {
 						this.installations_count = data.licenseInstallationStats.total;
