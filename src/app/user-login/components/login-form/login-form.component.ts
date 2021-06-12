@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../../global/services/auth-service/auth.service';
-import { USER_LOGIN } from 'src/app/global/models/api_user.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
 import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { first } from 'rxjs/operators';
+
+import { AuthService } from '../../../global/services/auth-service/auth.service';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
+import { USER_LOGIN } from 'src/app/global/models/api_user.model';
 
 @Component({
 	selector: 'app-login-form',
@@ -62,8 +63,7 @@ export class LoginFormComponent implements OnInit {
 				username: ['', Validators.required],
 				password: ['', Validators.required]
 			}
-			)
-		console.log(this.form[this.control])
+		);
 	}
 
 	// convenience getter for easy access to form fields
