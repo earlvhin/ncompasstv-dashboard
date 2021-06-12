@@ -1,9 +1,11 @@
-import { Component, OnInit } from '@angular/core';
-import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
-import { Subscription } from 'rxjs';
-import { UI_DEALER_PLAYLIST } from 'src/app/global/models/ui_dealer-playlist.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common';
+import { Subject } from 'rxjs';
+
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
+import { UI_DEALER_PLAYLIST } from 'src/app/global/models/ui_dealer-playlist.model';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-playlists',
@@ -11,25 +13,27 @@ import { DatePipe, TitleCasePipe } from '@angular/common';
 	styleUrls: ['./playlists.component.scss'],
 	providers: [DatePipe, TitleCasePipe]
 })
-export class PlaylistsComponent implements OnInit {
+export class PlaylistsComponent implements OnInit, OnDestroy {
 	playlist_details: any;
 	dealers_info;
 	dealer_id: string;
 	initial_load: boolean = true;
+	is_view_only = false;
 	playlist_data: UI_DEALER_PLAYLIST[] = [];
 	filtered_data: any = [];
 	no_playlist: boolean = false;
 	paging_data: any;
+	search_data: string = "";
+	searching: boolean = false;
+
 	playlist_table_column = [
 		'#',
 		'Name',
 		'Description',
 		'Creation Date',
-		// 'Last Update'
-	]
-	search_data: string = "";
-	searching: boolean = false;
-	subscription: Subscription = new Subscription;
+	];
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _playlist: PlaylistService,
@@ -39,73 +43,76 @@ export class PlaylistsComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+		this.dealer_id = this.currentUser.roleInfo.dealerId;
 		this.getPlaylist(1);
 		this.getTotalCount(this.dealer_id)
-		this.dealers_info = this._auth.current_user_value.roleInfo.businessName;
+		this.dealers_info = this.currentUser.roleInfo.businessName;
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
-	getTotalCount(id) {
-		this.subscription.add(
-			this._playlist.get_playlists_total_by_dealer(id).subscribe(
-				(data: any) => {
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	getTotalCount(id: string): void {
+
+		this._playlist.get_playlists_total_by_dealer(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
 					this.playlist_details = {
-						basis: data.total,
+						basis: response.total,
 						basis_label: 'Playlist(s)',
-						good_value: data.totalActive,
+						good_value: response.totalActive,
 						good_value_label: 'Active',
-						bad_value: data.totalInActive,
+						bad_value: response.totalInActive,
 						bad_value_label: 'Inactive',
-						new_this_week_value: data.newPlaylistsThisWeek,
+						new_this_week_value: response.newPlaylistsThisWeek,
 						new_this_week_label: 'Playlist(s)',
 						new_this_week_description: 'New this week',
-						new_last_week_value: data.newPlaylistsLastWeek,
+						new_last_week_value: response.newPlaylistsLastWeek,
 						new_last_week_label: 'Playlist(s)',
 						new_last_week_description: 'New last week'
 					}
-				}
-			)
-		)
+				},
+				error => console.log('Error retrieving dealer playlist total', error)
+			);
+		
 	}
 
-	getPlaylist(page) {
+	getPlaylist(page: number): void {
+
 		this.searching = true;
 		this.playlist_data = [];
-		this.subscription.add(
-			this._playlist.get_playlist_by_dealer_id_table(page, this.dealer_id, this.search_data).subscribe(
-				data => {
+
+		this._playlist.get_playlist_by_dealer_id_table(page, this.dealer_id, this.search_data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
 					this.initial_load = false;
-                    this.paging_data = data.paging;
-					if (data.playlists.length > 0) {
-						this.playlist_data = this.playlist_mapToUI(data.playlists)
-						this.filtered_data = this.playlist_mapToUI(data.playlists)
+					this.paging_data = response.paging;
+
+					if (response.playlists.length > 0) {
+						this.playlist_data = this.mapPlaylistToUI(response.playlists)
+						this.filtered_data = this.mapPlaylistToUI(response.playlists)
+
 					} else {
-						if(this.search_data.length > 0) {
+
+						if (this.search_data.length > 0) {
 							this.filtered_data = [];
 							this.no_playlist = false;
+
 						} else {
 							this.no_playlist = true;
 						}
-					}
-					this.searching = false;
-				}
-			)
-		)
-	}
 
-	playlist_mapToUI(data): UI_DEALER_PLAYLIST[] {
-		let count = this.paging_data.pageStart;
-		return data.map(
-			({playlist}) => {
-				return new UI_DEALER_PLAYLIST(
-					{ value: playlist.playlistId, link: null , editable: false, hidden: true},
-					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: playlist ? playlist.playlistName : '', link: '/sub-dealer/playlists/' +  playlist.playlistId, editable: false, hidden: false},
-					{ value: this._title.transform(playlist.playlistDescription), link: null, editable: false, hidden: false},
-					{ value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
-				)
-			}
-		)
+					}
+
+					this.searching = false;
+				},
+				error => console.log('Error retrieving playlist by dealer id table', error)
+
+			);
 	}
 
 	filterData(data) {
@@ -121,6 +128,28 @@ export class PlaylistsComponent implements OnInit {
 	fromDelete() {
 		// this.searching = true;
 		this.ngOnInit();
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
+	}
+
+	private mapPlaylistToUI(data): UI_DEALER_PLAYLIST[] {
+		
+		let count = this.paging_data.pageStart;
+
+		return data.map(
+			({playlist}) => {
+				return new UI_DEALER_PLAYLIST(
+					{ value: playlist.playlistId, link: null , editable: false, hidden: true},
+					{ value: count++, link: null , editable: false, hidden: false},
+					{ value: playlist ? playlist.playlistName : '', link: '/sub-dealer/playlists/' +  playlist.playlistId, editable: false, hidden: false},
+					{ value: this._title.transform(playlist.playlistDescription), link: null, editable: false, hidden: false},
+					{ value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
+				)
+			}
+		);
+		
 	}
 }
 

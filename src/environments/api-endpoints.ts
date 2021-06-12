@@ -131,6 +131,7 @@ export const API_ENDPOINTS = {
 		filestack_signature: '49306a4d1945bffbb381dd90b38be3a69230b2f473543d3d73440c77eeab730d',
 	},
 	update: {
+		account_permission: 'account/UpdatePermission',
 		api_assign_license_to_screen: 'screen/assignlicenses',
 		api_activate_license: 'license/activate?licenseKey=',
 		api_assign_license_to_host: 'license/assignhost',

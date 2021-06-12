@@ -558,7 +558,6 @@ export class CreateHostComponent implements OnInit {
 
 		this.no_category = true;
 		this.f.category.setValue(this._titlecase.transform(e).replace(/_/g, " "));
-		console.log('no', this._titlecase.transform(e).replace(/_/g, " "))
 	}
 
 	watchCategoryField() {

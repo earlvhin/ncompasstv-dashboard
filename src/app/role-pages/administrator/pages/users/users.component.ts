@@ -46,7 +46,6 @@ export class UsersComponent implements OnInit {
 	}
 
 	getAllusers() {
-		console.log("CALLED")
 		this.pageRequested(1);
 	}
 

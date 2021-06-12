@@ -25,6 +25,7 @@ import { ScreensComponent } from './pages/screens/screens.component';
 import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
+import { PermissionGuard } from 'src/app/global/guards/sub-dealer/permission.guard';
 
 export const SUB_DEALER_ROUTES: Routes = [
     {
@@ -35,27 +36,27 @@ export const SUB_DEALER_ROUTES: Routes = [
         children: [
             { path: '', component: DashboardComponent },
 			{ path: 'dashboard', component: DashboardComponent },
-			{ path: 'create-host', component: CreateHostComponent},
-			{ path: 'screens/create-screen', component: CreateScreenComponent},
-			{ path: 'advertisers', component: AdvertisersComponent },
-			{ path: 'advertisers/:data', component: SingleAdvertiserComponent },
-			{ path: 'create-advertiser', component: CreateAdvertiserComponent },
-			{ path: 'feeds', component: FeedsComponent },
 			{ path: 'hosts', component: HostsComponent },
-			{ path: 'hosts/:data', component: SingleHostComponent},
 			{ path: 'licenses', component: LicensesComponent },
-			{ path: 'licenses/:data', component: SingleLicenseComponent},
+			{ path: 'advertisers', component: AdvertisersComponent },
 			{ path: 'locator', component: LocatorComponent },
-			{ path: 'playlists', component: PlaylistsComponent },
-			{ path: 'playlists/create-playlist', component: CreatePlaylistComponent },
-			{ path: 'playlists/:data', component: SinglePlaylistComponent },
 			{ path: 'media-library', component: MediaLibraryComponent },
-			{ path: 'media-library/:data', component: SingleContentComponent },
+			{ path: 'feeds', component: FeedsComponent },
+			{ path: 'playlists', component: PlaylistsComponent },
 			{ path: 'screens', component: ScreensComponent },
-			{ path: 'screens/:data', component: SingleScreenComponent },
 			{ path: 'user-profile/:data', component: UserProfileComponent },
+			{ path: 'user-account-setting/:data', component: UserAccountSettingComponent },
+			{ path: 'create-host', component: CreateHostComponent, canActivate: [ PermissionGuard ] },
+			{ path: 'screens/create-screen', component: CreateScreenComponent, canActivate: [ PermissionGuard ] },
+			{ path: 'create-advertiser', component: CreateAdvertiserComponent, canActivate: [ PermissionGuard ] },
+			{ path: 'playlists/create-playlist', component: CreatePlaylistComponent, canActivate: [ PermissionGuard ] },
+			{ path: 'advertisers/:data', component: SingleAdvertiserComponent },
+			{ path: 'hosts/:data', component: SingleHostComponent },
+			{ path: 'licenses/:data', component: SingleLicenseComponent },
+			{ path: 'playlists/:data', component: SinglePlaylistComponent },
+			{ path: 'media-library/:data', component: SingleContentComponent },
+			{ path: 'screens/:data', component: SingleScreenComponent },
 			{ path: 'dealer-profile/:data', component: DealerProfileComponent },
-			{ path: 'user-account-setting/:data', component: UserAccountSettingComponent }
         ],
     }
 ];

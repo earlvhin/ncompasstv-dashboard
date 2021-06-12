@@ -151,7 +151,6 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 
 		this._helper.onResetAutocompleteField.pipe(takeUntil(this._unsubscribe)).subscribe(
 			(response: string) => {
-				console.log('reset this component for', response);
 				if (response === this.type) this.ngOnInit();
 			},
 			error => console.log('Error on reset auto complete subscription', error)

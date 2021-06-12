@@ -41,7 +41,6 @@ export class ScreenLicenseComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log('assignLicense', this._dialog_data);
 		this.zone_contents = this._dialog_data.zone_contents
 		this.license$ = this._license.get_license_by_host_id(this._dialog_data.license_id);
 	}
@@ -119,7 +118,6 @@ export class ScreenLicenseComponent implements OnInit {
 			)
 		}
 
-		console.log('#blacklistPlaylistContents', this.to_blacklist);
 	}
 
 	removeToBlacklist(licenseId) {
@@ -129,7 +127,6 @@ export class ScreenLicenseComponent implements OnInit {
 			}
 		)
 
-		console.log('#blacklistPlaylistContents', this.to_blacklist);
 	}
 
 	blacklistAddedContents() {

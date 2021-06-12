@@ -121,7 +121,6 @@ export class SingleHostComponent implements OnInit {
 		);
 
 		if (!this.business_hours_update_sub) this.subscribeToBusinessHoursUpdate();
-        console.log("CALLED")
 	}
 
 	ngOnDestroy() {
@@ -250,7 +249,7 @@ export class SingleHostComponent implements OnInit {
 			if(result === 'system_update') {
 				this.host_license_api.forEach(
 					(i: any) => {
-						console.log('SystemUpdate Emitted:', i.licenseId)
+						// console.log('SystemUpdate Emitted:', i.licenseId)
 						this._socket.emit('D_system_update_by_license', i.licenseId);
 					}
 				)
@@ -260,7 +259,7 @@ export class SingleHostComponent implements OnInit {
 			} else if(result === 'update') {
 				this.host_license_api.forEach(
 					(i: any) => {
-						console.log('D_update_player:', i.licenseId)
+						// console.log('D_update_player:', i.licenseId)
 						this._socket.emit('D_update_player', i.licenseId);
 					}
 				)
@@ -270,7 +269,7 @@ export class SingleHostComponent implements OnInit {
 			}  else if(result === 'upgrade_to_v2') {
 				this.host_license_api.forEach(
 					(i: any) => {
-						console.log('D_upgrade_to_v2_by_license:', i.licenseId)
+						// console.log('D_upgrade_to_v2_by_license:', i.licenseId)
 						this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
 					}
 				)

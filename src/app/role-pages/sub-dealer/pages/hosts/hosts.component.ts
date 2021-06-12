@@ -36,6 +36,7 @@ export class HostsComponent implements OnInit {
 	initial_load: boolean = true;
 	no_hosts: boolean = false;
 	paging_data: any;
+	is_view_only = false;
 
 	// UI Table Column Header
 	host_table_column: string[] = [
@@ -47,13 +48,11 @@ export class HostsComponent implements OnInit {
 		'Number of Licenses',
 		'Category',
 		'Status',
-	]
+	];
 
 	constructor(
-    	private _user: UserService,
-		private _host: HostService,
-    	private _dealer: DealerService,
 		private _auth: AuthService,
+		private _host: HostService,
 		private _title: TitleCasePipe
 	) { }
 

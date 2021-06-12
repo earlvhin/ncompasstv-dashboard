@@ -142,7 +142,6 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	playWhere() {
-		console.log('#playWhere', this._dialog_data.playlist_host_license);
 
 		let play_where = this._dialog.open(MediaPlaywhereComponent, {
 			data: this._dialog_data.playlist_host_license,

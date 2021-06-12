@@ -8,11 +8,11 @@
             </div>
             <div class="col-lg-2">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/sub-dealer/create-host']">
-                        <span class="button-label">
-                            Add Host Place
-                        </span>
-                        <span class="fas fa-map-marker ml-2 sm-text"></span>
+                    <button mat-button mat-raised-button class="theme-btn" 
+						[routerLink]="['/sub-dealer/create-host']"
+						[disabled]="is_view_only">
+							<span class="button-label">Add Host Place</span>
+							<span class="fas fa-map-marker ml-2 sm-text"></span>
                     </button>
                 </div>
             </div>
@@ -92,9 +92,9 @@
 				<p class="sm-text mb-3">
 					There are no available hosts at the moment.
 				</p>
-				<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/sub-dealer/create-host']">
-					Add Host Place
-					<span class="fas fa-plus ml-2 sm-text"></span>
+				<button mat-button mat-raised-button class="theme-btn mr-2" 
+					[routerLink]="['/sub-dealer/create-host']"
+					[disabled]="is_view_only">Add Host Place <span class="fas fa-plus ml-2 sm-text"></span>
 				</button>
 			</mat-card>
         </ng-template>

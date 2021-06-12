@@ -31,6 +31,7 @@ export class AdvertisersComponent implements OnInit {
 	subscription: Subscription = new Subscription;
 	tab: any = { tab: 2 };
 	title: string = "Advertisers";
+	is_view_only = false;
 	
 	constructor(
 		private _advertiser: AdvertiserService,

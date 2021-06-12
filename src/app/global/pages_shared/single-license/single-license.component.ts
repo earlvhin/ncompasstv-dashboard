@@ -558,7 +558,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 
 		this._socket.once('SS_offline_player', data => {
-			console.log('SS_offline_player', data)
+			// console.log('SS_offline_player', data)
 			if (data == this.license_id) {
 				this.displayPopup('Oh snap! Your player with this license is currently offline', 'error');
 				this.player_status = false;
@@ -566,7 +566,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 
 		this._socket.once('SS_offline_pi', data => {
-			console.log('SS_offline_pi', data)
+			// console.log('SS_offline_pi', data)
 			if (data == this.license_id) {
 				this.displayPopup('Oh snap! Your Pi with this license is currently offline', 'error');
 				this.pi_status = false;

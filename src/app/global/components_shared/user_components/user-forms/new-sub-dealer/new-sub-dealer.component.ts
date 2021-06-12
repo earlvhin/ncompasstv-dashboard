@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup, FormBuilder, Validators, FormGroupDirective } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
@@ -16,7 +16,7 @@ import { UserService } from 'src/app/global/services/user-service/user.service';
 	templateUrl: './new-sub-dealer.component.html',
 	styleUrls: ['./new-sub-dealer.component.scss']
 })
-export class NewSubDealerComponent implements OnInit {
+export class NewSubDealerComponent implements OnInit, OnDestroy {
 	
 	back_btn: string;
 	dealers: API_DEALER[] = [];
@@ -77,10 +77,8 @@ export class NewSubDealerComponent implements OnInit {
 
 		this.subscription.add(
 			this._dealer.get_dealers().subscribe(
-				data => {
-					console.log('get dealers response', data);
-					this.dealers = data;
-				}
+				data => this.dealers = data,
+				error => console.log('Error retrieving dealers', error)
 			)
 		);
 

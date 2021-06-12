@@ -27,7 +27,6 @@ export class FilestackService {
 			let filename = data.key.substring(0, data.key.lastIndexOf("."));
 			let originalName = data.filename;
 
-			console.log('#convert_videos', filename);
 
 			this.subscription.add(
 				// 1280×720 
@@ -53,7 +52,6 @@ export class FilestackService {
 	
 				// Change mp4 filetype/filename to webm
 				if (file.mimetype === 'video/mp4') {
-					console.log('is', file.mimetype);
 					filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.webm`;
 
 					let convert_data = await this.convert_videos(file);
