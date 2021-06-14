@@ -25,6 +25,11 @@ export class UserService {
 		private _auth: AuthService
 	) { }
 
+	deleteUser(userId: string) {
+		const endpoint = `${this.base}${this.delete.user}?userid=${userId}`;
+		return this._http.post(endpoint, {}, this.httpOptions);
+	}
+
 	get_users() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_users}`, this.httpOptions);
 	}
@@ -98,7 +103,12 @@ export class UserService {
 		return environment.base_uri;
 	}
 
+	protected get delete() {
+		return environment.delete;
+	}
+
 	protected get update() {
 		return environment.update;
 	}
+
 }

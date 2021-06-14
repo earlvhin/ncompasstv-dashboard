@@ -21,7 +21,7 @@
 				<th *ngIf="preview_column" class="text-right" class="p-3">
 					{{ preview_column_label || 'Action' }}
 				</th>
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete" class="text-right" class="p-3">
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || sub_dealer_delete" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
@@ -121,6 +121,9 @@
 				</td>
 				<td class="p-3 control-toggle text-center" *ngIf="license_delete">
 					<i class="fas fa-trash {{data.pi_status.value != 1  && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'}}" data-toggle="tooltip" title="{{data.pi_status.value != 1  && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'}}" (click)="deleteLicense(data.license_id.value)"></i>
+				</td>
+				<td class="p-3 control-toggle text-center" *ngIf="sub_dealer_delete">
+					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="data.role.value === 'Sub Dealer'" (click)="onDeleteSubDealer(data.user_id.value)"></i>
 				</td>
 			</tr>
 		</tbody>

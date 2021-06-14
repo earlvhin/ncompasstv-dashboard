@@ -1,8 +1,18 @@
 <div class="theme-container" *ngIf="user$ | async as u">
     <div class="row">
-        <div class="col-lg-12">`
-            <h2>{{ u.firstName }} {{ u.lastName }}</h2>
-            <p class="sm-text mb-4">Create {{ u.dateCreated | date }} by {{ u.creatorName }}</p>
+        <div class="col-lg-12">
+			<div class="d-flex justify-content-between align-items-baseline">
+				<div>
+					<h2>{{ u.firstName }} {{ u.lastName }}</h2>
+					<p class="sm-text mb-4">Create {{ u.dateCreated | date }} by {{ u.creatorName }}</p>
+				</div>
+
+				<button mat-button mat-raised-button class="theme-btn sm-text _danger" 
+					*ngIf="this.is_sub_dealer"
+					(click)="onDelete(u.userId)"
+					[disabled]="!can_delete_sub_dealer">Delete
+				</button>
+			</div>
         </div>
         <div class="col-lg-6">
             <mat-card class="p-5">
@@ -27,7 +37,7 @@
 								<label>Permission:</label>
 								<mat-radio-group name="{{ field.name }}" fxLayout="column" formControlName="{{ field.control }}">
 									<mat-radio-button *ngFor="let permission of permissions" class="mr-2 md-text text-gray" 
-										name="opList" [value]="permission.value" (change)="onSelectPermission($event.value)">{{ permission.label }}</mat-radio-button>
+										name="opList" [value]="permission.value">{{ permission.label }}</mat-radio-button>
 								</mat-radio-group>
 							</div>
 						</ng-template>

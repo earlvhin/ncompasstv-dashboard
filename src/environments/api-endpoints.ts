@@ -170,6 +170,7 @@ export const API_ENDPOINTS = {
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost?force=1',
-		host: 'host/delete'
+		host: 'host/delete',
+		user: 'user/delete',
 	}
 };

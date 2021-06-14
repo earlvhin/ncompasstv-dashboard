@@ -1,8 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { API_USER_DATA } from '../../models/api_user-data.model';
 import { API_UPDATE_USER_INFO } from '../../models/api_update-user-info.model';
@@ -10,7 +11,6 @@ import { AuthService } from '../../services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UserService } from '../../services/user-service/user.service';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-single-user',
@@ -20,6 +20,7 @@ import { takeUntil } from 'rxjs/operators';
 
 export class SingleUserComponent implements OnInit, OnDestroy {
 
+	current_role: string;
 	info_form: FormGroup;
 	info_form_disabled = false;
 	is_password_field_type = true;
@@ -84,10 +85,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _auth: AuthService,
-		private _user: UserService,
-		private _params: ActivatedRoute,
+		private _dialog: MatDialog,
 		private _form: FormBuilder,
-		private _dialog: MatDialog
+		private _params: ActivatedRoute,
+		private _router: Router,
+		private _user: UserService,
 	) { }
 
 	ngOnInit() {
@@ -95,6 +97,8 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
 			.subscribe(() => this.getUserById(this._params.snapshot.params.data));
+
+		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
 	}
 
 	ngOnDestroy() {
@@ -110,19 +114,53 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		return this.password_form.controls;
 	}
 
+	get can_delete_sub_dealer() {
+		return this.current_role === 'administrator' || this.current_role === 'dealer';
+	}
+
 	changeUserPassword() {
 		this.password_form_disabled = true;
-		this._user.update_user(this.mapPasswordChanges()).subscribe(
-			data => {
-				console.log(data)
-				this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
-				this.ngOnInit();
-			}, 
-			error => {
-				this.password_form_disabled = false;
-				console.log(error)
+
+		this._user.update_user(this.mapPasswordChanges()).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
+					this.ngOnInit();
+				}, 
+				error => {
+					console.log('Error changing user password', error);
+					this.password_form_disabled = false;
+				}
+			);
+	}
+
+	onDelete(userId: string): void {
+		console.log('user id', userId);
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status: 'warning',
+				message: 'Delete User',
+				data: 'Proceed deleting this user?'
 			}
-		)
+		});
+
+		dialog.afterClosed().subscribe(
+			response => {
+
+				if (!response) return;
+
+				this._user.deleteUser(userId).pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						() => this._router.navigate([`/${this.current_role}/users`]),
+						error => console.log('Error deleting user', error)
+					);
+
+			}
+		);
+
 	}
 
 	togglePasswordFieldType(): void {
@@ -131,10 +169,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
-	}
-
-	onSelectPermission(value: string): void {
-		this.infoFormControls
 	}
 
 	updateUserInfo(): void {
@@ -162,6 +196,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	}
 
+	private get currentUser() {
+		return this._auth.current_user_value;
+	}
+
 	private get formControlNames() {
 		return this.info_form_fields.map((field: { control: string }) => field.control);
 	}
@@ -174,11 +212,30 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		return this.info_form_fields.filter((field: { required: boolean }) => !field.required).map(field => field.control);
 	}
 
-	private initializeForms(): void {
-		this.initializeInfoForm();
-		this.initializePasswordForm();
-		this.subscribeToUpdateFormChanges();
-		this.subscribeToPasswordFormChanges();
+	private fillChangePasswordForm(): void {
+
+		this.password_form = this._form.group(
+			{
+				new_password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
+				re_password: ['', Validators.required]
+			}
+		);
+	}
+
+	private fillInfoForm(): void {
+
+		 const controls = this.formControlNames;
+
+		 controls.forEach(
+			control => {
+				Object.entries(this.user_data).forEach(
+					([key, value]) => {
+						if (key === control) this.infoFormControls[control].setValue(value);
+					}
+				);
+			}
+		);
+
 	}
 
 	private getUserById(id: string): void {
@@ -198,6 +255,13 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				}, 
 				error => console.log('Error retrieving user data', error)
 			);
+	}
+
+	private initializeForms(): void {
+		this.initializeInfoForm();
+		this.initializePasswordForm();
+		this.subscribeToUpdateFormChanges();
+		this.subscribeToPasswordFormChanges();
 	}
 
 	private initializePasswordForm(): void {
@@ -314,32 +378,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 				}
 			);
-
-	}
-
-	private fillChangePasswordForm(): void {
-
-		this.password_form = this._form.group(
-			{
-				new_password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-				re_password: ['', Validators.required]
-			}
-		);
-	}
-
-	private fillInfoForm(): void {
-
-		 const controls = this.formControlNames;
-
-		 controls.forEach(
-			control => {
-				Object.entries(this.user_data).forEach(
-					([key, value]) => {
-						if (key === control) this.infoFormControls[control].setValue(value);
-					}
-				);
-			}
-		);
 
 	}
 
