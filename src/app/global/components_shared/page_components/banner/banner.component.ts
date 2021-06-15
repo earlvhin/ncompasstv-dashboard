@@ -169,7 +169,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 	showHostContent() {
 		let dialogRef = this._dialog.open(EditSingleHostComponent, {
-			width: '700px',
+			width: '992px',
 			panelClass: 'app-edit-single-advertiser',
 			disableClose: true,
 			data: this.single_host_data.host_id 

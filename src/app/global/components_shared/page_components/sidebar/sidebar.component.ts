@@ -59,8 +59,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 		this.subscription.add(
 			this._license.get_statistics_by_installation(moment().format('MM/DD/YYYYY')).subscribe(
 				data => {
-					if (!data.message) {
-						this.installations_count = data.licenseInstallationStats.total;
+					if(!data.message) {
+						this.installations_count = data.licenseInstallationStats ? data.licenseInstallationStats.total : 0;
 					} else {
 						this.installations_count = 0;
 					}

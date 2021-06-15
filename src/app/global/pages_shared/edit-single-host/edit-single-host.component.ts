@@ -81,19 +81,19 @@ export class EditSingleHostComponent implements OnInit {
 			label: 'Address',
 			control: 'address',
 			placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-			col: 'col-lg-12'
+			col: 'col-lg-6'
 		},
 		{
 			label: 'City',
 			control: 'city',
 			placeholder: 'Ex. Chicago',
-			col: 'col-lg-6'
+			col: 'col-lg-3'
 		},
 		{
 			label: 'State',
 			control: 'state',
 			placeholder: 'Ex. IL',
-			col: 'col-lg-6'
+			col: 'col-lg-3'
 		},
 		{
 			label: 'Region',
@@ -113,6 +113,12 @@ export class EditSingleHostComponent implements OnInit {
 			placeholder: 'Ex. US/Central',
 			col: 'col-lg-4',
 			autocomplete: true,
+		},
+		{
+			label: 'Vistar Venue ID',
+			control: 'vistar_venue_id',
+			placeholder: 'Ex. Venue ID for Vistar',
+			col: 'col-lg-12'
 		},
 		{
 			label: 'Notes',
@@ -244,6 +250,7 @@ export class EditSingleHostComponent implements OnInit {
 			long: ['', Validators.required],
 			lat: ['', Validators.required],
 			timezone: ['', Validators.required],
+			vistar_venue_id: ['', Validators.required],
 			notes: ['']
 		});
 
@@ -327,6 +334,7 @@ export class EditSingleHostComponent implements OnInit {
 		this.initial_dealer = data.dealerId;
 		this.f.timezone.setValue(time.id);
 		this.f.notes.setValue(data.notes);
+		this.f.vistar_venue_id.setValue(data.vistarVenueId)
 	}
 
 	getTimezones(): void {
@@ -354,7 +362,8 @@ export class EditSingleHostComponent implements OnInit {
 			this.f.address.value,
 			this.f.category.value,
 			JSON.stringify(this.business_hours),
-			this.f.timezone.value
+			this.f.timezone.value,
+			this.f.vistar_venue_id.value
 		);
 
 		if (this.f.notes.value && this.f.notes.value.trim().length > 0) {

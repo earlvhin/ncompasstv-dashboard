@@ -882,24 +882,24 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getDealerHost(1);
 	}
 
-	getDealerLicenses() {
-		this.subscription.add(
-			this._license.get_license_to_export(this.dealer_id).subscribe(
-				data => {
-					this.licenses = data.licenses;
-					if (this.licenses) this.resyncSocketConnection();
-				}
-			)
-		);
-	}
+    getDealerLicenses() {
+        this.subscription.add(
+            this._license.get_license_to_export(this.dealer_id).subscribe(
+                data => {
+                    this.licenses = data.licenses;
+                    if (this.licenses) this.resyncSocketConnection();
+                }
+            )
+        );
+    }
 
-	resyncSocketConnection() {
-		this.licenses.forEach(
-			i => {
-				this._socket.emit('D_is_electron_running', i.licenseId);
-			}
-		)
-	}
+    resyncSocketConnection() {
+        this.licenses.forEach(
+            i => {
+                this._socket.emit('D_is_electron_running', i.licenseId);
+            }
+        )
+    }
 
 	getDataForExport(id, tab): void {
 		switch(tab) {
