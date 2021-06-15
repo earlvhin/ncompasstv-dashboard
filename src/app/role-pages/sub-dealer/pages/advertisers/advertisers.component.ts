@@ -41,6 +41,7 @@ export class AdvertisersComponent implements OnInit {
 	ngOnInit() {
 		this.getAdvertiserByDealer(1);
 		this.getAdvertiserTotal(this._auth.current_user_value.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	getAdvertiserTotal(id) {
@@ -114,5 +115,9 @@ export class AdvertisersComponent implements OnInit {
 				)
 			}
 		)
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }
