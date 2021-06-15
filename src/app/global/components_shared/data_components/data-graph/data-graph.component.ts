@@ -41,26 +41,30 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-		// if (this.reload && !this.page) {
+		if (this.reload && !this.page) {
+			this.reload.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					if (!this.chart_initiated) {
+						console.log('init graph from reload');
+						this.initGraph();
+					}
+				},
+				error => console.log('Error on reload subscription ', error)
+			);
+		}
 
-		// 	this.reload.pipe(takeUntil(this._unsubscribe))
-		// 	.subscribe(
-		// 		() => {
-		// 			if (!this.chart_initiated) {
-		// 				console.log('init graph from reload');
-		// 				this.initGraph();
-		// 			}
-		// 		},
-		// 		error => console.log('Error on reload subscription ', error)
-		// 	);
-
-		// }
-
-		this.analytics_reload.subscribe(
-			data => {
+		if (this.analytics_reload) {
+			this.analytics_reload.subscribe(
+				data => {
+					this.initGraph();
+				}
+			)
+		} else {
+			setTimeout(() => {
 				this.initGraph();
-			}
-		)
+			}, 1000)
+		}
 
 		// if (this.page === 'single-license') {
 		// 	this.subscribeToAnalyticsTabSelect();
@@ -86,7 +90,7 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 		// if (this.page === 'single-license' && this._helper.singleLicensePageCurrentTab !== 'Analytics') return;
 
 		this.canvas = <HTMLCanvasElement> document.getElementById(this.graph_id);
-		// console.log('THIS CANVAS', this.canvas)
+		// console.log('THIS CANVAS', this.canvas, this.graph_id)
 
 		if (this.data_set) {
 			this.data_set.map(
