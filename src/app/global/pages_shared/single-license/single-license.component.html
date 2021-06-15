@@ -497,7 +497,7 @@
 								<!-- Playlist Info -->
 								<div class="col-lg-3">
 									<div class="playlist-details">
-										<div><h2>{{ current_zone_selected }} Section</h2></div>
+										<div><h2>{{ current_zone_name_selected }} Section</h2></div>
 										<div class="row">
 											<div class="col-lg-10">
 												<a class="playlist-name" [routerLink]="playlist_route">{{ screen_zone.playlistName }}</a>
@@ -541,18 +541,18 @@
 								<div class="col-lg-3">
 									<div class="minimap">
 										<app-template-minimap
-										*ngIf="template_data else loader"
-										[larger]="false"
-										[zone_focus]="'main'"
-										[is_text_displayed]="true"
-										[is_interactive]="true"
-										[template_data]="template_data"
-										[height]="'180px'"
-										[width]="minimap_width">
+											*ngIf="template_data else loader"
+											[larger]="false"
+											[zone_focus]="'main'"
+											[is_text_displayed]="true"
+											[is_interactive]="true"
+											[template_data]="template_data"
+											[height]="'180px'"
+											[width]="minimap_width">
 										</app-template-minimap>
 			
 										<!-- Background Section Toggle -->
-										<div class="toggle-background-zone" *ngIf="has_background_zone && !is_new_standard_template">
+										<div class="toggle-background-zone" *ngIf="has_background_zone">
 											<mat-slide-toggle 
 											[checked]="background_zone_selected"
 											(click)="onSelectBackgroundZone($event)">Select Background Section</mat-slide-toggle>
