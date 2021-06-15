@@ -75,7 +75,7 @@ import { MediaLibraryOptionsComponent } from './components_shared/media_componen
 import { MediaModalComponent } from './components_shared/media_components/media-modal/media-modal.component';
 import { MediaPlaywhereComponent } from './components_shared/playlist_components/media-playwhere/media-playwhere.component';
 import { MediaViewerComponent } from './components_shared/media_components/media-viewer/media-viewer.component';
-import { MomentDateModule } from '@angular/material-moment-adapter';
+import { MatMomentDateModule, MomentDateModule } from '@angular/material-moment-adapter';
 import { MonthDayFormatDirective } from './directives/month-day-format/month-day-format.directive';
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
@@ -397,6 +397,7 @@ const DIRECTIVES = [
 		MatInputModule,
 		MatDatepickerModule, 
 		MatNativeDateModule, 
+		MatMomentDateModule,
 		MomentDateModule,
 		NgbModule,
 		NgxMaterialTimepickerModule,

@@ -659,8 +659,9 @@
 													</div>
 												</div>
 	
-												<app-data-graph
-													[reload]="eventsSubject.asObservable()"
+												<app-data-graph 
+													*ngIf="!destroy_monthly_charts"
+													[analytics_reload]="analytics_reload.asObservable()"
 													[data_set]="cc.contentPlaysListCount"
 													[graph_id]="cc.contentId + '_monthly'"
 													[realtime_data_per_license]="realtime_data"
@@ -701,6 +702,7 @@
 											</div>
 
 											<app-data-graph
+												[analytics_reload]="analytics_reload.asObservable()"
 												[data_set]="cc.contentPlaysListCount"
 												[graph_id]="cc.contentId + '_yearly'"
 												[realtime_data_per_license]="realtime_data"
@@ -741,6 +743,8 @@
 												</div>
 	
 												<app-data-graph
+													*ngIf="!destroy_daily_charts"
+													[analytics_reload]="analytics_reload.asObservable()"
 													[data_set]="cc.contentPlaysListCount"
 													[graph_id]="cc.contentId + '_daily'"
 													[realtime_data_per_license]="realtime_data"

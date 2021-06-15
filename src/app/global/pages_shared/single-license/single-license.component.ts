@@ -118,6 +118,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	zone_order: number = 0;
 	zone_playlists: UI_ZONE_PLAYLIST[];
 
+	destroy_daily_charts: boolean = false;
+	destroy_monthly_charts: boolean = false;
+	current_display_mode: string; 
+	analytics_reload: Subject<void> = new Subject<void>();
+
 	_socket: any;
 	thumb_no_socket: boolean = true;
 
@@ -200,9 +205,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this._helper.singleLicensePageCurrentTab = this.current_tab;
 
-		this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
-		this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
-		this.getContentReport_yearly();
+		// this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
+		// this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
+		// this.getContentReport_yearly();
 	
 	}
 
@@ -258,13 +263,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			this.dismissPopup();
 		}, 5000);
-
 	}
 
 	displayModeSelected(e): void {
-		if (e === 'yearly') {
+		this.destroy_monthly_charts = true;
+		this.destroy_daily_charts = true;
+		this.current_display_mode = e;
+
+		if (e === 'monthly') {
 			this.queried_date = this._date.transform(new Date(), 'longDate');
+			this.destroy_monthly_charts = false;
 			this.getContentReport_monthly(this._date.transform(new Date(), 'y-MM'))
+		} else {
+			this.destroy_daily_charts = false;
+			this.queried_date = this._date.transform(new Date(), 'longDate');
 			this.getContentReport_daily(this._date.transform(new Date(), 'y-MM-dd'))
 		}
 	}
@@ -316,12 +328,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	getContentReport_daily(date): void {
 		const data = { licenseId: this.license_id, from : date };
+		this.daily_chart_updating = true;
 
 		this.subscriptions.add(
 			this._content.get_content_daily_count_by_license(data).subscribe(
 				data => {
 					this.daily_content_count = data;
 					this.daily_chart_updating = false;
+					this.destroy_daily_charts = false;
+
+					setTimeout(() => {
+						this.analytics_reload.next();
+					}, 1000)
 				},
 				error => console.log('Error getting daily content count', error)
 			)
@@ -330,17 +348,22 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	getContentReport_monthly(date): void {
 		const data = { licenseId: this.license_id, from: date };
-
+		this.monthly_chart_updating = true;
+		
 		this.subscriptions.add(
 			this._content.get_content_monthly_count_by_license(data).subscribe(
 				data => {
 					this.monthly_content_count = data;
 					this.monthly_chart_updating = false;
+					this.destroy_monthly_charts = false;
+
+					setTimeout(() => {
+						this.analytics_reload.next();
+					}, 1000)
 				},
 				error => console.log('Error getting monthly content count', error)
 			)
 		);
-
 	}
 
 	getContentReport_yearly(): void {
@@ -496,6 +519,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
+
 			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
 			this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
 			this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
@@ -646,13 +670,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	tabSelected(event: { index: number }): void {
-
 		let tab = '';
 
 		switch (event.index) {
 			case 1:
 				tab = 'Content';
-				this.emitReloadMedia();
+				// this.emitReloadMedia();
 
 				if (this.initial_load_charts) {
 
@@ -662,19 +685,36 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					if (contents && contents.length > 0) {
 						setTimeout(() => {
 							this.generateAssetsBreakdownChart();
-							this.generateDurationBreakdownChart();		
+							this.generateDurationBreakdownChart();
 						}, 1000);
 					}
 
 				}
 
+				this.destroy_monthly_charts = true;
+				this.destroy_daily_charts = true;
+
 				break;
+
 			case 2:
 				tab = 'Analytics';
-				this._helper.onSelectAnalyticsTab.emit();
+				// this._helper.onSelectAnalyticsTab.emit();
+				this.monthly_chart_updating = true;
+				this.daily_chart_updating = true;
+
+				if (this.current_display_mode == 'monthly') {
+					this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
+				} else if(this.current_display_mode == 'daily') {
+					this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
+				} else {
+					this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
+				}
 				break;
+
 			default:
 				tab = 'Details';
+				this.destroy_monthly_charts = true;
+				this.destroy_daily_charts = true;
 		}
 
 		this.current_tab = tab;
@@ -995,10 +1035,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.charts = [];
 	}
 
-	private emitReloadMedia(): void {
-		this.eventsSubject.next();
-		this.monthSelected(this.default_selected_month)
-	}
+	// private emitReloadMedia(): void {
+	// 	this.eventsSubject.next();
+	// 	this.monthSelected(this.default_selected_month)
+	// }
 
 	private getHostTimezoneDay(): string {
 		let result: string;
