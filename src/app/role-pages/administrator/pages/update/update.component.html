@@ -120,6 +120,28 @@
                     </form>
                 </mat-card>
             </div>
+
+            <div class="col-lg-4">
+                <mat-card class="p-4">
+                    <h3>Delete Player App Version</h3>
+                    <p class="sm-text mb-4">Select a Player App Version to Delete</p>
+
+                    <form [formGroup]="delete_app_version_form" (ngSubmit)="deleteAppVersion()">
+                        <mat-form-field appearance="fill" class="w-100">
+                            <mat-label>Select App</mat-label>
+                            <mat-select formControlName="versionId" required>
+                                <mat-option *ngFor="let a of all_app_versions" [value]="a.versionId">
+                                    {{ a.appName }} - {{ a.version}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+
+                        <button mat-button mat-raised-button class="theme-btn" [disabled]="delete_app_version_form_disabled">
+                            Delete Version
+                        </button>
+                    </form>
+                </mat-card>
+            </div>
         </div>
     </div>
 </div>

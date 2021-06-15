@@ -22,6 +22,7 @@ import { ConfirmTemplateModalComponent } from './components_shared/template_comp
 import { ConfirmationModalComponent } from './components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
+import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
 import { CreateHostComponent } from './pages_shared/create-host/create-host.component';
 import { CreatePlaylistComponent } from './pages_shared/create-playlist/create-playlist.component';
@@ -34,7 +35,6 @@ import { DataCardComponent } from './components_shared/data_components/data-card
 import { DataCardCountComponent } from './components_shared/data_components/data-card-count/data-card-count.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
-import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
 import { DealerDetailsTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-details-tab/dealer-details-tab.component';
 import { DealerHistoryTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-history-tab/dealer-history-tab.component';
@@ -43,6 +43,7 @@ import { DealerInvoicesTabComponent } from './components_purpose-built/single-de
 import { DealerMapTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-map-tab/dealer-map-tab.component';
 import { DealerViewComponent } from './components_shared/locator_components/dealer-view/dealer-view.component';
 import { DealersTableComponent } from './components_purpose-built/dealers-table/dealers-table.component';
+import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
 import { DeletePlaylistComponent } from './components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { DemoZoneComponent } from './components_shared/zone_components/demo-zone/demo-zone.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -57,6 +58,7 @@ import { FailAnimationComponent } from './components_shared/page_components/fail
 import { FilenamePipe } from './pipes/filename.pipe';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
+import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { InformationModalComponent } from './components_shared/page_components/information-modal/information-modal.component';
 import { IsEmptyPipe } from './pipes/is-empty.pipe';
@@ -110,8 +112,8 @@ import { ScreenDemoComponent } from './components_shared/screen_components/scree
 import { ScreenItemComponent } from './components_shared/screen_components/screen-item/screen-item.component';
 import { ScreenLicenseComponent } from './components_shared/screen_components/screen-license/screen-license.component';
 import { ScreenshotPipe } from './pipes/screenshot.pipe';
-import { SelectOwnerComponent } from './components_shared/user_components/select-owner/select-owner.component';
 import { SearchFieldComponent } from './components_shared/page_components/search-field/search-field.component';
+import { SelectOwnerComponent } from './components_shared/user_components/select-owner/select-owner.component';
 import { SidebarComponent } from './components_shared/page_components/sidebar/sidebar.component';
 import { SingleAdvertiserComponent } from './pages_shared/single-advertiser/single-advertiser.component';
 import { SingleBillingsComponent } from './pages_shared/single-billings/single-billings.component';
@@ -187,6 +189,7 @@ const ngComponents = [
 	ConfirmationModalComponent,
 	ContentScheduleCardComponent,
 	CreateAdvertiserComponent,
+	CreateCustomHostFieldsComponent,
 	CreateFeedComponent,
 	CreateHostComponent,
 	CreatePlaylistComponent,
@@ -221,6 +224,7 @@ const ngComponents = [
 	FilenamePipe,
 	FilterLabelsComponent,
 	FooterComponent, 
+	HostCustomFieldsComponent,
 	HostViewComponent,
 	InformationModalComponent,
 	IsEmptyPipe,
@@ -236,20 +240,20 @@ const ngComponents = [
 	MediaLibraryOptionsComponent,
 	MediaModalComponent,
 	MediaPlaywhereComponent,
-	MediaViewerComponent,
 	MediaPlaywhereComponent,
+	MediaViewerComponent,
 	NavbarComponent,
 	NewAdminComponent,
 	NewAdvertiserComponent,
 	NewDealerComponent,
 	NewHostUserComponent,
+	NewSubDealerComponent,
 	NewTechrepComponent,
 	NewZoneComponent,
 	NewZoneModalComponent,
 	NohandlePipe,
 	ObjectKeysPipe,
 	OptionsComponent,
-  	PaginationFieldComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,
 	PlaylistContentPanelComponent,
@@ -271,9 +275,9 @@ const ngComponents = [
 	ScreenItemComponent,
 	ScreenLicenseComponent,
 	ScreenshotPipe,
+	SearchFieldComponent,
+	SearchFieldComponent,
 	SelectOwnerComponent,
-	SearchFieldComponent,
-	SearchFieldComponent,
 	SidebarComponent,
 	SingleAdvertiserComponent,
 	SingleBillingsComponent,
@@ -286,8 +290,8 @@ const ngComponents = [
 	SingleScreenComponent,
 	SingleUserComponent,
 	SpinnerComponent,
-	SuccessAnimationComponent,
 	SubstringPipe,
+	SuccessAnimationComponent,
 	TemplateMinimapComponent,
 	TemplateZonesComponent,
 	ThumbnailCardComponent, 
@@ -303,7 +307,8 @@ const ngComponents = [
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
-	ZoneListComponent
+	ZoneListComponent,
+  	PaginationFieldComponent
 ];
 
 const MaterialModules = [
@@ -340,8 +345,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES,
-		NewSubDealerComponent,
+		DIRECTIVES
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

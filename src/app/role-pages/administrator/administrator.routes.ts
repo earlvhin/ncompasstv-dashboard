@@ -41,6 +41,7 @@ import { CreateAdvertiserComponent } from 'src/app/global/pages_shared/create-ad
 import { ToolsComponent } from 'src/app/global/pages_shared/tools/tools.component';
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
+import { HostCustomFieldsComponent } from 'src/app/global/pages_shared/host-custom-fields/host-custom-fields.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -63,6 +64,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 			{ path: 'feeds', component: FeedsComponent},
             { path: 'hosts', component: HostsComponent},
             { path: 'hosts/:data', component: SingleHostComponent},
+            { path: 'hosts-fields', component: HostCustomFieldsComponent},
             { path: 'installations', component: InstallationsComponent },
             { path: 'licenses', component: LicensesComponent},
             { path: 'licenses/:data', component: SingleLicenseComponent},

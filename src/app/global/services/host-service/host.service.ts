@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { API_HOST } from '../../models/api_host.model';
+import { CustomFieldGroup } from '../../models/host-custom-field-group';
 
 @Injectable({
 	providedIn: 'root'
@@ -92,5 +93,21 @@ export class HostService {
 
 	get_host_total_per_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_total_per_dealer}${id}`, this.httpOptions)
+	}
+
+	get_fields() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_fields}`, this.httpOptions);
+	}
+
+	get_field_by_id(data: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_field_by_id}${data}`, this.httpOptions);
+	}
+
+	create_field_group(data: CustomFieldGroup) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_create_field_group}`, data, this.httpOptions);
+	}
+
+	create_field_group_value(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_fieldgroup_value_create}`, data, this.httpOptions);
 	}
 }
