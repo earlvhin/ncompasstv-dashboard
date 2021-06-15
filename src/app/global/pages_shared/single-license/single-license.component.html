@@ -660,12 +660,13 @@
 												</div>
 	
 												<app-data-graph
-												[reload]="eventsSubject.asObservable()"
-												[data_set]="cc.contentPlaysListCount"
-												[graph_id]="cc.contentId + '_monthly'"
-												[realtime_data_per_license]="realtime_data"
-												[date_format]="selected_display_mode"
-												[date_queried]="queried_date">
+													[reload]="eventsSubject.asObservable()"
+													[data_set]="cc.contentPlaysListCount"
+													[graph_id]="cc.contentId + '_monthly'"
+													[realtime_data_per_license]="realtime_data"
+													[date_format]="selected_display_mode"
+													[date_queried]="queried_date"
+													[page]="'single-license'">
 												</app-data-graph>
 										</mat-card>
 									</div>
@@ -700,11 +701,12 @@
 											</div>
 
 											<app-data-graph
-											[data_set]="cc.contentPlaysListCount"
-											[graph_id]="cc.contentId + '_yearly'"
-											[realtime_data_per_license]="realtime_data"
-											[date_format]="selected_display_mode"
-											[date_queried]="queried_date">
+												[data_set]="cc.contentPlaysListCount"
+												[graph_id]="cc.contentId + '_yearly'"
+												[realtime_data_per_license]="realtime_data"
+												[date_format]="selected_display_mode"
+												[date_queried]="queried_date"
+												[page]="'single-license'">
 											</app-data-graph>
 										</mat-card>
 									</div>
@@ -739,11 +741,12 @@
 												</div>
 	
 												<app-data-graph
-												[data_set]="cc.contentPlaysListCount"
-												[graph_id]="cc.contentId + '_daily'"
-												[realtime_data_per_license]="realtime_data"
-												[date_format]="selected_display_mode"
-												[date_queried]="queried_date">
+													[data_set]="cc.contentPlaysListCount"
+													[graph_id]="cc.contentId + '_daily'"
+													[realtime_data_per_license]="realtime_data"
+													[date_format]="selected_display_mode"
+													[date_queried]="queried_date"
+													[page]="'single-license'">
 												</app-data-graph>
 										</mat-card>
 									</div>

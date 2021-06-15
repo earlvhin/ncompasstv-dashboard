@@ -1,7 +1,10 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, OnChanges } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 import { Chart } from 'chart.js';
-import { Observable } from 'rxjs';
+
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 
 @Component({
 	selector: 'app-data-graph',
@@ -9,7 +12,7 @@ import { Observable } from 'rxjs';
 	styleUrls: ['./data-graph.component.scss'],
 	providers: [DatePipe]
 })
-export class DataGraphComponent implements OnInit {
+export class DataGraphComponent implements OnInit, OnDestroy {
 
 	@Input() data_labels: any = [];
 	@Input() data_values: any = [];
@@ -23,29 +26,54 @@ export class DataGraphComponent implements OnInit {
 	@Input() date_format: string;
 	@Input() date_queried: string;
 	@Input() reload: Observable<void>;
+	@Input() page?: string;
 	chart_initiated: boolean = false;
 	chart;
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
-		private _date: DatePipe
+		private _date: DatePipe,
+		private _helper: HelperService,
 	) { }
 
 	ngOnInit() {
-		if (this.reload) {
-			this.reload.subscribe(() => {
-				if (!this.chart_initiated) {
-					this.initGraph()
-				}
-			});
+
+		if (this.reload && !this.page) {
+
+			this.reload.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					() => {
+						if (!this.chart_initiated) {
+							console.log('init graph from reload');
+							this.initGraph();
+						}
+					},
+					error => console.log('Error on reload subscription ', error)
+				);
+
 		}
+
+		if (this.page === 'single-license') {
+			this.subscribeToAnalyticsTabSelect();
+		}
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+		if (this.chart) this.chart.destroy();
 	}
 
 	ngAfterViewInit() {
 		require('chartjs-plugin-datalabels');
-		this.initGraph();
 	}
 	
 	initGraph() {
+		console.log('init graph');
+
+		if (this.page === 'single-license' && this._helper.singleLicensePageCurrentTab !== 'Analytics') return;
+
 		let canvas = <HTMLCanvasElement> document.getElementById(this.graph_id);
 
 		if (this.data_set) {
@@ -76,6 +104,7 @@ export class DataGraphComponent implements OnInit {
 		if (canvas) {
 			this.chart_initiated = true;
 			let ctx = canvas.getContext('2d');
+			
 			this.chart = new Chart(ctx, {
 				// The type of chart we want to create
 				type: 'line',
@@ -142,7 +171,9 @@ export class DataGraphComponent implements OnInit {
 					}
 				}
 			});
+
 		}
+
 	}
 
 	setNewData() {
@@ -178,4 +209,20 @@ export class DataGraphComponent implements OnInit {
 			this.chart.update();
 		}
 	}
+
+	private subscribeToAnalyticsTabSelect(): void {
+		this._helper.onSelectAnalyticsTab.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+
+					setTimeout(() => {
+						this.initGraph();
+					}, 2000);
+
+				},
+				error => console.log('Error on select analytics tab subscription', error)
+			);
+	}
+
 }
+

@@ -26,6 +26,7 @@ import { UI_CONTENT, UI_CONTENT_PER_ZONE } from '../../models/ui_content.model';
 import { UI_OPERATION_DAYS } from '../../models/ui_operation-hours.model';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE, UI_SINGLE_SCREEN } from '../../models/ui_single-screen.model';
+import { HelperService } from '../../services/helper-service/helper.service';
 @Component({
 	selector: 'app-single-license',
 	templateUrl: './single-license.component.html',
@@ -52,6 +53,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	contents_array: any = [];
 	current_operation: { day: string, period: string };
 	current_month = new Date().getMonth() + 1;
+	current_tab = 'Details';
 	current_year = new Date().getFullYear();
 	current_zone_selected: string;
 	daily_chart_updating = true;
@@ -146,17 +148,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
+		private _helper: HelperService,
 		private _license: LicenseService,
 		private _params: ActivatedRoute,
 		private _router: Router,
 		private _screen: ScreenService,
 		private _template: TemplateService
-	) { 
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket'],
-            query: 'client=Dashboard__SingleLicenseComponent',
-		});
-	}
+	) { }
 
 	@HostListener('window:resize', ['$event'])
 	onResize(event: any) {
@@ -164,6 +162,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+            query: 'client=Dashboard__SingleLicenseComponent',
+		});
+
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
 		this.getLicenseInfo();
@@ -188,18 +192,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this._socket.on('connect', () => {
 			console.log('#SingleLicenseComponent - Connected to Socket Server');
-		})
+		});
 		
 		this._socket.on('disconnect', () => {
 			console.log('#SingleLicenseComponent - Disconnnected to Socket Server');
-		})
-		
-	}
+		});
 
-	ngAfterViewInit() {
+		this._helper.singleLicensePageCurrentTab = this.current_tab;
+
 		this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
 		this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
 		this.getContentReport_yearly();
+	
+	}
+
+	ngAfterViewInit() {
 		this.adjustMinimapWidth();
 	}
 
@@ -476,17 +483,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	monthSelected(value: any): void {
+
+		if (this.current_tab !== 'Analytics') return;
 		
 		if (this.selected_month == this.default_selected_month) {
 
 			this.monthly_chart_updating = true;
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM'))
+			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
 
 		} else {
 
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM'))
+			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
 			this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
 			this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
 
@@ -501,8 +510,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.queried_date = this._date.transform(value, 'longDate');
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
-			this.getContentReport_daily(this._date.transform(value, 'y-MM-dd'))
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM-dd'))
+			this.getContentReport_daily(this._date.transform(value, 'y-MM-dd'));
+			this.getContentReport_monthly(this._date.transform(value, 'y-MM-dd'));
 
 		} else if(this.selected_display_mode === 'yearly') {
 
@@ -637,33 +646,38 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	tabSelected(event: { index: number }): void {
 
-		if (event.index === 1) {
-			this.emitReloadMedia();
+		let tab = '';
 
-			if (this.initial_load_charts) {
+		switch (event.index) {
+			case 1:
+				tab = 'Content';
+				this.emitReloadMedia();
 
-				const contents = this.content_per_zone;
-				this.initial_load_charts = false;
+				if (this.initial_load_charts) {
 
-				if (contents && contents.length > 0) {
-					setTimeout(() => {
-						this.generateAssetsBreakdownChart();
-						this.generateDurationBreakdownChart();
-	
-						// get all chartjs instances and store them in an array
-						// used later for destroying the instances when leaving the page
-						Object.entries(Chart.instances).forEach(entries => {
-							entries.forEach(chartData => {
-								if (typeof chartData === 'object') this.charts.push(chartData);
-							})
-						});
-	
-					}, 1000);
+					const contents = this.content_per_zone;
+					this.initial_load_charts = false;
+
+					if (contents && contents.length > 0) {
+						setTimeout(() => {
+							this.generateAssetsBreakdownChart();
+							this.generateDurationBreakdownChart();		
+						}, 1000);
+					}
+
 				}
 
-			}
-			
+				break;
+			case 2:
+				tab = 'Analytics';
+				this._helper.onSelectAnalyticsTab.emit();
+				break;
+			default:
+				tab = 'Details';
 		}
+
+		this.current_tab = tab;
+		this._helper.singleLicensePageCurrentTab = tab;
 
 	}
 
@@ -977,6 +991,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private destroyCharts(): void {
 		if (this.charts.length <= 0) return;
 		this.charts.forEach(chart => chart.destroy());
+		this.charts = [];
 	}
 
 	private emitReloadMedia(): void {
@@ -1051,7 +1066,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const backgroundColor = [ hostColor.background, advertiserColor.background, fillerColor.background, feedColor.border, otherColor.background ];
 		const borderColor = [ hostColor.border, advertiserColor.border, fillerColor.border, feedColor.border, otherColor.border ];
 
-		new Chart(canvas, {
+		const chart = new Chart(canvas, {
 			type: 'doughnut',
 			data: { labels, datasets: [{ data, backgroundColor, borderColor, }], },
 			options: {
@@ -1062,6 +1077,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				maintainAspectRatio: false
 			}
 		});
+
+		this.charts.push(chart);
 
 	}
 
@@ -1093,7 +1110,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const backgroundColor = [ hostColor.background, advertiserColor.background, fillerColor.background, feedColor.border, otherColor.background ];
 		const borderColor = [ hostColor.border, advertiserColor.border, fillerColor.border, feedColor.border, otherColor.border ];
 
-		new Chart(canvas, {
+		const chart = new Chart(canvas, {
 			type: 'doughnut',
 			data: { labels, datasets: [{ data, backgroundColor, borderColor, }], },
 			options: {
@@ -1104,6 +1121,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				maintainAspectRatio: false
 			}
 		});
+
+		this.charts.push();
 
 	}
 
