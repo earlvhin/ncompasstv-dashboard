@@ -1,11 +1,13 @@
-import { Component, OnInit } from '@angular/core';
-import { Chart } from 'chart.js';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { Subject } from 'rxjs';
+import { Chart } from 'chart.js';
+import { takeUntil } from 'rxjs/operators';
+
+import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { HostService } from '../../../../global/services/host-service/host.service';
 import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
 import { UI_TABLE_HOSTS } from '../../../../global/models/ui_table_hosts_report.model';
 
 @Component({
@@ -15,23 +17,23 @@ import { UI_TABLE_HOSTS } from '../../../../global/models/ui_table_hosts_report.
 	providers: [ DatePipe ]
 })
 
-export class DashboardComponent implements OnInit {
-	title = '';
-	statTable: any = {};
-	nc = false;
-	now = new Date().getMonth();
+export class DashboardComponent implements OnInit, OnDestroy {
 
 	advertiser_report_chart: any;
-	loading_advertiser_report_chart: boolean = true;
-
+	displayedColumns_2: string[] = ['position', 'name'];
 	host_report_chart: any;
-	loading_host_report_chart: boolean = true;
-	
-	license_report_chart: any;
-	loading_license_report_chart: boolean = true;
-
+	is_view_only = false;
 	latest_hosts: any;
+	license_report_chart: any;
+	loading_advertiser_report_chart: boolean = true;
+	loading_host_report_chart: boolean = true;
+	loading_license_report_chart: boolean = true;
+	nc = false;
+	no_chart_to_show: boolean = true;
 	no_hosts: boolean;
+	now = new Date().getMonth();
+	statTable: any = {};
+	title = '';
 
 	latest_hosts_col = [
 		'#',
@@ -43,10 +45,8 @@ export class DashboardComponent implements OnInit {
 		'Creation Date'
 	];
 
-	subscription: Subscription = new Subscription();
-	displayedColumns_2: string[] = ['position', 'name'];
-	no_chart_to_show: boolean = true;
-	
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
 		private _auth: AuthService,
 		private _host: HostService,
@@ -56,20 +56,26 @@ export class DashboardComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log('current user', this._auth.current_user);
-		console.log('current user value', this._auth.current_user_value);
-		this.title = `Hello Sub-Dealer ${this._auth.current_user_value.firstname}!`;
-		this.getStatTable(this._auth.current_user_value.roleInfo.dealerId);
+		this.title = `Hello Sub-Dealer ${this.currentUser.firstname}!`;
+		this.getStatTable(this.currentUser.roleInfo.dealerId);
 		this.getAdvertiserReport();
 		this.getHostReport();
 		this.getLicenseReport();
-		this.getHosts(this._auth.current_user_value.roleInfo.dealerId);
+		this.getHosts(this.currentUser.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
-	generateChart(lan, wifi) {
-		var canvas = <HTMLCanvasElement> document.getElementById('connectionChart');
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	private generateChart(lan: any, wifi: any): void {
+		
+		const canvas = <HTMLCanvasElement> document.getElementById('connectionChart');
+
 		if (canvas) {
-			var chart = new Chart(canvas, {
+			new Chart(canvas, {
 				type: 'doughnut',
 				data: {
 					labels: ['LAN', 'WIFI'],
@@ -85,198 +91,211 @@ export class DashboardComponent implements OnInit {
 						],
 					}],
 				}
-			})
-		} else {
-			// setTimeout(() => {
-			// 	this.generateChart(lan, wifi);
-			// }, 1000)
+			});
 		}
 	}
 	
-	getAdvertiserReport() {
-		let filter =  {
+	private getAdvertiserReport(): void {
+
+		const filter =  {
 			type: 3,
 			date: this._date.transform(new Date(), 'medium'),
 			dealerId: this._auth.current_user_value.roleInfo.dealerId
-		}
+		};
 
-		this.subscription.add(
-			this._advertiser.get_advertiser_report(filter).subscribe(
-				data => {
-					let advertiser_report = data.list[0].monthly.filter(i => i.total > 0);
-					if (advertiser_report.length > 0) {
-						let latest_added = advertiser_report[advertiser_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-						this.advertiser_report_chart = {
-							title: 'Advertisers',
-							stats: `${latest_added.total} latest added advertisers on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'advertiser_report',
-							chart_label: [],
-							chart_data: []
-						}
-						advertiser_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.advertiser_report_chart.chart_data.push(i.total),
-								this.advertiser_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-						this.loading_advertiser_report_chart = false;
-					} else {
+		this._advertiser.get_advertiser_report(filter).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { list: any[] }) => {
+					const advertiser_report = response.list[0].monthly.filter(i => i.total > 0);
+
+					if (advertiser_report.length <= 0) {
 						this.advertiser_report_chart = false;
+						return;
 					}
 
-					// console.log(this.advertiser_report_chart);
+					const latest_added = advertiser_report[advertiser_report.length - 1];
+					const latest_date = latest_added.month.split(" ")
+						
+					this.advertiser_report_chart = {
+						title: 'Advertisers',
+						stats: `${latest_added.total} latest added advertisers on ${this._date.transform(latest_date[0], 'MMMM y')}`,
+						expand: true,
+						chart_id: 'advertiser_report',
+						chart_label: [],
+						chart_data: []
+					};
+
+					advertiser_report.map(
+						report => {
+							const month = report.month.split(" ");
+							this.advertiser_report_chart.chart_data.push(report.total),
+							this.advertiser_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'));
+						}
+					);
+
+					this.loading_advertiser_report_chart = false;
+
 				}, 
-				error => {
-					// console.log(error);
-				}
-			)
-		)
+				error => console.log('Error retrieving advertiser reports', error)
+			);
 	}
 
-	getHostReport() {
-		let filter =  {
+	private getHosts(id: string): void {
+
+		this._host.get_host_by_dealer_id(id, 1, '').pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { message?: string, hosts: any[] }) => {
+
+					if (response.message) {
+						this.no_hosts = true;
+						return;
+					}
+					
+					const hosts = [];
+					response.hosts.map(i => hosts.push(i.host));
+					this.latest_hosts = this.hosts_mapToUI(hosts).slice(0,5);
+				},
+				error => console.log('Error retrieving hosts by dealer id', error)
+			);
+	}
+
+	private getHostReport(): void {
+
+		const filter =  {
 			type: 3,
 			date: this._date.transform(new Date(), 'medium'),
 			dealerId: this._auth.current_user_value.roleInfo.dealerId
-		}
+		};
 
-		this.subscription.add(
-			this._host.get_host_report(filter).subscribe(
-				data => {
-					let host_report = data.list[0].monthly.filter(i => i.total > 0);
+		this._host.get_host_report(filter).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { list: any[] }) => {
+					const host_report = response.list[0].monthly.filter(i => i.total > 0);
 
-					if (host_report.length > 0) {
-						let latest_added = host_report[host_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.host_report_chart = {
-							title: 'Hosts',
-							stats: `${latest_added.total} latest added hosts on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'host_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						 host_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.host_report_chart.chart_data.push(i.total),
-								this.host_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-					} else {
+					if (host_report.length <= 0) {
 						this.host_report_chart = false;
+						return;
 					}
+
+					const latest_added = host_report[host_report.length - 1];
+					const latest_date = latest_added.month.split(" ")
+
+					this.host_report_chart = {
+						title: 'Hosts',
+						stats: `${latest_added.total} latest added hosts on ${this._date.transform(latest_date[0], 'MMMM y')}`,
+						expand: true,
+						chart_id: 'host_report',
+						chart_label: [],
+						chart_data: []
+					};
+
+					host_report.map(
+						(report: { total: any, month: any }) => {
+							const month = report.month.split(" ");
+							this.host_report_chart.chart_data.push(report.total),
+							this.host_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
+						}
+					);
+					
 					this.loading_host_report_chart = false;
+
 				}, 
-				error => {
-					// console.log(error);
-				}
-			)
-		)
+				error => console.log('Error retrieving host report', error)
+			);
 
 	}
 	
-	getLicenseReport() {
-		let filter =  {
+	private getLicenseReport(): void {
+		
+		const filter =  {
 			type: 3,
 			date: this._date.transform(new Date(), 'medium'),
 			dealerId: this._auth.current_user_value.roleInfo.dealerId
-		}
+		};
+		this._license.get_license_report(filter).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
 
-		this.subscription.add(
-			this._license.get_license_report(filter).subscribe(
-				data => {
-					// console.log('getLicenseReport', data);
-					let license_report = data.list[0].monthly.filter(i => i.total > 0);
+					const license_report = response.list[0].monthly.filter(i => i.total > 0);
 
-					if (license_report.length > 0) {
-						let latest_added = license_report[license_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.license_report_chart = {
-							title: 'Licenses',
-							stats: `${latest_added.total} latest added licenses on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'licenses_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						license_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.license_report_chart.chart_data.push(i.total),
-								this.license_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-					} else {
+					if (license_report.length <= 0) {
 						this.license_report_chart = false;
+						return;
 					}
+
+					const latest_added = license_report[license_report.length - 1];
+					const latest_date = latest_added.month.split(" ")
+
+					this.license_report_chart = {
+						title: 'Licenses',
+						stats: `${latest_added.total} latest added licenses on ${this._date.transform(latest_date[0], 'MMMM y')}`,
+						expand: true,
+						chart_id: 'licenses_report',
+						chart_label: [],
+						chart_data: []
+					};
+
+					license_report.map(
+						i => {
+							let month = i.month.split(" ");
+							this.license_report_chart.chart_data.push(i.total),
+							this.license_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
+						}
+					);
+
 					this.loading_license_report_chart = false;
 				}, 
-				error => {
-					// console.log(error);
-				}
-			)
-		)
+				error => console.log('Error retrieving license report', error)
+			);
 
 	}
 
-	getStatTable(id) {
-		var monthNames = ["January", "February", "March", "April", "May","June","July", "August", "September", "October", "November","December"];
-		let hostdata: any;
-		this.subscription.add(
-			this._host.get_host_total_per_dealer(id).subscribe(
-				(data: any) => {
+	private getStatTable(id: string): void {
+
+		const months = [
+			'January',
+			'February',
+			'March',
+			'April',
+			'May',
+			'June',
+			'July',
+			'August',
+			'September',
+			'October',
+			'November',
+			'December'
+		];
+
+		this._host.get_host_total_per_dealer(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
 					this.statTable = {
-						title: 'Month of ' +monthNames[this.now],
-						hosts: data.total,
-						active_hosts: data.totalActive,
-						inactive_hosts: data.totalInActive,
-					}
-				}
-			)
-		)
+						title: 'Month of ' +months[this.now],
+						hosts: response.total,
+						active_hosts: response.totalActive,
+						inactive_hosts: response.totalInActive,
+					};
+				},
+				error => console.log('Error retrieving host total per dealer', error)
+			);
 
-		this.subscription.add(
-			this._license.get_license_total_per_dealer(id).subscribe(
-				(data: any) => {
-					this.statTable.licenses =  data.total;
-					this.statTable.unassigned =  data.totalUnAssigned;
-					this.statTable.assigned =  data.totalAssigned;
-					this.generateChart(data.totalLan, data.totalWifi);
-				}
-			)
-		)
+		this._license.get_license_total_per_dealer(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
+					this.statTable.licenses =  response.total;
+					this.statTable.unassigned =  response.totalUnAssigned;
+					this.statTable.assigned =  response.totalAssigned;
+					this.generateChart(response.totalLan, response.totalWifi);
+				},
+				error => console.log('Error retrieving license total per dealer', error)
+			);
 	}
 
-	getHosts(id) {
-		this.subscription.add(
-			this._host.get_host_by_dealer_id(id, 1, "").subscribe(
-				(data: any) => {
-					if (!data.message) {
-						var x = [];
-						data.hosts.map (
-							i => {
-								x.push(i.host);
-							}
-						)
-						this.latest_hosts = this.hosts_mapToUI(x).slice(0,5);
-					} else {
-						this.no_hosts = true;
-					}
-				}
-			)
-		)
-	}
+	private hosts_mapToUI(data: any[]): UI_TABLE_HOSTS[] {
 
-	hosts_mapToUI(data) {
 		let count = 1;
+
 		if (data) {
 			return data.map(
 				host => {
@@ -291,7 +310,12 @@ export class DashboardComponent implements OnInit {
 						{ value: this._date.transform(host.dateCreated, 'MMM dd, y'), link: null , editable: false, hidden: false},	
 					)
 				}
-			)
+			);
 		}
+
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

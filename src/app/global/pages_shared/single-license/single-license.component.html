@@ -53,7 +53,7 @@
 				<span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _danger" (click)="deleteLicense()" title="Delete License" *ngIf="!pi_status">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _danger" (click)="onDeleteLicense()" title="Delete License" *ngIf="!pi_status">
 				<span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
 			</button>
         </div>
@@ -497,17 +497,17 @@
 								<!-- Playlist Info -->
 								<div class="col-lg-3">
 									<div class="playlist-details">
-										<div><h2>{{ current_zone_selected }} Section</h2></div>
+										<div><h2>{{ current_zone_name_selected }} Section</h2></div>
 										<div class="row">
 											<div class="col-lg-10">
 												<a class="playlist-name" [routerLink]="playlist_route">{{ screen_zone.playlistName }}</a>
 											</div>
 										</div>
 										<div class="description">
-											<span class="sm-text" *ngIf="has_playlist; else no_playlist">
+											<!-- <span class="sm-text" *ngIf="has_playlist; else no_playlist">
 												This playlist has <strong>{{ number_of_contents }}</strong> items on <strong>{{ screen_zone.zone ? screen_zone.zone : content_per_zone[0].zone_name }}</strong> zone.<br>
 												Total playtime of <b>{{ duration_breakdown_text.total }}</b>.
-											</span>
+											</span> -->
 										</div>
 										<br>
 										<div>
@@ -541,18 +541,18 @@
 								<div class="col-lg-3">
 									<div class="minimap">
 										<app-template-minimap
-										*ngIf="template_data else loader"
-										[larger]="false"
-										[zone_focus]="'main'"
-										[is_text_displayed]="true"
-										[is_interactive]="true"
-										[template_data]="template_data"
-										[height]="'180px'"
-										[width]="minimap_width">
+											*ngIf="template_data else loader"
+											[larger]="false"
+											[zone_focus]="'main'"
+											[is_text_displayed]="true"
+											[is_interactive]="true"
+											[template_data]="template_data"
+											[height]="'180px'"
+											[width]="minimap_width">
 										</app-template-minimap>
 			
 										<!-- Background Section Toggle -->
-										<div class="toggle-background-zone" *ngIf="has_background_zone && !is_new_standard_template">
+										<div class="toggle-background-zone" *ngIf="has_background_zone">
 											<mat-slide-toggle 
 											[checked]="background_zone_selected"
 											(click)="onSelectBackgroundZone($event)">Select Background Section</mat-slide-toggle>
@@ -563,14 +563,14 @@
 								<!-- Assets Breakdown -->
 								<div class="col-lg-3">
 									<div class="assets-chart-container">
-										<canvas id="assetsBreakdown"></canvas>
+										<canvas id="assetsBreakdown" height="250"></canvas>
 									</div>
 								</div>
 
 								<!-- Duration Breakdown -->
 								<div class="col-lg-3">
 									<div class="duration-chart-container">
-										<canvas id="durationBreakdown"></canvas>
+										<canvas id="durationBreakdown" height="250"></canvas>
 									</div>
 								</div>
 	
@@ -585,7 +585,7 @@
 							*ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
 								<div class="mr-2">
 									<app-thumbnail-card
-									(click)="mediaViewer_open(a, content_per_zone[selected_zone_index].contents, i)"
+									(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
 									[image_uri]="a.file_type !== 'feed' ?  a.thumbnail : a.thumbnail+a.file_url"
 									[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
 									[content_id]="a.content_id"
@@ -630,7 +630,7 @@
 	
 								<mat-form-field appearance="fill" *ngIf="selected_display_mode == 'daily'">
 									<mat-label>Choose a date</mat-label>
-									<input matInput (dateInput)="OnDateChange($event.value)" [matDatepicker]="picker" [(value)]="queried_date" readonly>
+									<input matInput (dateInput)="onDateChange($event.value)" [matDatepicker]="picker" [(value)]="queried_date" readonly>
 									<mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
 									<mat-datepicker #picker></mat-datepicker>
 								</mat-form-field>
@@ -659,13 +659,15 @@
 													</div>
 												</div>
 	
-												<app-data-graph
-												[reload]="eventsSubject.asObservable()"
-												[data_set]="cc.contentPlaysListCount"
-												[graph_id]="cc.contentId + '_monthly'"
-												[realtime_data_per_license]="realtime_data"
-												[date_format]="selected_display_mode"
-												[date_queried]="queried_date">
+												<app-data-graph 
+													*ngIf="!destroy_monthly_charts"
+													[analytics_reload]="analytics_reload.asObservable()"
+													[data_set]="cc.contentPlaysListCount"
+													[graph_id]="cc.contentId + '_monthly'"
+													[realtime_data_per_license]="realtime_data"
+													[date_format]="selected_display_mode"
+													[date_queried]="queried_date"
+													[page]="'single-license'">
 												</app-data-graph>
 										</mat-card>
 									</div>
@@ -700,11 +702,13 @@
 											</div>
 
 											<app-data-graph
-											[data_set]="cc.contentPlaysListCount"
-											[graph_id]="cc.contentId + '_yearly'"
-											[realtime_data_per_license]="realtime_data"
-											[date_format]="selected_display_mode"
-											[date_queried]="queried_date">
+												[analytics_reload]="analytics_reload.asObservable()"
+												[data_set]="cc.contentPlaysListCount"
+												[graph_id]="cc.contentId + '_yearly'"
+												[realtime_data_per_license]="realtime_data"
+												[date_format]="selected_display_mode"
+												[date_queried]="queried_date"
+												[page]="'single-license'">
 											</app-data-graph>
 										</mat-card>
 									</div>
@@ -739,11 +743,14 @@
 												</div>
 	
 												<app-data-graph
-												[data_set]="cc.contentPlaysListCount"
-												[graph_id]="cc.contentId + '_daily'"
-												[realtime_data_per_license]="realtime_data"
-												[date_format]="selected_display_mode"
-												[date_queried]="queried_date">
+													*ngIf="!destroy_daily_charts"
+													[analytics_reload]="analytics_reload.asObservable()"
+													[data_set]="cc.contentPlaysListCount"
+													[graph_id]="cc.contentId + '_daily'"
+													[realtime_data_per_license]="realtime_data"
+													[date_format]="selected_display_mode"
+													[date_queried]="queried_date"
+													[page]="'single-license'">
 												</app-data-graph>
 										</mat-card>
 									</div>

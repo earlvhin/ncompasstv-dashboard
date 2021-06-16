@@ -10,7 +10,8 @@
 (toggle_margin_top)="toggledHours($event)"
 (toggle_margin_top_notes)="toggledNotes($event)"
 [editable]="true"
-(update_info)="ngOnInit()">
+(update_info)="ngOnInit()"
+[refresh_banner]="true">
 </app-banner>
 <div class="stat-cards margin-top-extra mb-4" [ngClass]="{'margin-top-extra-toggle': margin_more, 'margin-top-extra-notes' : margin_notes, 'double-margin-top-extra' : didToggleNotesAndHours() }">
     <div class="theme-container">
@@ -107,6 +108,40 @@
                             </div>
                         </div>
                     </mat-tab>
+
+                    <!-- <mat-tab label="Fields" *ngIf="is_administrator">
+                        <div class="theme-container pt-4">
+                            <div class="row">
+                                <div class="col-lg-4">
+                                    <mat-card class="field-group-item d-flex p-3 mb-2" *ngFor="let c of host_fields" (click)="getFieldGroup(c.fieldGroupId, c.fieldGroupName)">
+                                        <div class="flex-even">
+                                            <h4>{{ c.fieldGroupName }}</h4>
+                                            <p class="sm-text">Created {{ c.createdDate | date }}</p>
+                                        </div>
+                                        <div>
+                                            <button class="mr-2">
+                                                <span class="fas fa-edit"></span>
+                                            </button>
+                                        </div>
+                                    </mat-card>
+                                </div>
+                                <div class="col-lg-8">
+                                    <h3 class="mb-3">
+                                        {{ host_field_title | titlecase }}
+                                    </h3>
+
+                                    <div class="row">
+                                        <div class="col-lg-6" *ngFor="let f of field_group_fields">
+                                            <mat-form-field class="full-width flex-even mr-2" appearance="fill">
+                                                <mat-label>{{ f.fieldName | titlecase }}</mat-label>
+                                                <input matInput [type]="f.fieldType" [placeholder]="f.fieldName">
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </mat-tab> -->
                 </mat-tab-group>
             </div>
         </div>

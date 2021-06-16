@@ -1,8 +1,9 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { FormBuilder, FormGroup, FormGroupDirective, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { AuthService } from '../../../../services/auth-service/auth.service';
 import { City, State } from '../../../../models/ui_city_state_region.model';
@@ -17,14 +18,14 @@ import { UserService } from 'src/app/global/services/user-service/user.service';
 	styleUrls: ['./new-dealer.component.scss']
 })
 
-export class NewDealerComponent implements OnInit {
+export class NewDealerComponent implements OnInit, OnDestroy {
 
 	@Output() dealer_created = new EventEmitter();
 	city_state: City[] = [];
 	form_description: string = "Fill the form below to create a new Dealer.";
 	form_fields_view: any[];
 	form_invalid: boolean = true;
-	form_title: string = "New Dealer";
+	form_title: string = 'New Dealer';
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
 	is_submitted: boolean;
@@ -35,15 +36,16 @@ export class NewDealerComponent implements OnInit {
 	password_is_valid_msg: string;
 	server_error: string;
 	state_region: State[] = [];
-	subscription: Subscription = new Subscription;
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
+		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _location: LocationService,
-		private _dialog: MatDialog,
-		private _user: UserService,
 		private _router: Router,
+		private _user: UserService,
 	) { }
 
 	ngOnInit() {
@@ -66,10 +68,87 @@ export class NewDealerComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	get f() {
+		return this.new_dealer_form.controls;
 	}
 	
-	createForm() {
+	createNewDealer(directive: FormGroupDirective): void {	
+
+		this.is_submitted = true;
+		this.form_invalid = true;
+
+		if (!this._user.validate_email(this.f.email.value)) {
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.'); 
+			this.is_submitted = false;
+			this.form_invalid = false;
+			return;
+		}
+
+		this._user.create_new_user(this.f.roleid.value, this.new_dealer_form.getRawValue()).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer account has been added to database.');
+					directive.resetForm();
+					this.is_submitted = false;
+					this.form_invalid = false;
+					this.new_dealer_form.reset();
+					this.ngOnInit();
+				},
+				error => {
+					console.log('Error creating dealer', error);
+					this.is_submitted = false; 
+					this.form_invalid = false;
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+				}
+			);
+
+	}
+
+	citySelected(value: string): void {
+		this.f.city.setValue(value.substr(0, value.indexOf(', ')));
+
+		this._location.get_states_regions(value.substr(value.indexOf(',') + 2)).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => {
+					this.f.state.setValue(data[0].abbreviation);
+					this.f.region.setValue(data[0].region);
+				},
+				error => console.log('Error retrieving states/regions', error)
+			);
+	}
+
+	openConfirmationModal(status: string, message: string, data: string): void {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width:'500px',
+			height: '350px',
+			data:  { status, message, data }
+		});
+
+		dialog.afterClosed()
+			.subscribe(
+				() => {
+					const roleId = this._auth.current_user_value.role_id;
+					const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === roleId);
+					this._router.navigate([`/${route}/dealers/`]);
+				}
+			);
+
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
+	}
+
+	toggleRetypePasswordFieldType(): void {
+		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
+
+	private createForm(): void {
 		this.form_fields_view = [
 			{
 				label: 'Owner Firstname',
@@ -166,7 +245,7 @@ export class NewDealerComponent implements OnInit {
 				type: 'password',
 				re_password_field: true
 			},
-		]
+		];
 
 		this.new_dealer_form = this._form.group(
 			{
@@ -188,8 +267,14 @@ export class NewDealerComponent implements OnInit {
 			}
 		);
 
-		this.subscription.add(
-			this.new_dealer_form.valueChanges.subscribe(
+		this.subscribeToFormChanges();
+		this.subscribeToPasswordValidation();
+	}
+
+	private subscribeToFormChanges(): void {
+
+		this.new_dealer_form.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				() => {
 					if (this.new_dealer_form.valid && this.f.password.value === this.f.re_password.value) {
 						this.form_invalid = false;
@@ -197,11 +282,14 @@ export class NewDealerComponent implements OnInit {
 						this.form_invalid = true;
 					}
 				}
-			)
-		);
+			);
 
-		this.subscription.add(
-			this.f.password.valueChanges.subscribe(
+	}
+
+	private subscribeToPasswordValidation(): void {
+
+		this.f.password.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				() => {
 					if (this.f.password.invalid) {
 						this.password_is_valid = false;
@@ -211,11 +299,10 @@ export class NewDealerComponent implements OnInit {
 						this.password_is_valid_msg = "Password is valid"
 					}
 				}
-			)
-		);
+			);
 
-		this.subscription.add(
-			this.f.re_password.valueChanges.subscribe(
+		this.f.re_password.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				() => {
 					if (this.f.password.value == this.f.re_password.value) {
 						this.password_is_match = true;
@@ -225,75 +312,8 @@ export class NewDealerComponent implements OnInit {
 						this.password_match_msg = "Password does not match"
 					}
 				}
-			)
-		);
-	}
+			);
 
-	createNewDealer(formDirective) {	
-		this.is_submitted = true;
-		this.form_invalid = true;
-
-		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.'); 
-			this.is_submitted = false;
-			this.form_invalid = false;
-			return false;
-		}
-
-		this._user.create_new_user(this.f.roleid.value, this.new_dealer_form.getRawValue()).subscribe(
-			data => {
-				this.openConfirmationModal('success', 'Account creation successful!', 'Dealer account has been added to database.');
-				formDirective.resetForm();
-				this.is_submitted = false;
-				this.form_invalid = false;
-				this.new_dealer_form.reset();
-				this.ngOnInit();
-			},
-			error => {
-				this.is_submitted = false; 
-				this.form_invalid = false;
-				this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
-			}
-		)
-	}
-
-	get f() {
-		return this.new_dealer_form.controls;
-	}
-
-	citySelected(e) {
-		this.f.city.setValue(e.substr(0, e.indexOf(', ')));
-		this._location.get_states_regions(e.substr(e.indexOf(",")+2)).subscribe(
-			data => {
-				this.f.state.setValue(data[0].abbreviation);
-				this.f.region.setValue(data[0].region);
-			}
-		)
-	}
-
-	openConfirmationModal(status, message, data): void {
-		var dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
-			height: '350px',
-			data:  {
-				status: status,
-				message: message,
-				data: data
-			}
-		})
-
-		dialog.afterClosed().subscribe(r => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/dealers/`]);
-		})
-	}
-
-	togglePasswordFieldType(): void {
-		this.is_password_field_type = !this.is_password_field_type;
-	}
-
-	toggleRetypePasswordFieldType(): void {
-		this.is_retype_password_field_type = !this.is_retype_password_field_type;
 	}
 
 }

@@ -103,6 +103,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	setData(data) {
+        this.paging_data = data.paging;
 		if (data.dealers) {
 			this.dealers_data = this.dealers_mapToUIFormat(data.dealers);
 			this.filtered_data = this.dealers_mapToUIFormat(data.dealers);
@@ -110,11 +111,10 @@ export class HostsComponent implements OnInit {
 			this.no_dealer = true;
 			this.filtered_data = [];
 		}
-		this.paging_data = data.paging;
 	}
 
 	dealers_mapToUIFormat(data: API_DEALER[]): UI_TABLE_HOSTS_BY_DEALER[] {
-		let count: number = 1;
+		let count = this.paging_data.pageStart;
 		return data.filter(
 			(dealer: API_DEALER) => {
 				if (dealer.hosts.length > 0) {

@@ -50,7 +50,7 @@
 						<div (click)="onSelectContent(content, i)" [class.selected]="selected_content_ids.includes(content.content_id)">
 							<app-thumbnail-card
 								[image_uri]="content.thumbnail"
-								[filename]="content.file_type !== 'feed' ? content.file_name : content.title"
+								[filename]="content.title"
 								[content_id]="content.content_id"
 								[filetype]="content.file_type"
 								[is_converted]="content.is_converted"

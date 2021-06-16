@@ -99,6 +99,7 @@ export class FeedsComponent implements OnInit {
 		this.subscription.add(
 			this._feed.get_feeds_by_dealer(this._auth.current_user_value.roleInfo.dealerId, e, this.search_data).subscribe(
 				data => {
+                    this.paging_data = data.paging;
 					if(!data.message) {
 						this.feed_data = this.feeds_mapToUIFormat(data.cFeeds);
 						this.filtered_data = this.feeds_mapToUIFormat(data.cFeeds);
@@ -108,9 +109,7 @@ export class FeedsComponent implements OnInit {
 						}
 						this.feed_data=[];
 						this.filtered_data = [];
-
 					}
-					this.paging_data = data.paging;
 					this.initial_load = false;
 					this.searching = false;
 				},	
@@ -133,7 +132,7 @@ export class FeedsComponent implements OnInit {
 	}
 
 	feeds_mapToUIFormat(data) {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			i => {
 				return new UI_TABLE_FEED_DEALER(

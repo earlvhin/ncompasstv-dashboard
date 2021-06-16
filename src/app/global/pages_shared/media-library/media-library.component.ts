@@ -1,15 +1,17 @@
-import { Component, OnInit, Input } from '@angular/core';
-import * as filestack from 'filestack-js';
-import { Subscription, Subject } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { environment } from '../../../../environments/environment';
-import { MediaModalComponent } from '../../components_shared/media_components/media-modal/media-modal.component';
-import { RenameModalComponent } from '../../components_shared/media_components/rename-modal/rename-modal.component';
-import { FilestackService } from '../../services/filestack-service/filestack.service';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import * as filestack from 'filestack-js';
+
 import { AuthService } from '../../services/auth-service/auth.service';
 import { ContentService } from 'src/app/global/services/content-service/content.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { environment } from '../../../../environments/environment';
+import { FilestackService } from '../../services/filestack-service/filestack.service';
+import { MediaModalComponent } from '../../components_shared/media_components/media-modal/media-modal.component';
+import { RenameModalComponent } from '../../components_shared/media_components/rename-modal/rename-modal.component';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
  
 @Component({
 	selector: 'app-media-library',
@@ -17,7 +19,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 	styleUrls: ['./media-library.component.scss']
 })
 
-export class MediaLibraryComponent implements OnInit {
+export class MediaLibraryComponent implements OnInit, OnDestroy {
 
 	advertiser_field_disabled: boolean = true;
 	assigned_users: any;
@@ -30,28 +32,29 @@ export class MediaLibraryComponent implements OnInit {
 	loading_overlay:boolean = false;
 	modified_data: any;
 	reload: boolean;
-	subscription: Subscription = new Subscription;
 	title: string = "Media Library"
 	upload_respond: any;
 	uploaded_files: any;
 	all_media: any = [];
 	is_dealer: boolean = false;
-
+	is_view_only = false;
 	compare:any;
 	count_1: any;
 	count_2: any;
 	count_3: any;
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _filestack: FilestackService,
 		private _dialog: MatDialog,
 		private _auth: AuthService,
 		private _content: ContentService,
-	) { 
-		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
-	}
+	) { }
 
 	ngOnInit() {
+		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
+
 		const roleId = this._auth.current_user_value.role_id;
 
 		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
@@ -60,10 +63,16 @@ export class MediaLibraryComponent implements OnInit {
 		} else {
 			this.getContents();
 		}
+
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		
 	}
 
-	// Upload Modal
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
 	assignContent() {
 		let dialogRef = this._dialog.open(MediaModalComponent, {
 			width: '600px',
@@ -82,19 +91,15 @@ export class MediaLibraryComponent implements OnInit {
 		});
 	}
 
-	displayStats(e) {
-		console.log("E", e)
+	displayStats(e): void {
+		
 		if (e) {
 			this.compare = {
 				basis: e.all,
 				basis_label: 'Contents',
-				// good_value: e.active,
-				// good_value_label: 'Active',
-				// bad_value: e.inactive,
-				// bad_value_label: 'Inactive'
-			}
+			};
 			
-	
+
 			this.count_1 = {
 				data_value: e.videos,
 				data_label: 'Videos',
@@ -117,37 +122,39 @@ export class MediaLibraryComponent implements OnInit {
 			this.count_1 = false;
 			this.count_2 = false;
 		}
-		console.log("COMPARE", this.compare)
+
 	}
 
-	// Get All Media Files
-	getContents() {
-		this.subscription.add(
-			this._content.get_contents().subscribe(
-				(data: any) => {
-					if(!data.message) {
-						this.all_media = data.iContents;
+	getContents(): void {
+
+		this._content.get_contents().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
+					if (!response.message) {
+						this.all_media = response.iContents;
 					}
-				}
-			)
-		)
+				},
+				error => console.log('Error retrieving contents', error)
+			);
+
 	}
 	
-	//Dealer Contents
-	getDealerContents(id: string, page: number, pageSize: number) {
-		this.subscription.add(
-			this._content.get_content_by_dealer_id(id, false, page, pageSize).subscribe(
-				(data: any) => {
-					if(!data.message) {
-						this.all_media = data.contents;
+	getDealerContents(id: string, page: number, pageSize: number): void {
+		
+		this._content.get_content_by_dealer_id(id, false, page, pageSize).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
+					if (!response.message) {
+						this.all_media = response.contents;
 					}
-				}
-			)
-		);
+				},
+				error => console.log('Erro retrieving dealer contents ', error)
+			);
+
 	}
 
-	// Filestack
-	uploadContent() {
+	uploadContent(): void {
+
 		const filestack_option = {
 			accept: [
 				'image/jpg',
@@ -169,27 +176,26 @@ export class MediaLibraryComponent implements OnInit {
 								med.fileName = name_no_index + med.fileName.substring(0, med.fileName.lastIndexOf('.'));
 							}
 						}
-					)
-
-					this.duplicate_files = this.all_media.filter( 
-						media => media.fileName === e.filename
 					);
 
-					if(this.duplicate_files.length > 0) {
+					this.duplicate_files = this.all_media.filter(media => media.fileName === e.filename);
+
+					if (this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
+
 						this.warningModal('warning', 'Duplicate Filename', 'Are you sure you want to continue upload?','','rename')
-						.then(result => {
-							if(result === 'upload') {
-								this.postContentInfo(this.duplicate_files, this.data_to_upload, false)
-								resolve({ filename: this.modified_data[0].filename })
-								//temporarily add recently uploaded to array
-								this.all_media.push({ fileName: this.modified_data[0].filename })
-							} else {
-								this.renameModal().then(name => {
-									resolve({ filename: name + this.data_to_upload[0].filename.substring(0, this.data_to_upload[0].filename.lastIndexOf('.')) })
-								});
-							}
-						})
+							.then(result => {
+								if (result === 'upload') {
+									this.postContentInfo(this.duplicate_files, this.data_to_upload, false)
+									resolve({ filename: this.modified_data[0].filename })
+									//temporarily add recently uploaded to array
+									this.all_media.push({ fileName: this.modified_data[0].filename })
+								} else {
+									this.renameModal().then(name => {
+										resolve({ filename: name + this.data_to_upload[0].filename.substring(0, this.data_to_upload[0].filename.lastIndexOf('.')) })
+									});
+								}
+							})
 					} else {
 						resolve({});
 					}
@@ -210,66 +216,76 @@ export class MediaLibraryComponent implements OnInit {
 		this.filestack_client.picker(filestack_option).open();
 	}
 
-	removeFilenameHandle(file_name) {
+	removeFilenameHandle(file_name: string): string {
 		return file_name.substring(file_name.indexOf('_') + 1);
 	}
 
-	warningModal(status, message, data, return_msg, action) {
-		return new Promise((resolve) => {
-			this._dialog.closeAll();
+	warningModal(status: string, message: string, data: string, return_msg: string, action: string): Promise<void | string> {
+
+		return new Promise(
+			(resolve) => {
+				this._dialog.closeAll();
+			
+				const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+					width: '500px',
+					height: '350px',
+					disableClose: true,
+					data: {
+						status,
+						message,
+						data,
+						return_msg,
+						action,
+						rename: true
+					}
+				});
 		
-			let dialogRef = this._dialog.open(ConfirmationModalComponent, {
-				width: '500px',
-				height: '350px',
-				disableClose: true,
-				data: {
-					status: status,
-					message: message,
-					data: data,
-					return_msg: return_msg,
-					action: action,
-					rename: true
-				}
-			})
-	
-			dialogRef.afterClosed().subscribe(result => resolve(result));
-		})
+				dialogRef.afterClosed().subscribe(result => resolve(result));
+			}
+		);
+
 	}
 
-	renameModal() {
-		return new Promise((resolve) => {
-			this._dialog.closeAll();
+	renameModal(): Promise<void> {
 
-			let dialogRef = this._dialog.open(RenameModalComponent, {
-				width: '500px',
-				height: '450px',
-				panelClass: 'app-media-modal',
-				disableClose: true 
-			})
-	
-			dialogRef.afterClosed().subscribe(r => resolve(r));
-		})
+		return new Promise(
+			(resolve) => {
+				this._dialog.closeAll();
+
+				const dialogRef = this._dialog.open(RenameModalComponent, {
+					width: '500px',
+					height: '450px',
+					panelClass: 'app-media-modal',
+					disableClose: true 
+				});
+		
+				dialogRef.afterClosed().subscribe(r => resolve(r));
+			}
+		);
+
 	}
 
-	// Filestack
-	async processUploadedFiles(data, users) {
+	async processUploadedFiles(data, users): Promise<void> {
 		const file_data = await this._filestack.process_uploaded_files(data, users || '');
-		if(file_data) {
+
+		if (file_data) {
 			this.postContentInfo('', file_data, true);
 			this.processFiles();
 		}
+
 	}
 
-	removeIndexes(data) {
-		if(data.indexOf('(') > 0) {
+	removeIndexes(data): void {
+
+		if (data.indexOf('(') > 0) {
 			return data.slice(0, data.indexOf('('));
 		} else {
 			return data.slice(0, data.indexOf('.'));
 		}
+
 	}
 
-	// Filestack
-	postContentInfo(duplicateArray, data, upload) {
+	postContentInfo(duplicateArray, data, upload): void {
 		data.map(
 			i => {
 				if(i.fileName) {
@@ -284,40 +300,38 @@ export class MediaLibraryComponent implements OnInit {
 				}
 			}
 		)
-		this.modified_data = data;
-		if (upload) {
-			console.log('DATA TO BE UPLOADED', data);
 
-			this.subscription.add(
-				this._filestack.post_content_info(data).subscribe(
-					data => {
-						this.emitReloadMedia();
-					},
-					error => {
-						console.log(error);
-					}
-				)
-			)
+		this.modified_data = data;
+		
+		if (upload) {
+
+			this._filestack.post_content_info(data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					() => this.emitReloadMedia(),
+					error => console.log('Error posting content info', error)
+				);
+
 		}
 		
 	}
 
-	// Filestack
-	processFiles() {
-		this.subscription.add(
-			this._filestack.process_files().subscribe(
-				data => {
+	processFiles(): void {
+		
+		this._filestack.process_files().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
 					// this.compare = undefined;
 				},
-				error => {
-					console.log('#processFiles', error);
-				}
-			)
-		)
+				error => console.log('Error processing files', error)
+			);
+
 	}
 
-	// Send Reload Signal to Child Component after Upload
-	emitReloadMedia() {
+	emitReloadMedia(): void {
 		this.eventsSubject.next();
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

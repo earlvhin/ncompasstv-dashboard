@@ -1,4 +1,5 @@
 export class UI_TABLE_DEALERS {
+    index: number;
     dealer_id: string;
     user_id:string;
     dealer_id_alias: string;
@@ -19,12 +20,13 @@ export class UI_TABLE_DEALERS {
     a_active: number;
 
     constructor(
-        dealer_id: string, user_id: string, dealer_id_alias: string, business_name: string, business_owner: string,
+        index: number, dealer_id: string, user_id: string, dealer_id_alias: string, business_name: string, business_owner: string,
         contact_person: string, region: string, state: string, months_as_dealer: number,
         l_total: number, l_inactive: number, l_online: number, l_offline: number,
         h_scheduled: number, h_total: number, h_active: number,
         a_total: number, a_active: number
     ) {
+        this.index = index;
         this.dealer_id = dealer_id;
         this.user_id = user_id;
         this.dealer_id_alias = dealer_id_alias;

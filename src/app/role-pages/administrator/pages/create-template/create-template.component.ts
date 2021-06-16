@@ -82,7 +82,6 @@ export class CreateTemplateComponent implements OnInit {
 	}
 
 	addZoneProperty(zone) {
-		console.log('addZoneProperty', zone);
 		const zones = this.zone_property_form.get('zones') as FormArray;
 		zones.push(this.zoneProperty(zone, this.zone_count++));
 	}

@@ -1,12 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
+
+import { API_UPDATE_USER_PROFILE } from '../../../global/models/api_update-user-info.model';
+import { AuthService } from '../../services/auth-service/auth.service';
+import { ConfirmationModalComponent } from '../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UserService } from '../../../global/services/user-service/user.service';
 import { USER_PROFILE } from '../../../global/models/api_user.model';
-import { API_UPDATE_USER_PROFILE } from '../../../global/models/api_update-user-info.model';
-import { ConfirmationModalComponent } from '../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-user-profile',
@@ -14,14 +16,15 @@ import { ConfirmationModalComponent } from '../../../global/components_shared/pa
   styleUrls: ['./user-profile.component.scss']
 })
 
-export class UserProfileComponent implements OnInit {
+export class UserProfileComponent implements OnInit, OnDestroy {
 	subscription: Subscription = new Subscription;
 	update_user: FormGroup;
 	user_data: USER_PROFILE;
   	update_info_form_disabled: boolean = false;
   	update_info_form_disabled_typing: boolean = true;
 	user_type: string; 
-	isDealer: boolean = false;
+	is_dealer = false;
+	is_view_only = false;
   	current_role: string;
 	disabled_fields: boolean = true;
 	user$: Observable<USER_PROFILE>;
@@ -86,6 +89,7 @@ export class UserProfileComponent implements OnInit {
 	}]
 
 	constructor(
+		private _auth: AuthService,
     	private _user: UserService,
 		private _params: ActivatedRoute,
 		private _form: FormBuilder,
@@ -94,39 +98,42 @@ export class UserProfileComponent implements OnInit {
 
 	ngOnInit() {	
 		this.update_info_form_disabled = false;
+
 		this.update_user = this._form.group(
 			this.subscription.add(
 				this._params.paramMap.subscribe(
-					data => {
+					() => {
 						this.getUserById(this._params.snapshot.params.data)
 					}
 				)
 			)
-		)
+		);
+
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
+
 	}
 
-	ngDestroy() {
+	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
 
-	getUserById(id) {
+	getUserById(id: string): void {
 		this.subscription.add(
 			this._user.get_user_alldata_by_id(id).subscribe(
-				(data: any) => {
-					console.log('getUserById', data);
-					if(data.dealer.length > 0) {
-						this.user_data = Object.assign({},data.dealer[0], data.user);
-						this.isDealer = true;
+				(response: any) => {
+
+					if (response.dealer.length > 0) {
+						this.user_data = Object.assign({},response.dealer[0], response.user);
+						this.is_dealer = true;
 					} else {
-						this.user_data = data.user;
-					}	
+						this.user_data = response.user;
+					}
+
 					this.readyUpdateForm();
 				}, 
-				error => {
-					console.log('Error', error);
-				}
+				error => console.log('Error retrieving user data', error)
 			)
-		)
+		);
 	}
 
 	get f() {
@@ -139,19 +146,17 @@ export class UserProfileComponent implements OnInit {
 			this.f.contact.value,
 			this.f.firstname.value,
 			this.f.lastname.value
-		)
+		);
 	}
 
 	updateUserInfo() {
 		this._user.update_user(this.mapUserInfoChanges()).subscribe(
-			data => {
+			() => {
 				this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
 				this.ngOnInit();
 			}, 
-			error => {
-				console.log('error', error);
-			}
-		)
+			error => console.log('Error updating user info', error)
+		);
 	}
 
 	readyUpdateForm() {
@@ -207,5 +212,9 @@ export class UserProfileComponent implements OnInit {
 
 	isDisabled() : boolean {
 		return this.update_info_form_disabled;
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

@@ -12,6 +12,7 @@ import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
 import { API_SINGLE_HOST } from '../../models/api_host.model';
 import { API_UPDATE_HOST } from '../../models/api_update-host.model';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { CategoryService } from '../../services/category-service/category.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DealerService } from '../../services/dealer-service/dealer.service';
@@ -34,9 +35,10 @@ export class EditSingleHostComponent implements OnInit {
 	closed_without_edit: boolean = false;
 	current_dealer: any;
 	dealer_id: string;
-	dealer_name: string;
+	dealer_name: string = '';
 	dealers_data: API_DEALER[] = [];
 	disable_business_name: boolean = true;
+	has_bulk_selected_business_hours = false;
 	has_content = false;
 	host_data:  any = [];
 	initial_dealer: string;
@@ -79,19 +81,19 @@ export class EditSingleHostComponent implements OnInit {
 			label: 'Address',
 			control: 'address',
 			placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-			col: 'col-lg-12'
+			col: 'col-lg-6'
 		},
 		{
 			label: 'City',
 			control: 'city',
 			placeholder: 'Ex. Chicago',
-			col: 'col-lg-6'
+			col: 'col-lg-3'
 		},
 		{
 			label: 'State',
 			control: 'state',
 			placeholder: 'Ex. IL',
-			col: 'col-lg-6'
+			col: 'col-lg-3'
 		},
 		{
 			label: 'Region',
@@ -111,6 +113,12 @@ export class EditSingleHostComponent implements OnInit {
 			placeholder: 'Ex. US/Central',
 			col: 'col-lg-4',
 			autocomplete: true,
+		},
+		{
+			label: 'Vistar Venue ID',
+			control: 'vistar_venue_id',
+			placeholder: 'Ex. Venue ID for Vistar',
+			col: 'col-lg-12'
 		},
 		{
 			label: 'Notes',
@@ -242,6 +250,7 @@ export class EditSingleHostComponent implements OnInit {
 			long: ['', Validators.required],
 			lat: ['', Validators.required],
 			timezone: ['', Validators.required],
+			vistar_venue_id: ['', Validators.required],
 			notes: ['']
 		});
 
@@ -325,6 +334,7 @@ export class EditSingleHostComponent implements OnInit {
 		this.initial_dealer = data.dealerId;
 		this.f.timezone.setValue(time.id);
 		this.f.notes.setValue(data.notes);
+		this.f.vistar_venue_id.setValue(data.vistarVenueId)
 	}
 
 	getTimezones(): void {
@@ -352,7 +362,8 @@ export class EditSingleHostComponent implements OnInit {
 			this.f.address.value,
 			this.f.category.value,
 			JSON.stringify(this.business_hours),
-			this.f.timezone.value
+			this.f.timezone.value,
+			this.f.vistar_venue_id.value
 		);
 
 		if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
@@ -415,9 +426,13 @@ export class EditSingleHostComponent implements OnInit {
 					this._host.delete_host([ hostId ], isForceDelete)
 						.subscribe(
 							() => {
-								console.log('Host Deleted');
 								this._dialogRef.close('delete-host');
-								this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
+                                if(!this.is_dealer) {
+                                    this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
+                                } else {
+                                    this._router.navigate([`/${route}/hosts`]);
+                                }
+								
 							},
 							error => console.log('Error deleting host', error)
 						)
@@ -481,15 +496,30 @@ export class EditSingleHostComponent implements OnInit {
 		this.disable_business_name = event;
 	}
 
-	setDealer(event: string): void {
+	onBulkEditHours(): void {
+		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
+			width: '550px',
+			height: '450px',
+			panelClass: 'position-relative',
+			data: { },
+			autoFocus: false
+		});
 
-		this.f.dealerId.setValue(event);
+		dialog.afterClosed().subscribe(
+			response => {
+				if (response) this.business_hours = response
+			},
+			error => console.log('Error on closing bulk edit hours', error)
+		);
+		
+	}
 
-		const filtered = this.dealers_data.filter(dealer => dealer.dealerId == event);
-
+	setDealer(id) {
+		this.f.dealerId.setValue(id);
+		const filtered = this.dealers_data.filter(dealer => dealer.dealerId == id);
 		if (filtered.length == 0) {
 			this.subscription.add(
-				this._dealer.get_dealer_by_id(event).subscribe(
+				this._dealer.get_dealer_by_id(id).subscribe(
 					data => {
 						this.current_dealer = data;
 						this.dealers_data.push(this.current_dealer);

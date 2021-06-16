@@ -19,7 +19,6 @@ export class MediaPlaywhereComponent implements OnInit {
 
 	ngOnInit() {
 		this.host_licenses = this._dialog_data;
-		console.log('#playWhereDialog', this.host_licenses);
 
 		if (localStorage.getItem('to_blocklist')) {
 			const blocklist = localStorage.getItem('to_blocklist').split(',')

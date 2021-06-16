@@ -31,6 +31,7 @@ export class AdvertisersComponent implements OnInit {
 	subscription: Subscription = new Subscription;
 	tab: any = { tab: 2 };
 	title: string = "Advertisers";
+	is_view_only = false;
 	
 	constructor(
 		private _advertiser: AdvertiserService,
@@ -40,13 +41,13 @@ export class AdvertisersComponent implements OnInit {
 	ngOnInit() {
 		this.getAdvertiserByDealer(1);
 		this.getAdvertiserTotal(this._auth.current_user_value.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	getAdvertiserTotal(id) {
 		this.subscription.add(
 			this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
 				data => {
-					console.log(data)
 					this.advertiser_stats = {
 						basis: data.total,
 						basis_label: 'Advertiser(s)',
@@ -83,6 +84,7 @@ export class AdvertisersComponent implements OnInit {
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
+                    this.paging_data_advertiser = data.paging;
 					if(!data.message) {
 						this.advertiser_data = this.advertiser_mapToUI(data.advertisers);
 						this.advertiser_filtered_data = this.advertiser_mapToUI(data.advertisers);
@@ -93,14 +95,13 @@ export class AdvertisersComponent implements OnInit {
 						this.advertiser_data=[];
 						this.advertiser_filtered_data = [];
 					}
-					this.paging_data_advertiser = data.paging;
 				}
 			)
 		)
 	}
 
 	advertiser_mapToUI(data): UI_TABLE_ADVERTISERS[]  {
-		let count = 1;
+		let count = this.paging_data_advertiser.pageStart;
 		return data.map(
 			i => {
 				return new UI_TABLE_ADVERTISERS(
@@ -114,5 +115,9 @@ export class AdvertisersComponent implements OnInit {
 				)
 			}
 		)
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

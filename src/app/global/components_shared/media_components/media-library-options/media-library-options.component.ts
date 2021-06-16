@@ -80,7 +80,6 @@ export class MediaLibraryOptionsComponent implements OnInit {
 			this.search_control.valueChanges
 			.pipe(debounceTime(1000), distinctUntilChanged())
 			.subscribe(data => {
-				console.log('#deb', data)
 				if (this.search_control.valid) {
 					this.search_form_invalid = false;
 					this.searchKeyword.emit(data);

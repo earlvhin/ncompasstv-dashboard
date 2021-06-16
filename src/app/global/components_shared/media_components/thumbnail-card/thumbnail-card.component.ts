@@ -80,9 +80,9 @@ export class ThumbnailCardComponent implements OnInit {
 	}
 	
 	removeFilenameHandle(e) {
-		if (this.filetype !== 'feed') {
-			return e.substring(e.indexOf('_') + 1);
-		}
+		// if (this.filetype !== 'feed') {
+		// 	return e.substring(e.indexOf('_') + 1);
+		// }
 		return e;
 	}
 

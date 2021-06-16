@@ -117,8 +117,6 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 
 		const oldId = this.current_dealer.dealer_id;
 		const newId = this.dealer.dealerId
-		console.log('old dealer ID', oldId);
-		console.log('new dealer ID', newId);
 
 		const confirmationModal = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',

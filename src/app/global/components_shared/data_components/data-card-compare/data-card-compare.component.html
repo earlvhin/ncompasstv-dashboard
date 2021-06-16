@@ -1,15 +1,23 @@
 <div class="h-100 d-flex align-items-center">
 	<div class="p-3 w-100">
-		<h2 class="mb-2">
-			<span class="text-primary font-weight-medium mr-2">{{ compare_basis }}</span>
-			<span class="normal-text font-weight-medium">{{ compare_basis_label }}</span>
+		<h2 class="mb-2" (click)="onResetDealerStatusFilters()" 
+			[class.cursor-pointer]="page && has_dealer_status_filter"
+			[class.on-hover]="page && has_dealer_status_filter">
+			<span class="text-primary font-weight-medium">
+				{{ compare_basis }}
+			</span>
+			<span class="normal-text font-weight-medium">
+				{{ compare_basis_label }}
+			</span>
 		</h2>
 		<h3>
-			<span class="text-primary font-weight-medium mr-2">{{ good_value }}</span>
-			<span class="sm-text font-weight-medium">{{ good_value_label }}</span>
-			/
-			<span class="font-weight-medium mr-2" [ngClass]="is_green ? 'text-primary' : 'text-danger '">{{ bad_value }}</span>
-			<span class="sm-text font-weight-medium">{{ bad_value_label }}</span>
+			<div *ngIf="!page && !has_dealer_status_filter; else dealerStatusFilters">
+				<span class="text-primary font-weight-medium mr-2">{{ good_value }}</span>
+				<span class="sm-text font-weight-medium">{{ good_value_label }}</span>
+				/
+				<span class="font-weight-medium mr-2" [ngClass]="is_green ? 'text-primary' : 'text-danger '">{{ bad_value }}</span>
+				<span class="sm-text font-weight-medium">{{ bad_value_label }}</span>
+			</div>
 
 			<ng-container *ngIf="additional_value && additional_value_label">
 				/
@@ -23,6 +31,20 @@
 				<span class="font-weight-medium mr-2" [ngClass]="is_green ? 'text-primary' : 'text-danger '">{{ offline_value }}</span>
 				<span class="sm-text font-weight-medium">{{ offline_value_label }}</span>
 			</ng-container>
+
+			<ng-template #dealerStatusFilters>
+				<div class="dealer-status-filters">
+					<div class="active cursor-pointer" (click)="onFilterDealerStatus()" [class.selected]="has_selected_active">
+						<span class="text-primary font-weight-medium mr-2">{{ good_value }}</span>
+						<span class="sm-text font-weight-medium">{{ good_value_label }}</span>
+					</div>
+					/
+					<div class="inactive cursor-pointer" (click)="onFilterDealerStatus('inactive')" [class.selected]="has_selected_inactive">
+						<span class="font-weight-medium mr-2" [ngClass]="is_green ? 'text-primary' : 'text-danger '">{{ bad_value }}</span>
+						<span class="sm-text font-weight-medium">{{ bad_value_label }}</span>
+					</div>
+				</div>
+			</ng-template>
 		</h3>
 	</div>
 </div>

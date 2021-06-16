@@ -75,8 +75,10 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 
-	get_dealers_with_sort(page, key, column, order, filter_column?, min?, max?) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_sort}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`+'&filter='+`${filter_column}`+'&filterMin='+`${min}`+'&filterMax='+`${max}`, this.httpOptions);
+	get_dealers_with_sort(page: number, key: string, column: string, order: string, filter_column?: string, min?, max?, status = '') {
+		const baseEndpoint = `${this.baseUri}${this.getters.api_get_dealers_with_sort}?page=${page}`;
+		const endpoint = `${baseEndpoint}&search=${key}&sortColumn=${column}&sortOrder=${order}&filter=${filter_column}&filterMin=${min}&filterMax=${max}&status=${status}`;
+		return this._http.get<any>(endpoint, this.httpOptions);
 	}
 
 	get_dealer_by_id(id: string) {
@@ -103,8 +105,31 @@ export class DealerService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_dealer}`, data, this.httpOptions);
 	}
 
+	update_status(id: string, status: string) {
+		const requestUrl = `${this.baseUri}${this.update.dealer_status}`;
+		const data = { dealerId: id, status };
+		const options = {
+			headers: new HttpHeaders({ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}`}),
+			responseType: 'text' as 'json'
+		};
+		return this._http.post(requestUrl, data, options);
+
+	}
+
 	reassign_dealer(old_id: string, new_id: string) {
 		const data = { oldDealerId: old_id, newDealerId: new_id };
 		return this._http.post(`${environment.base_uri}${environment.update.reassign_dealer}`, data, this.httpOptions);
+	}
+
+	protected get baseUri() {
+		return `${environment.base_uri}`;
+	}
+
+	protected get getters() {
+		return environment.getters;
+	}
+
+	protected get update() {
+		return environment.update;
 	}
 }

@@ -1,12 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
-import { Router, ActivatedRoute } from '@angular/router';
-import { AuthService } from '../../../global/services/auth-service/auth.service';
-import { USER_LOGIN } from 'src/app/global/models/api_user.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
 import { ThemePalette } from '@angular/material/core';
 import { ProgressSpinnerMode } from '@angular/material/progress-spinner';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
+import { first } from 'rxjs/operators';
+
+import { AuthService } from '../../../global/services/auth-service/auth.service';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
+import { USER_LOGIN } from 'src/app/global/models/api_user.model';
 
 @Component({
 	selector: 'app-login-form',
@@ -62,14 +63,13 @@ export class LoginFormComponent implements OnInit {
 				username: ['', Validators.required],
 				password: ['', Validators.required]
 			}
-			)
-		console.log(this.form[this.control])
+		);
 	}
 
 	// convenience getter for easy access to form fields
 	get form() { return this.login_form.controls; }
 
-	authUser() {
+	authUser(): void {
 		this.is_submitted = true;
 
 		if (this.login_form.invalid) {
@@ -79,20 +79,21 @@ export class LoginFormComponent implements OnInit {
 		this.show_overlay = true;
 
 		this._auth.authenticate_user(this.login_form.value).pipe(first()).subscribe(
-			(data: USER_LOGIN) => {
+			(response: USER_LOGIN) => {
 				
 				const user_data = {
-					user_id: data.userId,
-					firstname: data.firstName,
-					lastname: data.lastName,
-					role_id: data.userRole.roleId,
-					roleInfo: data.roleInfo,
-					jwt: { token: data.token, refreshToken: data.refreshToken }
+					user_id: response.userId,
+					firstname: response.firstName,
+					lastname: response.lastName,
+					role_id: response.userRole.roleId,
+					roleInfo: response.roleInfo,
+					jwt: { token: response.token, refreshToken: response.refreshToken }
 				};
 
+				if (response.userRole.roleName === 'Sub Dealer') user_data.roleInfo.permission = response.userRole.permission;
 				localStorage.setItem('current_user', JSON.stringify(user_data));
 				localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
-				this.refreshToken(data.userRole.roleId);
+				this.refreshToken(response.userRole.roleId);
 			},
 			error => {
 				this.show_overlay = false;

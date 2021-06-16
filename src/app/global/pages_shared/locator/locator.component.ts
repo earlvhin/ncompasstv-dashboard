@@ -10,11 +10,12 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 export class LocatorComponent implements OnInit {
 	
-	title: string = "Locator";
-	is_host_view: boolean = true;
-	is_dealer: boolean = false;
+	title = 'Locator';
+	is_host_view = true;
+	is_dealer = false;
+
 	constructor(
-		private _auth: AuthService,
+		private _auth: AuthService
 	) { }
 
 	ngOnInit() {

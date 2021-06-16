@@ -5,11 +5,11 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/sub-dealer/create-advertiser']">
-                    <span class="button-label">
-                        Add Advertiser Profile
-                    </span>
-                    <span class="fas fa-user ml-2 sm-text"></span>
+                <button mat-button mat-raised-button class="theme-btn" 
+					[routerLink]="['/sub-dealer/create-advertiser']" 
+					[disabled]="is_view_only">
+						<span class="button-label">Add Advertiser Profile</span>
+						<span class="fas fa-user ml-2 sm-text"></span>
                 </button>
             </div>
         </div>
@@ -93,9 +93,9 @@
             <p class="sm-text mb-3">
                 There are no available advertisers at the moment.
             </p>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/sub-dealer/create-advertiser']">
-                Add Advertiser Profile
-                <span class="fas fa-plus ml-2 sm-text"></span>
+            <button mat-button mat-raised-button class="theme-btn mr-2" 
+				[routerLink]="['/sub-dealer/create-advertiser']"
+				[disabled]="is_view_only">Add Advertiser Profile<span class="fas fa-plus ml-2 sm-text"></span>
             </button>
         </mat-card>
     </ng-template>

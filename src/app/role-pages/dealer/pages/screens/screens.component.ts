@@ -90,6 +90,7 @@ export class ScreensComponent implements OnInit {
 		this.screens = [];
 		this._screen.api_get_screen_by_dealer_table(e, this._auth.current_user_value.roleInfo.dealerId, this.search_data).subscribe(
 			data => {
+                this.paging_data = data.paging;
 				if (data.paging.entities.length > 0) {
 					this.screens = this.screen_mapToUI(data.paging.entities);
 					this.filtered_data = this.screen_mapToUI(data.paging.entities);
@@ -100,14 +101,13 @@ export class ScreensComponent implements OnInit {
 					this.filtered_data = []
 				}
 				this.initial_load = false;
-				this.paging_data = data.paging;
 				this.searching = false;
 			}
 		)
 	}
 
 	screen_mapToUI(data: any) {
-		let counter = 1;
+		let counter = this.paging_data.pageStart;
 		return data.map(
 			s => {
 				return new UI_DEALER_TABLE_SCREEN (

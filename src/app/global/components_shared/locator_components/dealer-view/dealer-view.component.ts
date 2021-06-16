@@ -73,7 +73,6 @@ export class DealerViewComponent implements OnInit {
 	}
 
 	getDealers(e) {
-		console.log('#GETDEALERS')
 		if(e > 1) {
 			this.loading_data = true;
 			this.subscription.add(
@@ -84,7 +83,6 @@ export class DealerViewComponent implements OnInit {
 								this.dealers.push(i)
 							}
 						)
-						console.log("DATA DEALERS", this.dealers)
 						this.paging = data.paging
 						this.loading_data = false;
 					}
@@ -120,9 +118,6 @@ export class DealerViewComponent implements OnInit {
 		this.selected_dealer_hosts = this.selected_dealer[0].hosts;
 		this.map_marker = this.markers_mapToUI(this.selected_dealer_hosts, this.selected_dealer[0].licenses);
 		this.location_selected = true;
-
-
-		console.log('#dealerSelected', this.selected_dealer);
 	}
 
 	markers_mapToUI(hosts, licenses) {

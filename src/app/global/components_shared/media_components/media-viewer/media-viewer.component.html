@@ -31,12 +31,8 @@
         </div>
         <div class="media-info text-gray height-100" *ngIf="file_data.selected.owner_name; else spinner">
             <div class="details p-3">
-                <h4 class="word-break font-weight-bold" *ngIf="file_data.selected.file_type !== 'feed'; else feedTitle">{{ removeFilenameHandle(file_data.selected.file_name) }}</h4>
+                <h4 class="word-break font-weight-bold">{{ file_data.selected.title }}</h4>
                 <p class="sm-text">by {{ file_data.selected.uploaded_by }} on {{ file_data.selected.date_uploaded | date }}</p>
-
-                <ng-template #feedTitle>
-                    <h4>{{ file_data.selected.title }}</h4>
-                </ng-template>
             </div>
             <mat-tab-group>
                 <mat-tab label="File Info">

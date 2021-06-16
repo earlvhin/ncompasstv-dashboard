@@ -13,10 +13,11 @@ export class API_UPDATE_HOST {
 	storeHours: string;
     timezone: string;
     notes?: string;
+    vistarVenueId: string;
 
 	constructor(hostId: string, dealerId: string, name: string, latitude: string, 
 		longitude: string, city: string, state: string, postalCode: string, region: string, 
-		address: string, category: string, storeHours: string, timezone: string) {
+		address: string, category: string, storeHours: string, timezone: string, vistar_venue_id: string) {
         this.hostId = hostId;
         this.dealerId = dealerId;
         this.name = name;
@@ -30,5 +31,6 @@ export class API_UPDATE_HOST {
         this.category = category;
 		this.storeHours = storeHours;
         this.timezone = timezone;
+        this.vistarVenueId = vistar_venue_id;
     }
 }

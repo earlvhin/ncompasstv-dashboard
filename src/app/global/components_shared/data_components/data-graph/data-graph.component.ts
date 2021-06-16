@@ -1,7 +1,10 @@
-import { Component, OnInit, Input, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, OnChanges, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject } from 'rxjs';
 import { Chart } from 'chart.js';
-import { Observable } from 'rxjs';
+
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 
 @Component({
 	selector: 'app-data-graph',
@@ -9,7 +12,7 @@ import { Observable } from 'rxjs';
 	styleUrls: ['./data-graph.component.scss'],
 	providers: [DatePipe]
 })
-export class DataGraphComponent implements OnInit {
+export class DataGraphComponent implements OnInit, OnDestroy {
 
 	@Input() data_labels: any = [];
 	@Input() data_values: any = [];
@@ -23,30 +26,71 @@ export class DataGraphComponent implements OnInit {
 	@Input() date_format: string;
 	@Input() date_queried: string;
 	@Input() reload: Observable<void>;
+	@Input() analytics_reload: Observable<void>;
+	@Input() page?: string;
+	canvas: any;
 	chart_initiated: boolean = false;
 	chart;
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
-		private _date: DatePipe
+		private _date: DatePipe,
+		private _helper: HelperService,
+		private host: ElementRef<HTMLElement>
 	) { }
 
 	ngOnInit() {
-		if (this.reload) {
-			this.reload.subscribe(() => {
-				if (!this.chart_initiated) {
-					this.initGraph()
-				}
-			});
+		if (this.reload && !this.page) {
+			this.reload.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					if (!this.chart_initiated) {
+						console.log('init graph from reload');
+						this.initGraph();
+					}
+				},
+				error => console.log('Error on reload subscription ', error)
+			);
 		}
+
+		if (this.analytics_reload) {
+			this.analytics_reload.subscribe(
+				data => {
+					this.initGraph();
+				}
+			)
+		} else {
+			setTimeout(() => {
+				this.initGraph();
+			}, 1000)
+		}
+
+		// if (this.page === 'single-license') {
+		// 	this.subscribeToAnalyticsTabSelect();
+		// }
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+		if (this.chart) this.chart.destroy();
+
+		// console.log('Destroyed');
+		this.host.nativeElement.remove();
 	}
 
 	ngAfterViewInit() {
 		require('chartjs-plugin-datalabels');
-		this.initGraph();
 	}
 	
 	initGraph() {
-		let canvas = <HTMLCanvasElement> document.getElementById(this.graph_id);
+		// console.log('init graph');
+
+		// if (this.page === 'single-license' && this._helper.singleLicensePageCurrentTab !== 'Analytics') return;
+
+		this.canvas = <HTMLCanvasElement> document.getElementById(this.graph_id);
+		// console.log('THIS CANVAS', this.canvas, this.graph_id)
 
 		if (this.data_set) {
 			this.data_set.map(
@@ -73,9 +117,10 @@ export class DataGraphComponent implements OnInit {
 		Chart.defaults.global.defaultFontSize = 12;
 		Chart.defaults.global.defaultFontStyle = '600';
 
-		if (canvas) {
+		if (this.canvas) {
 			this.chart_initiated = true;
-			let ctx = canvas.getContext('2d');
+			let ctx = this.canvas.getContext('2d');
+			
 			this.chart = new Chart(ctx, {
 				// The type of chart we want to create
 				type: 'line',
@@ -178,4 +223,20 @@ export class DataGraphComponent implements OnInit {
 			this.chart.update();
 		}
 	}
+
+	// private subscribeToAnalyticsTabSelect(): void {
+	// 	this._helper.onSelectAnalyticsTab.pipe(takeUntil(this._unsubscribe))
+	// 		.subscribe(
+	// 			() => {
+
+	// 				setTimeout(() => {
+	// 					this.initGraph();
+	// 				}, 2000);
+
+	// 			},
+	// 			error => console.log('Error on select analytics tab subscription', error)
+	// 		);
+	// }
+
 }
+

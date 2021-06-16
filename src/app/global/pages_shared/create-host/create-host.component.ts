@@ -19,6 +19,7 @@ import * as uuid from 'uuid';
 import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
 import { RoleService } from '../../../global/services/role-service/role.service';
 import { TitleCasePipe } from '@angular/common';
+import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 
 @Component({
 	selector: 'app-create-host',
@@ -557,7 +558,6 @@ export class CreateHostComponent implements OnInit {
 
 		this.no_category = true;
 		this.f.category.setValue(this._titlecase.transform(e).replace(/_/g, " "));
-		console.log('no', this._titlecase.transform(e).replace(/_/g, " "))
 	}
 
 	watchCategoryField() {
@@ -568,5 +568,23 @@ export class CreateHostComponent implements OnInit {
 				}
 			}
 		)
+	}
+
+	onBulkAddHours(): void {
+		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
+			width: '550px',
+			height: '450px',
+			panelClass: 'position-relative',
+			data: { },
+			autoFocus: false
+		});
+
+		dialog.afterClosed().subscribe(
+			response => {
+				if (response) this.operation_days = response
+			},
+			error => console.log('Error on closing bulk edit hours', error)
+		);
+		
 	}
 }

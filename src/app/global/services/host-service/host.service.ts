@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { API_HOST } from '../../models/api_host.model';
+import { CustomFieldGroup } from '../../models/host-custom-field-group';
 
 @Injectable({
 	providedIn: 'root'
@@ -61,6 +62,10 @@ export class HostService {
 	get_host_by_dealer_id(id, page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
+
+    get_host_by_dealer_id_with_sort(id, page, key, column, order) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_id_optimized}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+	}
 	
 	get_host_for_dealer_id(id) {
 		return this._http.get<API_HOST[]>(`${environment.base_uri}${environment.getters.api_get_host_for_dealer}${id}`, this.httpOptions);
@@ -88,5 +93,21 @@ export class HostService {
 
 	get_host_total_per_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_total_per_dealer}${id}`, this.httpOptions)
+	}
+
+	get_fields() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_fields}`, this.httpOptions);
+	}
+
+	get_field_by_id(data: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_field_by_id}${data}`, this.httpOptions);
+	}
+
+	create_field_group(data: CustomFieldGroup) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_create_field_group}`, data, this.httpOptions);
+	}
+
+	create_field_group_value(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_fieldgroup_value_create}`, data, this.httpOptions);
 	}
 }
