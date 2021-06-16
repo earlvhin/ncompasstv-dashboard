@@ -361,7 +361,6 @@ export class SingleScreenComponent implements OnInit {
 		this._playlist.get_playlist_by_dealer_id_v2(id).subscribe(
 			data => {
 				this.dealer_playlist = data.playlists;
-				console.log('DEALER PLAYLIST', data);
 			}, 
 			error => {
 				console.log(error);

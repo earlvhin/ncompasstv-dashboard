@@ -1,11 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { Chart } from 'chart.js';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { Observable, Subscription } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { Chart } from 'chart.js';
+import { Subscription } from 'rxjs';
+
+import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { HostService } from '../../../../global/services/host-service/host.service';
 import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
 import { UI_TABLE_HOSTS } from '../../../../global/models/ui_table_hosts_report.model';
 
 @Component({
@@ -59,7 +60,6 @@ export class DashboardComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		console.log('dealer dashboard');
 		this.title = `Hello Dealer ${this._auth.current_user_value.firstname}!`;
 		this.getStatTable(this._auth.current_user_value.roleInfo.dealerId);
 		this.getAdvertiserReport();
@@ -68,10 +68,11 @@ export class DashboardComponent implements OnInit {
 		this.getHosts(this._auth.current_user_value.roleInfo.dealerId);
 	}
 
-	generateChart(lan, wifi) {
-		var canvas = <HTMLCanvasElement> document.getElementById('connectionChart');
+	generateChart(lan, wifi): void {
+		const canvas = <HTMLCanvasElement> document.getElementById('connectionChart');
+		
 		if (canvas) {
-			var chart = new Chart(canvas, {
+			new Chart(canvas, {
 				type: 'doughnut',
 				data: {
 					labels: ['LAN', 'WIFI'],
@@ -88,10 +89,6 @@ export class DashboardComponent implements OnInit {
 					}],
 				}
 			})
-		} else {
-			// setTimeout(() => {
-			// 	this.generateChart(lan, wifi);
-			// }, 1000)
 		}
 	}
 	

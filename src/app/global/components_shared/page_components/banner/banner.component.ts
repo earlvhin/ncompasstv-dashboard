@@ -2,12 +2,16 @@ import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angu
 import { TitleCasePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
+import { API_DEALER } from 'src/app/global/models/api_dealer.model';
 import { AuthService } from '../../../services/auth-service/auth.service';
 import { EditSingleAdvertiserComponent } from '../../../../global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from '../../../../global/pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from '../../../../global/pages_shared/edit-single-host/edit-single-host.component';
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { InformationModalComponent } from '../information-modal/information-modal.component';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 
@@ -18,7 +22,7 @@ import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 	providers: [TitleCasePipe]
 })
 
-export class BannerComponent implements OnInit {
+export class BannerComponent implements OnInit, OnDestroy {
 	@Input() editable: boolean;
 	@Input() single_image: string;
 	@Input() single_name: string;
@@ -26,6 +30,7 @@ export class BannerComponent implements OnInit {
 	@Input() dealer_data: any;
 	@Input() host_data: any;
 	@Input() advertiser_data: any;
+    @Input() refresh_banner: boolean;
 	@Input() single_host_data: any;
 	@Input() single_advertiser: any;
 	@Input() single_host_controls: boolean;
@@ -42,12 +47,17 @@ export class BannerComponent implements OnInit {
 	now: any;
 	routes: string;
 	show_hours = false;
+	status = '';
 	notes: string = '';
+	view = '';
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _dialog: MatDialog,
-		private _router: Router,
 		private _auth: AuthService,
+		private _helper: HelperService,
+		private _router: Router,
 		private _titlecase: TitleCasePipe,
 	) { }
 
@@ -56,32 +66,34 @@ export class BannerComponent implements OnInit {
 
 		if (this.host_data && this.host_data.host) {
 			this.category = this._titlecase.transform(this.host_data.host.category);
-				
 			if (this.host_data.host.storeHours) {
 				this.business_hours = JSON.parse(this.host_data.host.storeHours);
-
 				for (let i = 0; i < this.business_hours.length; i++) {
 
 					if (this.business_hours[i].periods.length > 0) {
 						this.count = this.count + 1;
 					}
 				}
-
 				if (this.count == 0) {
 					this.business_hours = null;
 				}
-
 				this.setCurrentBusinessDay();
-
 			}
-
-		} else if(this.advertiser_data) {
+		} else if (this.advertiser_data) {
 			this.category = this._titlecase.transform(this.advertiser_data.category);
 		}
 
-		// To avoid this.now == -1
-		// this.now = new Date().getDay() - 1 > 0  ? new Date().getDay() - 1 : new Date().getDay();
-		// console.log('#BUSINESS_HOURS', this.business_hours, this.now)
+		this.setView();
+		this.setStatus();
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+        this._unsubscribe.complete();
+	}
+
+    ngOnChanges() {
+		if (this.refresh_banner) this.ngOnInit();
 	}
 
 	checkRoute (id1, id2) {
@@ -119,20 +131,27 @@ export class BannerComponent implements OnInit {
 	}
 
 	showDealerContent() {
-		let dialogRef = this._dialog.open(EditSingleDealerComponent, {
+
+		const dialogRef = this._dialog.open(EditSingleDealerComponent, {
 			width: '700px',
 			panelClass: 'app-edit-single-advertiser',
 			disableClose: true,
 			data: this.dealer_data 
 		});
 
-		dialogRef.afterClosed().subscribe(response => {
-			
-			if (!response) {
-				this.update_info.emit(true);
-			}
-			
-		});
+		dialogRef.afterClosed()
+			.subscribe(
+				response => {
+					
+					if (!response) {
+						this.update_info.emit(true);
+						return;
+					}
+
+				},
+				error => console.log('Error closing edit single dealer modal', error)
+		);
+
 	}
 
 	showAdvertiserContent() {
@@ -150,7 +169,7 @@ export class BannerComponent implements OnInit {
 
 	showHostContent() {
 		let dialogRef = this._dialog.open(EditSingleHostComponent, {
-			width: '700px',
+			width: '992px',
 			panelClass: 'app-edit-single-advertiser',
 			disableClose: true,
 			data: this.single_host_data.host_id 
@@ -187,31 +206,38 @@ export class BannerComponent implements OnInit {
 			return;
 		}
 
-		const hostData = this.host_data;
 		const businessHours: any[] = this.business_hours;
 		this.current_business_day = this.now;
-		// this.current_business_day = moment.tz(hostData.timezone.name).format('dddd');
 		this.current_business_day = moment().format('dddd');
-
 		businessHours.forEach(
 			operation => {
 				let period = '';
-
 				if (operation.day === this.current_business_day) {
-
 					if (!operation.periods || !operation.status) period = 'CLOSED';
-
 					else {
 						if (!operation.periods[0].open && !operation.periods[0].close) period = 'Open 24 hours';
 						else period = `${operation.periods[0].open} - ${operation.periods[0].close}`;
 					}
-					
 					this.current_operations = { day: this.current_business_day, period };
 				}
 
 			}
 		);
 
+	}
+
+	private setStatus(): void {
+		if (this.view !== 'dealer') return;
+		const data = this.dealer_data as API_DEALER;
+
+		if (data.status === 'A') this.status = 'active';
+		else this.status = 'inactive';
+	}
+
+	private setView(): string {
+		if (this.dealer_data) return this.view = 'dealer';
+		if (this.host_data) return this.view = 'host';
+		if (this.advertiser_data) return this.view = 'advertiser';
 	}
 
 }

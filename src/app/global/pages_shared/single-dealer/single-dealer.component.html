@@ -1,12 +1,13 @@
 <ng-container>
     <div *ngIf="dealer && loaded; else loading">
         <app-banner
-        [single_image]="img"
-        [single_name]="dealer.businessName"
-        [single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
-        [editable]="true"
-        [dealer_data]="dealer_user_data"
-        (update_info)="ngOnInit()">
+			[single_image]="img"
+			[single_name]="dealer.businessName"
+			[single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
+			[editable]="true"
+			[refresh_banner]="true"
+			[dealer_data]="dealer_user_data"
+			(update_info)="ngOnInit()">
         </app-banner>
         
         <div class="stat-cards margin-top-extra mb-4">
@@ -321,7 +322,11 @@
                                                     [table_data]="host_filtered_data"
                                                     [new_table]="true"
                                                     [paging_details]="paging_data"
-                                                    (page_triggered)="getDealerHost($event)">
+                                                    (page_triggered)="getDealerHost($event)"
+                                                    (to_sort_column)="getHostsColumnsAndOrder($event)"
+                                                    [active_tab]="sort_column_hosts"
+                                                    [sort_column]="sort_column_hosts"
+                                                    [sort_order]="sort_order_hosts">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
@@ -401,11 +406,5 @@
             <app-spinner></app-spinner>
         </div>
 	</ng-template>
-
-    <ng-template #loader_sm>
-        <div class="dealer-picker col-lg-3 text-center">
-            <app-spinner [diameter]="25"></app-spinner>
-        </div>
-    </ng-template>
 	
 </ng-container>

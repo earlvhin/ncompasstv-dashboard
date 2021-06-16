@@ -8,11 +8,11 @@
             </div>
             <div class="col-lg-2">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['create-playlist']">
-                        <span class="button-label">
-                            Create Playlist
-                        </span>
-                        <span class="fas fa-play ml-2 sm-text"></span>
+                    <button mat-button mat-raised-button class="theme-btn mr-2" 
+						[routerLink]="['create-playlist']"
+						[disabled]="is_view_only">
+							<span class="button-label">Create Playlist</span>
+                        	<span class="fas fa-play ml-2 sm-text"></span>
                     </button>
                 </div>
             </div>
@@ -94,9 +94,10 @@
             <p class="sm-text mb-3">
                 There are no playlists at the moment.
             </p>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/sub-dealer/playlists/create-playlist']">
-                Add Playlist
-                <span class="fas fa-plus ml-2 sm-text"></span>
+            <button mat-button mat-raised-button class="theme-btn mr-2" 
+				[routerLink]="['/sub-dealer/playlists/create-playlist']"
+				[disabled]="is_view_only">
+					Add Playlist<span class="fas fa-plus ml-2 sm-text"></span>
             </button>
         </mat-card>
     </ng-template>

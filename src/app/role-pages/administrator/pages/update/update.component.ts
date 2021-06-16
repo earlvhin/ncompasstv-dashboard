@@ -22,10 +22,13 @@ export class UpdateComponent implements OnInit {
 	app_form: FormGroup;
 	apps: App[] = [];
 	app_versions: any[] = [];
+	all_app_versions: any[] = [];
 	app_form_disabled: boolean = true;
 	add_app_form: FormGroup;
 	add_app_form_disabled: boolean = true;
 	delete_app_form: FormGroup;
+	delete_app_version_form: FormGroup;
+	delete_app_version_form_disabled: boolean = true;
 	delete_app_form_disabled: boolean = true;
 
 	constructor(
@@ -59,12 +62,28 @@ export class UpdateComponent implements OnInit {
 			}
 		)
 
+		this.delete_app_version_form = this._form.group(
+			{
+				versionId: ['', Validators.required]
+			}
+		)
+
 		this.delete_app_form.valueChanges.subscribe(
 			() => {
 				if (this.delete_app_form.valid) {
 					this.delete_app_form_disabled = false;
 				} else {
 					this.delete_app_form_disabled = true;
+				}
+			}
+		)
+
+		this.delete_app_version_form.valueChanges.subscribe(
+			() => {
+				if (this.delete_app_version_form.valid) {
+					this.delete_app_version_form_disabled = false;
+				} else {
+					this.delete_app_version_form_disabled = true;
 				}
 			}
 		)
@@ -114,7 +133,19 @@ export class UpdateComponent implements OnInit {
 	deleteApp() {
 		const app = this.delete_app_form.value;
 		this._updates.remove_app([app.appId]).subscribe(
-			data => {
+			() => {
+				this.delete_app_form.reset();
+				this.delete_app_form_disabled = true;
+				this.ngOnInit();
+			}
+		)
+	}
+
+	deleteAppVersion() {
+		const app = this.delete_app_version_form.value;
+
+		this._updates.remove_app_version([app.versionId]).subscribe(
+			() => {
 				this.delete_app_form.reset();
 				this.delete_app_form_disabled = true;
 				this.ngOnInit();
@@ -133,6 +164,8 @@ export class UpdateComponent implements OnInit {
 						}
 					)
 				}
+
+				this.getAppVersions();
 			}
 		)
 	}
@@ -148,5 +181,27 @@ export class UpdateComponent implements OnInit {
 				})
 			}
 		)		
+	}
+
+	getAppVersions() {
+		this._updates.get_app_versions().subscribe(
+			(data: any[]) => {
+				data.map(
+					i => {
+						this.all_app_versions.push(
+							{
+								versionId: i.versionId,
+								appId: i.appId,
+								version: i.version,
+								appName: this.apps.filter(j => i.appId === j.appId)[0].appName
+							}
+						)
+					}
+				)
+			}, 
+			error => {
+				console.log(error)
+			}
+		)
 	}
 }

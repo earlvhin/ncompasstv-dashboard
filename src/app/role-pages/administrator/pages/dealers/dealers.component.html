@@ -47,30 +47,32 @@
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
                     <app-data-card-compare *ngIf="dealer_stats; else loader"
-                    [compare_basis]="dealer_stats.basis"
-                    [compare_basis_label]="dealer_stats.basis_label"
-                    [good_value]="dealer_stats.good_value"
-                    [good_value_label]="dealer_stats.good_value_label"
-                    [bad_value]="dealer_stats.bad_value || 0"
-                    [bad_value_label]="dealer_stats.bad_value_label">
+						[compare_basis]="dealer_stats.basis"
+						[compare_basis_label]="dealer_stats.basis_label"
+						[good_value]="dealer_stats.good_value"
+						[good_value_label]="dealer_stats.good_value_label"
+						[bad_value]="dealer_stats.bad_value || 0"
+						[bad_value_label]="dealer_stats.bad_value_label"
+						[has_dealer_status_filter]="true"
+						[page]="'dealers'">
                     </app-data-card-compare>
                 </mat-card>
             </div>
             <div class="col-12 col-lg dealer-card">
                 <mat-card class="h-100">
                     <app-data-card-count *ngIf="dealer_stats; else loader"
-                    [data_value]="dealer_stats.this_week_value"
-                    [data_label]="dealer_stats.this_week_value_label"
-                    [data_description]="dealer_stats.this_week_value_description">
+						[data_value]="dealer_stats.this_week_value"
+						[data_label]="dealer_stats.this_week_value_label"
+						[data_description]="dealer_stats.this_week_value_description">
                     </app-data-card-count>
                 </mat-card>
             </div>
             <div class="col-12 col-lg dealer-card">
                 <mat-card class="h-100">
                     <app-data-card-count *ngIf="dealer_stats; else loader"
-                    [data_value]="dealer_stats.last_week_value"
-                    [data_label]="dealer_stats.last_week_value_label"
-                    [data_description]="dealer_stats.last_week_value_description">
+						[data_value]="dealer_stats.last_week_value"
+						[data_label]="dealer_stats.last_week_value_label"
+						[data_description]="dealer_stats.last_week_value_description">
                     </app-data-card-count>
                 </mat-card>
             </div>

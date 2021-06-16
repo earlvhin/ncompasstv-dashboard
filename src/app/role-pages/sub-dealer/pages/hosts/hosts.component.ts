@@ -1,13 +1,12 @@
 import { Component, OnInit } from '@angular/core';
+import { TitleCasePipe } from '@angular/common'
 import { Observable, Subscription } from 'rxjs';
+
 import { API_HOST } from '../../../../global/models/api_host.model';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { API_DEALER } from '../../../../global/models/api_dealer.model';
 import { HostService } from '../../../../global/services/host-service/host.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { UI_DEALER_HOSTS } from '../../../../global/models/ui_dealer_hosts.model';
-import { UserService } from '../../../../global/services/user-service/user.service';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { TitleCasePipe } from '@angular/common'
 
 @Component({
 	selector: 'app-hosts',
@@ -36,6 +35,7 @@ export class HostsComponent implements OnInit {
 	initial_load: boolean = true;
 	no_hosts: boolean = false;
 	paging_data: any;
+	is_view_only = false;
 
 	// UI Table Column Header
 	host_table_column: string[] = [
@@ -47,19 +47,18 @@ export class HostsComponent implements OnInit {
 		'Number of Licenses',
 		'Category',
 		'Status',
-	]
+	];
 
 	constructor(
-    	private _user: UserService,
-		private _host: HostService,
-    	private _dealer: DealerService,
 		private _auth: AuthService,
+		private _host: HostService,
 		private _title: TitleCasePipe
 	) { }
 
 	ngOnInit() {
 		this.getHosts(1);
 		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -108,11 +107,13 @@ export class HostsComponent implements OnInit {
 		this.host_data = [];
 		this.host_filtered_data = [];
 		this.temp_array = [];
+
 		this.subscription.add(
 			this._host.get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data).subscribe(
 				data => {
 					this.initial_load = false;
 					this.searching = false;
+                    this.paging_data = data.paging;
 					if(!data.message) {
 						data.hosts.map (
 							i => {
@@ -130,35 +131,13 @@ export class HostsComponent implements OnInit {
 						this.host_data=[];
 						this.host_filtered_data = [];
 					}
-					this.paging_data = data.paging;
 				}
 			)
-		)
-		// this.subscription.add(
-		// 	this._host.get_host_for_dealer_id(id).subscribe(
-		// 		(data: any) => {
-		// 			if(data.length > 0) {
-		// 				data.map(
-		// 					i => {
-		// 					this.combined_data = Object.assign({},i.host,i.hostStats);
-		// 					this.combined_data_array.push(this.combined_data);
-		// 				});
-		// 			}
-					
-		// 			if (this.combined_data_array.length > 0) {
-		// 				this.hosts_data = this.hosts_mapToUIFormat(this.combined_data_array);
-		// 				this.filtered_data = this.hosts_mapToUIFormat(this.combined_data_array);
-		// 			} else {
-		// 				this.no_host = true;
-		// 				this.filtered_data = {message: 'no records found'};
-		// 			}
-		// 		}
-		// 	)
-		// )
+		);
 	}
 
 	hosts_mapToUIFormat(data) {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			(hosts: any) => {
 				return new UI_DEALER_HOSTS(
@@ -174,5 +153,9 @@ export class HostsComponent implements OnInit {
 				)
 			}
 		)
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

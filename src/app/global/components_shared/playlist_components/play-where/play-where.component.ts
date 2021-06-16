@@ -72,12 +72,10 @@ export class PlayWhereComponent implements OnInit {
 			// Add to blacklist array
 			if (this.inBlacklistData(e.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId) == 0) {
 				this.remove_in_blocklist.push({blacklistedContentId: this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId})
-				console.log('remove_in_blocklist array:', this.remove_in_blocklist);
 			}
 
 			if (this.In_add_in_blocklist(e.blocklist_data)) {
 				this.RemoveIn_add_in_blocklist(e.blocklist_data);
-				console.log('add_in_blocklist_array_truthy', this.add_in_blocklist);
 			}
 
 		}
@@ -88,13 +86,11 @@ export class PlayWhereComponent implements OnInit {
 			// Remove in remove_in_blocklist
 			if (this.inBlacklistData(e.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId) > 0) {
 				this.RemoveIn_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId)
-				console.log('remove_in_blocklist array:', this.remove_in_blocklist);
 			}
 
 			// Add in add_in_blocklist
 			if (this.inBlacklistData(e.blocklist_data).length == 0) {
 				this.add_in_blocklist.push(e.blocklist_data);
-				console.log('add_in_blocklist_array_falsy', this.add_in_blocklist);
 			}
 		}
 
@@ -139,7 +135,6 @@ export class PlayWhereComponent implements OnInit {
 			)
 		}
 		
-		console.log('Not Found:', data)
 		return [];
 	}
 

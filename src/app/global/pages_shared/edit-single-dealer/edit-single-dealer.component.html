@@ -5,16 +5,16 @@
 			<p class="p-0 sm-text mb-4">You can update dealer details here:</p>
 		</div>
 		<div>
-			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="true">
 				<span class="fas fa-times"></span>
 			</button>
 		</div>
 	</div>
 	<div *ngIf="other_users;else loading">
-		<form [formGroup]="dealer_form" (ngSubmit)="updateDealerInfo()" class="text-left" >
+		<form [formGroup]="dealer_form" (ngSubmit)="onSubmit()" class="text-left" >
 			<div class="row mb-4">
 				<div *ngFor="let field of dealer_form_view" class="{{ field.col }} mb-3">
-					<mat-form-field class="full-width">
+					<mat-form-field class="full-width" *ngIf="field.type !== 'toggle'; else toggle">
 						<mat-label>{{ field.label }}</mat-label> 
 						<span class="validation-message warning sm-text py-1 text-danger" *ngIf="!email_not_valid && has_duplicate_email && field.control == 'email'">
                             This email is already taken.
@@ -26,7 +26,7 @@
 					</mat-form-field>
 				</div>
 			</div>
-			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">
+			<button mat-button mat-raised-button type="submit" color="primary" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">
 				Update
 			</button>
 			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
@@ -43,4 +43,12 @@
             <app-spinner></app-spinner>
         </div>
     </ng-template>
+
+	<ng-template #toggle>
+		Active:
+		<mat-slide-toggle 
+			[checked]="is_set_to_active"
+			(click)="onToggleStatus($event)">
+		</mat-slide-toggle>
+	</ng-template>
 </div>

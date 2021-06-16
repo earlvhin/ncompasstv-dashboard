@@ -68,7 +68,6 @@ export class PlaylistEditModalComponent implements OnInit {
 		this._playlist.update_playlist_info(this.edit_form.value).subscribe(
 			data => {
 				this.is_saved = true;
-				console.log('#updatePlaylistInfodata', data);
 			},
 			error => {
 				this.is_submitted = false;

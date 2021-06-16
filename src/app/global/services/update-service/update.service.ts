@@ -38,7 +38,6 @@ export class UpdateService {
         return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_app_version}`, data, this.httpOptions);
     }
 
-
     /**
      * Get Apps from API
      * API GET Method to AWS
@@ -46,7 +45,6 @@ export class UpdateService {
     get_apps() {
         return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps}`, this.httpOptions);
     }
-
 
     /**
      * Get App Version by App ID
@@ -57,6 +55,13 @@ export class UpdateService {
         return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps_version}${data}`, this.httpOptions);
     }
 
+    /**
+     * Get All App Versions
+     * API GET Method to AWS
+    */
+    get_app_versions() {
+        return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps_versions}`, this.httpOptions);
+    }
 
     /**
      * Remove Player Apps
@@ -65,5 +70,14 @@ export class UpdateService {
     */
     remove_app(data: any) {
         return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_player_app}`, data, this.httpOptions);
+    }
+
+    /**
+     * Remove Player Apps
+     * API POST Method to AWS
+     * @param data - Version ID
+    */
+    remove_app_version(data: any) {
+        return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_player_app_version}`, data, this.httpOptions);
     }
 }

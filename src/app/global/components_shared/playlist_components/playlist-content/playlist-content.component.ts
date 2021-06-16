@@ -57,7 +57,6 @@ export class PlaylistContentComponent implements OnInit {
 			.pipe(finalize(() => console.log('Ended')))
 			.subscribe(
 				data => {
-					console.log('#optionsModal', data)
 					if (data !== undefined && data !== true) {
 						this.options_saved.emit(data);
 					} else if (data === true){
@@ -81,7 +80,6 @@ export class PlaylistContentComponent implements OnInit {
 
 		delete_dialog.afterClosed().subscribe(
 			data => {
-				console.log('#removeContentPlaylist', data);
 				if (data) {
 					this.remove_playlist_content.emit(id);
 				}

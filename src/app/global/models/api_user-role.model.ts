@@ -3,4 +3,5 @@ export class API_USER_ROLES {
     roleId: string;
     roleName: string;
     status: string;
+	permission?: string;
 }

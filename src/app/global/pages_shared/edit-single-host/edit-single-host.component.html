@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	
-	<div *ngIf="dealers_data.length > 0 && categories_data as categories; else loading">
+	<div *ngIf="dealers_data.length > 0 && dealer_name != '' && categories_data as categories; else loading">
 		<form [formGroup]="new_host_form" (ngSubmit)="newHostPlace()" class="text-left">
 			<div class="row mb-4">
 				<div class="col-lg-11 mb-3" *ngIf="!is_dealer">
@@ -69,54 +69,66 @@
 						</app-autocomplete-field>
 					</ng-template>
 				</div>
-				<div class="d-flex mb-4 px-3" *ngFor="let h of business_hours">
-					<div class="round-label mr-3" (click)="operationDays(h)" [ngClass]="h.status ? 'active' : ''">
-						<span class="font-weight-bold">{{ h.label }}</span>
+
+				<!-- BUSINESS HOURS SECTION -->
+				<div class="business-hours-section">
+					<div class="d-flex mb-4 px-3 heading">
+						<h4>Business Hours</h4>
+
+						<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" 
+							(click)="onBulkEditHours()">Bulk Edit
+						</button>
 					</div>
-					<div class="flex-even">
-						<ng-container *ngIf="h.status; else closed">
-							<div class="mb-3" *ngFor="let t of h.periods; let i = index">
-								<div class="d-flex align-items-center">
-									<div class="mr-3">
-										<div class="time-picker">
-											<mat-label class="sm-text">Opening Hours</mat-label>
-											<input matInput class="input-border-bottom" 
-											placeholder="Opening Hours"
-											aria-label="12hr format" 
-											[ngxTimepicker]="opening" 
-											[(ngModel)]="t.open" 
-											[ngModelOptions]="{standalone: true}" 
-											readonly>
-											<ngx-material-timepicker #opening></ngx-material-timepicker>
+	
+					<div class="d-flex mb-4 px-3" *ngFor="let h of business_hours">
+						<div class="round-label mr-3" (click)="operationDays(h)" [ngClass]="h.status ? 'active' : ''">
+							<span class="font-weight-bold">{{ h.label }}</span>
+						</div>
+						<div class="flex-even">
+							<ng-container *ngIf="h.status; else closed">
+								<div class="mb-3" *ngFor="let t of h.periods; let i = index">
+									<div class="d-flex align-items-center">
+										<div class="mr-3">
+											<div class="time-picker">
+												<mat-label class="sm-text">Opening Hours</mat-label>
+												<input matInput class="input-border-bottom" 
+												placeholder="Opening Hours"
+												aria-label="12hr format" 
+												[ngxTimepicker]="opening" 
+												[(ngModel)]="t.open" 
+												[ngModelOptions]="{standalone: true}" 
+												readonly>
+												<ngx-material-timepicker #opening></ngx-material-timepicker>
+											</div>
+											<div class="d-inline-block mx-3">
+												<span>--</span>
+											</div>
+											<div class="time-picker">
+												<mat-label class="sm-text">Closing Hours</mat-label>
+												<input matInput class="input-border-bottom" 
+												placeholder="Closing Hours" 
+												aria-label="12hr format" 
+												[ngxTimepicker]="closing" 
+												[(ngModel)]="t.close" 
+												[ngModelOptions]="{standalone: true}" 
+												readonly>
+												<ngx-material-timepicker #closing></ngx-material-timepicker>
+											</div>
 										</div>
-										<div class="d-inline-block mx-3">
-											<span>--</span>
+										<div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
+											<span class="remove-hours-btn" (click)="removeHours(h, i)">
+												<span class="fas fa-times"></span>
+											</span>
 										</div>
-										<div class="time-picker">
-											<mat-label class="sm-text">Closing Hours</mat-label>
-											<input matInput class="input-border-bottom" 
-											placeholder="Closing Hours" 
-											aria-label="12hr format" 
-											[ngxTimepicker]="closing" 
-											[(ngModel)]="t.close" 
-											[ngModelOptions]="{standalone: true}" 
-											readonly>
-											<ngx-material-timepicker #closing></ngx-material-timepicker>
+										<div>
+											<span class="add-hours-btn" (click)="addHours(h)">
+												<span class="fas fa-plus ml-2"></span>
+											</span>
 										</div>
-									</div>
-									<div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
-										<span class="remove-hours-btn" (click)="removeHours(h, i)">
-											<span class="fas fa-times"></span>
-										</span>
-									</div>
-									<div>
-										<span class="add-hours-btn" (click)="addHours(h)">
-											<span class="fas fa-plus ml-2"></span>
-										</span>
 									</div>
 								</div>
-							</div>
-						</ng-container>
+							</ng-container>
+						</div>
 					</div>
 				</div>
 			</div>

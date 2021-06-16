@@ -16,6 +16,7 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { UnassignHostLicenseComponent } from '../../components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from '../../../../environments/environment';
+import { CustomFields, FieldGroupFields } from '../../models/host-custom-field-group';
 
 @Component({
 	selector: 'app-single-host',
@@ -67,6 +68,11 @@ export class SingleHostComponent implements OnInit {
 
 	private business_hours_update_sub: Subscription;
 
+	is_administrator: boolean;
+	host_fields: CustomFields[] = [];
+	host_field_title: string;
+	field_group_fields: FieldGroupFields[] = [];
+
 	constructor(
 		private _params: ActivatedRoute,
 		private _host: HostService,
@@ -94,6 +100,8 @@ export class SingleHostComponent implements OnInit {
 		
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.is_dealer = true;
+		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator) {
+			this.is_administrator = true;
 		}
 
 		this.subscription.add(
@@ -108,7 +116,6 @@ export class SingleHostComponent implements OnInit {
 		this.subscription.add(
 			this._host.get_host_by_id(this.host_id).subscribe(
 				(data: any) => {
-					// console.log('#GET_HOST_BY_ID', data)
 					this.host_data = data;
 					this.single_host_data = { dealer_id: data.dealer.dealerId, host_id: this.host_id };
 					this.d_name = data.host.name;
@@ -121,12 +128,43 @@ export class SingleHostComponent implements OnInit {
 		);
 
 		if (!this.business_hours_update_sub) this.subscribeToBusinessHoursUpdate();
+
+		this.getHostFields();
 	}
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 		this.business_hours_update_sub.unsubscribe();
 		this._socket.disconnect();
+	}
+
+	assignHostField() {
+		
+	}
+
+	getHostFields() {
+		this._host.get_fields().subscribe(
+			data => {
+				console.log(data)
+				this.host_fields = data.paging.entities;
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
+	}
+
+	getFieldGroup(id: string, title: string) {
+		this._host.get_field_by_id(id).subscribe(
+			(data: any) => {
+				console.log(data)
+				this.host_field_title = title;
+				this.field_group_fields = data.fields;
+			},
+			error => {
+				console.log(error)
+			}
+		)
 	}
 
 	openAssignLicenseModal(): void {
@@ -249,7 +287,7 @@ export class SingleHostComponent implements OnInit {
 			if(result === 'system_update') {
 				this.host_license_api.forEach(
 					(i: any) => {
-						console.log('SystemUpdate Emitted:', i.licenseId)
+						// console.log('SystemUpdate Emitted:', i.licenseId)
 						this._socket.emit('D_system_update_by_license', i.licenseId);
 					}
 				)
@@ -259,7 +297,7 @@ export class SingleHostComponent implements OnInit {
 			} else if(result === 'update') {
 				this.host_license_api.forEach(
 					(i: any) => {
-						console.log('D_update_player:', i.licenseId)
+						// console.log('D_update_player:', i.licenseId)
 						this._socket.emit('D_update_player', i.licenseId);
 					}
 				)
@@ -269,7 +307,7 @@ export class SingleHostComponent implements OnInit {
 			}  else if(result === 'upgrade_to_v2') {
 				this.host_license_api.forEach(
 					(i: any) => {
-						console.log('D_upgrade_to_v2_by_license:', i.licenseId)
+						// console.log('D_upgrade_to_v2_by_license:', i.licenseId)
 						this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
 					}
 				)

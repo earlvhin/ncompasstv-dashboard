@@ -109,9 +109,9 @@
 						<p class="sm-text mb-3">
 							There are no available hosts at the moment.
 						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/sub-dealer/create-host']">
-							Add Host
-							<span class="fas fa-plus ml-2 sm-text"></span>
+						<button mat-button mat-raised-button class="theme-btn mr-2" 
+							[routerLink]="['/sub-dealer/create-host']"
+							[disabled]="is_view_only">Add Host <span class="fas fa-plus ml-2 sm-text"></span>
 						</button>
 					</mat-card>
 				</ng-template>
@@ -135,9 +135,9 @@
 						<p class="sm-text mb-3">
 							There are no available advertisers at the moment.
 						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/sub-dealer/create-advertiser']">
-							Add Advertiser
-							<span class="fas fa-plus ml-2 sm-text"></span>
+						<button mat-button mat-raised-button class="theme-btn mr-2" 
+							[routerLink]="['/sub-dealer/create-advertiser']"
+							[disabled]="is_view_only">Add Advertiser <span class="fas fa-plus ml-2 sm-text"></span>
 						</button>
 					</mat-card>
 				</ng-template>
@@ -186,9 +186,9 @@
 								<p class="sm-text mb-3">
 									There are no available hosts at the moment.
 								</p>
-								<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/sub-dealer/users/create-user/hosts']">
-									Add Hosts
-									<span class="fas fa-plus ml-2 sm-text"></span>
+								<button mat-button mat-raised-button class="theme-btn mr-2" 
+									[routerLink]="['/sub-dealer/users/create-user/hosts']"
+									[disabled]="is_view_only">Add Hosts <span class="fas fa-plus ml-2 sm-text"></span>
 								</button>
 							</mat-card>
 						</ng-template>

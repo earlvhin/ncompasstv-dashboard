@@ -25,6 +25,11 @@ export class UserService {
 		private _auth: AuthService
 	) { }
 
+	deleteUser(userId: string) {
+		const endpoint = `${this.base}${this.delete.user}?userid=${userId}`;
+		return this._http.post(endpoint, {}, this.httpOptions);
+	}
+
 	get_users() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_users}`, this.httpOptions);
 	}
@@ -81,6 +86,11 @@ export class UserService {
 		return re.test(String(email).toLowerCase());
 	}
 
+	update_permission(userId: string, type: string) {
+		const endpoint = `${this.base}${this.update.account_permission}?userid=${userId}&type=${type}`;
+		return this._http.post(endpoint, {}, this.httpOptions);
+	}
+
 	update_user(data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_user}`, data, this.httpOptions);
 	}
@@ -88,4 +98,17 @@ export class UserService {
 	get_user_notifications(id) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_notifications}${id}`, this.httpOptions);
 	}
+
+	protected get base() {
+		return environment.base_uri;
+	}
+
+	protected get delete() {
+		return environment.delete;
+	}
+
+	protected get update() {
+		return environment.update;
+	}
+
 }

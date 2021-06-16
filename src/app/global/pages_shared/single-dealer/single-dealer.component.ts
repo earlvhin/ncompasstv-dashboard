@@ -2,13 +2,13 @@ import { DatePipe, Location, TitleCasePipe } from '@angular/common'
 import { ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { take } from 'rxjs/operators';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription } from 'rxjs';
 import { Chart } from 'chart.js';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as io from 'socket.io-client';
+import { take } from 'rxjs/operators';
 
 import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
 import { API_DEALER } from '../../models/api_dealer.model';
@@ -28,6 +28,7 @@ import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { HelperService } from '../../services/helper-service/helper.service';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -106,7 +107,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	show_admin_buttons: boolean = false
 	single_info: Array<any>;
 	sort_column: string = "";
+	sort_column_hosts: string = "";
 	sort_order: string = "";
+	sort_order_hosts: string = "";
 	statistics: API_LICENSE_STASTICS;
 	subscription: Subscription = new Subscription;
 	temp_array: any = [];
@@ -136,15 +139,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	// No_export: Dont Include to Export
 	host_table_col = [ 
 		{ name: '#', sortable: false, no_export: true},
-		{ name: 'Host Name', sortable: false, column:'name', key: 'name'},
-		{ name: 'Address', sortable: false, column:'address', key: 'address'},
-		{ name: 'City', sortable: false, column:'city', key: 'city'},
-		{ name: 'Postal Code', sortable: false, column:'postalCode', key: 'postalCode'},
-		{ name: 'License Count', sortable: false, column:'totalLicenses', key: 'totalLicenses'},
-		{ name: 'Status', sortable: false, no_export: true},
+		{ name: 'Host Name', sortable: true, column:'Name', key: 'name'},
+		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
+		{ name: 'City', sortable: true, column:'City', key: 'city'},
+		{ name: 'Postal Code', sortable: true, column:'PostalCode', key: 'postalCode'},
+		{ name: 'License Count', sortable: true, column:'TotalLicences', key: 'totalLicenses'},
+		{ name: 'Status', sortable: true, column: 'Status',no_export: true},
 	];
 
 	license_table_columns = [
+		{ name: '#', sortable: false, no_export: true},
+        { name: null, sortable: false, no_export: true, hidden: true},
 		{ name: 'Screenshot', sortable: false, no_export: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
@@ -162,6 +167,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		public _router: Router,
@@ -214,7 +221,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getDealerInfo(this.dealer_id);
 					this.getDealerAdvertiser(1);
 					this.getDealerHost(1);
-					this.getLicensesofDealer(1);
+                    this.sortList('desc');
 					this.getLicenseTotalCount(this.dealer_id);
 					this.getAdvertiserTotalCount(this.dealer_id);
 					this.getHostTotalCount(this.dealer_id);
@@ -260,6 +267,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.unsubscribe();
 		this.destroyCharts();
 		this._socket.disconnect();
+		this._unsubscribe.next();
+        this._unsubscribe.complete();
 	}
 
 	callCharts(): void {
@@ -314,7 +323,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	advertiser_mapToUI(data: any[]): DEALER_UI_TABLE_ADVERTISERS[] {
-		let count = 1;
+		let count = this.paging_data_advertiser.pageStart;
 		return data.map(
 			i => {
 				return new DEALER_UI_TABLE_ADVERTISERS(
@@ -365,7 +374,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
-
+                    this.paging_data_advertiser = data.paging;
 					if (!data.message) {
 						this.advertiser_data = this.advertiser_mapToUI(data.advertisers);
 						this.advertiser_filtered_data = this.advertiser_mapToUI(data.advertisers);
@@ -377,8 +386,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						this.advertiser_data=[];
 						this.advertiser_filtered_data = [];
 					}
-
-					this.paging_data_advertiser = data.paging;
 				},
 				error => console.log('Error retrieving advertisers by dealer', error)
 			)
@@ -390,29 +397,29 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.host_data = [];
 		this.host_filtered_data = [];
 		this.temp_array = [];
+
 		this.subscription.add(
-			this._host.get_host_by_dealer_id(this.dealer_id, page, this.search_data).subscribe(
+			this._host.get_host_by_dealer_id_with_sort(this.dealer_id, page, this.search_data, this.sort_column_hosts, this.sort_order_hosts).subscribe(
 				data => {
 					this.initial_load = false;
 					this.searching = false;
-					if(!data.message) {
-						data.hosts.map (
-							i => {
-								var x = Object.assign({},i.host,i.hostStats);
-								this.temp_array.push(x)
-							}
-						)
+                    this.paging_data = data.paging;
+					
+					if (!data.message) {
+						this.temp_array = data.paging.entities;
 						this.host_data = this.hostTable_mapToUI(this.temp_array);
 						this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
 						this.no_hosts = false;
 					} else {
-						if(this.search_data == "") {
+
+						if (this.search_data == "") {
 							this.no_hosts = true;
 						}
-						this.host_data=[];
+
+						this.host_data = [];
 						this.host_filtered_data = [];
 					}
-					this.paging_data = data.paging;
+					
 				},
 				error => console.log('Error retrieving dealer host', error)
 			)
@@ -437,7 +444,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._user.get_user_alldata_by_id(id).subscribe(
 				data =>  {
-					this.dealer_user_data = Object.assign({},data.user, data.dealer[0]),
+					this.dealer_user_data = Object.assign({},data.user, data.dealer[0]);
 					this.loaded = true;
 				},
 				error => console.log('Error retrieving dealer user data', error)
@@ -491,11 +498,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 								}	
 							}
 						);
-
+                        this.paging_data_license = response.paging;
 						const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
 						this.license_data = mappedLicenses;
 						this.license_filtered_data = mappedLicenses;
-						this.paging_data_license = response.paging;
+						
 					}
 
 					this.initial_load_license = false;
@@ -546,7 +553,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	hostTable_mapToUI(data: any[]): UI_DEALER_HOST[] {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.map(
 			(h: any) => {
 				return new UI_DEALER_HOST(
@@ -556,7 +563,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: h.address, link: null, editable: false, hidden: false},
 					{ value: h.city, link: null, editable: false, hidden: false},
 					{ value: h.postalCode, link: null, editable: false, hidden: false},
-					{ value: h.totalLicenses, link: null, editable: false, hidden: false},
+					{ value: h.totalLicences, link: null, editable: false, hidden: false},
 					{ value: h.status, link: null, editable: false, hidden: false},
 					// { value: this._date.transform(h.installDate), link: null, editable: false, hidden: false},	
 				)
@@ -575,10 +582,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
-		let count = 1;
+		let count = this.paging_data_license.pageStart;
 		return data.map(
 			(l: any) => {
 				const table = new UI_DEALER_LICENSE(
+                    { value: count++, link: null , editable: false, hidden: false},
 					{ value: l.licenseId, link: null , editable: false, hidden: true, key: true, table: 'license'},
 					{ 
 						value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace("/API/", "")}` : null,
@@ -603,7 +611,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.licenseId },
 					{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 					{ value: l.isActivated, link: null , editable: false, hidden: true },
-					{ value: l.host ? true : false, link: null , editable: false, hidden: true },
+					{ value: l.hostId ? true : false, link: null , editable: false, hidden: true },
 					{ value: l.piStatus, link: null , editable: false, hidden: true },
 				);
 				return table;
@@ -695,22 +703,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	async dealerSelected(id: string): Promise<void> {
-		// this.destroyCharts();
-		// this.loading_statistics = { activity: true, status: true, connection: true, screen: true };
-
-		// this.subscription.add(
-		// 	this._dealer.get_dealer_by_id(e).subscribe(
-		// 		data => {
-		// 			this.dealer_id = data.dealerId;
-		// 			this.dealer_name = data.businessName;
-		// 			this.from_change = true;
-		// 			this.loaded = false;
-		// 			this.ngOnInit();
-		// 		}
-		// 	)
-		// )
-		// this.initial_load = true;
-
 		await this._router.navigate([`/${this.current_role}/dealers/${id}`]);
 		this.getLicenseStatisticsByDealer(id, true);
 	}
@@ -884,25 +876,30 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getLicensesofDealer(1);
 	}
 
-	getDealerLicenses() {
-		this.subscription.add(
-			this._license.get_license_to_export(this.dealer_id).subscribe(
-				data => {
-					// console.log('getDealerLicenses', data);
-					this.licenses = data.licenses;
-					this.resyncSocketConnection();
-				}
-			)
-		)
+    getHostsColumnsAndOrder(data) {
+		this.sort_column_hosts = data.column;
+		this.sort_order_hosts = data.order;
+		this.getDealerHost(1);
 	}
 
-	resyncSocketConnection() {
-		this.licenses.forEach(
-			i => {
-				this._socket.emit('D_resync', i.licenseId);
-			}
-		)
-	}
+    getDealerLicenses() {
+        this.subscription.add(
+            this._license.get_license_to_export(this.dealer_id).subscribe(
+                data => {
+                    this.licenses = data.licenses;
+                    if (this.licenses) this.resyncSocketConnection();
+                }
+            )
+        );
+    }
+
+    resyncSocketConnection() {
+        this.licenses.forEach(
+            i => {
+                this._socket.emit('D_is_electron_running', i.licenseId);
+            }
+        )
+    }
 
 	getDataForExport(id, tab): void {
 		switch(tab) {

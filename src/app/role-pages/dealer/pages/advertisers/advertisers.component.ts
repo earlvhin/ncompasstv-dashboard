@@ -83,6 +83,7 @@ export class AdvertisersComponent implements OnInit {
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
+                    this.paging_data_advertiser = data.paging;
 					if(!data.message) {
 						this.advertiser_data = this.advertiser_mapToUI(data.advertisers);
 						this.advertiser_filtered_data = this.advertiser_mapToUI(data.advertisers);
@@ -93,14 +94,13 @@ export class AdvertisersComponent implements OnInit {
 						this.advertiser_data=[];
 						this.advertiser_filtered_data = [];
 					}
-					this.paging_data_advertiser = data.paging;
 				}
 			)
 		)
 	}
 
 	advertiser_mapToUI(data): UI_TABLE_ADVERTISERS[]  {
-		let count = 1;
+		let count = this.paging_data_advertiser.pageStart;
 		return data.map(
 			i => {
 				return new UI_TABLE_ADVERTISERS(

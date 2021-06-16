@@ -75,6 +75,7 @@ export class AdvertisersComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealers_with_advertiser(e, this.search_data).subscribe(
 				data => {
+                    this.paging_data = data.paging;
 					if(data.dealers) {
 						this.dealers_with_advertiser = this.dealer_mapToUI(data.dealers);
 						this.filtered_data = this.dealer_mapToUI(data.dealers);
@@ -84,7 +85,6 @@ export class AdvertisersComponent implements OnInit {
 						}
 						this.filtered_data = [];
 					}
-					this.paging_data = data.paging;
 					this.searching = false;
 					this.initial_load = false;
 				},
@@ -106,7 +106,7 @@ export class AdvertisersComponent implements OnInit {
 	}
 
 	dealer_mapToUI(data: API_DEALER[]) {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 		return data.filter(
 			i => {
 				return i.advertisers.length > 0;

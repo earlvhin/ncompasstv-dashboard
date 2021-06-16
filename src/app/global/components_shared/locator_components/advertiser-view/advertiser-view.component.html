@@ -89,9 +89,9 @@
 			<p class="sm-text mb-3">
 				There are no available advertiser profile at the moment.
 			</p>
-			<button mat-button mat-raised-button class="theme-btn mr-2" (click)="createAdvertiserProfile()">
-				Add Advertiser Profile
-				<span class="fas fa-user ml-2 sm-text"></span>
+			<button mat-button mat-raised-button class="theme-btn mr-2" 
+				(click)="createAdvertiserProfile()"
+				[disabled]="is_view_only">Add Advertiser Profile<span class="fas fa-user ml-2 sm-text"></span>
             </button>
         </div>
     </ng-template>

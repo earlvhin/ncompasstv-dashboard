@@ -5,8 +5,5 @@ export class UI_CURRENT_USER {
     lastname: string;
     role_id: string;
     roleInfo: API_ROLE_INFO;
-    jwt: {
-        token: string;
-        refreshToken: string;
-    }
+    jwt: { token: string, refreshToken: string; };
 }

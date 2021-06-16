@@ -34,6 +34,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { InstallationsComponent } from './pages/installations/installations.component';
 import { UpdateComponent } from './pages/update/update.component';
+import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 @NgModule({
 	declarations: [
 		AdministratorLayoutComponent, 
@@ -70,6 +71,7 @@ import { UpdateComponent } from './pages/update/update.component';
 		MatSelectModule,
 		MatExpansionModule,
 		DragDropModule,
+		NgbModule,
 		RouterModule.forChild(ADMINISTRATOR_ROUTES)
 	],
 	providers: [

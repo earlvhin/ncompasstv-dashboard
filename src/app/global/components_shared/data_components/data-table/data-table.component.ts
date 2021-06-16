@@ -1,17 +1,20 @@
 import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
-import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
-import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
-import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
+import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { ContentService } from 'src/app/global/services/content-service/content.service';
+import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
+import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
+import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
 import { LicenseService } from '../../../../global/services/license-service/license.service';
+import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
 import { ScreenService } from '../../../../global/services/screen-service/screen.service';
-import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
-import { ContentService } from 'src/app/global/services/content-service/content.service';
+import { UserService } from 'src/app/global/services/user-service/user.service';
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 
 @Component({
   selector: 'app-data-table',
@@ -40,6 +43,7 @@ export class DataTableComponent implements OnInit {
 	@Input() screen_delete: boolean;
 	@Input() sort_column: string;
 	@Input() sort_order: string;
+	@Input() sub_dealer_delete?: boolean;
 	@Input() table_columns: any;
 	@Input() table_data: any;
 	
@@ -68,39 +72,47 @@ export class DataTableComponent implements OnInit {
 	selectAll: boolean = false;
 	subscription: Subscription = new Subscription();
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
-		public _advertiser: AdvertiserService,
+		private _advertiser: AdvertiserService,
+		private _content: ContentService,
 		private _dialog: MatDialog,
-		public _license: LicenseService,
-		public _playlist: PlaylistService,
-		public _screen: ScreenService,
-		public _content: ContentService
+		private _helper: HelperService,
+		private _license: LicenseService,
+		private _playlist: PlaylistService,
+		private _screen: ScreenService,
+		private _user: UserService,
 	) { }
 
 	ngOnInit() {
+
 		this.table_data.map (
 			data => {
 				Object.keys(data).forEach(key => {
 					if (data[key].table) {
 						this.active_table = data[key].table;
 					}
-				})
+				});
 			}
 		);
-	}
 
-	onPageChange(page: number) {
-		this.pagination = page;
-		window.scrollTo(0, 0);
 	}
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
-	getPage(e): void {
+	onPageChange(page: number): void {
+		this.pagination = page;
+		window.scrollTo(0, 0);
+	}
+
+	getPage(page: any): void {
 		this.selected_array = [];
-		this.page_triggered.emit(e);
+		this.page_triggered.emit(page);
 		this.delete_selected.emit(this.selected_array);
 		this.ngOnInit();
 	}
@@ -219,6 +231,9 @@ export class DataTableComponent implements OnInit {
 					break;
 				case 'advertiser_delete_force':
 					this.advertiserDelete(id, 1);
+					break;
+				case 'sub_dealer_delete':
+					this.deleteSubDealer(id);
 					break;
 				default:
 			}
@@ -414,22 +429,27 @@ export class DataTableComponent implements OnInit {
 		}
 	}
 
-	sortByColumnName(column, order) {
-		// this.active_tab = column;
-		// this.sortColumn = column;
-		// this.sortOrder = order;
-		// this.pageRequested(1);
-		// this.active_tab = column;
-		// console.log("ACTIVE TAB", this.active_tab)
-		// this.sortColumn = column;
-		// this.sortOrder = order;
-        console.log(column, order)
-		var filter = {
+	sortByColumnName(column: string, order: string): void {
+
+		const filter = {
 			column: column,
 			order: order
-		}
+		};
 
-		
 		this.to_sort_column.emit(filter);
+	}
+
+	onDeleteSubDealer(userId: string): void {
+		this.warningModal('warning', 'Delete Sub Dealer', 'Are you sure you want to delete this sub-dealer?','','sub_dealer_delete', userId)
+	}
+
+	private deleteSubDealer(userId: string): void {
+
+		this._user.deleteUser(userId).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this._helper.onRefreshUsersPage.emit(),
+				error => console.log('Error deleting sub dealer', error)
+			);
+
 	}
 }

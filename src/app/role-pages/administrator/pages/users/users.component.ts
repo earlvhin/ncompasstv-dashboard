@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common'
-import { Observable, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { UserService } from '../../../../global/services/user-service/user.service';
-import { USER } from '../../../../global/models/api_user.model';
 import { UI_TABLE_USERS } from '../../../../global/models/ui_table-users.model';
-import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-users',
@@ -13,16 +15,18 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 	providers: [DatePipe]
 })
 
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 
 	title: string = "Users"
-	subscription: Subscription = new Subscription;
 	users: UI_TABLE_USERS[] = [];
 	user_details: any;
 	no_user: boolean = false;
 	filtered_data: any = [];
 	paging_data: any;
 	searching: boolean = false;
+	initial_load: boolean = true;
+	search_data: string = "";
+
 	users_table_column = [
 		'#',
 		'Name',
@@ -31,102 +35,125 @@ export class UsersComponent implements OnInit {
 		'Role',
 		'Creation Date',
 		'Created By'
-	]
-	initial_load: boolean = true;
-	search_data: string = "";
+	];
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _auth: AuthService,
+		private _date: DatePipe,
+		private _helper: HelperService,
 		private _user: UserService,
-		private _date: DatePipe
 	) { }
 
 	ngOnInit() {
 		this.getUserTotal();
 		this.getAllusers();
+		this.subscribeToPageRefresh();
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	ngOnChanges() {
+		this.ngOnInit();
 	}
 
 	getAllusers() {
-		console.log("CALLED")
 		this.pageRequested(1);
 	}
 
-	pageRequested(e) {
+	filterData(event: string): void {
+		let keyword = '';
+		if (event) keyword = event;
+		this.search_data = keyword;
+		this.pageRequested(1);
+	}
+
+	pageRequested(page: number): void {
 		this.searching = true;
 		this.users = [];
-		this.subscription.add(
-			this._user.get_users_by_page(e, this.search_data).subscribe(
-				data => {
-					if(data.users) {
-						this.users = this.mapToUIFormat(data.users);
-						this.filtered_data = this.mapToUIFormat(data.users);
-						this.paging_data = data.paging;
-					} else {
-						if(this.search_data == "") {
-							this.no_user = true;
-						}
-						this.filtered_data = []
+
+		this._user.get_users_by_page(page, this.search_data).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+
+					if (!response.users) {
+						this.filtered_data = [];
+						if (this.search_data == '') this.no_user = true;
+						return;
 					}
+
+					this.paging_data = response.paging;
+					this.users = this.mapToUIFormat(response.users);
+					this.filtered_data = this.mapToUIFormat(response.users);
+
+				},
+				error => console.log('Error retrieving users by page', error)
+			)
+			.add(
+				() => {
 					this.initial_load = false;
 					this.searching = false;
-				},
-				error => {
-					console.log('#getAllUsers', error);
 				}
-			)
-		)
+			);
+
 	}
 	
-	getUserTotal() {
-		this.subscription.add(
-			this._user.get_user_total().subscribe(
-				data => {
-					console.log("TOTAL", data)
+	private getUserTotal(): void {
+
+		this._user.get_user_total().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
 					this.user_details = {
-						basis: data.totalUsers,
+						basis: response.totalUsers,
 						basis_label: 'User(s)',
-						total_administrator: data.totalSuperAdmin,
+						total_administrator: response.totalSuperAdmin,
 						total_administrator_label: 'Admin(s)',
-						total_dealer: data.totalDealer,
+						total_dealer: response.totalDealer,
 						total_dealer_label: 'Dealer(s)',
-						total_host: data.totalHost,
+						total_host: response.totalHost,
 						total_host_label: 'Host(s)',
-						total_advertiser: data.totalAdvertisers,
+						total_advertiser: response.totalAdvertisers,
 						total_advertiser_label: 'Advertiser(s)',
-						total_tech: data.totalTech,
+						total_tech: response.totalTech,
 						total_tech_label: 'Tech(s)'
 					}
-					console.log("UTOTAL", data)
-				}
-			)
-		)
+				},
+				error => console.log('Error retrieving user total', error)
+			);
+
 	}
 
-	filterData(e) {
-		if (e) {
-			this.search_data = e;
-			this.pageRequested(1);
-		} else {
-			this.search_data = "";
-			this.pageRequested(1);
-		}
-	}
-
-	mapToUIFormat(data) {
-		console.log('users', data);
-		let count = 1;
+	private mapToUIFormat(data: any[]): UI_TABLE_USERS[] {
+		let count = this.paging_data.pageStart;
+		
 		return data.map(
-			u => {
+			user => {
 				return new UI_TABLE_USERS(
-					{ value: u.userId, link: null , editable: false, hidden: true},
-					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: u.firstName+" " +u.lastName, link: '/administrator/users/' +  u.userId, editable: false, hidden: false},
-					{ value: u.email, link: null, editable: false, hidden: false},
-					{ value: u.contactNumber, link: null, editable: false, hidden: false},
-					{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false},
-					{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false},
-					{ value: u.creatorName, link: '/administrator/users/' +  u.createdBy, editable: false, hidden: false},
+					{ value: user.userId, link: null , editable: false, hidden: true },
+					{ value: count++, link: null , editable: false, hidden: false },
+					{ value: `${user.firstName} ${user.lastName}`, link: `/administrator/users/${user.userId}`, editable: false, hidden: false },
+					{ value: user.email, link: null, editable: false, hidden: false },
+					{ value: user.contactNumber, link: null, editable: false, hidden: false },
+					{ value: user.userRoles[0].roleName, link: null, editable: false, hidden: false },
+					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
+					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
 				)
 			}
-		)
+		);
+
+	}
+
+	private subscribeToPageRefresh(): void {
+
+		this._helper.onRefreshUsersPage.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.ngOnInit(),
+				error => console.log('Error on users page refresh subscription ', error)
+			);
+
 	}
 }

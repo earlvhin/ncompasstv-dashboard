@@ -1,15 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
+import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver';
+
 import { API_LICENSE } from '../../../../global/models/api_license.model';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { environment } from 'src/environments/environment';
 import { LicenseService } from '../../../../global/services/license-service/license.service';
 import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
 import { UI_TABLE_LICENSE_BY_HOST } from '../../../../global/models/ui_table-license-by-host.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { TitleCasePipe, DatePipe } from '@angular/common';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
-import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-licenses',
@@ -18,7 +19,7 @@ import { environment } from 'src/environments/environment';
 	providers: [TitleCasePipe, DatePipe]
 })
 
-export class LicensesComponent implements OnInit {
+export class LicensesComponent implements OnInit, OnDestroy {
 	dealers_name: string;
 	initial_load_license: boolean = true;
 	license_info: API_LICENSE[]; 
@@ -46,6 +47,7 @@ export class LicensesComponent implements OnInit {
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+	is_view_only = false;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
@@ -73,9 +75,10 @@ export class LicensesComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.dealers_name = this._auth.current_user_value.roleInfo.businessName;
+		this.dealers_name = this.currentUser.roleInfo.businessName;
 		this.getLicenses(1);
-		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
+		this.getTotalCount(this.currentUser.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -121,6 +124,7 @@ export class LicensesComponent implements OnInit {
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
+                    this.paging_data_license = data.paging;
 					if(!data.message) {
 						this.license_data_api = data.paging.entities;
 						this.license_data = this.licenseTable_mapToUI(this.license_data_api);
@@ -133,7 +137,6 @@ export class LicensesComponent implements OnInit {
 						this.license_data=[];
 						this.license_filtered_data = [];
 					}
-					this.paging_data_license = data.paging;
 				}
 			)
 		)
@@ -155,7 +158,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
-		let count: number = 1;
+		let count = this.paging_data_license.pageStart;
 
 		return data.map(	
 			i => {
@@ -171,7 +174,7 @@ export class LicensesComponent implements OnInit {
 						isImage: true
 					},
 					{ value: i.licenseKey, link: '/sub-dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
-					{ value: i.alias ? i.alias : '--', link: '/sub-dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
+					{ value: i.alias ? i.alias : '--', link: '/sub-dealer/licenses/' + i.licenseId, editable: !this.is_view_only, label: 'License Alias', id: i.licenseId, hidden: false },
 					{ value: i.screenTypeId ? this._title.transform(i.screenName) : '--', link: null, editable:false, hidden: false },
 					{ value: i.hostId ? i.hostName: '--', link: i.hostId ? '/sub-dealer/hosts/' + i.hostId : null, editable: false, hidden: false },
 					{ value: i.hostId ? (i.category ? this._title.transform(i.category) : 'None') : '--', link: null, editable: false, hidden: false },
@@ -266,6 +269,10 @@ export class LicensesComponent implements OnInit {
 		});
 		this.worksheet.columns = header;
 		this.getDataForExport(this._auth.current_user_value.roleInfo.dealerId);		
+	}
+
+	private get currentUser() {
+		return this._auth.current_user_value;
 	}
 }
 

@@ -171,14 +171,14 @@ export class LicensesComponent implements OnInit {
 
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
-		let count: number = 1;
+		let count = this.paging_data_license.pageStart;
 		console.log("DATA", data)
 		return data.map(
 			i => {
 				return new UI_TABLE_LICENSE_BY_HOST(
 					{ value: i.licenseId, link: null , editable: false, hidden: true },
 					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
-					{ value: this.getIndexCount(count++, this.paging_data_license.pageSize, this.paging_data_license.page), link: null , editable: false, hidden: false },
+					{ value: count++, link: null , editable: false, hidden: false },
 					{ 
 						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null,
 						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null, 
@@ -198,23 +198,11 @@ export class LicensesComponent implements OnInit {
 					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 					{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 					{ value: i.isActivated ? 'Active' : 'Inactive', link: null, editable: false, hidden: false },	
-					{ value: i.piStatus, link: null, editable: false, hidden: true },	
+					{ value: i.piStatus, link: null, editable: false, hidden: true }
 				);
 			}
 		);
 	}
-
-    getIndexCount(num, size, page) {
-        if(page > 1) {
-            let count: number = size;
-           for (var i = 0 ; i < page; i++) {
-               count = count + size;
-           }
-           return count++; 
-        } else {
-            return num;
-        }
-    }
 
 	openGenerateLicenseModal(): void {
 		this._dialog.open(LicenseModalComponent, {
