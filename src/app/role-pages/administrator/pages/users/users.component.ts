@@ -1,4 +1,4 @@
-import { Component, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common'
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -6,7 +6,6 @@ import { Subject } from 'rxjs';
 import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { UserService } from '../../../../global/services/user-service/user.service';
 import { UI_TABLE_USERS } from '../../../../global/models/ui_table-users.model';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-users',
@@ -15,7 +14,7 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 	providers: [DatePipe]
 })
 
-export class UsersComponent implements OnInit, OnDestroy, OnChanges {
+export class UsersComponent implements OnInit, OnDestroy {
 
 	title: string = "Users"
 	users: UI_TABLE_USERS[] = [];
@@ -27,7 +26,7 @@ export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 	initial_load: boolean = true;
 	search_data: string = "";
 
-	users_table_column = [
+	users_table_columns = [
 		'#',
 		'Name',
 		'Email Address',
@@ -40,7 +39,6 @@ export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		private _auth: AuthService,
 		private _date: DatePipe,
 		private _helper: HelperService,
 		private _user: UserService,
@@ -55,10 +53,6 @@ export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	ngOnChanges() {
-		this.ngOnInit();
 	}
 
 	getAllusers() {
@@ -87,8 +81,10 @@ export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 					}
 
 					this.paging_data = response.paging;
-					this.users = this.mapToUIFormat(response.users);
-					this.filtered_data = this.mapToUIFormat(response.users);
+
+					const mappedData = this.mapToUIFormat(response.users);
+					this.users = mappedData;
+					this.filtered_data = mappedData;
 
 				},
 				error => console.log('Error retrieving users by page', error)
@@ -129,6 +125,7 @@ export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 
 	private mapToUIFormat(data: any[]): UI_TABLE_USERS[] {
 		let count = this.paging_data.pageStart;
+		console.log('users data', data);
 		
 		return data.map(
 			user => {
@@ -141,6 +138,7 @@ export class UsersComponent implements OnInit, OnDestroy, OnChanges {
 					{ value: user.userRoles[0].roleName, link: null, editable: false, hidden: false },
 					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
 					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
+					// { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
 				)
 			}
 		);
