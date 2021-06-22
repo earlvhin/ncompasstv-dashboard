@@ -132,7 +132,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 				}, 
 				error => console.log('Error retrieving users', error)
 			)
-			.add(() => this.loading_data = false)
+			.add(() => this.loading_data = false);
 	}
 
 	private mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {

@@ -42,6 +42,10 @@ export class HostService {
 	export_host(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
 	}
+	
+    get_licenses_per_state() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_licenses_by_state}`, this.httpOptions);
+	}
 
 	get_content_by_host_id(id: string) {
 		return this._http.get(`${environment.base_uri}${environment.getters.content_by_host_id}?hostId=${id}`, this.httpOptions);
@@ -59,8 +63,8 @@ export class HostService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?page='+`${page}`+'&search='+`${key}` , this.httpOptions);
 	}
 
-	get_host_by_dealer_id(id, page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_host_by_dealer_id(id, page, key, pageSize = 15) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&pageSize='+`${pageSize}`, this.httpOptions);
 	}
 
     get_host_by_dealer_id_with_sort(id, page, key, column, order) {

@@ -36,6 +36,7 @@ export class AdministratorLayoutComponent implements OnInit {
 		// { path: 'roles', label: 'Roles', icon: 'fas fa-pencil-ruler'},
 		{ path: 'templates', label: 'Templates', icon: 'fas fa-th-large'},
 		{ path: 'directory', label: 'Directory', icon: 'fas fa-sitemap'},
+		{ path: 'reports', label: 'Reports', icon: 'fas fa-chart-bar'},
 	]
 
 	constructor(
