@@ -19,6 +19,10 @@
     background-color: $gray !important;
 }
 
+.bg-blue {
+    background-color: $blue_dark;
+}
+
 .bg-gray-2 {
     background-color: $gray2
 }
@@ -467,6 +471,10 @@
 
 .white-bg {
     background: $light;
+}
+
+.text-white {
+    color: $light;
 }
 
 .disabled a {

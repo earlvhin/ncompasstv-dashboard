@@ -42,6 +42,10 @@ export class HostService {
 	export_host(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
 	}
+	
+    get_licenses_per_state() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_licenses_by_state}`, this.httpOptions);
+	}
 
 	get_content_by_host_id(id: string) {
 		return this._http.get(`${environment.base_uri}${environment.getters.content_by_host_id}?hostId=${id}`, this.httpOptions);
