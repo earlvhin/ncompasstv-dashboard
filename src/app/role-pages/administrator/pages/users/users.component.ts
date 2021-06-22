@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { UserService } from '../../../../global/services/user-service/user.service';
 import { UI_TABLE_USERS } from '../../../../global/models/ui_table-users.model';
+import { USER } from 'src/app/global/models/api_user.model';
 
 @Component({
 	selector: 'app-users',
@@ -16,15 +17,15 @@ import { UI_TABLE_USERS } from '../../../../global/models/ui_table-users.model';
 
 export class UsersComponent implements OnInit, OnDestroy {
 
-	title: string = "Users"
+	filtered_data = [];
+	initial_load = true;
+	no_user: boolean = false;
+	paging_data: any;
+	searching = false;
+	search_data = '';
+	title: string = 'Users';
 	users: UI_TABLE_USERS[] = [];
 	user_details: any;
-	no_user: boolean = false;
-	filtered_data: any = [];
-	paging_data: any;
-	searching: boolean = false;
-	initial_load: boolean = true;
-	search_data: string = "";
 
 	users_table_columns = [
 		'#',
@@ -32,6 +33,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 		'Email Address',
 		'Contact Number',
 		'Role',
+		'Affiliation',
 		'Creation Date',
 		'Created By'
 	];
@@ -123,23 +125,27 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 	}
 
-	private mapToUIFormat(data: any[]): UI_TABLE_USERS[] {
+	private mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {
 		let count = this.paging_data.pageStart;
-		console.log('users data', data);
 		
 		return data.map(
 			user => {
+
+				let permission = null;
+				const role = user.userRoles[0];
+				if (role.roleName === 'Sub Dealer') permission = role.permission;
+
 				return new UI_TABLE_USERS(
 					{ value: user.userId, link: null , editable: false, hidden: true },
 					{ value: count++, link: null , editable: false, hidden: false },
-					{ value: `${user.firstName} ${user.lastName}`, link: `/administrator/users/${user.userId}`, editable: false, hidden: false },
+					{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}` },
 					{ value: user.email, link: null, editable: false, hidden: false },
 					{ value: user.contactNumber, link: null, editable: false, hidden: false },
-					{ value: user.userRoles[0].roleName, link: null, editable: false, hidden: false },
+					{ value: role.roleName, link: null, editable: false, hidden: false },
 					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
 					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
-					// { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
-				)
+					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+				);
 			}
 		);
 

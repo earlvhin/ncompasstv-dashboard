@@ -135,7 +135,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	onDelete(userId: string): void {
-		console.log('user id', userId);
 
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
