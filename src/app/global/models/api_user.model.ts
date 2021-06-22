@@ -30,6 +30,7 @@ export class USER {
     status: string;
     token: string;
     refreshToken: string;
+	organization: string;
     userRoles: API_USER_ROLES;
 }
 

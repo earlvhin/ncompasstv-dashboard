@@ -32,9 +32,10 @@ export class UsersComponent implements OnInit {
 		'Email Address',
 		'Contact Number',
 		'Role',
+		'Affiliation',
 		'Creation Date',
 		'Created By'
-	]
+	];
 
 	constructor(
 		private _auth: AuthService,
@@ -50,14 +51,15 @@ export class UsersComponent implements OnInit {
 		this.filtered_data = data;
 	}
 
-	getAllusers() {
-		var new_data = [];
-		var count_host = 0;
-		var count_advertiser = 0;
+	getAllusers(): void {
+		let count_host = 0;
+		let count_advertiser = 0;
+
 		this.subscription.add(
 			this._user.get_users().subscribe(
 				data => {
-					if(data.users.length > 0) {
+
+					if (data.users.length > 0) {
 						data = data.users.filter(
 							i => {
 								return i.createdBy == this._auth.current_user_value.user_id;
@@ -77,19 +79,19 @@ export class UsersComponent implements OnInit {
 							}
 						)
 
-						if(data.length > 0) {
+						if (data.length > 0) {
 							this.users = this.mapToUIFormat(data)
 							this.filtered_data = this.mapToUIFormat(data)
 						} else {
 							this.no_user = true;
 							this.filtered_data = [];
 						}
+
 					} else {
 						this.no_user = true;
 						this.filtered_data = [];
 					}
 					
-
 					this.user_details = {
 						basis: data.length,
 						basis_label: 'Total User(s)',
@@ -105,24 +107,32 @@ export class UsersComponent implements OnInit {
 					console.log('#getAllUsers', error);
 				}
 			)
-		)
+		);
 	}
 
 	mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {
 		let count = 1;
+
 		return data.map(
 			(u: USER) => {
+
+				let permission = null;
+				const role = u.userRoles[0];
+				if (role.roleName === 'Sub Dealer') permission = role.permission;
+
 				return new UI_TABLE_USERS(
 					{ value: u.userId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: u.firstName + " " + u.lastName, link: '/dealer/users/' +  u.userId, editable: false, hidden: false},
+					{ value: `${u.firstName} ${u.lastName}`, permission, link: `/dealer/users/${u.userId}`, editable: false, hidden: false},
 					{ value: u.email, link: null, editable: false, hidden: false},
 					{ value: u.contactNumber, link: null, editable: false, hidden: false},
 					{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false},
 					{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false},
-					{ value: u.creatorName, link: null, editable: false, hidden: false},	
-				)
+					{ value: u.creatorName, link: null, editable: false, hidden: false},
+					{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false },
+				);
+
 			}
-		)
+		);
 	}
 }
