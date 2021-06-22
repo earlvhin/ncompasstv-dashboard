@@ -31,7 +31,7 @@ export class USER {
     token: string;
     refreshToken: string;
 	organization: string;
-    userRoles: API_USER_ROLES;
+    userRoles: API_USER_ROLES[];
 }
 
 export class USER_PROFILE {
