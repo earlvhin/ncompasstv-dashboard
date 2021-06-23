@@ -17,3 +17,17 @@
 .color-danger {
 	color: #EE5454;
 }
+
+.name-and-permission {
+	align-items: center;
+
+	.permission-container {
+		background-color: #8EC641;
+		padding: 0.5px 5px;
+		border-radius: 25px;
+		color: white;
+		font-size: 9px;
+		margin-left: 5px;
+	}
+
+}
