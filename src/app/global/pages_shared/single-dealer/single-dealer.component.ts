@@ -56,6 +56,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	d_desc: string = "Dealer since January 25, 2019";
 	d_name: string = "Business Name";
 	from_change: boolean = false;
+    height_show: boolean = true;
 	host_card:any;
 	host_data: any = [];
 	host_data_api: API_HOST[];
@@ -1189,4 +1190,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}, 1000);
 	}
 	
+    toggleCharts() {
+        this.height_show = !this.height_show;
+    }
 }
