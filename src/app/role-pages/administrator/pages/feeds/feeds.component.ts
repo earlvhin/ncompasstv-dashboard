@@ -25,7 +25,7 @@ export class FeedsComponent implements OnInit {
         { name: '#', sortable: false},
         { name: 'Feed Title', sortable: true, column:'Title'},
         { name: 'Business Name', sortable: true, column:'BusinessName'},
-        { name: 'Type', sortable: true, column:'FileType'},
+        { name: 'Type', sortable: true, column:'Classification'},
         { name: 'Created By', sortable: true, column:'CreatedByName'},
         { name: 'Creation Date', sortable: true, column:'DateCreated'},
         { name: 'Action', sortable: false},
