@@ -22,13 +22,13 @@ export class FeedsComponent implements OnInit {
 	feed_stats: any = {};
 	feeds_stats: any = {};
 	feeds_table_column = [
-		'#',
-		'Feed Title',
-		'Business Name',
-		'Type',
-		'Created By',
-		'Creation Date',
-		'Action'
+        { name: '#', sortable: false},
+        { name: 'Feed Title', sortable: true, column:'Title'},
+        { name: 'Business Name', sortable: true, column:'BusinessName'},
+        { name: 'Type', sortable: true, column:'FileType'},
+        { name: 'Created By', sortable: true, column:'CreatedByName'},
+        { name: 'Creation Date', sortable: true, column:'DateCreated'},
+        { name: 'Action', sortable: false},
 	];
 	filtered_data: any = [];
 	no_feeds: boolean = false;
@@ -36,6 +36,8 @@ export class FeedsComponent implements OnInit {
 	initial_load: boolean = true;
 	search_data: string = "";
 	searching: boolean = false;
+    sort_column: string = 'DateCreated';
+	sort_order: string = 'desc';
 	subscription: Subscription = new Subscription();
 	
 	constructor(
@@ -91,11 +93,17 @@ export class FeedsComponent implements OnInit {
 		)
 	}
 
+    getColumnsAndOrder(data) {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.pageRequested(1);
+	}
+
 	pageRequested(e) {
 		this.searching = true;
 		this.feed_data = [];
 		this.subscription.add(
-			this._feed.get_feeds(e, this.search_data).subscribe(
+			this._feed.get_feeds(e, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
 					this.initial_load = false;
 					this.searching = false;

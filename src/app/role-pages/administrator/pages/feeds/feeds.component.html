@@ -69,7 +69,11 @@
 								[feed_delete]="true"
 								[feed_edit]="true"
 								(page_triggered)="pageRequested($event)"
-								(reload_page)="reloadPage($event)">
+								(reload_page)="reloadPage($event)"
+                                (to_sort_column)="getColumnsAndOrder($event)"
+                                [active_tab]="sort_column"
+                                [sort_column]="sort_column"
+                                [sort_order]="sort_order">
 								</app-data-table>
 							</mat-card>
 						</ng-container>
