@@ -1542,9 +1542,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private submitTerminalCommand() {
-		console.log(this.terminal_value);
-
+	submitTerminalCommand() {
 		this.terminal_entered_scripts.push(this.terminal_value);
 
 		this._socket.emit('D_run_terminal', {

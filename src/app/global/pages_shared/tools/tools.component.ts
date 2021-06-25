@@ -17,6 +17,8 @@ export class ToolsComponent implements OnInit {
 	remote_reboot_disabled: boolean;
 	timeout_duration: number;
 	timeout_message: string;
+	terminal_entered_scripts: string[] = [];
+	terminal_value: string;
 
 	_socket: any;
 
@@ -101,7 +103,9 @@ export class ToolsComponent implements OnInit {
 					console.log('D_system_reboot');
 					this._socket.emit('D_system_reboot');
 				} else  if(result == 'run_script') {
-					this._socket.emit('D_run_script_to_all');
+					console.log(this.terminal_value);
+					this.terminal_entered_scripts.push(this.terminal_value);
+					this._socket.emit('D_run_script_to_all', this.terminal_value);
 				}
 	
 				const now = moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -112,9 +116,5 @@ export class ToolsComponent implements OnInit {
 				this.remote_update_disabled = true;
 			}
 		});
-	}
-
-	submitTerminalCommand() {
-
 	}
 }

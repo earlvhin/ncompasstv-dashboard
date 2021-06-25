@@ -29,6 +29,7 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { HelperService } from '../../services/helper-service/helper.service';
+import { verifyHostBindings } from '@angular/compiler';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -788,6 +789,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (this.licenses) {
 			this.resyncSocketConnection();
 		}
+	}
+
+	screenshotDealer(): void {
+		return null;
 	}
 
 	updateAndRestart(): void {
