@@ -108,8 +108,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	show_admin_buttons: boolean = false
 	single_info: Array<any>;
 	sort_column: string = "";
+    sort_column_advertisers: string = "";
 	sort_column_hosts: string = "";
 	sort_order: string = "";
+	sort_order_advertisers: string = "";
 	sort_order_hosts: string = "";
 	statistics: API_LICENSE_STASTICS;
 	subscription: Subscription = new Subscription;
@@ -124,12 +126,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	_socket: any;
 
 	adv_table_col = [
-		'#',
-		'Name',
-		'Region',
-		'State',
-		'Status',
-		'Assigned User'
+		{ name: '#', sortable: false},
+		{ name: 'Name', sortable: true, column:'Name'},
+		{ name: 'Region', sortable: true, column:'Region'},
+		{ name: 'State', sortable: true, column:'State'},
+		{ name: 'Status', sortable: true, column:'Status'},
+		{ name: 'Assigned User', sortable: true, column:'Assigned User'}
 	];
 
 	//Documentation for columns:
@@ -371,7 +373,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getDealerAdvertiser(page): void {
 		this.searching_advertiser = true;
 		this.subscription.add(
-			this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_data_advertiser).subscribe(
+			this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_data_advertiser, this.sort_column_advertisers, this.sort_order_advertisers).subscribe(
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
@@ -881,6 +883,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.sort_column_hosts = data.column;
 		this.sort_order_hosts = data.order;
 		this.getDealerHost(1);
+	}
+    
+    getAdvertisersColumnsAndOrder(data) {
+		this.sort_column_advertisers = data.column;
+		this.sort_order_advertisers = data.order;
+		this.getDealerAdvertiser(1);
 	}
 
     getDealerLicenses() {

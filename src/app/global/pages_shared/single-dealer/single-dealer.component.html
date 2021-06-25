@@ -377,7 +377,11 @@
                                                     [paging_details]="paging_data_advertiser"
                                                     (page_triggered)="getDealerAdvertiser($event)"
                                                     [advertiser_delete]="true"
-                                                    (update_info)="reloadAdvertiser()">
+                                                    (update_info)="reloadAdvertiser()"
+                                                    (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
+                                                    [active_tab]="sort_column_advertisers"
+                                                    [sort_column]="sort_column_advertisers"
+                                                    [sort_order]="sort_order_advertisers">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>
