@@ -131,7 +131,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Region', sortable: true, column:'Region'},
 		{ name: 'State', sortable: true, column:'State'},
 		{ name: 'Status', sortable: true, column:'Status'},
-		{ name: 'Assigned User', sortable: true, column:'Assigned User'}
+		{ name: 'Assigned User', sortable: true, column:'AdvertiserId'}
 	];
 
 	//Documentation for columns:
