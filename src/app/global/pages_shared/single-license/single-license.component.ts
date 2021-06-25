@@ -124,7 +124,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	analytics_reload: Subject<void> = new Subject<void>();
 
 	_socket: any;
+	is_admin: boolean = false;
 	thumb_no_socket: boolean = true;
+	terminal_value: string;
+	terminal_entered_scripts: string[] = [];
 
 	display_mode = [
 		{value: 'daily', viewValue: 'Daily'},
@@ -193,6 +196,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
+		}
+
+		if (roleId === UI_ROLE_DEFINITION.administrator) {
+			this.is_admin = true;
 		}
 
 		this._socket.on('connect', () => {
@@ -768,6 +775,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.status_check_disabled = false;
 		}, 2000);
 		this.socket_piPlayerStatus();
+	}
+
+	checkDisplayStatus(): void {
+		this._socket.emit('D_is_monitor_on', this.license_id);
 	}
 
 	internetSpeedTest(): void {
@@ -1531,4 +1542,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	private submitTerminalCommand() {
+		console.log(this.terminal_value);
+
+		this.terminal_entered_scripts.push(this.terminal_value);
+
+		this._socket.emit('D_run_terminal', {
+			license_id: this.license_id,
+			script: this.terminal_value
+		});
+
+ 		this.terminal_value = undefined;
+	}
 }

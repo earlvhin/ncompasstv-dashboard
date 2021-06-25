@@ -73,6 +73,10 @@ export class ToolsComponent implements OnInit {
 		this.warningModal('warning', 'Reboot Players', 'Are you sure you want reboot all online players?','','reboot_only')
 	}
 
+	remoteRunTerminal() {
+		this.warningModal('warning', 'Run Script', 'Are you sure you want to run this script to all players?', '', 'run_script')
+	}
+
 	warningModal(status, message, data, return_msg, action): void {
 		this._dialog.closeAll();
 		
@@ -96,6 +100,8 @@ export class ToolsComponent implements OnInit {
 				} else if(result == 'reboot_only') {
 					console.log('D_system_reboot');
 					this._socket.emit('D_system_reboot');
+				} else  if(result == 'run_script') {
+					this._socket.emit('D_run_script_to_all');
 				}
 	
 				const now = moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -106,5 +112,9 @@ export class ToolsComponent implements OnInit {
 				this.remote_update_disabled = true;
 			}
 		});
+	}
+
+	submitTerminalCommand() {
+
 	}
 }
