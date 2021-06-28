@@ -346,8 +346,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	deactivateLicense(e): void {
 		this.subscription.add(
 			this._license.deactivate_license(e).subscribe(
-				() => 
-					this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
+				() => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
 				error => console.log('Error deactivating license', error)
 			)
 		);
