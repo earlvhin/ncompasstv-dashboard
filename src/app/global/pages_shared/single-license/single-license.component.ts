@@ -170,7 +170,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
             query: 'client=Dashboard__SingleLicenseComponent',
