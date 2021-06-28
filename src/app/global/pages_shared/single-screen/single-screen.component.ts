@@ -142,7 +142,7 @@ export class SingleScreenComponent implements OnInit {
 	ngOnInit() {
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
-            query: 'client=Dashboard__SingleLicenseComponent',
+            query: 'client=Dashboard__SingleScreenComponent',
 		});
 
 		const roleId = this._auth.current_user_value.role_id;
