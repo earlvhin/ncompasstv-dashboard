@@ -48,7 +48,7 @@ export class AdvertiserService {
 	add_advertiser_profile(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_advertiser_profile}`, data, this.httpOptions);
 	}
-	
+
 	search_advertiser(keyword = '') {
 		const url = `${this.baseUri}${this.getters.search_advertiser}${keyword}`;
 		return this._http.get(url, this.httpOptions);

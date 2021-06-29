@@ -17,7 +17,7 @@ import { TagType } from 'src/app/global/models/tag-type.model';
 export class ViewTagComponent implements OnInit, OnDestroy {
 
 	columns = [];
-	hasDeleted = false;
+	hasUpdated = false;
 	isLoading = true;
 	tagName: string;
 	tags: Tag[] = [];
@@ -61,6 +61,7 @@ export class ViewTagComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response: boolean) => {
 					if (!response) return;
+					this.hasUpdated = true;
 					this.getTagsByNameAndType(this.tagName, this.tagType.tagTypeId);
 				}
 			);
@@ -90,7 +91,7 @@ export class ViewTagComponent implements OnInit, OnDestroy {
 						.pipe(takeUntil(this._unsubscribe))
 						.subscribe(
 							() => {
-								this.hasDeleted = true;
+								this.hasUpdated = true;
 
 								this._tag.getTagsByNameAndType(this.tagName, this.tagType.tagTypeId)
 									.pipe(takeUntil(this._unsubscribe))
