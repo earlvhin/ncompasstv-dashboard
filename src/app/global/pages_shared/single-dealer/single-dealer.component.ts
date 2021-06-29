@@ -29,6 +29,7 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { HelperService } from '../../services/helper-service/helper.service';
+import { verifyHostBindings } from '@angular/compiler';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -56,6 +57,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	d_desc: string = "Dealer since January 25, 2019";
 	d_name: string = "Business Name";
 	from_change: boolean = false;
+    height_show: boolean = true;
 	host_card:any;
 	host_data: any = [];
 	host_data_api: API_HOST[];
@@ -107,8 +109,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	show_admin_buttons: boolean = false
 	single_info: Array<any>;
 	sort_column: string = "";
+    sort_column_advertisers: string = "";
 	sort_column_hosts: string = "";
 	sort_order: string = "";
+	sort_order_advertisers: string = "";
 	sort_order_hosts: string = "";
 	statistics: API_LICENSE_STASTICS;
 	subscription: Subscription = new Subscription;
@@ -123,12 +127,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	_socket: any;
 
 	adv_table_col = [
-		'#',
-		'Name',
-		'Region',
-		'State',
-		'Status',
-		'Assigned User'
+		{ name: '#', sortable: false},
+		{ name: 'Name', sortable: true, column:'Name'},
+		{ name: 'Region', sortable: true, column:'Region'},
+		{ name: 'State', sortable: true, column:'State'},
+		{ name: 'Status', sortable: true, column:'Status'},
+		{ name: 'Assigned User', sortable: true, column:'AdvertiserId'}
 	];
 
 	//Documentation for columns:
@@ -342,8 +346,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	deactivateLicense(e): void {
 		this.subscription.add(
 			this._license.deactivate_license(e).subscribe(
-				() => 
-					this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
+				() => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
 				error => console.log('Error deactivating license', error)
 			)
 		);
@@ -370,7 +373,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getDealerAdvertiser(page): void {
 		this.searching_advertiser = true;
 		this.subscription.add(
-			this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_data_advertiser).subscribe(
+			this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_data_advertiser, this.sort_column_advertisers, this.sort_order_advertisers).subscribe(
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
@@ -787,6 +790,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}
 	}
 
+	screenshotDealer(): void {
+		return null;
+	}
+
 	updateAndRestart(): void {
 		this.warningModal('warning', 'Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to push updates for this license', 'system_update');
 	}
@@ -880,6 +887,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.sort_column_hosts = data.column;
 		this.sort_order_hosts = data.order;
 		this.getDealerHost(1);
+	}
+    
+    getAdvertisersColumnsAndOrder(data) {
+		this.sort_column_advertisers = data.column;
+		this.sort_order_advertisers = data.order;
+		this.getDealerAdvertiser(1);
 	}
 
     getDealerLicenses() {
@@ -1189,4 +1202,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}, 1000);
 	}
 	
+    toggleCharts() {
+        this.height_show = !this.height_show;
+    }
 }

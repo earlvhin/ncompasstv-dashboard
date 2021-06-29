@@ -17,6 +17,8 @@ export class ToolsComponent implements OnInit {
 	remote_reboot_disabled: boolean;
 	timeout_duration: number;
 	timeout_message: string;
+	terminal_entered_scripts: string[] = [];
+	terminal_value: string;
 
 	_socket: any;
 
@@ -73,6 +75,10 @@ export class ToolsComponent implements OnInit {
 		this.warningModal('warning', 'Reboot Players', 'Are you sure you want reboot all online players?','','reboot_only')
 	}
 
+	remoteRunTerminal() {
+		this.warningModal('warning', 'Run Script', 'Are you sure you want to run this script to all players?', '', 'run_script')
+	}
+
 	warningModal(status, message, data, return_msg, action): void {
 		this._dialog.closeAll();
 		
@@ -96,6 +102,10 @@ export class ToolsComponent implements OnInit {
 				} else if(result == 'reboot_only') {
 					console.log('D_system_reboot');
 					this._socket.emit('D_system_reboot');
+				} else  if(result == 'run_script') {
+					console.log(this.terminal_value);
+					this.terminal_entered_scripts.push(this.terminal_value);
+					this._socket.emit('D_run_script_to_all', this.terminal_value);
 				}
 	
 				const now = moment().format('MMMM Do YYYY, h:mm:ss a');

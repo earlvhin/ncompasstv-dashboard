@@ -62,8 +62,8 @@
         
         <div class="theme-container pb-5">
             <div class="row">
-                <div class="dealer-picker col-lg-3">
-                    <div class="dealer-field full-width">
+                <div class="dealer-picker col-lg-3 offset-9">
+                    <div class="dealer-field full-width position-absolute r-15">
                         <app-autocomplete-field
                             (data_value)="dealerSelected($event)"
                             [key_of_value]="'dealerId'"
@@ -88,8 +88,18 @@
                         <mat-tab label="Licenses">
                             <div>
                                 <!-- PIE CHARTS -->
-                                <div class="theme-container mb-3">
-                                    <div class="row statistics">
+                                <div class="theme-container">
+                                    <div class="row">
+                                        <div class="col-md-12 text-right">
+                                            <button class="theme-btn _dark no_border_radius border_radius_bottom position-relative sm-text" (click)="toggleCharts()">
+                                                <span *ngIf="!height_show; else hide">Show Charts</span>
+                                                <ng-template #hide>
+                                                    <span>Hide Charts</span>
+                                                </ng-template>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="row statistics" [ngClass]="!height_show ? 'height-toggle': 'mb-3'">
                                         <div class="col-sm-3">
                                             <mat-card id="activityContainer">
                                                 <div class="spinner-wrapper">
@@ -163,6 +173,7 @@
                                                         <span class="fas fa-terminal"></span> 
                                                         <span class="ml-2 button_text_animation">Update System</span>
                                                     </button>
+
                                                     <ng-template #disabled_remote_update>
                                                         <button mat-button mat-raised-button class="theme-btn pi-control sm-text _warning mr-2" [disabled]="true" [title]="timeout_message">
                                                             <span class="fas fa-terminal"></span> 
@@ -171,7 +182,17 @@
                                                     </ng-template>
     
                                                     <button mat-button mat-raised-button 
-                                                    *ngIf="!remote_reboot_disabled; else disabled_remote_reboot" 
+                                                    *ngIf="!remote_reboot_disabled; else disabled_remote_reboot_player" 
+                                                    class="theme-btn pi-control sm-text _teal mr-2"
+                                                    [disabled]="remote_reboot_disabled || !licenses" 
+                                                    (click)="screenshotDealer()" 
+                                                    title="Screenshot">
+                                                        <span class="fas fa-camera"></span> 
+                                                        <span class="ml-2 button_text_animation">Screenshot</span>
+                                                    </button>
+    
+                                                    <button mat-button mat-raised-button 
+                                                    *ngIf="!remote_reboot_disabled; else disabled_remote_reboot_player" 
                                                     class="theme-btn pi-control sm-text _warning mr-2" 
                                                     [disabled]="remote_reboot_disabled || !licenses" 
                                                     (click)="rebootPlayer()" 
@@ -181,7 +202,7 @@
                                                     </button>
                                                     
                                                     <button mat-button mat-raised-button 
-                                                    *ngIf="!remote_reboot_disabled; else disabled_remote_reboot"
+                                                    *ngIf="!remote_reboot_disabled; else disabled_remote_reboot_pi"
                                                     class="theme-btn pi-control sm-text _caution mr-2"
                                                     [disabled]="remote_reboot_disabled || !licenses"
                                                     (click)="rebootPi()"
@@ -199,7 +220,7 @@
                                                         <span class="ml-2 button_text_animation">Upgrade to version 2</span>
                                                     </button>
     
-                                                    <ng-template #disabled_remote_reboot>
+                                                    <ng-template #disabled_remote_reboot_player>
                                                         <button mat-button mat-raised-button 
                                                         class="theme-btn pi-control sm-text _warning mr-2" 
                                                         [disabled]="true" 
@@ -209,7 +230,7 @@
                                                         </button>
                                                     </ng-template>
     
-                                                    <ng-template #disabled_remote_reboot>
+                                                    <ng-template #disabled_remote_reboot_pi>
                                                         <button mat-button mat-raised-button 
                                                         class="theme-btn pi-control sm-text _caution mr-2" 
                                                         [disabled]="true" 
@@ -367,7 +388,11 @@
                                                     [paging_details]="paging_data_advertiser"
                                                     (page_triggered)="getDealerAdvertiser($event)"
                                                     [advertiser_delete]="true"
-                                                    (update_info)="reloadAdvertiser()">
+                                                    (update_info)="reloadAdvertiser()"
+                                                    (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
+                                                    [active_tab]="sort_column_advertisers"
+                                                    [sort_column]="sort_column_advertisers"
+                                                    [sort_order]="sort_order_advertisers">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>

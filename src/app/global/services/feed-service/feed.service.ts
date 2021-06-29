@@ -30,8 +30,8 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_feed}`, data, this.httpOptions)
 	}
 
-	get_feeds(page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_feeds(page, key, column?, order?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 
 	get_feeds_by_dealer(id, page, key) {

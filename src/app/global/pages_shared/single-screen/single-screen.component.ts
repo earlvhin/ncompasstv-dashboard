@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
+import * as io from 'socket.io-client';
 import { MatDialog } from '@angular/material';
 import { ScreenService } from '../../services/screen-service/screen.service';
 import { PlaylistService } from '../../services/playlist-service/playlist.service';
@@ -25,6 +26,7 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 import { LicenseService } from '../../services/license-service/license.service';
 import { RoleService } from '../../services/role-service/role.service';
 import { UnassignLicenseComponent } from '../../components_shared/screen_components/unassign-license/unassign-license.component';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-single-screen',
@@ -56,7 +58,7 @@ export class SingleScreenComponent implements OnInit {
 	playlist_id: string;
 	playlist_route: string;
 	playlist_contents: UI_CONTENT[];
-	screen: UI_SINGLE_SCREEN;
+	screen: any;
 	screen_init: string;
 	screen_types: Array<any> = [];
 	search_host_data: string = "";
@@ -67,6 +69,8 @@ export class SingleScreenComponent implements OnInit {
 	screen_template: UI_ZONE_PLAYLIST;
 	screen_zone: any;
 	templates: any;
+
+	_socket: any;
 	
 	constructor(
 		private _auth: AuthService,
@@ -136,6 +140,10 @@ export class SingleScreenComponent implements OnInit {
 	]
 
 	ngOnInit() {
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+            query: 'client=Dashboard__SingleScreenComponent',
+		});
 
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
@@ -154,6 +162,7 @@ export class SingleScreenComponent implements OnInit {
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
+		this._socket.disconnect();
 	}
 
 	getScreenIdOnRoute() {
@@ -222,11 +231,14 @@ export class SingleScreenComponent implements OnInit {
 		}
 	}
 
+	// Had to change this.screen type to ANY due to extra fields that are non existent in the UI_SINGLE_SCREEN type
 	activateLicense(e) {
 		this.subscription.add(
 			this._license.activate_license(e).subscribe(
 				data => {
-					// console.log('License is Activated -', e);
+					const license = this.screen.screen_license.filter(i => i.license_key.value === e)[0]
+					console.log('License Activated', this.screen.screen_license, license, e);
+					this._socket.emit('D_activated', license.license_id.value);
 				}
 			)
 		)
@@ -236,7 +248,7 @@ export class SingleScreenComponent implements OnInit {
 		this.subscription.add(
 			this._license.deactivate_license(e).subscribe(
 				data => {
-					// console.log('License is Deactivated -', e);
+					console.log('License is Deactivated -', e);
 				}
 			)
 		)
@@ -388,14 +400,16 @@ export class SingleScreenComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
 					data => {
-						data.hosts.map (
-							i => {
-								this.dealer_hosts.push(i.host);
-								this.hosts_data.push(i.host);
-							}
-						)
-						this.paging_host = data.paging;
-						this.loading_data_host = false;
+						if (data && data.hosts) {
+							data.hosts.map (
+								i => {
+									this.dealer_hosts.push(i.host);
+									this.hosts_data.push(i.host);
+								}
+							)
+							this.paging_host = data.paging;
+							this.loading_data_host = false;
+						}
 					}
 				)
 			)
@@ -408,7 +422,7 @@ export class SingleScreenComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
 					data => {
-						if(!data.message) {
+						if(!data.message && data.hosts) {
 							if(this.search_host_data == "") {
 								data.hosts.map (
 									i => {
