@@ -513,25 +513,25 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	monthSelected(value: any): void {
-
 		if (this.current_tab !== 'Analytics') return;
 		
 		if (this.selected_month == this.default_selected_month) {
-
 			this.monthly_chart_updating = true;
 			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-
 		} else {
-
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
-
 			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
 			this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
 			this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
-
 		}
+	}
 
+	monitorToggle(e) {
+		this._socket.emit('D_monitor_toggle', {
+			license_id: this.license_id,
+			status: e.checked
+		})
 	}
 
 	onDateChange(value: any): void {
