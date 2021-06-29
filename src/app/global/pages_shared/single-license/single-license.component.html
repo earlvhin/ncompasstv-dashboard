@@ -166,7 +166,7 @@
 																{{ player_status ? 'Online' : 'Offline' }}
 															</h5>
 														</div>
-
+															
 														<!-- Display Status -->
 														<div class="flex-even">
 															<span class="sm-text">
@@ -176,6 +176,16 @@
 															<h5 [ngClass]="{ 'good' : player_status, 'bad' : !player_status }">
 																{{ player_status ? 'Online' : 'Offline' }}
 															</h5>
+														</div>
+
+														<div class="flex-even">
+															<span class="sm-text">
+																Display ON/OFF
+															</span>
+
+															<br>
+	
+															<mat-slide-toggle (change)="monitorToggle($event)"></mat-slide-toggle>
 														</div>
 													</div>
 													
