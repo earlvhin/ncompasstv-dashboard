@@ -1,28 +1,25 @@
 <mat-form-field class="full-width custom-autocomplete p-relative" appearance="standard">
     <mat-label>{{ label }}</mat-label>
-    <input 
-    type="text"
-    [(ngModel)]="view_value"
-    matInput 
-    [placeholder]="placeholder"
-    (keyup)="search($event)"
-    (blur)="emptySearch()"
-    (click)="initializeSearch($event)"
-    [required]="required"
-    [disabled]="disabled"
-    autocomplete="nope" *ngIf="!paging">
 
-    <input 
-    type="text"
-    [(ngModel)]="view_value"
-    matInput
-    [placeholder]="placeholder"
-    (keyup)="search_by_api($event)"
-    (blur)="emptySearch()"
-    (click)="initializeSearch($event)"
-    [required]="required"
-    [disabled]="disabled"
-    autocomplete="nope" *ngIf="paging" appearance="standard">
+    <input type="text" autocomplete="nope" matInput 
+		*ngIf="!paging"
+		[(ngModel)]="view_value"
+		[placeholder]="placeholder"
+		(keyup)="search($event)"
+		(blur)="emptySearch()"
+		(click)="initializeSearch($event)"
+		[required]="required"
+		[disabled]="disabled">
+
+    <input type="text" autocomplete="nope" appearance="standard" matInput
+		*ngIf="paging"
+		[(ngModel)]="view_value"
+		[placeholder]="placeholder"
+		(keyup)="search_by_api($event)"
+		(blur)="emptySearch()"
+		(click)="initializeSearch($event)"
+		[required]="required"
+		[disabled]="disabled">
 
     <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
         <div *ngIf="loading_search">

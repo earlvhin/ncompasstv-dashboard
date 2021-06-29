@@ -48,6 +48,11 @@ export class AdvertiserService {
 	add_advertiser_profile(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_advertiser_profile}`, data, this.httpOptions);
 	}
+
+	search_advertiser(keyword = '') {
+		const url = `${this.baseUri}${this.getters.search_advertiser}${keyword}`;
+		return this._http.get(url, this.httpOptions);
+	}
 	
 	update_advertiser(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_advertiser}`, data, this.httpOptions);
@@ -55,5 +60,13 @@ export class AdvertiserService {
 
 	remove_advertiser(id, force) {
 		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_advertiser}${id}&force=${force}`, null, this.httpOptions);
+	}
+
+	protected get baseUri() {
+		return `${environment.base_uri}`;
+	}
+
+	protected get getters() {
+		return environment.getters;
 	}
 }

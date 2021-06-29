@@ -11,7 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 export class AdministratorLayoutComponent implements OnInit {
 
 	current_role: string;
-	public toggle: boolean;
+	toggle: boolean;
 	
 	receiveToggle($event) {
 		this.toggle = $event
@@ -24,7 +24,7 @@ export class AdministratorLayoutComponent implements OnInit {
 		{ path: 'licenses', label: 'Licenses', icon: 'fas fa-barcode'},
 		{ path: 'advertisers', label: 'Advertisers', icon: 'fas fa-ad'},
 		{ path: 'locator', label: 'Locator', icon: 'fas fa-map-marker'},
-		// { path: 'categories', label: 'Categories', icon: 'fas fa-stream'},
+		{ path: 'tags', label: 'Tags', icon: 'fas fa-stream'},
 		{ path: 'media-library', label: 'Media Library', icon: 'fas fa-photo-video'},
 		{ path: 'feeds', label: 'Feeds', icon: 'fas fa-newspaper'},
 		{ path: 'playlists', label: 'Playlists', icon: 'fas fa-play'},

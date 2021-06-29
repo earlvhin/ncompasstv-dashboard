@@ -16,6 +16,7 @@ import { AuthGuard } from './global/guards/auth/auth.guard';
 import { ReassignDealerModule } from './global/pages_shared/edit-single-dealer/reassign-dealer/reassign-dealer.module';
 import { ViewContentListModule } from './global/components_shared/playlist_components/view-content-list/view-content-list.module';
 import { SubDealerModule } from './role-pages/sub-dealer/sub-dealer.module';
+import { TagsModule } from './global/pages_shared/tags/tags.module';
 
 @NgModule({
 	declarations: [
@@ -35,7 +36,8 @@ import { SubDealerModule } from './role-pages/sub-dealer/sub-dealer.module';
 		UserLoginModule,
 		AppRoutingModule,
 		ReassignDealerModule,
-		ViewContentListModule
+		ViewContentListModule,
+		TagsModule
 	],
 	providers: [AuthService, AuthGuard],
 	bootstrap: [AppComponent]

@@ -201,7 +201,7 @@ export class CreateFeedComponent implements OnInit {
 		}
 	}
 
-	searchBoxTrigger (event) {
+	searchBoxTrigger(event) {
 		this.is_search = event.is_search;
 		this.getDealers(event.page);		
 	}
