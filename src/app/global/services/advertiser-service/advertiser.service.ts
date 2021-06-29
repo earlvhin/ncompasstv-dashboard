@@ -33,7 +33,7 @@ export class AdvertiserService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertiser_total_by_dealer}${id}`, this.httpOptions);
 	}
 
-	get_advertisers_by_dealer_id(id, page, key, column?, order?) {
+	get_advertisers_by_dealer_id(id, page, key, column='', order='') {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 

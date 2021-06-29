@@ -259,7 +259,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 	}
 
 	openMediaViewer(content: UI_CONTENT, contents: UI_CONTENT[], i: number): void {
-
+        console.log({contents})
 		this._dialog.open(MediaViewerComponent, {
 			panelClass: 'app-media-viewer-dialog',
 			data: {
