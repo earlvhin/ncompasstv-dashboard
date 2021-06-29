@@ -115,6 +115,11 @@ export class LicenseService {
 	get_screenshots(id) {
 		return this._http.get(`${environment.base_uri_old}${environment.getters.api_get_screenshots}${id}`, this.httpOptions).map( (data: any) => data.files );
 	}
+
+	search_license(keyword = '') {
+		const url = `${this.baseUri}${this.getters.search_license}${keyword}`;
+		return this._http.get(url, this.httpOptions);
+	}
 	
 	update_alias(data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_alias}`, data, this.httpOptions);

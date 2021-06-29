@@ -98,13 +98,22 @@ export const API_ENDPOINTS = {
 		api_apps_versions: 'playerapp/getappversions',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
+		all_tag_types: 'tag/GetAllTypes',
 		content_by_host_id: 'content/GetByHostId',
+		distinct_tags_by_tag_type: 'tag/GetDistincTagsByTypeId?typeid=', // yes that is intentionally misspelled 
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/ExportDealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
 		license_statistics: 'license/GetStatisticsByDealerId',
-		license_statistics_by_install_date: 'license/GetLicenseStatisticsByInstallDate?installDate='
+		license_statistics_by_install_date: 'license/GetLicenseStatisticsByInstallDate?installDate=',
+		search_advertiser: 'advertiser/search?searchkey=',
+		search_license: 'license/search?searchkey=',
+		tag_types_by_type_id: 'tag/GetTagsByTagTypeId?typeid=',
+		tags_by_id: 'tag/GetTagsById?tagid=',
+		tags_by_owner_id: 'tag/GetTagsByOwnerId?ownerid',
+		tags_by_tag_name_and_type: 'tag/GetTagsByTagNameAndTypeId',
+		tags_count: 'tag/GetAllTagsCount'
 	},
 	create: {
 		api_new_admin: 'admin/create',
@@ -126,6 +135,8 @@ export const API_ENDPOINTS = {
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
 		content_schedule: 'PlaylistContentsSchedule/Create',
 		sub_dealer_account: 'account/CreateSubAccount',
+		tag: 'tag/create',
+		tag_type: 'tag/createtype'
 
 	},
 	third_party: {
@@ -161,6 +172,8 @@ export const API_ENDPOINTS = {
 		api_update_internet_info: 'license/UpdateInternetInfo',
 		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
+		tag: 'tag/update',
+		tag_type: 'tag/updatetype',
 	},
 	delete: {
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',
@@ -178,6 +191,7 @@ export const API_ENDPOINTS = {
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost?force=1',
 		host: 'host/delete',
+		tag: 'tag/delete',
 		user: 'user/delete',
 	}
 };

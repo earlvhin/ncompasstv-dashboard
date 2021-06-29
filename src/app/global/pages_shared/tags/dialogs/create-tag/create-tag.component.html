@@ -1,0 +1,63 @@
+<div class="create-dialog p-2" id="createTagsDialog">
+	<div class="d-flex">
+		<div class="flex-even">
+			<h3 class="p-0 col-lg-12">{{ title }}</h3>
+		</div>
+		<div>
+			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+				<span class="fas fa-times"></span>
+			</button>
+		</div>
+	</div>
+	<br><br>
+	<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+		<!-- TAG TYPE SELECTION -->
+		<mat-form-field class="full-width">
+			<mat-label>Select Tag Type</mat-label>
+			<mat-select formControlName="tagTypeId" (selectionChange)="onSelectTagType($event.value)">
+				<mat-option *ngFor="let type of tagTypes" [value]="type.tagTypeId">
+					{{ type.name }}
+				</mat-option>
+			</mat-select>
+		</mat-form-field>
+		
+		<!-- TAG NAME FIELD -->
+		<mat-form-field class="full-width">
+			<mat-label>Tag Name</mat-label>
+			<input formControlName="name" matInput>
+		</mat-form-field>
+
+		<!-- OWNER AUTOCOMPLETE FIELD -->
+		<div *ngIf="tagTypeId; else selectOwner">
+			<app-autocomplete-field
+				(data_value)="onSelectOwner($event)"
+				(call_next_page)="searchBoxTrigger($event, ownerSearchSettings.type)"
+				(searched)="searchOwner($event, ownerSearchSettings.type)"
+				[label]="ownerSearchSettings.label"
+				[placeholder]="ownerSearchSettings.placeholder"
+				[data_reference]="ownerSearchSettings.data_reference"
+				[key_of_value]="ownerSearchSettings.key"
+				[primary_keyword]="ownerSearchSettings.primary_keyword"
+				[search_keyword]="ownerSearchSettings.search_keyword"
+				[paging]="paging"
+				[is_scroll_next_disabled]="true"
+				[loading_data]="isLoadingSearchResults"
+				[loading_search]="isSearching"
+				[initial_load]="isInitialLoad">							
+			</app-autocomplete-field>
+		</div>
+		
+		<!-- SUBMIT BUTTON -->
+		<div mat-dialog-actions align="end">
+			<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="form.invalid">Submit</button>
+		</div>
+	</form>
+</div>
+
+<ng-template #selectOwner>
+	<mat-form-field class="full-width">
+		<mat-label>Select Owner</mat-label>
+		<input matInput disabled>
+	</mat-form-field>
+</ng-template>
