@@ -4,6 +4,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CreateTagComponent } from './dialogs/create-tag/create-tag.component';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { Tag } from '../../models/tag.model';
 import { TagService } from '../../services/tag.service';
 import { TagType } from '../../models/tag-type.model';
 import { ViewTagComponent } from './dialogs/view-tag/view-tag.component';
@@ -61,6 +63,51 @@ export class TagsComponent implements OnInit, OnDestroy {
 					if (!response) return;
 					this.getTagsCount();
 					this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
+				}
+			);
+	}
+
+	onDelete(tagName: string): void {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { 
+				status: 'warning', 
+				message: 'Delete Tag',  
+				data: `Associated ${this.currentTagType.name.toLowerCase()}s will be removed from this tag`,
+				return_msg: 'Confirmed deletion'
+			}
+		});
+
+		dialog.afterClosed()
+			.subscribe(
+				response => {
+
+					if (!response) return;
+
+					this._tag.getTagsByNameAndType(tagName, this.currentTagType.tagTypeId)
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe(
+							async (response: { tags: Tag[] }) => {
+
+								const tagIdsToDelete = response.tags.map(tag => `${tag.tagId}`);
+
+								try {
+
+									await this._tag.deleteTag(tagIdsToDelete).toPromise();
+									this.getTagsCount();
+									this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
+
+								} catch (error) {
+									console.error('Error deleting tag', error);
+								}
+
+
+							},
+							error => console.log('Error retrieving distinct tags', error)
+						);
+
 				}
 			);
 	}

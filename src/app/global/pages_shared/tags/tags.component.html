@@ -89,6 +89,7 @@
 								<td class="p-3">{{ tag.count }}</td>
 								<td class="p-3 action-buttons">
 									<mat-icon class="no-select" (click)="onViewTag(tag.name)">edit</mat-icon>
+									<mat-icon class="no-select text-danger" (click)="onDelete(tag.name)">delete</mat-icon>
 								</td>
 							</tr>
 						</tbody>
