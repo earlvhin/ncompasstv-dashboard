@@ -157,6 +157,15 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.install_date_list}`, data, options);
 	}
 
+	/**
+	 * @description: Update the Display Status of the License
+	 * @param data: {licenseId:string, displayStatus: number}
+	 * @returns: Observable of ANY
+	 */
+	update_display_status(data: {licenseId: string, displayStatus: number}): Observable<any> {
+		return this._http.post(`${environment.base_uri}${environment.update.api_display_status}`, data, this.httpOptions);
+	}
+
 	delete_screenshots(id) {
 		return this._http.get(`${environment.base_uri_old}${environment.delete.api_remove_screenshots}${id}`, this.httpOptions);
 	}

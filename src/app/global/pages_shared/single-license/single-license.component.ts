@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Chart } from 'chart.js';
@@ -62,6 +62,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	default_selected_month: string = this._date.transform(`${this.current_year}-${this.current_month}`, 'y-MM');
 	duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' }; 
+	display_status: number;
 	enable_edit_alias: boolean = false;
 	eventsSubject: Subject<void> = new Subject<void>();
 	filters: any;
@@ -178,11 +179,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
 		this.getLicenseInfo();
+		this.socket_checkDisplayStatus();
 		this.socket_piPlayerStatus();
 		this.socket_screenShotFailed();
 		this.socket_screenShotSuccess();
 		this.socket_updateCompleted();
 		this.socket_licenseOffline();
+		this.socket_monitorStatusResponse();
 		this.socket_getAnydeskID();
 		this.socket_speedtestSuccess();
 		this.socket_deadUI();
@@ -528,6 +531,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	monitorToggle(e) {
+		this.display_status = 0;
 		this._socket.emit('D_monitor_toggle', {
 			license_id: this.license_id,
 			status: e.checked
@@ -535,7 +539,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	onDateChange(value: any): void {
-
 		if (this.selected_display_mode === 'daily') {
 
 			this.queried_date = this._date.transform(value, 'longDate');
@@ -637,7 +640,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	openConfirmationModal(status: string, message: string, data: any): void {
-
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
@@ -645,7 +647,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 
 		dialogRef.afterClosed().subscribe(() => this.ngOnInit());
-
 	}
 	
 	onSelectBackgroundZone(event: any): void {
@@ -764,7 +765,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
 		this.has_playlist = true;
 
-	} 
+	}
+
+	updateDisplayStatus(data: {licenseId: string, displayStatus: number}) {
+		this._license.update_display_status(data).subscribe(
+			data => {
+				console.log(data);
+			},
+			error => {
+				console.log(error);
+			}
+		)
+	}
 
 	// ==== START: Socket Dependent Events ====== //
 
@@ -774,10 +786,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.status_check_disabled = false;
 		}, 2000);
 		this.socket_piPlayerStatus();
-	}
-
-	checkDisplayStatus(): void {
-		this._socket.emit('D_is_monitor_on', this.license_id);
 	}
 
 	internetSpeedTest(): void {
@@ -817,6 +825,37 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		setTimeout(() => {
 			this.getScreenshots(this.license_id);
 		}, 15000);
+	}
+
+	socket_checkDisplayStatus(): void {
+		this._socket.emit('D_is_monitor_on', this.license_id);
+	}
+
+	socket_monitorStatusResponse(): void {
+		this._socket.on('SS_monitor_status_response', (data: {licenseId: string, monitorStatus: string}) => {
+			if (this.license_id === data.licenseId) {
+				console.log(data);
+				if (data && data.monitorStatus.includes("power status: on")) {
+					this.updateDisplayStatus(
+						{
+							licenseId: this.license_id,
+							displayStatus: 1
+						}
+					)
+					
+					this.display_status = 1
+				} else {
+					this.updateDisplayStatus(
+						{
+							licenseId: this.license_id,
+							displayStatus: 0
+						}
+					)
+
+					this.display_status = 2
+				}
+			}
+		})
 	}
 
 	socket_screenShotFailed(): void {

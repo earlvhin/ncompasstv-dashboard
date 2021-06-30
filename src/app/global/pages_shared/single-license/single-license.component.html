@@ -33,10 +33,6 @@
 				<span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _teal mr-2" [disabled]="!pi_status || pi_updating" (click)="checkDisplayStatus()" title="Display Status Check">
-				<span class="fas fa-desktop"></span> <span class="ml-2 button_text_animation">Display Check</span>
-			</button>
-
 			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" [disabled]="!pi_status || pi_updating" (click)="updateAndRestart()"  title="Update System">
 				<span class="fas fa-terminal"></span> <span class="ml-2 button_text_animation">Update System</span>
 			</button>
@@ -173,9 +169,15 @@
 																Display Status
 															</span>
 	
-															<h5 [ngClass]="{ 'good' : player_status, 'bad' : !player_status }">
-																{{ player_status ? 'Online' : 'Offline' }}
+															<h5 *ngIf="display_status; else wait" [ngClass]="{ 'good' : display_status == 1, 'bad' : display_status == 0 }">
+																{{ display_status == 1 ? 'ON' : 'OFF/UNKNOWN' }}
 															</h5>
+
+															<ng-template #wait>
+																<h5 class="xsm-text text-gray">
+																	Getting Display Status ...
+																</h5>
+															</ng-template>
 														</div>
 
 														<div class="flex-even">
@@ -185,7 +187,10 @@
 
 															<br>
 	
-															<mat-slide-toggle (change)="monitorToggle($event)"></mat-slide-toggle>
+															<mat-slide-toggle 
+															(change)="monitorToggle($event)"
+															[checked]="display_status == 1 ? 'checked' : 'false'">
+															</mat-slide-toggle>
 														</div>
 													</div>
 													
