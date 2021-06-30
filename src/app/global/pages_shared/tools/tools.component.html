@@ -42,12 +42,12 @@
 										</p>
 									</div>
 									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _caution" (click)="remoteRebootAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
+										<button mat-button mat-raised-button class="theme-btn _danger" (click)="remoteRebootAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
 											Reboot Pi
 										</button>
 				
 										<ng-template #disabled_remote_reboot>
-											<button mat-button mat-raised-button class="theme-btn _caution" [disabled]="remote_reboot_disabled" [title]="timeout_message">
+											<button mat-button mat-raised-button class="theme-btn _danger" [disabled]="remote_reboot_disabled" [title]="timeout_message">
 												Reboot Pi
 											</button>
 										</ng-template>
@@ -64,7 +64,7 @@
 										</p>
 									</div>
 									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _caution" (click)="remoteRebootAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
+										<button mat-button mat-raised-button class="theme-btn _caution" (click)="removeAllScreenshots()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
 											Delete Screenshots
 										</button>
 				
@@ -86,12 +86,12 @@
 										</p>
 									</div>
 									<div class="text-right">
-										<button mat-button mat-raised-button class="theme-btn _caution" (click)="remoteRebootAll()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
+										<button mat-button mat-raised-button class="theme-btn _teal" (click)="renewSocket()" [disabled]="remote_update_disabled" *ngIf="!remote_update_disabled; else disabled_remote_reboot">
 											Renew Socket
 										</button>
 				
 										<ng-template #disabled_remote_reboot>
-											<button mat-button mat-raised-button class="theme-btn _caution" [disabled]="remote_reboot_disabled" [title]="timeout_message">
+											<button mat-button mat-raised-button class="theme-btn _teal" [disabled]="remote_reboot_disabled" [title]="timeout_message">
 												Renew Socket
 											</button>
 										</ng-template>

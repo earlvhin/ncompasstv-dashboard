@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import * as moment from 'moment';
+import { ToolsService } from '../../services/tools/tools.service';
 
 @Component({
   selector: 'app-tools',
@@ -23,7 +24,8 @@ export class ToolsComponent implements OnInit {
 	_socket: any;
 
 	constructor(
-		private _dialog: MatDialog
+		private _dialog: MatDialog,
+		private _tool: ToolsService
 	) { 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -67,6 +69,10 @@ export class ToolsComponent implements OnInit {
 		}
 	}
 
+	removeAllScreenshots() {
+		this.warningModal('warning', 'Delete All Screenshots', 'Are you sure you want to delete all screenshots?','','delete_screenshots')
+	}
+
 	remoteUpdateAll() {
 		this.warningModal('warning', 'Update and Reboot', 'Update and reboot all online players?','','update_reboot')
 	}
@@ -77,6 +83,10 @@ export class ToolsComponent implements OnInit {
 
 	remoteRunTerminal() {
 		this.warningModal('warning', 'Run Script', 'Are you sure you want to run this script to all players?', '', 'run_script')
+	}
+
+	renewSocket() {
+		this.warningModal('warning', 'Renew Socket', 'You are about to renew all socket connections?', '', 'renew_socket')
 	}
 
 	warningModal(status, message, data, return_msg, action): void {
@@ -106,6 +116,16 @@ export class ToolsComponent implements OnInit {
 					console.log(this.terminal_value);
 					this.terminal_entered_scripts.push(this.terminal_value);
 					this._socket.emit('D_run_script_to_all', this.terminal_value);
+				} else if(result == 'renew_socket') {
+					this._tool.resetSocketConnection().subscribe(
+						data => console.log(data),
+						error => console.log(error)
+					)
+				} else if(result == 'delete_screenshots') {
+					this._tool.deleteScreenshots().subscribe(
+						data => console.log(data),
+						error => console.log(error)
+					)
 				}
 	
 				const now = moment().format('MMMM Do YYYY, h:mm:ss a');
