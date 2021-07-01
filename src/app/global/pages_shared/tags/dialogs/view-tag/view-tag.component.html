@@ -31,7 +31,7 @@
 						<tbody>
 							<tr *ngFor="let tag of tags; let i = index;">
 								<td class="p-3">{{ i + 1 }}</td>
-								<td class="p-3">{{ tag.ownerName }}</td>
+								<td class="p-3"><a target="_blank" [routerLink]="ownerUrl(tag.ownerId)">{{ tag.ownerName }}</a></td>
 								<td class="p-3 action-buttons">
 									<mat-icon class="no-select text-danger" (click)="onDelete(tag.tagId)">delete</mat-icon>
 								</td>

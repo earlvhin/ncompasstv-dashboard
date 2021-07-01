@@ -15,9 +15,11 @@
 				</ng-template>
 			</div>
 			
-            <p class="sm-text mb-0">
-				{{ license_key }}
-			</p>
+            <p class="sm-text mb-0">{{ license_key }}</p>
+
+			<div class="d-flex tags-container" *ngIf="tags.length > 0">
+				<div *ngFor="let tag of tags" class="d-inline sm-text tag">{{ tag }}</div>
+			</div>
             <!-- <p class="sm-text mb-0">Tags</p> -->
         </div>
         <div class="text-right">

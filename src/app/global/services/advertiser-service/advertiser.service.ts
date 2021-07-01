@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
-import { API_ADVERTISER } from '../../models/api_advertiser.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -37,8 +38,11 @@ export class AdvertiserService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 
-	get_advertiser_by_id(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_id}${id}`, this.httpOptions).map(data => data.advertiser);
+	get_advertiser_by_id(id, page = ''): Observable<any | { advertiser: any, tags: any[]}> {
+		const url = `${environment.base_uri}${environment.getters.api_get_advertisers_by_id}${id}`;
+		const request = this._http.get<any>(url, this.httpOptions);
+		if (page !== 'single-advertiser') return request.map(data => data.advertiser);
+		return request;
 	}
 
 	get_advertiser_report(data) {

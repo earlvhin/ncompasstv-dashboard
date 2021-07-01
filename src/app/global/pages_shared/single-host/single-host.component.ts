@@ -43,6 +43,19 @@ export class SingleHostComponent implements OnInit {
 	host_data: API_SINGLE_HOST;
 	filtered_data: UI_HOST_LICENSE[] = [];
 	host_license: UI_HOST_LICENSE[] = [];
+	
+	lat: string;
+	long: string;
+	no_case: boolean = true;
+	pi_updating: boolean;
+	update_btn: string = "Update System and Restart";
+	_socket: any;
+
+	is_administrator: boolean;
+	host_fields: CustomFields[] = [];
+	host_field_title: string;
+	field_group_fields: FieldGroupFields[] = [];
+
 	host_license_table_col = [
 		'#',
 		'License Key',
@@ -57,21 +70,8 @@ export class SingleHostComponent implements OnInit {
 		'Last Offline Status',
 		'Installation Date'
 	];
-
-	lat: string;
-	long: string;
-	no_case: boolean = true;
-	pi_updating: boolean;
-	update_btn: string = "Update System and Restart";
-
-	_socket: any;
-
+	
 	private business_hours_update_sub: Subscription;
-
-	is_administrator: boolean;
-	host_fields: CustomFields[] = [];
-	host_field_title: string;
-	field_group_fields: FieldGroupFields[] = [];
 
 	constructor(
 		private _params: ActivatedRoute,
@@ -115,13 +115,15 @@ export class SingleHostComponent implements OnInit {
 			
 		this.subscription.add(
 			this._host.get_host_by_id(this.host_id).subscribe(
-				(data: any) => {
-					this.host_data = data;
-					this.single_host_data = { dealer_id: data.dealer.dealerId, host_id: this.host_id };
-					this.d_name = data.host.name;
-					this.d_desc = data.host.address ? `${data.host.address}, ${data.host.city}, ${data.host.state} ${data.host.postalCode}` : 'No Address Available';
-					this.lat = data.host.latitude;
-					this.long = data.host.longitude;
+				(response: { host, dealer, hostTags }) => {
+					const { host, dealer, hostTags } = response;
+					host.tags = hostTags;
+					this.host_data = response.host;
+					this.single_host_data = { dealer_id: dealer.dealerId, host_id: this.host_id };
+					this.d_name = host.name;
+					this.d_desc = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
+					this.lat = host.latitude;
+					this.long = host.longitude;
 				},
 				error => console.log('Error retrieving host by ID', error)
 			)
@@ -138,33 +140,32 @@ export class SingleHostComponent implements OnInit {
 		this._socket.disconnect();
 	}
 
-	assignHostField() {
-		
-	}
+	getHostFields(): void {
 
-	getHostFields() {
-		this._host.get_fields().subscribe(
-			data => {
-				console.log(data)
-				this.host_fields = data.paging.entities;
-			}, 
-			error => {
-				console.log(error);
-			}
-		)
+		this.subscription.add(
+			this._host.get_fields().subscribe(
+				response => {
+					this.host_fields = response.paging.entities;
+				}, 
+				error => console.log('Error retrieving host fields', error)
+			)
+		);
+
 	}
 
 	getFieldGroup(id: string, title: string) {
-		this._host.get_field_by_id(id).subscribe(
-			(data: any) => {
-				console.log(data)
-				this.host_field_title = title;
-				this.field_group_fields = data.fields;
-			},
-			error => {
-				console.log(error)
-			}
-		)
+
+		this.subscription.add(
+			this._host.get_field_by_id(id)
+				.subscribe(
+					(response: any) => {
+						this.host_field_title = title;
+						this.field_group_fields = response.fields;
+					},
+					error => console.log('Error retrieving host field by id', error)
+				)
+		);
+
 	}
 
 	openAssignLicenseModal(): void {
@@ -184,7 +185,6 @@ export class SingleHostComponent implements OnInit {
 
 	toggledHours(e) {
 		this.margin_more = e;
-
 	}
 
 	toggledNotes(value: boolean): void {
@@ -316,7 +316,6 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	unassignHostLicense() {
-		console.log(this.host_license_api)
 		let dialog = this._dialog.open(UnassignHostLicenseComponent, {
 			width: '500px',
 			data: this.host_license_api ? this.host_license_api : null

@@ -110,6 +110,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	storage_capacity = '';
 	subscriptions: Subscription = new Subscription;
 	template_data: API_TEMPLATE;
+	tags: string[] = [];
 	timezone: any;
 	title: string[] = [];
 	update_alias: FormGroup;
@@ -129,6 +130,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
+
 
 	display_mode = [
 		{value: 'daily', viewValue: 'Daily'},
@@ -404,6 +406,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.title = data.license.alias;
 					this.license_key = data.license.licenseKey;
 					this.license_data = data.license;
+					this.tags = this.setTags(data.license.tags);
 					this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
 					this.timezone = data.timezone;
 					this.anydesk_id = data.license.anydeskId;
@@ -1430,6 +1433,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const free = ((parseInt(freeStorage.split('%')[0]) * 0.01) * total).toFixed(2);
 		this.storage_capacity = `${free} GB free of ${total} GB`;
 
+	}
+
+	private setTags(data: { name: string, tagId: number, tagTypeId: number, ownerId: string }[]): string[] {
+		return data.map(tag => tag.name);
 	}
 
 	private showInformationModal(width: string, height: string, title: string, contents: any, type: string, character_limit?: number): void {
