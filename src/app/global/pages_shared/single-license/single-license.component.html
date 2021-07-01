@@ -328,9 +328,9 @@
 															<div class="flex-even">
 																<span class="sm-text">Connection Status</span>
 																<ng-container *ngIf="apps && apps.server; else netstatus_v1">
-																	<h5 *ngIf="license_data.internetSpeed && pi_status;else offline_net;" 
-																	[ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
-																		{{ license_data.internetSpeed }}
+																	<h5 *ngIf="internet_connection.status && pi_status;else offline_net;" 
+																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
+																		{{ internet_connection.status }}
 																	</h5>
 															
 																	<ng-template #offline_net>

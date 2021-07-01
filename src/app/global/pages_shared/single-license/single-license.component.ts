@@ -74,7 +74,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host_notes = '';
 	host_route: string;
 	initial_load_charts = true;
-	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A',  date: 'N/A' };
+	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A',  date: 'N/A', status: 'N/A' };
 	is_dealer: boolean = false;
 	is_new_standard_template = false;
 	license_data: any;
@@ -442,7 +442,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
 						this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
 						this.internet_connection.date = date ? `${date}` : 'N/A';
-
+						this.internet_connection.status = download > 7 ? 'Good' : 'Slow';
 					}
 
 					if (this.license_data.internetType != null) {
@@ -870,7 +870,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	socket_monitorStatusResponse(): void {
 		this._socket.on('SS_monitor_status_response', (data: {licenseId: string, monitorStatus: string}) => {
 			if (this.license_id === data.licenseId) {
-				console.log(data);
 				if (data && data.monitorStatus.includes("power status: on")) {
 					this.updateDisplayStatus(
 						{
@@ -938,7 +937,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
 				this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
 				this.internet_connection.date = date;
-				this.license_data.internetSpeed = downloadMbps > 7 ? 'Good' : 'Slow';
+				this.license_data.d = downloadMbps > 7 ? 'Good' : 'Slow';
 				this.speedtest_running = false;
 			
 				this._license.update_internet_info(
