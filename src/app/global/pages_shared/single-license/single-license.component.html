@@ -171,7 +171,7 @@
 																Display Status
 															</span>
 	
-															<h5 *ngIf="display_status; else wait" [ngClass]="{ 'good' : display_status == 1, 'bad' : display_status == 0 }">
+															<h5 *ngIf="display_status; else wait" [ngClass]="{ 'good' : display_status == 1, 'bad' : display_status == 2 }">
 																{{ display_status == 1 ? 'ON' : 'OFF/UNKNOWN' }}
 															</h5>
 
@@ -820,6 +820,20 @@
 							</div>
 						</div>
 					</div>
+				</mat-tab>
+
+				<!-- Activity Tab -->
+				<mat-tab label="Activity" *ngIf="is_admin">
+					<ng-container *ngIf="activities">
+						<div class="row mt-4">
+							<div class="col-lg-4">
+								<mat-card class="p-3 mb-3" *ngFor="let a of activities">
+									<h4>{{ a.activityDescription }}</h4>
+									<p class="sm-text">Initiated by {{ a.initiatedBy }} on {{ a.dateCreated | date: 'MMM dd, y hh:mm a' }}</p>
+								</mat-card>
+							</div>
+						</div>
+					</ng-container>
 				</mat-tab>
 
             </mat-tab-group>
