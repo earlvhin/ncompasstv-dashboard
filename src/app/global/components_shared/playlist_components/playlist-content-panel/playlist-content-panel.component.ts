@@ -12,6 +12,7 @@ import { API_CONTENT_BLACKLISTED_CONTENTS } from '../../../../global/models/api_
 import { API_UPDATED_PLAYLIST_CONTENT, API_UPDATE_PLAYLIST_CONTENT } from 'src/app/global/models/api_update-playlist-content.model';
 import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { ContentService } from 'src/app/global/services/content-service/content.service';
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
@@ -27,6 +28,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Input() dealer_id: string;
+	@Input() page? = '';
 	@Input() playlist_content: any[];
 	@Input() playlist_id: string;
 	@Input() playlist_host_license: any[];
@@ -65,6 +67,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
+		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _playlist: PlaylistService
 	) { }
@@ -313,7 +316,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	optionsSaved(e: any): void {
+		let frequencyUpdate = null;
 		this.playlist_changes_data = e;
+
+		if (e.content.frequency === 2 || e.content.frequency === 3) {
+			const { frequency, playlistContentId } = e.content;
+			frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
+		}
 
 		if (this.playlist_changes_data.content) {
 
@@ -329,7 +338,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.structured_incoming_blocklist = this.playlist_changes_data.blocklist && this.playlist_changes_data.blocklist.incoming.length > 0 ? this.playlist_changes_data.blocklist.incoming : [];
 		this.structured_remove_in_blocklist = this.playlist_changes_data.blocklist && this.playlist_changes_data.blocklist.removing.length > 0 ? this.playlist_changes_data.blocklist.removing : [];
 
-		this.savePlaylistChanges(this.structured_updated_playlist);
+		this.savePlaylistChanges(this.structured_updated_playlist, frequencyUpdate);
 	}
 
 	openPlaylistMedia(): void {
@@ -514,11 +523,22 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.addToBlocklist(to_block);
 	}
 
-	savePlaylistChanges(data: any): void {
+	async savePlaylistChanges(data: any, frequencyUpdate?: { frequency: number, playlistContentId: string, playlistId: string }): Promise<void> {
 		this.playlist_saving = true;
 		this.is_marking = false;
 
 		if (data) {
+
+			if (frequencyUpdate) {
+				const { frequency, playlistContentId, playlistId } = frequencyUpdate;
+
+				try {
+					await this._content.set_frequency(frequency, playlistContentId, playlistId).toPromise();
+				} catch (error) {
+					console.log('Error updating content frequency', error);
+				}
+
+			}
 
 			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(

@@ -4,13 +4,17 @@
     <!-- <div class="h-100 w-100"> -->
         <div class="content-thumbnail inline-block">
             <img [src]="content.thumbnail" alt="thumbnail" class="full-width height-100 border-bottom">
-            <p class="number-overlay mb-0 xsm-text font-weight-bold">
-				<i class="fas fa-user-circle mr-2" [ngClass]="dealer == null || dealer == '' ? 'text-gray' : 'text-primary'" 
-					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'"></i>
-                <span>
-                    {{ content.title }}
-				</span>
-            </p>
+            <div class="number-overlay mb-0 xsm-text font-weight-bold d-flex justify-content-between">
+				<i class="fas fa-user-circle mr-2"
+					*ngIf="page !== 'single-playlist'"
+					[ngClass]="dealer == null || dealer == '' ? 'text-gray' : 'text-primary'" 
+					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'">
+				</i>
+                <div class="content-title" [class.text-info]="isBaseFrequency">
+                    {{ contentTitle }}
+				</div>
+				<span class="frequency-badge">2</span>
+            </div>
         </div>
         <div class="px-2 pb-2">
             <div class="d-flex align-items-center">

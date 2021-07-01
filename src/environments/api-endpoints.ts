@@ -172,6 +172,7 @@ export const API_ENDPOINTS = {
 		api_update_internet_info: 'license/UpdateInternetInfo',
 		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
+		set_content_frequency: 'playlists/ClonePlaylistContent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
 	},

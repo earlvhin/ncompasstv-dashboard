@@ -32,6 +32,7 @@ export class API_CONTENT {
 	scheduleStatus?: any;
 	uploaded_by?: any;
 	classification?: string;
+	frequency: number;
 }
 
 export class API_CONTENT_PLAY_COUNT {

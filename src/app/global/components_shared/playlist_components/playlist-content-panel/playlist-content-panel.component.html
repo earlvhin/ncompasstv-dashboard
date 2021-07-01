@@ -99,15 +99,17 @@
 			id="{{ 'drg_' + content.playlistContentId }}"
 			[ngClass]="selected_contents.includes(content.playlistContentId) ? 'marked' : null">
 				<app-playlist-content
-				[playlist_host_license]="playlist_host_license"
-				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[dealer]="content.dealerId"
-				[content]="content"
-				[is_marking]="false"
-				[schedule_status]="content.scheduleStatus"
-				(options_saved)="optionsSaved($event)"
-				(reset_playlist_content)="reloadPlaylist()"
-				(remove_playlist_content)="removePlaylistContent($event)">
+					[playlist_host_license]="playlist_host_license"
+					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+					[dealer]="content.dealerId"
+					[content]="content"
+					[is_marking]="false"
+					[schedule_status]="content.scheduleStatus"
+					[page]="page"
+					[total_contents]="playlist_content.length"
+					(options_saved)="optionsSaved($event)"
+					(reset_playlist_content)="reloadPlaylist()"
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>
@@ -123,16 +125,18 @@
 			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
 			[ngClass]="selected_contents.includes(content.playlistContentId) ? 'marked' : null">
 				<app-playlist-content
-				[playlist_host_license]="playlist_host_license"
-				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[content]="content"
-				[dealer]="content.dealerId"
-				[is_marking]="true"
-				[schedule_status]="content.scheduleStatus"
-				(options_saved)="optionsSaved($event)"
-				(click)="selectedContent(content.playlistContentId)"
-				(reset_playlist_content)="reloadPlaylist()"
-				(remove_playlist_content)="removePlaylistContent($event)">
+					[playlist_host_license]="playlist_host_license"
+					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+					[content]="content"
+					[dealer]="content.dealerId"
+					[is_marking]="true"
+					[schedule_status]="content.scheduleStatus"
+					[page]="page"
+					[total_contents]="playlist_content.length"
+					(options_saved)="optionsSaved($event)"
+					(click)="selectedContent(content.playlistContentId)"
+					(reset_playlist_content)="reloadPlaylist()"
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>
