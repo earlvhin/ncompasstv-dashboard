@@ -791,7 +791,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	screenshotDealer(): void {
-		return null;
+		this.warningModal('warning', 'Screenshot Dealer', "Screenshot all this dealer's licenses, Requires a reload after a minute or two.", 'Click OK to continue', 'screenshot');
 	}
 
 	updateAndRestart(): void {
@@ -852,6 +852,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
 						}
 					)
+					break;
+				case 'screenshot': 
+					if (this.licenses) {
+						this.licenses.forEach(
+							i => {
+								this._socket.emit('D_screenshot_pi', i.licenseId);
+							}
+						)
+					}
 					break;
 				default:
 			}
