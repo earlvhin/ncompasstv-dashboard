@@ -182,7 +182,7 @@
                                                     </ng-template>
     
                                                     <button mat-button mat-raised-button 
-                                                    *ngIf="!disabled_screenshot; else disabled_screenshot" 
+                                                    *ngIf="!screenshot_disabled; else disabled_screenshot" 
                                                     class="theme-btn pi-control sm-text _teal mr-2"
                                                     [disabled]="remote_reboot_disabled || !licenses" 
                                                     (click)="screenshotDealer()"

@@ -99,6 +99,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	pi_updating: boolean = false;
 	remote_update_disabled = false;
 	remote_reboot_disabled = false;
+	screenshot_disabled = false;
 	search_data: string = "";
 	search_data_advertiser: string = "";
 	search_data_license: string = "";
@@ -302,10 +303,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			if (this.timeout_duration >= 10) {
 				this.remote_update_disabled = false;
 				this.remote_reboot_disabled = false;
+				this.screenshot_disabled = false;
 				localStorage.removeItem(`${this.dealer_id}`);
 			} else {
 				this.remote_update_disabled = true;
 				this.remote_reboot_disabled = true;
+				this.screenshot_disabled = false;
 			}
 			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 		}
@@ -871,6 +874,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 			this.remote_reboot_disabled = true;
 			this.remote_update_disabled = true;
+			this.screenshot_disabled = true;
 		});
 	}
 
