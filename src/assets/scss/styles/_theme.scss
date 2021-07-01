@@ -604,3 +604,11 @@ agm-map {
     transition: max-height 1s ease-out;
     overflow: hidden;
 }
+
+.break-word {
+    word-wrap: break-word;
+}
+
+.max-height-90 {
+    max-height: 90px;
+}

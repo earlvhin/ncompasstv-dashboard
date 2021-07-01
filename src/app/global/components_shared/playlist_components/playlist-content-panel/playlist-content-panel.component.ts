@@ -44,6 +44,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	button_click_event: string;
 	has_selected_content_with_schedule = false;
 	is_marking: boolean = false;
+    list_view_mode: boolean = false;
 	updated_playlist_content: API_UPDATED_PLAYLIST_CONTENT[];
 	playlist_order: string[] = [];
 	playlist_changes_data: any;
@@ -308,7 +309,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	onViewContentList(): void {
-		this.showViewContentListDialog();
+		// this.showViewContentListDialog();
+        this.list_view_mode = !this.list_view_mode;
 	}
 
 	onViewSchedule(): void {

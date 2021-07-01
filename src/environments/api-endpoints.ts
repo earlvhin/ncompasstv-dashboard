@@ -90,6 +90,7 @@ export const API_ENDPOINTS = {
 		api_get_users: 'user/getall',
 		api_get_users_total: 'user/gettotal',
 		api_google_map: 'googleapi/searchplaces?place=',
+		api_renewsocket: 'license/renewsocket',
 		api_search_dealer: 'dealer/searchdealer?search=',
 		api_search_dealer_with_host: 'dealer/getdealerswithhost?search=',
 		api_search_host: 'dealer/getdealerswithhost?search=',
@@ -155,6 +156,7 @@ export const API_ENDPOINTS = {
 		api_assign_template_to_dealer: 'template/assigntodealer',
 		api_blocklist_content: 'blacklistedcontents/create',
 		api_deactivate_license: 'license/deactivate?licenseKey=',
+		api_display_status: '/license/UpdateDisplayStatus',
 		api_update_advertiser: 'advertiser/updateadvertiser',
 		api_update_alias: 'license/updatealias',
 		api_update_dealer: 'dealer/update',
@@ -177,6 +179,7 @@ export const API_ENDPOINTS = {
 		tag_type: 'tag/updatetype',
 	},
 	delete: {
+		api_delete_screenshot: 'pi/deletescreenshots',
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',
 		api_remove_content: 'content/removebycontentid',
 		api_remove_player_app: 'playerapp/removeplayerapp',

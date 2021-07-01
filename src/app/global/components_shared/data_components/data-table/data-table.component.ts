@@ -320,7 +320,7 @@ export class DataTableComponent implements OnInit {
 							)
 						);
 						break;
-					case 'Installation Date':
+					case 'Install Date':
 						this.subscription.add (
 							this._license.update_install_date(fields.id, response).subscribe(
 								() => 

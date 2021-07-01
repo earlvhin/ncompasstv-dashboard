@@ -778,8 +778,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	reloadLicense(): void {
 		if (this.searching_license) return;
 		this.license_data = [];
-		this.sort_column = "";
-		this.sort_order = "";
+		this.sort_column = 'PiStatus';
+		this.sort_order = 'desc';
 		this.array_to_delete = [];
 		this.getLicenseTotalCount(this.dealer_id);
 		this.getLicensesofDealer(1);
