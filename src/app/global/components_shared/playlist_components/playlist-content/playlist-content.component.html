@@ -13,7 +13,7 @@
                 <div class="content-title" [class.text-info]="isBaseFrequency">
                     {{ contentTitle }}
 				</div>
-				<span class="frequency-badge">2</span>
+				<span class="frequency-badge" *ngIf="page === 'single-playlist'">{{ frequency }}</span>
             </div>
         </div>
         <div class="px-2 pb-2">

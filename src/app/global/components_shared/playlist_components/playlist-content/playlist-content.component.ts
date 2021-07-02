@@ -27,6 +27,7 @@ export class PlaylistContentComponent implements OnInit {
 	@Output() remove_playlist_content = new EventEmitter();
 
 	contentTitle: string;
+	frequency: number;
 	isBaseFrequency = false;
 
 	protected _unsubscribe: Subject<void> = new Subject();
@@ -43,8 +44,10 @@ export class PlaylistContentComponent implements OnInit {
 			});
 		}
 
-		if (this.page === 'single-playlist') this.isBaseFrequency = this.content.frequency === 22 || this.content.frequency === 33;
-
+		if (this.page === 'single-playlist') {
+			this.isBaseFrequency = this.content.frequency === 22 || this.content.frequency === 33;
+			this.frequency = this.setFrequency(this.content.frequency);
+		}
 		this.contentTitle = this.content.title;
 
 		if (this.contentTitle.length >= 15) {
@@ -102,4 +105,30 @@ export class PlaylistContentComponent implements OnInit {
 	removeFilenameHandle(file_name) {
 		return file_name.substring(file_name.indexOf('_') + 1);
 	}
+
+	private setFrequency(value: number): number {
+
+		let result: number;
+
+		switch (value) {
+
+			case 2:
+			case 22:
+				result = 2;
+				break;
+
+			case 3:
+			case 33:
+				result = 3;
+				break;
+
+			default:
+				result = 0;
+				
+		}
+
+		return result;
+
+	}
+
 }
