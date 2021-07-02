@@ -2,7 +2,7 @@ import { Component, ElementRef, Input, OnInit, ViewChild, EventEmitter, Output, 
 import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
-import { fromEvent, Observable, Subject } from 'rxjs';
+import { forkJoin, fromEvent, Observable, Subject } from 'rxjs';
 import { Sortable } from 'sortablejs';
 import * as moment from 'moment-timezone';
 
@@ -525,26 +525,21 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.addToBlocklist(to_block);
 	}
 
-	async savePlaylistChanges(data: any, frequencyUpdate?: { frequency: number, playlistContentId: string, playlistId: string }): Promise<void> {
+	savePlaylistChanges(data: any, frequencyUpdate?: { frequency: number, playlistContentId: string, playlistId: string }): void {
 		this.playlist_saving = true;
 		this.is_marking = false;
 
 		if (data) {
 
-			if (frequencyUpdate) {
-				const { frequency, playlistContentId, playlistId } = frequencyUpdate;
-
-				try {
-					await this._content.set_frequency(frequency, playlistContentId, playlistId).toPromise();
-				} catch (error) {
-					console.log('Error updating content frequency', error);
-				}
-
-			}
-
 			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					(data: any) => {
+					async (data: any) => {
+
+						if (frequencyUpdate) {
+							const { frequency, playlistContentId, playlistId } = frequencyUpdate;
+							await this._content.set_frequency(frequency, playlistContentId, playlistId).toPromise();
+						}
+
 						localStorage.removeItem('playlist_order');
 						localStorage.removeItem('playlist_data');
 						this.playlist_content_backup = this.playlist_content;
@@ -562,6 +557,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						} else {
 							this.removeToBlocklist();
 						}
+
 					},
 					error => console.log('Error updating playlist contents', error)
 				);
