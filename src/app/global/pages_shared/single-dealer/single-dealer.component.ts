@@ -155,6 +155,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: '#', sortable: false, no_export: true},
         { name: null, sortable: false, no_export: true, hidden: true},
 		{ name: 'Screenshot', sortable: false, no_export: true},
+		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName'},
@@ -967,6 +968,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+				item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
 				item.screenType =  this._titlecase.transform(item.screenType);
 				item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 				item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
