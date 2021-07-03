@@ -177,7 +177,7 @@ export class DealersTableComponent implements OnInit {
 					dealer.dealerStats.totalLicensesInactive,
 					dealer.dealerStats.totalLicensesOnline,
 					dealer.dealerStats.totalLicensesOffline,
-					0,
+					dealer.dealerStats.totalLicenseScheduled,
 					dealer.dealerStats.totalHosts,
 					dealer.dealerStats.totalHostsActive,
 					dealer.dealerStats.totalAdvertisers,
