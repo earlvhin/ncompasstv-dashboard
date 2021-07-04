@@ -73,6 +73,7 @@ export const API_ENDPOINTS = {
 		api_get_playlist_total: 'playlists/gettotal',
 		api_get_playlist_total_by_dealer: 'playlists/gettotal?dealerid=',
 		api_get_roles: 'role/getall',
+		api_get_resource_logs: 'resourcelogs/GetResourceLogByLicenseId?licenseId=',
 		api_get_screen_by_id: 'screen/getscreenbyid?screenId=',
 		api_get_screen_by_dealer: 'screen/getbydealerid?dealerId=',
 		api_get_screen_by_dealer_table: 'screen/getscreenbydealerid',

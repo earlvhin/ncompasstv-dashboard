@@ -475,13 +475,24 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.getScreenshots(this.license_id);
 					this.getContentByLicenseId(this.license_id);
 					this.getActivityOfLicense(this.license_id);
+					// this.getLicenseResourceUsage(this.license_id);
 				}
 			)
 		);
 	}
 
-	getScreenById(id: string, licenseId?: string): void {
+	getLicenseResourceUsage(id: string) {
+		this._license.get_license_resource(id).subscribe(
+			data => {
+				console.log('Resource Usage', data)
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
+	}
 
+	getScreenById(id: string, licenseId?: string): void {
 		this.subscriptions.add(this._screen.get_screen_by_id(id, licenseId)
 			.subscribe(
 				(response: { contents, createdBy, dealer, host, licenses, screen, screenZonePlaylistsContents, template, timezone, message }) => {

@@ -183,7 +183,15 @@ export class LicenseService {
 	}
 
 	/**
-	 * Get All Activities
+	 * @description: Get Resource Usage By License
+	 * @param license: string
+	 */
+	get_license_resource(license: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_resource_logs}${license}`, this.httpOptions);
+	}
+
+	/**
+	 * @description: Get All Activities
 	 * @param license
 	 * @returns array of activities
 	 */
@@ -201,7 +209,7 @@ export class LicenseService {
 	}
 
 	/**
-	 * Update Internet Information of License ID
+	 * @description: Update Internet Information of License ID
 	 * @param data - LicenseID, InternetInfo Data 
 	*/
 	update_internet_info(data) {
