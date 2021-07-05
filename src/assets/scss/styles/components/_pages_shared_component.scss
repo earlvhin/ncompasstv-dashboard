@@ -100,8 +100,18 @@
     right: 0;
     padding-right: 26px;
     flex-direction: column;
+    z-index: 10;
     .dealer-field {
         margin-left: auto;
+        .mat-form-field-subscript-wrapper {
+            display: none !important;
+        }
+        .mat-form-field-wrapper {
+            padding-bottom: 0px !important;
+        }
+        .mat-form-field-underline {
+            bottom: 0px !important;
+        }
     }
 }
 
