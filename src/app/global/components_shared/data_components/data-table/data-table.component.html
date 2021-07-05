@@ -2,7 +2,7 @@
 	<table class="full-width" *ngIf="table_data.length > 0; else loading">
 		<thead align="left" class="border-bottom">
 			<tr>
-				<th *ngFor="let tc of table_columns" class="p-3" [ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''">
+				<th *ngFor="let tc of table_columns" class="p-3" [ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''" [style.display]="tc.no_show ? 'none' : ''">
 					<span *ngIf="!tc.hidden; else checkbox">
                         {{ !tc.name ? tc : tc.name }}
                     </span>
