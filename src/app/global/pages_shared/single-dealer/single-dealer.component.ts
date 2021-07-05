@@ -157,7 +157,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: null, sortable: false, no_export: true, hidden: true},
         { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
 		{ name: 'Screenshot', sortable: false, no_export: true},
-		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName'},
