@@ -8,7 +8,7 @@
                 <h3 class="p-0 col-lg-12">Advertiser Details: </h3>
                 <p class="p-0 sm-text mb-4">You can update advertiser details here:</p>
             </div>
-            <div class="row" *ngIf="dealers_data.length > 0 && dealer_name != '' && categories_data as categories; else loading">
+            <div class="row" *ngIf="dealers_data.length > 0 && dealer_name && categories_data as categories; else loading">
                 <form [formGroup]="new_advertiser_form" (ngSubmit)="newAdvertiserProfile()" class="text-left">
                     <div class="row mb-4">
                         <div class="col-lg-11 mb-3" *ngIf="!is_dealer">
