@@ -232,10 +232,10 @@ export class UserSortModalComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.dealer_id, e, this.search_host_data).subscribe(
 					data => {
-						data.hosts.map (
+						data.paging.entities.map (
 							i => {
-								this.hosts.push(i.host);
-								this.hosts_data.push(i.host);
+								this.hosts.push(i);
+								this.hosts_data.push(i);
 							}
 						)
 						this.paging_host = data.paging;
@@ -257,10 +257,10 @@ export class UserSortModalComponent implements OnInit {
 					data => {
 						if(!data.message) {
 							if(this.search_host_data == "") {
-								data.hosts.map (
+								data.paging.entities.map (
 									i => {
-										this.hosts.push(i.host);
-										this.hosts_data.push(i.host);
+										this.hosts.push(i);
+										this.hosts_data.push(i);
 									}
 								)
 							} else {

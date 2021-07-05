@@ -207,14 +207,14 @@ export class NewHostUserComponent implements OnInit {
 				this.subscription.add(
 					this._host.get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_key).subscribe(
 						data => {
-							data.hosts.map (
+							data.paging.entities.map (
 								i => {
 									if(this.search_key != "") {
-										this.hosts.push(i.host)
+										this.hosts.push(i)
 									} else {
-										this.hosts.push(i.host)
+										this.hosts.push(i)
 									}
-									this.hosts_data.push(i.host)
+									this.hosts_data.push(i)
 								}
 							)
 							this.paging = data.paging
@@ -228,14 +228,14 @@ export class NewHostUserComponent implements OnInit {
 						data => {
 							console.log("DD", data)
 							if(!data.message) {
-								data.hosts.map (
+								data.paging.entities.map (
 									i => {
 										if(this.search_key != "") {
-											this.hosts.push(i.host)
+											this.hosts.push(i)
 										} else {
-											this.hosts.push(i.host)
+											this.hosts.push(i)
 										}
-										this.hosts_data.push(i.host)
+										this.hosts_data.push(i)
 									}
 								)
 								this.paging = data.paging
@@ -255,7 +255,7 @@ export class NewHostUserComponent implements OnInit {
 				this.subscription.add(
 					this._host.get_host_by_page(page,this.search_key).subscribe(
 						data => {
-							data.host.map (
+							data.paging.entities.map (
 								i => {
 									if(this.search_key != "") {
 										this.hosts.push(i)
@@ -280,7 +280,7 @@ export class NewHostUserComponent implements OnInit {
 					this._host.get_host_by_page(page,this.search_key).subscribe(
 						data => {
 							if(!data.message) {
-								data.host.map (
+								data.paging.entities.map (
 									i => {
 										if(this.search_key != "") {
 											this.hosts.push(i)

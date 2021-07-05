@@ -400,11 +400,11 @@ export class SingleScreenComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
 					data => {
-						if (data && data.hosts) {
+						if (data && data.paging.entities) {
 							data.hosts.map (
 								i => {
-									this.dealer_hosts.push(i.host);
-									this.hosts_data.push(i.host);
+									this.dealer_hosts.push(i);
+									this.hosts_data.push(i);
 								}
 							)
 							this.paging_host = data.paging;
@@ -422,12 +422,12 @@ export class SingleScreenComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
 					data => {
-						if(!data.message && data.hosts) {
+						if(!data.message && data.paging.entities) {
 							if(this.search_host_data == "") {
-								data.hosts.map (
+								data.paging.entities.map (
 									i => {
-										this.dealer_hosts.push(i.host);
-										this.hosts_data.push(i.host);
+										this.dealer_hosts.push(i);
+										this.hosts_data.push(i);
 									}
 								)
 							} else {
