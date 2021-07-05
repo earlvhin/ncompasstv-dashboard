@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
-import { HttpClientModule } from '@angular/common/http';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { UserLoginModule } from './user-login/user-login.module';
@@ -17,6 +17,7 @@ import { ReassignDealerModule } from './global/pages_shared/edit-single-dealer/r
 import { ViewContentListModule } from './global/components_shared/playlist_components/view-content-list/view-content-list.module';
 import { SubDealerModule } from './role-pages/sub-dealer/sub-dealer.module';
 import { TagsModule } from './global/pages_shared/tags/tags.module';
+import { HttpErrorInterceptor } from './global/middlewares/http-interceptor/http-error.interceptor';
 
 @NgModule({
 	declarations: [
@@ -39,7 +40,11 @@ import { TagsModule } from './global/pages_shared/tags/tags.module';
 		ViewContentListModule,
 		TagsModule
 	],
-	providers: [AuthService, AuthGuard],
+	providers: [
+		{provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true},
+		AuthService, 
+		AuthGuard
+	],
 	bootstrap: [AppComponent]
 })
 

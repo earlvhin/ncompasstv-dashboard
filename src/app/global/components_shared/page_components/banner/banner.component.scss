@@ -32,6 +32,18 @@
 		}
 	}
 
+	.tags-container {
+		margin-left: 20px;
+
+		.tag {
+			margin-right: 10px;
+			background-color: gray;
+			color: white;
+			border-radius: 5px;
+			padding: 1px 5px;
+		}
+	}
+
     .settings-btn {
         background-color: transparent;
         border: none;

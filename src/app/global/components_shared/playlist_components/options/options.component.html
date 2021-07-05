@@ -65,7 +65,27 @@
 				</p>
 			</div>
 
-			<button mat-button mat-raised-button class="theme-btn position-bottom" [disabled]="unchanged_playlist" [mat-dialog-close]="playlist_changes_data">
+			<hr>
+			<!-- FREQUENCY SETTINGS -->
+			<div class="frequency-settings">
+				<mat-label class="md-text">Frequency: </mat-label>
+
+				<mat-radio-group name="opList" fxLayout="column" 
+					[(ngModel)]="content_frequency" 
+					(change)="onSelectFrequency()"
+					[disabled]="total_contents <= 5"> 
+					<mat-radio-button class="mr-3 md-text text-gray" name="frequencyList"
+						*ngFor="let frequency of frequencyList" 
+						[value]="frequency.value">{{ frequency.label }}
+					</mat-radio-button>
+				</mat-radio-group>
+
+				<div class="total-contents-notice" *ngIf="total_contents <= 5">
+					<p class="text-danger">* You need at least 6 contents in the playlist to start setting frequencies</p>
+				</div>
+			</div>
+
+			<button mat-button mat-raised-button class="theme-btn position-bottom" [disabled]="unchanged_playlist" [mat-dialog-close]="onSave()">
 				Save Options
 				<span class="fas fa-save ml-2"></span>
 			</button>
@@ -103,7 +123,7 @@
 							</div>
 						</div>
 						<app-play-where
-						[toggleEvent]="toggleEvent.asObservable()"
+						[toggleEvent]="toggle_event.asObservable()"
 						[content_data]="_dialog_data"
 						(whitelisted)="hasWhiteListed($event)"
 						(blocklist_changes_saved)="saveBlocklistChanges($event)"

@@ -183,7 +183,33 @@ export class LicenseService {
 	}
 
 	/**
-	 * Update Internet Informationof License ID
+	 * @description: Get Resource Usage By License
+	 * @param license: string
+	 */
+	get_license_resource(license: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_resource_logs}${license}`, this.httpOptions);
+	}
+
+	/**
+	 * @description: Get All Activities
+	 * @param license
+	 * @returns array of activities
+	 */
+	get_activities(id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_activities_by_license_id}${id}`, this.httpOptions);
+	}
+	
+	/**
+	 * @description: Save User Dashboard Activities
+	 * @param activity
+	 * @returns: Observable of ANY
+	 */
+	save_activity(activity) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_save_activity}`, activity, this.httpOptions);
+	}
+
+	/**
+	 * @description: Update Internet Information of License ID
 	 * @param data - LicenseID, InternetInfo Data 
 	*/
 	update_internet_info(data) {

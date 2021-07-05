@@ -15,9 +15,11 @@
 				</ng-template>
 			</div>
 			
-            <p class="sm-text mb-0">
-				{{ license_key }}
-			</p>
+            <p class="sm-text mb-0">{{ license_key }}</p>
+
+			<div class="d-flex tags-container" *ngIf="tags.length > 0">
+				<div *ngFor="let tag of tags" class="d-inline sm-text tag">{{ tag }}</div>
+			</div>
             <!-- <p class="sm-text mb-0">Tags</p> -->
         </div>
         <div class="text-right">
@@ -169,7 +171,7 @@
 																Display Status
 															</span>
 	
-															<h5 *ngIf="display_status; else wait" [ngClass]="{ 'good' : display_status == 1, 'bad' : display_status == 0 }">
+															<h5 *ngIf="display_status; else wait" [ngClass]="{ 'good' : display_status == 1, 'bad' : display_status == 2 }">
 																{{ display_status == 1 ? 'ON' : 'OFF/UNKNOWN' }}
 															</h5>
 
@@ -326,9 +328,9 @@
 															<div class="flex-even">
 																<span class="sm-text">Connection Status</span>
 																<ng-container *ngIf="apps && apps.server; else netstatus_v1">
-																	<h5 *ngIf="license_data.internetSpeed && pi_status;else offline_net;" 
-																	[ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
-																		{{ license_data.internetSpeed }}
+																	<h5 *ngIf="internet_connection.status && pi_status;else offline_net;" 
+																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
+																		{{ internet_connection.status }}
 																	</h5>
 															
 																	<ng-template #offline_net>
@@ -820,6 +822,38 @@
 					</div>
 				</mat-tab>
 
+				<!-- Activity Tab -->
+				<mat-tab label="Activity" *ngIf="is_admin">
+					<ng-container *ngIf="activities">
+						<div class="row mt-4">
+							<div class="col-lg-4">
+								<mat-card class="p-3 mb-3" *ngFor="let a of activities">
+									<h4>{{ a.activityDescription }}</h4>
+									<p class="sm-text">Initiated by {{ a.initiatedBy }} on {{ a.dateCreated | date: 'MMM dd, y hh:mm a' }}</p>
+								</mat-card>
+							</div>
+						</div>
+					</ng-container>
+				</mat-tab>
+
+				<!-- Activity Tab -->
+				<!-- <mat-tab label="Resource Usage" *ngIf="is_admin">
+					<div class="row mt-4">	
+						<div class="col-lg-12">
+							<h2>Resource Usage</h2>
+							<p class="sm-text">CPU and RAM Average usage of the Player</p>
+						</div>
+					</div>
+					<app-data-graph
+					[analytics_reload]="analytics_reload.asObservable()"
+					[data_set]="cc.contentPlaysListCount"
+					[graph_id]="cc.contentId + '_yearly'"
+					[realtime_data_per_license]="realtime_data"
+					[date_format]="selected_display_mode"
+					[date_queried]="queried_date"
+					[page]="'single-license'">
+					</app-data-graph>
+				</mat-tab> -->
             </mat-tab-group>
         </div>
     </div>

@@ -17,6 +17,7 @@ export class OptionsComponent implements OnInit {
 	blocklist_changes = { status: false };
 	blacklist_ready: boolean = false;
 	content_data: any;
+	content_frequency: number;
 	host_license: any;
 	disable_animation = true;
 	feed_url = '';
@@ -26,20 +27,31 @@ export class OptionsComponent implements OnInit {
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
 	toggle_all: boolean;
-	toggleEvent: Subject<void> = new Subject<void>();
+	toggle_event: Subject<void> = new Subject<void>();
+	total_contents: number;
 	unchanged_playlist: boolean = true;
 
+	frequencyList = [ 
+		{ label: '2x', value: 2 },
+		{ label: '3x', value: 3 },
+	];
+
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: any, content: API_CONTENT, host_license: any },
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: number, content: API_CONTENT, host_license: any, total_contents?: number },
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<OptionsComponent>
 	) { }
 	
 	ngOnInit() {
-		localStorage.setItem('playlist_data', JSON.stringify(this._dialog_data.content));
-		this.c_index = this._dialog_data.index;
-		this.content_data = this._dialog_data.content;
-		this.host_license = this._dialog_data.host_license;
+		const { index, content, host_license, total_contents } = this._dialog_data;
+		localStorage.setItem('playlist_data', JSON.stringify(content));
+
+		this.c_index = index;
+		this.content_data = content;
+		this.content_frequency = this.setFrequency(content.frequency);
+		this.total_contents = total_contents;
+		this.host_license = host_license;		
+
 		if (this.isFeedContent()) this.setFeedUrl();
 		this.setSchedule(this._dialog_data.content);
 	}
@@ -79,6 +91,15 @@ export class OptionsComponent implements OnInit {
 			this.playlist_changes_data.content = this.content_data;
 			this.unchanged_playlist = false;
 		}
+	}
+
+	onSave(): any {
+		return this.playlist_changes_data;
+	}
+
+	onSelectFrequency(): void {
+		this.content_data.frequency = this.content_frequency;
+		this.contentDataChanged();
 	}
 
 	removeFilenameHandle(e) {
@@ -125,7 +146,13 @@ export class OptionsComponent implements OnInit {
 	}
 
 	toggleAll(e) {
-		this.toggleEvent.next(e.checked)
+		this.toggle_event.next(e.checked)
+	}
+
+	private setFrequency(value: number): number {
+		if (value === 22) return 2;
+		if (value === 33) return 3; 
+		return value;
 	}
 
 	private isFeedContent(): boolean {

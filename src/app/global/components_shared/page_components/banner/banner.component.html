@@ -9,17 +9,30 @@
                     <div class="single-info flex-even">
 						<div class="d-flex align-items-center">
 							<h3 class="text-white mb-0" *ngIf="single_name != null">{{ single_name | titlecase }}</h3>
+							
 							<div class="status" [ngClass]="status === 'active' ? 'active' : 'inactive'" *ngIf="view === 'dealer'">
 								<span>{{ status | titlecase }}</span>
 							</div>
+
+							<div class="d-flex tags-container" *ngIf="tags.length > 0">
+								<div *ngFor="let tag of tags" class="d-inline sm-text tag">{{ tag }}</div>
+							</div>
 						</div>
-                        <h5 class="text-white font-italic sm-text mb-0" *ngIf="dealer_data && dealer_data.dealerIdAlias">Dealer Alias: {{ dealer_data.dealerIdAlias }}</h5>
+						
+						<div class="d-flex align-items-baseline">
+							<h5 class="text-white font-italic sm-text mb-0" *ngIf="dealer_data && dealer_data.dealerIdAlias">
+								Dealer Alias: {{ dealer_data.dealerIdAlias }}
+							</h5>
+						</div>
+
                         <h4 class="d-inline-block sm-text mb-0 font-italic text-white" *ngIf="host_data && host_data.dealer && isAdmin()">
                             <a class="text-white" [routerLink]="['/'+routes+'/dealers', host_data.dealer.dealerId]">{{ host_data.dealer.businessName }}</a><span class="mx-2">|</span>
                         </h4>
+
                         <h4 class="d-inline-block sm-text text-white mb-0" *ngIf="category"><i>{{ category }}</i></h4>
                         <p class="mt-1 text-white md-text mb-0" *ngIf="single_desc != null">{{ single_desc }}</p>
-                        <div *ngIf="single_host_data">
+                        
+						<div *ngIf="single_host_data">
                             <div *ngIf="business_hours != null; else openhours" class="mt-1 md-text mb-0">
                                 <div class="cursor-pointer text-white" (click)="triggerToggleMargin()">
                                     <strong>Business Hours:</strong> 

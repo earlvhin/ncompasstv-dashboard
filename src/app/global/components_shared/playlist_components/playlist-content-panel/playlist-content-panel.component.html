@@ -108,16 +108,18 @@
 			id="{{ 'drg_' + content.playlistContentId }}"
 			[ngClass]="{'marked' : selected_contents.includes(content.playlistContentId), 'col-lg-4': list_view_mode, 'col-lg-1': !list_view_mode}">
 				<app-playlist-content
-				[playlist_host_license]="playlist_host_license"
-				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[dealer]="content.dealerId"
-				[content]="content"
-				[is_marking]="false"
-				[schedule_status]="content.scheduleStatus"
-				(options_saved)="optionsSaved($event)"
-				(reset_playlist_content)="reloadPlaylist()"
-				(remove_playlist_content)="removePlaylistContent($event)"
-                [is_list]="list_view_mode">
+					[playlist_host_license]="playlist_host_license"
+					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+					[dealer]="content.dealerId"
+					[content]="content"
+					[is_marking]="false"
+					[schedule_status]="content.scheduleStatus"
+					[page]="page"
+					[total_contents]="playlist_content.length"
+					[is_list]="list_view_mode"
+					(options_saved)="optionsSaved($event)"
+					(reset_playlist_content)="reloadPlaylist()"
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>
@@ -133,17 +135,19 @@
 			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
 			[ngClass]="{'marked' : selected_contents.includes(content.playlistContentId), 'col-lg-1' : !list_view_mode, 'col-lg-4': list_view_mode}">
 				<app-playlist-content
-				[playlist_host_license]="playlist_host_license"
-				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[content]="content"
-				[dealer]="content.dealerId"
-				[is_marking]="true"
-				[schedule_status]="content.scheduleStatus"
-				(options_saved)="optionsSaved($event)"
-				(click)="selectedContent(content.playlistContentId)"
-				(reset_playlist_content)="reloadPlaylist()"
-				(remove_playlist_content)="removePlaylistContent($event)"
-                [is_list]="list_view_mode">
+					[playlist_host_license]="playlist_host_license"
+					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+					[content]="content"
+					[dealer]="content.dealerId"
+					[is_marking]="true"
+					[schedule_status]="content.scheduleStatus"
+					[page]="page"
+					[total_contents]="playlist_content.length"
+					[is_list]="list_view_mode"
+					(options_saved)="optionsSaved($event)"
+					(click)="selectedContent(content.playlistContentId)"
+					(reset_playlist_content)="reloadPlaylist()"
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>

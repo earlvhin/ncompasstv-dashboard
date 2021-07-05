@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs';
-import { finalize } from 'rxjs/operators';
-import { API_CONTENT_BLACKLISTED_CONTENTS } from '../../../../global/models/api_single-playlist.model';
+import { Subject } from 'rxjs';
+
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { OptionsComponent } from '../options/options.component';
 
@@ -21,10 +20,17 @@ export class PlaylistContentComponent implements OnInit {
 	@Input() is_list: boolean;
 	@Input() dealer: string;
 	@Input() schedule_status?: string;
+	@Input() page? = '';
+	@Input() total_contents? = 0;
 	@Output() options_saved = new EventEmitter();
 	@Output() reset_playlist_content = new EventEmitter();
 	@Output() remove_playlist_content = new EventEmitter();
-	subscription: Subscription = new Subscription();
+
+	contentTitle: string;
+	frequency: number;
+	isBaseFrequency = false;
+
+	protected _unsubscribe: Subject<void> = new Subject();
 
 	constructor(
 		private _dialog: MatDialog,
@@ -35,41 +41,49 @@ export class PlaylistContentComponent implements OnInit {
 		if (this.playlist_host_license) {
 			this.playlist_host_license = this.playlist_host_license.sort((a, b) => {
 				return a.host.name.localeCompare(b.host.name)
-			})
+			});
+		}
+
+		if (this.page === 'single-playlist') {
+			this.isBaseFrequency = this.content.frequency === 22 || this.content.frequency === 33;
+			this.frequency = this.setFrequency(this.content.frequency);
+		}
+		this.contentTitle = this.content.title;
+
+		if (this.contentTitle.length >= 15) {
+			this.contentTitle = `${this.contentTitle.substr(0, 12)}...`;
 		}
 
 	}
 
-	optionsModal() {
-		let content_data = {
+	optionsModal(): void {
+
+		const data = {
 			index: this.array_index,
 			content: this.content,
-			host_license: this.playlist_host_license
-		} 
+			host_license: this.playlist_host_license,
+			total_contents: this.total_contents			
+		};
 
-		let option_dialog = this._dialog.open(OptionsComponent, {
-			data: content_data,
+		const dialog = this._dialog.open(OptionsComponent, {
+			data,
 			width: '1024px',
 			height: '750px'
-		})
+		});
 
-		this.subscription.add(
-			option_dialog.afterClosed()
-			.pipe(finalize(() => console.log('Ended')))
+		dialog.afterClosed()
 			.subscribe(
-				data => {
-					if (data !== undefined && data !== true) {
-						this.options_saved.emit(data);
-					} else if (data === true){
-						this.reset_playlist_content.emit(true)
-					}
+				response => {
+					if (typeof response === 'undefined') return;
+					if (typeof response === 'object') return this.options_saved.emit(response);
+					return this.reset_playlist_content.emit(true); 
 				}
-			)
-		)
+			);
 	}
 
-	removeContentToPlaylistModal(id) {
-		let delete_dialog = this._dialog.open(ConfirmationModalComponent, {
+	removeContentToPlaylistModal(id): void {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
 			data:  {
@@ -79,16 +93,42 @@ export class PlaylistContentComponent implements OnInit {
 			}
 		})
 
-		delete_dialog.afterClosed().subscribe(
-			data => {
-				if (data) {
-					this.remove_playlist_content.emit(id);
+		dialog.afterClosed()
+			.subscribe(
+				response => {
+					if (!response) return;
+					this.remove_playlist_content.emit(id); 
 				}
-			}
-		)
+			);
 	}
 
 	removeFilenameHandle(file_name) {
 		return file_name.substring(file_name.indexOf('_') + 1);
 	}
+
+	private setFrequency(value: number): number {
+
+		let result: number;
+
+		switch (value) {
+
+			case 2:
+			case 22:
+				result = 2;
+				break;
+
+			case 3:
+			case 33:
+				result = 3;
+				break;
+
+			default:
+				result = 0;
+				
+		}
+
+		return result;
+
+	}
+
 }

@@ -29,15 +29,16 @@
 					<mat-tab label="Playlist Content">
 						<div class="position-relative pt-4">
 							<app-playlist-content-panel
-							*ngIf="!playlist_updating"
-							[dealer_id]="playlist.playlist.dealerId" 
-							[playlist_id]="playlist.playlist.playlistId"
-							[playlist_content]="playlist_content_and_blacklist"
-							[playlist_host_license]="playlist.hostLicenses"
-							(playlist_changes_saved)="reloadPlaylist()"
-							(reload_playlist)="reloadPlaylist()"
-							(reload_demo)="reloadDemo($event)"
-							(playlist_demo)="openPlaylistDemo($event)">
+								*ngIf="!playlist_updating"
+								[dealer_id]="playlist.playlist.dealerId"
+								[page]="'single-playlist'"
+								[playlist_id]="playlist.playlist.playlistId"
+								[playlist_content]="playlist_content_and_blacklist"
+								[playlist_host_license]="playlist.hostLicenses"
+								(playlist_changes_saved)="reloadPlaylist()"
+								(reload_playlist)="reloadPlaylist()"
+								(reload_demo)="reloadDemo($event)"
+								(playlist_demo)="openPlaylistDemo($event)">
 							</app-playlist-content-panel>
 			
 							<div class="load_overlay d-flex align-items-center justify-content-center" *ngIf="playlist_updating">

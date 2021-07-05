@@ -141,6 +141,18 @@
 
 	}
 
+	.tags-container {
+		margin-top: 10px;
+
+		.tag {
+			margin-right: 10px;
+			background-color: gray;
+			color: white;
+			border-radius: 5px;
+			padding: 1px 5px;
+		}
+	}
+
 	.tabs {
 
 		.screen-playlists {

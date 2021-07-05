@@ -160,9 +160,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	onSelectOwner(value: any): void {
-		console.log('on select value', value);
 		this.setCtrlValue('ownerId', value);
-		console.log('form ', this.form);
 	}
 
 	searchBoxTrigger(event: { is_search: boolean, page: number }, type: string): void {

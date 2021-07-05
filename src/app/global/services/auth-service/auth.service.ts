@@ -6,6 +6,7 @@ import { UI_CURRENT_USER } from '../../models/ui_current-user.model';
 import { tokenNotExpired } from 'angular2-jwt';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { USER_LOGIN } from '../../models/api_user.model';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 
 @Injectable({
@@ -14,9 +15,10 @@ import { USER_LOGIN } from '../../models/api_user.model';
 
 export class AuthService {
 
+	current_user: Observable<UI_CURRENT_USER>;
+	session_status: boolean;
+
 	private current_user_subject: BehaviorSubject<UI_CURRENT_USER>;
-	public current_user: Observable<UI_CURRENT_USER>;
-	public session_status: boolean;
 
 	http_options = {
 		headers: new HttpHeaders(
@@ -30,13 +32,19 @@ export class AuthService {
 	) { }
 
 	// Store User Info inside Local Storage to a global variable. 
-	public get current_user_value(): UI_CURRENT_USER {
+	get current_user_value(): UI_CURRENT_USER {
 		this.current_user_subject = new BehaviorSubject<UI_CURRENT_USER>(JSON.parse(localStorage.getItem('current_user')));
 		this.current_user = this.current_user_subject.asObservable();
 		return this.current_user_subject.value;
+
+		// this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 	}
 
-	public get session_valid(): boolean {
+	get current_role(): string {
+		return Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.current_user_value.role_id);
+	}
+
+	get session_valid(): boolean {
 		return this.session_status;
 	}
 

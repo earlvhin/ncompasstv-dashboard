@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
 		api_refresh: 'token/refresh',
 	},
 	getters: {
+		api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
 		api_get_advertisers: 'advertiser/getall',
 		api_get_advertisers_by_dealer_id: 'advertiser/getbydealerid?dealer_id=',
 		api_get_advertisers_by_id: 'advertiser/getbyid?id=',
@@ -72,6 +73,7 @@ export const API_ENDPOINTS = {
 		api_get_playlist_total: 'playlists/gettotal',
 		api_get_playlist_total_by_dealer: 'playlists/gettotal?dealerid=',
 		api_get_roles: 'role/getall',
+		api_get_resource_logs: 'resourcelogs/GetResourceLogByLicenseId?licenseId=',
 		api_get_screen_by_id: 'screen/getscreenbyid?screenId=',
 		api_get_screen_by_dealer: 'screen/getbydealerid?dealerId=',
 		api_get_screen_by_dealer_table: 'screen/getscreenbydealerid',
@@ -134,11 +136,11 @@ export const API_ENDPOINTS = {
 		api_new_app_version: 'playerapp/addversion',
 		api_new_app: 'playerapp/create',
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
+		api_save_activity: 'activity/log',
 		content_schedule: 'PlaylistContentsSchedule/Create',
 		sub_dealer_account: 'account/CreateSubAccount',
 		tag: 'tag/create',
 		tag_type: 'tag/createtype'
-
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
@@ -156,7 +158,7 @@ export const API_ENDPOINTS = {
 		api_assign_template_to_dealer: 'template/assigntodealer',
 		api_blocklist_content: 'blacklistedcontents/create',
 		api_deactivate_license: 'license/deactivate?licenseKey=',
-		api_display_status: '/license/UpdateDisplayStatus',
+		api_display_status: 'license/UpdateDisplayStatus',
 		api_update_advertiser: 'advertiser/updateadvertiser',
 		api_update_alias: 'license/updatealias',
 		api_update_dealer: 'dealer/update',
@@ -174,6 +176,7 @@ export const API_ENDPOINTS = {
 		api_update_internet_info: 'license/UpdateInternetInfo',
 		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
+		set_content_frequency: 'playlists/ClonePlaylistContent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
 	},

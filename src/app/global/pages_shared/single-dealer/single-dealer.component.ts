@@ -99,6 +99,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	pi_updating: boolean = false;
 	remote_update_disabled = false;
 	remote_reboot_disabled = false;
+	screenshot_disabled = false;
 	search_data: string = "";
 	search_data_advertiser: string = "";
 	search_data_license: string = "";
@@ -156,6 +157,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: null, sortable: false, no_export: true, hidden: true},
         { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
 		{ name: 'Screenshot', sortable: false, no_export: true},
+		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName'},
@@ -303,10 +305,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			if (this.timeout_duration >= 10) {
 				this.remote_update_disabled = false;
 				this.remote_reboot_disabled = false;
+				this.screenshot_disabled = false;
 				localStorage.removeItem(`${this.dealer_id}`);
 			} else {
 				this.remote_update_disabled = true;
 				this.remote_reboot_disabled = true;
+				this.screenshot_disabled = false;
 			}
 			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 		}
@@ -448,7 +452,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._user.get_user_alldata_by_id(id).subscribe(
 				data =>  {
-					this.dealer_user_data = Object.assign({},data.user, data.dealer[0]);
+					data.dealer[0].tags = this.dealer.tags;
+					this.dealer_user_data = Object.assign({}, data.user, data.dealer[0]);
 					this.loaded = true;
 				},
 				error => console.log('Error retrieving dealer user data', error)
@@ -792,7 +797,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	screenshotDealer(): void {
-		return null;
+		this.warningModal('warning', 'Screenshot Dealer', "Screenshot all this dealer's licenses, Requires a reload after a minute or two.", 'Click OK to continue', 'screenshot');
 	}
 
 	updateAndRestart(): void {
@@ -854,6 +859,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						}
 					)
 					break;
+				case 'screenshot': 
+					if (this.licenses) {
+						this.licenses.forEach(
+							i => {
+								this._socket.emit('D_screenshot_pi', i.licenseId);
+							}
+						)
+					}
+					break;
 				default:
 			}
 			const now = moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -862,6 +876,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 			this.remote_reboot_disabled = true;
 			this.remote_update_disabled = true;
+			this.screenshot_disabled = true;
 		});
 	}
 

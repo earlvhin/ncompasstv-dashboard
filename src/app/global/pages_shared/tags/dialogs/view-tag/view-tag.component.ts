@@ -1,8 +1,9 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { CreateTagComponent } from '../create-tag/create-tag.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { Tag } from 'src/app/global/models/tag.model';
@@ -29,6 +30,8 @@ export class ViewTagComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: { tagName: string, tagType: TagType, tagTypes: TagType[] },
+		public _dialog_ref: MatDialogRef<ViewTagComponent>,
+		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _tag: TagService
 	) { }
@@ -109,6 +112,11 @@ export class ViewTagComponent implements OnInit, OnDestroy {
 			);
 	}
 
+	ownerUrl(id: string): string {
+		const currentTagTypeName = `${this.tagType.name.toLowerCase()}s`;
+		return `/${this.currentRole}/${currentTagTypeName}/${id}`;
+	}
+
 	private getTagsByNameAndType(tagName: string, tagTypeId: number): void {
 
 		this._tag.getTagsByNameAndType(tagName, tagTypeId)
@@ -127,6 +135,10 @@ export class ViewTagComponent implements OnInit, OnDestroy {
 			{ name: this.tagType.name, class: 'p-3' },
 			{ name: 'Actions', class: 'p-3 text-center' }
 		];
+	}
+
+	private get currentRole() {
+		return this._auth.current_role;
 	}
 
 	
