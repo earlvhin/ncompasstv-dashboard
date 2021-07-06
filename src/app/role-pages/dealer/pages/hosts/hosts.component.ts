@@ -9,6 +9,8 @@ import { UserService } from '../../../../global/services/user-service/user.servi
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { TitleCasePipe } from '@angular/common'
 import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver'; 
 
 @Component({
 	selector: 'app-hosts',
@@ -18,37 +20,33 @@ import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
 })
 
 export class HostsComponent implements OnInit {
-	dealers_info: API_DEALER;
-	dealers$: Observable<API_DEALER[]>;
-	combined_data: API_HOST[];
-	combined_data_array = [];
-	hosts_data: UI_DEALER_HOSTS[] = [];
 	filtered_data: any = [];
-	hosts$: Observable<API_HOST[]>;
-	subscription: Subscription = new Subscription();
-	host_count: any;
-	no_host: boolean = false;
-
-	searching: boolean = false;
 	host_data: any = [];
 	host_filtered_data: any = [];
-	temp_array: any = [];
-	search_data: string = "";
-	initial_load: boolean = true;
+    hosts_to_export: any = [];
+    initial_load: boolean = true;
+	subscription: Subscription = new Subscription();
+	host_count: any;
 	no_hosts: boolean = false;
-	paging_data: any;
+    pageSize: number;
+    paging_data: any;
+	search_data: string = "";
+    searching: boolean = false;
+    temp_array: any = [];	
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 
-	// UI Table Column Header
-	host_table_column: string[] = [
-		'#',
-		'Name',
-		'Address',
-		'City',
-		'Postal Code',
-		'Number of Licenses',
-		'Category',
-		'Status',
-	]
+    host_table_column = [
+		{ name: '#', no_export: true},
+		{ name: 'Name', key: 'name'},
+		{ name: 'Address', key: 'address'},
+		{ name: 'City', key: 'city'},
+		{ name: 'Postal Code', key: 'postalCode'},
+		{ name: 'Number of Licenses', key: 'totalLicenses'},
+		{ name: 'Category', key: 'category'},
+		{ name: 'Status', key: 'status'},
+	];
 
 	constructor(
     	private _user: UserService,
@@ -116,15 +114,8 @@ export class HostsComponent implements OnInit {
 					this.searching = false;
                     this.paging_data = data.paging;
 					if(!data.message) {
-						data.hosts.map (
-							i => {
-								var x = Object.assign({},i.host,i.hostStats);
-								console.log("X",x)
-								this.temp_array.push(x)
-							}
-						)
-						this.host_data = this.hosts_mapToUIFormat(this.temp_array);
-						this.host_filtered_data = this.hosts_mapToUIFormat(this.temp_array);
+						this.host_data = this.hosts_mapToUIFormat(data.paging.entities);
+						this.host_filtered_data = this.hosts_mapToUIFormat(data.paging.entities);
 					} else {
 						if(this.search_data == "") {
 							this.no_hosts = true;
@@ -135,33 +126,12 @@ export class HostsComponent implements OnInit {
 				}
 			)
 		)
-		// this.subscription.add(
-		// 	this._host.get_host_for_dealer_id(id).subscribe(
-		// 		(data: any) => {
-		// 			if(data.length > 0) {
-		// 				data.map(
-		// 					i => {
-		// 					this.combined_data = Object.assign({},i.host,i.hostStats);
-		// 					this.combined_data_array.push(this.combined_data);
-		// 				});
-		// 			}
-					
-		// 			if (this.combined_data_array.length > 0) {
-		// 				this.hosts_data = this.hosts_mapToUIFormat(this.combined_data_array);
-		// 				this.filtered_data = this.hosts_mapToUIFormat(this.combined_data_array);
-		// 			} else {
-		// 				this.no_host = true;
-		// 				this.filtered_data = {message: 'no records found'};
-		// 			}
-		// 		}
-		// 	)
-		// )
 	}
 
 	hosts_mapToUIFormat(data) {
 		let count = this.paging_data.pageStart;
 		return data.map(
-			(hosts: any) => {
+			hosts => {
 				return new UI_DEALER_HOSTS(
 					{ value: hosts.hostId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
@@ -175,5 +145,53 @@ export class HostsComponent implements OnInit {
 				)
 			}
 		)
+	}
+
+    getDataForExport() {
+        this.pageSize = 0;
+        this._host.get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, 1, '', this.pageSize).subscribe(
+            data => {
+                if(!data.message) {
+                    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                    this.hosts_to_export = data.paging.entities;
+                    this.hosts_to_export.forEach((item, i) => {
+                        this.worksheet.addRow(item).font ={
+                            bold: false
+                        };
+                    });
+                    let rowIndex = 1;
+                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+                        this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                    }
+                    this.workbook.xlsx.writeBuffer()
+                        .then((file: any) => {
+                            const blob = new Blob([file], { type: EXCEL_TYPE });
+                            const filename = this._auth.current_user_value.roleInfo.businessName+'-HOSTS' +'.xlsx';
+                            FileSaver.saveAs(blob, filename);
+                        }
+                    );
+                    this.workbook_generation = false;
+                } else {
+                    this.hosts_to_export = [];
+                }
+            }
+        )
+	}
+
+    exportTable() {
+		this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Excel.Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet('Installations');
+		Object.keys(this.host_table_column).forEach(key => {
+			if(this.host_table_column[key].name && !this.host_table_column[key].no_export) {
+				header.push({ header: this.host_table_column[key].name, key: this.host_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+			}
+		});
+        this.worksheet.columns = header;
+		this.getDataForExport();		
 	}
 }

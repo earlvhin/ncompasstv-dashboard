@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
-import { API_ADVERTISER } from '../../models/api_advertiser.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -33,12 +34,15 @@ export class AdvertiserService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertiser_total_by_dealer}${id}`, this.httpOptions);
 	}
 
-	get_advertisers_by_dealer_id(id, page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}${id}`+'&page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_advertisers_by_dealer_id(id, page, key, column='', order='') {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
 
-	get_advertiser_by_id(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_id}${id}`, this.httpOptions).map(data => data.advertiser);
+	get_advertiser_by_id(id, page = ''): Observable<any | { advertiser: any, tags: any[]}> {
+		const url = `${environment.base_uri}${environment.getters.api_get_advertisers_by_id}${id}`;
+		const request = this._http.get<any>(url, this.httpOptions);
+		if (page !== 'single-advertiser') return request.map(data => data.advertiser);
+		return request;
 	}
 
 	get_advertiser_report(data) {
@@ -48,6 +52,11 @@ export class AdvertiserService {
 	add_advertiser_profile(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_advertiser_profile}`, data, this.httpOptions);
 	}
+
+	search_advertiser(keyword = '') {
+		const url = `${this.baseUri}${this.getters.search_advertiser}${keyword}`;
+		return this._http.get(url, this.httpOptions);
+	}
 	
 	update_advertiser(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_advertiser}`, data, this.httpOptions);
@@ -55,5 +64,13 @@ export class AdvertiserService {
 
 	remove_advertiser(id, force) {
 		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_advertiser}${id}&force=${force}`, null, this.httpOptions);
+	}
+
+	protected get baseUri() {
+		return `${environment.base_uri}`;
+	}
+
+	protected get getters() {
+		return environment.getters;
 	}
 }

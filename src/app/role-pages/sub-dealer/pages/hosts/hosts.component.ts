@@ -115,15 +115,8 @@ export class HostsComponent implements OnInit {
 					this.searching = false;
                     this.paging_data = data.paging;
 					if(!data.message) {
-						data.hosts.map (
-							i => {
-								var x = Object.assign({},i.host,i.hostStats);
-								console.log("X",x)
-								this.temp_array.push(x)
-							}
-						)
-						this.host_data = this.hosts_mapToUIFormat(this.temp_array);
-						this.host_filtered_data = this.hosts_mapToUIFormat(this.temp_array);
+						this.host_data = this.hosts_mapToUIFormat(data.paging.entities);
+						this.host_filtered_data = this.hosts_mapToUIFormat(data.paging.entities);
 					} else {
 						if(this.search_data == "") {
 							this.no_hosts = true;
@@ -139,7 +132,7 @@ export class HostsComponent implements OnInit {
 	hosts_mapToUIFormat(data) {
 		let count = this.paging_data.pageStart;
 		return data.map(
-			(hosts: any) => {
+			hosts => {
 				return new UI_DEALER_HOSTS(
 					{ value: hosts.hostId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},

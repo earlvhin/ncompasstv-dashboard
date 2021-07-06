@@ -19,6 +19,10 @@
     background-color: $gray !important;
 }
 
+.bg-blue {
+    background-color: $blue_dark;
+}
+
 .bg-gray-2 {
     background-color: $gray2
 }
@@ -469,6 +473,10 @@
     background: $light;
 }
 
+.text-white {
+    color: $light;
+}
+
 .disabled a {
     pointer-events:none; 
     opacity:0.6;
@@ -530,7 +538,7 @@
 }
 
 .margin-top-extra-toggle {
-    margin-top: 300px;
+    margin-top: 300px !important;
 }
 
 .margin-top-extra-notes {
@@ -579,5 +587,28 @@ agm-map {
     display: none;
 }
 .no_border_radius {
-    border-radius: 0px !important;
+    border-radius: 0px;
+}
+
+.border_radius_bottom {
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
+
+.r-15 {
+    right: 15px;
+}
+
+.height-toggle {
+    max-height: 0 !important;
+    transition: max-height 1s ease-out;
+    overflow: hidden;
+}
+
+.break-word {
+    word-wrap: break-word;
+}
+
+.max-height-90 {
+    max-height: 90px;
 }

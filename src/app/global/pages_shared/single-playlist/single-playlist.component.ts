@@ -16,6 +16,7 @@ import { RoleService } from '../../services/role-service/role.service';
 import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { ContentService } from '../../services/content-service/content.service';
 
 @Component({
 	selector: 'app-single-playlist',
@@ -59,6 +60,7 @@ export class SinglePlaylistComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _role: RoleService,
 		private _auth: AuthService,
+		private _content: ContentService,
 	) {}
 
 	ngOnInit() {
@@ -115,6 +117,23 @@ export class SinglePlaylistComponent implements OnInit {
 
 	getPlaylistData(id) {
 		this.playlist_updating = true;
+
+		// if (id === 'e9b0204a-6d98-4ec8-b658-478fe8a86df7') {
+		// 	const body = {
+		// 		"frequency": 2,
+		// 		"playlistContentId": "c4d24f6c-c2b4-48ca-9a0e-16eefcbbd5e8",
+		// 		"playlistId": "e9b0204a-6d98-4ec8-b658-478fe8a86df7"
+		// 	};
+
+		// 	this._content.set_frequency(body.frequency, body.playlistContentId, body.playlistId)
+		// 		.subscribe(
+		// 			response => {
+		// 				console.log('set frequency response', response);
+		// 			},
+		// 			error => console.log('Error setting frequency', error)
+		// 		);
+		// }
+
 		this.subscription.add(
 			this._playlist.get_playlist_by_id(id).subscribe(
 				data => {
@@ -129,7 +148,7 @@ export class SinglePlaylistComponent implements OnInit {
 					console.log('#getPlaylistData', error);
 				}
 			)
-		)
+		);
 
 		this.subscription.add(
 			this._playlist.get_screens_of_playlist(id).subscribe(
@@ -141,7 +160,7 @@ export class SinglePlaylistComponent implements OnInit {
 					console.log(error);
 				}
 			)
-		)
+		);
 	}
 
 	openUpdatePlaylistInfoModal() {

@@ -10,8 +10,8 @@
 				{{ compare_basis_label }}
 			</span>
 		</h2>
-		<h3>
-			<div *ngIf="!page && !has_dealer_status_filter; else dealerStatusFilters">
+		<h3 class="flex">
+			<div class="col-lg-6 p-0" *ngIf="!page && !has_dealer_status_filter; else dealerStatusFilters">
 				<span class="text-primary font-weight-medium mr-2">{{ good_value }}</span>
 				<span class="sm-text font-weight-medium">{{ good_value_label }}</span>
 				/
@@ -24,13 +24,14 @@
 				<span class="text-primary font-weight-medium mr-2">{{ additional_value }}</span>
 				<span class="sm-text font-weight-medium">{{ additional_value_label }}</span>
 			</ng-container>
-			<ng-container *ngIf="online_value_label">
+
+			<div class="col-lg-6 p-0" *ngIf="online_value_label">
 				<span class="text-primary font-weight-medium mr-2 ml-5 ">{{ online_value }}</span>
 				<span class="sm-text font-weight-medium">{{online_value_label }}</span>
 				/
 				<span class="font-weight-medium mr-2" [ngClass]="is_green ? 'text-primary' : 'text-danger '">{{ offline_value }}</span>
 				<span class="sm-text font-weight-medium">{{ offline_value_label }}</span>
-			</ng-container>
+            </div>
 
 			<ng-template #dealerStatusFilters>
 				<div class="dealer-status-filters">

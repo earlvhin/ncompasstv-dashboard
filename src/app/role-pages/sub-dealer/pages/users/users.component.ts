@@ -109,6 +109,7 @@ export class UsersComponent implements OnInit {
 
 	mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {
 		let count = 1;
+		
 		return data.map(
 			(u: USER) => {
 				return new UI_TABLE_USERS(
@@ -119,9 +120,10 @@ export class UsersComponent implements OnInit {
 					{ value: u.contactNumber, link: null, editable: false, hidden: false},
 					{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false},
 					{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false},
-					{ value: u.creatorName, link: null, editable: false, hidden: false},	
-				)
+					{ value: u.creatorName, link: null, editable: false, hidden: false},
+					{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false },
+				);
 			}
-		)
+		);
 	}
 }

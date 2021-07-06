@@ -38,6 +38,7 @@ import { UserAccountSettingComponent } from '../../global/pages_shared/user-acco
 import { SingleAdvertiserComponent } from 'src/app/global/pages_shared/single-advertiser/single-advertiser.component';
 import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
 import { CreateAdvertiserComponent } from 'src/app/global/pages_shared/create-advertiser/create-advertiser.component';
+import { TagsComponent } from 'src/app/global/pages_shared/tags/tags.component';
 import { ToolsComponent } from 'src/app/global/pages_shared/tools/tools.component';
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
@@ -79,6 +80,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
             { path: 'screens', component: ScreensComponent },
             { path: 'screens/create-screen', component: CreateScreenComponent },
             { path: 'screens/:data', component: SingleScreenComponent },
+            { path: 'tags', component: TagsComponent },
             { path: 'templates', component: TemplatesComponent },
 			{ path: 'templates/create-template', component: CreateTemplateComponent },
 			{ path: 'tools', component: ToolsComponent},

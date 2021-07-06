@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
 		api_refresh: 'token/refresh',
 	},
 	getters: {
+		api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
 		api_get_advertisers: 'advertiser/getall',
 		api_get_advertisers_by_dealer_id: 'advertiser/getbydealerid?dealer_id=',
 		api_get_advertisers_by_id: 'advertiser/getbyid?id=',
@@ -51,6 +52,7 @@ export const API_ENDPOINTS = {
 		api_get_host_total_per_dealer: 'host/gettotal?dealerid=',
 		api_get_host_by_id: 'host/getbyid?hostid=',
 		api_get_host_by_id_optimized: 'host/getbydealerwithtotal?dealerid=',
+		api_get_host_licenses_by_state: 'host/getlicensesperstate',
 		api_get_host_report: 'host/getaddedreport',
 		api_get_hosts: 'host/getall',
 		api_get_licenses: 'license/getall',
@@ -71,6 +73,7 @@ export const API_ENDPOINTS = {
 		api_get_playlist_total: 'playlists/gettotal',
 		api_get_playlist_total_by_dealer: 'playlists/gettotal?dealerid=',
 		api_get_roles: 'role/getall',
+		api_get_resource_logs: 'resourcelogs/GetResourceLogByLicenseId?licenseId=',
 		api_get_screen_by_id: 'screen/getscreenbyid?screenId=',
 		api_get_screen_by_dealer: 'screen/getbydealerid?dealerId=',
 		api_get_screen_by_dealer_table: 'screen/getscreenbydealerid',
@@ -89,6 +92,7 @@ export const API_ENDPOINTS = {
 		api_get_users: 'user/getall',
 		api_get_users_total: 'user/gettotal',
 		api_google_map: 'googleapi/searchplaces?place=',
+		api_renewsocket: 'license/renewsocket',
 		api_search_dealer: 'dealer/searchdealer?search=',
 		api_search_dealer_with_host: 'dealer/getdealerswithhost?search=',
 		api_search_host: 'dealer/getdealerswithhost?search=',
@@ -97,13 +101,22 @@ export const API_ENDPOINTS = {
 		api_apps_versions: 'playerapp/getappversions',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
+		all_tag_types: 'tag/GetAllTypes',
 		content_by_host_id: 'content/GetByHostId',
+		distinct_tags_by_tag_type: 'tag/GetDistincTagsByTypeId?typeid=', // yes that is intentionally misspelled 
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/ExportDealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
 		license_statistics: 'license/GetStatisticsByDealerId',
-		license_statistics_by_install_date: 'license/GetLicenseStatisticsByInstallDate?installDate='
+		license_statistics_by_install_date: 'license/GetLicenseStatisticsByInstallDate?installDate=',
+		search_advertiser: 'advertiser/search?searchkey=',
+		search_license: 'license/search?searchkey=',
+		tag_types_by_type_id: 'tag/GetTagsByTagTypeId?typeid=',
+		tags_by_id: 'tag/GetTagsById?tagid=',
+		tags_by_owner_id: 'tag/GetTagsByOwnerId?ownerid',
+		tags_by_tag_name_and_type: 'tag/GetTagsByTagNameAndTypeId',
+		tags_count: 'tag/GetAllTagsCount'
 	},
 	create: {
 		api_new_admin: 'admin/create',
@@ -123,9 +136,11 @@ export const API_ENDPOINTS = {
 		api_new_app_version: 'playerapp/addversion',
 		api_new_app: 'playerapp/create',
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
+		api_save_activity: 'activity/log',
 		content_schedule: 'PlaylistContentsSchedule/Create',
 		sub_dealer_account: 'account/CreateSubAccount',
-
+		tag: 'tag/create',
+		tag_type: 'tag/createtype'
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
@@ -143,6 +158,7 @@ export const API_ENDPOINTS = {
 		api_assign_template_to_dealer: 'template/assigntodealer',
 		api_blocklist_content: 'blacklistedcontents/create',
 		api_deactivate_license: 'license/deactivate?licenseKey=',
+		api_display_status: 'license/UpdateDisplayStatus',
 		api_update_advertiser: 'advertiser/updateadvertiser',
 		api_update_alias: 'license/updatealias',
 		api_update_dealer: 'dealer/update',
@@ -160,8 +176,12 @@ export const API_ENDPOINTS = {
 		api_update_internet_info: 'license/UpdateInternetInfo',
 		reassign_content: 'content/ReAssignContent',
 		reassign_dealer: 'dealer/ReAssignDealer',
+		set_content_frequency: 'playlists/ClonePlaylistContent',
+		tag: 'tag/update',
+		tag_type: 'tag/updatetype',
 	},
 	delete: {
+		api_delete_screenshot: 'pi/deletescreenshots',
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',
 		api_remove_content: 'content/removebycontentid',
 		api_remove_player_app: 'playerapp/removeplayerapp',
@@ -177,6 +197,7 @@ export const API_ENDPOINTS = {
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost?force=1',
 		host: 'host/delete',
+		tag: 'tag/delete',
 		user: 'user/delete',
 	}
 };

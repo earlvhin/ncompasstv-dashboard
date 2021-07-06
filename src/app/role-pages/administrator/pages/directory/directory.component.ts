@@ -58,7 +58,6 @@ export class DirectoryComponent implements OnInit {
 					this.directory_data = data.dealerHosts;
                     this.paging_data = data.paging;
                     this.searching = false;
-                    console.log("DD", this.directory_data)
 				}
 			)
 		)
@@ -69,7 +68,6 @@ export class DirectoryComponent implements OnInit {
 	}
 
     filterData(key, searchKey) {
-        console.log("KEY", key)
 		if (key) {
 			this.search_data = key;
             this.search_field = searchKey;

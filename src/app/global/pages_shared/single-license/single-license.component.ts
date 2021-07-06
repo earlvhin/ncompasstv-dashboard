@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Chart } from 'chart.js';
@@ -27,6 +27,7 @@ import { UI_OPERATION_DAYS } from '../../models/ui_operation-hours.model';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE, UI_SINGLE_SCREEN } from '../../models/ui_single-screen.model';
 import { HelperService } from '../../services/helper-service/helper.service';
+import { ACTIVITY_CODES } from '../../models/constant_activity_code';
 @Component({
 	selector: 'app-single-license',
 	templateUrl: './single-license.component.html',
@@ -35,6 +36,7 @@ import { HelperService } from '../../services/helper-service/helper.service';
 })
 
 export class SingleLicenseComponent implements OnInit, OnDestroy {
+	activities: any;
 	anydesk_id: string;
 	anydesk_restarting: boolean = false;
 	apps: any;
@@ -62,6 +64,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	default_selected_month: string = this._date.transform(`${this.current_year}-${this.current_month}`, 'y-MM');
 	duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' }; 
+	display_status: number;
 	enable_edit_alias: boolean = false;
 	eventsSubject: Subject<void> = new Subject<void>();
 	filters: any;
@@ -71,7 +74,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host_notes = '';
 	host_route: string;
 	initial_load_charts = true;
-	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A',  date: 'N/A' };
+	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A',  date: 'N/A', status: 'N/A' };
 	is_dealer: boolean = false;
 	is_new_standard_template = false;
 	license_data: any;
@@ -109,6 +112,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	storage_capacity = '';
 	subscriptions: Subscription = new Subscription;
 	template_data: API_TEMPLATE;
+	tags: string[] = [];
 	timezone: any;
 	title: string[] = [];
 	update_alias: FormGroup;
@@ -124,7 +128,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	analytics_reload: Subject<void> = new Subject<void>();
 
 	_socket: any;
+	is_admin: boolean = false;
 	thumb_no_socket: boolean = true;
+	terminal_value: string;
+	terminal_entered_scripts: string[] = [];
+
 
 	display_mode = [
 		{value: 'daily', viewValue: 'Daily'},
@@ -167,7 +175,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
             query: 'client=Dashboard__SingleLicenseComponent',
@@ -176,11 +183,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
 		this.getLicenseInfo();
+		this.socket_checkDisplayStatus();
 		this.socket_piPlayerStatus();
 		this.socket_screenShotFailed();
 		this.socket_screenShotSuccess();
 		this.socket_updateCompleted();
 		this.socket_licenseOffline();
+		this.socket_monitorStatusResponse();
 		this.socket_getAnydeskID();
 		this.socket_speedtestSuccess();
 		this.socket_deadUI();
@@ -193,6 +202,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
+		}
+
+		if (roleId === UI_ROLE_DEFINITION.administrator) {
+			this.is_admin = true;
 		}
 
 		this._socket.on('connect', () => {
@@ -279,6 +292,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.queried_date = this._date.transform(new Date(), 'longDate');
 			this.getContentReport_daily(this._date.transform(new Date(), 'y-MM-dd'))
 		}
+	}
+
+	getActivityOfLicense(id: string) {
+		this._license.get_activities(id).subscribe(
+			(data: any) => {
+				this.activities = data.paging.entities;
+			}, 
+			error => {
+				console.log(error)
+			}
+		)
 	}
 
 	getContentByLicenseId(id: string): void {
@@ -395,6 +419,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.title = data.license.alias;
 					this.license_key = data.license.licenseKey;
 					this.license_data = data.license;
+					this.tags = this.setTags(data.license.tags);
 					this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
 					this.timezone = data.timezone;
 					this.anydesk_id = data.license.anydeskId;
@@ -417,7 +442,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
 						this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
 						this.internet_connection.date = date ? `${date}` : 'N/A';
-
+						this.internet_connection.status = download > 7 ? 'Good' : 'Slow';
 					}
 
 					if (this.license_data.internetType != null) {
@@ -449,13 +474,25 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.getLicenseById(this.license_id);
 					this.getScreenshots(this.license_id);
 					this.getContentByLicenseId(this.license_id);
+					this.getActivityOfLicense(this.license_id);
+					// this.getLicenseResourceUsage(this.license_id);
 				}
 			)
 		);
 	}
 
-	getScreenById(id: string, licenseId?: string): void {
+	getLicenseResourceUsage(id: string) {
+		this._license.get_license_resource(id).subscribe(
+			data => {
+				console.log('Resource Usage', data)
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
+	}
 
+	getScreenById(id: string, licenseId?: string): void {
 		this.subscriptions.add(this._screen.get_screen_by_id(id, licenseId)
 			.subscribe(
 				(response: { contents, createdBy, dealer, host, licenses, screen, screenZonePlaylistsContents, template, timezone, message }) => {
@@ -507,29 +544,31 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	monthSelected(value: any): void {
-
 		if (this.current_tab !== 'Analytics') return;
 		
 		if (this.selected_month == this.default_selected_month) {
-
 			this.monthly_chart_updating = true;
 			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-
 		} else {
-
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
-
 			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
 			this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
 			this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
-
 		}
+	}
 
+	monitorToggle(e) {
+		this.display_status = 0;
+		this._socket.emit('D_monitor_toggle', {
+			license_id: this.license_id,
+			status: e.checked
+		})
+
+		this.saveActivityLog(e.checked ? ACTIVITY_CODES.monitor_toggled_on : ACTIVITY_CODES.monitor_toggled_off);
 	}
 
 	onDateChange(value: any): void {
-
 		if (this.selected_display_mode === 'daily') {
 
 			this.queried_date = this._date.transform(value, 'longDate');
@@ -631,7 +670,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	openConfirmationModal(status: string, message: string, data: any): void {
-
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
@@ -639,7 +677,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 
 		dialogRef.afterClosed().subscribe(() => this.ngOnInit());
-
 	}
 	
 	onSelectBackgroundZone(event: any): void {
@@ -667,6 +704,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.screen_route = "/" + this.routes + "/screens/" + this.screen.screen_id;
 		this.dealer_route = "/" + this.routes + "/dealers/" + this.screen.assigned_dealer_id;
 		this.host_route = "/" + this.routes + "/hosts/" + this.screen.assigned_host_id;
+	}
+
+	saveActivityLog(activity_code: string) {
+		const data = {
+			licenseId: this.license_id,
+			activityCode: activity_code,
+			initiatedBy: this._auth.current_user_value.user_id
+		}
+
+		this._license.save_activity(data).subscribe(
+			data => {
+				this.getActivityOfLicense(this.license_id);
+			},
+			error => {
+				console.log(error)
+			}
+		)
 	}
 
 	tabSelected(event: { index: number }): void {
@@ -758,7 +812,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
 		this.has_playlist = true;
 
-	} 
+	}
+
+	updateDisplayStatus(data: {licenseId: string, displayStatus: number}) {
+		this._license.update_display_status(data).subscribe(
+			data => {
+				console.log(data);
+			},
+			error => {
+				console.log(error);
+			}
+		)
+	}
 
 	// ==== START: Socket Dependent Events ====== //
 
@@ -773,6 +838,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	internetSpeedTest(): void {
 		this.speedtest_running = true;
 		this._socket.emit('D_speed_test', this.license_id);
+		this.saveActivityLog(ACTIVITY_CODES.speedtest);
 	}
 
 	pushUpdate(): void {
@@ -790,6 +856,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	restartAnydesk() {
 		this._socket.emit('D_restart_anydesk', this.license_id);
 		this.anydesk_restarting = true;
+		this.saveActivityLog(ACTIVITY_CODES.restart_anydesk);
 	}
 
 	restartPi(): void {
@@ -804,9 +871,37 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.screenshot_timeout = true;
 		this.screenshot_message = "Taking Screenshot, Please wait. . .";
 		this._socket.emit('D_screenshot_pi', this.license_id);
-		setTimeout(() => {
-			this.getScreenshots(this.license_id);
-		}, 15000);
+		this.saveActivityLog(ACTIVITY_CODES.screenshot)
+	}
+
+	socket_checkDisplayStatus(): void {
+		this._socket.emit('D_is_monitor_on', this.license_id);
+	}
+
+	socket_monitorStatusResponse(): void {
+		this._socket.on('SS_monitor_status_response', (data: {licenseId: string, monitorStatus: string}) => {
+			if (this.license_id === data.licenseId) {
+				if (data && data.monitorStatus.includes("power status: on")) {
+					this.updateDisplayStatus(
+						{
+							licenseId: this.license_id,
+							displayStatus: 1
+						}
+					)
+					
+					this.display_status = 1
+				} else {
+					this.updateDisplayStatus(
+						{
+							licenseId: this.license_id,
+							displayStatus: 0
+						}
+					)
+
+					this.display_status = 2
+				}
+			}
+		})
 	}
 
 	socket_screenShotFailed(): void {
@@ -853,7 +948,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
 				this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
 				this.internet_connection.date = date;
-				this.license_data.internetSpeed = downloadMbps > 7 ? 'Good' : 'Slow';
+				this.license_data.d = downloadMbps > 7 ? 'Good' : 'Slow';
 				this.speedtest_running = false;
 			
 				this._license.update_internet_info(
@@ -1383,6 +1478,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
+	private setTags(data: { name: string, tagId: number, tagTypeId: number, ownerId: string }[]): string[] {
+		return data.map(tag => tag.name);
+	}
+
 	private showInformationModal(width: string, height: string, title: string, contents: any, type: string, character_limit?: number): void {
 		this._dialog.open(InformationModalComponent, {
 			width: width,
@@ -1486,17 +1585,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.pi_status = false;
 				this.player_status = false;
 
+				this.saveActivityLog(ACTIVITY_CODES.reset_data);
+
 			} else if(result === 'update') {
 
 				this._socket.emit('D_update_player', this.license_id);
 				this.pi_updating = true;
 				this.update_btn = 'Updating...';
 
+				this.saveActivityLog(ACTIVITY_CODES.content_update);
+
 			} else if(result === 'refetch') {
 
 				this._socket.emit('D_refetch_pi', this.license_id);
 				this.pi_updating = true;
 				this.update_btn = 'Ongoing Refetch';
+
+				this.saveActivityLog(ACTIVITY_CODES.refetch)
 
 			} else if(result === 'system_update') {
 
@@ -1505,6 +1610,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.pi_updating = true;
 				this.update_btn = 'Ongoing System Update';
 
+
+				this.saveActivityLog(ACTIVITY_CODES.update_system);
+
 			} else if(result === 'pi_restart') {
 
 				this._socket.emit('D_pi_restart', this.license_id);
@@ -1512,12 +1620,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.pi_updating = true;
 				this.update_btn = 'Pi Restarting';
 
+				this.saveActivityLog(ACTIVITY_CODES.reboot_pi);
+
 			} else if(result === 'player_restart') {
 
 				this._socket.emit('D_player_restart', this.license_id);
 				this.pi_status = false;
 				this.pi_updating = true;
 				this.update_btn = 'Player Restarting';
+
+				this.saveActivityLog(ACTIVITY_CODES.reboot_player);
 
 			} else if(result === 'system_upgrade') {
 
@@ -1527,8 +1639,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.update_btn = 'Ongoing System Update';
 
 			}
-
 		});
 	}
 
+	submitTerminalCommand() {
+		this.terminal_entered_scripts.push(this.terminal_value);
+
+		this._socket.emit('D_run_terminal', {
+			license_id: this.license_id,
+			script: this.terminal_value
+		});
+
+		this.saveActivityLog(ACTIVITY_CODES.terminal_run);
+
+ 		this.terminal_value = undefined;
+	}
 }

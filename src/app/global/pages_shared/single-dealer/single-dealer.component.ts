@@ -29,6 +29,7 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { HelperService } from '../../services/helper-service/helper.service';
+import { verifyHostBindings } from '@angular/compiler';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -56,6 +57,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	d_desc: string = "Dealer since January 25, 2019";
 	d_name: string = "Business Name";
 	from_change: boolean = false;
+    height_show: boolean = true;
 	host_card:any;
 	host_data: any = [];
 	host_data_api: API_HOST[];
@@ -97,6 +99,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	pi_updating: boolean = false;
 	remote_update_disabled = false;
 	remote_reboot_disabled = false;
+	screenshot_disabled = false;
 	search_data: string = "";
 	search_data_advertiser: string = "";
 	search_data_license: string = "";
@@ -107,8 +110,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	show_admin_buttons: boolean = false
 	single_info: Array<any>;
 	sort_column: string = "";
+    sort_column_advertisers: string = "";
 	sort_column_hosts: string = "";
 	sort_order: string = "";
+	sort_order_advertisers: string = "";
 	sort_order_hosts: string = "";
 	statistics: API_LICENSE_STASTICS;
 	subscription: Subscription = new Subscription;
@@ -123,12 +128,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	_socket: any;
 
 	adv_table_col = [
-		'#',
-		'Name',
-		'Region',
-		'State',
-		'Status',
-		'Assigned User'
+		{ name: '#', sortable: false},
+		{ name: 'Name', sortable: true, column:'Name'},
+		{ name: 'Region', sortable: true, column:'Region'},
+		{ name: 'State', sortable: true, column:'State'},
+		{ name: 'Status', sortable: true, column:'Status'},
+		{ name: 'Assigned User', sortable: true, column:'AdvertiserId'}
 	];
 
 	//Documentation for columns:
@@ -150,6 +155,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true},
         { name: null, sortable: false, no_export: true, hidden: true},
+        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
 		{ name: 'Screenshot', sortable: false, no_export: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
@@ -298,10 +304,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			if (this.timeout_duration >= 10) {
 				this.remote_update_disabled = false;
 				this.remote_reboot_disabled = false;
+				this.screenshot_disabled = false;
 				localStorage.removeItem(`${this.dealer_id}`);
 			} else {
 				this.remote_update_disabled = true;
 				this.remote_reboot_disabled = true;
+				this.screenshot_disabled = false;
 			}
 			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 		}
@@ -342,8 +350,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	deactivateLicense(e): void {
 		this.subscription.add(
 			this._license.deactivate_license(e).subscribe(
-				() => 
-					this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
+				() => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
 				error => console.log('Error deactivating license', error)
 			)
 		);
@@ -370,7 +377,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getDealerAdvertiser(page): void {
 		this.searching_advertiser = true;
 		this.subscription.add(
-			this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_data_advertiser).subscribe(
+			this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_data_advertiser, this.sort_column_advertisers, this.sort_order_advertisers).subscribe(
 				data => {
 					this.initial_load_advertiser = false;
 					this.searching_advertiser = false;
@@ -444,7 +451,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._user.get_user_alldata_by_id(id).subscribe(
 				data =>  {
-					this.dealer_user_data = Object.assign({},data.user, data.dealer[0]);
+					data.dealer[0].tags = this.dealer.tags;
+					this.dealer_user_data = Object.assign({}, data.user, data.dealer[0]);
 					this.loaded = true;
 				},
 				error => console.log('Error retrieving dealer user data', error)
@@ -775,8 +783,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	reloadLicense(): void {
 		if (this.searching_license) return;
 		this.license_data = [];
-		this.sort_column = "";
-		this.sort_order = "";
+		this.sort_column = 'PiStatus';
+		this.sort_order = 'desc';
 		this.array_to_delete = [];
 		this.getLicenseTotalCount(this.dealer_id);
 		this.getLicensesofDealer(1);
@@ -785,6 +793,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (this.licenses) {
 			this.resyncSocketConnection();
 		}
+	}
+
+	screenshotDealer(): void {
+		this.warningModal('warning', 'Screenshot Dealer', "Screenshot all this dealer's licenses, Requires a reload after a minute or two.", 'Click OK to continue', 'screenshot');
 	}
 
 	updateAndRestart(): void {
@@ -846,6 +858,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						}
 					)
 					break;
+				case 'screenshot': 
+					if (this.licenses) {
+						this.licenses.forEach(
+							i => {
+								this._socket.emit('D_screenshot_pi', i.licenseId);
+							}
+						)
+					}
+					break;
 				default:
 			}
 			const now = moment().format('MMMM Do YYYY, h:mm:ss a');
@@ -854,6 +875,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 			this.remote_reboot_disabled = true;
 			this.remote_update_disabled = true;
+			this.screenshot_disabled = true;
 		});
 	}
 
@@ -880,6 +902,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.sort_column_hosts = data.column;
 		this.sort_order_hosts = data.order;
 		this.getDealerHost(1);
+	}
+    
+    getAdvertisersColumnsAndOrder(data) {
+		this.sort_column_advertisers = data.column;
+		this.sort_order_advertisers = data.order;
+		this.getDealerAdvertiser(1);
 	}
 
     getDealerLicenses() {
@@ -954,6 +982,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+				item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
 				item.screenType =  this._titlecase.transform(item.screenType);
 				item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 				item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
@@ -1189,4 +1218,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}, 1000);
 	}
 	
+    toggleCharts() {
+        this.height_show = !this.height_show;
+    }
 }

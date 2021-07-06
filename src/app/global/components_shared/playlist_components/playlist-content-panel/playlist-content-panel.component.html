@@ -53,8 +53,17 @@
 
 			<!-- CONTENT LIST BUTTON -->
 			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="onViewContentList()">
-				Content List
-				<span class="fas fa-list ml-2 sm-text"></span>
+				<span *ngIf="!list_view_mode; else grid">
+                    List View
+                    <span class="fas fa-list ml-2 sm-text"></span>
+                </span>
+                <ng-template #grid>
+                    <span>
+                        Grid View
+                        <span class="fas fa-th ml-2 sm-text"></span>
+                    </span>
+                </ng-template>
+				
 			</button>
 
 			<!-- VIEW SCHEDULES BUTTON -->
@@ -93,21 +102,24 @@
 
 	<div class="playlist-content-panel" [ngClass]="is_marking ? 'd-none' : null">
 		<div class="row no-gutters" #draggables id="draggables">
-			<div class="col-lg-1"
+			<div
 			*ngFor="let content of playlist_content; let i = index" 
 			[attr.data-id]="content.playlistContentId"
 			id="{{ 'drg_' + content.playlistContentId }}"
-			[ngClass]="selected_contents.includes(content.playlistContentId) ? 'marked' : null">
+			[ngClass]="{'marked' : selected_contents.includes(content.playlistContentId), 'col-lg-4': list_view_mode, 'col-lg-1': !list_view_mode}">
 				<app-playlist-content
-				[playlist_host_license]="playlist_host_license"
-				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[dealer]="content.dealerId"
-				[content]="content"
-				[is_marking]="false"
-				[schedule_status]="content.scheduleStatus"
-				(options_saved)="optionsSaved($event)"
-				(reset_playlist_content)="reloadPlaylist()"
-				(remove_playlist_content)="removePlaylistContent($event)">
+					[playlist_host_license]="playlist_host_license"
+					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+					[dealer]="content.dealerId"
+					[content]="content"
+					[is_marking]="false"
+					[schedule_status]="content.scheduleStatus"
+					[page]="page"
+					[total_contents]="playlist_content.length"
+					[is_list]="list_view_mode"
+					(options_saved)="optionsSaved($event)"
+					(reset_playlist_content)="reloadPlaylist()"
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>
@@ -115,24 +127,27 @@
 
 	<div class="playlist-content-panel" [ngClass]="is_marking ? null : 'd-none'">
 		<div class="row no-gutters">
-			<div class="col-lg-1"
+			<div
 			*ngFor="let content of playlist_content; let i = index" 
 			[attr.data-id]="content.playlistContentId"
 			id="{{ 'drg_' + content.playlistContentId }}"
 			[class.future-schedule]="content.scheduleStatus === 'future'"
 			[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-			[ngClass]="selected_contents.includes(content.playlistContentId) ? 'marked' : null">
+			[ngClass]="{'marked' : selected_contents.includes(content.playlistContentId), 'col-lg-1' : !list_view_mode, 'col-lg-4': list_view_mode}">
 				<app-playlist-content
-				[playlist_host_license]="playlist_host_license"
-				[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-				[content]="content"
-				[dealer]="content.dealerId"
-				[is_marking]="true"
-				[schedule_status]="content.scheduleStatus"
-				(options_saved)="optionsSaved($event)"
-				(click)="selectedContent(content.playlistContentId)"
-				(reset_playlist_content)="reloadPlaylist()"
-				(remove_playlist_content)="removePlaylistContent($event)">
+					[playlist_host_license]="playlist_host_license"
+					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+					[content]="content"
+					[dealer]="content.dealerId"
+					[is_marking]="true"
+					[schedule_status]="content.scheduleStatus"
+					[page]="page"
+					[total_contents]="playlist_content.length"
+					[is_list]="list_view_mode"
+					(options_saved)="optionsSaved($event)"
+					(click)="selectedContent(content.playlistContentId)"
+					(reset_playlist_content)="reloadPlaylist()"
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>

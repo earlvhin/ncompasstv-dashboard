@@ -29,6 +29,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	@Input() required: boolean;
 	@Input() search_keyword: string;
 	@Input() initial_value: string;
+	@Input() is_scroll_next_disabled = false;
 	@Input() new_value: string;
 	@Input() no_edit: boolean;
 	@Input() loading_data: boolean;
@@ -36,7 +37,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	@Input() old: boolean = false;
 	@Input() initial_load: boolean;
 	@Input() reset_value: boolean;
-	@Input()  type?: string;
+	@Input() type?: string;
 
 	view_value: string;
 	search_result: Array<any>;
@@ -136,6 +137,9 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	}
 	
 	onScroll(event) {
+
+		if (this.is_scroll_next_disabled) return;
+
 		if (event.target.offsetHeight + event.target.scrollTop == event.target.scrollHeight && event.target.scrollHeight != 0) {
 			if(this.paging) {
 				if(this.paging.hasNextPage) {

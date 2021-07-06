@@ -1,0 +1,108 @@
+<div id="tagsPage" class="theme-container">
+	<div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+			<div class="flex-even text-right">
+				<button mat-button mat-raised-button class="theme-btn _primary sm-text mr-2"
+					(click)="onAddTag()">
+					Add Tags
+				</button>
+			</div>
+        </div>
+    </div>
+
+	<hr class="my-4">
+
+	<!-- COUNT CARDS SECTION -->
+	<div class="row cards">
+		<div class="col-lg">
+			<!-- DEALER COUNT -->
+			<div *ngIf="!isLoadingCount; else loading;">
+				<app-data-card-count 
+					[data_value]="count.dealer" 
+					[data_label]="'Dealers'">
+				</app-data-card-count>
+			</div>
+		</div>
+		<div class="col-lg">
+			<!-- HOST COUNT -->
+			<div *ngIf="!isLoadingCount; else loading;">
+				<app-data-card-count 
+					[data_value]="count.host" 
+					[data_label]="'Hosts'">
+				</app-data-card-count>
+			</div>
+		</div>
+		<div class="col-lg">
+			<!-- ADVERTISER COUNT -->
+			<div *ngIf="!isLoadingCount; else loading;">
+				<app-data-card-count 
+					[data_value]="count.advertiser" 
+					[data_label]="'Advertisers'">
+				</app-data-card-count>
+			</div>
+		</div>
+		<div class="col-lg">
+			<!-- LICENSE COUNT -->
+			<div *ngIf="!isLoadingCount; else loading;">
+				<app-data-card-count 
+					[data_value]="count.license" 
+					[data_label]="'Licenses'">
+				</app-data-card-count>
+			</div>
+		</div>
+	</div>
+
+	<hr class="my-4">
+
+	<!-- TAG TYPES DROPDOWN ROW -->
+	<div class="row tag-type-selection">
+		<div class="col-lg">
+			<mat-form-field>
+				<mat-label>Select Tag Type</mat-label>
+				<mat-select (selectionChange)="onSelectTagType($event.value)" [(ngModel)]="currentTagType">
+					<mat-option *ngFor="let type of tagTypes" [value]="type">
+						{{ type.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
+		</div>
+	</div>
+
+	<!-- TAGS TABLE -->
+	<div class="row">
+		<div class="col-lg">
+			<mat-card>
+				<div class="theme-table">
+					<table class="full-width" *ngIf="!isLoadingTags; else loading;">
+						<thead align="left" class="border-bottom">
+							<tr>
+								<th *ngFor="let column of columns" [class]="column.class">{{ column.name }}</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr *ngFor="let tag of tags; let i = index;">
+								<td class="p-3">{{ i + 1 }}</td>
+								<td class="p-3">{{ tag.name }}</td>
+								<td class="p-3">{{ tag.count }}</td>
+								<td class="p-3 action-buttons">
+									<mat-icon class="no-select" (click)="onViewTag(tag.name)">edit</mat-icon>
+									<mat-icon class="no-select text-danger" (click)="onDelete(tag.name)">delete</mat-icon>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</mat-card>
+		</div>
+	</div>
+	
+</div>
+
+<ng-template #loading>
+	<div class="py-4">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>

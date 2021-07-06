@@ -345,7 +345,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES
+		DIRECTIVES,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -411,6 +411,7 @@ const DIRECTIVES = [
 	exports: [
 		ngComponents,
 		MaterialModules,
+		FormsModule,
 		ReactiveFormsModule,
 		DIRECTIVES,
 	],

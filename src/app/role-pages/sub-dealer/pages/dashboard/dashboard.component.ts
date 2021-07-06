@@ -144,15 +144,13 @@ export class DashboardComponent implements OnInit, OnDestroy {
 
 		this._host.get_host_by_dealer_id(id, 1, '').pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { message?: string, hosts: any[] }) => {
-
+				response => {
 					if (response.message) {
 						this.no_hosts = true;
 						return;
 					}
-					
 					const hosts = [];
-					response.hosts.map(i => hosts.push(i.host));
+					response.paging.entities.map(i => hosts.push(i));
 					this.latest_hosts = this.hosts_mapToUI(hosts).slice(0,5);
 				},
 				error => console.log('Error retrieving hosts by dealer id', error)

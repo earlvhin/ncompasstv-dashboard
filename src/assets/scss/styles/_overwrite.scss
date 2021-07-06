@@ -148,4 +148,12 @@
 	.mat-expansion-panel-body {
         display: flex;
     }
+
+    .mat-tab-header, .mat-tab-nav-bar {
+        border-bottom: 2px solid $dark;
+    }
+
+    .mat-tab-list {
+        padding-bottom: 10px;
+    }
 }

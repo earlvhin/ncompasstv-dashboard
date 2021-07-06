@@ -23,6 +23,7 @@ import { AuthService } from '../../../services/auth-service/auth.service';
 export class MediaViewerComponent implements OnInit {
 
 	file_data: any;
+    file_size_formatted: any;
 	subscription: Subscription = new Subscription;
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	is_edit: boolean = false;
@@ -140,11 +141,10 @@ export class MediaViewerComponent implements OnInit {
 	}
 
 	setSettings(selected) {
-		console.log("SELECTED", selected)
 		var datetime = new Date(selected.date_uploaded);
 		var  time = datetime.getHours() + ':' + datetime.getMinutes() + " " + (datetime.getHours() < 12 ? 'AM' : 'PM' );
 		this.file_data.selected.time_uploaded = time;
-		this.file_data.selected.file_size = this.getFileSize(selected.file_size)
+		this.file_size_formatted = this.getFileSize(selected.file_size);
 		this.file_data.selected.index = selected.index;
 
 		// File URL Base on Filetype
@@ -164,7 +164,6 @@ export class MediaViewerComponent implements OnInit {
 
 	fetchNextMedia(i) {
 		this.file_data.selected = this.file_data.content_array[i+1];
-		console.log("NEW", this.file_data.selected)
 		if(this.file_data.selected.content_data) {
 			this.file_data.selected = this.file_data.selected.content_data
 		} else {}
@@ -172,7 +171,6 @@ export class MediaViewerComponent implements OnInit {
 	}
 
 	fetchPrevMedia(i) {
-		console.log(i)
 		this.file_data.selected = this.file_data.content_array[i-1];
 		if(this.file_data.selected.content_data) {
 			this.file_data.selected = this.file_data.selected.content_data
@@ -186,7 +184,6 @@ export class MediaViewerComponent implements OnInit {
 	}
 
 	reassignMedia(e) {
-		console.log("E", e)
 		var temp = [];
 		temp.push({'is_edit': true})
 		temp.push({'id': this.file_data.selected.content_id})

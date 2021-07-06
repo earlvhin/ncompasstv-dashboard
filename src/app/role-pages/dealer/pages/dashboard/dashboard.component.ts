@@ -260,9 +260,9 @@ export class DashboardComponent implements OnInit {
 				(data: any) => {
 					if (!data.message) {
 						var x = [];
-						data.hosts.map (
+						data.paging.entities.map (
 							i => {
-								x.push(i.host);
+								x.push(i);
 							}
 						)
 						this.latest_hosts = this.hosts_mapToUI(x).slice(0,5);

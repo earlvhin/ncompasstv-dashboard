@@ -30,7 +30,8 @@ export class USER {
     status: string;
     token: string;
     refreshToken: string;
-    userRoles: API_USER_ROLES;
+	organization: string;
+    userRoles: API_USER_ROLES[];
 }
 
 export class USER_PROFILE {

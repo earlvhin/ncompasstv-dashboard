@@ -2,11 +2,15 @@
 	<table class="full-width" *ngIf="table_data.length > 0; else loading">
 		<thead align="left" class="border-bottom">
 			<tr>
-				<th *ngFor="let tc of table_columns" class="p-3" [ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''">
+				<th *ngFor="let tc of table_columns" class="p-3" [ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''" [style.display]="tc.no_show ? 'none' : ''">
 					<span *ngIf="!tc.hidden; else checkbox">
-                        {{ !tc.name ? tc : tc.name }} 
+                        {{ !tc.name ? tc : tc.name }}
                     </span>
-					<i *ngIf="tc.sortable" class="sort cursor-pointer ml-2 fas fa-angle-{{sort_order == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sort_order == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+					<i *ngIf="tc.sortable" class="sort cursor-pointer ml-2 fas fa-angle-{{sort_order == 'desc' ? 'down' : 'up'}}" 
+						(click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')" 
+						data-toggle="tooltip" 
+						title="Sorted by {{sort_order == 'desc' ? 'Descending' : 'Ascending'}} Order">
+					</i>
 				</th>
                 <ng-template #checkbox>
                     <span *ngIf="multiple_delete" class="text-right" class="p-3">
@@ -41,8 +45,18 @@
 						<ng-container *ngIf="!data[d].isImage; else isImage;">
 							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params">
 								<ng-container>
-									{{ data[d].value }}
+
+									<div *ngIf="!data[d].permission; else userWithPermission">{{ data[d].value }}</div>
+
+									<ng-template #userWithPermission>
+										<div class="d-flex name-and-permission">
+											<div>{{ data[d].value }}</div>
+											<div class="permission-container">{{ data[d].permission }}</div>
+										</div>
+									</ng-template>
+
 								</ng-container>
+
 							</a>
 							<span *ngIf="data[d].business_hours" >
 								<span class="fas fa-clock cursor-pointer text-gray-with-hover"  placement="right" [ngbTooltip]="testing"></span>
@@ -60,7 +74,8 @@
 										<i class="fas fa-clock"></i> {{data[d].business_hours_label.schedule}}
 									</span>
 								</div>
-							  </ng-template>
+							</ng-template>
+
 							<ng-template #no_link>
 								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
 

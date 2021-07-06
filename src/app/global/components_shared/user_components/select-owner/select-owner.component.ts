@@ -349,10 +349,10 @@ export class SelectOwnerComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.dealer_id, page, this.search_host_data).subscribe(
 					data => {
-						data.hosts.map (
+						data.paging.entities.map (
 							i => {
-								this.hosts.push(i.host);
-								this.hosts_data.push(i.host);
+								this.hosts.push(i);
+								this.hosts_data.push(i);
 							}
 						)
 						this.paging_host = data.paging;
@@ -375,10 +375,10 @@ export class SelectOwnerComponent implements OnInit {
 
 							if (this.search_host_data == '') {
 
-								data.hosts.map (
+								data.paging.entities.map (
 									host => {
-										this.hosts.push(host.host);
-										this.hosts_data.push(host.host);
+										this.hosts.push(host);
+										this.hosts_data.push(host);
 									}
 								);
 

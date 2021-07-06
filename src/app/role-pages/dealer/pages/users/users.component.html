@@ -18,15 +18,23 @@
 
     <div class="content-section">
         <div class="row">
-            <div class="col-12 col-lg">
+            <div class="col-lg">
                 <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
-                    [data_value]="user_details.basis"
-                    [data_label]="user_details.basis_label">
+						[data_value]="user_details.basis"
+						[data_label]="user_details.basis_label">
                     </app-data-card-count>
                 </mat-card>
             </div>
-            <div class="col-12 col-lg">
+            <div class="col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count *ngIf="user_details; else small_loader"
+						[data_value]="user_details.sub_dealer_count"
+						[data_label]="user_details.sub_dealer_label">
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-lg">
                 <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
                     [data_value]="user_details.hosts"
@@ -34,11 +42,11 @@
                     </app-data-card-count>
                 </mat-card>
             </div>
-            <div class="col-12 col-lg">
+            <div class="col-lg">
                 <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
-                    [data_value]="user_details.advertiser"
-                    [data_label]="user_details.advertiser_label">
+						[data_value]="user_details.advertiser"
+						[data_label]="user_details.advertiser_label">
                     </app-data-card-count>
                 </mat-card>
             </div>
@@ -50,14 +58,14 @@
                     <div class="col-lg-8"></div>
                     <div class="col-lg-4">
                         <app-search-field
-                        *ngIf="users.length != 0"
-                        [form_title]="'Search Name or Email Address'"
-                        [placeholder]="'Example: N-Compass'"
-                        [data_reference]="users"
-                        [primary_keyword]="'name'"
-                        [secondary_keyword]="'email'"
-                        (searched)="filterData($event)"
-                        ></app-search-field>
+							*ngIf="users.length != 0"
+							[form_title]="'Search Name or Email Address'"
+							[placeholder]="'Example: N-Compass'"
+							[data_reference]="users"
+							[primary_keyword]="'name'"
+							[secondary_keyword]="'email'"
+							(searched)="filterData($event)">
+						</app-search-field>
                     </div>
                 </div>
                 <div class="row" *ngIf="users.length != 0">

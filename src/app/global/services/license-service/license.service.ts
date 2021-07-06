@@ -115,6 +115,11 @@ export class LicenseService {
 	get_screenshots(id) {
 		return this._http.get(`${environment.base_uri_old}${environment.getters.api_get_screenshots}${id}`, this.httpOptions).map( (data: any) => data.files );
 	}
+
+	search_license(keyword = '') {
+		const url = `${this.baseUri}${this.getters.search_license}${keyword}`;
+		return this._http.get(url, this.httpOptions);
+	}
 	
 	update_alias(data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_alias}`, data, this.httpOptions);
@@ -152,6 +157,15 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.install_date_list}`, data, options);
 	}
 
+	/**
+	 * @description: Update the Display Status of the License
+	 * @param data: {licenseId:string, displayStatus: number}
+	 * @returns: Observable of ANY
+	 */
+	update_display_status(data: {licenseId: string, displayStatus: number}): Observable<any> {
+		return this._http.post(`${environment.base_uri}${environment.update.api_display_status}`, data, this.httpOptions);
+	}
+
 	delete_screenshots(id) {
 		return this._http.get(`${environment.base_uri_old}${environment.delete.api_remove_screenshots}${id}`, this.httpOptions);
 	}
@@ -169,7 +183,33 @@ export class LicenseService {
 	}
 
 	/**
-	 * Update Internet Informationof License ID
+	 * @description: Get Resource Usage By License
+	 * @param license: string
+	 */
+	get_license_resource(license: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_resource_logs}${license}`, this.httpOptions);
+	}
+
+	/**
+	 * @description: Get All Activities
+	 * @param license
+	 * @returns array of activities
+	 */
+	get_activities(id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_activities_by_license_id}${id}`, this.httpOptions);
+	}
+	
+	/**
+	 * @description: Save User Dashboard Activities
+	 * @param activity
+	 * @returns: Observable of ANY
+	 */
+	save_activity(activity) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_save_activity}`, activity, this.httpOptions);
+	}
+
+	/**
+	 * @description: Update Internet Information of License ID
 	 * @param data - LicenseID, InternetInfo Data 
 	*/
 	update_internet_info(data) {

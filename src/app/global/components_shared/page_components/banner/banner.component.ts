@@ -3,7 +3,6 @@ import { TitleCasePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';
@@ -11,7 +10,6 @@ import { AuthService } from '../../../services/auth-service/auth.service';
 import { EditSingleAdvertiserComponent } from '../../../../global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from '../../../../global/pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from '../../../../global/pages_shared/edit-single-host/edit-single-host.component';
-import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { InformationModalComponent } from '../information-modal/information-modal.component';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 
@@ -48,6 +46,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	routes: string;
 	show_hours = false;
 	status = '';
+	tags: string[];
 	notes: string = '';
 	view = '';
 
@@ -56,7 +55,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 	constructor(
 		private _dialog: MatDialog,
 		private _auth: AuthService,
-		private _helper: HelperService,
 		private _router: Router,
 		private _titlecase: TitleCasePipe,
 	) { }
@@ -64,21 +62,21 @@ export class BannerComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
-		if (this.host_data && this.host_data.host) {
-			this.category = this._titlecase.transform(this.host_data.host.category);
-			if (this.host_data.host.storeHours) {
-				this.business_hours = JSON.parse(this.host_data.host.storeHours);
-				for (let i = 0; i < this.business_hours.length; i++) {
+		if (this.host_data) {
+			this.category = this._titlecase.transform(this.host_data.category);
+			
+			if (this.host_data.storeHours) {
+				this.business_hours = JSON.parse(this.host_data.storeHours);
 
-					if (this.business_hours[i].periods.length > 0) {
-						this.count = this.count + 1;
-					}
+				for (let i = 0; i < this.business_hours.length; i++) {
+					if (this.business_hours[i].periods.length > 0) this.count = this.count + 1;
 				}
-				if (this.count == 0) {
-					this.business_hours = null;
-				}
+
+				if (this.count == 0) this.business_hours = null;
+
 				this.setCurrentBusinessDay();
 			}
+
 		} else if (this.advertiser_data) {
 			this.category = this._titlecase.transform(this.advertiser_data.category);
 		}
@@ -118,11 +116,11 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	onShowNotes(): void {
-		this.showNotesModal('Notes', this.host_data.host.notes, 'textarea', 500);
+		this.showNotesModal('Notes', this.host_data.notes, 'textarea', 500);
 	}
 
 	partialNotes(): string {
-		const notes = this.host_data.host.notes;
+		const notes = this.host_data.notes;
 
 		if (!notes || notes.trim().length <= 0) 
 			return '';
@@ -234,10 +232,30 @@ export class BannerComponent implements OnInit, OnDestroy {
 		else this.status = 'inactive';
 	}
 
-	private setView(): string {
-		if (this.dealer_data) return this.view = 'dealer';
-		if (this.host_data) return this.view = 'host';
-		if (this.advertiser_data) return this.view = 'advertiser';
+	private setTags(): void {
+
+		let tags: { name: string }[];
+
+		switch (this.view) {
+			case 'host':
+				tags = this.host_data.tags;
+				break;
+			case 'advertiser':
+				tags = this.advertiser_data.tags;
+				break;
+			default:
+				tags = this.dealer_data.tags;
+		}
+
+		this.tags = tags.map(tag => tag.name);
+
+	}
+
+	private setView(): void {
+		if (this.dealer_data) this.view = 'dealer';
+		if (this.host_data) this.view = 'host';
+		if (this.advertiser_data) this.view = 'advertiser';
+		this.setTags();
 	}
 
 }

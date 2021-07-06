@@ -31,4 +31,5 @@ export class API_DEALER {
     owner: string;
     contractDetails: string;
 	advertisers: any;
+	tags: { dateCreated: string, name: string, ownerId: string, tagId: number, tagTypeId: number }[];
 }
