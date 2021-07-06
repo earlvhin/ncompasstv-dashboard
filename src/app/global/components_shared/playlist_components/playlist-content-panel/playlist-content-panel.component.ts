@@ -321,7 +321,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		let frequencyUpdate = null;
 		this.playlist_changes_data = e;
 
-		if (e.content.frequency === 2 || e.content.frequency === 3) {
+		if (e.content && (e.content.frequency === 2 || e.content.frequency === 3)) {
 			const { frequency, playlistContentId } = e.content;
 			frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
 		}

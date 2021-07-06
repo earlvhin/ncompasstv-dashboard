@@ -166,7 +166,7 @@
 														</div>
 															
 														<!-- Display Status -->
-														<div class="flex-even">
+														<div class="flex-even" *ngIf="is_admin">
 															<span class="sm-text">
 																Display Status
 															</span>
@@ -182,7 +182,7 @@
 															</ng-template>
 														</div>
 
-														<div class="flex-even">
+														<div class="flex-even" *ngIf="is_admin">
 															<span class="sm-text">
 																Display ON/OFF
 															</span>
@@ -329,8 +329,8 @@
 																<span class="sm-text">Connection Status</span>
 																<ng-container *ngIf="apps && apps.server; else netstatus_v1">
 																	<h5 *ngIf="internet_connection.status && pi_status;else offline_net;" 
-																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
-																		{{ internet_connection.status }}
+ 																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
+ 																		{{ internet_connection.status }}
 																	</h5>
 															
 																	<ng-template #offline_net>
@@ -836,7 +836,7 @@
 					</ng-container>
 				</mat-tab>
 
-				<!-- Activity Tab -->
+				<!-- Resource Tab -->
 				<!-- <mat-tab label="Resource Usage" *ngIf="is_admin">
 					<div class="row mt-4">	
 						<div class="col-lg-12">
