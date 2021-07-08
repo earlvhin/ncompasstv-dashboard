@@ -1,7 +1,7 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { Chart } from 'chart.js';
@@ -416,6 +416,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(this._license.get_license_by_id(id)
 			.subscribe(
 				(data: any) => {
+					this.setHostDetails(data.host);
 					this.title = data.license.alias;
 					this.license_key = data.license.licenseKey;
 					this.license_data = data.license;
@@ -503,7 +504,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					}
 					
 					this.screen = this.mapScreenToUI(response);
-					this.setHostDetails(response.host);
 					this.getTemplateData(response.template.templateId);
 					this.setPlaylists(response.screenZonePlaylistsContents);
 					this.setRoutes();
@@ -698,12 +698,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		return 'bg-primary';
 
-	}
-
-	setRoutes(): void {
-		this.screen_route = "/" + this.routes + "/screens/" + this.screen.screen_id;
-		this.dealer_route = "/" + this.routes + "/dealers/" + this.screen.assigned_dealer_id;
-		this.host_route = "/" + this.routes + "/hosts/" + this.screen.assigned_host_id;
 	}
 
 	saveActivityLog(activity_code: string) {
@@ -1130,11 +1124,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.charts = [];
 	}
 
-	// private emitReloadMedia(): void {
-	// 	this.eventsSubject.next();
-	// 	this.monthSelected(this.default_selected_month)
-	// }
-
 	private getHostTimezoneDay(): string {
 		let result: string;
 		let timezone: string;
@@ -1463,6 +1452,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		if (main) this.zone_playlists.push(main);
 		if (vertical) this.zone_playlists.push(vertical);
 		if (horizontal) this.zone_playlists.push(horizontal);
+	}
+
+	private setRoutes(): void {
+		const baseEndpoint = `/${this.routes}`;
+		const { screen_id, assigned_dealer_id } = this.screen;
+		const { hostId } = this.host;
+
+		this.screen_route = `${baseEndpoint}/screens/${screen_id}`;
+		this.dealer_route = `${baseEndpoint}/dealers/${assigned_dealer_id}`;
+		this.host_route = `/${baseEndpoint}/hosts/${hostId}`;
 	}
 
 	private setStorageCapacity(freeStorage: string, totalStorage: string ): void {
