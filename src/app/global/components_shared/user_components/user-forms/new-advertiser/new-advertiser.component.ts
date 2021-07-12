@@ -234,7 +234,7 @@ export class NewAdvertiserComponent implements OnInit {
         this.loading_data = true;
 		if(e > 1) {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, this.search_data).subscribe(
+				this._dealer.get_dealers_with_advertiser(e, this.search_data).subscribe(
 					data => {
 						data.dealers.map (
 							i => {
@@ -252,7 +252,7 @@ export class NewAdvertiserComponent implements OnInit {
 			}
 			
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, this.search_data).subscribe(
+				this._dealer.get_dealers_with_advertiser(e, this.search_data).subscribe(
 					data => {
 						this.dealers = data.dealers;
 						this.dealers_data = data.dealers;
