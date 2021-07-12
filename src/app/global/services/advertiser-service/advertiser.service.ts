@@ -37,6 +37,10 @@ export class AdvertiserService {
 	get_advertisers_by_dealer_id(id, page, key, column='', order='') {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
+	
+    get_advertisers_unassigned_to_user(id, page, key, column='', order='') {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_unassigned}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+	}
 
 	get_advertiser_by_id(id, page = ''): Observable<any | { advertiser: any, tags: any[]}> {
 		const url = `${environment.base_uri}${environment.getters.api_get_advertisers_by_id}${id}`;

@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
 		api_get_advertiser_report: 'advertiser/getaddedreport',
 		api_get_advertiser_total: 'advertiser/gettotal',
 		api_get_advertiser_total_by_dealer: 'advertiser/gettotal?dealerid=',
+        api_get_advertisers_unassigned: 'advertiser/getunassignedbydealerid?dealer_id=',
 		api_get_assets: 'content/getall',
 		api_get_blacklisted_by_id: 'blacklistedcontents/GetBlacklistedByPlaylistContentId?playlistContentId=',
 		api_get_content: 'content/findall',
