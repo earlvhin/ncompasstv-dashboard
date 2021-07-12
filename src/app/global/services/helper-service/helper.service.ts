@@ -15,5 +15,7 @@ export class HelperService {
 	onRefreshUsersPage = new EventEmitter<void>();
     onResetAutocompleteField = new EventEmitter<string>();
 	onSelectAnalyticsTab = new EventEmitter<string>();
+	onToggleEmailNotification = new EventEmitter<{ userId: string, value: boolean, tableDataIndex: number, currentEmail: string }>();
+	onResultToggleEmailNotification = new EventEmitter<{ tableDataIndex: number, updated: boolean }>();
 
 }

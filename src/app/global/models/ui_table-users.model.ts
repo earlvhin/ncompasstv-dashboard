@@ -8,10 +8,12 @@ export class UI_TABLE_USERS {
     date_created: object;
     created_by: object;
 	affiliation: object;
+	allow_email: any;
 
     constructor(
         id: object, i: object, name: object, email: object, contact: object,
-        role: object, date: object, created_by: object, affiliation: object
+        role: object, date: object, created_by: object, affiliation: object,
+		allow_email = {},
     ) {
         this.user_id = id;
         this.index = i;
@@ -20,6 +22,7 @@ export class UI_TABLE_USERS {
         this.contact_number = contact;
         this.role = role;
 		this.affiliation = affiliation;
+		this.allow_email = allow_email;
         this.date_created = date;
         this.created_by = created_by;
     }

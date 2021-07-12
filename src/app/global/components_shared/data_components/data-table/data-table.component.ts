@@ -29,6 +29,7 @@ export class DataTableComponent implements OnInit {
 	@Input() ctrl_column_label: string;
 	@Input() ctrl_column: boolean;
 	@Input() ctrl_toggle: boolean;
+	@Input() can_toggle_email_notifications = false;
 	@Input() is_dealer: boolean;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
@@ -96,6 +97,8 @@ export class DataTableComponent implements OnInit {
 				});
 			}
 		);
+
+		this.subscribeToEmailNotificationToggleResult();
 
 	}
 
@@ -443,13 +446,46 @@ export class DataTableComponent implements OnInit {
 		this.warningModal('warning', 'Delete Sub Dealer', 'Are you sure you want to delete this sub-dealer?','','sub_dealer_delete', userId)
 	}
 
+	onToggleEmailNotification(event: MouseEvent, tableDataIndex: number): void {
+		event.preventDefault();
+		const currentData: { allow_email: { value: string }, user_id: { value: string }, email: { value: string } } = this.table_data[tableDataIndex];
+		const { allow_email, user_id, email } = currentData;
+		const currentValue = allow_email.value;
+		const userId = user_id.value;
+		const currentEmail = email.value;
+		this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
+		this._helper.onToggleEmailNotification.emit({ userId, value: !currentValue, tableDataIndex, currentEmail });
+	}
+
 	private deleteSubDealer(userId: string): void {
 
-		this._user.deleteUser(userId).pipe(takeUntil(this._unsubscribe))
+		this._user.deleteUser(userId)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this._helper.onRefreshUsersPage.emit(),
 				error => console.log('Error deleting sub dealer', error)
 			);
 
 	}
+
+	private subscribeToEmailNotificationToggleResult(): void {
+
+		this._helper.onResultToggleEmailNotification
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { tableDataIndex: number, updated: boolean }) => {
+					
+					const { updated, tableDataIndex } = response;
+
+					if (updated) return;
+
+					const currentValue = this.table_data[tableDataIndex]['allow_email'].value;
+					this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
+
+				},
+				error => console.log('Error on email notification toggle result subscription ', error)
+			);
+	}
+
+	
 }

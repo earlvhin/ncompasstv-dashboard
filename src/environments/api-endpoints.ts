@@ -179,6 +179,7 @@ export const API_ENDPOINTS = {
 		set_content_frequency: 'playlists/ClonePlaylistContent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
+		user_email_settings: 'user/UpdateEmailSettings',
 	},
 	delete: {
 		api_delete_screenshot: 'pi/deletescreenshots',
