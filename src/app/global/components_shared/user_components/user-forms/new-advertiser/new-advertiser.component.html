@@ -81,7 +81,8 @@
 						(searched)="searchDataAdv($event)"
                         [loading_data]="loading_data_adv"
                         [loading_search]="loading_search_adv"
-                        [disabled]="advertisers.length == 0">
+                        [disabled]="advertisers.length == 0"
+                        [reset_value]="initial_load_advertiser">
                         </app-autocomplete-field>
                     </ng-template>
                 </div>

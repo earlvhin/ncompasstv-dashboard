@@ -21,11 +21,13 @@ export class NewAdvertiserComponent implements OnInit {
 
     advertisers: Array<any> = [];
     advertisers_data: Array<any> = [];
+    advertiser_name: null;
 	back_btn: string;
 	dealers: API_DEALER[] = [];
 	dealers_data: Array<any> = [];
 	form_fields_view: any;
 	form_invalid: boolean = true;
+    initial_load_advertiser: boolean = false;
 	is_dealer: boolean = false;
     is_loading: boolean = true;
     is_loading_adv: boolean = true;
@@ -85,7 +87,7 @@ export class NewAdvertiserComponent implements OnInit {
 			contactNumber: ['', Validators.required],
 			dealerId: this._auth.current_user_value.roleInfo.dealerId || ['', Validators.required],
 			dealer: [{value: '', disabled: true}, Validators.required],
-			advertiserId: [{value: '',}],
+			advertiserId: [{value: '',},Validators.required],
 			email: ['', Validators.required],
 			password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
 			re_password: ['', Validators.required],
@@ -277,8 +279,11 @@ export class NewAdvertiserComponent implements OnInit {
 	dealerSelected(e) {
 		this.f.dealerId.setValue(e);
         this.selected_dealer = e;
-        this.getAdvertisers(1);
         this.no_advertiser = false;
+        this.initial_load_advertiser = true;
+        this.f.advertiserId.setValue(null);
+        this.getAdvertisers(1);
+        
 	}
 	
     advertiserSelected(e) {
@@ -305,7 +310,6 @@ export class NewAdvertiserComponent implements OnInit {
 			if(this.is_search) {
 				this.loading_search_adv = true;
 			}
-			
 			this.subscription.add(
 				this._advertiser.get_advertisers_unassigned_to_user(this.selected_dealer, e, this.search_data_adv, '', '').subscribe(
 					data => {
@@ -315,6 +319,7 @@ export class NewAdvertiserComponent implements OnInit {
 						this.is_loading_adv = false;
 						this.loading_data_adv = false;
 						this.loading_search_adv = false;
+                        this.initial_load_advertiser = false;
 					}
 				)
 			)
