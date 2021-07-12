@@ -133,7 +133,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Region', sortable: true, column:'Region'},
 		{ name: 'State', sortable: true, column:'State'},
 		{ name: 'Status', sortable: true, column:'Status'},
-		{ name: 'Assigned User', sortable: true, column:'AdvertiserId'}
+		{ name: 'Assigned User', sortable: true, column:'AdvertiserUser'}
 	];
 
 	//Documentation for columns:
@@ -341,7 +341,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: i.region ? i.region : '--', link: null , editable: false, hidden: false},
 					{ value: i.state, link: null , editable: false, hidden: false},
 					{ value: i.status, link: null , editable: false, hidden: false},
-					{ value: i.firstName != null && i.lastName != null ? i.firstName + " " + i.lastName: 'Unassigned', link: null , editable: false, hidden: false},
+					{ value: i.userId ? i.advertiserUser : 'Unassigned', link: null , editable: false, hidden: false},
 				)
 			}
 		);
@@ -383,8 +383,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.searching_advertiser = false;
                     this.paging_data_advertiser = data.paging;
 					if (!data.message) {
-						this.advertiser_data = this.advertiser_mapToUI(data.advertisers);
-						this.advertiser_filtered_data = this.advertiser_mapToUI(data.advertisers);
+						this.advertiser_data = this.advertiser_mapToUI(data.paging.entities);
+						this.advertiser_filtered_data = this.advertiser_mapToUI(data.paging.entities);
 						this.no_advertisers = false;
 					} else {
 						if (this.search_data_advertiser == "") {
