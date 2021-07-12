@@ -63,6 +63,7 @@ export class ScreensComponent implements OnInit {
 	}
 
 	getTotalScreens(id) {
+        this.screen_details = {};
 		this.subscription.add(
 			this._screen.get_screen_total_by_dealer(id).subscribe(
 				(data: any) => {

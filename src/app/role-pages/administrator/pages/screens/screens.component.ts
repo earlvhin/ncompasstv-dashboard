@@ -59,11 +59,11 @@ export class ScreensComponent implements OnInit {
 	}
 
 	fromDelete() {
-		// this.searching = true;
 		this.ngOnInit();
 	}
 
 	getTotalScreens() {
+        this.screen_details = {};
 		this.subscription.add(
 			this._screen.get_screen_total().subscribe(
 				(data: any) => {

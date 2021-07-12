@@ -68,7 +68,7 @@ export class ScreensComponent implements OnInit {
 	}
 
 	getTotalScreens(id: string): void {
-
+        this.screen_details = {};
 		this._screen.get_screen_total_by_dealer(id).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {

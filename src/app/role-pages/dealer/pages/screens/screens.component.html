@@ -20,7 +20,7 @@
         <div class="row">
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
-                    <app-data-card-compare *ngIf="screen_details; else small_loader"
+                    <app-data-card-compare *ngIf="screen_details.basis_label; else small_loader"
                     [compare_basis]="screen_details.basis"
                     [compare_basis_label]="screen_details.basis_label"
                     [good_value]="screen_details.good_value"
@@ -32,7 +32,7 @@
             </div>
             <div class="col-12 col-lg">
                 <mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="screen_details; else small_loader"
+                    <app-data-card-count *ngIf="screen_details.basis_label; else small_loader"
                     [data_value]="screen_details.new_this_week_value"
                     [data_label]="screen_details.new_this_week_value_label"
                     [data_description]="screen_details.new_this_week_value_description">
@@ -41,7 +41,7 @@
             </div>
             <div class="col-12 col-lg">
                 <mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="screen_details; else small_loader"
+                    <app-data-card-count *ngIf="screen_details.basis_label; else small_loader"
                     [data_value]="screen_details.new_last_week_value"
                     [data_label]="screen_details.new_last_week_value_label"
                     [data_description]="screen_details.new_last_week_value_description">
@@ -74,7 +74,7 @@
                                 [table_columns]="tbl_screen_columns"
                                 [new_table]="true"
                                 [screen_delete]="true"
-                                (update_info)="getAllScreens(1)"
+                                (update_info)="ngOnInit()"
                                 [paging_details]="paging_data"
                                 (page_triggered)="getAllScreens($event)">
                                 </app-data-table>
