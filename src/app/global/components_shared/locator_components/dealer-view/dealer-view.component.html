@@ -3,17 +3,17 @@
 		<div class="col-lg-6">
 			<ng-container *ngIf="!loading_hosts; else loader">
 				<app-autocomplete-field
-				[data_reference]="dealers_data"
-				[primary_keyword]="'businessName'"
-				[key_of_value]="'dealerId'"
-				(data_value)="dealerSelected($event)"
-				[required]="true"
-				[label]="'Type in a Dealer business name here'"
-				[paging]="paging"
-                (call_next_page)="searchBoxTrigger($event)"
-                [loading_data]="loading_data"
-				(searched)="searchData($event)"
-				[loading_search]="loading_search">
+					[data_reference]="dealers_data"
+					[primary_keyword]="'businessName'"
+					[key_of_value]="'dealerId'"
+					(data_value)="onSelectDealer($event)"
+					[required]="true"
+					[label]="'Type in a Dealer business name here'"
+					[paging]="paging"
+					(call_next_page)="searchBoxTrigger($event)"
+					[loading_data]="loading_data"
+					(searched)="searchData($event)"
+					[loading_search]="loading_search">
 				</app-autocomplete-field>
 
 				<div class="search-result" *ngIf="selected_dealer_hosts; else no_record">
@@ -21,20 +21,33 @@
 						<div class="row">
 							<div class="col-lg-12" *ngFor="let h of selected_dealer_hosts" >
 								<mat-expansion-panel 
-								class="mb-3" 
-								hideToggle 
-								(click)="hostExpansionClicked(h.hostId); onMarkerClick(h, null)"
-								[expanded]='h.hostId == clicked_marker_id'>
+									class="mb-3" 
+									hideToggle 
+									(click)="onExpandHost(h.hostId)"
+									[expanded]='h.hostId == clicked_marker_id'>
+
 									<mat-expansion-panel-header [ngClass]="h.hostId == clicked_marker_id ? 'bg-primary' : null">
 										<mat-panel-title [ngClass]="h.hostId == clicked_marker_id ? 'text-light' : null">
 											{{ h.name }}
 										</mat-panel-title>
+
 										<mat-panel-description class="sm-text" [ngClass]="h.hostId == clicked_marker_id ? 'text-light' : null">
 											{{ h.address}} {{ h.city}} {{ h.state }} {{ h.postalCode }}
 										</mat-panel-description>
 									</mat-expansion-panel-header>
-									<div class="pt-4">
-										<p>This is the primary content of the panel.</p>
+
+									<div class="pt-4" *ngIf="!loading_license_count; else loader_sm_no_text">
+										<ul class="host-licenses-list" *ngIf="host_licenses.length > 0; else no_licenses_text">
+											<li *ngFor="let license of host_licenses">
+												<a [routerLink]="setLink(license.licenseId)" target="_blank">
+													{{ (license.alias && license.alias.length > 0) ? license.alias : license.licenseKey }}
+												</a>
+											</li>
+										</ul>
+										
+										<ng-template #no_licenses_text>
+											<p>No licenses for this host</p>
+										</ng-template>
 									</div>
 								</mat-expansion-panel>
 							</div>
@@ -44,19 +57,21 @@
 			</ng-container>
 		</div>
 		<div class="col-6 col-lg">
-			<mat-card class="mb-4" *ngIf="host_license; else no_host_selected">
+
+			<mat-card class="mb-4" *ngIf="host_licenses && host_licenses.length > 0; else no_host_selected">
 				<ng-container *ngIf="!loading_license_count; else loader_sm">
-					<app-data-card-compare  
-					*ngIf="license_card"
-					[compare_basis]="license_card.basis" 
-					[compare_basis_label]="license_card.basis_label"
-					[good_value]="license_card.good_value" 
-					[good_value_label]="license_card.good_value_label"
-					[bad_value]="license_card.bad_value" 
-					[bad_value_label]="license_card.bad_value_label">
+					<app-data-card-compare 
+						*ngIf="license_card"
+						[compare_basis]="license_card.basis" 
+						[compare_basis_label]="license_card.basis_label"
+						[good_value]="license_card.good_value" 
+						[good_value_label]="license_card.good_value_label"
+						[bad_value]="license_card.bad_value" 
+						[bad_value_label]="license_card.bad_value_label">
 					</app-data-card-compare>
 				</ng-container>
 			</mat-card>
+
 			<div class="row mb-4">
 				<div class="col-lg-3">
 					<div class="d-flex align-items-center">
@@ -87,21 +102,22 @@
 				</div>
 			</div>
 			<agm-map class="vh-60" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
-				<agm-marker
-				*ngFor="let h of map_marker"
-				id="{{ h.hostId }}"
-				(markerClick)="onMarkerClick(h, window)"
-				[latitude]="h.latitude"
-				[longitude]="h.longitude"
-				[agmFitBounds]="true"
-				[iconUrl]="h.icon_url">
+				<agm-marker id="{{ h.hostId }}"
+					*ngFor="let h of map_marker"
+					(markerClick)="onMarkerClick(h.hostId, window)"
+					[latitude]="h.latitude"
+					[longitude]="h.longitude"
+					[agmFitBounds]="true"
+					[iconUrl]="h.icon_url">
+
 					<agm-info-window
-					[isOpen]="expansion_id == h.hostId"
-					#window>
+						[isOpen]="expansion_id == h.hostId"
+						#window>
 						<h4>{{ h.name }}</h4>
 						<h6>Longitude: {{h.longitude}}</h6>
 						<h6>Latitude: {{h.latitude}}</h6>
 				  	</agm-info-window>
+
 				</agm-marker>
 			</agm-map>
 			<p class="sm-text mt-3 bg-info p-3 text-white">Note: If host is displayed but no marker is shown please check the coordinates of that host.</p>
@@ -121,6 +137,12 @@
         </div>
     </ng-template>
 
+	<ng-template #loader_sm_no_text>
+		<div class="loader-sm-no-text py-4">
+			<app-spinner [diameter]="65"></app-spinner>
+		</div>
+	</ng-template>	
+
     <ng-template #no_record>
         <mat-card class="vh-50 p-5">
             <div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
@@ -138,7 +160,11 @@
             <div class="border-dashed d-flex align-items-center h-100 p-4 w-100">
                 <div class="text-center w-100">
                     <h3>No Host Selected</h3>
-                    <p class="sm-text">Search a Host to get license count</p>
+                    <p class="sm-text" *ngIf="selected_dealer; else no_dealer_selected">Click on a host to get license count</p>
+
+					<ng-template #no_dealer_selected>
+						<p class="sm-text">Search a dealer to list hosts</p>
+					</ng-template>
                 </div>
             </div>
         </mat-card>
