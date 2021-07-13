@@ -108,6 +108,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	speedtest_running: boolean = false;
 	show_hours = false;
 	show_popup = false;
+    splitted_text: any;
 	status_check_disabled: boolean;
 	storage_capacity = '';
 	subscriptions: Subscription = new Subscription;
@@ -223,6 +224,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		// this.getContentReport_yearly();
 	
 	}
+
+    splitKey(key) {
+        this.splitted_text = key.split("-");
+        return this.splitted_text[this.splitted_text.length - 1];
+    }
 
 	ngAfterViewInit() {
 		this.adjustMinimapWidth();
