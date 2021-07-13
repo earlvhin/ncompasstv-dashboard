@@ -13,6 +13,7 @@ export class USER_LOGIN {
 }
 
 export class USER {
+	allowEmail: number;
     users: Array<any>;
     userId: string;
     firstName: string;

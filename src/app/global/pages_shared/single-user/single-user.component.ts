@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { forkJoin, Observable, Subject } from 'rxjs';
+import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { API_USER_DATA } from '../../models/api_user-data.model';
@@ -23,6 +23,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	current_role: string;
 	info_form: FormGroup;
 	info_form_disabled = false;
+	is_loading = true;
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
 	is_sub_dealer = false;
@@ -33,7 +34,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	password_match: boolean;
 	password_validation_message: string;
 	permissions = [ { label: 'View', value: 'V' }, { label: 'Edit', value: 'E' } ];
-	user$: Observable<API_USER_DATA>;
+	user: API_USER_DATA;
 
 	info_form_fields = [
 		{
@@ -69,17 +70,22 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			required: true
 		},
 		{
+			label: 'Email Notification',
+			control: 'allowEmail',
+			type: 'toggle',
+			required: true
+		},
+		{
 			label: 'Permission',
 			control: 'permission',
 			type: 'radio',
 			width: 'col-lg-6',
 			name: 'permissionList',
 			required: false
-		}
+		},
 	];
 
 	private current_permission: string;
-	private user_data: API_USER_DATA;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -93,10 +99,13 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+
 		this.initializeForms();
 
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.getUserById(this._params.snapshot.params.data));
+			.subscribe(
+				() => this.getUserById(this._params.snapshot.params.data).add(() => this.is_loading = false)
+			);
 
 		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
 	}
@@ -176,7 +185,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		const observables = [ this._user.update_user(this.mapUserInfoChanges()) ];
 
 		if (this.infoFormControls.permission.value !== this.current_permission) {
-			const { userId } = this.user_data;
+			const { userId } = this.user;
 			const permission = this.infoFormControls.permission.value;
 			observables.push(this._user.update_permission(userId, permission));
 		}
@@ -224,10 +233,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	private fillInfoForm(): void {
 
 		 const controls = this.formControlNames;
+		 console.log('user data', this.user);
 
 		 controls.forEach(
 			control => {
-				Object.entries(this.user_data).forEach(
+				Object.entries(this.user).forEach(
 					([key, value]) => {
 						if (key === control) this.infoFormControls[control].setValue(value);
 					}
@@ -236,17 +246,16 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		);
 
 	}
+	
+	private getUserById(id: string) {
 
-	private getUserById(id: string): void {
-		this.user$ = this._user.get_user_by_id(id);
-
-		this.user$.pipe(takeUntil(this._unsubscribe))
+		return this._user.get_user_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_USER_DATA) => {
-					this.user_data = response;
-
+					this.user = response;
 					const role = response.userRoles[0];
-					this.user_data.permission = role.permission;
+					this.user.permission = role.permission;
 					this.current_permission = role.permission;
 					this.is_sub_dealer = role.roleName === 'Sub Dealer';
 					this.fillInfoForm();
@@ -312,25 +321,37 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private mapPasswordChanges(): API_UPDATE_USER_INFO {
+
+		const { userId, firstName, middleName, lastName, email } = this.user;
+		const isEmailAllowed = this.infoFormControls.allowEmail.value;
+		const allowEmail = isEmailAllowed ? 1 : 0;
+
 		return new API_UPDATE_USER_INFO(
-			this.user_data.userId,
-			this.user_data.firstName,
-			this.user_data.middleName,
-			this.user_data.lastName,
-			this.user_data.email,
-			this.passwordFormControls.new_password.value
+			userId,
+			firstName,
+			middleName,
+			lastName,
+			email,
+			this.passwordFormControls.new_password.value,
+			allowEmail,
 		);
 	}
 
 	private mapUserInfoChanges(): API_UPDATE_USER_INFO {
+
+		const isEmailAllowed = this.infoFormControls.allowEmail.value;
+		const allowEmail = isEmailAllowed ? 1 : 0;
+
 		return new API_UPDATE_USER_INFO(
-			this.user_data.userId,
+			this.user.userId,
 			this.infoFormControls.firstName.value,
 			this.infoFormControls.middleName.value,
 			this.infoFormControls.lastName.value,
 			this.infoFormControls.email.value,
-			this.user_data.password
+			this.user.password,
+			allowEmail
 		);
+		
 	}
 
 	private subscribeToUpdateFormChanges(): void {

@@ -49,12 +49,17 @@
                 </form>
             </mat-card>
         </div>
-        <!-- <div class="col-lg-6">
+        <div class="col-lg-6">
             <mat-card class="p-5">
                 <h3>Other Settings</h3>
-                <form>
-                    <div class="mt-3 mb-3">Receive email notifications:</div>
-                    <div class="col-lg-12 mb-2 flex">
+                <form [formGroup]="other_settings_form" (ngSubmit)="onSaveOtherSettings()">
+					<div class="col-lg-12 p-0">
+						<div class="email-settings-container d-flex">
+							<span>Receive email notifications:</span>
+							<mat-slide-toggle formControlName="allowEmail"></mat-slide-toggle>
+						</div>
+					</div>
+                    <!-- <div class="col-lg-12 mb-2 flex">
                         <div class="col-lg-8 p-0">
                             <mat-label>News and Events</mat-label>
                         </div>
@@ -98,10 +103,15 @@
                             <mat-slide-toggle>
                             </mat-slide-toggle>
                         </div>
-                    </div>                      
-                </form>
+                    </div>                       -->
+					
+					<!-- SUBMIT BUTTON FOR OTHER SETTINGS FORM -->
+					<button mat-button mat-raised-button class="theme-btn mt-4" type="submit" [disabled]="!other_settings_form.valid">
+                        Save Settings
+                    </button>
+				</form>
             </mat-card>
-        </div> -->
+        </div>
     </div>
     <!-- <div class="row">
         <div class="col-lg-6">

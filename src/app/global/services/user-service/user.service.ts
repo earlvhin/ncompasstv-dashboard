@@ -86,6 +86,12 @@ export class UserService {
 		return re.test(String(email).toLowerCase());
 	}
 
+	update_email_notifications(userId: string, data: boolean) {
+		const endpoint = `${this.base}${this.update.user_email_settings}`;
+		const body = { allowEmail: data ? 1 : 0, userId };
+		return this._http.post(endpoint, body, this.httpOptions);
+	}
+
 	update_permission(userId: string, type: string) {
 		const endpoint = `${this.base}${this.update.account_permission}?userid=${userId}&type=${type}`;
 		return this._http.post(endpoint, {}, this.httpOptions);

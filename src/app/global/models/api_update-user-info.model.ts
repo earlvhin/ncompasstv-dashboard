@@ -7,14 +7,16 @@ export class API_UPDATE_USER_INFO {
     lastName: string;
     email: string;
     password: string;
+	allowEmail: number
 
-    constructor(userId: string, fname: string, mname: string, lname: string, email: string, password: string) {
+    constructor(userId: string, fname: string, mname: string, lname: string, email: string, password: string, allowEmail = 0) {
         this.userId = userId;
         this.firstName = fname;
         this.middleName = mname;
         this.lastName = lname;
         this.email = email;
         this.password = password;
+		this.allowEmail = allowEmail;
     }
 }
 
