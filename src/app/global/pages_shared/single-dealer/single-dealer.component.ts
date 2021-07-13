@@ -165,7 +165,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Last Online', sortable: true, column:'TimeIn', key:'timeIn'},
 		{ name: 'Net Type', sortable: true, column:'InternetType', key:'internetType'},
 		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
-		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId'},
+		{ name: 'Anydesk' + '\n' + '& Password', sortable: true, column:'AnydeskId', key:'anydeskId'},
 		{ name: 'PS Version', sortable: false, key:'server'},
 		{ name: 'UI Version', sortable: false, key:'ui'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
@@ -611,7 +611,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
 					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
 					{ value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--', link: null, editable: false, hidden: false },
-					{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false },
+					{ value: l.anydeskId ? l.anydeskId + '\n' + this.splitKey(l.licenseId) : '--', link: null, editable: false, hidden: false },
 					{ value: l.apps && l.apps.server ? l.apps.server : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.apps && l.apps.ui ? l.apps.ui : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.screenName ? l.screenName : '--', link: `/administrator/screens/${l.screenId}` , editable: false },
@@ -626,6 +626,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			}
 		);
 	}
+
+    splitKey(key) {
+        this.splitted_text = key.split("-");
+        return this.splitted_text[this.splitted_text.length - 1];
+    }
 
 	getLabel(data) {
 		this.now = moment().format('d');

@@ -287,7 +287,7 @@
                                             <div class="col-lg-12">
                                                 <ng-container *ngIf="!searching_license; else loader">
                                                     <mat-card *ngIf="license_filtered_data.length > 0; else no_data">
-                                                        <app-data-table 
+                                                        <app-data-table id="licenseTable" 
                                                         [table_columns]="license_table_columns" 
                                                         [table_data]="license_filtered_data"
                                                         [ctrl_column]="true"
