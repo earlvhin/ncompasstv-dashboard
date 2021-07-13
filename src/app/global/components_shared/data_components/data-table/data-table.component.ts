@@ -29,6 +29,7 @@ export class DataTableComponent implements OnInit {
 	@Input() ctrl_column_label: string;
 	@Input() ctrl_column: boolean;
 	@Input() ctrl_toggle: boolean;
+	@Input() can_toggle_email_notifications = false;
 	@Input() is_dealer: boolean;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
@@ -43,7 +44,7 @@ export class DataTableComponent implements OnInit {
 	@Input() screen_delete: boolean;
 	@Input() sort_column: string;
 	@Input() sort_order: string;
-	@Input() sub_dealer_delete?: boolean;
+	@Input() is_user_delete_enabled = false;
 	@Input() table_columns: any;
 	@Input() table_data: any;
 	
@@ -65,7 +66,6 @@ export class DataTableComponent implements OnInit {
 	@Output() delete_selected = new EventEmitter;
 	@Output() to_sort_column = new EventEmitter;
 
-	
 	active_table: string;
 	selected_array: any = [];
 	pagination: number;
@@ -97,12 +97,27 @@ export class DataTableComponent implements OnInit {
 			}
 		);
 
+		this.subscribeToEmailNotificationToggleResult();
+
 	}
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	canDelete(userRole: string): boolean {
+
+		const restrictedRoles = [
+			'Administrator',
+			'Super Admin',
+			'Technical Support',
+			'Dealer'
+		];
+
+		return !restrictedRoles.includes(userRole);
+
 	}
 
 	onPageChange(page: number): void {
@@ -232,8 +247,8 @@ export class DataTableComponent implements OnInit {
 				case 'advertiser_delete_force':
 					this.advertiserDelete(id, 1);
 					break;
-				case 'sub_dealer_delete':
-					this.deleteSubDealer(id);
+				case 'user_delete':
+					this.deleteUser(id);
 					break;
 				default:
 			}
@@ -378,7 +393,7 @@ export class DataTableComponent implements OnInit {
 		dialog.afterClosed().subscribe(() => this.update_info.emit(true));
 	}
 
-	OnCheckboxSelect(id, event, data) {
+	onCheckboxSelect(id, event, data) {
 		if(!event) {
 			var index = this.selected_array.indexOf(id);
 			if (index !== -1) {
@@ -439,17 +454,50 @@ export class DataTableComponent implements OnInit {
 		this.to_sort_column.emit(filter);
 	}
 
-	onDeleteSubDealer(userId: string): void {
-		this.warningModal('warning', 'Delete Sub Dealer', 'Are you sure you want to delete this sub-dealer?','','sub_dealer_delete', userId)
+	onDeleteUser(userId: string, email: string): void {
+		this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`,'','user_delete', userId);
 	}
 
-	private deleteSubDealer(userId: string): void {
+	onToggleEmailNotification(event: MouseEvent, tableDataIndex: number): void {
+		event.preventDefault();
+		const currentData: { allow_email: { value: string }, user_id: { value: string }, email: { value: string } } = this.table_data[tableDataIndex];
+		const { allow_email, user_id, email } = currentData;
+		const currentValue = allow_email.value;
+		const userId = user_id.value;
+		const currentEmail = email.value;
+		this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
+		this._helper.onToggleEmailNotification.emit({ userId, value: !currentValue, tableDataIndex, currentEmail });
+	}
 
-		this._user.deleteUser(userId).pipe(takeUntil(this._unsubscribe))
+	private deleteUser(userId: string): void {
+
+		this._user.deleteUser(userId)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this._helper.onRefreshUsersPage.emit(),
-				error => console.log('Error deleting sub dealer', error)
+				error => console.log('Error deleting user', error)
 			);
 
 	}
+
+	private subscribeToEmailNotificationToggleResult(): void {
+
+		this._helper.onResultToggleEmailNotification
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { tableDataIndex: number, updated: boolean }) => {
+					
+					const { updated, tableDataIndex } = response;
+
+					if (updated) return;
+
+					const currentValue = this.table_data[tableDataIndex]['allow_email'].value;
+					this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
+
+				},
+				error => console.log('Error on email notification toggle result subscription ', error)
+			);
+	}
+
+	
 }

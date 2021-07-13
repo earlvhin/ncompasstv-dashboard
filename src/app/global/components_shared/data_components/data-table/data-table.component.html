@@ -2,47 +2,62 @@
 	<table class="full-width" *ngIf="table_data.length > 0; else loading">
 		<thead align="left" class="border-bottom">
 			<tr>
-				<th *ngFor="let tc of table_columns" class="p-3" [ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''" [style.display]="tc.no_show ? 'none' : ''">
+				<!-- TABLE COLUMN HEADINGS -->
+				<th *ngFor="let tc of table_columns" class="p-3" 
+					[ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''"
+					[class.text-center]="tc.type === 'toggle'"
+					[style.display]="tc.no_show ? 'none' : ''">
+
 					<span *ngIf="!tc.hidden; else checkbox">
                         {{ !tc.name ? tc : tc.name }}
                     </span>
+
 					<i *ngIf="tc.sortable" class="sort cursor-pointer ml-2 fas fa-angle-{{sort_order == 'desc' ? 'down' : 'up'}}" 
 						(click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')" 
 						data-toggle="tooltip" 
 						title="Sorted by {{sort_order == 'desc' ? 'Descending' : 'Ascending'}} Order">
 					</i>
+
 				</th>
                 <ng-template #checkbox>
                     <span *ngIf="multiple_delete" class="text-right" class="p-3">
                         <mat-checkbox class="example-margin" (change)="updateCheck()" [(ngModel)]="selectAll"></mat-checkbox>
                     </span>
                 </ng-template>
+
 				<!-- For activate toggle [[DEALER LICENSE TABLE]] -->
 				<th *ngIf="ctrl_column" class="text-right" class="p-3">
 					{{ ctrl_column_label || 'Action' }}
 				</th>
+
 				<!-- For preview column [[SINGLE ADVERTISER PAGE]] -->
 				<th *ngIf="preview_column" class="text-right" class="p-3">
 					{{ preview_column_label || 'Action' }}
 				</th>
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || sub_dealer_delete" class="text-right" class="p-3">
+
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
 		</thead>
 
+		<!-- TABLE DATA ROWS -->
 		<tbody *ngIf="new_table">
-			<tr *ngFor="let data of table_data; let j=index" >
+			<tr *ngFor="let data of table_data; let j = index" >
 				<td class="p-3" *ngFor="let d of data | objectKeys; let i = index" [hidden]="data[d].hidden && !data[d].key" [ngClass]="data[d].hidden && data[d].key ? 'text-center': ''">
+
 					<span *ngIf="data[d].hidden && data[d].key">
-						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="OnCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
+						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
+
 					<span *ngIf="!data[d].hidden">
+
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
 							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
 						</span>		
 
 						<ng-container *ngIf="!data[d].isImage; else isImage;">
+
 							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params">
 								<ng-container>
 
@@ -58,12 +73,13 @@
 								</ng-container>
 
 							</a>
+
+							<!-- START: BUSINESS HOURS SECTION -->
 							<span *ngIf="data[d].business_hours" >
-								<span class="fas fa-clock cursor-pointer text-gray-with-hover"  placement="right" [ngbTooltip]="testing"></span>
+								<span class="fas fa-clock cursor-pointer text-gray-with-hover" placement="right" [ngbTooltip]="businessHoursTooltip"></span>
 							</span>
 							
-							<!-- "Business Hours Today &#013;{{data[d].business_hours_label.date}}&#013;&#013;{{data[d].business_hours_label.address}}&#013;{{data[d].business_hours_label.schedule}}" -->
-							<ng-template #testing>
+							<ng-template #businessHoursTooltip>
 								<div class="text-left">
 									<span class="sm-text"><b>Business Hours Today</b></span><br />
 									<span class="xsm-text">{{data[d].business_hours_label.date}}</span><br /><br />
@@ -75,20 +91,36 @@
 									</span>
 								</div>
 							</ng-template>
+							<!-- END: BUSINESS HOURS SECTION -->
 
 							<ng-template #no_link>
 								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
 
-									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultvalue;">
+									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultValue;">
 										{{ data[d].value | date: 'MMM dd, y' }}<br>
 										{{ data[d].value | date: 'hh:mm a' }}
 									</div>
 
-									<ng-template #defaultvalue>
-										{{ data[d].value }}
+									<ng-template #defaultValue>
+										<!-- DEFAULT DATA DISPLAY -->
+										<div *ngIf="!data[d].type">{{ data[d].value }}</div>
+
+										<!-- TOGGLE FIELD -->
+										<div *ngIf="data[d].type === 'toggle'">
+
+											<!-- EMAIL NOTIFICATIONS TOGGLE -->
+											<div *ngIf="can_toggle_email_notifications" class="d-flex justify-content-center">
+												<mat-slide-toggle 
+													(click)="onToggleEmailNotification($event, j)"
+													[checked]="data[d].value">
+												</mat-slide-toggle>
+											</div>
+										</div>
 									</ng-template>
+
 								</span>
 							</ng-template>
+
 						</ng-container>
 
 						<ng-template #isImage>
@@ -105,41 +137,52 @@
 							</ng-template>
 						</ng-template>
 					</span>
+
+					<!-- EDIT BUTTON -->
 					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
 						<i class="clickable fa fa-pencil text-gray" title="Edit {{data[d].label}}"></i>
 					</div>
-				</td>		
+				</td>
+
 				<td class="p-3 control-toggle text-center" *ngIf="ctrl_column">
 					<mat-slide-toggle 
-					*ngIf="ctrl_toggle"
-					(change)="controlToggle(data.license_key.value, $event)"
-					[checked]="data.is_activated.value == 1 ? 'checked' : 'false'">
+						*ngIf="ctrl_toggle"
+						(change)="controlToggle(data.license_key.value, $event)"
+						[checked]="data.is_activated.value == 1 ? 'checked' : 'false'">
 					</mat-slide-toggle>
 				</td>
+
 				<td class="p-3 control-toggle" *ngIf="preview_column">
 					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>	
 				</td>
+
 				<td class="p-3 control-toggle md-text" *ngIf="feed_controls">
 					<i class="fas fa-play cursor-pointer mx-2 text-primary" title="Preview" *ngIf="feed_preview" (click)="feedPreview_open(data.feed_url)"></i>
 					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" *ngIf="feed_edit" (click)="editFeed(data)"></i>
 					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete" (click)="deleteFeed(data.id.value)"></i>
 				</td>
+
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
 				</td>
+
 				<td class="p-3 control-toggle" *ngIf="screen_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Screen" (click)="deleteScreen(data.screen_id.value)"></i>
 				</td>
+
 				<td class="p-3 control-toggle" *ngIf="playlist_delete">
 					<i class="fas fa-trash cursor-pointer mx-3 text-danger" title="Delete Playlist" (click)="deletePlaylist(data.playlist_id.value)"></i>
 					<i *ngIf="!is_dealer" class="fas fa-file-excel" [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer': 'text-gray cursor-void'"  title="{{data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.'}}" (click)="exportPlaylist({id: data.playlist_id.value, name: data.name.value})"></i>
 				</td>
+
 				<td class="p-3 control-toggle text-center" *ngIf="license_delete">
 					<i class="fas fa-trash {{data.pi_status.value != 1  && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'}}" data-toggle="tooltip" title="{{data.pi_status.value != 1  && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'}}" (click)="deleteLicense(data.license_id.value)"></i>
 				</td>
-				<td class="p-3 control-toggle text-center" *ngIf="sub_dealer_delete">
-					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="data.role.value === 'Sub Dealer'" (click)="onDeleteSubDealer(data.user_id.value)"></i>
+
+				<td class="p-3 control-toggle text-center" *ngIf="is_user_delete_enabled">
+					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i>
 				</td>
+				
 			</tr>
 		</tbody>
 	</table>

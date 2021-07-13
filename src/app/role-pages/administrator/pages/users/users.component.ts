@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common'
+import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -7,6 +8,7 @@ import { HelperService } from 'src/app/global/services/helper-service/helper.ser
 import { UserService } from '../../../../global/services/user-service/user.service';
 import { UI_TABLE_USERS } from '../../../../global/models/ui_table-users.model';
 import { USER } from 'src/app/global/models/api_user.model';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-users',
@@ -28,20 +30,22 @@ export class UsersComponent implements OnInit, OnDestroy {
 	user_details: any;
 
 	users_table_columns = [
-		'#',
-		'Name',
-		'Email Address',
-		'Contact Number',
-		'Role',
-		'Affiliation',
-		'Creation Date',
-		'Created By'
+		{ name: '#', },
+		{ name: 'Name', },
+		{ name: 'Email Address', },
+		{ name: 'Contact Number', },
+		{ name: 'Role', },
+		{ name: 'Affiliation', },
+		{ name: 'Email Notification', type: 'toggle' },
+		{ name: 'Creation Date', },
+		{ name: 'Created By', }
 	];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _date: DatePipe,
+		private _dialog: MatDialog,
 		private _helper: HelperService,
 		private _user: UserService,
 	) { }
@@ -49,6 +53,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.getUserTotal();
 		this.getAllusers();
+		this.subscribeToToggleEmailNotification();
 		this.subscribeToPageRefresh();
 	}
 
@@ -130,12 +135,12 @@ export class UsersComponent implements OnInit, OnDestroy {
 		
 		return data.map(
 			user => {
-
 				let permission = null;
 				const role = user.userRoles[0];
+				const allowEmail = user.allowEmail === 1 ? true : false;
 				if (role.roleName === 'Sub Dealer') permission = role.permission;
 
-				return new UI_TABLE_USERS(
+				const result = new UI_TABLE_USERS(
 					{ value: user.userId, link: null , editable: false, hidden: true },
 					{ value: count++, link: null , editable: false, hidden: false },
 					{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}` },
@@ -145,7 +150,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
 					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
 					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+					{ value: allowEmail, type: 'toggle' },
 				);
+
+				return result;
 			}
 		);
 
@@ -160,4 +168,57 @@ export class UsersComponent implements OnInit, OnDestroy {
 			);
 
 	}
+
+	private subscribeToToggleEmailNotification(): void {
+
+		this._helper.onToggleEmailNotification
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { userId: string, value: boolean, tableDataIndex: number, currentEmail: string }) => {
+					const { userId, value, tableDataIndex, currentEmail } = response;
+					this.confirmEmailNotificationToggle(userId, value, tableDataIndex, currentEmail);
+				},
+				error => console.log('Error on email notification toggle ', error)
+			);
+
+	}
+
+	private confirmEmailNotificationToggle(userId: string, value: boolean, tableDataIndex: number, currentEmail: string): void {
+
+		let type = 'Enable';
+		if (!value) type = 'Disable';
+		const status = 'warning';
+		const message = `${type} email notifications`;
+		const data = `Proceed update for ${currentEmail}?`;
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});	
+
+		dialog.afterClosed()
+			.subscribe(
+				(response: boolean) => {
+
+					if (!response) {
+						this._helper.onResultToggleEmailNotification.emit({ updated: false, tableDataIndex });
+						return;
+					}
+
+					this.updateEmailNotification(userId, value);
+				}
+			);
+	}
+
+	private updateEmailNotification(userId: string, value: boolean): void {
+		this._user.update_email_notifications(userId, value)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => console.log('Email setting updated'),
+				error => console.log('Error updating email notification ', error)
+			);
+	}
+
+	
 }
