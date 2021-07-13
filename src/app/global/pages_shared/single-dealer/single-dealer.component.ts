@@ -115,6 +115,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	sort_order: string = "";
 	sort_order_advertisers: string = "";
 	sort_order_hosts: string = "";
+    splitted_text: any;
 	statistics: API_LICENSE_STASTICS;
 	subscription: Subscription = new Subscription;
 	temp_array: any = [];
