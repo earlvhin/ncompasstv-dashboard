@@ -35,7 +35,7 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || sub_dealer_delete" class="text-right" class="p-3">
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
@@ -47,7 +47,7 @@
 				<td class="p-3" *ngFor="let d of data | objectKeys; let i = index" [hidden]="data[d].hidden && !data[d].key" [ngClass]="data[d].hidden && data[d].key ? 'text-center': ''">
 
 					<span *ngIf="data[d].hidden && data[d].key">
-						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="OnCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
+						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
 
 					<span *ngIf="!data[d].hidden">
@@ -146,9 +146,9 @@
 
 				<td class="p-3 control-toggle text-center" *ngIf="ctrl_column">
 					<mat-slide-toggle 
-					*ngIf="ctrl_toggle"
-					(change)="controlToggle(data.license_key.value, $event)"
-					[checked]="data.is_activated.value == 1 ? 'checked' : 'false'">
+						*ngIf="ctrl_toggle"
+						(change)="controlToggle(data.license_key.value, $event)"
+						[checked]="data.is_activated.value == 1 ? 'checked' : 'false'">
 					</mat-slide-toggle>
 				</td>
 
@@ -179,8 +179,8 @@
 					<i class="fas fa-trash {{data.pi_status.value != 1  && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'}}" data-toggle="tooltip" title="{{data.pi_status.value != 1  && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'}}" (click)="deleteLicense(data.license_id.value)"></i>
 				</td>
 
-				<td class="p-3 control-toggle text-center" *ngIf="sub_dealer_delete">
-					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="data.role.value === 'Sub Dealer'" (click)="onDeleteSubDealer(data.user_id.value)"></i>
+				<td class="p-3 control-toggle text-center" *ngIf="is_user_delete_enabled">
+					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i>
 				</td>
 				
 			</tr>

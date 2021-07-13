@@ -44,7 +44,7 @@ export class DataTableComponent implements OnInit {
 	@Input() screen_delete: boolean;
 	@Input() sort_column: string;
 	@Input() sort_order: string;
-	@Input() sub_dealer_delete?: boolean;
+	@Input() is_user_delete_enabled = false;
 	@Input() table_columns: any;
 	@Input() table_data: any;
 	
@@ -66,7 +66,6 @@ export class DataTableComponent implements OnInit {
 	@Output() delete_selected = new EventEmitter;
 	@Output() to_sort_column = new EventEmitter;
 
-	
 	active_table: string;
 	selected_array: any = [];
 	pagination: number;
@@ -106,6 +105,19 @@ export class DataTableComponent implements OnInit {
 		this.subscription.unsubscribe();
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	canDelete(userRole: string): boolean {
+
+		const restrictedRoles = [
+			'Administrator',
+			'Super Admin',
+			'Technical Support',
+			'Dealer'
+		];
+
+		return !restrictedRoles.includes(userRole);
+
 	}
 
 	onPageChange(page: number): void {
@@ -235,8 +247,8 @@ export class DataTableComponent implements OnInit {
 				case 'advertiser_delete_force':
 					this.advertiserDelete(id, 1);
 					break;
-				case 'sub_dealer_delete':
-					this.deleteSubDealer(id);
+				case 'user_delete':
+					this.deleteUser(id);
 					break;
 				default:
 			}
@@ -381,7 +393,7 @@ export class DataTableComponent implements OnInit {
 		dialog.afterClosed().subscribe(() => this.update_info.emit(true));
 	}
 
-	OnCheckboxSelect(id, event, data) {
+	onCheckboxSelect(id, event, data) {
 		if(!event) {
 			var index = this.selected_array.indexOf(id);
 			if (index !== -1) {
@@ -442,8 +454,8 @@ export class DataTableComponent implements OnInit {
 		this.to_sort_column.emit(filter);
 	}
 
-	onDeleteSubDealer(userId: string): void {
-		this.warningModal('warning', 'Delete Sub Dealer', 'Are you sure you want to delete this sub-dealer?','','sub_dealer_delete', userId)
+	onDeleteUser(userId: string, email: string): void {
+		this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`,'','user_delete', userId);
 	}
 
 	onToggleEmailNotification(event: MouseEvent, tableDataIndex: number): void {
@@ -457,13 +469,13 @@ export class DataTableComponent implements OnInit {
 		this._helper.onToggleEmailNotification.emit({ userId, value: !currentValue, tableDataIndex, currentEmail });
 	}
 
-	private deleteSubDealer(userId: string): void {
+	private deleteUser(userId: string): void {
 
 		this._user.deleteUser(userId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this._helper.onRefreshUsersPage.emit(),
-				error => console.log('Error deleting sub dealer', error)
+				error => console.log('Error deleting user', error)
 			);
 
 	}
