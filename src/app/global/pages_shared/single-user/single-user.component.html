@@ -1,15 +1,15 @@
-<div class="theme-container" *ngIf="user$ | async as u">
+<div class="theme-container" *ngIf="!is_loading; else loader">
     <div class="row">
         <div class="col-lg-12">
 			<div class="d-flex justify-content-between align-items-baseline">
 				<div>
-					<h2>{{ u.firstName }} {{ u.lastName }}</h2>
-					<p class="sm-text mb-4">Create {{ u.dateCreated | date }} by {{ u.creatorName }}</p>
+					<h2>{{ user.firstName }} {{ user.lastName }}</h2>
+					<p class="sm-text mb-4">Created {{ user.dateCreated | date }} by {{ user.creatorName }}</p>
 				</div>
 
 				<button mat-button mat-raised-button class="theme-btn sm-text _danger" 
 					*ngIf="this.is_sub_dealer"
-					(click)="onDelete(u.userId)"
+					(click)="onDelete(user.userId)"
 					[disabled]="!can_delete_sub_dealer">Delete
 				</button>
 			</div>
@@ -23,24 +23,35 @@
                     <p class="sm-text mb-4">Modify Basic User Info and Save Changes.</p>
 
 					<div *ngFor="let field of info_form_fields">
-						<mat-form-field class="full-width" *ngIf="field.type !== 'radio'; else radioButton">
-							<mat-label>{{ field.label }}</mat-label>
-	
-							<input matInput 
-								formControlName="{{ field.control }}" 
-								[type]="field.type"
-								[placeholder]="field.placeholder">
-						</mat-form-field>
 
-						<ng-template #radioButton>
-							<div class="radio-btn-container" *ngIf="this.is_sub_dealer">
-								<label>Permission:</label>
-								<mat-radio-group name="{{ field.name }}" fxLayout="column" formControlName="{{ field.control }}">
-									<mat-radio-button *ngFor="let permission of permissions" class="mr-2 md-text text-gray" 
-										name="opList" [value]="permission.value">{{ permission.label }}</mat-radio-button>
-								</mat-radio-group>
-							</div>
-						</ng-template>
+						<!-- TEXT FIELD -->
+						<div class="text-field-container" *ngIf="field.type === 'text'">
+							<mat-form-field class="full-width" >
+								<mat-label>{{ field.label }}</mat-label>
+		
+								<input matInput 
+									formControlName="{{ field.control }}" 
+									[type]="field.type"
+									[placeholder]="field.placeholder">
+	
+							</mat-form-field>
+						</div>
+
+						<!-- RADIO BUTTON -->
+						<div class="radio-btn-container" *ngIf="this.is_sub_dealer && field.type === 'radio'">
+							<label>Permission:</label>
+							<mat-radio-group name="{{ field.name }}" fxLayout="column" formControlName="{{ field.control }}">
+								<mat-radio-button *ngFor="let permission of permissions" class="mr-2 md-text text-gray" 
+									name="opList" [value]="permission.value">{{ permission.label }}</mat-radio-button>
+							</mat-radio-group>
+						</div>
+
+						<!-- TOGGLE FIELD -->
+						<div class="toggle-field-container" *ngIf="field.type === 'toggle'">
+							<span>Receive Email Notification:</span>
+							<mat-slide-toggle formControlName="{{ field.control }}"></mat-slide-toggle>
+						</div>
+
 					</div>
 
                     <button mat-button mat-raised-button class="theme-btn mt-4" [disabled]="info_form_disabled">
@@ -90,3 +101,9 @@
         </div>
     </div>
 </div>
+
+<ng-template #loader>
+	<div class="vh-50 d-flex align-items-center justify-content-center">
+		<app-spinner></app-spinner>
+	</div>
+</ng-template>

@@ -1,4 +1,5 @@
 export class API_USER_DATA {
+	allowEmail: number;
     contactNumber: string;
     createdBy: string;
     creatorName: string;
