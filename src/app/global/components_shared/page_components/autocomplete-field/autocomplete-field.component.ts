@@ -54,12 +54,21 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.view_value = this.initial_value;
 		this.subscribeToResetField();
+
+        document.addEventListener('click',this.customBlur)
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+        document.removeEventListener('click', this.customBlur)
 	}
+
+    customBlur = (e : any) => {
+        if(!e.target.className.includes('skip-blur')) {
+            this.emptySearch();
+        }
+    }
 
 	dataSelected(data) {
 		this.data_value.emit(data.target.getAttribute('data-value'));
