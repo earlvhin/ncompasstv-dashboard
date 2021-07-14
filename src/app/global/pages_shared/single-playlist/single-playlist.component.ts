@@ -115,24 +115,8 @@ export class SinglePlaylistComponent implements OnInit {
 		})
 	}
 
-	getPlaylistData(id) {
+	getPlaylistData(id): void {
 		this.playlist_updating = true;
-
-		// if (id === 'e9b0204a-6d98-4ec8-b658-478fe8a86df7') {
-		// 	const body = {
-		// 		"frequency": 2,
-		// 		"playlistContentId": "c4d24f6c-c2b4-48ca-9a0e-16eefcbbd5e8",
-		// 		"playlistId": "e9b0204a-6d98-4ec8-b658-478fe8a86df7"
-		// 	};
-
-		// 	this._content.set_frequency(body.frequency, body.playlistContentId, body.playlistId)
-		// 		.subscribe(
-		// 			response => {
-		// 				console.log('set frequency response', response);
-		// 			},
-		// 			error => console.log('Error setting frequency', error)
-		// 		);
-		// }
 
 		this.subscription.add(
 			this._playlist.get_playlist_by_id(id).subscribe(
@@ -144,9 +128,7 @@ export class SinglePlaylistComponent implements OnInit {
 					this.playlist_host_and_license = this.playlist.hostLicenses;
 					this.playlist_updating = false;
 				},
-				error => {
-					console.log('#getPlaylistData', error);
-				}
+				error => console.log('Error retrieving playlist data', error)
 			)
 		);
 
@@ -156,9 +138,7 @@ export class SinglePlaylistComponent implements OnInit {
 					this.playlist_screens = data.screens;
 					this.screensMapToTable(this.playlist_screens);
 				},
-				error => {
-					console.log(error);
-				}
+				error => console.log('Error retrieving screens of playlist', error)
 			)
 		);
 	}
