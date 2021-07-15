@@ -112,7 +112,8 @@
 						<div class="d-flex">
 							<div class="flex-even">
 								<h4>Play Where</h4>
-								<p class="sm-text mb-4">Choose which host and license you want this content displayed.</p>
+								<!-- <p class="sm-text mb-4">Choose which host and license you want this content displayed.</p> -->
+								<p class="sm-text mb-4" *ngIf="host_license && host_license.length > 0">Content is currently playing on {{total_whitelist}} licenses.</p>
 							</div>
 							<div class="ml-2" *ngIf="host_license && host_license.length > 0">
 								<mat-slide-toggle class="sm-text"
@@ -127,7 +128,8 @@
 						[content_data]="_dialog_data"
 						(whitelisted)="hasWhiteListed($event)"
 						(blocklist_changes_saved)="saveBlocklistChanges($event)"
-						(blacklist_data_ready)="blacklist_ready=true">
+						(blacklist_data_ready)="blacklist_ready=true"
+                        (blacklist_count)="getCount($event)">
 						</app-play-where>
 					</div>
 				</div>
