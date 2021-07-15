@@ -43,6 +43,7 @@ import { ToolsComponent } from 'src/app/global/pages_shared/tools/tools.componen
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { HostCustomFieldsComponent } from 'src/app/global/pages_shared/host-custom-fields/host-custom-fields.component';
+import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -63,6 +64,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 			{ path: 'dealers/:data', component: SingleDealerComponent},
 			{ path: 'directory', component: DirectoryComponent},
 			{ path: 'feeds', component: FeedsComponent},
+			{ path: 'feeds/generate', component: GenerateFeedComponent},
             { path: 'hosts', component: HostsComponent},
             { path: 'hosts/:data', component: SingleHostComponent},
             { path: 'hosts-fields', component: HostCustomFieldsComponent},
