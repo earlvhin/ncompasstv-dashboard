@@ -1,0 +1,9 @@
+<div class="generated-feed-preview">
+    <div class="generated-feed-item" *ngFor="let f of feed_items; let i = index">
+        <img *ngIf="image" [src]="image" [alt]="heading">
+        <div class="context">
+            <h2 *ngIf="heading">{{ heading }}</h2>
+            <p *ngIf="paragraph">{{ paragraph }}</p>
+        </div>
+    </div>
+</div>

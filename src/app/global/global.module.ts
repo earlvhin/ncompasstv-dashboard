@@ -142,6 +142,9 @@ import { ViewSchedulesComponent } from './components_shared/playlist_components/
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
+import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
+import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
+import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -221,9 +224,12 @@ const ngComponents = [
 	ErrorMessageComponent,
 	ExpansionPanelComponent,
 	FailAnimationComponent,
+	FeedMediaComponent,
+	FeedDemoComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
 	FooterComponent, 
+	GenerateFeedComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
 	InformationModalComponent,
@@ -345,7 +351,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES,
+		DIRECTIVES
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -363,6 +369,7 @@ const DIRECTIVES = [
 		EditSingleDealerComponent,
 		EditSingleHostComponent,
 		EditableFieldModalComponent,
+		FeedMediaComponent,
 		InformationModalComponent,
 		LicenseModalComponent,
 		MediaModalComponent,
