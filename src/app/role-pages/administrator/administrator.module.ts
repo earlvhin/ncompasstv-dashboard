@@ -35,6 +35,8 @@ import { FeedsComponent } from './pages/feeds/feeds.component';
 import { InstallationsComponent } from './pages/installations/installations.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import {BreadcrumbsModule} from "ng6-breadcrumbs";
+
 @NgModule({
 	declarations: [
 		AdministratorLayoutComponent, 
@@ -72,7 +74,8 @@ import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 		MatExpansionModule,
 		DragDropModule,
 		NgbModule,
-		RouterModule.forChild(ADMINISTRATOR_ROUTES)
+		RouterModule.forChild(ADMINISTRATOR_ROUTES),
+        BreadcrumbsModule
 	],
 	providers: [
 		AuthGuard

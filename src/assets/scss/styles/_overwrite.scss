@@ -157,3 +157,36 @@
         padding-bottom: 10px;
     }
 }
+
+breadcrumb {
+    .container-fluid {
+        background: none;
+        padding: 0px;
+        margin-bottom: 10px;
+        .container {
+            max-width: 97% !important;
+            background: none;
+            padding: 0px;
+            .breadcrumb {
+                background: none;
+                padding-left: 0px;
+                font-size: 14px;
+            }
+            li {
+                &:before {
+                    content: ">";
+                } 
+                &:first-child {
+                    &:before {
+                        content: "\f015";
+                        font-family: FontAwesome;
+                        margin-right: 5px;
+                    }
+                }
+            }
+            .active {
+                color: $primary;
+            }
+        }
+    }
+}

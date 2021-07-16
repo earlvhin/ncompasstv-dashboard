@@ -5,7 +5,7 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/create-host']">
+                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/hosts/create-host']">
                     <span class="button-label">
                         Add Host Place
                     </span>
@@ -136,4 +136,5 @@
             </div>
         </ng-template>
     </div>
+    <router-outlet></router-outlet>
 </div>

@@ -21,7 +21,7 @@ import { HttpErrorInterceptor } from './global/middlewares/http-interceptor/http
 
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
 	],
 	imports: [
 		BrowserModule,
