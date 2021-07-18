@@ -8,6 +8,7 @@ import { LicenseService } from '../../../../global/services/license-service/lice
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
 import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-license-by-dealer.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-licenses',
@@ -48,17 +49,27 @@ export class LicensesComponent implements OnInit {
 	]
 
 	constructor(
+		private _route: ActivatedRoute,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _date: DatePipe,
-		private _host: HostService,
 		private _license: LicenseService,
 		private _title: TitleCasePipe
 	) { }
 
 	ngOnInit() {
 		this.getLicensesTotal();
-		this.pageRequested(1);
+
+		// Saved Page on URL
+		this._route.queryParams.subscribe(params => {
+			let saved_page = params['page'];
+
+			if (saved_page) {
+				this.pageRequested(parseInt(saved_page));
+			} else {
+				this.pageRequested(1);
+			}
+		})
 	}
 
 	ngOnDestroy() {
