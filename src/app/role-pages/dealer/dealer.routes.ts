@@ -36,37 +36,248 @@ export const DEALER_ROUTES: Routes = [
 	path: 'dealer',
 	component: DealerLayoutComponent,
 	canActivate: [AuthGuard],
-	data: { role: [UI_ROLE_DEFINITION.dealer] },
-		children: [
-			{ path: '', component: DashboardComponent },
-			{ path: 'dashboard', component: DashboardComponent },
-			{ path: 'create-host', component: CreateHostComponent},
-			{ path: 'screens/create-screen', component: CreateScreenComponent},
-			{ path: 'advertisers', component: AdvertisersComponent },
-			{ path: 'advertisers/:data', component: SingleAdvertiserComponent },
-			{ path: 'create-advertiser', component: CreateAdvertiserComponent },
-			{ path: 'feeds', component: FeedsComponent },
-			{ path: 'hosts', component: HostsComponent },
-			{ path: 'hosts/:data', component: SingleHostComponent},
-			{ path: 'licenses', component: LicensesComponent },
-			{ path: 'licenses/:data', component: SingleLicenseComponent},
-			{ path: 'locator', component: LocatorComponent },
-			{ path: 'playlists', component: PlaylistsComponent },
-			{ path: 'playlists/create-playlist', component: CreatePlaylistComponent },
-			{ path: 'playlists/:data', component: SinglePlaylistComponent },
-			{ path: 'media-library', component: MediaLibraryComponent },
-			{ path: 'media-library/:data', component: SingleContentComponent },
-			{ path: 'screens', component: ScreensComponent },
-			{ path: 'screens/:data', component: SingleScreenComponent },
-			{ path: 'billings', component: BillingsComponent },
-			{ path: 'reports', component: ReportsComponent },
-			{ path: 'users', component: UsersComponent },
-			{ path: 'users/create-user', component: CreateUserComponent},
-			{ path: 'users/:data', component: SingleUserComponent },
-			{ path: 'user-profile/:data', component: UserProfileComponent },
-			{ path: 'dealer-profile/:data', component: DealerProfileComponent },
-			{ path: 'users/create-user/:data', component: CreateUserTypeComponent },
-			{ path: 'user-account-setting/:data', component: UserAccountSettingComponent }
+	data: { 
+        role: [UI_ROLE_DEFINITION.dealer],
+        breadcrumb: 'Dashboard'
+    },
+	children: [
+			{ 
+                path: '', 
+                component: DashboardComponent 
+            },
+            { 
+                path: 'dashboard', 
+                component: DashboardComponent, 
+            },
+            { 
+                path: 'hosts', 
+                data: {
+                    breadcrumb: 'Hosts'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: HostsComponent,
+                    },
+                    { 
+                        path: 'create-host', 
+                        component: CreateHostComponent,
+                        data: {
+                            breadcrumb: 'Create Host'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleHostComponent,
+                        data: {
+                            breadcrumb: 'Single Host Page'
+                        }
+                    },
+                ]
+            },
+            { 
+                path: 'screens', 
+                data: {
+                    breadcrumb: 'Screens'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: ScreensComponent
+                    },
+                    { 
+                        path: 'create-screen', 
+                        component: CreateScreenComponent,
+                        data: {
+                            breadcrumb: 'Create Screen'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleScreenComponent,
+                        data: {
+                            breadcrumb: 'Single Screen Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'advertisers',  
+                data: {
+                    breadcrumb: 'Advertisers'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: AdvertisersComponent,
+                    },
+                    { 
+                        path: 'create-advertiser', 
+                        component: CreateAdvertiserComponent, 
+                        data: {
+                            breadcrumb: 'Create Advertiser'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleAdvertiserComponent,
+                        data: {
+                            breadcrumb: 'Single Advertiser Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'feeds', 
+                component: FeedsComponent,
+                data: {
+                    breadcrumb: 'Feeds'
+                }
+            },
+			{ 
+                path: 'licenses', 
+                data: {
+                    breadcrumb: 'Licenses'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: LicensesComponent,
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleLicenseComponent,
+                        data: {
+                            breadcrumb: 'Single License Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'locator', 
+                component: LocatorComponent, 
+                data: {
+                    breadcrumb: 'Locator'
+                }
+            },
+			{ 
+                path: 'playlists', 
+                data: {
+                    breadcrumb: 'Playlists'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: PlaylistsComponent, 
+                    },
+                    { 
+                        path: 'create-playlist', 
+                        component: CreatePlaylistComponent, 
+                        data: {
+                            breadcrumb: 'Create Playlist'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SinglePlaylistComponent, 
+                        data: {
+                            breadcrumb: 'Single Playlist Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'media-library', 
+                data: {
+                    breadcrumb: 'Media Library'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: MediaLibraryComponent, 
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleContentComponent,
+                        data: {
+                            breadcrumb: 'Single Content Page'
+                        }
+                    },		
+                ]
+            },	
+			{ 
+                path: 'billings', 
+                component: BillingsComponent,
+                data: {
+                    breadcrumb: 'Billings'
+                }
+            },
+			{ 
+                path: 'reports', 
+                component: ReportsComponent, 
+                data: {
+                    breadcrumb: 'Reports'
+                }
+            },
+			{ 
+                path: 'users',
+                data: {
+                    breadcrumb: 'Users'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: UsersComponent, 
+                    },
+                    { 
+                        path: 'create-user', 
+                        data: {
+                            breadcrumb: 'Create User'
+                        },
+                        children: [
+                            {
+                                path: '',
+                                component: CreateUserComponent,
+                            },
+                            { 
+                                path: ':data', 
+                                component: CreateUserTypeComponent,
+                                data: {
+                                    breadcrumb: 'User Type'
+                                }
+                            },
+                        ]
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleUserComponent, 
+                        data: {
+                            breadcrumb: 'Single User Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'user-profile/:data', 
+                component: UserProfileComponent,
+                data: {
+                    breadcrumb: 'User Profile'
+                }
+            },
+			{ 
+                path: 'dealer-profile/:data', 
+                component: DealerProfileComponent, 
+                data: {
+                    breadcrumb: 'Dealer Profile'
+                }
+            },
+			{ 
+                path: 'user-account-setting/:data', 
+                component: UserAccountSettingComponent, 
+                data: {
+                    breadcrumb: 'User Account Settings'
+                }
+            }
 		]
 	}
 ];

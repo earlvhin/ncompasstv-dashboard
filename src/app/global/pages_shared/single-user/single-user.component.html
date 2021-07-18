@@ -7,7 +7,7 @@
 					<p class="sm-text mb-4">Created {{ user.dateCreated | date }} by {{ user.creatorName }}</p>
 				</div>
 
-				<button mat-button mat-raised-button class="theme-btn sm-text _danger" 
+				<button mat-button mat-raised-button class="theme-btn" 
 					*ngIf="this.is_sub_dealer"
 					(click)="onDelete(user.userId)"
 					[disabled]="!can_delete_sub_dealer">Delete

@@ -8,7 +8,7 @@
             </div>
             <div class="col-lg-2">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/dealer/create-host']">
+                    <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/dealer/hosts/create-host']">
                         <span class="button-label">
                             Add Host Place
                         </span>
@@ -136,5 +136,6 @@
                 <app-spinner [diameter]="60"></app-spinner>
             </div>
         </ng-template>
+        <router-outlet></router-outlet>
     </div>
 </div>

@@ -16,7 +16,7 @@ import { UsersComponent } from './pages/users/users.component';
 import { MatAutocompleteModule, MatButtonModule, MatCardModule, MatExpansionModule, MatInputModule, MatMenuModule, MatSelectModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
-
+import {BreadcrumbsModule} from "ng6-breadcrumbs";
 
 @NgModule({
 	declarations: [ 
@@ -44,6 +44,7 @@ import { PlaylistsComponent } from './pages/playlists/playlists.component';
 		MatExpansionModule,
 		FormsModule,
 		ReactiveFormsModule,
+        BreadcrumbsModule
 	],
 	providers: [ AuthGuard ]
 })

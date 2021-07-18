@@ -221,7 +221,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         path: ':data', 
                         component: SingleContentComponent,
                         data: {
-                            breadcrumb: 'Single Content'
+                            breadcrumb: 'Single Content Page'
                         }
                     },
                 ]
@@ -358,7 +358,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         path: ':data', 
                         component: SingleUserComponent,
                         data: {
-                            breadcrumb: 'Single User'
+                            breadcrumb: 'Single User Page'
                         },
                     },
                 ]
