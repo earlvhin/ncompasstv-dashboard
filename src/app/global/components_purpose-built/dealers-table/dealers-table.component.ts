@@ -107,7 +107,7 @@ export class DealersTableComponent implements OnInit {
 
 	}
 
-	getDealers(page: number): void {
+	getDealers(page?: number): void {
 		if (page) {
 			this.pageRequested(page);
 			return
