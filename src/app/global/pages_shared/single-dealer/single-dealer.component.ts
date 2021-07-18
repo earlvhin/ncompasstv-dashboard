@@ -696,7 +696,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		})
 	}
 
-	sortList(order, page): void {
+	sortList(order, page?): void {
 		var filter = {
 			column: 'PiStatus',
 			order: order
