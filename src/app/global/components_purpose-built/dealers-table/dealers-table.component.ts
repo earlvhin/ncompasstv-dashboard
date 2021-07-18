@@ -5,6 +5,7 @@ import { Subject } from 'rxjs';
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { HelperService } from '../../services/helper-service/helper.service';
 import { UI_TABLE_DEALERS } from '../../models/ui_table_dealers.model';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-dealers-table',
@@ -47,13 +48,18 @@ export class DealersTableComponent implements OnInit {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _route: ActivatedRoute,
 		private _dealer: DealerService,
 		private _helper: HelperService,
 	) { }
 
 	ngOnInit() {
-		this.getDealers();
 		this.subscribeToDealerStatusFilter();
+		// Saved Page on URL
+		this._route.queryParams.subscribe(params => {
+			let saved_page = params['page'];
+			this.getDealers(parseInt(saved_page));
+		})
 	}
 
 	ngOnChanges() {
@@ -101,7 +107,12 @@ export class DealersTableComponent implements OnInit {
 
 	}
 
-	getDealers(): void {
+	getDealers(page?: number): void {
+		if (page) {
+			this.pageRequested(page);
+			return
+		}
+
 		this.pageRequested(1);
 	}
 
