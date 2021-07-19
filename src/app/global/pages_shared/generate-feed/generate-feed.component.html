@@ -7,7 +7,7 @@
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit totam praesentium vel blanditiis ab.
                 </p>
 
-                <mat-horizontal-stepper #stepper *ngIf="dealers" linear (selectionChange)="selectionChange($event)">
+                <mat-horizontal-stepper #stepper *ngIf="dealers; else spinner" linear (selectionChange)="selectionChange($event)">
                     <!-- Begin: Step 1 -->
                     <mat-step>
                         <div class="row justify-content-center pt-4">
@@ -39,7 +39,7 @@
                                       </mat-form-field>
                                 </form>
 
-                                <button mat-button mat-raised-button matStepperNext class="theme-btn">
+                                <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!new_feed_form.valid">
                                     <span class="button-label">Next</span>
                                     <span class="fas fa-long-arrow-alt-right ml-2"></span>
                                 </button>
@@ -53,7 +53,7 @@
                     <mat-step>
                         <ng-template matStepLabel>Feed Content</ng-template>
                         
-                        <div class="bg-gray mt-5 p-4">
+                        <div class="bg-gray mt-5 p-4"  *ngIf="selected_dealer && new_feed_form.valid; else no_dealer_selected">
                             <mat-accordion #draggables id="draggables">
                                 <mat-expansion-panel *ngFor="let f of feed_items; let i = index" hideToggle class="feed-item" [attr.data-id]="f.image.content_id">
                                     <mat-expansion-panel-header class="align-items-center">
@@ -90,8 +90,11 @@
         
                                                 <div class="col-lg-6">
                                                     <mat-form-field class="full-width" appearance="fill">
-                                                        <mat-label>Duration</mat-label>
-                                                        <input matInput type="text" [value]="f.context.duration" [(ngModel)]="f.context.duration">
+                                                        <mat-label>Duration: Default is 5 seconds</mat-label>
+                                                        <input matInput type="text" [value]="f.context.duration" [(ngModel)]="f.context.duration" (change)="apply_to_all_btn_status = !apply_to_all_btn_status">
+                                                        <button class="apply-to-all-btn" *ngIf="apply_to_all_btn_status" [ngClass]="apply_to_all_btn_status ? 'active' : ''" (click)="applyDurationToAll(f.context.duration);">
+                                                            Apply to all items
+                                                        </button>
                                                     </mat-form-field>
                                                 </div>
             
@@ -108,12 +111,14 @@
                             </mat-accordion>
 
                             <div class="row justify-content-center pt-5">
-                                <div class="border-dash col-lg-10 text-center p-5">
+                                <div class="border-dash col-lg-10 text-center p-5 position-relative">
                                     <h3 class="mb-4" *ngIf="feed_items.length == 0">Add images to get started.</h3>
-                                    <button mat-button mat-raised-button class="theme-btn" (click)="openMediaLibraryModal()">
+                                    <button mat-button mat-raised-button class="theme-btn mr-2" (click)="openMediaLibraryModal()">
                                         <span class="button-label">Add Images</span>
                                         <span class="fas fa-images ml-2"></span>
                                     </button>
+
+                                    <button *ngIf="feed_items.length > 0" mat-button mat-raised-button matStepperNext class="theme-btn" (click)="structureFeedToGenerate()">Next</button>
                                 </div>
                             </div>
                         </div>
@@ -122,26 +127,47 @@
 
                     <!-- Begin: Step 3 -->
                     <mat-step>
-                        <div class="row mb-5 mt-5">
-                            <div class="col-lg-12 text-center">
-                                <h3>Here's a preview of your customized feed.</h3>
-                                <p class="sm-text">You can edit your generated feed by going back one step above.</p>
-                            </div>
-                        </div>
-
-                        <div class="row justify-content-center" *ngIf="selected_index === 2">
-                            <div class="col-lg-8">
-                                <app-feed-demo *ngIf="feed_items.length > 0" [feed_items]="feed_items"></app-feed-demo>
-                            </div>
-                        </div>
-                        
                         <ng-template matStepLabel>Preview and Save</ng-template>
+                        <div *ngIf="feed_items.length > 0; else no_feed_content">
+                            <div class="row mb-5 mt-5">
+                                <div class="col-lg-12 text-center">
+                                    <h3>Here's a preview of your customized feed.</h3>
+                                    <p class="sm-text">You can edit your generated feed by going back one step above.</p>
+                                </div>
+                            </div>
+    
+                            <div class="row justify-content-center" *ngIf="selected_index === 2">
+                                <div class="col-lg-8 position-relative">
+                                    <div class="overlay" *ngIf="saving">
+                                        <app-spinner [diameter]="70"></app-spinner>
+                                    </div>
+                                    <app-feed-demo [feed_items]="feed_items"></app-feed-demo>
+                                    <button *ngIf="feed_items.length > 0" mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedFeed()" [disabled]="saving">Save</button>
+                                </div>
+                            </div>
+                        </div>
                     </mat-step>
                     <!-- End: Step 3 -->
                 </mat-horizontal-stepper>
-            </mat-card>
 
-            
+                <ng-template #no_feed_content>
+                    <div class="bg-gray p-5 text-center mt-5">
+                        <h3>No Feed Items Available, Go Back to Step 2 - Feed Content</h3>
+                    </div>
+                </ng-template>
+
+                <ng-template #no_dealer_selected>
+                    <div class="bg-gray p-5 text-center mt-5">
+                        <h3>Feed information is not valid, Go Back to Step 1 - Feed Information</h3>
+                    </div>
+                </ng-template>
+
+                <ng-template #spinner>
+                    <div class="py-5">
+                        <app-spinner></app-spinner>
+                    </div>
+                </ng-template>
+            </mat-card>
         </div>
     </div>
 </div>

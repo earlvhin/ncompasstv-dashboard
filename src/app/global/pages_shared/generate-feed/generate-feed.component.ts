@@ -7,9 +7,12 @@ import { FeedMediaComponent } from '../../components_shared/feed_components/feed
 import { API_CONTENT } from '../../models/api_content.model';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-
+import { GenerateFeed } from '../../models/api_feed_generator.model'; 
 import { Sortable } from 'sortablejs';
 import { FeedItem } from '../../models/ui_feed_item.model';
+import { FeedService } from '../../services/feed-service/feed.service';
+import { Router } from '@angular/router';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-generate-feed',
@@ -20,27 +23,50 @@ import { FeedItem } from '../../models/ui_feed_item.model';
 export class GenerateFeedComponent implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	
-	title: string = "Generate Feed";
+	dealer_id: string;
+	feed_items: FeedItem[] = [];
+	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
+	generated_feed: GenerateFeed;
+	is_dealer: boolean = false;
+	new_feed_form: FormGroup;
+	saving: boolean = false;
 	selected_dealer: string;
 	selected_index: number = 0;
+	title: string = "Generate Feed";
+	route: string;
+
 	dealers: {
 		dealerId: string,
 		businessName: string
 	}[];
 
-	new_feed_form: FormGroup;
-	feed_items: FeedItem[] = [];
-	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
+	apply_to_all_btn_status: boolean = false;
 
 	constructor(
 		private _auth: AuthService,
 		private _dealer: DealerService,
+		private _feed: FeedService,
 		private _form: FormBuilder,
 		private _dialog: MatDialog,
+		private _router: Router
 	) { }
 
 	ngOnInit() {
-		this.getDealers();
+
+		this.route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+
+		const roleId = this._auth.current_user_value.role_id;
+		const dealerRole = UI_ROLE_DEFINITION.dealer;
+		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+
+		// for dealer_users auto fill
+		if (roleId === dealerRole || roleId === subDealerRole) {
+			this.is_dealer = true;
+			this.selected_dealer = this._auth.current_user_value.roleInfo.dealerId;
+			this.prepareFeedInfoForm();
+		} else {
+			this.getDealers();
+		}
 	}
 
 	/** Initialize Angular Material Autocomplete Component */
@@ -59,7 +85,7 @@ export class GenerateFeedComponent implements OnInit {
 	private filter(value: string): {dealerId: string, businessName: string}[] {
 		const filter_value = value.toLowerCase();
 		const filtered_result = this.dealers.filter(i => i.businessName.toLowerCase().includes(filter_value));
-		this.selected_dealer = filtered_result[0] ? filtered_result[0].dealerId : null;
+		this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;
 		return filtered_result;
 	}
 
@@ -81,8 +107,10 @@ export class GenerateFeedComponent implements OnInit {
 			{
 				feed_title: ['', Validators.required],
 				description: [''],
-				assign_to: ['', Validators.required],
-				assign_to_id: ['', Validators.required]
+				assign_to: [{
+					value: this.is_dealer ? this._auth.current_user_value.roleInfo.businessName : '',
+					disabled: this.is_dealer ? true : false
+				}, Validators.required],
 			}
 		)
 	}
@@ -152,6 +180,70 @@ export class GenerateFeedComponent implements OnInit {
 				store: { set }
 			});
 		}
+	}
+
+	/**
+	 * Structure Feed Contents with GenerateFeed.feedContents Type
+	 * @param {feedItem[]} data Array of feed content items
+	 * @returns Structured Array of Feed Contents with GenerateFeed.feedContents Type
+	 */
+	private structureFeedContents(data: FeedItem[]): {contentId: string, heading: string, paragraph: string, duration: number, sequence: number}[] {
+		let feed_contents = [];
+
+		data.map((feed, index) => {
+			feed_contents.push(
+				{
+					contentId: feed.image.content_id,
+					heading: feed.context.heading,
+					paragraph: feed.context.paragraph,
+					duration: feed.context.duration,
+					sequence: index += 1
+				}
+			)
+		})
+
+		return feed_contents;
+	}
+
+	/** Apply Set Duration a Field to All Items
+	 *  @param {number} duration Duration set from UI
+	 */
+	applyDurationToAll(duration: number) {
+		this.feed_items.forEach(
+			i => {
+				i.context.duration = duration || 5;
+			}
+		)
+
+		this.apply_to_all_btn_status = !this.apply_to_all_btn_status;
+	}
+
+	/** Construct Generated Feed Payload to be sent to API */
+	structureFeedToGenerate(): void {
+		this.generated_feed = new GenerateFeed(
+			{
+				dealerId: this.selected_dealer,
+				feedTitle: this.f.feed_title.value,
+				description: this.f.description.value,
+				createdBy: this._auth.current_user_value.user_id
+			},
+			this.structureFeedContents(this.feed_items)
+		)
+	}
+
+	/** POST Request to API with Generated Feed Payload*/
+	saveGeneratedFeed(): void {
+		this.saving = true;
+
+		this._feed.generate_feed(this.generated_feed).subscribe(
+			data => {
+				console.log(data);
+				this._router.navigate([`/${this.route}/feeds`])
+			},
+			error => {
+				console.log(error);
+			}
+		)
 	}
 
 	/** Open Media Library where contents are assigned to selected dealer */

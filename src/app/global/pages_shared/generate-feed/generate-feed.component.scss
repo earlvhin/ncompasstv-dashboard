@@ -54,3 +54,32 @@
         padding: 5px;
     }
 }
+
+.apply-to-all-btn {
+    background: #aaa;
+    border: 0;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 10px;
+    right: 0;
+    top: 5px;
+    padding: 5px;
+    position: absolute;
+
+    &.active {
+        background: rgb(180, 219, 73);
+    }
+}
+
+.overlay {
+    background-color: rgba(#ffffff, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 999;
+}

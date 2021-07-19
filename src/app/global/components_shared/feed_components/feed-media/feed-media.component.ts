@@ -18,6 +18,7 @@ export class FeedMediaComponent implements OnInit {
 	selected_media_files: API_CONTENT[] = [];
 	subscription: Subscription = new Subscription();
 	media_files_page: number = 1;
+	pageEnd: boolean = false;
 
 	constructor(
 		private _content: ContentService,
@@ -45,6 +46,8 @@ export class FeedMediaComponent implements OnInit {
 	
 					if (data.paging.hasNextPage) {
 						this.getUserMediaFiles(dealer_id)
+					} else {
+						this.pageEnd = true;
 					}
 				}
 			)

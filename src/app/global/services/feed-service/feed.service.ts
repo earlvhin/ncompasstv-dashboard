@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
+import { GenerateFeed } from '../../models/api_feed_generator.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -30,6 +31,10 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_feed}`, data, this.httpOptions)
 	}
 
+	generate_feed(data: GenerateFeed) {
+		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate}`, data, this.httpOptions);
+	}
+
 	get_feeds(page, key, column?, order?) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
@@ -53,6 +58,7 @@ export class FeedService {
 	get_feed_by_id(feed_id) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions)
 	}
+
 
 	// get_feed_screenshot(url) {
 	// 	return 
