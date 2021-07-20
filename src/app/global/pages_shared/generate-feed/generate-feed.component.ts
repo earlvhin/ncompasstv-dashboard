@@ -11,7 +11,7 @@ import { GenerateFeed } from '../../models/api_feed_generator.model';
 import { Sortable } from 'sortablejs';
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 @Component({
@@ -24,6 +24,7 @@ export class GenerateFeedComponent implements OnInit {
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	
 	dealer_id: string;
+	editing: boolean = false;
 	feed_items: FeedItem[] = [];
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
 	generated_feed: GenerateFeed;
@@ -48,25 +49,54 @@ export class GenerateFeedComponent implements OnInit {
 		private _feed: FeedService,
 		private _form: FormBuilder,
 		private _dialog: MatDialog,
-		private _router: Router
-	) { }
+		private _router: Router,
+		private _route: ActivatedRoute
+	) { 
+		this.getParamOfActivatedRoute();
+	}
 
 	ngOnInit() {
-
 		this.route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
-		// for dealer_users auto fill
-		if (roleId === dealerRole || roleId === subDealerRole) {
-			this.is_dealer = true;
-			this.selected_dealer = this._auth.current_user_value.roleInfo.dealerId;
-			this.prepareFeedInfoForm();
+		if (this.editing) {
+			this.title = 'Edit Generated Feed';
 		} else {
-			this.getDealers();
+			if (roleId === dealerRole || roleId === subDealerRole) {
+				this.is_dealer = true;
+				this.selected_dealer = this._auth.current_user_value.roleInfo.dealerId;
+				this.prepareFeedInfoForm();
+			} else {
+				this.getDealers();
+			}
 		}
+	}
+
+	/** Enable Edit Mode if an ID is passed on init */
+	private getParamOfActivatedRoute() {
+		this._route.paramMap.subscribe(
+			(data: any) => {
+				if (data.params.data) {
+					this.editing = true;
+					this.getGeneratedFeedById(data.params.data);
+				}
+			}
+		)
+	}
+
+
+	/** Get feed info of passed query param
+	 *  @param {string} data ID from URL
+	 */
+	private getGeneratedFeedById(id: string) {
+		this._feed.get_generated_feed_by_id(id).subscribe(
+			data => {
+				console.log(data);
+			}
+		)
 	}
 
 	/** Initialize Angular Material Autocomplete Component */

@@ -171,6 +171,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Last Online', sortable: true, column:'TimeIn', key:'timeIn'},
 		{ name: 'Net Type', sortable: true, column:'InternetType', key:'internetType'},
 		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
+		{ name: 'Display', sortable: false, key: 'displayStatus'},
 		{ name: 'Anydesk' + '\n' + '& Password', sortable: true, column:'AnydeskId', key:'anydeskId'},
 		{ name: 'PS Version', sortable: false, key:'server'},
 		{ name: 'UI Version', sortable: false, key:'ui'},
@@ -608,6 +609,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
+		console.log(data);
 		let count = this.paging_data_license.pageStart;
 		return data.map(
 			(l: any) => {
@@ -621,7 +623,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						hidden: false, 
 						isImage: true
 					},
-					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, editable: false, hidden: false, status: true},
+					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, compressed: true, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
 					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false, business_hours: l.hostId ? true : false, business_hours_label: l.hostId ? this.getLabel(l) : null },
 					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false },
@@ -629,6 +631,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
 					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
 					{ value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--', link: null, editable: false, hidden: false },
+					{ value: l.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
 					{ value: l.anydeskId ? l.anydeskId + '\n' + this.splitKey(l.licenseId) : '--', link: null, editable: false, hidden: false },
 					{ value: l.apps && l.apps.server ? l.apps.server : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.apps && l.apps.ui ? l.apps.ui : '1.0.0', link: null, editable: false, hidden: false },

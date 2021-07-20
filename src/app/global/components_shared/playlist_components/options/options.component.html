@@ -113,12 +113,12 @@
 							<div class="flex-even">
 								<h4>Play Where</h4>
 								<!-- <p class="sm-text mb-4">Choose which host and license you want this content displayed.</p> -->
-								<p class="sm-text mb-4" *ngIf="host_license && host_license.length > 0">Content is currently playing on {{total_whitelist}} licenses.</p>
+								<p class="sm-text mb-4" *ngIf="host_license && host_license.length > 0">Content is currently playing on {{ total_whitelist }} licenses.</p>
 							</div>
 							<div class="ml-2" *ngIf="host_license && host_license.length > 0">
 								<mat-slide-toggle class="sm-text"
 								(change)="toggleAll($event)"
-								[checked]="toggle_all">
+								[checked]="host_license.length === total_whitelist">
 									<strong>Toggle All</strong>
 								</mat-slide-toggle>
 							</div>

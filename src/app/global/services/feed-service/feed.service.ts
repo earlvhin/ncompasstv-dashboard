@@ -46,6 +46,10 @@ export class FeedService {
 	// get_search_feeds(key: string) {
 	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?search='+`${key}`, this.httpOptions);
 	// }
+
+	get_generated_feed_by_id(id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions);
+	}
 	
 	get_feeds_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_total}`, this.httpOptions);

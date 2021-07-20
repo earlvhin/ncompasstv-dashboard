@@ -146,7 +146,7 @@ export class FeedsComponent implements OnInit {
 					{ value:i.feed.feedTitle, link: '/administrator/media-library/' +  i.feed.contentId , editable: false, hidden: false},
 					// { value:i.feed.feedDescription, link: null, editable: false, hidden: false},
 					{ value:i.dealer ? i.dealer.businessName : null, link: i.dealer ? '/administrator/dealers/' + i.dealer.dealerId : null, id: i.dealer ? i.dealer.dealerId : '', editable: false, hidden: false},
-					{ value: i.feed.classification ? this._titlecase.transform(i.feed.classification) : '--', link: null, editable: false, hidden: false},
+					{ value: i.feed.classification ? i.feed.classification : '--', link: null, editable: false, hidden: false},
 					{ value:`${i.owner.firstName} ${i.owner.lastName}`, link: '/administrator/users/' + i.owner.userId, editable: false, hidden: false},
 					{ value: this._date.transform(i.feed.dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false},
 					{ value: i.feed.feedTitle, link: i.feed.feedUrl, editable: false, hidden: true},

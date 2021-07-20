@@ -15,6 +15,9 @@ import { PlaylistService } from '../../../../global/services/playlist-service/pl
 import { ScreenService } from '../../../../global/services/screen-service/screen.service';
 import { UserService } from 'src/app/global/services/user-service/user.service';
 import { HelperService } from 'src/app/global/services/helper-service/helper.service';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-data-table',
@@ -75,12 +78,14 @@ export class DataTableComponent implements OnInit {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _auth: AuthService,
 		private _advertiser: AdvertiserService,
 		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _helper: HelperService,
 		private _license: LicenseService,
 		private _playlist: PlaylistService,
+		private _router: Router,
 		private _screen: ScreenService,
 		private _user: UserService,
 	) { }
@@ -98,7 +103,6 @@ export class DataTableComponent implements OnInit {
 		);
 
 		this.subscribeToEmailNotificationToggleResult();
-
 	}
 
 	ngOnDestroy() {
@@ -118,6 +122,12 @@ export class DataTableComponent implements OnInit {
 
 		return !restrictedRoles.includes(userRole);
 
+	}
+
+	editGeneratedFeed(data) {
+		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		console.log(`/${route}/feed/edit-generated/${data.id.value}`);
+		this._router.navigate([`/${route}/feeds/edit-generated/${data.id.value}`]);
 	}
 
 	onPageChange(page: number): void {

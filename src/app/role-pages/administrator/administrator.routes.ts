@@ -141,6 +141,13 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Generate Feeds'
                         }
                     },
+                    {
+                        path: 'edit-generated/:data',
+                        component: GenerateFeedComponent,
+                        data: {
+                            breadcrum: 'Edit Generated Feed'
+                        }
+                    }
                 ]
             },
             { 
