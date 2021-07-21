@@ -15,7 +15,10 @@
 							</div>
 
 							<div class="d-flex tags-container" *ngIf="tags.length > 0">
-								<div *ngFor="let tag of tags" class="d-inline sm-text tag">{{ tag }}</div>
+								<div *ngFor="let tag of tags" class="d-inline sm-text tag" 
+									[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
+									<div class="name">{{ tag.name }}</div>
+								</div>
 							</div>
 						</div>
 						

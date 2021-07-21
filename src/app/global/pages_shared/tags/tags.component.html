@@ -100,14 +100,20 @@
 							<!-- OWNERS -->
 							<tr *ngFor="let data of owners; let i = index;">
 								<td class="p-3">{{ i + 1 }}</td>
-								<td class="p-3">{{ data.owner.displayName }}</td>
+								<td class="p-3">
+									<a [routerLink]="[getOwnerLink(data.owner)]">
+										{{ data.owner.displayName }}
+									</a>
+								</td>
 								<td class="p-3">
 									<!-- TAGS -->
 									<div class="d-flex tags">
 										<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
 											[style.backgroundColor]="setTagColor(tag.tagColor)">
 											<!-- TAG NAME -->
-											<div class="name">{{ tag.name }} ({{ tag.count }})</div>
+											<div class="name">												
+												{{ tag.name }} ({{ tag.count }})
+											</div>
 											<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId)"><mat-icon>close</mat-icon></div>
 										</div>
 									</div>

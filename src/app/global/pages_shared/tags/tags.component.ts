@@ -10,6 +10,7 @@ import { Tag } from '../../models/tag.model';
 import { TagService } from '../../services/tag.service';
 import { TagType } from '../../models/tag-type.model';
 import { ViewTagComponent } from './dialogs/view-tag/view-tag.component';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-tags',
@@ -40,6 +41,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
+		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _form_builder: FormBuilder,
 		private _tag: TagService
@@ -55,6 +57,12 @@ export class TagsComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	getOwnerLink(owner: any): string {
+		const ownerId = this.getOwnerId(owner);
+		const currentTagType = `${this.currentTagType.name.toLowerCase()}s`;
+		return `/${this.currentUserRole}/${currentTagType}/${ownerId}`;
 	}
 
 	onAddTag(): void {
@@ -154,61 +162,6 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	}
 
-	private searchTags(keyword = ''): void {
-
-		if (keyword == null) return;
-
-		this.isLoadingTags = true;
-
-		this._tag.searchOwnersByTagType(this.currentTagType.tagTypeId, keyword)
-			.pipe(takeUntil(this._unsubscribe))
-			.map(
-				(response: { owner: any, tagTypeId: string, tags: any[] }[]) => {
-
-					const type = this.currentTagType.name.toLowerCase();
-					let displayName = null;
-
-					response.forEach(
-						(data, index) => {
-
-							const { owner } = data;
-
-							switch (type) {
-								case 'host':
-								case 'hosts':
-									displayName = `${owner.name} (${owner.city})`;
-									break;
-					
-								case 'license':
-								case 'licenses':
-									displayName = owner.alias ? owner.alias : owner.licenseKey;
-									break;
-								
-								case 'advertiser':
-								case 'advertisers':
-									displayName = owner.name;
-									break;
-					
-								default:
-									displayName = owner.businessName;
-							}
-
-							response[index].owner.displayName = displayName;
-
-						}
-					);
-
-					return response;
-				}
-			)
-			.subscribe(
-				(response: { owner: any, tagTypeId: string, tags: Tag[] }[]) => this.owners = response,
-				error => console.log('Error retrieving tags by tag type', error)
-			)
-			.add(() => this.isLoadingTags = false);
-
-	}
-
 	private getOwnerId(owner: any): string {
 
 		let result = null;
@@ -228,7 +181,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 			
 			case 'advertiser':
 			case 'advertisers':
-				result = owner.advertiserId;
+				result = owner.id;
 				break;
 
 			default:
@@ -306,6 +259,62 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	}
 
+	private searchTags(keyword = ''): void {
+
+		if (keyword == null) return;
+
+		this.isLoadingTags = true;
+
+		this._tag.searchOwnersByTagType(this.currentTagType.tagTypeId, keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.map(
+				(response: { owner: any, tagTypeId: string, tags: any[] }[]) => {
+
+					const type = this.currentTagType.name.toLowerCase();
+					let displayName = null;
+
+					response.forEach(
+						(data, index) => {
+
+							const { owner } = data;
+
+							switch (type) {
+								case 'host':
+								case 'hosts':
+									displayName = `${owner.name} (${owner.city})`;
+									break;
+					
+								case 'license':
+								case 'licenses':
+									displayName = owner.alias ? owner.alias : owner.licenseKey;
+									break;
+								
+								case 'advertiser':
+								case 'advertisers':
+									displayName = owner.name;
+									break;
+					
+								default:
+									displayName = owner.businessName;
+							}
+
+							response[index].owner.displayName = displayName;
+
+						}
+					);
+
+					return response;
+				}
+			)
+			.subscribe(
+				(response: { owner: any, tagTypeId: string, tags: Tag[] }[]) => this.owners = response,
+				error => console.log('Error retrieving tags by tag type', error)
+			)
+			.add(() => this.isLoadingTags = false);
+
+	}
+
+
 	private subscribeToOwnerSearch(): void {
 		
 		this.tagFilterControl.valueChanges
@@ -316,6 +325,10 @@ export class TagsComponent implements OnInit, OnDestroy {
 			)
 			.subscribe(() => { });
 
+	}
+
+	protected get currentUserRole() {
+		return this._auth.current_role;
 	}
 
 	protected get tagFilterControl() {
