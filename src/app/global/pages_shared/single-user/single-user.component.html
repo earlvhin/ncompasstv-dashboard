@@ -23,12 +23,12 @@
                     <p class="sm-text mb-4">Modify Basic User Info and Save Changes.</p>
 
 					<div *ngFor="let field of info_form_fields">
-
+	
 						<!-- TEXT FIELD -->
 						<div class="text-field-container" *ngIf="field.type === 'text'">
 							<mat-form-field class="full-width" >
 								<mat-label>{{ field.label }}</mat-label>
-		
+
 								<input matInput 
 									formControlName="{{ field.control }}" 
 									[type]="field.type"

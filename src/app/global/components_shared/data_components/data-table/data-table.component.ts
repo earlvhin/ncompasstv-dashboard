@@ -66,6 +66,7 @@ export class DataTableComponent implements OnInit {
 	@Output() delete_selected = new EventEmitter;
 	@Output() to_sort_column = new EventEmitter;
 
+	
 	active_table: string;
 	selected_array: any = [];
 	pagination: number;
@@ -470,7 +471,7 @@ export class DataTableComponent implements OnInit {
 	}
 
 	private deleteUser(userId: string): void {
-
+	    
 		this._user.deleteUser(userId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
