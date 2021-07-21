@@ -41,7 +41,6 @@ export class FeedsComponent implements OnInit {
 	subscription: Subscription = new Subscription();
 	
 	constructor(
-		private _titlecase: TitleCasePipe,
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
@@ -105,6 +104,7 @@ export class FeedsComponent implements OnInit {
 		this.subscription.add(
 			this._feed.get_feeds(e, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
+					console.log(data);
 					this.initial_load = false;
 					this.searching = false;
                     this.paging_data = data.paging;

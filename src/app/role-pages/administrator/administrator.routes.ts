@@ -43,7 +43,7 @@ import { ToolsComponent } from 'src/app/global/pages_shared/tools/tools.componen
 import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { HostCustomFieldsComponent } from 'src/app/global/pages_shared/host-custom-fields/host-custom-fields.component';
-import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
+import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -139,13 +139,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         component: GenerateFeedComponent,
                         data: {
                             breadcrumb: 'Generate Feeds'
-                        }
-                    },
-                    {
-                        path: 'edit-generated/:data',
-                        component: GenerateFeedComponent,
-                        data: {
-                            breadcrum: 'Edit Generated Feed'
                         }
                     }
                 ]
