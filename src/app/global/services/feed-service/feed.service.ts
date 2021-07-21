@@ -3,6 +3,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { GenerateFeed } from '../../models/api_feed_generator.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
 	providedIn: 'root'
@@ -48,7 +49,7 @@ export class FeedService {
 	// }
 
 	get_generated_feed_by_id(id: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions);
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions).pipe(map(data => data.data[0]));
 	}
 	
 	get_feeds_total() {

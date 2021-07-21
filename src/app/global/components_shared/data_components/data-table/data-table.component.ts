@@ -126,8 +126,8 @@ export class DataTableComponent implements OnInit {
 
 	editGeneratedFeed(data) {
 		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		console.log(`/${route}/feed/edit-generated/${data.id.value}`);
-		this._router.navigate([`/${route}/feeds/edit-generated/${data.id.value}`]);
+		// console.log(`/${route}/feed/edit-generated/${data.feed_id.value}`);
+		this._router.navigate([`/${route}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
 	onPageChange(page: number): void {

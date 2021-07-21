@@ -142,6 +142,7 @@ export class FeedsComponent implements OnInit {
 			i => {
 				return new UI_TABLE_FEED(
 					{ value:i.feed.contentId, link: null , editable: false, hidden: true},
+					{ value:i.feed.feedId, link: null, editable: false, hidden: true},
 					{ value:count++, link: null , editable: false, hidden: false},
 					{ value:i.feed.feedTitle, link: '/administrator/media-library/' +  i.feed.contentId , editable: false, hidden: false},
 					// { value:i.feed.feedDescription, link: null, editable: false, hidden: false},

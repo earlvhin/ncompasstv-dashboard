@@ -115,7 +115,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                     },
                 ]
             },
-			
 			{ 
                 path: 'directory', 
                 component: DirectoryComponent,
@@ -139,6 +138,13 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         component: GenerateFeedComponent,
                         data: {
                             breadcrumb: 'Generate Feeds'
+                        }
+                    },
+                    { 
+                        path: 'edit-generated/:data', 
+                        component: GenerateFeedComponent,
+                        data: {
+                            breadcrumb: 'Edit Generated Feeds'
                         }
                     }
                 ]

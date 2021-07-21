@@ -7,7 +7,7 @@ import { FeedMediaComponent } from '../../components_shared/feed_components/feed
 import { API_CONTENT } from '../../models/api_content.model';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-import { GenerateFeed } from '../../models/api_feed_generator.model'; 
+import { API_GENERATED_FEED, GenerateFeed } from '../../models/api_feed_generator.model'; 
 import { Sortable } from 'sortablejs';
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
@@ -25,6 +25,7 @@ export class GenerateFeedComponent implements OnInit {
 	
 	dealer_id: string;
 	editing: boolean = false;
+	fetched_feed: API_GENERATED_FEED;
 	feed_items: FeedItem[] = [];
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
 	generated_feed: GenerateFeed;
@@ -61,16 +62,13 @@ export class GenerateFeedComponent implements OnInit {
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-		if (this.editing) {
-			this.title = 'Edit Generated Feed';
+	
+		if (roleId === dealerRole || roleId === subDealerRole) {
+			this.is_dealer = true;
+			this.selected_dealer = this._auth.current_user_value.roleInfo.dealerId;
 		} else {
-			if (roleId === dealerRole || roleId === subDealerRole) {
-				this.is_dealer = true;
-				this.selected_dealer = this._auth.current_user_value.roleInfo.dealerId;
-				this.prepareFeedInfoForm();
-			} else {
-				this.getDealers();
+			if (!this.editing) {
+				this.getDealers();	
 			}
 		}
 	}
@@ -81,20 +79,22 @@ export class GenerateFeedComponent implements OnInit {
 			(data: any) => {
 				if (data.params.data) {
 					this.editing = true;
+					this.title = 'Edit Generated Feed';
 					this.getGeneratedFeedById(data.params.data);
 				}
 			}
 		)
 	}
 
-
 	/** Get feed info of passed query param
 	 *  @param {string} data ID from URL
 	 */
 	private getGeneratedFeedById(id: string) {
 		this._feed.get_generated_feed_by_id(id).subscribe(
-			data => {
-				console.log(data);
+			(data: API_GENERATED_FEED) => {
+				this.fetched_feed = data;
+				this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
+				this.prepareFeedInfoForm();
 			}
 		)
 	}
@@ -133,16 +133,31 @@ export class GenerateFeedComponent implements OnInit {
 
 	/** Build Feed Information Form with fields of feed_title, description, assign_to */
 	private prepareFeedInfoForm(): void {
-		this.new_feed_form = this._form.group(
-			{
-				feed_title: ['', Validators.required],
-				description: [''],
-				assign_to: [{
-					value: this.is_dealer ? this._auth.current_user_value.roleInfo.businessName : '',
-					disabled: this.is_dealer ? true : false
-				}, Validators.required],
-			}
-		)
+		if (this.editing) {
+			this.new_feed_form = this._form.group(
+				{
+					feed_title: [this.fetched_feed.feeds.feedTitle, Validators.required],
+					description: [this.fetched_feed.feeds.description],
+					assign_to: [{
+						value: this.fetched_feed.feeds.businessName,
+						disabled: true
+					}, Validators.required],
+				}
+			)
+
+			this.selected_dealer = this.fetched_feed.feeds.dealerId;
+		} else {
+			this.new_feed_form = this._form.group(
+				{
+					feed_title: [this.editing ? this.fetched_feed.feeds.feedTitle : '', Validators.required],
+					description: [this.editing ? this.fetched_feed.feeds.description : '',],
+					assign_to: [{
+						value: this.is_dealer ? this._auth.current_user_value.roleInfo.businessName : '',
+						disabled: this.is_dealer ? true : false
+					}, Validators.required],
+				}
+			)
+		}
 	}
 
 	/** New Feed Form Control Getter */
@@ -233,6 +248,33 @@ export class GenerateFeedComponent implements OnInit {
 		})
 
 		return feed_contents;
+	}
+
+	/**
+	 * Map fetched generated feed by id to UI to prepare for editing
+	 * 
+	 */
+	private mapFetchedGeneratedFeedToUI(data: API_GENERATED_FEED) {
+		data.feedContents.map(
+			c => {
+				this.feed_items.push(
+					new FeedItem(
+						{
+							heading: c.heading,
+							duration: c.duration,
+							paragraph: c.paragraph
+						},
+						{
+							content_id: c.contentId,
+							filename: '',
+							filetype: '',
+							preview_url: '',
+							file_url: ''
+						}
+					)
+				)
+			}
+		)
 	}
 
 	/** Apply Set Duration a Field to All Items

@@ -7,7 +7,7 @@
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit totam praesentium vel blanditiis ab.
                 </p>
 
-                <mat-horizontal-stepper #stepper *ngIf="dealers; else spinner" linear (selectionChange)="selectionChange($event)">
+                <mat-horizontal-stepper #stepper *ngIf="dealers || fetched_feed; else spinner" linear (selectionChange)="selectionChange($event)">
                     <!-- Begin: Step 1 -->
                     <mat-step>
                         <div class="row justify-content-center pt-4">
@@ -36,7 +36,7 @@
                                                 {{ option.businessName }}
                                             </mat-option>
                                         </mat-autocomplete>
-                                      </mat-form-field>
+                                    </mat-form-field>
                                 </form>
 
                                 <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!new_feed_form.valid">

@@ -2,6 +2,7 @@ import { create } from 'domain';
 
 export class UI_TABLE_FEED {
     id: object;
+    feed_id: object;
     index: object;
     title: object;
     business_name: object;
@@ -12,9 +13,10 @@ export class UI_TABLE_FEED {
     description: object;
    
     constructor(
-        id: object, index: object, title: object, business_name: object, classification: object,
+        id: object, feed_id: object, index: object, title: object, business_name: object, classification: object,
         created_by: object, date_created: object, feed_url: object, description: object) {
         this.id = id;
+        this.feed_id = feed_id;
         this.index = index;
         this.title = title;
         this.business_name = business_name;
