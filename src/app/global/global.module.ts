@@ -142,6 +142,7 @@ import { ViewSchedulesComponent } from './components_shared/playlist_components/
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -404,6 +405,7 @@ const DIRECTIVES = [
 		NgxPaginationModule,
 		ReactiveFormsModule,
 		RouterModule,
+		NgxMatSelectSearchModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
 		})
@@ -414,6 +416,8 @@ const DIRECTIVES = [
 		FormsModule,
 		ReactiveFormsModule,
 		DIRECTIVES,
+		NgxMatSelectSearchModule,
+		ColorPickerModule,
 	],
 	providers: [
 		MatDatepickerModule,

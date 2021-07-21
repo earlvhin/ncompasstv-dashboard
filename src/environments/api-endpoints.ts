@@ -105,6 +105,7 @@ export const API_ENDPOINTS = {
 		all_tag_types: 'tag/GetAllTypes',
 		content_by_host_id: 'content/GetByHostId',
 		distinct_tags_by_tag_type: 'tag/GetDistincTagsByTypeId?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/ExportDealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
@@ -113,6 +114,7 @@ export const API_ENDPOINTS = {
 		license_statistics_by_install_date: 'license/GetLicenseStatisticsByInstallDate?installDate=',
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
+		search_tags: 'tag/SearchTags',
 		tag_types_by_type_id: 'tag/GetTagsByTagTypeId?typeid=',
 		tags_by_id: 'tag/GetTagsById?tagid=',
 		tags_by_owner_id: 'tag/GetTagsByOwnerId?ownerid',
@@ -200,6 +202,7 @@ export const API_ENDPOINTS = {
 		api_remove_host_licenses: 'license/unassignhost?force=1',
 		host: 'host/delete',
 		tag: 'tag/delete',
+		tag_by_owner_id: 'tag/DeleteByOwnerId?ownerid=',
 		user: 'user/delete',
 	}
 };

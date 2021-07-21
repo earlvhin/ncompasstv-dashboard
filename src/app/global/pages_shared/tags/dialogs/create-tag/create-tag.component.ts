@@ -1,14 +1,15 @@
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { MatDialog, MatDialogRef, MatSelect, MAT_DIALOG_DATA } from '@angular/material';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { ReplaySubject, Subject } from 'rxjs';
 
 import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { HostService } from 'src/app/global/services/host-service/host.service';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
+import { Tag } from 'src/app/global/models/tag.model';
 import { TagService } from 'src/app/global/services/tag.service';
 import { TagType } from 'src/app/global/models/tag-type.model';
 
@@ -19,31 +20,27 @@ import { TagType } from 'src/app/global/models/tag-type.model';
 })
 export class CreateTagComponent implements OnInit, OnDestroy {
 	
+	@ViewChild('ownerMultiSelect', { static: true }) ownerMultiSelect: MatSelect;
 	advertisers = [];
 	dealers = [];
+	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
+	filteredTags: ReplaySubject<Tag[]> = new ReplaySubject(1);
 	form: FormGroup;
 	hosts = [];
 	isInitialLoad = false;
 	isLoadingSearchResults = false;
 	isSearching = false
 	licenses = [];
-	paging: any;
+	ownerSearchSettings = { label: '', placeholder: '', };
+	pendingTags: string[] = [];
+	searchTagsResult: Tag[];
+	selectedTagColor: string;
 	tagName: string;
 	tagType: TagType;
 	tagTypes: TagType[];
 	title = 'Create Tag';
+	uniqueOwners = [];
 	
-	ownerSearchSettings = { 
-		data_reference: [], 
-		key: '', 
-		label: '', 
-		placeholder: '', 
-		primary_keyword: '', 
-		search_keyword: '',
-		type: '',
-		tagTypeId: null
-	};
-
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
@@ -63,6 +60,9 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		this.tagTypes = this._dialog_data.tagTypes;
 		this.tagType = this._dialog_data.tagType;
 		this.initializeForm();
+		this.subscribeToOwnerSearch();
+		this.subscribeToTagNameSearch();
+		this.searchTags();
 	}
 
 	ngOnDestroy() {
@@ -70,20 +70,37 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	onSelectTagType(tagTypeId: number) {
+	onAddTag(name: string): void {
+
+		name = name.trim().replace(/\s+/g, '');
+		this.setCtrlValue('selectedTag', null);
+		this.setCtrlValue('tagName', null);
+
+		if (!name || name.length <= 0 || this.pendingTags.includes(name)) return;
+
+		this.ownerMultiSelect.compareWith = (a, b) => a && b && a === b;
+		this.pendingTags.push(name);
+		this.filteredTags.next(this.searchTagsResult);
+
+	}
+
+	onRemovePendingTag(index: number): void {
+		this.pendingTags.splice(index, 1);
+	}
+
+	onRemoveSelectedOwner(index: number): void {
+		this.selectedOwners.splice(index, 1);
+		this.ownerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+	}
+
+	onSelectTagType(tagTypeId: number): void {
 
 		const tagType: TagType = this.tagTypes.filter(type => type.tagTypeId === tagTypeId)[0];
 		const type = tagType.name.toLowerCase();
 
 		let settings = {
-			data_reference: this.dealers,
-			key: 'dealerId',
 			label: 'Select Dealer',
 			placeholder: 'Search Dealers...',
-			primary_keyword: 'businessName',
-			search_keyword: 'dealer',
-			type: 'dealer',
-			tagTypeId
 		};
 
 		switch (type) {
@@ -92,56 +109,33 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 			case 'hosts':
 
 				settings = {
-					data_reference: this.hosts,
-					key: 'hostId',
 					label: 'Select Host',
 					placeholder: 'Search Hosts...',
-					primary_keyword: 'name',
-					search_keyword: 'name',
-					type,
-					tagTypeId
-
 				};
 
-				this.searchHost();
 				break;
 
 			case 'license':
 			case 'licenses':
 
 				settings = {
-					data_reference: this.licenses,
-					key: 'licenseId',
 					label: 'Select License',
 					placeholder: 'Search Licenses...',
-					primary_keyword: 'licenseAlias',
-					search_keyword: '',
-					type,
-					tagTypeId
 				};
 
-				this.searchLicense();
 				break;
 
 			case 'advertiser':
 			case 'advertisers':
 
 				settings = {
-					data_reference: this.advertisers,
-					key: 'advertiserId',
 					label: 'Select Advertiser',
 					placeholder: 'Search Advertisers...',
-					primary_keyword: 'advertiserName',
-					search_keyword: '',
-					type,
-					tagTypeId
 				};
 
-				this.searchAdvertiser();
 				break;
 
 			default:
-				this.searchDealer();
 
 		}
 
@@ -150,17 +144,55 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	onSubmit(): void {
 
-		this._tag.createTag(this.tagTypeId, this.ownerId, this.name)
+		let errorMessage = 'Error creating tag';
+		const { tagTypeId, name } = this.tagType;
+		const tagTypeName = name.toLowerCase();
+		const names = this.pendingTags;
+		const tagColor = this.tagColor;
+
+		if (names.length > 1) errorMessage += 's';
+
+		const owners = this.selectedOwners.map(
+			owner => {
+				let result;
+
+				switch (tagTypeName) {
+
+					case 'host':
+					case 'hosts':
+						result = owner.hostId;
+						break;
+		
+					case 'license':
+					case 'licenses':
+						result = owner.licenseId;
+						break;
+		
+					case 'advertiser':
+					case 'advertisers':
+						result = owner.advertiserId;
+						break;
+		
+					default:
+						result = owner.dealerId;
+				}
+
+				return result;
+
+			}
+		);
+
+		this._tag.createTag(tagTypeId, tagColor, names, owners)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
-				error => console.log('Error creating tag ', error)
+				error => console.log(errorMessage, error)
 			);
 
 	}
 
-	onSelectOwner(value: any): void {
-		this.setCtrlValue('ownerId', value);
+	onSelectTagColor(value: string): void {
+		this.tagColorCtrl.setValue(value);
 	}
 
 	searchBoxTrigger(event: { is_search: boolean, page: number }, type: string): void {
@@ -193,16 +225,26 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	get isFormValid(): boolean {
+		const owners = this.selectedOwners;
+		const tagNames = this.pendingTags;
+		return this.tagColor && owners.length > 0 && tagNames.length > 0;
+	}
+
 	get name() {
-		return this.nameCtrl.value;
+		return this.tagNameCtrl.value;
+	}
+
+	get selectedOwners(): any[] {
+		return this.selectedOwnersCtrl.value;
+	}
+
+	get tagColor() {
+		return this.tagColorCtrl.value;
 	}
 
 	get tagTypeId() {
 		return this.tagTypeIdCtrl.value;
-	}
-
-	get ownerId() {
-		return this.ownerIdCtrl.value;
 	}
 
 	private initializeForm(): void {
@@ -217,25 +259,63 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 			this.onSelectTagType(this.tagType.tagTypeId);
 		}
 
-		const formGroup = this._form_builder.group({
+		this.form = this._form_builder.group({
 			tagTypeId: [ tagTypeId, Validators.required ],
-			ownerId: [ null, Validators.required ],
-			name: [ name, Validators.required ]
+			tagName: [ name ],
+			tagColor: [ null ],
+			selectedOwners: [ [], Validators.required ],
+			selectedTag: [ null ],
+			ownerFilter: [ null ]
 		});
-
-		this.form = formGroup;
 
 	}
 
 	private searchDealer(keyword = '', page = 1): void {
+
+		if (!keyword || keyword.trim().length <= 0) return;
+
 		this.isSearching = true;
 
 		this._dealer.get_dealers_with_sort(page, keyword, '', '', '', '', '', 'A')
 			.pipe(takeUntil(this._unsubscribe))
+			.map(
+				(response: { paging?: { entities: any[] }, message?: string }) => {
+
+					const { paging, message } = response;
+
+					if (message) {
+						response.paging = { entities: [] };
+						return response;
+					}
+
+					const { entities } = paging;
+
+					const dealers = entities.map(
+						(dealer: { displayName: string, businessName: string}) => {
+							const { businessName } = dealer;
+							dealer.displayName = businessName;
+							return dealer;
+						}
+					);
+
+					response.paging.entities = dealers;
+					return response;
+				}
+			)
 			.subscribe(
-				(response: { dealers: any[], paging }) => {
-					this.paging = response.paging;
-					this.ownerSearchSettings.data_reference = response.dealers;
+				(response: { paging: { entities: any[] } }) => {
+
+					const { paging } = response;
+					const { entities } = paging;
+					const merged = this.selectedOwners.concat(entities);
+
+					const unique = merged.filter(
+						(owner, index, merged) => merged.findIndex(mergedOwner => (mergedOwner.dealerId === owner.dealerId) ) === index
+					);
+
+					this.uniqueOwners = unique;
+					this.filteredOwners.next(unique);
+
 				},
 				error => console.log('Error searching for dealer ', error)
 			)
@@ -249,12 +329,49 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	private searchHost(keyword = '', page = 1): void {
 		this.isSearching = true;
 
+		if (!keyword || keyword.trim().length <= 0) return;
+
 		this._host.get_host_by_page(page, keyword)
 			.pipe(takeUntil(this._unsubscribe))
+			.map(
+				(response: { paging?: { entities: any[] }, message?: string }) => {
+
+					const { paging, message } = response;
+
+					if (message) {
+						response.paging = { entities: [] };
+						return response;
+					}
+
+					const { entities } = paging;
+
+					const hosts = entities.map(
+						(host: { displayName: string, name: string, city: string }) => {
+							const { name, city } = host;
+							host.displayName = `${name} (${city})`;
+							return host;
+						}
+					);
+
+					response.paging.entities = hosts;
+					return response;
+
+				}
+			)
 			.subscribe(
-				(response: { host: any[], paging }) => {
-					this.paging = response.paging;
-					this.ownerSearchSettings.data_reference = response.host;
+				(response: { paging: { entities: any[] } }) => {
+
+					const { paging } = response;
+					const { entities } = paging;
+					const merged = this.selectedOwners.concat(entities);
+
+					const unique = merged.filter(
+						(owner, index, merged) => merged.findIndex(mergedOwner => (mergedOwner.hostId === owner.hostId) ) === index
+					);
+
+					this.uniqueOwners = unique;
+					this.filteredOwners.next(unique);
+
 				},
 				error => console.log('Error searching for host ', error)
 			)
@@ -267,7 +384,8 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	private searchLicense(keyword = '', page = 1): void {
 		this.isSearching = true;
-		this.paging = true;
+
+		if (!keyword || keyword.trim().length <= 0) return;
 
 		this._license.search_license(keyword)
 			.pipe(takeUntil(this._unsubscribe))
@@ -276,8 +394,9 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 				if (response.message) return [];
 
 				const licenses = response.licenses.map(
-					license => {
-						license.licenseAlias += ` (${license.hostName})`;
+					(license: { licenseAlias: string, hostName: string, displayName: string, licenseKey: string }) => {
+						const { licenseAlias, hostName, licenseKey } = license;
+						license.displayName = licenseAlias ? `${licenseAlias} (${hostName})` : licenseKey; 
 						return license;
 					}
 				);
@@ -289,8 +408,14 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 				(response: any[]) => {
 
 					if (response.length <= 0) return;
+					const merged = this.selectedOwners.concat(response);
 
-					this.ownerSearchSettings.data_reference = response;
+					const unique = merged.filter(
+						(owner, index, merged) => merged.findIndex(mergedOwner => (mergedOwner.licenseId === owner.licenseId) ) === index
+					);
+
+					this.uniqueOwners = unique;
+					this.filteredOwners.next(unique);
 					
 				},
 				error => console.log('Error searching for license ', error)
@@ -304,7 +429,8 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	private searchAdvertiser(keyword = '', page = 1): void {
 		this.isSearching = true;
-		this.paging = true;
+
+		if (!keyword || keyword.trim().length <= 0) return;
 
 		this._advertiser.search_advertiser(keyword)
 			.pipe(takeUntil(this._unsubscribe))
@@ -313,8 +439,9 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 				if (response.message) return [];
 
 				const advertisers = response.advertisers.map(
-					advertiser => {
-						advertiser.advertiserName += ` (${advertiser.dealerName})`;
+					(advertiser: { dealerName: string, advertiserName: string, displayName: string }) => {
+						const { advertiserName } = advertiser;
+						advertiser.displayName = advertiserName;
 						return advertiser;
 					}
 				);
@@ -326,9 +453,15 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 				(response: any[]) => {
 					
 					if (response.length <= 0) return;
+					const merged = this.selectedOwners.concat(response);
 
-					this.ownerSearchSettings.data_reference = response;
-					
+					const unique = merged.filter(
+						(owner, index, merged) => merged.findIndex(mergedOwner => (mergedOwner.advertiserId === owner.advertiserId) ) === index
+					);
+
+					this.uniqueOwners = unique;
+					this.filteredOwners.next(unique);
+
 				},
 				error => console.log('Error searching for advertiser ', error)
 			)
@@ -336,6 +469,20 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 				this.isInitialLoad = false;
 				this.isSearching = false;
 			});
+
+	}
+
+	private searchTags(): void {
+
+		this._tag.getDistinctTagsByType(this.tagTypeId)
+			.map((response: { tags: Tag[] }) => response.tags)
+			.subscribe(
+				(response: Tag[]) => {
+					this.searchTagsResult = response;
+					this.filteredTags.next(response);
+				},
+				error => console.log('Error searching for tags', error)
+			);
 
 	}
 
@@ -351,16 +498,56 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	}
 
-	protected get nameCtrl() {
-		return this.getCtrl('name');
+	private subscribeToOwnerSearch(): void {
+		const control = this.form.get('ownerFilter');
+
+		control.valueChanges
+			.pipe(
+				takeUntil(this._unsubscribe),
+				debounceTime(200),
+				map(keyword => this.searchOwner(keyword, this.tagType.name)),
+			)
+			.subscribe(
+				() => this.ownerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId
+			);
+	}
+
+	private subscribeToTagNameSearch(): void {
+
+		this.tagNameCtrl.valueChanges
+			.pipe(takeUntil(this._unsubscribe), debounceTime(200))
+			.subscribe(
+				() => {
+					const results = this.searchTagsResult;
+					const keyword = this.tagNameCtrl.value;
+
+					if (!keyword) {
+						this.filteredTags.next(results);
+						return;
+					};
+
+					this.filteredTags.next(
+						results.filter(tag => tag.name.toLowerCase().indexOf(keyword.toLowerCase()) > - 1)
+					);
+				}
+			);
+
+	}
+
+	protected get tagNameCtrl() {
+		return this.getCtrl('tagName');
+	}
+
+	protected get selectedOwnersCtrl() {
+		return this.getCtrl('selectedOwners');
 	}
 
 	protected get tagTypeIdCtrl() {
 		return this.getCtrl('tagTypeId');
 	}
 
-	protected get ownerIdCtrl() {
-		return this.getCtrl('ownerId');
+	protected get tagColorCtrl() {
+		return this.getCtrl('tagColor');
 	}
 
 	protected getCtrl(name: string) {

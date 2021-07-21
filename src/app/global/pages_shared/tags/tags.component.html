@@ -57,9 +57,10 @@
 
 	<hr class="my-4">
 
-	<!-- TAG TYPES DROPDOWN ROW -->
-	<div class="row tag-type-selection">
-		<div class="col-lg">
+	<div class="dropdown-and-search-section d-flex justify-content-between">
+
+		<!-- TAG TYPES DROPDOWN -->
+		<div class="tag-types-select-container">
 			<mat-form-field>
 				<mat-label>Select Tag Type</mat-label>
 				<mat-select (selectionChange)="onSelectTagType($event.value)" [(ngModel)]="currentTagType">
@@ -69,6 +70,19 @@
 				</mat-select>
 			</mat-form-field>
 		</div>
+
+		<!-- SEARCH FIELD -->
+		<div class="search-container">
+
+			<form [formGroup]="searchForm">
+				<mat-form-field class="full-width" *ngIf="!isLoadingTags">
+					<mat-label>Search Tags...</mat-label>
+					<input matInput formControlName="tagFilter">
+				</mat-form-field>
+			</form>
+
+		</div>
+
 	</div>
 
 	<!-- TAGS TABLE -->
@@ -83,13 +97,23 @@
 							</tr>
 						</thead>
 						<tbody>
-							<tr *ngFor="let tag of tags; let i = index;">
+							<!-- OWNERS -->
+							<tr *ngFor="let data of owners; let i = index;">
 								<td class="p-3">{{ i + 1 }}</td>
-								<td class="p-3">{{ tag.name }}</td>
-								<td class="p-3">{{ tag.count }}</td>
+								<td class="p-3">{{ data.owner.displayName }}</td>
+								<td class="p-3">
+									<!-- TAGS -->
+									<div class="d-flex tags">
+										<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
+											[style.backgroundColor]="setTagColor(tag.tagColor)">
+											<!-- TAG NAME -->
+											<div class="name">{{ tag.name }} ({{ tag.count }})</div>
+											<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId)"><mat-icon>close</mat-icon></div>
+										</div>
+									</div>
+								</td>
 								<td class="p-3 action-buttons">
-									<mat-icon class="no-select" (click)="onViewTag(tag.name)">edit</mat-icon>
-									<mat-icon class="no-select text-danger" (click)="onDelete(tag.name)">delete</mat-icon>
+									<mat-icon class="no-select text-danger" (click)="onDelete(data.owner)">delete</mat-icon>
 								</td>
 							</tr>
 						</tbody>
@@ -98,7 +122,6 @@
 			</mat-card>
 		</div>
 	</div>
-	
 </div>
 
 <ng-template #loading>
