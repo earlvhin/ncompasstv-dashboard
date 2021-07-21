@@ -1,7 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { ReplaySubject, Subject } from 'rxjs';
 
 import { CreateTagComponent } from './dialogs/create-tag/create-tag.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -19,16 +20,20 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	count = { dealer: 0, host: 0, advertiser: 0, license: 0 };
 	currentTagType: TagType;
+	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
 	isLoadingCount = false;
 	isLoadingTags = false;
+	isSearchingTags = true;
+	owners: { owner: { displayName: string }, tagTypeId: string, tags: Tag[] }[];
+	searchForm: FormGroup;
 	tags: { name: string, count: number }[] = [];
 	tagTypes: TagType[] = [];
 	title = 'Tags';
 	
 	columns = [
 		{ name: '#', class: 'p-3 index-column-width' },
-		{ name: 'Name', class: 'p-3' },
-	 	{ name: 'Count', class: 'p-3' },
+		{ name: 'Owner', class: 'p-3' },
+		{ name: 'Tags', class: 'p-3' },
 		{ name: 'Actions', class: 'p-3 text-center' }
 	];
 
@@ -36,10 +41,13 @@ export class TagsComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		private _dialog: MatDialog,
+		private _form_builder: FormBuilder,
 		private _tag: TagService
 	) { }
 	
 	ngOnInit() {
+		this.initializeSearchForm();
+		this.subscribeToOwnerSearch();
 		this.getAllTagTypes();
 		this.getTagsCount();
 	}
@@ -51,9 +59,9 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	onAddTag(): void {
 		const dialog = this._dialog.open(CreateTagComponent, {
-			width: '500px',
+			width: '900px',
 			height: '500px',
-			data: { tagTypes: this.tagTypes },
+			data: { tagTypes: this.tagTypes, tagType: this.currentTagType },
 			panelClass: 'dialog-container-position-relative'
 		});
 
@@ -62,59 +70,15 @@ export class TagsComponent implements OnInit, OnDestroy {
 				(response: boolean) => {
 					if (!response) return;
 					this.getTagsCount();
-					this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
-				}
-			);
-	}
-
-	onDelete(tagName: string): void {
-
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { 
-				status: 'warning', 
-				message: 'Delete Tag',  
-				data: `Associated ${this.currentTagType.name.toLowerCase()}s will be removed from this tag`,
-				return_msg: 'Confirmed deletion'
-			}
-		});
-
-		dialog.afterClosed()
-			.subscribe(
-				response => {
-
-					if (!response) return;
-
-					this._tag.getTagsByNameAndType(tagName, this.currentTagType.tagTypeId)
-						.pipe(takeUntil(this._unsubscribe))
-						.subscribe(
-							async (response: { tags: Tag[] }) => {
-
-								const tagIdsToDelete = response.tags.map(tag => `${tag.tagId}`);
-
-								try {
-
-									await this._tag.deleteTag(tagIdsToDelete).toPromise();
-									this.getTagsCount();
-									this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
-
-								} catch (error) {
-									console.error('Error deleting tag', error);
-								}
-
-
-							},
-							error => console.log('Error retrieving distinct tags', error)
-						);
-
+					this.searchTags();
 				}
 			);
 	}
 
 	onSelectTagType(type: TagType): void {
 		this.currentTagType = type;
-		this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
+		this.searchTags();
+		this.tagFilterControl.setValue(null);
 	}
 
 	onViewTag(tagName: string): void {
@@ -125,30 +89,54 @@ export class TagsComponent implements OnInit, OnDestroy {
 			autoFocus: false
 		});
 
-		dialog.afterClosed().subscribe(
-			response => {
+		dialog.afterClosed()
+			.subscribe(
+				response => {
 
-				if (!response) return;
-				this.getTagsCount();
-				this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
+					if (!response) return;
+					this.getTagsCount();
 
-			}
-		);
+				}
+			);
 	}
 
-	private getDistinctTagsByTypeId(typeId: number): void {
-		this.isLoadingTags = true;
+	setTagColor(value: string): string {
+		return value ? value : 'gray';
+	}
 
-		this._tag.getDistinctTagsByTypeId(typeId)
+	async onDelete(owner: any): Promise<void> {
+
+		const response = await this.openConfirmAPIRequestDialog('delete_all_owner_tags').toPromise();
+
+		if (!response) return;
+
+		const ownerId = this.getOwnerId(owner);
+
+		this._tag.deleteAllTagsFromOwner(ownerId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { tags: { name: string, count: number }[] }) => {
-					this.tags = response.tags;
-				},
+				() => this.searchTags(),
 				error => console.log('Error retrieving distinct tags', error)
-			)
-			.add(() => this.isLoadingTags = false);
+			);
+	}
 
+	async onDeleteTagFromOwner(tagId: string): Promise<void> {
+	
+		const response = await this.openConfirmAPIRequestDialog('delete_owner_tag').toPromise();
+
+		if (!response) return;
+
+		this._tag.deleteTag([tagId])
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.searchTags(),
+				error => console.log('Error deleting tag', error)
+			);
+
+	}
+
+	get tagFilter() {
+		return this.tagFilterControl.value;
 	}
 
 	private getAllTagTypes(): void {
@@ -162,9 +150,92 @@ export class TagsComponent implements OnInit, OnDestroy {
 				},
 				error => console.log('Error retrieving tag types', error)
 			)
-			.add(() => {
-				this.getDistinctTagsByTypeId(this.currentTagType.tagTypeId);
-			});
+			.add(() => this.searchTags());
+
+	}
+
+	private searchTags(keyword = ''): void {
+
+		if (keyword == null) return;
+
+		this.isLoadingTags = true;
+
+		this._tag.searchOwnersByTagType(this.currentTagType.tagTypeId, keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.map(
+				(response: { owner: any, tagTypeId: string, tags: any[] }[]) => {
+
+					const type = this.currentTagType.name.toLowerCase();
+					let displayName = null;
+
+					response.forEach(
+						(data, index) => {
+
+							const { owner } = data;
+
+							switch (type) {
+								case 'host':
+								case 'hosts':
+									displayName = `${owner.name} (${owner.city})`;
+									break;
+					
+								case 'license':
+								case 'licenses':
+									displayName = owner.alias ? owner.alias : owner.licenseKey;
+									break;
+								
+								case 'advertiser':
+								case 'advertisers':
+									displayName = owner.name;
+									break;
+					
+								default:
+									displayName = owner.businessName;
+							}
+
+							response[index].owner.displayName = displayName;
+
+						}
+					);
+
+					return response;
+				}
+			)
+			.subscribe(
+				(response: { owner: any, tagTypeId: string, tags: Tag[] }[]) => this.owners = response,
+				error => console.log('Error retrieving tags by tag type', error)
+			)
+			.add(() => this.isLoadingTags = false);
+
+	}
+
+	private getOwnerId(owner: any): string {
+
+		let result = null;
+		const type = this.currentTagType.name.toLowerCase();
+
+
+		switch (type) {
+			case 'host':
+			case 'hosts':
+				result = owner.hostId;
+				break;
+
+			case 'license':
+			case 'licenses':
+				result = owner.licenseId;
+				break;
+			
+			case 'advertiser':
+			case 'advertisers':
+				result = owner.advertiserId;
+				break;
+
+			default:
+				result = owner.dealerId;
+		}
+
+		return result;
 
 	}
 
@@ -196,6 +267,63 @@ export class TagsComponent implements OnInit, OnDestroy {
 				error => console.log('Error retrieving tags count ', error)
 			);
 
+	}
+
+	private initializeSearchForm(): void {
+		this.filteredOwners.next([]);
+
+		this.searchForm = this._form_builder.group({
+			tagFilter: [ null ]
+		});
+
+	}
+
+	private openConfirmAPIRequestDialog(type: string) {
+
+		let data: string;
+		let message: string;
+		let status = 'warning';
+		let return_msg: string;
+		let width = '500px';
+		let height = '350px';
+
+		switch (type) {
+
+			case 'delete_owner_tag':
+				message = 'Delete Tag';
+				data = `Associated ${this.currentTagType.name.toLowerCase()}s will be removed from this tag`;
+				return_msg = 'Confirmed deletion';
+				break;
+
+			case 'delete_all_owner_tags':
+				message = 'Delete Owner Tags';
+				data = `ALL associated tags from ${this.currentTagType.name.toLowerCase()} will be removed`
+				return_msg = 'Confirmed deletion'
+				break;
+		}
+
+		return this._dialog.open(ConfirmationModalComponent, { width, height, data: { status, message, data, return_msg } }).afterClosed();
+
+	}
+
+	private subscribeToOwnerSearch(): void {
+		
+		this.tagFilterControl.valueChanges
+			.pipe(
+				takeUntil(this._unsubscribe),
+				debounceTime(200),
+				map(keyword => this.searchTags(keyword)),
+			)
+			.subscribe(() => { });
+
+	}
+
+	protected get tagFilterControl() {
+		return this.getSearchFormControl('tagFilter');
+	}
+
+	protected getSearchFormControl(name: string) {
+		return this.searchForm.get(name);
 	}
 	
 }

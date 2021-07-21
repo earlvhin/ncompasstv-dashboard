@@ -1,3 +1,66 @@
+.heading {
+	margin-bottom: 20px;
+}
+
+.form-section {
+	margin-right: 20px;
+	padding-right: 20px;
+	border-right: 1px solid gray;
+	max-width: 360px;
+
+	// .owner-select-search {
+	// 	width: 300px;
+	// }
+}
+
+.preview-section {
+	mat-icon {
+		font-size: 12px;
+	}
+
+	.remove-btn {
+		text-align: center;
+
+		mat-icon {
+			line-height: 25px;
+		}
+	}
+
+	.pending-tags-container {
+
+		h4 {
+			margin-right: 20px;
+		}
+
+		.tag {
+			margin-right: 5px;
+			margin-bottom: 5px;
+			padding: 1px 5px 1px 7px;
+			font-size: 12px;
+			border-radius: 5px;
+			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
+			color: white;
+		}
+	}
+	
+	.selected-owners-container {
+
+		h4 {
+			margin-right: 20px;
+		}
+
+		.owner {
+			background: #8ec641;
+			color: white;
+			font-size: 12px;
+			margin-right: 5px;
+			margin-bottom: 5px;
+			padding: 1px 5px;
+		}
+
+	}
+}
+
 button[type="submit"] {
 	float: right;
 	position: absolute;

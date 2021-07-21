@@ -1,5 +1,5 @@
 <div class="create-dialog p-2" id="createTagsDialog">
-	<div class="d-flex">
+	<div class="d-flex heading">
 		<div class="flex-even">
 			<h3 class="p-0 col-lg-12">{{ title }}</h3>
 		</div>
@@ -9,50 +9,123 @@
 			</button>
 		</div>
 	</div>
-	<br><br>
-	<form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-		<!-- TAG TYPE SELECTION -->
-		<mat-form-field class="full-width">
-			<mat-label>Select Tag Type</mat-label>
-			<mat-select formControlName="tagTypeId" (selectionChange)="onSelectTagType($event.value)">
-				<mat-option *ngFor="let type of tagTypes" [value]="type.tagTypeId">
-					{{ type.name }}
-				</mat-option>
-			</mat-select>
-		</mat-form-field>
+	<div class="sections-container d-flex">
+		<!-- FORM SECTION -->
+		<div class="form-section">
+			<!-- <br><br> -->
+			<form [formGroup]="form" (ngSubmit)="onSubmit()">
 		
-		<!-- TAG NAME FIELD -->
-		<mat-form-field class="full-width">
-			<mat-label>Tag Name</mat-label>
-			<input formControlName="name" matInput>
-		</mat-form-field>
+				<!-- TAG TYPE SELECTION -->
+				<mat-form-field class="full-width">
+					<mat-label>Select Tag Type</mat-label>
+					<mat-select formControlName="tagTypeId" (selectionChange)="onSelectTagType($event.value)">
+						<mat-option *ngFor="let type of tagTypes" [value]="type.tagTypeId">
+							{{ type.name }}
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
 
-		<!-- OWNER AUTOCOMPLETE FIELD -->
-		<div *ngIf="tagTypeId; else selectOwner">
-			<app-autocomplete-field
-				(data_value)="onSelectOwner($event)"
-				(call_next_page)="searchBoxTrigger($event, ownerSearchSettings.type)"
-				(searched)="searchOwner($event, ownerSearchSettings.type)"
-				[label]="ownerSearchSettings.label"
-				[placeholder]="ownerSearchSettings.placeholder"
-				[data_reference]="ownerSearchSettings.data_reference"
-				[key_of_value]="ownerSearchSettings.key"
-				[primary_keyword]="ownerSearchSettings.primary_keyword"
-				[search_keyword]="ownerSearchSettings.search_keyword"
-				[paging]="paging"
-				[is_scroll_next_disabled]="true"
-				[loading_data]="isLoadingSearchResults"
-				[loading_search]="isSearching"
-				[initial_load]="isInitialLoad">							
-			</app-autocomplete-field>
-		</div>
+				<!-- TAG COLOR PICKER -->
+				<mat-form-field class="full-width">
+                    <mat-label>Tag Color</mat-label>
+                    <input matInput type="text"
+						[(colorPicker)]="selectedTagColor" 
+						[cpAlphaChannel]="'disabled'"
+						[cpDisableInput]="true"
+						(colorPickerChange)="onSelectTagColor(selectedTagColor)" 
+						[style.background]="selectedTagColor"
+						[value]="selectedTagColor || ''"/>
+                </mat-form-field>
+				
+				<!-- TAG NAME FIELD -->
+				<mat-form-field class="full-width">
+					<!-- <mat-label>Tag Name</mat-label>
+					<input matInput formControlName="name" 
+						(keyup.space)="onAddTag($event.target.value)" 
+						(keyup.enter)="onAddTag($event.target.value)"> -->
+
+					<mat-select placeholder="Tag Name" #tagSearchSelect formControlName="selectedTag">
+						<mat-option>
+							<ngx-mat-select-search 
+								formControlName="tagName" 
+								placeholderLabel="Input tag..."
+								noEntriesFoundLabel="No results"
+								[clearSearchInput]="true"
+								(keyup.space)="onAddTag($event.target.value)" 
+								(keyup.enter)="onAddTag($event.target.value)">
+							</ngx-mat-select-search>
+						</mat-option>
+				
+						<mat-option *ngFor="let tag of filteredTags | async" [value]="null">
+							<div class="tag" (click)="onAddTag(tag.name)">
+								{{ tag.name }} ({{ tag.count }})
+							</div>
+						</mat-option>
+					</mat-select>
+				</mat-form-field>
 		
-		<!-- SUBMIT BUTTON -->
-		<div mat-dialog-actions align="end">
-			<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="form.invalid">Submit</button>
+				<!-- OWNER SELECT SEARCH FIELD -->
+				<mat-form-field class="full-width owner-select-search">
+					<mat-select #ownerMultiSelect formControlName="selectedOwners" 
+						[placeholder]="ownerSearchSettings.label" 
+						[multiple]="true">
+
+						<mat-option>
+							<ngx-mat-select-search 
+								formControlName="ownerFilter" 
+								noEntriesFoundLabel="No results"
+								[placeholderLabel]="ownerSearchSettings.placeholder"
+								[clearSearchInput]="false"
+								[searching]="isSearching">
+								<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+							</ngx-mat-select-search>
+						</mat-option>
+
+						<mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
+							<div class="displayName">
+								{{ owner.displayName | titlecase }}
+							</div>
+						</mat-option>
+					</mat-select>
+		
+				</mat-form-field>
+				
+				<!-- SUBMIT BUTTON -->
+				<div mat-dialog-actions align="end">
+					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="!isFormValid">Submit</button>
+				</div>
+			</form>
 		</div>
-	</form>
+	
+		<!-- PREVIEW SECTION -->
+		<div class="preview-section">
+			<div class="d-flex flex-column">
+				<!-- TAGS LIST -->
+				<div class="pending-tags-container d-flex flex-row align-items-start flex-wrap">
+					<h4>Tags:</h4>
+
+					<div *ngFor="let tag of pendingTags; let i = index;" class="tag d-flex align-items-center"
+						[style.backgroundColor]="selectedTagColor">
+						<div class="name">{{ tag }}</div>
+						<div class="remove-btn cursor-pointer" (click)="onRemovePendingTag(i)"><mat-icon>close</mat-icon></div>
+					</div>
+				</div>
+				
+				<br>
+				<!-- OWNERS LIST -->
+				<div class="selected-owners-container d-flex flex-row align-items-start flex-wrap">
+					<h4>{{ tagType.name | titlecase }}s: </h4>
+
+					<div *ngFor="let owner of selectedOwners; let i = index;" class="owner d-flex align-items-center">
+						<div class="business-name">{{ owner.displayName }}</div>
+						<div class="remove-btn cursor-pointer" (click)="onRemoveSelectedOwner(i)"><mat-icon>close</mat-icon></div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
 </div>
 
 <ng-template #selectOwner>

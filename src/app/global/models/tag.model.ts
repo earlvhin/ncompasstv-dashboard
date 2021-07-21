@@ -1,10 +1,12 @@
 export interface Tag {
-	alias: string;
-	dateCreated: string;
+	alias?: string;
+	dateCreated?: string;
 	name: string;
-	ownerId: string;
+	ownerId?: string;
 	ownerName: string;
-	tagId: number;
+	tagId?: number;
 	tagTypeId: number;
 	tagType: string;
+	tagColor: string;
+	count: number;
 }

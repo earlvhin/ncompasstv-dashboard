@@ -47,6 +47,7 @@
         "moment-timezone": "^0.5.33",
         "ng6-breadcrumbs": "^1.0.7",
         "ngx-color-picker": "^9.1.0",
+        "ngx-mat-select-search": "^3.3.0",
         "ngx-material-timepicker": "^5.5.3",
         "ngx-pagination": "^5.1.0",
         "ngx-sortable": "^1.0.3",
