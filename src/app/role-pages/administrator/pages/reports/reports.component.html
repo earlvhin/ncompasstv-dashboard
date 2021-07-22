@@ -1,19 +1,21 @@
-<div class="theme-container">
+<div class="theme-container" id="reports">
     <div class="title-section">
         <h1 class="page-title">{{ title }}</h1>
         <hr class="my-4">
     </div>
     <div class="content-section">
-        <div class="row">
-            <div class="col-lg-6 bg-dark text-center text-white">
-                LICENSES STATISTICS
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-lg-6 p-0">
-                <div id="host-map" class="white-bg pt-5 p-3" style="height:600px;width:100%"></div>
-            </div>
-        </div>
+        <mat-tab-group dynamicHeight>
+            <mat-tab label="Hosts">
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-hosts-tab></app-hosts-tab>
+                </div>
+            </mat-tab>
+            <mat-tab label="Content">
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-contents-tab></app-contents-tab>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
     </div>
 </div>
   

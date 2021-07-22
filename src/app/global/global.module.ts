@@ -21,6 +21,7 @@ import { ColorPickerModule } from 'ngx-color-picker';
 import { ConfirmTemplateModalComponent } from './components_shared/template_components/confirm-template-modal/confirm-template-modal.component';
 import { ConfirmationModalComponent } from './components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { ContentScheduleCardComponent } from './components_shared/playlist_components/content-schedule-cards/content-schedule-card.component';
+import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
 import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
@@ -60,6 +61,7 @@ import { FilterLabelsComponent } from './components_shared/media_components/filt
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
+import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
 import { InformationModalComponent } from './components_shared/page_components/information-modal/information-modal.component';
 import { IsEmptyPipe } from './pipes/is-empty.pipe';
 import { IsFeedPipe } from './pipes/is-feed.pipe';
@@ -192,6 +194,7 @@ const ngComponents = [
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
 	ContentScheduleCardComponent,
+    ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
 	CreateFeedComponent,
@@ -233,6 +236,7 @@ const ngComponents = [
 	GenerateFeedComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
+    HostsTabComponent,
 	InformationModalComponent,
 	IsEmptyPipe,
 	IsFeedPipe,
@@ -352,7 +356,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES
+		DIRECTIVES,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

@@ -58,11 +58,10 @@
 
 						<ng-container *ngIf="!data[d].isImage; else isImage;">
 
-							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params">
+							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params" target="{{data[d].new_tab_link ? '_blank' : '_self'}}">
 								<ng-container>
 
 									<div *ngIf="!data[d].permission; else userWithPermission">{{ data[d].value }}</div>
-
 									<ng-template #userWithPermission>
 										<div class="d-flex name-and-permission">
 											<div>{{ data[d].value }}</div>
@@ -103,7 +102,21 @@
 
 									<ng-template #defaultValue>
 										<!-- DEFAULT DATA DISPLAY -->
-										<div *ngIf="!data[d].type">{{ data[d].value }}</div>
+										<div *ngIf="!data[d].type">{{ data[d].value }}
+                                            <div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].show_host">
+                                                <button class="hidden-button no-background" id="dropdownMenu1" ngbDropdownToggle>
+                                                    <i class="pl-3 cursor-pointer text-right fas fa-map-marked text-primary" data-toggle="tooltip" title="Show Host List"></i>
+                                                </button>
+                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="reportsDrop" ngbDropdownMenu>
+                                                        <span class="md-text pl-2">Playing Where:</span>
+                                                        <a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="['/administrator/hosts', host.hostId]" target="_blank">
+                                                            {{host.hostName}}
+                                                        </a>
+                                                    </div>
+                                            </div>
+                                        </div>
+
+                                        
 
 										<!-- TOGGLE FIELD -->
 										<div *ngIf="data[d].type === 'toggle'">

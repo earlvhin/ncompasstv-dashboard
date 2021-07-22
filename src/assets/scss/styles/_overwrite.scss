@@ -190,3 +190,18 @@ breadcrumb {
         }
     }
 }
+
+#reports {
+    .theme-table {
+        overflow: visible;
+    }
+    .mat-tab-body-wrapper {
+        min-height: 500px;
+    }
+}
+
+#reportsDrop {
+    max-height: 235px;
+    overflow-y: auto;
+    // transform: translate3d(5px, 35px, 0px)!important;
+}
