@@ -1,0 +1,37 @@
+.media-file-thumbnail {
+    border: 1px solid #f0f0f0;
+    height: 100px;
+    overflow: hidden;
+    position: relative;
+
+    img {
+        height: 100%;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .overlay {
+        background: rgba(0,0,0,0.8);
+        padding: 5px;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        text-align: center;
+        width: 100%;
+
+        span {
+            color: rgb(138, 201, 56);
+            font-weight: bold;
+        }
+    }
+
+    &.selected {
+        border: 2px solid rgb(138, 201, 56);
+    }
+}
+
+.media-files {
+    border-bottom: 1px solid #f0f0f0;
+    overflow-y: scroll;
+    height: 550px;
+}

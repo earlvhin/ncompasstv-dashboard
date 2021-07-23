@@ -20,7 +20,7 @@ import { TagsModule } from './global/pages_shared/tags/tags.module';
 import { HttpErrorInterceptor } from './global/middlewares/http-interceptor/http-error.interceptor';
 @NgModule({
 	declarations: [
-		AppComponent
+		AppComponent,
 	],
 	imports: [
 		BrowserModule,

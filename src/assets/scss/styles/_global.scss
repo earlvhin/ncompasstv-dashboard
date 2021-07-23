@@ -52,6 +52,10 @@ hr {
 	background-color: $danger;
 }
 
+.text-danger {
+	color: $danger;
+}
+
 .dialog-container-position-relative {
 	mat-dialog-container {
 		position: relative !important;

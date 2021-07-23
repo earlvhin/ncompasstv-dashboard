@@ -422,6 +422,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(this._license.get_license_by_id(id)
 			.subscribe(
 				(data: any) => {
+					console.log(data);
+					
 					this.setHostDetails(data.host);
 					this.title = data.license.alias;
 					this.license_key = data.license.licenseKey;
@@ -626,7 +628,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					);
 				}
 			);
-
 	}
 
 	onInitTasks(): void {

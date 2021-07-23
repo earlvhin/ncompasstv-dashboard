@@ -23,6 +23,7 @@ export class PlayWhereComponent implements OnInit {
 	@Output() blocklist_changes_saved = new EventEmitter;
 	@Output() whitelisted = new EventEmitter;
 	@Output() blacklist_data_ready = new EventEmitter;
+	@Output() blacklist_count = new EventEmitter;
 	toggleEvent_child: Subject<void> = new Subject<void>();
 	add_in_blocklist = [];
 	remove_in_blocklist = [];
@@ -112,6 +113,12 @@ export class PlayWhereComponent implements OnInit {
 			data => {
 				this.blacklist_data = data.blacklistsContents || [];
 				this.blacklist_data_ready.emit(true)
+                if(!data.message) {
+                    this.blacklist_count.emit(data.blacklistsContents.length)
+                } else {
+                    this.blacklist_count.emit(0)
+                }
+                
 			}
 		)
 	}

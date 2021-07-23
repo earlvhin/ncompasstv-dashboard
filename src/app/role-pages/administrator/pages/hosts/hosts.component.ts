@@ -127,7 +127,7 @@ export class HostsComponent implements OnInit {
 					return new UI_TABLE_HOSTS_BY_DEALER(
 						{ value: dealer.dealerId, link: null , editable: false, hidden: true},
 						{ value: count++, link: null , editable: false, hidden: false},
-						{ value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--', link: '/administrator/dealers/' +  dealer.dealerId, editable: false, hidden: false},
+						{ value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--', link: '/administrator/dealers/' +  dealer.dealerId, new_tab_link:false, editable: false, hidden: false},
 						{ value: dealer.businessName, link: '/administrator/dealers/' +  dealer.dealerId, editable: false, hidden: false},
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false},
 						// { value: dealer.region, link: null, editable: false, hidden: false},

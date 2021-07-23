@@ -32,31 +32,200 @@ export const SUB_DEALER_ROUTES: Routes = [
         path: 'sub-dealer',
         component: SubDealerLayoutComponent,
         canActivate: [ AuthGuard ],
-        data: { role: [ UI_ROLE_DEFINITION['sub-dealer']]  },
+        data: { 
+            role: [ UI_ROLE_DEFINITION['sub-dealer']],
+            breadcrumb: 'Dashboard'
+        },
         children: [
-            { path: '', component: DashboardComponent },
-			{ path: 'dashboard', component: DashboardComponent },
-			{ path: 'hosts', component: HostsComponent },
-			{ path: 'licenses', component: LicensesComponent },
-			{ path: 'advertisers', component: AdvertisersComponent },
-			{ path: 'locator', component: LocatorComponent },
-			{ path: 'media-library', component: MediaLibraryComponent },
-			{ path: 'feeds', component: FeedsComponent },
-			{ path: 'playlists', component: PlaylistsComponent },
-			{ path: 'screens', component: ScreensComponent },
-			{ path: 'user-profile/:data', component: UserProfileComponent },
-			{ path: 'user-account-setting/:data', component: UserAccountSettingComponent },
-			{ path: 'create-host', component: CreateHostComponent, canActivate: [ PermissionGuard ] },
-			{ path: 'screens/create-screen', component: CreateScreenComponent, canActivate: [ PermissionGuard ] },
-			{ path: 'create-advertiser', component: CreateAdvertiserComponent, canActivate: [ PermissionGuard ] },
-			{ path: 'playlists/create-playlist', component: CreatePlaylistComponent, canActivate: [ PermissionGuard ] },
-			{ path: 'advertisers/:data', component: SingleAdvertiserComponent },
-			{ path: 'hosts/:data', component: SingleHostComponent },
-			{ path: 'licenses/:data', component: SingleLicenseComponent },
-			{ path: 'playlists/:data', component: SinglePlaylistComponent },
-			{ path: 'media-library/:data', component: SingleContentComponent },
-			{ path: 'screens/:data', component: SingleScreenComponent },
-			{ path: 'dealer-profile/:data', component: DealerProfileComponent },
+            { 
+                path: '', 
+                component: DashboardComponent 
+            },
+			{ 
+                path: 'dashboard', 
+                component: DashboardComponent 
+            },
+			{ 
+                path: 'hosts', 
+                data: {
+                    breadcrumb: 'Hosts'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: HostsComponent, 
+                    },
+                    { 
+                        path: 'create-host', 
+                        component: CreateHostComponent, 
+                        canActivate: [ PermissionGuard ],
+                        data: {
+                            breadcrumb: 'Create Host'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleHostComponent, 
+                        data: {
+                            breadcrumb: 'Single Host Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'licenses', 
+                data: {
+                    breadcrumb: 'Licenses'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: LicensesComponent, 
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleLicenseComponent, 
+                        data: {
+                            breadcrumb: 'Single License Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'advertisers', 
+                data: {
+                    breadcrumb: 'Advertisers'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: AdvertisersComponent, 
+                    },
+                    { 
+                        path: 'create-advertiser', 
+                        component: CreateAdvertiserComponent, 
+                        canActivate: [ PermissionGuard ],
+                        data: {
+                            breadcrumb: 'Create Advertiser'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleAdvertiserComponent, 
+                        data: {
+                            breadcrumb: 'Single Advertiser Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'locator', 
+                component: LocatorComponent, 
+                data: {
+                    breadcrumb: 'Locator'
+                }
+            },
+			{ 
+                path: 'media-library', 
+                data: {
+                    breadcrumb: 'Media Library'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: MediaLibraryComponent, 
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleContentComponent, 
+                        data: {
+                            breadcrumb: 'Single Content Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'feeds', 
+                component: FeedsComponent, 
+                data: {
+                    breadcrumb: 'Feeds'
+                }
+            },
+			{ 
+                path: 'playlists', 
+                data: {
+                    breadcrumb: 'Playlists'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: PlaylistsComponent, 
+                    },
+                    { 
+                        path: 'create-playlist', 
+                        component: CreatePlaylistComponent, 
+                        canActivate: [ PermissionGuard ],
+                        data: {
+                            breadcrumb: 'Create Playlist'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SinglePlaylistComponent, 
+                        data: {
+                            breadcrumb: 'Single Playlist Page'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'screens', 
+                data: {
+                    breadcrumb: 'Screens'
+                },
+                children: [
+                    {
+                        path: '',
+                        component: ScreensComponent, 
+                    },
+                    { 
+                        path: 'create-screen', 
+                        component: CreateScreenComponent, 
+                        canActivate: [ PermissionGuard ],
+                        data: {
+                            breadcrumb: 'Create Screen'
+                        }
+                    },
+                    { 
+                        path: ':data', 
+                        component: SingleScreenComponent, 
+                        data: {
+                            breadcrumb: 'Single Screen Component'
+                        }
+                    },
+                ]
+            },
+			{ 
+                path: 'user-profile/:data', 
+                component: UserProfileComponent, 
+                data: {
+                    breadcrumb: 'User Profile'
+                }
+            },
+			{ 
+                path: 'user-account-setting/:data', 
+                component: UserAccountSettingComponent, 
+                data: {
+                    breadcrumb: 'User Account Settings'
+                }
+            },
+			{ 
+                path: 'dealer-profile/:data', 
+                component: DealerProfileComponent, 
+                data :{
+                    breadcrumb: 'Dealer Profile'
+                }
+            },
         ],
     }
 ];

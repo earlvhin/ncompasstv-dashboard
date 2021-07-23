@@ -126,6 +126,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	workbook_generation: boolean = false;
 	worksheet: any;
 
+	saved_license_page: any;
+	saved_hosts_page: any;
+	saved_adv_page: any;
+	saved_tab: any;
+
 	_socket: any;
 
 	adv_table_col = [
@@ -166,6 +171,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Last Online', sortable: true, column:'TimeIn', key:'timeIn'},
 		{ name: 'Net Type', sortable: true, column:'InternetType', key:'internetType'},
 		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
+		{ name: 'Display', sortable: false, key: 'displayStatus'},
 		{ name: 'Anydesk' + '\n' + '& Password', sortable: true, column:'AnydeskId', key:'anydeskId'},
 		{ name: 'PS Version', sortable: false, key:'server'},
 		{ name: 'UI Version', sortable: false, key:'ui'},
@@ -204,6 +210,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			query: 'client=Dashboard__SingleDealerComponent'
 		});
 
+		this._params.queryParams.subscribe(params => {
+			this.saved_tab = params['tab'] || 0;
+
+			if (this.saved_tab == 0) {
+				this.saved_license_page = params['page'] || 1;
+			} else if(this.saved_tab == 1) {
+				this.saved_hosts_page = params['page'] || 1;
+			} else if(this.saved_tab == 2) {
+				this.saved_adv_page = params['page'] || 1;
+			}
+		})
+
 		this._socket.on('connect', () => {
 			// console.log('#SingleDealerComponent - Connected to Socket Server');
 		});
@@ -228,7 +246,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getDealerInfo(this.dealer_id);
 					this.getDealerAdvertiser(1);
 					this.getDealerHost(1);
-                    this.sortList('desc');
+                    this.sortList('desc', parseInt(this.saved_license_page));
 					this.getLicenseTotalCount(this.dealer_id);
 					this.getAdvertiserTotalCount(this.dealer_id);
 					this.getHostTotalCount(this.dealer_id);
@@ -591,6 +609,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
+		console.log(data);
 		let count = this.paging_data_license.pageStart;
 		return data.map(
 			(l: any) => {
@@ -604,7 +623,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						hidden: false, 
 						isImage: true
 					},
-					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, editable: false, hidden: false, status: true},
+					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, compressed: true, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
 					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false, business_hours: l.hostId ? true : false, business_hours_label: l.hostId ? this.getLabel(l) : null },
 					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false },
@@ -612,6 +631,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
 					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
 					{ value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--', link: null, editable: false, hidden: false },
+					{ value: l.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
 					{ value: l.anydeskId ? l.anydeskId + '\n' + this.splitKey(l.licenseId) : '--', link: null, editable: false, hidden: false },
 					{ value: l.apps && l.apps.server ? l.apps.server : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.apps && l.apps.ui ? l.apps.ui : '1.0.0', link: null, editable: false, hidden: false },
@@ -668,18 +688,30 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				if (!this.no_licenses && this.initial_load_charts) {
 					this.getLicenseStatisticsByDealer(this.dealer_id);
 				}
-
 		}
 
+		this._router.navigate([], {
+			relativeTo: this._params,
+			queryParams: {
+				tab: event.index
+			},
+			queryParamsHandling: 'merge'
+		})
 	}
 
-	sortList(order): void {
+	sortList(order, page?): void {
 		var filter = {
 			column: 'PiStatus',
 			order: order
 		}
+
 		this.getColumnsAndOrder(filter)
-		this.getLicensesofDealer(1);
+
+		if (this.saved_tab == 0) {
+			this.getLicensesofDealer(page);
+		} else {
+			this.getLicensesofDealer(1);
+		}
 	}
 
 	getDealers(e) {
@@ -793,7 +825,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.sort_order = 'desc';
 		this.array_to_delete = [];
 		this.getLicenseTotalCount(this.dealer_id);
-		this.getLicensesofDealer(1);
+		this.getLicensesofDealer(this.saved_license_page);
 		this.getLicenseStatisticsByDealer(this.dealer_id, true);
 
 		if (this.licenses) {

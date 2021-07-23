@@ -3,5 +3,8 @@
 [routes]="sidebar_routes"
 (toggleEvent)="receiveToggle($event)"></app-sidebar>
 <div class="page" [ngClass]=" toggle ? 'sidebar-fully' : 'sidebar-full'">
+    <div>
+        <breadcrumb [allowBootstrap]="true"></breadcrumb>
+    </div>
     <router-outlet></router-outlet>
 </div>

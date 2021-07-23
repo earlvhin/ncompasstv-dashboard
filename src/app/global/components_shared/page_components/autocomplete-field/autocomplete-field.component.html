@@ -1,12 +1,11 @@
 <mat-form-field class="full-width custom-autocomplete p-relative" appearance="standard">
     <mat-label>{{ label }}</mat-label>
 
-    <input type="text" autocomplete="nope" matInput 
+    <input type="text" autocomplete="nope" matInput class="skip-blur"
 		*ngIf="!paging"
 		[(ngModel)]="view_value"
 		[placeholder]="placeholder"
 		(keyup)="search($event)"
-		(blur)="emptySearch()"
 		(click)="initializeSearch($event)"
 		[required]="required"
 		[disabled]="disabled">

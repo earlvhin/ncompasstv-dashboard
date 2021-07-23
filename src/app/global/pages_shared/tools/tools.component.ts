@@ -5,6 +5,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import * as moment from 'moment';
 import { ToolsService } from '../../services/tools/tools.service';
+import { GLOBAL_SETTINGS } from '../../models/api_global_settings.model';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-tools',
@@ -13,6 +15,8 @@ import { ToolsService } from '../../services/tools/tools.service';
 })
 export class ToolsComponent implements OnInit {
 
+	activity_code_form: FormGroup;
+	global_settings_form: FormGroup;
 	title: string = "Administrative Tools";
 	remote_update_disabled: boolean;
 	remote_reboot_disabled: boolean;
@@ -25,12 +29,27 @@ export class ToolsComponent implements OnInit {
 
 	constructor(
 		private _dialog: MatDialog,
+		private _form: FormBuilder,
 		private _tool: ToolsService
 	) { 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__ToolsComponent',
 		});
+
+		this.activity_code_form = this._form.group(
+			{
+				activityCode: ['', Validators.required],
+				activityDescription: ['', Validators.required]
+			}
+		)
+
+		this.global_settings_form == this._form.group(
+			{
+				vistarNetworkId: ['', Validators.required],
+				vistarApiKey: ['', Validators.required]
+			}
+		)
 	}
 
 	ngOnInit() {
@@ -43,6 +62,9 @@ export class ToolsComponent implements OnInit {
 		})
 		
 		this.disableTimeoutChecker();
+
+		this.getActivityCode();
+		this.getGlobalSettings();
 	}
 
 	ngOnDestroy() {
@@ -136,5 +158,29 @@ export class ToolsComponent implements OnInit {
 				this.remote_update_disabled = true;
 			}
 		});
+	}
+
+	getGlobalSettings() {
+		this._tool.getActivities().subscribe(
+			data => {
+				console.log(data);
+			}
+		)
+	}
+
+	getActivityCode() {
+		this._tool.getActivities().subscribe(
+			data => {
+				console.log(data);
+			}
+		)
+	}
+
+	setGlobalSettings() {
+		return false;
+	}
+
+	saveActivity() {
+		return false;
 	}
 }

@@ -1,0 +1,44 @@
+<div *ngIf="media_files">
+    <div class="row align-items-center">
+        <div class="col-lg-6">
+            <h3>Choose Images</h3>
+            <p class="sm-text mb-0">Select single or multiple images to use on your custom feed.</p>
+        </div>
+
+        <!-- <div class="col-lg-6">
+            <mat-form-field class="full-width" appearance="fill">
+                <mat-label>Search an image . . .</mat-label>
+                <input matInput type="text">
+            </mat-form-field>
+        </div> -->
+    </div>
+
+    <hr>
+
+    <div class="media-files mb-4">
+        <div class="row no-gutters" *ngIf="media_files">
+            <div class="col-lg-2 mb-3" *ngFor="let m of media_files">
+                <div class="media-file-thumbnail mx-2" (click)="imageSelected(m)" [ngClass]="selected_media_files.includes(m) ? 'selected' : ''">
+                    <img [src]="m.previewThumbnail" [alt]="m.fileName">
+    
+                    <div class="overlay">
+                        <span class="xsm-text">{{ m.title | filename }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="py-4" *ngIf="!pageEnd">
+            <app-spinner [diameter]="70"></app-spinner>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-12">
+            <button mat-button mat-raised-button class="theme-btn" [disabled]="selected_media_files.length == 0" [mat-dialog-close]="selected_media_files">
+                Add Selected Images
+                <span class="fas fa-plus ml-2"></span>
+            </button>
+        </div>
+    </div>
+</div>

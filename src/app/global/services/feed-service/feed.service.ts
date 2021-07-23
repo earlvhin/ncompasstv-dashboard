@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
+import { GenerateFeed } from '../../models/api_feed_generator.model';
+import { map } from 'rxjs/operators';
 
 @Injectable({
 	providedIn: 'root'
@@ -30,6 +32,14 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_feed}`, data, this.httpOptions)
 	}
 
+	edit_generated_feed(data) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_generated_feed}`, data, this.httpOptions);
+	}
+
+	generate_feed(data: GenerateFeed) {
+		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate}`, data, this.httpOptions);
+	}
+
 	get_feeds(page, key, column?, order?) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
@@ -41,6 +51,10 @@ export class FeedService {
 	// get_search_feeds(key: string) {
 	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?search='+`${key}`, this.httpOptions);
 	// }
+
+	get_generated_feed_by_id(id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions).pipe(map(data => data.feed));
+	}
 	
 	get_feeds_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_total}`, this.httpOptions);

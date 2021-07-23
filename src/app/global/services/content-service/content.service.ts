@@ -64,7 +64,11 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&page=${page}&pageSize=${pageSize}`, this.httpOptions).map(data => data)
 	}
 
-	get_content_count_by_license(data) {
+	get_content_metrics(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_metrics}`, data, this.httpOptions);
+	}
+	
+    get_content_count_by_license(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_count_by_license}`, data, this.httpOptions).map(data => data.iContents);
 	}
 

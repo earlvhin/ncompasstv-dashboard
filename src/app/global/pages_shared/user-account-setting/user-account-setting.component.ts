@@ -9,6 +9,7 @@ import { UserService } from '../../services/user-service/user.service';
 import { API_USER_DATA } from '../../models/api_user-data.model';
 import { API_UPDATE_USER_INFO } from '../../models/api_update-user-info.model';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-user-account-setting',
@@ -89,7 +90,7 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 
 	}
 
-	get passw() {
+	get passwordFormControl() {
 		return this.change_password.controls;
 	}
 
@@ -105,7 +106,7 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 			middleName,
 			lastName,
 			email,
-			this.passw.new_password.value,
+			this.passwordFormControl.new_password.value,
 			allowEmail
 		);
 	}
@@ -113,13 +114,25 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 	changeUserPassword() {
 		this.change_password_form_disabled = true;
 
-		this._user.update_user(this.mapPasswordChanges())
+		const body = {
+			userId: this.user_data.userId,
+			password: this.passwordFormControl.new_password.value,
+			oldPassword: this.passwordFormControl.current_password.value,
+		};
+
+		this._user.update_user(body)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.openConfirmationModal('success', 'Success!', 'Password changed succesfully'), 
-				error => {
-					this.change_password_form_disabled = false;
+				(error: HttpErrorResponse) => {
 					console.log('Error changing password', error);
+					this.change_password_form_disabled = false;
+
+					if (error.error.message.toLowerCase().includes('old password is required')) {
+						this.current_password_validation_message = 'Old password does not match';
+						this.password_old_not_match = true;
+					}
+
 				}
 			);
 			
@@ -154,34 +167,29 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					if (this.passw.current_password.value != this.user_data.password) {
-						this.password_old_not_match = true;
-						this.current_password_validation_message = 'Current Password is incorrect';
-					} else {
-						this.password_old_not_match = false;
-						this.current_password_validation_message = 'Password Passed';
-					}
-					if (this.passw.new_password.invalid) {
+
+					if (this.passwordFormControl.new_password.invalid) {
 						this.password_invalid = true;
 						this.password_validation_message = 'Must be atleast 8 characters';
 					} else {
 						this.password_invalid = false;
 						this.password_validation_message = 'Password Passed'
 					}
-					if (this.passw.new_password.value == this.passw.re_password.value) {
+
+					if (this.passwordFormControl.new_password.value == this.passwordFormControl.re_password.value) {
 						this.password_match = true;
 						this.password_is_match = 'Password Match';
 					} else {
 						this.password_match = false;
 						this.password_is_match = 'Password Does Not Match';
 					}
-					if(this.change_password.valid && this.password_match && !this.password_old_not_match) {
+
+					if (this.change_password.valid && this.password_match) {
 						this.change_password_form_disabled = false;
 					} else {
 						this.change_password_form_disabled = true;
 					}
 				},
-				error => console.log('Error on form change', error)
 			);
 	}
 

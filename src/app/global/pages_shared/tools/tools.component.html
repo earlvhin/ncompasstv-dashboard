@@ -127,6 +127,54 @@
 						</div>
 					</div>
 				</mat-tab>
+
+				<mat-tab label="Global Settings">
+					<div class="row">
+						<div class="col-lg-5">
+							<mat-card class="p-5 mt-5">
+								<h3>Set Global Settings</h3>
+								<p class="sm-text mb-4">Global settings are configuration fetched and applied by all players.</p>
+								<form [formGroup]="global_settings_form" (ngSubmit)="setGlobalSettings()">
+									<mat-form-field class="mb-3 full-width" appearance="fill">
+										<mat-label>Vistar Network ID</mat-label>
+										<input type="text" matInput formControlname="vistarNetworkId" placeholder="Enter Vistar Network ID">
+									</mat-form-field>
+			
+									<mat-form-field class="mb-3 full-width" appearance="fill">
+										<mat-label>Vistar API Key</mat-label>
+										<input type="text" matInput formControlname="vistarApiKey" placeholder="Enter API Key">
+									</mat-form-field>
+			
+									<button type="button" mat-button mat-raised-button class="theme-btn">Save</button>
+								</form>
+							</mat-card>
+						</div>
+					</div>
+				</mat-tab>
+
+				<mat-tab label="Activity Codes">
+					<div class="row">
+						<div class="col-lg-5">
+							<mat-card class="p-5 mt-5">
+								<h3>Add Activity Code</h3>
+								<p class="sm-text mb-4">Activity codes for dashboard, reference for activity logs.</p>
+								<form [formGroup]="global_settings_form" (ngSubmit)="saveActivity()">
+									<mat-form-field class="mb-3 full-width" appearance="fill">
+										<mat-label>Activity Code</mat-label>
+										<input type="text" matInput formControlname="vistarNetworkId" placeholder="Example: reboot_device">
+									</mat-form-field>
+			
+									<mat-form-field class="mb-4 full-width" appearance="fill">
+										<mat-label>Activity Description</mat-label>
+										<input type="text" matInput formControlname="vistarApiKey" placeholder="Example: Reboot Device">
+									</mat-form-field>
+			
+									<button type="button" mat-button mat-raised-button class="theme-btn">Save</button>
+								</form>
+							</mat-card>
+						</div>
+					</div>
+				</mat-tab>
 				<!-- Terminal End -->
 			</mat-tab-group>
 		</div>

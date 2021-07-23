@@ -16,6 +16,7 @@ export class OptionsComponent implements OnInit {
 
 	blocklist_changes = { status: false };
 	blacklist_ready: boolean = false;
+    blacklist_count: number = 0;
 	content_data: any;
 	content_frequency: number;
 	host_license: any;
@@ -29,6 +30,8 @@ export class OptionsComponent implements OnInit {
 	toggle_all: boolean;
 	toggle_event: Subject<void> = new Subject<void>();
 	total_contents: number;
+    total_whitelist: number = 0;
+    total_licenses : number =0;
 	unchanged_playlist: boolean = true;
 
 	frequencyList = [ 
@@ -51,24 +54,37 @@ export class OptionsComponent implements OnInit {
 		this.content_frequency = this.setFrequency(content.frequency);
 		this.total_contents = total_contents;
 		this.host_license = host_license;		
-
 		if (this.isFeedContent()) this.setFeedUrl();
 		this.setSchedule(this._dialog_data.content);
+        this.getTotalLicenses();
 	}
+    
+    getTotalLicenses() {
+        this._dialog_data.host_license.map (
+            host => {
+                this.total_licenses = this.total_licenses + host.licenses.length;
+            }
+        )
+    }
+	
+    getCount(e) {
+        this.blacklist_count = e;
+        this.getWhitelistTotal();
+    }
+
+    getWhitelistTotal() {
+        this.total_whitelist = this.total_licenses - this.blacklist_count;
+    }
 
 	ngOnDestroy() {
 		clearTimeout(this.timeout);
 	}
 
-	ngAfterViewInit(): void {
-		this.timeout = setTimeout(() => this.disable_animation = false);
+	ngAfterContentInit (): void {
+        this.timeout = setTimeout(() => this.disable_animation = false);
 	}
 
-	hasWhiteListed(e) {
-		setTimeout(() => {
-			this.toggle_all = e;
-		}, 0)
-	}
+	hasWhiteListed(e) {}
 
 	onClose(): void {
 		this._dialog_ref.close();
