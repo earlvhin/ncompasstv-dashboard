@@ -7,7 +7,7 @@
                     Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit totam praesentium vel blanditiis ab.
                 </p>
 
-                <mat-horizontal-stepper #stepper *ngIf="dealers; else spinner" linear (selectionChange)="selectionChange($event)">
+                <mat-horizontal-stepper #stepper *ngIf="dealers || fetched_feed; else spinner" linear (selectionChange)="selectionChange($event)">
                     <!-- Begin: Step 1 -->
                     <mat-step>
                         <div class="row justify-content-center pt-4">
@@ -36,7 +36,7 @@
                                                 {{ option.businessName }}
                                             </mat-option>
                                         </mat-autocomplete>
-                                      </mat-form-field>
+                                    </mat-form-field>
                                 </form>
 
                                 <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!new_feed_form.valid">
@@ -53,7 +53,7 @@
                     <mat-step>
                         <ng-template matStepLabel>Feed Content</ng-template>
                         
-                        <div class="bg-gray mt-5 p-4"  *ngIf="selected_dealer && new_feed_form.valid; else no_dealer_selected">
+                        <div class="bg-gray mt-5 p-4" *ngIf="selected_dealer && new_feed_form.valid; else no_dealer_selected">
                             <mat-accordion #draggables id="draggables">
                                 <mat-expansion-panel *ngFor="let f of feed_items; let i = index" hideToggle class="feed-item" [attr.data-id]="f.image.content_id">
                                     <mat-expansion-panel-header class="align-items-center">
@@ -64,7 +64,7 @@
                                                 </div>
     
                                                 <div class="text-right">
-                                                    <button class="delete-item"><span class="fas fa-times"></span></button>
+                                                    <button class="delete-item" (click)="removeFeedItem(f)"><span class="fas fa-times"></span></button>
                                                 </div>
                                             </div>
                                         </mat-panel-description>
@@ -74,7 +74,7 @@
                                         <div class="col-lg-2 text-center">
                                             <div class="image-wrapper">
                                                 <img class="image-w-100 mb-1" [src]="f.image.preview_url" alt="f.image.filename">
-                                                <div class="overlay">
+                                                <div class="overlay" [title]="f.image.filename">
                                                     <span class="sm-text font-weight-bold">{{ f.image.filename | filename }}</span>
                                                 </div>
                                             </div>
@@ -138,7 +138,7 @@
     
                             <div class="row justify-content-center" *ngIf="selected_index === 2">
                                 <div class="col-lg-8 position-relative">
-                                    <div class="overlay" *ngIf="saving">
+                                    <div class="loading-overlay" *ngIf="saving">
                                         <app-spinner [diameter]="70"></app-spinner>
                                     </div>
                                     <app-feed-demo [feed_items]="feed_items"></app-feed-demo>

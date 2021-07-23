@@ -74,8 +74,8 @@ import {BreadcrumbsModule} from "ng6-breadcrumbs";
 		MatExpansionModule,
 		DragDropModule,
 		NgbModule,
-		RouterModule.forChild(ADMINISTRATOR_ROUTES),
-        BreadcrumbsModule
+        BreadcrumbsModule,
+		RouterModule.forChild(ADMINISTRATOR_ROUTES)
 	],
 	providers: [
 		AuthGuard

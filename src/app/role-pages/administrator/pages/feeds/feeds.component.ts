@@ -41,7 +41,6 @@ export class FeedsComponent implements OnInit {
 	subscription: Subscription = new Subscription();
 	
 	constructor(
-		private _titlecase: TitleCasePipe,
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
@@ -105,6 +104,7 @@ export class FeedsComponent implements OnInit {
 		this.subscription.add(
 			this._feed.get_feeds(e, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
+					console.log(data);
 					this.initial_load = false;
 					this.searching = false;
                     this.paging_data = data.paging;
@@ -142,11 +142,12 @@ export class FeedsComponent implements OnInit {
 			i => {
 				return new UI_TABLE_FEED(
 					{ value:i.feed.contentId, link: null , editable: false, hidden: true},
+					{ value:i.feed.feedId, link: null, editable: false, hidden: true},
 					{ value:count++, link: null , editable: false, hidden: false},
 					{ value:i.feed.feedTitle, link: '/administrator/media-library/' +  i.feed.contentId , editable: false, hidden: false},
 					// { value:i.feed.feedDescription, link: null, editable: false, hidden: false},
 					{ value:i.dealer ? i.dealer.businessName : null, link: i.dealer ? '/administrator/dealers/' + i.dealer.dealerId : null, id: i.dealer ? i.dealer.dealerId : '', editable: false, hidden: false},
-					{ value: i.feed.classification ? this._titlecase.transform(i.feed.classification) : '--', link: null, editable: false, hidden: false},
+					{ value: i.feed.classification ? i.feed.classification : '--', link: null, editable: false, hidden: false},
 					{ value:`${i.owner.firstName} ${i.owner.lastName}`, link: '/administrator/users/' + i.owner.userId, editable: false, hidden: false},
 					{ value: this._date.transform(i.feed.dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false},
 					{ value: i.feed.feedTitle, link: i.feed.feedUrl, editable: false, hidden: true},

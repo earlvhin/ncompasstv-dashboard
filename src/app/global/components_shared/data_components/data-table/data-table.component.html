@@ -50,7 +50,7 @@
 						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
 
-					<span *ngIf="!data[d].hidden">
+					<span *ngIf="!data[d].hidden" class="d-inline-block">
 
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
 							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
@@ -61,7 +61,18 @@
 							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params" target="{{data[d].new_tab_link ? '_blank' : '_self'}}">
 								<ng-container>
 
-									<div *ngIf="!data[d].permission; else userWithPermission">{{ data[d].value }}</div>
+									<div *ngIf="!data[d].permission; else userWithPermission">
+										<span *ngIf="!data[d].compressed; else shortened_tooltip">
+											{{ data[d].value }}
+										</span>
+
+										<ng-template #shortened_tooltip>
+											<span [title]="data[d].value">
+												{{ data[d].value | substring:10 }}
+											</span>
+										</ng-template>
+									</div>
+
 									<ng-template #userWithPermission>
 										<div class="d-flex name-and-permission">
 											<div>{{ data[d].value }}</div>
@@ -155,7 +166,7 @@
 					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
 						<i class="clickable fa fa-pencil text-gray" title="Edit {{data[d].label}}"></i>
 					</div>
-				</td>		
+				</td>
 
 				<td class="p-3 control-toggle text-center" *ngIf="ctrl_column">
 					<mat-slide-toggle 
@@ -171,7 +182,13 @@
 
 				<td class="p-3 control-toggle md-text" *ngIf="feed_controls">
 					<i class="fas fa-play cursor-pointer mx-2 text-primary" title="Preview" *ngIf="feed_preview" (click)="feedPreview_open(data.feed_url)"></i>
-					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" *ngIf="feed_edit" (click)="editFeed(data)"></i>
+
+					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" *ngIf="feed_edit && data.classification.value !== 'generated_feed'; else edit_generated_feed" (click)="editFeed(data)"></i>
+
+					<ng-template #edit_generated_feed>
+						<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit Generated Feed" (click)="editGeneratedFeed(data)"></i>
+					</ng-template>
+					
 					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete" (click)="deleteFeed(data.id.value)"></i>
 				</td>
 

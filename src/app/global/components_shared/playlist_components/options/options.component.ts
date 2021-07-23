@@ -66,6 +66,7 @@ export class OptionsComponent implements OnInit {
             }
         )
     }
+	
     getCount(e) {
         this.blacklist_count = e;
         this.getWhitelistTotal();

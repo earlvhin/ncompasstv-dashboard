@@ -30,6 +30,7 @@ import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user
 import { CreatePlaylistComponent } from '../../global/pages_shared/create-playlist/create-playlist.component'; 
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
+import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
 
 export const DEALER_ROUTES: Routes = [
 	{
@@ -129,10 +130,23 @@ export const DEALER_ROUTES: Routes = [
             },
 			{ 
                 path: 'feeds', 
-                component: FeedsComponent,
                 data: {
                     breadcrumb: 'Feeds'
-                }
+                },
+                children: [
+                    {
+                        path: '',
+                        component: FeedsComponent,
+                        
+                    },
+                    { 
+                        path: 'generate', 
+                        component: GenerateFeedComponent,
+                        data: {
+                            breadcrumb: 'Generate Feeds'
+                        }
+                    }
+                ]
             },
 			{ 
                 path: 'licenses', 

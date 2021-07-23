@@ -42,7 +42,6 @@ import {BreadcrumbsModule} from "ng6-breadcrumbs";
 	imports: [
 		CommonModule,
 		GlobalModule,
-		RouterModule.forChild(DEALER_ROUTES),
 		MatCardModule,
 		MatButtonModule,
 		MatAutocompleteModule,
@@ -53,7 +52,8 @@ import {BreadcrumbsModule} from "ng6-breadcrumbs";
 		MatExpansionModule,
 		FormsModule,
 		ReactiveFormsModule,
-        BreadcrumbsModule
+        BreadcrumbsModule,
+		RouterModule.forChild(DEALER_ROUTES)
 	],
 	providers: [
 		AuthGuard
