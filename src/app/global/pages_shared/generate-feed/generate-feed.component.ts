@@ -66,10 +66,6 @@ export class GenerateFeedComponent implements OnInit {
 		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.selected_dealer = this._auth.current_user_value.roleInfo.dealerId;
-		} else {
-			if (!this.editing) {
-				this.getDealers();	
-			}
 		}
 	}
 
@@ -78,9 +74,13 @@ export class GenerateFeedComponent implements OnInit {
 		this._route.paramMap.subscribe(
 			(data: any) => {
 				if (data.params.data) {
+					console.log('TEST')
 					this.editing = true;
 					this.title = 'Edit Generated Feed';
 					this.getGeneratedFeedById(data.params.data);
+				} else {
+					console.log('TED')
+					this.getDealers();	
 				}
 			}
 		)
@@ -92,9 +92,10 @@ export class GenerateFeedComponent implements OnInit {
 	private getGeneratedFeedById(id: string) {
 		this._feed.get_generated_feed_by_id(id).subscribe(
 			(data: API_GENERATED_FEED) => {
+				console.log(data);
 				this.fetched_feed = data;
-				this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
 				this.prepareFeedInfoForm();
+				this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
 			}
 		)
 	}
@@ -136,21 +137,23 @@ export class GenerateFeedComponent implements OnInit {
 		if (this.editing) {
 			this.new_feed_form = this._form.group(
 				{
-					feed_title: [this.fetched_feed.feeds.feedTitle, Validators.required],
-					description: [this.fetched_feed.feeds.description],
+					feed_title: [this.fetched_feed.feedTitle, Validators.required],
+					description: [this.fetched_feed.description],
 					assign_to: [{
-						value: this.fetched_feed.feeds.businessName,
+						value: this.fetched_feed.dealer.businessName,
 						disabled: true
 					}, Validators.required],
 				}
 			)
 
-			this.selected_dealer = this.fetched_feed.feeds.dealerId;
+			this.selected_dealer = this.fetched_feed.dealerId;
+			
+			this.sortableJSInit();
 		} else {
 			this.new_feed_form = this._form.group(
 				{
-					feed_title: [this.editing ? this.fetched_feed.feeds.feedTitle : '', Validators.required],
-					description: [this.editing ? this.fetched_feed.feeds.description : '',],
+					feed_title: [this.editing ? this.fetched_feed.feedTitle : '', Validators.required],
+					description: [this.editing ? this.fetched_feed.description : '',],
 					assign_to: [{
 						value: this.is_dealer ? this._auth.current_user_value.roleInfo.businessName : '',
 						disabled: this.is_dealer ? true : false
@@ -194,6 +197,7 @@ export class GenerateFeedComponent implements OnInit {
 
 	/** Sortable JS Plugin Initialization*/
 	private sortableJSInit(): void {
+
 		const set = (sortable) => {
 			let sorted_feed_items = [];
 			
@@ -208,8 +212,8 @@ export class GenerateFeedComponent implements OnInit {
 			sorted_feed_items;
 			this.feed_items = sorted_feed_items;
 		}
-		
-		if (this.draggables) {
+
+		setTimeout(() => {
 			new Sortable(this.draggables.nativeElement, {
 				swapThreshold: 1,
 				sort: true,
@@ -224,7 +228,7 @@ export class GenerateFeedComponent implements OnInit {
 				fallbackTolerance: 10,
 				store: { set }
 			});
-		}
+		}, 0)
 	}
 
 	/**
@@ -266,10 +270,10 @@ export class GenerateFeedComponent implements OnInit {
 						},
 						{
 							content_id: c.contentId,
-							filename: '',
-							filetype: '',
-							preview_url: '',
-							file_url: ''
+							filename: c.contents.title,
+							filetype: c.contents.fileType,
+							preview_url: `https://cdn.filestackcontent.com/resize=width:500/${c.contents.handlerId}`,
+							file_url: `${c.contents.url}${c.contents.fileName}`
 						}
 					)
 				)
@@ -297,25 +301,45 @@ export class GenerateFeedComponent implements OnInit {
 				dealerId: this.selected_dealer,
 				feedTitle: this.f.feed_title.value,
 				description: this.f.description.value,
-				createdBy: this._auth.current_user_value.user_id
+				createdBy: this._auth.current_user_value.user_id,
+				feedId: this.editing ? this.fetched_feed.feedId : null
 			},
 			this.structureFeedContents(this.feed_items)
 		)
+	}
+
+	/** Remove X-ed Feed Item 
+	 * @param {any} f Feed Item X-ed on UI
+	*/
+	removeFeedItem(f: any) {
+		this.feed_items = this.feed_items.filter(i => i !== f);
 	}
 
 	/** POST Request to API with Generated Feed Payload*/
 	saveGeneratedFeed(): void {
 		this.saving = true;
 
-		this._feed.generate_feed(this.generated_feed).subscribe(
-			data => {
-				console.log(data);
-				this._router.navigate([`/${this.route}/feeds`])
-			},
-			error => {
-				console.log(error);
-			}
-		)
+		if (!this.editing) {
+			this._feed.generate_feed(this.generated_feed).subscribe(
+				data => {
+					console.log(data);
+					this._router.navigate([`/${this.route}/feeds`])
+				},
+				error => {
+					console.log(error);
+				}
+			)
+		} else {
+			this._feed.edit_generated_feed(this.generated_feed).subscribe(
+				data => {
+					console.log(data);
+					this._router.navigate([`/${this.route}/feeds`])
+				},
+				error => {
+					console.log(error);
+				}
+			)
+		}
 	}
 
 	/** Open Media Library where contents are assigned to selected dealer */

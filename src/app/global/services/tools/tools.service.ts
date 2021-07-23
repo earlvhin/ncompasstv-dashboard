@@ -26,4 +26,12 @@ export class ToolsService {
 	resetSocketConnection() {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_renewsocket}`, this.httpOptions);
 	}
+
+	getActivities() {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_activities}`, this.httpOptions);
+	}
+
+	getGlobalSettings() {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_global_settings}`, this.httpOptions);
+	}
 }

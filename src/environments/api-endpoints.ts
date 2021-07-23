@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
 		api_refresh: 'token/refresh',
 	},
 	getters: {
+		api_get_activities: 'activity/getall',
 		api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
 		api_get_advertisers: 'advertiser/getall',
 		api_get_advertisers_by_dealer_id: 'advertiser/getbydealerid?dealer_id=',
@@ -17,6 +18,7 @@ export const API_ENDPOINTS = {
 		api_get_content: 'content/findall',
 		api_get_categories: 'category/getall',
 		api_get_dealer_total:'dealer/gettotal',
+		api_get_global_settings: 'globalSettings/getall',
 		api_get_host_fields: 'fieldgroup/getall',
 		api_get_host_field_by_id: 'fieldgroupfield/getbyfieldGroupId?fieldGroupId=',
 		api_get_parent_categories: 'category/getparentcategory',
@@ -166,6 +168,7 @@ export const API_ENDPOINTS = {
 		api_update_alias: 'license/updatealias',
 		api_update_dealer: 'dealer/update',
 		api_update_feed: 'feed/update',
+		api_update_generated_feed: 'feed/edit',
 		api_update_host: 'host/updatehost',
 		api_update_playlist_content: 'playlists/addcontent',
 		api_update_playlist_info: 'playlists/updateplaylistinfo',

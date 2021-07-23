@@ -32,6 +32,10 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_feed}`, data, this.httpOptions)
 	}
 
+	edit_generated_feed(data) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_generated_feed}`, data, this.httpOptions);
+	}
+
 	generate_feed(data: GenerateFeed) {
 		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate}`, data, this.httpOptions);
 	}
@@ -49,7 +53,7 @@ export class FeedService {
 	// }
 
 	get_generated_feed_by_id(id: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions).pipe(map(data => data.data[0]));
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions).pipe(map(data => data.feed));
 	}
 	
 	get_feeds_total() {
@@ -63,7 +67,6 @@ export class FeedService {
 	get_feed_by_id(feed_id) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions)
 	}
-
 
 	// get_feed_screenshot(url) {
 	// 	return 

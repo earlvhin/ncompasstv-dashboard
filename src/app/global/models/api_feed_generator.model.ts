@@ -1,9 +1,13 @@
+import { API_CONTENT } from "./api_content.model";
+import { API_DEALER } from "./api_dealer.model";
+
 export class GenerateFeed {
     feeds: {
         dealerId: string,
         feedTitle: string,
         description: string,
-        createdBy: string
+        createdBy: string,
+        feedId?: string
     };
 
     feedContents: {
@@ -20,6 +24,7 @@ export class GenerateFeed {
             feedTitle: string,
             description: string,
             createdBy: string
+            feedId?: string
         },
         feedContents: {
             contentId: string,
@@ -35,21 +40,22 @@ export class GenerateFeed {
 }
 
 export type API_GENERATED_FEED = {
-    feeds: {
-        businessName: string,
-        createdBy: string,
-        dateCreated: string,
-        dateUpdated: string,
-        dealerId: string,
-        dealerIdAlias: string,
-        description: string,
-        feedId: string,
-        feedTitle: string,
-        status: string,
-        updatedBy: string
-    },
+    businessName: string,
+    createdBy: string,
+    contents: API_CONTENT,
+    dateCreated: string,
+    dateUpdated: string,
+    dealerId: string,
+    dealer: API_DEALER,
+    dealerIdAlias: string,
+    description: string,
+    feedId: string,
+    feedTitle: string,
+    status: string,
+    updatedBy: string,
     feedContents: {
         contentId: string,
+        contents: API_CONTENT,
         dateCreated: string,
         duration: number,
         feedContentId: string,
