@@ -55,6 +55,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.getAllusers();
 		this.subscribeToToggleEmailNotification();
+		this.subscribeToPageRefresh();
 	}
 
 	ngOnDestroy() {
@@ -196,6 +197,16 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 			}
 		);
+	}
+
+	private subscribeToPageRefresh(): void {
+
+		this._helper.onRefreshUsersPage.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.ngOnInit(),
+				error => console.log('Error on users page refresh subscription ', error)
+			);
+
 	}
 
 	private subscribeToToggleEmailNotification(): void {

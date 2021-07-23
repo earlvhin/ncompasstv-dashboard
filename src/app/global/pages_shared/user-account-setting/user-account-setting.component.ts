@@ -128,7 +128,7 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 					console.log('Error changing password', error);
 					this.change_password_form_disabled = false;
 
-					if (error.error.message.toLowerCase().includes('old password is required')) {
+					if (error.error.message.toLowerCase().includes('old password does not match')) {
 						this.current_password_validation_message = 'Old password does not match';
 						this.password_old_not_match = true;
 					}

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { debounceTime, delay, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { CreateTagComponent } from './dialogs/create-tag/create-tag.component';
@@ -320,8 +320,10 @@ export class TagsComponent implements OnInit, OnDestroy {
 		this.tagFilterControl.valueChanges
 			.pipe(
 				takeUntil(this._unsubscribe),
-				debounceTime(200),
+				debounceTime(1000),
 				map(keyword => this.searchTags(keyword)),
+				delay(500),
+				takeUntil(this._unsubscribe)
 			)
 			.subscribe(() => { });
 
