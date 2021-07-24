@@ -16,10 +16,12 @@ import { ContentService } from '../../../services/content-service/content.servic
 
 export class ThumbnailCardComponent implements OnInit {
 	@Input() image_uri: string;
+	@Input() classification: string;
 	@Input() filename: string;
 	@Input() content_id: string;
 	@Input() is_converted: number;
 	@Input() filetype: string;
+	@Input() file_url: string;
 	@Input() is_checked: boolean;
 	@Input() uuid: string;
 	@Input() dealer: string;

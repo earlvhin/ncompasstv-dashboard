@@ -137,15 +137,15 @@
 								<form [formGroup]="global_settings_form" (ngSubmit)="setGlobalSettings()">
 									<mat-form-field class="mb-3 full-width" appearance="fill">
 										<mat-label>Vistar Network ID</mat-label>
-										<input type="text" matInput formControlname="vistarNetworkId" placeholder="Enter Vistar Network ID">
+										<input type="text" matInput formControlName="vistarNetworkId" placeholder="Enter Vistar Network ID">
 									</mat-form-field>
 			
 									<mat-form-field class="mb-3 full-width" appearance="fill">
 										<mat-label>Vistar API Key</mat-label>
-										<input type="text" matInput formControlname="vistarApiKey" placeholder="Enter API Key">
+										<input type="text" matInput formControlName="vistarApiKey" placeholder="Enter API Key">
 									</mat-form-field>
 			
-									<button type="button" mat-button mat-raised-button class="theme-btn">Save</button>
+									<button mat-button mat-raised-button class="theme-btn" [disabled]="!global_settings_form.valid">Save</button>
 								</form>
 							</mat-card>
 						</div>
@@ -158,19 +158,45 @@
 							<mat-card class="p-5 mt-5">
 								<h3>Add Activity Code</h3>
 								<p class="sm-text mb-4">Activity codes for dashboard, reference for activity logs.</p>
-								<form [formGroup]="global_settings_form" (ngSubmit)="saveActivity()">
+								<form [formGroup]="activity_code_form" #formDirective="ngForm" (ngSubmit)="saveActivity()">
 									<mat-form-field class="mb-3 full-width" appearance="fill">
 										<mat-label>Activity Code</mat-label>
-										<input type="text" matInput formControlname="vistarNetworkId" placeholder="Example: reboot_device">
+										<input type="text" matInput formControlName="activityCode" placeholder="Example: reboot_device">
 									</mat-form-field>
 			
 									<mat-form-field class="mb-4 full-width" appearance="fill">
 										<mat-label>Activity Description</mat-label>
-										<input type="text" matInput formControlname="vistarApiKey" placeholder="Example: Reboot Device">
+										<input type="text" matInput formControlName="activityDescription" placeholder="Example: Reboot Device">
 									</mat-form-field>
 			
-									<button type="button" mat-button mat-raised-button class="theme-btn">Save</button>
+									<button mat-button mat-raised-button class="theme-btn" [disabled]="!activity_code_form.valid">Save</button>
 								</form>
+							</mat-card>
+						</div>
+						<div class="col-lg-7">
+							<mat-card class="mt-5 p-4">
+								<div class="row border-bottom">
+									<div class="col-lg-1 border-right py-2">
+										<span class="sm-text">#</span>
+									</div>
+									<div class="col-lg-3 border-right py-2">
+										<span class="sm-text">Activity Code</span>
+									</div>
+									<div class="col-lg-8 py-2">
+										<span class="sm-text">Activity Description</span>
+									</div>
+								</div>
+								<div class="row border-bottom" *ngFor="let a of activities; let i = index">
+									<div class="col-lg-1 border-right py-3">
+										{{ i + 1 }}
+									</div>
+									<div class="col-lg-3 border-right py-3">
+										{{ a.activityCode }}
+									</div>
+									<div class="col-lg-8 py-3">
+										{{ a.activityDescription }}
+									</div>
+								</div>
 							</mat-card>
 						</div>
 					</div>

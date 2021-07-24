@@ -125,6 +125,8 @@ export const API_ENDPOINTS = {
 		tags_by_tag_name_and_type: 'tag/gettagsbytagnameandtypeid',
 		tags_count: 'tag/getalltagscount'	},
 	create: {
+		api_new_activity: 'activity/create',
+		api_create_global_settings: 'globalsettings/create',
 		api_new_admin: 'admin/create',
 		api_new_advertiser: 'advertiser/create',
 		api_new_advertiser_profile: 'advertiser/createadvertiser',

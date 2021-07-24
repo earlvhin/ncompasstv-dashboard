@@ -16,7 +16,16 @@
 			</mat-checkbox>
 		</div>
 	</div>
-    <img [src]="image_uri" alt="thumbnail">
+
+    <img [src]="image_uri" *ngIf="filetype !== 'feed'; else generated_feed_display" alt="thumbnail">
+
+	<ng-template #generated_feed_display>
+		<div class="iframe-thumb-holder">
+			<div class="iframe-overlay"></div>
+			<iframe [src]="file_url | sanitize" frameborder="0" width="100%"></iframe>
+		</div>
+	</ng-template>
+
     <p class="thumbnail-title">
         <a [routerLink]="[route, content_id]" target="_blank">
 			<span>{{ filename | filename }}</span>

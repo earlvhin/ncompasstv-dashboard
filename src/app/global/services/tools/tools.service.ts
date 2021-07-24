@@ -27,6 +27,14 @@ export class ToolsService {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_renewsocket}`, this.httpOptions);
 	}
 
+	createActivity(data) {
+		return this._http.post(`${environment.base_uri}${environment.create.api_new_activity}`, data, this.httpOptions);
+	}
+
+	saveGlobalSettings(data) {
+		return this._http.post(`${environment.base_uri}${environment.create.api_create_global_settings}`, data, this.httpOptions);
+	}
+
 	getActivities() {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_activities}`, this.httpOptions);
 	}

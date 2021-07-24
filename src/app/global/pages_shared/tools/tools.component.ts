@@ -6,7 +6,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 import * as moment from 'moment';
 import { ToolsService } from '../../services/tools/tools.service';
 import { GLOBAL_SETTINGS } from '../../models/api_global_settings.model';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
   selector: 'app-tools',
@@ -16,6 +16,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 export class ToolsComponent implements OnInit {
 
 	activity_code_form: FormGroup;
+	activities: any;
 	global_settings_form: FormGroup;
 	title: string = "Administrative Tools";
 	remote_update_disabled: boolean;
@@ -37,19 +38,6 @@ export class ToolsComponent implements OnInit {
 			query: 'client=Dashboard__ToolsComponent',
 		});
 
-		this.activity_code_form = this._form.group(
-			{
-				activityCode: ['', Validators.required],
-				activityDescription: ['', Validators.required]
-			}
-		)
-
-		this.global_settings_form == this._form.group(
-			{
-				vistarNetworkId: ['', Validators.required],
-				vistarApiKey: ['', Validators.required]
-			}
-		)
 	}
 
 	ngOnInit() {
@@ -60,6 +48,20 @@ export class ToolsComponent implements OnInit {
 		this._socket.on('disconnect', () => {
 			console.log('#ToolsComponent - Disconnnected to Socket Server');
 		})
+
+		this.activity_code_form = this._form.group(
+			{
+				activityCode: ['', Validators.required],
+				activityDescription: ['', Validators.required]
+			}
+		)
+
+		this.global_settings_form = this._form.group(
+			{
+				vistarNetworkId: ['', Validators.required],
+				vistarApiKey: ['', Validators.required]
+			}
+		)
 		
 		this.disableTimeoutChecker();
 
@@ -161,7 +163,7 @@ export class ToolsComponent implements OnInit {
 	}
 
 	getGlobalSettings() {
-		this._tool.getActivities().subscribe(
+		this._tool.getGlobalSettings().subscribe(
 			data => {
 				console.log(data);
 			}
@@ -171,16 +173,21 @@ export class ToolsComponent implements OnInit {
 	getActivityCode() {
 		this._tool.getActivities().subscribe(
 			data => {
-				console.log(data);
+				this.activities = data;
 			}
 		)
 	}
 
 	setGlobalSettings() {
-		return false;
+		console.log(this.global_settings_form.value);
 	}
 
 	saveActivity() {
-		return false;
+		this._tool.createActivity(this.activity_code_form.value).subscribe(
+			data => {
+				this.activity_code_form.reset();
+				this.getActivityCode();
+			}
+		)
 	}
 }

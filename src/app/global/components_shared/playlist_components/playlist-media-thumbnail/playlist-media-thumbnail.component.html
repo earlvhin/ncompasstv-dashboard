@@ -4,7 +4,13 @@ data-placement="top"
 [attr.title]="content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title">
     <div class="h-100 w-100">
         <div class="content-thumbnail inline-block">
-            <img [src]="content.thumbnail" alt="thumbnail" class="full-width height-100 border-bottom">
+
+            <img [src]="content.thumbnail" *ngIf="content.fileType !== 'feed'; else feed_thumb" alt="thumbnail" class="full-width height-100 border-bottom">
+
+            <ng-template #feed_thumb>
+                ifrm
+            </ng-template>
+
             <p class="number-overlay mb-0 xsm-text font-weight-bold text-center">
                 <span *ngIf="content.fileType !== 'feed'; else feed">
                     {{ content.fileName | filename }}
@@ -13,6 +19,7 @@ data-placement="top"
                     <strong>{{ content.title }}</strong>
                 </ng-template>
             </p>
+
         </div>
         <div class="px-2 pb-2">
             <div class="d-flex align-items-center">

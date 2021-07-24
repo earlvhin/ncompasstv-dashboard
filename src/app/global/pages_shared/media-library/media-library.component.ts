@@ -131,6 +131,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response: any) => {
 					if (!response.message) {
+						console.log(response)
 						this.all_media = response.iContents;
 					}
 				},
