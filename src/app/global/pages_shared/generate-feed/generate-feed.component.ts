@@ -52,12 +52,12 @@ export class GenerateFeedComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _router: Router,
 		private _route: ActivatedRoute
-	) { 
-		this.getParamOfActivatedRoute();
-	}
+	) { }
 
 	ngOnInit() {
 		this.route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+
+		this.getParamOfActivatedRoute();
 
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
@@ -74,13 +74,13 @@ export class GenerateFeedComponent implements OnInit {
 		this._route.paramMap.subscribe(
 			(data: any) => {
 				if (data.params.data) {
-					console.log('TEST')
 					this.editing = true;
 					this.title = 'Edit Generated Feed';
 					this.getGeneratedFeedById(data.params.data);
 				} else {
-					console.log('TED')
-					this.getDealers();	
+					if (!this.is_dealer) {
+						this.getDealers();	
+					}
 				}
 			}
 		)
@@ -116,7 +116,11 @@ export class GenerateFeedComponent implements OnInit {
 	private filter(value: string): {dealerId: string, businessName: string}[] {
 		const filter_value = value.toLowerCase();
 		const filtered_result = this.dealers.filter(i => i.businessName.toLowerCase().includes(filter_value));
-		this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;
+
+		if (!this.is_dealer) {
+			this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;
+		}
+
 		return filtered_result;
 	}
 
