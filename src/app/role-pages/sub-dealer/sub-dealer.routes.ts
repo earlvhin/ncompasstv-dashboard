@@ -26,6 +26,7 @@ import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
 import { PermissionGuard } from 'src/app/global/guards/sub-dealer/permission.guard';
+import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
 
 export const SUB_DEALER_ROUTES: Routes = [
     {
@@ -146,10 +147,30 @@ export const SUB_DEALER_ROUTES: Routes = [
             },
 			{ 
                 path: 'feeds', 
-                component: FeedsComponent, 
                 data: {
                     breadcrumb: 'Feeds'
-                }
+                },
+                children: [
+                    {
+                        path: '',
+                        component: FeedsComponent,
+                        
+                    },
+                    { 
+                        path: 'generate', 
+                        component: GenerateFeedComponent,
+                        data: {
+                            breadcrumb: 'Generate Feeds'
+                        }
+                    },
+                    { 
+                        path: 'edit-generated/:data', 
+                        component: GenerateFeedComponent,
+                        data: {
+                            breadcrumb: 'Edit Generated Feeds'
+                        }
+                    }
+                ]
             },
 			{ 
                 path: 'playlists', 

@@ -164,9 +164,10 @@ export class FeedsComponent implements OnInit, OnDestroy {
 			i => {
 				return new UI_TABLE_FEED_DEALER(
 					{ value:i.feed.contentId, link: null , editable: false, hidden: true },
+					{ value:i.feed.feedId, link: null, editable: false, hidden: true},
 					{ value:count++, link: null , editable: false, hidden: false },
 					{ value:i.feed.feedTitle, link: '/sub-dealer/media-library/' +  i.feed.contentId , editable: false, hidden: false },
-					{ value: i.feed.classification ? this._titlecase.transform(i.feed.classification) : '--', link: null, editable: false, hidden: false },
+					{ value: i.feed.classification ? i.feed.classification : '--', link: null, editable: false, hidden: false },
 					{ value:`${i.owner.firstName} ${i.owner.lastName}`, link: '/sub-dealer/users/' + i.owner.userId, editable: false, hidden: false },
 					{ value: this._date.transform(i.feed.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
 					{ value: i.feed.feedTitle, link: i.feed.feedUrl, editable: false, hidden: true },
