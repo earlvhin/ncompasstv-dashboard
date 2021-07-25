@@ -145,6 +145,13 @@ export const DEALER_ROUTES: Routes = [
                         data: {
                             breadcrumb: 'Generate Feeds'
                         }
+                    },
+                    { 
+                        path: 'edit-generated/:data', 
+                        component: GenerateFeedComponent,
+                        data: {
+                            breadcrumb: 'Edit Generated Feeds'
+                        }
                     }
                 ]
             },

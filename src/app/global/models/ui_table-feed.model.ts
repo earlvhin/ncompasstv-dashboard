@@ -30,6 +30,7 @@ export class UI_TABLE_FEED {
 
 export class UI_TABLE_FEED_DEALER {
     id: object;
+    feed_id: object;
     index: object;
     title: object;
     classification: object;
@@ -39,9 +40,10 @@ export class UI_TABLE_FEED_DEALER {
     description: object;
 
     constructor(
-        id: object, index: object, title: object, classification: object,
+        id: object, feed_id: object, index: object, title: object, classification: object,
         created_by: object, date_created: object, feed_url: object, description: object) {
         this.id = id;
+        this.feed_id = feed_id;
         this.index = index;
         this.title = title;
         this.classification = classification;
