@@ -1,9 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UI_PLAYLIST_HOST_LICENSE } from 'src/app/global/models/ui_playlist-host-license.model';
-import { UI_BLOCKLIST_CONTENT } from 'src/app/global/models/ui_single-playlist.model';
-import { UI_CONTENT, UI_PLAYLIST_CONTENT } from 'src/app/global/models/ui_content.model';
-import { API_CONTENT_BLACKLISTED_CONTENTS } from 'src/app/global/models/api_single-playlist.model';
-import { Observable } from 'rxjs';
+import { UI_PLAYLIST_HOST_LICENSE } from '../../../../global/models/ui_playlist-host-license.model';
+import { UI_PLAYLIST_CONTENT } from '../../../../global/models/ui_content.model';
+import { API_CONTENT_BLACKLISTED_CONTENTS } from '../../../../global/models/api_single-playlist.model';
 
 @Component({
   selector: 'app-create-playlist-content',
@@ -83,5 +81,4 @@ export class CreatePlaylistContentComponent implements OnInit {
 	removeFilenameHandle(filename, filetype) {
 		// return filename.substring(filename.indexOf('_') + 1);
 	}
-
 }

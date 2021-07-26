@@ -3,7 +3,16 @@
     <div *ngIf="!is_list; else list_mode" class="h-100 w-100" [class.future-schedule]="schedule_status === 'future'" [class.inactive-schedule]="schedule_status === 'inactive'">
     <!-- <div class="h-100 w-100"> -->
         <div class="content-thumbnail inline-block">
-            <img [src]="content.thumbnail" alt="thumbnail" class="full-width height-100 border-bottom">
+
+            <img [src]="content.thumbnail" alt="thumbnail" *ngIf="content.fileType !== 'feed'; else feed_thumb" class="full-width height-100 border-bottom">
+
+            <ng-template #feed_thumb>
+                <div>
+                    <iframe [src]="content.url | sanitize" class="feed-thumb" frameborder="0"></iframe>
+                    <div class="iframe-overlay"></div>
+                </div>
+            </ng-template>
+
             <div class="number-overlay mb-0 xsm-text font-weight-bold d-flex justify-content-between">
 				<i class="fas fa-user-circle mr-2"
 					*ngIf="page !== 'single-playlist'"

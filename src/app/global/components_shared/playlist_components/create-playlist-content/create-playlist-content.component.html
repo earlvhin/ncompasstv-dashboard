@@ -3,7 +3,13 @@ data-placement="top" [attr.title]="removeFilenameHandle(content.content_data.fil
     <div class="bg-light playlist-expansion-header p-0">
         <div class="d-flex align-items-center h-100 w-100 pr-4">
             <div class="create-playlist-content-thumbnail inline-block mr-3 h-100">
-                <img src="{{ content.content_data.thumbnail }}" alt="thumbnail" class="full-width height-100">
+
+                <img src="{{ content.content_data.thumbnail }}" *ngIf="content.content_data.file_type !== 'feed'; else feed_thumb" alt="thumbnail" class="full-width height-100">
+                
+                <ng-template #feed_thumb>
+                    <iframe [src]="content.content_data.file_url | sanitize" class="feed-thumb" frameborder="0"></iframe>
+                </ng-template>
+
             </div>
             <div class="flex-even py-3">
 				<h5 data-toggle="tooltip">

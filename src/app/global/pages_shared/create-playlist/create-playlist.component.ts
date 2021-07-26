@@ -120,7 +120,7 @@ export class CreatePlaylistComponent implements OnInit {
 		);
 
 		//Autofill for dealer
-		if (this.is_dealer) {	
+		if (this.is_dealer) {
 			this.setToDealer(this.dealerid);
 		}
 	}
@@ -304,7 +304,6 @@ export class CreatePlaylistComponent implements OnInit {
 				}
 			)
 			return media_content;
-			
 		}
 	}
 

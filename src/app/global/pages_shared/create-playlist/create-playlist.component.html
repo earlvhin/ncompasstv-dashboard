@@ -93,7 +93,7 @@
                         </div>
         
                         <div class="mb-3">
-                            <app-filter-labels 
+                            <app-filter-labels
                             (clear_filter)="clearFilter($event)"
                             [filters]="filters"></app-filter-labels>
                         </div>
@@ -119,9 +119,11 @@
 											<div class="col-lg-2 example-box" *ngFor="let a of media_library; let i = index"
 											cdkDrag [cdkDragDisabled]="(a.content_data.is_converted == 1 && a.content_data.file_type == 'webm') || a.content_data.file_type != 'webm' ? false : true">
 												<div class="mx-1">
-													<app-thumbnail-card 
+													<app-thumbnail-card
+                                                    [classification]="a.content_data.classification"
+                                                    [filename]="a.content_data.title"
+                                                    [file_url]="a.content_data.file_url"
 													[image_uri]="a.content_data.thumbnail"
-													[filename]="a.content_data.file_type !== 'feed' ? a.content_data.file_name : a.content_data.title"
 													[filetype]="a.content_data.file_type"
 													[is_converted]="a.content_data.is_converted"
 													[dealer]="a.content_data.dealer_id"
