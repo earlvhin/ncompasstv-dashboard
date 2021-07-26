@@ -623,6 +623,7 @@
 								<div class="mr-2">
 									<app-thumbnail-card
 									(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
+									[file_url]="a.file_url"
 									[image_uri]="a.file_type !== 'feed' ?  a.thumbnail : a.thumbnail+a.file_url"
 									[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
 									[content_id]="a.content_id"

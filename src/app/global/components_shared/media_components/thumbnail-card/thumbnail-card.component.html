@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-    <img [src]="image_uri" *ngIf="filetype !== 'feed'; else generated_feed_display" alt="thumbnail">
+    <img [src]="image_uri" *ngIf="filetype !== 'feed' && file_url; else generated_feed_display" alt="thumbnail">
 
 	<ng-template #generated_feed_display>
 		<div class="iframe-thumb-holder">
