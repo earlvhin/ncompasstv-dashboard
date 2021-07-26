@@ -25,6 +25,8 @@ export class NewAdvertiserComponent implements OnInit {
 	back_btn: string;
 	dealers: API_DEALER[] = [];
 	dealers_data: Array<any> = [];
+    dealer_id: string;
+    dealer_name: string;
 	form_fields_view: any;
 	form_invalid: boolean = true;
     initial_load_advertiser: boolean = false;
@@ -67,6 +69,8 @@ export class NewAdvertiserComponent implements OnInit {
 	ngOnInit() {
 		if (this._auth.current_user_value.roleInfo.dealerId) {
 			this.is_dealer = true;
+            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 		}
 
 		const roleId = this._auth.current_user_value.role_id;
@@ -93,6 +97,10 @@ export class NewAdvertiserComponent implements OnInit {
 			re_password: ['', Validators.required],
 			createdby: [this._auth.current_user_value.user_id]
 		});
+        
+        if(this.is_dealer) {
+            this.dealerSelected(this.dealer_id);
+        }
 
         this.getDealers(1);
 		
@@ -204,7 +212,6 @@ export class NewAdvertiserComponent implements OnInit {
 	}
 
     searchBoxTrigger(event) {
-        console.log("EVE", event)
         if(event.no_keyword) {
             this.search_data = '';
         }

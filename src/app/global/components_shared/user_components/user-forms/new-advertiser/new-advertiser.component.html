@@ -17,7 +17,7 @@
     <form [formGroup]="new_advertiser_form"  #formDirective="ngForm"  (ngSubmit)="createNewAdvertiser(formDirective)" class="text-left" *ngIf="dealers.length > 0; else loader">
         <div class="row mb-4">
             <ng-container *ngFor="let f of form_fields_view">
-                <div class="{{ f.width }}" *ngIf="!f.is_dealer">
+                <div class="{{ f.width }}">
                     <mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
                         <mat-label>{{ f.label }}</mat-label>
                         <input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" matInput type="{{ f.type }}" placeholder="{{ f.placeholder }}">
@@ -63,7 +63,10 @@
 						(call_next_page)="searchBoxTrigger($event)"
 						(searched)="searchData($event)"
                         [loading_data]="loading_data"
-                        [loading_search]="loading_search">
+                        [loading_search]="loading_search"
+                        [initial_value]="dealer_name"
+                        [new_value]="dealer_name"
+                        [disabled]="is_dealer">
 						</app-autocomplete-field>
                     </ng-template>
 
@@ -81,7 +84,7 @@
 						(searched)="searchDataAdv($event)"
                         [loading_data]="loading_data_adv"
                         [loading_search]="loading_search_adv"
-                        [disabled]="advertisers.length == 0"
+                        [disabled]="!advertisers"
                         [reset_value]="initial_load_advertiser">
                         </app-autocomplete-field>
                     </ng-template>
