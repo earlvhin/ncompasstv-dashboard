@@ -4,7 +4,7 @@
             <mat-card class="p-5">
                 <h1 class="mb-2 text-center page-title">{{ title }}</h1>
                 <p class="mb-5 text-center font-weight-md sm-text"> 
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit totam praesentium vel blanditiis ab.
+                    Create your own feeds, choose your images and set what texts to display.
                 </p>
 
                 <mat-horizontal-stepper #stepper *ngIf="dealers || fetched_feed; else spinner" linear (selectionChange)="selectionChange($event)">

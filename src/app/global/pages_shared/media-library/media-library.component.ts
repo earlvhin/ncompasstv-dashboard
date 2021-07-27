@@ -164,7 +164,8 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				'video/mp4',
 				'video/webm'
 			],
-			maxFiles: 5,
+			maxFiles: 10,
+			imageMax: [1280, 720],
 			onFileSelected: (e) => {
 				this.data_to_upload = [];
 				return new Promise((resolve, reject) => {
