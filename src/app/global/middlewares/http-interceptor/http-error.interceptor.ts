@@ -10,7 +10,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
           .pipe(retry(4),
               catchError((error: HttpErrorResponse) => {
                 console.log(error);
-                alert(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
+                console.log(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
                 return throwError(error);
             })
         )   
