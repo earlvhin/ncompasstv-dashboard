@@ -19,26 +19,32 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 	constructor() { }
 
 	ngOnInit() {
-		if (this.content.fileType === 'webm' && this.content.isConverted === 0) {
-			this._socket = io(environment.socket_server, {
-				transports: ['websocket'],
-				query: 'client=Dashboard__PlaylistMediaThumbnailComponent',
-			});
+		if (this.content.fileType === 'webm') {
 
-			this._socket.on('video_converted', data => {
-				if (data == this.content.uuid) {
-					this.is_converted = 1;
-					this.converted.emit(data);
-				}
-			})
-	
-			this._socket.on('connect', () => {
-				console.log('#PlaylistMediaThumbnailComponent - Connected to Socket Server');
-			})
+			// Thumbnail
+			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf(".") + 1)}jpg`
 			
-			this._socket.on('disconnect', () => {
-				console.log('#PlaylistMediaThumbnailComponent - Disconnnected to Socket Server');
-			})
+			if (this.content.isConverted === 0) {
+				this._socket = io(environment.socket_server, {
+					transports: ['websocket'],
+					query: 'client=Dashboard__PlaylistMediaThumbnailComponent',
+				});
+	
+				this._socket.on('video_converted', data => {
+					if (data == this.content.uuid) {
+						this.is_converted = 1;
+						this.converted.emit(data);
+					}
+				})
+		
+				this._socket.on('connect', () => {
+					console.log('#PlaylistMediaThumbnailComponent - Connected to Socket Server');
+				})
+				
+				this._socket.on('disconnect', () => {
+					console.log('#PlaylistMediaThumbnailComponent - Disconnnected to Socket Server');
+				})
+			}
 		}
 	}
 

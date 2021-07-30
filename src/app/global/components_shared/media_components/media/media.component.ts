@@ -259,7 +259,6 @@ export class MediaComponent implements OnInit, OnDestroy {
 	}
 
 	openMediaViewer(content: UI_CONTENT, contents: UI_CONTENT[], i: number): void {
-        console.log('TEST', {content})
 		this._dialog.open(MediaViewerComponent, {
 			panelClass: 'app-media-viewer-dialog',
 			data: {
@@ -383,7 +382,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 					m.dateCreated,
 					m.isFullScreen,
 					m.filesize,
-					m.previewThumbnail || m.thumbnail,
+					m.fileType !== 'webm' ? m.previewThumbnail || m.thumbnail : this.renameWebmThumb(m.fileName, m.url),
 					m.isActive,
 					m.isConverted,
 					m.uuid,
@@ -400,6 +399,10 @@ export class MediaComponent implements OnInit, OnDestroy {
 		} else {
 			return media_content;
 		}
+	}
+
+	private renameWebmThumb(filename: string, source: string) {
+		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`
 	}
 
 	private reassignContent(data: { type: number, toId: string, contentIds: string[] }): void {

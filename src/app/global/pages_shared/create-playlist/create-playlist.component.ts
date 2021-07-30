@@ -293,7 +293,7 @@ export class CreatePlaylistComponent implements OnInit {
 							c.dateCreated,
 							c.isFullScreen,
 							c.filesize,
-							c.thumbnail,
+							c.fileType !== 'webm' ? c.previewThumbnail || c.thumbnail : this.renameWebmThumb(c.fileName, c.url),
 							c.isActive,
 							c.isConverted,
 							c.uuid,
@@ -305,6 +305,12 @@ export class CreatePlaylistComponent implements OnInit {
 			)
 			return media_content;
 		}
+	}
+
+	private renameWebmThumb(filename: string, source: string) {
+		let thumbnail = `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`
+		console.log('the thumb', thumbnail)
+		return thumbnail
 	}
 
 	searchData(e) {
