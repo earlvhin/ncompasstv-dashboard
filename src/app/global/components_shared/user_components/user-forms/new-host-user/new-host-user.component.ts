@@ -226,7 +226,6 @@ export class NewHostUserComponent implements OnInit {
 				this.subscription.add(
 					this._host.get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_key).subscribe(
 						data => {
-							console.log("DD", data)
 							if(!data.message) {
 								data.paging.entities.map (
 									i => {

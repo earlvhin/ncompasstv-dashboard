@@ -37,6 +37,11 @@ export class UserService {
 	get_users_by_page(page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_users}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
+
+	get_users_by_owner(ownerId: string) {
+		const endpoint = `${environment.base_uri}${environment.getters.users_by_owner}${ownerId}`;
+		return this._http.get(endpoint, this.httpOptions);
+	}
 	
 	get_users_search(key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_users}`+'?search='+`${key}`, this.httpOptions);
