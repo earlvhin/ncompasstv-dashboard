@@ -1,7 +1,8 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { PAGING } from 'src/app/global/models/paging.model';
 import { IsimagePipe } from 'src/app/global/pipes/isimage.pipe';
 import { ContentService } from '../../../../global/services/content-service/content.service';
 
@@ -13,12 +14,16 @@ import { ContentService } from '../../../../global/services/content-service/cont
 })
 
 export class FeedMediaComponent implements OnInit {
+	@HostListener("scroll", ["$event"])
 
 	media_files: API_CONTENT[] = [];
 	selected_media_files: API_CONTENT[] = [];
 	subscription: Subscription = new Subscription();
 	media_files_page: number = 1;
 	pageEnd: boolean = false;
+	scroll_end: boolean;
+	single_select: boolean = false;
+	has_page_left: boolean;
 
 	constructor(
 		private _content: ContentService,
@@ -27,11 +32,34 @@ export class FeedMediaComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.getUserMediaFiles(this._dialog_data);
+		console.log(typeof(this._dialog_data));
+
+		if (this._dialog_data) {
+			this.getUserMediaFiles(typeof(this._dialog_data) === 'string' ? this._dialog_data : this._dialog_data.dealer);
+			this.single_select = typeof(this._dialog_data) === 'object' ? this._dialog_data.singleSelect : false;
+		} else {
+			this.getUnassignedMediaFiles();
+		}
 	}
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
+	}
+
+	/**
+	 * Detect End of Y Scroll
+	 * @param event
+	 */
+	onScroll(event: any) {
+		if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight && this.has_page_left) {
+			this.pageEnd = false;
+
+			if (this._dialog_data) {
+				this.getUserMediaFiles(this._dialog_data);
+			} else {
+				this.getUnassignedMediaFiles();
+			}
+		}
 	}
 
 	/**
@@ -41,14 +69,43 @@ export class FeedMediaComponent implements OnInit {
 	private getUserMediaFiles(dealer_id: string): void {
 		this.subscription.add(
 			this._content.get_content_by_dealer_id(dealer_id, false, this.media_files_page++, 200).subscribe(
-				(data: {contents: API_CONTENT[], paging: any}) => {
+				(data: {contents: API_CONTENT[], paging: PAGING}) => {
+					if(!data.contents) {
+						this.pageEnd = true;
+						return;
+					}
+
 					this.mediaMapToUI(data)
-	
-					if (data.paging.hasNextPage) {
+
+					if ((data.paging.hasNextPage && this.media_files_page > 5) || this.scroll_end) {
 						this.getUserMediaFiles(dealer_id)
+						this.scroll_end = false;
+					} else {
+						this.has_page_left = false;
+						this.pageEnd = true;
+					}
+				}
+			)
+		)
+	}
+
+	/**
+	 * Get unassigned media files if no dealer selected
+	 */
+	private getUnassignedMediaFiles() {
+		this.subscription.add(
+			this._content.get_contents_with_page(this.media_files_page++, 'image').map(data => { return { contents: data.iContents, paging: data.paging }}).subscribe(
+				(data: {contents: API_CONTENT[], paging: PAGING}) => {
+					this.mediaMapToUI(data)
+
+					if (data.paging.hasNextPage && this.media_files_page < 5) {
+						this.getUnassignedMediaFiles()
 					} else {
 						this.pageEnd = true;
 					}
+				}, 
+				error => {
+					console.log(error)
 				}
 			)
 		)
@@ -71,11 +128,22 @@ export class FeedMediaComponent implements OnInit {
 	 * @param media_file Media File Clicked via UI
 	 */
 	imageSelected(media_file: API_CONTENT) {
-		if (this.selected_media_files.includes(media_file)) {
-			this.selected_media_files = this.selected_media_files.filter(i => i.contentId !== media_file.contentId)
-			return;
-		}
+		if (!this.single_select) {
+			if (this.selected_media_files.includes(media_file)) {
+				this.selected_media_files = this.selected_media_files.filter(i => i.contentId !== media_file.contentId)
+				return;
+			}
 
-		this.selected_media_files.push(media_file);
+			this.selected_media_files.push(media_file);
+		} else {
+			if (this.selected_media_files.length < 1) {
+				this.selected_media_files.push(media_file);
+			} else {
+				if (this.selected_media_files.includes(media_file)) {
+					this.selected_media_files = this.selected_media_files.filter(i => i.contentId !== media_file.contentId)
+					return;
+				}
+			}
+		}
 	}
 }

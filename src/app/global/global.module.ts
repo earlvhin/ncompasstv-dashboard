@@ -177,6 +177,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -318,6 +319,7 @@ const ngComponents = [
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
+	WeatherFormComponent,
 	ZoneListComponent,
   	PaginationFieldComponent
 ];
@@ -356,7 +358,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES,
+		DIRECTIVES
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
@@ -21,6 +21,8 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 })
 
 export class GenerateFeedComponent implements OnInit {
+	@Input() background_image: string;
+	@Input() banner_image: string;
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	
 	dealer_id: string;
@@ -41,6 +43,24 @@ export class GenerateFeedComponent implements OnInit {
 		dealerId: string,
 		businessName: string
 	}[];
+
+	feed_types = [
+		{
+			id: 'weather',
+			label: 'Weather Feed',
+			description: 'A feed that displays today\'s weather'
+		}, 
+		{
+			id: 'slide',
+			label: 'Slide Feed',
+			description: 'A feed that displays images with text'
+		},
+		{
+			id: 'filler',
+			label: 'Filler',
+			description: 'A scheduled image feed display'
+		}
+	]
 
 	apply_to_all_btn_status: boolean = false;
 
@@ -156,10 +176,11 @@ export class GenerateFeedComponent implements OnInit {
 		} else {
 			this.new_feed_form = this._form.group(
 				{
-					feed_title: [this.editing ? this.fetched_feed.feedTitle : '', Validators.required],
-					description: [this.editing ? this.fetched_feed.description : '',],
+					feed_title: ['', Validators.required],
+					description: ['',],
+					feed_type: ['', Validators.required],
 					assign_to: [{
-						value: this.is_dealer ? this._auth.current_user_value.roleInfo.businessName : '',
+						value: '',
 						disabled: this.is_dealer ? true : false
 					}, Validators.required],
 				}
