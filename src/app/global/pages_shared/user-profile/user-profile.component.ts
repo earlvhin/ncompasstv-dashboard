@@ -141,12 +141,17 @@ export class UserProfileComponent implements OnInit, OnDestroy {
 	}
 
 	mapUserInfoChanges() {
-		return new API_UPDATE_USER_PROFILE(
-			this.user_data.userId,
-			this.f.contact.value,
-			this.f.firstname.value,
-			this.f.lastname.value
-		);
+
+		const { contact, firstname, lastname } = this.update_user.value;
+
+		return {
+			userId: this.user_data.userId,
+			contactNumber: contact,
+			firstName: firstname,
+			lastName: lastname,
+			updatedBy: this.currentUser.user_id
+		};
+
 	}
 
 	updateUserInfo() {

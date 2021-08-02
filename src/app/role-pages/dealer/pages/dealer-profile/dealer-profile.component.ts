@@ -1,20 +1,21 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription, Observable } from 'rxjs';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
-import { HostService } from '../../../../global/services/host-service/host.service';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { DatePipe } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
+import { Subscription, Subject } from 'rxjs';
+
+import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
+import { API_UPDATE_DEALER_PROFILE } from '../../../../global/models/api_update-user-info.model';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ContentService } from 'src/app/global/services/content-service/content.service';
 import { DEALER_PROFILE } from '../../../../global/models/api_user.model';
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
+import { LicenseService } from '../../../../global/services/license-service/license.service';
+import { HostService } from '../../../../global/services/host-service/host.service';
 import { UserService } from '../../../../global/services/user-service/user.service';
-import { DatePipe } from '@angular/common';
-import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { API_UPDATE_DEALER_PROFILE } from '../../../../global/models/api_update-user-info.model';
-import { API_UPDATE_DEALER_USER_PROFILE } from '../../../../global/models/api_update-user-info.model';
-import { ContentService } from 'src/app/global/services/content-service/content.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dealer-profile',
@@ -22,7 +23,7 @@ import { ContentService } from 'src/app/global/services/content-service/content.
   styleUrls: ['./dealer-profile.component.scss'],
   providers: [DatePipe]
 })
-export class DealerProfileComponent implements OnInit {
+export class DealerProfileComponent implements OnInit, OnDestroy {
 	advertiser_details: any = {}; 
 	content_data: any;
 	content_details: any = {};
@@ -100,11 +101,13 @@ export class DealerProfileComponent implements OnInit {
 	loading_host: boolean = true;
 	loading_license: boolean = true;
 	no_content: boolean;
-	subscription: Subscription = new Subscription();
+	// subscription: Subscription = new Subscription();
 	user_data: DEALER_PROFILE; 
 	update_info_form_disabled: boolean = false;
 	update_info_form_disabled_typing: boolean = true;
 	update_user: FormGroup;
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
   	constructor(
 		private _license: LicenseService,
@@ -121,25 +124,32 @@ export class DealerProfileComponent implements OnInit {
 	) { }
 
   	ngOnInit() {
+
 		this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
 		this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
 		this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
 		this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
+
 		this.update_info_form_disabled = false;
+
 		this.update_user = this._form.group(
-			this.subscription.add(
-				this._params.paramMap.subscribe(
-					data => {
-					this.getUserById(this._params.snapshot.params.data)
-					}
-				)
-			)
-		)
+			this._params.paramMap
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(() => this.getUserById(this._params.snapshot.params.data))
+		);
+
   	}
+	
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
 
   	getTotalContents(id) {
-		this.subscription.add(
-			this._content.get_contents_total_by_dealer(id).subscribe(
+
+		this._content.get_contents_total_by_dealer(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.content_details.basis = data.total;
 					this.content_details.basis_label = 'Media Library';
@@ -150,24 +160,24 @@ export class DealerProfileComponent implements OnInit {
 					this.content_details.additional_value = data.totalFeeds;
 					this.content_details.additional_value_label = 'Feed';
 					this.loading_content = false;
-				}
-			)
-		)
+				},
+				error => console.log('Error retrieving content total by dealer ', error)
+			);
 	}
 
 	getUserById(id) {
-		this.subscription.add(
-			this._user.get_user_alldata_by_id(id).subscribe(
+
+		this._user.get_user_alldata_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.user_data = Object.assign({},data.user, data.dealer[0]);
 					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy')
 					this.readyUpdateForm();
 				}, 
-				error => {
-					console.log('Error', error);
-				}
-			)
-		)
+				error => console.log('Error retrieving user by ID', error)
+			);
+
 	}
 
 	get f() {
@@ -189,8 +199,9 @@ export class DealerProfileComponent implements OnInit {
 			region: [{value: this.user_data.region, disabled: true}, Validators.required],
 		})
 
-		this.subscription.add(
-			this.update_user.valueChanges.subscribe(
+		this.update_user.valueChanges
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					if (this.update_user.valid) {
 						this.update_info_form_disabled_typing = false;
@@ -198,8 +209,7 @@ export class DealerProfileComponent implements OnInit {
 						this.update_info_form_disabled_typing = true;
 					}
 				}
-			)
-		)
+			);
 	}
 
 	activateEdit(x) {
@@ -229,12 +239,19 @@ export class DealerProfileComponent implements OnInit {
 	}
   
 	mapUserInfoChanges() {
-		return new API_UPDATE_DEALER_USER_PROFILE(
-			this.user_data.userId,
-			this.user_data.dealerId,
-			this.f.owner_f_name.value,
-			this.f.owner_l_name.value
-		)
+
+		const { owner_f_name, owner_l_name } = this.update_user.value;
+		const { userId, dealerId } = this.user_data;
+		const updatedBy = this.currentUser.user_id;
+		
+		return {
+			userId,
+			updatedBy,
+			dealerId,
+			firstName: owner_f_name,
+			lastName: owner_l_name,
+		};
+
 	}
 
 	updateUserInfo() {
@@ -273,10 +290,11 @@ export class DealerProfileComponent implements OnInit {
 		return this.update_info_form_disabled;
 	}
 
-  getTotalLicenses(id) {
-    this.subscription.add(
-		this.subscription.add(
-			this._license.get_license_total_per_dealer(id).subscribe(
+  	getTotalLicenses(id) {
+    
+		this._license.get_license_total_per_dealer(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.license_details.basis = data.total;
 					this.license_details.basis_label = 'Licenses';
@@ -285,16 +303,16 @@ export class DealerProfileComponent implements OnInit {
 					this.license_details.bad_value = data.totalInActive;
 					this.license_details.bad_value_label = 'Inactive';
 					this.loading_license = false;
-				}
-			)
-		)
-	)
-  }
+				},
+				error => console.log('Error retrieving total licenses by dealer ', error)
+			);
+  	}
 
-  getTotalAdvertisers(id) {
-    this.subscription.add(
-		this.subscription.add(
-			this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
+	getTotalAdvertisers(id) {
+		
+		this._advertiser.get_advertisers_total_by_dealer(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					this.advertiser_details.basis = data.total;
 					this.advertiser_details.basis_label = 'Advertisers';
@@ -303,15 +321,16 @@ export class DealerProfileComponent implements OnInit {
 					this.advertiser_details.bad_value = data.totalInActive;
 					this.advertiser_details.bad_value_label = 'Inactive';
 					this.loading_advertiser = false;
-				}
-			)
-		)
-	)
-  }
+				},
+				error => console.log('Error retrieving total advertisers by dealer', error)
+			);
+	}
 
   	getTotalHosts(id) {
-		this.subscription.add(
-			this._host.get_host_total_per_dealer(id).subscribe(
+
+		this._host.get_host_total_per_dealer(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					this.host_details.basis = data.total;
 					this.host_details.basis_label = 'Hosts';
@@ -320,8 +339,12 @@ export class DealerProfileComponent implements OnInit {
 					this.host_details.bad_value = data.totalInActive;
 					this.host_details.bad_value_label = 'Inactive';
 					this.loading_host = false;
-				}
-			)
-		)
+				},
+				error => console.log('Error retrieving total hosts by dealer ', error)
+			);
   	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
+	}
 }

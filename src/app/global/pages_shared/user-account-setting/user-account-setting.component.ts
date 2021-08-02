@@ -5,11 +5,12 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { UserService } from '../../services/user-service/user.service';
+import { AuthService } from '../../services/auth-service/auth.service';
 import { API_USER_DATA } from '../../models/api_user-data.model';
 import { API_UPDATE_USER_INFO } from '../../models/api_update-user-info.model';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
+import { UserService } from '../../services/user-service/user.service';
 
 @Component({
   selector: 'app-user-account-setting',
@@ -38,6 +39,7 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _auth: AuthService,
 		private _user: UserService,
 		private _params: ActivatedRoute,
 		private _form: FormBuilder,
@@ -45,7 +47,6 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-
 
 		this.change_password = this._form.group(
 			this._params.paramMap
@@ -118,6 +119,7 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 			userId: this.user_data.userId,
 			password: this.passwordFormControl.new_password.value,
 			oldPassword: this.passwordFormControl.current_password.value,
+			updatedBy: this.currentUser.user_id
 		};
 
 		this._user.update_user(body)
@@ -142,8 +144,9 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 
 		const { userId } = this.user_data;
 		const isEmailAllowed = this.other_settings_form.get('allowEmail').value;
-		const allowEmail = isEmailAllowed ? 1 : 0;		
-		const body = { userId, allowEmail }
+		const allowEmail = isEmailAllowed ? 1 : 0;
+		const updatedBy = this.currentUser.user_id;
+		const body = { userId, allowEmail, updatedBy };
 
 		this._user.update_user(body)
 			.pipe(takeUntil(this._unsubscribe))
@@ -218,5 +221,9 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

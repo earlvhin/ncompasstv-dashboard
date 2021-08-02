@@ -6,7 +6,6 @@ import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { API_USER_DATA } from '../../models/api_user-data.model';
-import { API_UPDATE_USER_INFO } from '../../models/api_update-user-info.model';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UserService } from '../../services/user-service/user.service';
@@ -100,11 +99,13 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 
-		this.initializeForms();
-
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this.getUserById(this._params.snapshot.params.data).add(() => this.is_loading = false)
+				() => this.getUserById(this._params.snapshot.params.data)
+					.add(() => {
+						this.initializeForms();
+						this.is_loading = false;
+					})
 			);
 
 		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
@@ -207,45 +208,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	private get currentUser() {
 		return this._auth.current_user_value;
 	}
-
-	private get formControlNames() {
-		return this.info_form_fields.map((field: { control: string }) => field.control);
-	}
-
-	private get requiredInfoControls() {
-		return this.info_form_fields.filter((field: { required: boolean }) => field.required).map(field => field.control);
-	}
-
-	private get unrequiredInfoControls() {
-		return this.info_form_fields.filter((field: { required: boolean }) => !field.required).map(field => field.control);
-	}
-
-	private fillChangePasswordForm(): void {
-
-		this.password_form = this._form.group(
-			{
-				new_password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-				re_password: ['', Validators.required]
-			}
-		);
-	}
-
-	private fillInfoForm(): void {
-
-		 const controls = this.formControlNames;
-		 console.log('user data', this.user);
-
-		 controls.forEach(
-			control => {
-				Object.entries(this.user).forEach(
-					([key, value]) => {
-						if (key === control) this.infoFormControls[control].setValue(value);
-					}
-				);
-			}
-		);
-
-	}
 	
 	private getUserById(id: string) {
 
@@ -258,8 +220,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 					this.user.permission = role.permission;
 					this.current_permission = role.permission;
 					this.is_sub_dealer = role.roleName === 'Sub Dealer';
-					this.fillInfoForm();
-					this.fillChangePasswordForm();
 				}, 
 				error => console.log('Error retrieving user data', error)
 			);
@@ -284,73 +244,66 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private initializeInfoForm(): void {
+		let data: any;
 		const config: any = {};
-		
-		const controls = {
-			required: this.requiredInfoControls,
-			unrequired: this.unrequiredInfoControls
-		};
+		const { userRoles } = this.user;
+		const { permission } = userRoles[0];
+		const controls = this.info_form_fields.map(field => field.control);
 
-		// set the required fields
-		// customize default values here
-		controls.required.forEach(
+		controls.forEach(
 			control => {
 
 				let controlValue = [];
-				
+
 				switch (control) {
-					case 'email':
-						controlValue.push({ value: '', disabled: true });
+					case 'allowEmail':
+						data = this.user[control] === 1 ? true : false;
 						break;
+
+					case 'permission':
+						data = permission;
+						break;
+
 					default:
-						controlValue.push('');
+						data = this.user[control];
 				}
 
-				controlValue.push(Validators.required);
+				controlValue.push(data);
 				config[control] = controlValue;
 
 			}
 		);
-
-		// set unrequired fields
-		controls.unrequired.forEach(control => config[control] = [ '' ]);
 
 		// initialize update user form
 		this.info_form = this._form.group(config);
 
 	}
 
-	private mapPasswordChanges(): API_UPDATE_USER_INFO {
+	private mapPasswordChanges() {
+		const { userId, } = this.user;
+		const password = this.passwordFormControls.new_password.value;
+		const updatedBy = this.currentUser.user_id;
+		return { userId, password, updatedBy };
+	}
 
-		const { userId, firstName, middleName, lastName, email } = this.user;
-		const isEmailAllowed = this.infoFormControls.allowEmail.value;
+	private mapUserInfoChanges() {
+
+		const { firstName, middleName, lastName, email, permission } = this.info_form.value;
+		const isEmailAllowed = this.info_form.value.allowEmail;
 		const allowEmail = isEmailAllowed ? 1 : 0;
+		const { userId } = this.user;
+		const updatedBy = this.currentUser.user_id;
 
-		return new API_UPDATE_USER_INFO(
+		return {
 			userId,
 			firstName,
 			middleName,
 			lastName,
 			email,
-			this.passwordFormControls.new_password.value,
 			allowEmail,
-		);
-	}
-
-	private mapUserInfoChanges(): API_UPDATE_USER_INFO {
-
-		const isEmailAllowed = this.infoFormControls.allowEmail.value;
-		const allowEmail = isEmailAllowed ? 1 : 0;
-
-		return new API_UPDATE_USER_INFO(
-			this.user.userId,
-			this.infoFormControls.firstName.value,
-			this.infoFormControls.middleName.value,
-			this.infoFormControls.lastName.value,
-			this.infoFormControls.email.value,
-			this.user.password,
-			allowEmail
-		);
+			permission,
+			updatedBy,
+		};
 		
 	}
 
@@ -368,23 +321,23 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	private subscribeToPasswordFormChanges(): void {
 
-		const isValidForm = this.password_form.valid;
-		const newPassword = this.passwordFormControls.new_password.value;
-
 		this.password_form.valueChanges.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
 
+					const isValidForm = this.password_form.valid;
+					const newPassword = this.password_form.value.new_password;
+					const reTypePassword = this.password_form.value.re_password;
+
 					if (this.passwordFormControls.new_password.invalid) {
 						this.password_invalid = true;
 						this.password_validation_message = 'Must be atleast 8 characters';
-
 					} else {
 						this.password_invalid = false;
 						this.password_validation_message = 'Password Passed';
 					}
 
-					if (isValidForm && newPassword == this.passwordFormControls.re_password.value) {
+					if (isValidForm && newPassword === reTypePassword) {
 						this.password_match = true;
 						this.password_is_match = 'Password Match';
 						this.password_form_disabled = false;
@@ -393,7 +346,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 						this.password_match = false;
 						this.password_is_match = 'Password Does Not Match';
 						this.password_form_disabled = true;
-
 					}
 
 				}
