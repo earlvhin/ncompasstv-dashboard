@@ -79,7 +79,8 @@
                                 (page_triggered)="getPlaylist($event)"
                                 [playlist_delete]="true"
                                 (update_info)="fromDelete()"
-                                [is_dealer]="true">
+                                [is_dealer]="true"
+                                (export_playlist)="exportPlaylist($event)">
                             </app-data-table>
                         </mat-card>
                     </ng-container>
