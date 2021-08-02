@@ -708,7 +708,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getColumnsAndOrder(filter)
 
 		if (this.saved_tab == 0) {
-			this.getLicensesofDealer(page);
+			this.getLicensesofDealer(parseInt(this.saved_license_page));
 		} else {
 			this.getLicensesofDealer(1);
 		}

@@ -29,7 +29,8 @@ export class CreatePlaylistContentComponent implements OnInit {
 	duration_value: number;
 	checked: boolean = false;
 
-	constructor() { }
+	constructor() { 
+	}
 
 	ngOnInit() {
 		if (this.content.content_data.is_fullscreen == 1) {

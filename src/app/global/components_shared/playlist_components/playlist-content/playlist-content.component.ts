@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
+import { API_CONTENT } from 'src/app/global/models/api_content.model';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { OptionsComponent } from '../options/options.component';
@@ -37,6 +38,9 @@ export class PlaylistContentComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		if (this.content.fileType === 'webm') {
+			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf(".") + 1)}jpg`
+		}
 
 		if (this.playlist_host_license) {
 			this.playlist_host_license = this.playlist_host_license.sort((a, b) => {
@@ -48,12 +52,12 @@ export class PlaylistContentComponent implements OnInit {
 			this.isBaseFrequency = this.content.frequency === 22 || this.content.frequency === 33;
 			this.frequency = this.setFrequency(this.content.frequency);
 		}
+
 		this.contentTitle = this.content.title;
 
 		if (this.contentTitle.length >= 15) {
 			this.contentTitle = `${this.contentTitle.substr(0, 12)}...`;
 		}
-
 	}
 
 	optionsModal(): void {
