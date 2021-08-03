@@ -10,6 +10,7 @@ import { DealerService } from '../../services/dealer-service/dealer.service';
 import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
 import { UserService } from '../../services/user-service/user.service';
 import { takeUntil } from 'rxjs/operators';
+import { AuthService } from '../../services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-edit-single-dealer',
@@ -116,6 +117,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dealer_data: any,
 		public _dialog_ref: MatDialogRef<EditSingleDealerComponent>,
+		private _auth: AuthService,
 		private _form: FormBuilder,
 		private _user: UserService,
 		private _dialog: MatDialog,
@@ -335,14 +337,20 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		);
 	}
   
-  	private mapUserInfoChanges(): API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN {
-		return new API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN(
-			this._dealer_data.userId,
-			this.f.dealer_id.value,
-			this.f.owner_f_name.value,
-			this.f.owner_l_name.value,
-			this.f.email.value,
-		);
+  	private mapUserInfoChanges() {
+
+		const { dealer_id, owner_f_name, owner_l_name, email } = this.dealer_form.value;
+		const updatedBy = this.currentUser.user_id;
+
+		return {
+			userId: this._dealer_data.userId,
+			updatedBy,
+			dealerId: dealer_id,
+			firstName: owner_f_name,
+			lastName: owner_l_name,
+			email
+		};
+
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string): void {
@@ -396,6 +404,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	private updateDealerStatus(id: string, status: string): Observable<any> {
 		return this._dealer.update_status(id, status).pipe(takeUntil(this._unsubscribe));
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 }

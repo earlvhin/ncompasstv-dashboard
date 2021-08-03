@@ -123,7 +123,9 @@ export const API_ENDPOINTS = {
 		tags_by_id: 'tag/gettagsbyid?tagid=',
 		tags_by_owner_id: 'tag/gettagsbyownerid?ownerid',
 		tags_by_tag_name_and_type: 'tag/gettagsbytagnameandtypeid',
-		tags_count: 'tag/getalltagscount'	},
+		tags_count: 'tag/getalltagscount',
+		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
+	},
 	create: {
 		api_new_activity: 'activity/create',
 		api_create_global_settings: 'globalsettings/create',

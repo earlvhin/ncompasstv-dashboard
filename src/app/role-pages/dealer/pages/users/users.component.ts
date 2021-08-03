@@ -140,35 +140,31 @@ export class UsersComponent implements OnInit, OnDestroy {
 	}
 
 	private getAllusers(): void {
-		let users: USER[] = [];
-		
-		this._user.get_users().pipe(takeUntil(this._unsubscribe))
+
+		this.loading_data = true;
+
+		this._user.get_users_by_owner(this.currentUser.roleInfo.dealerId)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { paging, users: USER[] }) => {
+				(response: { ownerId: string, users: USER[] }) => {
 
-					if (!response.users || response.users.length <= 0) {
+					if (response.users.length <= 0) {
 						this.no_user = true;
 						this.filtered_data = [];
 						return;
 					}
 
-					users = response.users.filter(user => user.organization === this.currentUser.roleInfo.businessName);
-
-					if (users.length <= 0) {
-						this.no_user = true;
-						this.filtered_data = [];
-						return;
-					}
-
+					const { users } = response;
 					this.countUserRoles(users);
 					const mappedUsers = this.mapToUIFormat(users);
 					this.users = mappedUsers;
 					this.filtered_data = mappedUsers;
 
-				}, 
+				},
 				error => console.log('Error retrieving users', error)
 			)
 			.add(() => this.loading_data = false);
+
 	}
 
 	private mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {

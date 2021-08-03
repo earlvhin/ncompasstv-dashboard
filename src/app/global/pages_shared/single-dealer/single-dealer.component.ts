@@ -4,11 +4,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
 import { Chart } from 'chart.js';
+import { take } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as io from 'socket.io-client';
-import { take } from 'rxjs/operators';
 
 import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
 import { API_DEALER } from '../../models/api_dealer.model';
@@ -28,8 +28,6 @@ import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
-import { HelperService } from '../../services/helper-service/helper.service';
-import { verifyHostBindings } from '@angular/compiler';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -609,7 +607,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
-		console.log(data);
+
 		let count = this.paging_data_license.pageStart;
 		return data.map(
 			(l: any) => {
