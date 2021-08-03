@@ -91,7 +91,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
 	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
 		this.is_search = event.is_search;
-		this.getDealers(event.page);	
+		this.getDealers(event.page);
 	}
 
 	searchData(key: string): void {

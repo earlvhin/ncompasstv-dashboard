@@ -7,6 +7,18 @@
 
 .host-licenses-list {
 	margin-left: 20px;
+	
+	.pi-status {
+		margin-left: 10px;
+		border-radius: 5px;
+		background: #EE5454;
+		font-size: 12px;
+		padding: 1px 7px;
+
+		&.online {
+			background: #8EC641;
+		}
+	}
 }
 
 .loader-sm-no-text {
