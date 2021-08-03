@@ -14,16 +14,15 @@ import { ContentService } from '../../../../global/services/content-service/cont
 })
 
 export class FeedMediaComponent implements OnInit {
-	@HostListener("scroll", ["$event"])
 
-	has_page_left: boolean;
-	media_files: API_CONTENT[];
+	media_files: API_CONTENT[] = [];
+	selected_media_files: API_CONTENT[] = [];
+	subscription: Subscription = new Subscription();
 	media_files_page: number = 1;
 	pageEnd: boolean = false;
 	scroll_end: boolean;
-	selected_media_files: API_CONTENT[];
 	single_select: boolean = false;
-	subscription: Subscription = new Subscription();
+	has_page_left: boolean;
 
 	constructor(
 		private _content: ContentService,
@@ -50,7 +49,7 @@ export class FeedMediaComponent implements OnInit {
 	 * Detect End of Y Scroll
 	 * @param event
 	 */
-	onScroll(event: any) {
+	@HostListener("scroll", ["$event"]) onScroll(event: any) {
 		if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight && this.has_page_left) {
 			this.pageEnd = false;
 
@@ -116,9 +115,9 @@ export class FeedMediaComponent implements OnInit {
 	 * @param {contents: API_CONTENT[], paging: any} media_files Data returned by get_content_by_dealer_id API
 	 */
 	private mediaMapToUI(media_files: {contents: API_CONTENT[], paging: any}): void {
-		media_files.contents.forEach(i => {
+		media_files.contents.forEach((i: API_CONTENT) => {
 			if (this._is_image.transform(i.fileType)) {
-				this.media_files.push(i);
+				// this.media_files.push(i);
 			}
 		});
 	}
