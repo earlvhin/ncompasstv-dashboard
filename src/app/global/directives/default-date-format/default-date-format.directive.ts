@@ -19,5 +19,6 @@ export const FORMAT = {
         { provide: MAT_DATE_FORMATS, useValue: FORMAT },
     ],
 })
+
 export class DefaultDateFormatDirective {
 }

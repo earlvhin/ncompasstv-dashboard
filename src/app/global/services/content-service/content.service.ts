@@ -36,8 +36,16 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=30`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}` +`&search=` + `${key}`+`&floating=` + `${floating}`, this.httpOptions);
 	}
 
-	get_contents_with_page(page, type, sort, dealerId, hostId, advertiserId, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=60`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}`+`&hostId=` + `${hostId}`+`&advertiserId=` + `${advertiserId}`+`&search=` + `${key}`, this.httpOptions);
+	get_contents_with_page(page?, type?, sort?, dealerId?, hostId?, advertiserId?, key?, pageSize=60) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}
+		?pageSize=${pageSize}
+		&page=${page}
+		&fileCategory=${type || ''}
+		&sort=${sort || ''}
+		&dealerId=${dealerId || ''}
+		&hostId=${hostId || ''}
+		&advertiserId=${advertiserId || '' }
+		&search=${key || ''}`, this.httpOptions);
 	}
 	
     get_contents_playing_where(id) {
