@@ -12,6 +12,7 @@ export class UI_DEALER_LICENSE {
 	connection_speed: object;
 	display: object;
     anydesk: object;
+    anydesk_password: object;
 	server_version: object;
 	ui_version: object;
 	screen: object;
@@ -36,6 +37,7 @@ export class UI_DEALER_LICENSE {
 		connection_speed: object, 
 		display: object,
 		anydesk: object, 
+		anydesk_password: object, 
 		server: object, 
 		ui: object, 
 		screen: object,
@@ -59,6 +61,7 @@ export class UI_DEALER_LICENSE {
 		this.connection_speed = connection_speed;
 		this.display = display;
 		this.anydesk = anydesk;
+        this.anydesk_password = anydesk_password;
 		this.server_version = server;
 		this.ui_version = ui;
 		this.screen = screen;
