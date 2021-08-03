@@ -18,7 +18,6 @@ import { HelperService } from 'src/app/global/services/helper-service/helper.ser
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
 import { Router } from '@angular/router';
-import { ClipboardService } from 'ngx-clipboard'
 
 @Component({
   selector: 'app-data-table',
@@ -89,8 +88,7 @@ export class DataTableComponent implements OnInit {
 		private _playlist: PlaylistService,
 		private _router: Router,
 		private _screen: ScreenService,
-		private _user: UserService,
-        private _clipboardService: ClipboardService
+		private _user: UserService
 	) { }
 
 	ngOnInit() {
@@ -114,7 +112,8 @@ export class DataTableComponent implements OnInit {
 		this._unsubscribe.complete();
 	}
 
-    copyMessage(val: string){
+    copyToClipboard(val: string){
+        //create artificial textbox for selector
         const selBox = document.createElement('textarea');
         selBox.style.position = 'fixed';
         selBox.style.left = '0';
