@@ -140,7 +140,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 	}
 
 	private getAllusers(): void {
-
+		
 		this.loading_data = true;
 
 		this._user.get_users_by_owner(this.currentUser.roleInfo.dealerId)
@@ -151,6 +151,20 @@ export class UsersComponent implements OnInit, OnDestroy {
 					if (response.users.length <= 0) {
 						this.no_user = true;
 						this.filtered_data = [];
+
+						const details = {
+							basis: 0,
+							basis_label: 'Total User(s)',
+							hosts: 0,
+							hosts_label: 'Host(s)',
+							advertiser: 0,
+							advertiser_label: 'Advertiser(s)',
+							sub_dealer_count: 0,
+							sub_dealer_label: 'Sub Dealer(s)'
+						}
+			
+						this.user_details = details;
+
 						return;
 					}
 
@@ -160,7 +174,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 					this.users = mappedUsers;
 					this.filtered_data = mappedUsers;
 
-				},
+				}, 
 				error => console.log('Error retrieving users', error)
 			)
 			.add(() => this.loading_data = false);
