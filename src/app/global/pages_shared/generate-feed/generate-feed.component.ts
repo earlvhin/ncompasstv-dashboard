@@ -189,7 +189,7 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	/** New Feed Form Control Getter */
-	private get f() {
+	get f() {
 		return this.new_feed_form.controls;
 	}
 

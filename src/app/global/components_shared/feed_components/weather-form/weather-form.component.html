@@ -15,7 +15,7 @@
 
                 <mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="w.viewType == 'select'">
                     <mat-label>{{ w.label }}</mat-label>
-                    <mat-select (selectionChange)="onSelectContentFilter($event.value)" [(value)]="currentContentFilter" [disabled]="is_marking">
+                    <mat-select [disabled]="is_marking">
                         <mat-option *ngFor="let filter of w.options" [value]="filter.label">
                             {{ filter.label }}
                         </mat-option>

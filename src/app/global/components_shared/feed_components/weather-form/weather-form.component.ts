@@ -14,6 +14,8 @@ export class WeatherFormComponent implements OnInit {
 	@Input() selected_dealer: string;
 	@Output() open_media_library = new EventEmitter;
 
+	is_marking: boolean = false;
+
 	font_family = [
 		{
 			label: 'Helvetica'

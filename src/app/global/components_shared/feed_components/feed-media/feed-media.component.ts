@@ -1,9 +1,9 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
-import { PAGING } from 'src/app/global/models/paging.model';
-import { IsimagePipe } from 'src/app/global/pipes/isimage.pipe';
+import { API_CONTENT } from '../../../../global/models/api_content.model';
+import { PAGING } from '../../../../global/models/paging.model';
+import { IsimagePipe } from '../../../../global/pipes/isimage.pipe';
 import { ContentService } from '../../../../global/services/content-service/content.service';
 
 @Component({
@@ -16,14 +16,14 @@ import { ContentService } from '../../../../global/services/content-service/cont
 export class FeedMediaComponent implements OnInit {
 	@HostListener("scroll", ["$event"])
 
-	media_files: API_CONTENT[] = [];
-	selected_media_files: API_CONTENT[] = [];
-	subscription: Subscription = new Subscription();
+	has_page_left: boolean;
+	media_files: API_CONTENT[];
 	media_files_page: number = 1;
 	pageEnd: boolean = false;
 	scroll_end: boolean;
+	selected_media_files: API_CONTENT[];
 	single_select: boolean = false;
-	has_page_left: boolean;
+	subscription: Subscription = new Subscription();
 
 	constructor(
 		private _content: ContentService,
