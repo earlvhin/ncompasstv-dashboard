@@ -28,7 +28,7 @@ export class DealerLayoutComponent {
 		{ path: 'playlists', label: 'Playlists', icon: 'fas fa-play'},
 		{ path: 'screens', label: 'Screens', icon: 'fas fa-tv'},
 		//{ path: 'billings', label: 'Billings', icon: 'fas fa-file-invoice-dollar '},
-		//{ path: 'reports', label: 'Reports', icon: 'fas fa-chart-area'},
+		{ path: 'reports', label: 'Reports', icon: 'fas fa-chart-area'},
 		{ path: 'users', label: 'Users', icon: 'fas fa-users'},
 	]
 
