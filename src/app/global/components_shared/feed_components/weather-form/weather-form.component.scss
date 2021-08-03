@@ -12,6 +12,12 @@
 
 .upload-button {
     position: absolute;
-    right: 0;
-    top: 0;
+    right: -13px;
+    top: -26px;
+    height: 60px;
+    width: 60px;
+    border: none;
+    background: gray;
+    color: white;
+    z-index: 7;
 }
