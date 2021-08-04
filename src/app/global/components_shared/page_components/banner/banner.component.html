@@ -8,43 +8,46 @@
                     </div>
                     <div class="single-info flex-even">
 						<div class="d-flex align-items-center">
-							<h3 class="text-white mb-0" *ngIf="single_name != null">{{ single_name | titlecase }}</h3>
-							
-							<div class="status" [ngClass]="status === 'active' ? 'active' : 'inactive'" *ngIf="view === 'dealer'">
-								<span>{{ status | titlecase }}</span>
-							</div>
-
-							<div class="d-flex tags-container" *ngIf="tags.length > 0">
-								<div *ngFor="let tag of tags" class="d-inline sm-text tag" 
-									[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
-									<div class="name">{{ tag.name }}</div>
-								</div>
-							</div>
+							<h3 class="text-dark mb-1" *ngIf="single_name != null">{{ single_name | titlecase }}</h3>
 						</div>
 						
-						<div class="d-flex align-items-baseline">
-							<h5 class="text-white font-italic sm-text mb-0" *ngIf="dealer_data && dealer_data.dealerIdAlias">
+						<div class="d-flex align-items-baseline" *ngIf="dealer_data && dealer_data.dealerIdAlias">
+							<h5 class="text-dark font-italic sm-text mb-1">
 								Dealer Alias: {{ dealer_data.dealerIdAlias }}
 							</h5>
 						</div>
 
-                        <h4 class="d-inline-block sm-text mb-0 font-italic text-white" *ngIf="host_data && host_data.dealer && isAdmin()">
-                            <a class="text-white" [routerLink]="['/'+routes+'/dealers', host_data.dealer.dealerId]">{{ host_data.dealer.businessName }}</a><span class="mx-2">|</span>
+                        <h4 class="d-inline-block sm-text mb-0 font-italic text-dark" *ngIf="host_data && host_data.dealer && isAdmin()">
+                            <a class="text-dark" [routerLink]="['/'+routes+'/dealers', host_data.dealer.dealerId]">{{ host_data.dealer.businessName }}</a><span class="mx-2">|</span>
                         </h4>
 
-                        <h4 class="d-inline-block sm-text text-white mb-0" *ngIf="category"><i>{{ category }}</i></h4>
-                        <p class="mt-1 text-white md-text mb-0" *ngIf="single_desc != null">{{ single_desc }}</p>
+                        <h4 class="d-inline-block sm-text text-dark mb-1" *ngIf="category"><i>{{ category }}</i></h4>
+
+                        <h5 class="text-dark font-italic sm-text mb-1" *ngIf="single_desc != null">{{ single_desc }}</h5>
+
+                        <div class="d-flex tag-pills mt-1">
+                            <div class="status" [ngClass]="status === 'active' ? 'active' : 'inactive'" *ngIf="view === 'dealer'">
+                                <span>{{ status | titlecase }}</span>
+                            </div>
+    
+                            <div class="d-flex tags-container" *ngIf="tags.length > 0">
+                                <div *ngFor="let tag of tags" class="d-inline tag" 
+                                    [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
+                                    <div class="name">{{ tag.name }}</div>
+                                </div>
+                            </div>
+                        </div>
                         
 						<div *ngIf="single_host_data">
-                            <div *ngIf="business_hours != null; else openhours" class="mt-1 md-text mb-0">
-                                <div class="cursor-pointer text-white" (click)="triggerToggleMargin()">
+                            <div *ngIf="business_hours != null; else openhours" class="md-text mb-0">
+                                <div class="cursor-pointer text-dark" (click)="triggerToggleMargin()">
                                     <strong>Business Hours:</strong> 
                                     <span class="ml-2" *ngIf="!show_hours">{{ current_operations.day }} - {{ current_operations.period }}</span>
                                     <i *ngIf="!show_hours" class="ml-3 fa fa-caret-down"></i>
                                     <i *ngIf="show_hours" class="ml-3 fa fa-caret-up"></i>
                                 </div>
                                 <div *ngIf="show_hours">
-                                    <div *ngFor="let hours of business_hours; let i = index" [ngClass]="current_business_day === hours.day ? 'text-primary': 'text-white'">
+                                    <div *ngFor="let hours of business_hours; let i = index" [ngClass]="current_business_day === hours.day ? 'text-primary': 'text-dark'">
                                         {{hours.day}} 
                                         <span *ngIf="hours.periods[0]; else close"> 
                                             <span *ngFor="let periods of hours.periods; let j = index">
@@ -65,13 +68,13 @@
                         </div>
                         
                         <ng-template #openhours>
-                            <div class="text-white mt-1 md-text mb-0">
+                            <div class="text-dark mt-1 md-text mb-0">
                                 <strong>Business Hours:</strong> <span class="ml-2">CLOSED</span>
                             </div>
                         </ng-template>
 
                         <div class="mt-1 md-text mb-0" *ngIf="host_data">
-                            <div class="cursor-pointer text-white" (click)="onShowNotes()">
+                            <div class="cursor-pointer text-dark" (click)="onShowNotes()">
                                 <strong>Notes: </strong>
                                 <span class="ml-2">{{ partialNotes() }}</span>
                                 <i class="ml-3 fa fa-external-link"></i>
@@ -99,6 +102,6 @@
     </div>
 
     <button *ngIf="editable" class="settings-btn" (click)="checkContent()">
-        <span class="fas fa-cog"></span>
+        <span class="md-text"><strong>Modify Dealer</strong> <span class="fas fa-cog ml-2"></span></span>
     </button>
 </div>

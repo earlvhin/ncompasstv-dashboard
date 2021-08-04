@@ -1,14 +1,37 @@
 <ng-container>
     <div *ngIf="dealer && loaded; else loading">
-        <app-banner
-			[single_image]="img"
-			[single_name]="dealer.businessName"
-			[single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
-			[editable]="true"
-			[refresh_banner]="true"
-			[dealer_data]="dealer_user_data"
-			(update_info)="ngOnInit()">
-        </app-banner>
+        <div class="position-relative">
+            <app-banner
+            [single_image]="img"
+            [single_name]="dealer.businessName"
+            [single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
+            [editable]="true"
+            [refresh_banner]="true"
+            [dealer_data]="dealer_user_data"
+            (update_info)="ngOnInit()">
+            </app-banner>
+
+            <div class="select-dealer-field position-absolute">
+                <app-autocomplete-field
+                (data_value)="dealerSelected($event)"
+                [key_of_value]="'dealerId'"
+                [placeholder]="'N-Compass TV'"
+                [label]="'Selected Dealer'"
+                [data_reference]="dealers_data"
+                [search_keyword]="'businessName'"
+                [primary_keyword]="'businessName'"
+                [paging]="paging"
+                (call_next_page)="searchBoxTrigger($event)"
+                (searched)="searchData($event)"
+                [new_value]="dealer_name"
+                [initial_value]="dealer_name"
+                [loading_data]="loading_data"
+                [loading_search]="loading_search">
+                </app-autocomplete-field>
+
+                <span class="fas fa-search icon"></span>
+            </div>
+        </div>
         
         <div class="stat-cards top-50 mb-4">
             <div class="theme-container">
@@ -64,22 +87,7 @@
             <div class="row">
                 <div class="dealer-picker position-absolute col-lg-3 offset-9">
                     <div class="dealer-field full-width r-15">
-                        <app-autocomplete-field
-                            (data_value)="dealerSelected($event)"
-                            [key_of_value]="'dealerId'"
-                            [placeholder]="'N-Compass TV'"
-                            [label]="'Selected Dealer'"
-                            [data_reference]="dealers_data"
-                            [search_keyword]="'businessName'"
-                            [primary_keyword]="'businessName'"
-                            [paging]="paging"
-                            (call_next_page)="searchBoxTrigger($event)"
-                            (searched)="searchData($event)"
-                            [new_value]="dealer_name"
-                            [initial_value]="dealer_name"
-                            [loading_data]="loading_data"
-                            [loading_search]="loading_search">
-                        </app-autocomplete-field>
+                        
                     </div>
                 </div>
                 <div class="col-lg-12">
