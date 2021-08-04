@@ -65,3 +65,14 @@ a.text-white {
 .justified {
     text-align: justify;
 }
+
+.transition {
+    height: 135px;
+    transition: height .5s ease-out;
+}
+
+.hidden_hours {
+    height: 0px;
+    transition: height .5s ease-out;
+    overflow: hidden;
+}

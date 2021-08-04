@@ -43,7 +43,7 @@
                                     <i *ngIf="!show_hours" class="ml-3 fa fa-caret-down"></i>
                                     <i *ngIf="show_hours" class="ml-3 fa fa-caret-up"></i>
                                 </div>
-                                <div *ngIf="show_hours">
+                                <div [ngClass]="show_hours ? 'transition':'hidden_hours'">
                                     <div *ngFor="let hours of business_hours; let i = index" [ngClass]="current_business_day === hours.day ? 'text-primary': 'text-white'">
                                         {{hours.day}} 
                                         <span *ngIf="hours.periods[0]; else close"> 

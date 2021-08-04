@@ -45,6 +45,10 @@ export class DealerService {
 	add_dealer(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_dealer}`, data);
 	}
+	
+    content_dealer_metrics(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_dealers_content_metrics}`, data);
+	}
 
 	export_dealers() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealers}`, this.httpOptions).map(data => data.dealers);
