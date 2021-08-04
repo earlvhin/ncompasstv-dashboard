@@ -1287,7 +1287,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					c.dateCreated,
 					c.isFullScreen,
 					c.filesize,
-					c.thumbnail,
+					c.fileType !== 'webm' ? c.previewThumbnail || c.thumbnail : this.renameWebmThumb(c.url),
 					c.isActive,
 					c.isConverted,
 					c.uuid,
@@ -1307,6 +1307,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			}
 
 		});
+	}
+
+	private renameWebmThumb(source: string) {
+		return `${source.substr(0, source.lastIndexOf(".") + 1)}jpg`
 	}
 
 	private mapScreenLicenseToUI(data): UI_SCREEN_LICENSE[] {
