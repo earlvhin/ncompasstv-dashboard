@@ -169,6 +169,10 @@
     }
 }
 
+.title-section, .content-section {
+    padding-top: 30px;
+}
+
 .theme-btn {
     background-color: $dark;
     border: 0;
@@ -366,13 +370,13 @@
 }
 
 .page {
-    padding: 75px 0 20px 0;
+    padding: 65px 0 20px 0;
     // transition: padding-left .5s;
     &.sidebar-full {
         padding-left: 200px;
     }
     &.sidebar-fully {
-        padding-left: 70px;
+        padding-left: 50px;
         .theme-container{
             max-width: 1800px;
         }
