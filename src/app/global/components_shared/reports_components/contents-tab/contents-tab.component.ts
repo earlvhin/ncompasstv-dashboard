@@ -3,11 +3,12 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { ContentService } from '../../../../global/services/content-service/content.service';
 import { API_DEALER } from '../../../../global/models/api_dealer.model';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { ContentService } from '../../../../global/services/content-service/content.service';
+import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { UI_TABLE_CONTENT_METRICS } from '../../../../global/models/ui_table_content_metrics';
-
+import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 
 @Component({
   selector: 'app-contents-tab',
@@ -31,10 +32,13 @@ export class ContentsTabComponent implements OnInit {
     content_metrics: Array<any> = [];
     dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
+    dealer_id: string;
+	dealer_name: string;
     dealer_not_found: boolean;
     end_date: Date;
     filtered_data: Array<any> = [];
     initial_load: boolean = true;
+    is_dealer: boolean = false;
     is_loading: boolean = true;
 	is_search: boolean = false;
     loading_data: boolean = true;
@@ -51,10 +55,17 @@ export class ContentsTabComponent implements OnInit {
         private _form_builder: FormBuilder,
         private _dealer: DealerService,
         private _content: ContentService,
+        private _auth: AuthService,
     ) { }
 
     ngOnInit() {
         this.getDealers(1);
+        if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.dealer) {
+            this.is_dealer = true;
+            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+            this.setDealerId(this.dealer_id);
+        }
     }
 
     onSelectStartDate(e) {

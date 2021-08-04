@@ -39,9 +39,14 @@
 									<div class="pt-4" *ngIf="!loading_license_count; else loader_sm_no_text">
 										<ul class="host-licenses-list" *ngIf="host_licenses.length > 0; else no_licenses_text">
 											<li *ngFor="let license of host_licenses">
-												<a [routerLink]="setLink(license.licenseId)" target="_blank">
-													{{ (license.alias && license.alias.length > 0) ? license.alias : license.licenseKey }}
-												</a>
+												<div class="d-flex">
+													<a [routerLink]="setLink(license.licenseId)" target="_blank">	
+														{{ (license.alias && license.alias.length > 0) ? license.alias : license.licenseKey }}
+													</a>
+													<div class="pi-status" [class.online]="license.piStatus === 1">
+														{{ license.piStatus === 1 ? 'Online' : 'Offline' }}
+													</div>
+												</div>
 											</li>
 										</ul>
 										

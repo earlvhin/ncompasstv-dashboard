@@ -29,7 +29,7 @@
         </div>
         <div class="row"></div>
         <div class="col-lg-12 p-0">
-            <span class="md-text">
+            <span class="md-text" *ngIf="!is_dealer">
                 Select Dealer
             </span>
         </div>
@@ -48,7 +48,9 @@
 				(searched)="searchData($event)"
 				[loading_data]="loading_data"
 				[loading_search]="loading_search"
-				[disabled]="!start_date && !end_date">							
+				[disabled]="((!start_date && !end_date) || is_dealer)"
+                [initial_value]="dealer_name"
+				[new_value]="dealer_name">							
 			</app-autocomplete-field>
         </div>
     </form>
