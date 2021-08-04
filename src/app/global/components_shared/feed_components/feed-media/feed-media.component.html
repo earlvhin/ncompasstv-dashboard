@@ -15,7 +15,7 @@
 
     <hr>
 
-    <div class="media-files mb-4">
+    <div class="media-files mb-4" (scroll)="onScroll($event)">
         <div class="row no-gutters" *ngIf="media_files">
             <div class="col-lg-2 mb-3" *ngFor="let m of media_files">
                 <div class="media-file-thumbnail mx-2" (click)="imageSelected(m)" [ngClass]="selected_media_files.includes(m) ? 'selected' : ''">

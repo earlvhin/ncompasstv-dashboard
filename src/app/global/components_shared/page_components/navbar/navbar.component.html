@@ -1,5 +1,5 @@
-<nav class="navbar left-0 top-0 full-width sidebar-full p-fixed">
-    <div class="container-fluid d-flex justify-content-end p-0">
+<nav class="navbar left-0 top-0 full-width sidebar-full p-fixed" [ngClass]="sidebar_state ? 'sidebar-fully' : ''">
+    <div class="container-fluid d-flex p-0 align-items-center">
 		<!-- <div class="notification-area">
 			<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="notif">
 				<span class="fas fa-bell mr-2"></span>
@@ -19,7 +19,10 @@
 				</div>
 			</mat-menu>
 		</div> -->
-        <div class="navbar-menu">
+		<div class="breadcrumbs flex-even">
+			<breadcrumb [allowBootstrap]="true"></breadcrumb>
+		</div>
+        <div class="navbar-menu flex-even text-right">
 			<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="menu">
 				<span class="navbar-btn-label inline-block mr-1">{{ current_username }}</span>
 				<span class="fas fa-angle-down"></span>

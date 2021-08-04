@@ -1,0 +1,45 @@
+<div id="weather-form" class="weather-form">
+    <form [formGroup]="weather_form">
+        <div class="row mb-5">
+            <div *ngFor="let w of weather_form_fields" class="{{ w.width }}">
+                <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!w.viewType">
+                    <mat-label>{{ w.label }}</mat-label>
+                    <input matInput formControlName="{{ w.form_control_name }}" [type]="w.type" [required]="w.required" autocomplete="off">
+                </mat-form-field>
+
+                <mat-form-field class="full-width mb-2 position-relative overflow-hidden" appearance="fill" *ngIf="w.viewType == 'upload'">
+                    <mat-label>{{ w.label }}</mat-label>
+                    <input matInput formControlName="{{ w.form_control_name }}" [type]="w.type" [required]="w.required" autocomplete="off">
+                    <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(w.form_control_name);"><span class="fas fa-camera"></span></button>
+                </mat-form-field>
+
+                <mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="w.viewType == 'select'">
+                    <mat-label>{{ w.label }}</mat-label>
+                    <mat-select [disabled]="is_marking">
+                        <mat-option *ngFor="let filter of w.options" [value]="filter.label">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="w.viewType == 'colorpicker'">
+                    <mat-label>{{ w.label }}</mat-label>
+
+                    <input
+                    autocomplete="off"
+                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
+                    [(colorPicker)]="w.colorValue"
+                    formControlName="{{ w.form_control_name }}"
+                    [cpAlphaChannel]="'disabled'"
+                    [cpDisableInput]="true"
+                    matInput [type]="w.type"
+                    [value]="w.colorValue || ''"/>
+
+                    <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>
+                </mat-form-field>
+            </div>
+        </div>
+
+        <button mat-button mat-raised class="theme-btn">Submit <span class="fas fa-long-arrow-right"></span></button>
+    </form>
+</div>

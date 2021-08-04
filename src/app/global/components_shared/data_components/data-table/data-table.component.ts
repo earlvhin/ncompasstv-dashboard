@@ -88,7 +88,7 @@ export class DataTableComponent implements OnInit {
 		private _playlist: PlaylistService,
 		private _router: Router,
 		private _screen: ScreenService,
-		private _user: UserService,
+		private _user: UserService
 	) { }
 
 	ngOnInit() {
@@ -112,6 +112,21 @@ export class DataTableComponent implements OnInit {
 		this._unsubscribe.complete();
 	}
 
+    copyToClipboard(val: string){
+        //create artificial textbox for selector
+        const selBox = document.createElement('textarea');
+        selBox.style.position = 'fixed';
+        selBox.style.left = '0';
+        selBox.style.top = '0';
+        selBox.style.opacity = '0';
+        selBox.value = val;
+        document.body.appendChild(selBox);
+        selBox.focus();
+        selBox.select();
+        document.execCommand('copy');
+        document.body.removeChild(selBox);
+    }
+        
 	canDelete(userRole: string): boolean {
 
 		const restrictedRoles = [

@@ -1,4 +1,4 @@
-export class PAGING {
+export type PAGING = {
 	entities: any[];
 	hasNextPage: boolean;
 	hasPreviousPage: boolean;
@@ -6,8 +6,4 @@ export class PAGING {
 	pageSize: number;
 	pages: number;
 	totalEntities: number;
-
-	constructor() {
-		
-	}
 }

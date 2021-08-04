@@ -148,6 +148,7 @@ import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-fee
 import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
 import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
+import { BreadcrumbsModule } from "ng6-breadcrumbs";
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -177,6 +178,8 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
+import { FeedInfoComponent } from './components_shared/feed_components/feed-info/feed-info.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -318,6 +321,7 @@ const ngComponents = [
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
+	WeatherFormComponent,
 	ZoneListComponent,
   	PaginationFieldComponent
 ];
@@ -357,6 +361,7 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		FeedInfoComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -417,6 +422,7 @@ const DIRECTIVES = [
 		ReactiveFormsModule,
 		RouterModule,
 		NgxMatSelectSearchModule,
+        BreadcrumbsModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
 		})

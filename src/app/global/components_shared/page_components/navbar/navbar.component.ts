@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { UserService } from 'src/app/global/services/user-service/user.service';
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
@@ -10,6 +10,7 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 })
 
 export class NavbarComponent implements OnInit {
+	@Input() sidebar_state: boolean;
 	current_username: string;
 	current_userid: string;
 	is_dealer : boolean = false;

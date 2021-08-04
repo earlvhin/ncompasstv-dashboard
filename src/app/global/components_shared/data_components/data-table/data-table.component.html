@@ -125,6 +125,7 @@
                                                         </a>
                                                     </div>
                                             </div>
+                                            <button class="fas fa-copy text-primary no-border" *ngIf="data[d].copy" (click)="copyToClipboard(data[d].value)" title="Copy {{data[d].label}}"></button>
                                         </div>
 
                                         
