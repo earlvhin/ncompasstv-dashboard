@@ -121,8 +121,6 @@ export class SinglePlaylistComponent implements OnInit {
 		this.subscription.add(
 			this._playlist.get_playlist_by_id(id).subscribe(
 				data => {
-					console.log("Playlist Data:", data);
-
 					this.playlist = data;
 					this.title = this.playlist.playlist.playlistName;
 					this.description = this.playlist.playlist.playlistDescription;

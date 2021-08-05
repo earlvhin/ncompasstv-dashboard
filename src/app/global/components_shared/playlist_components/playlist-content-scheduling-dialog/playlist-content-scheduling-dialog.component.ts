@@ -239,8 +239,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							days,
 							playTimeStart,
 							playTimeEnd,
-							from: `${moment(from).format('YYYY-MM-DD')} 00:00:00`,
-							to: `${moment(to).format('YYYY-MM-DD')} 22:59:59`,
+							from: `${moment(`${from} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format()}`,
+							to: `${moment(`${to} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format()}`,
 							type: this.getTypeValue(type.name),
 							playlistContentId: id,
 						};
@@ -274,8 +274,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							days,
 							playTimeStart,
 							playTimeEnd,
-							from: `${moment(from).format('YYYY-MM-DD')} 00:00:00`,
-							to: `${moment(to).format('YYYY-MM-DD')} 22:59:59`,
+							from: `${moment(`${from} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format()}`,
+							to: `${moment(`${to} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format()}`,
 							type: this.getTypeValue(type.name),
 							playlistContentId: schedule.content_id
 						};
@@ -316,8 +316,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				playTimeEnd,
 				playlistContentId,
 				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId,
-				from: `${moment(from).format('YYYY-MM-DD')} 00:00:00`,
-				to: `${moment(to).format('YYYY-MM-DD')} 22:59:59`,
+				from: `${moment(`${from} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format()}`,
+				to: `${moment(`${to} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format()}`,
 				type: this.getTypeValue(type.name),
 			};
 
