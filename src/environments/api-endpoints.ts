@@ -40,6 +40,7 @@ export const API_ENDPOINTS = {
 		api_get_content_total_by_dealer: 'content/gettotal?dealerid=',
 		api_get_dealer_by_id: 'dealer/getbyid?dealer_id=',
 		api_get_dealers: 'dealer/getall',
+		api_get_dealers_content_metrics: 'contentplaysdaily/exportscontentmetricsbydealer',
 		api_get_dealers_directory: 'dealer/getdirectorytree',
 		api_get_dealers_with_sort: 'dealer/fetchallsorttotal',
 		api_get_dealers_with_host: 'dealer/getdealerswithhost',

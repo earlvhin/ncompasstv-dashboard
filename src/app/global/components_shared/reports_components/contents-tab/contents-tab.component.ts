@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
+import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 import { API_DEALER } from '../../../../global/models/api_dealer.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
@@ -28,9 +30,19 @@ export class ContentsTabComponent implements OnInit {
         { name: 'Total Play Count'},
         { name: 'Total Play Duration'},
 	];
+
+    dealers_mode_export_column = [
+        {name: 'Content Name', key:'title'},
+        {name: 'Host Name', key:'hostName'},
+        {name: 'Play Count', key:'hostPlaysTotal'},
+        {name: 'Play Duration', key:'hostDurationsTotal'},
+        {name: 'Total Play Count', key: 'playsTotal'},
+        {name: 'Total Duration', key:'durationsTotal'}
+    ]
     
     content_metrics: Array<any> = [];
     dealers: API_DEALER[];
+    dealers_content_to_export: any = [];
 	dealers_data: Array<any> = [];
     dealer_id: string;
 	dealer_name: string;
@@ -50,6 +62,9 @@ export class ContentsTabComponent implements OnInit {
     selected_dealer: string;
     selected_dealer_name: string = "";
     subscription: Subscription = new Subscription();
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 
     constructor(
         private _form_builder: FormBuilder,
@@ -80,6 +95,28 @@ export class ContentsTabComponent implements OnInit {
         if(this.start_date && this.selected_dealer) {
             this.getMediaFiles(1);
         }
+    }
+
+    getMetrics() {
+        var filter =  {
+            dealerid: this.selected_dealer,
+            from: this.start_date,
+            to: this.end_date, 
+        }
+        this.subscription.add(
+            this._dealer.content_dealer_metrics(filter).subscribe(
+                data => {
+                    this.dealers_content_to_export = data.contentMetricExports;
+					this.dealers_content_to_export.forEach((item, i) => {
+						this.modifyItem(item);
+						this.worksheet.addRow(item).font ={
+							bold: false
+						};
+					});
+                    this.generateExcel();
+                }
+            )
+        )
     }
 
     getDealers(e) {
@@ -172,7 +209,6 @@ export class ContentsTabComponent implements OnInit {
             pageSize: 10,
             page: e
         }
-
         this.subscription.add(
             this._content.get_content_metrics(filter).subscribe(
                 data => {
@@ -232,4 +268,41 @@ export class ContentsTabComponent implements OnInit {
         result += seconds + 's';
         return result;
     }
+
+    generateExcel() {
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+		let rowIndex = 1;
+		for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+			this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+		}
+		this.workbook.xlsx.writeBuffer().then((file: any) => {
+			const blob = new Blob([file], { type: EXCEL_TYPE });
+			const filename = this.selected_dealer_name + '-contents_report' +  '.xlsx';
+			FileSaver.saveAs(blob, filename);
+		});
+		this.workbook_generation = false;
+	}
+
+	modifyItem(item) {
+		item.playsTotal =  item.playsTotal == 0 ? '': item.playsTotal;
+        item.durationsTotal = item.durationsTotal == 0 ? '': this.msToTime(item.durationsTotal);
+        item.hostDurationsTotal = item.hostDurationsTotal == 0 ? '': this.msToTime(item.hostDurationsTotal);
+	}
+
+	exportTable() {
+		this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Excel.Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet(this.start_date +' - '+ this.end_date);
+		Object.keys(this.dealers_mode_export_column).forEach(key => {
+			if(this.dealers_mode_export_column[key].name && !this.dealers_mode_export_column[key].no_export) {
+				header.push({ header: this.dealers_mode_export_column[key].name, key: this.dealers_mode_export_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+			}
+		});
+	    // header.push({ header: 'Activated', key: 'isActivated', width: 30, style: { font: { name: 'Arial', bold: true, color: '8EC641' }}});
+		this.worksheet.columns = header;
+		this.getMetrics();		
+	}
 }
