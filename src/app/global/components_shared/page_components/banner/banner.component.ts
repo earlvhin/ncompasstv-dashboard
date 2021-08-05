@@ -61,6 +61,10 @@ export class BannerComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+		console.log(this.host_data);
+
+		console.log(this.dealer_data);
+
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		if (this.host_data) {
