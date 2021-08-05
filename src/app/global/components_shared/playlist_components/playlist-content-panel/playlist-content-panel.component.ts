@@ -646,21 +646,42 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	private setScheduleStatus(): void {
 		const originalContents = this.playlist_content_backup;
 
-		this.playlist_contents = originalContents.map(content => {
-			let status = 'inactive';
+		this.playlist_contents = originalContents.map(
+			content => {
+				let status: string;
+				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
+				const { type } = schedule;
 
-			if (content.playlistContentsSchedule) {
-				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null
-				const currentDate = moment();
-				const startDate = moment(schedule.from);
-				const endDate = moment(schedule.to);
-				if (currentDate.isBefore(startDate)) status = 'future';
-				if (currentDate.isBetween(startDate, endDate, undefined, '[]') || schedule.type === 1) status = 'active';
+				if (!schedule) {
+					content.scheduleStatus = status;
+					return;
+				}
+
+				switch (type) {
+					case 2:
+						status = 'inactive';
+						break;
+
+					case 3:
+
+						const currentDate = moment();
+						const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, 'YYYY-MM-DD hh:mm A');
+						const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, 'YYYY-MM-DD hh:mm A');
+
+						if (currentDate.isBefore(startDate)) status = 'future';
+						if (currentDate.isBetween(startDate, endDate, undefined, '[]')) status = 'active';
+
+						break;
+
+					default:
+						status = 'active';
+				}
+
+				content.scheduleStatus = status;
+				return content;
 			}
+		);
 
-			content.scheduleStatus = status;
-			return content;
-		});
 	}
 
 	private showContentScheduleDialog(): void {
