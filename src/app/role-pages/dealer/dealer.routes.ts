@@ -31,6 +31,7 @@ import { CreatePlaylistComponent } from '../../global/pages_shared/create-playli
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
 import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
+import { OwnerGuard } from 'src/app/global/guards/owner/owner.guard';
 
 export const DEALER_ROUTES: Routes = [
 	{
@@ -70,6 +71,7 @@ export const DEALER_ROUTES: Routes = [
                     { 
                         path: ':data', 
                         component: SingleHostComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Host Page'
                         }
@@ -96,6 +98,7 @@ export const DEALER_ROUTES: Routes = [
                     { 
                         path: ':data', 
                         component: SingleScreenComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Screen Page'
                         }
@@ -168,6 +171,7 @@ export const DEALER_ROUTES: Routes = [
                     { 
                         path: ':data', 
                         component: SingleLicenseComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single License Page'
                         }
@@ -200,7 +204,8 @@ export const DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data', 
-                        component: SinglePlaylistComponent, 
+                        component: SinglePlaylistComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Playlist Page'
                         }
@@ -271,7 +276,7 @@ export const DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data', 
-                        component: SingleUserComponent, 
+                        component: SingleUserComponent,
                         data: {
                             breadcrumb: 'Single User Page'
                         }

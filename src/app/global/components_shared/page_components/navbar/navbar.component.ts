@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { UserService } from 'src/app/global/services/user-service/user.service';
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
@@ -21,12 +22,15 @@ export class NavbarComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.current_username = this._auth.current_user_value.firstname;
-		this.current_userid = this._auth.current_user_value.user_id;
 
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.is_dealer = true;
+		if (this.currentUser) {
+			const { firstname, user_id, role_id } = this.currentUser
+			this.current_username = firstname;
+			this.current_userid = user_id;
+
+			if (role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
 		}
+
 	}
 
 	logOut() {
@@ -40,4 +44,9 @@ export class NavbarComponent implements OnInit {
 			}
 		)
 	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
+	}
+
 }

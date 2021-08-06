@@ -163,7 +163,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     getColumnsAndOrder(data) {
-        console.log("DD", data)
 		this.sort_column = data.column;
 		this.sort_order = data.order;
 		this.getLicenses(1);
@@ -172,7 +171,7 @@ export class LicensesComponent implements OnInit {
 
 	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
 		let count = this.paging_data_license.pageStart;
-		console.log("DATA", data)
+		
 		return data.map(
 			i => {
 				return new UI_TABLE_LICENSE_BY_HOST(
