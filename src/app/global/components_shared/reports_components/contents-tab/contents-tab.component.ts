@@ -23,13 +23,19 @@ export class ContentsTabComponent implements OnInit {
 		end_date: [ '', Validators.required ],
 	});
 
+    content_metrics_table_column = [
+        { name: 'Host Name', key:'hostName'},
+        { name: 'Play Count', key:'hostPlaysTotal'},
+        { name: 'Play Duration', key:'hostDurationsTotal'},
+	];
+
     metrics_table_column = [
         { name: '#', sortable: false},
         { name: 'File Name'},
         { name: 'Playing Where'},
         { name: 'Total Play Count'},
         { name: 'Total Play Duration'},
-	];
+    ];
 
     dealers_mode_export_column = [
         {name: 'Content Name', key:'title'},
@@ -41,6 +47,7 @@ export class ContentsTabComponent implements OnInit {
     ]
     
     content_metrics: Array<any> = [];
+    content_to_export: Array<any> = [];
     dealers: API_DEALER[];
     dealers_content_to_export: any = [];
 	dealers_data: Array<any> = [];
@@ -59,6 +66,8 @@ export class ContentsTabComponent implements OnInit {
     paging_data: any;
     searching: boolean = false;
     start_date: Date;
+    selected_content: string;
+    selected_content_name: string;
     selected_dealer: string;
     selected_dealer_name: string = "";
     subscription: Subscription = new Subscription();
@@ -98,6 +107,7 @@ export class ContentsTabComponent implements OnInit {
     }
 
     getMetrics() {
+        var tab = 'dealer';
         var filter =  {
             dealerid: this.selected_dealer,
             from: this.start_date,
@@ -108,15 +118,44 @@ export class ContentsTabComponent implements OnInit {
                 data => {
                     this.dealers_content_to_export = data.contentMetricExports;
 					this.dealers_content_to_export.forEach((item, i) => {
-						this.modifyItem(item);
+						this.modifyItem(item, tab);
 						this.worksheet.addRow(item).font ={
 							bold: false
 						};
 					});
-                    this.generateExcel();
+                    this.generateExcel(tab);
                 }
             )
         )
+    }
+    
+    getContentMetrics() {
+        var tab = 'contents';
+        var filter =  {
+            contentid: this.selected_content,
+            from: this.start_date,
+            to: this.end_date, 
+        }
+        this.subscription.add(
+            this._content.get_content_metrics_export(filter).subscribe(
+                data => {
+                    this.content_to_export = data.contentMetricExports;
+					this.content_to_export.forEach((item, i) => {
+						this.modifyItem(item, tab);
+						this.worksheet.addRow(item).font ={
+							bold: false
+						};
+					});
+                    this.generateExcel(tab);
+                }
+            )
+        )
+    }
+
+    setContentSelected(data) {
+        this.selected_content = data.id;
+        this.selected_content_name = data.name;
+        this.exportTable('contents');
     }
 
     getDealers(e) {
@@ -233,6 +272,7 @@ export class ContentsTabComponent implements OnInit {
 			i => {
 				return new UI_TABLE_CONTENT_METRICS(
 					{ value:count++, link: null , editable: false, hidden: false},
+					{ value:i.contentId, link: null , editable: false, hidden: true},
 					{ value:i.title, link: '/administrator/media-library/'+ i.contentId, new_tab_link: 'true'},
 					{ value:i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts},
 					{ value:i.playsTotal},
@@ -247,62 +287,87 @@ export class ContentsTabComponent implements OnInit {
         totalSeconds = input / 1000;
         totalMinutes = totalSeconds / 60;
         totalHours = totalMinutes / 60;
-
         seconds = Math.floor(totalSeconds) % 60;
         minutes = Math.floor(totalMinutes) % 60;
         hours = Math.floor(totalHours) % 60;
-
         if (hours !== 0) {
             result += hours+'h ';
             if (minutes.toString().length == 1) {
                 minutes = '0'+minutes;
             }
         }
-
         result += minutes+'m ';
-
         if (seconds.toString().length == 1) {
             seconds = '0'+seconds;
         }
-
         result += seconds + 's';
         return result;
     }
 
-    generateExcel() {
+    generateExcel(options) {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        var filename = '';
 		let rowIndex = 1;
 		for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
 			this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 		}
 		this.workbook.xlsx.writeBuffer().then((file: any) => {
 			const blob = new Blob([file], { type: EXCEL_TYPE });
-			const filename = this.selected_dealer_name + '-contents_report' +  '.xlsx';
+            switch(options) {
+                case 'dealer':
+                    filename = this.selected_dealer_name + '-contents_report' +  '.xlsx';
+                    break;
+                case 'contents':
+                    filename = this.selected_content_name + '-_reports' +  '.xlsx';
+                    break;
+                default:
+            }
 			FileSaver.saveAs(blob, filename);
 		});
 		this.workbook_generation = false;
 	}
 
-	modifyItem(item) {
-		item.playsTotal =  item.playsTotal == 0 ? '': item.playsTotal;
-        item.durationsTotal = item.durationsTotal == 0 ? '': this.msToTime(item.durationsTotal);
-        item.hostDurationsTotal = item.hostDurationsTotal == 0 ? '': this.msToTime(item.hostDurationsTotal);
+	modifyItem(item, tab) {
+        switch(tab) {
+            case 'dealer':
+                item.playsTotal =  item.playsTotal == 0 ? '': item.playsTotal;
+                item.durationsTotal = item.durationsTotal == 0 ? '': this.msToTime(item.durationsTotal);
+                item.hostDurationsTotal = item.hostDurationsTotal == 0 ? '': this.msToTime(item.hostDurationsTotal);
+                break;
+            case 'contents':
+                item.hostDurationsTotal = item.hostDurationsTotal == 0 ? '': this.msToTime(item.hostDurationsTotal);
+                break;
+            default:
+        }
 	}
 
-	exportTable() {
-		this.workbook_generation = true;
+	exportTable(tab) {
 		const header = [];
 		this.workbook = new Excel.Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet(this.start_date +' - '+ this.end_date);
-		Object.keys(this.dealers_mode_export_column).forEach(key => {
-			if(this.dealers_mode_export_column[key].name && !this.dealers_mode_export_column[key].no_export) {
-				header.push({ header: this.dealers_mode_export_column[key].name, key: this.dealers_mode_export_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
-			}
-		});
-	    // header.push({ header: 'Activated', key: 'isActivated', width: 30, style: { font: { name: 'Arial', bold: true, color: '8EC641' }}});
-		this.worksheet.columns = header;
-		this.getMetrics();		
+        switch(tab) {
+            case 'dealer':
+                this.workbook_generation = true;
+                Object.keys(this.dealers_mode_export_column).forEach(key => {
+                    if(this.dealers_mode_export_column[key].name && !this.dealers_mode_export_column[key].no_export) {
+                        header.push({ header: this.dealers_mode_export_column[key].name, key: this.dealers_mode_export_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+                    }
+                });
+                this.worksheet.columns = header;
+		        this.getMetrics();
+                break;
+            case 'contents':
+                Object.keys(this.content_metrics_table_column).forEach(key => {
+                    if(this.content_metrics_table_column[key].name && !this.content_metrics_table_column[key].no_export) {
+                        header.push({ header: this.content_metrics_table_column[key].name, key: this.content_metrics_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+                    }
+                });
+                this.worksheet.columns = header;
+                this.getContentMetrics();	
+                break;
+            default:
+        }
 	}
 }

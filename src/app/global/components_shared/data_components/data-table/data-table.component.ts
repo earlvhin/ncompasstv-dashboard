@@ -29,6 +29,7 @@ export class DataTableComponent implements OnInit {
 
 	@Input() active_tab: string;
 	@Input() advertiser_delete: boolean;
+    @Input() content_metrics: boolean;
 	@Input() ctrl_column_label: string;
 	@Input() ctrl_column: boolean;
 	@Input() ctrl_toggle: boolean;
@@ -61,6 +62,7 @@ export class DataTableComponent implements OnInit {
 
 	@Output() delete_license = new EventEmitter;
 	@Output() delete_screen = new EventEmitter;
+	@Output() export_content_details = new EventEmitter;
 	@Output() export_playlist = new EventEmitter;
 	@Output() page_triggered = new EventEmitter;
 	@Output() reload_page = new EventEmitter;
@@ -233,6 +235,10 @@ export class DataTableComponent implements OnInit {
 
 	exportPlaylist(data): void {
 		this.export_playlist.emit(data)
+	}
+
+    exportContentDetails(data): void {
+		this.export_content_details.emit(data)
 	}
 
 	deleteLicense(id): void {

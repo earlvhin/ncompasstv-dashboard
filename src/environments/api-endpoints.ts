@@ -27,6 +27,7 @@ export const API_ENDPOINTS = {
 		api_get_content_by_id: 'content/getcontentsbyid?contentid=',
 		api_get_content_by_dealer_id: 'content/getbydealerid?dealerid=',
 		api_get_content_daily_count: 'contentplays/getdailytotalbycontent',
+        api_get_content_metrics_export: 'contentplaysdaily/exportscontentmetricsbycontent',
 		api_get_content_monthly_count: 'contentplays/getmonthlytotalbycontent',
 		api_get_content_yearly_count: 'contentplays/getyearlytotalbycontent',
 		api_get_content_count_by_license: 'contentplays/gettotalbylicense',

@@ -35,7 +35,7 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled" class="text-right" class="p-3">
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
@@ -212,6 +212,11 @@
 
 				<td class="p-3 control-toggle text-center" *ngIf="is_user_delete_enabled">
 					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i>
+				</td>
+
+                <td class="p-3 control-toggle text-center" *ngIf="content_metrics">
+					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value })"></i>
+					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
 				
 			</tr>
