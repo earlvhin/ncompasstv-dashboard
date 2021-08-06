@@ -94,14 +94,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.bulk_toggle = false;
 		this.is_marking = false;
 
-		this.contents_with_schedules = this.playlist_contents.filter(content => {
+		this.contents_with_schedules = this.playlist_content_backup.filter(content => {
 			const schedule = content.playlistContentsSchedule;
-			if (typeof schedule !== 'undefined' && schedule) return content; 
+			if (schedule.type === 3) return content; 
 		});
 
-		this.contents_without_schedules = this.playlist_contents.filter(content => {
+		this.contents_without_schedules = this.playlist_content_backup.filter(content => {
 			const schedule = content.playlistContentsSchedule;
-			if (typeof schedule === 'undefined' || !schedule) return content;
+			if (schedule.type !== 3) return content;
 		});
 
 	}
@@ -648,7 +648,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		this.playlist_contents = originalContents.map(
 			content => {
-				let status: string;
+				let status = 'inactive';
 				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
 				const { type } = schedule;
 
