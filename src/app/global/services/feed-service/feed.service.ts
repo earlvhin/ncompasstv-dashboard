@@ -36,8 +36,8 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_generated_feed}`, data, this.httpOptions);
 	}
 
-	generate_feed(data: GenerateFeed) {
-		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate}`, data, this.httpOptions);
+	generate_slide_feed(data: GenerateFeed) {
+		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate_slide}`, data, this.httpOptions);
 	}
 
 	get_feeds(page, key, column?, order?) {
@@ -46,6 +46,10 @@ export class FeedService {
 
 	get_feeds_by_dealer(id, page, key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_by_dealer}`+'?dealerid='+`${id}`+'&page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	}
+
+	get_feed_types() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feed_types}`, this.httpOptions).map((data: any) => data.feedTypes);
 	}
 	
 	// get_search_feeds(key: string) {

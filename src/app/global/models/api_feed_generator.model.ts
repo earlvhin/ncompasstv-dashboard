@@ -7,10 +7,17 @@ export class GenerateFeed {
         feedTitle: string,
         description: string,
         createdBy: string,
+        feedTypeId: string,
         feedId?: string
     };
 
-    feedContents: {
+    feedGlobalSettings: {
+        overlay: string,
+        fontColor: string,
+        fontFamily: string
+    }
+
+    feedSlides: {
         contentId: string,
         heading: string,
         paragraph: string,
@@ -23,10 +30,16 @@ export class GenerateFeed {
             dealerId: string,
             feedTitle: string,
             description: string,
-            createdBy: string
+            createdBy: string,
+            feedTypeId: string,
             feedId?: string
         },
-        feedContents: {
+        feedGlobalSettings: {
+            overlay: string,
+            fontColor: string,
+            fontFamily: string
+        },
+        feedSlides: {
             contentId: string,
             heading: string,
             paragraph: string,
@@ -35,7 +48,8 @@ export class GenerateFeed {
         }[]
     ) {
         this.feeds = feeds;
-        this.feedContents = feedContents;
+        this.feedGlobalSettings = feedGlobalSettings;
+        this.feedSlides = feedSlides;
     }
 }
 

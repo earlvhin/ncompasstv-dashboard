@@ -49,3 +49,11 @@ export class API_EDIT_FEED {
 		this.feedUrl = url;
 	}
 }
+
+export type API_FEED_TYPES = {
+	dateCreated: string,
+	description: string,
+	feedTypeId: string,
+	name: string,
+	status: string
+}

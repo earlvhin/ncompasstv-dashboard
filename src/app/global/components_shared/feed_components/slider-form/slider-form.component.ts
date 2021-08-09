@@ -33,25 +33,34 @@ export class SliderFormComponent implements OnInit {
 	slide_global_settings = [
 		{
 			label: 'Overlay Background and Transparency for Context',
-			form_control_name: 'overlayBackgroundColor',
+			form_control_name: 'overlay',
 			type: 'text',
 			viewType: 'colorpicker',
 			colorValue: '',
-			width: 'col-lg-6', 
+			width: 'col-lg-4', 
+			required: true
+		},
+		{
+			label: 'Font Color',
+			form_control_name: 'fontColor',
+			type: 'text',
+			viewType: 'colorpicker',
+			colorValue: '',
+			width: 'col-lg-4', 
 			required: true
 		},
 		{
 			label: 'Font Family',
 			form_control_name: 'fontFamily',
 			type: 'text',
-			width: 'col-lg-6', 
+			width: 'col-lg-4', 
 			viewType: 'select',
 			options: this.font_family,
 			required: true
 		},
 	]
 
-	slide_form: FormGroup;
+	slide_global_settings_form: FormGroup;
 	
 	apply_to_all_btn_status: boolean = false;
 
@@ -71,13 +80,13 @@ export class SliderFormComponent implements OnInit {
 			}
 		)
 
-		this.slide_form = this._form.group(form_group_obj)
+		this.slide_global_settings_form = this._form.group(form_group_obj)
 	}
 
 	/** Apply Set Duration a Field to All Items
 	 *  @param {number} duration Duration set from UI
 	 */
-	applyDurationToAll(duration: number) {
+	applyDurationToAll(duration: number): void {
 		this.feed_items.forEach(
 			i => {
 				i.context.duration = duration || 5;
@@ -88,10 +97,8 @@ export class SliderFormComponent implements OnInit {
 	}
 
 	/** Color Picker */
-	colorPicker(e, form_control_name) {
-		console.log(e, form_control_name);
-		this.slide_form.get(form_control_name).setValue(e);
-		console.log(this.slide_form.get(form_control_name).value)
+	colorPicker(e, form_control_name): void {
+		this.slide_global_settings_form.get(form_control_name).setValue(e);
 	}
 
 	/** Open Media Library where contents are assigned to selected dealer */
@@ -115,14 +122,19 @@ export class SliderFormComponent implements OnInit {
 	}
 
 	/** Pass Feed Items to Parent Component */
-	passFeedItems() {
-		this.structured_feed_items.emit(this.feed_items)
+	passFeedItems(): void {
+		this.structured_feed_items.emit(
+			{
+				globalSettings: this.slide_global_settings_form.value,
+				feedItems: this.feed_items
+			}
+		)
 	}
 
 	/** Remove X-ed Feed Item 
 	 * @param {any} f Feed Item X-ed on UI
 	*/
-	removeFeedItem(f: any) {
+	removeFeedItem(f: any): void {
 		this.feed_items = this.feed_items.filter(i => i !== f);
 	}
 
@@ -153,7 +165,6 @@ export class SliderFormComponent implements OnInit {
 		);
 	}
 	
-
 	/** Sortable JS Plugin Initialization*/
 	private sortableJSInit(): void {
 		const set = (sortable) => {

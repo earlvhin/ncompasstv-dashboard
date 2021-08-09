@@ -7,12 +7,13 @@
                     Create your own feeds, choose your images and set what texts to display.
                 </p>
 
-                <mat-horizontal-stepper #stepper *ngIf="dealers || fetched_feed; else spinner" linear (selectionChange)="selectionChange($event)">
+                <mat-horizontal-stepper #stepper *ngIf="(dealers && feed_types) || fetched_feed; else spinner" linear (selectionChange)="selectionChange($event)">
                     <!-- Begin: Step 1 -->
                     <mat-step>
                         <div class="row justify-content-center pt-4">
                             <div class="col-lg-8">
                                 <app-feed-info
+                                [feed_types]="feed_types"
                                 [dealers]="dealers"
                                 [is_dealer]="is_dealer"
                                 (feed_info)="prepareFeedInfo($event)">
@@ -28,7 +29,7 @@
                         <ng-template matStepLabel>Feed Content</ng-template>
 
                         <!-- Begin: Slider Form -->
-                        <div class="bg-gray mt-5 p-4" *ngIf="feed_info && feed_info.feedType === 'slide'">
+                        <div class="bg-gray mt-5 p-4" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'">
                             <app-slider-form 
                             *ngIf="selected_dealer" 
                             (structured_feed_items)="structureFeedToGenerate($event)"
@@ -39,10 +40,8 @@
                         <!-- End: Slider Form -->
 
                         <!-- Begin: Weather Maker -->
-                        <div class="mt-5" *ngIf="feed_info && feed_info.feedType === 'weather'">
-                            <app-weather-form
-                            [selected_dealer]="selected_dealer"
-                            (open_media_library)="openMediaLibraryModal()">
+                        <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'">
+                            <app-weather-form [selected_dealer]="selected_dealer">
                             </app-weather-form>
                         </div>
                         <!-- End: Weather Maker -->
@@ -64,7 +63,10 @@
                                     <div class="loading-overlay" *ngIf="saving">
                                         <app-spinner [diameter]="70"></app-spinner>
                                     </div>
-                                    <app-feed-demo [feed_items]="feed_items"></app-feed-demo>
+                                    <app-feed-demo 
+                                    *ngIf="generated_feed"
+                                    [global_settings]="generated_feed.feedGlobalSettings"
+                                    [feed_items]="feed_items"></app-feed-demo>
                                     <button *ngIf="feed_items.length > 0" mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedFeed()" [disabled]="saving">Save</button>
                                 </div>
                             </div>

@@ -3,6 +3,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
+import { API_FEED_TYPES } from 'src/app/global/models/api_feed.model';
+import { FeedService } from 'src/app/global/services/feed-service/feed.service';
 import { API_GENERATED_FEED, GenerateFeed } from '../../../../global/models/api_feed_generator.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 
@@ -20,6 +22,7 @@ export class FeedInfoComponent implements OnInit {
 	@Input() is_dealer: boolean = false;
 	@Input() editing: boolean = false;
 	@Input() fetched_feed: API_GENERATED_FEED;
+	@Input() feed_types: API_FEED_TYPES[];
 	@Output() feed_info = new EventEmitter();
 
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
@@ -27,27 +30,10 @@ export class FeedInfoComponent implements OnInit {
 	new_feed_form: FormGroup;
 	selected_dealer: string;
 
-	feed_types = [
-		{
-			id: 'weather',
-			label: 'Weather Feed',
-			description: 'A feed that displays today\'s weather'
-		}, 
-		{
-			id: 'slide',
-			label: 'Slide Feed',
-			description: 'A feed that displays images with text'
-		},
-		{
-			id: 'filler',
-			label: 'Filler',
-			description: 'A scheduled image feed display'
-		}
-	]
 
 	constructor(
 		private _auth: AuthService,
-		private _form: FormBuilder,
+		private _form: FormBuilder
 	) { }
 
 	ngOnInit() {

@@ -1,7 +1,7 @@
 <ng-container>
     <div class="slide-global-settings">
         <h3 class="mb-4">Set Slide Feed Global Settings</h3>
-        <form [formGroup]="slide_form">
+        <form [formGroup]="slide_global_settings_form">
             <div class="row">
                 <div *ngFor="let s of slide_global_settings" class="{{ s.width }}">
                     <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!s.viewType">
@@ -12,12 +12,12 @@
                     <mat-form-field class="full-width mb-2 position-relative overflow-hidden" appearance="fill" *ngIf="s.viewType == 'upload'">
                         <mat-label>{{ s.label }}</mat-label>
                         <input matInput formControlName="{{ s.form_control_name }}" [type]="s.type" [required]="s.required" autocomplete="off">
-                        <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(s.form_control_name);"><span class="fas fa-camera"></span></button>
+                        <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal();"><span class="fas fa-camera"></span></button>
                     </mat-form-field>
 
                     <mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="s.viewType == 'select'">
                         <mat-label>{{ s.label }}</mat-label>
-                        <mat-select [disabled]="is_marking">
+                        <mat-select matInput formControlName="{{ s.form_control_name }}">
                             <mat-option *ngFor="let filter of s.options" [value]="filter.label">
                                 {{ filter.label }}
                             </mat-option>
@@ -32,7 +32,6 @@
                         (colorPickerChange)="colorPicker(s.colorValue, s.form_control_name)"
                         [(colorPicker)]="s.colorValue"
                         formControlName="{{ s.form_control_name }}"
-                        
                         [cpDisableInput]="true"
                         matInput [type]="s.type"
                         [value]="s.colorValue || ''"/>

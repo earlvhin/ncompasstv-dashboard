@@ -12,8 +12,8 @@
     <mat-form-field class="full-width" appearance="fill">
         <mat-label>Feed Type</mat-label>
         <mat-select formControlName="feed_type" >
-            <mat-option *ngFor="let f of feed_types" [value]="f.id">
-                {{ f.label }} - <small>{{ f.description }}</small>
+            <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
+                {{ f.name }} - <small>{{ f.description }}</small>
             </mat-option>
         </mat-select>
     </mat-form-field>
