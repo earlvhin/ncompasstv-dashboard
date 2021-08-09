@@ -123,8 +123,9 @@ export const DEALER_ROUTES: Routes = [
                         }
                     },
                     { 
-                        path: ':data', 
+                        path: ':data',
                         component: SingleAdvertiserComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Advertiser Page'
                         }
