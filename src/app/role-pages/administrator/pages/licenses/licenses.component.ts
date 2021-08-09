@@ -60,6 +60,8 @@ export class LicensesComponent implements OnInit {
 	ngOnInit() {
 		this.getLicensesTotal();
 
+		this.getLicenses();
+
 		// Saved Page on URL
 		this._route.queryParams.subscribe(params => {
 			let saved_page = params['page'];
@@ -74,6 +76,14 @@ export class LicensesComponent implements OnInit {
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
+	}
+
+	getLicenses() {
+		this._license.get_all_licenses().subscribe(
+			data => {
+				console.log(data)
+			}
+		)	
 	}
 
 	filterData(e) {

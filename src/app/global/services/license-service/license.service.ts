@@ -41,7 +41,9 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses() {}
+	get_all_licenses() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, this.httpOptions)
+	}
 
 	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?) {
 		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;

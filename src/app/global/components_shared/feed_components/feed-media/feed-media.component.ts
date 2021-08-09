@@ -34,10 +34,7 @@ export class FeedMediaComponent implements OnInit {
 		console.log(typeof(this._dialog_data));
 
 		if (this._dialog_data) {
-			this.getUserMediaFiles(typeof(this._dialog_data) === 'string' ? this._dialog_data : this._dialog_data.dealer);
-			this.single_select = typeof(this._dialog_data) === 'object' ? this._dialog_data.singleSelect : false;
-		} else {
-			this.getUnassignedMediaFiles();
+			this.getUserMediaFiles(this._dialog_data.dealer);
 		}
 	}
 
@@ -53,52 +50,30 @@ export class FeedMediaComponent implements OnInit {
 		if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight && this.has_page_left) {
 			this.pageEnd = false;
 
+			console.log("SCROLLEND")
+
 			if (this._dialog_data) {
 				this.getUserMediaFiles(this._dialog_data);
-			} else {
-				this.getUnassignedMediaFiles();
 			}
 		}
 	}
 
 	/**
-	 * Get All Media Files Assigned to Passed User
-	 * @param {string} dealer_id Passed Dealer ID from parent component
-	 */
-	private getUserMediaFiles(dealer_id: string): void {
-		this.subscription.add(
-			this._content.get_content_by_dealer_id(dealer_id, false, this.media_files_page++, 200).subscribe(
-				(data: {contents: API_CONTENT[], paging: PAGING}) => {
-					if(!data.contents) {
-						this.pageEnd = true;
-						return;
-					}
-
-					this.mediaMapToUI(data)
-
-					if ((data.paging.hasNextPage && this.media_files_page > 5) || this.scroll_end) {
-						this.getUserMediaFiles(dealer_id)
-						this.scroll_end = false;
-					} else {
-						this.has_page_left = false;
-						this.pageEnd = true;
-					}
-				}
-			)
-		)
-	}
-
-	/**
 	 * Get unassigned media files if no dealer selected
 	 */
-	private getUnassignedMediaFiles() {
+	private getUserMediaFiles(dealer_id: string) {
 		this.subscription.add(
-			this._content.get_contents_with_page(this.media_files_page++, 'image').map(data => { return { contents: data.iContents, paging: data.paging }}).subscribe(
+			this._content.get_contents_with_page(
+				this.media_files_page++, 
+				'image',
+				'',
+				dealer_id,
+			).map(data => { return { contents: data.iContents, paging: data.paging }}).subscribe(
 				(data: {contents: API_CONTENT[], paging: PAGING}) => {
 					this.mediaMapToUI(data)
 
-					if (data.paging.hasNextPage && this.media_files_page < 5) {
-						this.getUnassignedMediaFiles()
+					if (data.paging.hasNextPage) {
+						this.getUserMediaFiles(dealer_id)
 					} else {
 						this.pageEnd = true;
 					}
@@ -117,7 +92,7 @@ export class FeedMediaComponent implements OnInit {
 	private mediaMapToUI(media_files: {contents: API_CONTENT[], paging: any}): void {
 		media_files.contents.forEach((i: API_CONTENT) => {
 			if (this._is_image.transform(i.fileType)) {
-				// this.media_files.push(i);
+				this.media_files.push(i);
 			}
 		});
 	}
