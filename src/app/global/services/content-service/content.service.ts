@@ -103,6 +103,10 @@ export class ContentService {
 	get_content_yearly_count(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions).map(data => data.iContent);
 	}
+	
+    get_content_metrics_export(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_metrics_export}`, data, this.httpOptions).map(data => data);
+	}
 
 	get_content_by_license_id(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`, this.httpOptions).map(data => data.screenZonePlaylistsContents);

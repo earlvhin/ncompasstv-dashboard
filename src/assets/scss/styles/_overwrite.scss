@@ -206,3 +206,36 @@ breadcrumb {
     overflow-y: auto;
     // transform: translate3d(5px, 35px, 0px)!important;
 }
+
+.custom-mat-tab {
+    .mat-tab-label {
+        color: $lighten_white;
+        &:before {
+            width: 120px;
+            height: 50px;
+            background: #2c3e50;
+            border-radius: 5px;
+            transform: perspective(5px) rotateX(2deg);
+            transform-origin: left;
+            content: "";
+            position: absolute;
+            z-index: -1;
+            left:0;
+        }
+        .mat-tab-label-content {
+            position: relative;
+            left: -20px;
+            top: 2px;
+        }
+    }
+
+    .mat-tab-label-active {
+        opacity: 1;
+        &:before {
+            background: #2c3e50;
+        }
+    }
+    .mat-ink-bar {
+        display: none !important;
+    }
+}

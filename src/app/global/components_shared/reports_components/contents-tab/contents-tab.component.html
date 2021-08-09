@@ -64,7 +64,7 @@
             <div class="col-lg-4 mb-2 pr-0 text-right">
                 <button mat-button mat-raised-button
                     class="theme-btn pi-control sm-text _primary" 
-                    (click)="exportTable()"
+                    (click)="exportTable('dealer')"
                     [disabled]="filtered_data.length == 0 || searching || workbook_generation"  
                     title="Export to CSV">
                     <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
@@ -81,7 +81,9 @@
                             [table_columns]="metrics_table_column"
                             [new_table]="true"
                             [paging_details]="paging_data"
-                            (page_triggered)="getMediaFiles($event)">
+                            (page_triggered)="getMediaFiles($event)"
+                            [content_metrics]="true"
+                            (export_content_details)="setContentSelected($event)">
                         </app-data-table>
                     </mat-card>
                 </ng-container>
