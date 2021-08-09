@@ -17,9 +17,9 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 export class SidebarComponent implements OnInit, OnDestroy {
 	@Input() routes: { path: string, label: string, icon: string }[];
 	@Output() toggleEvent = new EventEmitter<boolean>();
-	icons_only: boolean = false;
+	icons_only = false;
 	installations_count = 0;
-	isDealer: boolean = false;
+	isDealer = false;
 
 	private subscription: Subscription = new Subscription();
 	
@@ -42,8 +42,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
 				error => console.log('Error on sidebar router events', error)
 			);
 
-		if (this.currentUser.role_id === UI_ROLE_DEFINITION.dealer) this.isDealer = true;
-		if (!this.isDealer) this.getInstallations();
+		if (this.currentUser) {
+			const { role_id } = this.currentUser;
+			this.isDealer = role_id === UI_ROLE_DEFINITION.dealer;
+
+			if (!this.isDealer) this.getInstallations();
+		}
+
 	}
 
 	ngOnDestroy() {

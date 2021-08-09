@@ -11,7 +11,6 @@ import { AuthService } from '../../services/auth-service/auth.service';
 import { API_SINGLE_SCREEN, API_SCREEN_TEMPLATE_ZONE, API_SCREEN_ZONE_PLAYLISTS_CONTENTS } from '../../models/api_single-screen.model';
 import { UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS } from '../../models/ui_single-screen.model';
 import { API_CONTENT } from '../../models/api_content.model';
-import { API_LICENSE, API_LICENSE_PROPS } from '../../models/api_license.model';
 import { UI_CONTENT } from '../../models/ui_content.model';
 import { API_SINGLE_PLAYLIST } from '../../models/api_single-playlist.model';
 import { EDIT_SCREEN_ZONE_PLAYLIST, EDIT_SCREEN_INFO } from '../../models/api_edit-screen.model';
@@ -22,11 +21,15 @@ import { API_TEMPLATE } from '../../models/api_template.model';
 import { ScreenLicenseComponent } from '../../components_shared/screen_components/screen-license/screen-license.component';
 import { CloneScreenComponent } from '../../components_shared/screen_components/clone-screen/clone-screen.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { LicenseService } from '../../services/license-service/license.service';
 import { RoleService } from '../../services/role-service/role.service';
 import { UnassignLicenseComponent } from '../../components_shared/screen_components/unassign-license/unassign-license.component';
 import { environment } from 'src/environments/environment';
+import { HelperService } from '../../services';
+
+import { API_LICENSE_PROPS } from 'src/app/global/models';
+
 
 @Component({
 	selector: 'app-single-screen',
@@ -44,6 +47,7 @@ export class SingleScreenComponent implements OnInit {
 	hosts_data: Array<any> = [];
 	initial_load: boolean = false;
 	is_dealer: boolean = false;
+	is_initial_load_for_dealer = true;
 	is_search: boolean = false;
 	licenses_array: any;
 	licenses_array_api: any;
@@ -76,6 +80,7 @@ export class SingleScreenComponent implements OnInit {
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
+		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
 		private _params: ActivatedRoute,
@@ -163,6 +168,7 @@ export class SingleScreenComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 		this._socket.disconnect();
+		this._helper.singleScreenData = null;
 	}
 
 	getScreenIdOnRoute() {
@@ -173,54 +179,10 @@ export class SingleScreenComponent implements OnInit {
 					if(this._params.snapshot.queryParams.pid) {
 						this.playlist_id = this._params.snapshot.queryParams.pid;
 					}
-					this.getScreenById(this.screen_id);
+					this.getScreen(this.screen_id);
 				}
 			)
-		)
-	}
-
-	getScreenById(id) {
-		this.subscription.add(
-			this._screen.get_screen_by_id(id).subscribe(
-				(data: API_SINGLE_SCREEN) => {
-					this.licenses_array_api = data.licenses;
-					this.sortList('desc');
-
-					//sort screen zone template by order
-					data.screenZonePlaylistsContents = data.screenZonePlaylistsContents.sort((a,b)=>a.screenTemplateZonePlaylist.order - b.screenTemplateZonePlaylist.order);
-					
-					this.screen = this.screen_mapToUI(data);
-					this.edit_screen_zone_playlist = data.screenZonePlaylistsContents.map(
-						(i: API_SCREEN_ZONE_PLAYLISTS_CONTENTS) => {
-							return new EDIT_SCREEN_ZONE_PLAYLIST(
-								i.screenTemplateZonePlaylist.templateZoneId,
-								i.screenTemplateZonePlaylist.playlistId
-							)
-						}
-					)
-					this.getPlaylistByDealer(this.screen.assigned_dealer_id);
-					this.getHostByDealer(1);
-					this.getTemplate();
-					
-					// Form Screen Information
-					this.screen_info = this._form.group(
-						{
-							screen_title: [this.screen.screen_title, Validators.required],
-							description: [this.screen.description],
-							type: [{ value: this.screen.type ? this.screen.type : null, disabled: this.is_dealer ? true : false}],
-							published_by: [{ value: this.screen.created_by, disabled: true }, Validators.required],
-							business_name: [{ value: this.screen.assigned_dealer, disabled: true }, Validators.required],
-							assigned_host: [{value: this.screen.assigned_host, disabled: true}, Validators.required],
-							template: [{ value: this.screen.assigned_template, disabled: true}, Validators.required],
-							notes: [{ value: this.screen.notes ? this.screen.notes : '', disabled: true }]
-						}
-					)
-					setTimeout(() => {
-						this.watchScreenInfo();	
-					}, 50);
-				}
-			)
-		)
+		);
 	}
 
 	toggleActivateDeactivate(e) {
@@ -504,7 +466,7 @@ export class SingleScreenComponent implements OnInit {
 			dialog.afterClosed().subscribe(
 				data => {
 					if (data == true) {
-						this.getScreenById(this.screen_id);
+						this.getScreen(this.screen_id);
 						this.licenseUnassigned();
 					}
 				}
@@ -592,7 +554,6 @@ export class SingleScreenComponent implements OnInit {
 
 	// Final UI Data Model
 	screen_mapToUI(data: API_SINGLE_SCREEN) {
-		console.log("TEMPLETE", data.template)
 		const screen = new UI_SINGLE_SCREEN (
 			data.screen.screenId,
 			data.screen.screenName,
@@ -700,5 +661,63 @@ export class SingleScreenComponent implements OnInit {
 			data.description,
 			data.order
 		)
+	}
+
+	private getScreen(id: string) {
+
+		if (this.is_initial_load_for_dealer && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			this.setPageData(this._helper.singleScreenData);
+			this.is_initial_load_for_dealer = false;
+			return;
+		}
+
+		this.subscription.add(
+			this._screen.get_screen_by_id(id).subscribe(
+				(response: API_SINGLE_SCREEN) => this.setPageData(response)
+			)
+		);
+	}
+
+	private setPageData(data: API_SINGLE_SCREEN) {
+		this.licenses_array_api = data.licenses;
+		this.sortList('desc');
+
+		//sort screen zone template by order
+		data.screenZonePlaylistsContents = data.screenZonePlaylistsContents.sort((a,b)=>a.screenTemplateZonePlaylist.order - b.screenTemplateZonePlaylist.order);
+		
+		this.screen = this.screen_mapToUI(data);
+		this.edit_screen_zone_playlist = data.screenZonePlaylistsContents.map(
+			(i: API_SCREEN_ZONE_PLAYLISTS_CONTENTS) => {
+				return new EDIT_SCREEN_ZONE_PLAYLIST(
+					i.screenTemplateZonePlaylist.templateZoneId,
+					i.screenTemplateZonePlaylist.playlistId
+				)
+			}
+		)
+		this.getPlaylistByDealer(this.screen.assigned_dealer_id);
+		this.getHostByDealer(1);
+		this.getTemplate();
+		
+		// Form Screen Information
+		this.screen_info = this._form.group(
+			{
+				screen_title: [this.screen.screen_title, Validators.required],
+				description: [this.screen.description],
+				type: [{ value: this.screen.type ? this.screen.type : null, disabled: this.is_dealer ? true : false}],
+				published_by: [{ value: this.screen.created_by, disabled: true }, Validators.required],
+				business_name: [{ value: this.screen.assigned_dealer, disabled: true }, Validators.required],
+				assigned_host: [{value: this.screen.assigned_host, disabled: true}, Validators.required],
+				template: [{ value: this.screen.assigned_template, disabled: true}, Validators.required],
+				notes: [{ value: this.screen.notes ? this.screen.notes : '', disabled: true }]
+			}
+		);
+
+		setTimeout(() => {
+			this.watchScreenInfo();	
+		}, 50);
+	}
+	
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }

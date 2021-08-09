@@ -1,3 +1,4 @@
+import { API_DEALER } from './api_dealer.model';
 import { API_LICENSE } from './api_license.model';
 
 export class API_HOST {
@@ -71,9 +72,13 @@ export class API_SINGLE_HOST {
 		totalLicenses: number;
 		category: string;
 	};
-	timezone:  {
+
+	timezone?:  {
 		id: string,
 		name: string,
 		status: string
 	};
+
+	dealer: API_DEALER;
+	hostTags: any;
 }

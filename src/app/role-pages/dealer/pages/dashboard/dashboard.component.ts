@@ -60,12 +60,19 @@ export class DashboardComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.title = `Hello Dealer ${this._auth.current_user_value.firstname}!`;
-		this.getStatTable(this._auth.current_user_value.roleInfo.dealerId);
+
+		if (this.currentUser) {
+			const { firstname, roleInfo } = this.currentUser;
+			const { dealerId } = roleInfo;
+
+			this.title = `Hello Dealer ${firstname}!`;
+			this.getStatTable(dealerId);
+			this.getHosts(dealerId);
+		}
+
 		this.getAdvertiserReport();
 		this.getHostReport();
 		this.getLicenseReport();
-		this.getHosts(this._auth.current_user_value.roleInfo.dealerId);
 	}
 
 	generateChart(lan, wifi): void {
@@ -292,5 +299,9 @@ export class DashboardComponent implements OnInit {
 				}
 			)
 		}
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }
