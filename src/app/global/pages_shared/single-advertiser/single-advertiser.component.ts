@@ -4,9 +4,9 @@ import { DatePipe } from '@angular/common'
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
-import { ContentService } from '../../services/content-service/content.service';
 import { UI_TABLE_ADVERTISERS_CONTENT } from '../../models/ui_table_advertisers_content.model';
+
+import { AdvertiserService, ContentService, AuthService, HelperService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-single-advertiser',
@@ -22,6 +22,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	advertiser_id: string;
 	content_data: any = [];
 	img: string = "assets/media_files/admin-icon.png";
+	is_initial_load = true;
 	selected_index: number;
 	subscription: Subscription = new Subscription;
 	
@@ -36,8 +37,10 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		private _params: ActivatedRoute,
 		private _advertiser: AdvertiserService,
+		private _auth: AuthService,
+		private _helper: HelperService,
+		private _params: ActivatedRoute,
 		private _content: ContentService,
 	) { }
 
@@ -68,6 +71,13 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	}
 
 	getAdvertiserInfo(id: string): void {
+
+		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			this.advertiser = this._helper.singleAdvertiserData;
+			this.is_initial_load = false;
+			return;
+		}
+
 		this._advertiser.get_advertiser_by_id(id, 'single-advertiser')
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -78,6 +88,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 				},
 				error => console.log('Error retrieving advertiser', error)
 			);
+
 	}
 
 	getContents(id: string): void {
@@ -109,5 +120,10 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 			}
 		);
 	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
+	}
+
 }
 

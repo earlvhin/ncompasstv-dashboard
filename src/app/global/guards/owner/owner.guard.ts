@@ -1,19 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CanActivate, ActivatedRouteSnapshot, RouterStateSnapshot, Router } from '@angular/router';
-import { Observable } from 'rxjs';
+import { CanActivate, ActivatedRouteSnapshot, Router } from '@angular/router';
 import { map } from 'rxjs/operators';
-import { API_HOST } from '../../models/api_host.model';
+import { Observable } from 'rxjs';
 
+import { API_ADVERTISER } from '../../models/api_advertiser.model';
 import { API_LICENSE } from '../../models/api_license.model';
+import { API_SINGLE_HOST } from '../../models/api_host.model';
 import { API_SINGLE_PLAYLIST } from '../../models/api_single-playlist.model';
 import { API_SINGLE_SCREEN } from '../../models/api_single-screen.model';
 import { API_USER_DATA } from '../../models/api_user-data.model';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { HostService } from '../../services/host-service/host.service';
-import { LicenseService } from '../../services/license-service/license.service';
-import { PlaylistService } from '../../services/playlist-service/playlist.service';
-import { ScreenService } from '../../services/screen-service/screen.service';
-import { UserService } from '../../services/user-service/user.service';
+
+import { AdvertiserService, AuthService, HelperService, HostService, LicenseService, PlaylistService, 
+	ScreenService, UserService } from 'src/app/global/services';
+import { Tag } from '../../models/tag.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -21,7 +20,9 @@ import { UserService } from '../../services/user-service/user.service';
 export class OwnerGuard implements CanActivate {
 
 	constructor(
+		private _advertiser: AdvertiserService,
 		private _auth: AuthService,
+		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
 		private _playlist: PlaylistService,
@@ -54,53 +55,73 @@ export class OwnerGuard implements CanActivate {
 	private isAllowed(page: string, id: string) {
 
 		let request: Observable<any>;
-		let result: API_LICENSE | API_HOST | API_SINGLE_PLAYLIST | API_SINGLE_SCREEN | API_USER_DATA;
+		let result: API_LICENSE | API_SINGLE_HOST | API_SINGLE_PLAYLIST | API_SINGLE_SCREEN | API_USER_DATA | { advertiser: API_ADVERTISER, tags: Tag[] };
 
 		switch (page) {
 
+			case 'advertisers':
+				request = this._advertiser.get_advertiser_by_id(id, 'single-advertiser');
+				break;
+
 			case 'hosts':
 				request = this._host.get_host_by_id(id);
+				break;
 
 			case 'licenses':
 				request = this._license.get_license_by_id(id);
+				break;
 
 			case 'playlists':
 				request = this._playlist.get_playlist_by_id(id);
+				break;
 
 			case 'screens':
 				request = this._screen.get_screen_by_id(id);
+				break;
 
 			case 'users':
-				request = this._user.get_user_alldata_by_id(id);
+				request = this._user.get_user_by_id(id);
+				break;
 
 		}
 
 		return request.pipe(
 			map(
 				(response: any) => {
-					console.log('request response', response);
 
 					switch (page) {
 
+						case 'advertisers':
+							result = response as { advertiser: API_ADVERTISER, tags: Tag[] };
+							const { advertiser, tags } = result;
+							advertiser.tags = tags;
+							this._helper.singleAdvertiserData = advertiser;
+							return result.advertiser.dealerId === this.ownerId;
+
 						case 'hosts':
-							result = response as API_HOST;
-							return result.dealerId === this.ownerId;
+							result = response as API_SINGLE_HOST;
+							this._helper.singleHostData = result;
+							return result.host.dealerId === this.ownerId;
 
 						case 'licenses':
 							result = response as API_LICENSE;
+							this._helper.singleLicenseData = result;
 							return result.license.dealerId === this.ownerId;
 
 						case 'playlists':
 							result = response as API_SINGLE_PLAYLIST;
+							this._helper.singlePlaylistData = result;
 							return result.playlist.dealerId === this.ownerId;
 
 						case 'screens':
 							result = response as API_SINGLE_SCREEN;
+							this._helper.singleScreenData = result;
 							return result.dealer.dealerId === this.ownerId;
 
 						case 'users':
 							result = response as API_USER_DATA;
-							return result;
+							this._helper.singleUserData = result;
+							return result.ownerId === this.ownerId;
 					}
 
 				}
@@ -119,24 +140,11 @@ export class OwnerGuard implements CanActivate {
 
 	protected get ownerId() {
 
-		let id: string;
 		const role = this.currentRole;
 		const user = this.currentUser;
+		let id = user.user_id;
 
-		switch (role) {
-			case 'dealer':
-			case 'sub-dealer':
-				id = user.roleInfo.dealerId;
-				break;
-
-			case 'host':
-				break;
-
-			default:
-				id = user.user_id;
-
-		}
-
+		if (role !== 'admin') id = user.roleInfo.dealerId;
 		return id;
 
 	}

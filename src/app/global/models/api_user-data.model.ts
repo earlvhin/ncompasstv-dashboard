@@ -17,4 +17,5 @@ export class API_USER_DATA {
     userId: string;
 	userRoles?: { permission: string, roleId: string, roleName: string, status: string }[];
 	permission?: string;
+	ownerId?: string;
 }

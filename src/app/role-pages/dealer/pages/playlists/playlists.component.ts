@@ -111,7 +111,6 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	playlist_mapToUI(data): UI_DEALER_PLAYLIST[] {
-        console.log("DATA", data)
 		let count = this.paging_data.pageStart;
 		return data.map(
 			playlist => {

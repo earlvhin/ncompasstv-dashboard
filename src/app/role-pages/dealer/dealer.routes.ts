@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-import { AuthGuard } from '../../global/guards/auth/auth.guard';
 import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
 import { DealerLayoutComponent } from './dealer-layout/dealer-layout.component'
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
@@ -31,7 +30,8 @@ import { CreatePlaylistComponent } from '../../global/pages_shared/create-playli
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
 import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
-import { OwnerGuard } from 'src/app/global/guards/owner/owner.guard';
+
+import { AuthGuard, OwnerGuard } from 'src/app/global/guards';
 
 export const DEALER_ROUTES: Routes = [
 	{
@@ -277,6 +277,7 @@ export const DEALER_ROUTES: Routes = [
                     { 
                         path: ':data', 
                         component: SingleUserComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single User Page'
                         }

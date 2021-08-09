@@ -1,22 +1,19 @@
+import { UpperCasePipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs';
-import { UpperCasePipe, DatePipe, TitleCasePipe } from '@angular/common';
-import { Router } from '@angular/router';
+import { Subject, Subscription } from 'rxjs';
 import * as io from 'socket.io-client';
-import { HostService } from '../../services/host-service/host.service';
-import { LicenseService } from '../../services/license-service/license.service';
-import { API_SINGLE_HOST } from '../../models/api_host.model';
-import { API_LICENSE } from '../../models/api_license.model';
-import { UI_HOST_LICENSE } from '../../models/ui_host-license.model';
+
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { UnassignHostLicenseComponent } from '../../components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from '../../../../environments/environment';
 import { CustomFields, FieldGroupFields } from '../../models/host-custom-field-group';
+
+import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
+import { API_SINGLE_HOST, API_LICENSE, UI_HOST_LICENSE, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-single-host',
@@ -27,34 +24,33 @@ import { CustomFields, FieldGroupFields } from '../../models/host-custom-field-g
 
 export class SingleHostComponent implements OnInit {
 
-	subscription: Subscription = new Subscription();
-	is_dealer: boolean = false;
-	margin_more: boolean = false;
-	margin_notes = false;
-	img: string = "assets/media_files/admin-icon.png";
+	_socket: any;
 	d_name: string;
 	d_desc: string ;
-	host_id: string;
 	dealer_id: string;
-	single_host_data: any;
-	no_record: boolean = false;
+	field_group_fields: FieldGroupFields[] = [];
+	filtered_data: UI_HOST_LICENSE[] = [];
 	has_records: boolean = true;
+	host_id: string;
 	host_license_api: API_LICENSE[];
 	host_data: API_SINGLE_HOST;
-	filtered_data: UI_HOST_LICENSE[] = [];
 	host_license: UI_HOST_LICENSE[] = [];
-	
-	lat: string;
-	long: string;
-	no_case: boolean = true;
-	pi_updating: boolean;
-	update_btn: string = "Update System and Restart";
-	_socket: any;
-
-	is_administrator: boolean;
 	host_fields: CustomFields[] = [];
 	host_field_title: string;
-	field_group_fields: FieldGroupFields[] = [];
+	img: string = "assets/media_files/admin-icon.png";
+	is_administrator: boolean;
+	is_dealer: boolean = false;
+	is_initial_load = true;
+	lat: string;
+	long: string;
+	margin_more: boolean = false;
+	margin_notes = false;
+	no_record: boolean = false;
+	no_case: boolean = true;
+	pi_updating: boolean;
+	single_host_data: any;
+	subscription: Subscription = new Subscription();
+	update_btn: string = "Update System and Restart";
 
 	host_license_table_col = [
 		'#',
@@ -73,23 +69,27 @@ export class SingleHostComponent implements OnInit {
 	
 	private business_hours_update_sub: Subscription;
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
-		private _params: ActivatedRoute,
-		private _host: HostService,
-		private _dialog: MatDialog,
-		private _license: LicenseService,
-		private _auth: AuthService,
 		private _allcaps: UpperCasePipe,
 		private _date: DatePipe,
+		private _auth: AuthService,
+		private _dialog: MatDialog,
+		private _helper: HelperService,
+		private _host: HostService,
+		private _license: LicenseService,
+		private _params: ActivatedRoute,
 		private _titlecase: TitleCasePipe
-	) { 
+	) { }
+
+	ngOnInit() {
+
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__SingleHostComponent'
 		});
-	}
 
-	ngOnInit() {
 		this._socket.on('connect', () => {
 			console.log('#SingleHostComponent - Connected to Socket Server');
 		})
@@ -113,28 +113,17 @@ export class SingleHostComponent implements OnInit {
 			)
 		);
 			
-		this.subscription.add(
-			this._host.get_host_by_id(this.host_id).subscribe(
-				(response: { host, dealer, hostTags }) => {
-					const { host, dealer, hostTags } = response;
-					host.tags = hostTags;
-					this.host_data = response.host;
-					this.single_host_data = { dealer_id: dealer.dealerId, host_id: this.host_id };
-					this.d_name = host.name;
-					this.d_desc = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
-					this.lat = host.latitude;
-					this.long = host.longitude;
-				},
-				error => console.log('Error retrieving host by ID', error)
-			)
-		);
+		this.getHostById();
 
 		if (!this.business_hours_update_sub) this.subscribeToBusinessHoursUpdate();
 
 		this.getHostFields();
+
 	}
 
 	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 		this.subscription.unsubscribe();
 		this.business_hours_update_sub.unsubscribe();
 		this._socket.disconnect();
@@ -330,6 +319,34 @@ export class SingleHostComponent implements OnInit {
 		);
 	}
 
+	private getHostById() {
+
+		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			this.setPageData(this._helper.singleHostData);
+			this.is_initial_load = false;
+			return;
+		}
+
+		this._host.get_host_by_id(this.host_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { host, dealer, hostTags }) => this.setPageData(response),
+				error => console.log('Error retrieving host by ID', error)
+			);
+
+	}
+
+	private setPageData(response: { host, dealer, hostTags }) {
+		const { host, dealer, hostTags } = response;
+		host.tags = hostTags;
+		this.host_data = response.host;
+		this.single_host_data = { dealer_id: dealer.dealerId, host_id: this.host_id };
+		this.d_name = host.name;
+		this.d_desc = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
+		this.lat = host.latitude;
+		this.long = host.longitude;
+	}
+
 	private subscribeToBusinessHoursUpdate(): void {
 		this.business_hours_update_sub = this._host.onUpdateBusinessHours.subscribe(
 			(response: boolean) => {
@@ -343,5 +360,9 @@ export class SingleHostComponent implements OnInit {
 				}
 			}
 		);
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }

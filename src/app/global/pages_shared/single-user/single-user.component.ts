@@ -2,14 +2,14 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { forkJoin, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { forkJoin, Subject } from 'rxjs';
 
 import { API_USER_DATA } from '../../models/api_user-data.model';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UserService } from '../../services/user-service/user.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { HelperService } from '../../services';
 
 @Component({
 	selector: 'app-single-user',
@@ -19,9 +19,9 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 export class SingleUserComponent implements OnInit, OnDestroy {
 
-	current_role: string;
 	info_form: FormGroup;
 	info_form_disabled = false;
+	is_initial_load = true;
 	is_loading = true;
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
@@ -92,12 +92,25 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
+		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _router: Router,
 		private _user: UserService,
 	) { }
 
 	ngOnInit() {
+		this.getUserData();
+	}
+
+	private getUserData() {
+
+		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			this.setPageData(this._helper.singleUserData);
+			this.initializeForms();
+			this.is_initial_load = false;
+			this.is_loading = false;
+			return;
+		}
 
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -107,8 +120,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 						this.is_loading = false;
 					})
 			);
-
-		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
 	}
 
 	ngOnDestroy() {
@@ -125,7 +136,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	get can_delete_sub_dealer() {
-		return this.current_role === 'administrator' || this.current_role === 'dealer';
+		return this.currentRole === 'administrator' || this.currentRole === 'dealer';
 	}
 
 	changeUserPassword() {
@@ -163,7 +174,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 				this._user.deleteUser(userId).pipe(takeUntil(this._unsubscribe))
 					.subscribe(
-						() => this._router.navigate([`/${this.current_role}/users`]),
+						() => this._router.navigate([`/${this.currentRole}/users`]),
 						error => console.log('Error deleting user', error)
 					);
 
@@ -214,15 +225,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		return this._user.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: API_USER_DATA) => {
-					this.user = response;
-					const role = response.userRoles[0];
-					this.user.permission = role.permission;
-					this.current_permission = role.permission;
-					this.is_sub_dealer = role.roleName === 'Sub Dealer';
-				}, 
+				(response: API_USER_DATA) => this.setPageData(response), 
 				error => console.log('Error retrieving user data', error)
 			);
+
 	}
 
 	private initializeForms(): void {
@@ -307,6 +313,18 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		
 	}
 
+	private setPageData(data: API_USER_DATA) {
+
+		const { userRoles } = data;
+		const { permission, roleName } = userRoles[0];
+
+		this.user = data;
+		this.user.permission = permission;
+		this.current_permission = permission;
+		this.is_sub_dealer = roleName === 'Sub Dealer';
+
+	}
+
 	private subscribeToUpdateFormChanges(): void {
 
 		this.info_form.valueChanges.pipe(takeUntil(this._unsubscribe))
@@ -361,6 +379,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			data:  { status, message, data }
 		});
 
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 	
 }

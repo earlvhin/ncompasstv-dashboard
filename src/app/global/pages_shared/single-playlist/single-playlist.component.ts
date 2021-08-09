@@ -6,7 +6,7 @@ import { API_LICENSE_PROPS } from '../../models/api_license.model';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { PlaylistService } from '../../services/playlist-service/playlist.service';
-import { Observable, Subscription } from 'rxjs';
+import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
 import { ClonePlaylistComponent } from '../../components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -17,6 +17,8 @@ import { PlaylistDemoComponent } from '../../components_shared/playlist_componen
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { ContentService } from '../../services/content-service/content.service';
+import { HelperService } from '../../services';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-single-playlist',
@@ -30,6 +32,7 @@ export class SinglePlaylistComponent implements OnInit {
 
 	description: string;
 	host_url: string;
+	is_initial_load = true;
 	license_to_update = [];
 	license_url: string;
 	playlist: API_SINGLE_PLAYLIST;
@@ -39,7 +42,7 @@ export class SinglePlaylistComponent implements OnInit {
 	playlist_screens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlist_screen_table: any;
 	playlist_updating: boolean = true;
-	subscription: Subscription = new Subscription;
+	// subscription: Subscription = new Subscription;
 	title: string;
 
 	_socket: any;
@@ -52,14 +55,17 @@ export class SinglePlaylistComponent implements OnInit {
 		'Type',
 		'Template',
 		'Created By'
-	]
+	];
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
+		private _auth: AuthService,
+		private _dialog: MatDialog,
+		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _playlist: PlaylistService,
-		private _dialog: MatDialog,
 		private _role: RoleService,
-		private _auth: AuthService,
 		private _content: ContentService,
 	) {}
 
@@ -94,7 +100,8 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 	
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 		this._socket.disconnect();
 	}
 
@@ -115,34 +122,19 @@ export class SinglePlaylistComponent implements OnInit {
 		})
 	}
 
-	getPlaylistData(id): void {
+	getPlaylistData(id: string) {
+
 		this.playlist_updating = true;
 
-		this.subscription.add(
-			this._playlist.get_playlist_by_id(id).subscribe(
-				data => {
-					console.log("Playlist Data:", data);
+		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			this.setpageData(this._helper.singlePlaylistData);
+			this.getPlaylistScreens(id).add(() => this.playlist_updating = false);
+			this.is_initial_load = false;
+			return;
+		}
 
-					this.playlist = data;
-					this.title = this.playlist.playlist.playlistName;
-					this.description = this.playlist.playlist.playlistDescription;
-					this.playlist_content_and_blacklist = this.playlist.playlistContents;
-					this.playlist_host_and_license = this.playlist.hostLicenses;
-					this.playlist_updating = false;
-				},
-				error => console.log('Error retrieving playlist data', error)
-			)
-		);
+		this.getPlaylistDataAndScreens(id).add(() => this.playlist_updating = false);
 
-		this.subscription.add(
-			this._playlist.get_screens_of_playlist(id).subscribe(
-				data => {
-					this.playlist_screens = data.screens;
-					this.screensMapToTable(this.playlist_screens);
-				},
-				error => console.log('Error retrieving screens of playlist', error)
-			)
-		);
 	}
 
 	openUpdatePlaylistInfoModal() {
@@ -262,5 +254,49 @@ export class SinglePlaylistComponent implements OnInit {
 				this.ngOnInit();
 			}
 		});
+	}
+
+	private getPlaylistDataAndScreens(playlistId: string) {
+
+		const requests = [ this._playlist.get_playlist_by_id(playlistId), this._playlist.get_screens_of_playlist(playlistId) ];
+
+		return forkJoin(requests).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				([playlistResponse, screenResponse]) => {
+					this.setpageData(playlistResponse);
+					this.playlist_screens = screenResponse.screens;
+					this.screensMapToTable(this.playlist_screens);
+				},
+				error => console.log('Error retrieving playlist data', error)
+			);
+
+	}
+
+	private getPlaylistScreens(playlistId: string) {
+		
+		return this._playlist.get_screens_of_playlist(playlistId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					this.playlist_screens = response.screens;
+					this.screensMapToTable(this.playlist_screens);
+				},
+				error => console.log('Error retrieving screens of playlist', error)
+			);
+
+	}
+
+	private setpageData(data: API_SINGLE_PLAYLIST) {
+		const { playlist, playlistContents, hostLicenses } = data;
+		const { playlistName, playlistDescription } = playlist;
+		this.playlist = data;
+		this.title = playlistName;
+		this.description = playlistDescription;
+		this.playlist_content_and_blacklist = playlistContents;
+		this.playlist_host_and_license = hostLicenses;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }

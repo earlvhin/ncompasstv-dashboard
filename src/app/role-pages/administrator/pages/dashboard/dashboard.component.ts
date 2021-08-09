@@ -28,7 +28,7 @@ export class DashboardComponent implements OnInit {
 	loading_license_report_chart: boolean = true;
 	no_dealers: boolean;
 	subscription: Subscription = new Subscription;
-	title: string = "Dashboard";
+	title = 'Dashboard';
 	
 	latest_dealer_col = [
 		'#', 
@@ -50,7 +50,12 @@ export class DashboardComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.title = `Hello ${this._auth.current_user_value.firstname}!`;
+
+		if (this.currentUser) {
+			const { firstname } = this.currentUser;
+			this.title = `Hello ${firstname}!`;
+		}
+
 		this.getDealerReport();
 		this.getHostReport();
 		this.getAdvertiserReport();
@@ -264,5 +269,9 @@ export class DashboardComponent implements OnInit {
 				}
 			)
 		}
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }
