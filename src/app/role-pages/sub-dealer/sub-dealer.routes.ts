@@ -1,6 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { AuthGuard } from '../../global/guards/auth/auth.guard';
 import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
 import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
 import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
@@ -27,6 +26,8 @@ import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.co
 import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
 import { PermissionGuard } from 'src/app/global/guards/sub-dealer/permission.guard';
 import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
+
+import { AuthGuard, OwnerGuard } from 'src/app/global/guards';
 
 export const SUB_DEALER_ROUTES: Routes = [
     {
@@ -66,7 +67,8 @@ export const SUB_DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data', 
-                        component: SingleHostComponent, 
+                        component: SingleHostComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Host Page'
                         }
@@ -84,8 +86,9 @@ export const SUB_DEALER_ROUTES: Routes = [
                         component: LicensesComponent, 
                     },
                     { 
-                        path: ':data', 
+                        path: ':data',
                         component: SingleLicenseComponent, 
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single License Page'
                         }
@@ -112,7 +115,8 @@ export const SUB_DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data', 
-                        component: SingleAdvertiserComponent, 
+                        component: SingleAdvertiserComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Advertiser Page'
                         }
@@ -193,6 +197,7 @@ export const SUB_DEALER_ROUTES: Routes = [
                     { 
                         path: ':data', 
                         component: SinglePlaylistComponent, 
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Playlist Page'
                         }
@@ -219,7 +224,8 @@ export const SUB_DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data', 
-                        component: SingleScreenComponent, 
+                        component: SingleScreenComponent,
+						canActivate: [ OwnerGuard ],
                         data: {
                             breadcrumb: 'Single Screen Component'
                         }

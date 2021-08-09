@@ -21,7 +21,7 @@ import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule, MatAutocompleteModule, MatInputModule, MatSelectModule, MatExpansionModule } from '@angular/material';
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { FeedsComponent } from './pages/feeds/feeds.component';
-import {BreadcrumbsModule} from "ng6-breadcrumbs";
+import { BreadcrumbsModule } from "ng6-breadcrumbs";
 
 @NgModule({
 	declarations: [
@@ -37,7 +37,7 @@ import {BreadcrumbsModule} from "ng6-breadcrumbs";
 		ReportsComponent, 
 		UsersComponent, 
 		DealerProfileComponent,
-		FeedsComponent
+		FeedsComponent,
 	],
 	imports: [
 		CommonModule,
@@ -53,10 +53,10 @@ import {BreadcrumbsModule} from "ng6-breadcrumbs";
 		FormsModule,
 		ReactiveFormsModule,
         BreadcrumbsModule,
-		RouterModule.forChild(DEALER_ROUTES)
+		RouterModule.forChild(DEALER_ROUTES),
 	],
 	providers: [
-		AuthGuard
+		AuthGuard,
 	]
 })
 

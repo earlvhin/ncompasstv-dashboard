@@ -76,6 +76,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	initial_load_charts = true;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A',  date: 'N/A', status: 'N/A' };
 	is_dealer: boolean = false;
+	is_initial_load = true;
 	is_new_standard_template = false;
 	license_data: any;
 	license_id: string;
@@ -222,7 +223,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		// this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
 		// this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
 		// this.getContentReport_yearly();
-	
 	}
 
     splitKey(key) {
@@ -236,6 +236,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this.subscriptions.unsubscribe();
+		this._helper.singleLicenseData = null;
 		this._socket.disconnect();
 		this.destroyCharts();
 	}
@@ -419,53 +420,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	getLicenseById(id: string): void {
 
+		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			const data = this._helper.singleLicenseData;
+			this.setHostDetails(data.host);
+			this.setPageData(data);
+			this.getScreenById(data.screen.screenId, this.license_id);
+			this.getFormValue();
+			this.is_initial_load = false;
+			return;
+		}
+
 		this.subscriptions.add(this._license.get_license_by_id(id)
 			.subscribe(
 				(data: any) => {
-					console.log(data);
-					
 					this.setHostDetails(data.host);
-					this.title = data.license.alias;
-					this.license_key = data.license.licenseKey;
-					this.license_data = data.license;
-					this.tags = this.setTags(data.license.tags);
-					this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
-					this.timezone = data.timezone;
-					this.anydesk_id = data.license.anydeskId;
-
-					const updated = this.license_data.contentsUpdated;
-					const format = 'MMMM DD, YYYY, h:mm:ss A';
-					this.content_time_update = updated != null ? moment.utc(new Date(updated)).format(format) : null;
-					
-					this.screen_type = data.screenType ? data.screenType : null;
-					this.apps = data.license.appVersion ? JSON.parse(data.license.appVersion) : null;
-
-					if (data.license.internetInfo) {
-
-						const download = JSON.parse(data.license.internetInfo).downloadMbps;
-						const upload = JSON.parse(data.license.internetInfo).uploadMbps;
-						const ping = JSON.parse(data.license.internetInfo).ping;
-						const date = JSON.parse(data.license.internetInfo).date;
-
-						this.internet_connection.downloadMbps = download ? `${download.toFixed(2)} Mbps` : 'N/A';
-						this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
-						this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
-						this.internet_connection.date = date ? `${date}` : 'N/A';
-						this.internet_connection.status = download > 7 ? 'Good' : 'Slow';
-					}
-
-					if (this.license_data.internetType != null) {
-
-						if (this.license_data.internetType.charAt(0) === 'e') {
-							this.license_data.internetType = 'Lan'
-						} else if (this.license_data.internetType.charAt(0) === 'w') {
-							this.license_data.internetType = 'Wi-fi'
-						} else {
-							this.license_data.internetType == this.license_data.internetType
-						}
-
-					}
-
+					this.setPageData(data);
 					this.getScreenById(data.screen.screenId, this.license_id);
 					this.getFormValue();
 				},
@@ -1438,6 +1407,49 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return result;
 	}
 
+	private setPageData(data: any) {
+		this.title = data.license.alias;
+		this.license_key = data.license.licenseKey;
+		this.license_data = data.license;
+		this.tags = this.setTags(data.license.tags);
+		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
+		this.timezone = data.timezone;
+		this.anydesk_id = data.license.anydeskId;
+
+		const updated = this.license_data.contentsUpdated;
+		const format = 'MMMM DD, YYYY, h:mm:ss A';
+		this.content_time_update = updated != null ? moment.utc(new Date(updated)).format(format) : null;
+		
+		this.screen_type = data.screenType ? data.screenType : null;
+		this.apps = data.license.appVersion ? JSON.parse(data.license.appVersion) : null;
+
+		if (data.license.internetInfo) {
+
+			const download = JSON.parse(data.license.internetInfo).downloadMbps;
+			const upload = JSON.parse(data.license.internetInfo).uploadMbps;
+			const ping = JSON.parse(data.license.internetInfo).ping;
+			const date = JSON.parse(data.license.internetInfo).date;
+
+			this.internet_connection.downloadMbps = download ? `${download.toFixed(2)} Mbps` : 'N/A';
+			this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
+			this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
+			this.internet_connection.date = date ? `${date}` : 'N/A';
+			this.internet_connection.status = download > 7 ? 'Good' : 'Slow';
+		}
+
+		if (this.license_data.internetType != null) {
+
+			if (this.license_data.internetType.charAt(0) === 'e') {
+				this.license_data.internetType = 'Lan'
+			} else if (this.license_data.internetType.charAt(0) === 'w') {
+				this.license_data.internetType = 'Wi-fi'
+			} else {
+				this.license_data.internetType == this.license_data.internetType
+			}
+
+		}
+	}
+
 	private setPlaylists(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]): void {
 		this.zone_playlists = [];
 
@@ -1663,5 +1675,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.saveActivityLog(ACTIVITY_CODES.terminal_run);
 
  		this.terminal_value = undefined;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }
