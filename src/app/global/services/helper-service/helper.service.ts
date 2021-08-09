@@ -2,7 +2,6 @@ import { EventEmitter, Injectable } from '@angular/core';
 
 import { API_ADVERTISER, API_SINGLE_HOST, API_LICENSE, API_SINGLE_PLAYLIST,
 	API_SINGLE_SCREEN, API_USER_DATA } from 'src/app/global/models';
-import { Tag } from '../../models/tag.model';
 
 @Injectable({
 	providedIn: 'root'

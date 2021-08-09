@@ -7,4 +7,4 @@ export * from './api_user-data.model';
 export * from './ui_host-license.model';
 export * from './ui_role-definition.model';
 export * from './ui_role_info.model';
-export * from './api_license.model';
+export * from './ui_single-playlist.model';

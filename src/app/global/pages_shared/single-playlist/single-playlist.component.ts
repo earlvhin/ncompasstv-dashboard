@@ -1,24 +1,20 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { API_CONTENT_BLACKLISTED_CONTENTS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST } from '../../models/api_single-playlist.model';
-import { API_SINGLE_SCREEN } from '../../models/api_single-screen.model';
-import { UI_PLAYLIST_SCREENS_NEW } from '../../models/ui_single-playlist.model';
-import { API_LICENSE_PROPS } from '../../models/api_license.model';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
-import { PlaylistService } from '../../services/playlist-service/playlist.service';
-import { forkJoin, Observable, Subject, Subscription } from 'rxjs';
-import { ClonePlaylistComponent } from '../../components_shared/playlist_components/clone-playlist/clone-playlist.component';
-import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import * as io from 'socket.io-client';
-import { environment } from '../../../../environments/environment';
-import { RoleService } from '../../services/role-service/role.service';
-import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { ContentService } from '../../services/content-service/content.service';
-import { HelperService } from '../../services';
 import { takeUntil } from 'rxjs/operators';
+import { forkJoin, Observable, Subject, } from 'rxjs';
+import * as io from 'socket.io-client';
+
+import { ClonePlaylistComponent } from '../../components_shared/playlist_components/clone-playlist/clone-playlist.component';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
+import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
+
+import { API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, UI_ROLE_DEFINITION, 
+	UI_PLAYLIST_SCREENS_NEW } from 'src/app/global/models';
+
+import { AuthService, HelperService, PlaylistService, RoleService } from 'src/app/global/services';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-single-playlist',
@@ -42,7 +38,6 @@ export class SinglePlaylistComponent implements OnInit {
 	playlist_screens: API_SCREEN_OF_PLAYLIST[] = [];
 	playlist_screen_table: any;
 	playlist_updating: boolean = true;
-	// subscription: Subscription = new Subscription;
 	title: string;
 
 	_socket: any;
@@ -65,10 +60,7 @@ export class SinglePlaylistComponent implements OnInit {
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _playlist: PlaylistService,
-		private _dialog: MatDialog,
 		private _role: RoleService,
-		private _auth: AuthService,
-		private _content: ContentService,
 	) {}
 
 	ngOnInit() {
