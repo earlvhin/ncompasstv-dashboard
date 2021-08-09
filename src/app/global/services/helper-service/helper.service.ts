@@ -1,5 +1,9 @@
 import { EventEmitter, Injectable } from '@angular/core';
 
+import { API_ADVERTISER, API_SINGLE_HOST, API_LICENSE, API_SINGLE_PLAYLIST,
+	API_SINGLE_SCREEN, API_USER_DATA } from 'src/app/global/models';
+import { Tag } from '../../models/tag.model';
+
 @Injectable({
 	providedIn: 'root'
 })
@@ -18,4 +22,10 @@ export class HelperService {
 	onToggleEmailNotification = new EventEmitter<{ userId: string, value: boolean, tableDataIndex: number, currentEmail: string }>();
 	onResultToggleEmailNotification = new EventEmitter<{ tableDataIndex: number, updated: boolean }>();
 
+	singleAdvertiserData: API_ADVERTISER;
+	singleHostData: API_SINGLE_HOST;
+	singleLicenseData: API_LICENSE;
+	singlePlaylistData: API_SINGLE_PLAYLIST;
+	singleScreenData: API_SINGLE_SCREEN;
+	singleUserData: API_USER_DATA;
 }
