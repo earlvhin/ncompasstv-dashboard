@@ -2,7 +2,7 @@ import { Component, Input, OnInit} from '@angular/core';
 import { Observable, forkJoin, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-import { API_GENERATED_FEED, GenerateFeed } from '../../models/api_feed_generator.model'; 
+import { API_GENERATED_FEED, GenerateFeed, GenerateWeatherFeed, WEATHER_DATA } from '../../models/api_feed_generator.model'; 
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +27,8 @@ export class GenerateFeedComponent implements OnInit {
 	fetched_feed: API_GENERATED_FEED;
 	feed_items: FeedItem[] = [];
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
-	generated_feed: GenerateFeed;
+	generated_slide_feed: GenerateFeed;
+	generated_weather_feed: GenerateWeatherFeed;
 	is_dealer: boolean = false;
 	
 	saving: boolean = false;
@@ -84,13 +85,23 @@ export class GenerateFeedComponent implements OnInit {
 		}
 	}
 
-	/** Construct Generated Feed Payload to be sent to API */
-	structureFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
-		this.generated_feed = new GenerateFeed(
+	/** Construct Generated Slide Feed Payload to be sent to API */
+	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
+		this.generated_slide_feed = new GenerateFeed(
 			this.feed_info,
 			feed_data.globalSettings,
 			this.structureFeedContents(feed_data.feedItems)
 		)
+	}
+
+	/** Construct Generated Weather Feed Payload to be sent to API */
+	structureWeatherFeedToGenerate(feed_data: WEATHER_DATA): void {
+		this.generated_weather_feed = new GenerateWeatherFeed(
+			this.feed_info,
+			feed_data
+		)
+
+		console.log(this.generated_weather_feed);
 	}
 
 	setSelectedFeedType(feedTypeId: string) {
@@ -165,9 +176,8 @@ export class GenerateFeedComponent implements OnInit {
 		)
 	}
 
-	/**
-	 * Map fetched generated feed by id to UI to prepare for editing
-	 * 
+	/** Map fetched generated feed by id to UI to prepare for editing
+	 * @param data {API_GENERATED_FEED}
 	 */
 	private mapFetchedGeneratedFeedToUI(data: API_GENERATED_FEED) {
 		data.feedContents.map(
@@ -196,11 +206,11 @@ export class GenerateFeedComponent implements OnInit {
 	saveGeneratedFeed(): void {
 		this.saving = true;
 
-		console.log('Generated Feed', this.generated_feed)
+		console.log('Generated Feed', this.generated_slide_feed)
 
 		if (!this.editing) {
 			this.subscription.add(
-				this._feed.generate_slide_feed(this.generated_feed).subscribe(
+				this._feed.generate_slide_feed(this.generated_slide_feed).subscribe(
 					data => {
 						console.log(data);
 						this._router.navigate([`/${this.route}/feeds`])
@@ -212,7 +222,7 @@ export class GenerateFeedComponent implements OnInit {
 			)
 		} else {
 			this.subscription.add(
-				this._feed.edit_generated_feed(this.generated_feed).subscribe(
+				this._feed.edit_generated_feed(this.generated_slide_feed).subscribe(
 					data => {
 						console.log(data);
 						this._router.navigate([`/${this.route}/feeds`])

@@ -2,14 +2,7 @@ import { API_CONTENT } from "./api_content.model";
 import { API_DEALER } from "./api_dealer.model";
 
 export class GenerateFeed {
-    feeds: {
-        dealerId: string,
-        feedTitle: string,
-        description: string,
-        createdBy: string,
-        feedTypeId: string,
-        feedId?: string
-    };
+    feeds: FEED_INFO
 
     feedGlobalSettings: {
         overlay: string,
@@ -53,6 +46,15 @@ export class GenerateFeed {
     }
 }
 
+export type FEED_INFO = {
+    dealerId: string,
+    feedTitle: string,
+    description: string,
+    createdBy: string,
+    feedTypeId: string,
+    feedId?: string
+}
+
 export type API_GENERATED_FEED = {
     businessName: string,
     createdBy: string,
@@ -78,4 +80,30 @@ export type API_GENERATED_FEED = {
         paragraph: string,
         sequence: number
     }[]
+}
+
+export class GenerateWeatherFeed {
+    feeds: FEED_INFO;
+    feedWeather: {
+        backgroundContentId: string,
+        bannerContentId: string,
+        boxBackgroundColor: string,
+        daysFontColor: string,
+        numberDay: number,
+        zipCode: string,
+    }
+
+    constructor(feeds: FEED_INFO, feedWeather: WEATHER_DATA){
+        this.feeds = feeds;
+        this.feedWeather = feedWeather;
+    }
+}
+
+export type WEATHER_DATA = {
+    backgroundContentId: string,
+    bannerContentId: string,
+    boxBackgroundColor: string,
+    daysFontColor: string,
+    numberDay: number,
+    zipCode: string
 }

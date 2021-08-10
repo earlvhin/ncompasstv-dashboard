@@ -7,15 +7,15 @@
                     <input matInput formControlName="{{ w.form_control_name }}" [type]="w.type" [required]="w.required" autocomplete="off">
                 </mat-form-field>
 
-                <mat-form-field class="full-width mb-2 position-relative overflow-hidden" appearance="fill" *ngIf="w.viewType == 'upload'">
-                    <mat-label>{{ w.label }}</mat-label>
-                    <input matInput formControlName="{{ w.form_control_name }}" [type]="w.type" [required]="w.required" autocomplete="off">
+                <div class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="w.viewType == 'upload'">
+                    <img [src]="w.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
+                    <p class="filename">{{ w.fileName ? (w.fileName | substring:35) : '' || w.label }}</p>
                     <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(w.form_control_name);"><span class="fas fa-camera"></span></button>
-                </mat-form-field>
+                </div>
 
                 <mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="w.viewType == 'select'">
                     <mat-label>{{ w.label }}</mat-label>
-                    <mat-select [disabled]="is_marking">
+                    <mat-select formControlName="{{ w.form_control_name }}" [disabled]="is_marking">
                         <mat-option *ngFor="let filter of w.options" [value]="filter.label">
                             {{ filter.label }}
                         </mat-option>
@@ -40,6 +40,6 @@
             </div>
         </div>
 
-        <button mat-button mat-raised class="theme-btn">Submit <span class="fas fa-long-arrow-right"></span></button>
+        <button mat-button mat-raised class="theme-btn" matStepperNext (click)="generateWeatherFeed()">Next <span class="fas fa-long-arrow-right"></span></button>
     </form>
 </div>

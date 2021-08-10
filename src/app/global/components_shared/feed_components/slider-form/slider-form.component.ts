@@ -27,6 +27,9 @@ export class SliderFormComponent implements OnInit {
 		},
 		{
 			label: 'Roboto'
+		},
+		{
+			label: 'Montserrat'
 		}
 	]
 
@@ -142,7 +145,7 @@ export class SliderFormComponent implements OnInit {
 	 * Structure the Feed Items Sequence
 	 * @param {API_CONTENT[]} data The Feed Items
 	 */
-	 private structureFeedItems(data: API_CONTENT[]): void {
+	private structureFeedItems(data: API_CONTENT[]): void {
 		data.forEach(
 			(f: API_CONTENT) => {
 				this.feed_items.push(
