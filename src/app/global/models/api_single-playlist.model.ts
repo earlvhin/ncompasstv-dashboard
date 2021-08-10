@@ -1,6 +1,6 @@
 import { API_CONTENT } from './api_content.model';
 import { API_HOST } from './api_host.model';
-import { API_LICENSE, API_LICENSE_PROPS } from './api_license.model';
+import { API_LICENSE_PROPS } from './api_license.model';
 
 export class API_SINGLE_PLAYLIST {
     blacklistedIContents: API_CONTENT_BLACKLISTED_CONTENTS[];
@@ -8,7 +8,7 @@ export class API_SINGLE_PLAYLIST {
     hosts: API_HOST[];
 	licenses: API_LICENSE_PROPS[];
 	hostLicenses: any;
-	playlistContents: any;
+	playlistContents: API_CONTENT[];
     screens: API_SCREEN_OF_PLAYLIST[];
     playlistId?: any;
     contents?: any;

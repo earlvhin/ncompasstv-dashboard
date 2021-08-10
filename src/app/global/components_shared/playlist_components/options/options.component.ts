@@ -17,14 +17,14 @@ export class OptionsComponent implements OnInit {
 	blocklist_changes = { status: false };
 	blacklist_ready: boolean = false;
     blacklist_count: number = 0;
-	content_data: any;
+	content_data: API_CONTENT;
 	content_frequency: number;
 	host_license: any;
 	disable_animation = true;
 	feed_url = '';
 	has_schedule = false;
 	c_index: number;
-	playlist_changes_data = { content: null, blocklist: null };
+	playlist_changes_data = { content: null, blocklist: null, original_credits: null };
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
 	toggle_all: boolean;
@@ -47,8 +47,8 @@ export class OptionsComponent implements OnInit {
 	
 	ngOnInit() {
 		const { index, content, host_license, total_contents } = this._dialog_data;
+		this.playlist_changes_data.original_credits = content.playlistContentCredits;
 		localStorage.setItem('playlist_data', JSON.stringify(content));
-
 		this.c_index = index;
 		this.content_data = content;
 		this.content_frequency = this.setFrequency(content.frequency);

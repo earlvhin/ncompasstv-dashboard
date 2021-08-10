@@ -27,6 +27,7 @@ export class API_CONTENT {
 	isActive: number;
     isConverted: number;
     title: string;
+	playlistContentCredits?: number;
 	playlistContentSchedule?: PlaylistContentSchedule;
 	playlistContentsSchedule?: PlaylistContentSchedule;
 	scheduleStatus?: any;

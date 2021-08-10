@@ -12,6 +12,7 @@
 			</button>
 		</div>
 	</div>
+	
 	<div class="row">
 		<div class="col-lg-6">
 			<div class="content-holder mb-3">
@@ -55,40 +56,53 @@
 				<mat-form-field class="w-100">
 					<mat-label>Set Content Duration</mat-label>
 					<input matInput type="number" placeholder="Ex: 100" 
-					[(ngModel)]="content_data.duration"
-					(blur)="setDuration()"
-					(change)="setDuration()"
-					min="5" max="100" [disabled]="(content_data.fileType | isvideo) || (content_data.classification == 'generated_feed')">
+						[(ngModel)]="content_data.duration"
+						(blur)="setDuration()"
+						(change)="setDuration()"
+						min="5" max="100" [disabled]="(content_data.fileType | isvideo) || (content_data.classification == 'generated_feed')">
+					<mat-hint align="start"><strong>Applicable to feeds and images only. Min of 5 seconds.</strong> </mat-hint>
 				</mat-form-field>
-				<p class="sm-text">
-					Setting of Content duration is applicable to feeds and images only. Minimum is 5 seconds.
-				</p>
 			</div>
 
 			<hr>
 			<!-- FREQUENCY SETTINGS -->
-			<div class="frequency-settings">
-				<mat-label class="md-text">Frequency: </mat-label>
+			<div class="frequency-settings d-flex flex-column">
 
-				<mat-radio-group name="opList" fxLayout="column" 
-					[(ngModel)]="content_frequency" 
-					(change)="onSelectFrequency()"
-					[disabled]="total_contents <= 5"> 
-					<mat-radio-button class="mr-3 md-text text-gray" name="frequencyList"
-						*ngFor="let frequency of frequencyList" 
-						[value]="frequency.value">{{ frequency.label }}
-					</mat-radio-button>
-				</mat-radio-group>
+				<div class="d-flex">
+					<mat-label class="md-text">Frequency: </mat-label>
+	
+					<mat-radio-group name="opList" fxLayout="column" 
+						[(ngModel)]="content_frequency" 
+						(change)="onSelectFrequency()"
+						[disabled]="total_contents <= 5"> 
+						<mat-radio-button class="mr-3 md-text text-gray" name="frequencyList"
+							*ngFor="let frequency of frequencyList" 
+							[value]="frequency.value">{{ frequency.label }}
+						</mat-radio-button>
+					</mat-radio-group>
+				</div>
 
 				<div class="total-contents-notice" *ngIf="total_contents <= 5">
 					<p class="text-danger">* You need at least 6 contents in the playlist to start setting frequencies</p>
 				</div>
 			</div>
 
-			<button mat-button mat-raised-button class="theme-btn position-bottom" [disabled]="unchanged_playlist" [mat-dialog-close]="onSave()">
-				Save Options
-				<span class="fas fa-save ml-2"></span>
-			</button>
+			<hr>
+
+			<!-- PLAYLIST CREDITS -->
+			<div class="play-credits">
+				<mat-form-field class="w-100">
+					<mat-label>Play Credits</mat-label>
+					<input matInput type="number" placeholder="No. of times content will play" min="0" 
+						[(ngModel)]="content_data.playlistContentCredits"
+						(blur)="contentDataChanged()"
+						(change)="contentDataChanged()">
+					<mat-hint align="start"><strong>Can only be edited when there are 0 credits</strong> </mat-hint>
+				</mat-form-field>
+			</div>
+
+			<hr>
+
 		</div>
 		<div class="col-lg-6">
 			<div class="row">
@@ -140,4 +154,10 @@
 			</div>
 		</div>
 	</div>
+	
+	<button mat-button mat-raised-button class="theme-btn" 
+		[disabled]="unchanged_playlist" [mat-dialog-close]="onSave()">
+		Save Options
+		<span class="fas fa-save ml-2"></span>
+	</button>
 </div>

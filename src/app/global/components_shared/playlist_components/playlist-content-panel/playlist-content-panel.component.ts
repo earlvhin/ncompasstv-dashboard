@@ -6,17 +6,15 @@ import { fromEvent, Observable, Subject } from 'rxjs';
 import { Sortable } from 'sortablejs';
 import * as moment from 'moment-timezone';
 
-import { API_BLOCKLIST_CONTENT } from 'src/app/global/models/api_blocklist-content.model';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
-import { API_CONTENT_BLACKLISTED_CONTENTS } from '../../../../global/models/api_single-playlist.model';
-import { API_UPDATED_PLAYLIST_CONTENT, API_UPDATE_PLAYLIST_CONTENT } from 'src/app/global/models/api_update-playlist-content.model';
 import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { ContentService } from 'src/app/global/services/content-service/content.service';
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
-import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
+import { ContentService, PlaylistService } from 'src/app/global/services';
+import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
+	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS } from 'src/app/global/models';
+
 @Component({
 	selector: 'app-playlist-content-panel',
 	templateUrl: './playlist-content-panel.component.html',
@@ -51,7 +49,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	playlist_order: string[] = [];
 	playlist_changes_data: any;
 	playlist_unchanged: boolean = true;
-	playlist_content_backup: any[];
+	playlist_content_backup: API_CONTENT[];
 	playlist_saving: boolean = false;
 	selected_contents: string[];
 	selected_content_count: number;
@@ -327,30 +325,39 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.showViewSchedulesDialog();
 	}
 
-	optionsSaved(e: any): void {
-		let frequencyUpdate = null;
-		this.playlist_changes_data = e;
+	optionsSaved(data: { content: API_CONTENT, original_credits: number }): void {
 
-		if (e.content && (e.content.frequency === 2 || e.content.frequency === 3)) {
-			const { frequency, playlistContentId } = e.content;
+		const { content, original_credits } = data;
+		const { playlistContentId } = content;
+
+		let creditsUpdate: CREDITS = null;
+		let frequencyUpdate: FREQUENCY = null;
+		this.playlist_changes_data = data;
+
+		if (content && (content.frequency === 2 || content.frequency === 3)) {
+			const { frequency } = content;
 			frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
+		}
+
+		if (!original_credits || original_credits === 0) {
+			creditsUpdate = { playlistContentId, credits: content.playlistContentCredits };
 		}
 
 		if (this.playlist_changes_data.content) {
 
 			this.playlist_contents.forEach(
 				i => {
-					if (i.playlistContentId == e.playlistContentId) i = e;
+					if (i.playlistContentId == playlistContentId) i = data;
 				}
 			);
 			
 			this.structured_updated_playlist = this.structureUpdatedPlaylist();
 		}
 
-		this.structured_incoming_blocklist = this.playlist_changes_data.blocklist && this.playlist_changes_data.blocklist.incoming.length > 0 ? this.playlist_changes_data.blocklist.incoming : [];
-		this.structured_remove_in_blocklist = this.playlist_changes_data.blocklist && this.playlist_changes_data.blocklist.removing.length > 0 ? this.playlist_changes_data.blocklist.removing : [];
-
-		this.savePlaylistChanges(this.structured_updated_playlist, frequencyUpdate);
+		const { blocklist } = this.playlist_changes_data;
+		this.structured_incoming_blocklist = blocklist && blocklist.incoming.length > 0 ? blocklist.incoming : [];
+		this.structured_remove_in_blocklist = blocklist && blocklist.removing.length > 0 ? blocklist.removing : [];
+		this.savePlaylistChanges(this.structured_updated_playlist, frequencyUpdate, creditsUpdate);
 	}
 
 	openPlaylistMedia(): void {
@@ -535,7 +542,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.addToBlocklist(to_block);
 	}
 
-	savePlaylistChanges(data: any, frequencyUpdate?: { frequency: number, playlistContentId: string, playlistId: string }): void {
+	savePlaylistChanges(data: any, frequencyUpdate?: FREQUENCY, creditsUpdate?: CREDITS): void {
 		this.playlist_saving = true;
 		this.is_marking = false;
 
@@ -548,6 +555,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						if (frequencyUpdate) {
 							const { frequency, playlistContentId, playlistId } = frequencyUpdate;
 							await this._content.set_frequency(frequency, playlistContentId, playlistId).toPromise();
+						}
+
+						if (creditsUpdate) {
+							const { playlistContentId, credits } = creditsUpdate;
+							await this._content.update_play_credits(playlistContentId, credits).toPromise();
 						}
 
 						localStorage.removeItem('playlist_order');
