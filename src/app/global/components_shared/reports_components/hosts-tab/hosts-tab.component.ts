@@ -18,7 +18,14 @@ var usMap = require("@highcharts/map-collection/countries/us/us-all.geo.json");
 export class HostsTabComponent implements OnInit {
     chartsData : any;
     formatted: any = [];
-    Highcharts: typeof Highcharts = Highcharts;  
+    has_data : boolean = false;
+    has_state_details : boolean = false;
+    Highcharts: typeof Highcharts = Highcharts;
+    loading_details: boolean = false; 
+    panelOpenState = false;
+    raw_details : any = [];
+    state_details: any = []; 
+    state_selected: string; 
 	title: string = "Reports";
     subscription: Subscription = new Subscription();
 
@@ -28,7 +35,10 @@ export class HostsTabComponent implements OnInit {
     ) { }
 
 	ngOnInit() {
-        this.getChartsData()
+        this.getChartsData();
+        this.raw_details = {
+            totalLicenses: 0
+        }
 	}
    
     getChartsData() {
@@ -40,6 +50,22 @@ export class HostsTabComponent implements OnInit {
             )
         )
     }
+    
+    getChartsDataDetails(state) {
+        this.loading_details = true;
+        this.subscription.add(
+            this._host.get_licenses_per_state_details(state).subscribe(
+                data => {
+                    this.raw_details = data;
+                    console.log("DATA",  this.raw_details)
+                    this.loading_details = false;
+                    this.has_state_details = true;
+                    this.state_details = data.dealerHostsStates;
+                    console.log("DD",this.state_details)
+                }
+            )
+        )
+    }
 
     formatData(data) {
         data.map (
@@ -47,6 +73,7 @@ export class HostsTabComponent implements OnInit {
                 this.formatted.push({'stateCode': this._uppercase.transform(list.state), 'value': list.count })
             }
         )
+        this.has_data = true;
         this.generateCharts(this.formatted);
     }
 
@@ -94,7 +121,34 @@ export class HostsTabComponent implements OnInit {
                 nullColor: 'silver',
                 showInLegend: false,
                 enableMouseTracking: false
-            }]
+            }],
+            plotOptions: {
+                series: {
+                    point: {
+                        events: {
+                            click: function (state) {
+                                console.log(state)
+                                var text = '<b>Clicked point</b><br>Series: ' + state.point.series.name +
+                                        '<br>Point: ' + state.point.name + ' (' + state.point.value + '/km²)',
+                                    chart = state.point.series.chart;
+                                if (!chart.clickLabel) {
+                                    chart.clickLabel = chart.renderer.label(text, 550, 450)
+                                        .css({
+                                            width: '180px'
+                                        })
+                                        .add();
+                                } else {
+                                    chart.clickLabel.attr({
+                                        text: text
+                                    });
+                                }
+                                this.state_selected = this._uppercase.transform(state.point.name);
+                                this.getChartsDataDetails(state.point.stateCode);
+                            }.bind(this)
+                        }
+                    }
+                }
+            }
         });
     }  
 }

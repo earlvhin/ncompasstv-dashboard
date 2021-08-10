@@ -54,7 +54,6 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.view_value = this.initial_value;
 		this.subscribeToResetField();
-
         document.addEventListener('click',this.customBlur)
 	}
 
@@ -65,9 +64,12 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	}
 
     customBlur = (e : any) => {
-        if(!e.target.className.includes('skip-blur')) {
-            this.emptySearch();
+        if(e) {
+            if(!e.target.className.includes('skip-blur')) {
+                this.emptySearch();
+            }
         }
+        
     }
 
 	dataSelected(data) {

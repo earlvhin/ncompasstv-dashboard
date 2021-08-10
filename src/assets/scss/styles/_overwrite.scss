@@ -199,6 +199,13 @@ breadcrumb {
     .mat-tab-body-wrapper {
         min-height: 500px;
     }
+    .mat-expansion-panel-header-description, .mat-expansion-panel-header-title {
+        vertical-align: middle;
+        line-height: 35px;
+    }
+    .mat-expansion-panel-header:not([aria-disabled=true]) {
+        cursor: context-menu;
+    }
 }
 
 #reportsDrop {

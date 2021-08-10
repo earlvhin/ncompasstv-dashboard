@@ -1,10 +1,97 @@
 <div class="row">
-    <div class="col-lg-6 bg-dark text-center text-white">
-        LICENSES STATISTICS
+    <div class="col-lg-12 p-0 d-flex">
+        <div class="col-lg-6 bg-dark text-white">
+            <div class="col-lg-6 text-left">
+                LICENSES STATISTICS
+            </div>
+        </div>
+        <div class="col-lg-6 text-center text-white">
+            <div class="col-lg-12 flex bg-dark p-0">
+                <div class="col-lg-4 text-left">
+                    REPORTS DETAILS
+                </div>
+                <div class="col-lg-4 text-center">
+                    <span class="text-danger md-text"> {{state_selected}}</span>
+                </div>
+                <div class="col-lg-4 text-right">
+                    <span class="text-danger md-text"> {{raw_details.totalLicenses}} license(s)</span>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 <div class="row">
-    <div class="col-lg-6 p-0">
+    <!-- dont change hidden to ngif, there is a chartjs error if it has been used -->
+    <div class="col-lg-6 p-0" [hidden]="!has_data">
         <div id="host-map" class="white-bg pt-5 p-3" style="height:600px;width:100%"></div>
+    </div>
+    <div class="white-bg col-lg-6 p-0 vh-64 d-flex align-items-center justify-content-center" *ngIf="!has_data">
+        <app-spinner></app-spinner>
+    </div>
+
+    <div class="col-lg-6 pr-0 overflow-auto">
+        <div class="table-container white-bg vh-64">
+            <div class="h-100 d-flex align-items-center justify-content-center no-content-yet" *ngIf="!has_data || loading_details">
+                <app-spinner></app-spinner>
+            </div>
+            <div *ngIf="!has_state_details else details" class="h-100 d-flex align-items-center justify-content-center no-content-yet">
+                <div class="text-center border-dashed p-5">
+                    <h2 class="mb-3"><span class="fas fa-chart-bar fa-2x"></span></h2>
+                    <p class="sm-text mb-0">Click a state in the map to view more details.</p>
+                </div>
+            </div>
+            <ng-template #details>
+                <div>
+                    <mat-accordion>
+                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="mb-2 p-2 pl-0 pr-0" *ngFor="let dealer of state_details; let i = index" hideToggle="true" #example id="outer-mat">
+                            <mat-expansion-panel-header [ngClass]="dealer.hostStates.length > 0 ? 'bleft-5-active' : 'bleft-5-inactive prevent-click'" >
+                                <mat-panel-title class="md-text col-lg-11 p-0">     
+                                    <p class="text-left col-lg-8">
+                                        <span class="font-weight-bold">
+                                            <a [routerLink]="['/administrator/dealers/', dealer.dealerId]" target="_blank">{{dealer.businessName}}</a>
+                                        </span>
+                                    </p>
+                                    <p class="md-text col-lg-4 text-left">
+                                        {{dealer.totalLicenses}} license(s)
+                                    </p>
+                                </mat-panel-title>
+                                <mat-panel-description class="md-text clickable">
+                                    <div class="col-lg-1 p-0 pt-1 text-right" *ngIf="dealer.hostStates.length > 0">
+                                        <div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+                                        <div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+                                    </div>
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                        
+                            <div class="col-lg-12 text-left pl-0 pr-0" *ngIf="dealer.hostStates.length > 0">
+                                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="p-2 mb-2" *ngFor="let host of dealer.hostStates" hideToggle="true" #example>
+                                    <mat-expansion-panel-header class="pr-0">
+                                        <mat-panel-title class="md-text col-lg-12 p-0">     
+                                            <p class="text-left col-lg-8">
+                                                <span class="font-weight-bold ">
+                                                    <a [routerLink]="['/administrator/hosts/', host.hostId]" target="_blank">{{host.hostName}}</a>
+                                                </span>
+                                            </p>
+                                            <p class="md-text col-lg-4 text-left">
+                                                {{host.totalLicenses}} license(s)
+                                            </p>
+                                        </mat-panel-title>
+                                        <!-- <mat-panel-description class="md-text clickable">
+                                            <div class="col-lg-1 ml-2 p-0 pt-1 text-right" >
+                                                <div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+                                                <div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+                                            </div>
+                                        </mat-panel-description> -->
+                                    </mat-expansion-panel-header>
+                                    <div class="description col-lg-12 p-0">
+                                        
+                                    </div>
+                                </mat-expansion-panel>
+                            </div>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </div>
+            </ng-template>
+        </div>
     </div>
 </div>
