@@ -54,7 +54,7 @@
             <div class="col-lg-12 custom-mat-tab p-0">
                 <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
                     <mat-tab label="Licenses View">
-                        <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
+                        <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
                             <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
                                 <div *ngIf="!initial_load_licenses; else loader">
                                     <div *ngIf="!no_licenses; else no_data">
