@@ -139,7 +139,7 @@ export const API_ENDPOINTS = {
 		api_new_dealer: 'dealer/create',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
-		api_new_feed_generate_slide: 'feed/generate/slides',
+		api_new_weather_feed_demo: 'feed/preview/demo/weather',
 		api_new_host: 'host/create',
 		api_new_host_place: 'host/createhost',
 		api_new_license:'license/create?',

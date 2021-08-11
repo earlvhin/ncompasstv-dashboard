@@ -86,7 +86,8 @@ export class SliderFormComponent implements OnInit {
 		this.slide_global_settings_form = this._form.group(form_group_obj)
 	}
 
-	/** Apply Set Duration a Field to All Items
+	/** 
+	 * Apply Set Duration a Field to All Items
 	 *  @param {number} duration Duration set from UI
 	 */
 	applyDurationToAll(duration: number): void {
@@ -134,7 +135,8 @@ export class SliderFormComponent implements OnInit {
 		)
 	}
 
-	/** Remove X-ed Feed Item 
+	/** 
+	 * Remove X-ed Feed Item 
 	 * @param {any} f Feed Item X-ed on UI
 	*/
 	removeFeedItem(f: any): void {

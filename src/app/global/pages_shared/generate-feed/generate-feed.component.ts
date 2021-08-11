@@ -100,12 +100,12 @@ export class GenerateFeedComponent implements OnInit {
 			this.feed_info,
 			feed_data
 		)
-
-		console.log(this.generated_weather_feed);
 	}
 
+	/** Set Selected Feed */
 	setSelectedFeedType(feedTypeId: string) {
-		return this.feed_types.filter(i => i.feedTypeId === feedTypeId)[0].name
+		if (!this.editing) return this.feed_types.filter(i => i.feedTypeId === feedTypeId)[0].name;
+		return this.fetched_feed.feedType.name;
 	}
 
 	/**
@@ -169,7 +169,9 @@ export class GenerateFeedComponent implements OnInit {
 		this.subscription.add(
 			this._feed.get_generated_feed_by_id(id).subscribe(
 				(data: API_GENERATED_FEED) => {
+					console.log(data);
 					this.fetched_feed = data;
+					this.selected_dealer = data.dealerId;
 					this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
 				}
 			)
@@ -180,7 +182,7 @@ export class GenerateFeedComponent implements OnInit {
 	 * @param data {API_GENERATED_FEED}
 	 */
 	private mapFetchedGeneratedFeedToUI(data: API_GENERATED_FEED) {
-		data.feedContents.map(
+		data.feedSlides.map(
 			c => {
 				this.feed_items.push(
 					new FeedItem(
@@ -203,14 +205,12 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	/** POST Request to API with Generated Feed Payload*/
-	saveGeneratedFeed(): void {
+	saveGeneratedSlideFeed(): void {
 		this.saving = true;
-
-		console.log('Generated Feed', this.generated_slide_feed)
 
 		if (!this.editing) {
 			this.subscription.add(
-				this._feed.generate_slide_feed(this.generated_slide_feed).subscribe(
+				this._feed.generate_feed(this.generated_slide_feed, 'slides').subscribe(
 					data => {
 						console.log(data);
 						this._router.navigate([`/${this.route}/feeds`])
@@ -233,6 +233,20 @@ export class GenerateFeedComponent implements OnInit {
 				)
 			)
 		}
+	}
+
+	saveGeneratedWeatherFeed(): void {
+		this.subscription.add(
+			this._feed.generate_feed(this.generated_weather_feed, 'weather').subscribe(
+				data => {
+					console.log(data);
+					this._router.navigate([`/${this.route}/feeds`])
+				},
+				error => {
+					console.log(error);
+				}
+			)
+		)
 	}
 
 	/**

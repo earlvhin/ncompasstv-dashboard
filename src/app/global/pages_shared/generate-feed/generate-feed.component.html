@@ -10,17 +10,20 @@
                 <mat-horizontal-stepper #stepper *ngIf="(dealers && feed_types) || fetched_feed; else spinner" linear (selectionChange)="selectionChange($event)">
                     <!-- Begin: Step 1 -->
                     <mat-step>
+                        <ng-template matStepLabel>Feed Information</ng-template>
+
                         <div class="row justify-content-center pt-4">
                             <div class="col-lg-8">
                                 <app-feed-info
                                 [feed_types]="feed_types"
+                                [fetched_feed]="fetched_feed"
                                 [dealers]="dealers"
                                 [is_dealer]="is_dealer"
+                                [editing]="editing"
                                 (feed_info)="prepareFeedInfo($event)">
                                 </app-feed-info>
                             </div>
                         </div>
-                        <ng-template matStepLabel>Feed Information</ng-template>
                     </mat-step>
                     <!-- End: Step 1 -->
 
@@ -48,6 +51,7 @@
                         </div>
                         <!-- End: Weather Maker -->
                     </mat-step>
+                    <!-- End: Step 2 -->
 
                     <!-- Begin: Step 4 -->
                     <mat-step>
@@ -70,17 +74,22 @@
                                     <!-- Begin: Slide Feed Demo -->
                                     <app-feed-demo 
                                     *ngIf="generated_slide_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'"
-                                    [global_settings]="generated_feed.feedGlobalSettings"
+                                    [global_settings]="generated_slide_feed.feedGlobalSettings"
                                     [feed_items]="feed_items"></app-feed-demo>
                                     <!-- End: Slide Feed Demo -->
 
                                     <!-- Begin: Weather Feed Demo -->
                                     <app-weather-demo
-                                    *ngIf="generated_slide_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'">
+                                    *ngIf="generated_weather_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'"
+                                    [weather_data]="generated_weather_feed">
                                     </app-weather-demo>
                                     <!-- End: Weather Feed Demo -->
 
-                                    <button *ngIf="feed_items.length > 0" mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedFeed()" [disabled]="saving">Save</button>
+                                    <button *ngIf="feed_items.length > 0" mat-button mat-raised-button class="theme-btn mt-4" 
+                                    (click)="setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed' ? saveGeneratedSlideFeed() : saveGeneratedWeatherFeed()" 
+                                    [disabled]="saving">
+                                        Save
+                                    </button>
                                 </div>
                             </div>
                         </div>

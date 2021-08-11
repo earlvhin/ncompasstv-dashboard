@@ -52,7 +52,8 @@ export type FEED_INFO = {
     description: string,
     createdBy: string,
     feedTypeId: string,
-    feedId?: string
+    feedId?: string,
+    status?: string
 }
 
 export type API_GENERATED_FEED = {
@@ -69,7 +70,14 @@ export type API_GENERATED_FEED = {
     feedTitle: string,
     status: string,
     updatedBy: string,
-    feedContents: {
+    feedType: {
+        dateCreated: string,
+        description: string,
+        feedTypeId: string,
+        name: string,
+        status: string
+    },
+    feedSlides: {
         contentId: string,
         contents: API_CONTENT,
         dateCreated: string,
@@ -84,19 +92,21 @@ export type API_GENERATED_FEED = {
 
 export class GenerateWeatherFeed {
     feeds: FEED_INFO;
-    feedWeather: {
-        backgroundContentId: string,
-        bannerContentId: string,
-        boxBackgroundColor: string,
-        daysFontColor: string,
-        numberDay: number,
-        zipCode: string,
-    }
+    feedWeather: WEATHER_FEED_STYLE_DATA
 
     constructor(feeds: FEED_INFO, feedWeather: WEATHER_DATA){
         this.feeds = feeds;
         this.feedWeather = feedWeather;
     }
+}
+
+export type WEATHER_FEED_STYLE_DATA = {
+    backgroundContentId: string,
+    bannerContentId: string,
+    boxBackgroundColor: string,
+    daysFontColor: string,
+    numberDay: number,
+    zipCode: string
 }
 
 export type WEATHER_DATA = {
