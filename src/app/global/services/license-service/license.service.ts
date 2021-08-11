@@ -41,8 +41,9 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, this.httpOptions)
+	get_all_licenses(page, key) {
+        const params = this.httpParams({ page, search: key })
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
 	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?) {

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
 import { DatePipe, TitleCasePipe } from '@angular/common'
@@ -8,6 +8,7 @@ import { LicenseService } from '../../../../global/services/license-service/lice
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
 import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-license-by-dealer.model';
+import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -19,19 +20,26 @@ import { ActivatedRoute } from '@angular/router';
 
 export class LicensesComponent implements OnInit {
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
+	licenses_data: UI_LICENSE[] = [];
 	no_dealer: boolean;
+	no_licenses: boolean;
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
+	filtered_data_licenses: UI_LICENSE[] = [];
 	subscription: Subscription = new Subscription();
 	title: string = "Licenses";
 	tab: any = { tab: 0 };
 	licenses_details: any;
 	paging_data: any;
+	paging_data_licenses: any;
 	searching: boolean = false;
+	searching_licenses: boolean = false;
 	initial_load: boolean = true;
+	initial_load_licenses: boolean = true;
 	search_data: string = "";
+	search_data_licenses: string = "";
 
 	// UI Table Column Header
-	license_table_column: string[] = [
+	dealers_table_column: string[] = [
 		'#',
 		'Dealer Alias',
 		'Business Name',
@@ -48,52 +56,102 @@ export class LicensesComponent implements OnInit {
 		'Quantity'
 	]
 
+    // UI Table Column Header
+	license_table_column = [
+		{ name: '#', sortable: false, no_export: true},
+        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
+		{ name: 'License Key', sortable: false, column:'LicenseKey', key: 'licenseKey'},
+		{ name: 'Type', sortable: false, column:'ScreenType', key: 'screenType'},
+		{ name: 'Host', sortable: false, column:'HostName', key: 'hostName'},
+		{ name: 'Alias', sortable: false, column:'Alias', key: 'alias'},
+		{ name: 'Last Push', sortable: false, column:'ContentsUpdated', key:'contentsUpdated'},
+		{ name: 'Last Online', sortable: false, column:'TimeIn', key:'timeIn'},
+		{ name: 'Net Type', sortable: false, column:'InternetType', key:'internetType'},
+		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
+		{ name: 'Display', sortable: false, key: 'displayStatus'},
+		{ name: 'PS Version', sortable: false, key:'server', column:'ServerVersion'},
+		{ name: 'UI Version', sortable: false, key:'ui', column:'UiVersion'},
+		{ name: 'Screen', sortable: false, column:'ScreenName', key:'screenName' },
+		{ name: 'Template', sortable: false, column:'TemplateName', key:'templateName'},		
+		{ name: 'Installation Date', sortable: false, column:'InstallDate', key:'installDate'},
+		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
+	]
+
 	constructor(
 		private _route: ActivatedRoute,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _date: DatePipe,
 		private _license: LicenseService,
-		private _title: TitleCasePipe
+		private _title: TitleCasePipe,
+        private cdr: ChangeDetectorRef,
 	) { }
 
 	ngOnInit() {
 		this.getLicensesTotal();
-
-		this.getLicenses();
-
-		// Saved Page on URL
-		this._route.queryParams.subscribe(params => {
-			let saved_page = params['page'];
-
-			if (saved_page) {
-				this.pageRequested(parseInt(saved_page));
-			} else {
-				this.pageRequested(1);
-			}
-		})
+        this.getLicenses(1);
 	}
+
+    ngAfterContentChecked() : void {
+        this.cdr.detectChanges();
+    }
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
 
-	getLicenses() {
-		this._license.get_all_licenses().subscribe(
-			data => {
-				console.log(data)
-			}
-		)	
+	getLicenses(page) {
+        this.searching_licenses = true;
+		this.licenses_data = [];    
+        this.subscription.add(
+			this._license.get_all_licenses(page, this.search_data_licenses).subscribe(
+				data => {
+                    this.paging_data_licenses = data.paging;
+                    if (data.licenses) {
+						this.licenses_data = this.licenses_mapToUIFormat(data.licenses);
+						this.filtered_data_licenses = this.licenses_mapToUIFormat(data.licenses);
+					} else {
+						if(this.search_data == "") {
+							this.no_licenses = true;
+						}
+						this.filtered_data_licenses = [];
+					}
+					this.initial_load_licenses = false;
+					this.searching_licenses = false;
+				}
+			)
+		)
 	}
 
-	filterData(e) {
-		if (e) {
-			this.search_data = e;
-			this.pageRequested(1);
-		} else {
-			this.search_data = "";
-			this.pageRequested(1);
-		}
+    onTabChanged(e) {
+        if(e.index == 1) {
+            this.pageRequested(1);
+        } else {
+            this.getLicenses(1);
+        }
+    }
+
+	filterData(e, tab) {
+        switch(tab) {
+            case 'licenses':
+                if (e) {
+                    this.search_data_licenses = e;
+                    this.getLicenses(1);
+                } else {
+                    this.search_data_licenses = "";
+                    this.getLicenses(1);
+                }    
+                break;
+            default:
+                if (e) {
+                    this.search_data = e;
+                    this.pageRequested(1);
+                } else {
+                    this.search_data = "";
+                    this.pageRequested(1);
+                }
+        }
+  
 	}
 	
 	getLicensesTotal () {
@@ -167,6 +225,47 @@ export class LicensesComponent implements OnInit {
 				)
 			}
 		)
+	}
+
+    licenses_mapToUIFormat(data): UI_LICENSE[] {
+		let count = this.paging_data_licenses.pageStart;
+		return data.map(
+			(l: any) => {
+				const table = new UI_LICENSE(
+                    { value: count++, link: null , editable: false, hidden: false},
+					{ value: l.licenseId, link: null , editable: false, hidden: true, key: false, table: 'license'},
+					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, compressed: true, editable: false, hidden: false, status: true},
+					{ value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
+					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false},
+					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: false, label: 'License Alias', id: l.licenseId, hidden: false },
+					{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
+					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
+					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
+					{ value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--', link: null, editable: false, hidden: false },
+					{ value: l.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
+					{ value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
+					{ value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
+					{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}` , editable: false },
+					{ value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
+					{ value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: false, label: 'Install Date', hidden: false, id: l.licenseId },
+					{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
+					{ value: l.piStatus, link: null , editable: false, hidden: true },
+				);
+				return table;
+			}
+		);
+	}
+
+    private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
 	}
 
 	openGenerateLicenseModal(): void {
