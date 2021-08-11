@@ -188,7 +188,7 @@ export const API_ENDPOINTS = {
 		dealer_status: 'dealer/updatestatus',
 		install_date: 'license/updateinstalldate',
 		install_date_list: 'license/updateinstalldatelist',
-		play_credits: 'playlists/addcredit',
+		play_credits: 'playlists/addcredits',
 		reassign_content: 'content/reassigncontent',
 		reassign_dealer: 'dealer/reassigndealer',
 		set_content_frequency: 'playlists/cloneplaylistcontent',

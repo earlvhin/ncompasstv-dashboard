@@ -5,6 +5,7 @@ import * as moment from 'moment';
 
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { CREDITS } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-options',
@@ -14,17 +15,19 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 
 export class OptionsComponent implements OnInit {
 
+	balance: number = null;
 	blocklist_changes = { status: false };
 	blacklist_ready: boolean = false;
     blacklist_count: number = 0;
+	c_index: number;
 	content_data: API_CONTENT;
 	content_frequency: number;
-	host_license: any;
+	credits: number = null;
 	disable_animation = true;
-	feed_url = '';
 	has_schedule = false;
-	c_index: number;
-	playlist_changes_data = { content: null, blocklist: null, original_credits: null };
+	host_license: any;
+	feed_url = '';
+	playlist_changes_data: { content: API_CONTENT, blocklist: any, original_credits: CREDITS } = { content: null, blocklist: null, original_credits: null };
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
 	toggle_all: boolean;
@@ -52,11 +55,18 @@ export class OptionsComponent implements OnInit {
 		this.c_index = index;
 		this.content_data = content;
 		this.content_frequency = this.setFrequency(content.frequency);
+		this.credits = this.setCreditsAndBalance(content.playlistContentCredits);
 		this.total_contents = total_contents;
 		this.host_license = host_license;		
 		if (this.isFeedContent()) this.setFeedUrl();
 		this.setSchedule(this._dialog_data.content);
         this.getTotalLicenses();
+	}
+
+	canEditCreditsField() {
+		const { original_credits } = this.playlist_changes_data;
+		if (!original_credits) return true;
+		return original_credits.balance === 0;
 	}
     
     getTotalLicenses() {
@@ -118,6 +128,18 @@ export class OptionsComponent implements OnInit {
 		this.contentDataChanged();
 	}
 
+	onInputCredits(): void {
+
+		this.content_data.playlistContentCredits = {
+			playlistContentId: this.content_data.playlistContentId,
+			credits: this.credits,
+			balance: this.credits
+		};
+
+		this.contentDataChanged();
+
+	}
+
 	removeFilenameHandle(e) {
 		return e.substring(e.indexOf('_') + 1);
 	}
@@ -163,6 +185,19 @@ export class OptionsComponent implements OnInit {
 
 	toggleAll(e) {
 		this.toggle_event.next(e.checked)
+	}
+
+	private setCreditsAndBalance(data: CREDITS) {
+		
+		if (!data) {
+			this.balance = 0;
+			return 0;
+		}
+
+		const { balance, credits } = data;
+		this.balance = credits;
+		return balance;
+
 	}
 
 	private setFrequency(value: number): number {

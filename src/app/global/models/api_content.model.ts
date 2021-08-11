@@ -1,3 +1,4 @@
+import { CREDITS } from "./credits.model";
 import { PlaylistContentSchedule } from "./playlist-content-schedule.model";
 
 export class API_CONTENT {
@@ -27,7 +28,7 @@ export class API_CONTENT {
 	isActive: number;
     isConverted: number;
     title: string;
-	playlistContentCredits?: number;
+	playlistContentCredits?: CREDITS;
 	playlistContentSchedule?: PlaylistContentSchedule;
 	playlistContentsSchedule?: PlaylistContentSchedule;
 	scheduleStatus?: any;

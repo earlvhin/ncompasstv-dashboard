@@ -325,12 +325,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.showViewSchedulesDialog();
 	}
 
-	optionsSaved(data: { content: API_CONTENT, original_credits: number }): void {
+	optionsSaved(data: { content: API_CONTENT, original_credits: CREDITS }): void {
 
 		const { content, original_credits } = data;
 		const { playlistContentId } = content;
 
-		let creditsUpdate: CREDITS = null;
+		let creditsUpdate: { playlistContentId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
 		this.playlist_changes_data = data;
 
@@ -339,8 +339,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
 		}
 
-		if (!original_credits || original_credits === 0) {
-			creditsUpdate = { playlistContentId, credits: content.playlistContentCredits };
+		if (!original_credits || original_credits.balance === 0) {
+			creditsUpdate = { playlistContentId, credits: content.playlistContentCredits.credits };
 		}
 
 		if (this.playlist_changes_data.content) {
