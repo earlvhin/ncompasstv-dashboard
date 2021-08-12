@@ -3,8 +3,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { API_FEED_TYPES } from 'src/app/global/models/api_feed.model';
-import { FeedService } from 'src/app/global/services/feed-service/feed.service';
+import { API_FEED_TYPES } from '../../../../global/models/api_feed.model';
 import { API_GENERATED_FEED, GenerateFeed } from '../../../../global/models/api_feed_generator.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 
@@ -30,6 +29,7 @@ export class FeedInfoComponent implements OnInit {
 	new_feed_form: FormGroup;
 	selected_dealer: string;
 
+	existing: any;
 
 	constructor(
 		private _auth: AuthService,
@@ -43,8 +43,11 @@ export class FeedInfoComponent implements OnInit {
 
 	/** Structure Feed Information and Pass */
 	structureFeedInfo() {
-		console.log(this.new_feed_form.value);
-		this.feed_info.emit(this.new_feed_form.value);
+		if (!this.editing) {
+			this.feed_info.emit(this.new_feed_form.value)
+		} else {
+			this.feed_info.emit(this.existing);
+		}
 	}
 
 	/** New Feed Form Control Getter */
@@ -59,15 +62,20 @@ export class FeedInfoComponent implements OnInit {
 				{
 					feed_title: [this.fetched_feed.feedTitle, Validators.required],
 					description: [this.fetched_feed.description],
+					feed_type: [{
+						value: this.fetched_feed.feedType.feedTypeId,
+						disabled: true
+					},  Validators.required],
 					assign_to: [{
 						value: this.fetched_feed.dealer.businessName,
 						disabled: true
 					}, Validators.required],
-					assign_to_id: [this.fetched_feed.dealerId, Validators.required]
+					assign_to_id: [this.fetched_feed.dealer.dealerId, Validators.required]
 				}
 			)
 
-			this.selected_dealer = this.fetched_feed.dealerId;
+			/** Temp Work Around */
+			this.existing = this.new_feed_form.getRawValue();
 		} else {
 			this.new_feed_form = this._form.group(
 				{
@@ -91,7 +99,7 @@ export class FeedInfoComponent implements OnInit {
  	 */
 	private filter(value: string): {dealerId: string, businessName: string}[] {
 		const filter_value = value.toLowerCase();
-		const filtered_result = this.dealers.filter(i => i.businessName.toLowerCase().includes(filter_value));
+		const filtered_result = this.dealers ? this.dealers.filter(i => i.businessName.toLowerCase().includes(filter_value)) : [];
 
 		if (!this.is_dealer) {
 			this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;

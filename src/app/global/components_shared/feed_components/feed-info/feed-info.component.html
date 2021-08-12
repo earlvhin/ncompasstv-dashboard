@@ -9,14 +9,25 @@
         <input matInput formControlName="description">
     </mat-form-field>
 
-    <mat-form-field class="full-width" appearance="fill">
+    <mat-form-field class="full-width" appearance="fill" *ngIf="editing; else default">
         <mat-label>Feed Type</mat-label>
-        <mat-select formControlName="feed_type" >
-            <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
-                {{ f.name }} - <small>{{ f.description }}</small>
+        <mat-select formControlName="feed_type" [(ngModel)]="fetched_feed.feedType.feedTypeId">
+            <mat-option selected [value]="fetched_feed.feedType.feedTypeId">
+                {{ fetched_feed.feedType.name }} - <small>{{ fetched_feed.feedType.description }}</small>
             </mat-option>
         </mat-select>
     </mat-form-field>
+
+    <ng-template #default>
+        <mat-form-field class="full-width" appearance="fill" *ngIf="!editing">
+            <mat-label>Feed Type</mat-label>
+            <mat-select formControlName="feed_type">
+                <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
+                    {{ f.name }} - <small>{{ f.description}}</small>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </ng-template>
 
     <mat-form-field class="full-width" appearance="fill">
         <mat-label>Assign to Dealer</mat-label>
@@ -33,8 +44,15 @@
         </mat-autocomplete>
     </mat-form-field>
 
-    <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!new_feed_form.valid" (click)="structureFeedInfo()">
+    <button *ngIf="!editing; else editingBtn;"mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!new_feed_form.valid" (click)="structureFeedInfo()">
         <span class="button-label">Next</span>
         <span class="fas fa-long-arrow-alt-right ml-2"></span>
     </button>
+
+    <ng-template #editingBtn>
+        <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!f.feed_title.valid" (click)="structureFeedInfo()">
+            <span class="button-label">Next</span>
+            <span class="fas fa-long-arrow-alt-right ml-2"></span>
+        </button>
+    </ng-template>
 </form>

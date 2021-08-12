@@ -139,7 +139,7 @@ export const API_ENDPOINTS = {
 		api_new_dealer: 'dealer/create',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
-		api_new_feed_generate_slide: 'feed/generate/slides',
+		api_new_weather_feed_demo: 'feed/preview/demo/weather',
 		api_new_host: 'host/create',
 		api_new_host_place: 'host/createhost',
 		api_new_license:'license/create?',
@@ -165,6 +165,7 @@ export const API_ENDPOINTS = {
 		filestack_api_key: 'ALjKIdQzT1uQvACcqMCnQz',
 		filestack_policy: 'eyJjYWxsIjpbIndyaXRlIiwicmVtb3ZlIl0sImV4cGlyeSI6MTYxMjAyMjQwMH0',
 		filestack_signature: '49306a4d1945bffbb381dd90b38be3a69230b2f473543d3d73440c77eeab730d',
+		filestack_screenshot: 'https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=mode:window,height:1080,width:1920/resize=width:600/'
 	},
 	update: {
 		account_permission: 'account/updatepermission',

@@ -35,6 +35,7 @@ export class FeedMediaComponent implements OnInit {
 
 		if (this._dialog_data) {
 			this.getUserMediaFiles(this._dialog_data.dealer);
+			this.single_select = this._dialog_data.singleSelect || false;
 		}
 	}
 
@@ -49,8 +50,6 @@ export class FeedMediaComponent implements OnInit {
 	@HostListener("scroll", ["$event"]) onScroll(event: any) {
 		if (event.target.offsetHeight + event.target.scrollTop >= event.target.scrollHeight && this.has_page_left) {
 			this.pageEnd = false;
-
-			console.log("SCROLLEND")
 
 			if (this._dialog_data) {
 				this.getUserMediaFiles(this._dialog_data);
@@ -102,6 +101,8 @@ export class FeedMediaComponent implements OnInit {
 	 * @param media_file Media File Clicked via UI
 	 */
 	imageSelected(media_file: API_CONTENT) {
+		console.log(this.single_select);
+
 		if (!this.single_select) {
 			if (this.selected_media_files.includes(media_file)) {
 				this.selected_media_files = this.selected_media_files.filter(i => i.contentId !== media_file.contentId)

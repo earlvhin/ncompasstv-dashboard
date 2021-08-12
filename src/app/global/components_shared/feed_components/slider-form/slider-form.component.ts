@@ -27,6 +27,9 @@ export class SliderFormComponent implements OnInit {
 		},
 		{
 			label: 'Roboto'
+		},
+		{
+			label: 'Montserrat'
 		}
 	]
 
@@ -83,7 +86,8 @@ export class SliderFormComponent implements OnInit {
 		this.slide_global_settings_form = this._form.group(form_group_obj)
 	}
 
-	/** Apply Set Duration a Field to All Items
+	/** 
+	 * Apply Set Duration a Field to All Items
 	 *  @param {number} duration Duration set from UI
 	 */
 	applyDurationToAll(duration: number): void {
@@ -131,7 +135,8 @@ export class SliderFormComponent implements OnInit {
 		)
 	}
 
-	/** Remove X-ed Feed Item 
+	/** 
+	 * Remove X-ed Feed Item 
 	 * @param {any} f Feed Item X-ed on UI
 	*/
 	removeFeedItem(f: any): void {
@@ -142,7 +147,7 @@ export class SliderFormComponent implements OnInit {
 	 * Structure the Feed Items Sequence
 	 * @param {API_CONTENT[]} data The Feed Items
 	 */
-	 private structureFeedItems(data: API_CONTENT[]): void {
+	private structureFeedItems(data: API_CONTENT[]): void {
 		data.forEach(
 			(f: API_CONTENT) => {
 				this.feed_items.push(

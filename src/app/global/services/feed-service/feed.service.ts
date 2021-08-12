@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
-import { GenerateFeed } from '../../models/api_feed_generator.model';
+import { GenerateFeed, GenerateWeatherFeed, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -36,8 +36,8 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_generated_feed}`, data, this.httpOptions);
 	}
 
-	generate_slide_feed(data: GenerateFeed) {
-		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate_slide}`, data, this.httpOptions);
+	generate_feed(data: any, type: string) {
+		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed_generate}/${type}`, data, this.httpOptions);
 	}
 
 	get_feeds(page, key, column?, order?) {
@@ -70,6 +70,15 @@ export class FeedService {
 
 	get_feed_by_id(feed_id) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions)
+	}
+	
+	create_weather_feed_demo(weather_feed_style: WEATHER_FEED_STYLE_DATA) {
+		return this._http.get(
+			`${environment.base_uri}${environment.create.api_new_weather_feed_demo}?
+			backgroundContentId=${weather_feed_style.bannerContentId}&
+			bannerContentId=${weather_feed_style.bannerContentId}$
+			daysFontColor`, 
+			this.httpOptions);
 	}
 
 	// get_feed_screenshot(url) {

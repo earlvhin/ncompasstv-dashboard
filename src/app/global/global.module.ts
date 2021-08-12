@@ -181,6 +181,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -363,7 +364,8 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES
+		DIRECTIVES,
+		WeatherDemoComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

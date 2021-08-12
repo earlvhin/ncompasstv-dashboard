@@ -12,47 +12,45 @@ import { FeedMediaComponent } from '../feed-media/feed-media.component';
 
 export class WeatherFormComponent implements OnInit {
 	@Input() selected_dealer: string;
-	@Output() open_media_library = new EventEmitter;
+	@Output() open_media_library: EventEmitter<any> = new EventEmitter;
+	@Output() weather_feed_data: EventEmitter<any> = new EventEmitter;
 
 	is_marking: boolean = false;
+	selected_background_image: string;
+	selected_banner_image: string;
 
 	font_family = [
-		{
-			label: 'Helvetica'
-		},
-		{
-			label: 'Poppins'
-		},
-		{
-			label: 'Roboto'
-		}
+		{ label: 'Helvetica' },
+		{ label: 'Poppins' },
+		{ label: 'Roboto' },
+		{ label: 'Montserrat' }
 	]
 
 	orientation = [
-		{
-			label: 'Vertical'
-		},
-		{
-			label: 'Horizontal'
-		}
+		{ label: 'Vertical' },
+		{ label: 'Horizontal' }
 	]
 
 	weather_form: FormGroup;
 	weather_form_fields = [
 		{
-			label: 'Background Image',
-			form_control_name: 'backgroundImage',
+			label: 'Select Background Image',
+			form_control_name: 'backgroundContentId',
 			type: 'text',
 			width: 'col-lg-6', 
 			viewType: 'upload',
+			imageUri: '',
+			fileName: '',
 			required: true
 		},
 		{
-			label: 'Banner',
-			form_control_name: 'banner',
+			label: 'Select Banner Image',
+			form_control_name: 'bannerContentId',
 			type: 'text',
 			width: 'col-lg-6', 
 			viewType: 'upload',
+			imageUri: '',
+			fileName: '',
 			required: true
 		},
 		{
@@ -84,7 +82,7 @@ export class WeatherFormComponent implements OnInit {
 			label: 'Font Family',
 			form_control_name: 'fontFamily',
 			type: 'text',
-			width: 'col-lg-4', 
+			width: 'col-lg-6', 
 			viewType: 'select',
 			options: this.font_family,
 			required: true
@@ -93,18 +91,9 @@ export class WeatherFormComponent implements OnInit {
 			label: 'Zip Code',
 			form_control_name: 'zipCode',
 			type: 'text',
-			width: 'col-lg-4', 
+			width: 'col-lg-6', 
 			required: true
-		},
-		{
-			label: 'Orientation',
-			form_control_name: 'orientation',
-			type: 'text',
-			width: 'col-lg-4', 
-			viewType: 'select',
-			options: this.orientation,
-			required: true
-		},
+		}
 	]
 
 	constructor(
@@ -115,6 +104,7 @@ export class WeatherFormComponent implements OnInit {
 	ngOnInit() {
 		let form_group_obj = {};
 
+		/** Loop through form fields object and prepare for group */
 		this.weather_form_fields.map(
 			i => {
 				Object.assign(form_group_obj, {
@@ -124,16 +114,18 @@ export class WeatherFormComponent implements OnInit {
 		)
 
 		this.weather_form = this._form.group(form_group_obj)
+
+		this.f.daysToDisplay.setValidators([Validators.min(1), Validators.max(5)])
 	}
 
+	/** On Color Picker Field Changed */
 	colorPicker(e, form_control_name) {
-		console.log(e, form_control_name);
 		this.weather_form.get(form_control_name).setValue(e);
-		console.log(this.weather_form.get(form_control_name).value)
 	}
 
 	/** Open Media Library where contents are assigned to selected dealer */
 	openMediaLibraryModal(form_control_name: string): void {
+		/** Open Feed Media Modal */
 		let dialog = this._dialog.open(FeedMediaComponent, {
 			width: '1024px',
 			data: {
@@ -142,11 +134,28 @@ export class WeatherFormComponent implements OnInit {
 			}
 		})
 
+		/** On Modal Close */
 		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
 			if (data && data.length > 0) {
-				
+				/** Set Form Control Field Value */
+				this.weather_form.controls[form_control_name].setValue(data[0].contentId);
+
+				/** Set UI Image Display */
+				this.weather_form_fields.map(
+					i => {
+						if (i.form_control_name === form_control_name) {
+							i.imageUri = data[0].thumbnail;
+							i.fileName = data[0].title;
+						}
+					}
+				)
 			}
 		})
+	}
+
+	/** Pass weather feed data to parent component */
+	generateWeatherFeed() {
+		this.weather_feed_data.emit(this.weather_form.value);
 	}
 
 	/** Weather Form Control Getter */
