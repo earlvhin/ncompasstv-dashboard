@@ -1,18 +1,13 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { map, startWith } from 'rxjs/operators';
-import { FeedMediaComponent } from '../../components_shared/feed_components/feed-media/feed-media.component';
-import { API_CONTENT } from '../../models/api_content.model';
+import { Component, Input, OnInit} from '@angular/core';
+import { Observable, forkJoin, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { API_GENERATED_FEED, GenerateFeed } from '../../models/api_feed_generator.model'; 
-import { Sortable } from 'sortablejs';
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { API_FEED_TYPES } from '../../models/api_feed.model';
 
 @Component({
 	selector: 'app-generate-feed',
@@ -23,16 +18,18 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 export class GenerateFeedComponent implements OnInit {
 	@Input() background_image: string;
 	@Input() banner_image: string;
-	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
+	subscription: Subscription = new Subscription();
 	
 	dealer_id: string;
 	editing: boolean = false;
+	feed_info: any;
+	feed_types: API_FEED_TYPES[];
 	fetched_feed: API_GENERATED_FEED;
 	feed_items: FeedItem[] = [];
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
 	generated_feed: GenerateFeed;
 	is_dealer: boolean = false;
-	new_feed_form: FormGroup;
+	
 	saving: boolean = false;
 	selected_dealer: string;
 	selected_index: number = 0;
@@ -43,38 +40,18 @@ export class GenerateFeedComponent implements OnInit {
 		dealerId: string,
 		businessName: string
 	}[];
-
-	feed_types = [
-		{
-			id: 'weather',
-			label: 'Weather Feed',
-			description: 'A feed that displays today\'s weather'
-		}, 
-		{
-			id: 'slide',
-			label: 'Slide Feed',
-			description: 'A feed that displays images with text'
-		},
-		{
-			id: 'filler',
-			label: 'Filler',
-			description: 'A scheduled image feed display'
-		}
-	]
-
+	
 	apply_to_all_btn_status: boolean = false;
 
 	constructor(
 		private _auth: AuthService,
 		private _dealer: DealerService,
 		private _feed: FeedService,
-		private _form: FormBuilder,
-		private _dialog: MatDialog,
 		private _router: Router,
 		private _route: ActivatedRoute
 	) { }
 
-	ngOnInit() {
+	ngOnInit(): void {
 		this.route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		this.getParamOfActivatedRoute();
@@ -89,171 +66,35 @@ export class GenerateFeedComponent implements OnInit {
 		}
 	}
 
-	/** Enable Edit Mode if an ID is passed on init */
-	private getParamOfActivatedRoute() {
-		this._route.paramMap.subscribe(
-			(data: any) => {
-				if (data.params.data) {
-					this.editing = true;
-					this.title = 'Edit Generated Feed';
-					this.getGeneratedFeedById(data.params.data);
-				} else {
-					if (!this.is_dealer) {
-						this.getDealers();	
-					}
-				}
-			}
-		)
+	ngOnDestroy(): void {
+		this.subscription.unsubscribe();
 	}
 
-	/** Get feed info of passed query param
-	 *  @param {string} data ID from URL
-	 */
-	private getGeneratedFeedById(id: string) {
-		this._feed.get_generated_feed_by_id(id).subscribe(
-			(data: API_GENERATED_FEED) => {
-				console.log(data);
-				this.fetched_feed = data;
-				this.prepareFeedInfoForm();
-				this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
-			}
-		)
-	}
+	/** Prepare Feed Info */
+	prepareFeedInfo(e: {feed_title: string, description: string, feed_type: string, assign_to: string, assign_to_id: string}) {
+		this.selected_dealer = e.assign_to_id;
 
-	/** Initialize Angular Material Autocomplete Component */
-	private matAutoFilter(): void {
-		this.filtered_options = this.f.assign_to.valueChanges.pipe(
-			startWith(''),
-			map(value => this.filter(value))
-		)
-	}
-
-	/**
-	 * Filter Method for the Angular Material Autocomplete
-	 * @param {string} value The entered phrase in the field
-	 * @returns {dealerId: string, businessName: string} Array of filtered results
- 	 */
-	private filter(value: string): {dealerId: string, businessName: string}[] {
-		const filter_value = value.toLowerCase();
-		const filtered_result = this.dealers.filter(i => i.businessName.toLowerCase().includes(filter_value));
-
-		if (!this.is_dealer) {
-			this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;
-		}
-
-		return filtered_result;
-	}
-
-	/** Get all dealers to display on the auto-complete field. For admin only */
-	private getDealers(): void {
-		this._dealer.export_dealers().subscribe(
-			(data: any) => {
-				this.dealers = data;
-				this.prepareFeedInfoForm();
-				this.matAutoFilter();
-			}, 
-			error => console.log(error)
-		)
-	}
-
-	/** Build Feed Information Form with fields of feed_title, description, assign_to */
-	private prepareFeedInfoForm(): void {
-		if (this.editing) {
-			this.new_feed_form = this._form.group(
-				{
-					feed_title: [this.fetched_feed.feedTitle, Validators.required],
-					description: [this.fetched_feed.description],
-					assign_to: [{
-						value: this.fetched_feed.dealer.businessName,
-						disabled: true
-					}, Validators.required],
-				}
-			)
-
-			this.selected_dealer = this.fetched_feed.dealerId;
-			
-			this.sortableJSInit();
-		} else {
-			this.new_feed_form = this._form.group(
-				{
-					feed_title: ['', Validators.required],
-					description: ['',],
-					feed_type: ['', Validators.required],
-					assign_to: [{
-						value: '',
-						disabled: this.is_dealer ? true : false
-					}, Validators.required],
-				}
-			)
+		this.feed_info = {
+			dealerId: this.selected_dealer,
+			feedTitle: e.feed_title,
+			description: e.description,
+			createdBy: this._auth.current_user_value.user_id,
+			feedId: this.editing ? this.fetched_feed.feedId : null,
+			feedTypeId: e.feed_type
 		}
 	}
 
-	/** New Feed Form Control Getter */
-	get f() {
-		return this.new_feed_form.controls;
+	/** Construct Generated Feed Payload to be sent to API */
+	structureFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
+		this.generated_feed = new GenerateFeed(
+			this.feed_info,
+			feed_data.globalSettings,
+			this.structureFeedContents(feed_data.feedItems)
+		)
 	}
 
-	/**
-	 * Structure the Feed Items Sequence
-	 * @param {API_CONTENT[]} data The Feed Items
-	 */
-	private structureFeedItems(data: API_CONTENT[]): void {
-		data.forEach(
-			(f: API_CONTENT) => {
-				this.feed_items.push(
-					new FeedItem(
-						{
-							heading: 'Click Here To Change Heading',
-							duration: 5,
-							paragraph: ''
-						},
-						{
-							content_id: f.contentId,
-							filename: f.title,
-							filetype: f.fileType,
-							preview_url: f.previewThumbnail,
-							file_url: `${f.url}${f.fileName}`
-						}
-					)
-				)
-			}
-		);
-	}
-
-	/** Sortable JS Plugin Initialization*/
-	private sortableJSInit(): void {
-
-		const set = (sortable) => {
-			let sorted_feed_items = [];
-			
-			sortable.toArray().forEach(i => {
-				this.feed_items.forEach(f => {
-					if (i == f.image.content_id) {
-						sorted_feed_items.push(f)
-					}
-				})
-			})
-			
-			sorted_feed_items;
-			this.feed_items = sorted_feed_items;
-		}
-
-		setTimeout(() => {
-			new Sortable(this.draggables.nativeElement, {
-				swapThreshold: 1,
-				sort: true,
-				animation: 500,
-				ghostClass: 'dragging',
-				scrollSensitivity: 200,
-				multiDrag: true,
-				selectedClass: 'selected',
-				fallbackOnBody: true,
-				forceFallback: true,
-				group: 'feed_content_items',
-				fallbackTolerance: 10,
-				store: { set }
-			});
-		}, 0)
+	setSelectedFeedType(feedTypeId: string) {
+		return this.feed_types.filter(i => i.feedTypeId === feedTypeId)[0].name
 	}
 
 	/**
@@ -277,6 +118,51 @@ export class GenerateFeedComponent implements OnInit {
 		})
 
 		return feed_contents;
+	}
+
+	/** Enable Edit Mode if an ID is passed on init */
+	private getParamOfActivatedRoute() {
+		this._route.paramMap.subscribe(
+			(data: any) => {
+				if (data.params.data) {
+					this.editing = true;
+					this.title = 'Edit Generated Feed';
+					this.getGeneratedFeedById(data.params.data);
+				} else {
+					if (!this.is_dealer) {
+						this.getSelectFieldData();	
+					}
+				}
+			}
+		)
+	}
+
+	/** ForkJoin: API Call on Dealers and Feed Type to supply data on select fields */
+	private getSelectFieldData() {
+		const observables = [ this._dealer.export_dealers(), this._feed.get_feed_types() ];
+		this.subscription.add(
+			forkJoin(observables).subscribe(
+				([dealers, feedTypes]) => {
+					this.dealers = dealers;
+					this.feed_types = feedTypes;
+				},
+				error => console.log('Error Getting Dealers and FeedTypes', error)
+			)
+		)
+	}
+
+	/** Get feed info of passed query param
+	 *  @param {string} data ID from URL
+	 */
+	private getGeneratedFeedById(id: string) {
+		this.subscription.add(
+			this._feed.get_generated_feed_by_id(id).subscribe(
+				(data: API_GENERATED_FEED) => {
+					this.fetched_feed = data;
+					this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
+				}
+			)
+		)
 	}
 
 	/**
@@ -306,80 +192,37 @@ export class GenerateFeedComponent implements OnInit {
 		)
 	}
 
-	/** Apply Set Duration a Field to All Items
-	 *  @param {number} duration Duration set from UI
-	 */
-	applyDurationToAll(duration: number) {
-		this.feed_items.forEach(
-			i => {
-				i.context.duration = duration || 5;
-			}
-		)
-
-		this.apply_to_all_btn_status = !this.apply_to_all_btn_status;
-	}
-
-	/** Construct Generated Feed Payload to be sent to API */
-	structureFeedToGenerate(): void {
-		this.generated_feed = new GenerateFeed(
-			{
-				dealerId: this.selected_dealer,
-				feedTitle: this.f.feed_title.value,
-				description: this.f.description.value,
-				createdBy: this._auth.current_user_value.user_id,
-				feedId: this.editing ? this.fetched_feed.feedId : null
-			},
-			this.structureFeedContents(this.feed_items)
-		)
-	}
-
-	/** Remove X-ed Feed Item 
-	 * @param {any} f Feed Item X-ed on UI
-	*/
-	removeFeedItem(f: any) {
-		this.feed_items = this.feed_items.filter(i => i !== f);
-	}
-
 	/** POST Request to API with Generated Feed Payload*/
 	saveGeneratedFeed(): void {
 		this.saving = true;
 
+		console.log('Generated Feed', this.generated_feed)
+
 		if (!this.editing) {
-			this._feed.generate_feed(this.generated_feed).subscribe(
-				data => {
-					console.log(data);
-					this._router.navigate([`/${this.route}/feeds`])
-				},
-				error => {
-					console.log(error);
-				}
+			this.subscription.add(
+				this._feed.generate_slide_feed(this.generated_feed).subscribe(
+					data => {
+						console.log(data);
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
 			)
 		} else {
-			this._feed.edit_generated_feed(this.generated_feed).subscribe(
-				data => {
-					console.log(data);
-					this._router.navigate([`/${this.route}/feeds`])
-				},
-				error => {
-					console.log(error);
-				}
+			this.subscription.add(
+				this._feed.edit_generated_feed(this.generated_feed).subscribe(
+					data => {
+						console.log(data);
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
 			)
 		}
-	}
-
-	/** Open Media Library where contents are assigned to selected dealer */
-	openMediaLibraryModal(): void {
-		let dialog = this._dialog.open(FeedMediaComponent, {
-			width: '1024px',
-			data: this.selected_dealer
-		})
-
-		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
-			if (data && data.length > 0) {
-				this.structureFeedItems(data);
-				this.sortableJSInit();
-			}
-		})
 	}
 
 	/**

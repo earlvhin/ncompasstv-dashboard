@@ -192,15 +192,15 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?search=`+`${key}`, this.httpOptions);
 	}
 
-	// {
-	// 	"playlistContentId": "8a26882a-bf82-40d7-b8a1-b6e037459d7a",
-	// 		"frequency":"3",
-	// 		"playlistId":"4d215cff-db25-4362-953b-a3720da90c33"
-	// 	}
-
 	set_frequency(frequency: number, playlistContentId: string, playlistId: string) {
 		const url = `${environment.base_uri}${environment.update.set_content_frequency}`;
 		const body = { frequency, playlistContentId, playlistId };
+		return this._http.post(url, body, this.httpOptions);
+	}
+
+	update_play_credits(playlistContentId: string, credits = 100) {
+		const url = `${environment.base_uri}${environment.update.play_credits}`;
+		const body = { playlistContentId, credits };
 		return this._http.post(url, body, this.httpOptions);
 	}
 

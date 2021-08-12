@@ -32,3 +32,27 @@
         font-size: 20px;
     }
 }
+
+.color-picker.open {
+    left: 30% !important;
+    top: 10% !important; 
+}
+
+.color-showcase {
+    height: 20px;
+    width: 20px;
+    top: 5px;
+    right: 15px;
+}
+
+.upload-button {
+    position: absolute;
+    right: -13px;
+    top: -26px;
+    height: 60px;
+    width: 60px;
+    border: none;
+    background: gray;
+    color: white;
+    z-index: 7;
+}
