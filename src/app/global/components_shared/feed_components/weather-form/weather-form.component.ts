@@ -114,6 +114,8 @@ export class WeatherFormComponent implements OnInit {
 		)
 
 		this.weather_form = this._form.group(form_group_obj)
+
+		this.f.daysToDisplay.setValidators([Validators.min(1), Validators.max(5)])
 	}
 
 	/** On Color Picker Field Changed */

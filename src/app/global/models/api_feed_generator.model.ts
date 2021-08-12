@@ -94,7 +94,7 @@ export class GenerateWeatherFeed {
     feeds: FEED_INFO;
     feedWeather: WEATHER_FEED_STYLE_DATA
 
-    constructor(feeds: FEED_INFO, feedWeather: WEATHER_DATA){
+    constructor(feeds: FEED_INFO, feedWeather: WEATHER_FEED_STYLE_DATA){
         this.feeds = feeds;
         this.feedWeather = feedWeather;
     }
@@ -105,15 +105,7 @@ export type WEATHER_FEED_STYLE_DATA = {
     bannerContentId: string,
     boxBackgroundColor: string,
     daysFontColor: string,
-    numberDay: number,
-    zipCode: string
-}
-
-export type WEATHER_DATA = {
-    backgroundContentId: string,
-    bannerContentId: string,
-    boxBackgroundColor: string,
-    daysFontColor: string,
+    fontFamily: string,
     numberDay: number,
     zipCode: string
 }

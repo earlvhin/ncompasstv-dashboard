@@ -9,17 +9,25 @@
         <input matInput formControlName="description">
     </mat-form-field>
 
-    <mat-form-field class="full-width" appearance="fill">
+    <mat-form-field class="full-width" appearance="fill" *ngIf="editing; else default">
         <mat-label>Feed Type</mat-label>
         <mat-select formControlName="feed_type" [(ngModel)]="fetched_feed.feedType.feedTypeId">
-            <mat-option *ngIf="editing" selected [value]="fetched_feed.feedType.feedTypeId">
+            <mat-option selected [value]="fetched_feed.feedType.feedTypeId">
                 {{ fetched_feed.feedType.name }} - <small>{{ fetched_feed.feedType.description }}</small>
-            </mat-option>
-            <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
-                {{ f.name }} - <small>{{ f.description}}</small>
             </mat-option>
         </mat-select>
     </mat-form-field>
+
+    <ng-template #default>
+        <mat-form-field class="full-width" appearance="fill" *ngIf="!editing">
+            <mat-label>Feed Type</mat-label>
+            <mat-select formControlName="feed_type">
+                <mat-option *ngFor="let f of feed_types" [value]="f.feedTypeId">
+                    {{ f.name }} - <small>{{ f.description}}</small>
+                </mat-option>
+            </mat-select>
+        </mat-form-field>
+    </ng-template>
 
     <mat-form-field class="full-width" appearance="fill">
         <mat-label>Assign to Dealer</mat-label>

@@ -73,7 +73,12 @@ export class FeedService {
 	}
 	
 	create_weather_feed_demo(weather_feed_style: WEATHER_FEED_STYLE_DATA) {
-		return this._http.post(`${environment.base_uri}${environment.create.api_new_weather_feed_demo}`, weather_feed_style, this.httpOptions);
+		return this._http.get(
+			`${environment.base_uri}${environment.create.api_new_weather_feed_demo}?
+			backgroundContentId=${weather_feed_style.bannerContentId}&
+			bannerContentId=${weather_feed_style.bannerContentId}$
+			daysFontColor`, 
+			this.httpOptions);
 	}
 
 	// get_feed_screenshot(url) {

@@ -2,7 +2,7 @@ import { Component, Input, OnInit} from '@angular/core';
 import { Observable, forkJoin, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-import { API_GENERATED_FEED, GenerateFeed, GenerateWeatherFeed, WEATHER_DATA } from '../../models/api_feed_generator.model'; 
+import { API_GENERATED_FEED, GenerateFeed, GenerateWeatherFeed, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model'; 
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -95,7 +95,7 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	/** Construct Generated Weather Feed Payload to be sent to API */
-	structureWeatherFeedToGenerate(feed_data: WEATHER_DATA): void {
+	structureWeatherFeedToGenerate(feed_data: WEATHER_FEED_STYLE_DATA): void {
 		this.generated_weather_feed = new GenerateWeatherFeed(
 			this.feed_info,
 			feed_data
@@ -236,6 +236,8 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	saveGeneratedWeatherFeed(): void {
+		this.saving = true;
+
 		this.subscription.add(
 			this._feed.generate_feed(this.generated_weather_feed, 'weather').subscribe(
 				data => {

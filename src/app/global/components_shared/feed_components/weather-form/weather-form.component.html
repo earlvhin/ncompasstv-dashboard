@@ -40,6 +40,6 @@
             </div>
         </div>
 
-        <button mat-button mat-raised class="theme-btn" matStepperNext (click)="generateWeatherFeed()">Next <span class="fas fa-long-arrow-right"></span></button>
+        <button mat-button mat-raised class="theme-btn" matStepperNext [disabled]="!weather_form.valid" (click)="generateWeatherFeed()">Next <span class="fas fa-long-arrow-right"></span></button>
     </form>
 </div>

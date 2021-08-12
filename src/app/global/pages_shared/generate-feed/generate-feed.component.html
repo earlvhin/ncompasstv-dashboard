@@ -65,31 +65,30 @@
                             </div>
     
                             <div class="row justify-content-center" *ngIf="selected_index === 2">
-                                <div class="col-lg-8 position-relative">
-
+                                <div class="col-lg-8 position-relative text-center">
                                     <div class="loading-overlay" *ngIf="saving">
                                         <app-spinner [diameter]="70"></app-spinner>
                                     </div>
 
                                     <!-- Begin: Slide Feed Demo -->
-                                    <app-feed-demo 
-                                    *ngIf="generated_slide_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'"
-                                    [global_settings]="generated_slide_feed.feedGlobalSettings"
-                                    [feed_items]="feed_items"></app-feed-demo>
+                                    <ng-container *ngIf="generated_slide_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'">
+                                        <app-feed-demo 
+                                        [global_settings]="generated_slide_feed.feedGlobalSettings"
+                                        [feed_items]="feed_items"></app-feed-demo>
+
+                                        <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedSlideFeed()">Save Slide Feed</button>
+                                    </ng-container>
                                     <!-- End: Slide Feed Demo -->
 
                                     <!-- Begin: Weather Feed Demo -->
-                                    <app-weather-demo
-                                    *ngIf="generated_weather_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'"
-                                    [weather_data]="generated_weather_feed">
-                                    </app-weather-demo>
-                                    <!-- End: Weather Feed Demo -->
+                                    <ng-container *ngIf="generated_weather_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'">
+                                        <app-weather-demo
+                                        [weather_data]="generated_weather_feed">
+                                        </app-weather-demo>
 
-                                    <button *ngIf="feed_items.length > 0" mat-button mat-raised-button class="theme-btn mt-4" 
-                                    (click)="setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed' ? saveGeneratedSlideFeed() : saveGeneratedWeatherFeed()" 
-                                    [disabled]="saving">
-                                        Save
-                                    </button>
+                                        <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedWeatherFeed()">Save Weather Feed</button>
+                                    </ng-container>
+                                    <!-- End: Weather Feed Demo -->
                                 </div>
                             </div>
                         </div>

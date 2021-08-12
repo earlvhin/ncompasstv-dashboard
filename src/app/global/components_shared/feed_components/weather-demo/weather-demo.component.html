@@ -1,3 +1,6 @@
-<div class="weather-demo">
-    Weather
+<div class="weather-demo text-center">
+    <div class="spinner-display">
+        <app-spinner [diameter]="70"></app-spinner>
+    </div>
+    <img class="w-100" [src]="weather_demo_url | sanitize" [alt]="Demo_URL">
 </div>
