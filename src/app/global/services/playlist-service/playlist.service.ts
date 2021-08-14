@@ -78,7 +78,7 @@ export class PlaylistService {
 	}
 
 	get_playlist_by_dealer_id_v2(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist_by_dealer_id_table}?dealerId=${id}&pageSize=0`, this.httpOptions)
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist_by_dealer_id_table}?dealerId=${id}&pageSize=0`, this.httpOptions);
 	}
 
 	get_playlist_by_id(id) {

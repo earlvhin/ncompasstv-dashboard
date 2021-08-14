@@ -1,9 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs';
-import * as io from 'socket.io-client';
 import { MatDialog } from '@angular/material';
+import { Subscription, Observable, Subject } from 'rxjs';
+import * as io from 'socket.io-client';
+
 import { ScreenService } from '../../services/screen-service/screen.service';
 import { PlaylistService } from '../../services/playlist-service/playlist.service';
 import { AuthService } from '../../services/auth-service/auth.service';
@@ -20,15 +22,16 @@ import { API_TEMPLATE } from '../../models/api_template.model';
 import { ScreenLicenseComponent } from '../../components_shared/screen_components/screen-license/screen-license.component';
 import { CloneScreenComponent } from '../../components_shared/screen_components/clone-screen/clone-screen.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Router } from '@angular/router';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { LicenseService } from '../../services/license-service/license.service';
 import { RoleService } from '../../services/role-service/role.service';
 import { UnassignLicenseComponent } from '../../components_shared/screen_components/unassign-license/unassign-license.component';
 import { environment } from 'src/environments/environment';
 import { HelperService } from '../../services';
-
 import { API_LICENSE_PROPS } from 'src/app/global/models';
+import { takeUntil } from 'rxjs/operators';
+import { PAGING } from '../../models/paging.model';
+import { API_PLAYLIST } from '../../models/api_playlists.model';
 
 
 @Component({
@@ -75,6 +78,8 @@ export class SingleScreenComponent implements OnInit {
 	templates: any;
 
 	_socket: any;
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
 		private _auth: AuthService,
@@ -166,6 +171,8 @@ export class SingleScreenComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 		this.subscription.unsubscribe();
 		this._socket.disconnect();
 		this._helper.singleScreenData = null;
@@ -323,23 +330,19 @@ export class SingleScreenComponent implements OnInit {
 	}
 
 	// Get Playlist By Dealer ID
-	getPlaylistByDealer(id) {
-		// this.dealer_playlist$ = this._playlist.get_playlist_by_dealer_id_v2(id);
+	getPlaylistByDealer(id: string | number) {
 
-		// this.dealer_playlist$.subscribe(
-		// 	data => {
-		// 		console.log('DEALER PLAYLISTS', data)
-		// 	}
-		// )
+		this._playlist.get_playlist_by_dealer_id_v2(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { paging: PAGING, playlists: { playlists: API_PLAYLIST[], contents: any }[] }) => {
+					const { entities } = response.paging;
+					const playlists = entities as API_PLAYLIST[];
+					this.dealer_playlist = playlists;
+				}, 
+				error => console.log('Error retrieving playlists by dealer', error)
+			);
 
-		this._playlist.get_playlist_by_dealer_id_v2(id).subscribe(
-			data => {
-				this.dealer_playlist = data.playlists;
-			}, 
-			error => {
-				console.log(error);
-			}
-		)
 	}
 
 	hostSearchBoxTrigger (event) {
