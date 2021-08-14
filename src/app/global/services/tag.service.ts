@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
@@ -9,7 +9,10 @@ import { Tag } from '../models/tag.model';
 })
 export class TagService extends BaseService {
 
-	createTag(tagTypeId: number, tagColor: string, names: string[], owners: string[]) {
+	onRefreshTagsTable = new EventEmitter<void>();
+	onRefreshTagOwnersTable = new EventEmitter<void>();
+	
+	createTag(tagTypeId: number, tagColor: string, names: { name: string, tagColor: string }[], owners: string[]) {
 		const body = { tagTypeId, owners, names, tagColor };
 		return this.postRequest(this.creators.tag, body);
 	}
@@ -29,8 +32,17 @@ export class TagService extends BaseService {
 		return this.postRequest(this.deleters.tag, body);
 	}
 
+	deleteTagByIdAndOwner(tagId: string, ownerId: string) {
+		const url = `${this.deleters.tag_by_id_and_owner}?tagId=${tagId}&ownerId=${ownerId}`;
+		return this.postRequest(url, {});
+	}
+
+	getAllTags() {
+		return this.getRequest(this.getters.tags_get_all);
+	}
+
 	getAllTagTypes() {
-		return this.getRequest(this.getters.all_tag_types);
+		return this.getRequest(this.getters.tag_types_get_all);
 	}
 
 	getAllTagsCount() {
@@ -62,8 +74,8 @@ export class TagService extends BaseService {
 			.map((response: { tags: { owner: any, tagTypeId: string, tags: any[] }[] }) => response.tags);
 	}
 
-	updateTag(tagId: number, name: string) {
-		const body = { tagId, name };
+	updateTag(tagId: number, name: string, tagColor: string) {
+		const body = [{ tagId, name, tagColor }];
 		return this.postRequest(this.updaters.tag, body);
 	}
 

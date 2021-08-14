@@ -110,7 +110,6 @@ export const API_ENDPOINTS = {
 		api_apps_versions: 'playerapp/getappversions',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
-		all_tag_types: 'tag/GetAllTypes',
 		content_by_host_id: 'content/getbyhostid',
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
@@ -124,10 +123,12 @@ export const API_ENDPOINTS = {
 		search_license: 'license/search?searchkey=',
 		search_tags: 'tag/searchtags',
 		tag_types_by_type_id: 'tag/gettagsbytagtypeid?typeid=',
+		tag_types_get_all: 'tag/GetAllTypes',
 		tags_by_id: 'tag/gettagsbyid?tagid=',
 		tags_by_owner_id: 'tag/gettagsbyownerid?ownerid',
 		tags_by_tag_name_and_type: 'tag/gettagsbytagnameandtypeid',
 		tags_count: 'tag/getalltagscount',
+		tags_get_all: 'tag/getall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 	},
 	create: {
@@ -218,6 +219,7 @@ export const API_ENDPOINTS = {
 		api_remove_host_licenses: 'license/unassignhost?force=1',
 		host: 'host/delete',
 		tag: 'tag/delete',
+		tag_by_id_and_owner: 'tag/DeleteByOwnerIdAndTagId',
 		tag_by_owner_id: 'tag/DeleteByOwnerId?ownerid=',
 		user: 'user/delete',
 	}

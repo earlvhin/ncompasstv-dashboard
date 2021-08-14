@@ -40,10 +40,6 @@
 				
 				<!-- TAG NAME FIELD -->
 				<mat-form-field class="full-width">
-					<!-- <mat-label>Tag Name</mat-label>
-					<input matInput formControlName="name" 
-						(keyup.space)="onAddTag($event.target.value)" 
-						(keyup.enter)="onAddTag($event.target.value)"> -->
 
 					<mat-select placeholder="Tag Name" #tagSearchSelect formControlName="selectedTag">
 						<mat-option>
@@ -93,7 +89,7 @@
 				
 				<!-- SUBMIT BUTTON -->
 				<div mat-dialog-actions align="end">
-					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="!isFormValid">Submit</button>
+					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="false">Submit</button>
 				</div>
 			</form>
 		</div>
@@ -101,27 +97,36 @@
 		<!-- PREVIEW SECTION -->
 		<div class="preview-section">
 			<div class="d-flex flex-column">
-				<!-- TAGS LIST -->
-				<div class="pending-tags-container d-flex flex-row align-items-start flex-wrap">
+				<!-- TAGS ROW -->
+				<div class="tags-row d-flex">
 					<h4>Tags:</h4>
 
-					<div *ngFor="let tag of pendingTags; let i = index;" class="tag d-flex align-items-center"
-						[style.backgroundColor]="selectedTagColor">
-						<div class="name">{{ tag }}</div>
-						<div class="remove-btn cursor-pointer" (click)="onRemovePendingTag(i)"><mat-icon>close</mat-icon></div>
+					<!-- TAGS-LIST -->
+					<div class="pending-tags-container d-flex flex-row align-items-start flex-wrap" *ngIf="pendingTags.length > 0">
+						<div *ngFor="let tag of pendingTags; let i = index;" class="tag d-flex align-items-center"
+							[style.backgroundColor]="tag.tagColor">
+							<div class="name">{{ tag.name }}</div>
+							<div class="remove-btn cursor-pointer" (click)="onRemovePendingTag(i)"><mat-icon>close</mat-icon></div>
+						</div>
 					</div>
 				</div>
 				
 				<br>
-				<!-- OWNERS LIST -->
-				<div class="selected-owners-container d-flex flex-row align-items-start flex-wrap">
-					<h4>{{ tagType.name | titlecase }}s: </h4>
 
-					<div *ngFor="let owner of selectedOwners; let i = index;" class="owner d-flex align-items-center">
-						<div class="business-name">{{ owner.displayName }}</div>
-						<div class="remove-btn cursor-pointer" (click)="onRemoveSelectedOwner(i)"><mat-icon>close</mat-icon></div>
+				<!-- OWNERS ROW -->
+				<div class="owners-row d-flex">
+					<h4>{{ tagType.name | titlecase }}s: </h4>
+					
+					<!-- OWNERS LIST -->
+					<div class="selected-owners-container d-flex flex-row align-items-start flex-wrap">
+	
+						<div *ngFor="let owner of selectedOwners; let i = index;" class="owner d-flex align-items-center">
+							<div class="business-name">{{ owner.displayName }}</div>
+							<div class="remove-btn cursor-pointer" (click)="onRemoveSelectedOwner(i)"><mat-icon>close</mat-icon></div>
+						</div>
 					</div>
 				</div>
+
 			</div>
 		</div>
 	</div>

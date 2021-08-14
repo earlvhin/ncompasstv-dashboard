@@ -7,4 +7,5 @@ export * from './license-service/license.service';
 export * from './playlist-service/playlist.service';
 export * from './role-service/role.service';
 export * from './screen-service/screen.service';
+export * from './tag.service';
 export * from './user-service/user.service';

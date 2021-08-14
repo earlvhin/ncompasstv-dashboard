@@ -32,6 +32,5 @@ export class LoginLayoutComponent implements OnInit {
 			);
 		}
 
-		this._router.navigate(['/login']);
 	}
 }

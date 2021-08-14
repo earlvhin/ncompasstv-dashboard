@@ -10,6 +10,8 @@ export * from './api_update-playlist-content.model';
 export * from './api_user-data.model';
 export * from './credits.model';
 export * from './frequency.model';
+export * from './tag.model';
+export * from './tag-type.model';
 export * from './ui_host-license.model';
 export * from './ui_role-definition.model';
 export * from './ui_role_info.model';

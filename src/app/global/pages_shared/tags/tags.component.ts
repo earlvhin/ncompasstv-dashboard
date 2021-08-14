@@ -4,13 +4,10 @@ import { MatDialog } from '@angular/material';
 import { debounceTime, delay, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { CreateTagComponent } from './dialogs/create-tag/create-tag.component';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Tag } from '../../models/tag.model';
-import { TagService } from '../../services/tag.service';
-import { TagType } from '../../models/tag-type.model';
-import { ViewTagComponent } from './dialogs/view-tag/view-tag.component';
-import { AuthService } from '../../services/auth-service/auth.service';
+import { Tag, TagType } from 'src/app/global/models';
+import { CreateTagComponent, EditTagComponent } from './dialogs';
+import { AuthService, TagService,  } from 'src/app/global/services';
+import { TitleCasePipe } from '@angular/common';
 
 @Component({
 	selector: 'app-tags',
@@ -24,27 +21,25 @@ export class TagsComponent implements OnInit, OnDestroy {
 	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
 	isLoadingCount = false;
 	isLoadingTags = false;
+	isLoadingTagOwners = false;
 	isSearchingTags = true;
 	owners: { owner: { displayName: string }, tagTypeId: string, tags: Tag[] }[];
 	searchForm: FormGroup;
-	tags: { name: string, count: number }[] = [];
+	tags: Tag[];
 	tagTypes: TagType[] = [];
 	title = 'Tags';
-	
-	columns = [
-		{ name: '#', class: 'p-3 index-column-width' },
-		{ name: 'Owner', class: 'p-3' },
-		{ name: 'Tags', class: 'p-3' },
-		{ name: 'Actions', class: 'p-3 text-center' }
-	];
 
+	tagsTableSettings = { columns: this.getColumns() };
+	tagOwnersTableSettings = { columns: this.getColumns('tag-owners') };
+	
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _form_builder: FormBuilder,
-		private _tag: TagService
+		private _tag: TagService,
+		private _titlecase: TitleCasePipe
 	) { }
 	
 	ngOnInit() {
@@ -52,17 +47,13 @@ export class TagsComponent implements OnInit, OnDestroy {
 		this.subscribeToOwnerSearch();
 		this.getAllTagTypes();
 		this.getTagsCount();
+		this.getAllTags();
+		this.subscribeToEventEmitters();
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	getOwnerLink(owner: any): string {
-		const ownerId = this.getOwnerId(owner);
-		const currentTagType = `${this.currentTagType.name.toLowerCase()}s`;
-		return `/${this.currentUserRole}/${currentTagType}/${ownerId}`;
 	}
 
 	onAddTag(): void {
@@ -90,7 +81,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 	}
 
 	onViewTag(tagName: string): void {
-		const dialog = this._dialog.open(ViewTagComponent, {
+		const dialog = this._dialog.open(EditTagComponent, {
 			width: '500px',
 			height: '450px',
 			data: { tagName, tagType: this.currentTagType, tagTypes: this.tagTypes },
@@ -108,43 +99,26 @@ export class TagsComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	setTagColor(value: string): string {
-		return value ? value : 'gray';
-	}
-
-	async onDelete(owner: any): Promise<void> {
-
-		const response = await this.openConfirmAPIRequestDialog('delete_all_owner_tags').toPromise();
-
-		if (!response) return;
-
-		const ownerId = this.getOwnerId(owner);
-
-		this._tag.deleteAllTagsFromOwner(ownerId)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.searchTags(),
-				error => console.log('Error retrieving distinct tags', error)
-			);
-	}
-
-	async onDeleteTagFromOwner(tagId: string): Promise<void> {
-	
-		const response = await this.openConfirmAPIRequestDialog('delete_owner_tag').toPromise();
-
-		if (!response) return;
-
-		this._tag.deleteTag([tagId])
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.searchTags(),
-				error => console.log('Error deleting tag', error)
-			);
-
+	get currentUserRole() {
+		return this._auth.current_role;
 	}
 
 	get tagFilter() {
 		return this.tagFilterControl.value;
+	}
+
+	private getAllTags() {
+
+		this.isLoadingTags = true;
+
+		return this._tag.getAllTags()
+			.pipe(takeUntil(this._unsubscribe), map(response => response.tags))
+			.subscribe(
+				response => this.tags = response,
+				error => console.log('Error retrieving all tags', error)
+			)
+			.add(() => this.isLoadingTags = false);
+
 	}
 
 	private getAllTagTypes(): void {
@@ -162,63 +136,49 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	}
 
-	private getOwnerId(owner: any): string {
+	private getColumns(table = '') {
 
-		let result = null;
-		const type = this.currentTagType.name.toLowerCase();
+		let columns = [
+			{ name: '#', class: 'p-3 index-column-width' },
+		];
 
+		switch (table) {
 
-		switch (type) {
-			case 'host':
-			case 'hosts':
-				result = owner.hostId;
-				break;
+			case 'tag-owners':
+				columns.push(
+					{ name: 'Owner', class: 'p-3' },
+					{ name: 'Tags', class: 'p-3' },
+				);
 
-			case 'license':
-			case 'licenses':
-				result = owner.licenseId;
-				break;
-			
-			case 'advertiser':
-			case 'advertisers':
-				result = owner.id;
 				break;
 
 			default:
-				result = owner.dealerId;
+
+				columns.push(
+					{ name: 'Name', class: 'p-3' },
+				);
+
+				break;
 		}
 
-		return result;
+		columns.push({ name: 'Actions', class: 'p-3 text-center' });
+		return columns;
 
 	}
 
 	private getTagsCount(): void {
 
+		this.isLoadingCount = true;
+
 		this._tag.getAllTagsCount()
-			.pipe(takeUntil(this._unsubscribe))
-			.map((response: { tags: any[][] }) => {
-				const filtered = response.tags.filter(tag => tag.length);
-
-				const mapped = filtered.map((tag: { name: string, count: number }[]) => {
-					const { name, count } = tag[0]; 
-					return { name, count };
-				});
-
-				return mapped;
-			})
+			.pipe(takeUntil(this._unsubscribe), map(response => response.tags))
 			.subscribe(
-				(response: { name: string, count: number }[]) => {
-
-					response.forEach(
-						countObj => {
-							const countName = countObj.name.toLowerCase();
-							this.count[countName] = countObj.count;
-						}
-					);
-
+				(response: {}[]) => {
+					response.forEach(data => Object.keys(data).forEach(key => this.count[key.toLowerCase()] = data[key]));
 				},
 				error => console.log('Error retrieving tags count ', error)
-			);
+			)
+			.add(() => this.isLoadingCount = false);
 
 	}
 
@@ -231,39 +191,11 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	}
 
-	private openConfirmAPIRequestDialog(type: string) {
-
-		let data: string;
-		let message: string;
-		let status = 'warning';
-		let return_msg: string;
-		let width = '500px';
-		let height = '350px';
-
-		switch (type) {
-
-			case 'delete_owner_tag':
-				message = 'Delete Tag';
-				data = `Associated ${this.currentTagType.name.toLowerCase()}s will be removed from this tag`;
-				return_msg = 'Confirmed deletion';
-				break;
-
-			case 'delete_all_owner_tags':
-				message = 'Delete Owner Tags';
-				data = `ALL associated tags from ${this.currentTagType.name.toLowerCase()} will be removed`
-				return_msg = 'Confirmed deletion'
-				break;
-		}
-
-		return this._dialog.open(ConfirmationModalComponent, { width, height, data: { status, message, data, return_msg } }).afterClosed();
-
-	}
-
 	private searchTags(keyword = ''): void {
 
 		if (keyword == null) return;
 
-		this.isLoadingTags = true;
+		this.isLoadingTagOwners = true;
 
 		this._tag.searchOwnersByTagType(this.currentTagType.tagTypeId, keyword)
 			.pipe(takeUntil(this._unsubscribe))
@@ -310,10 +242,9 @@ export class TagsComponent implements OnInit, OnDestroy {
 				(response: { owner: any, tagTypeId: string, tags: Tag[] }[]) => this.owners = response,
 				error => console.log('Error retrieving tags by tag type', error)
 			)
-			.add(() => this.isLoadingTags = false);
+			.add(() => this.isLoadingTagOwners = false);
 
 	}
-
 
 	private subscribeToOwnerSearch(): void {
 		
@@ -329,8 +260,16 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	}
 
-	protected get currentUserRole() {
-		return this._auth.current_role;
+	private subscribeToEventEmitters(): void {
+
+		this._tag.onRefreshTagsTable
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.getAllTags());
+
+		this._tag.onRefreshTagOwnersTable
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.searchTags());
+
 	}
 
 	protected get tagFilterControl() {
