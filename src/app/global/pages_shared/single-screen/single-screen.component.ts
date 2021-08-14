@@ -4,35 +4,22 @@ import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { Subscription, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
-import { ScreenService } from '../../services/screen-service/screen.service';
-import { PlaylistService } from '../../services/playlist-service/playlist.service';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { API_SINGLE_SCREEN, API_SCREEN_TEMPLATE_ZONE, API_SCREEN_ZONE_PLAYLISTS_CONTENTS } from '../../models/api_single-screen.model';
-import { UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS } from '../../models/ui_single-screen.model';
-import { API_CONTENT } from '../../models/api_content.model';
-import { UI_CONTENT } from '../../models/ui_content.model';
-import { API_SINGLE_PLAYLIST } from '../../models/api_single-playlist.model';
-import { EDIT_SCREEN_ZONE_PLAYLIST, EDIT_SCREEN_INFO } from '../../models/api_edit-screen.model';
-import { HostService } from '../../services/host-service/host.service';
-import { TemplateService } from '../../services/template-service/template.service';
-import { API_HOST } from '../../models/api_host.model';
-import { API_TEMPLATE } from '../../models/api_template.model';
 import { ScreenLicenseComponent } from '../../components_shared/screen_components/screen-license/screen-license.component';
 import { CloneScreenComponent } from '../../components_shared/screen_components/clone-screen/clone-screen.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-import { LicenseService } from '../../services/license-service/license.service';
-import { RoleService } from '../../services/role-service/role.service';
 import { UnassignLicenseComponent } from '../../components_shared/screen_components/unassign-license/unassign-license.component';
-import { environment } from 'src/environments/environment';
-import { HelperService } from '../../services';
-import { API_LICENSE_PROPS } from 'src/app/global/models';
-import { takeUntil } from 'rxjs/operators';
-import { PAGING } from '../../models/paging.model';
-import { API_PLAYLIST } from '../../models/api_playlists.model';
 
+import { environment } from 'src/environments/environment';
+
+import { API_CONTENT, API_HOST, API_LICENSE_PROPS, API_PLAYLIST, API_SCREEN_TEMPLATE_ZONE, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
+	API_SINGLE_PLAYLIST, API_SINGLE_SCREEN, API_TEMPLATE,  EDIT_SCREEN_ZONE_PLAYLIST, EDIT_SCREEN_INFO, PAGING, UI_CONTENT, 
+	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS } from 'src/app/global/models';
+
+import { AuthService, HelperService, HostService, LicenseService, PlaylistService, RoleService, 
+	ScreenService, TemplateService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-single-screen',
