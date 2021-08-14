@@ -9,6 +9,7 @@ import { FeedItem } from '../../../../global/models/ui_feed_item.model';
 
 export class FeedDemoComponent implements OnInit {
 	@Input() feed_items: FeedItem[] = [];
+	@Input() global_settings: { overlay: string, fontColor: string, fontFamily: string }
 
 	image: string;
 	heading: string;

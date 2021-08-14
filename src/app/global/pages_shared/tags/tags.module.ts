@@ -1,25 +1,27 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { TagsComponent } from './tags.component';
+import { CommonModule, TitleCasePipe } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
 import { AdministratorModule } from 'src/app/role-pages/administrator/administrator.module';
 import { GlobalModule } from '../../global.module';
-import { RouterModule } from '@angular/router';
-import { CreateTagComponent } from './dialogs/create-tag/create-tag.component';
-import { ViewTagComponent } from './dialogs/view-tag/view-tag.component';
+import { TagsComponent } from './tags.component';
+import { CreateTagComponent, EditTagComponent } from './dialogs';
+import { TagsTableComponent } from './components/tags-table/tags-table.component';
 
 const DIALOGS = [
 	CreateTagComponent,
-	ViewTagComponent,
+	EditTagComponent,
 ];
 
 @NgModule({
-	declarations: [ TagsComponent, DIALOGS ],
+	declarations: [ TagsComponent, DIALOGS, TagsTableComponent ],
 	entryComponents: [ DIALOGS ],
 	imports: [
 		AdministratorModule,
 		GlobalModule,
 		CommonModule,
 		RouterModule	
-	]
+	],
+	providers: [ TitleCasePipe ]
 })
 export class TagsModule { }

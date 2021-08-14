@@ -53,6 +53,7 @@ export const API_ENDPOINTS = {
 		api_get_feeds_total: 'feed/gettotal',
 		api_get_feeds_by_dealer: 'feed/getbydealerid',
 		api_get_feed_by_id: 'feed/getfeedbycontentid?contentid=',
+		api_get_feed_types: 'feedtype/getall',
 		api_get_host_by_dealer: 'host/getbydealer?dealerid=',
 		api_get_host_for_dealer: 'host/gethostbydealer?dealerid=',
 		api_get_host_total: 'host/gettotal',
@@ -60,6 +61,7 @@ export const API_ENDPOINTS = {
 		api_get_host_by_id: 'host/getbyid?hostid=',
 		api_get_host_by_id_optimized: 'host/getbydealerwithtotal?dealerid=',
 		api_get_host_licenses_by_state: 'host/getlicensesperstate',
+		api_get_host_licenses_by_state_details: 'host/getdealershostslicensesperstate?state=',
 		api_get_host_report: 'host/getaddedreport',
 		api_get_hosts: 'host/getall',
 		api_get_licenses: 'license/getall',
@@ -108,7 +110,6 @@ export const API_ENDPOINTS = {
 		api_apps_versions: 'playerapp/getappversions',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
-		all_tag_types: 'tag/GetAllTypes',
 		content_by_host_id: 'content/getbyhostid',
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
@@ -122,10 +123,12 @@ export const API_ENDPOINTS = {
 		search_license: 'license/search?searchkey=',
 		search_tags: 'tag/searchtags',
 		tag_types_by_type_id: 'tag/gettagsbytagtypeid?typeid=',
+		tag_types_get_all: 'tag/GetAllTypes',
 		tags_by_id: 'tag/gettagsbyid?tagid=',
 		tags_by_owner_id: 'tag/gettagsbyownerid?ownerid',
 		tags_by_tag_name_and_type: 'tag/gettagsbytagnameandtypeid',
 		tags_count: 'tag/getalltagscount',
+		tags_get_all: 'tag/getall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 	},
 	create: {
@@ -137,6 +140,7 @@ export const API_ENDPOINTS = {
 		api_new_dealer: 'dealer/create',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
+		api_new_weather_feed_demo: 'feed/preview/demo/weather',
 		api_new_host: 'host/create',
 		api_new_host_place: 'host/createhost',
 		api_new_license:'license/create?',
@@ -162,6 +166,7 @@ export const API_ENDPOINTS = {
 		filestack_api_key: 'ALjKIdQzT1uQvACcqMCnQz',
 		filestack_policy: 'eyJjYWxsIjpbIndyaXRlIiwicmVtb3ZlIl0sImV4cGlyeSI6MTYxMjAyMjQwMH0',
 		filestack_signature: '49306a4d1945bffbb381dd90b38be3a69230b2f473543d3d73440c77eeab730d',
+		filestack_screenshot: 'https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=mode:window,height:1080,width:1920/resize=width:600/'
 	},
 	update: {
 		account_permission: 'account/updatepermission',
@@ -214,6 +219,7 @@ export const API_ENDPOINTS = {
 		api_remove_host_licenses: 'license/unassignhost?force=1',
 		host: 'host/delete',
 		tag: 'tag/delete',
+		tag_by_id_and_owner: 'tag/DeleteByOwnerIdAndTagId',
 		tag_by_owner_id: 'tag/DeleteByOwnerId?ownerid=',
 		user: 'user/delete',
 	}

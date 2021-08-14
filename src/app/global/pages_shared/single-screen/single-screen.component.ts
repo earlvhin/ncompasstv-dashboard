@@ -3,7 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { Subscription, Observable, Subject } from 'rxjs
+import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import { ScreenService } from '../../services/screen-service/screen.service';
@@ -29,7 +30,6 @@ import { UnassignLicenseComponent } from '../../components_shared/screen_compone
 import { environment } from 'src/environments/environment';
 import { HelperService } from '../../services';
 import { API_LICENSE_PROPS } from 'src/app/global/models';
-import { takeUntil } from 'rxjs/operators';
 import { PAGING } from '../../models/paging.model';
 import { API_PLAYLIST } from '../../models/api_playlists.model';
 
@@ -78,7 +78,7 @@ export class SingleScreenComponent implements OnInit {
 	templates: any;
 
 	_socket: any;
-
+	
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
@@ -343,6 +343,14 @@ export class SingleScreenComponent implements OnInit {
 				error => console.log('Error retrieving playlists by dealer', error)
 			);
 
+		this._playlist.get_playlist_by_dealer_id_v2(id).subscribe(
+			data => {
+				this.dealer_playlist = data.playlists;
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
 	}
 
 	hostSearchBoxTrigger (event) {

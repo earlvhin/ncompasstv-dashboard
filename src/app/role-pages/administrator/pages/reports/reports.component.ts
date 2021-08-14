@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, AfterContentChecked } from '@angular/core';
 import { HostsTabComponent } from '../../../../global/components_shared/reports_components/hosts-tab/hosts-tab.component';
 
 
@@ -11,5 +11,13 @@ import { HostsTabComponent } from '../../../../global/components_shared/reports_
 export class ReportsComponent implements OnInit {
     title: string = "Reports";
     
+    constructor(
+        private cdr: ChangeDetectorRef,
+    ) {}
     ngOnInit(){}
+
+
+    ngAfterContentChecked() : void {
+        this.cdr.detectChanges();
+    }
 }

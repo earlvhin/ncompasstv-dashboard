@@ -4,14 +4,11 @@ import { MatDialog, MatDialogRef, MatSelect, MAT_DIALOG_DATA } from '@angular/ma
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { Tag, TagType } from 'src/app/global/models';
+
+import { AdvertiserService, HostService, LicenseService, TagService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { HostService } from 'src/app/global/services/host-service/host.service';
-import { LicenseService } from 'src/app/global/services/license-service/license.service';
-import { Tag } from 'src/app/global/models/tag.model';
-import { TagService } from 'src/app/global/services/tag.service';
-import { TagType } from 'src/app/global/models/tag-type.model';
 
 @Component({
 	selector: 'app-create-tag',
@@ -32,7 +29,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	isSearching = false
 	licenses = [];
 	ownerSearchSettings = { label: '', placeholder: '', };
-	pendingTags: string[] = [];
+	pendingTags: { name: string, tagColor: string }[] = [];
 	searchTagsResult: Tag[];
 	selectedTagColor: string;
 	tagName: string;
@@ -76,11 +73,14 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		this.setCtrlValue('selectedTag', null);
 		this.setCtrlValue('tagName', null);
 
-		if (!name || name.length <= 0 || this.pendingTags.includes(name)) return;
+		const pendingTagNames = this.pendingTags.map(tag => tag.name);
+
+		if (!name || name.length <= 0 || pendingTagNames.includes(name)) return;
 
 		this.ownerMultiSelect.compareWith = (a, b) => a && b && a === b;
-		this.pendingTags.push(name);
+		this.pendingTags.push({ name, tagColor: this.selectedTagColor });
 		this.filteredTags.next(this.searchTagsResult);
+		this.selectedTagColor = null;
 
 	}
 

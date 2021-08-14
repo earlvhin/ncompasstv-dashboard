@@ -1,0 +1,56 @@
+<div class="theme-table">
+	<table class="full-width" *ngIf="!isLoading; else loading;">
+		<thead align="left" class="border-bottom">
+			<tr>
+				<th *ngFor="let column of tableColumns" [class]="column.class">{{ column.name }}</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr *ngFor="let data of tableData; let i = index;">
+				<!-- TAGS DATA -->
+				<ng-container *ngIf="tableType === 'tags'; else tagOwnersData">
+					<td class="p-3">{{ i + 1 }}</td>
+					<td class="p-3">{{ data.name }}</td>
+					<td class="p-3 action-buttons">
+						<mat-icon class="no-select" color="primary" (click)="onOpenDialog('edit_tag', data)">edit</mat-icon>
+						<mat-icon class="no-select text-danger" (click)="onDeleteTag(data.tagId)">delete</mat-icon>
+					</td>
+				</ng-container>
+
+				<ng-template #tagOwnersData>
+					<td class="p-3">{{ i + 1 }}</td>
+					<td class="p-3">
+						<a [routerLink]="[getOwnerLink(data.owner)]">
+							{{ data.owner.displayName }}
+						</a>
+					</td>
+					<td class="p-3">
+						<!-- TAG OWNERS DATA -->
+						<div class="d-flex tags">
+							<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
+								[style.backgroundColor]="setTagColor(tag.tagColor)">
+								<!-- TAG NAME -->
+								<div class="name">												
+									{{ tag.name }} ({{ tag.count }})
+								</div>
+								<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId, data)">
+									<mat-icon class="no-select">close</mat-icon>
+								</div>
+							</div>
+						</div>
+					</td>
+					<td class="p-3 action-buttons">
+						<mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.owner)">delete</mat-icon>
+					</td>
+				</ng-template>
+			</tr>
+
+		</tbody>
+	</table>
+</div>
+
+<ng-template #loading>
+	<div class="py-4">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>

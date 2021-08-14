@@ -11,6 +11,7 @@ import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
+import { BreadcrumbsModule } from "ng6-breadcrumbs";
 import { BulkEditBusinessHoursComponent } from './components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
@@ -56,9 +57,13 @@ import { EditableFieldModalComponent } from './components_shared/page_components
 import { ErrorMessageComponent } from './components_shared/page_components/error-message/error-message.component';
 import { ExpansionPanelComponent } from './components_shared/data_components/expansion-panel/expansion-panel.component';
 import { FailAnimationComponent } from './components_shared/page_components/fail-animation/fail-animation.component';
+import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
+import { FeedInfoComponent } from './components_shared/feed_components/feed-info/feed-info.component';
+import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
 import { FilenamePipe } from './pipes/filename.pipe';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
+import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
@@ -71,13 +76,13 @@ import { LicenseModalComponent } from './components_shared/license_components/li
 import { ListItemComponent } from './components_shared/data_components/list-item/list-item.component';
 import { LittleSpinnerComponent } from './components_shared/page_components/little-spinner/little-spinner.component';
 import { LocatorComponent } from './pages_shared/locator/locator.component';
+import { MatMomentDateModule, MomentDateModule } from '@angular/material-moment-adapter';
 import { MediaComponent } from './components_shared/media_components/media/media.component';
 import { MediaLibraryComponent } from './pages_shared/media-library/media-library.component';
 import { MediaLibraryOptionsComponent } from './components_shared/media_components/media-library-options/media-library-options.component';
 import { MediaModalComponent } from './components_shared/media_components/media-modal/media-modal.component';
 import { MediaPlaywhereComponent } from './components_shared/playlist_components/media-playwhere/media-playwhere.component';
 import { MediaViewerComponent } from './components_shared/media_components/media-viewer/media-viewer.component';
-import { MatMomentDateModule, MomentDateModule } from '@angular/material-moment-adapter';
 import { MonthDayFormatDirective } from './directives/month-day-format/month-day-format.directive';
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
@@ -89,6 +94,7 @@ import { NewTechrepComponent } from './components_shared/user_components/user-fo
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
 import { NewZoneModalComponent } from './components_shared/zone_components/new-zone-modal/new-zone-modal.component';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NohandlePipe } from './pipes/nohandle.pipe';
@@ -127,6 +133,7 @@ import { SingleLicenseComponent } from './pages_shared/single-license/single-lic
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
+import { SliderFormComponent } from './components_shared/feed_components/slider-form/slider-form.component';
 import { SpinnerComponent } from './components_shared/page_components/spinner/spinner.component';
 import { SubstringPipe } from './pipes/substring.pipe';
 import { SuccessAnimationComponent } from './components_shared/page_components/success-animation/success-animation.component';
@@ -143,12 +150,8 @@ import { UserTypeComponent } from './components_shared/user_components/user-type
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
+import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
-import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
-import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
-import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
-import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { BreadcrumbsModule } from "ng6-breadcrumbs";
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -178,8 +181,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
-import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
-import { FeedInfoComponent } from './components_shared/feed_components/feed-info/feed-info.component';
+import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -233,6 +235,7 @@ const ngComponents = [
 	FailAnimationComponent,
 	FeedMediaComponent,
 	FeedDemoComponent,
+	FeedInfoComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
 	FooterComponent, 
@@ -303,6 +306,7 @@ const ngComponents = [
 	SinglePlaylistComponent,
 	SingleScreenComponent,
 	SingleUserComponent,
+	SliderFormComponent,
 	SpinnerComponent,
 	SubstringPipe,
 	SuccessAnimationComponent,
@@ -361,7 +365,7 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
-		FeedInfoComponent
+		WeatherDemoComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

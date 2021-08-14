@@ -62,7 +62,7 @@ export class OptionsComponent implements OnInit {
 		this.setSchedule(this._dialog_data.content);
         this.getTotalLicenses();
 	}
-
+    
 	canEditCreditsField() {
 		const { original_credits } = this.playlist_changes_data;
 		if (!original_credits) return true;

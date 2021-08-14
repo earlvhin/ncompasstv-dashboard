@@ -57,77 +57,79 @@
 
 	<hr class="my-4">
 
-	<div class="dropdown-and-search-section d-flex justify-content-between">
+	<mat-tab-group dynamicHeight animationDuration="0ms">
 
-		<!-- TAG TYPES DROPDOWN -->
-		<div class="tag-types-select-container">
-			<mat-form-field>
-				<mat-label>Select Tag Type</mat-label>
-				<mat-select (selectionChange)="onSelectTagType($event.value)" [(ngModel)]="currentTagType">
-					<mat-option *ngFor="let type of tagTypes" [value]="type">
-						{{ type.name }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
-		</div>
-
-		<!-- SEARCH FIELD -->
-		<div class="search-container">
-
-			<form [formGroup]="searchForm">
-				<mat-form-field class="full-width" *ngIf="!isLoadingTags">
-					<mat-label>Search Tags/Owners...</mat-label>
-					<input matInput formControlName="tagFilter">
-				</mat-form-field>
-			</form>
-
-		</div>
-
-	</div>
-
-	<!-- TAGS TABLE -->
-	<div class="row">
-		<div class="col-lg">
-			<mat-card>
-				<div class="theme-table">
-					<table class="full-width" *ngIf="!isLoadingTags; else loading;">
-						<thead align="left" class="border-bottom">
-							<tr>
-								<th *ngFor="let column of columns" [class]="column.class">{{ column.name }}</th>
-							</tr>
-						</thead>
-						<tbody>
-							<!-- OWNERS -->
-							<tr *ngFor="let data of owners; let i = index;">
-								<td class="p-3">{{ i + 1 }}</td>
-								<td class="p-3">
-									<a [routerLink]="[getOwnerLink(data.owner)]">
-										{{ data.owner.displayName }}
-									</a>
-								</td>
-								<td class="p-3">
-									<!-- TAGS -->
-									<div class="d-flex tags">
-										<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
-											[style.backgroundColor]="setTagColor(tag.tagColor)">
-											<!-- TAG NAME -->
-											<div class="name">												
-												{{ tag.name }} ({{ tag.count }})
-											</div>
-											<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId)"><mat-icon>close</mat-icon></div>
-										</div>
-									</div>
-								</td>
-								<td class="p-3 action-buttons">
-									<mat-icon class="no-select text-danger" (click)="onDelete(data.owner)">delete</mat-icon>
-								</td>
-							</tr>
-						</tbody>
-					</table>
+		<!-- TAGS TAB -->
+		<mat-tab label="Tags">
+			<div class="row">
+				<div class="col-lg">
+					<ng-template matTabContent>
+						<mat-card>
+							<app-tags-table
+								[isLoading]="isLoadingTags"
+								[tableColumns]="tagsTableSettings.columns"
+								[tableData]="tags"
+								[currentTagType]="currentTagType"
+								[currentUserRole]="currentUserRole">
+							</app-tags-table>
+						</mat-card>
+					</ng-template>
 				</div>
-			</mat-card>
-		</div>
-	</div>
+			</div>
+		</mat-tab>
+
+		<!-- TAG OWNERS TAB -->
+		<mat-tab label="Owners">
+
+			<ng-template matTabContent>
+				<!-- DROPDOWN AND SEARCH BOX ROW -->
+				<div class="dropdown-and-search-section d-flex justify-content-between">
+	
+					<!-- TAG TYPES DROPDOWN -->
+					<div class="tag-types-select-container">
+						<mat-form-field>
+							<mat-label>Select Tag Type</mat-label>
+							<mat-select (selectionChange)="onSelectTagType($event.value)" [(ngModel)]="currentTagType">
+								<mat-option *ngFor="let type of tagTypes" [value]="type">
+									{{ type.name }}
+								</mat-option>
+							</mat-select>
+						</mat-form-field>
+					</div>
+	
+					<!-- SEARCH FIELD -->
+					<div class="search-container">
+	
+						<form [formGroup]="searchForm">
+							<mat-form-field class="full-width" *ngIf="!isLoadingTags">
+								<mat-label>Search Tags/Owners...</mat-label>
+								<input matInput formControlName="tagFilter">
+							</mat-form-field>
+						</form>
+	
+					</div>
+	
+				</div>
+	
+				<!-- TAG-OWNERS TABLE -->
+				<div class="row">
+					<div class="col-lg">
+						<mat-card>
+							<app-tags-table
+								[tableType]="'tag-owners'"
+								[isLoading]="isLoadingTagOwners"
+								[tableColumns]="tagOwnersTableSettings.columns"
+								[tableData]="owners"
+								[currentTagType]="currentTagType"
+								[currentUserRole]="currentUserRole">
+							</app-tags-table>
+						</mat-card>
+					</div>
+				</div>
+			</ng-template>
+
+		</mat-tab>
+	</mat-tab-group>
 </div>
 
 <ng-template #loading>

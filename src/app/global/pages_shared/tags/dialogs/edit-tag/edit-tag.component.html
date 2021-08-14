@@ -1,0 +1,55 @@
+<div class="p-2" id="editTagComponent">
+	<div class="d-flex align-items-baseline justify-content-between">
+		<div class="title">
+			<h4 class="p-0 col-lg-12">{{ title }}</h4>
+		</div>
+
+		<div class="close-btn">
+			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+				<span class="fas fa-times"></span>
+			</button>
+		</div>
+	</div>
+
+	<br>
+
+	<div class="content">
+		<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+			<div class="fields-container" *ngIf="!isLoading; else loading">
+				<!-- TAG COLOR PICKER -->
+				<mat-form-field class="full-width">
+					<mat-label>Tag Color</mat-label>
+					<input matInput type="text"
+						[(colorPicker)]="selectedTagColor" 
+						[cpAlphaChannel]="'disabled'"
+						[cpDisableInput]="true"
+						(colorPickerChange)="onSelectTagColor(selectedTagColor)" 
+						[style.background]="selectedTagColor"
+						[value]="selectedTagColor">
+				</mat-form-field>
+	
+				<!-- TAG NAME FIELD -->
+				<mat-form-field class="full-width">
+					<mat-label>Tag Name</mat-label>
+					<input matInput formControlName="name">
+				</mat-form-field>
+			</div>
+
+			<!-- SUBMIT BUTTON -->
+			<div mat-dialog-actions align="end">
+				<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" 
+					[disabled]="!form.valid">Submit
+				</button>
+			</div>
+
+		</form>
+	</div>
+
+</div>
+
+<ng-template #loading>
+	<div class="spinner py-4">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
