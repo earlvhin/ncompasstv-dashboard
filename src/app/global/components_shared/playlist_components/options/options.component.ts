@@ -267,7 +267,6 @@ export class OptionsComponent implements OnInit {
 
 		let { from, to, days, playTimeStart, playTimeEnd, type } = content.playlistContentsSchedule;
 
-
 		switch (type) {
 			case 2:
 				const NO_PLAY = 'Do Not Play';

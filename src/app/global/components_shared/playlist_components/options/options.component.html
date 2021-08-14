@@ -93,7 +93,7 @@
 			<div class="play-credits">
 				<mat-form-field class="w-100">
 					<mat-label>Play Credits</mat-label>
-					<input matInput type="number" placeholder="No. of times content will play" min="0" 
+					<input matInput type="number" placeholder="No. of times content will play" min="1" max="1000000" 
 						[(ngModel)]="credits"
 						(change)="onInputCredits()"
 						[disabled]="!canEditCreditsField()">

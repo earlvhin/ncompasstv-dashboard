@@ -340,7 +340,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		}
 
 		if (!original_credits || original_credits.balance === 0) {
-			creditsUpdate = { playlistContentId, credits: content.playlistContentCredits.credits };
+			let { credits } = content.playlistContentCredits;
+			const maxCredits = 1000000;
+
+			if (credits > maxCredits) credits = maxCredits; 
+			creditsUpdate = { playlistContentId, credits };
 		}
 
 		if (this.playlist_changes_data.content) {
@@ -663,10 +667,20 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				let status = 'inactive';
 				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
 				const { type } = schedule;
+				const { playlistContentCredits } = content;
 
+				// no schedule
 				if (!schedule) {
 					content.scheduleStatus = status;
-					return;
+					return content;
+				}
+
+				// credits depleted to 0
+				if (playlistContentCredits) {
+					const { balance } = playlistContentCredits;
+
+					if (balance === 0) content.scheduleStatus = status;
+					return content;
 				}
 
 				switch (type) {
