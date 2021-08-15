@@ -329,15 +329,7 @@ export class SingleScreenComponent implements OnInit {
 				}, 
 				error => console.log('Error retrieving playlists by dealer', error)
 			);
-
-		this._playlist.get_playlist_by_dealer_id_v2(id).subscribe(
-			data => {
-				this.dealer_playlist = data.playlists;
-			}, 
-			error => {
-				console.log(error);
-			}
-		)
+			
 	}
 
 	hostSearchBoxTrigger (event) {
