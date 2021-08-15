@@ -61,15 +61,16 @@
             
             <ng-container>
                 <div class="row w-100 align-items-start">
-                    <div class="col-lg-2 text-center">
+                    <div class="col-lg-3 text-center">
                         <div class="image-wrapper">
+                            <button (click)="changeImageSlide(f)" class="edit-image-btn"><span class="fas fa-edit"></span> <small>change</small></button>
                             <img class="image-w-100 mb-1" [src]="f.image.preview_url" alt="f.image.filename">
                             <div class="overlay" [title]="f.image.filename">
                                 <span class="sm-text font-weight-bold">{{ f.image.filename | filename }}</span>
                             </div>
                         </div>
                     </div>
-                    <div class="col-lg-10">
+                    <div class="col-lg-9">
                         <div class="row">
                             <div class="col-lg-6">
                                 <mat-form-field class="full-width" appearance="fill">

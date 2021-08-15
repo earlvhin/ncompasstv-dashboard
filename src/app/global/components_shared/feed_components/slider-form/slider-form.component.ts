@@ -122,6 +122,27 @@ export class SliderFormComponent implements OnInit {
 		this.slide_global_settings_form.get(form_control_name).setValue(e);
 	}
 
+	/** Change set image of slide item */
+	changeImageSlide(f: FeedItem) {
+		let dialog = this._dialog.open(FeedMediaComponent, {
+			width: '1024px',
+			data: {
+				dealer: this.selected_dealer,
+				singleSelect: true
+			}
+		})
+
+		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
+			if (data && data.length > 0) {
+				f.image.content_id = data[0].contentId,
+				f.image.filename = data[0].title,
+				f.image.filetype = data[0].fileType,
+				f.image.preview_url = data[0].previewThumbnail,
+				f.image.file_url = `${data[0].url}${data[0].fileName}`
+			}
+		})
+	}
+
 	/** Open Media Library where contents are assigned to selected dealer */
 	openMediaLibraryModal(): void {
 		console.log(this.selected_dealer);

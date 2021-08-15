@@ -687,7 +687,7 @@
 													</div>
 													<div>
 														<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
-															<h5 *ngIf="cc.fileType != 'feed'; else is_feed">{{ cc.fileName | filename }}</h5>
+															<h5 *ngIf="cc.fileType != 'feed'; else is_feed" [title]="cc.fileName | nohandle">{{ (cc.fileName | nohandle) | substring:20 }}</h5>
 	
 															<ng-template #is_feed>
 																<h5>{{ cc.title }}</h5>

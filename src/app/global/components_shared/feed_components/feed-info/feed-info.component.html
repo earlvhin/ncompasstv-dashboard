@@ -38,7 +38,7 @@
             matInput
             [matAutocomplete]="auto">
         <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-            <mat-option *ngFor="let option of filtered_options | async" [value]="option.businessName">
+            <mat-option *ngFor="let option of filtered_options | async" [value]="option.dealerId">
                 {{ option.businessName }}
             </mat-option>
         </mat-autocomplete>

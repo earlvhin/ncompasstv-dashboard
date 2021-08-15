@@ -46,7 +46,13 @@ export class FeedInfoComponent implements OnInit {
 		if (!this.editing) {
 			this.feed_info.emit(this.new_feed_form.value)
 		} else {
-			this.feed_info.emit(this.existing);
+			/** Temp workaround (For some reason assign_to_id field value is not reflecting ) */
+			this.feed_info.emit({
+				feed_title: this.f.feed_title.value,
+				description: this.f.description.value,
+				feed_type: this.fetched_feed.feedType.feedTypeId,
+				assign_to_id: this.fetched_feed.dealerId
+			});
 		}
 	}
 
@@ -62,20 +68,11 @@ export class FeedInfoComponent implements OnInit {
 				{
 					feed_title: [this.fetched_feed.feedTitle, Validators.required],
 					description: [this.fetched_feed.description],
-					feed_type: [{
-						value: this.fetched_feed.feedType.feedTypeId,
-						disabled: true
-					},  Validators.required],
-					assign_to: [{
-						value: this.fetched_feed.dealer.businessName,
-						disabled: true
-					}, Validators.required],
+					feed_type: [{value: this.fetched_feed.feedType.feedTypeId, disabled: true},  Validators.required],
+					assign_to: [{value: this.fetched_feed.dealer.businessName, disabled: true}, Validators.required],
 					assign_to_id: [this.fetched_feed.dealer.dealerId, Validators.required]
 				}
 			)
-
-			/** Temp Work Around */
-			this.existing = this.new_feed_form.getRawValue();
 		} else {
 			this.new_feed_form = this._form.group(
 				{
