@@ -183,8 +183,8 @@ export class OptionsComponent implements OnInit {
 		}
 	}
 
-	toggleAll(e) {
-		this.toggle_event.next(e.checked)
+	toggleAll(event) {
+		this.toggle_event.next(event.checked);
 	}
 
 	private setCreditsAndBalance(data: CREDITS) {

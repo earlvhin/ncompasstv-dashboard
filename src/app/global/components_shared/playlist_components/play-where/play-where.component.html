@@ -3,12 +3,12 @@
         <mat-accordion>
             <ng-container *ngFor="let h of host_licenses" class="mb-2">
 				<app-playlist-host *ngIf="blacklist_data"
-				[content_data]="content"
-				[blocklist_data]="blacklist_data"
-				[host_licenses]="h"
-				[toggleEvent]="toggleEvent_child.asObservable()"
-                (blocklist_changes)="blacklistToggle($event)"
-                (whitelisted)="hasWhiteListed($event)">
+					[content_data]="content"
+					[blocklist_data]="blacklist_data"
+					[host_licenses]="h"
+					[toggleEvent]="toggleEvent_child.asObservable()"
+					(blocklist_changes)="blacklistToggle($event)"
+					(whitelisted)="hasWhiteListed($event)">
                 </app-playlist-host>
             </ng-container>
         </mat-accordion>

@@ -140,12 +140,12 @@
 							</div>
 						</div>
 						<app-play-where
-						[toggleEvent]="toggle_event.asObservable()"
-						[content_data]="_dialog_data"
-						(whitelisted)="hasWhiteListed($event)"
-						(blocklist_changes_saved)="saveBlocklistChanges($event)"
-						(blacklist_data_ready)="blacklist_ready=true"
-                        (blacklist_count)="getCount($event)">
+							[toggleEvent]="toggle_event.asObservable()"
+							[content_data]="_dialog_data"
+							(whitelisted)="hasWhiteListed($event)"
+							(blocklist_changes_saved)="saveBlocklistChanges($event)"
+							(blacklist_data_ready)="blacklist_ready=true"
+							(blacklist_count)="getCount($event)">
 						</app-play-where>
 					</div>
 				</div>

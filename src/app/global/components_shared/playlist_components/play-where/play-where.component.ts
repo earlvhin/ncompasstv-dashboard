@@ -66,32 +66,33 @@ export class PlayWhereComponent implements OnInit {
 	 * Important
 	 * Put SCHEMA/MODEL of @param e
 	*/
-	blacklistToggle(e) {
+	blacklistToggle(event: { blocklist_data: API_BLOCKLIST_CONTENT, status: boolean }) {
+
 		// If Toggle is TRUE
-		if  (e.status == true) {
+		if  (event.status == true) {
 			
 			// Add to blacklist array
-			if (this.inBlacklistData(e.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId) == 0) {
-				this.remove_in_blocklist.push({blacklistedContentId: this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId})
+			if (this.inBlacklistData(event.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId) == 0) {
+				this.remove_in_blocklist.push({blacklistedContentId: this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId})
 			}
 
-			if (this.In_add_in_blocklist(e.blocklist_data)) {
-				this.RemoveIn_add_in_blocklist(e.blocklist_data);
+			if (this.In_add_in_blocklist(event.blocklist_data)) {
+				this.RemoveIn_add_in_blocklist(event.blocklist_data);
 			}
 
 		}
 
 		// If Toggle is FALSE
-		if (e.status == false) {
+		if (event.status == false) {
 
 			// Remove in remove_in_blocklist
-			if (this.inBlacklistData(e.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId) > 0) {
-				this.RemoveIn_remove_in_blocklist(this.inBlacklistData(e.blocklist_data)[0].blacklistedContentId)
+			if (this.inBlacklistData(event.blocklist_data).length > 0 && this.In_remove_in_blocklist(this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId) > 0) {
+				this.RemoveIn_remove_in_blocklist(this.inBlacklistData(event.blocklist_data)[0].blacklistedContentId)
 			}
 
 			// Add in add_in_blocklist
-			if (this.inBlacklistData(e.blocklist_data).length == 0) {
-				this.add_in_blocklist.push(e.blocklist_data);
+			if (this.inBlacklistData(event.blocklist_data).length == 0) {
+				this.add_in_blocklist.push(event.blocklist_data);
 			}
 		}
 
