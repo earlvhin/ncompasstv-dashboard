@@ -2,7 +2,7 @@ import { Component, Input, OnInit} from '@angular/core';
 import { Observable, forkJoin, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-import { API_GENERATED_FEED, GenerateFeed, GenerateWeatherFeed, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model'; 
+import { API_GENERATED_FEED, GenerateFeed, GenerateWeatherFeed, SLIDE_GLOBAL_SETTINGS, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model'; 
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -34,6 +34,7 @@ export class GenerateFeedComponent implements OnInit {
 	saving: boolean = false;
 	selected_dealer: string;
 	selected_index: number = 0;
+	slide_global_settings: SLIDE_GLOBAL_SETTINGS;
 	title: string = "Generate Feed";
 	route: string;
 
@@ -69,43 +70,6 @@ export class GenerateFeedComponent implements OnInit {
 
 	ngOnDestroy(): void {
 		this.subscription.unsubscribe();
-	}
-
-	/** Prepare Feed Info */
-	prepareFeedInfo(e: {feed_title: string, description: string, feed_type: string, assign_to: string, assign_to_id: string}) {
-		this.selected_dealer = e.assign_to_id;
-
-		this.feed_info = {
-			dealerId: this.selected_dealer,
-			feedTitle: e.feed_title,
-			description: e.description,
-			createdBy: this._auth.current_user_value.user_id,
-			feedId: this.editing ? this.fetched_feed.feedId : null,
-			feedTypeId: e.feed_type
-		}
-	}
-
-	/** Construct Generated Slide Feed Payload to be sent to API */
-	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
-		this.generated_slide_feed = new GenerateFeed(
-			this.feed_info,
-			feed_data.globalSettings,
-			this.structureFeedContents(feed_data.feedItems)
-		)
-	}
-
-	/** Construct Generated Weather Feed Payload to be sent to API */
-	structureWeatherFeedToGenerate(feed_data: WEATHER_FEED_STYLE_DATA): void {
-		this.generated_weather_feed = new GenerateWeatherFeed(
-			this.feed_info,
-			feed_data
-		)
-	}
-
-	/** Set Selected Feed */
-	setSelectedFeedType(feedTypeId: string) {
-		if (!this.editing) return this.feed_types.filter(i => i.feedTypeId === feedTypeId)[0].name;
-		return this.fetched_feed.feedType.name;
 	}
 
 	/**
@@ -148,14 +112,19 @@ export class GenerateFeedComponent implements OnInit {
 		)
 	}
 
-	/** ForkJoin: API Call on Dealers and Feed Type to supply data on select fields */
+	/** ForkJoin: API Call on Dealers and Feed Type to supply data on Dealer and Feed Type Select Fields */
 	private getSelectFieldData() {
 		const observables = [ this._dealer.export_dealers(), this._feed.get_feed_types() ];
 		this.subscription.add(
 			forkJoin(observables).subscribe(
 				([dealers, feedTypes]) => {
-					this.dealers = dealers;
 					this.feed_types = feedTypes;
+
+					if (this.is_dealer) {
+						this.dealers = dealers.filter(d => d.dealerId === this.selected_dealer)
+					} else {
+						this.dealers = dealers;
+					}
 				},
 				error => console.log('Error Getting Dealers and FeedTypes', error)
 			)
@@ -172,7 +141,14 @@ export class GenerateFeedComponent implements OnInit {
 					console.log(data);
 					this.fetched_feed = data;
 					this.selected_dealer = data.dealerId;
-					this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
+
+
+					/** Please improve this future dev, maybe use enums? :) */
+					if (data.feedType.name === 'Slide Feed') {
+						this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
+					} else {
+						
+					}
 				}
 			)
 		)
@@ -182,6 +158,7 @@ export class GenerateFeedComponent implements OnInit {
 	 * @param data {API_GENERATED_FEED}
 	 */
 	private mapFetchedGeneratedFeedToUI(data: API_GENERATED_FEED) {
+		this.slide_global_settings = data.slideGlobalSettings;
 		data.feedSlides.map(
 			c => {
 				this.feed_items.push(
@@ -204,7 +181,45 @@ export class GenerateFeedComponent implements OnInit {
 		)
 	}
 
-	/** POST Request to API with Generated Feed Payload*/
+	/** Prepare Feed Info */
+	prepareFeedInfo(e: {feed_title: string, description: string, feed_type: string, assign_to: string, assign_to_id: string}) {
+		this.selected_dealer = e.assign_to_id;
+
+		this.feed_info = {
+			dealerId: this.selected_dealer,
+			feedTitle: e.feed_title,
+			description: e.description,
+			createdBy: this._auth.current_user_value.user_id,
+			feedId: this.editing ? this.fetched_feed.feedId : null,
+			feedTypeId: e.feed_type,
+			updatedBy: this.editing ? this._auth.current_user_value.user_id : null
+		}
+	}
+
+	/** Construct Generated Slide Feed Payload to be sent to API */
+	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
+		this.generated_slide_feed = new GenerateFeed(
+			this.feed_info,
+			feed_data.globalSettings,
+			this.structureFeedContents(feed_data.feedItems)
+		)
+	}
+
+	/** Construct Generated Weather Feed Payload to be sent to API */
+	structureWeatherFeedToGenerate(feed_data: WEATHER_FEED_STYLE_DATA): void {
+		this.generated_weather_feed = new GenerateWeatherFeed(
+			this.feed_info,
+			feed_data
+		)
+	}
+
+	/** Set Selected Feed */
+	setSelectedFeedType(feedTypeId: string) {
+		if (!this.editing) return this.feed_types.filter(i => i.feedTypeId === feedTypeId)[0].name;
+		return this.fetched_feed.feedType.name;
+	}
+
+	/** POST Request to API with Generated Slide Feed Payload*/
 	saveGeneratedSlideFeed(): void {
 		this.saving = true;
 
@@ -222,7 +237,7 @@ export class GenerateFeedComponent implements OnInit {
 			)
 		} else {
 			this.subscription.add(
-				this._feed.edit_generated_feed(this.generated_slide_feed).subscribe(
+				this._feed.update_slide_feed(this.generated_slide_feed).subscribe(
 					data => {
 						console.log(data);
 						this._router.navigate([`/${this.route}/feeds`])
@@ -235,20 +250,35 @@ export class GenerateFeedComponent implements OnInit {
 		}
 	}
 
+	/** POST Request to API with Generated Weather Feed Payload*/
 	saveGeneratedWeatherFeed(): void {
 		this.saving = true;
 
-		this.subscription.add(
-			this._feed.generate_feed(this.generated_weather_feed, 'weather').subscribe(
-				data => {
-					console.log(data);
-					this._router.navigate([`/${this.route}/feeds`])
-				},
-				error => {
-					console.log(error);
-				}
+		if (!this.editing) {
+			this.subscription.add(
+				this._feed.generate_feed(this.generated_weather_feed, 'weather').subscribe(
+					data => {
+						console.log(data);
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
 			)
-		)
+		} else {
+			this.subscription.add(
+				this._feed.update_weather_feed(this.generated_weather_feed).subscribe(
+					data => {
+						console.log(data);
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
+			)
+		}
 	}
 
 	/**

@@ -5,6 +5,7 @@ import { Sortable } from 'sortablejs';
 import { FeedMediaComponent } from '../../../components_shared/feed_components/feed-media/feed-media.component';
 import { FeedItem } from '../../../../global/models/ui_feed_item.model';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
+import { SLIDE_GLOBAL_SETTINGS } from '../../../../global/models/api_feed_generator.model';
 
 @Component({
 	selector: 'app-slider-form',
@@ -13,6 +14,7 @@ import { API_CONTENT } from '../../../../global/models/api_content.model';
 })
 
 export class SliderFormComponent implements OnInit {
+	@Input() global_settings: SLIDE_GLOBAL_SETTINGS;
 	@Input() selected_dealer: string;
 	@Input() feed_items: FeedItem[] = [];
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
@@ -33,6 +35,7 @@ export class SliderFormComponent implements OnInit {
 		}
 	]
 
+	/** Form Control Names (form_control_name) have been set with the same keys required by the API */
 	slide_global_settings = [
 		{
 			label: 'Overlay Background and Transparency for Context',
@@ -84,6 +87,20 @@ export class SliderFormComponent implements OnInit {
 		)
 
 		this.slide_global_settings_form = this._form.group(form_group_obj)
+	
+		console.log(this.global_settings);
+
+		if (this.global_settings) {
+			this.slide_global_settings.map(i => {
+				if (i.viewType == 'colorpicker') {
+					i.colorValue = this.global_settings[i.form_control_name]
+				}
+			})
+
+			this.f.overlay.setValue(this.global_settings.overlay);
+			this.f.fontColor.setValue(this.global_settings.fontColor);
+			this.f.fontFamily.setValue(this.global_settings.fontFamily);
+		}
 	}
 
 	/** 
@@ -141,6 +158,11 @@ export class SliderFormComponent implements OnInit {
 	*/
 	removeFeedItem(f: any): void {
 		this.feed_items = this.feed_items.filter(i => i !== f);
+	}
+
+	/** Slide Global Settings Form Control Getter */
+	private get f() {
+		return this.slide_global_settings_form.controls;
 	}
 
 	/**

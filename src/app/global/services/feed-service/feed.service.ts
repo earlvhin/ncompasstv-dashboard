@@ -71,6 +71,15 @@ export class FeedService {
 	get_feed_by_id(feed_id) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions)
 	}
+
+	update_slide_feed(feed_data) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_slide_feed}`, feed_data, this.httpOptions);
+	}
+
+	update_weather_feed(feed_data) {
+		console.log(feed_data);
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_weather_feed}`, feed_data, this.httpOptions);
+	}
 	
 	create_weather_feed_demo(weather_feed_style: WEATHER_FEED_STYLE_DATA) {
 		return this._http.get(
@@ -80,8 +89,4 @@ export class FeedService {
 			daysFontColor`, 
 			this.httpOptions);
 	}
-
-	// get_feed_screenshot(url) {
-	// 	return 
-	// }
 }

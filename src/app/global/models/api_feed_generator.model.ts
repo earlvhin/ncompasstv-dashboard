@@ -53,7 +53,8 @@ export type FEED_INFO = {
     createdBy: string,
     feedTypeId: string,
     feedId?: string,
-    status?: string
+    status?: string,
+    updatedBy?: string
 }
 
 export type API_GENERATED_FEED = {
@@ -87,9 +88,20 @@ export type API_GENERATED_FEED = {
         heading: string,
         paragraph: string,
         sequence: number
-    }[]
+    }[],
+    feedWeather: WEATHER_FEED_STYLE_DATA,
+    slideGlobalSettings: SLIDE_GLOBAL_SETTINGS
 }
 
+export type SLIDE_GLOBAL_SETTINGS =  {
+    dateCreated: string,
+    feedGlobalSettingsId: string,
+    feedId: string,
+    fontColor: string,
+    fontFamily: string,
+    overlay: string,
+    status: string
+}
 export class GenerateWeatherFeed {
     feeds: FEED_INFO;
     feedWeather: WEATHER_FEED_STYLE_DATA
@@ -102,10 +114,13 @@ export class GenerateWeatherFeed {
 
 export type WEATHER_FEED_STYLE_DATA = {
     backgroundContentId: string,
+    backgroundContents: API_CONTENT,
     bannerContentId: string,
+    bannerContents: API_CONTENT,
     boxBackgroundColor: string,
     daysFontColor: string,
     fontFamily: string,
     numberDay: number,
-    zipCode: string
+    zipCode: string,
+    numberDays?: number,
 }

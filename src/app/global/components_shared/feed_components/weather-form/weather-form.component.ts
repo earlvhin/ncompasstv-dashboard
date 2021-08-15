@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
+import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { FeedMediaComponent } from '../feed-media/feed-media.component';
 
@@ -12,6 +13,7 @@ import { FeedMediaComponent } from '../feed-media/feed-media.component';
 
 export class WeatherFormComponent implements OnInit {
 	@Input() selected_dealer: string;
+	@Input() edit_weather_data: WEATHER_FEED_STYLE_DATA;
 	@Output() open_media_library: EventEmitter<any> = new EventEmitter;
 	@Output() weather_feed_data: EventEmitter<any> = new EventEmitter;
 
@@ -32,6 +34,8 @@ export class WeatherFormComponent implements OnInit {
 	]
 
 	weather_form: FormGroup;
+
+	/** Form Control Names (form_control_name) have been set with the same keys required by the API */
 	weather_form_fields = [
 		{
 			label: 'Select Background Image',
@@ -41,7 +45,8 @@ export class WeatherFormComponent implements OnInit {
 			viewType: 'upload',
 			imageUri: '',
 			fileName: '',
-			required: true
+			required: true,
+			api_key_ref: 'backgroundContents'
 		},
 		{
 			label: 'Select Banner Image',
@@ -51,7 +56,8 @@ export class WeatherFormComponent implements OnInit {
 			viewType: 'upload',
 			imageUri: '',
 			fileName: '',
-			required: true
+			required: true,
+			api_key_ref: 'bannerContents'
 		},
 		{
 			label: 'Box Background Color',
@@ -73,7 +79,7 @@ export class WeatherFormComponent implements OnInit {
 		},
 		{
 			label: 'Number of days to display',
-			form_control_name: 'daysToDisplay',
+			form_control_name: 'numberDays',
 			type: 'number',
 			width: 'col-lg-4', 
 			required: true
@@ -102,6 +108,8 @@ export class WeatherFormComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		console.log(this.edit_weather_data);
+
 		let form_group_obj = {};
 
 		/** Loop through form fields object and prepare for group */
@@ -114,8 +122,30 @@ export class WeatherFormComponent implements OnInit {
 		)
 
 		this.weather_form = this._form.group(form_group_obj)
+		this.f.numberDays.setValidators([Validators.min(1), Validators.max(5)])
+		this.f.zipCode.setValidators([Validators.minLength(5), Validators.maxLength(5)])
 
-		this.f.daysToDisplay.setValidators([Validators.min(1), Validators.max(5)])
+		if (this.edit_weather_data) {
+			this.weather_form_fields.map(i => {
+				if (i.viewType == 'upload') {
+					i.imageUri = `${this.edit_weather_data[i.api_key_ref].url}${this.edit_weather_data[i.api_key_ref].fileName}`;
+					i.fileName = this.edit_weather_data[i.api_key_ref].title;
+				}
+
+				if (i.viewType == 'colorpicker') {
+					i.colorValue = this.edit_weather_data[i.form_control_name]
+				}
+			})
+
+
+			this.f.backgroundContentId.setValue(this.edit_weather_data.backgroundContentId);
+			this.f.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
+			this.f.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
+			this.f.daysFontColor.setValue(this.edit_weather_data.daysFontColor);
+			this.f.numberDays.setValue(this.edit_weather_data.numberDays);
+			this.f.fontFamily.setValue(this.edit_weather_data.fontFamily);
+			this.f.zipCode.setValue(this.edit_weather_data.zipCode);
+		}
 	}
 
 	/** On Color Picker Field Changed */
