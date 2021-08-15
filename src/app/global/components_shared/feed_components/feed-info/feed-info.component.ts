@@ -39,7 +39,6 @@ export class FeedInfoComponent implements OnInit {
 	ngOnInit() {
 		this.prepareFeedInfoForm();
 		this.matAutoFilter();
-		console.log('DEALER', this.dealers);
 	}
 
 	/** Structure Feed Information and Pass */
