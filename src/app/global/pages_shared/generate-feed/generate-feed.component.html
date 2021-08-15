@@ -36,6 +36,7 @@
                             <app-slider-form 
                             *ngIf="selected_dealer" 
                             (structured_feed_items)="structureSlideFeedToGenerate($event)"
+                            [global_settings]="slide_global_settings"
                             [feed_items]="feed_items"
                             [selected_dealer]="selected_dealer">
                             </app-slider-form>
@@ -46,6 +47,7 @@
                         <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'">
                             <app-weather-form 
                             (weather_feed_data)="structureWeatherFeedToGenerate($event)"
+                            [edit_weather_data]="fetched_feed ? fetched_feed.feedWeather : null"
                             [selected_dealer]="selected_dealer">
                             </app-weather-form>
                         </div>

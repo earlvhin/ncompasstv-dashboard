@@ -39,6 +39,7 @@ export class FeedInfoComponent implements OnInit {
 	ngOnInit() {
 		this.prepareFeedInfoForm();
 		this.matAutoFilter();
+		console.log('DEALER', this.dealers);
 	}
 
 	/** Structure Feed Information and Pass */
@@ -82,11 +83,8 @@ export class FeedInfoComponent implements OnInit {
 					feed_title: ['', Validators.required],
 					description: ['',],
 					feed_type: ['', Validators.required],
-					assign_to: [{
-						value: '',
-						disabled: this.is_dealer ? true : false
-					}, Validators.required],
-					assign_to_id: ['', Validators.required]
+					assign_to: [this.is_dealer ? this.dealers[0].businessName : '', Validators.required],
+					assign_to_id: [this.is_dealer ? this.dealers[0].dealerId : '', Validators.required]
 				}
 			)
 		}
