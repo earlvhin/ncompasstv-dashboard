@@ -1,9 +1,12 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs/internal/Subscription';
 import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { FeedMediaComponent } from '../feed-media/feed-media.component';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { FeedService } from 'src/app/global/services/feed-service/feed.service';
 
 @Component({
 	selector: 'app-weather-form',
@@ -16,10 +19,13 @@ export class WeatherFormComponent implements OnInit {
 	@Input() edit_weather_data: WEATHER_FEED_STYLE_DATA;
 	@Output() open_media_library: EventEmitter<any> = new EventEmitter;
 	@Output() weather_feed_data: EventEmitter<any> = new EventEmitter;
-
+	subscription: Subscription = new Subscription;
+	
 	is_marking: boolean = false;
 	selected_background_image: string;
 	selected_banner_image: string;
+	zipcode_valid: boolean;
+	zipcode_checking: boolean = false;
 
 	font_family = [
 		{ label: 'Helvetica' },
@@ -78,7 +84,7 @@ export class WeatherFormComponent implements OnInit {
 			required: true
 		},
 		{
-			label: 'Number of days to display',
+			label: 'Number of days to display, Maximum 5',
 			form_control_name: 'numberDays',
 			type: 'number',
 			width: 'col-lg-4', 
@@ -94,8 +100,9 @@ export class WeatherFormComponent implements OnInit {
 			required: true
 		},
 		{
-			label: 'Zip Code',
+			label: 'US Zip Code',
 			form_control_name: 'zipCode',
+			errorMsg: '',
 			type: 'text',
 			width: 'col-lg-6', 
 			required: true
@@ -104,6 +111,7 @@ export class WeatherFormComponent implements OnInit {
 
 	constructor(
 		private _form: FormBuilder,
+		private _feed: FeedService,
 		private _dialog: MatDialog,
 	) { }
 
@@ -137,7 +145,6 @@ export class WeatherFormComponent implements OnInit {
 				}
 			})
 
-
 			this.f.backgroundContentId.setValue(this.edit_weather_data.backgroundContentId);
 			this.f.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
 			this.f.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
@@ -145,7 +152,30 @@ export class WeatherFormComponent implements OnInit {
 			this.f.numberDays.setValue(this.edit_weather_data.numberDays);
 			this.f.fontFamily.setValue(this.edit_weather_data.fontFamily);
 			this.f.zipCode.setValue(this.edit_weather_data.zipCode);
+
+			this.validateZipCode(this.f.zipCode.value);
 		}
+
+		/** No Debounce for UI Alert Display */
+		this.subscription.add(
+			this.f.zipCode.valueChanges.subscribe(_ => 
+				{
+					this.zipcode_checking = true;
+					this.zipcode_valid = undefined;
+				}
+			)
+		)
+
+		/** Debounce for Field Validity and API Call */
+		this.subscription.add(
+			this.f.zipCode.valueChanges
+			.pipe(debounceTime(1000), distinctUntilChanged())
+			.subscribe(_ => {
+				if (this.f.zipCode.valid) {
+					this.validateZipCode(this.f.zipCode.value);
+				}
+			})
+		)
 	}
 
 	/** On Color Picker Field Changed */
@@ -189,7 +219,19 @@ export class WeatherFormComponent implements OnInit {
 	}
 
 	/** Weather Form Control Getter */
-	private get f() {
+	get f() {
 		return this.weather_form.controls;
+	}
+
+	private validateZipCode(zipCode: string) {
+		this._feed.validate_weather_zip(zipCode).subscribe(
+			(data: {success: boolean}) => {
+				this.zipcode_valid = data.success;
+				this.zipcode_checking = false;
+			}, 
+			error => {
+				console.log(error);
+			}
+		)
 	}
 }

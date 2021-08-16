@@ -1,6 +1,6 @@
 <div id="weather-form" class="weather-form">
     <form [formGroup]="weather_form">
-        <div class="row mb-5">
+        <div class="row mb-3">
             <div *ngFor="let w of weather_form_fields" class="{{ w.width }}">
                 <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!w.viewType">
                     <mat-label>{{ w.label }}</mat-label>
@@ -37,9 +37,27 @@
 
                     <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>
                 </mat-form-field>
+
+                <div class="error-message">
+                    <p class="sm-text m-0"></p>
+                </div>
             </div>
         </div>
 
-        <button mat-button mat-raised class="theme-btn" matStepperNext [disabled]="!weather_form.valid" (click)="generateWeatherFeed()">Next <span class="fas fa-long-arrow-right"></span></button>
+        <div class="alert alert-primary" *ngIf="f.zipCode.valid && zipcode_checking">
+            <p class="sm-text font-weight-bold">Checking zipcode {{f.zipCode.value}} validity ...</p>
+        </div>
+
+        <div class="alert alert-success" *ngIf="zipcode_valid === true && !zipcode_checking">
+            <p class="sm-text font-weight-bold">Zipcode {{f.zipCode.value}} is a valid location.</p>
+        </div>
+
+        <div class="alert alert-danger" *ngIf="zipcode_valid === false && !zipcode_checking">
+            <p class="sm-text font-weight-bold">Zipcode {{f.zipCode.value}} is not a valid location.</p>
+        </div>
+
+        <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!zipcode_valid || zipcode_checking || !weather_form.valid" (click)="generateWeatherFeed()">
+            Next <span class="fas fa-long-arrow-right"></span>
+        </button>
     </form>
 </div>

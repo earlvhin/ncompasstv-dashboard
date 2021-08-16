@@ -89,4 +89,8 @@ export class FeedService {
 			daysFontColor`, 
 			this.httpOptions);
 	}
+
+	validate_weather_zip(zip: string) {
+		return this._http.post(`${environment.base_uri}${environment.getters.validate_weather_zip}${zip}`, null, this.httpOptions).pipe(map((data: any) => data.weatherResponse));
+	}
 }

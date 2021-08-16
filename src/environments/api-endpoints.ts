@@ -130,6 +130,7 @@ export const API_ENDPOINTS = {
 		tags_count: 'tag/getalltagscount',
 		tags_get_all: 'tag/getall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
+		validate_weather_zip: 'feed/weather/validate?zipcode='
 	},
 	create: {
 		api_new_activity: 'activity/create',
