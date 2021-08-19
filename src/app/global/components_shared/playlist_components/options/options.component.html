@@ -59,7 +59,7 @@
 						[(ngModel)]="content_data.duration"
 						(blur)="setDuration()"
 						(change)="setDuration()"
-						min="5" max="100" [disabled]="(content_data.fileType | isvideo) || (content_data.classification == 'generated_feed')">
+						min="5" max="100" [disabled]="(content_data.fileType | isvideo)">
 					<mat-hint align="start"><strong>Applicable to feeds and images only. Min of 5 seconds.</strong> </mat-hint>
 				</mat-form-field>
 			</div>

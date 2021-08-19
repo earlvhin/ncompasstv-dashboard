@@ -326,7 +326,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	optionsSaved(data: { content: API_CONTENT, original_credits: CREDITS }): void {
-
+		
 		let creditsUpdate: { playlistContentId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
 		const { content, original_credits } = data;
@@ -340,12 +340,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			}
 
 			if (!original_credits || original_credits.balance === 0) {
-				let { credits } = content.playlistContentCredits;
-				const { playlistContentId } = content;
-				const maxCredits = 1000000;
-	
-				if (credits > maxCredits) credits = maxCredits; 
-				creditsUpdate = { playlistContentId, credits };
+				if (content.playlistContentCredits) {
+					let { credits } = content.playlistContentCredits;
+					const { playlistContentId } = content;
+					const maxCredits = 1000000;
+		
+					if (credits > maxCredits) credits = maxCredits; 
+					creditsUpdate = { playlistContentId, credits };
+				}
 			}
 
 			this.playlist_contents.forEach(
