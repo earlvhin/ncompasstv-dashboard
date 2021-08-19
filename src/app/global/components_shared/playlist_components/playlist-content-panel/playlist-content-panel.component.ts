@@ -326,6 +326,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	optionsSaved(data: { content: API_CONTENT, original_credits: CREDITS }): void {
+
+		console.log('DATA FROM OPTIONS COMPONENTS', data);
 		
 		let creditsUpdate: { playlistContentId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
@@ -357,7 +359,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			);
 			
 			this.structured_updated_playlist = this.structureUpdatedPlaylist();
-
 		}
 
 		const { blocklist } = this.playlist_changes_data;
@@ -553,6 +554,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.is_marking = false;
 
 		if (data) {
+			console.log('DATA TO SEND', data);
 
 			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
@@ -573,19 +575,20 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						this.playlist_content_backup = this.playlist_contents;
 
 						if (this.incoming_blacklist_licenses.length > 0) {
+							console.log("IGNORED 1")
 							this.structureAddedContentBlocklist(data.playlistContentsAdded);
 						} else if (this.structured_bulk_remove_in_blocklist.length > 0) {
+							console.log("IGNORED 2")
 							this.bulkWhitelist(this.structured_bulk_remove_in_blocklist);
+						} else if (this.structured_incoming_blocklist.length > 0) {
+							console.log("IIGNORED")
+							this.addToBlocklist(this.structured_incoming_blocklist);
+						} else if (this.structured_incoming_blocklist.length == 0) {
+							this.removeToBlocklist()
 						} else {
+							console.log("IGNORED")
 							this.getPlaylistById();
 						}
-						
-						if (this.structured_incoming_blocklist.length > 0) {
-							this.addToBlocklist(this.structured_incoming_blocklist);
-						} else {
-							this.removeToBlocklist();
-						}
-
 					},
 					error => console.log('Error updating playlist contents', error)
 				);
