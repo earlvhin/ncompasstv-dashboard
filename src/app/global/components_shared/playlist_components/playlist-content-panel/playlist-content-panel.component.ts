@@ -327,7 +327,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	optionsSaved(data: { content: API_CONTENT, original_credits: CREDITS }): void {
 
-		console.log('DATA FROM OPTIONS COMPONENTS', data);
+		// console.log('DATA FROM OPTIONS COMPONENTS', data);
 		
 		let creditsUpdate: { playlistContentId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
@@ -554,7 +554,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.is_marking = false;
 
 		if (data) {
-			console.log('DATA TO SEND', data);
+			// console.log('DATA TO SEND', data);
 
 			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
