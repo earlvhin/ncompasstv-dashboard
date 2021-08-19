@@ -430,6 +430,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					error => console.log('Error removing in blocklist', error)
 				);
 
+		} else {
+			this.getPlaylistById();
 		}
 
 	}
