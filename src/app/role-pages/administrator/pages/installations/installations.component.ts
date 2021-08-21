@@ -33,6 +33,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	next_month = '';
     pageSize: number;
 	paging_data: any;
+    search_data: string = "";
 	searching: boolean = false;
 	selected_date: any;
 	sort_column: string = '';
@@ -135,13 +136,23 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.sort_order = data.order;
 		this.getLicenses(1);
 	}
+
+    filterData(data) {
+		if (data) {
+			this.search_data = data;
+			this.getLicenses(1);
+		} else {
+			this.search_data = "";
+			this.getLicenses(1);
+		}
+	}
 	
 	getLicenses(page: number) {
         this.pageSize = 15;
 		this.searching = true;
 		this.installations = [];
 
-		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize)
+		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { message?: string, paging }) => {
