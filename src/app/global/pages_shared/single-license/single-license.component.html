@@ -681,32 +681,32 @@
 								<ng-container *ngIf="monthly_content_count.length > 0; else no_data">
 									<div class="col-lg-4 mb-4" *ngFor="let cc of monthly_content_count">
 										<mat-card  style="height: 375px">
-												<div class="d-flex align-items-center">
-													<div class="chart-thumbnail mr-3">
-														<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
-													</div>
-													<div>
-														<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
-															<h5 *ngIf="cc.fileType != 'feed'; else is_feed" [title]="cc.fileName | nohandle">{{ (cc.fileName | nohandle) | substring:20 }}</h5>
-	
-															<ng-template #is_feed>
-																<h5>{{ cc.title }}</h5>
-															</ng-template>
-														</a>
-														<p class="sm-text mb-0">Uploaded {{ cc.dateCreated | date }}</p>
-													</div>
+											<div class="d-flex align-items-center">
+												<div class="chart-thumbnail mr-3">
+													<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
 												</div>
-	
-												<app-data-graph 
-													*ngIf="!destroy_monthly_charts"
-													[analytics_reload]="analytics_reload.asObservable()"
-													[data_set]="cc.contentPlaysListCount"
-													[graph_id]="cc.contentId + '_monthly'"
-													[realtime_data_per_license]="realtime_data"
-													[date_format]="selected_display_mode"
-													[date_queried]="queried_date"
-													[page]="'single-license'">
-												</app-data-graph>
+												<div>
+													<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
+														<h5 *ngIf="cc.fileType != 'feed'; else is_feed" [title]="cc.fileName | nohandle">{{ (cc.fileName | nohandle) | substring:20 }}</h5>
+
+														<ng-template #is_feed>
+															<h5>{{ cc.title }}</h5>
+														</ng-template>
+													</a>
+													<p class="sm-text mb-0">Uploaded {{ cc.dateCreated | date }}</p>
+												</div>
+											</div>
+
+											<app-data-graph 
+												*ngIf="!destroy_monthly_charts"
+												[analytics_reload]="analytics_reload.asObservable()"
+												[data_set]="cc.contentPlaysListCount"
+												[graph_id]="cc.contentId + '_monthly'"
+												[realtime_data_per_license]="realtime_data"
+												[date_format]="selected_display_mode"
+												[date_queried]="queried_date"
+												[page]="'single-license'">
+											</app-data-graph>
 										</mat-card>
 									</div>
 								</ng-container>
@@ -760,36 +760,36 @@
 								<ng-container *ngIf="daily_content_count.length > 0; else no_data">
 									<div class="col-lg-4 mb-4" *ngFor="let cc of daily_content_count">
 										<mat-card  style="height: 375px">
-												<div class="d-flex align-items-center" >
-													<div class="chart-thumbnail mr-3">
-														<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
-													</div>
-													<div>
-														<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
-															<h5 *ngIf="cc.fileType != 'feed'; else is_feed_d">
-																{{ cc.fileName | filename }}
-															</h5>
-	
-															<ng-template #is_feed_d>
-																<h5>
-																	{{ cc.title }}
-																</h5>
-															</ng-template>
-														</a>
-														<p class="sm-text mb-0">Uploaded {{ cc.dateCreated | date }}</p>
-													</div>
+											<div class="d-flex align-items-center" >
+												<div class="chart-thumbnail mr-3">
+													<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
 												</div>
-	
-												<app-data-graph
-													*ngIf="!destroy_daily_charts"
-													[analytics_reload]="analytics_reload.asObservable()"
-													[data_set]="cc.contentPlaysListCount"
-													[graph_id]="cc.contentId + '_daily'"
-													[realtime_data_per_license]="realtime_data"
-													[date_format]="selected_display_mode"
-													[date_queried]="queried_date"
-													[page]="'single-license'">
-												</app-data-graph>
+												<div>
+													<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
+														<h5 *ngIf="cc.fileType != 'feed'; else is_feed_d">
+															{{ cc.fileName | filename }}
+														</h5>
+
+														<ng-template #is_feed_d>
+															<h5>
+																{{ cc.title }}
+															</h5>
+														</ng-template>
+													</a>
+													<p class="sm-text mb-0">Uploaded {{ cc.dateCreated | date }}</p>
+												</div>
+											</div>
+
+											<app-data-graph
+												*ngIf="!destroy_daily_charts"
+												[analytics_reload]="analytics_reload.asObservable()"
+												[data_set]="cc.contentPlaysListCount"
+												[graph_id]="cc.contentId + '_daily'"
+												[realtime_data_per_license]="realtime_data"
+												[date_format]="selected_display_mode"
+												[date_queried]="queried_date"
+												[page]="'single-license'">
+											</app-data-graph>
 										</mat-card>
 									</div>
 								</ng-container>
