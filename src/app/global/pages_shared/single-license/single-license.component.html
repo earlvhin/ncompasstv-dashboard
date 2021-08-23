@@ -615,24 +615,34 @@
 						</div>
 	
 						<br>
-	
+
+						<div class="row no-gutters">
+							<div class="col-lg-2">
+								<div class="content-search">
+									<mat-form-field class="full-width">
+										<mat-label>Content Search</mat-label>
+										<input matInput type="text" [formControl]="content_search_control">
+									</mat-form-field>
+								</div>
+							</div>
+						</div>
+
 						<!-- Media Viewer -->
 						<div class="row no-gutters" *ngIf="has_playlist">
-							<div class="col-md-1"
-							*ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
+							<div class="col-md-1" *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
 								<div class="mr-2">
 									<app-thumbnail-card
-									(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
-									[file_url]="a.file_url"
-									[image_uri]="a.file_type !== 'feed' ?  a.thumbnail : a.thumbnail+a.file_url"
-									[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
-									[content_id]="a.content_id"
-									[filetype]="a.file_type"
-									[is_converted]="a.is_converted"
-									[uuid]="a.uuid"
-									[zone_content]="true"
-									[is_fullscreen]="a.is_fullscreen"
-									[disconnect_to_socket]="thumb_no_socket">
+										(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
+										[file_url]="a.file_url"
+										[image_uri]="a.file_type !== 'feed' ?  a.thumbnail : a.thumbnail+a.file_url"
+										[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
+										[content_id]="a.content_id"
+										[filetype]="a.file_type"
+										[is_converted]="a.is_converted"
+										[uuid]="a.uuid"
+										[zone_content]="true"
+										[is_fullscreen]="a.is_fullscreen"
+										[disconnect_to_socket]="thumb_no_socket">
 									</app-thumbnail-card>
 								</div>
 							</div>
