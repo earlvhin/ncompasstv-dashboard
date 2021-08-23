@@ -1,10 +1,8 @@
-import { Component, OnInit, Input, EventEmitter, OnDestroy, OnChanges, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, OnDestroy, ElementRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
 import { Chart } from 'chart.js';
-
-import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 
 @Component({
 	selector: 'app-data-graph',
@@ -28,55 +26,44 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 	@Input() reload: Observable<void>;
 	@Input() analytics_reload: Observable<void>;
 	@Input() page?: string;
+	
 	canvas: any;
 	chart_initiated: boolean = false;
-	chart;
+	chart: Chart;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _date: DatePipe,
-		private _helper: HelperService,
 		private host: ElementRef<HTMLElement>
 	) { }
 
 	ngOnInit() {
+
 		if (this.reload && !this.page) {
+
 			this.reload.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					if (!this.chart_initiated) {
-						console.log('init graph from reload');
+				.subscribe(
+					() => {
+						if (this.chart_initiated) return;
 						this.initGraph();
 					}
-				},
-				error => console.log('Error on reload subscription ', error)
-			);
+				);
+
 		}
 
 		if (this.analytics_reload) {
-			this.analytics_reload.subscribe(
-				data => {
-					this.initGraph();
-				}
-			)
-		} else {
-			setTimeout(() => {
-				this.initGraph();
-			}, 1000)
+			this.analytics_reload.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.initGraph());
+			return;
 		}
 
-		// if (this.page === 'single-license') {
-		// 	this.subscribeToAnalyticsTabSelect();
-		// }
+		setTimeout(() => this.initGraph(), 1000);
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
 		if (this.chart) this.chart.destroy();
-
-		// console.log('Destroyed');
 		this.host.nativeElement.remove();
 	}
 
@@ -84,13 +71,9 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 		require('chartjs-plugin-datalabels');
 	}
 	
-	initGraph() {
-		// console.log('init graph');
-
-		// if (this.page === 'single-license' && this._helper.singleLicensePageCurrentTab !== 'Analytics') return;
+	private initGraph(): void {
 
 		this.canvas = <HTMLCanvasElement> document.getElementById(this.graph_id);
-		// console.log('THIS CANVAS', this.canvas, this.graph_id)
 
 		if (this.data_set) {
 			this.data_set.map(
@@ -189,54 +172,6 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 			});
 		}
 	}
-
-	setNewData() {
-		this.chart.update();
-	}
-
-	realtimeData_perLicense(data) {
-		if (this.date_format == "monthly") {
-			if(this._date.transform(this.date_queried, 'y-MM') == this._date.transform(data.logDate, 'y-MM')) {
-				if (this.graph_id.split('_')[0] === data.contentId) {
-					this.chart.data.datasets[0].data[this.data_values.length - 1] = parseInt(this.chart.data.datasets[0].data[this.data_values.length - 1]) + 1;
-					this.chart.update();
-				}
-			}
-		} else if(this.date_format == "daily") {
-			if(this._date.transform(this.date_queried, 'y-MM-dd') == this._date.transform(data.logDate, 'y-MM-dd')) {
-				if (this.graph_id.split('_')[0] === data.contentId) {
-					this.chart.data.datasets[0].data[this.data_values.length - 1] = parseInt(this.chart.data.datasets[0].data[this.data_values.length - 1]) + 1;
-					this.chart.update();
-				}
-			}
-		} else {
-			if (this.graph_id.split('_')[0] === data.contentId) {
-				this.chart.data.datasets[0].data[this.data_values.length - 1] = parseInt(this.chart.data.datasets[0].data[this.data_values.length - 1]) + 1;
-				this.chart.update();
-			}
-		}
-	}
-
-	realtimeData_perContent(data) {
-		if (this._date.transform(this.date_queried, 'y-MM-dd') == this._date.transform(data.logDate, 'y-MM-dd')) {
-			this.chart.data.datasets[0].data[this.data_values.length - 1] = parseInt(this.chart.data.datasets[0].data[this.data_values.length - 1]) + 1;
-			this.chart.update();
-		}
-	}
-
-	// private subscribeToAnalyticsTabSelect(): void {
-	// 	this._helper.onSelectAnalyticsTab.pipe(takeUntil(this._unsubscribe))
-	// 		.subscribe(
-	// 			() => {
-
-	// 				setTimeout(() => {
-	// 					this.initGraph();
-	// 				}, 2000);
-
-	// 			},
-	// 			error => console.log('Error on select analytics tab subscription', error)
-	// 		);
-	// }
 
 }
 
