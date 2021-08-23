@@ -48,7 +48,7 @@ export class LicenseService {
 
 	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?, dealer="") {
 		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;
-		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}&businessName=${dealer}`;
+		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}&search=${dealer}`;
 		return this._http.get<any>(endpoint, this.httpOptions);
 	}
 

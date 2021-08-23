@@ -244,7 +244,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
     getDataForExport(): void {
         this.pageSize = 0;
-        this._license.get_licenses_by_install_date(1, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize).subscribe(
+        this._license.get_licenses_by_install_date(1, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data).subscribe(
             data => {
                 if(!data.message) {
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';

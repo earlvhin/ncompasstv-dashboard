@@ -37,6 +37,7 @@ export class LicensesComponent implements OnInit {
 	initial_load_licenses: boolean = true;
 	search_data: string = "";
 	search_data_licenses: string = "";
+    splitted_text: any;
 
 	// UI Table Column Header
 	dealers_table_column: string[] = [
@@ -71,8 +72,8 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Display', sortable: false, key: 'displayStatus'},
 		{ name: 'PS Version', sortable: false, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: false, key:'ui', column:'UiVersion'},
-		{ name: 'Screen', sortable: false, column:'ScreenName', key:'screenName' },
-		{ name: 'Template', sortable: false, column:'TemplateName', key:'templateName'},		
+		{ name: 'Anydesk', sortable: false, column:'ScreenName', key:'screenName' },
+		{ name: 'Password', sortable: false, column:'TemplateName', key:'templateName'},		
 		{ name: 'Installation Date', sortable: false, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	]
@@ -245,8 +246,8 @@ export class LicensesComponent implements OnInit {
 					{ value: l.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
 					{ value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
-					{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}` , editable: false },
-					{ value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
+                    { value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
+					{ value: l.anydeskId ? this.splitKey(l.licenseId) : '--', link: null, editable: false, hidden: false, copy:true, label: 'Anydesk Password' },
 					{ value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: false, label: 'Install Date', hidden: false, id: l.licenseId },
 					{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 					{ value: l.piStatus, link: null , editable: false, hidden: true },
@@ -255,6 +256,11 @@ export class LicensesComponent implements OnInit {
 			}
 		);
 	}
+
+    splitKey(key) {
+        this.splitted_text = key.split("-");
+        return this.splitted_text[this.splitted_text.length - 1];
+    }
 
     private getInternetType(value: string): string {
 		if(value) {

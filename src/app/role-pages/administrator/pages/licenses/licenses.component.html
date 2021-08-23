@@ -83,7 +83,8 @@
                                                         [new_table]="true"
                                                         [paging_details]="paging_data_licenses"
                                                         [query_params]="tab"
-                                                        (page_triggered)="getLicenses($event)">
+                                                        (page_triggered)="getLicenses($event)"
+                                                        [license_status_column]="true">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
