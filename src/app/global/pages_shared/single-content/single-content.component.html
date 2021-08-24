@@ -17,58 +17,30 @@
         </div>
         <div class="col-lg-6 white-bg p-5">
             <div class="mb-3">
-                <h3 class="col-lg-12 p-0 mb-3">
-                    File Info
-                </h3>
+                <h3 class="col-lg-12 p-0 mb-3">File Info</h3>
                 <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">
-                        File Name: 
-                    </span>
-                    <span>
-                        <span>
-                            {{ c.title }}
-                        </span>
-                    </span>
+                    <span class="font-weight-medium">File Name:</span>
+                    <span>{{ c.title }}</span>
                 </div>
                 <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">
-                        Created By: 
-                    </span>
-                    <span>
-                        {{c.createdByName}}
-                    </span>
+                    <span class="font-weight-medium">Created By:</span>
+                    <span>{{ c.createdByName }} </span>
                 </div>
                 <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">
-                        Created At: 
-                    </span>
-                    <span>
-                        {{c.dateCreated | date}}
-                    </span>
+                    <span class="font-weight-medium">Created At:</span>
+                    <span>{{ c.dateCreated | date }}</span>
                 </div>
                 <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">
-                        File Type:
-                    </span>
-                    <span>
-                        {{c.fileType}}
-                    </span>
+                    <span class="font-weight-medium">File Type:</span>
+                    <span>{{ c.fileType }}</span>
                 </div>
                 <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">
-                        File Size: 
-                    </span>
-                    <span>
-                        {{getFileSize(c.filesize)}}
-                    </span>
+                    <span class="font-weight-medium">File Size:</span>
+                    <span>{{ getFileSize(c.filesize) }}</span>
                 </div>
                 <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">
-                        Duration: 
-                    </span>
-                    <span>
-                        {{c.duration}} s
-                    </span>
+                    <span class="font-weight-medium">Duration:</span>
+                    <span>{{ c.duration }} s</span>
                 </div>
             </div>
         </div>
@@ -80,14 +52,14 @@
                 <mat-tab label="Content Analytics">
                     <div class="row align-items-center mt-4">
                         <div class="col-lg-4">
-                            <h3 class="mb-0">Report for {{ queried_date | date: 'longDate'}}</h3>
+                            <h3 class="mb-0">Report for {{ queried_date | date: 'longDate' }}</h3>
                         </div>
                         <div class="col-lg-8 text-right">
                             <mat-form-field appearance="fill">
                                 <mat-label>Choose a date</mat-label>
-                                <input matInput (dateInput)="OnDateChange($event.value)" [matDatepicker]="picker" [(value)]="queried_date" readonly>
-                                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                                <mat-datepicker #picker></mat-datepicker>
+                                <input matInput (dateInput)="onSelectDate($event.value)" [matDatepicker]="contentDatePicker" [(value)]="queried_date" readonly>
+                                <mat-datepicker-toggle matSuffix [for]="contentDatePicker"></mat-datepicker-toggle>
+                                <mat-datepicker #contentDatePicker></mat-datepicker>
                             </mat-form-field>
                         </div>
                     </div>
@@ -96,12 +68,12 @@
                             <mat-card>
                                 <ng-container *ngIf="!daily_chart_updating; else loader">
                                     <app-data-graph
-                                    [data_set]="content_daily_count"
-                                    [graph_title]="'Daily Content Play Analytics'"
-                                    [graph_description]="'Graph shows the play count of this content for this day.'"
-                                    [graph_id]="'daily_graph'"
-                                    [realtime_data_per_content]="realtime_data"
-                                    [update_chart]="update_chart">
+                                        [data_set]="content_daily_count"
+                                        [graph_title]="'Daily Content Play Analytics'"
+                                        [graph_description]="'Graph shows the play count of this content for this day.'"
+                                        [graph_id]="'daily_graph'"
+                                        [realtime_data_per_content]="realtime_data"
+                                        [update_chart]="update_chart">
                                     </app-data-graph>
                                 </ng-container>
                             </mat-card>
@@ -111,13 +83,13 @@
                             <mat-card>
                                 <ng-container *ngIf="!monthly_chart_updating; else loader">
                                     <app-data-graph 
-                                    [date_format]="'monthly'"
-                                    [data_set]="content_monthly_count"
-                                    [graph_title]="'Monthly Content Play Analytics'"
-                                    [graph_description]="'Graph shows the play count of this content for this month.'"
-                                    [graph_id]="'monthly_graph'"
-                                    [realtime_data_per_content]="realtime_data"
-                                    [update_chart]="update_chart">
+                                        [date_format]="'monthly'"
+                                        [data_set]="content_monthly_count"
+                                        [graph_title]="'Monthly Content Play Analytics'"
+                                        [graph_description]="'Graph shows the play count of this content for this month.'"
+                                        [graph_id]="'monthly_graph'"
+                                        [realtime_data_per_content]="realtime_data"
+                                        [update_chart]="update_chart">
                                     </app-data-graph>
                                 </ng-container>
                             </mat-card>
@@ -127,13 +99,13 @@
                             <mat-card>
                                 <ng-container *ngIf="!yearly_chart_updating; else loader">
                                     <app-data-graph 
-                                    [date_format]="'yearly'"
-                                    [data_set]="content_yearly_count"
-                                    [graph_title]="'Yearly Content Play Analytics'"
-                                    [graph_description]="'Graph shows the play count of this content for this year.'"
-                                    [graph_id]="'yearly_graph'"
-                                    [realtime_data_per_content]="realtime_data"
-                                    [update_chart]="update_chart">
+                                        [date_format]="'yearly'"
+                                        [data_set]="content_yearly_count"
+                                        [graph_title]="'Yearly Content Play Analytics'"
+                                        [graph_description]="'Graph shows the play count of this content for this year.'"
+                                        [graph_id]="'yearly_graph'"
+                                        [realtime_data_per_content]="realtime_data"
+                                        [update_chart]="update_chart">
                                     </app-data-graph>
                                 </ng-container>
                             </mat-card>
@@ -147,7 +119,7 @@
                     <mat-card *ngIf="playing_where.length > 0; else nodata">
                         <app-data-table 
                         [table_data]="playing_where"
-                        [table_columns]="playing_where_columns"
+                        [table_columns]="table_columns"
                         [new_table]="true"></app-data-table>
                     </mat-card>
                 </mat-tab>
