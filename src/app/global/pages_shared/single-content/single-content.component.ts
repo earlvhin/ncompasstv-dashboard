@@ -22,6 +22,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	content_daily_count: API_CONTENT_PLAY_COUNT[] = [];
 	content_yearly_count: API_CONTENT_PLAY_COUNT[] = [];
 	daily_chart_updating = true;
+	date_selected = this._date.transform(new Date(), 'longDate');
 	monthly_chart_updating = true;
     playing_where: any[] = [];
 	queried_date = this._date.transform(new Date(), 'longDate');
@@ -73,6 +74,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		this.daily_chart_updating = true;
 		this.yearly_chart_updating = true;
 		this.monthly_chart_updating = true;
+		this.date_selected = value.format('MMMM DD, YYYY');
 		this.getMonthlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
 		this.getDailyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
 		this.getYearlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
