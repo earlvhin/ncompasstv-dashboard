@@ -28,7 +28,7 @@ export class FilestackService {
 			let originalName = data.filename;
 
 			this.subscription.add(
-				this._http.get<any>(`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:h264,extname:.webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`).subscribe(
+				this._http.get<any>(`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`).subscribe(
 					data => {
 						resolve(data);
 					},
