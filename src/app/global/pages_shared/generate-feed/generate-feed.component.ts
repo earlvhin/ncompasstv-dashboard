@@ -2,7 +2,7 @@ import { Component, Input, OnInit} from '@angular/core';
 import { Observable, forkJoin, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-import { API_GENERATED_FEED, GenerateFeed, GenerateWeatherFeed, SLIDE_GLOBAL_SETTINGS, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model'; 
+import { API_GENERATED_FEED, SLIDE_GLOBAL_SETTINGS, WEATHER_FEED_STYLE_DATA, GenerateSlideFeed, GenerateWeatherFeed } from '../../models/api_feed_generator.model'; 
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -27,7 +27,7 @@ export class GenerateFeedComponent implements OnInit {
 	fetched_feed: API_GENERATED_FEED;
 	feed_items: FeedItem[] = [];
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
-	generated_slide_feed: GenerateFeed;
+	generated_slide_feed: GenerateSlideFeed;
 	generated_weather_feed: GenerateWeatherFeed;
 	is_dealer: boolean = false;
 	
@@ -73,9 +73,9 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	/**
-	 * Structure Feed Contents with GenerateFeed.feedContents Type
+	 * Structure Feed Contents with GenerateSlideFeed.feedContents Type
 	 * @param {feedItem[]} data Array of feed content items
-	 * @returns Structured Array of Feed Contents with GenerateFeed.feedContents Type
+	 * @returns Structured Array of Feed Contents with GenerateSlideFeed.feedContents Type
 	 */
 	private structureFeedContents(data: FeedItem[]): {contentId: string, heading: string, paragraph: string, duration: number, sequence: number}[] {
 		let feed_contents = [];
@@ -198,7 +198,7 @@ export class GenerateFeedComponent implements OnInit {
 
 	/** Construct Generated Slide Feed Payload to be sent to API */
 	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
-		this.generated_slide_feed = new GenerateFeed(
+		this.generated_slide_feed = new GenerateSlideFeed(
 			this.feed_info,
 			feed_data.globalSettings,
 			this.structureFeedContents(feed_data.feedItems)

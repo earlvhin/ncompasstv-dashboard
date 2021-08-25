@@ -55,6 +55,27 @@
     color: $light;
 }
 
+.generated-feed-demo {
+    background: #e0e0e0;
+    min-height: 450px;
+    position: relative;
+    width: 100%;
+
+    .spinner-display {
+        position: absolute;
+        top: 35%;
+        left: 0;
+        right: 0;
+        margin: auto;
+        z-index: 6;
+    }
+
+    img {
+        position: relative;
+        z-index: 7
+    }
+}
+
 .field-error {
     background-color: $danger;
     border-radius: 5px;
@@ -170,6 +191,26 @@
     transition: 0.1s linear;
     &:hover {
         color: $primary;
+    }
+}
+
+.upload-image-field {
+    height: 60px;
+
+    img {
+        object-fit: cover;
+        height: 100%;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 60px;
+    }
+
+    .filename {
+        font-size: 15px;
+        position: absolute;
+        left: 75px;
+        top: 18px;
     }
 }
 

@@ -1,4 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { feedGlobalSettings } from 'src/app/global/models/api_feed_generator.model';
+import { environment as env } from '../../../../../environments/environment';
 import { FeedItem } from '../../../../global/models/ui_feed_item.model';
 
 @Component({
@@ -9,11 +11,12 @@ import { FeedItem } from '../../../../global/models/ui_feed_item.model';
 
 export class FeedDemoComponent implements OnInit {
 	@Input() feed_items: FeedItem[] = [];
-	@Input() global_settings: { overlay: string, fontColor: string, fontFamily: string }
+	@Input() global_settings: feedGlobalSettings
 
 	image: string;
 	heading: string;
 	paragraph: string;
+	slide_demo_url: string;
 
 	private current_display_index: number = 0;
 	private duration_handler: any;
@@ -24,6 +27,16 @@ export class FeedDemoComponent implements OnInit {
 		if (this.feed_items.length > 0) {
 			this.controlFeedDisplay(this.current_display_index);
 		}
+
+		this.slide_demo_url = `${env.third_party.filestack_screenshot}/${env.base_uri}${env.create.api_new_slide_feed_demo}?
+		imageContentId=${this.feed_items[0].image.content_id}&
+		bannerImageContentId=${this.global_settings.bannerImage}&
+		fontFamily=${this.global_settings.fontFamily}&
+		&overlayBackground=${this.global_settings.overlay}&
+		fontColor=${this.global_settings.fontColor}&
+		headLineBackground=${this.global_settings.headlineBackground}&
+		headLineColor=${this.global_settings.headlineColor}&
+		textAlignment=${this.global_settings.textAlign}`
 	}
 
 	ngOnDestroy() {
