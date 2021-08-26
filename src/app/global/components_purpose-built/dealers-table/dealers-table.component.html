@@ -137,12 +137,13 @@
 									<!-- Licenses -->
 					
 									<!-- Hosts -->
-									<th class="border-right border-bottom p-3" 
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'forInstallationHost' ? 'tab-active': ''"
 									rowspan="2" 
 									valign="middle" 
 									[attr.data-column]="'forInstallationHost'"
 									[attr.data-number]="true">
 										Scheduled
+                                        <i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('forInstallationHost', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
 									</th>
 					
 									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalHosts' ? 'tab-active': ''"

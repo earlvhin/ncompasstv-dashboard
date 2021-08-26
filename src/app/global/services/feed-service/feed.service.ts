@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
-import { GenerateFeed, GenerateWeatherFeed, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model';
+import { FEED_INFO, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({

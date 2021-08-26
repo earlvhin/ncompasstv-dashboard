@@ -27,10 +27,8 @@ export class FilestackService {
 			let filename = data.key.substring(0, data.key.lastIndexOf("."));
 			let originalName = data.filename;
 
-
 			this.subscription.add(
-				// 1280×720 
-				this._http.get<any>(`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:1024,height:576,video_bitrate:3000,filename:${filename}/${handle}`).subscribe(
+				this._http.get<any>(`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`).subscribe(
 					data => {
 						resolve(data);
 					},

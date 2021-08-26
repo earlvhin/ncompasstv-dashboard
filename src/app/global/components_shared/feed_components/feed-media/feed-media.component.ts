@@ -15,6 +15,7 @@ import { ContentService } from '../../../../global/services/content-service/cont
 
 export class FeedMediaComponent implements OnInit {
 
+	no_media: boolean = false;
 	media_files: API_CONTENT[] = [];
 	selected_media_files: API_CONTENT[] = [];
 	subscription: Subscription = new Subscription();
@@ -69,13 +70,20 @@ export class FeedMediaComponent implements OnInit {
 				dealer_id,
 			).map(data => { return { contents: data.iContents, paging: data.paging }}).subscribe(
 				(data: {contents: API_CONTENT[], paging: PAGING}) => {
-					this.mediaMapToUI(data)
+					if (data.contents && data.paging) {
+						this.mediaMapToUI(data)
 
-					if (data.paging.hasNextPage) {
-						this.getUserMediaFiles(dealer_id)
-					} else {
-						this.pageEnd = true;
+						if (data.paging.hasNextPage) {
+							this.getUserMediaFiles(dealer_id)
+						} else {
+							this.pageEnd = true;
+						}
+
+						return;
 					}
+
+					this.no_media = true;
+					this.pageEnd = true;
 				}, 
 				error => {
 					console.log(error)

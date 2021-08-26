@@ -1,9 +1,6 @@
-<div class="generated-feed-preview">
-    <div class="generated-feed-item" *ngFor="let f of feed_items; let i = index">
-        <img *ngIf="image" [src]="image" [alt]="heading">
-        <div class="context" [ngStyle]="{'background': global_settings.overlay, 'color': global_settings.fontColor, 'font-family': global_settings.fontFamily}">
-            <h2 *ngIf="heading">{{ heading }}</h2>
-            <p *ngIf="paragraph">{{ paragraph }}</p>
-        </div>
+<div class="generated-feed-demo text-center">
+    <div class="spinner-display">
+        <app-spinner [diameter]="70"></app-spinner>
     </div>
+    <img class="w-100" [src]="slide_demo_url | sanitize" alt="Demo Screenshot">
 </div>
