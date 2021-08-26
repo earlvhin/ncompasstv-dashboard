@@ -121,7 +121,8 @@ export type API_GENERATED_FEED = {
         sequence: number
     }[],
     feedWeather: WEATHER_FEED_STYLE_DATA,
-    slideGlobalSettings: SLIDE_GLOBAL_SETTINGS
+    slideGlobalSettings: SLIDE_GLOBAL_SETTINGS,
+    bannerImageData: API_CONTENT
 }
 
 export type WEATHER_FEED_STYLE_DATA = {

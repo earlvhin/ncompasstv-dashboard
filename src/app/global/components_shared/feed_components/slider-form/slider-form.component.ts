@@ -14,6 +14,7 @@ import { SLIDE_GLOBAL_SETTINGS } from '../../../../global/models/api_feed_genera
 })
 
 export class SliderFormComponent implements OnInit {
+	@Input() banner_image_data: API_CONTENT;
 	@Input() global_settings: SLIDE_GLOBAL_SETTINGS;
 	@Input() selected_dealer: string;
 	@Input() feed_items: FeedItem[] = [];
@@ -58,7 +59,7 @@ export class SliderFormComponent implements OnInit {
 			imageUri: '',
 			fileName: '',
 			required: false,
-			api_key_ref: 'bannerContents'
+			api_key_ref: 'bannerImageData'
 		},
 		{
 			label: 'Font Family',
@@ -247,6 +248,11 @@ export class SliderFormComponent implements OnInit {
 			this.slide_global_settings.map(i => {
 				if (i.viewType == 'colorpicker') {
 					i.colorValue = this.global_settings[i.form_control_name]
+				}
+
+				if (i.viewType == 'upload' && this.banner_image_data) {
+					i.imageUri = `${this.banner_image_data.url}${this.banner_image_data.fileName}`;
+					i.fileName = this.banner_image_data.title;
 				}
 			})
 

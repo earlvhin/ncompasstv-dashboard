@@ -36,6 +36,7 @@
                             <app-slider-form 
                             *ngIf="selected_dealer" 
                             (structured_feed_items)="structureSlideFeedToGenerate($event)"
+                            [banner_image_data]="fetched_feed.bannerImageData"
                             [global_settings]="slide_global_settings"
                             [feed_items]="feed_items"
                             [selected_dealer]="selected_dealer">
