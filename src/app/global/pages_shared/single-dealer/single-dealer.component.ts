@@ -171,7 +171,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
 		{ name: 'Display', sortable: false, key: 'displayStatus'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId'},
-		{ name: 'Password', sortable: true, column:'AnydeskId', key:'anydeskId'},
+		{ name: 'Password', sortable: false, column:'AnydeskId', key:'anydeskId'},
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },

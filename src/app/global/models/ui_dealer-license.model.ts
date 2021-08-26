@@ -98,6 +98,7 @@ export class UI_LICENSE {
     constructor(
 		index:object, 
 		id: object, 
+        screenshot: object,
 		key: object, 
 		type: object, 
 		host: object, 
@@ -117,6 +118,7 @@ export class UI_LICENSE {
 	) {
 		this.index = index;
         this.license_id = id;
+        this.screenshot = screenshot;
         this.license_key = key;
 		this.type = type;
         this.host_name = host;
