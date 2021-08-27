@@ -4,6 +4,22 @@
             <h3>Choose Images</h3>
             <p class="sm-text mb-0">Select single or multiple images to use on your custom feed.</p>
         </div>
+
+        <div class="col-lg-6">
+            <div class="d-flex align-items-center">
+				<div class="mr-2">
+					<mat-slide-toggle
+					(change)="showFloatingContent($event)">
+					</mat-slide-toggle>
+				</div>
+				<div class="flex-even">
+					<h6 class="sm-text">Display Floating Contents</h6>
+					<p class="xsm-text">
+						Display all content that are not assigned to any Dealer
+					</p>
+				</div>
+			</div>
+        </div>
     </div>
 
     <hr>

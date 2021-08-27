@@ -4,18 +4,11 @@ data-placement="top"
 [attr.title]="content.fileType !== 'feed' ? removeFilenameHandle(content.fileName) : content.title">
     <div class="h-100 w-100">
         <div class="content-thumbnail inline-block">
-            <img [src]="content.thumbnail" *ngIf="content.fileType !== 'feed'; else feed_thumb" alt="thumbnail" class="full-width height-100 border-bottom">
-
-            <ng-template #feed_thumb>
-                <div>
-                    <iframe [src]="content.url | sanitize" class="feed-thumb" frameborder="0"></iframe>
-                    <div class="iframe-overlay"></div>
-                </div>
-            </ng-template>
+            <img [src]="content.thumbnail" alt="thumbnail" class="full-width height-100 border-bottom">
 
             <p class="number-overlay mb-0 xsm-text font-weight-bold text-center">
                 <span *ngIf="content.fileType !== 'feed'; else feed">
-                    {{ content.fileName | filename }}
+                    {{ (content.fileName | nohandle) | substring:15 }}
                 </span>
                 <ng-template #feed>
                     <strong>{{ content.title }}</strong>

@@ -20,11 +20,12 @@ export class PlaylistMediaComponent implements OnInit {
 	media_files_no_floating: API_CONTENT[] = [];
 	selected_contents: any = [];
 	media_files_backup: API_CONTENT[] = [];
+	floating_contents: API_CONTENT[] = [];
 	file_not_found: boolean = false;
 	show_floating: boolean = false;
 	page: number = 1;
 	paging: any;
-	isDealer: boolean;
+	isDealer: boolean = true;
 	isGettingData: boolean = true;
 	subscription: Subscription = new Subscription();
 
@@ -37,8 +38,10 @@ export class PlaylistMediaComponent implements OnInit {
 
 	ngOnInit() {
 		this.getDealerContent(this._dialog_data.dealer_id);
-		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.dealer) {
-			this.isDealer = true;
+
+		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator || this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech) {
+			this.isDealer = false;
+			this.getFloatingContents();
 		}
 	}
 
@@ -88,21 +91,21 @@ export class PlaylistMediaComponent implements OnInit {
 		)
 	}
 
+	getFloatingContents() {
+		this._content.get_floating_contents().subscribe(
+			data => {
+				this.floating_contents = data;
+			}
+		)
+	}
+
 	displayFloating(e) {
 		if (e.checked == true) {
 			this.show_floating = e.checked;
-			this.media_files_no_floating = this.media_files;
-			console.log(this.media_files_no_floating);
+			this.media_files = this.media_files.concat(this.floating_contents);
 		} else {
-			this.media_files_no_floating = [];
 			this.show_floating = e.checked;
-			this.media_files.map(
-				i => {
-					if(i.dealerId !== null && i.dealerId !== "") {
-						this.media_files_no_floating.push(i)
-					}
-				}
-			)
+			this.media_files = this.media_files.filter(i => i.dealerId !== null && i.dealerId !== "")
 		}
 	}
 
