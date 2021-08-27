@@ -25,7 +25,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	date_selected = this._date.transform(new Date(), 'longDate');
 	monthly_chart_updating = true;
     playing_where: any[] = [];
-	queried_date = this._date.transform(new Date(), 'longDate');
+	queried_date = moment();
 	realtime_data: EventEmitter<any> = new EventEmitter();
 	update_chart: EventEmitter<any> = new EventEmitter();
 	yearly_chart_updating = true;
@@ -50,7 +50,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.getPageParam();
-		this.queried_date = moment().format('MM-DD-YYYY');
 	}
 
 	ngOnDestroy() {
