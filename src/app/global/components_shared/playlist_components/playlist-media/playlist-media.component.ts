@@ -114,7 +114,7 @@ export class PlaylistMediaComponent implements OnInit {
 		this.file_not_found = false;
 
 		if(e.target.value !== '') {
-			this.media_files_no_floating = this.media_files_no_floating.filter(
+			this.media_files = this.media_files.filter(
 				i => {
 					if (i.fileName) {
 						return this.removeFilenameHandle(i.fileName).toLowerCase().includes(e.target.value.toLowerCase())
@@ -125,18 +125,18 @@ export class PlaylistMediaComponent implements OnInit {
 			)
 
 			if (this.media_files.length == 0) {
-				this.media_files_no_floating = this.media_files_backup;
+				this.media_files = this.media_files_backup;
 				this.file_not_found = true;
 			}
 		} else {
 			if (this.show_floating == true) {
-				this.media_files_no_floating = this.media_files_backup;
+				this.media_files = this.media_files_backup;
 			} else {
-				this.media_files_no_floating = [];
+				this.media_files = [];
 				this.media_files_backup.map(
 					i => {
 						if(i.dealerId !== null && i.dealerId !== "") {
-							this.media_files_no_floating.push(i)
+							this.media_files.push(i)
 						}
 					}
 				)
