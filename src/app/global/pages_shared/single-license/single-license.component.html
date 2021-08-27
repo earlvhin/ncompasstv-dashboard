@@ -693,12 +693,12 @@
 										<mat-card  style="height: 375px">
 											<div class="d-flex align-items-center">
 												<div class="chart-thumbnail mr-3">
-													<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
+													<img [src]="cc.fileType !== 'webm' ? cc.thumbnail : cc.url + cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) + 'jpg'" alt="content-thumbnail">
 												</div>
 												<div>
 													<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
 														<h5 *ngIf="cc.fileType != 'feed'; else is_feed" [title]="cc.fileName | nohandle">{{ (cc.fileName | nohandle) | substring:20 }}</h5>
-	
+	 
 														<ng-template #is_feed>
 															<h5>{{ cc.title }}</h5>
 														</ng-template>

@@ -132,8 +132,7 @@ export class ThumbnailCardComponent implements OnInit {
 						}
 					)
 				)
-				
-			} else {}
+			}
 		} );
 	}
 }
