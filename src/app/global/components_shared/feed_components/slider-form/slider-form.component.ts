@@ -242,8 +242,6 @@ export class SliderFormComponent implements OnInit {
 
 		this.slide_global_settings_form = this._form.group(form_group_obj)
 	
-		console.log(this.global_settings);
-
 		if (this.global_settings) {
 			this.slide_global_settings.map(i => {
 				if (i.viewType == 'colorpicker') {

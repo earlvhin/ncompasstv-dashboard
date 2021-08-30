@@ -138,7 +138,6 @@ export class GenerateFeedComponent implements OnInit {
 		this.subscription.add(
 			this._feed.get_generated_feed_by_id(id).subscribe(
 				(data: API_GENERATED_FEED) => {
-					console.log(data);
 					this.fetched_feed = data;
 					this.selected_dealer = data.dealerId;
 

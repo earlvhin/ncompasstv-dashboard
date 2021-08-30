@@ -158,6 +158,7 @@ export const API_ENDPOINTS = {
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
 		api_save_activity: 'activity/log',
 		content_schedule: 'playlistcontentsschedule/create',
+		feed_clone: 'feed/clone',
 		sub_dealer_account: 'account/createsubaccount',
 		tag: 'tag/create',
 		tag_type: 'tag/createtype'

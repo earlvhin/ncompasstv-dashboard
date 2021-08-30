@@ -1,23 +1,19 @@
 import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
+import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
+import { AdvertiserService, AuthService, ContentService, FeedService, HelperService, LicenseService, PlaylistService,
+	ScreenService, UserService, } from 'src/app/global/services';
+
+import { UI_CURRENT_USER, UI_ROLE_DEFINITION} from 'src/app/global/models';
+
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { ContentService } from 'src/app/global/services/content-service/content.service';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
-import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
-import { ScreenService } from '../../../../global/services/screen-service/screen.service';
-import { UserService } from 'src/app/global/services/user-service/user.service';
-import { HelperService } from 'src/app/global/services/helper-service/helper.service';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
-import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-data-table',
@@ -34,12 +30,15 @@ export class DataTableComponent implements OnInit {
 	@Input() ctrl_column: boolean;
 	@Input() ctrl_toggle: boolean;
 	@Input() can_toggle_email_notifications = false;
+	@Input() current_user?: UI_CURRENT_USER;
+	@Input() has_action = false;
 	@Input() is_dealer: boolean;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
 	@Input() multiple_delete: boolean;
 	@Input() media_array: any;
 	@Input() new_table: boolean;
+	@Input() page? = '';
 	@Input() paging_details: any;
 	@Input() playlist_delete: boolean;
 	@Input() preview_column: boolean;
@@ -85,6 +84,7 @@ export class DataTableComponent implements OnInit {
 		private _advertiser: AdvertiserService,
 		private _content: ContentService,
 		private _dialog: MatDialog,
+		private _feed: FeedService,
 		private _helper: HelperService,
 		private _license: LicenseService,
 		private _playlist: PlaylistService,
@@ -422,7 +422,7 @@ export class DataTableComponent implements OnInit {
 			data:  { status, message, data }
 		})
 
-		dialog.afterClosed().subscribe(() => this.update_info.emit(true));
+		dialog.afterClosed().subscribe(() => this.reload_page.emit(true));
 	}
 
 	onCheckboxSelect(id, event, data) {
@@ -435,6 +435,17 @@ export class DataTableComponent implements OnInit {
 			this.selected_array.push(id);
 		}
 		this.delete_selected.emit(this.selected_array);
+	}
+
+	onCloneFeed(contentId: string) {
+
+		this._feed.clone_feed(contentId, this.current_user.user_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.openConfirmationModal('success', 'Success!', 'Feed cloned'),
+				error => console.log('Error cloning feed', error)
+			);
+
 	}
 
 	updateCheck(){

@@ -1,6 +1,7 @@
 export * from './auth-service/auth.service';
 export * from './advertiser-service/advertiser.service';
 export * from './content-service/content.service';
+export * from './feed-service/feed.service';
 export * from './helper-service/helper.service';
 export * from './host-service/host.service';
 export * from './license-service/license.service';

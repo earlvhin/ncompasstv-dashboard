@@ -24,6 +24,11 @@ export class FeedService {
 		private _auth: AuthService
 	) { }
 
+	clone_feed(contentId: string, createdBy: string) {
+		const body = { contentId, createdBy };
+		return this._http.post(`${environment.base_uri}${environment.create.feed_clone}`, body, this.httpOptions);
+	}
+
 	create_feed(data) {
 		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed}`, data, this.httpOptions)
 	}

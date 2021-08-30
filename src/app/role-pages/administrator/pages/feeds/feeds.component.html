@@ -67,20 +67,23 @@
 						<ng-container *ngIf="!searching; else loader">
 							<mat-card *ngIf="filtered_data.length > 0; else nodata">
 								<app-data-table 
-								[table_data]="filtered_data" 
-								[table_columns]="feeds_table_column"
-								[new_table]="true"
-								[paging_details]="paging_data"
-								[feed_controls]="true"
-								[feed_preview]="true"
-								[feed_delete]="true"
-								[feed_edit]="true"
-								(page_triggered)="pageRequested($event)"
-								(reload_page)="reloadPage($event)"
-                                (to_sort_column)="getColumnsAndOrder($event)"
-                                [active_tab]="sort_column"
-                                [sort_column]="sort_column"
-                                [sort_order]="sort_order">
+                                    [table_data]="filtered_data" 
+                                    [table_columns]="feeds_table_column"
+                                    [new_table]="true"
+                                    [paging_details]="paging_data"
+                                    [feed_controls]="true"
+                                    [feed_preview]="true"
+                                    [feed_delete]="true"
+                                    [feed_edit]="true"
+                                    (page_triggered)="pageRequested($event)"
+                                    (reload_page)="reloadPage($event)"
+                                    (to_sort_column)="getColumnsAndOrder($event)"
+                                    [active_tab]="sort_column"
+                                    [sort_column]="sort_column"
+                                    [sort_order]="sort_order"
+                                    [page]="'feeds'"
+                                    [has_action]="true"
+									[current_user]="currentUser">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

@@ -41,7 +41,7 @@
 			</tr>
 		</thead>
 
-		<!-- TABLE DATA ROWS -->
+		<!-- NEW TABLE DATA ROWS -->
 		<tbody *ngIf="new_table">
 			<tr *ngFor="let data of table_data; let j = index" >
 				<td class="p-3" *ngFor="let d of data | objectKeys; let i = index" [hidden]="data[d].hidden && !data[d].key" [ngClass]="data[d].hidden && data[d].key ? 'text-center': ''">
@@ -191,6 +191,8 @@
 					</ng-template>
 					
 					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete" (click)="deleteFeed(data.id.value)"></i>
+
+					<i class="fas fa-copy cursor-pointer mx-2 text-primary" title="Clone Feed" (click)="onCloneFeed(data.id.value)"></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
@@ -218,6 +220,11 @@
 					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value })"></i>
 					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
+
+				<!-- FEEDS PAGE ACTION -->
+				<!-- <ng-container *ngIf="page === 'feeds'">
+					<app-feeds-page-action-buttons></app-feeds-page-action-buttons>
+				</ng-container> -->
 				
 			</tr>
 		</tbody>
