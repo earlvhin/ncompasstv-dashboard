@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { API_ZONE } from '../../../models/api_zone.model';
-import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+import { API_ZONE } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-new-zone-modal',
@@ -11,14 +13,13 @@ import { Subscription } from 'rxjs';
 
 export class NewZoneModalComponent implements OnInit {
 
-	title: string = "Set Zone Properties"
-	subscription: Subscription = new Subscription;
-	
 	color: string;
-	disable_btn: boolean = true;
+	disable_btn = true;
 	new_zone_properties: FormGroup;
-	zone_data: API_ZONE;
+	title = 'Set Zone Properties';
 	
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor(
 		private _form: FormBuilder
 	) { }
@@ -33,31 +34,33 @@ export class NewZoneModalComponent implements OnInit {
 				zone_y: ['', Validators.required],
 				zone_background: ['', Validators.required]
 			}
-		)
+		);
 
-		this.subscription.add(
-			this.new_zone_properties.valueChanges.subscribe(
-				(data: any) => {
+		this.new_zone_properties.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+
 					if (this.new_zone_properties.valid) {
 						this.disable_btn = false;
-					} else {
-						this.disable_btn = true;
+						return;
 					}
+
+					this.disable_btn = true;
 				}
-			)
-		)
+			);
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	get f() { 
 		return this.new_zone_properties.controls; 
 	}
 
-	colorPicker(e) {
-		this.new_zone_properties.get('zone_background').setValue(e);
+	colorPicker(value: string) {
+		this.new_zone_properties.get('zone_background').setValue(value);
 	}
 
 	zoneData(): API_ZONE {
@@ -69,6 +72,6 @@ export class NewZoneModalComponent implements OnInit {
 			this.f.zone_width.value,
 			this.f.zone_background.value,
 			0
-		)
+		);
 	}
 }
