@@ -61,7 +61,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	dealer_route: string;
 	default_selected_month: string = this._date.transform(`${this.current_year}-${this.current_month}`, 'y-MM');
 	duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
-	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
+	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' }; 
 	display_status: number;
 	enable_edit_alias: boolean = false;
 	eventsSubject: Subject<void> = new Subject<void>();
@@ -124,7 +124,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	destroy_daily_charts: boolean = false;
 	destroy_monthly_charts: boolean = false;
-	current_display_mode: string;
+	current_display_mode: string; 
 	analytics_reload: Subject<void> = new Subject<void>();
 
 	_socket: any;
@@ -201,14 +201,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._socket.on('connect', () => {
 			console.log('#SingleLicenseComponent - Connected to Socket Server');
 		});
-
+		
 		this._socket.on('disconnect', () => {
 			console.log('#SingleLicenseComponent - Disconnnected to Socket Server');
 		});
 
 		this._helper.singleLicensePageCurrentTab = this.current_tab;
 		this.subscribeToContentSearch();
-	
+
 		// this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
 		// this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
 		// this.getContentReport_yearly();
@@ -254,7 +254,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				error => console.log('Error clearing screenshots', error)
 			)
 		);
+	}
 
+	disableScreenshot(e) {
+		this._license.set_screenshot_status(
+			{
+				licenseId: this.license_id,
+				screenshotSettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`Screenshot ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
+				console.log(data);
+			}
+		)
+	}
+
+	disableSpeedtest(e) {
+		this._license.set_speedtest_status(
+			{
+				licenseId: this.license_id,
+				speedtestSettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`Speedtest ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
+				console.log(data);
+			}
+		)
 	}
 
 	dismissPopup(): void {
@@ -292,7 +319,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._license.get_activities(id).subscribe(
 			(data: any) => {
 				this.activities = data.paging.entities;
-			},
+			}, 
 			error => {
 				console.log(error)
 			}
@@ -367,7 +394,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	getContentReport_monthly(date): void {
 		const data = { licenseId: this.license_id, from: date };
 		this.monthly_chart_updating = true;
-
+		
 		this.subscriptions.add(
 			this._content.get_content_monthly_count_by_license(data).subscribe(
 				data => {
@@ -450,7 +477,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._license.get_license_resource(id).subscribe(
 			data => {
 				console.log('Resource Usage', data)
-			},
+			}, 
 			error => {
 				console.log(error);
 			}
@@ -466,7 +493,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						this.no_screen_assigned = true;
 						return;
 					}
-
+					
 					this.screen = this.mapScreenToUI(response);
 					this.getTemplateData(response.template.templateId);
 					this.setPlaylists(response.screenZonePlaylistsContents);
@@ -509,7 +536,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	monthSelected(value: any): void {
 		if (this.current_tab !== 'Analytics') return;
-
+		
 		if (this.selected_month == this.default_selected_month) {
 			this.monthly_chart_updating = true;
 			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
@@ -629,7 +656,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				zoneContent: true
 			}
 		});
-
+		
 	}
 
 	openConfirmationModal(status: string, message: string, data: any): void {
@@ -641,7 +668,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		dialogRef.afterClosed().subscribe(() => this.ngOnInit());
 	}
-
+	
 	onSelectBackgroundZone(event: any): void {
 		event.preventDefault();
 		this._template.onSelectZone.emit('Background');
@@ -863,7 +890,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 							displayStatus: 1
 						}
 					)
-
+					
 					this.display_status = 1
 				} else {
 					this.updateDisplayStatus(
@@ -925,7 +952,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.internet_connection.date = date;
 				this.license_data.d = downloadMbps > 7 ? 'Good' : 'Slow';
 				this.speedtest_running = false;
-
+			
 				this._license.update_internet_info(
 					{
 						licenseId: this.license_id,
@@ -1000,7 +1027,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	// ==== END: Socket Dependent Events ====== //
 
 	private adjustMinimapWidth(): void {
-
+		
 		if (window.innerWidth <= 1039) {
 			this.minimap_width = '100%';
 		} else {
@@ -1079,7 +1106,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.duration_breakdown_text[key] = this.calculateTime(value);
 			}
 		);
-
+		
 	}
 
 	private calculateTime(duration: number): string {
@@ -1129,7 +1156,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					const zones = response[0].templateZones;
 					this.subscribeToZoneSelect();
 
-					const backgroundZoneIndex = zones.findIndex(zone => zone.name === 'Background');
+					const backgroundZoneIndex = zones.findIndex(zone => zone.name === 'Background'); 
 
 					if (backgroundZoneIndex > -1) {
 						selectedZoneName = 'Background';
@@ -1153,7 +1180,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						this._template.onSelectZone.emit(selectedZoneName);
 					}
 
-				},
+				}, 
 				error => console.log('Error retrieving template data', error)
 			);
 	}
@@ -1201,9 +1228,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const labels = [
 			`Hosts: ${this.calculateTime(hosts)}`,
 			`Advertisers: ${this.calculateTime(advertisers)}`,
-			`Fillers: ${this.calculateTime(fillers)}`,
+			`Fillers: ${this.calculateTime(fillers)}`, 
 			`Feeds: ${this.calculateTime(fillers)}`,
-			`Others: ${this.calculateTime(others)}`
+			`Others: ${this.calculateTime(others)}` 
 		];
 
 		let data = [hosts, advertisers, fillers, feeds, others];
@@ -1385,18 +1412,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 				if (!operation.periods || !operation.status) result[index].periods.push('CLOSED');
 
-				else
+				else 
 					result[index].periods = operation.periods.map(period => {
 						if (!period.open && !period.close) return 'Open 24 hours';
-						return `${period.open} - ${period.close}`
+						return `${period.open} - ${period.close}` 
 					});
-
+				
 				if (operation.day === timezoneDay) this.current_operation = { day: result[index].day, period: result[index].periods[0] };
 			}
 		);
 
 		return result;
-
+		
 	}
 
 	private setHostDetails(data: API_HOST): void {
@@ -1425,7 +1452,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const updated = this.license_data.contentsUpdated;
 		const format = 'MMMM DD, YYYY, h:mm:ss A';
 		this.content_time_update = updated != null ? moment.utc(new Date(updated)).format(format) : null;
-
+		
 		this.screen_type = data.screenType ? data.screenType : null;
 		this.apps = data.license.appVersion ? JSON.parse(data.license.appVersion) : null;
 
@@ -1461,7 +1488,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		const zonePlaylists = data.map(
 			contents => {
-				const { screenId, description, height, name, order, playlistId, playlistName, templateId, width, xPos, yPos } = contents.screenTemplateZonePlaylist;
+				const { screenId, description, height, name, order, playlistId, playlistName, templateId, width, xPos, yPos } = contents.screenTemplateZonePlaylist;				
 				const playlist = new UI_ZONE_PLAYLIST(screenId, templateId, '', xPos, yPos, height, width, playlistId, playlistName, name, description, order);
 				playlist.link = `/${this.routes}/playlists/${playlistId}`;
 				return playlist;
@@ -1531,7 +1558,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			height: height,
 			data: { title, contents, type, character_limit },
 			panelClass: 'information-modal',
-			autoFocus: false
+			autoFocus: false		
 		});
 	}
 
@@ -1588,7 +1615,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private updateCharts(): void {
-
+		
 		setTimeout(() => {
 			this.updateAssetsChart();
 			this.updateDurationChart();
@@ -1600,19 +1627,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const config = { duration: 800, easing: 'easeOutBounce' };
 		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0];
 		const { advertisers, feeds, fillers, hosts, others } = this.assets_breakdown;
-
+		
 		const currentZone = this.screen_zone ? this.screen_zone.zone : this.content_per_zone[0].zone_name;
 		const description = `${currentZone} Zone: ${this.number_of_contents} items`;
 		const title = ['Assets Breakdown', description];
 
 		chart.options.title.text = title;
 
-		chart.data.labels = [
-			`Hosts: ${hosts}`,
-			`Advertisers: ${advertisers}`,
-			`Fillers: ${fillers}`,
-			`Feeds: ${feeds}`,
-			`Others: ${others}`
+		chart.data.labels = [ 
+			`Hosts: ${hosts}`, 
+			`Advertisers: ${advertisers}`, 
+			`Fillers: ${fillers}`, 
+			`Feeds: ${feeds}`, 
+			`Others: ${others}` 
 		];
 
 		chart.data.datasets[0].data = [hosts, advertisers, fillers, feeds, others];
@@ -1627,13 +1654,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const title = ['Duration Breakdown', description];
 
 		chart.options.title.text = title;
-
+		
 		chart.data.labels = [
 			`Hosts: ${this.calculateTime(hosts)}`,
 			`Advertisers: ${this.calculateTime(advertisers)}`,
-			`Fillers: ${this.calculateTime(fillers)}`,
+			`Fillers: ${this.calculateTime(fillers)}`, 
 			`Feeds: ${this.calculateTime(fillers)}`,
-			`Others: ${this.calculateTime(others)}`
+			`Others: ${this.calculateTime(others)}` 
 		];
 
 		let data = [hosts, advertisers, fillers, feeds, others];

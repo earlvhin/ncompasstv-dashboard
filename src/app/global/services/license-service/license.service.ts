@@ -224,6 +224,14 @@ export class LicenseService {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_internet_info}`, data, this.httpOptions);
 	}
 
+	set_screenshot_status(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_screenshot_settings}`, data, this.httpOptions);
+	}
+
+	set_speedtest_status(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_speedtest_settings}`, data, this.httpOptions);
+	}
+
 	protected get baseUri() {
 		return `${environment.base_uri}`;
 	}

@@ -6,7 +6,7 @@ export class API_LICENSE {
 	screen: screenInfo;
 }
 
-export class API_LICENSE_PROPS {
+export interface API_LICENSE_PROPS {
 	alias: string;
 	anydeskId?: string;
     contentsUpdated: string;
@@ -26,12 +26,14 @@ export class API_LICENSE_PROPS {
     freeStorage: string;
 	message: string;
 	piStatus: number;
+    screenshotSettings?: number;
+    speedtestSettings?: number;
 	timeIn?: string;
 	installDate?: string;
     screenId?: string;
 }
 
-class screenInfo {
+interface screenInfo {
     screenId: string;
     screenName: string;
     description: string;
