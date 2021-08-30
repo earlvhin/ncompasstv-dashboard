@@ -139,22 +139,30 @@
                             </button>
                         </div>
                     </div>
-                    <mat-card-content class="mt-3">
+                    <mat-card-content class="mt-3" *ngIf="!searching; else loader">
                         <hr class="mb-0">
                         <app-data-table
                         *ngIf="screen.screen_license.length != 0; else no_record"
                         [table_columns]="license_column"
-                        [table_data]="screen.screen_license"
+                        [table_data]="screen_licenses"
                         [ctrl_column]="true"
-                        [new_table]="true"
                         [license_status_column]="true"
                         [ctrl_toggle]="true"
-                        (toggle_triggered)="toggleActivateDeactivate($event)">
+                        (toggle_triggered)="toggleActivateDeactivate($event)"
+                        [new_table]="true"
+						[paging_details]="paging_data"
+                        (page_triggered)="getScreenLicenses($event)"
+                        (update_info)="ngOnInit()">
                         </app-data-table>
                         <ng-template #no_record>
                             <app-error-message></app-error-message>
                         </ng-template>
                     </mat-card-content>
+                    <ng-template #loader>
+                        <div class="py-4 white-bg h-500">
+                            <app-spinner></app-spinner>
+                        </div>
+                    </ng-template>
                 </mat-card>
                 <!-- Screen Licenses -->
             </div>

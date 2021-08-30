@@ -64,6 +64,11 @@ export class LicenseService {
 		const params = this.httpParams({ dealerId: id,page, search: key, arrangement })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
+	
+    get_license_by_screen_id(id, page) {
+		const params = this.httpParams({ screenId: id,page })
+		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
+	}
 
 	sort_license_by_dealer_id(id, page, key, column, order) {
 		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order })
