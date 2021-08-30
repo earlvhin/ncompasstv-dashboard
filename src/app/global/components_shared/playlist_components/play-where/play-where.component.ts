@@ -28,6 +28,7 @@ export class PlayWhereComponent implements OnInit {
 	add_in_blocklist = [];
 	remove_in_blocklist = [];
 	license_count: number = 0;
+	licenses: any[] = [];
 	blacklist_data: any[];
 	content: API_CONTENT;
 	host_licenses: [{ host: API_HOST, licenses: API_LICENSE_PROPS[] }];
@@ -49,6 +50,12 @@ export class PlayWhereComponent implements OnInit {
 		)
 
 		if (this.host_licenses && this.host_licenses.length > 0) {
+			this.host_licenses.forEach(host => {
+				if (host.licenses.length > 0) {
+					host.licenses.map(i => this.licenses.push(i.licenseId));
+				}
+			});
+
 			this.getBlacklistProperties();
 		} else {
 			this.blacklist_data_ready.emit(true);
@@ -114,8 +121,18 @@ export class PlayWhereComponent implements OnInit {
 			data => {
 				this.blacklist_data = data.blacklistsContents || [];
 				this.blacklist_data_ready.emit(true)
+
                 if(!data.message) {
-                    this.blacklist_count.emit(data.blacklistsContents.length)
+					const blacklisted = [];
+
+					this.blacklist_data.forEach(i => {
+						if (this.licenses.includes(i.licenseId)) {
+							blacklisted.push(i);
+						}
+					})
+					
+                    this.blacklist_count.emit(blacklisted.length);
+
                 } else {
                     this.blacklist_count.emit(0)
                 }

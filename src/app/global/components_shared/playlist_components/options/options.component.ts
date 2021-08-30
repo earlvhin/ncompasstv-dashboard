@@ -26,6 +26,7 @@ export class OptionsComponent implements OnInit {
 	disable_animation = true;
 	has_schedule = false;
 	host_license: any;
+	licenses: any[] = [];
 	feed_url = '';
 	playlist_changes_data: { content: API_CONTENT, blocklist: any, original_credits: CREDITS } = { content: null, blocklist: null, original_credits: null };
 	schedule = { date: '', days: '', time: '' };
@@ -70,11 +71,13 @@ export class OptionsComponent implements OnInit {
 	}
     
     getTotalLicenses() {
-        this._dialog_data.host_license.map (
-            host => {
-                this.total_licenses = this.total_licenses + host.licenses.length;
-            }
-        )
+		this.host_license.forEach(host => {
+			if (host.licenses.length > 0) {
+				this.licenses = this.licenses.concat(host.licenses);
+			}
+		});
+
+		this.total_licenses = this.licenses.length;
     }
 	
     getCount(e) {
