@@ -373,7 +373,7 @@
 																<h5 class="d-inline-block mr-4">{{ internet_connection.date ? internet_connection.date : 'N/A' }}</h5>
 
 																<ng-container *ngIf="!speedtest_running; else disable_speedtest_btn">
-																	<button class="card-button" (click)="internetSpeedTest()" title="Test Internet Speed">
+																	<button *ngIf="license_data.speedtestSettings == 1" class="card-button" (click)="internetSpeedTest()" title="Test Internet Speed">
 																		<span class="fas fa-sync md-text"></span>
 																	</button>
 																</ng-container>
@@ -840,6 +840,47 @@
 							</div>
 						</div>
 					</ng-container>
+				</mat-tab>
+
+				<!-- Settings Tab -->
+				<mat-tab label="Settings" *ngIf="is_admin && license_data">
+					<div class="row mt-4">
+						<div class="col-lg-4">
+							<mat-card class="p-4 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even">
+										<h4>Enable Scheduled Screenshot</h4>
+										<p class="sm-text mb-0">
+											For players with limited internet data, Disabling this feature is recommended. Manual screenshot will still be available of use.
+										</p>
+									</div>
+									<div class="ml-5 text-right">
+										<mat-slide-toggle 
+										(change)="disableScreenshot($event)"
+										[checked]="license_data.screenshotSettings == 1 ? true : false">
+										</mat-slide-toggle>
+									</div>
+								</div>
+							</mat-card>
+		
+							<mat-card class="p-4 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even">
+										<h4>Enable Speedtest</h4>
+										<p class="sm-text mb-0">
+											Internet Speedtest uses almost 200MB of internet data. For players with limited internet data, disabling this feature is recommended.
+										</p>
+									</div>
+									<div class="ml-5 text-right">
+										<mat-slide-toggle 
+										(change)="disableSpeedtest($event)"
+										[checked]="license_data.speedtestSettings == 1 ? true : false">
+										</mat-slide-toggle>
+									</div>
+								</div>
+							</mat-card>
+						</div>
+					</div>
 				</mat-tab>
 
 				<!-- Resource Tab -->

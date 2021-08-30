@@ -267,7 +267,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				error => console.log('Error clearing screenshots', error)
 			)
 		);
+	}
 
+	disableScreenshot(e) {
+		this._license.set_screenshot_status(
+			{
+				licenseId: this.license_id,
+				screenshotSettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`Screenshot ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
+				console.log(data);
+			}
+		)
+	}
+
+	disableSpeedtest(e) {
+		this._license.set_speedtest_status(
+			{
+				licenseId: this.license_id,
+				speedtestSettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`Speedtest ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
+				console.log(data);
+			}
+		)
 	}
 
 	dismissPopup(): void {
