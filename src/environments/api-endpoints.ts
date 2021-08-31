@@ -207,6 +207,7 @@ export const API_ENDPOINTS = {
 		set_content_frequency: 'playlists/cloneplaylistcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
+		toggle_credits: 'playlists/enableCredits',
 		user_email_settings: 'user/updateemailsettings',
 	},
 	delete: {

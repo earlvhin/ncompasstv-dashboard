@@ -207,6 +207,12 @@ export class ContentService {
 		return this._http.post(url, body, this.httpOptions);
 	}
 
+	toggle_credits(playlistContentId: string, creditsEnabled = 1) {
+		const url = `${environment.base_uri}${environment.update.toggle_credits}`;
+		const body = { playlistContentId, creditsEnabled };
+		return this._http.post(url, body, this.httpOptions);
+	}
+
 	update_play_credits(playlistContentId: string, credits = 100) {
 		const url = `${environment.base_uri}${environment.update.play_credits}`;
 		const body = { playlistContentId, credits };
