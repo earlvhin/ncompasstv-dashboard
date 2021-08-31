@@ -102,15 +102,15 @@ export class ContentService {
 	}
 
 	get_content_monthly_count(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count}`, data, this.httpOptions).map(data => data.iContent);
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count}`, data, this.httpOptions).map(data => data.iContents[0]);
 	}
 
 	get_content_daily_count(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_daily_count}`, data, this.httpOptions).map(data => data.iContent);
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_daily_count}`, data, this.httpOptions).map(data => data.iContents[0]);
 	}
 
 	get_content_yearly_count(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions).map(data => data.iContent);
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions).map(data => data.iContents[0]);
 	}
 	
     get_content_metrics_export(data) {
