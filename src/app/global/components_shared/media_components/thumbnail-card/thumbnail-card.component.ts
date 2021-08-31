@@ -8,7 +8,6 @@ import * as io from 'socket.io-client';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService, ContentService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { ContentService } from '../../../services/content-service/content.service';
 
 @Component({
 	selector: 'app-thumbnail-card',
@@ -35,10 +34,7 @@ export class ThumbnailCardComponent implements OnInit {
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Output() content_to_delete = new EventEmitter;
 
-	subscription: Subscription = new Subscription;
-	role: string;
 	route: string;
-	return_mes: string;
 	
 	private return_mes: string;
 	private role: string;
