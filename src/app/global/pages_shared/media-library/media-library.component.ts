@@ -30,9 +30,11 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	filestack_client: any;
 	host_field_disabled: boolean = true;
 	loading_overlay:boolean = false;
-	modified_data: any;
+	modified_data: any = [];
 	reload: boolean;
-	title: string = "Media Library"
+	removed_index: boolean = false;
+    summarized_media: any = [];
+    title: string = "Media Library"
 	upload_respond: any;
 	uploaded_files: any;
 	all_media: any = [];
@@ -54,18 +56,15 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
-
 		const roleId = this._auth.current_user_value.role_id;
-
 		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
 			this.is_dealer = true;
 			this.getDealerContents(this._auth.current_user_value.roleInfo.dealerId, 1, 60);
 		} else {
 			this.getContents();
+			this.getSummaryContents();
 		}
-
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
-		
 	}
 
 	ngOnDestroy() {
@@ -126,22 +125,31 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	}
 
 	getContents(): void {
-
-		this._content.get_contents().pipe(takeUntil(this._unsubscribe))
+		this._content.get_contents_with_page().pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
 					if (!response.message) {
-						console.log(response)
 						this.all_media = response.iContents;
 					}
 				},
 				error => console.log('Error retrieving contents', error)
 			);
-
+	}
+	
+    getSummaryContents(): void {
+		this._content.get_contents_summary().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
+                    console.log({res:response})
+					if (!response.message) {
+						this.summarized_media = response.contents;
+					}
+				},
+				error => console.log('Error retrieving contents', error)
+			);
 	}
 	
 	getDealerContents(id: string, page: number, pageSize: number): void {
-		
 		this._content.get_content_by_dealer_id(id, false, page, pageSize).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
@@ -151,11 +159,9 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				},
 				error => console.log('Erro retrieving dealer contents ', error)
 			);
-
 	}
 
 	uploadContent(): void {
-
 		const filestack_option = {
 			accept: [
 				'image/jpg',
@@ -167,21 +173,23 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 			maxFiles: 10,
 			imageMax: [1280, 720],
 			onFileSelected: (e) => {
-				this.data_to_upload = [];
+                this.data_to_upload = [];
 				return new Promise((resolve, reject) => {
 					// Do something async
 					this.all_media.map (
 						med => {
-							if(med.fileName != null) {
-								med.fileName = this.removeFilenameHandle(med.fileName);
+							if(med.title != null && !this.removed_index) {
+								med.fileName = med.title;
 								var name_no_index = this.removeIndexes(med.fileName);
-								med.fileName = name_no_index + med.fileName.substring(0, med.fileName.lastIndexOf('.'));
-							}
+								med.fileName = name_no_index + "." + med.fileType
+							} else {
+                                var temp = med.fileName.split(".")
+                                med.fileName = this.removeIndexes(med.fileName)
+                                med.fileName = med.fileName+ "." + temp[temp.length - 1]
+                            }
 						}
 					);
-
-					this.duplicate_files = this.all_media.filter(media => media.fileName === e.filename);
-
+					this.duplicate_files = this.summarized_media.filter(media => media.title === e.originalFile.name);
 					if (this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
 
@@ -223,7 +231,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	}
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string): Promise<void | string> {
-
 		return new Promise(
 			(resolve) => {
 				this._dialog.closeAll();
@@ -241,15 +248,12 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 						rename: true
 					}
 				});
-		
 				dialogRef.afterClosed().subscribe(result => resolve(result));
 			}
 		);
-
 	}
 
 	renameModal(): Promise<void> {
-
 		return new Promise(
 			(resolve) => {
 				this._dialog.closeAll();
@@ -264,27 +268,23 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				dialogRef.afterClosed().subscribe(r => resolve(r));
 			}
 		);
-
 	}
 
 	async processUploadedFiles(data, users): Promise<void> {
 		const file_data = await this._filestack.process_uploaded_files(data, users || '');
-
 		if (file_data) {
 			this.postContentInfo('', file_data, true);
 			this.processFiles();
 		}
-
 	}
 
 	removeIndexes(data): void {
-
 		if (data.indexOf('(') > 0) {
 			return data.slice(0, data.indexOf('('));
 		} else {
 			return data.slice(0, data.indexOf('.'));
 		}
-
+        this.removed_index = true;
 	}
 
 	postContentInfo(duplicateArray, data, upload): void {
@@ -296,8 +296,9 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				i.createdBy = this._auth.current_user_value.user_id;
 				if(duplicateArray) {
 					var name_of_file = this.removeIndexes(i.filename)
-					var index_to_set = duplicateArray.length + 1;
-					i.filename = name_of_file + "(" + index_to_set + ")" + i.filename.substring(0, i.filename.lastIndexOf('.'))
+                    var mime = i.mimetype.split("/")
+                    var index_to_set = duplicateArray.length + 1;
+					i.filename = name_of_file + "(" + index_to_set + ")" + "." + mime[mime.length-1]
 					delete i.fileName;
 				}
 			}
@@ -306,19 +307,15 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		this.modified_data = data;
 		
 		if (upload) {
-
 			this._filestack.post_content_info(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					() => this.emitReloadMedia(),
 					error => console.log('Error posting content info', error)
 				);
-
 		}
-		
 	}
 
 	processFiles(): void {
-		
 		this._filestack.process_files().pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -326,7 +323,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				},
 				error => console.log('Error processing files', error)
 			);
-
 	}
 
 	emitReloadMedia(): void {

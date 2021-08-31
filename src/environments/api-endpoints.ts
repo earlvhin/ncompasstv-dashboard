@@ -16,6 +16,7 @@ export const API_ENDPOINTS = {
 		api_get_assets: 'content/getall',
 		api_get_blacklisted_by_id: 'blacklistedcontents/getblacklistedbyplaylistcontentid?playlistcontentid=',
 		api_get_content: 'content/findall',
+		api_get_content_summary: 'content/getalllimitedfields',
 		api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',
 		api_get_categories: 'category/getall',
 		api_get_dealer_total:'dealer/gettotal',

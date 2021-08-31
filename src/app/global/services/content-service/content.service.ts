@@ -28,6 +28,10 @@ export class ContentService {
 		private _auth: AuthService
 	) { }
 
+    get_all_contents() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=0`, this.httpOptions);
+	}
+
 	get_contents() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`, this.httpOptions);
 	}
@@ -36,7 +40,7 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=30`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}` +`&search=` + `${key}`+`&floating=` + `${floating}`, this.httpOptions);
 	}
 
-	get_contents_with_page(page?, type?, sort?, dealerId?, hostId?, advertiserId?, key?, pageSize=60) {
+	get_contents_with_page(page=1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, pageSize=60) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}
 		?pageSize=${pageSize}
 		&page=${page}
@@ -54,6 +58,10 @@ export class ContentService {
 	
 	get_contents_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total}`, this.httpOptions);
+	}
+	
+    get_contents_summary() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_summary}`, this.httpOptions);
 	}
 
 	get_contents_total_by_dealer(id) {
