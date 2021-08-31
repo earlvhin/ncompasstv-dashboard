@@ -1,10 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subscription } from 'rxjs';
-import { UI_TABLE_FEED } from '../../../../global/models/ui_table-feed.model';
-import { FeedService } from '../../../../global/services/feed-service/feed.service';
-import { CreateFeedComponent } from '../../../../global/components_shared/feed_components/create-feed/create-feed.component';
 import { TitleCasePipe, DatePipe } from '@angular/common';
+import { Subscription } from 'rxjs';
+
+import { CreateFeedComponent } from '../../../../global/components_shared/feed_components/create-feed/create-feed.component';
+import { AuthService, FeedService } from 'src/app/global/services';
+import { UI_TABLE_FEED } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feeds',
@@ -41,6 +42,7 @@ export class FeedsComponent implements OnInit {
 	subscription: Subscription = new Subscription();
 	
 	constructor(
+		private _auth: AuthService,
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
@@ -49,6 +51,10 @@ export class FeedsComponent implements OnInit {
 	ngOnInit() {
 		this.getFeedsTotal();
 		this.pageRequested(1);
+	}
+
+	get currentUser() {
+		return this._auth.current_user_value;
 	}
 	
 	// Upload Modal
@@ -101,29 +107,29 @@ export class FeedsComponent implements OnInit {
 	pageRequested(e) {
 		this.searching = true;
 		this.feed_data = [];
+
 		this.subscription.add(
 			this._feed.get_feeds(e, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
-					console.log(data);
 					this.initial_load = false;
 					this.searching = false;
                     this.paging_data = data.paging;
-					if(!data.message) {
+
+					if (!data.message) {
 						this.feed_data = this.feeds_mapToUIFormat(data.cFeeds);
 						this.filtered_data = this.feeds_mapToUIFormat(data.cFeeds);
 					} else {
-						if(this.search_data == "") {
+						if (this.search_data == "") {
 							this.no_feeds = true;
 						}
-						this.feed_data=[];
+
+						this.feed_data = [];
 						this.filtered_data = [];
 					}					
 				},	
-				error => {
-					console.log('#getFeeds', error);
-				}
+				error => console.log('Error retrieving feeds', error)
 			)
-		)
+		);
 	}
 
 	filterData(e) {
@@ -156,4 +162,5 @@ export class FeedsComponent implements OnInit {
 			}
 		)
 	}
+
 }

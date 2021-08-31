@@ -71,15 +71,29 @@
 
 		
 	<hr class="my-4">
-        <div class="mb-3">
-            <button mat-button mat-raised-button
-                class="theme-btn pi-control sm-text _primary mr-2" 
-                (click)="exportTable()"
-                [disabled]="workbook_generation"  
-                title="Export to CSV">
-                <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
-            </button>
+        <div class="mb-3 col-lg-12 flex p-0">
+            <div class="col-lg-3 pl-0">
+                <button mat-button mat-raised-button
+                    class="theme-btn pi-control sm-text _primary mr-2" 
+                    (click)="exportTable()"
+                    [disabled]="workbook_generation"  
+                    title="Export to CSV">
+                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                    <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                </button>
+            </div>
+			<div class="offset-6 col-lg-3 pr-0">
+				<app-search-field *ngIf="!initial_load"
+				[form_title]="'Search Dealer Business Name'"
+				[placeholder]="'Example: N-Compass'"
+				[data_reference]="installations"
+				[primary_keyword]="'business_name'"
+				[secondary_keyword]="'business_name'"
+				(searched)="filterData($event)"
+                [api_search]="true"
+				></app-search-field>
+			</div>
+
         </div>
         <div *ngIf="!initial_load; else loader">
             <div>

@@ -59,7 +59,19 @@
                                 <div *ngIf="!initial_load_licenses; else loader">
                                     <div *ngIf="!no_licenses; else no_data">
                                         <div class="row">
-                                            <div class="col-lg-8"></div>
+                                            <div class="col-lg-8">
+                                                <button mat-button mat-raised-button 
+                                                    class="theme-btn pi-control _cool sm-text mr-2" 
+                                                    [matMenuTriggerFor]="orderSort" 
+                                                    title="Order by License Status">
+                                                    <span class="fas fa-sort"></span> 
+                                                    <span class="ml-2 button_text_animation">Order by License Status</span>
+                                                </button>
+                                                <mat-menu #orderSort="matMenu">
+                                                    <button mat-menu-item (click)="sortList('desc')">Online</button>
+                                                    <button mat-menu-item (click)="sortList('asc')">Offline</button>
+                                                </mat-menu>
+                                            </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
                                                 *ngIf="!initial_load_licenses"
@@ -83,7 +95,12 @@
                                                         [new_table]="true"
                                                         [paging_details]="paging_data_licenses"
                                                         [query_params]="tab"
-                                                        (page_triggered)="getLicenses($event)">
+                                                        (page_triggered)="getLicenses($event)"
+                                                        [license_status_column]="true"
+                                                        (to_sort_column)="getColumnsAndOrder($event)"
+                                                        [active_tab]="sort_column"
+                                                        [sort_column]="sort_column"
+                                                        [sort_order]="sort_order">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>

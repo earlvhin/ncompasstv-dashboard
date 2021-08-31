@@ -114,18 +114,17 @@ export class CreateTemplateComponent implements OnInit {
 	}
 
 	openNewZoneModal(): void {
-		let dialog = this._dialog.open(NewZoneModalComponent, {
-			width: '600px',
-		});
+		const dialog = this._dialog.open(NewZoneModalComponent, { width: '600px', disableClose: true });
 
 		this.subscription.add(
 			dialog.afterClosed().subscribe((data: API_ZONE) => this.addZoneProperty(data))
-		)
+		);
 	}
 
 	zoneProperty(data: any, index: number) {
 		this.zone_data = JSON.parse(data);
 		this.zone_background = this.zone_data.background;
+
 		return new FormGroup(
 			{
 				'name': new FormControl(this.zone_data.name, [Validators.required]),
@@ -137,6 +136,6 @@ export class CreateTemplateComponent implements OnInit {
 				'ypos': new FormControl(this.zone_data.yPos, [Validators.required]),
 				'order': new FormControl(index, [Validators.required])
 			}
-		)
+		);
 	}
 }

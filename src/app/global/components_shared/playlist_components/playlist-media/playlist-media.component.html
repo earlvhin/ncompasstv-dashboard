@@ -44,8 +44,8 @@
 	<div class="playlist-media-panel border material-shadow bg-light p-2 mb-4">
 		<ng-container *ngIf="media_files; else loading">
 				<div *ngIf="!file_not_found; else not_found" class="h-100">
-					<div class="row no-gutters" *ngIf="media_files_no_floating.length > 0; else loading">
-						<div class="col-lg-2" *ngFor="let content of media_files_no_floating; let i = index">
+					<div class="row no-gutters" *ngIf="media_files.length > 0; else loading">
+						<div class="col-lg-2" *ngFor="let content of media_files; let i = index">
 							<div class="m-1 position-relative" [ngClass]="isMarked(content) ? 'marked' : null">
 								<app-playlist-media-thumbnail
 								[content]="content"

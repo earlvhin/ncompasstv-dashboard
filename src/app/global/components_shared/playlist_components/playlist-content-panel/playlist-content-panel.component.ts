@@ -13,7 +13,7 @@ import { PlaylistMediaComponent } from '../playlist-media/playlist-media.compone
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 import { ContentService, PlaylistService } from 'src/app/global/services';
 import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
-	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS } from 'src/app/global/models';
+	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlist-content-panel',
@@ -53,7 +53,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	playlist_saving: boolean = false;
 	selected_contents: string[];
 	selected_content_count: number;
-	structured_updated_playlist: any;
+	structured_updated_playlist: API_UPDATE_PLAYLIST_CONTENT;
 	structured_incoming_blocklist = [];
 	structured_remove_in_blocklist = [];
 	structured_bulk_remove_in_blocklist = [];
@@ -325,12 +325,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.showViewSchedulesDialog();
 	}
 
-	optionsSaved(data: { content: API_CONTENT, original_credits: CREDITS }): void {
+	optionsSaved(data: PLAYLIST_CHANGES): void {
 
 		// console.log('DATA FROM OPTIONS COMPONENTS', data);
 		
 		let creditsUpdate: { playlistContentId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
+		let creditsStatusUpdate: CREDITS_STATUS = null;
 		const { content, original_credits } = data;
 		this.playlist_changes_data = data;
 
@@ -362,9 +363,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		}
 
 		const { blocklist } = this.playlist_changes_data;
+		const dataToSubmit = this.structured_updated_playlist;
 		this.structured_incoming_blocklist = blocklist && blocklist.incoming.length > 0 ? blocklist.incoming : [];
 		this.structured_remove_in_blocklist = blocklist && blocklist.removing.length > 0 ? blocklist.removing : [];
-		this.savePlaylistChanges(this.structured_updated_playlist, frequencyUpdate, creditsUpdate);
+
+		if (typeof data.credits_status !== 'undefined') creditsStatusUpdate = data.credits_status;
+		this.savePlaylistChanges(dataToSubmit, frequencyUpdate, creditsUpdate, creditsStatusUpdate);
 	}
 
 	openPlaylistMedia(): void {
@@ -551,12 +555,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.addToBlocklist(to_block);
 	}
 
-	savePlaylistChanges(data: any, frequencyUpdate?: FREQUENCY, creditsUpdate?: CREDITS): void {
+	savePlaylistChanges(data: API_UPDATE_PLAYLIST_CONTENT, frequencyUpdate?: FREQUENCY, creditsUpdate?: CREDITS, creditsStatusUpdate?: CREDITS_STATUS): void {
 		this.playlist_saving = true;
 		this.is_marking = false;
 
 		if (data) {
-			// console.log('DATA TO SEND', data);
 
 			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
@@ -570,6 +573,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						if (creditsUpdate) {
 							const { playlistContentId, credits } = creditsUpdate;
 							await this._content.update_play_credits(playlistContentId, credits).toPromise();
+						}
+
+						if (creditsStatusUpdate) {
+							const { playlistContentId, status } = creditsStatusUpdate;
+							await this._content.toggle_credits(playlistContentId, status).toPromise();
 						}
 
 						localStorage.removeItem('playlist_order');

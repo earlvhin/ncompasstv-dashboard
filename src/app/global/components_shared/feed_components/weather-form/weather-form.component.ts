@@ -116,6 +116,57 @@ export class WeatherFormComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.prepareForms();
+	}
+
+	/** On Color Picker Field Changed */
+	colorPicker(e, form_control_name) {
+		this.weather_form.get(form_control_name).setValue(e);
+	}
+
+	/** Open Media Library where contents are assigned to selected dealer */
+	openMediaLibraryModal(form_control_name: string): void {
+		/** Open Feed Media Modal */
+		let dialog = this._dialog.open(FeedMediaComponent, {
+			width: '1024px',
+			data: {
+				dealer: this.selected_dealer,
+				singleSelect: true
+			}
+		})
+
+		/** On Modal Close */
+		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
+			if (data && data.length > 0) {
+				/** Set Form Control Field Value */
+				this.weather_form.controls[form_control_name].setValue(data[0].contentId);
+
+				/** Set UI Image Display */
+				this.weather_form_fields.map(
+					i => {
+						if (i.form_control_name === form_control_name) {
+							i.imageUri = data[0].thumbnail;
+							i.fileName = data[0].title;
+						}
+					}
+				)
+			}
+		})
+	}
+
+
+	/** Pass weather feed data to parent component */
+	generateWeatherFeed() {
+		this.weather_feed_data.emit(this.weather_form.value);
+	}
+
+	/** Weather Form Control Getter */
+	get f() {
+		return this.weather_form.controls;
+	}
+
+	/** Prepare Forms */
+	private prepareForms(): void {
 		console.log(this.edit_weather_data);
 
 		let form_group_obj = {};
@@ -178,51 +229,9 @@ export class WeatherFormComponent implements OnInit {
 		)
 	}
 
-	/** On Color Picker Field Changed */
-	colorPicker(e, form_control_name) {
-		this.weather_form.get(form_control_name).setValue(e);
-	}
-
-	/** Open Media Library where contents are assigned to selected dealer */
-	openMediaLibraryModal(form_control_name: string): void {
-		/** Open Feed Media Modal */
-		let dialog = this._dialog.open(FeedMediaComponent, {
-			width: '1024px',
-			data: {
-				dealer: this.selected_dealer,
-				singleSelect: true
-			}
-		})
-
-		/** On Modal Close */
-		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
-			if (data && data.length > 0) {
-				/** Set Form Control Field Value */
-				this.weather_form.controls[form_control_name].setValue(data[0].contentId);
-
-				/** Set UI Image Display */
-				this.weather_form_fields.map(
-					i => {
-						if (i.form_control_name === form_control_name) {
-							i.imageUri = data[0].thumbnail;
-							i.fileName = data[0].title;
-						}
-					}
-				)
-			}
-		})
-	}
-
-	/** Pass weather feed data to parent component */
-	generateWeatherFeed() {
-		this.weather_feed_data.emit(this.weather_form.value);
-	}
-
-	/** Weather Form Control Getter */
-	get f() {
-		return this.weather_form.controls;
-	}
-
+	/** Validate Zipcode if is within API jurisdiction
+	 * @param {string} zipCode Entered Zipcode
+	 */
 	private validateZipCode(zipCode: string) {
 		this._feed.validate_weather_zip(zipCode).subscribe(
 			(data: {success: boolean}) => {

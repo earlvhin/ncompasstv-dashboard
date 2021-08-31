@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
-import { GenerateFeed, GenerateWeatherFeed, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model';
+import { FEED_INFO, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model';
 import { map } from 'rxjs/operators';
 
 @Injectable({
@@ -23,6 +23,11 @@ export class FeedService {
 		private _http: HttpClient,
 		private _auth: AuthService
 	) { }
+
+	clone_feed(contentId: string, createdBy: string) {
+		const body = { contentId, createdBy };
+		return this._http.post(`${environment.base_uri}${environment.create.feed_clone}`, body, this.httpOptions);
+	}
 
 	create_feed(data) {
 		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed}`, data, this.httpOptions)

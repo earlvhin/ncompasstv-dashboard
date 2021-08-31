@@ -36,6 +36,7 @@
                             <app-slider-form 
                             *ngIf="selected_dealer" 
                             (structured_feed_items)="structureSlideFeedToGenerate($event)"
+                            [banner_image_data]="fetched_feed ? fetched_feed.bannerImageData : null"
                             [global_settings]="slide_global_settings"
                             [feed_items]="feed_items"
                             [selected_dealer]="selected_dealer">
@@ -61,8 +62,11 @@
                         <div *ngIf="feed_items.length > 0 || generated_weather_feed; else no_feed_content">
                             <div class="row mb-5 mt-5">
                                 <div class="col-lg-12 text-center">
-                                    <h3>Here's a preview of your customized feed.</h3>
-                                    <p class="sm-text">You can edit your generated feed by going back one step above.</p>
+                                    <h3 class="mb-1">Here's a preview of your customized feed.</h3>
+                                    <p class="sm-text">
+                                        This is just a demo to see the styles applied. The texts displayed are for demo purposes.<br> 
+                                        You can edit your generated feed by going back one step above.
+                                    </p>
                                 </div>
                             </div>
     

@@ -7,6 +7,7 @@ export class API_CONTENT {
     contentId: string;
     createdBy: string;
     createdByName: string;
+	creditsEnabled?: number | boolean;
 	dealerId: string;
 	duration: number;
     hostId: string;

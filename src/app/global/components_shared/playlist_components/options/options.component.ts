@@ -5,7 +5,7 @@ import * as moment from 'moment';
 
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { CREDITS } from 'src/app/global/models';
+import { CREDITS, PLAYLIST_CHANGES } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-options',
@@ -26,8 +26,10 @@ export class OptionsComponent implements OnInit {
 	disable_animation = true;
 	has_schedule = false;
 	host_license: any;
+	initial_credits_status: number | boolean;
+	licenses: any[] = [];
 	feed_url = '';
-	playlist_changes_data: { content: API_CONTENT, blocklist: any, original_credits: CREDITS } = { content: null, blocklist: null, original_credits: null };
+	playlist_changes_data: PLAYLIST_CHANGES = { content: null, blocklist: null, original_credits: null };
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
 	toggle_all: boolean;
@@ -61,20 +63,39 @@ export class OptionsComponent implements OnInit {
 		if (this.isFeedContent()) this.setFeedUrl();
 		this.setSchedule(this._dialog_data.content);
         this.getTotalLicenses();
+		this.initial_credits_status = content.creditsEnabled;
+	}
+
+	ngOnDestroy() {
+		clearTimeout(this.timeout);
+	}
+
+	ngAfterContentInit (): void {
+        this.timeout = setTimeout(() => this.disable_animation = false);
 	}
     
 	canEditCreditsField() {
-		const { original_credits } = this.playlist_changes_data;
-		if (!original_credits) return true;
-		return original_credits.balance === 0;
+		if (!this.playlist_changes_data.original_credits) return true;
+		return this.playlist_changes_data.original_credits.balance === 0;
+	}
+
+	contentDataChanged() {
+		if (JSON.stringify(this.content_data) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
+			this.unchanged_playlist = true;
+		} else {
+			this.playlist_changes_data.content = this.content_data;
+			this.unchanged_playlist = false;
+		}
 	}
     
     getTotalLicenses() {
-        this._dialog_data.host_license.map (
-            host => {
-                this.total_licenses = this.total_licenses + host.licenses.length;
-            }
-        )
+		this.host_license.forEach(host => {
+			if (host.licenses.length > 0) {
+				this.licenses = this.licenses.concat(host.licenses);
+			}
+		});
+
+		this.total_licenses = this.licenses.length;
     }
 	
     getCount(e) {
@@ -86,46 +107,8 @@ export class OptionsComponent implements OnInit {
         this.total_whitelist = this.total_licenses - this.blacklist_count;
     }
 
-	ngOnDestroy() {
-		clearTimeout(this.timeout);
-	}
-
-	ngAfterContentInit (): void {
-        this.timeout = setTimeout(() => this.disable_animation = false);
-	}
-
-	hasWhiteListed(e) {}
-
 	onClose(): void {
 		this._dialog_ref.close();
-	}
-
-	toggleFullscreen(e) {
-		this.content_data.isFullScreen = e.checked == true ? 1 : 0;
-		this.contentDataChanged();
-	}
-
-	setDuration() {
-		this.content_data.duration = this.content_data.duration < 5 ? 5 : this.content_data.duration;
-		this.contentDataChanged();
-	}
-
-	contentDataChanged() {
-		if (JSON.stringify(this.content_data) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
-			this.unchanged_playlist = true;
-		} else {
-			this.playlist_changes_data.content = this.content_data;
-			this.unchanged_playlist = false;
-		}
-	}
-
-	onSave(): any {
-		return this.playlist_changes_data;
-	}
-
-	onSelectFrequency(): void {
-		this.content_data.frequency = this.content_frequency;
-		this.contentDataChanged();
 	}
 
 	onInputCredits(): void {
@@ -140,8 +123,35 @@ export class OptionsComponent implements OnInit {
 
 	}
 
+	onSave(): any {
+		return this.playlist_changes_data;
+	}
+
+	onSelectFrequency(): void {
+		this.content_data.frequency = this.content_frequency;
+		this.contentDataChanged();
+	}
+
+	onToggleCredits(): void {
+		this.contentDataChanged();
+
+		const { creditsEnabled } = this.content_data;
+		const initialStatus = this.initial_credits_status;
+		const enabled = creditsEnabled ? 1 : 0;
+		const { playlistContentId } = this.content_data;
+
+		if (enabled !== initialStatus) this.playlist_changes_data.credits_status = { playlistContentId, status: enabled };
+		if (enabled === initialStatus && 'credits_status' in this.playlist_changes_data) delete this.playlist_changes_data.credits_status;
+
+	}
+
 	removeFilenameHandle(e) {
 		return e.substring(e.indexOf('_') + 1);
+	}
+
+	setDuration() {
+		this.content_data.duration = this.content_data.duration < 5 ? 5 : this.content_data.duration;
+		this.contentDataChanged();
 	}
 
 	saveBlocklistChanges(e) {
@@ -153,6 +163,15 @@ export class OptionsComponent implements OnInit {
 			this.unchanged_playlist = false;
 			this.playlist_changes_data.blocklist = this.blocklist_changes;
 		}
+	}
+
+	toggleAll(event) {
+		this.toggle_event.next(event.checked);
+	}
+
+	toggleFullscreen(e) {
+		this.content_data.isFullScreen = e.checked == true ? 1 : 0;
+		this.contentDataChanged();
 	}
 
 	undoChanges() {
@@ -181,10 +200,6 @@ export class OptionsComponent implements OnInit {
 		} else {
 			this._dialog_ref.close();
 		}
-	}
-
-	toggleAll(event) {
-		this.toggle_event.next(event.checked);
 	}
 
 	private setCreditsAndBalance(data: CREDITS) {

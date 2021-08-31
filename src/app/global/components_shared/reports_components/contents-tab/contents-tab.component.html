@@ -53,23 +53,36 @@
 				[new_value]="dealer_name">							
 			</app-autocomplete-field>
         </div>
+        <div class="row"></div>
+        <div class="col-lg-12 pl-0">
+            <app-search-field *ngIf="selected_dealer_name != ''"
+				[form_title]="'Search File Name'"
+				[placeholder]="'Example: N-Compass.png'"
+				[data_reference]="content_metrics"
+				[primary_keyword]="'title'"
+				[secondary_keyword]="'title'"
+				(searched)="filterData($event)"
+                [api_search]="true"
+			></app-search-field>
+        </div>
+        <div class="row"></div>
+        <div class="col-lg-12 pl-0" *ngIf="selected_dealer_name != '' && filtered_data.length != 0">
+            <div class="offset-6 col-lg-6 mb-2 pr-0 text-right">
+                <button mat-button mat-raised-button class="theme-btn" (click)="exportTable('dealer')" [disabled]="searching || workbook_generation" title="Export to CSV">
+                    <span class="button-label">
+                        {{!workbook_generation ? 'Export Results' : 'Generating CSV'}}
+                    </span>
+                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}} ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
     </form>
     <div class="col-lg-9 pl-0" *ngIf="selected_dealer_name != ''">
         <div class="row flex p-0 m-0">
-            <div class="col-lg-8 mb-2 pl-0">
+            <div class="col-lg-12 bg-primary text-white text-center md-text pl-0 pt-1 pb-1">
                 <span>
-                    Media Files from Dealer: <i class="text-primary">{{selected_dealer_name}}</i>
+                    Media Files from Dealer: <i>{{selected_dealer_name}}</i>
                 </span>
-            </div>
-            <div class="col-lg-4 mb-2 pr-0 text-right">
-                <button mat-button mat-raised-button
-                    class="theme-btn pi-control sm-text _primary" 
-                    (click)="exportTable('dealer')"
-                    [disabled]="filtered_data.length == 0 || searching || workbook_generation"  
-                    title="Export to CSV">
-                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                    <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
-                </button>
             </div>
         </div>
         <div class="row">

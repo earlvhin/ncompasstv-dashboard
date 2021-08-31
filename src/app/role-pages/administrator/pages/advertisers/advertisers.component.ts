@@ -16,14 +16,11 @@ export class AdvertisersComponent implements OnInit {
 	advertiser_stats: any;
 	title: string = "Advertisers";
 	advertiser_table_column = [
-		'#',
-		'Dealer Alias',
-		'Business Name',
-		'Contact Person',
-		// 'Region',
-		// 'City',
-		// 'State',
-		'Advertiser Count'
+		{ name: '#', sortable: false},
+        { name: 'Dealer Alias', sortable: true, column:'DealerIdAlias'},
+        { name: 'Business Name', sortable: true, column:'BusinessName'},
+        { name: 'Contact Person', sortable: true, column:'ContactPerson'},
+		{ name: 'Advertiser Count', sortable: true, column:'totalAdvertisers'},
 	]
 	paging_data: any;
 	table_loading: boolean = true;
@@ -35,6 +32,8 @@ export class AdvertisersComponent implements OnInit {
 	searching: boolean = false;
 	initial_load: boolean = true;
 	search_data: string = "";
+    sort_column: string = '';
+	sort_order: string = '';
 
 	constructor(
 		private _advertiser: AdvertiserService,
@@ -69,17 +68,27 @@ export class AdvertisersComponent implements OnInit {
 		);
 	}
 
+    getColumnsAndOrder(data) {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.pageRequested(1);
+	}
+
 	pageRequested(e) {
 		this.searching = true;
 		this.dealers_with_advertiser = [];
 		this.subscription.add(
-			this._dealer.get_dealers_with_advertiser(e, this.search_data).subscribe(
+			this._dealer.get_dealers_with_advertiser(e, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
+                    // console.log(JSON.parse(JSON.stringify(data)))
+                    console.log({data:data.dealers})
                     this.paging_data = data.paging;
 					if(data.dealers) {
+                        console.log("HERE")
 						this.dealers_with_advertiser = this.dealer_mapToUI(data.dealers);
 						this.filtered_data = this.dealer_mapToUI(data.dealers);
 					} else {
+                        console.log("THERE")
 						if(this.search_data == "") {
 							this.no_advertiser = true;
 						}
@@ -105,13 +114,9 @@ export class AdvertisersComponent implements OnInit {
 		}
 	}
 
-	dealer_mapToUI(data: API_DEALER[]) {
+	dealer_mapToUI(data) {
 		let count = this.paging_data.pageStart;
-		return data.filter(
-			i => {
-				return i.advertisers.length > 0;
-			}
-		).map(
+		return data.map(
 			i => {
 				return new UI_DEALER_ADVERTISERS(
 					{ value: i.dealerId, link: null , editable: false, hidden: true},
@@ -122,7 +127,7 @@ export class AdvertisersComponent implements OnInit {
 					// { value: i.region, link: null , editable: false, hidden: false},
 					// { value: i.city, link: null , editable: false, hidden: false},
 					// { value: i.state, link: null , editable: false, hidden: false},
-					{ value: i.advertisers.length, link: null , editable: false, hidden: false},
+					{ value: i.totalAdvertisers, link: null , editable: false, hidden: false},
 				)
 			}
 		)

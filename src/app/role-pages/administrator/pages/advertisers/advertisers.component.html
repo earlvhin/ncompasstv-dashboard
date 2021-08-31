@@ -82,7 +82,11 @@
 								[new_table]="true"
 								[paging_details]="paging_data"
 								[query_params]="tab"
-								(page_triggered)="pageRequested($event)">
+								(page_triggered)="pageRequested($event)"
+                                (to_sort_column)="getColumnsAndOrder($event)"
+                                [active_tab]="sort_column"
+                                [sort_column]="sort_column"
+                                [sort_order]="sort_order">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

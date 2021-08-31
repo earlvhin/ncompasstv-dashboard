@@ -41,14 +41,14 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses(page, key) {
-        const params = this.httpParams({ page, search: key })
+	get_all_licenses(page, key, column, order) {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order })
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
-	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?) {
+	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?, dealer="") {
 		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;
-		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}`;
+		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}&search=${dealer}`;
 		return this._http.get<any>(endpoint, this.httpOptions);
 	}
 
@@ -63,6 +63,11 @@ export class LicenseService {
 	get_license_by_dealer_id(id, page, key, arrangement) {
 		const params = this.httpParams({ dealerId: id,page, search: key, arrangement })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+	}
+	
+    get_license_by_screen_id(id, page) {
+		const params = this.httpParams({ screenId: id,page })
+		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
 	}
 
 	sort_license_by_dealer_id(id, page, key, column, order) {
@@ -217,6 +222,14 @@ export class LicenseService {
 	*/
 	update_internet_info(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_internet_info}`, data, this.httpOptions);
+	}
+
+	set_screenshot_status(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_screenshot_settings}`, data, this.httpOptions);
+	}
+
+	set_speedtest_status(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_speedtest_settings}`, data, this.httpOptions);
 	}
 
 	protected get baseUri() {

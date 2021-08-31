@@ -1,13 +1,18 @@
 import { API_CONTENT } from "./api_content.model";
 import { API_DEALER } from "./api_dealer.model";
 
-export class GenerateFeed {
+/** Slide Feed Model to be submitted to API via POST */
+export class GenerateSlideFeed {
     feeds: FEED_INFO
 
     feedGlobalSettings: {
-        overlay: string,
+        bannerImage: string,
         fontColor: string,
-        fontFamily: string
+        fontFamily: string,
+        headlineColor: string,
+        headlingBackground: string,
+        overlay: string,
+        textAlign: string
     }
 
     feedSlides: {
@@ -28,9 +33,13 @@ export class GenerateFeed {
             feedId?: string
         },
         feedGlobalSettings: {
-            overlay: string,
+            bannerImage: string,
             fontColor: string,
-            fontFamily: string
+            fontFamily: string,
+            headlineColor: string,
+            headlingBackground: string,
+            overlay: string,
+            textAlign: string
         },
         feedSlides: {
             contentId: string,
@@ -57,6 +66,28 @@ export type FEED_INFO = {
     updatedBy?: string
 }
 
+export type feedGlobalSettings = {
+    bannerImage: string,
+    fontColor: string,
+    fontFamily: string,
+    headlineColor: string,
+    headlineBackground: string,
+    overlay: string,
+    textAlign: string
+}
+
+/** Weather Feed Model to be submitted to API via POST */
+export class GenerateWeatherFeed {
+    feeds: FEED_INFO;
+    feedWeather: WEATHER_FEED_STYLE_DATA
+
+    constructor(feeds: FEED_INFO, feedWeather: WEATHER_FEED_STYLE_DATA){
+        this.feeds = feeds;
+        this.feedWeather = feedWeather;
+    }
+}
+
+/** Model from API via GET */
 export type API_GENERATED_FEED = {
     businessName: string,
     createdBy: string,
@@ -90,26 +121,8 @@ export type API_GENERATED_FEED = {
         sequence: number
     }[],
     feedWeather: WEATHER_FEED_STYLE_DATA,
-    slideGlobalSettings: SLIDE_GLOBAL_SETTINGS
-}
-
-export type SLIDE_GLOBAL_SETTINGS =  {
-    dateCreated: string,
-    feedGlobalSettingsId: string,
-    feedId: string,
-    fontColor: string,
-    fontFamily: string,
-    overlay: string,
-    status: string
-}
-export class GenerateWeatherFeed {
-    feeds: FEED_INFO;
-    feedWeather: WEATHER_FEED_STYLE_DATA
-
-    constructor(feeds: FEED_INFO, feedWeather: WEATHER_FEED_STYLE_DATA){
-        this.feeds = feeds;
-        this.feedWeather = feedWeather;
-    }
+    slideGlobalSettings: SLIDE_GLOBAL_SETTINGS,
+    bannerImageData: API_CONTENT
 }
 
 export type WEATHER_FEED_STYLE_DATA = {
@@ -123,4 +136,15 @@ export type WEATHER_FEED_STYLE_DATA = {
     numberDay: number,
     zipCode: string,
     numberDays?: number,
+}
+
+export type SLIDE_GLOBAL_SETTINGS =  {
+    dateCreated: string,
+    feedGlobalSettingsId: string,
+    feedId: string,
+    fontColor: string,
+    fontFamily: string,
+    overlay: string,
+    status: string,
+    textAlign: string
 }

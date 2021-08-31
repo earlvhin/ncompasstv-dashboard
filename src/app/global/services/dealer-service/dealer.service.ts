@@ -66,8 +66,8 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_host}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 	
-	get_dealers_with_advertiser(page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_advertiser}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_dealers_with_advertiser(page, key, column?, order?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_advertiser}`+'?page='+`${page}`+'&search='+`${key}&sortColumn=${column}&sortOrder=${order}`, this.httpOptions);
 	}
 	
 	get_dealers_with_license(page, key) {
