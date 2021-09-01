@@ -694,7 +694,7 @@
 										<mat-card  style="height: 375px">
 											<div class="d-flex align-items-center">
 												<div class="chart-thumbnail mr-3">
-													<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
+													<img [src]="cc.fileType !== 'webm' ? cc.thumbnail : cc.url + cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) + 'jpg'" alt="content-thumbnail">
 												</div>
 												<div>
 													<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
