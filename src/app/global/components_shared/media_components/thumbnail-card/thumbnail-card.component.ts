@@ -30,6 +30,7 @@ export class ThumbnailCardComponent implements OnInit {
 	@Input() is_fullscreen: number;
 	@Input() multiple_delete: boolean;
 	@Input() disconnect_to_socket: boolean;
+	@Input() sequence: number;
 	@Output() converted: EventEmitter<boolean> = new EventEmitter();
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Output() content_to_delete = new EventEmitter;
