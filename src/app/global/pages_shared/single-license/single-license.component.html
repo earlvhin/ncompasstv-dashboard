@@ -642,7 +642,8 @@
 										[uuid]="a.uuid"
 										[zone_content]="true"
 										[is_fullscreen]="a.is_fullscreen"
-										[disconnect_to_socket]="thumb_no_socket">
+										[disconnect_to_socket]="thumb_no_socket"
+										[sequence]="i + 1">
 									</app-thumbnail-card>
 								</div>
 							</div>
@@ -731,7 +732,7 @@
 										<mat-card  style="height: 375px">
 											<div class="d-flex align-items-center">
 												<div class="chart-thumbnail mr-3">
-													<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
+													<img [src]="cc.fileType !== 'webm' ? cc.thumbnail : cc.url + cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) + 'jpg'" alt="content-thumbnail">
 												</div>
 												<div>
 													<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
@@ -772,7 +773,7 @@
 										<mat-card  style="height: 375px">
 											<div class="d-flex align-items-center" >
 												<div class="chart-thumbnail mr-3">
-													<img [src]="cc.previewThumbnail || cc.thumbnail" alt="content-thumbnail">
+													<img [src]="cc.fileType !== 'webm' ? cc.thumbnail : cc.url + cc.fileName.substr(0, cc.fileName.lastIndexOf('.') + 1) + 'jpg'" alt="content-thumbnail">
 												</div>
 												<div>
 													<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
