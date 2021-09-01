@@ -27,15 +27,17 @@
 
                     <input
                     autocomplete="off"
-                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
                     [(colorPicker)]="w.colorValue"
+                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
                     formControlName="{{ w.form_control_name }}"
                     [cpAlphaChannel]="'disabled'"
                     [cpDisableInput]="true"
                     matInput [type]="w.type"
                     [value]="w.colorValue || ''"/>
 
-                    <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>
+                    <div class="color-showcase position-absolute" [style.background]="w.colorValue">
+                        <p>{{ w.colorValue }}</p>
+                    </div>
                 </mat-form-field>
 
                 <div class="error-message">
