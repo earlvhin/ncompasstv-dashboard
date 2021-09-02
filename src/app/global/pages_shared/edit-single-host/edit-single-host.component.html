@@ -138,7 +138,8 @@
 			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
 				Cancel
 			</button>
-			<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteHost()">
+			<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button"
+				*ngIf="isCurrentUserAdmin" (click)="onDeleteHost()">
 				Delete Host
 			</button>
 		</form>

@@ -197,7 +197,7 @@ export class EditSingleHostComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
+		if (this.isCurrentUserDealer) this.is_dealer = true;
 
 		this.getDealers(1);
 		this.getHostData(this._host_data);
@@ -258,6 +258,10 @@ export class EditSingleHostComponent implements OnInit {
 	}
 
 	get f() { return this.new_host_form.controls; }
+
+	get isCurrentUserAdmin() {
+		return this.currentUser.role_id === UI_ROLE_DEFINITION.administrator;
+	}
 
 	getHostData(id: string): void {
 		this.subscription.add(
@@ -534,6 +538,14 @@ export class EditSingleHostComponent implements OnInit {
 
 	private get hasUpdatedBusinessHours(): boolean {
 		return JSON.stringify(this.business_hours) !== JSON.stringify(this.initial_business_hours);
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
+	}
+
+	protected get isCurrentUserDealer() {
+		return this.currentUser.role_id === UI_ROLE_DEFINITION.dealer;
 	}
 }
 
