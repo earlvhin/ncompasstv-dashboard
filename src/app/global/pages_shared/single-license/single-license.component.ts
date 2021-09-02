@@ -135,21 +135,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		{ value: 'yearly', viewValue: 'Yearly' }
 	];
 
-	months = [
-		{ value: `${this.current_year}-01`, viewValue: 'January' },
-		{ value: `${this.current_year}-02`, viewValue: 'February' },
-		{ value: `${this.current_year}-03`, viewValue: 'March' },
-		{ value: `${this.current_year}-04`, viewValue: 'April' },
-		{ value: `${this.current_year}-05`, viewValue: 'May' },
-		{ value: `${this.current_year}-06`, viewValue: 'June' },
-		{ value: `${this.current_year}-07`, viewValue: 'July' },
-		{ value: `${this.current_year}-08`, viewValue: 'August' },
-		{ value: `${this.current_year}-09`, viewValue: 'September' },
-		{ value: `${this.current_year}-10`, viewValue: 'October' },
-		{ value: `${this.current_year}-11`, viewValue: 'November' },
-		{ value: `${this.current_year}-12`, viewValue: 'December' }
-	];
-
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -295,21 +280,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		}, 5000);
 	}
 
-	displayModeSelected(e): void {
-		this.destroy_monthly_charts = true;
-		this.destroy_daily_charts = true;
-		this.current_display_mode = e;
+	// displayModeSelected(e): void {
+	// 	this.destroy_monthly_charts = true;
+	// 	this.destroy_daily_charts = true;
+	// 	this.current_display_mode = e;
 
-		if (e === 'monthly') {
-			this.queried_date = this._date.transform(new Date(), 'longDate');
-			this.destroy_monthly_charts = false;
-			this.getContentReport_monthly(this._date.transform(new Date(), 'y-MM'))
-		} else {
-			this.destroy_daily_charts = false;
-			this.queried_date = this._date.transform(new Date(), 'longDate');
-			this.getContentReport_daily(this._date.transform(new Date(), 'y-MM-dd'))
-		}
-	}
+	// 	if (e === 'monthly') {
+	// 		this.queried_date = this._date.transform(new Date(), 'longDate');
+	// 		this.destroy_monthly_charts = false;
+	// 		this.getContentReport_monthly(this._date.transform(new Date(), 'y-MM'))
+	// 	} else {
+	// 		this.destroy_daily_charts = false;
+	// 		this.queried_date = this._date.transform(new Date(), 'longDate');
+	// 		this.getContentReport_daily(this._date.transform(new Date(), 'y-MM-dd'))
+	// 	}
+	// }
 
 	getActivityOfLicense(id: string) {
 		this._license.get_activities(id).subscribe(
@@ -367,60 +352,60 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
-	getContentReport_daily(date): void {
-		const data = { licenseId: this.license_id, from: date };
-		this.daily_chart_updating = true;
+	// getContentReport_daily(date): void {
+	// 	const data = { licenseId: this.license_id, from: date };
+	// 	this.daily_chart_updating = true;
 
-		this.subscriptions.add(
-			this._content.get_content_daily_count_by_license(data).subscribe(
-				data => {
-					this.daily_content_count = data;
-					this.daily_chart_updating = false;
-					this.destroy_daily_charts = false;
+	// 	this.subscriptions.add(
+	// 		this._content.get_content_daily_count_by_license(data).subscribe(
+	// 			data => {
+	// 				this.daily_content_count = data;
+	// 				this.daily_chart_updating = false;
+	// 				this.destroy_daily_charts = false;
 
-					setTimeout(() => {
-						this.analytics_reload.next();
-					}, 1000)
-				},
-				error => console.log('Error getting daily content count', error)
-			)
-		);
-	}
+	// 				setTimeout(() => {
+	// 					this.analytics_reload.next();
+	// 				}, 1000)
+	// 			},
+	// 			error => console.log('Error getting daily content count', error)
+	// 		)
+	// 	);
+	// }
 
-	getContentReport_monthly(date): void {
-		const data = { licenseId: this.license_id, from: date };
-		this.monthly_chart_updating = true;
+	// getContentReport_monthly(date): void {
+	// 	const data = { licenseId: this.license_id, from: date };
+	// 	this.monthly_chart_updating = true;
 		
-		this.subscriptions.add(
-			this._content.get_content_monthly_count_by_license(data).subscribe(
-				data => {
-					this.monthly_content_count = data;
-					this.monthly_chart_updating = false;
-					this.destroy_monthly_charts = false;
+	// 	this.subscriptions.add(
+	// 		this._content.get_content_monthly_count_by_license(data).subscribe(
+	// 			data => {
+	// 				this.monthly_content_count = data;
+	// 				this.monthly_chart_updating = false;
+	// 				this.destroy_monthly_charts = false;
 
-					setTimeout(() => {
-						this.analytics_reload.next();
-					}, 1000)
-				},
-				error => console.log('Error getting monthly content count', error)
-			)
-		);
-	}
+	// 				setTimeout(() => {
+	// 					this.analytics_reload.next();
+	// 				}, 1000)
+	// 			},
+	// 			error => console.log('Error getting monthly content count', error)
+	// 		)
+	// 	);
+	// }
 
-	getContentReport_yearly(): void {
-		const data = { licenseId: this.license_id };
+	// getContentReport_yearly(): void {
+	// 	const data = { licenseId: this.license_id };
 
-		this.subscriptions.add(
-			this._content.get_content_yearly_count_by_license(data).subscribe(
-				data => {
-					this.yearly_content_count = data;
-					this.yearly_chart_updating = false;
-				},
-				error => console.log('Error getting yearly content count', error)
-			)
-		);
+	// 	this.subscriptions.add(
+	// 		this._content.get_content_yearly_count_by_license(data).subscribe(
+	// 			data => {
+	// 				this.yearly_content_count = data;
+	// 				this.yearly_chart_updating = false;
+	// 			},
+	// 			error => console.log('Error getting yearly content count', error)
+	// 		)
+	// 	);
 
-	}
+	// }
 
 	getFormValue(): void {
 		this.update_alias = this._form.group({
@@ -530,20 +515,27 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	monthSelected(value: any): void {
-		if (this.current_tab !== 'Analytics') return;
+	// monthSelected(value: any): void {
+	// 	console.log('month select', value);
+	// 	if (this.current_tab !== 'Analytics') return;
 		
-		if (this.selected_month == this.default_selected_month) {
-			this.monthly_chart_updating = true;
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-		} else {
-			this.monthly_chart_updating = true;
-			this.daily_chart_updating = true;
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-			this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
-			this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
-		}
-	}
+	// 	// if (this.selected_month == this.default_selected_month) {
+	// 	// 	console.log('1');
+	// 	// 	this.monthly_chart_updating = true;
+	// 	// 	this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
+	// 	// } else {
+	// 	// 	console.log('2');
+	// 	// 	this.monthly_chart_updating = true;
+	// 	// 	this.daily_chart_updating = true;
+	// 	// 	this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
+	// 	// 	// this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
+	// 	// 	this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
+	// 	// }
+
+	// 	this.monthly_chart_updating = true;
+	// 	this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
+	// 	this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
+	// }
 
 	monitorToggle(e) {
 		this.display_status = 0;
@@ -555,23 +547,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.saveActivityLog(e.checked ? ACTIVITY_CODES.monitor_toggled_on : ACTIVITY_CODES.monitor_toggled_off);
 	}
 
-	onDateChange(value: any): void {
-		if (this.selected_display_mode === 'daily') {
+	// onDateChange(value: any): void {
+	// 	if (this.selected_display_mode === 'daily') {
 
-			this.queried_date = this._date.transform(value, 'longDate');
-			this.monthly_chart_updating = true;
-			this.daily_chart_updating = true;
-			this.getContentReport_daily(this._date.transform(value, 'y-MM-dd'));
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM-dd'));
+	// 		this.queried_date = this._date.transform(value, 'longDate');
+	// 		this.monthly_chart_updating = true;
+	// 		this.daily_chart_updating = true;
+	// 		this.getContentReport_daily(this._date.transform(value, 'y-MM-dd'));
+	// 		this.getContentReport_monthly(this._date.transform(value, 'y-MM-dd'));
 
-		} else if (this.selected_display_mode === 'yearly') {
+	// 	} else if (this.selected_display_mode === 'yearly') {
 
-			this.queried_date = this._date.transform(new Date(), 'longDate');
-			this.yearly_chart_updating = true;
-			this.getContentReport_yearly();
+	// 		this.queried_date = this._date.transform(new Date(), 'longDate');
+	// 		this.yearly_chart_updating = true;
+	// 		this.getContentReport_yearly();
 
-		}
-	}
+	// 	}
+	// }
 
 	onDeleteLicense(): void {
 
@@ -749,18 +741,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				break;
 
 			case 2:
-				tab = 'Analytics';
-				// this._helper.onSelectAnalyticsTab.emit();
-				this.monthly_chart_updating = true;
-				this.daily_chart_updating = true;
+				// tab = 'Analytics';
+				// // this._helper.onSelectAnalyticsTab.emit();
+				// this.monthly_chart_updating = true;
+				// this.daily_chart_updating = true;
 
-				if (this.current_display_mode == 'monthly') {
-					this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
-				} else if (this.current_display_mode == 'daily') {
-					this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
-				} else {
-					this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
-				}
+				// if (this.current_display_mode == 'monthly') {
+				// 	this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
+				// } else if (this.current_display_mode == 'daily') {
+				// 	this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
+				// } else {
+				// 	this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
+				// }
 				break;
 
 			default:

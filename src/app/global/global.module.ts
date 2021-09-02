@@ -130,7 +130,7 @@ import { SingleContentComponent } from './pages_shared/single-content/single-con
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
 import { SingleHostComponent } from './pages_shared/single-host/single-host.component';
-import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
+// import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
@@ -304,7 +304,7 @@ const ngComponents = [
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
 	SingleHostComponent,
-	SingleLicenseComponent,
+	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
 	SingleUserComponent,
