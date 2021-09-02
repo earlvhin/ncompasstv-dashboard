@@ -81,7 +81,7 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 					if (i.count > 0) {
 						if (this.date_format === 'yearly') {
 							if (Date.parse(i.dateTime)) {
-								this.data_labels.push(this.transform(i.dateTime, 'MMM'));
+								this.data_labels.push(this._date.transform(i.dateTime, 'MMM'));
 							} else {
 								this.data_labels.push(i.dateTime);
 							}
