@@ -49,7 +49,7 @@ export class LicensesComponent implements OnInit {
 	worksheet: any;
 
 	license_table_columns = [
-		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
+		{ name: '#', sortable: false, no_export: true},
 		{ name: 'Screenshot', sortable: false, no_export: true },
         { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
 		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey'},
@@ -231,7 +231,6 @@ export class LicensesComponent implements OnInit {
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 					this.licenses_to_export = data.paging.entities;
 					this.licenses_to_export.forEach((item, i) => {
-                        console.log({item:item})
 						this.modifyItem(item);
 						this.worksheet.addRow(item).font ={
 							bold: false
@@ -288,7 +287,7 @@ export class LicensesComponent implements OnInit {
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet('Licenses');
 		Object.keys(this.license_table_columns).forEach(key => {
-			if(this.license_table_columns[key].name && !this.license_table_columns[key].hidden && !this.license_table_columns[key].no_export) {
+			if(this.license_table_columns[key].name && !this.license_table_columns[key].no_export) {
 				header.push({ header: this.license_table_columns[key].name, key: this.license_table_columns[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
 			}
 		});
