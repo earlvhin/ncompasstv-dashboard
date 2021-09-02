@@ -171,7 +171,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
 		{ name: 'Display', sortable: false, key: 'displayStatus'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId'},
-		{ name: 'Password', sortable: false, column:'AnydeskId', key:'anydeskId'},
+		{ name: 'Password', sortable: false, column:'AnydeskId', key:'password'},
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
@@ -1020,6 +1020,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+                item.displayStatus = item.displayStatus == 0 ? 'No' : 'Yes';
 				item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
 				item.screenType =  this._titlecase.transform(item.screenType);
 				item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
@@ -1029,9 +1030,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.internetType = this.getInternetType(item.internetType);
 				item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 				item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
+                item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 				var parse_version = JSON.parse(item.appVersion);
 				item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
 				item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
+                console.log("ITEM", item)
 				break;
 		}	
 	}
