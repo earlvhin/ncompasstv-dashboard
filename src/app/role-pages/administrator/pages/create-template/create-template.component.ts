@@ -54,8 +54,6 @@ export class CreateTemplateComponent implements OnInit {
 					if (this.new_template_form.valid && 
 						this.zone_property_form.get('zones').value != '' && 
 						this.zone_property_form.get('zones').valid) {
-						console.log(this.new_template_form.valid);
-						console.log(this.zone_property_form.get('zones').value);
 						this.disable_submit = false;
 					} else {
 						this.disable_submit = true;
@@ -92,25 +90,26 @@ export class CreateTemplateComponent implements OnInit {
 	}
 
 	confirmTemplateCreation() {
-		this.created_template = {
-			template: {
-				name: this.new_template_form.get('template_name').value
-			},
-			templatezones: this.zone_property_form.get('zones').value
-		}
 
-		let dialog = this._dialog.open(ConfirmTemplateModalComponent, {
+		this.created_template = {
+			template: { name: this.new_template_form.get('template_name').value },
+			templatezones: this.zone_property_form.get('zones').value
+		};
+
+		const dialog = this._dialog.open(ConfirmTemplateModalComponent, {
+			disableClose: true,
 			width: '600px',
 			data: {zones: this.created_template}
 		});
 
 		this.subscription.add(
 			dialog.afterClosed().subscribe(
-				data => {
+				(response: any) => {
+					if (response === 'cancel') return;
 					this._router.navigate(['/administrator/templates'])
 				}
 			)
-		)
+		);
 	}
 
 	openNewZoneModal(): void {
