@@ -694,8 +694,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				if (playlistContentCredits) {
 					const { balance } = playlistContentCredits;
 
-					if (balance === 0) content.scheduleStatus = status;
-					return content;
+					if (balance === 0) {
+						content.scheduleStatus = status;
+						return content;
+					}
+
 				}
 
 				switch (type) {
@@ -704,14 +707,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						break;
 
 					case 3:
-
-						const currentDate = moment();
+						const currentDate = moment(new Date(), 'YYYY-MM-DD hh:mm A');
 						const startDate = moment(`${schedule.from} ${schedule.playTimeStart}`, 'YYYY-MM-DD hh:mm A');
 						const endDate = moment(`${schedule.to} ${schedule.playTimeEnd}`, 'YYYY-MM-DD hh:mm A');
 
 						if (currentDate.isBefore(startDate)) status = 'future';
-						if (currentDate.isBetween(startDate, endDate, undefined, '[]')) status = 'active';
-
+						if (currentDate.isBetween(startDate, endDate, undefined)) status = 'active';
 						break;
 
 					default:
