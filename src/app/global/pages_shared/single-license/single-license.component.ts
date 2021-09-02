@@ -9,16 +9,12 @@ import { Chart } from 'chart.js';
 import * as io from 'socket.io-client';
 import * as moment from 'moment-timezone';
 
-import { AuthService } from '../../services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { ContentService } from '../../services/content-service/content.service';
 import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
-import { LicenseService } from '../../services/license-service/license.service';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
-import { ScreenService } from '../../services/screen-service/screen.service';
-import { TemplateService } from '../../services/template-service/template.service';
-import { HelperService } from '../../services/helper-service/helper.service';
+
+import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
 
 import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_SINGLE_SCREEN, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SCREEN_TEMPLATE_ZONE, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
