@@ -9,7 +9,7 @@
 				<mat-slide-toggle
 				[checked]="allHostLicenseInBlacklist()"
 				(change)="toggleAll($event)">
-					<strong class="sm-text">Toggle All</strong>
+					<h5 class="mb-0 ml-2">Toggle All</h5>
 				</mat-slide-toggle>
 			</div>
 		</div>
@@ -25,8 +25,8 @@
 							(change)="hostToggle($event, h)"
 							(click)="$event.stopPropagation()"
 							[checked]="allLicenseInBlacklist(h)">
+								<h5 class="mb-0 ml-2">{{ cutString(h.host.name) }}</h5>
 							</mat-slide-toggle>
-							<span class="font-weight-bold mb-0 ml-3 sm-text">{{ cutString(h.host.name) }}</span>
 						</div>
 						<div class="sm-text">
 							{{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1">s</span>
@@ -37,10 +37,8 @@
 	
 				<div class="px-3 py-3 border-top">
 					<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
-						<mat-slide-toggle class="sm-text" 
-						[checked]="!blocklist_licenses.includes(l.licenseId)" 
-						(change)="addToBlocklistLicense($event, l.licenseId)">
-							<strong>{{ l.alias || l.licenseKey }}</strong>
+						<mat-slide-toggle [checked]="!blocklist_licenses.includes(l.licenseId)" (change)="addToBlocklistLicense($event, l.licenseId)">
+							<h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
 						</mat-slide-toggle>
 					</div>
 				</div>
