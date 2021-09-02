@@ -6,23 +6,24 @@
 			[checked]="hasActiveLicenses() || remove_in_blocklist.length > 0"
 			(click)="$event.stopPropagation()"
 			(change)="blocklistingAllLicenses($event, host_licenses.host.hostId)">
+				<h5 class="mb-0 ml-2">{{ cutString(host_licenses.host.name) }}</h5>
 			</mat-slide-toggle>
-			
-			<h5 class="font-weight-bold mb-0 sm-text d-inline-block ml-2 align-middle">{{ cutString(host_licenses.host.name) }}</h5>
 		</div>
 		<div class="xsm-text">
-			{{ host_licenses.licenses.length }} License<span *ngIf="host_licenses.licenses.length > 1">s</span>
+			<strong>{{ host_licenses.licenses.length }}</strong> License<span *ngIf="host_licenses.licenses.length > 1">s</span>
 			<span class="fas fa-arrow-down ml-2"></span>
 		</div>
 	</mat-expansion-panel-header>
 
-	<div class="px-3 py-3 border-top">
+	<div class="p-3 border-top w-100">
 		<div *ngFor="let l of host_licenses.licenses" class="option-license-list w-100">
-			<mat-slide-toggle class="sm-text"
-			(change)="blocklisting($event, l.licenseId)"
-			[checked]="!incoming_blocklist.includes(l.licenseId) || remove_in_blocklist.includes(l.licenseId)">
-				{{ l.alias || l.licenseKey }}
-			</mat-slide-toggle>
+			<div class="flex-even align-middle">
+				<mat-slide-toggle class="align-middle"
+				(change)="blocklisting($event, l.licenseId)"
+				[checked]="!incoming_blocklist.includes(l.licenseId) || remove_in_blocklist.includes(l.licenseId)">
+					<h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
+				</mat-slide-toggle>
+			</div>
 		</div>
 	</div>
 </mat-expansion-panel>

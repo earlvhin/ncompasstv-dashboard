@@ -48,7 +48,7 @@
 				<mat-slide-toggle
 				(change)="toggleFullscreen($event)"
 				[checked]="content_data.isFullScreen == 1 ? true : false">
-					<h5 class="mb-0">Set to Fullscreen</h5>
+					<h5 class="mb-0 ml-2">Set to Fullscreen</h5>
 				</mat-slide-toggle>
 			</div>
 
@@ -89,12 +89,21 @@
 
 			<hr>
 
+			<!-- TOGGLE CREDITS -->
+			<div class="toggle-credits-setting">
+				<mat-slide-toggle
+					(change)="onToggleCredits()"
+					[(ngModel)]="content_data.creditsEnabled">
+					<h5 class="mb-0 ml-2">Enable/Disable Credits</h5>
+				</mat-slide-toggle>
+			</div>
+
 			<!-- PLAYLIST CREDITS -->
-			<div class="play-credits-settings">
+			<div class="play-credits-settings mt-4" *ngIf="content_data.creditsEnabled">
 				<div class="d-flex align-items-baseline">
 					<!-- CREDITS INPUT FIELD -->
 					<mat-form-field class="w-100">
-						<mat-label>Play Credits</mat-label>
+						<mat-label>Set Play Credits</mat-label>
 						<input matInput type="number" placeholder="No. of times content will play" min="1" max="1000000"
 							[(ngModel)]="credits"
 							(change)="onInputCredits()"
@@ -104,17 +113,6 @@
 						<mat-hint align="start"><strong>Can only be edited when there are 0 credits</strong> </mat-hint>
 					</mat-form-field>
 				</div>
-			</div>
-
-			<hr>
-
-			<!-- TOGGLE CREDITS -->
-			<div class="toggle-credits-setting">
-				<mat-slide-toggle
-					(change)="onToggleCredits()"
-					[(ngModel)]="content_data.creditsEnabled">
-					<h5 class="mb-0">Enable/Disable Credits</h5>
-				</mat-slide-toggle>
 			</div>
 
 			<hr>
@@ -149,7 +147,7 @@
 								<mat-slide-toggle class="sm-text"
 								(change)="toggleAll($event)"
 								[checked]="total_licenses === total_whitelist">
-									<strong>Toggle All</strong>
+									<strong class="ml-2">Toggle All</strong>
 								</mat-slide-toggle>
 							</div>
 						</div>
