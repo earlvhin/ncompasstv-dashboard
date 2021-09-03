@@ -1,44 +1,44 @@
-import { DatePipe } from '@angular/common';
 import { Component, EventEmitter, Input, OnDestroy, OnInit } from '@angular/core';
-import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { UI_SINGLE_SCREEN } from 'src/app/global/models';
+import { Subject } from 'rxjs';
+import * as moment from 'moment';
+
+import { API_CONTENT, UI_SINGLE_SCREEN } from 'src/app/global/models';
 import { ContentService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-analytics-tab',
 	templateUrl: './analytics-tab.component.html',
-	styleUrls: ['./analytics-tab.component.scss'],
-	providers: [ DatePipe ]
+	styleUrls: ['./analytics-tab.component.scss']
 })
 export class AnalyticsTabComponent implements OnInit, OnDestroy {
 
-	@Input() current_tab: string;
 	@Input() license_id: string;
 	@Input() screen: UI_SINGLE_SCREEN;
 	@Input() realtime_data: EventEmitter<any>;
 	
-	current_month = new Date().getMonth() + 1;
-	current_year = new Date().getFullYear();
+	analytics_reload: Subject<any> = new Subject();
+	current_date_display = moment().format('MMMM D, YYYY');
+	daily_chart_updating = false;
+	default_selected_month: string = moment().format('YYYY-MM');
+	destroy_daily_charts = false;
+	destroy_monthly_charts = false;
+	monthly_chart_updating = true;
 	queried_date: string;
 	selected_display_mode: string;
-	destroy_monthly_charts = false;
-	destroy_daily_charts = false;
-	current_display_mode: string;
-	daily_chart_updating = false;
-	monthly_chart_updating = false;
-	yearly_chart_updating = false;
-	default_selected_month: string = this._date.transform(`${this.current_year}-${this.current_month}`, 'y-MM');
 	selected_month = this.default_selected_month;
-	monthly_content_count;
-	daily_content_count;
-	yearly_content_count;
-	analytics_reload: Subject<any> = new Subject();
-
+	yearly_chart_updating = false;
+	
+	daily_content_count: API_CONTENT[];
+	monthly_content_count: API_CONTENT[];
+	yearly_content_count: API_CONTENT[];
+	
+	private current_year = new Date().getFullYear();
+	
 	display_mode = [
 		{ value: 'daily', viewValue: 'Daily' },
 		{ value: 'monthly', viewValue: 'Monthly' },
-		{ value: 'yearly', viewValue: 'Yearly' }
+		// { value: 'yearly', viewValue: 'Yearly' }
 	];
 
 	months = [
@@ -59,24 +59,11 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
-		private _content: ContentService,
-		private _date: DatePipe
+		private _content: ContentService
 	) { }
 	
 	ngOnInit() {
-		// this._helper.onSelectAnalyticsTab.emit();
-		// this.monthly_chart_updating = true;
-		// this.daily_chart_updating = true;
-
-		// if (this.current_display_mode == 'monthly') {
-		// 	this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
-		// } else if (this.current_display_mode == 'daily') {
-		// 	this.getContentReport_daily(this._date.transform(this.queried_date, 'y-MM-dd'));
-		// } else {
-		// 	this.getContentReport_monthly(this._date.transform(this.queried_date, 'y-MM-dd'));
-		// }
-
-		this.displayModeSelected('monthly');
+		this.onSelectDisplayMode('monthly');
 	}
 
 	ngOnDestroy() {
@@ -84,72 +71,72 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	displayModeSelected(e): void {
-		this.destroy_monthly_charts = true;
-		this.destroy_daily_charts = true;
-		this.current_display_mode = e;
-		this.selected_display_mode = e;
+	onSelectDate(value: any): void {
 
-		if (e === 'monthly') {
-			this.queried_date = this._date.transform(new Date(), 'longDate');
-			this.destroy_monthly_charts = false;
-			this.getContentReport_monthly(this._date.transform(new Date(), 'y-MM'))
-		} else {
-			this.destroy_daily_charts = false;
-			this.queried_date = this._date.transform(new Date(), 'longDate');
-			this.getContentReport_daily(this._date.transform(new Date(), 'y-MM-dd'))
-		}
-	}
+		const currentDate = moment(value);
+		this.current_date_display = currentDate.format('MMMM D, YYYY');
 
-	monthSelected(value: any): void {
-		console.log('month select', value);
-		// if (this.current_tab !== 'Analytics') return;
-		
-		// if (this.selected_month == this.default_selected_month) {
-		// 	console.log('1');
-		// 	this.monthly_chart_updating = true;
-		// 	this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-		// } else {
-		// 	console.log('2');
-		// 	this.monthly_chart_updating = true;
-		// 	this.daily_chart_updating = true;
-		// 	this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-		// 	// this.getContentReport_daily(this._date.transform(`${this.selected_month}-01`, 'y-MM-dd'))
-		// 	this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
-		// }
-
-		this.monthly_chart_updating = true;
-		this.getContentReport_monthly(this._date.transform(value, 'y-MM'));
-		this.queried_date = this._date.transform(`${this.selected_month}-01`, 'longDate');
-	}
-
-	onDateChange(value: any): void {
 		if (this.selected_display_mode === 'daily') {
 
-			this.queried_date = this._date.transform(value, 'longDate');
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
-			this.getContentReport_daily(this._date.transform(value, 'y-MM-dd'));
-			this.getContentReport_monthly(this._date.transform(value, 'y-MM-dd'));
-
-		} else if (this.selected_display_mode === 'yearly') {
-
-			this.queried_date = this._date.transform(new Date(), 'longDate');
-			this.yearly_chart_updating = true;
-			this.getContentReport_yearly();
+			this.getDailyContentReport(currentDate.format('YYYY-MM-DD'));
+			return;
 
 		}
+	
+		this.yearly_chart_updating = true;
+		this.getYearlyContentReport();
 	}
 
-	private getContentReport_daily(date): void {
+	onSelectDisplayMode(value: string): void {
+
+		let currentDateResult: string;
+		const currentDate = moment();
+
+		this.destroy_monthly_charts = true;
+		this.destroy_daily_charts = true;
+		this.selected_display_mode = value;
+		this.queried_date = currentDate.format('MMMM D, YYYY');
+
+		switch (value) {
+			case 'daily':
+				this.destroy_daily_charts = false;
+				this.getDailyContentReport(currentDate.format('YYYY-MM-DD'));
+				this.queried_date = moment().format();
+				currentDateResult = currentDate.format('MMMM D, YYYY');
+				break;
+
+			case 'yearly':
+				break;
+
+			default:
+				this.destroy_monthly_charts = false;
+				this.getMonthlyContentReport(currentDate.format('YYYY-MM'));
+				currentDateResult = currentDate.format('MMMM, YYYY');
+		}
+
+		this.current_date_display = currentDateResult;
+
+	}
+
+	onSelectMonth(value: any): void {
+		const currentDate = moment(value);
+		this.monthly_chart_updating = true;
+		this.getMonthlyContentReport(currentDate.format('YYYY-MM'));
+		this.queried_date = currentDate.format('MMMM D, YYYY');
+		this.current_date_display = currentDate.format('MMMM YYYY');
+	}
+
+	private getDailyContentReport(date: string): void {
 		const data = { licenseId: this.license_id, from: date };
 		this.daily_chart_updating = true;
 
 		this._content.get_content_daily_count_by_license(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => {
-					this.daily_content_count = data;
+				(response: API_CONTENT[]) => {
+					this.daily_content_count = response;
 					this.daily_chart_updating = false;
 					this.destroy_daily_charts = false;
 
@@ -161,15 +148,15 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	private getContentReport_monthly(date): void {
+	private getMonthlyContentReport(date: string): void {
 		const data = { licenseId: this.license_id, from: date };
 		this.monthly_chart_updating = true;
 		
 		this._content.get_content_monthly_count_by_license(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => {
-					this.monthly_content_count = data;
+				(response: API_CONTENT[]) => {
+					this.monthly_content_count = response;
 					this.monthly_chart_updating = false;
 					this.destroy_monthly_charts = false;
 
@@ -181,14 +168,14 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	private getContentReport_yearly(): void {
+	private getYearlyContentReport(): void {
 		const data = { licenseId: this.license_id };
 
 		this._content.get_content_yearly_count_by_license(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => {
-					this.yearly_content_count = data;
+				(response: API_CONTENT[]) => {
+					this.yearly_content_count = response;
 					this.yearly_chart_updating = false;
 				},
 				error => console.log('Error getting yearly content count', error)
