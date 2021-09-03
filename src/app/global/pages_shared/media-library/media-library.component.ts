@@ -189,6 +189,14 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                             }
 						}
 					);
+
+                    //Additional Checking for video conversion duplicate
+                    if(e.originalFile.type.includes("video")) {
+                        var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
+                        temp = temp + ".webm"
+                        e.originalFile.name = temp;
+                    }
+
 					this.duplicate_files = this.summarized_media.filter(media => media.title === e.originalFile.name);
 					if (this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
