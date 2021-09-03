@@ -210,7 +210,8 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 									this.all_media.push({ fileName: this.modified_data[0].filename })
 								} else {
 									this.renameModal().then(name => {
-										resolve({ filename: name + this.data_to_upload[0].filename.substring(0, this.data_to_upload[0].filename.lastIndexOf('.')) })
+                                        var temp = this.data_to_upload[0].mimetype.split("/")
+                                        resolve({ filename: name + "." + temp[temp.length - 1] })
 									});
 								}
 							})
