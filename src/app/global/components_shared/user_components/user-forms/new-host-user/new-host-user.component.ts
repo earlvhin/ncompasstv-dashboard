@@ -78,7 +78,7 @@ export class NewHostUserComponent implements OnInit {
 				hostid: ['', Validators.required],
 				email: ['', Validators.required],
 				password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-				re_password: ['', Validators.required],
+				re_password: [ { value: '', disabled: true }, Validators.required],
 				createdBy: [this._auth.current_user_value.user_id]
 			}
 		);
@@ -167,6 +167,13 @@ export class NewHostUserComponent implements OnInit {
 						this.password_is_valid = true;
 						this.password_is_valid_msg = "Password is valid"
 					}
+
+					if (!this.f.password.value || this.f.password.value.length === 0) {
+						this.f.re_password.setValue(null);
+						this.f.re_password.disable();
+					} else {
+						this.f.re_password.enable();
+					}
 				}
 			)
 		)
@@ -174,7 +181,7 @@ export class NewHostUserComponent implements OnInit {
 		this.subscription.add(
 			this.f.re_password.valueChanges.subscribe(
 				data => {
-					if (this.f.password.value == this.f.re_password.value) {
+					if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
 						this.password_is_match = true;
 						this.password_match_msg = "Password matches"
 					} else {
