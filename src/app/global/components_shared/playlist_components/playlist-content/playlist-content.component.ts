@@ -71,7 +71,7 @@ export class PlaylistContentComponent implements OnInit {
 
 		const dialog = this._dialog.open(OptionsComponent, {
 			data,
-			width: '1024px',
+			width: '1200px',
 			height: '750px'
 		});
 

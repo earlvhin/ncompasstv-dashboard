@@ -26,11 +26,14 @@
 		</div>
 	</ng-template>
 
-	<p class="thumbnail-title">
-		<a [routerLink]="[route]" target="_blank">
-			<span>{{ filename | filename }}</span>
-		</a>
-	</p>
+    <div class="thumbnail-title">
+		<div class="d-flex">
+			<span class="sequence">{{ sequence }}</span>
+			<a [routerLink]="[route, content_id]" class="flex-even text-center" target="_blank">
+				<span>{{ filename | filename }}</span>
+			</a>
+		</div>
+	</div>
 	
 	<div class="is_converting d-flex align-items-center justify-content-center px-2" *ngIf="filetype == 'webm' && is_converted == 0">
 		<div>

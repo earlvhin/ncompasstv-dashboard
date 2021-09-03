@@ -28,13 +28,14 @@
                         <mat-label>{{ s.label }}</mat-label>
                         <input
                         autocomplete="off"
-                        (colorPickerChange)="colorPicker(s.colorValue, s.form_control_name)"
                         [(colorPicker)]="s.colorValue"
+                        (colorPickerChange)="colorPicker(s.colorValue, s.form_control_name)"
                         formControlName="{{ s.form_control_name }}"
                         [cpDisableInput]="true"
                         matInput [type]="s.type"
                         [value]="s.colorValue || ''"/>
-                        <div class="color-showcase position-absolute" [style.background]="s.colorValue"></div>
+                        <div class="color-showcase position-absolute" [style.background]="s.colorValue">
+                        </div>
                     </mat-form-field>
                 </div>
             </div>

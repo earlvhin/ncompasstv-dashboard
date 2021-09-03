@@ -27,8 +27,8 @@
 
                     <input
                     autocomplete="off"
-                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
                     [(colorPicker)]="w.colorValue"
+                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
                     formControlName="{{ w.form_control_name }}"
                     [cpAlphaChannel]="'disabled'"
                     [cpDisableInput]="true"

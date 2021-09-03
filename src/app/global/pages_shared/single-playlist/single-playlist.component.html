@@ -64,42 +64,46 @@
 							Push Updates to Selected Licenses
 						</button>
 
-						<div class="mt-3" [ngClass]="playlist_updating ? 'overlay' : null">
-							<ng-container *ngIf="!playlist_updating; else loader_overlay">
-								<mat-accordion>
-									<mat-expansion-panel hideToggle [expanded]="false" *ngFor="let h of playlist_host_and_license">
-										<mat-expansion-panel-header>
-											<div class="d-flex w-100">
-												<div>
-													<a [routerLink]="[host_url, h.host.hostId]">
-														<h5 class="sm-text font-weight-bold mb-0">{{ h.host.name }}</h5>
-													</a>
+						<div class="row no-gutters">
+							<div class="col-lg-6">
+								<div class="mt-3" [ngClass]="playlist_updating ? 'overlay' : null">
+									<ng-container *ngIf="!playlist_updating; else loader_overlay">
+										<mat-accordion>
+											<mat-expansion-panel hideToggle [expanded]="false" *ngFor="let h of playlist_host_and_license">
+												<mat-expansion-panel-header>
+													<div class="d-flex w-100">
+														<div>
+															<a [routerLink]="[host_url, h.host.hostId]">
+																<h5 class="sm-text font-weight-bold mb-0">{{ h.host.name }}</h5>
+															</a>
+														</div>
+														<div class="flex-even text-right sm-text">
+															{{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1">s</span>
+															<span class="fas fa-arrow-down ml-2"></span>
+														</div>
+													</div>
+												</mat-expansion-panel-header>
+											
+												<div class="px-3 py-3 border-top w-100">
+													<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
+														<mat-checkbox class="sm-text" (change)="addToLicenseToPush($event, l.licenseId)">
+															<a [routerLink]="[license_url, l.licenseId]">
+																<h5 class="sm-text font-weight-bold mb-0">{{ l.alias || l.licenseKey }}</h5>
+															</a>
+														</mat-checkbox>
+													</div>
 												</div>
-												<div class="flex-even text-right sm-text">
-													{{ h.licenses.length }} License<span *ngIf="h.licenses.length > 1">s</span>
-													<span class="fas fa-arrow-down ml-2"></span>
-												</div>
-											</div>
-										</mat-expansion-panel-header>
-									
-										<div class="px-3 py-3 border-top">
-											<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
-												<mat-checkbox class="sm-text" (change)="addToLicenseToPush($event, l.licenseId)">
-													<a [routerLink]="[license_url, l.licenseId]">
-														<h5 class="sm-text font-weight-bold mb-0">{{ l.alias || l.licenseKey }}</h5>
-													</a>
-												</mat-checkbox>
-											</div>
+											</mat-expansion-panel>
+										</mat-accordion>
+									</ng-container>
+		
+									<ng-template #loader_overlay>
+										<div class="loader-overlay">
+											<app-spinner></app-spinner>
 										</div>
-									</mat-expansion-panel>
-								</mat-accordion>
-							</ng-container>
-
-							<ng-template #loader_overlay>
-								<div class="loader-overlay">
-									<app-spinner></app-spinner>
+									</ng-template>
 								</div>
-							</ng-template>
+							</div>
 						</div>
 					</mat-tab>
 				</mat-tab-group>
