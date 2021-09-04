@@ -20,6 +20,7 @@ export class SliderFormComponent implements OnInit {
 	@Input() feed_items: FeedItem[] = [];
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Output() structured_feed_items = new EventEmitter();
+	selected_banner_image: string;
 
 	font_family = [
 		{
@@ -51,7 +52,7 @@ export class SliderFormComponent implements OnInit {
 	/** Form Control Names (form_control_name) have been set with the same keys required by the API */
 	slide_global_settings = [
 		{
-			label: 'Select Banner Image',
+			label: 'Banner Image',
 			form_control_name: 'bannerImage',
 			type: 'text',
 			width: 'col-lg-4', 
@@ -127,6 +128,7 @@ export class SliderFormComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+
 		this.prepareForms();
 	}
 
@@ -198,6 +200,10 @@ export class SliderFormComponent implements OnInit {
 								i.imageUri = data[0].thumbnail;
 								i.fileName = data[0].title;
 							}
+
+							if (form_control_name === 'bannerImage') {
+								this.selected_banner_image = `${data[0].url}${data[0].fileName}`
+							}
 						}
 					)
 				}
@@ -207,10 +213,18 @@ export class SliderFormComponent implements OnInit {
 
 	/** Pass Feed Items to Parent Component */
 	passFeedItems(): void {
-		this.structured_feed_items.emit(
+		console.log(
 			{
 				globalSettings: this.slide_global_settings_form.value,
 				feedItems: this.feed_items
+			}
+		)
+
+		this.structured_feed_items.emit(
+			{
+				globalSettings: this.slide_global_settings_form.value,
+				feedItems: this.feed_items,
+				selectedBannerImage: this.selected_banner_image
 			}
 		)
 	}
@@ -251,13 +265,17 @@ export class SliderFormComponent implements OnInit {
 				if (i.viewType == 'upload' && this.banner_image_data) {
 					i.imageUri = `${this.banner_image_data.url}${this.banner_image_data.fileName}`;
 					i.fileName = this.banner_image_data.title;
+					this.selected_banner_image = `${this.banner_image_data.url}${this.banner_image_data.fileName}`
 				}
 			})
 
+			this.f.bannerImage.setValue(this.banner_image_data.contentId);
 			this.f.textAlign.setValue(this.global_settings.textAlign);
 			this.f.overlay.setValue(this.global_settings.overlay);
 			this.f.fontColor.setValue(this.global_settings.fontColor);
 			this.f.fontFamily.setValue(this.global_settings.fontFamily);
+			this.f.headlineBackground.setValue(this.global_settings.headlineBackground);
+			this.f.headlineColor.setValue(this.global_settings.headlineColor);
 		}
 	}
 

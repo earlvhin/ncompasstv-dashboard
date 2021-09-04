@@ -64,7 +64,7 @@
                                 <div class="col-lg-12 text-center">
                                     <h3 class="mb-1">Here's a preview of your customized feed.</h3>
                                     <p class="sm-text">
-                                        This is just a demo to see the styles applied. The texts displayed are for demo purposes.<br> 
+                                        This is just a demo to see the styles applied. Save this feed to see it live with animations.
                                         You can edit your generated feed by going back one step above.
                                     </p>
                                 </div>
@@ -79,8 +79,10 @@
                                     <!-- Begin: Slide Feed Demo -->
                                     <ng-container *ngIf="generated_slide_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'">
                                         <app-feed-demo 
+                                        [banner_image_data]="selected_banner_image"
                                         [global_settings]="generated_slide_feed.feedGlobalSettings"
-                                        [feed_items]="feed_items"></app-feed-demo>
+                                        [feed_items]="feed_items">
+                                        </app-feed-demo>
 
                                         <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedSlideFeed()">Save Slide Feed</button>
                                     </ng-container>

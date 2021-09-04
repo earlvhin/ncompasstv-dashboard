@@ -66,7 +66,7 @@ export type FEED_INFO = {
     updatedBy?: string
 }
 
-export type feedGlobalSettings = {
+export type SLIDE_GLOBAL_SETTINGS = {
     bannerImage: string,
     fontColor: string,
     fontFamily: string,
@@ -138,13 +138,13 @@ export type WEATHER_FEED_STYLE_DATA = {
     numberDays?: number,
 }
 
-export type SLIDE_GLOBAL_SETTINGS =  {
-    dateCreated: string,
-    feedGlobalSettingsId: string,
-    feedId: string,
-    fontColor: string,
-    fontFamily: string,
-    overlay: string,
-    status: string,
-    textAlign: string
-}
+// export type SLIDE_GLOBAL_SETTINGS =  {
+//     dateCreated: string,
+//     feedGlobalSettingsId: string,
+//     feedId: string,
+//     fontColor: string,
+//     fontFamily: string,
+//     overlay: string,
+//     status: string,
+//     textAlign: string
+// }

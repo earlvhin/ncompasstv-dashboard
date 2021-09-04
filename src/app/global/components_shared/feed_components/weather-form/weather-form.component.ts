@@ -44,7 +44,7 @@ export class WeatherFormComponent implements OnInit {
 	/** Form Control Names (form_control_name) have been set with the same keys required by the API */
 	weather_form_fields = [
 		{
-			label: 'Select Background Image',
+			label: 'Background Image',
 			form_control_name: 'backgroundContentId',
 			type: 'text',
 			width: 'col-lg-6', 
@@ -55,7 +55,7 @@ export class WeatherFormComponent implements OnInit {
 			api_key_ref: 'backgroundContents'
 		},
 		{
-			label: 'Select Banner Image',
+			label: 'Banner Image',
 			form_control_name: 'bannerContentId',
 			type: 'text',
 			width: 'col-lg-6', 

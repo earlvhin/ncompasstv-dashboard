@@ -206,11 +206,22 @@
         width: 60px;
     }
 
+    .label-when-filled {
+        color: rgba(0,0,0,.6);
+        left: 75px;
+        top: 12px;
+        position: absolute;
+    }
+
     .filename {
         font-size: 15px;
         position: absolute;
         left: 75px;
         top: 18px;
+
+        &.filled {
+            top: 28px;
+        }
     }
 }
 

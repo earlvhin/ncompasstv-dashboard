@@ -1,7 +1,8 @@
 import { Component, Input, OnInit } from '@angular/core';
-import { feedGlobalSettings } from 'src/app/global/models/api_feed_generator.model';
+import { SLIDE_GLOBAL_SETTINGS } from '../../../../global/models/api_feed_generator.model';
 import { environment as env } from '../../../../../environments/environment';
 import { FeedItem } from '../../../../global/models/ui_feed_item.model';
+import { API_CONTENT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feed-demo',
@@ -11,7 +12,8 @@ import { FeedItem } from '../../../../global/models/ui_feed_item.model';
 
 export class FeedDemoComponent implements OnInit {
 	@Input() feed_items: FeedItem[] = [];
-	@Input() global_settings: feedGlobalSettings
+	@Input() global_settings: SLIDE_GLOBAL_SETTINGS;
+	@Input() banner_image_data: API_CONTENT;
 
 	image: string;
 	heading: string;
@@ -28,11 +30,14 @@ export class FeedDemoComponent implements OnInit {
 			this.controlFeedDisplay(this.current_display_index);
 		}
 
+		console.log('feedItems', this.feed_items);
+		console.log('globalSettings', this.global_settings);
+
 		this.slide_demo_url = `${env.third_party.filestack_screenshot}/${env.base_uri}${env.create.api_new_slide_feed_demo}?
 		imageContentId=${this.feed_items[0].image.content_id}&
 		bannerImageContentId=${this.global_settings.bannerImage}&
 		fontFamily=${this.global_settings.fontFamily}&
-		&overlayBackground=${this.global_settings.overlay}&
+		overlayBackground=${this.global_settings.overlay}&
 		fontColor=${this.global_settings.fontColor}&
 		headLineBackground=${this.global_settings.headlineBackground}&
 		headLineColor=${this.global_settings.headlineColor}&

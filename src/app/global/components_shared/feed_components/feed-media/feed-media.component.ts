@@ -17,6 +17,7 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 
 export class FeedMediaComponent implements OnInit {
 
+	is_admin: boolean = false;
 	floating_content: API_CONTENT[] = [];
 	no_media: boolean = false;
 	media_files: API_CONTENT[] = [];
@@ -96,6 +97,7 @@ export class FeedMediaComponent implements OnInit {
 		)
 
 		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator || this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech) {
+			this.is_admin = true;
 			this.subscription.add(
 				this._content.get_floating_contents().subscribe(
 					data => {
