@@ -422,7 +422,7 @@ export class DataTableComponent implements OnInit {
 			data:  { status, message, data }
 		})
 
-		dialog.afterClosed().subscribe(() => this.reload_page.emit(true));
+		dialog.afterClosed().subscribe(() => this.update_info.emit(true));
 	}
 
 	onCheckboxSelect(id, event, data) {
