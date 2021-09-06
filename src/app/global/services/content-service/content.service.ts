@@ -28,15 +28,28 @@ export class ContentService {
 		private _auth: AuthService
 	) { }
 
+    get_all_contents() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=0`, this.httpOptions);
+	}
+
 	get_contents() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`, this.httpOptions);
 	}
 
 	get_contents_temp(page, type, sort, dealerId, key, floating) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=30`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}` +`&search=` + `${key}`+`&floating=` + `${floating}`, this.httpOptions);
+		return this._http.get<any>(`
+		${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=30`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}` +`&search=` + `${key}`+`&floating=` + `${floating}`, this.httpOptions);
 	}
 
-	get_contents_with_page(page?, type?, sort?, dealerId?, hostId?, advertiserId?, key?, pageSize=60) {
+	get_floating_contents() {
+		return this._http.get<any>(`
+		${environment.base_uri}${environment.getters.api_get_assets}
+		?pageSize=0
+		&floating=true`, 
+		this.httpOptions).map(i => i.iContents);
+	}
+
+	get_contents_with_page(page=1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, pageSize=60) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}
 		?pageSize=${pageSize}
 		&page=${page}
@@ -54,6 +67,10 @@ export class ContentService {
 	
 	get_contents_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total}`, this.httpOptions);
+	}
+	
+    get_contents_summary() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_summary}`, this.httpOptions);
 	}
 
 	get_contents_total_by_dealer(id) {
@@ -93,15 +110,15 @@ export class ContentService {
 	}
 
 	get_content_monthly_count(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count}`, data, this.httpOptions).map(data => data.iContent);
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count}`, data, this.httpOptions).map(data => data.iContents[0]);
 	}
 
 	get_content_daily_count(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_daily_count}`, data, this.httpOptions).map(data => data.iContent);
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_daily_count}`, data, this.httpOptions).map(data => data.iContents[0]);
 	}
 
 	get_content_yearly_count(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions).map(data => data.iContent);
+		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions).map(data => data.iContents[0]);
 	}
 	
     get_content_metrics_export(data) {
@@ -195,6 +212,12 @@ export class ContentService {
 	set_frequency(frequency: number, playlistContentId: string, playlistId: string) {
 		const url = `${environment.base_uri}${environment.update.set_content_frequency}`;
 		const body = { frequency, playlistContentId, playlistId };
+		return this._http.post(url, body, this.httpOptions);
+	}
+
+	toggle_credits(playlistContentId: string, creditsEnabled = 1) {
+		const url = `${environment.base_uri}${environment.update.toggle_credits}`;
+		const body = { playlistContentId, creditsEnabled };
 		return this._http.post(url, body, this.httpOptions);
 	}
 

@@ -10,6 +10,7 @@ import { LicenseModalComponent } from '../../../../global/components_shared/lice
 import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-license-by-dealer.model';
 import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
 import { ActivatedRoute } from '@angular/router';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
 	selector: 'app-licenses',
@@ -37,6 +38,9 @@ export class LicensesComponent implements OnInit {
 	initial_load_licenses: boolean = true;
 	search_data: string = "";
 	search_data_licenses: string = "";
+    splitted_text: any;
+    sort_column: string = "PiStatus";
+	sort_order: string = "desc";
 
 	// UI Table Column Header
 	dealers_table_column: string[] = [
@@ -60,21 +64,22 @@ export class LicensesComponent implements OnInit {
 	license_table_column = [
 		{ name: '#', sortable: false, no_export: true},
         { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
-		{ name: 'License Key', sortable: false, column:'LicenseKey', key: 'licenseKey'},
-		{ name: 'Type', sortable: false, column:'ScreenType', key: 'screenType'},
-		{ name: 'Host', sortable: false, column:'HostName', key: 'hostName'},
-		{ name: 'Alias', sortable: false, column:'Alias', key: 'alias'},
-		{ name: 'Last Push', sortable: false, column:'ContentsUpdated', key:'contentsUpdated'},
-		{ name: 'Last Online', sortable: false, column:'TimeIn', key:'timeIn'},
-		{ name: 'Net Type', sortable: false, column:'InternetType', key:'internetType'},
-		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
-		{ name: 'Display', sortable: false, key: 'displayStatus'},
-		{ name: 'PS Version', sortable: false, key:'server', column:'ServerVersion'},
-		{ name: 'UI Version', sortable: false, key:'ui', column:'UiVersion'},
-		{ name: 'Screen', sortable: false, column:'ScreenName', key:'screenName' },
-		{ name: 'Template', sortable: false, column:'TemplateName', key:'templateName'},		
-		{ name: 'Installation Date', sortable: false, column:'InstallDate', key:'installDate'},
-		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
+        { name: 'Screenshot', sortable: false, no_export: true},
+		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
+		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
+		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName'},
+		{ name: 'Alias', sortable: true, column:'Alias', key: 'alias'},
+		{ name: 'Last Push', sortable: true, column:'ContentsUpdated', key:'contentsUpdated'},
+		{ name: 'Last Online', sortable: true, column:'TimeIn', key:'timeIn'},
+		{ name: 'Net Type', sortable: true, column:'InternetType', key:'internetType'},
+		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column:'InternetSpeed'},
+		{ name: 'Display', sortable: true, key: 'displayStatus', column:'DisplayStatus'},
+		{ name: 'PS Version', sortable: true, key:'ServerVersion', column:'ServerVersion'},
+		{ name: 'UI Version', sortable: true, key:'UiVersion', column:'UiVersion'},
+		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId' },
+		{ name: 'Password', sortable: false, column:'TemplateName', key:'templateName'},		
+		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
+		{ name: 'Creation Date', sortable: true, key:'dateCreated', column:'DateCreated'},
 	]
 
 	constructor(
@@ -100,11 +105,27 @@ export class LicensesComponent implements OnInit {
 		this.subscription.unsubscribe();
 	}
 
+    getColumnsAndOrder(data) {
+        console.log({data:data})
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.getLicenses(1);
+	}
+
+    sortList(order, page?): void {
+		var filter = {
+			column: 'PiStatus',
+			order: order
+		}
+
+		this.getColumnsAndOrder(filter)
+	}
+
 	getLicenses(page) {
         this.searching_licenses = true;
 		this.licenses_data = [];    
         this.subscription.add(
-			this._license.get_all_licenses(page, this.search_data_licenses).subscribe(
+			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order).subscribe(
 				data => {
                     this.paging_data_licenses = data.paging;
                     if (data.licenses) {
@@ -234,6 +255,13 @@ export class LicensesComponent implements OnInit {
 				const table = new UI_LICENSE(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: l.licenseId, link: null , editable: false, hidden: true, key: false, table: 'license'},
+                    { 
+						value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace("/API/", "")}` : null,
+						link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace("/API/", "")}` : null, 
+						editable: false, 
+						hidden: false, 
+						isImage: true
+					},
 					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, compressed: true, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
 					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false},
@@ -245,8 +273,8 @@ export class LicensesComponent implements OnInit {
 					{ value: l.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
 					{ value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
 					{ value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
-					{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}` , editable: false },
-					{ value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
+                    { value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
+					{ value: l.anydeskId ? this.splitKey(l.licenseId) : '--', link: null, editable: false, hidden: false, copy:true, label: 'Anydesk Password' },
 					{ value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: false, label: 'Install Date', hidden: false, id: l.licenseId },
 					{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 					{ value: l.piStatus, link: null , editable: false, hidden: true },
@@ -255,6 +283,11 @@ export class LicensesComponent implements OnInit {
 			}
 		);
 	}
+
+    splitKey(key) {
+        this.splitted_text = key.split("-");
+        return this.splitted_text[this.splitted_text.length - 1];
+    }
 
     private getInternetType(value: string): string {
 		if(value) {

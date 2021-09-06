@@ -1,10 +1,12 @@
 import { Component, HostListener, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
 import { Subscription } from 'rxjs';
+import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { PAGING } from '../../../../global/models/paging.model';
 import { IsimagePipe } from '../../../../global/pipes/isimage.pipe';
 import { ContentService } from '../../../../global/services/content-service/content.service';
+import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-feed-media',
@@ -15,6 +17,9 @@ import { ContentService } from '../../../../global/services/content-service/cont
 
 export class FeedMediaComponent implements OnInit {
 
+	is_admin: boolean = false;
+	floating_content: API_CONTENT[] = [];
+	no_media: boolean = false;
 	media_files: API_CONTENT[] = [];
 	selected_media_files: API_CONTENT[] = [];
 	subscription: Subscription = new Subscription();
@@ -27,6 +32,7 @@ export class FeedMediaComponent implements OnInit {
 	constructor(
 		private _content: ContentService,
 		private _is_image: IsimagePipe,
+		private _auth: AuthService,
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any
 	) { }
 
@@ -69,19 +75,37 @@ export class FeedMediaComponent implements OnInit {
 				dealer_id,
 			).map(data => { return { contents: data.iContents, paging: data.paging }}).subscribe(
 				(data: {contents: API_CONTENT[], paging: PAGING}) => {
-					this.mediaMapToUI(data)
+					if (data.contents && data.paging) {
+						this.mediaMapToUI(data)
 
-					if (data.paging.hasNextPage) {
-						this.getUserMediaFiles(dealer_id)
-					} else {
-						this.pageEnd = true;
+						if (data.paging.hasNextPage) {
+							this.getUserMediaFiles(dealer_id)
+						} else {
+							this.pageEnd = true;
+						}
+
+						return;
 					}
+
+					this.no_media = true;
+					this.pageEnd = true;
 				}, 
 				error => {
 					console.log(error)
 				}
 			)
 		)
+
+		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator || this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech) {
+			this.is_admin = true;
+			this.subscription.add(
+				this._content.get_floating_contents().subscribe(
+					data => {
+						this.floating_content = data.filter(i => this._is_image.transform(i.fileType));
+					}
+				)
+			)
+		} 
 	}
 
 	/** 
@@ -119,6 +143,20 @@ export class FeedMediaComponent implements OnInit {
 					return;
 				}
 			}
+		}
+	}
+
+	/**
+	 * Show Floating Contents, Only for Admin and Tech Support
+	 *  @param e Toggle Status
+	*/
+	showFloatingContent(e: any) {
+		if (e.checked) {
+			if (this.floating_content) this.no_media = false;
+			this.media_files = this.media_files.concat(this.floating_content);
+		} else {
+			this.media_files = this.media_files.filter(i => i.dealerId !== null && i.dealerId !== "")
+			if (this.media_files.length == 0) this.no_media = true;
 		}
 	}
 }

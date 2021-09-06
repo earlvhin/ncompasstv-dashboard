@@ -77,6 +77,7 @@ export class UI_DEALER_LICENSE {
 export class UI_LICENSE {
     index: object;
     license_id: object;
+    screenshot: object;
     license_key: object;
 	type: object;
 	host_name: object;
@@ -88,8 +89,8 @@ export class UI_LICENSE {
 	display: object;
 	server_version: object;
 	ui_version: object;
-	screen: object;
-	template: object;
+	anydesk: object;
+	password: object;
 	date_installed: object;
     date_created: object;
 	pi_status: object;
@@ -97,6 +98,7 @@ export class UI_LICENSE {
     constructor(
 		index:object, 
 		id: object, 
+        screenshot: object,
 		key: object, 
 		type: object, 
 		host: object, 
@@ -108,14 +110,15 @@ export class UI_LICENSE {
 		display: object,
 		server: object, 
 		ui: object, 
-		screen: object,
-		template: object, 
+		anydesk: object,
+		password: object, 
 		date_installed: object, 
 		date_created: object, 
 		pi_status: object
 	) {
 		this.index = index;
         this.license_id = id;
+        this.screenshot = screenshot;
         this.license_key = key;
 		this.type = type;
         this.host_name = host;
@@ -127,8 +130,8 @@ export class UI_LICENSE {
 		this.display = display;
 		this.server_version = server;
 		this.ui_version = ui;
-		this.screen = screen;
-		this.template = template;
+		this.anydesk = anydesk;
+		this.password = password;
 		this.date_installed = date_installed;
         this.date_created = date_created;
         this.pi_status = pi_status;

@@ -52,40 +52,40 @@
 
                     <ng-template #autocomplete>
 						<app-autocomplete-field *ngIf="!f.advertiser_field; else advertiser_dropdown"
-                        (data_value)="dealerSelected($event)"
-                        [key_of_value]="'dealerId'"
-                        [placeholder]="f.placeholder"
-                        [label]="f.label"
-                        [data_reference]="dealers_data"
-                        [search_keyword]="'businessName'"
-                        [primary_keyword]="'businessName'"
-                        [paging]="paging"
-						(call_next_page)="searchBoxTrigger($event)"
-						(searched)="searchData($event)"
-                        [loading_data]="loading_data"
-                        [loading_search]="loading_search"
-                        [initial_value]="dealer_name"
-                        [new_value]="dealer_name"
-                        [disabled]="is_dealer">
+							(data_value)="dealerSelected($event)"
+							[key_of_value]="'dealerId'"
+							[placeholder]="f.placeholder"
+							[label]="f.label"
+							[data_reference]="dealers_data"
+							[search_keyword]="'businessName'"
+							[primary_keyword]="'businessName'"
+							[paging]="paging"
+							(call_next_page)="searchBoxTrigger($event)"
+							(searched)="searchData($event)"
+							[loading_data]="loading_data"
+							[loading_search]="loading_search"
+							[initial_value]="dealer_name"
+							[new_value]="dealer_name"
+							[disabled]="is_dealer">
 						</app-autocomplete-field>
                     </ng-template>
 
                     <ng-template #advertiser_dropdown>
 						<app-autocomplete-field
-                        (data_value)="advertiserSelected($event)"
-                        [key_of_value]="'id'"
-                        [placeholder]="f.placeholder"
-                        [label]="f.label"
-                        [data_reference]="advertisers_data"
-                        [search_keyword]="'name'"
-                        [primary_keyword]="'name'"
-                        [paging]="paging_adv"
-						(call_next_page)="searchBoxTriggerAdv($event)"
-						(searched)="searchDataAdv($event)"
-                        [loading_data]="loading_data_adv"
-                        [loading_search]="loading_search_adv"
-                        [disabled]="!advertisers"
-                        [reset_value]="initial_load_advertiser">
+							(data_value)="advertiserSelected($event)"
+							[key_of_value]="'id'"
+							[placeholder]="f.placeholder"
+							[label]="f.label"
+							[data_reference]="advertisers_data"
+							[search_keyword]="'name'"
+							[primary_keyword]="'name'"
+							[paging]="paging_adv"
+							(call_next_page)="searchBoxTriggerAdv($event)"
+							(searched)="searchDataAdv($event)"
+							[loading_data]="loading_data_adv"
+							[loading_search]="loading_search_adv"
+							[disabled]="!advertisers"
+							[reset_value]="initial_load_advertiser">
                         </app-autocomplete-field>
                     </ng-template>
                 </div>

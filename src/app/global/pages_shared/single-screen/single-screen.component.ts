@@ -48,14 +48,17 @@ export class SingleScreenComponent implements OnInit {
 	loading_search_host: boolean = false;
 	no_case: boolean = true;
 	no_changes: boolean = true;
+    paging_data: any;
 	paging_host: any;
 	playlist_id: string;
 	playlist_route: string;
 	playlist_contents: UI_CONTENT[];
 	screen: any;
 	screen_init: string;
+    screen_licenses: Array<any> = [];
 	screen_types: Array<any> = [];
 	search_host_data: string = "";
+    searching: boolean = false;
 	screen_id: string;
 	screen_info: FormGroup;
 	subscription: Subscription = new Subscription;
@@ -152,6 +155,7 @@ export class SingleScreenComponent implements OnInit {
 
 		// Queried Object ID
 		this.getScreenIdOnRoute();
+        this.getScreenLicenses(1);
 		this.getScreenType();
 		this.license_tbl_row_url = `/${this._role.get_user_role()}/licenses/`
 		this.playlist_route = `/${this._role.get_user_role()}/playlists/`
@@ -177,6 +181,41 @@ export class SingleScreenComponent implements OnInit {
 				}
 			)
 		);
+	}
+
+    getScreenLicenses(e) {
+        this.searching = true;
+		this.subscription.add(
+			this._license.get_license_by_screen_id(this.screen_id, e).subscribe(
+				data => {
+                    this.searching = false;
+                    this.paging_data = data.paging;
+					if(!data.message) {
+                        this.screen_licenses = this.screenLicense_mapToUI(data.paging.entities);
+                        // this.filtered_data = this.screenLicense_mapToUI(data.cFeeds);
+                    } else {
+                        // if(this.search_data == "") {
+						// 	this.no_licenses = true;
+						// }
+						this.screen_licenses=[];
+						// this.filtered_data = [];
+                    }
+					console.log({data:data})
+				}
+			)
+		)
+	}
+
+    private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
 	}
 
 	toggleActivateDeactivate(e) {
@@ -456,7 +495,8 @@ export class SingleScreenComponent implements OnInit {
 			dialog.afterClosed().subscribe(
 				data => {
 					if (data == true) {
-						this.getScreen(this.screen_id);
+						// this.getScreen(this.screen_id);
+                        this.getScreenLicenses(1);
 						this.licenseUnassigned();
 					}
 				}
@@ -619,7 +659,7 @@ export class SingleScreenComponent implements OnInit {
 					{ value: counter++, link: null , editable: false, hidden: false},
 					{ value: l.licenseKey, link: `/${route}/licenses/` + l.licenseId, editable: false, hidden: false, status: true},
 					{ value: l.alias ? l.alias : '--', link: `/${route}/licenses/` + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false},
-					{ value: l.internetType ? l.internetType : '--', link: null, editable: false, hidden: false},
+					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false},
 					{ value: l.internetSpeed ? l.internetSpeed : '--', link: null, editable: false, hidden: false},
 					{ value: l.isActivated, link: null , editable: false, hidden: true},
 					{ value: l.isRegistered, link: null , editable: false, hidden: true},

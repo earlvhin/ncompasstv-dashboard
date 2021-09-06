@@ -4,7 +4,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { API_FEED_TYPES } from '../../../../global/models/api_feed.model';
-import { API_GENERATED_FEED, GenerateFeed } from '../../../../global/models/api_feed_generator.model';
+import { API_GENERATED_FEED, GenerateSlideFeed } from '../../../../global/models/api_feed_generator.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 
 @Component({
@@ -25,7 +25,7 @@ export class FeedInfoComponent implements OnInit {
 	@Output() feed_info = new EventEmitter();
 
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
-	generated_feed: GenerateFeed;
+	generated_feed: GenerateSlideFeed;
 	new_feed_form: FormGroup;
 	selected_dealer: string;
 

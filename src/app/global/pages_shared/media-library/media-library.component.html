@@ -52,8 +52,8 @@
 		</div>
 		<hr class="my-4" *ngIf="compare != false">
 		<app-media
-		(send_stats)="displayStats($event)"
-		[reload]="eventsSubject.asObservable()">
+			(send_stats)="displayStats($event)"
+			[reload]="eventsSubject.asObservable()">
 		</app-media>
 	</div>
 

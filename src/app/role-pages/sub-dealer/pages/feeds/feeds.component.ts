@@ -154,7 +154,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	}
 
-	private get currentUser() {
+	get currentUser() {
 		return this._auth.current_user_value;
 	}
 

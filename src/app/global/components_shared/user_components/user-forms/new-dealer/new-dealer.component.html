@@ -17,23 +17,26 @@
     <ng-container *ngIf="new_dealer_form">
         <form [formGroup]="new_dealer_form" #formDirective="ngForm" (ngSubmit)="createNewDealer(formDirective)" class="text-left position-relative">
             <div class="row mb-4">
-                <ng-container *ngFor="let f of form_fields_view" >
-                    <div class="{{ f.width }}">
-                        <mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
-                            <mat-label>{{ f.label }}</mat-label>
-                            <input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" type="{{ f.type }}" matInput placeholder="{{ f.placeholder }}">
+                <ng-container *ngFor="let field of form_fields_view" >
+                    <div class="{{ field.width }}">
+                        <mat-form-field class="full-width" *ngIf="!field.is_autocomplete; else autocomplete">
+                            <mat-label>{{ field.label }}</mat-label>
+                            <input *ngIf="field.type !== 'password'; else passwordField" formControlName="{{ field.control }}" type="{{ field.type }}" matInput placeholder="{{ field.placeholder }}">
                             
 							<ng-template #passwordField>
-								<div class="password-container" *ngIf="f.control === 'password'">
+								<div class="password-container" *ngIf="field.control === 'password'">
 									<div class="field">
-										<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
+										<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
 										<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
 									</div>
 								</div>
 	
-								<div class="password-container" *ngIf="f.control === 're_password'">
+								<div class="password-container" *ngIf="field.control === 're_password'">
 									<div class="field">
-										<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_retype_password_field_type ? 'password' : 'text'">
+										<input matInput 
+											formControlName="{{ field.control }}" 
+											placeholder="{{ field.placeholder }}" 
+											[type]="is_retype_password_field_type ? 'password' : 'text'">
 										<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
 									</div>
 								</div>
@@ -41,25 +44,25 @@
 
                         </mat-form-field>
 
-						<div class="validation" *ngIf="f.type === 'password'">
-							<span *ngIf="f.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
+						<div class="validation" *ngIf="field.type === 'password'">
+							<span *ngIf="field.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
 								{{ password_is_valid_msg }}
 							</span>
 	
-							<span *ngIf="f.re_password_field" class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
+							<span *ngIf="field.re_password_field" class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
 								{{ password_match_msg }}
 							</span>
 						</div>
     
                         <ng-template #autocomplete>
                             <app-autocomplete-field
-                            (data_value)="citySelected($event)"
-                            [key_of_value]="'city_state'"
-                            [placeholder]="f.placeholder"
-                            [label]="f.label"
-                            [data_reference]="f.data"
-                            [search_keyword]="'city_state'"
-                            [primary_keyword]="'city_state'">
+								(data_value)="citySelected($event)"
+								[key_of_value]="'city_state'"
+								[placeholder]="field.placeholder"
+								[label]="field.label"
+								[data_reference]="field.data"
+								[search_keyword]="'city_state'"
+								[primary_keyword]="'city_state'">
                             </app-autocomplete-field>
                         </ng-template>
                     </div>

@@ -18,6 +18,7 @@ import { ViewContentListModule } from './global/components_shared/playlist_compo
 import { SubDealerModule } from './role-pages/sub-dealer/sub-dealer.module';
 import { TagsModule } from './global/pages_shared/tags/tags.module';
 import { HttpErrorInterceptor } from './global/middlewares/http-interceptor/http-error.interceptor';
+import { SingleLicenseModule } from './global/pages_shared/single-license/single-license.module';
 @NgModule({
 	declarations: [
 		AppComponent,
@@ -37,6 +38,7 @@ import { HttpErrorInterceptor } from './global/middlewares/http-interceptor/http
 		AppRoutingModule,
 		ReassignDealerModule,
 		ViewContentListModule,
+		SingleLicenseModule,
 		TagsModule,
 	],
 	providers: [

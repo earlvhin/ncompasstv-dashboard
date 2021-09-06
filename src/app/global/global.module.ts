@@ -60,6 +60,7 @@ import { FailAnimationComponent } from './components_shared/page_components/fail
 import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
 import { FeedInfoComponent } from './components_shared/feed_components/feed-info/feed-info.component';
 import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
+import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
 import { FilenamePipe } from './pipes/filename.pipe';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
@@ -129,7 +130,7 @@ import { SingleContentComponent } from './pages_shared/single-content/single-con
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
 import { SingleHostComponent } from './pages_shared/single-host/single-host.component';
-import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
+// import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
@@ -150,6 +151,7 @@ import { UserTypeComponent } from './components_shared/user_components/user-type
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
+import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
 
@@ -181,7 +183,6 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
-import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -236,6 +237,7 @@ const ngComponents = [
 	FeedMediaComponent,
 	FeedDemoComponent,
 	FeedInfoComponent,
+	FeedsPageActionButtonsComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
 	FooterComponent, 
@@ -302,7 +304,7 @@ const ngComponents = [
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
 	SingleHostComponent,
-	SingleLicenseComponent,
+	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
 	SingleUserComponent,
@@ -365,7 +367,7 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
-		WeatherDemoComponent
+		WeatherDemoComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

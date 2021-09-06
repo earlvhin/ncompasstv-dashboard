@@ -21,12 +21,15 @@
 
 .frequency-badge {
 	background-color: #8EC641;
-	padding: 0.5px 5px;
-	border-radius: 25px;
+	width: 15px;
+	height: 15px;
+	border-radius: 100%;
 	color: white;
-	font-size: 9px;
+	font-size: 8px;
 	margin-left: 5px;
+	padding-top: 2px;
 	line-height: 14px;
+	text-align: center;
 }
 
 .feed-thumb {

@@ -54,8 +54,6 @@ export class CreateTemplateComponent implements OnInit {
 					if (this.new_template_form.valid && 
 						this.zone_property_form.get('zones').value != '' && 
 						this.zone_property_form.get('zones').valid) {
-						console.log(this.new_template_form.valid);
-						console.log(this.zone_property_form.get('zones').value);
 						this.disable_submit = false;
 					} else {
 						this.disable_submit = true;
@@ -92,40 +90,40 @@ export class CreateTemplateComponent implements OnInit {
 	}
 
 	confirmTemplateCreation() {
-		this.created_template = {
-			template: {
-				name: this.new_template_form.get('template_name').value
-			},
-			templatezones: this.zone_property_form.get('zones').value
-		}
 
-		let dialog = this._dialog.open(ConfirmTemplateModalComponent, {
+		this.created_template = {
+			template: { name: this.new_template_form.get('template_name').value },
+			templatezones: this.zone_property_form.get('zones').value
+		};
+
+		const dialog = this._dialog.open(ConfirmTemplateModalComponent, {
+			disableClose: true,
 			width: '600px',
 			data: {zones: this.created_template}
 		});
 
 		this.subscription.add(
 			dialog.afterClosed().subscribe(
-				data => {
+				(response: any) => {
+					if (response === 'cancel') return;
 					this._router.navigate(['/administrator/templates'])
 				}
 			)
-		)
+		);
 	}
 
 	openNewZoneModal(): void {
-		let dialog = this._dialog.open(NewZoneModalComponent, {
-			width: '600px',
-		});
+		const dialog = this._dialog.open(NewZoneModalComponent, { width: '600px', disableClose: true });
 
 		this.subscription.add(
 			dialog.afterClosed().subscribe((data: API_ZONE) => this.addZoneProperty(data))
-		)
+		);
 	}
 
 	zoneProperty(data: any, index: number) {
 		this.zone_data = JSON.parse(data);
 		this.zone_background = this.zone_data.background;
+
 		return new FormGroup(
 			{
 				'name': new FormControl(this.zone_data.name, [Validators.required]),
@@ -137,6 +135,6 @@ export class CreateTemplateComponent implements OnInit {
 				'ypos': new FormControl(this.zone_data.yPos, [Validators.required]),
 				'order': new FormControl(index, [Validators.required])
 			}
-		)
+		);
 	}
 }

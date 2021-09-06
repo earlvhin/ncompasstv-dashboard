@@ -66,6 +66,7 @@ export class ContentsTabComponent implements OnInit {
     paging_data: any;
     searching: boolean = false;
     start_date: Date;
+    search_data: string = "";
     selected_content: string;
     selected_content_name: string;
     selected_dealer: string;
@@ -92,6 +93,15 @@ export class ContentsTabComponent implements OnInit {
         }
     }
 
+    filterData(key) {
+		if (key) {
+			this.search_data = key;
+		} else {
+            this.search_data = ""
+        }
+        this.getMediaFiles(1);
+	}
+
     onSelectStartDate(e) {
         this.start_date = e.format('YYYY-MM-DD');
         if(this.end_date && this.selected_dealer) {
@@ -111,7 +121,8 @@ export class ContentsTabComponent implements OnInit {
         var filter =  {
             dealerid: this.selected_dealer,
             from: this.start_date,
-            to: this.end_date, 
+            to: this.end_date,
+            contenttitle: this.search_data
         }
         this.subscription.add(
             this._dealer.content_dealer_metrics(filter).subscribe(
@@ -134,7 +145,8 @@ export class ContentsTabComponent implements OnInit {
         var filter =  {
             contentid: this.selected_content,
             from: this.start_date,
-            to: this.end_date, 
+            to: this.end_date,
+            contenttitle: this.search_data 
         }
         this.subscription.add(
             this._content.get_content_metrics_export(filter).subscribe(
@@ -246,7 +258,8 @@ export class ContentsTabComponent implements OnInit {
             from: this.start_date,
             to: this.end_date,
             pageSize: 10,
-            page: e
+            page: e,
+            contenttitle: this.search_data
         }
         this.subscription.add(
             this._content.get_content_metrics(filter).subscribe(

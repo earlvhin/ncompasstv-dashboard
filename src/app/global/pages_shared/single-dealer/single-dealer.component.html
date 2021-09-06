@@ -296,24 +296,24 @@
                                                 <ng-container *ngIf="!searching_license; else loader">
                                                     <mat-card *ngIf="license_filtered_data.length > 0; else no_data">
                                                         <app-data-table id="licenseTable" 
-                                                        [table_columns]="license_table_columns" 
-                                                        [table_data]="license_filtered_data"
-                                                        [ctrl_column]="true"
-                                                        [ctrl_column_label]="'Activate'"
-                                                        [ctrl_toggle]="true"
-                                                        [new_table]="true"
-                                                        [license_status_column]="true"
-                                                        (toggle_triggered)="toggleActivateDeactivate($event)"
-                                                        (update_info)="reloadLicense()"
-                                                        [license_delete]="true"
-                                                        [paging_details]="paging_data_license"
-                                                        (page_triggered)="getLicensesofDealer($event)"
-                                                        [multiple_delete]="true"
-                                                        (delete_selected)="getMultipleDeleteData($event)"
-                                                        (to_sort_column)="getColumnsAndOrder($event)"
-                                                        [active_tab]="sort_column"
-                                                        [sort_column]="sort_column"
-                                                        [sort_order]="sort_order">
+															[table_columns]="license_table_columns" 
+															[table_data]="license_filtered_data"
+															[ctrl_column]="true"
+															[ctrl_column_label]="'Activate'"
+															[ctrl_toggle]="true"
+															[new_table]="true"
+															[license_status_column]="true"
+															(toggle_triggered)="toggleActivateDeactivate($event)"
+															(update_info)="reloadLicense()"
+															[license_delete]="true"
+															[paging_details]="paging_data_license"
+															(page_triggered)="getLicensesofDealer($event)"
+															[multiple_delete]="true"
+															(delete_selected)="getMultipleDeleteData($event)"
+															(to_sort_column)="getColumnsAndOrder($event)"
+															[active_tab]="sort_column"
+															[sort_column]="sort_column"
+															[sort_order]="sort_order">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>

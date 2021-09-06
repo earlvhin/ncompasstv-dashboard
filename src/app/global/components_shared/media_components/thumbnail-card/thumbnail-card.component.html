@@ -1,4 +1,4 @@
-<mat-card class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden" data-placement="top" [attr.title]="removeFilenameHandle(filename)">
+<mat-card class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden" data-placement="top" [attr.title]="filename">
 	<div class="icon-overlay">
 		<div class="type-icon sm-text">
 			<i class="far fa-image text-primary mr-1" *ngIf="filetype != 'webm' && filetype != 'feed'" title="Image"></i>
@@ -17,7 +17,7 @@
 		</div>
 	</div>
 
-    <img [src]="image_uri" *ngIf="filetype !== 'feed' && file_url; else generated_feed_display" alt="thumbnail">
+	<img [src]="image_uri" *ngIf="filetype !== 'feed' && file_url; else generated_feed_display" alt="thumbnail">
 
 	<ng-template #generated_feed_display>
 		<div class="iframe-thumb-holder">
@@ -26,11 +26,14 @@
 		</div>
 	</ng-template>
 
-    <p class="thumbnail-title">
-        <a [routerLink]="[route, content_id]" target="_blank">
-			<span>{{ filename | filename }}</span>
-        </a>
-	</p>
+    <div class="thumbnail-title">
+		<div class="d-flex">
+			<span class="sequence">{{ sequence }}</span>
+			<a [routerLink]="[route, content_id]" class="flex-even text-center" target="_blank">
+				<span>{{ filename | filename }}</span>
+			</a>
+		</div>
+	</div>
 	
 	<div class="is_converting d-flex align-items-center justify-content-center px-2" *ngIf="filetype == 'webm' && is_converted == 0">
 		<div>

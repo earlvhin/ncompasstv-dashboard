@@ -34,7 +34,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 		this._router.events.pipe(filter(event => event instanceof NavigationEnd))
 			.subscribe(
 				(event: NavigationEnd) => {
-					if (event.url.match(/dealers.*/)) {
+					if (event.url.match(/dealers.*/) || event.url.match(/licenses.*/)) {
 						this.icons_only = true;
 						this.toggleEvent.emit(this.icons_only);
 					}

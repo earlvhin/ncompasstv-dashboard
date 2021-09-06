@@ -171,7 +171,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Net Speed', sortable: false, key:'internetSpeed'},
 		{ name: 'Display', sortable: false, key: 'displayStatus'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId'},
-		{ name: 'Password', sortable: true, column:'AnydeskId', key:'anydeskId'},
+		{ name: 'Password', sortable: false, key:'password'},
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
@@ -971,9 +971,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		switch(tab) {
 			case 'Licenses': 
 				this.subscription.add(
-					this._license.get_license_to_export(id).subscribe(
+					this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
 						data => {
-							this.licenses_to_export = data.licenses;
+							this.licenses_to_export = data.paging.entities;
 							this.licenses_to_export.forEach((item, i) => {
 								this.modifyItem(item, tab);
 								this.worksheet.addRow(item).font ={
@@ -1020,6 +1020,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+                item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
+                item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 				item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
 				item.screenType =  this._titlecase.transform(item.screenType);
 				item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');

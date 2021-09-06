@@ -26,13 +26,13 @@ import { PlaylistContentScheduleDialog } from 'src/app/global/models/playlist-co
 export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnInit {
 
 	days_list = [
+		{ value: 0, name: 'Sun', checked: false },
 		{ value: 1, name: 'Mon', checked: false },
 		{ value: 2, name: 'Tue', checked: false },
 		{ value: 3, name: 'Wed', checked: false },
 		{ value: 4, name: 'Thu', checked: false },
 		{ value: 5, name: 'Fri', checked: false },
 		{ value: 6, name: 'Sat', checked: false },
-		{ value: 7, name: 'Sun', checked: false },
 	];
 
 	form = this.form_builder.group(
@@ -241,8 +241,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							days,
 							playTimeStart,
 							playTimeEnd,
-							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format(),
-							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format(),
+							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
+							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							type: this.getTypeValue(type.name),
 							playlistContentId: id,
 						};
@@ -276,8 +276,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							days,
 							playTimeStart,
 							playTimeEnd,
-							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format(),
-							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format(),
+							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
+							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							type: this.getTypeValue(type.name),
 							playlistContentId: schedule.content_id
 						};
@@ -311,6 +311,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		const { playlistContentId, playlistContentsSchedule } = this.dialog_data.content;
 
 		if (this.is_custom_play) {
+			console.log('play time start', playTimeStart);
 
 			result = {
 				days,
@@ -318,8 +319,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				playTimeEnd,
 				playlistContentId,
 				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId,
-				from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format(),
-				to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format(),
+				from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
+				to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 				type: this.getTypeValue(type.name),
 			};
 

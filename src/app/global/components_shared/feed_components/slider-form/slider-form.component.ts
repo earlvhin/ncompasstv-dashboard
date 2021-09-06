@@ -14,11 +14,13 @@ import { SLIDE_GLOBAL_SETTINGS } from '../../../../global/models/api_feed_genera
 })
 
 export class SliderFormComponent implements OnInit {
+	@Input() banner_image_data: API_CONTENT;
 	@Input() global_settings: SLIDE_GLOBAL_SETTINGS;
 	@Input() selected_dealer: string;
 	@Input() feed_items: FeedItem[] = [];
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Output() structured_feed_items = new EventEmitter();
+	selected_banner_image: string;
 
 	font_family = [
 		{
@@ -35,25 +37,30 @@ export class SliderFormComponent implements OnInit {
 		}
 	]
 
+	alignment = [
+		{
+			label: 'Left'
+		},
+		{
+			label: 'Center'
+		},
+		{
+			label: 'Right'
+		}
+	]
+
 	/** Form Control Names (form_control_name) have been set with the same keys required by the API */
 	slide_global_settings = [
 		{
-			label: 'Overlay Background and Transparency for Context',
-			form_control_name: 'overlay',
+			label: 'Banner Image',
+			form_control_name: 'bannerImage',
 			type: 'text',
-			viewType: 'colorpicker',
-			colorValue: '',
 			width: 'col-lg-4', 
-			required: true
-		},
-		{
-			label: 'Font Color',
-			form_control_name: 'fontColor',
-			type: 'text',
-			viewType: 'colorpicker',
-			colorValue: '',
-			width: 'col-lg-4', 
-			required: true
+			viewType: 'upload',
+			imageUri: '',
+			fileName: '',
+			required: false,
+			api_key_ref: 'bannerImageData'
 		},
 		{
 			label: 'Font Family',
@@ -64,6 +71,51 @@ export class SliderFormComponent implements OnInit {
 			options: this.font_family,
 			required: true
 		},
+		{
+			label: 'Text Alignment',
+			form_control_name: 'textAlign',
+			type: 'text',
+			width: 'col-lg-4', 
+			viewType: 'select',
+			options: this.alignment,
+			required: true
+		},
+		{
+			label: 'Headline Background Color',
+			form_control_name: 'headlineBackground',
+			type: 'text',
+			viewType: 'colorpicker',
+			colorValue: '',
+			width: 'col-lg-3', 
+			required: false
+		},
+		{
+			label: 'Headline Color',
+			form_control_name: 'headlineColor',
+			type: 'text',
+			viewType: 'colorpicker',
+			colorValue: '',
+			width: 'col-lg-3', 
+			required: true
+		},
+		{
+			label: 'Overlay Background and Transparency for Context',
+			form_control_name: 'overlay',
+			type: 'text',
+			viewType: 'colorpicker',
+			colorValue: '',
+			width: 'col-lg-3', 
+			required: true
+		},
+		{
+			label: 'Font Color',
+			form_control_name: 'fontColor',
+			type: 'text',
+			viewType: 'colorpicker',
+			colorValue: '',
+			width: 'col-lg-3', 
+			required: true
+		}
 	]
 
 	slide_global_settings_form: FormGroup;
@@ -76,31 +128,8 @@ export class SliderFormComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		let form_group_obj = {};
 
-		this.slide_global_settings.map(
-			i => {
-				Object.assign(form_group_obj, {
-					[i.form_control_name]: ['', Validators.required]
-				})
-			}
-		)
-
-		this.slide_global_settings_form = this._form.group(form_group_obj)
-	
-		console.log(this.global_settings);
-
-		if (this.global_settings) {
-			this.slide_global_settings.map(i => {
-				if (i.viewType == 'colorpicker') {
-					i.colorValue = this.global_settings[i.form_control_name]
-				}
-			})
-
-			this.f.overlay.setValue(this.global_settings.overlay);
-			this.f.fontColor.setValue(this.global_settings.fontColor);
-			this.f.fontFamily.setValue(this.global_settings.fontFamily);
-		}
+		this.prepareForms();
 	}
 
 	/** 
@@ -144,31 +173,58 @@ export class SliderFormComponent implements OnInit {
 	}
 
 	/** Open Media Library where contents are assigned to selected dealer */
-	openMediaLibraryModal(): void {
+	openMediaLibraryModal(form_control_name?: string, singleSelect?: boolean): void {
 		console.log(this.selected_dealer);
 
 		let dialog = this._dialog.open(FeedMediaComponent, {
 			width: '1024px',
 			data: {
 				dealer: this.selected_dealer,
-				singleSelect: false
+				singleSelect: singleSelect || false
 			}
 		})
 
 		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
 			if (data && data.length > 0) {
-				this.structureFeedItems(data);
-				this.sortableJSInit();
+				if (!form_control_name) {
+					this.structureFeedItems(data);
+					this.sortableJSInit();
+				} else {
+					/** Set Form Control Field Value */
+					this.slide_global_settings_form.controls[form_control_name].setValue(data[0].contentId);
+						
+					/** Set UI Image Display */
+					this.slide_global_settings.map(
+						i => {
+							if (i.form_control_name === form_control_name) {
+								i.imageUri = data[0].thumbnail;
+								i.fileName = data[0].title;
+							}
+
+							if (form_control_name === 'bannerImage') {
+								this.selected_banner_image = `${data[0].url}${data[0].fileName}`
+							}
+						}
+					)
+				}
 			}
 		})
 	}
 
 	/** Pass Feed Items to Parent Component */
 	passFeedItems(): void {
-		this.structured_feed_items.emit(
+		console.log(
 			{
 				globalSettings: this.slide_global_settings_form.value,
 				feedItems: this.feed_items
+			}
+		)
+
+		this.structured_feed_items.emit(
+			{
+				globalSettings: this.slide_global_settings_form.value,
+				feedItems: this.feed_items,
+				selectedBannerImage: this.selected_banner_image
 			}
 		)
 	}
@@ -184,6 +240,43 @@ export class SliderFormComponent implements OnInit {
 	/** Slide Global Settings Form Control Getter */
 	private get f() {
 		return this.slide_global_settings_form.controls;
+	}
+
+	/** Prepare Forms */
+	private prepareForms(): void {
+		let form_group_obj = {};
+
+		this.slide_global_settings.map(
+			i => {
+				Object.assign(form_group_obj, {
+					[i.form_control_name]: ['', i.required ? Validators.required : null]
+				})
+			}
+		)
+
+		this.slide_global_settings_form = this._form.group(form_group_obj)
+	
+		if (this.global_settings) {
+			this.slide_global_settings.map(i => {
+				if (i.viewType == 'colorpicker') {
+					i.colorValue = this.global_settings[i.form_control_name]
+				}
+
+				if (i.viewType == 'upload' && this.banner_image_data) {
+					i.imageUri = `${this.banner_image_data.url}${this.banner_image_data.fileName}`;
+					i.fileName = this.banner_image_data.title;
+					this.selected_banner_image = `${this.banner_image_data.url}${this.banner_image_data.fileName}`
+				}
+			})
+
+			this.f.bannerImage.setValue(this.banner_image_data ? this.banner_image_data.contentId : '');
+			this.f.textAlign.setValue(this.global_settings.textAlign);
+			this.f.overlay.setValue(this.global_settings.overlay);
+			this.f.fontColor.setValue(this.global_settings.fontColor);
+			this.f.fontFamily.setValue(this.global_settings.fontFamily);
+			this.f.headlineBackground.setValue(this.global_settings.headlineBackground);
+			this.f.headlineColor.setValue(this.global_settings.headlineColor);
+		}
 	}
 
 	/**
@@ -213,7 +306,7 @@ export class SliderFormComponent implements OnInit {
 		);
 	}
 	
-	/** Sortable JS Plugin Initialization*/
+	/** Sortable JS Plugin Initialization */
 	private sortableJSInit(): void {
 		const set = (sortable) => {
 			let sorted_feed_items = [];

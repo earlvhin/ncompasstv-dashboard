@@ -41,14 +41,14 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses(page, key) {
-        const params = this.httpParams({ page, search: key })
+	get_all_licenses(page, key, column, order) {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order })
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
-	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?) {
+	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?, dealer="") {
 		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;
-		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}`;
+		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}&search=${dealer}`;
 		return this._http.get<any>(endpoint, this.httpOptions);
 	}
 
@@ -60,13 +60,19 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 	
-	get_license_by_dealer_id(id, page, key, arrangement) {
-		const params = this.httpParams({ dealerId: id,page, search: key, arrangement })
+	get_license_by_dealer_id(id, page, key, arrangement, pageSize?: number) {
+		const params: any = this.httpParams({ dealerId: id,page, search: key, arrangement });
+		if (typeof pageSize !== 'undefined') params.pageSize = pageSize;
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
+	
+    get_license_by_screen_id(id, page) {
+		const params = this.httpParams({ screenId: id,page })
+		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
+	}
 
-	sort_license_by_dealer_id(id, page, key, column, order) {
-		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order })
+	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15) {
+		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 

@@ -2,24 +2,59 @@
     <div class="row align-items-center">
         <div class="col-lg-6">
             <h3>Choose Images</h3>
-            <p class="sm-text mb-0">Select single or multiple images to use on your custom feed.</p>
+            <p class="sm-text mb-0">Select image(s) to use on your custom feed.</p>
+        </div>
+
+        <div class="col-lg-6">
+            <ng-container *ngIf="is_admin">
+                  <div class="d-flex align-items-center" *ngIf="floating_content.length > 0; else spinner;">
+                    <div class="mr-2">
+                        <mat-slide-toggle
+                        (change)="showFloatingContent($event)">
+                        </mat-slide-toggle>
+                    </div>
+                    <div class="flex-even">
+                        <h6 class="sm-text">Display Floating Contents</h6>
+                        <p class="xsm-text">
+                            Display all content that are not assigned to any Dealer
+                        </p>
+                    </div>
+                </div>
+
+                <ng-template #spinner>
+                    <app-spinner [diameter]="20"></app-spinner>
+                </ng-template>
+            </ng-container>
         </div>
     </div>
 
     <hr>
 
     <div class="media-files mb-4" (scroll)="onScroll($event)">
-        <div class="row no-gutters" *ngIf="media_files">
-            <div class="col-lg-2 mb-3" *ngFor="let m of media_files">
-                <div class="media-file-thumbnail mx-2" (click)="imageSelected(m)" [ngClass]="selected_media_files.includes(m) ? 'selected' : ''">
-                    <img [src]="m.previewThumbnail" [alt]="m.fileName">
-    
-                    <div class="overlay">
-                        <span class="xsm-text">{{ m.title | filename }}</span>
+        <ng-container *ngIf="!no_media; else no_available_media">
+            <div class="row no-gutters" *ngIf="media_files">
+                <div class="col-lg-2 mb-3" *ngFor="let m of media_files">
+                    <div class="media-file-thumbnail mx-2" (click)="imageSelected(m)" [ngClass]="selected_media_files.includes(m) ? 'selected' : ''">
+                        <img [src]="m.previewThumbnail" [alt]="m.fileName">
+        
+                        <div class="overlay">
+                            <span class="xsm-text">{{ m.title | filename }}</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </ng-container>
+
+        <ng-template #no_available_media>
+            <div class="py-4 text-center">
+                <h3>
+                    No Media File Available
+                </h3>
+                <p class="sm-text">
+                    No available or appropriate media file for Slide Feed, Go to Media Library to upload images.
+                </p>
+            </div>
+        </ng-template>
 
         <div class="py-4" *ngIf="!pageEnd">
             <app-spinner [diameter]="70"></app-spinner>
