@@ -186,7 +186,7 @@ export class WeatherFormComponent implements OnInit {
 		this.weather_form_fields.map(
 			i => {
 				Object.assign(form_group_obj, {
-					[i.form_control_name]: ['', Validators.required]
+					[i.form_control_name]: ['', i.required ? Validators.required : null]
 				})
 			}
 		)
