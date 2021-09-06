@@ -133,18 +133,9 @@ export type WEATHER_FEED_STYLE_DATA = {
     boxBackgroundColor: string,
     daysFontColor: string,
     fontFamily: string,
+    footerContentId: string,
+    footerContents: API_CONTENT,
     numberDay: number,
     zipCode: string,
     numberDays?: number,
 }
-
-// export type SLIDE_GLOBAL_SETTINGS =  {
-//     dateCreated: string,
-//     feedGlobalSettingsId: string,
-//     feedId: string,
-//     fontColor: string,
-//     fontFamily: string,
-//     overlay: string,
-//     status: string,
-//     textAlign: string
-// }
