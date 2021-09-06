@@ -60,8 +60,9 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 	
-	get_license_by_dealer_id(id, page, key, arrangement, pageSize?) {
-		const params = this.httpParams({ dealerId: id,page, search: key, arrangement, pageSize })
+	get_license_by_dealer_id(id, page, key, arrangement, pageSize?: number) {
+		const params: any = this.httpParams({ dealerId: id,page, search: key, arrangement });
+		if (typeof pageSize !== 'undefined') params.pageSize = pageSize;
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 	

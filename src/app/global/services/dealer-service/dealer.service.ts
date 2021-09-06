@@ -66,8 +66,12 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_host}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 	
-	get_dealers_with_advertiser(page, key, column?, order?) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_advertiser}`+'?page='+`${page}`+'&search='+`${key}&sortColumn=${column}&sortOrder=${order}`, this.httpOptions);
+	get_dealers_with_advertiser(page, key, column?: string, order?: string) {
+		const baseUrl = `${environment.base_uri}${environment.getters.api_get_dealers_with_advertiser}`;
+		let url = `${baseUrl}?page=${page}&search=${key}`;
+		if (typeof column !== 'undefined') url += `&sortColumn=${column}`;
+		if (typeof order !== 'undefined') url += `&sortOrder=${order}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 	
 	get_dealers_with_license(page, key) {

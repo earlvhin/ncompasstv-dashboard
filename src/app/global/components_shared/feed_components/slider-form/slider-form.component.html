@@ -11,7 +11,8 @@
 
                     <div class="full-width bg-gray-2 mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="s.viewType == 'upload'">
                         <img [src]="s.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
-                        <p class="filename">{{ s.fileName ? (s.fileName | substring:25) : '' || s.label }}</p>
+                        <span class="sm-text label-when-filled" *ngIf="s.fileName">{{ s.label }}</span>
+                        <p class="filename" [ngClass]="s.fileName ? 'filled' : ''" [title]="s.fileName">{{ s.fileName ? (s.fileName | substring:18) : '' || s.label }}</p>
                         <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(s.form_control_name, true);"><span class="fas fa-camera"></span></button>
                     </div>
 

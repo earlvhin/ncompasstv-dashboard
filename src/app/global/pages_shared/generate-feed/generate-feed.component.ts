@@ -32,6 +32,7 @@ export class GenerateFeedComponent implements OnInit {
 	is_dealer: boolean = false;
 	
 	saving: boolean = false;
+	selected_banner_image: string;
 	selected_dealer: string;
 	selected_index: number = 0;
 	slide_global_settings: SLIDE_GLOBAL_SETTINGS;
@@ -196,12 +197,14 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	/** Construct Generated Slide Feed Payload to be sent to API */
-	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any}): void {
+	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any, selectedBannerImage: string}): void {
 		this.generated_slide_feed = new GenerateSlideFeed(
 			this.feed_info,
 			feed_data.globalSettings,
 			this.structureFeedContents(feed_data.feedItems)
 		)
+
+		this.selected_banner_image = feed_data.selectedBannerImage;
 	}
 
 	/** Construct Generated Weather Feed Payload to be sent to API */
