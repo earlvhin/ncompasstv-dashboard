@@ -140,7 +140,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		this._content.get_contents_summary().pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
-                    console.log({res:response})
 					if (!response.message) {
 						this.summarized_media = response.contents;
 					}
@@ -195,9 +194,16 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                         var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
                         temp = temp + ".webm"
                         e.originalFile.name = temp;
+                        
                     }
 
-					this.duplicate_files = this.summarized_media.filter(media => media.title === e.originalFile.name);
+                    e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
+					this.duplicate_files = this.summarized_media.filter(
+                        media =>  {
+                            return media.title.indexOf(e.originalFile.name) !== -1
+                        }
+                    );
+                    
 					if (this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
 
@@ -303,6 +309,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					i.filename = i.fileName
 				}
 				i.createdBy = this._auth.current_user_value.user_id;
+
 				if(duplicateArray) {
 					var name_of_file = this.removeIndexes(i.filename)
                     var mime = i.mimetype.split("/")
