@@ -83,7 +83,8 @@
                                     [sort_order]="sort_order"
                                     [page]="'feeds'"
                                     [has_action]="true"
-									[current_user]="currentUser">
+									[current_user]="currentUser"
+                                    (update_info)="reloadPage($event)">
 								</app-data-table>
 							</mat-card>
 						</ng-container>
