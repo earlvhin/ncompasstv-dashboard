@@ -7,7 +7,7 @@ data-placement="top" [attr.title]="removeFilenameHandle(content.content_data.fil
                 <img src="{{ content.content_data.thumbnail }}" *ngIf="content.content_data.file_type !== 'feed'; else feed_thumb" alt="thumbnail" class="full-width height-100">
                 
                 <ng-template #feed_thumb>
-                    <iframe [src]="content.content_data.file_url | sanitize" class="feed-thumb" frameborder="0"></iframe>
+                    <img [src]=" fs_screenshot + '/' + content.content_data.file_url | sanitize">
                 </ng-template>
 
             </div>

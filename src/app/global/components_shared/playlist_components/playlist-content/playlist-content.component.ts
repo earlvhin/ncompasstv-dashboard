@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { environment } from '../../../../../environments/environment';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { OptionsComponent } from '../options/options.component';
@@ -30,6 +30,7 @@ export class PlaylistContentComponent implements OnInit {
 	contentTitle: string;
 	frequency: number;
 	isBaseFrequency = false;
+	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
 
 	protected _unsubscribe: Subject<void> = new Subject();
 

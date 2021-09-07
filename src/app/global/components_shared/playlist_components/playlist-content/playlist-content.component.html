@@ -7,10 +7,7 @@
             <img [src]="content.thumbnail" alt="thumbnail" *ngIf="content.fileType !== 'feed'; else feed_thumb" class="full-width height-100 border-bottom">
 
             <ng-template #feed_thumb>
-                <div>
-                    <iframe [src]="content.url | sanitize" class="feed-thumb" frameborder="0"></iframe>
-                    <div class="iframe-overlay"></div>
-                </div>
+                <img [src]=" fs_screenshot + '/' + content.url | sanitize" class="full-width height-100 border-bottom">
             </ng-template>
 
             <div class="number-overlay mb-0 xsm-text font-weight-bold d-flex justify-content-between">

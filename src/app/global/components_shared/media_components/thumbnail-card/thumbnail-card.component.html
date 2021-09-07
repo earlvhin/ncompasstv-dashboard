@@ -22,7 +22,7 @@
 	<ng-template #generated_feed_display>
 		<div class="iframe-thumb-holder">
 			<div class="iframe-overlay"></div>
-			<iframe [src]="file_url | sanitize" frameborder="0" width="100%"></iframe>
+			<img [src]=" fs_screenshot + '/' + file_url | sanitize">
 		</div>
 	</ng-template>
 
