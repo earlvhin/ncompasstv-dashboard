@@ -177,6 +177,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					// Do something async
 					this.all_media.map (
 						med => {
+                            console.log("MED", med)
 							if(med.title != null && !this.removed_index) {
 								med.fileName = med.title;
 								var name_no_index = this.removeIndexes(med.fileName);
@@ -198,11 +199,20 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                     }
 
                     e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
-					this.duplicate_files = this.summarized_media.filter(
-                        media =>  {
-                            return media.title.indexOf(e.originalFile.name) !== -1
-                        }
-                    );
+					if(!this.is_dealer) {
+                        this.duplicate_files = this.summarized_media.filter(
+                            media =>  {
+                                return media.title.indexOf(e.originalFile.name) !== -1
+                            }
+                        );
+                    } else {
+                        this.duplicate_files = this.all_media.filter(
+                            media =>  {
+                                return media.title.indexOf(e.originalFile.name) !== -1
+                            }
+                        );
+                    }
+                    
                     
 					if (this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
