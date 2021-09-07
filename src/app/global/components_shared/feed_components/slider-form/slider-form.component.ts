@@ -69,7 +69,7 @@ export class SliderFormComponent implements OnInit {
 			width: 'col-lg-4', 
 			viewType: 'select',
 			options: this.font_family,
-			required: false
+			required: true
 		},
 		{
 			label: 'Text Alignment',
@@ -78,7 +78,7 @@ export class SliderFormComponent implements OnInit {
 			width: 'col-lg-4', 
 			viewType: 'select',
 			options: this.alignment,
-			required: false
+			required: true
 		},
 		{
 			label: 'Headline Background Color',
@@ -96,7 +96,7 @@ export class SliderFormComponent implements OnInit {
 			viewType: 'colorpicker',
 			colorValue: '',
 			width: 'col-lg-3', 
-			required: false
+			required: true
 		},
 		{
 			label: 'Overlay Background and Transparency for Context',
@@ -105,7 +105,7 @@ export class SliderFormComponent implements OnInit {
 			viewType: 'colorpicker',
 			colorValue: '',
 			width: 'col-lg-3', 
-			required: false
+			required: true
 		},
 		{
 			label: 'Font Color',
@@ -114,7 +114,7 @@ export class SliderFormComponent implements OnInit {
 			viewType: 'colorpicker',
 			colorValue: '',
 			width: 'col-lg-3', 
-			required: false
+			required: true
 		}
 	]
 
@@ -249,7 +249,7 @@ export class SliderFormComponent implements OnInit {
 		this.slide_global_settings.map(
 			i => {
 				Object.assign(form_group_obj, {
-					[i.form_control_name]: ['']
+					[i.form_control_name]: ['', i.required ? Validators.required : null]
 				})
 			}
 		)
@@ -269,7 +269,7 @@ export class SliderFormComponent implements OnInit {
 				}
 			})
 
-			this.f.bannerImage.setValue(this.banner_image_data.contentId);
+			this.f.bannerImage.setValue(this.banner_image_data ? this.banner_image_data.contentId : '');
 			this.f.textAlign.setValue(this.global_settings.textAlign);
 			this.f.overlay.setValue(this.global_settings.overlay);
 			this.f.fontColor.setValue(this.global_settings.fontColor);

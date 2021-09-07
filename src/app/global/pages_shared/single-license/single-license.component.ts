@@ -17,7 +17,7 @@ import { MediaViewerComponent } from '../../components_shared/media_components/m
 import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
 
 import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_SINGLE_SCREEN, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
-	API_SCREEN_TEMPLATE_ZONE, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
+	API_SCREEN_TEMPLATE_ZONE, Tag, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
 	UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE, UI_SINGLE_SCREEN  } from 'src/app/global/models';
 
 @Component({
@@ -98,7 +98,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	storage_capacity = '';
 	subscriptions: Subscription = new Subscription;
 	template_data: API_TEMPLATE;
-	tags: string[] = [];
+	tags: Tag[] = [];
 	timezone: any;
 	title: string[] = [];
 	update_alias: FormGroup;
@@ -1288,7 +1288,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.title = data.license.alias;
 		this.license_key = data.license.licenseKey;
 		this.license_data = data.license;
-		this.tags = this.setTags(data.license.tags);
+		this.tags = data.license.tags;
 		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
 		this.timezone = data.timezone;
 		this.anydesk_id = data.license.anydeskId;
@@ -1392,9 +1392,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
-	private setTags(data: { name: string, tagId: number, tagTypeId: number, ownerId: string }[]): string[] {
-		return data.map(tag => tag.name);
-	}
+	// private setTags(data: { name: string, tagId: number, tagTypeId: number, ownerId: string }[]): Tag[] {
+	// 	return data.map(tag => {
+	// 		const { name, tagColor } = tag;
+	// 		return { name, tagColor };
+	// 	});
+	// }
 
 	private showInformationModal(width: string, height: string, title: string, contents: any, type: string, character_limit?: number): void {
 		this._dialog.open(InformationModalComponent, {

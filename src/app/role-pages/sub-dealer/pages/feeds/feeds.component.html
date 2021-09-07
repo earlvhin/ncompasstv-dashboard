@@ -67,6 +67,7 @@
 						<ng-container *ngIf="!searching; else loader">
 							<mat-card *ngIf="filtered_data.length > 0; else nodata">
 								<app-data-table 
+                                [current_user]="currentUser"
 								[table_data]="filtered_data" 
 								[table_columns]="feeds_table_column"
 								[new_table]="true"
@@ -76,7 +77,8 @@
 								[feed_delete]="true"
 								[feed_edit]="true"
 								(page_triggered)="pageRequested($event)"
-								(reload_page)="reloadPage($event)">
+								(reload_page)="reloadPage($event)"
+                                (update_info)="reloadPage($event)">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

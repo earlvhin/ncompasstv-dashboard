@@ -2,11 +2,11 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs/internal/Subscription';
-import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
+import { WEATHER_FEED_STYLE_DATA } from '../../../../global/models/api_feed_generator.model';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { FeedMediaComponent } from '../feed-media/feed-media.component';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FeedService } from 'src/app/global/services/feed-service/feed.service';
+import { FeedService } from '../../../../global/services/feed-service/feed.service';
 
 @Component({
 	selector: 'app-weather-form',
@@ -47,23 +47,34 @@ export class WeatherFormComponent implements OnInit {
 			label: 'Background Image',
 			form_control_name: 'backgroundContentId',
 			type: 'text',
-			width: 'col-lg-6', 
+			width: 'col-lg-4', 
 			viewType: 'upload',
 			imageUri: '',
 			fileName: '',
-			required: true,
+			required: false,
 			api_key_ref: 'backgroundContents'
 		},
 		{
-			label: 'Banner Image',
+			label: 'Header Image',
 			form_control_name: 'bannerContentId',
 			type: 'text',
-			width: 'col-lg-6', 
+			width: 'col-lg-4', 
 			viewType: 'upload',
 			imageUri: '',
 			fileName: '',
-			required: true,
+			required: false,
 			api_key_ref: 'bannerContents'
+		},
+		{
+			label: 'Footer Image',
+			form_control_name: 'footerContentId',
+			type: 'text',
+			width: 'col-lg-4', 
+			viewType: 'upload',
+			imageUri: '',
+			fileName: '',
+			required: false,
+			api_key_ref: 'footerContents'
 		},
 		{
 			label: 'Box Background Color',
@@ -72,7 +83,7 @@ export class WeatherFormComponent implements OnInit {
 			viewType: 'colorpicker',
 			colorValue: '',
 			width: 'col-lg-4', 
-			required: true
+			required: false
 		},
 		{
 			label: 'Days Font Color',
@@ -81,14 +92,14 @@ export class WeatherFormComponent implements OnInit {
 			width: 'col-lg-4', 
 			viewType: 'colorpicker',
 			colorValue: '',
-			required: true
+			required: false
 		},
 		{
 			label: 'Number of days to display, Maximum 5',
 			form_control_name: 'numberDays',
 			type: 'number',
 			width: 'col-lg-4', 
-			required: true
+			required: false
 		},
 		{
 			label: 'Font Family',
@@ -97,7 +108,7 @@ export class WeatherFormComponent implements OnInit {
 			width: 'col-lg-6', 
 			viewType: 'select',
 			options: this.font_family,
-			required: true
+			required: false
 		},
 		{
 			label: 'US Zip Code',
@@ -175,7 +186,7 @@ export class WeatherFormComponent implements OnInit {
 		this.weather_form_fields.map(
 			i => {
 				Object.assign(form_group_obj, {
-					[i.form_control_name]: ['', Validators.required]
+					[i.form_control_name]: ['', i.required ? Validators.required : null]
 				})
 			}
 		)
@@ -186,7 +197,7 @@ export class WeatherFormComponent implements OnInit {
 
 		if (this.edit_weather_data) {
 			this.weather_form_fields.map(i => {
-				if (i.viewType == 'upload') {
+				if (i.viewType == 'upload' && this.edit_weather_data[i.api_key_ref]) {
 					i.imageUri = `${this.edit_weather_data[i.api_key_ref].url}${this.edit_weather_data[i.api_key_ref].fileName}`;
 					i.fileName = this.edit_weather_data[i.api_key_ref].title;
 				}
@@ -198,6 +209,7 @@ export class WeatherFormComponent implements OnInit {
 
 			this.f.backgroundContentId.setValue(this.edit_weather_data.backgroundContentId);
 			this.f.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
+			this.f.footerContentId.setValue(this.edit_weather_data.footerContentId);
 			this.f.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
 			this.f.daysFontColor.setValue(this.edit_weather_data.daysFontColor);
 			this.f.numberDays.setValue(this.edit_weather_data.numberDays);

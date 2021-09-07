@@ -75,6 +75,10 @@ export class FeedsComponent implements OnInit {
 		}
 	}
 
+	get currentUser() {
+		return this._auth.current_user_value;
+	}
+
 	getFeedsTotal(id) {
 		this.subscription.add(
 			this._feed.get_feeds_total_by_dealer(id).subscribe(

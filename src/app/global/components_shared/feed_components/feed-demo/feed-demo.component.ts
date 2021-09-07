@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { SLIDE_GLOBAL_SETTINGS } from '../../../../global/models/api_feed_generator.model';
 import { environment as env } from '../../../../../environments/environment';
 import { FeedItem } from '../../../../global/models/ui_feed_item.model';
-import { API_CONTENT } from 'src/app/global/models';
+import { API_CONTENT } from '../../../../global/models';
 
 @Component({
 	selector: 'app-feed-demo',

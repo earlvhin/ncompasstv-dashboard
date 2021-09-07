@@ -438,11 +438,14 @@ export class DataTableComponent implements OnInit {
 	}
 
 	onCloneFeed(contentId: string) {
-
+		console.log(this.current_user);
 		this._feed.clone_feed(contentId, this.current_user.user_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this.openConfirmationModal('success', 'Success!', 'Feed cloned'),
+				() => {
+					this.openConfirmationModal('success', 'Success!', 'Feed cloned')
+					
+				},
 				error => console.log('Error cloning feed', error)
 			);
 
