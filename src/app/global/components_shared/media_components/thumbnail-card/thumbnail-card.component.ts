@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { environment } from 'src/environments/environment';
+import { environment } from '../../../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
-import { UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { AuthService, ContentService } from 'src/app/global/services';
+import { UI_ROLE_DEFINITION } from '../../../../global/models';
+import { AuthService, ContentService } from '../../../../global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -35,6 +35,7 @@ export class ThumbnailCardComponent implements OnInit {
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Output() content_to_delete = new EventEmitter;
 
+	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
 	route: string;
 	
 	private return_mes: string;

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UI_PLAYLIST_HOST_LICENSE } from '../../../../global/models/ui_playlist-host-license.model';
 import { UI_PLAYLIST_CONTENT } from '../../../../global/models/ui_content.model';
 import { API_CONTENT_BLACKLISTED_CONTENTS } from '../../../../global/models/api_single-playlist.model';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   selector: 'app-create-playlist-content',
@@ -28,6 +29,8 @@ export class CreatePlaylistContentComponent implements OnInit {
 	@Output() content_duration = new EventEmitter();
 	duration_value: number;
 	checked: boolean = false;
+
+	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
 
 	constructor() { 
 	}

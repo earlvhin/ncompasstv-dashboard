@@ -15,6 +15,7 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 	@Output() converted = new EventEmitter;
 	is_converted: number = 0;
 	_socket: any;
+	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
 
 	constructor() { }
 
