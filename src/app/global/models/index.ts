@@ -15,6 +15,7 @@ export * from './api_zone.model';
 export * from './credits.model';
 export * from './credits-status.model';
 export * from './frequency.model';
+export * from './installation.model';
 export * from './tag.model';
 export * from './tag-type.model';
 export * from './ui_content.model';

@@ -28,7 +28,6 @@ export class EditableFieldModalComponent implements OnInit {
 	) { }
 		
 	ngOnInit() {
-		console.log("MODAL", this._dialog_data);
 		this.status = this._dialog_data.status;
 		this.message = this._dialog_data.message;
 		this.data = this._dialog_data.data;
@@ -59,7 +58,6 @@ export class EditableFieldModalComponent implements OnInit {
 			this._screen.get_screens_type().subscribe(
 				data => {
 					this.screen_types = data;
-					console.log("Screen Type", data)
           			this.screen_init = this.status.value;
 			    	this.setScreenType(this.status.id);
 				},
