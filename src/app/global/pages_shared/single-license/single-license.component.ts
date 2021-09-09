@@ -1113,7 +1113,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private mapPlaylistContentToUI(data: API_CONTENT[]): UI_CONTENT[] {
-
 		const content = data.map(
 			(c: API_CONTENT) => {
 				return new UI_CONTENT(
@@ -1139,7 +1138,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					c.title,
 					c.playlistContentSchedule,
 					c.uploaded_by,
-					c.classification
+					c.classification,
+					c.seq
 				)
 			}
 		);
