@@ -11,6 +11,8 @@ import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-l
 import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
+import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver';
 
 @Component({
 	selector: 'app-licenses',
@@ -41,6 +43,13 @@ export class LicensesComponent implements OnInit {
     splitted_text: any;
     sort_column: string = "PiStatus";
 	sort_order: string = "desc";
+
+    //for export
+    licenses_to_export: any = [];
+    pageSize: number;
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 
 	// UI Table Column Header
 	dealers_table_column: string[] = [
@@ -74,8 +83,8 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Net Type', sortable: true, column:'InternetType', key:'internetType'},
 		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column:'InternetSpeed'},
 		{ name: 'Display', sortable: true, key: 'displayStatus', column:'DisplayStatus'},
-		{ name: 'PS Version', sortable: true, key:'ServerVersion', column:'ServerVersion'},
-		{ name: 'UI Version', sortable: true, key:'UiVersion', column:'UiVersion'},
+		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
+		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId' },
 		{ name: 'Password', sortable: false, column:'TemplateName', key:'templateName'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
@@ -310,5 +319,72 @@ export class LicensesComponent implements OnInit {
 		dialogRef.afterClosed().subscribe(result => {
 			this.ngOnInit() 
 		});
+	}
+
+    getDataForExport(): void {
+        this.pageSize = 0;
+        this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0).subscribe(
+            data => {
+                console.log("DATA", data)
+                if(!data.message) {
+                    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                    this.licenses_to_export = data.licenses;
+                    this.licenses_to_export.forEach((item, i) => {
+                        this.modifyItem(item);
+                        this.worksheet.addRow(item).font ={
+                            bold: false
+                        };
+                    });
+                    let rowIndex = 1;
+                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+                        this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                    }
+                    this.workbook.xlsx.writeBuffer()
+                        .then((file: any) => {
+                            const blob = new Blob([file], { type: EXCEL_TYPE });
+                            const filename = 'Licenses' +'.xlsx';
+                            FileSaver.saveAs(blob, filename);
+                        }
+                    );
+                    this.workbook_generation = false;
+                } else {
+                    this.licenses_to_export = [];
+                }
+            }
+        )
+	}
+
+	modifyItem(item) {
+        item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
+        item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
+        item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
+        item.screenType =  this._title.transform(item.screenType);
+        item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
+        item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
+        item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
+        item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
+        item.internetType = this.getInternetType(item.internetType);
+        item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
+        item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
+        var parse_version = JSON.parse(item.appVersion);
+		item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
+		item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
+	}
+
+	exportTable() {
+		this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Excel.Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet('License View');
+		Object.keys(this.license_table_column).forEach(key => {
+			if(this.license_table_column[key].name && !this.license_table_column[key].no_export) {
+				header.push({ header: this.license_table_column[key].name, key: this.license_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+			}
+		});
+        this.worksheet.columns = header;
+		this.getDataForExport();		
 	}
 }

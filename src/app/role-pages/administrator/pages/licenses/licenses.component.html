@@ -71,6 +71,14 @@
                                                     <button mat-menu-item (click)="sortList('desc')">Online</button>
                                                     <button mat-menu-item (click)="sortList('asc')">Offline</button>
                                                 </mat-menu>
+                                                <button mat-button mat-raised-button
+                                                    class="theme-btn pi-control sm-text _primary mr-2" 
+                                                    (click)="exportTable()"
+                                                    [disabled]="workbook_generation"  
+                                                    title="Export to CSV">
+                                                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                                                    <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                                                </button>
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
