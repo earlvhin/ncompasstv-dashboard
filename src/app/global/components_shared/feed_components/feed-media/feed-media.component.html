@@ -38,7 +38,7 @@
                         <img [src]="m.previewThumbnail" [alt]="m.fileName">
         
                         <div class="overlay">
-                            <span class="xsm-text">{{ m.title | filename }}</span>
+                            <span class="xsm-text" [title]="m.title">{{ m.title | substring:10 }}</span>
                         </div>
                     </div>
                 </div>
