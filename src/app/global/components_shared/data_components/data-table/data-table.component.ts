@@ -189,13 +189,14 @@ export class DataTableComponent implements OnInit {
 	}
 	
 	feedPreview_open(i): void {
-		let top = window.screen.height - 500;
-		top = top > 0 ? top/2 : 0;		
-		let left = window.screen.width - 800;
-		left = left > 0 ? left/2 : 0;
-		let uploadWin = window.open(i.link, "_blank", "width=800, height=500" + ",top=" + top + ",left=30%" + left);
-		uploadWin.moveTo(left, top);
-    	uploadWin.focus();
+		// let top = window.screen.height - 500;
+		// top = top > 0 ? top/2 : 0;		
+		// let left = window.screen.width - 800;
+		// left = left > 0 ? left/2 : 0;
+		// let uploadWin = window.open(i.link, "_blank", "width=800, height=500" + ",top=" + top + ",left=30%" + left);
+		// uploadWin.moveTo(left, top);
+    	// uploadWin.focus();
+        window.open(i.link, '_blank').focus();
 	}
 
 	editFeed(e): void {
