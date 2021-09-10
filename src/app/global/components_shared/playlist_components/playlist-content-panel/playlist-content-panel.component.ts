@@ -65,7 +65,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	bulk_toggle: boolean;
 
 	contentFilterOptions = [
-		{ label: 'Default', key: 'default' },
+		{ label: 'No Filter', key: 'default' },
 		{ label: 'Active', key: 'active' },
 		{ label: 'In Queue', key: 'future' },
 		{ label: 'Inactive', key: 'inactive' },
@@ -86,7 +86,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.setScheduleStatus();
 		this.playlist_contents = this.filterExpiredContent(this.playlist_contents);
 		this.getAssetCount();
-		this.currentContentFilter = this.contentFilterOptions[0].key;
+		this.currentContentFilter = this.contentFilterOptions[1].key;
 		this.playlist_saving = false;
 		this.selected_contents = [];
 		this.bulk_toggle = false;
@@ -300,7 +300,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						const { playlistContents } = response;
 						this.playlist_content_backup = playlistContents;
 						this.setScheduleStatus();
-						this.playlist_contents = this.filterExpiredContent(playlistContents);
+						this.playlist_contents = playlistContents;
 					},
 					error => console.log('Error retrieving playlist by id', error)
 				)
@@ -310,7 +310,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		}
 
 		this.playlist_contents = originalContents.filter(content => content.scheduleStatus === key);
-
 	}
 
 	onSetSchedule(): void {
@@ -448,11 +447,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_saving = true;
 
 		this._playlist.remove_playlist_content(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.getPlaylistById(),
-				error => console.log('Error removing playlist content', error)
-			);
-
+		.subscribe(
+			() => this.saveOrderChanges(),
+			error => console.log('Error removing playlist content', error)
+		);
 	}
 
 	removePlaylistContents(data: any): void {
@@ -585,18 +583,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						this.playlist_content_backup = this.playlist_contents;
 
 						if (this.incoming_blacklist_licenses.length > 0) {
-							console.log("IGNORED 1")
 							this.structureAddedContentBlocklist(data.playlistContentsAdded);
 						} else if (this.structured_bulk_remove_in_blocklist.length > 0) {
-							console.log("IGNORED 2")
 							this.bulkWhitelist(this.structured_bulk_remove_in_blocklist);
 						} else if (this.structured_incoming_blocklist.length > 0) {
-							console.log("IIGNORED")
 							this.addToBlocklist(this.structured_incoming_blocklist);
 						} else if (this.structured_incoming_blocklist.length == 0) {
 							this.removeToBlocklist()
 						} else {
-							console.log("IGNORED")
 							this.getPlaylistById();
 						}
 					},

@@ -1,5 +1,5 @@
 <ng-container *ngIf="!license_generated; else success">
-    <div class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
+    <div id="generate_license_form" class="generate-license-modal p-4 pb-0 h-100" *ngIf="!is_submitted; else loading">
         <ng-container *ngIf="dealers.length > 0; else loading">
             <h3 class="mb-1">Generate License</h3>
             <p class="sm-text mb-4">Choose a dealer and set number of license to generate.</p>
@@ -19,7 +19,7 @@
             <form [formGroup]="generate_license_form">
                 <mat-form-field class="full-width">
                     <mat-label>Number of Licenses</mat-label>
-                    <input formControlName="number_of_license" matInput placeholder="Number of Licenses" type="number">
+                    <input id="generate_license_quantity" formControlName="number_of_license" matInput placeholder="Number of Licenses" type="number">
                 </mat-form-field>
                 <button mat-button mat-raised-button class="theme-btn mt-4" (click)="generateLicense()" [disabled]="invalid_form">
                     <span class="button-label">
