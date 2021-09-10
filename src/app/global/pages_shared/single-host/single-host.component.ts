@@ -35,6 +35,7 @@ export class SingleHostComponent implements OnInit {
 	host_license_api: API_LICENSE[];
 	host_data: API_SINGLE_HOST;
 	host_license: UI_HOST_LICENSE[] = [];
+	host_license_count: any;
 	host_fields: CustomFields[] = [];
 	host_field_title: string;
 	img: string = "assets/media_files/admin-icon.png";
@@ -319,6 +320,33 @@ export class SingleHostComponent implements OnInit {
 		);
 	}
 
+	getLicenseTotalByHostIdDealerId() {
+	let dealerId = this.single_host_data.dealer_id;
+	let hostId = this.single_host_data.host_id;
+	this.subscription.add(
+		this._license.api_get_licenses_total_by_host_dealer(dealerId, hostId).subscribe(
+			(data: any) => {
+				if(data)
+				{
+					this.host_license_count = {
+						total_count: data.total,
+						total_count_label: 'License(s)',
+						active_value: data.totalActive,
+						active_value_label: 'Active',
+						inactive_value: data.totalInActive,
+						inactive_value_label: 'Inactive',
+						online_value: data.totalOnline,
+						online_value_label: 'Online',
+						offline_value: data.totalOffline,
+						offline_value_label: 'Offline'
+					}
+				}
+			},
+			error => console.log('Error retrieving total license count', error)
+		)
+	);
+	}
+
 	private getHostById() {
 
 		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
@@ -345,6 +373,7 @@ export class SingleHostComponent implements OnInit {
 		this.d_desc = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
 		this.lat = host.latitude;
 		this.long = host.longitude;
+		this.getLicenseTotalByHostIdDealerId();
 	}
 
 	private subscribeToBusinessHoursUpdate(): void {

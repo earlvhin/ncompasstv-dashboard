@@ -65,6 +65,12 @@ export class LicenseService {
 		if (typeof pageSize !== 'undefined') params.pageSize = pageSize;
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
+
+	api_get_licenses_total_by_host_dealer(dealerId, hostId) {
+		const base = `${this.baseUri}${this.getters.api_get_licenses_total}`;
+		const endpoint = `${base}?dealerid=${dealerId}&hostid=${hostId}`;
+		return this._http.get<any>(endpoint, this.httpOptions);
+	} 
 	
     get_license_by_screen_id(id, page) {
 		const params = this.httpParams({ screenId: id,page })
