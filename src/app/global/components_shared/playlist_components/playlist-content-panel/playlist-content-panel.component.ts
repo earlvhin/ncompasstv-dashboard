@@ -443,6 +443,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.getPlaylistById();
 	}
 
+	/** Single Content Remove */
 	removePlaylistContent(data: any): void {
 		this.playlist_saving = true;
 
@@ -453,15 +454,15 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		);
 	}
 
+	/** Bulk Content Remove */
 	removePlaylistContents(data: any): void {
 		this.playlist_saving = true;
 
 		this._playlist.remove_playlist_contents(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.getPlaylistById(),
-				error => console.log('Error removing playlist contents', error)
-			);
-
+		.subscribe(
+			() => this.saveOrderChanges(),
+			error => console.log('Error removing playlist contents', error)
+		);
 	}
 
 	sortableJSInit(): void {
