@@ -197,12 +197,16 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	/** Construct Generated Slide Feed Payload to be sent to API */
-	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any, selectedBannerImage: string}): void {
+	structureSlideFeedToGenerate(feed_data: { globalSettings: any, feedItems: any, selectedBannerImage: string, imageAnimation: number}): void {
+		feed_data.globalSettings.imageAnimation = feed_data.imageAnimation;
+
 		this.generated_slide_feed = new GenerateSlideFeed(
 			this.feed_info,
 			feed_data.globalSettings,
 			this.structureFeedContents(feed_data.feedItems)
 		)
+
+		console.log('GENFEED', this.generated_slide_feed);
 
 		this.selected_banner_image = feed_data.selectedBannerImage;
 	}

@@ -72,6 +72,7 @@ export type SLIDE_GLOBAL_SETTINGS = {
     fontFamily: string,
     headlineColor: string,
     headlineBackground: string,
+    imageAnimation: number,
     overlay: string,
     textAlign: string
 }

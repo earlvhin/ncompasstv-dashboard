@@ -4,7 +4,7 @@
         <form [formGroup]="slide_global_settings_form">
             <div class="row">
                 <div *ngFor="let s of slide_global_settings" class="{{ s.width }}">
-                    <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!s.viewType">
+                    <mat-form-field class="full-width" appearance="fill" *ngIf="!s.viewType">
                         <mat-label>{{ s.label }}</mat-label>
                         <input matInput formControlName="{{ s.form_control_name }}" [type]="s.type" [required]="s.required" autocomplete="off">
                     </mat-form-field>
@@ -25,7 +25,7 @@
                         </mat-select>
                     </mat-form-field>
 
-                    <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="s.viewType == 'colorpicker'">
+                    <mat-form-field class="full-width position-relative" appearance="fill" *ngIf="s.viewType == 'colorpicker'">
                         <mat-label>{{ s.label }}</mat-label>
                         <input
                         autocomplete="off"
@@ -41,6 +41,12 @@
                 </div>
             </div>
         </form>
+
+        <div class="d-inline-block bg-gray-2 mb-3 p-3 rounded">
+            <mat-slide-toggle [checked]="image_animation === 1 ? true : false" (change)="setImageAnimation($event)">
+                <h5 class="ml-2 mb-0">Enable or Disable Slide Image Animation</h5>
+            </mat-slide-toggle>
+        </div>
     </div>
 
     <hr class="mt-0">
