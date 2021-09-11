@@ -145,7 +145,6 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	playWhere() {
-
 		let play_where = this._dialog.open(MediaPlaywhereComponent, {
 			data: this._dialog_data.playlist_host_license,
 			height: '700px',

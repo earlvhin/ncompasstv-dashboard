@@ -17,17 +17,21 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 
 export class FeedMediaComponent implements OnInit {
 
-	is_admin: boolean = false;
 	floating_content: API_CONTENT[] = [];
-	no_media: boolean = false;
+	has_page_left: boolean;
+	image_search_key: string;
+	is_admin: boolean = false;
 	media_files: API_CONTENT[] = [];
-	selected_media_files: API_CONTENT[] = [];
-	subscription: Subscription = new Subscription();
+	media_files_backup: API_CONTENT[] = [];
 	media_files_page: number = 1;
+	no_media: boolean = false;
 	pageEnd: boolean = false;
 	scroll_end: boolean;
+	selected_media_files: API_CONTENT[] = [];
+	show_floating_content: boolean = false;
 	single_select: boolean = false;
-	has_page_left: boolean;
+	subscription: Subscription = new Subscription();
+	file_not_found: boolean;
 
 	constructor(
 		private _content: ContentService,
@@ -118,6 +122,8 @@ export class FeedMediaComponent implements OnInit {
 				this.media_files.push(i);
 			}
 		});
+
+		this.media_files_backup = this.media_files;
 	}
 
 	/**
@@ -147,16 +153,40 @@ export class FeedMediaComponent implements OnInit {
 	}
 
 	/**
-	 * Show Floating Contents, Only for Admin and Tech Support
+	 * Show Floating Contents, For Admin and Tech Support only
 	 *  @param e Toggle Status
 	*/
 	showFloatingContent(e: any) {
+		this.show_floating_content = e.checked;
+
 		if (e.checked) {
 			if (this.floating_content) this.no_media = false;
 			this.media_files = this.media_files.concat(this.floating_content);
 		} else {
-			this.media_files = this.media_files.filter(i => i.dealerId !== null && i.dealerId !== "")
+			this.media_files = this.media_files.filter(i => i.dealerId !== null && i.dealerId !== "");
+			this.image_search_key = null;
+			this.media_files = this.media_files_backup;
 			if (this.media_files.length == 0) this.no_media = true;
+		}
+	}
+
+	// Search Content Field
+	searchContent(e) {
+		if(e.target.value !== '') {
+			this.media_files = this.media_files.filter(i => i.title.toLowerCase().includes(e.target.value.toLowerCase()))
+
+			if (this.media_files.length == 0) {
+				this.media_files = this.media_files_backup;
+				this.no_media = true;
+			}
+		} else {
+			if (this.show_floating_content == true) {
+				this.media_files = this.media_files_backup.concat(this.floating_content);
+			} else {
+				this.media_files = this.media_files_backup;
+			}
+
+			this.no_media = false;
 		}
 	}
 }
