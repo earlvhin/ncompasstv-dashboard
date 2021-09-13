@@ -56,11 +56,11 @@
                     <div class="col-lg-4">
                         <app-search-field 
                         *ngIf="!initial_load"
-                        [form_title]="'Search Screen Name'"
+                        [form_title]="'Search Screen Name or Dealer Name'"
                         [placeholder]="'Example: N-Compass'" 
                         [data_reference]="screens" 
                         [primary_keyword]="'screen_name'"
-                        [secondary_keyword]="'description'"
+                        [secondary_keyword]="'businessName'"
                         (searched)="filterData($event)"
                         [api_search]="true"></app-search-field>
                     </div>
