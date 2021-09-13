@@ -1,45 +1,46 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { TitleCasePipe, DatePipe } from '@angular/common';
-import { Subscription } from 'rxjs';
+import { DatePipe } from '@angular/common';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { CreateFeedComponent } from '../../../../global/components_shared/feed_components/create-feed/create-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
-import { UI_TABLE_FEED } from 'src/app/global/models';
+import { API_FEED, FEED, PAGING, UI_TABLE_FEED } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feeds',
 	templateUrl: './feeds.component.html',
 	styleUrls: ['./feeds.component.scss'],
-	providers: [
-		DatePipe, TitleCasePipe
-	],
+	providers: [ DatePipe ],
 })
-export class FeedsComponent implements OnInit {
+export class FeedsComponent implements OnInit, OnDestroy {
 
 	@Input() title: string = "Feeds";
 
 	feed_data: UI_TABLE_FEED[] = [];
 	feed_stats: any = {};
 	feeds_stats: any = {};
-	feeds_table_column = [
-        { name: '#', sortable: false},
-        { name: 'Feed Title', sortable: true, column:'Title'},
-        { name: 'Business Name', sortable: true, column:'BusinessName'},
-        { name: 'Type', sortable: true, column:'Classification'},
-        { name: 'Created By', sortable: true, column:'CreatedByName'},
-        { name: 'Creation Date', sortable: true, column:'DateCreated'},
-        { name: 'Action', sortable: false},
-	];
 	filtered_data: any = [];
-	no_feeds: boolean = false;
+	initial_load = true;
+	no_feeds = false;
 	paging_data: any;
-	initial_load: boolean = true;
-	search_data: string = "";
-	searching: boolean = false;
-    sort_column: string = 'DateCreated';
-	sort_order: string = 'desc';
-	subscription: Subscription = new Subscription();
+	search_data = '';
+	searching = false;
+    sort_column = 'DateCreated';
+	sort_order = 'desc';
+
+	feeds_table_column = [
+        { name: '#', sortable: false },
+        { name: 'Feed Title', sortable: true, column: 'Title' },
+        { name: 'Business Name', sortable: true, column: 'BusinessName' },
+        { name: 'Type', sortable: true, column: 'Classification' },
+        { name: 'Created By', sortable: true, column: 'CreatedByName' },
+        { name: 'Creation Date', sortable: true, column: 'DateCreated' },
+        { name: 'Action', sortable: false },
+	];
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
 		private _auth: AuthService,
@@ -50,117 +51,120 @@ export class FeedsComponent implements OnInit {
 
 	ngOnInit() {
 		this.getFeedsTotal();
-		this.pageRequested(1);
+		this.getFeeds(1);
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	get currentUser() {
 		return this._auth.current_user_value;
 	}
-	
-	// Upload Modal
-	createFeedModal() {
-		let dialogRef = this._dialog.open(CreateFeedComponent, {
+
+	filterData(keyword: string): void {
+		this.search_data = '';
+		if (keyword && keyword.length > 0) this.search_data = keyword;
+		this.getFeeds(1);
+	}
+
+	getColumnsAndOrder(data: { column: string, order: string }): void {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.getFeeds(1);
+	}
+
+	getFeeds(page: number): void {
+		this.searching = true;
+		this.feed_data = [];
+
+		this._feed.get_feeds(page, this.search_data, this.sort_column, this.sort_order)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { cFeeds: API_FEED[], paging: PAGING, message?: string }) => {
+					
+					if (response.message || response.paging.entities.length === 0) {
+						if (this.search_data == '') this.no_feeds = true;
+						this.feed_data = [];
+						this.filtered_data = [];
+						return;
+					}
+
+					this.feed_data = this.mapToTableFormat(response.paging.entities);
+					this.filtered_data = this.mapToTableFormat(response.paging.entities);
+					this.paging_data = response.paging;
+				},	
+				error => console.log('Error retrieving feeds', error)
+			)
+			.add(() => {
+				this.initial_load = false;
+				this.searching = false;
+			});
+	}
+
+	onCreateUrlFeed(): void {
+
+		const dialog = this._dialog.open(CreateFeedComponent, {
 			width: '600px',
 			panelClass: 'app-media-modal'
-		})
+		});
 
-		dialogRef.afterClosed().subscribe(
-			data => {
-				if (data) {
-					this.pageRequested(1);
-				}
-			}
-		)
-	}
-
-	reloadPage(e) {
-		if (e) {
-			this.ngOnInit()
-		}
-	}
-
-	getFeedsTotal() {
-		this.subscription.add(
-			this._feed.get_feeds_total().subscribe(
+		dialog.afterClosed()
+			.subscribe(
 				data => {
+					if (data) this.getFeeds(1);
+				}
+			);
+	}
+
+	reloadPage(e: boolean): void {
+		if (e) this.ngOnInit();
+	}
+
+	private getFeedsTotal(): void {
+
+		this._feed.get_feeds_total()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
 					this.feeds_stats = {
-						total_value : data.total,
+						total_value : response.total,
 						total_label: "Feed(s)",
-						this_week_value: data.newFeedsThisWeek,
+						this_week_value: response.newFeedsThisWeek,
 						this_week_value_label: "Feed(s)",
 						this_week_value_description: "New this week",
-						last_week_value: data.newFeedsLastWeek,
+						last_week_value: response.newFeedsLastWeek,
 						last_week_value_label: "Feed(s)",
 						last_week_value_description: "New this week"
 					}
 				}
-			)
-		)
+			);
 	}
 
-    getColumnsAndOrder(data) {
-		this.sort_column = data.column;
-		this.sort_order = data.order;
-		this.pageRequested(1);
-	}
+	private mapToTableFormat(feeds: FEED[]): UI_TABLE_FEED[] {
+		let count = 1;
 
-	pageRequested(e) {
-		this.searching = true;
-		this.feed_data = [];
+		return feeds.map(
+			(data: FEED) => {
 
-		this.subscription.add(
-			this._feed.get_feeds(e, this.search_data, this.sort_column, this.sort_order).subscribe(
-				data => {
-					this.initial_load = false;
-					this.searching = false;
-                    this.paging_data = data.paging;
+				const { contentId, dealerId, feedId, title, businessName, classification, createdByName, 
+					dateCreated, feedTitle, feedDescription } = data;
 
-					if (!data.message) {
-						this.feed_data = this.feeds_mapToUIFormat(data.cFeeds);
-						this.filtered_data = this.feeds_mapToUIFormat(data.cFeeds);
-					} else {
-						if (this.search_data == "") {
-							this.no_feeds = true;
-						}
-
-						this.feed_data = [];
-						this.filtered_data = [];
-					}					
-				},	
-				error => console.log('Error retrieving feeds', error)
-			)
-		);
-	}
-
-	filterData(e) {
-		if (e) {
-			this.search_data = e;
-			this.pageRequested(1);
-		} else {
-			this.search_data = "";
-			this.pageRequested(1);
-		}
-	}
-
-	feeds_mapToUIFormat(data) {
-		let count = this.paging_data.pageStart;
-		return data.map(
-			i => {
 				return new UI_TABLE_FEED(
-					{ value:i.feed.contentId, link: null , editable: false, hidden: true},
-					{ value:i.feed.feedId, link: null, editable: false, hidden: true},
-					{ value:count++, link: null , editable: false, hidden: false},
-					{ value:i.feed.feedTitle, link: '/administrator/media-library/' +  i.feed.contentId , editable: false, hidden: false},
-					// { value:i.feed.feedDescription, link: null, editable: false, hidden: false},
-					{ value:i.dealer ? i.dealer.businessName : null, link: i.dealer ? '/administrator/dealers/' + i.dealer.dealerId : null, id: i.dealer ? i.dealer.dealerId : '', editable: false, hidden: false},
-					{ value: i.feed.classification ? i.feed.classification : '--', link: null, editable: false, hidden: false},
-					{ value:`${i.owner.firstName} ${i.owner.lastName}`, link: '/administrator/users/' + i.owner.userId, editable: false, hidden: false},
-					{ value: this._date.transform(i.feed.dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false},
-					{ value: i.feed.feedTitle, link: i.feed.feedUrl, editable: false, hidden: true},
-					{ value:i.feed.feedDescription, link: null, editable: false, hidden: true},
-				)
+					{ value: contentId, link: null , editable: false, hidden: true },
+					{ value: feedId, link: null, editable: false, hidden: true },
+					{ value: count++, link: null , editable: false, hidden: false },
+					{ value: title, link: `/administrator/media-library/${contentId}`, editable: false, hidden: false },
+					{ value: businessName, link: `/administrator/dealers/${data.dealerId}`, id: dealerId, editable: false, hidden: false },
+					{ value: classification ? data.classification : '--', link: null, editable: false, hidden: false },
+					{ value: createdByName, editable: false, hidden: false },
+					{ value: this._date.transform(dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false },
+					{ value: feedTitle, link: data.feedUrl, editable: false, hidden: true },
+					{ value: feedDescription, link: null, editable: false, hidden: true },
+				);
 			}
-		)
+		);
 	}
 
 }
