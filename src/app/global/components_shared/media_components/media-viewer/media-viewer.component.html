@@ -26,7 +26,7 @@
             <video [src]="file_data.selected.file_url" *ngIf="file_data.selected.file_type | isvideo"  [muted]="true" controls class="full-width height-100 top-0 left-0 p-absolute"></video>
             <img [src]="file_data.selected.file_url" alt="image-content" *ngIf="file_data.selected.file_type | isimage" class="full-width height-100 p-absolute">
             <div class="frame-wrap" *ngIf="file_data.selected.file_type | isFeed" >
-                <iframe class="responsive-iframe" [src]="file_data.selected.file_url | sanitize" frameborder="0"></iframe>
+                <img class="full-width height-100 p-absolute" [src]="(feed_demo_url + file_data.selected.file_url) | sanitize" frameborder="0">
             </div>
         </div>
         <div class="media-info text-gray height-100" *ngIf="file_data.selected.owner_name; else spinner">

@@ -3,9 +3,10 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material'
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
+import { API_CONTENT } from '../../../../global/models/api_content.model';
+import { CREDITS, PLAYLIST_CHANGES } from '../../../../global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { CREDITS, PLAYLIST_CHANGES } from 'src/app/global/models';
+import { environment as env } from '../../../../../environments/environment';
 
 @Component({
 	selector: 'app-options',
@@ -24,6 +25,7 @@ export class OptionsComponent implements OnInit {
 	content_frequency: number;
 	credits: number = null;
 	disable_animation = true;
+	feed_demo_url = `${env.third_party.filestack_screenshot}/`
 	has_schedule = false;
 	host_license: any;
 	initial_credits_status: number | boolean;

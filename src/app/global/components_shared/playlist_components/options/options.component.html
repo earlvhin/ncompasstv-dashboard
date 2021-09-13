@@ -23,9 +23,7 @@
 					<img [src]="content_data.url+content_data.fileName">
 				</ng-container>
 				<ng-container *ngIf="content_data.fileType == 'feed'">
-					<div class="frame-wrap">
-						<iframe class="responsive-iframe" [src]="content_data.url | sanitize" frameborder="0"></iframe>
-					</div>
+					<img class="full-width height-100 p-absolute" [src]="(feed_demo_url + content_data.url) | sanitize" frameborder="0">
 				</ng-container>
 			</div>
 
