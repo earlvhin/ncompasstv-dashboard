@@ -13,7 +13,7 @@ import { ContentService } from '../../../services/content-service/content.servic
 import { MediaModalComponent } from '../../../components_shared/media_components/media-modal/media-modal.component';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
 import { AuthService } from '../../../services/auth-service/auth.service';
-
+import { environment as env } from '../../../../../environments/environment';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
@@ -28,7 +28,8 @@ export class MediaViewerComponent implements OnInit {
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	is_edit: boolean = false;
 	is_dealer: boolean = false;
-
+	feed_demo_url = `${env.third_party.filestack_screenshot}/`
+	
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		private _dealer: DealerService,

@@ -81,6 +81,32 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="col-lg-4 license_count" *ngIf="single_host_controls && host_license_count">
+                        <div>
+                            <h1 style="text-align: center;">
+                                <span class="text-primary font-weight-medium">{{host_license_count.total_count}} </span>
+                                <span class="normal-text font-weight-medium">{{host_license_count.total_count_label}} </span>
+                            </h1>
+                            <h3 class="flex">
+                                <div class="col-lg-6 p-0">
+                                    <span class="text-primary font-weight-medium">{{host_license_count.active_value}} </span>
+                                    <span class="sm-text font-weight-medium">{{host_license_count.active_value_label}} </span>
+                                    /
+                                    <span class="font-weight-medium mr-2 text-danger">{{host_license_count.inactive_value}} </span>
+                                    <span class="sm-text font-weight-medium">{{host_license_count.inactive_value_label}}</span>
+                                </div>
+                                <div class="col-lg-6 p-0">
+                                    <span class="text-primary font-weight-medium">{{host_license_count.online_value}} </span>
+                                    <span class="sm-text font-weight-medium">{{host_license_count.online_value_label}} </span>
+                                    /
+                                    <span class="font-weight-medium mr-2 text-danger">{{host_license_count.offline_value}} </span>
+                                    <span class="sm-text font-weight-medium">{{host_license_count.offline_value_label}}</span>
+                                </div>
+                            </h3>
+                        </div>
+                    </div>
+
                     <div class="flex-even text-right">
                         <div class="control-buttons" *ngIf="single_host_controls && single_host_data">
                             <button mat-button mat-raised-button 

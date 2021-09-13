@@ -19,8 +19,11 @@ export class SliderFormComponent implements OnInit {
 	@Input() selected_dealer: string;
 	@Input() feed_items: FeedItem[] = [];
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
-	@Output() structured_feed_items = new EventEmitter();
+	@Output() structured_slide_feed = new EventEmitter();
+	apply_to_all_btn_status: boolean = false;
+	image_animation: number = 1;
 	selected_banner_image: string;
+	slide_global_settings_form: FormGroup;
 
 	font_family = [
 		{
@@ -116,11 +119,7 @@ export class SliderFormComponent implements OnInit {
 			width: 'col-lg-3', 
 			required: true
 		}
-	]
-
-	slide_global_settings_form: FormGroup;
-	
-	apply_to_all_btn_status: boolean = false;
+	];
 
 	constructor(
 		private _dialog: MatDialog,
@@ -128,7 +127,6 @@ export class SliderFormComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-
 		this.prepareForms();
 	}
 
@@ -213,28 +211,28 @@ export class SliderFormComponent implements OnInit {
 
 	/** Pass Feed Items to Parent Component */
 	passFeedItems(): void {
-		console.log(
-			{
-				globalSettings: this.slide_global_settings_form.value,
-				feedItems: this.feed_items
-			}
-		)
-
-		this.structured_feed_items.emit(
-			{
-				globalSettings: this.slide_global_settings_form.value,
-				feedItems: this.feed_items,
-				selectedBannerImage: this.selected_banner_image
-			}
-		)
+		this.structured_slide_feed.emit({
+			globalSettings: this.slide_global_settings_form.value,
+			feedItems: this.feed_items,
+			selectedBannerImage: this.selected_banner_image,
+			imageAnimation: this.image_animation
+		})
 	}
 
-	/** 
+	/**
 	 * Remove X-ed Feed Item 
 	 * @param {any} f Feed Item X-ed on UI
 	*/
 	removeFeedItem(f: any): void {
 		this.feed_items = this.feed_items.filter(i => i !== f);
+	}
+
+	/**
+	 * Set Zooming Effect of Slide Image
+	 * @param e
+	*/
+	setImageAnimation(e) {
+		this.image_animation = e.checked ? 1 : 0; 
 	}
 
 	/** Slide Global Settings Form Control Getter */
@@ -265,10 +263,11 @@ export class SliderFormComponent implements OnInit {
 				if (i.viewType == 'upload' && this.banner_image_data) {
 					i.imageUri = `${this.banner_image_data.url}${this.banner_image_data.fileName}`;
 					i.fileName = this.banner_image_data.title;
-					this.selected_banner_image = `${this.banner_image_data.url}${this.banner_image_data.fileName}`
+					this.selected_banner_image = `${this.banner_image_data.url}${this.banner_image_data.fileName}`;
 				}
 			})
 
+			this.image_animation = this.global_settings.imageAnimation;
 			this.f.bannerImage.setValue(this.banner_image_data ? this.banner_image_data.contentId : '');
 			this.f.textAlign.setValue(this.global_settings.textAlign);
 			this.f.overlay.setValue(this.global_settings.overlay);

@@ -35,7 +35,7 @@
                         <div class="bg-gray mt-5 p-4" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'">
                             <app-slider-form 
                             *ngIf="selected_dealer" 
-                            (structured_feed_items)="structureSlideFeedToGenerate($event)"
+                            (structured_slide_feed)="structureSlideFeedToGenerate($event)"
                             [banner_image_data]="fetched_feed ? fetched_feed.bannerImageData : null"
                             [global_settings]="slide_global_settings"
                             [feed_items]="feed_items"

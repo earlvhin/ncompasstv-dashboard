@@ -31,6 +31,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	@Input() advertiser_data: any;
     @Input() refresh_banner: boolean;
 	@Input() single_host_data: any;
+	@Input() host_license_count: any;
 	@Input() single_advertiser: any;
 	@Input() single_host_controls: boolean;
 	@Input() single_info: Array<any>;

@@ -21,6 +21,7 @@ export class WeatherDemoComponent implements OnInit {
 		daysFontColor=${this.weather_data.feedWeather.daysFontColor.replace('#', '')}&
 		boxBackgroundColor=${this.weather_data.feedWeather.boxBackgroundColor.replace('#', '')}&
 		fontFamily=${this.weather_data.feedWeather.fontFamily}&
-		footerContentId=${this.weather_data.feedWeather.footerContentId}`
+		footerContentId=${this.weather_data.feedWeather.footerContentId}&
+		numberDays=${this.weather_data.feedWeather.numberDays}`
 	}
 }
