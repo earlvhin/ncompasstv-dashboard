@@ -1,0 +1,48 @@
+.content-section {
+
+	.zones {
+		margin: 0 auto;
+
+		.zone {
+			margin-bottom: 10px;
+		}	
+	}
+
+	.minimap {
+		margin-left: 25%;
+		margin-right: 25%;
+	}
+
+}
+
+@media screen and (min-width: 1366px) {
+
+	.content-section {
+		flex-direction: row !important;
+
+		.zones {
+			flex: 0.50;
+			margin: unset !important;
+			margin-right: 50px !important;
+		}
+	
+		.minimap {
+			flex: 0.45;
+			margin: unset !important;
+		}
+
+	}
+
+}
+
+@media screen and (min-width: 1700px) {
+
+	.content-section {
+	
+		.minimap {
+			flex: 0.30 !important;
+		}
+
+	}
+
+}

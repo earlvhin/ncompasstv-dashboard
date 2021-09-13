@@ -133,6 +133,7 @@ import { SingleHostComponent } from './pages_shared/single-host/single-host.comp
 // import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
+import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
 import { SliderFormComponent } from './components_shared/feed_components/slider-form/slider-form.component';
 import { SpinnerComponent } from './components_shared/page_components/spinner/spinner.component';
@@ -154,6 +155,7 @@ import { WarningPopupComponent } from './components_shared/page_components/warni
 import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
+import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -307,6 +309,7 @@ const ngComponents = [
 	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
+	SingleTemplateComponent,
 	SingleUserComponent,
 	SliderFormComponent,
 	SpinnerComponent,
@@ -329,7 +332,8 @@ const ngComponents = [
 	WarningPopupComponent,
 	WeatherFormComponent,
 	ZoneListComponent,
-  	PaginationFieldComponent
+  	PaginationFieldComponent,
+	ZoneExpansionPanelComponent,
 ];
 
 const MaterialModules = [

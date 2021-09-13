@@ -44,6 +44,7 @@ import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { HostCustomFieldsComponent } from 'src/app/global/pages_shared/host-custom-fields/host-custom-fields.component';
 import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
+import { SingleTemplateComponent } from 'src/app/global/pages_shared/single-template/single-template.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -322,6 +323,11 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Create Template'
                         },
                     },
+					{
+						path: ':data',
+						component: SingleTemplateComponent,
+						data: {  breadcrumb: 'Single Template' },
+					},
                 ]
             },
 			{ 
