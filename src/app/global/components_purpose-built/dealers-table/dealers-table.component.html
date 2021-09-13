@@ -3,7 +3,7 @@
 		<div class="row" *ngIf="!no_dealer; else no_data">
 			<div class="col-lg-9"></div>
 			<div class="col-lg-3">
-				<app-search-field *ngIf="!initial_load"
+				<app-search-field id="dealerFieldSearch" *ngIf="!initial_load"
 				[form_title]="'Search Dealer Alias or Business Name'"
 				[placeholder]="'Example: N-Compass'"
 				[data_reference]="dealers_data"
