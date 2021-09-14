@@ -14,6 +14,7 @@ import { BulkEditBusinessHoursComponent } from './components_shared/page_compone
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
+import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ClonePlaylistComponent } from './components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { CloneScreenComponent } from './components_shared/screen_components/clone-screen/clone-screen.component';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -192,6 +193,7 @@ const ngComponents = [
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
 	CategoryModalComponent,
+	CloneFeedDialogComponent,
 	ClonePlaylistComponent,
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
@@ -365,12 +367,14 @@ const DIRECTIVES = [
 		ngComponents,
 		DIRECTIVES,
 		WeatherDemoComponent,
+		CloneFeedDialogComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
 		CategoryModalComponent,
+		CloneFeedDialogComponent,
 		ClonePlaylistComponent,
 		CloneScreenComponent,
 		ConfirmTemplateModalComponent,

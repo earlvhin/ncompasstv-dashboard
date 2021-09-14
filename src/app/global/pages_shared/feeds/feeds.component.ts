@@ -1,10 +1,10 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { CreateFeedComponent } from '../../../../global/components_shared/feed_components/create-feed/create-feed.component';
+import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
 import { API_FEED, FEED, PAGING, UI_TABLE_FEED } from 'src/app/global/models';
 
@@ -12,12 +12,10 @@ import { API_FEED, FEED, PAGING, UI_TABLE_FEED } from 'src/app/global/models';
 	selector: 'app-feeds',
 	templateUrl: './feeds.component.html',
 	styleUrls: ['./feeds.component.scss'],
-	providers: [ DatePipe ],
 })
 export class FeedsComponent implements OnInit, OnDestroy {
 
-	@Input() title: string = "Feeds";
-
+	title = 'Feeds';
 	feed_data: UI_TABLE_FEED[] = [];
 	feed_stats: any = {};
 	feeds_stats: any = {};

@@ -14,6 +14,7 @@ import { DeletePlaylistComponent } from '../../../components_shared/playlist_com
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
+import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 
 @Component({
   selector: 'app-data-table',
@@ -439,15 +440,26 @@ export class DataTableComponent implements OnInit {
 	}
 
 	onCloneFeed(contentId: string) {
-		console.log(this.current_user);
-		this._feed.clone_feed(contentId, this.current_user.user_id)
-			.pipe(takeUntil(this._unsubscribe))
+
+		const dialog = this._dialog.open(CloneFeedDialogComponent, { width: '500px' });
+
+		dialog.afterClosed()
 			.subscribe(
-				() => {
-					this.openConfirmationModal('success', 'Success!', 'Feed cloned')
-					
-				},
-				error => console.log('Error cloning feed', error)
+				(response: boolean | string) => {
+
+					if (typeof response === 'boolean') return;
+
+					this._feed.clone_feed(contentId, response, this.current_user.user_id)
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe(
+							() => {
+								this.openConfirmationModal('success', 'Success!', 'Feed cloned')
+								
+							},
+							error => console.log('Error cloning feed', error)
+						);
+
+				}
 			);
 
 	}
