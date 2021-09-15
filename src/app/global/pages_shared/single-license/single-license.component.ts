@@ -67,6 +67,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	is_dealer: boolean = false;
 	is_initial_load = true;
 	is_new_standard_template = false;
+	is_view_only = false;
 	license_data: any;
 	license_id: string;
 	license_key: string;
@@ -142,6 +143,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			query: 'client=Dashboard__SingleLicenseComponent',
 		});
 
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
 		this.getLicenseInfo();
@@ -1148,7 +1150,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 			if (content.playlist_content_schedule) {
 				const schedule = content.playlist_content_schedule;
-				return schedule && schedule.type === 1 || (schedule.type === 3 && !moment().isAfter(moment(schedule.to)));
+				return schedule && schedule.type === 1 || (schedule.type === 3 && !moment().isAfter(moment(schedule.to, 'MM/DD/YYYY')));
 			}
 
 		});
@@ -1592,5 +1594,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

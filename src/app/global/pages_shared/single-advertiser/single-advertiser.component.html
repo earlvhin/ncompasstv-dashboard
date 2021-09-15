@@ -3,7 +3,7 @@
         [single_image]="img"
         [single_name]="advertiser.name"
         [single_desc]="advertiser.state + ' ' + (advertiser.region ? advertiser.region : '')  + '  -  ' + 'Advertiser since ' + (advertiser.dateCreated | date)"
-        [editable]="true"
+        [editable]="!is_view_only"
         [single_advertiser]="advertiser_id"
         [advertiser_data]="advertiser"
         (update_info)="ngOnInit()">
@@ -23,7 +23,8 @@
                                         [table_data]="content_data"
                                         [media_array]="array_to_preview"
                                         [preview_column]="true"
-                                        [new_table]="true">
+                                        [new_table]="true"
+										[is_view_only]="is_view_only">
                                     </app-data-table>
                                 </mat-card>
                             </div>

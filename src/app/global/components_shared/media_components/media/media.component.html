@@ -32,7 +32,7 @@
 				<button mat-button mat-raised-button
 					class="theme-btn ml-3 danger"
                     (click)="deleteMultiple()"
-					[disabled]="selected_content_ids.length === 0">Delete
+					[disabled]="selected_content_ids.length === 0 || is_view_only">Delete
                 </button>
 
 				<button mat-button mat-raised-button 
@@ -60,6 +60,7 @@
 								[uuid]="content.uuid"
 								[zone_content]="is_zone_content"
 								[multiple_delete]="is_bulk_select"
+								[is_view_only]="is_view_only"
 								(deleted)="isDeleted($event)"
 								(content_to_delete)="multipleDelete($event)">
 							</app-thumbnail-card>

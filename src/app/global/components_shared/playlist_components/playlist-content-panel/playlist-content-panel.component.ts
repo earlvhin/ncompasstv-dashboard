@@ -25,6 +25,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Input() dealer_id: string;
+	@Input() is_view_only = false;
 	@Input() page? = '';
 	@Input() playlist_contents: any[];
 	@Input() playlist_id: string;

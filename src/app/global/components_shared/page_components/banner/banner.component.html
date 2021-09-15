@@ -109,18 +109,21 @@
 
                     <div class="flex-even text-right">
                         <div class="control-buttons" *ngIf="single_host_controls && single_host_data">
-                            <button mat-button mat-raised-button 
-							(click)="triggerAssignLicenseModal()"
-							class="theme-btn mr-3">
+                            <button mat-button mat-raised-button class="theme-btn mr-3"
+								[class.disabled]="editable" 
+								(click)="triggerAssignLicenseModal()" 
+								[disabled]="!editable">
                                 <span class="button-label">Assign License</span>
                                 <span class="fas fa-barcode"></span>
                             </button>
                             <button mat-button mat-raised-button class="theme-btn"
-                            (click)="checkRoute(single_host_data.dealer_id, single_host_data.host_id)">
+								[class.disabled]="editable" 
+								(click)="checkRoute(single_host_data.dealer_id, single_host_data.host_id)" 
+								[disabled]="!editable">
                                 <span class="button-label">Create Screen</span>
                                 <span class="fas fa-tv"></span>
                             </button>
-                           </div>
+						</div>
                     </div>
                 </div>
             </div>
