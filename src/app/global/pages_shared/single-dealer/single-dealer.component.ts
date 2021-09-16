@@ -177,7 +177,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
 		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},
-        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone'},		
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
