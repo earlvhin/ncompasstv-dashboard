@@ -191,7 +191,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	private searchTags(keyword = ''): void {
 
-		if (keyword == null) return;
+		if (keyword == null || !this.currentTagType) return;
 
 		this.isLoadingTagOwners = true;
 
