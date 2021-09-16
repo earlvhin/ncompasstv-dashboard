@@ -164,7 +164,7 @@
 					</span>
 
 					<!-- EDIT BUTTON -->
-					<div class="float-right" *ngIf="data[d].editable" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
+					<div class="float-right" *ngIf="data[d].editable && !is_view_only" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
 						<i class="clickable fa fa-pencil text-gray" title="Edit {{data[d].label}}"></i>
 					</div>
 				</td>
@@ -173,7 +173,8 @@
 					<mat-slide-toggle 
 						*ngIf="ctrl_toggle"
 						(change)="controlToggle(data.license_key.value, $event)"
-						[checked]="data.is_activated.value == 1 ? 'checked' : 'false'">
+						[checked]="data.is_activated.value == 1 ? 'checked' : 'false'"
+						[disabled]="is_view_only">
 					</mat-slide-toggle>
 				</td>
 
@@ -184,15 +185,21 @@
 				<td class="p-3 control-toggle md-text" *ngIf="feed_controls">
 					<i class="fas fa-play cursor-pointer mx-2 text-primary" title="Preview" *ngIf="feed_preview" (click)="feedPreview_open(data.feed_url)"></i>
 
-					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" *ngIf="feed_edit && data.classification.value !== 'generated_feed'; else edit_generated_feed" (click)="editFeed(data)"></i>
+					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" 
+						*ngIf="feed_edit && data.classification.value !== 'generated_feed' && !is_view_only; else edit_generated_feed" 
+						(click)="editFeed(data)">
+					</i>
 
 					<ng-template #edit_generated_feed>
-						<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit Generated Feed" (click)="editGeneratedFeed(data)"></i>
+						<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit Generated Feed?"
+							*ngIf="!is_view_only"
+							(click)="editGeneratedFeed(data)">
+						</i>
 					</ng-template>
 					
-					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete" (click)="deleteFeed(data.id.value)"></i>
+					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete && !is_view_only" (click)="deleteFeed(data.id.value)"></i>
 
-					<i class="fas fa-copy cursor-pointer mx-2 text-primary" title="Clone Feed" (click)="onCloneFeed(data.id.value)"></i>
+					<i class="fas fa-copy cursor-pointer mx-2 text-primary" title="Clone Feed" *ngIf="!is_view_only" (click)="onCloneFeed(data.id.value)"></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
@@ -200,11 +207,11 @@
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="screen_delete">
-					<i class="fas fa-trash cursor-pointer" title="Delete Screen" (click)="deleteScreen(data.screen_id.value)"></i>
+					<i class="fas fa-trash cursor-pointer text-danger" title="Delete Screen" *ngIf="!is_view_only" (click)="deleteScreen(data.screen_id.value)"></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="playlist_delete">
-					<i class="fas fa-trash cursor-pointer mx-3 text-danger" title="Delete Playlist" (click)="deletePlaylist(data.playlist_id.value)"></i>
+					<i class="fas fa-trash cursor-pointer mx-3 text-danger" title="Delete Playlist" *ngIf="!is_view_only" (click)="deletePlaylist(data.playlist_id.value)"></i>
 					<i class="fas fa-file-excel" [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer': 'text-gray cursor-void'"  title="{{data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.'}}" (click)="exportPlaylist({id: data.playlist_id.value, name: data.name.value})"></i>
 				</td>
 

@@ -23,6 +23,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	content_data: any = [];
 	img: string = "assets/media_files/admin-icon.png";
 	is_initial_load = true;
+	is_view_only = false;
 	selected_index: number;
 	subscription: Subscription = new Subscription;
 	
@@ -45,6 +46,8 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 
 		this._params.paramMap
 			.pipe(takeUntil(this._unsubscribe))
@@ -123,6 +126,10 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 }

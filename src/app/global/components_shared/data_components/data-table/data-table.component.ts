@@ -14,6 +14,7 @@ import { DeletePlaylistComponent } from '../../../components_shared/playlist_com
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
+import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 
 @Component({
   selector: 'app-data-table',
@@ -33,6 +34,7 @@ export class DataTableComponent implements OnInit {
 	@Input() current_user?: UI_CURRENT_USER;
 	@Input() has_action = false;
 	@Input() is_dealer: boolean;
+	@Input() is_view_only = false;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
 	@Input() multiple_delete: boolean;
@@ -95,7 +97,7 @@ export class DataTableComponent implements OnInit {
 
 	ngOnInit() {
 
-		this.table_data.map (
+		this.table_data.map(
 			data => {
 				Object.keys(data).forEach(key => {
 					if (data[key].table) {
@@ -143,8 +145,8 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editGeneratedFeed(data) {
+		if (this.is_view_only) return;
 		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		// console.log(`/${route}/feed/edit-generated/${data.feed_id.value}`);
 		this._router.navigate([`/${route}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
@@ -186,6 +188,8 @@ export class DataTableComponent implements OnInit {
 				selected: this.media_array[i],
 			}
 		});
+
+		dialog.componentInstance.is_view_only = this.is_view_only;
 	}
 	
 	feedPreview_open(i): void {
@@ -200,6 +204,9 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editFeed(e): void {
+
+		if (this.is_view_only) return;
+
 		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data: e });
 
 		dialogRef.afterClosed().subscribe(
@@ -439,15 +446,26 @@ export class DataTableComponent implements OnInit {
 	}
 
 	onCloneFeed(contentId: string) {
-		console.log(this.current_user);
-		this._feed.clone_feed(contentId, this.current_user.user_id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					this.openConfirmationModal('success', 'Success!', 'Feed cloned')
 					
-				},
-				error => console.log('Error cloning feed', error)
+		const dialog = this._dialog.open(CloneFeedDialogComponent, { width: '500px' });
+
+		dialog.afterClosed()
+			.subscribe(
+				(response: boolean | string) => {
+
+					if (typeof response === 'boolean') return;
+
+					this._feed.clone_feed(contentId, response, this.current_user.user_id)
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe(
+							() => {
+								this.openConfirmationModal('success', 'Success!', 'Feed cloned')
+								
+							},
+							error => console.log('Error cloning feed', error)
+						);
+
+				}
 			);
 
 	}

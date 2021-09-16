@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Inject, Output, EventEmitter, Input } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material'
 import { environment } from '../../../../../environments/environment';
 import { VIDEO_FILETYPE, IMAGE_FILETYPE } from '../../../models/ui_filetype';
@@ -22,12 +22,14 @@ import { environment as env } from '../../../../../environments/environment';
 
 export class MediaViewerComponent implements OnInit {
 
+	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
+	@Input() is_view_only = false;
+
 	file_data: any;
     file_size_formatted: any;
 	subscription: Subscription = new Subscription;
-	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
-	is_edit: boolean = false;
-	is_dealer: boolean = false;
+	is_edit = false;
+	is_dealer = false;
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`
 	
 	constructor(

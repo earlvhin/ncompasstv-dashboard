@@ -42,6 +42,7 @@ export class SingleHostComponent implements OnInit {
 	is_administrator: boolean;
 	is_dealer: boolean = false;
 	is_initial_load = true;
+	is_view_only = false;
 	lat: string;
 	long: string;
 	margin_more: boolean = false;
@@ -85,6 +86,8 @@ export class SingleHostComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -393,5 +396,9 @@ export class SingleHostComponent implements OnInit {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

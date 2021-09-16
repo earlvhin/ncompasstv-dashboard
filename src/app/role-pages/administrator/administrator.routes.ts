@@ -15,6 +15,7 @@ import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user
 import { DashboardComponent } from  './pages/dashboard/dashboard.component';
 import { DealersComponent } from './pages/dealers/dealers.component';
 import { DirectoryComponent } from './pages/directory/directory.component';
+import { FeedsComponent } from 'src/app/global/pages_shared/feeds/feeds.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
 import { InstallationsComponent } from './pages/installations/installations.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
@@ -40,7 +41,6 @@ import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.co
 import { CreateAdvertiserComponent } from 'src/app/global/pages_shared/create-advertiser/create-advertiser.component';
 import { TagsComponent } from 'src/app/global/pages_shared/tags/tags.component';
 import { ToolsComponent } from 'src/app/global/pages_shared/tools/tools.component';
-import { FeedsComponent } from './pages/feeds/feeds.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { HostCustomFieldsComponent } from 'src/app/global/pages_shared/host-custom-fields/host-custom-fields.component';
 import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
@@ -130,8 +130,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 children: [
                     {
                         path: '',
-                        component: FeedsComponent,
-                        
+                        component: FeedsComponent,                        
                     },
                     { 
                         path: 'generate', 

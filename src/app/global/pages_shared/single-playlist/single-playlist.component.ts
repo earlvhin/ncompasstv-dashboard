@@ -29,6 +29,7 @@ export class SinglePlaylistComponent implements OnInit {
 	description: string;
 	host_url: string;
 	is_initial_load = true;
+	is_view_only = false;
 	license_to_update = [];
 	license_url: string;
 	playlist: API_SINGLE_PLAYLIST;
@@ -64,6 +65,7 @@ export class SinglePlaylistComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		localStorage.removeItem('playlist_data');
 		this.playlistRouteInit();
 
@@ -287,6 +289,10 @@ export class SinglePlaylistComponent implements OnInit {
 		this.description = playlistDescription;
 		this.playlist_content_and_blacklist = playlistContents;
 		this.playlist_host_and_license = hostLicenses;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 	protected get currentRole() {

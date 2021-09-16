@@ -139,13 +139,15 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		let count = this.paging_data.pageStart;
 
 		return data.map(
-			({playlist}) => {
+			({ playlist }) => {
+
 				return new UI_DEALER_PLAYLIST(
 					{ value: playlist.playlistId, link: null , editable: false, hidden: true},
 					{ value: count++, link: null , editable: false, hidden: false},
 					{ value: playlist ? playlist.playlistName : '', link: '/sub-dealer/playlists/' +  playlist.playlistId, editable: false, hidden: false},
 					{ value: this._title.transform(playlist.playlistDescription), link: null, editable: false, hidden: false},
 					{ value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
+					{ value: playlist.totalScreens > 0 ? true: false, link: null, hidden: true }
 				)
 			}
 		);
