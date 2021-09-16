@@ -97,6 +97,10 @@ export class LicenseService {
 	get_license_to_export(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealer_licenses}${id}`, this.httpOptions);
 	}
+	
+    get_license_to_export_duration(id,key,column, order) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}&search=${key}&sortColumn=${column}&sortOrder=${order}`, this.httpOptions);
+	}
 
 	get_license_total_per_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions)
