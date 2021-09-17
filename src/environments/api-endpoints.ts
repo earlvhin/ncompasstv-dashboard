@@ -212,6 +212,7 @@ export const API_ENDPOINTS = {
 		set_content_frequency: 'playlists/cloneplaylistcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
+		template: 'template/update',
 		toggle_credits: 'playlists/enableCredits',
 		user_email_settings: 'user/updateemailsettings',
 	},
