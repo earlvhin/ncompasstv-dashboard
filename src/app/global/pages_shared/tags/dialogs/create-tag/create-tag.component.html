@@ -54,7 +54,7 @@
 						</mat-option>
 				
 						<mat-option *ngFor="let tag of filteredTags | async" [value]="null">
-							<div class="tag" (click)="onAddTag(tag.name)">
+							<div class="tag" (click)="onSelectTag(tag)">
 								{{ tag.name }} ({{ tag.count }})
 							</div>
 						</mat-option>

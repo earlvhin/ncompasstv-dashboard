@@ -70,8 +70,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	onAddTag(name: string): void {
 
 		name = name.trim().replace(/\s+/g, '');
-		this.setCtrlValue('selectedTag', null);
-		this.setCtrlValue('tagName', null);
+		this.resetFields();
 
 		const pendingTagNames = this.pendingTags.map(tag => tag.name);
 
@@ -91,6 +90,15 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	onRemoveSelectedOwner(index: number): void {
 		this.selectedOwners.splice(index, 1);
 		this.ownerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+	}
+
+	onSelectTag(data: Tag): void {
+		this.resetFields();
+		const { name, tagColor } = data;
+		this.pendingTags.push({ name, tagColor });
+		this.ownerMultiSelect.compareWith = (a, b) => a && b && a === b;
+		this.filteredTags.next(this.searchTagsResult);
+		this.selectedTagColor = null;
 	}
 
 	onSelectTagType(tagTypeId: number): void {
@@ -268,6 +276,11 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 			ownerFilter: [ null ]
 		});
 
+	}
+
+	private resetFields(): void {
+		this.setCtrlValue('selectedTag', null);
+		this.setCtrlValue('tagName', null);
 	}
 
 	private searchDealer(keyword = '', page = 1): void {
