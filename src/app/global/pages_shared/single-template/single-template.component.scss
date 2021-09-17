@@ -1,3 +1,17 @@
+.disabled {
+	background: gray !important;
+
+	&:hover {
+		background: gray !important;
+	}
+}
+
+.title-section {
+	.template-name {
+		width: 600px;
+	}
+}
+
 .content-section {
 
 	.zones {
@@ -13,6 +27,11 @@
 		margin-right: 25%;
 	}
 
+}
+
+button.submit-btn {
+	float: right;
+	margin-right: 7%;
 }
 
 @media screen and (min-width: 1366px) {
@@ -31,6 +50,11 @@
 			margin: unset !important;
 		}
 
+	}
+
+	button.submit-btn {
+		float: unset !important;
+		margin-right: unset !important;
 	}
 
 }

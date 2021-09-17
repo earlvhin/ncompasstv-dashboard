@@ -25,8 +25,9 @@ export class TemplateService extends BaseService {
 		return this.postRequest(`${environment.create.api_new_template}`, data);
 	}
 
-	update_template_zone(data: API_ZONE) {
-		const url = `${environment.update.template_zone}/${data.templateZoneId}`;
+	update_template(template: API_TEMPLATE['template'], templateZones: API_ZONE[]) {
+		const url = `${environment.update.template}`;
+		const data = { template, templateZones: templateZones  };
 		return this.postRequest(url, data);
 	}
 

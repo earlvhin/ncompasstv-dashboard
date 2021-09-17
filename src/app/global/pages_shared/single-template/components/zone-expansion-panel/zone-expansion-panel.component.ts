@@ -1,10 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { API_ZONE } from 'src/app/global/models';
-import { TemplateService } from 'src/app/global/services';
+import { FormService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-zone-expansion-panel',
@@ -13,11 +12,12 @@ import { TemplateService } from 'src/app/global/services';
 })
 export class ZoneExpansionPanelComponent implements OnInit, OnDestroy {
 
-	@Input() data: API_ZONE 
-
+	@Input() data: API_ZONE;
+	@Output() isFormValid: boolean;
 	form: FormGroup;
 
 	formControlConfigs = [
+		{ name: 'templateZoneId', type: 'text', required: true },
 		{ name: 'name', type: 'text', label: '', placeholder: 'Name', required: true, row: 1 },
 		{ name: 'description', type: 'text', label: '', placeholder: 'Description', required: true, row: 1 },
 		{ name: 'background', type: 'color', label: '', placeholder: 'Color', required: true, row: 1 },
@@ -36,8 +36,8 @@ export class ZoneExpansionPanelComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
+		private _form: FormService,
 		private _form_builder: FormBuilder,
-		private _template: TemplateService,
 	) { }
 	
 	ngOnInit() {
@@ -57,17 +57,6 @@ export class ZoneExpansionPanelComponent implements OnInit, OnDestroy {
 	onSelectZoneColor(value: string): void {
 		this.form.get('background').setValue(value);
 	}
-
-	onSubmit(): void {
-		const data = this.form.value;
-
-		this._template.update_template_zone(data)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => console.log('updated template zone', response),
-				error => console.log('Error updating template zone', error)
-			);
-	}
 	
 	private initializeForm(reset = false): void {
 
@@ -80,12 +69,14 @@ export class ZoneExpansionPanelComponent implements OnInit, OnDestroy {
                 let data: any[] = [ zone[config.name] ];
                 if (config.required) data.push(Validators.required);
                 formConfiguration[config.name] = data;
+				if (config.name === 'templateZoneId') formConfiguration['templateZoneId'] = zone.templateZoneId;
             }
         );
 
 		this.form = this._form_builder.group(formConfiguration);
+		this._form.addForm(this.form);
+		this.isFormValid = this.form.valid;
 		this.selectedZoneColor = this.form.get('background').value;
-
 	}
-	
+
 }

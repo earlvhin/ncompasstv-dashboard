@@ -5,7 +5,7 @@
 	</mat-expansion-panel-header>
 	
 	<ng-container *ngIf="form">
-		<form [formGroup]="form" (ngSubmit)="onSubmit()">
+		<form [formGroup]="form">
 
 			<div class="first-row d-flex justify-content-between">
 				<mat-form-field *ngFor="let field of firstRowFields">
@@ -40,10 +40,6 @@
 
 	<mat-action-row>
 		<button mat-button mat-raised-button class="bg-danger text-white" (click)="onReset()">Reset</button>
-
-		<button mat-button mat-raised-button type="submit" class="bg-primary text-white" 
-			[disabled]="form.invalid"
-			[class.disabled]="form.invalid">Save</button>
 	</mat-action-row>
 
 </mat-expansion-panel>
