@@ -2,7 +2,15 @@ import { Component, Input, OnInit} from '@angular/core';
 import { Observable, forkJoin, Subscription } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
-import { API_GENERATED_FEED, SLIDE_GLOBAL_SETTINGS, WEATHER_FEED_STYLE_DATA, GenerateSlideFeed, GenerateWeatherFeed } from '../../models/api_feed_generator.model'; 
+import { 
+	API_GENERATED_FEED, 
+	SLIDE_GLOBAL_SETTINGS, 
+	WEATHER_FEED_STYLE_DATA, 
+	GenerateSlideFeed, 
+	GenerateWeatherFeed, 
+	NEWS_FEED_STYLE_DATA, 
+	GenerateNewsFeed 
+} from '../../models/api_feed_generator.model'; 
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,6 +36,7 @@ export class GenerateFeedComponent implements OnInit {
 	feed_items: FeedItem[] = [];
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
 	generated_slide_feed: GenerateSlideFeed;
+	generated_news_feed: GenerateNewsFeed;
 	generated_weather_feed: GenerateWeatherFeed;
 	is_dealer: boolean = false;
 	
@@ -142,12 +151,11 @@ export class GenerateFeedComponent implements OnInit {
 					this.fetched_feed = data;
 					this.selected_dealer = data.dealerId;
 
+					console.log(data);
 
 					/** Please improve this future dev, maybe use enums? :) */
 					if (data.feedType.name === 'Slide Feed') {
 						this.mapFetchedGeneratedFeedToUI(this.fetched_feed);
-					} else {
-						
 					}
 				}
 			)
@@ -209,6 +217,14 @@ export class GenerateFeedComponent implements OnInit {
 		console.log('GENFEED', this.generated_slide_feed);
 
 		this.selected_banner_image = feed_data.selectedBannerImage;
+	}
+
+	/** Construct Generated News Feed Payload to be sent to API */
+	structureNewsFeedToGenerate(feed_data: NEWS_FEED_STYLE_DATA): void {
+		this.generated_news_feed = new GenerateNewsFeed(
+			this.feed_info,
+			feed_data
+		)
 	}
 
 	/** Construct Generated Weather Feed Payload to be sent to API */
@@ -277,6 +293,35 @@ export class GenerateFeedComponent implements OnInit {
 				this._feed.update_weather_feed(this.generated_weather_feed).subscribe(
 					data => {
 						console.log(data);
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
+			)
+		}
+	}
+
+	/** POST Request to API with Generated News Feather Feed Payload*/
+	saveGeneratedNewsFeed(): void {
+		this.saving = true;
+
+		if (!this.editing) {
+			this.subscription.add(
+				this._feed.generate_feed(this.generated_news_feed, 'news').subscribe(
+					data => {
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
+			)
+		} else {
+			this.subscription.add(
+				this._feed.update_news_feed(this.generated_news_feed).subscribe(
+					data => {
 						this._router.navigate([`/${this.route}/feeds`])
 					},
 					error => {

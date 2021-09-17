@@ -1,0 +1,64 @@
+<div id="news-form" class="news-form">
+    <form [formGroup]="news_form">
+        <div class="row mb-3">
+            <div *ngFor="let w of news_form_fields" class="{{ w.width }}">
+                <mat-form-field class="full-width mb-2" appearance="fill" *ngIf="!w.viewType">
+                    <mat-label>{{ w.label }}</mat-label>
+                    <input matInput formControlName="{{ w.form_control_name }}" [type]="w.type" [required]="w.required" autocomplete="off">
+                </mat-form-field>
+
+                <div class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="w.viewType == 'upload'">
+                    <img [src]="w.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
+                    <span class="sm-text label-when-filled" *ngIf="w.fileName">{{ w.label }}</span>
+                        <p class="filename" [ngClass]="w.fileName ? 'filled' : ''" [title]="w.fileName">{{ w.fileName ? (w.fileName | substring:18) : '' || w.label }}</p>
+                    <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(w.form_control_name);"><span class="fas fa-camera"></span></button>
+                </div>
+
+                <mat-form-field class="full-width content-filter-dropdown" appearance="fill" *ngIf="w.viewType == 'select'">
+                    <mat-label>{{ w.label }}</mat-label>
+                    <mat-select formControlName="{{ w.form_control_name }}" [disabled]="is_marking">
+                        <mat-option *ngFor="let filter of w.options" [value]="filter.label">
+                            {{ filter.label }}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+
+                <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="w.viewType == 'colorpicker'">
+                    <mat-label>{{ w.label }}</mat-label>
+
+                    <input
+                    autocomplete="off"
+                    [(colorPicker)]="w.colorValue"
+                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
+                    formControlName="{{ w.form_control_name }}"
+                    [cpAlphaChannel]="'disabled'"
+                    [cpDisableInput]="true"
+                    matInput [type]="w.type"
+                    [value]="w.colorValue || ''"/>
+
+                    <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>
+                </mat-form-field>
+
+                <div class="error-message">
+                    <p class="sm-text m-0"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-primary" *ngIf="f.rssFeedUrl.valid && rss_url_checking">
+            <p class="sm-text font-weight-bold">Checking RSS URL: {{ f.rssFeedUrl.value }} format</p>
+        </div>
+
+        <div class="alert alert-success" *ngIf="rss_url_valid === true && !rss_url_checking">
+            <p class="sm-text font-weight-bold">Entered RSS URL is a supported format.</p>
+        </div>
+
+        <div class="alert alert-danger" *ngIf="rss_url_valid === false && !rss_url_checking">
+            <p class="sm-text font-weight-bold">Entered RSS URL is an unsupported format.</p>
+        </div>
+
+        <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!rss_url_valid || rss_url_checking || !news_form.valid" (click)="generateNewsFeed()">
+            Next <span class="fas fa-long-arrow-right"></span>
+        </button>
+    </form>
+</div>

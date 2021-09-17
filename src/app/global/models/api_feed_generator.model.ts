@@ -122,6 +122,7 @@ export type API_GENERATED_FEED = {
         sequence: number
     }[],
     feedWeather: WEATHER_FEED_STYLE_DATA,
+    feedNews: NEWS_FEED_STYLE_DATA,
     slideGlobalSettings: SLIDE_GLOBAL_SETTINGS,
     bannerImageData: API_CONTENT
 }
@@ -139,4 +140,29 @@ export type WEATHER_FEED_STYLE_DATA = {
     numberDay: number,
     zipCode: string,
     numberDays?: number,
+}
+
+/** Weather Feed Model to be submitted to API via POST */
+export class GenerateNewsFeed {
+    feeds: FEED_INFO;
+    feedNews: NEWS_FEED_STYLE_DATA
+
+    constructor(feeds: FEED_INFO, feedNews: NEWS_FEED_STYLE_DATA){
+        this.feeds = feeds;
+        this.feedNews = feedNews;
+    }
+}
+
+export type NEWS_FEED_STYLE_DATA = {
+    backgroundColor: string,
+    backgroundContentId: string,
+    backgroundContents: API_CONTENT,
+    fontColor: string,
+    fontSize: string,
+    loopCycle: string,
+    marginLeft: string,
+    marginTop: string,
+    results: string,
+    rssFeedUrl: string,
+    time: string 
 }

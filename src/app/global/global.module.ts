@@ -93,6 +93,8 @@ import { NewSubDealerComponent } from './components_shared/user_components/user-
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
 import { NewZoneModalComponent } from './components_shared/zone_components/new-zone-modal/new-zone-modal.component';
+import { NewsDemoComponent } from './components_shared/feed_components/news-demo/news-demo.component';
+import { NewsFormComponent } from './components_shared/feed_components/news-form/news-form.component';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
@@ -194,12 +196,12 @@ const ngComponents = [
 	BulkPlaywhereComponent,
 	CategoryModalComponent,
 	CloneFeedDialogComponent,
+	CloneFeedDialogComponent,
 	ClonePlaylistComponent,
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
 	ContentScheduleCardComponent,
-    ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
 	CreateFeedComponent,
@@ -233,9 +235,9 @@ const ngComponents = [
 	ErrorMessageComponent,
 	ExpansionPanelComponent,
 	FailAnimationComponent,
-	FeedMediaComponent,
 	FeedDemoComponent,
 	FeedInfoComponent,
+	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
@@ -243,7 +245,6 @@ const ngComponents = [
 	GenerateFeedComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
-    HostsTabComponent,
 	InformationModalComponent,
 	IsEmptyPipe,
 	IsFeedPipe,
@@ -269,6 +270,8 @@ const ngComponents = [
 	NewTechrepComponent,
 	NewZoneComponent,
 	NewZoneModalComponent,
+	NewsDemoComponent,
+	NewsFormComponent,
 	NohandlePipe,
 	ObjectKeysPipe,
 	OptionsComponent,
@@ -303,7 +306,6 @@ const ngComponents = [
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
 	SingleHostComponent,
-	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
 	SingleUserComponent,
@@ -326,9 +328,12 @@ const ngComponents = [
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
+	WeatherDemoComponent,
 	WeatherFormComponent,
 	ZoneListComponent,
-  	PaginationFieldComponent
+  	PaginationFieldComponent,
+    ContentsTabComponent,
+    HostsTabComponent,
 ];
 
 const MaterialModules = [
@@ -365,9 +370,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES,
-		WeatherDemoComponent,
-		CloneFeedDialogComponent,
+		DIRECTIVES
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
