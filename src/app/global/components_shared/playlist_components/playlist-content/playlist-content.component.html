@@ -43,11 +43,15 @@
 					<i class="fas fa-expand"></i>
 				</p>
 
-				<p (click)="removeContentToPlaylistModal(content.playlistContentId)" class="sm-text mb-0 cursor-pointer text-danger mx-1" *ngIf="!is_marking">
+				<p  class="sm-text mb-0 cursor-pointer text-danger mx-1" 
+					*ngIf="!is_marking && !is_view_only" 
+					(click)="removeContentToPlaylistModal(content.playlistContentId)">
 					<span class="fas fa-trash"></span>
 				</p>
 
-                <p (click)="optionsModal()" class="sm-text mb-0 cursor-pointer" *ngIf="!is_marking">
+                <p class="sm-text mb-0 cursor-pointer" 
+					*ngIf="!is_marking && !is_view_only" 
+					(click)="optionsModal()">
 					<span class="fas fa-cog"></span>
 				</p>
 			</div>

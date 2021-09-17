@@ -15,6 +15,7 @@ import { UI_DEALER_TABLE_SCREEN } from 'src/app/global/models/ui_table-screens.m
 })
 
 export class ScreensComponent implements OnInit {
+
 	filtered_data: any = [];
 	initial_load: boolean = true;
 	paging_data : any;
@@ -34,7 +35,6 @@ export class ScreensComponent implements OnInit {
 		'Template',
 		'Creation Date', 
 		'Created By',
-		'Action'
 	];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -50,6 +50,7 @@ export class ScreensComponent implements OnInit {
 		this.getAllScreens(1);
 		this.getTotalScreens(this.currentUser.roleInfo.dealerId);
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
+		if (!this.is_view_only) this.tbl_screen_columns.push('Action');
 	}
 
 	ngOnDestroy() {

@@ -19,6 +19,7 @@ export class PlaylistContentComponent implements OnInit {
 	@Input() playlist_host_license: any;
 	@Input() is_marking: boolean;
 	@Input() is_list: boolean;
+	@Input() is_view_only = false;
 	@Input() dealer: string;
 	@Input() schedule_status?: string;
 	@Input() page? = '';

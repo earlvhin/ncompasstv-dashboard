@@ -7,14 +7,14 @@
 					<p class="sm-text mb-0" *ngIf="description">{{ description }}</p>
 				</div>
 				<div class="flex-even text-right">
-					<button mat-button mat-raised-button class="theme-btn mr-2" (click)="clonePlaylist()">
+					<button mat-button mat-raised-button class="theme-btn mr-2" (click)="clonePlaylist()" [disabled]="is_view_only">
 						Clone Playlist
 						<span class="fas fa-copy ml-2 sm-text"></span>
 					</button>
-					<button mat-button mat-raised-button class="theme-btn mr-2" (click)="pushUpdateToAllLicenses()">
+					<button mat-button mat-raised-button class="theme-btn mr-2" (click)="pushUpdateToAllLicenses()" [disabled]="is_view_only">
 						Push Updates to All Licenses
 					</button>
-					<button mat-button mat-raised-button class="theme-btn" (click)="openUpdatePlaylistInfoModal()">
+					<button mat-button mat-raised-button class="theme-btn" (click)="openUpdatePlaylistInfoModal()" [disabled]="is_view_only">
 						Edit Playlist Info
 						<span class="fas fa-edit ml-2 sm-text"></span>
 					</button>
@@ -31,6 +31,7 @@
 							<app-playlist-content-panel
 								*ngIf="!playlist_updating"
 								[dealer_id]="playlist.playlist.dealerId"
+								[is_view_only]="is_view_only"
 								[page]="'single-playlist'"
 								[playlist_id]="playlist.playlist.playlistId"
 								[playlist_contents]="playlist_content_and_blacklist"
@@ -60,7 +61,9 @@
 					</mat-tab>
 
 					<mat-tab label="Licenses" *ngIf="playlist_host_and_license.length > 0">
-						<button mat-button mat-raised-button class="theme-btn mr-2 mt-3" (click)="pushUpdateToSelectedLicenses()" [disabled]="license_to_update.length == 0">
+						<button mat-button mat-raised-button class="theme-btn mr-2 mt-3" 
+							(click)="pushUpdateToSelectedLicenses()" 
+							[disabled]="license_to_update.length == 0 || is_view_only">
 							Push Updates to Selected Licenses
 						</button>
 

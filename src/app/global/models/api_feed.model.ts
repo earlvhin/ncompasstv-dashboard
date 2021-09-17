@@ -3,11 +3,13 @@ import { API_USER_DATA } from './api_user-data.model';
 
 export class API_FEED {
 	feed: {
+		feedId: string;
 		contentId: string;
 		createdBy: string;
 		dateCreated: string;
 		dealerId: string;
 		feedDescription: string;
+		classification: string;
 		feedTitle: string;
 		feedUrl: string;
 		fileType: string;

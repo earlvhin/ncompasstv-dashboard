@@ -5,17 +5,13 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="createFeedModal()">
-                    <span class="button-label">
-                        Add a URL Feed
-                    </span>
+                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="createFeedModal()" [disabled]="is_view_only">
+                    <span class="button-label">Add a URL Feed</span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>
 
-                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['generate']">
-                    <span class="button-label">
-                        Generate a Feed
-                    </span>
+                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['generate']" [disabled]="is_view_only">
+                    <span class="button-label">Generate a Feed</span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>
             </div>
@@ -67,18 +63,19 @@
 						<ng-container *ngIf="!searching; else loader">
 							<mat-card *ngIf="filtered_data.length > 0; else nodata">
 								<app-data-table 
-                                [current_user]="currentUser"
-								[table_data]="filtered_data" 
-								[table_columns]="feeds_table_column"
-								[new_table]="true"
-								[paging_details]="paging_data"
-								[feed_preview]="true"
-								[feed_controls]="true"
-								[feed_delete]="true"
-								[feed_edit]="true"
-								(page_triggered)="pageRequested($event)"
-								(reload_page)="reloadPage($event)"
-                                (update_info)="reloadPage($event)">
+									[current_user]="currentUser"
+									[table_data]="filtered_data" 
+									[table_columns]="feeds_table_column"
+									[new_table]="true"
+									[paging_details]="paging_data"
+									[feed_preview]="true"
+									[feed_controls]="true"
+									[feed_delete]="true"
+									[feed_edit]="true"
+									[is_view_only]="is_view_only"
+									(page_triggered)="pageRequested($event)"
+									(reload_page)="reloadPage($event)"
+									(update_info)="reloadPage($event)">
 								</app-data-table>
 							</mat-card>
 						</ng-container>

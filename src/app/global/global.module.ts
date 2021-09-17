@@ -1,8 +1,6 @@
 import { NgModule } from '@angular/core';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -16,6 +14,7 @@ import { BulkEditBusinessHoursComponent } from './components_shared/page_compone
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
+import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ClonePlaylistComponent } from './components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { CloneScreenComponent } from './components_shared/screen_components/clone-screen/clone-screen.component';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -130,7 +129,6 @@ import { SingleContentComponent } from './pages_shared/single-content/single-con
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
 import { SingleHostComponent } from './pages_shared/single-host/single-host.component';
-// import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
@@ -195,6 +193,7 @@ const ngComponents = [
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
 	CategoryModalComponent,
+	CloneFeedDialogComponent,
 	ClonePlaylistComponent,
 	CloneScreenComponent,
 	ConfirmTemplateModalComponent,
@@ -368,12 +367,14 @@ const DIRECTIVES = [
 		ngComponents,
 		DIRECTIVES,
 		WeatherDemoComponent,
+		CloneFeedDialogComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
 		CategoryModalComponent,
+		CloneFeedDialogComponent,
 		ClonePlaylistComponent,
 		CloneScreenComponent,
 		ConfirmTemplateModalComponent,
@@ -410,12 +411,10 @@ const DIRECTIVES = [
 		WarningPopupComponent,
 	],
 	imports: [
-		BrowserAnimationsModule,
 		ColorPickerModule,
 		CommonModule,
 		DragDropModule,
 		FormsModule,
-		HttpClientModule,
 		MaterialModules,
 		MatInputModule,
 		MatDatepickerModule, 

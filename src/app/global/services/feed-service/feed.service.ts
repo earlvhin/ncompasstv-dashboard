@@ -24,8 +24,8 @@ export class FeedService {
 		private _auth: AuthService
 	) { }
 
-	clone_feed(contentId: string, createdBy: string) {
-		const body = { contentId, createdBy };
+	clone_feed(contentId: string, title: string, createdBy: string) {
+		const body = { contentId, createdBy, title };
 		return this._http.post(`${environment.base_uri}${environment.create.feed_clone}`, body, this.httpOptions);
 	}
 

@@ -19,6 +19,7 @@ import { SelectOwnerComponent } from '../../user_components/select-owner/select-
 export class MediaComponent implements OnInit, OnDestroy {
 	@Input() reload: Observable<void>;
 	@Input() sm_view: boolean;
+	@Input() is_view_only = false;
 	@Output() empty = new EventEmitter;
 	@Output() send_stats = new EventEmitter;
 
@@ -259,7 +260,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 	}
 
 	openMediaViewer(content: UI_CONTENT, contents: UI_CONTENT[], i: number): void {
-		this._dialog.open(MediaViewerComponent, {
+		
+		const dialog = this._dialog.open(MediaViewerComponent, {
 			panelClass: 'app-media-viewer-dialog',
 			data: {
 				index: i,
@@ -267,6 +269,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 				selected: content,
 			}
 		});
+
+		dialog.componentInstance.is_view_only = this.is_view_only;
 
 	}
 

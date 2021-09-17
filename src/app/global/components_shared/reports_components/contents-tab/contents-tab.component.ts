@@ -297,7 +297,7 @@ export class ContentsTabComponent implements OnInit {
 
     msToTime(input) {
         var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
-        totalSeconds = input / 1000;
+        totalSeconds = input;
         totalMinutes = totalSeconds / 60;
         totalHours = totalMinutes / 60;
         seconds = Math.floor(totalSeconds) % 60;

@@ -7,7 +7,6 @@ import { ReplaySubject, Subject } from 'rxjs';
 import { Tag, TagType } from 'src/app/global/models';
 import { CreateTagComponent, EditTagComponent } from './dialogs';
 import { AuthService, TagService,  } from 'src/app/global/services';
-import { TitleCasePipe } from '@angular/common';
 
 @Component({
 	selector: 'app-tags',
@@ -39,7 +38,6 @@ export class TagsComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _form_builder: FormBuilder,
 		private _tag: TagService,
-		private _titlecase: TitleCasePipe
 	) { }
 	
 	ngOnInit() {

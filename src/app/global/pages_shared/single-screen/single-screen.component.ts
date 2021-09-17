@@ -39,6 +39,7 @@ export class SingleScreenComponent implements OnInit {
 	is_dealer: boolean = false;
 	is_initial_load_for_dealer = true;
 	is_search: boolean = false;
+	is_view_only = false;
 	licenses_array: any;
 	licenses_array_api: any;
 	license_tbl_row_url: string;
@@ -145,6 +146,7 @@ export class SingleScreenComponent implements OnInit {
             query: 'client=Dashboard__SingleScreenComponent',
 		});
 
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
@@ -200,7 +202,6 @@ export class SingleScreenComponent implements OnInit {
 						this.screen_licenses=[];
 						// this.filtered_data = [];
                     }
-					console.log({data:data})
 				}
 			)
 		)
@@ -749,5 +750,9 @@ export class SingleScreenComponent implements OnInit {
 	
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }

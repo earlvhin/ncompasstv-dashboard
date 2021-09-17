@@ -28,6 +28,7 @@ import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { isNgTemplate } from '@angular/compiler';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -175,7 +176,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
-		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},		
+		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
@@ -971,9 +973,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		switch(tab) {
 			case 'Licenses': 
 				this.subscription.add(
-					this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
+					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
+					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order).subscribe(
 						data => {
-							this.licenses_to_export = data.paging.entities;
+                            this.licenses_to_export = data.licenseTemplateZoneExports;
 							this.licenses_to_export.forEach((item, i) => {
 								this.modifyItem(item, tab);
 								this.worksheet.addRow(item).font ={
@@ -1020,6 +1023,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+                item.zone = this.getZoneHours(item);
                 item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
                 item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 				item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
@@ -1037,6 +1041,64 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 		}	
 	}
+
+    getZoneHours(data) {
+        if(data.templateName == 'Fullscreen') {
+            return "Main: " + this.msToTime(data.templateMain)
+        } else {
+            var data_to_return: any = '';
+            if(data.templateBackground != 'NO DATA') {
+                data_to_return = data_to_return + "Background: " + this.msToTime(data.templateBackground);
+            }
+            if (data.templateBottom != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Bottom: " + this.msToTime(data.templateBottom);
+            } 
+            if (data.templateHorizontal != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal: " + this.msToTime(data.templateHorizontal);
+            } 
+            if (data.templateHorizontalSmall != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
+            } 
+            if (data.templateLowerLeft != 'NO DATA') {
+                console.log("LL")
+                data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
+            } 
+            if (data.templateMain != 'NO DATA') {
+                console.log("M")
+                data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
+            } 
+            if (data.templateUpperLeft != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Upper Left: " + this.msToTime(data.templateUpperLeft)
+            } 
+            if (data.templateVertical != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Vertical: " + this.msToTime(data.templateVertical)
+            }
+            return data_to_return;
+        }
+    }
+
+    msToTime(input) {
+        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+        totalSeconds = input;
+        // totalSeconds = input / 1000;
+        totalMinutes = totalSeconds / 60;
+        totalHours = totalMinutes / 60;
+        seconds = Math.floor(totalSeconds) % 60;
+        minutes = Math.floor(totalMinutes) % 60;
+        hours = Math.floor(totalHours) % 60;
+        if (hours !== 0) {
+            result += hours+'h ';
+            if (minutes.toString().length == 1) {
+                minutes = '0'+minutes;
+            }
+        }
+        result += minutes+'m ';
+        if (seconds.toString().length == 1) {
+            seconds = '0'+seconds;
+        }
+        result += seconds + 's';
+        return result;
+    }
 
 	exportTable(tab) {
 		this.workbook_generation = true;
