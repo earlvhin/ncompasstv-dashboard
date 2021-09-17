@@ -11,7 +11,7 @@
 					<form class="edit-alias-form" [formGroup]="update_alias">
 						<h1 class="page-title mb-1"><input matInput formControlName="alias" placeholder="License Alias"></h1>
 					</form>
-					<mat-icon class="save-alias" *ngIf="enable_edit_alias" (click)="updateLicenseAlias()">save</mat-icon>
+					<mat-icon class="save-alias" *ngIf="enable_edit_alias && !is_view_only" (click)="updateLicenseAlias()">save</mat-icon>
 				</ng-template>
 			</div>
 			
@@ -29,7 +29,7 @@
 				<span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _info" [disabled]="!pi_status || pi_updating" (click)="pushUpdate()" title="Content Update">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _info" [disabled]="!pi_status || pi_updating || is_view_only" (click)="pushUpdate()" title="Content Update">
 				<span class="fas fa-upload"></span> <span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
@@ -37,27 +37,27 @@
 				<span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" [disabled]="!pi_status || pi_updating" (click)="updateAndRestart()"  title="Update System">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" [disabled]="!pi_status || pi_updating || is_view_only" (click)="updateAndRestart()"  title="Update System">
 				<span class="fas fa-terminal"></span> <span class="ml-2 button_text_animation">Update System</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _warning mr-2" [disabled]="!pi_status || pi_updating" (click)="restartPlayer()" title="Reboot Player">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _warning mr-2" [disabled]="!pi_status || pi_updating || is_view_only" (click)="restartPlayer()" title="Reboot Player">
 				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _caution mr-2" [disabled]="!pi_status || pi_updating" (click)="restartPi()" title="Reboot Pi">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _caution mr-2" [disabled]="!pi_status || pi_updating || is_view_only" (click)="restartPi()" title="Reboot Pi">
 				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _teal mr-2" [disabled]="!pi_status || pi_updating" (click)="resetPi()" title="Reset Player Data">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _teal mr-2" [disabled]="!pi_status || pi_updating || is_view_only" (click)="resetPi()" title="Reset Player Data">
 				<span class="fas fa-eraser"></span> <span class="ml-2 button_text_animation">Reset Data</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _dark mr-2" [disabled]="!pi_status || pi_updating" (click)="upgradeToV2()" title="Reset Player Data"  *ngIf="!apps">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _dark mr-2" [disabled]="!pi_status || pi_updating || is_view_only" (click)="upgradeToV2()" title="Reset Player Data"  *ngIf="!apps">
 				<span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _danger" (click)="onDeleteLicense()" title="Delete License" *ngIf="!pi_status">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text _danger" title="Delete License" *ngIf="!pi_status" (click)="onDeleteLicense()" [disabled]="is_view_only">
 				<span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
 			</button>
         </div>

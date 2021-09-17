@@ -44,6 +44,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	count = 0;
 	current_business_day = '';
 	current_operations: any;
+	is_view_only = false;
 	now: any;
 	routes: string;
 	show_hours = false;

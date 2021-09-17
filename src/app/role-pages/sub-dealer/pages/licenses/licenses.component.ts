@@ -21,6 +21,7 @@ import { environment } from 'src/environments/environment';
 export class LicensesComponent implements OnInit {
 	dealers_name: string;
 	initial_load_license: boolean = true;
+	is_view_only = false;
 	license_info: API_LICENSE[]; 
 	license_data: UI_TABLE_LICENSE_BY_HOST[] = [];
 	license_data_api: any;
@@ -76,8 +77,10 @@ export class LicensesComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		this.dealers_name = this._auth.current_user_value.roleInfo.businessName;
-        this.sortList('desc')
+		console.log('current user value', this._auth.current_user_value);
+        this.sortList('desc');
 		this.getLicenses(1);
 		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
 	}
@@ -188,10 +191,10 @@ export class LicensesComponent implements OnInit {
 						hidden: false, 
 						isImage: true
 					},
-                    { value: i.licenseKey, link: '/dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
+                    { value: i.licenseKey, link: '/sub-dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
                     { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
-                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? '/dealer/hosts/' + i.hostId : null, editable: false, hidden: false },
-                    { value: i.alias ? i.alias : '--', link: '/dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
+                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? '/sub-dealer/hosts/' + i.hostId : null, editable: false, hidden: false },
+                    { value: i.alias ? i.alias : '--', link: '/sub-dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
                     { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
                     { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
                     { value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
@@ -253,18 +256,6 @@ export class LicensesComponent implements OnInit {
 		);
 	}
 
-	private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
-	}
-
 	modifyItem(item) {
 		item.screenType =  this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
@@ -293,6 +284,22 @@ export class LicensesComponent implements OnInit {
 		});
 		this.worksheet.columns = header;
 		this.getDataForExport(this._auth.current_user_value.roleInfo.dealerId);		
+	}
+
+	private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }
 

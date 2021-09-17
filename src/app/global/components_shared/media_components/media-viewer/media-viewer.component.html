@@ -3,10 +3,10 @@
         <h3>Media Details</h3>
     </div>
     <div class="col-lg-3 text-right p-0">
-        <button class="navi" data-toggle="tooltip" title="Settings" (click)="reassignMedia($event)" *ngIf="!file_data.zoneContent && !is_dealer">
+        <button class="navi" data-toggle="tooltip" title="Settings" *ngIf="!file_data.zoneContent && !is_dealer" (click)="reassignMedia($event)">
             <i class="fa fa-cog"></i>
         </button>
-        <button class="navi" data-toggle="tooltip" title="Delete" (click)="deleteMedia($event)" *ngIf="!file_data.zoneContent">
+        <button class="navi" data-toggle="tooltip" title="Delete" *ngIf="!file_data.zoneContent" (click)="deleteMedia($event)" [disabled]="is_view_only">
             <i class="fa fa-trash-alt"></i>
         </button>
         <button class="navi" [disabled]="file_data.selected.index === 0" (click)="fetchPrevMedia(file_data.selected.index)" data-toggle="tooltip" title="Prev">

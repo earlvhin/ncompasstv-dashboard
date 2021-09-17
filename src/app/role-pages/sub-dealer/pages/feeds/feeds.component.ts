@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { DatePipe, TitleCasePipe } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
 import { Subject } from 'rxjs';
 
@@ -13,13 +13,12 @@ import { takeUntil } from 'rxjs/operators';
 	selector: 'app-feeds',
 	templateUrl: './feeds.component.html',
 	styleUrls: ['./feeds.component.scss'],
-	providers: [
-		DatePipe, TitleCasePipe
-	],
+	providers: [ DatePipe ],
 })
 export class FeedsComponent implements OnInit, OnDestroy {
 
 	@Input() title: string = 'Feeds';
+
 	feed_data: UI_TABLE_FEED_DEALER[] = [];
 	feed_stats: any = {};
 	feeds_stats: any = {};
@@ -47,7 +46,6 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
-		private _titlecase: TitleCasePipe
 	) { }
 
 	ngOnInit() {
@@ -176,4 +174,5 @@ export class FeedsComponent implements OnInit, OnDestroy {
 			}
 		)
 	}
+	
 }

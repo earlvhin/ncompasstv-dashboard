@@ -55,8 +55,10 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+		
 		this.filestack_client = filestack.init(environment.third_party.filestack_api_key);
 		const roleId = this._auth.current_user_value.role_id;
+
 		if (roleId === UI_ROLE_DEFINITION.dealer || roleId === UI_ROLE_DEFINITION['sub-dealer']) {
 			this.is_dealer = true;
 			this.getDealerContents(this._auth.current_user_value.roleInfo.dealerId, 1, 60);
@@ -64,6 +66,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 			this.getContents();
 			this.getSummaryContents();
 		}
+		
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 

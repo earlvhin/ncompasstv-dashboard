@@ -34,6 +34,7 @@ export class DataTableComponent implements OnInit {
 	@Input() current_user?: UI_CURRENT_USER;
 	@Input() has_action = false;
 	@Input() is_dealer: boolean;
+	@Input() is_view_only = false;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
 	@Input() multiple_delete: boolean;
@@ -96,7 +97,7 @@ export class DataTableComponent implements OnInit {
 
 	ngOnInit() {
 
-		this.table_data.map (
+		this.table_data.map(
 			data => {
 				Object.keys(data).forEach(key => {
 					if (data[key].table) {
@@ -144,8 +145,8 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editGeneratedFeed(data) {
+		if (this.is_view_only) return;
 		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		// console.log(`/${route}/feed/edit-generated/${data.feed_id.value}`);
 		this._router.navigate([`/${route}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
@@ -187,6 +188,8 @@ export class DataTableComponent implements OnInit {
 				selected: this.media_array[i],
 			}
 		});
+
+		dialog.componentInstance.is_view_only = this.is_view_only;
 	}
 	
 	feedPreview_open(i): void {
@@ -201,6 +204,9 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editFeed(e): void {
+
+		if (this.is_view_only) return;
+
 		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data: e });
 
 		dialogRef.afterClosed().subscribe(
@@ -440,7 +446,7 @@ export class DataTableComponent implements OnInit {
 	}
 
 	onCloneFeed(contentId: string) {
-
+					
 		const dialog = this._dialog.open(CloneFeedDialogComponent, { width: '500px' });
 
 		dialog.afterClosed()
