@@ -146,8 +146,8 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		return feeds.map(
 			(data: FEED) => {
 
-				const { contentId, dealerId, feedId, title, businessName, classification, createdByName, 
-					dateCreated, feedTitle, feedDescription } = data;
+				const { contentId, dealerId, feedId, url, title, businessName, classification, createdByName, 
+					dateCreated, description } = data;
 
 				return new UI_TABLE_FEED(
 					{ value: contentId, link: null , editable: false, hidden: true },
@@ -155,11 +155,11 @@ export class FeedsComponent implements OnInit, OnDestroy {
 					{ value: count++, link: null , editable: false, hidden: false },
 					{ value: title, link: `/administrator/media-library/${contentId}`, editable: false, hidden: false },
 					{ value: businessName, link: `/administrator/dealers/${data.dealerId}`, id: dealerId, editable: false, hidden: false },
-					{ value: classification ? data.classification : '--', link: null, editable: false, hidden: false },
+					{ value: data.classification ? classification : '--', link: null, editable: false, hidden: false },
 					{ value: createdByName, editable: false, hidden: false },
 					{ value: this._date.transform(dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false },
-					{ value: feedTitle, link: data.feedUrl, editable: false, hidden: true },
-					{ value: feedDescription, link: null, editable: false, hidden: true },
+					{ value: title, link: url, editable: false, hidden: true },
+					{ value: description, link: null, editable: false, hidden: true },
 				);
 			}
 		);
