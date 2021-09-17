@@ -750,23 +750,15 @@
 				</mat-tab>
 
 				<!-- Resource Tab -->
-				<!-- <mat-tab label="Resource Usage" *ngIf="is_admin">
-					<div class="row mt-4">	
-						<div class="col-lg-12">
-							<h2>Resource Usage</h2>
-							<p class="sm-text">CPU and RAM Average usage of the Player</p>
-						</div>
-					</div>
-					<app-data-graph
-					[analytics_reload]="analytics_reload.asObservable()"
-					[data_set]="cc.contentPlaysListCount"
-					[graph_id]="cc.contentId + '_yearly'"
-					[realtime_data_per_license]="realtime_data"
-					[date_format]="selected_display_mode"
-					[date_queried]="queried_date"
-					[page]="'single-license'">
-					</app-data-graph>
-				</mat-tab> -->
+				<mat-tab label="Resource" *ngIf="is_admin">
+					<ng-template matTabContent>
+						<app-resource-tab
+							[license_id]="license_id"
+							[screen]="screen"
+							[realtime_data]="realtime_data">
+						</app-resource-tab>
+					</ng-template>
+				</mat-tab> 
             </mat-tab-group>
         </div>
     </div>
