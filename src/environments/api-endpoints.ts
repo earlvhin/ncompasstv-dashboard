@@ -133,7 +133,8 @@ export const API_ENDPOINTS = {
 		tags_count: 'tag/getalltagscount',
 		tags_get_all: 'tag/getall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
-		validate_weather_zip: 'feed/weather/validate?zipcode='
+		validate_weather_zip: 'feed/weather/validate?zipcode=',
+		validate_rss_url: 'feed/news/validate?url='
 	},
 	create: {
 		api_new_activity: 'activity/create',
@@ -144,6 +145,7 @@ export const API_ENDPOINTS = {
 		api_new_dealer: 'dealer/create',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
+		api_new_news_feed_demo: 'feed/preview/demo/news',
 		api_new_slide_feed_demo: 'feed/preview/demo/slides',
 		api_new_weather_feed_demo: 'feed/preview/demo/weather',
 		api_new_host: 'host/create',
@@ -190,6 +192,7 @@ export const API_ENDPOINTS = {
 		api_update_generated_feed: 'feed/edit',
 		api_update_host: 'host/updatehost',
 		api_update_internet_info: 'license/updateinternetinfo',
+		api_update_news_slide_feed: 'feed/update/news',
 		api_update_playlist_content: 'playlists/addcontent',
 		api_update_playlist_info: 'playlists/updateplaylistinfo',
 		api_update_screen: 'screen/edit',
@@ -209,6 +212,7 @@ export const API_ENDPOINTS = {
 		set_content_frequency: 'playlists/cloneplaylistcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
+		template: 'template/update',
 		toggle_credits: 'playlists/enableCredits',
 		user_email_settings: 'user/updateemailsettings',
 	},

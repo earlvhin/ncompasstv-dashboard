@@ -16,11 +16,13 @@
         <hr class="my-4">
     </div>
 
-    <div class="content-section" *ngIf="templates$ | async as templates; else loading">
+    <div class="content-section" *ngIf="templateData$ | async as templateData; else loading">
         <div class="row">
-            <div class="col-lg-3 text-center mb-4" *ngFor="let t of templates">
-                <app-template-minimap [template_data]="t"></app-template-minimap>
-                <h5 class="font-weight-bold mt-2">{{ t.template.name }}</h5>
+            <div class="col-lg-3 text-center mb-4" *ngFor="let data of templateData">
+				<app-template-minimap [template_data]="data"></app-template-minimap>
+                <h5 class="font-weight-bold mt-2">
+					<a class="cursor-pointer" (click)="onClickTemplateLink(data)">{{ data.template.name }}</a>
+				</h5>
             </div>
         </div>
     </div>

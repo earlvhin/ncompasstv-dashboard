@@ -1,6 +1,9 @@
 import { Component, OnInit } from '@angular/core';
-import { TemplateService } from '../../../../global/services/template-service/template.service';
-import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { API_TEMPLATE } from 'src/app/global/models';
+
+import { AuthService, TemplateService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-templates',
@@ -9,14 +12,26 @@ import { Observable } from 'rxjs';
 })
 export class TemplatesComponent implements OnInit {
 
-	title: string = "Templates";
-	templates$: Observable<any>;
+	title: string = 'Templates';
+	templateData$ = this._template.get_templates();
+
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
+		public router: Router,
+		private _auth: AuthService,
 		private _template: TemplateService
 	) { }
 
 	ngOnInit() {
-		this.templates$ = this._template.get_templates();
 	}
+
+	onClickTemplateLink(data: API_TEMPLATE) {
+		this.router.navigate([`/${this.currentRole}/templates/${data.template.templateId}`], { state: { data } });
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
+	}
+
 }

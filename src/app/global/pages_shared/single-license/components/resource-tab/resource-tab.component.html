@@ -1,0 +1,84 @@
+<div class="resource-tab-container" *ngIf="screen else no_screen">
+    <div class="row mt-4">
+        <div class="col-lg-4">
+            <h2>Resource Usage</h2>
+            <p class="sm-text">CPU and RAM Average usage of the Player.</p>
+            <br/>
+        </div>
+        <!-- <form [formGroup]="contentsForm" *ngIf="contentsForm" class="col-lg-8">
+            <div class="text-right">
+                <mat-form-field class="mr-3" appearance="fill" appDefaultDateFormat>
+                    <mat-label class="md-text">Start Date</mat-label>
+                    <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                    <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #datePicker></mat-datepicker>
+                </mat-form-field>
+            
+                <mat-form-field class="mr-3" appearance="fill" appDefaultDateFormat>
+                    <mat-label class="md-text">End Date</mat-label>
+                    <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date"
+                        readonly>
+                    <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
+                    <mat-datepicker #datePicker2></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </form> -->
+        <div class="col-lg-8 text-right">
+            <h2>{{current_date}}</h2>
+        </div>
+    </div>
+
+    <!-- <ng-container *ngIf="end_date"> -->
+        <ng-container>
+            <div class="row" *ngIf="!dateRange_chart_updating; else loader">
+                <ng-container *ngIf="resource_logs.length > 0; else no_data">
+                    <div class="col-lg-12 mb-4" *ngFor="let res of resource_data">
+                        <mat-card style="height: 375px">
+                            <div class="d-flex align-items-center">
+                                <h5>{{res.resourceName}}</h5>
+                            </div>
+                            <app-data-graph 
+                                [analytics_reload]="analytics_reload.asObservable()"
+                                [data_set]="res.resourceDataCount" [graph_id]="res.resourceName + '_dateRange'"
+                                [realtime_data_per_license]="realtime_data" [date_format]="display_mode"
+                                [date_queried]="queried_date" [page]="'single-license'">
+                            </app-data-graph>
+                        </mat-card>
+                    </div>
+                </ng-container>
+            </div>
+        </ng-container>
+    <!-- </ng-container> -->
+
+</div>
+
+<ng-template #no_screen>
+    <div class="no-screen vh-50 row align-items-center justify-content-center">
+        <div class="col-lg-12 text-center">
+            <span class="fa fa-tv"></span>
+            <br>
+            <div class="captions mt-3">No Screen Assigned</div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #loader>
+    <div class="loader text-center py-5 d-flex align-items-center vh-50">
+        <div class="w-100">
+            <mat-spinner></mat-spinner>
+            <h3 class="mt-4 mb-2">Please Wait</h3>
+            <p class="sm-text">Getting resource logs from database. This might take a while.</p>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #no_data>
+    <div class="col-lg-12 text-center">
+        <div class="loader text-center py-5 d-flex align-items-center vh-50">
+            <div class="w-100">
+                <h3 class="mt-4 mb-2">No Data Found</h3>
+                <p class="sm-text">There are no recorded logs of resource today.</p>
+            </div>
+        </div>
+    </div>
+</ng-template>
