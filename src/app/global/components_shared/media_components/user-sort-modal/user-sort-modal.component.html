@@ -1,8 +1,11 @@
 <div class="p-4">
 	<div *ngIf="!no_dealers; else no_data">
 		<div class="sort-by-dealer" *ngIf="dealers; else loader_sm">
-			<h3 class="mb-1">Filter Media Files by User</h3>
-			<p class="sm-text mb-4">Select Dealer, Host, and Advertiser</p>
+			<h3 class="mb-1" *ngIf="!is_license; else licenseLabel">Filter Media Files by User</h3>
+            <ng-template #licenseLabel>
+                <h3 class="mb-1">Filter Licenses by User</h3>
+            </ng-template>
+			<p class="sm-text mb-4">Select Dealer, Host <span *ngIf="!is_license">, and Advertiser</span></p>
 
 			<div class="dealer-field">
 				<app-autocomplete-field
@@ -48,7 +51,7 @@
 				</ng-template>
 			</div>
 
-			<div class="advertiser-field">
+			<div class="advertiser-field" *ngIf="!is_license">
 				<app-autocomplete-field
 				*ngIf="advertisers.length > 0; else no_dealer_adv"
 				(data_value)="advertiserSelected($event)"

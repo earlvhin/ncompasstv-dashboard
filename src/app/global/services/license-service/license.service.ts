@@ -41,8 +41,8 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses(page, key, column, order, pageSize = 15) {
-        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize })
+	get_all_licenses(page, key, column, order, pageSize, status?, zone?, dealer?, host?) {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
