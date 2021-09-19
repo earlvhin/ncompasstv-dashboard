@@ -1,148 +1,227 @@
-<div class="theme-container single-content content-section">
-    <div class="row mb-4" *ngIf="content$ | async as c">
-        <div class="col-lg-6">
-            <div class="d-flex align-items-center content-wrapper">
-                <ng-container *ngIf="c.fileType | isvideo">
-                    <video autoplay muted [src]="c.url+c.fileName"></video>
-                </ng-container>
-                <ng-container *ngIf="c.fileType | isimage">
-                    <img [src]="c.url+c.fileName">
-                </ng-container>
-                <ng-container *ngIf="c.fileType == 'feed'">
-                    <div class="frame-wrap">
-                        <iframe class="responsive-iframe" [src]="c.url | sanitize" frameborder="0"></iframe>
-                    </div>
-                </ng-container>
-            </div>
-        </div>
-        <div class="col-lg-6 white-bg p-5">
-            <div class="mb-3">
-                <h3 class="col-lg-12 p-0 mb-3">File Info</h3>
-                <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">File Name:</span>
-                    <span>{{ c.title }}</span>
-                </div>
-                <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">Created By:</span>
-                    <span>{{ c.createdByName }} </span>
-                </div>
-                <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">Created At:</span>
-                    <span>{{ c.dateCreated | date }}</span>
-                </div>
-                <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">File Type:</span>
-                    <span>{{ c.fileType }}</span>
-                </div>
-                <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">File Size:</span>
-                    <span>{{ getFileSize(c.filesize) }}</span>
-                </div>
-                <div class="col-lg-12 p-0">
-                    <span class="font-weight-medium">Duration:</span>
-                    <span>{{ c.duration }} s</span>
+<ng-container>
+    <div class="theme-container single-content" *ngIf="content$ | async as c; else loading">
+        <div class="title-section">
+            <div class="d-flex align-items-center">
+                <div class="flex-even">
+                    <h1 class="page-title" [title]="c.title">{{ c.title | substring:40 }}</h1>
                 </div>
             </div>
+            <hr class="my-4">
         </div>
-    </div>
-
-    <div class="row">
-        <div class="col-lg-12">
-            <mat-tab-group dynamicHeight>
-                <mat-tab label="Content Analytics">
-                    <div class="row align-items-center mt-4">
-                        <div class="col-lg-4">
-                            <h3 class="mb-0">Report for {{ date_selected }}</h3>
+    
+        <div class="row mb-4" *ngIf="content$ | async as c">
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center content-wrapper">
+                    <ng-container *ngIf="c.fileType | isvideo">
+                        <video autoplay muted [src]="c.url+c.fileName"></video>
+                    </ng-container>
+                    <ng-container *ngIf="c.fileType | isimage">
+                        <img [src]="c.url+c.fileName">
+                    </ng-container>
+                    <ng-container *ngIf="c.fileType == 'feed'">
+                        <img [src]="fs_screenshot + '/' + c.url | sanitize">
+                    </ng-container>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <mat-card class="p-4">
+                    <h5 class="mb-0 font-weight-medium">
+                        Content Information
+                    </h5>
+    
+                    <hr>
+    
+                    <div class="d-flex">
+                        <div class="flex-even filename">
+                            <span class="sm-text">
+                                Filename
+                            </span>
+                            <h5 class="mb-0" [title]="c.title">
+                                {{ c.title | substring:32 }}
+                            </h5>
                         </div>
-                        <div class="col-lg-8 text-right">
-                            <mat-form-field appearance="fill">
-                                <mat-label>Choose a date</mat-label>
-                                <input matInput (dateInput)="onSelectDate($event.value)" [matDatepicker]="contentDatePicker" [(value)]="queried_date" readonly>
-                                <mat-datepicker-toggle matSuffix [for]="contentDatePicker"></mat-datepicker-toggle>
-                                <mat-datepicker #contentDatePicker></mat-datepicker>
-                            </mat-form-field>
+    
+                        <div class="flex-even filetype">
+                            <span class="sm-text">
+                                Filetype
+                            </span>
+                            <h5 class="mb-0">
+                                {{ c.fileType }}
+                            </h5>
                         </div>
                     </div>
-                    <div class="row">
-                        <div class="col-lg-12 mb-4">
-                            <mat-card>
-                                <ng-container *ngIf="!daily_chart_updating; else loader">
-                                    <app-data-graph
-                                        [data_set]="content_daily_count"
-                                        [graph_title]="'Daily Content Play Analytics'"
-                                        [graph_description]="'Graph shows the play count of this content for this day.'"
-                                        [graph_id]="'daily_graph'"
-                                        [realtime_data_per_content]="realtime_data"
-                                        [update_chart]="update_chart">
-                                    </app-data-graph>
-                                </ng-container>
-                            </mat-card>
+                    
+                    <hr class="my-3">
+    
+                    <div class="d-flex">
+                        <div class="flex-even uploaded-by">
+                            <span class="sm-text">
+                                Uploaded by
+                            </span>
+                            <h5>
+                                {{ c.createdByName || 'N/A' }}
+                            </h5>
+                        </div>
+    
+                        <div class="flex-even date-uploaded">
+                            <span class="sm-text">
+                                Date Uploaded
+                            </span>
+                            <h5>
+                                {{ c.dateCreated | date }}
+                            </h5>
                         </div>
 
-                        <div class="col-lg-12 mb-4">
-                            <mat-card>
-                                <ng-container *ngIf="!monthly_chart_updating; else loader">
-                                    <app-data-graph 
-                                        [date_format]="'monthly'"
-                                        [data_set]="content_monthly_count"
-                                        [graph_title]="'Monthly Content Play Analytics'"
-                                        [graph_description]="'Graph shows the play count of this content for this month.'"
-                                        [graph_id]="'monthly_graph'"
-                                        [realtime_data_per_content]="realtime_data"
-                                        [update_chart]="update_chart">
-                                    </app-data-graph>
-                                </ng-container>
-                            </mat-card>
-                        </div>
-
-                        <div class="col-lg-12">
-                            <mat-card>
-                                <ng-container *ngIf="!yearly_chart_updating; else loader">
-                                    <app-data-graph 
-                                        [date_format]="'yearly'"
-                                        [data_set]="content_yearly_count"
-                                        [graph_title]="'Yearly Content Play Analytics'"
-                                        [graph_description]="'Graph shows the play count of this content for this year.'"
-                                        [graph_id]="'yearly_graph'"
-                                        [realtime_data_per_content]="realtime_data"
-                                        [update_chart]="update_chart">
-                                    </app-data-graph>
-                                </ng-container>
-                            </mat-card>
+                        <div class="flex-even duration" *ngIf="c.fileType == 'webm'">
+                            <span class="sm-text">
+                                Duration
+                            </span>
+                            <h5>
+                                {{ c.duration }}
+                            </h5>
                         </div>
                     </div>
-                </mat-tab>
-                <mat-tab label="In Playlist">
-                    <h1>Coming Soon</h1>
-                </mat-tab>
-                <mat-tab label="Playing Where">
-                    <mat-card *ngIf="playing_where.length > 0; else nodata">
-                        <app-data-table 
-                        [table_data]="playing_where"
-                        [table_columns]="table_columns"
-                        [new_table]="true"></app-data-table>
-                    </mat-card>
-                </mat-tab>
-            </mat-tab-group>
+                    
+                    <hr class="my-3">
+
+                    <div class="d-flex">
+                        <div class="flex-even uploaded-by">
+                            <span class="sm-text">
+                                License Count
+                            </span>
+                            <h5>
+                                {{ license_count }}
+                            </h5>
+                        </div>
+    
+                        <div class="flex-even date-uploaded">
+                            <span class="sm-text">
+                                Host Count
+                            </span>
+                            <h5>
+                                {{ host_count }}
+                            </h5>
+                        </div>
+
+                        <div class="flex-even duration">
+                            <span class="sm-text">
+                                Screen Count
+                            </span>
+                            <h5>
+                                {{ screen_count }}
+                            </h5>
+                        </div>
+                    </div>
+
+                </mat-card>
+            </div>
         </div>
+    
+        <div class="row">
+            <div class="col-lg-12">
+                <mat-tab-group dynamicHeight>
+                    <!-- <mat-tab label="Content Analytics">
+                        <div class="row align-items-center mt-4">
+                            <div class="col-lg-4">
+                                <h3 class="mb-0">Report for {{ date_selected }}</h3>
+                            </div>
+                            <div class="col-lg-8 text-right">
+                                <mat-form-field appearance="fill">
+                                    <mat-label>Choose a date</mat-label>
+                                    <input matInput (dateInput)="onSelectDate($event.value)" [matDatepicker]="contentDatePicker" [(value)]="queried_date" readonly>
+                                    <mat-datepicker-toggle matSuffix [for]="contentDatePicker"></mat-datepicker-toggle>
+                                    <mat-datepicker #contentDatePicker></mat-datepicker>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-12 mb-4">
+                                <mat-card>
+                                    <ng-container *ngIf="!daily_chart_updating; else loader">
+                                        <app-data-graph
+                                            [data_set]="content_daily_count"
+                                            [graph_title]="'Daily Content Play Analytics'"
+                                            [graph_description]="'Graph shows the play count of this content for this day.'"
+                                            [graph_id]="'daily_graph'"
+                                            [realtime_data_per_content]="realtime_data"
+                                            [update_chart]="update_chart">
+                                        </app-data-graph>
+                                    </ng-container>
+                                </mat-card>
+                            </div>
+    
+                            <div class="col-lg-12 mb-4">
+                                <mat-card>
+                                    <ng-container *ngIf="!monthly_chart_updating; else loader">
+                                        <app-data-graph 
+                                            [date_format]="'monthly'"
+                                            [data_set]="content_monthly_count"
+                                            [graph_title]="'Monthly Content Play Analytics'"
+                                            [graph_description]="'Graph shows the play count of this content for this month.'"
+                                            [graph_id]="'monthly_graph'"
+                                            [realtime_data_per_content]="realtime_data"
+                                            [update_chart]="update_chart">
+                                        </app-data-graph>
+                                    </ng-container>
+                                </mat-card>
+                            </div>
+    
+                            <div class="col-lg-12">
+                                <mat-card>
+                                    <ng-container *ngIf="!yearly_chart_updating; else loader">
+                                        <app-data-graph 
+                                            [date_format]="'yearly'"
+                                            [data_set]="content_yearly_count"
+                                            [graph_title]="'Yearly Content Play Analytics'"
+                                            [graph_description]="'Graph shows the play count of this content for this year.'"
+                                            [graph_id]="'yearly_graph'"
+                                            [realtime_data_per_content]="realtime_data"
+                                            [update_chart]="update_chart">
+                                        </app-data-graph>
+                                    </ng-container>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </mat-tab> -->
+                    <mat-tab label="In Playlist">
+                        <h1>Coming Soon</h1>
+                    </mat-tab>
+                    <mat-tab label="Playing Where">
+                        <mat-card *ngIf="playing_where.length > 0; else nodata">
+                            <app-data-table 
+                            [table_data]="playing_where"
+                            [table_columns]="table_columns"
+                            [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
+    
+        <ng-template #loader>
+            <div class="loader text-center py-5">
+                <app-spinner></app-spinner>
+                <h3 class="mt-4 mb-2">Please Wait</h3>
+                <p class="sm-text">Getting content logs from database.</p>
+            </div>
+        </ng-template>
+    
+        <ng-template #nodata>
+            <div class="col-lg-12 pl-0 pr-0">
+                <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                    <div class="mb-4">
+                        <i class="text-gray fa-5x far fa-file-alt"></i>
+                    </div>
+                    <h3 class="text-gray col-lg-12">No Data Found.</h3>
+                </mat-card>
+            </div>
+        </ng-template>
     </div>
 
-    <ng-template #loader>
+    <ng-template #loading>
         <div class="loader text-center py-5">
             <app-spinner></app-spinner>
             <h3 class="mt-4 mb-2">Please Wait</h3>
-            <p class="sm-text">Getting content logs from database.</p>
         </div>
     </ng-template>
-
-    <ng-template #nodata>
-        <div class="col-lg-12 pl-0 pr-0">
-            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
-                <div class="mb-4">
-                    <i class="text-gray fa-5x far fa-file-alt"></i>
-                </div>
-                <h3 class="text-gray col-lg-12">No Data Found.</h3>
-            </mat-card>
-        </div>
-    </ng-template>
-</div>
+</ng-container>
