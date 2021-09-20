@@ -11,10 +11,10 @@
                     REPORTS DETAILS
                 </div>
                 <div class="col-lg-4 text-center">
-                    <span class="text-danger md-text"> {{state_selected}}</span>
+                    <span class="text-primary font-weight-bold"> {{state_selected}}</span>
                 </div>
-                <div class="col-lg-4 text-right">
-                    <span class="text-danger md-text"> {{raw_details.totalLicenses}} license(s)</span>
+                <div class="col-lg-4 text-right" *ngIf="!loading_details">
+                    <span class="text-primary font-weight-bold"> {{raw_details.totalLicenses}} license(s)</span>
                 </div>
             </div>
         </div>
