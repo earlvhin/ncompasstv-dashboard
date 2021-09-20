@@ -81,9 +81,7 @@
 							</div>
 							<div>
 								<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
-									<h5 *ngIf="cc.fileType != 'feed'; else is_feed_y">
-										{{ cc.title }}
-									</h5>
+									<h5 *ngIf="cc.fileType != 'feed'; else is_feed_y" [title]="cc.fileName | nohandle">{{ (cc.fileName | nohandle) | substring:20 }}</h5>
 
 									<ng-template #is_feed_y>
 										<h5>
@@ -122,9 +120,7 @@
 							</div>
 							<div>
 								<a [routerLink]="['/administrator/media-library/', cc.contentId]" target="_blank">
-									<h5 *ngIf="cc.fileType != 'feed'; else is_feed_d">
-										{{ cc.title }}
-									</h5>
+									<h5 *ngIf="cc.fileType != 'feed'; else is_feed_d" [title]="cc.fileName | nohandle">{{ (cc.fileName | nohandle) | substring:20 }}</h5>
 
 									<ng-template #is_feed_d>
 										<h5>
