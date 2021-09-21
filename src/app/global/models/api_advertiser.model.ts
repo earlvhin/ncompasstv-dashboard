@@ -1,4 +1,4 @@
-import { Tag } from "./tag.model";
+import { TAG } from "./tag.model";
 
 export class API_ADVERTISER {
     advertiserId: string;
@@ -16,5 +16,5 @@ export class API_ADVERTISER {
     status: string;
     updatedBy: string;
     userId: string;
-	tags?: Tag[];
+	tags?: TAG[];
 }

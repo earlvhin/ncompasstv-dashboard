@@ -12,7 +12,7 @@ import { EditSingleDealerComponent } from '../../../../global/pages_shared/edit-
 import { EditSingleHostComponent } from '../../../../global/pages_shared/edit-single-host/edit-single-host.component';
 import { InformationModalComponent } from '../information-modal/information-modal.component';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
-import { Tag } from 'src/app/global/models/tag.model';
+import { TAG } from 'src/app/global/models/tag.model';
 
 @Component({
 	selector: 'app-banner',
@@ -49,7 +49,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	routes: string;
 	show_hours = false;
 	status = '';
-	tags: Tag[];
+	tags: TAG[];
 	notes: string = '';
 	view = '';
 
@@ -238,7 +238,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 	private setTags(): void {
 
-		let tags: Tag[];
+		let tags: TAG[];
 
 		switch (this.view) {
 			case 'host':

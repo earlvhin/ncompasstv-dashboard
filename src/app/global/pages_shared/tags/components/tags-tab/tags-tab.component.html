@@ -1,0 +1,25 @@
+<!-- DROPDOWN AND SEARCH BOX ROW -->
+<div class="dropdown-and-search-section d-flex justify-content-between">
+			
+	<!-- SEARCH FIELD -->
+	<div class="search-container">
+		<mat-form-field class="full-width" *ngIf="!isLoading">
+			<mat-label>Search Tags...</mat-label>
+			<input matInput [formControl]="searchFormControl">
+		</mat-form-field>
+	</div>
+
+</div>
+
+<mat-card>
+	<!-- TABLE -->
+	<app-tags-table
+		[currentTabIndex]="currentTabIndex"
+		[currentTagType]="currentTagType"
+		[currentUserRole]="currentUserRole"
+		[isLoading]="isLoading"
+		[tableColumns]="columns"
+		[tableData]="tags"
+		(clickedTagName)="onClickTagName($event)">
+	</app-tags-table>
+</mat-card>
