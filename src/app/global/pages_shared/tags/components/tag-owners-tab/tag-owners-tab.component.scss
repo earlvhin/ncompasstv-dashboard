@@ -1,0 +1,18 @@
+.search-container {
+		
+	mat-form-field {
+		width: 400px;
+	}
+}
+
+.dropdown-and-search-section {
+	margin-top: 20px;
+}
+
+.selected-filter {
+	background-color: #8EC641;
+
+	&:hover {
+		background-color: #8EC641 !important;
+	}
+}

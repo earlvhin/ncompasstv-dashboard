@@ -1,12 +1,19 @@
-export interface Tag {
+import { API_ADVERTISER, API_DEALER, API_HOST, API_LICENSE } from '.';
+
+export interface TAG {
+	name: string;
+	tagId: number;
+	tagColor: string;
+	count?: number;
+	dealer?: API_DEALER[];
+	host?: API_HOST[];
+	license?: API_LICENSE[];
+	advertiser?: API_ADVERTISER[];
+	owners?: API_DEALER[] | API_HOST[] | API_LICENSE[] | API_ADVERTISER[];
+	tagType?: string;
 	alias?: string;
 	dateCreated?: string;
-	name: string;
 	ownerId?: string;
-	ownerName: string;
-	tagId?: number;
-	tagTypeId: number;
-	tagType: string;
-	tagColor: string;
-	count: number;
+	ownerName?: string;
+	tagTypeId?: number;
 }

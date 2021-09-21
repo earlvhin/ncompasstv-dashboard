@@ -2,7 +2,7 @@ import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 
-import { Tag } from 'src/app/global/models/tag.model';
+import { TAG } from 'src/app/global/models/tag.model';
 import { TagService } from 'src/app/global/services/tag.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
@@ -14,13 +14,13 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class EditTagComponent implements OnInit, OnDestroy {
 
-	@Input() tag: Tag;
-	selectedTagColor: string;
+	@Input() tag: TAG;
 
 	columns = [];
-	hasUpdated = false;
 	form: FormGroup;
+	hasUpdated = false;
 	isLoading = true;
+	selectedTagColor: string;
 	title = 'Edit Tag';
 	
 	protected _unsubscribe: Subject<void> = new Subject<void>();

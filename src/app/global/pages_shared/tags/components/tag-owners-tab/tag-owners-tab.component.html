@@ -1,0 +1,44 @@
+<!-- DROPDOWN AND SEARCH BOX ROW -->
+<div class="dropdown-and-search-section d-flex justify-content-between">
+	
+	<!-- TAG TYPES DROPDOWN -->
+	<div class="tag-types-select-container">
+
+		<div class="mr-2">
+			<button mat-button mat-raised-button [matMenuTriggerFor]="tagTypeMenu" mat-raised-button class="theme-btn">
+				<span class="button-label">Filter by: {{ currentFilter }}</span>
+				<span class="fas fa-angle-down ml-2"></span>
+			</button>
+			<mat-menu #tagTypeMenu="matMenu">
+				<button mat-menu-item *ngFor="let type of tagTypes" 
+					[class.selected-filter]="type.name === currentFilter"
+					(click)="onSelectTagType(type)">{{ type.name }}</button>
+			</mat-menu>
+		</div>
+	</div>
+
+	<!-- SEARCH FIELD -->
+	<div class="search-container">
+		<mat-form-field class="full-width" *ngIf="!isLoading">
+			<mat-label>Search Tags/Owners...</mat-label>
+			<input matInput [formControl]="searchFormControl">
+		</mat-form-field>
+	</div>
+
+</div>
+
+<!-- TAG-OWNERS TABLE -->
+<div class="row">
+	<div class="col-lg">
+		<mat-card>
+			<app-tags-table
+				[tableType]="'tag-owners'"
+				[isLoading]="isLoading"
+				[tableColumns]="columns"
+				[tableData]="owners"
+				[currentTagType]="currentTagType"
+				[currentUserRole]="currentUserRole">
+			</app-tags-table>
+		</mat-card>
+	</div>
+</div>

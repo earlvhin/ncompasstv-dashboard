@@ -7,6 +7,20 @@
 	}
 }
 
+.clickable {
+	cursor: pointer;
+
+	&:hover {
+		color: #8EC641 !important;
+	}
+
+}
+
+.tag-color-text {
+	color: #ffffff;
+	text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
+}
+
 table {
 
 	.tags {
