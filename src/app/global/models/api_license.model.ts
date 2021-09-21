@@ -28,6 +28,7 @@ export interface API_LICENSE_PROPS {
 	piStatus: number;
     screenshotSettings?: number;
     speedtestSettings?: number;
+    resourceSettings?: number;
 	timeIn?: string;
 	installDate?: string;
     screenId?: string;

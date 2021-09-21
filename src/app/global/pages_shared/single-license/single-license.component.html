@@ -745,6 +745,22 @@
 									</div>
 								</div>
 							</mat-card>
+
+							<mat-card class="p-4 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even">
+										<h4>Enable Resource Log Sending</h4>
+										<p class="sm-text mb-0">
+										This will send the player’s CPU and RAM average usage every 2 hours. Requires data usage, toggle off to disable.
+										</p>
+									</div>
+									<div class="ml-5 text-right">
+										<mat-slide-toggle (change)="disableResource($event)"
+											[checked]="license_data.resourceSettings == 1 ? true : false">
+										</mat-slide-toggle>
+									</div>
+								</div>
+							</mat-card>
 						</div>
 					</div>
 				</mat-tab>
