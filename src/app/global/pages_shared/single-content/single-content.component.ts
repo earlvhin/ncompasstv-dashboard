@@ -5,9 +5,8 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
-
 import { environment as env } from '../../../../environments/environment';
-import { AuthService, ContentService } from '../../../global/services';
+import { AuthService, ContentService, PlaylistService } from '../../../global/services';
 import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION } from '../../../global/models';
 
 @Component({
@@ -27,6 +26,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	date_selected = this._date.transform(new Date(), 'longDate');
 	monthly_chart_updating = true;
     playing_where: any[] = [];
+	in_playlist: any[] = [];
 	queried_date = moment();
 	realtime_data: EventEmitter<any> = new EventEmitter();
 	update_chart: EventEmitter<any> = new EventEmitter();
@@ -35,7 +35,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	host_count: number = 0;
 	license_count: number = 0;
 	screen_count: number = 0;
-
 
 	fs_screenshot: string = `${env.third_party.filestack_screenshot}`
 
@@ -46,6 +45,12 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         'Screen Name'
     ];
 
+	in_playlist_table_columns = [
+		'#',
+		'Playlist Name',
+		'Business Name'
+    ];
+
 	private content_id: string;
 	private current_date: string = this._date.transform(new Date(), 'y-MMM-dd');
 
@@ -54,6 +59,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	constructor(
         private _auth: AuthService,
 		private _content: ContentService,
+		private _playlist: PlaylistService,
 		private _date: DatePipe,
 		private _params: ActivatedRoute,
 	) { }
@@ -89,6 +95,31 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		// this.getYearlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
 	}
 
+	private getPlaylistsOfContent(id: string) {
+		this._playlist.get_playlist_by_content_id(id).subscribe(
+			(data: any) => {
+				const role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
+
+				if (data) {
+					let count = 1;
+
+					this.in_playlist = data.map(
+						i => {
+							return (
+								[
+									{ value: i.playlistId, link: null , editable: false, hidden: true },
+									{ value: count++, link: null , editable: false, hidden: false },
+									{ value: i.playlistName, link: i.playlistId ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
+									{ value: i.businessName, link: i.dealerId ? `/${role}/dealers/${i.dealerId}` : null , hidden: false },
+								]
+							);
+						}
+					);
+				}
+			}
+		)
+	}
+
 	private getContentInfo(content_id: string): void {
 		this.content$ = this._content.get_content_by_id(content_id);
 	}
@@ -115,6 +146,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => {
 					this.content_id = this._params.snapshot.params.data;
+					this.getPlaylistsOfContent(this.content_id);
 					this.getMonthlyStats(this.content_id, this.current_date);
 					this.getDailyStats(this.content_id, this.current_date);
 					// this.getYearlyStats(this.content_id, this.current_date);

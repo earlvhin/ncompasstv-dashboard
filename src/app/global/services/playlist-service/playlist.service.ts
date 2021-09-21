@@ -56,6 +56,10 @@ export class PlaylistService {
 	get_all_playlists(page, key, column?, order?) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_all_playlist}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
 	}
+
+	get_playlist_by_content_id(content_id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist_by_content}${content_id}`, this.httpOptions).pipe(map(i => i.playlists));
+	} 
 	
 	// search_playlists(key) {
 	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_playlist}`+'?search='+`${key}`, this.httpOptions);

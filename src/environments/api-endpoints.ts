@@ -77,6 +77,7 @@ export const API_ENDPOINTS = {
         api_get_licenses_by_screen: 'license/getlicensesbyscreenid',
 		api_get_notifications: 'notification/getbyreceiverid?receiver_id=',
 		api_get_playlist: 'playlists/getall',
+		api_get_playlist_by_content: 'playlists/GetPlaylistsByContentId?contentid=',
 		api_get_all_playlist: 'playlists/getplaylistswithscreens',
 		api_get_playlist_by_dealer_id: 'playlists/getplaylistbydealerid?dealerid=',
 		api_get_playlist_by_dealer_id_table: 'playlists/getplaylistsbydealerid',
