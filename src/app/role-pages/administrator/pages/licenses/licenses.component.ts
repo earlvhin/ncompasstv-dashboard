@@ -53,6 +53,7 @@ export class LicensesComponent implements OnInit {
 	worksheet: any;
 
     filters: any = {
+        activated: "",
         zone:"",
         status:"",
         dealer:"",
@@ -145,7 +146,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.licenses_data = [];    
         this.subscription.add(
-			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
+			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
 				data => {
                     this.paging_data_licenses = data.paging;
                     if (data.licenses) {
@@ -176,11 +177,17 @@ export class LicensesComponent implements OnInit {
         switch(type) {
             case 'status':
                 this.filters.status = value
+                this.filters.activated = "";
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
                 break;
             case 'zone':
                 this.filters.zone = value
                 this.filters.label_zone = value;
+                break;
+            case 'activated':
+                this.filters.status = "";
+                this.filters.activated = value;
+                this.filters.label_status = 'Inactive';
                 break;
             default:
         }
@@ -344,6 +351,7 @@ export class LicensesComponent implements OnInit {
 
     clearFilter() {
         this.filters = {
+            activated: "",
             zone:"",
             status:"",
             dealer:"",
