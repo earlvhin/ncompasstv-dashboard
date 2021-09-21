@@ -24,6 +24,7 @@ export class NewsDemoComponent implements OnInit {
 		marginLeft=${this.news_data.feedNews.marginLeft}&
 		backgroundColor=${this.news_data.feedNews.backgroundColor.replace('#', '')}&
 		backgroundContentId=${this.news_data.feedNews.backgroundContentId}&
-		time=${this.news_data.feedNews.time}`
+		time=${this.news_data.feedNews.time}&
+		rssFeedUrl=${this.news_data.feedNews.rssFeedUrl}`
 	}
 }
