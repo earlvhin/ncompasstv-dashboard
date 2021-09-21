@@ -247,6 +247,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		)
 	}
 
+	disableResource(e) {
+		this._license.set_resource_status(
+			{
+				licenseId: this.license_id,
+				resourceSettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`Resource Log Sending ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
+				console.log(data);
+			}
+		)
+	}
+
 	dismissPopup(): void {
 		this.show_popup = false;
 		this.popup_type = '';
