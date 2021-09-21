@@ -12,7 +12,7 @@ import { API_USER_DATA } from '../../models/api_user-data.model';
 
 import { AdvertiserService, AuthService, HelperService, HostService, LicenseService, PlaylistService, 
 	ScreenService, UserService } from 'src/app/global/services';
-import { Tag } from '../../models/tag.model';
+import { TAG } from '../../models/tag.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -55,7 +55,7 @@ export class OwnerGuard implements CanActivate {
 	private isAllowed(page: string, id: string) {
 
 		let request: Observable<any>;
-		let result: API_LICENSE | API_SINGLE_HOST | API_SINGLE_PLAYLIST | API_SINGLE_SCREEN | API_USER_DATA | { advertiser: API_ADVERTISER, tags: Tag[] };
+		let result: API_LICENSE | API_SINGLE_HOST | API_SINGLE_PLAYLIST | API_SINGLE_SCREEN | API_USER_DATA | { advertiser: API_ADVERTISER, tags: TAG[] };
 
 		switch (page) {
 
@@ -92,7 +92,7 @@ export class OwnerGuard implements CanActivate {
 					switch (page) {
 
 						case 'advertisers':
-							result = response as { advertiser: API_ADVERTISER, tags: Tag[] };
+							result = response as { advertiser: API_ADVERTISER, tags: TAG[] };
 							const { advertiser, tags } = result;
 							advertiser.tags = tags;
 							this._helper.singleAdvertiserData = advertiser;

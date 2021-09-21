@@ -1,10 +1,10 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Tag, TagType } from 'src/app/global/models';
+import { TAG, TAG_TYPE, TAG_OWNER } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 import { EditTagComponent } from '../../dialogs';
 
@@ -17,11 +17,14 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	@Input() isLoading = true;
 	@Input() tableType = 'tags';
-	@Input() currentTagType: TagType;
+	@Input() currentTabIndex: number;
+	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserRole: string;
-	@Input() tagOwners: { owner: { displayName: string }, tagTypeId: string, tags: Tag[] }[];
+	@Input() tagOwners: TAG_OWNER[];
 	@Input() tableColumns: any[];
-	@Input() tableData: Tag[] | { owner: { displayName: string }, tagTypeId: string, tags: Tag[] }[] = [];
+	@Input() tableData: TAG[] | { owner: { displayName: string }, tagTypeId: string, tags: TAG[] }[] = [];
+
+	@Output() clickedTagName = new EventEmitter<{ tag: string }>();
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -86,7 +89,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	}
 
-	async onOpenDialog(type: string, data: Tag | any) {
+	async onOpenDialog(type: string, data: TAG | any) {
 
 		let dialog: MatDialogRef<EditTagComponent | any>;
 
@@ -103,10 +106,8 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	}
 
-	getOwnerLink(owner: any): string {
-		const ownerId = this.getOwnerId(owner);
-		const currentTagType = `${this.currentTagType.name.toLowerCase()}s`;
-		return `/${this.currentUserRole}/${currentTagType}/${ownerId}`;
+	onClickTagName(data: string): void {
+		this.clickedTagName.emit({ tag: data });
 	}
 
 	setTagColor(value: string): string {
@@ -155,7 +156,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 			case 'delete_tag':
 				title = 'Delete Tag';
-				message = `Associated ${this.currentTagType.name.toLowerCase()}s will be removed from this tag`;
+				message = `Associated owners will be removed from this tag`;
 				return_msg = 'Confirmed deletion';
 				break;
 
@@ -165,7 +166,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 			case 'delete_all_tags_from_owner':
 				title = 'Delete Owner Tags';
-				message = `ALL associated tags from ${this.currentTagType.name.toLowerCase()} will be removed`
+				message = `ALL associated tags from owner will be removed`
 				return_msg = 'Confirmed deletion'
 				break;
 		}

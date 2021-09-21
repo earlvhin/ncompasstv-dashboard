@@ -5,7 +5,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Tag, TagType } from 'src/app/global/models';
+import { TAG, TAG_TYPE } from 'src/app/global/models';
 
 import { AdvertiserService, HostService, LicenseService, TagService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
@@ -21,27 +21,27 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	advertisers = [];
 	dealers = [];
 	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
-	filteredTags: ReplaySubject<Tag[]> = new ReplaySubject(1);
+	filteredTags: ReplaySubject<TAG[]> = new ReplaySubject(1);
 	form: FormGroup;
 	hosts = [];
 	isInitialLoad = false;
 	isLoadingSearchResults = false;
 	isSearching = false
 	licenses = [];
-	ownerSearchSettings = { label: '', placeholder: '', };
+	ownerSearchSettings = { label: 'Select Owners', placeholder: 'Search Owners Owners', };
 	pendingTags: { name: string, tagColor: string }[] = [];
-	searchTagsResult: Tag[];
+	searchTagsResult: TAG[];
 	selectedTagColor: string;
 	tagName: string;
-	tagType: TagType;
-	tagTypes: TagType[];
+	tagType: TAG_TYPE;
+	tagTypes: TAG_TYPE[];
 	title = 'Create Tag';
 	uniqueOwners = [];
 	
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: { tagName: string, tagType: TagType, tagTypes: TagType[] },
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { tagName: string, tagType: TAG_TYPE, tagTypes: TAG_TYPE[] },
 		private _advertiser: AdvertiserService,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<CreateTagComponent>,
@@ -92,7 +92,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		this.ownerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
 	}
 
-	onSelectTag(data: Tag): void {
+	onSelectTag(data: TAG): void {
 		this.resetFields();
 		const { name, tagColor } = data;
 		this.pendingTags.push({ name, tagColor });
@@ -103,7 +103,10 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	onSelectTagType(tagTypeId: number): void {
 
-		const tagType: TagType = this.tagTypes.filter(type => type.tagTypeId === tagTypeId)[0];
+		const selectOwnersControl = this.form.get('selectedOwners');
+		if (selectOwnersControl.disabled) selectOwnersControl.enable();
+
+		const tagType: TAG_TYPE = this.tagTypes.filter(type => type.tagTypeId === tagTypeId)[0];
 		const type = tagType.name.toLowerCase();
 
 		let settings = {
@@ -147,7 +150,13 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 		}
 
+		this.tagType = tagType;
 		this.ownerSearchSettings = settings;
+		this.pendingTags = [];
+		this.filteredOwners.next([]);
+		this.searchTags();
+		this.setCtrlValue('selectedOwners', []);
+		this.resetFields();
 	}
 
 	onSubmit(): void {
@@ -271,7 +280,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 			tagTypeId: [ tagTypeId, Validators.required ],
 			tagName: [ name ],
 			tagColor: [ null ],
-			selectedOwners: [ [], Validators.required ],
+			selectedOwners: [ { value: [], disabled: true }, Validators.required ],
 			selectedTag: [ null ],
 			ownerFilter: [ null ]
 		});
@@ -487,10 +496,12 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	private searchTags(): void {
 
+		if (!this.tagTypeId) return;
+
 		this._tag.getDistinctTagsByType(this.tagTypeId)
-			.map((response: { tags: Tag[] }) => response.tags)
+			.map((response: { tags: TAG[] }) => response.tags)
 			.subscribe(
-				(response: Tag[]) => {
+				(response: TAG[]) => {
 					this.searchTagsResult = response;
 					this.filteredTags.next(response);
 				},

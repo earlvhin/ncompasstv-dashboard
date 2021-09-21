@@ -17,7 +17,7 @@ import { MediaViewerComponent } from '../../components_shared/media_components/m
 import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
 
 import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_SINGLE_SCREEN, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
-	API_SCREEN_TEMPLATE_ZONE, Tag, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
+	API_SCREEN_TEMPLATE_ZONE, TAG, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
 	UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE, UI_SINGLE_SCREEN  } from 'src/app/global/models';
 
 @Component({
@@ -99,7 +99,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	storage_capacity = '';
 	subscriptions: Subscription = new Subscription;
 	template_data: API_TEMPLATE;
-	tags: Tag[] = [];
+	tags: TAG[] = [];
 	timezone: any;
 	title: string[] = [];
 	update_alias: FormGroup;

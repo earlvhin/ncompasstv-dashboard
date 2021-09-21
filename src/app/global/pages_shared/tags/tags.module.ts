@@ -6,6 +6,8 @@ import { GlobalModule } from '../../global.module';
 import { TagsComponent } from './tags.component';
 import { CreateTagComponent, EditTagComponent } from './dialogs';
 import { TagsTableComponent } from './components/tags-table/tags-table.component';
+import { TagsTabComponent } from './components/tags-tab/tags-tab.component';
+import { TagOwnersTabComponent } from './components/tag-owners-tab/tag-owners-tab.component';
 
 const DIALOGS = [
 	CreateTagComponent,
@@ -13,7 +15,13 @@ const DIALOGS = [
 ];
 
 @NgModule({
-	declarations: [ TagsComponent, DIALOGS, TagsTableComponent ],
+	declarations: [ 
+		DIALOGS, 
+		TagsComponent, 
+		TagOwnersTabComponent, 
+		TagsTableComponent, 
+		TagsTabComponent, 
+	],
 	entryComponents: [ DIALOGS ],
 	imports: [
 		GlobalModule,

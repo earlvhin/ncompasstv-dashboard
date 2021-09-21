@@ -7,22 +7,36 @@
 		</thead>
 		<tbody>
 			<tr *ngFor="let data of tableData; let i = index;">
-				<!-- TAGS DATA -->
+				<!-- TAGS ROW -->
 				<ng-container *ngIf="tableType === 'tags'; else tagOwnersData">
 					<td class="p-3">{{ i + 1 }}</td>
-					<td class="p-3">{{ data.name }}</td>
+					<!-- TAG NAME -->
+					<td class="p-3">
+						<a class="clickable" (click)="onClickTagName(data.name)">
+							{{ data.name }}
+						</a>
+					</td>
+					<!-- TAG COLOR -->
+					<td class="p-3">
+						<span class="tag-color-text" [style.backgroundColor]="data.tagColor">
+							{{ data.tagColor }}
+						</span>
+					</td>
 					<td class="p-3 action-buttons">
 						<mat-icon class="no-select" color="primary" (click)="onOpenDialog('edit_tag', data)">edit</mat-icon>
 						<mat-icon class="no-select text-danger" (click)="onDeleteTag(data.tagId)">delete</mat-icon>
 					</td>
 				</ng-container>
 
+				<!-- TAG OWNERS ROW -->
 				<ng-template #tagOwnersData>
 					<td class="p-3">{{ i + 1 }}</td>
+					<!-- OWNER NAME -->
 					<td class="p-3">
-						<a [routerLink]="[getOwnerLink(data.owner)]">
-							{{ data.owner.displayName }}
-						</a>
+						<a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
+					</td>
+					<td class="p-3">
+						{{ data.tagTypeName }}
 					</td>
 					<td class="p-3">
 						<!-- TAG OWNERS DATA -->

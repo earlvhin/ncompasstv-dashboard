@@ -8,7 +8,7 @@
 }
  */
 
-export interface TagType {
+export interface TAG_TYPE {
 	tagTypeId: number;
 	name: string;
 	dateCreated: string;

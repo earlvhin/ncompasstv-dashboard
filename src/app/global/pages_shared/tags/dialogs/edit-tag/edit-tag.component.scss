@@ -1,33 +1,4 @@
-#viewTagDialog {
-
-	.add-btn {
-		margin-right: 25%;
-	
-		i {
-			font-size: 12px;
-		}
-	}
-
-	.table-container {
-
-		.theme-table {
-
-			table {
-				.action-buttons {
-					text-align: center;
-			
-					mat-icon {
-						cursor: pointer;
-						font-size: 15px;
-					}
-				}
-			}
-		}
-
-	}
-
-	.spinner {
-		margin-top: 20%;
-	}
-
+.tag-color-text {
+	color: #ffffff;
+	text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
 }

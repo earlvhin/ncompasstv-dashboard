@@ -2,7 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
-import { Tag } from '../models/tag.model';
+import { TAG } from '../models/tag.model';
 
 @Injectable({
 	providedIn: 'root'
@@ -57,7 +57,7 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.tags_by_owner_id}${ownerId}`);
 	}
 
-	getTagsByNameAndType(name: string, typeId: number): Observable<{ tags: Tag[] }> {
+	getTagsByNameAndType(name: string, typeId: number): Observable<{ tags: TAG[] }> {
 		return this.getRequest(`${this.getters.tags_by_tag_name_and_type}?typeId=${typeId}&name=${name}`);
 	}
 
@@ -69,9 +69,19 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
 	}
 
-	searchOwnersByTagType(typeId: number, keyword = '') {
-		return this.getRequest(`${this.getters.search_tags}?typeid=${typeId}&search=${keyword}`)
+	searchOwnersByTagType(typeId = 0, keyword = null) {
+
+		let url = `${this.getters.search_tags}?typeid=${typeId}`;
+		if (keyword) url += `&search=${keyword}`;
+
+		return this.getRequest(url)
 			.map((response: { tags: { owner: any, tagTypeId: string, tags: any[] }[] }) => response.tags);
+	}
+
+	searchAllTags(keyword = '', typeId = 0) {
+		let url = `${this.getters.search_all_tags}?key=${keyword}`;
+		if (typeId > 0) url += `?typeId=${typeId}`;
+		return this.getRequest(url);
 	}
 
 	updateTag(tagId: number, name: string, tagColor: string) {

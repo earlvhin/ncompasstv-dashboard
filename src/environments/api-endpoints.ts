@@ -125,6 +125,7 @@ export const API_ENDPOINTS = {
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
 		search_tags: 'tag/searchtags',
+		search_all_tags: 'tag/search',
 		tag_types_by_type_id: 'tag/gettagsbytagtypeid?typeid=',
 		tag_types_get_all: 'tag/GetAllTypes',
 		tags_by_id: 'tag/gettagsbyid?tagid=',
