@@ -147,9 +147,40 @@
                                     <div *ngIf="!initial_load_license; else loader">
                                         <!-- BUTTONS ROW -->
                                         <div class="row pt-2">
-                                            <div class="col-lg-8">
+                                            <div class="col-lg-9">
                                                 <!-- <button mat-button mat-raised-button class="theme-btn mt-2 mr-2" (click)="reloadLicense()" [disabled]="searching_license"> <i class="fas fa-sync-alt"></i></button> -->
                                                 
+                                                <button mat-button mat-raised-button 
+                                                    class="theme-btn sm-text mr-2 h-45" 
+                                                    [matMenuTriggerFor]="licenseStatus" >
+                                                    <span class="button-label">Filter by License Status</span>
+                                                    <span class="fas fa-circle text-primary"></span>
+                                                </button>
+                                                <mat-menu #licenseStatus="matMenu">
+                                                    <button mat-menu-item (click)="filterTable('status', '1')">Online</button>
+                                                    <button mat-menu-item (click)="filterTable('status', '0')">Offline</button>
+                                                    <button mat-menu-item (click)="filterTable('activated', 'false')">Inactive</button>
+                                                </mat-menu>
+
+                                                <button mat-button mat-raised-button 
+                                                    class="theme-btn sm-text mr-2 h-45" 
+                                                    [matMenuTriggerFor]="timezone">
+                                                    <span class="button-label">Filter by Timezone</span>
+                                                    <span class="fas fa-sort"></span>
+                                                </button>
+                                                <mat-menu #timezone="matMenu">
+                                                    <button mat-menu-item (click)="filterTable('zone','Central')">Central</button>
+                                                    <button mat-menu-item (click)="filterTable('zone','Eastern')">Eastern</button>
+                                                    <button mat-menu-item (click)="filterTable('zone','Mountain')">Mountain</button>
+                                                    <button mat-menu-item (click)="filterTable('zone','Pacific')">Pacific</button>
+                                                </mat-menu>
+
+                                                <button mat-button mat-raised-button 
+                                                    class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
+                                                    <span class="button-label">Filter by User</span>
+                                                    <span class="fas fa-user"></span>
+                                                </button>
+
                                                 <button mat-button mat-raised-button 
                                                     class="theme-btn pi-control sm-text mr-2" 
                                                     [disabled]="searching_license" 
@@ -277,7 +308,7 @@
                                                     </button>
                                                 </ng-container>
                                             </div>
-                                            <div class="col-lg-4">
+                                            <div class="col-lg-3">
                                                 
                                                 <app-search-field
                                                     *ngIf="!initial_load_license"
@@ -289,6 +320,37 @@
                                                     (searched)="licenseFilterData($event)"
                                                     [api_search]="true"
                                                 ></app-search-field>
+                                            </div>
+                                        </div>
+                                        <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host">
+                                            <div class="col-lg-12">
+                                                <div class="d-flex align-items-center p-2 bg-gray-2" >
+                                                    <div class="filter-pills">
+                                                        <div class="filetype-pill pill" *ngIf="filters.label_status">
+                                                            License Status: <strong>{{filters.label_status}}</strong>
+                                                        </div>
+
+                                                        <div class="order-pill pill" *ngIf="filters.label_zone">
+                                                            Timezone: <strong>{{filters.label_zone}}</strong>
+                                                        </div>
+
+                                                        <div class="dealer-pill pill" *ngIf="filters.label_dealer">
+                                                            Dealer: <strong>{{filters.label_dealer}}</strong>
+                                                        </div>
+
+                                                        <div class="host-pill pill" *ngIf="filters.label_host">
+                                                            Host: <strong>{{filters.label_host}}</strong>
+                                                        </div>
+                                                    </div>
+                                                    <div class="control flex-even text-right">
+                                                        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                                                            <span class="button-label">
+                                                                Clear Filter
+                                                            </span>
+                                                            <span class="fas fa-times ml-2 sm-text"></span>
+                                                        </button>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row">

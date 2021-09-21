@@ -29,6 +29,8 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { isNgTemplate } from '@angular/compiler';
+import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
+
 
 @Component({
 	selector: 'app-single-dealer',
@@ -181,6 +183,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
 	];
+
+    filters: any = {
+        activated: "",
+        zone:"",
+        status:"",
+        dealer:"",
+        host:"",
+        label_status:"",
+        label_zone:"",
+        label_dealer: "",
+        label_host: ""
+    }
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -501,7 +515,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order).subscribe(
+			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				(response: { paging, statistics, message }) => {	
 
 					if (response.message) {
@@ -974,7 +988,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			case 'Licenses': 
 				this.subscription.add(
 					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
-					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order).subscribe(
+					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 						data => {
                             this.licenses_to_export = data.licenseTemplateZoneExports;
 							this.licenses_to_export.forEach((item, i) => {
@@ -1322,5 +1336,65 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	
     toggleCharts() {
         this.height_show = !this.height_show;
+    }
+
+    filterTable(type, value) {
+        switch(type) {
+            case 'status':
+                this.filters.status = value
+                this.filters.activated = "";
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                break;
+            case 'zone':
+                this.filters.zone = value
+                this.filters.label_zone = value;
+                break;
+            case 'activated':
+                this.filters.status = "";
+                this.filters.activated = value;
+                this.filters.label_status = 'Inactive';
+                break;
+            default:
+        }
+        this.getLicensesofDealer(1);
+    }
+
+    sortByUser() {
+		let dialog = this._dialog.open(UserSortModalComponent, {
+			width: '500px',
+            data: {
+                view: 'license',
+                is_dealer: true,
+                dealer_id: this.dealer_id,
+                dealer_name: this.dealer_name
+            }
+		})
+
+		dialog.afterClosed().subscribe(
+			data => {
+				if (data) {
+					if(data.host.id) {
+                        this.filters.host = data.host.id;
+                        this.filters.label_host = data.host.name;
+                    }
+                    this.getLicensesofDealer(1);
+				}
+			}
+		)
+	}
+
+    clearFilter() {
+        this.filters = {
+            activated: "",
+            zone:"",
+            status:"",
+            dealer:"",
+            host:"",
+            label_status:"",
+            label_zone:"",
+            label_dealer: "",
+            label_host: ""
+        }
+        this.getLicensesofDealer(1);
     }
 }
