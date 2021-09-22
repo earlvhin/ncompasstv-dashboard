@@ -37,15 +37,15 @@
 									<div class="col-sm-6">
 										<mat-form-field appearance="fill" appDefaultDateFormat>
 											<mat-label>Start Date</mat-label>
-											<input matInput formControlName="from" (dateInput)="onSelectDate($event.value, 'start')" [matDatepicker]="startDatePicker" readonly>
+											<input matInput formControlName="from" (dateInput)="onSelectDate($event.value, 'start')" [matDatepicker]="startDatePicker" [min]="today" readonly>
 											<mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
 											<mat-datepicker #startDatePicker></mat-datepicker>
 										</mat-form-field>
 									</div>
 									<div class="col-sm-6">
-										<mat-form-field appearance="fill" appDefaultDateFormat>
+										<mat-form-field appearance="fill" appDefaultDateFormat *ngIf="start_date">
 											<mat-label>End Date</mat-label>
-											<input matInput formControlName="to" (dateInput)="onSelectDate($event.value, 'end')" [matDatepicker]="endDatePicker" readonly>
+											<input matInput formControlName="to" (dateInput)="onSelectDate($event.value, 'end')" [matDatepicker]="endDatePicker" [min]="form.controls.from.value" readonly>
 											<mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
 											<mat-datepicker #endDatePicker></mat-datepicker>
 										</mat-form-field>

@@ -1,37 +1,38 @@
 import { Routes } from '@angular/router';
-import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
-import { DealerLayoutComponent } from './dealer-layout/dealer-layout.component'
-import { DashboardComponent } from './pages/dashboard/dashboard.component';
+
 import { AdvertisersComponent } from './pages/advertisers/advertisers.component';
-import { FeedsComponent } from './pages/feeds/feeds.component';
-import { HostsComponent } from './pages/hosts/hosts.component';
-import { LicensesComponent } from './pages/licenses/licenses.component';
-import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
-import { PlaylistsComponent } from './pages/playlists/playlists.component';
-import { ScreensComponent } from './pages/screens/screens.component';
 import { BillingsComponent } from './pages/billings/billings.component';
-import { ReportsComponent } from './pages/reports/reports.component';
-import { UsersComponent } from './pages/users/users.component';
-import { CreateHostComponent } from 'src/app/global/pages_shared/create-host/create-host.component';
-import { SingleHostComponent } from 'src/app/global/pages_shared/single-host/single-host.component';
-import { SingleLicenseComponent } from 'src/app/global/pages_shared/single-license/single-license.component';
-import { SingleAdvertiserComponent } from 'src/app/global/pages_shared/single-advertiser/single-advertiser.component';
 import { CreateAdvertiserComponent } from 'src/app/global/pages_shared/create-advertiser/create-advertiser.component';
-import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
-import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
-import { MediaLibraryComponent } from '../../global/pages_shared/media-library/media-library.component';
-import { SinglePlaylistComponent } from 'src/app/global/pages_shared/single-playlist/single-playlist.component';
-import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
-import { SingleContentComponent } from 'src/app/global/pages_shared/single-content/single-content.component';
+import { CreateHostComponent } from 'src/app/global/pages_shared/create-host/create-host.component';
+import { CreatePlaylistComponent } from '../../global/pages_shared/create-playlist/create-playlist.component'; 
 import { CreateScreenComponent } from 'src/app/global/pages_shared/create-screen/create-screen.component';
 import { CreateUserComponent } from 'src/app/global/pages_shared/create-user/create-user.component';
 import { CreateUserTypeComponent } from 'src/app/global/pages_shared/create-user-type/create-user-type.component';
-import { CreatePlaylistComponent } from '../../global/pages_shared/create-playlist/create-playlist.component'; 
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
+import { DealerLayoutComponent } from './dealer-layout/dealer-layout.component'
 import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
-import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
+import { FeedsComponent } from 'src/app/global/pages_shared/feeds/feeds.component';
 import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
+import { HostsComponent } from './pages/hosts/hosts.component';
+import { LicensesComponent } from './pages/licenses/licenses.component';
+import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
+import { MediaLibraryComponent } from '../../global/pages_shared/media-library/media-library.component';
+import { PlaylistsComponent } from './pages/playlists/playlists.component';
+import { ReportsComponent } from './pages/reports/reports.component';
+import { ScreensComponent } from './pages/screens/screens.component';
+import { SingleAdvertiserComponent } from 'src/app/global/pages_shared/single-advertiser/single-advertiser.component';
+import { SingleContentComponent } from 'src/app/global/pages_shared/single-content/single-content.component';
+import { SingleHostComponent } from 'src/app/global/pages_shared/single-host/single-host.component';
+import { SingleLicenseComponent } from 'src/app/global/pages_shared/single-license/single-license.component';
+import { SinglePlaylistComponent } from 'src/app/global/pages_shared/single-playlist/single-playlist.component';
+import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
+import { SingleUserComponent } from 'src/app/global/pages_shared/single-user/single-user.component';
+import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
+import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
+import { UsersComponent } from './pages/users/users.component';
 
 import { AuthGuard, OwnerGuard } from 'src/app/global/guards';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 export const DEALER_ROUTES: Routes = [
 	{
