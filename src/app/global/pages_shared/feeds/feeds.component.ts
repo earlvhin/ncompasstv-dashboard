@@ -61,6 +61,14 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		return this._auth.current_user_value;
 	}
 
+	get isCurrentRoleDealer() {
+		return this.currentRole === 'dealer';
+	}
+
+	get isCurrentRoleSubDealer() {
+		return this.currentRole === 'sub-dealer';
+	}
+
 	filterData(keyword: string): void {
 		this.search_data = '';
 		if (keyword && keyword.length > 0) this.search_data = keyword;
@@ -74,11 +82,13 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	}
 
 	getFeeds(page: number): void {
+
 		this.searching = true;
 		this.feed_data = [];
+		let request = this._feed.get_feeds(page, this.search_data, this.sort_column, this.sort_order);
+		if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) request = this._feed.get_feeds_by_dealer(this.currentUser.roleInfo.dealerId, page, this.search_data);
 
-		this._feed.get_feeds(page, this.search_data, this.sort_column, this.sort_order)
-			.pipe(takeUntil(this._unsubscribe))
+		request.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { cFeeds: API_FEED[], paging: PAGING, message?: string }) => {
 					
@@ -89,8 +99,9 @@ export class FeedsComponent implements OnInit, OnDestroy {
 						return;
 					}
 
-					this.feed_data = this.mapToTableFormat(response.paging.entities);
-					this.filtered_data = this.mapToTableFormat(response.paging.entities);
+					const mappedData = this.mapToTableFormat(response.paging.entities); 
+					this.feed_data = [...mappedData];
+					this.filtered_data = [...mappedData];
 					this.paging_data = response.paging;
 				},	
 				error => console.log('Error retrieving feeds', error)
@@ -122,19 +133,25 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	private getFeedsTotal(): void {
 
-		this._feed.get_feeds_total()
-			.pipe(takeUntil(this._unsubscribe))
+		let request = this._feed.get_feeds_total();
+
+		if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) {
+			const id = this.currentUser.roleInfo.dealerId;
+			request = this._feed.get_feeds_total_by_dealer(id);
+		}
+
+		request.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
 					this.feeds_stats = {
 						total_value : response.total,
-						total_label: "Feed(s)",
+						total_label: 'Feed(s)',
 						this_week_value: response.newFeedsThisWeek,
-						this_week_value_label: "Feed(s)",
-						this_week_value_description: "New this week",
+						this_week_value_label: 'Feed(s)',
+						this_week_value_description: 'New this week',
 						last_week_value: response.newFeedsLastWeek,
-						last_week_value_label: "Feed(s)",
-						last_week_value_description: "New this week"
+						last_week_value_label: 'Feed(s)',
+						last_week_value_description: 'New this week'
 					}
 				}
 			);
@@ -153,8 +170,8 @@ export class FeedsComponent implements OnInit, OnDestroy {
 					{ value: contentId, link: null , editable: false, hidden: true },
 					{ value: feedId, link: null, editable: false, hidden: true },
 					{ value: count++, link: null , editable: false, hidden: false },
-					{ value: title, link: `/administrator/media-library/${contentId}`, editable: false, hidden: false },
-					{ value: businessName, link: `/administrator/dealers/${data.dealerId}`, id: dealerId, editable: false, hidden: false },
+					{ value: title, link: `/${this.currentRole}/media-library/${contentId}`, editable: false, hidden: false },
+					{ value: businessName, link: `/${this.currentRole}/dealers/${data.dealerId}`, id: dealerId, editable: false, hidden: false },
 					{ value: data.classification ? classification : '--', link: null, editable: false, hidden: false },
 					{ value: createdByName, editable: false, hidden: false },
 					{ value: this._date.transform(dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false },
@@ -163,6 +180,10 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				);
 			}
 		);
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 
 }
