@@ -74,9 +74,16 @@
                         </ng-template>
 
                         <div class="mt-1 md-text mb-0" *ngIf="host_data">
-                            <div class="cursor-pointer text-dark" (click)="onShowNotes()">
+                            <div class="cursor-pointer text-dark" (click)="onShowNotes('notes')">
                                 <strong>Notes: </strong>
-                                <span class="ml-2">{{ partialNotes() }}</span>
+                                <span class="ml-2">{{ partialNotes('notes') }}</span>
+                                <i class="ml-3 fa fa-external-link"></i>
+                            </div>
+                        </div>
+                        <div class="mt-1 md-text mb-0" *ngIf="host_data">
+                            <div class="cursor-pointer text-dark" (click)="onShowNotes('others')">
+                                <strong>Others: </strong>
+                                <span class="ml-2">{{ partialNotes('others') }}</span>
                                 <i class="ml-3 fa fa-external-link"></i>
                             </div>
                         </div>

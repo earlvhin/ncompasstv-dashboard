@@ -1,6 +1,6 @@
 import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { trigger, style, animate, transition } from '@angular/animations';
-import { AbstractControl, FormBuilder, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -35,7 +35,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		{ value: 6, name: 'Sat', checked: false },
 	];
 
-	form = this.form_builder.group(
+	form : FormGroup = this.form_builder.group(
 		{
 			'type': ['', Validators.required],
 			'from': ['', Validators.required], 
@@ -58,6 +58,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	is_ready = false;
 	selected_days: any[] = [];
 	title = 'Set Schedule';
+    today = new Date();
 	warning_text = '';
 
 	private _days: AbstractControl = this.form.get('days');
@@ -311,7 +312,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		const { playlistContentId, playlistContentsSchedule } = this.dialog_data.content;
 
 		if (this.is_custom_play) {
-			console.log('play time start', playTimeStart);
 
 			result = {
 				days,

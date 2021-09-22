@@ -53,7 +53,6 @@ export class ThumbnailCardComponent implements OnInit {
 
 	ngOnInit() {
 		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		console.log('is view only?', this.is_view_only);
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 
 		if (!this.disconnect_to_socket && this.filetype == 'webm' && this.is_converted == 0) {
