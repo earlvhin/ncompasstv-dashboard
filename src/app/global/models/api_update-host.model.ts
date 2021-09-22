@@ -13,6 +13,7 @@ export class API_UPDATE_HOST {
 	storeHours: string;
     timezone: string;
     notes?: string;
+    others?: string;
     vistarVenueId: string;
 
 	constructor(hostId: string, dealerId: string, name: string, latitude: string, 

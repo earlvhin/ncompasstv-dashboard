@@ -119,18 +119,28 @@ export class BannerComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	onShowNotes(): void {
-		this.showNotesModal('Notes', this.host_data.notes, 'textarea', 500);
+	onShowNotes(button) {
+        if(button == 'notes') {
+            this.showNotesModal('Notes', this.host_data.notes, 'textarea', 500);
+        } else {
+            this.showNotesModal('Others', this.host_data.others, 'textarea', 500);
+        }
 	}
 
-	partialNotes(): string {
-		const notes = this.host_data.notes;
-
-		if (!notes || notes.trim().length <= 0) 
-			return '';
-
-		return notes.substr(0, 41);
-	}
+    partialNotes(button) {
+        if (button == 'notes') {
+            const notes = this.host_data.notes;
+            if (!notes || notes.trim().length <= 0)
+            return '';
+            return notes.substr(0, 41);
+        } else {
+            const others = this.host_data.others;
+            if (!others || others.trim().length <= 0)
+            return '';
+            return others.substr(0, 41);
+        }
+        
+    }
 
 	showDealerContent() {
 

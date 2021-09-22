@@ -155,8 +155,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
 		{ name: 'City', sortable: true, column:'City', key: 'city'},
 		{ name: 'Postal Code', sortable: true, column:'PostalCode', key: 'postalCode'},
-		{ name: 'License Count', sortable: true, column:'TotalLicences', key: 'totalLicenses'},
-		{ name: 'Status', sortable: true, column: 'Status',no_export: true},
+		{ name: 'License Count', sortable: true, column:'TotalLicences', key: 'totalLicences'},
+		{ name: 'Vistar Venue ID', no_show:true, key: 'vistarVenueId'},
+		{ name: 'Notes', no_show:true, key: 'notes'},
+		{ name: 'Others', no_show:true, key: 'others'},
+        { name: 'Status', sortable: true, column: 'Status',no_export: true},
 	];
 
 	license_table_columns = [
@@ -1004,9 +1007,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 			case 'Hosts':
 				this.subscription.add(
-					this._host.export_host(id).subscribe(
+					this._host.get_host_by_dealer_id_with_sort(this.dealer_id, 1, this.search_data, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe(
 						data => {
-							this.hosts_to_export = data.hosts;
+							this.hosts_to_export = data.paging.entities;
 							this.hosts_to_export.forEach((item, i) => {
 								this.worksheet.addRow(item).font ={
 									bold: false
