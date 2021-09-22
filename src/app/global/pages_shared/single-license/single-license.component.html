@@ -657,6 +657,8 @@
 				<mat-tab label="Analytics">
 					<ng-template matTabContent>
 						<app-analytics-tab
+							*ngIf="content_per_zone.length > 0"
+							[content_per_zone]="content_per_zone"
 							[license_id]="license_id"
 							[screen]="screen"
 							[realtime_data]="realtime_data">
