@@ -3,8 +3,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
-import { API_CONTENT, UI_SINGLE_SCREEN } from 'src/app/global/models';
-import { ContentService } from 'src/app/global/services';
+import { API_CONTENT, UI_CONTENT_PER_ZONE, UI_SINGLE_SCREEN } from '../../../../../global/models';
+import { ContentService } from '../../../../../global/services';
 
 @Component({
 	selector: 'app-analytics-tab',
@@ -13,6 +13,7 @@ import { ContentService } from 'src/app/global/services';
 })
 export class AnalyticsTabComponent implements OnInit, OnDestroy {
 
+	@Input() content_per_zone: UI_CONTENT_PER_ZONE[] = []
 	@Input() license_id: string;
 	@Input() screen: UI_SINGLE_SCREEN;
 	@Input() realtime_data: EventEmitter<any>;
@@ -27,6 +28,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	queried_date: string;
 	selected_display_mode: string;
 	selected_month = this.default_selected_month;
+	selected_zone: number = -1;
 	yearly_chart_updating = false;
 	
 	daily_content_count: API_CONTENT[];
@@ -37,8 +39,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	
 	display_mode = [
 		{ value: 'daily', viewValue: 'Daily' },
-		{ value: 'monthly', viewValue: 'Monthly' },
-		// { value: 'yearly', viewValue: 'Yearly' }
+		{ value: 'monthly', viewValue: 'Monthly' }
 	];
 
 	months = [
@@ -63,12 +64,22 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	) { }
 	
 	ngOnInit() {
-		this.onSelectDisplayMode('monthly');
+		this.onSelectDisplayMode('daily');
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	inZone(cc: API_CONTENT) {
+		if (this.selected_zone == -1) return true;
+
+		if (this.content_per_zone[this.selected_zone].contents.filter(i => i.content_id === cc.contentId).length > 0) {
+			return true;
+		} else {
+			return false;
+		};
 	}
 
 	onSelectDate(value: any): void {
@@ -77,12 +88,10 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 		this.current_date_display = currentDate.format('MMMM D, YYYY');
 
 		if (this.selected_display_mode === 'daily') {
-
 			this.monthly_chart_updating = true;
 			this.daily_chart_updating = true;
 			this.getDailyContentReport(currentDate.format('YYYY-MM-DD'));
 			return;
-
 		}
 	
 		this.yearly_chart_updating = true;
@@ -136,6 +145,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_CONTENT[]) => {
+					console.log(response)
 					this.daily_content_count = response;
 					this.daily_chart_updating = false;
 					this.destroy_daily_charts = false;
