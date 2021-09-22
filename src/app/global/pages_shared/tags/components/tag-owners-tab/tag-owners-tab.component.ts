@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { map, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { API_ADVERTISER, API_DEALER, API_HOST, API_LICENSE, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
@@ -35,6 +35,7 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 		this.currentFilter = defaultType.name;
 		this.searchOwnerTags(this.searchKey, 0);
 		this.subscribeToRefreshTableData();
+		this.subscribeToSearch();
 	}
 
 	ngOnDestroy() {
@@ -112,6 +113,13 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 		this._tag.onRefreshTagOwnersTable
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(() => this.searchOwnerTags());
+	}
+
+	private subscribeToSearch(): void {
+
+		this.searchFormControl.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+			.subscribe(keyword => this.searchOwnerTags(keyword));
+
 	}
 	
 }
