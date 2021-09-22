@@ -81,8 +81,11 @@ export class FeedService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_slide_feed}`, feed_data, this.httpOptions);
 	}
 
+	update_news_feed(feed_data) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_news_slide_feed}`, feed_data, this.httpOptions);
+	}
+
 	update_weather_feed(feed_data) {
-		console.log(feed_data);
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_weather_feed}`, feed_data, this.httpOptions);
 	}
 	
@@ -97,5 +100,9 @@ export class FeedService {
 
 	validate_weather_zip(zip: string) {
 		return this._http.post(`${environment.base_uri}${environment.getters.validate_weather_zip}${zip}`, null, this.httpOptions).pipe(map((data: any) => data.weatherResponse));
+	}
+
+	validate_rss_url(url: string) {
+		return this._http.post(`${environment.base_uri}${environment.getters.validate_rss_url}${url}`, null, this.httpOptions);
 	}
 }

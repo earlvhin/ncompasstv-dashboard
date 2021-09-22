@@ -14,7 +14,7 @@ data-placement="top" [attr.title]="removeFilenameHandle(content.content_data.fil
             <div class="flex-even py-3">
 				<h5 data-toggle="tooltip">
                     <span *ngIf="content.content_data.file_type !== 'feed'; else feed">
-                        {{ content.content_data.file_name | nohandle }}
+                        {{ (content.content_data.file_name | nohandle) | substring:20 }}
                     </span>
 
                     <ng-template #feed>

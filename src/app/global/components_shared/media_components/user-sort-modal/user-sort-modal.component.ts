@@ -8,6 +8,8 @@ import { API_HOST } from 'src/app/global/models/api_host.model';
 import { API_ADVERTISER } from 'src/app/global/models/api_advertiser.model';
 import { AuthService } from '../../../services/auth-service/auth.service';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
+import { Inject } from '@angular/core';
+import { MAT_DIALOG_DATA} from '@angular/material';
 
 @Component({
 	selector: 'app-user-sort-modal',
@@ -46,6 +48,7 @@ export class UserSortModalComponent implements OnInit {
 	initial_load_advertiser: boolean = false;
 	is_dealer: boolean = false;
 	is_search: boolean = false;
+    is_license: boolean = false;
 	loading_data: boolean = true;
 	loading_data_advertiser: boolean = true;
 	loading_data_host: boolean = true;
@@ -66,10 +69,20 @@ export class UserSortModalComponent implements OnInit {
 		private _dealer: DealerService,
 		private _host: HostService,
 		private _advertiser: AdvertiserService,
-		private _auth: AuthService
+		private _auth: AuthService,
+        @Inject(MAT_DIALOG_DATA) public data: any
 	) { }
 
 	ngOnInit() {
+        if(this.data == 'license' || this.data.view == 'license') {
+            this.is_license = true;
+            if(this.data.is_dealer) {
+                this.is_dealer = true;
+                this.dealer_id = this.data.dealer_id;
+                this.dealer_name = this.data.dealer_name;
+                this.dealerSelected(this.data.dealer_id)
+            }
+        }
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];

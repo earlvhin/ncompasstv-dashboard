@@ -55,11 +55,18 @@
     color: $light;
 }
 
+.responsive-size {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
 .generated-feed-demo {
     background: #e0e0e0;
     min-height: 250px;
     position: relative;
     width: 100%;
+    padding-top: 56.25%;
 
     .spinner-display {
         position: absolute;
@@ -67,12 +74,17 @@
         left: 0;
         right: 0;
         margin: auto;
-        z-index: 6;
+        z-index: 8;
     }
 
     img {
-        position: relative;
-        z-index: 7
+        position: absolute;
+        z-index: 9;
+
+        &.preview-image {
+            left: 0;
+            top: 0;
+        }
     }
 }
 
@@ -675,4 +687,8 @@ agm-map {
 
 .overflow-auto {
     overflow: auto;
+}
+
+.h-45 {
+    height: 45px;
 }

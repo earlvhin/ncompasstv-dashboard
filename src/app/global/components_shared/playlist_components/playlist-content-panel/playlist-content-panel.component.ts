@@ -329,7 +329,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		// console.log('DATA FROM OPTIONS COMPONENTS', data);
 		
-		let creditsUpdate: { playlistContentId: string, credits: number } = null;
+		let creditsUpdate: { playlistContentId: string, licenseId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
 		let creditsStatusUpdate: CREDITS_STATUS = null;
 		const { content, original_credits } = data;
@@ -337,19 +337,19 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		if (content) {
 
-			if (content.frequency === 2 || content.frequency === 3) {
+			if (content.frequency === 1 || content.frequency === 2 || content.frequency === 3) {
 				const { frequency, playlistContentId } = content;
 				frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
 			}
 
 			if (!original_credits || original_credits.balance === 0) {
 				if (content.playlistContentCredits) {
-					let { credits } = content.playlistContentCredits;
+					let { credits, licenseId } = content.playlistContentCredits;
 					const { playlistContentId } = content;
 					const maxCredits = 1000000;
 		
 					if (credits > maxCredits) credits = maxCredits; 
-					creditsUpdate = { playlistContentId, credits };
+					creditsUpdate = { playlistContentId, licenseId, credits };
 				}
 			}
 
@@ -566,13 +566,21 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					async (data: any) => {
 
 						if (frequencyUpdate) {
+
 							const { frequency, playlistContentId, playlistId } = frequencyUpdate;
-							await this._content.set_frequency(frequency, playlistContentId, playlistId).toPromise();
+							let request = this._content.set_frequency(frequency, playlistContentId, playlistId); 
+
+							if (frequency === 1) {
+								request = this._content.revert_frequency(playlistContentId);
+							}
+							
+							await request.toPromise();
+
 						}
 
 						if (creditsUpdate) {
-							const { playlistContentId, credits } = creditsUpdate;
-							await this._content.update_play_credits(playlistContentId, credits).toPromise();
+							const { playlistContentId, licenseId, credits } = creditsUpdate;
+							await this._content.update_play_credits(playlistContentId, licenseId, credits).toPromise();
 						}
 
 						if (creditsStatusUpdate) {

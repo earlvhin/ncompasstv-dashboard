@@ -87,7 +87,11 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 							}
 						} else if (this.date_format === 'monthly') {
 							this.data_labels.push(this._date.transform(i.dateTime, 'MMM d'));
-						} else {
+						//For Resource Logs
+						} else if (this.date_format === 'dateRange'){
+							this.data_labels.push(this._date.transform(i.dateTime, 'MMM d hh:mm a'));
+						}
+						else {
 							this.data_labels.push(this._date.transform(i.dateTime, 'h a'));
 						}
 						this.data_values.push(i.count);
@@ -170,6 +174,16 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 					}
 				}
 			});
+
+			//For Resource Logs
+			if(this.date_format === 'dateRange')
+			{
+				this.chart.options.plugins.datalabels.formatter = function(value, ctx) {
+						return Math.round(value) + '%'
+				}
+				this.chart.update();
+			}
+				
 		}
 	}
 

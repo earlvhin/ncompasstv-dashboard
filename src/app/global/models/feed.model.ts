@@ -1,19 +1,17 @@
 export interface FEED {
-	feedId: string;
+	businessName: string;
+	classification: string;
 	contentId: string;
 	createdBy: string;
 	createdByName: string;
 	dateCreated: string;
 	dealerId: string;
-	feedDescription: string;
-	classification: string;
-	feedTitle: string;
-	feedUrl: string;
+	description: string;
+	feedId: string;
 	fileType: string;
-	thumbnail: string;
-	businessName: string;
 	prefix: string;
 	refDealerId: string;
 	title: string;
 	url: string;
 }
+

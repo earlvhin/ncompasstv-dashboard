@@ -105,13 +105,13 @@ export class UI_PLAYINGWHERE_CONTENT {
     license_id: object;
     index: object;
     license_alias: object;
-    screen_id: object;
+    host: object;
     screen_name: object;
-    constructor(license_id: object, index: object, license_alias: object, screen_id:object, screen_name: object) {
+    constructor(license_id: object, index: object, license_alias: object, host: object, screen_name: object) {
         this.license_id = license_id;
         this.index = index;
         this.license_alias = license_alias;
-        this.screen_id = screen_id;
+        this.host = host;
         this.screen_name = screen_name;
     }
 }

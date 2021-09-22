@@ -41,8 +41,8 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses(page, key, column, order, pageSize = 15) {
-        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize })
+	get_all_licenses(page, key, column, order, pageSize, status?, activated?, zone?, dealer?, host?) {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
@@ -77,8 +77,8 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
 	}
 
-	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15) {
-		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize })
+	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, activate?, zone?, host?) {
+		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activate, timezone: zone, hostId:host })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
@@ -98,8 +98,8 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealer_licenses}${id}`, this.httpOptions);
 	}
 	
-    get_license_to_export_duration(id,key,column, order) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}&search=${key}&sortColumn=${column}&sortOrder=${order}`, this.httpOptions);
+    get_license_to_export_duration(id,key,column, order, pageSize?, status?, activate?, zone?, host?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}&search=${key}&sortColumn=${column}&sortOrder=${order}&pageSize=${pageSize}&piStatus=${status}&active=${activate}&timeZone=${zone}&hostId=${host}`, this.httpOptions);
 	}
 
 	get_license_total_per_dealer(id) {
@@ -241,6 +241,10 @@ export class LicenseService {
 
 	set_speedtest_status(data: any) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_speedtest_settings}`, data, this.httpOptions);
+	}
+
+	set_resource_status(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_resource_settings}`, data, this.httpOptions);
 	}
 
 	protected get baseUri() {

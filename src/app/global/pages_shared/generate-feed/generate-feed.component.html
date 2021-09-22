@@ -53,13 +53,23 @@
                             </app-weather-form>
                         </div>
                         <!-- End: Weather Maker -->
+
+                        <!-- Begin: News Maker -->
+                        <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'News'">
+                            <app-news-form 
+                            (news_feed_data)="structureNewsFeedToGenerate($event)"
+                            [edit_news_data]="fetched_feed ? fetched_feed.feedNews : null"
+                            [selected_dealer]="selected_dealer">
+                            </app-news-form>
+                        </div>
+                        <!-- End: News Maker -->
                     </mat-step>
                     <!-- End: Step 2 -->
 
                     <!-- Begin: Step 4 -->
                     <mat-step>
                         <ng-template matStepLabel>Preview and Save</ng-template>
-                        <div *ngIf="feed_items.length > 0 || generated_weather_feed; else no_feed_content">
+                        <div *ngIf="feed_items.length > 0 || generated_weather_feed || generated_news_feed; else no_feed_content">
                             <div class="row mb-5 mt-5">
                                 <div class="col-lg-12 text-center">
                                     <h3 class="mb-1">Here's a preview of your customized feed.</h3>
@@ -97,6 +107,16 @@
                                         <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedWeatherFeed()">Save Weather Feed</button>
                                     </ng-container>
                                     <!-- End: Weather Feed Demo -->
+
+                                    <!-- Begin: Weather Feed Demo -->
+                                    <ng-container *ngIf="generated_news_feed && setSelectedFeedType(feed_info.feedTypeId) === 'News'">
+                                        <app-news-demo
+                                        [news_data]="generated_news_feed">
+                                        </app-news-demo>
+
+                                        <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedNewsFeed()">Save News Feed</button>
+                                    </ng-container>
+                                    <!-- End: Weather Feed Demo -->
                                 </div>
                             </div>
                         </div>
@@ -106,7 +126,7 @@
 
                 <ng-template #no_feed_content>
                     <div class="bg-gray p-5 text-center mt-5">
-                        <h3>No Feed Items Available, Go Back to Step 2 - Feed Content</h3>
+                        <h3>Incomplete Requirements, Go Back to Step 2 - Feed Content</h3>
                     </div>
                 </ng-template>
 

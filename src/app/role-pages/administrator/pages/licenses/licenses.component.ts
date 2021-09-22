@@ -9,6 +9,7 @@ import { DealerService } from '../../../../global/services/dealer-service/dealer
 import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
 import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-license-by-dealer.model';
 import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
+import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import * as Excel from 'exceljs';
@@ -51,6 +52,18 @@ export class LicensesComponent implements OnInit {
 	workbook_generation: boolean = false;
 	worksheet: any;
 
+    filters: any = {
+        activated: "",
+        zone:"",
+        status:"",
+        dealer:"",
+        host:"",
+        label_status:"",
+        label_zone:"",
+        label_dealer: "",
+        label_host: ""
+    }
+
 	// UI Table Column Header
 	dealers_table_column: string[] = [
 		'#',
@@ -86,7 +99,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId' },
-		{ name: 'Password', sortable: false, column:'TemplateName', key:'templateName'},		
+		{ name: 'Password', sortable: false, key:'password'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column:'DateCreated'},
 	]
@@ -115,7 +128,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     getColumnsAndOrder(data) {
-        console.log({data:data})
 		this.sort_column = data.column;
 		this.sort_order = data.order;
 		this.getLicenses(1);
@@ -134,7 +146,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.licenses_data = [];    
         this.subscription.add(
-			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order).subscribe(
+			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
 				data => {
                     this.paging_data_licenses = data.paging;
                     if (data.licenses) {
@@ -160,6 +172,50 @@ export class LicensesComponent implements OnInit {
             this.getLicenses(1);
         }
     }
+
+    filterTable(type, value) {
+        switch(type) {
+            case 'status':
+                this.filters.status = value
+                this.filters.activated = "";
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                break;
+            case 'zone':
+                this.filters.zone = value
+                this.filters.label_zone = value;
+                break;
+            case 'activated':
+                this.filters.status = "";
+                this.filters.activated = value;
+                this.filters.label_status = 'Inactive';
+                break;
+            default:
+        }
+        this.getLicenses(1);
+    }
+
+    sortByUser() {
+		let dialog = this._dialog.open(UserSortModalComponent, {
+			width: '500px',
+            data: 'license'
+		})
+
+		dialog.afterClosed().subscribe(
+			data => {
+				if (data) {
+                    if(data.dealer.id) {
+                        this.filters.dealer = data.dealer.id;
+                        this.filters.label_dealer = data.dealer.name;
+                    }
+					if(data.host.id) {
+                        this.filters.host = data.host.id;
+                        this.filters.label_host = data.host.name;
+                    }
+                    this.getLicenses(1);
+				}
+			}
+		)
+	}
 
 	filterData(e, tab) {
         switch(tab) {
@@ -271,10 +327,10 @@ export class LicensesComponent implements OnInit {
 						hidden: false, 
 						isImage: true
 					},
-					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, compressed: true, editable: false, hidden: false, status: true},
+					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
-					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, editable: false, hidden: false},
-					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: false, label: 'License Alias', id: l.licenseId, hidden: false },
+					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: false, new_tab_link: 'true', label: 'License Alias', id: l.licenseId, hidden: false },
 					{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
 					{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
@@ -292,6 +348,21 @@ export class LicensesComponent implements OnInit {
 			}
 		);
 	}
+
+    clearFilter() {
+        this.filters = {
+            activated: "",
+            zone:"",
+            status:"",
+            dealer:"",
+            host:"",
+            label_status:"",
+            label_zone:"",
+            label_dealer: "",
+            label_host: ""
+        }
+        this.getLicenses(1);
+    }
 
     splitKey(key) {
         this.splitted_text = key.split("-");
@@ -323,9 +394,8 @@ export class LicensesComponent implements OnInit {
 
     getDataForExport(): void {
         this.pageSize = 0;
-        this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0).subscribe(
+        this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
             data => {
-                console.log("DATA", data)
                 if(!data.message) {
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
                     this.licenses_to_export = data.licenses;

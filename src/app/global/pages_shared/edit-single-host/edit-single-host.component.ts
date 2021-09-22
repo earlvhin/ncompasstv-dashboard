@@ -125,7 +125,14 @@ export class EditSingleHostComponent implements OnInit {
 			control: 'notes',
 			placeholder: 'Enter your notes here...',
 			type: 'textarea',
-			col: 'col-lg-12'
+			col: 'col-lg-6'
+		},
+        {
+			label: 'Others',
+			control: 'others',
+			placeholder: 'Enter your others here...',
+			type: 'textarea',
+			col: 'col-lg-6'
 		}
 	];
 
@@ -251,7 +258,8 @@ export class EditSingleHostComponent implements OnInit {
 			lat: ['', Validators.required],
 			timezone: ['', Validators.required],
 			vistar_venue_id: ['', Validators.required],
-			notes: ['']
+			notes: [''],
+			others: [''],
 		});
 
 		this.getTimezones();
@@ -338,6 +346,7 @@ export class EditSingleHostComponent implements OnInit {
 		this.initial_dealer = data.dealerId;
 		this.f.timezone.setValue(time.id);
 		this.f.notes.setValue(data.notes);
+		this.f.others.setValue(data.others);
 		this.f.vistar_venue_id.setValue(data.vistarVenueId)
 	}
 
@@ -372,6 +381,10 @@ export class EditSingleHostComponent implements OnInit {
 
 		if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
 			newHostPlace.notes = this.f.notes.value;
+		}
+
+        if (this.f.others.value && this.f.others.value.trim().length > 0) {
+			newHostPlace.others = this.f.others.value;
 		}
 
 		if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);

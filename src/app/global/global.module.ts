@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
@@ -93,6 +95,8 @@ import { NewSubDealerComponent } from './components_shared/user_components/user-
 import { NewTechrepComponent } from './components_shared/user_components/user-forms/new-techrep/new-techrep.component';
 import { NewZoneComponent } from './components_shared/zone_components/new-zone/new-zone.component';
 import { NewZoneModalComponent } from './components_shared/zone_components/new-zone-modal/new-zone-modal.component';
+import { NewsDemoComponent } from './components_shared/feed_components/news-demo/news-demo.component';
+import { NewsFormComponent } from './components_shared/feed_components/news-form/news-form.component';
 import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
@@ -129,8 +133,10 @@ import { SingleContentComponent } from './pages_shared/single-content/single-con
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
 import { SingleHostComponent } from './pages_shared/single-host/single-host.component';
+// import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
+import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
 import { SingleUserComponent } from './pages_shared/single-user/single-user.component';
 import { SliderFormComponent } from './components_shared/feed_components/slider-form/slider-form.component';
 import { SpinnerComponent } from './components_shared/page_components/spinner/spinner.component';
@@ -152,6 +158,7 @@ import { WarningPopupComponent } from './components_shared/page_components/warni
 import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
+import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -193,6 +200,7 @@ const ngComponents = [
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
 	CategoryModalComponent,
+	CloneFeedDialogComponent,
 	CloneFeedDialogComponent,
 	ClonePlaylistComponent,
 	CloneScreenComponent,
@@ -236,6 +244,7 @@ const ngComponents = [
 	FeedMediaComponent,
 	FeedDemoComponent,
 	FeedInfoComponent,
+	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
@@ -269,6 +278,8 @@ const ngComponents = [
 	NewTechrepComponent,
 	NewZoneComponent,
 	NewZoneModalComponent,
+	NewsDemoComponent,
+	NewsFormComponent,
 	NohandlePipe,
 	ObjectKeysPipe,
 	OptionsComponent,
@@ -306,6 +317,7 @@ const ngComponents = [
 	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
+	SingleTemplateComponent,
 	SingleUserComponent,
 	SliderFormComponent,
 	SpinnerComponent,
@@ -326,9 +338,11 @@ const ngComponents = [
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
+	WeatherDemoComponent,
 	WeatherFormComponent,
 	ZoneListComponent,
-  	PaginationFieldComponent
+  	PaginationFieldComponent,
+	ZoneExpansionPanelComponent,
 ];
 
 const MaterialModules = [
@@ -365,9 +379,7 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES,
-		WeatherDemoComponent,
-		CloneFeedDialogComponent,
+		DIRECTIVES
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -411,10 +423,12 @@ const DIRECTIVES = [
 		WarningPopupComponent,
 	],
 	imports: [
+		BrowserAnimationsModule,
 		ColorPickerModule,
 		CommonModule,
 		DragDropModule,
 		FormsModule,
+		HttpClientModule,
 		MaterialModules,
 		MatInputModule,
 		MatDatepickerModule, 

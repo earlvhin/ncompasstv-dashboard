@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 
-import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
+import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from '../../../global/services';
 
 import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_SINGLE_SCREEN, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SCREEN_TEMPLATE_ZONE, TAG, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
@@ -247,6 +247,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		)
 	}
 
+	disableResource(e) {
+		this._license.set_resource_status(
+			{
+				licenseId: this.license_id,
+				resourceSettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`Resource Log Sending ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
+				console.log(data);
+			}
+		)
+	}
+
 	dismissPopup(): void {
 		this.show_popup = false;
 		this.popup_type = '';
@@ -359,22 +373,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.getScreenshots(this.license_id);
 					this.getContentByLicenseId(this.license_id);
 					this.getActivityOfLicense(this.license_id);
-					// this.getLicenseResourceUsage(this.license_id);
 				}
 			)
 		);
 	}
 
-	getLicenseResourceUsage(id: string) {
-		this._license.get_license_resource(id).subscribe(
-			data => {
-				console.log('Resource Usage', data)
-			}, 
-			error => {
-				console.log(error);
-			}
-		)
-	}
 
 	getScreenById(id: string, licenseId?: string): void {
 		this.subscriptions.add(this._screen.get_screen_by_id(id, licenseId)

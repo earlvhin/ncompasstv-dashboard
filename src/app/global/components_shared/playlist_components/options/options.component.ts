@@ -28,6 +28,7 @@ export class OptionsComponent implements OnInit {
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`
 	has_schedule = false;
 	host_license: any;
+	is_base_frequency = false;
 	initial_credits_status: number | boolean;
 	licenses: any[] = [];
 	feed_url = '';
@@ -66,6 +67,9 @@ export class OptionsComponent implements OnInit {
 		this.setSchedule(this._dialog_data.content);
         this.getTotalLicenses();
 		this.initial_credits_status = content.creditsEnabled;
+		this.is_base_frequency = content.frequency === 22 || content.frequency === 33;
+
+		if (this.is_base_frequency) this.frequencyList.unshift({ label: '1x', value: 1 });
 	}
 
 	ngOnDestroy() {
@@ -118,7 +122,8 @@ export class OptionsComponent implements OnInit {
 		this.content_data.playlistContentCredits = {
 			playlistContentId: this.content_data.playlistContentId,
 			credits: this.credits,
-			balance: this.credits
+			balance: this.credits,
+			licenseId: this.host_license[0].licenses[0].licenseId
 		};
 
 		this.contentDataChanged();
@@ -137,12 +142,12 @@ export class OptionsComponent implements OnInit {
 	onToggleCredits(): void {
 		this.contentDataChanged();
 
-		const { creditsEnabled } = this.content_data;
+		const { creditsEnabled, playlistContentId } = this.content_data;
 		const initialStatus = this.initial_credits_status;
 		const enabled = creditsEnabled ? 1 : 0;
-		const { playlistContentId } = this.content_data;
+		const licenseId = this.host_license[0].licenses[0].licenseId;
 
-		if (enabled !== initialStatus) this.playlist_changes_data.credits_status = { playlistContentId, status: enabled };
+		if (enabled !== initialStatus) this.playlist_changes_data.credits_status = { playlistContentId, licenseId, status: enabled };
 		if (enabled === initialStatus && 'credits_status' in this.playlist_changes_data) delete this.playlist_changes_data.credits_status;
 
 	}
