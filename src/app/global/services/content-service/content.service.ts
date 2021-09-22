@@ -205,6 +205,12 @@ export class ContentService {
 		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_content}`, data, this.httpOptions)
 	}
 
+	revert_frequency(playlistContentId: string) {
+		const url = `${environment.base_uri}${environment.update.revert_frequency}`;
+		const body = { playlistContentId };
+		return this._http.post(url, body, this.httpOptions);
+	}
+
 	search_contents_via_api(key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?search=`+`${key}`, this.httpOptions);
 	}

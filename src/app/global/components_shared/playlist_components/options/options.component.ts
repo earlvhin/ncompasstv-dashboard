@@ -28,6 +28,7 @@ export class OptionsComponent implements OnInit {
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`
 	has_schedule = false;
 	host_license: any;
+	is_base_frequency = false;
 	initial_credits_status: number | boolean;
 	licenses: any[] = [];
 	feed_url = '';
@@ -41,7 +42,7 @@ export class OptionsComponent implements OnInit {
     total_licenses : number =0;
 	unchanged_playlist: boolean = true;
 
-	frequencyList = [ 
+	frequencyList = [
 		{ label: '2x', value: 2 },
 		{ label: '3x', value: 3 },
 	];
@@ -66,6 +67,9 @@ export class OptionsComponent implements OnInit {
 		this.setSchedule(this._dialog_data.content);
         this.getTotalLicenses();
 		this.initial_credits_status = content.creditsEnabled;
+		this.is_base_frequency = content.frequency === 22 || content.frequency === 33;
+
+		if (this.is_base_frequency) this.frequencyList.unshift({ label: '1x', value: 1 });
 	}
 
 	ngOnDestroy() {

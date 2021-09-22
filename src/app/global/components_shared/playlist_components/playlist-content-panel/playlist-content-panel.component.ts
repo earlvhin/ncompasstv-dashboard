@@ -337,7 +337,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		if (content) {
 
-			if (content.frequency === 2 || content.frequency === 3) {
+			if (content.frequency === 1 || content.frequency === 2 || content.frequency === 3) {
 				const { frequency, playlistContentId } = content;
 				frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
 			}
@@ -566,8 +566,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					async (data: any) => {
 
 						if (frequencyUpdate) {
+
 							const { frequency, playlistContentId, playlistId } = frequencyUpdate;
-							await this._content.set_frequency(frequency, playlistContentId, playlistId).toPromise();
+							let request = this._content.set_frequency(frequency, playlistContentId, playlistId); 
+
+							if (frequency === 1) {
+								request = this._content.revert_frequency(playlistContentId);
+							}
+							
+							await request.toPromise();
+
 						}
 
 						if (creditsUpdate) {
