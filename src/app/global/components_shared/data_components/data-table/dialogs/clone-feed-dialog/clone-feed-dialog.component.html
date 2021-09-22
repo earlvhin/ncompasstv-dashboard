@@ -9,7 +9,10 @@
 			</mat-form-field>
 		</div>
 		<div class="row text-left">
-			<button mat-button mat-raised-button class="theme-btn _primary mr-2" [mat-dialog-close]="feedName.value">Submit</button>
+			<button mat-button mat-raised-button class="theme-btn _primary mr-2" 
+				[mat-dialog-close]="feedName.value"
+				[disabled]="!feedName.valid">Submit
+			</button>
 			<button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="false">Cancel</button>
 		</div>
 	</div>

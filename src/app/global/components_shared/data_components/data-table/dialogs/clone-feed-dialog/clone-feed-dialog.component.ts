@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
 	selector: 'app-clone-feed-dialog',
@@ -8,7 +8,7 @@ import { FormControl } from '@angular/forms';
 })
 export class CloneFeedDialogComponent implements OnInit {
 
-	feedName = new FormControl();
+	feedName = new FormControl(null, Validators.required);
 	
 	constructor() { }
 	
