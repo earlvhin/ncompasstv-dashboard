@@ -227,9 +227,9 @@ export class ContentService {
 		return this._http.post(url, body, this.httpOptions);
 	}
 
-	update_play_credits(playlistContentId: string, credits = 100) {
+	update_play_credits(playlistContentId: string, licenseId: string, credits = 100) {
 		const url = `${environment.base_uri}${environment.update.play_credits}`;
-		const body = { playlistContentId, credits };
+		const body = { playlistContentId, licenseId, credits };
 		return this._http.post(url, body, this.httpOptions);
 	}
 
