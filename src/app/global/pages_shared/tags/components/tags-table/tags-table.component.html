@@ -11,16 +11,10 @@
 				<ng-container *ngIf="tableType === 'tags'; else tagOwnersData">
 					<td class="p-3">{{ i + 1 }}</td>
 					<!-- TAG NAME -->
-					<td class="p-3">
-						<a class="clickable" (click)="onClickTagName(data.name)">
+					<td class="p-3 tags">
+						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="onClickTagName(data.name)">
 							{{ data.name }}
 						</a>
-					</td>
-					<!-- TAG COLOR -->
-					<td class="p-3">
-						<span class="tag-color-text" [style.backgroundColor]="data.tagColor">
-							{{ data.tagColor }}
-						</span>
 					</td>
 					<td class="p-3 action-buttons">
 						<mat-icon class="no-select" color="primary" (click)="onOpenDialog('edit_tag', data)">edit</mat-icon>
@@ -42,7 +36,7 @@
 						<!-- TAG OWNERS DATA -->
 						<div class="d-flex tags">
 							<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
-								[style.backgroundColor]="setTagColor(tag.tagColor)">
+								[style.backgroundColor]="tag.tagColor">
 								<!-- TAG NAME -->
 								<div class="name">												
 									{{ tag.name }} ({{ tag.count }})

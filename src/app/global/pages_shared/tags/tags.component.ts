@@ -117,7 +117,6 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 				columns.push(
 					{ name: 'Name', class: 'p-3' },
-					{ name: 'Color', class: 'p-3' },
 				);
 
 				break;
