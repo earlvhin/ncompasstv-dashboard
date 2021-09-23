@@ -312,7 +312,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				let color = '';
 
 				if (isPast) {
-					backgroundColor = '#d23737';
+					backgroundColor = '#e08283';
 					color = '#ffffff';
 				}
 
