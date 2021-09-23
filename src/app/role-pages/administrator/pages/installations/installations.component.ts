@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 
-import { LicenseService } from 'src/app/global/services';
+import { AuthService, LicenseService } from 'src/app/global/services';
 import { INSTALLATION, PAGING } from 'src/app/global/models';
 
 @Component({
@@ -69,6 +69,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _auth: AuthService,
 		private _dates: DatePipe,
 		private _form_builder: FormBuilder,
 		private _license: LicenseService,
@@ -163,9 +164,11 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.installations = [];
 
 		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data)
-			.pipe(takeUntil(this._unsubscribe))
+			.pipe(
+				takeUntil(this._unsubscribe)
+			)
 			.subscribe(
-				(response: { message?: string, paging }) => {
+				(response: { message?: string, paging: PAGING }) => {
 
 					let installations = [];
 					let filtered_data = [];
@@ -303,16 +306,26 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 		return data.map(
 			license => {
+				
+				const isPast = moment(license.installDate).isBefore(moment(this.selected_date, 'MM-DD-YYYY'));
+				let backgroundColor = '';
+				let color = '';
+
+				if (isPast) {
+					backgroundColor = '#d23737';
+					color = '#ffffff';
+				}
+
 				return new INSTALLATION(
 					{ value: license.licenseKey, link: null , editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false },
-					{ value: license.licenseKey, link: `/administrator/licenses/${license.licenseId}` , editable: false, hidden: false },
-					{ value: license.hostName != null ? license.hostName : '--', link: `/administrator/hosts/${license.hostId}`, editable: false, hidden: false },
-					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/administrator/dealers/${license.dealerId}`, editable: false, hidden: false },
-					{ value: license.businessName, link: `/administrator/dealers/${license.dealerId}`, editable: false, hidden: false },
-					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false },
-					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/administrator/screens/${license.screenId}` : null , editable: false, hidden: false },
-					{ value: this._dates.transform(license.installDate, 'MMM d, y, h:mm a'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false },
+					{ value: count++, link: null , editable: false, hidden: false, backgroundColor, color },
+					{ value: license.licenseKey, link: `/${this.currentRole}/licenses/${license.licenseId}` , editable: false, hidden: false,  backgroundColor, color },
+					{ value: license.hostName != null ? license.hostName : '--', link: `/${this.currentRole}/hosts/${license.hostId}`, editable: false, hidden: false,  backgroundColor, color },
+					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  backgroundColor, color },
+					{ value: license.businessName, link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  backgroundColor, color },
+					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false,  backgroundColor, color },
+					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this.currentRole}/screens/${license.screenId}` : null , editable: false, hidden: false,  backgroundColor, color },
+					{ value: this._dates.transform(license.installDate, 'MMM d, y, h:mm a'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  backgroundColor, color },
 				);
 			}
 		);
@@ -321,6 +334,10 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	private modifyItem(item: { screenTypeName: string, installDate: string }): void {
 		item.screenTypeName = this._titlecase.transform(item.screenTypeName);
         item.installDate = this._dates.transform(item.installDate, 'MMM d, y, h:mm a')
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 
 }
