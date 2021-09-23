@@ -49,6 +49,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 	}
 
 	onAddTag(): void {
+		
 		const dialog = this._dialog.open(CreateTagComponent, {
 			width: '500px',
 			height: '700px',
@@ -59,9 +60,21 @@ export class TagsComponent implements OnInit, OnDestroy {
 		dialog.afterClosed()
 			.subscribe(
 				(response: boolean) => {
+
 					if (!response) return;
+
 					this.getTagsCount();
-					// this.searchOwnerTags();
+
+					switch (this.currentTabIndex) {
+
+						case 1:
+							this._tag.onRefreshTagOwnersTable.emit();
+							break;
+
+						default:
+							this._tag.onRefreshTagsTable.emit();
+
+					}
 				}
 			);
 	}

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_ADVERTISER, API_DEALER, API_HOST, API_LICENSE, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
+import { TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 
 @Component({
@@ -59,41 +59,11 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 				takeUntil(this._unsubscribe),
 				map(
 					(response: TAG_OWNER[]) => {
-
-						let displayName = null;
 	
 						response.forEach(
 							(data, index) => {
-	
-								const { owner, tagTypeName } = data;
-	
-								switch (tagTypeName.toLowerCase()) {
-									case 'host':
-									case 'hosts':
-										const host = owner as API_HOST;
-										displayName = `${host.name} (${host.city})`;
-										break;
-						
-									case 'license':
-									case 'licenses':
-										const license = owner as API_LICENSE['license'];
-										displayName = license.alias ? license.alias : license.licenseKey;
-										break;
-									
-									case 'advertiser':
-									case 'advertisers':
-										const advertiser = owner as API_ADVERTISER;
-										displayName = advertiser.name;
-										break;
-						
-									default:
-										const dealer = owner as API_DEALER;
-										displayName = dealer.businessName;
-								}
-	
-								response[index].displayName = displayName;
+								const { tagTypeName } = data;
 								response[index].url = `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
-	
 							}
 						);
 	
@@ -110,9 +80,11 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToRefreshTableData(): void {
+
 		this._tag.onRefreshTagOwnersTable
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(() => this.searchOwnerTags());
+
 	}
 
 	private subscribeToSearch(): void {
