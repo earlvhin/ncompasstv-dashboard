@@ -71,7 +71,7 @@ export class TagService extends BaseService {
 
 	searchOwnersByTagType(typeId = 0, keyword = null) {
 
-		let url = `${this.getters.search_tags}?typeid=${typeId}`;
+		let url = `${this.getters.search_owner_tags}?typeid=${typeId}`;
 		if (keyword) url += `&search=${keyword}`;
 
 		return this.getRequest(url)
@@ -79,7 +79,7 @@ export class TagService extends BaseService {
 	}
 
 	searchAllTags(keyword = '', typeId = 0) {
-		let url = `${this.getters.search_all_tags}?key=${keyword}`;
+		let url = `${this.getters.search_tags}?key=${keyword}`;
 		if (typeId > 0) url += `?typeId=${typeId}`;
 		return this.getRequest(url);
 	}
