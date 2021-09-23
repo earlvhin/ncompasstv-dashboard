@@ -1,4 +1,4 @@
-<div class="theme-table">
+<div class="theme-table" [ngClass]="paging ? 'with-page' : ''">
 	<table class="full-width" *ngIf="!isLoading; else loading;">
 		<thead align="left" class="border-bottom">
 			<tr>
@@ -9,13 +9,14 @@
 			<tr *ngFor="let data of tableData; let i = index;">
 				<!-- TAGS ROW -->
 				<ng-container *ngIf="tableType === 'tags'; else tagOwnersData">
-					<td class="p-3">{{ i + 1 }}</td>
+					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- TAG NAME -->
 					<td class="p-3 tags">
 						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="onClickTagName(data.name)">
 							{{ data.name }}
 						</a>
 					</td>
+					<!-- ACTION BTNS -->
 					<td class="p-3 action-buttons">
 						<mat-icon class="no-select" color="primary" (click)="onOpenDialog('edit_tag', data)">edit</mat-icon>
 						<mat-icon class="no-select text-danger" (click)="onDeleteTag(data.tagId)">delete</mat-icon>
@@ -24,16 +25,16 @@
 
 				<!-- TAG OWNERS ROW -->
 				<ng-template #tagOwnersData>
-					<td class="p-3">{{ i + 1 }}</td>
+					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- OWNER NAME -->
 					<td class="p-3">
 						<a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
 					</td>
+					<!-- TAG TYPE NAME -->
+					<td class="p-3">{{ data.tagTypeName }}</td>
+
+					<!-- TAGS -->
 					<td class="p-3">
-						{{ data.tagTypeName }}
-					</td>
-					<td class="p-3">
-						<!-- TAG OWNERS DATA -->
 						<div class="d-flex tags">
 							<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
 								[style.backgroundColor]="tag.tagColor">
@@ -56,6 +57,14 @@
 		</tbody>
 	</table>
 </div>
+
+<div class="row" *ngIf="tableData.length > 0 && !paging">
+	<div class="col-lg-12 text-center mt-4">
+		<pagination-controls class="sm-text" (pageChange)="onPageChange($event)"></pagination-controls>
+	</div>
+</div>
+
+<app-pagination-field [paging_data]="paging" (get_page)="onClickPageNumber($event)"></app-pagination-field>
 
 <ng-template #loading>
 	<div class="py-4">

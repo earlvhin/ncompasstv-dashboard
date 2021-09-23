@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { TAG, TAG_TYPE, TAG_OWNER } from 'src/app/global/models';
+import { TAG, TAG_TYPE, TAG_OWNER, PAGING } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 import { EditTagComponent } from '../../dialogs';
 
@@ -20,12 +20,16 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	@Input() currentTabIndex: number;
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserRole: string;
+	@Input() paging: PAGING;
 	@Input() tagOwners: TAG_OWNER[];
 	@Input() tableColumns: any[];
 	@Input() tableData: TAG[] | { owner: { displayName: string }, tagTypeId: string, tags: TAG[] }[] = [];
 
 	@Output() clickedTagName = new EventEmitter<{ tag: string }>();
+	@Output() clickedPageNumber = new EventEmitter<number>();
 
+	page: number
+	selectedArray: any = [];
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -106,8 +110,18 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	}
 
+	onClickPageNumber(page: number): void {
+		this.selectedArray = [];
+		this.clickedPageNumber.emit(page);
+	}
+
 	onClickTagName(data: string): void {
 		this.clickedTagName.emit({ tag: data });
+	}
+
+	onPageChange(page: number): void {
+		this.page = page;
+		window.scrollTo(0, 0);
 	}
 
 	setTagColor(value: string): string {
