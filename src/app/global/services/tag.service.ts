@@ -96,7 +96,7 @@ export class TagService extends BaseService {
 
 	searchAllTags(keyword = '', typeId = 0, page = 1): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
 		let url = `${this.getters.search_tags}?page=${page}&key=${keyword}`;
-		if (typeId && typeId > 0) url += `$typeId=${typeId}`;
+		if (typeId && typeId > 0) url += `&typeId=${typeId}`;
 		return this.getRequest(url);
 	}
 
