@@ -122,7 +122,6 @@
                             </h5>
                         </div>
                     </div>
-
                 </mat-card>
             </div>
         </div>
@@ -194,7 +193,7 @@
                         </div>
                     </mat-tab> -->
                     <mat-tab label="In Playlist">
-                        <mat-card *ngIf="in_playlist.length > 0; else nodata">
+                        <mat-card *ngIf="in_playlist.length > 0; else nodata" class="mt-4">
                             <app-data-table 
                             [table_data]="in_playlist"
                             [table_columns]="in_playlist_table_columns"
@@ -202,10 +201,78 @@
                         </mat-card>
                     </mat-tab>
                     <mat-tab label="Playing Where">
-                        <mat-card *ngIf="playing_where.length > 0; else nodata">
+                        <mat-card *ngIf="playing_where.length > 0; else nodata" class="mt-4">
                             <app-data-table 
                             [table_data]="playing_where"
                             [table_columns]="table_columns"
+                            [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="Reports">
+                        <div class="row align-items-center mt-4 mb-4">
+                            <div class="col-lg-6">
+                                <h2 class="m-0">Playlist Reports</h2>
+                                <p class="sm-text">Select Start and End Date then click the Generate button to get started.</p>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="d-flex">
+                                    <div class="flex-even">
+                                        <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
+                                            <mat-label class="md-text">Start Date</mat-label>
+                                            <input (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                                            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #datePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+                
+                                    <div class="flex-even mx-3">
+                                        <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
+                                            <mat-label class="md-text">End Date</mat-label>
+                                            <input (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date"
+                                                readonly>
+                                            <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #datePicker2></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
+            
+                                    <div>
+                                        <button mat-button mat-raised-button class="theme-btn px-4" [disabled]="!start_date || !end_date || generating_report" style="height: 60px;" title="Generate Report" (click)="generateReport()">
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-even mr-2">
+                                                    <span class="fas fa-chart-bar"></span>
+                                                    <span class="ml-2">Generate</span>
+                                                </div>
+                                                <div *ngIf="generating_report">
+                                                    <mat-spinner [diameter]="20"></mat-spinner>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row" *ngIf="report_generated">
+                            <div class="col-lg">
+                                <div class="bg-dark px-3 py-2 d-inline-block rounded mr-2">
+                                    <h5 class="mb-0 text-white">
+                                        Showing records from <span class="text-primary">{{ start_date | date }}</span> to <span class="text-primary">{{ end_date | date }}</span>
+                                    </h5>
+                                </div>
+
+                                <button mat-button mat-raised-button class="theme-btn"
+                                title="Export Report as Excel File" 
+                                (click)="exportAsFile()">
+                                    <span class="far fa-file-excel"></span>
+                                    <span class="ml-2">Export as File</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <mat-card *ngIf="content_logs_report.length > 0; else nodata" class="mt-4">
+                            <app-data-table 
+                            [table_data]="content_logs_report"
+                            [table_columns]="content_logs_report_table_columns"
                             [new_table]="true"></app-data-table>
                         </mat-card>
                     </mat-tab>
@@ -227,7 +294,9 @@
                     <div class="mb-4">
                         <i class="text-gray fa-5x far fa-file-alt"></i>
                     </div>
-                    <h3 class="text-gray col-lg-12">No Data Found.</h3>
+                    <h3 class="text-gray col-lg-12">
+                        {{ generating_report ? 'Generating Content Logs Report, Please Wait ...' : 'No Data Found' }}
+                    </h3>
                 </mat-card>
             </div>
         </ng-template>

@@ -4,10 +4,21 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
-
+import * as Excel from 'exceljs';
 import { environment as env } from '../../../../environments/environment';
 import { AuthService, ContentService, PlaylistService } from '../../../global/services';
 import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION } from '../../../global/models';
+
+interface CONTENT_LOGS_REPORT {
+	durationTime: string,
+	endDate: string,
+	hostId: string,
+	hostName: string,
+	playlistName: string,
+	startDate: string,
+	totalDuration: number,
+	totalPlay: number
+}
 
 @Component({
 	selector: 'app-single-content',
@@ -36,6 +47,22 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	license_count: number = 0;
 	screen_count: number = 0;
 
+	generating_report: boolean = false;
+	report_generated: boolean = false;
+	start_date: Date;
+	end_date: Date;
+	content_logs_report: any[] = [];
+	content_logs_report_table_columns = [
+		'#',
+		'Host',
+		'Playlist',
+		'Total Play',
+		'Total Duraton',
+		'Date Started',
+		'Date Ended'
+	];
+
+	role: any;
 	fs_screenshot: string = `${env.third_party.filestack_screenshot}`
 
     table_columns = [
@@ -50,6 +77,19 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		'Playlist Name',
 		'Business Name'
     ];
+
+	workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
+
+	content_metrics_table_column = [
+        { name: 'Host', key:'hostName'},
+        { name: 'Playlist', key:'hostPlaysTotal'},
+        { name: 'Total Play', key:'hostDurationsTotal'},
+		{ name: 'Total Duration', key:'hostName'},
+        { name: 'Date Started', key:'hostPlaysTotal'},
+        { name: 'End Date', key:'hostDurationsTotal'},
+	];
 
 	private content_id: string;
 	private current_date: string = this._date.transform(new Date(), 'y-MMM-dd');
@@ -66,6 +106,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.getPageParam();
+
+		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
 	}
 
 	ngOnDestroy() {
@@ -95,6 +137,63 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		// this.getYearlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
 	}
 
+	/**
+	 * Content Logs Report: Export Generated Report to Excel File
+	 * requires content_logs_report?
+	 */
+	exportAsFile() {
+		alert("EXPORTING :)");
+	}
+
+	/**
+	 * Content Logs Report: Generates Content Logs Report
+	 * requires startDate, endDate, contentId
+	 */
+	generateReport() {
+		this.report_generated = false;
+		this.generating_report = true;
+		if (this.start_date && this.end_date) {
+			this._content.generate_content_logs_report({
+				contentId: this.content_id,
+				start: this.start_date.toString(),
+				end: this.end_date.toString() 
+			}).subscribe((data: {total: number, contentLogsByHosts: CONTENT_LOGS_REPORT[]}) => {
+				this.generating_report = false;
+				this.report_generated = true;
+
+				if (data.total > 0) {
+					let count = 1;
+
+					this.content_logs_report = data.contentLogsByHosts.map(
+						i => {
+							return (
+								[
+									{ value: count++, link: null , editable: false, hidden: false },
+									{ value: i.hostName, link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null, editable: false, hidden: false },
+									{ value: i.playlistName, link: null, hidden: false },
+									{ value: i.totalPlay, link: null , hidden: false },
+									{ value: moment.utc(i.totalDuration*1000).format('HH:mm:ss'), link: null , hidden: false },
+									{ value: i.startDate ? moment(new Date(i.startDate)).format('MMMM DD, YYYY') : 'No Data', link: null , hidden: false },
+									{ value: i.endDate ? moment(new Date(i.endDate)).format('MMMM DD, YY') : 'No Data', link: null , hidden: false }
+								]
+							)
+						}
+					);
+				}
+			})
+		}
+	}
+
+	/** Content Logs Report: StarDate Picker */
+	onSelectStartDate(e) {
+		this.start_date = e.format('YYYY-MM-DD');
+	}
+
+	/** Content Logs Report: EndDate Picker */
+	onSelectEndDate(e){
+		this.end_date = e.format('YYYY-MM-DD');
+	}
+
 	private getPlaylistsOfContent(id: string) {
 		this._playlist.get_playlist_by_content_id(id).subscribe(
 			(data: any) => {
@@ -118,6 +217,10 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 				}
 			}
 		)
+	}
+
+	exportTable() {
+		
 	}
 
 	private getContentInfo(content_id: string): void {
@@ -205,8 +308,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 			this.host_count = [...new Set(data.map(i => i.hostId))].length
 
-			console.log([...new Set(data.map(i => i.hostId))])
-
 			let count = 1;
 
 			const role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
@@ -230,5 +331,4 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	protected get currentUser() {
 		return this._auth.current_user_value;
 	}
-
 }

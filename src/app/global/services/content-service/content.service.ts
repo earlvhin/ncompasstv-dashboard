@@ -129,6 +129,11 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`, this.httpOptions).map(data => data.screenZonePlaylistsContents);
 	}
 
+	generate_content_logs_report(data: { contentId: string, start: string, end: string}) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_generate_content_logs_report}
+		?contentId=${data.contentId}&startDate=${data.start}&endDate=${data.end}`, this.httpOptions);
+	}
+
 	create_content_schedule(data: PlaylistContentSchedule[]): Observable<any> {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.content_schedule}`, data, this.httpOptions);
 	}
