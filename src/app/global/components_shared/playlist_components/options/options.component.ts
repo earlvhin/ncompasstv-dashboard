@@ -44,6 +44,8 @@ export class OptionsComponent implements OnInit {
     total_licenses : number =0;
 	unchanged_playlist: boolean = true;
 
+	is_paging: boolean = false;
+
 	frequencyList = [ 
 		{ label: '2x', value: 2 },
 		{ label: '3x', value: 3 },
@@ -77,6 +79,7 @@ export class OptionsComponent implements OnInit {
 	}
 
     next() {
+		this.is_paging = true;
         this.c_index = this.c_index + 1;
         this.content_data = this.contents_list[this.c_index - 1];
         this.selected_data = {
@@ -86,15 +89,28 @@ export class OptionsComponent implements OnInit {
         this.content_frequency = this.setFrequency(this.content_data.frequency);
 		this.credits = this.setCreditsAndBalance(this.content_data.playlistContentCredits);
         this.unchanged_playlist = true;
+
+		setTimeout(() => {
+			this.is_paging = false;
+		}, 0)
     }
 
     prev() {
+		this.is_paging = true;
         this.c_index = this.c_index - 1;
-        this.content_data = this.contents_list[this.c_index];
+        this.content_data = this.contents_list[this.c_index - 1];
+		this.selected_data = {
+            content: this.content_data,
+            host_license: this.host_license
+        }
         this.content_frequency = this.setFrequency(this.content_data.frequency);
 		this.credits = this.setCreditsAndBalance(this.content_data.playlistContentCredits);
         this.unchanged_playlist = true;
-    }
+
+		setTimeout(() => {
+			this.is_paging = false;
+		}, 0)
+	}
 
 	ngOnDestroy() {
 		clearTimeout(this.timeout);
