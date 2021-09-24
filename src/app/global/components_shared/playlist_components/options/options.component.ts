@@ -70,7 +70,8 @@ export class OptionsComponent implements OnInit {
         this.getTotalLicenses();
 		this.initial_credits_status = content.creditsEnabled;
 		this.contents_list = this._dialog_data.contents_list;
-        this.selected_data = this._dialog_data		this.is_base_frequency = content.frequency === 22 || content.frequency === 33;
+        this.selected_data = this._dialog_data;	
+        this.is_base_frequency = content.frequency === 22 || content.frequency === 33;
 
 		if (this.is_base_frequency) this.frequencyList.unshift({ label: '1x', value: 1 });
 	}
