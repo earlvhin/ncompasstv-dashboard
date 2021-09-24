@@ -108,7 +108,8 @@
 					<div class="toggle-credits-setting">
 						<mat-slide-toggle
 							(change)="onToggleCredits()"
-							[(ngModel)]="content_data.creditsEnabled">
+							[(ngModel)]="content_data.creditsEnabled"
+							[disabled]="!can_toggle_credits">
 							<h5 class="mb-0 ml-2">Enable/Disable Credits</h5>
 						</mat-slide-toggle>
 					</div>
@@ -172,7 +173,7 @@
 							[toggleEvent]="toggle_event.asObservable()"
 							[content_data]="selected_data"
 							(blocklist_changes_saved)="saveBlocklistChanges($event)"
-							(blacklist_data_ready)="blacklist_ready=true"
+							(blacklist_data_ready)="blackListDataLoaded($event)"
 							(blacklist_count)="getCount($event)">
 						</app-play-where>
 					</div>

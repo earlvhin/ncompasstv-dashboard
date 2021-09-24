@@ -29,7 +29,7 @@ export class API_CONTENT {
 	isActive: number;
     isConverted: number;
     title: string;
-	playlistContentCredits?: CREDITS;
+	playlistContentCredits?: CREDITS[];
 	playlistContentSchedule?: PlaylistContentSchedule;
 	playlistContentsSchedule?: PlaylistContentSchedule;
 	scheduleStatus?: any;

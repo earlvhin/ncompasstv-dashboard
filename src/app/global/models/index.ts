@@ -16,6 +16,7 @@ export * from './api_zone.model';
 export * from './constant_activity_code';
 export * from './credits.model';
 export * from './credits-status.model';
+export * from './credits-to-submit.model';
 export * from './feed.model';
 export * from './frequency.model';
 export * from './installation.model';

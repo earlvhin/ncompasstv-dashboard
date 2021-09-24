@@ -3,10 +3,9 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material'
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
-import { API_CONTENT } from '../../../../global/models/api_content.model';
-import { CREDITS, PLAYLIST_CHANGES } from '../../../../global/models';
+import { environment as env } from 'src/environments/environment';
+import { API_CONTENT, API_BLOCKLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, API_LICENSE } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { environment as env } from '../../../../../environments/environment';
 
 @Component({
 	selector: 'app-options',
@@ -20,6 +19,8 @@ export class OptionsComponent implements OnInit {
 	blocklist_changes = { status: false };
 	blacklist_ready: boolean = false;
     blacklist_count: number = 0;
+	blacklisted_content: API_BLOCKLIST_CONTENT[] = [];
+	can_toggle_credits = true;
 	c_index: number;
 	content_data: API_CONTENT;
 	content_frequency: number;
@@ -31,9 +32,10 @@ export class OptionsComponent implements OnInit {
 	host_license: any;
 	is_base_frequency = false;
 	initial_credits_status: number | boolean;
-	licenses: any[] = [];
+	licenses: API_LICENSE['license'][] = [];
+	license_ids_for_credits: string[] = [];
 	feed_url = '';
-	playlist_changes_data: PLAYLIST_CHANGES = { content: null, blocklist: null, original_credits: null };
+	playlist_changes_data: PLAYLIST_CHANGES = { content: null, blocklist: null, credits: null, credits_status: null };
     selected_data: any;
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
@@ -59,7 +61,7 @@ export class OptionsComponent implements OnInit {
 	
 	ngOnInit() {
 		const { index, content, host_license, total_contents } = this._dialog_data;
-		this.playlist_changes_data.original_credits = content.playlistContentCredits;
+		this.playlist_changes_data.credits = content.playlistContentCredits;
 		localStorage.setItem('playlist_data', JSON.stringify(content));
 		this.c_index = index;
 		this.content_data = content;
@@ -121,8 +123,15 @@ export class OptionsComponent implements OnInit {
 	}
     
 	canEditCreditsField() {
-		if (!this.playlist_changes_data.original_credits) return true;
-		return this.playlist_changes_data.original_credits.balance === 0;
+		const { credits } = this.playlist_changes_data;
+		if (credits.length <= 0) return true;
+		const sum = credits.map((credit) => credit.balance).reduce((previous, current) => previous + current);
+		return sum === 0;
+	}
+
+	blackListDataLoaded(data: API_BLOCKLIST_CONTENT[]): void {
+		this.blacklisted_content = data;
+		this.blacklist_ready = true;
 	}
 
 	contentDataChanged() {
@@ -158,19 +167,11 @@ export class OptionsComponent implements OnInit {
 	}
 
 	onInputCredits(): void {
-
-		this.content_data.playlistContentCredits = {
-			playlistContentId: this.content_data.playlistContentId,
-			credits: this.credits,
-			balance: this.credits,
-			licenseId: this.host_license[0].licenses[0].licenseId
-		};
-
 		this.contentDataChanged();
-
 	}
 
-	onSave(): any {
+	onSave() {
+		this.setCreditsDataForSubmission();
 		return this.playlist_changes_data;
 	}
 
@@ -189,6 +190,7 @@ export class OptionsComponent implements OnInit {
 
 		if (enabled !== initialStatus) this.playlist_changes_data.credits_status = { playlistContentId, licenseId, status: enabled };
 		if (enabled === initialStatus && 'credits_status' in this.playlist_changes_data) delete this.playlist_changes_data.credits_status;
+		this.contentDataChanged();
 
 	}
 
@@ -201,8 +203,9 @@ export class OptionsComponent implements OnInit {
 		this.contentDataChanged();
 	}
 
-	saveBlocklistChanges(e) {
-		this.blocklist_changes = e;
+	saveBlocklistChanges(data: { incoming: API_BLOCKLIST_CONTENT[], removing: API_BLOCKLIST_CONTENT[], status: boolean }) {
+		
+		this.blocklist_changes = data;
 		
 		if (JSON.stringify(this.content_data) === localStorage.getItem('playlist_data') && this.blocklist_changes.status == false) {
 			this.unchanged_playlist = true;
@@ -210,6 +213,9 @@ export class OptionsComponent implements OnInit {
 			this.unchanged_playlist = false;
 			this.playlist_changes_data.blocklist = this.blocklist_changes;
 		}
+
+		this.setCreditsDataForSubmission('toggle_license');
+
 	}
 
 	toggleAll(event) {
@@ -249,16 +255,61 @@ export class OptionsComponent implements OnInit {
 		}
 	}
 
-	private setCreditsAndBalance(data: CREDITS) {
+	private setCreditsAndBalance(data: CREDITS[]) {
 		
-		if (!data) {
+		if (!data || data.length <= 0) {
 			this.balance = 0;
 			return 0;
 		}
 
-		const { balance, credits } = data;
+		const balance = data.map(credit => credit.balance).reduce((previous, current) => previous + current);
+		const credits = data.map(credit => credit.credits).reduce((previous, current) => previous + current);
 		this.balance = credits;
 		return balance;
+
+	}
+
+	private setCreditsDataForSubmission(from = null): void {
+
+		const dataToSubmit = this.playlist_changes_data;
+
+		if (!dataToSubmit.credits_status || dataToSubmit.credits_status.status === 0) {
+			this.playlist_changes_data.credits_to_submit = null;
+			return;
+		}
+
+		let licenseIds = [... this.licenses].map(license => license.licenseId);
+		let result: string[] = [];
+		let incoming = [];
+
+		const { playlistContentId } = this.content_data;
+
+		if (this.playlist_changes_data.blocklist) {
+			const { blocklist } = this.playlist_changes_data;
+			incoming = blocklist.incoming;
+		}
+
+		const blackListedLicenseIds: string[] = this.blacklisted_content.map(content => content.licenseId);
+		const toRemove = blackListedLicenseIds.concat(incoming.map(content => content.licenseId));
+					
+		result = licenseIds.filter(id => !toRemove.includes(id));
+
+		if (result.length <= 0) {
+			this.playlist_changes_data.credits_to_submit = null;
+			this.content_data.creditsEnabled = 0;
+
+			if (from === 'toggle_license') this.can_toggle_credits = false;
+
+			return;
+		}
+
+		if (from === 'toggle_license') this.can_toggle_credits = true;
+
+		this.playlist_changes_data.credits_to_submit = {
+			playlistContentId,
+			credits: this.credits,
+			licenses: result
+		};
 
 	}
 
