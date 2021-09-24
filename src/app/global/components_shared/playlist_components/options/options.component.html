@@ -1,19 +1,28 @@
-<div class="option-modal p-3" [@.disabled]="disable_animation">
-	<div class="d-flex mb-4">
+<div class="option-modal" [@.disabled]="disable_animation">
+	<div class="d-flex mb-2 media-navigation">
 		<div class="flex-even">
-			<h3>Playlist Content Options - #{{ c_index }}</h3>
-			<p class="sm-text">
-				Here you can set duration, display mode, and choose where host and licenses this content should play.
-			</p>
+			<h3 class="pt-2 mt-1 pl-3">Playlist Content Options <span class="text-primary"># {{ c_index }}</span></h3>
 		</div>
 		<div>
-			<button class="naked-btn" (click)="undoChanges()">
-				<span class="fas fa-times"></span>
+			<button class="naked-btn" (click)="prev()" [disabled]="c_index == 1">
+				<span class="xlg-text fas fa-chevron-left text-gray" [ngClass]="c_index == 1 ? 'text-light-gray drop-cursor': 'text-gray'" title="Prev"></span>
+			</button>
+            <button class="naked-btn" (click)="next()" [disabled]="c_index == contents_list.length ">
+				<span class="xlg-text fas fa-chevron-right" [ngClass]="c_index == contents_list.length ? 'text-light-gray drop-cursor': 'text-gray'" title="Next"></span>
+			</button>
+            <button class="naked-btn" (click)="undoChanges()">
+				<span class="xlg-text fas fa-times text-danger" title="Close"></span>
 			</button>
 		</div>
 	</div>
-	
-	<div class="row">
+	<div class="row mb-2 pl-3 pr-3">
+		<div class="col-lg-12">
+            <p class="sm-text">
+				Here you can set duration, display mode, and choose where host and licenses this content should play.
+			</p>
+        </div>
+    </div>
+	<div class="row pl-3 pr-3">
 		<div class="col-lg-6">
 			<div class="content-holder mb-3">
 				<ng-container *ngIf="content_data.fileType | isvideo">
@@ -150,7 +159,7 @@
 						</div>
 						<app-play-where
 							[toggleEvent]="toggle_event.asObservable()"
-							[content_data]="_dialog_data"
+							[content_data]="selected_data"
 							(blocklist_changes_saved)="saveBlocklistChanges($event)"
 							(blacklist_data_ready)="blacklist_ready=true"
 							(blacklist_count)="getCount($event)">
@@ -165,9 +174,11 @@
 		</div>
 	</div>
 	
-	<button mat-button mat-raised-button class="theme-btn" 
-		[disabled]="unchanged_playlist" [mat-dialog-close]="onSave()">
-		Save Options
-		<span class="fas fa-save ml-2"></span>
-	</button>
+    <div class="col-lg-12 pl-3 pr-3">
+        <button mat-button mat-raised-button class="theme-btn" 
+            [disabled]="unchanged_playlist" [mat-dialog-close]="onSave()">
+            Save Options
+            <span class="fas fa-save ml-2"></span>
+        </button>
+    </div>
 </div>

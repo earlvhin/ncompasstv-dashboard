@@ -24,6 +24,7 @@ export class PlaylistContentComponent implements OnInit {
 	@Input() schedule_status?: string;
 	@Input() page? = '';
 	@Input() total_contents? = 0;
+	@Input() playlist_contents: any;
 	@Output() options_saved = new EventEmitter();
 	@Output() reset_playlist_content = new EventEmitter();
 	@Output() remove_playlist_content = new EventEmitter();
@@ -63,12 +64,12 @@ export class PlaylistContentComponent implements OnInit {
 	}
 
 	optionsModal(): void {
-
 		const data = {
 			index: this.array_index,
 			content: this.content,
 			host_license: this.playlist_host_license,
-			total_contents: this.total_contents			
+			total_contents: this.total_contents,
+            contents_list: this.playlist_contents	
 		};
 
 		const dialog = this._dialog.open(OptionsComponent, {

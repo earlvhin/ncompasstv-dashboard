@@ -138,7 +138,8 @@
 					[is_view_only]="is_view_only"
 					(options_saved)="optionsSaved($event)"
 					(reset_playlist_content)="reloadPlaylist()"
-					(remove_playlist_content)="removePlaylistContent($event)">
+					(remove_playlist_content)="removePlaylistContent($event)"
+                    [playlist_contents]="playlist_contents">
 				</app-playlist-content>
 
 			</div>

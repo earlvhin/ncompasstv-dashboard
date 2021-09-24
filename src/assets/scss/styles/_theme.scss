@@ -526,6 +526,10 @@
     color: $gray_dark;
 }
 
+.text-light-gray {
+    color: $disabled;
+}
+
 .text-gray-with-hover {
     color: $gray_dark;
     &:hover {
@@ -564,6 +568,10 @@
 
 .not-clickable {
     pointer-events: none;
+}
+
+.drop-cursor {
+    cursor: no-drop;
 }
 
 .select-icon {

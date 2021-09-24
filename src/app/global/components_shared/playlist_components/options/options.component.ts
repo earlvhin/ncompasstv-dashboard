@@ -23,6 +23,7 @@ export class OptionsComponent implements OnInit {
 	c_index: number;
 	content_data: API_CONTENT;
 	content_frequency: number;
+    contents_list: any[] = [];
 	credits: number = null;
 	disable_animation = true;
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`
@@ -32,6 +33,7 @@ export class OptionsComponent implements OnInit {
 	licenses: any[] = [];
 	feed_url = '';
 	playlist_changes_data: PLAYLIST_CHANGES = { content: null, blocklist: null, original_credits: null };
+    selected_data: any;
 	schedule = { date: '', days: '', time: '' };
 	timeout: any;
 	toggle_all: boolean;
@@ -47,7 +49,7 @@ export class OptionsComponent implements OnInit {
 	];
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: number, content: API_CONTENT, host_license: any, total_contents?: number },
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: number, content: API_CONTENT, host_license: any, total_contents?: number, contents_list: any },
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<OptionsComponent>
 	) { }
@@ -61,12 +63,34 @@ export class OptionsComponent implements OnInit {
 		this.content_frequency = this.setFrequency(content.frequency);
 		this.credits = this.setCreditsAndBalance(content.playlistContentCredits);
 		this.total_contents = total_contents;
-		this.host_license = host_license;		
+		this.host_license = host_license;	
 		if (this.isFeedContent()) this.setFeedUrl();
 		this.setSchedule(this._dialog_data.content);
         this.getTotalLicenses();
 		this.initial_credits_status = content.creditsEnabled;
+        this.contents_list = this._dialog_data.contents_list;
+        this.selected_data = this._dialog_data
 	}
+
+    next() {
+        this.c_index = this.c_index + 1;
+        this.content_data = this.contents_list[this.c_index - 1];
+        this.selected_data = {
+            content: this.content_data,
+            host_license: this.host_license
+        }
+        this.content_frequency = this.setFrequency(this.content_data.frequency);
+		this.credits = this.setCreditsAndBalance(this.content_data.playlistContentCredits);
+        this.unchanged_playlist = true;
+    }
+
+    prev() {
+        this.c_index = this.c_index - 1;
+        this.content_data = this.contents_list[this.c_index];
+        this.content_frequency = this.setFrequency(this.content_data.frequency);
+		this.credits = this.setCreditsAndBalance(this.content_data.playlistContentCredits);
+        this.unchanged_playlist = true;
+    }
 
 	ngOnDestroy() {
 		clearTimeout(this.timeout);
