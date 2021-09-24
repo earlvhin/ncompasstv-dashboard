@@ -55,36 +55,37 @@
 		</div>
 	</div>
 
-	<hr class="my-4">
+    <div class="col-lg-12 mt-3 p-0 custom-mat-tab">
+        <mat-tab-group dynamicHeight animationDuration="0ms" [selectedIndex]="currentTabIndex" (selectedTabChange)="onChangeTab($event)">
 
-	<mat-tab-group dynamicHeight animationDuration="0ms" [selectedIndex]="currentTabIndex" (selectedTabChange)="onChangeTab($event)">
-
-		<!-- TAGS TAB -->
-		<mat-tab label="Tags">
-			<ng-template matTabContent>
-				<app-tags-tab
-					[columns]="tagsTableSettings.columns"
-					[currentTabIndex]="currentTabIndex"
-					[currentTagType]="currentTagType"
-					[currentUserRole]="currentUserRole"
-					[tagTypes]="tagTypes"
-					(clickedTagName)="onClickTagName($event)">
-				</app-tags-tab>
-			</ng-template>
-		</mat-tab>
-
-		<!-- TAG OWNERS TAB -->
-		<mat-tab label="Owners">
-			<ng-template matTabContent>
-				<app-tag-owners-tab
-					[columns]="tagOwnersTableSettings.columns"
-					[currentUserRole]="currentUserRole"
-					[tagTypes]="tagTypesMutated"
-					[searchKey]="ownersTabSearchKey">
-				</app-tag-owners-tab>
-			</ng-template>
-		</mat-tab>
-	</mat-tab-group>
+            <!-- TAGS TAB -->
+            <mat-tab label="Tags">
+                <ng-template matTabContent>
+                    <app-tags-tab
+                        [columns]="tagsTableSettings.columns"
+                        [currentTabIndex]="currentTabIndex"
+                        [currentTagType]="currentTagType"
+                        [currentUserRole]="currentUserRole"
+                        [tagTypes]="tagTypes"
+                        (clickedTagName)="onClickTagName($event)">
+                    </app-tags-tab>
+                </ng-template>
+            </mat-tab>
+    
+            <!-- TAG OWNERS TAB -->
+            <mat-tab label="Owners">
+                <ng-template matTabContent>
+                    <app-tag-owners-tab
+                        [columns]="tagOwnersTableSettings.columns"
+                        [currentUserRole]="currentUserRole"
+                        [tagTypes]="tagTypesMutated"
+                        [searchKey]="ownersTabSearchKey">
+                    </app-tag-owners-tab>
+                </ng-template>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
+	
 </div>
 
 <ng-template #loading>
