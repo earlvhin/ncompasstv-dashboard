@@ -1,9 +1,9 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { map, takeUntil } from 'rxjs/operators';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_ADVERTISER, API_DEALER, API_HOST, API_LICENSE, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
+import { PAGING, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 
 @Component({
@@ -18,10 +18,11 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 	@Input() tagTypes: TAG_TYPE[];
 	@Input() searchKey: string;
 	
+	currentFilter = 'All';
 	currentTagType: TAG_TYPE;
 	isLoading = false;
-	owners: TAG_OWNER[];
-	currentFilter = 'All';
+	owners: TAG_OWNER[] = [];
+	pagingData: PAGING;
 	searchFormControl = new FormControl();
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
@@ -35,6 +36,7 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 		this.currentFilter = defaultType.name;
 		this.searchOwnerTags(this.searchKey, 0);
 		this.subscribeToRefreshTableData();
+		this.subscribeToSearch();
 	}
 
 	ngOnDestroy() {
@@ -42,66 +44,48 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	onClickPageNumber(page: number): void {
+		const keyword = this.searchFormControl.value;
+		this.searchOwnerTags(keyword, null, page);
+	}
+
 	onSelectTagType(type: TAG_TYPE): void {
 		this.currentTagType = type;
 		this.currentFilter = type.name;
-		this.searchOwnerTags(null, this.currentTagType.tagTypeId);;
+		this.searchOwnerTags(null, type.tagTypeId);
 	}
 
-	private searchOwnerTags(keyword = null, tagTypeId = 0): void {
+	private searchOwnerTags(keyword = null, tagTypeId = null, page = 1): void {
 
 		if (!this.currentTagType) return;
 		this.isLoading = true;
 
-		this._tag.searchOwnersByTagType(tagTypeId, keyword)
+		if (this.searchFormControl.value) keyword = this.searchFormControl.value;
+
+		this._tag.searchOwnersByTagType(keyword, tagTypeId, page)
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map(
-					(response: TAG_OWNER[]) => {
+					({ tags, paging, message}) => {
+	
+						if (message) return { tags: [] };
 
-						let displayName = null;
-	
-						response.forEach(
+						tags.forEach(
 							(data, index) => {
-	
-								const { owner, tagTypeName } = data;
-	
-								switch (tagTypeName.toLowerCase()) {
-									case 'host':
-									case 'hosts':
-										const host = owner as API_HOST;
-										displayName = `${host.name} (${host.city})`;
-										break;
-						
-									case 'license':
-									case 'licenses':
-										const license = owner as API_LICENSE['license'];
-										displayName = license.alias ? license.alias : license.licenseKey;
-										break;
-									
-									case 'advertiser':
-									case 'advertisers':
-										const advertiser = owner as API_ADVERTISER;
-										displayName = advertiser.name;
-										break;
-						
-									default:
-										const dealer = owner as API_DEALER;
-										displayName = dealer.businessName;
-								}
-	
-								response[index].displayName = displayName;
-								response[index].url = `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
-	
+								const { tagTypeName } = data;
+								tags[index].url = `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
 							}
 						);
 	
-						return response;
+						return { tags, paging };
 					}
 				)
 			)
 			.subscribe(
-				(response: TAG_OWNER[]) => this.owners = response,
+				({ tags, paging }) => {
+					this.owners = tags;
+					this.pagingData = paging;
+				},
 				error => console.log('Error retrieving tags by tag type', error)
 			)
 			.add(() => this.isLoading = false);
@@ -109,9 +93,20 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToRefreshTableData(): void {
+
 		this._tag.onRefreshTagOwnersTable
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(() => this.searchOwnerTags());
+
+	}
+
+	private subscribeToSearch(): void {
+
+		this.searchFormControl.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+			.subscribe(
+				keyword => this.searchOwnerTags(keyword, 0)
+			);
+
 	}
 	
 }

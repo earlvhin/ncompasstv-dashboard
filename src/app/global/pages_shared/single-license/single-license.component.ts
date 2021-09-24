@@ -14,7 +14,7 @@ import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 
-import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
+import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from '../../../global/services';
 
 import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_SINGLE_SCREEN, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SCREEN_TEMPLATE_ZONE, TAG, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 

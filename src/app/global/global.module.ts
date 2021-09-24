@@ -453,6 +453,7 @@ const DIRECTIVES = [
 		ReactiveFormsModule,
 		DIRECTIVES,
 		NgxMatSelectSearchModule,
+		NgxPaginationModule,
 		ColorPickerModule,
 	],
 	providers: [

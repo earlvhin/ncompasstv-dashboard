@@ -38,8 +38,21 @@
 	}
 }
 
-.play-credits-settings {
-	mat-form-field {
-		margin-right: 20px; 
+.play-credits {
+
+	.license-assignment-notice {
+		font-size: 12px;
+		margin-top: 12px;
+	}
+
+	.play-credits-settings {
+		mat-form-field {
+			margin-right: 20px; 
+		}
+	}
+
+	mat-hint {
+		font-size: 12px;
 	}
 }
+

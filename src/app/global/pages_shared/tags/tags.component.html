@@ -61,25 +61,20 @@
 
 		<!-- TAGS TAB -->
 		<mat-tab label="Tags">
-			<div class="row">
-				<div class="col-lg">
-					<ng-template matTabContent>
-						<app-tags-tab
-							[columns]="tagsTableSettings.columns"
-							[currentTabIndex]="currentTabIndex"
-							[currentTagType]="currentTagType"
-							[currentUserRole]="currentUserRole"
-							[tagTypes]="tagTypes"
-							(clickedTagName)="onClickTagName($event)">
-						</app-tags-tab>
-					</ng-template>
-				</div>
-			</div>
+			<ng-template matTabContent>
+				<app-tags-tab
+					[columns]="tagsTableSettings.columns"
+					[currentTabIndex]="currentTabIndex"
+					[currentTagType]="currentTagType"
+					[currentUserRole]="currentUserRole"
+					[tagTypes]="tagTypes"
+					(clickedTagName)="onClickTagName($event)">
+				</app-tags-tab>
+			</ng-template>
 		</mat-tab>
 
 		<!-- TAG OWNERS TAB -->
 		<mat-tab label="Owners">
-
 			<ng-template matTabContent>
 				<app-tag-owners-tab
 					[columns]="tagOwnersTableSettings.columns"
@@ -88,7 +83,6 @@
 					[searchKey]="ownersTabSearchKey">
 				</app-tag-owners-tab>
 			</ng-template>
-
 		</mat-tab>
 	</mat-tab-group>
 </div>

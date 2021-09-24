@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { TAG, TAG_TYPE } from 'src/app/global/models';
+import { PAGING, TAG, TAG_TYPE } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 
 @Component({
@@ -24,7 +24,8 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 	isLoading = true;
 	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
 	searchFormControl = new FormControl();
-	tags: TAG[];
+	tags: TAG[] = [];
+	pagingData: PAGING;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -33,7 +34,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 	) { }
 	
 	ngOnInit() {
-		if (!this.tags) this.searchTags();
+		if (!this.tags || this.tags.length <= 0) this.searchTags();
 		this.subscribeToSearch();
 		this.subscribeToRefreshTableData();
 	}
@@ -43,21 +44,33 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	onClickPageNumber(page: number): void {
+		this.searchTags(page);
+	}
+
 	onClickTagName(event: { tag: string }): void {
 		this.clickedTagName.emit(event);
 	}
 
-	private searchTags() {
+	private searchTags(page = 1) {
 
 		this.isLoading = true;
 		const keyword = this.searchFormControl.value;
-		let request = this._tag.searchAllTags(keyword); 
-		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags();
+		let request = this._tag.searchAllTags(keyword, page);
+		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags(page);
 
-		return request.pipe(takeUntil(this._unsubscribe), map((response: { tags: TAG[] }) => response.tags))
+		return request.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: TAG[]) => {
-					this.tags = response;
+				({ tags, paging, message }) => {
+
+					if (message) {
+						this.tags = [];
+						return;
+					}
+
+					this.tags = tags;
+					this.pagingData = paging;
+
 				},
 				error => console.log('Error searching for tags ', error)
 			)

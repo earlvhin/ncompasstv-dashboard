@@ -417,8 +417,13 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 				const licenses = response.licenses.map(
 					(license: { licenseAlias: string, hostName: string, displayName: string, licenseKey: string }) => {
+						
 						const { licenseAlias, hostName, licenseKey } = license;
-						license.displayName = licenseAlias ? `${licenseAlias} (${hostName})` : licenseKey; 
+						license.displayName = hostName;
+
+						if (licenseAlias) license.displayName += ` ${licenseAlias}`;
+						else license.displayName += ` ${licenseKey}`;
+
 						return license;
 					}
 				);

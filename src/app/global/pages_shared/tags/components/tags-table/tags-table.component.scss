@@ -33,6 +33,10 @@ table {
 			border-radius: 5px;
 			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
 			color: white;
+
+			&.clickable {
+				padding: 1px 7px 1px 7px;
+			}
 		}
 
 		mat-icon {

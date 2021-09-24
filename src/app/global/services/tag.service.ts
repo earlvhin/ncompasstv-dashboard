@@ -3,6 +3,7 @@ import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
 import { TAG } from '../models/tag.model';
+import { PAGING, TAG_OWNER } from '../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -37,8 +38,9 @@ export class TagService extends BaseService {
 		return this.postRequest(url, {});
 	}
 
-	getAllTags() {
-		return this.getRequest(this.getters.tags_get_all);
+	getAllTags(page = 1): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
+		const url = `${this.getters.tags_get_all}?page=${page}`;
+		return this.getRequest(url);
 	}
 
 	getAllTagTypes() {
@@ -69,18 +71,32 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
 	}
 
-	searchOwnersByTagType(typeId = 0, keyword = null) {
+	searchOwnersByTagType(keyword = null, typeId = null, page = 1): Observable<{ tags?: TAG_OWNER[], paging?: PAGING, message?: string }> {
+		let url = `${this.getters.search_owner_tags}?page=${page}`;
 
-		let url = `${this.getters.search_tags}?typeid=${typeId}`;
-		if (keyword) url += `&search=${keyword}`;
+		const params = [
+			{ name: 'search', value: keyword },
+			{ name: 'typeId', value: typeId },
+		];
 
-		return this.getRequest(url)
-			.map((response: { tags: { owner: any, tagTypeId: string, tags: any[] }[] }) => response.tags);
+		params.forEach(
+			param => {
+
+				if (param.value) {
+					if (url.includes('?')) url += '&';
+					else url += '?';
+					url += `${param.name}=${param.value}`;
+				}
+
+			}
+		);
+		
+		return this.getRequest(url);
 	}
 
-	searchAllTags(keyword = '', typeId = 0) {
-		let url = `${this.getters.search_all_tags}?key=${keyword}`;
-		if (typeId > 0) url += `?typeId=${typeId}`;
+	searchAllTags(keyword = '', typeId = 0, page = 1): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
+		let url = `${this.getters.search_tags}?page=${page}&key=${keyword}`;
+		if (typeId && typeId > 0) url += `&typeId=${typeId}`;
 		return this.getRequest(url);
 	}
 

@@ -27,18 +27,28 @@
 
 </div>
 
-<!-- TAG-OWNERS TABLE -->
-<div class="row">
-	<div class="col-lg">
-		<mat-card>
-			<app-tags-table
-				[tableType]="'tag-owners'"
-				[isLoading]="isLoading"
-				[tableColumns]="columns"
-				[tableData]="owners"
-				[currentTagType]="currentTagType"
-				[currentUserRole]="currentUserRole">
-			</app-tags-table>
-		</mat-card>
+<mat-card>
+	<ng-container *ngIf="!isLoading; else loading">
+		<!-- TABLE -->
+		<app-tags-table *ngIf="owners.length > 0; else noResults"
+			[tableType]="'tag-owners'"
+			[isLoading]="isLoading"
+			[paging]="pagingData"
+			[tableColumns]="columns"
+			[tableData]="owners"
+			[currentTagType]="currentTagType"
+			[currentUserRole]="currentUserRole"
+			(clickedPageNumber)="onClickPageNumber($event)">
+		</app-tags-table>
+	</ng-container>
+</mat-card>
+
+<ng-template #loading>
+	<div class="py-4">
+		<app-spinner [diameter]="60"></app-spinner>
 	</div>
-</div>
+</ng-template>
+
+<ng-template #noResults>
+	<p>No results found</p>
+</ng-template>

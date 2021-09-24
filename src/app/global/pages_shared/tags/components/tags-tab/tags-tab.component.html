@@ -12,14 +12,28 @@
 </div>
 
 <mat-card>
-	<!-- TABLE -->
-	<app-tags-table
-		[currentTabIndex]="currentTabIndex"
-		[currentTagType]="currentTagType"
-		[currentUserRole]="currentUserRole"
-		[isLoading]="isLoading"
-		[tableColumns]="columns"
-		[tableData]="tags"
-		(clickedTagName)="onClickTagName($event)">
-	</app-tags-table>
+	<ng-container *ngIf="!isLoading; else loading">
+		<!-- TABLE -->
+		<app-tags-table *ngIf="tags.length > 0; else noResults"
+			[currentTabIndex]="currentTabIndex"
+			[currentTagType]="currentTagType"
+			[currentUserRole]="currentUserRole"
+			[isLoading]="isLoading"
+			[paging]="pagingData"
+			[tableColumns]="columns"
+			[tableData]="tags"
+			(clickedPageNumber)="onClickPageNumber($event)"
+			(clickedTagName)="onClickTagName($event)">
+		</app-tags-table>
+	</ng-container>
 </mat-card>
+
+<ng-template #loading>
+	<div class="py-4">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #noResults>
+	<p>No results found</p>
+</ng-template>

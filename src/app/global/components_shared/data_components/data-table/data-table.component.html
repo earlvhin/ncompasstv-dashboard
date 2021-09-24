@@ -44,13 +44,17 @@
 		<!-- NEW TABLE DATA ROWS -->
 		<tbody *ngIf="new_table">
 			<tr *ngFor="let data of table_data; let j = index" >
-				<td class="p-3" *ngFor="let d of data | objectKeys; let i = index" [hidden]="data[d].hidden && !data[d].key" [ngClass]="data[d].hidden && data[d].key ? 'text-center': ''">
+				<td class="p-3" 
+					*ngFor="let d of data | objectKeys; let i = index" 
+					[hidden]="data[d].hidden && !data[d].key" 
+					[ngClass]="data[d].hidden && data[d].key ? 'text-center': ''"
+					[style.backgroundColor]="data[d].backgroundColor">
 
 					<span *ngIf="data[d].hidden && data[d].key">
 						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
 
-					<span *ngIf="!data[d].hidden" class="d-inline-block">
+					<span *ngIf="!data[d].hidden" class="d-inline-block" [style.color]="data[d].color">
 
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
 							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
@@ -58,7 +62,13 @@
 
 						<ng-container *ngIf="!data[d].isImage; else isImage;">
 
-							<a class="cursor-pointer table-row-url" *ngIf="data[d].link != null; else no_link" [routerLink]="[data[d].link]" [queryParams]="query_params" target="{{data[d].new_tab_link ? '_blank' : '_self'}}">
+							<a class="cursor-pointer table-row-url" 
+								target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
+								*ngIf="data[d].link != null; else no_link" 
+								[routerLink]="[data[d].link]" 
+								[queryParams]="query_params"
+								[style.color]="data[d].color">
+								
 								<ng-container>
 
 									<div *ngIf="!data[d].permission; else userWithPermission">
