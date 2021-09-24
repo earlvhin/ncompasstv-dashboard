@@ -58,8 +58,8 @@ export class PlayWhereComponent implements OnInit {
 
 			this.getBlacklistProperties();
 		} else {
-			this.blacklist_data_ready.emit(true);
 			this.blacklist_data = [];
+			this.blacklist_data_ready.emit(this.blacklist_data);
 		}
 
 		this.toggleEvent.subscribe(
@@ -120,7 +120,7 @@ export class PlayWhereComponent implements OnInit {
 		this._playlist.get_blacklisted_by_id(this.content_data.content.playlistContentId).subscribe(
 			data => {
 				this.blacklist_data = data.blacklistsContents || [];
-				this.blacklist_data_ready.emit(true)
+				this.blacklist_data_ready.emit(this.blacklist_data)
 
                 if(!data.message) {
 					const blacklisted = [];

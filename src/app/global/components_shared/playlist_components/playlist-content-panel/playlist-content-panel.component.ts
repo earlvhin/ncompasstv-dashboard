@@ -13,7 +13,7 @@ import { PlaylistMediaComponent } from '../playlist-media/playlist-media.compone
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 import { ContentService, PlaylistService } from 'src/app/global/services';
 import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
-	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS } from 'src/app/global/models';
+	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlist-content-panel',
@@ -326,13 +326,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	optionsSaved(data: PLAYLIST_CHANGES): void {
-
-		// console.log('DATA FROM OPTIONS COMPONENTS', data);
 		
+		let creditsData: CREDITS_TO_SUBMIT = null;
 		let creditsUpdate: { playlistContentId: string, licenseId: string, credits: number } = null;
 		let frequencyUpdate: FREQUENCY = null;
 		let creditsStatusUpdate: CREDITS_STATUS = null;
-		const { content, original_credits } = data;
+		const { content, credits_to_submit, blocklist } = data;
 		this.playlist_changes_data = data;
 
 		if (content) {
@@ -342,15 +341,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				frequencyUpdate = { frequency, playlistContentId, playlistId: this.playlist_id };
 			}
 
-			if (!original_credits || original_credits.balance === 0) {
-				if (content.playlistContentCredits) {
-					let { credits, licenseId } = content.playlistContentCredits;
-					const { playlistContentId } = content;
-					const maxCredits = 1000000;
-		
-					if (credits > maxCredits) credits = maxCredits; 
-					creditsUpdate = { playlistContentId, licenseId, credits };
-				}
+			if (credits_to_submit) {
+				let { credits } = credits_to_submit;
+				const maxCredits = 1000000;
+				if (credits > maxCredits) credits = maxCredits; 
+				creditsData = credits_to_submit;
+
 			}
 
 			this.playlist_contents.forEach(
@@ -362,13 +358,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			this.structured_updated_playlist = this.structureUpdatedPlaylist();
 		}
 
-		const { blocklist } = this.playlist_changes_data;
 		const dataToSubmit = this.structured_updated_playlist;
 		this.structured_incoming_blocklist = blocklist && blocklist.incoming.length > 0 ? blocklist.incoming : [];
 		this.structured_remove_in_blocklist = blocklist && blocklist.removing.length > 0 ? blocklist.removing : [];
 
 		if (typeof data.credits_status !== 'undefined') creditsStatusUpdate = data.credits_status;
-		this.savePlaylistChanges(dataToSubmit, frequencyUpdate, creditsUpdate, creditsStatusUpdate);
+
+		console.log('credits to submit', creditsData);
+		this.savePlaylistChanges(dataToSubmit, frequencyUpdate, creditsData, creditsStatusUpdate);
 	}
 
 	openPlaylistMedia(): void {
@@ -555,7 +552,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.addToBlocklist(to_block);
 	}
 
-	savePlaylistChanges(data: API_UPDATE_PLAYLIST_CONTENT, frequencyUpdate?: FREQUENCY, creditsUpdate?: CREDITS, creditsStatusUpdate?: CREDITS_STATUS): void {
+	savePlaylistChanges(data: API_UPDATE_PLAYLIST_CONTENT, frequencyUpdate?: FREQUENCY, creditsToSubmit?: CREDITS_TO_SUBMIT, creditsStatusUpdate?: CREDITS_STATUS): void {
 		this.playlist_saving = true;
 		this.is_marking = false;
 
@@ -578,9 +575,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 						}
 
-						if (creditsUpdate) {
-							const { playlistContentId, licenseId, credits } = creditsUpdate;
-							await this._content.update_play_credits(playlistContentId, licenseId, credits).toPromise();
+						if (creditsToSubmit) {
+							await this._content.update_play_credits(creditsToSubmit).toPromise();
 						}
 
 						if (creditsStatusUpdate) {
@@ -686,7 +682,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				let status = 'inactive';
 				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
 				const { type } = schedule;
-				const { playlistContentCredits } = content;
+				const { playlistContentCredits, creditsEnabled } = content;
 
 				// no schedule
 				if (!schedule) {
@@ -695,13 +691,15 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				}
 
 				// credits depleted to 0
-				if (playlistContentCredits) {
-					const { balance } = playlistContentCredits;
+				if (creditsEnabled === 1 && playlistContentCredits && playlistContentCredits.length > 0) {
 
-					if (balance === 0) {
+					const sum = playlistContentCredits.map(content => content.credits).reduce((previous, current) => previous + current); 
+
+					if (sum === 0) {
 						content.scheduleStatus = status;
 						return content;
 					}
+
 
 				}
 

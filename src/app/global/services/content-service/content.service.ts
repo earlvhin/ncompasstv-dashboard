@@ -6,6 +6,7 @@ import 'rxjs/add/operator/map'
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { PlaylistContentSchedule } from '../../models/playlist-content-schedule.model';
+import { CREDITS_TO_SUBMIT } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -232,10 +233,9 @@ export class ContentService {
 		return this._http.post(url, body, this.httpOptions);
 	}
 
-	update_play_credits(playlistContentId: string, licenseId: string, credits = 100) {
+	update_play_credits(data: CREDITS_TO_SUBMIT) {
 		const url = `${environment.base_uri}${environment.update.play_credits}`;
-		const body = { playlistContentId, licenseId, credits };
-		return this._http.post(url, body, this.httpOptions);
+		return this._http.post(url, data, this.httpOptions);
 	}
 
 	unassign_content(data) {
