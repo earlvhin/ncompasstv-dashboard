@@ -168,6 +168,7 @@
 							</div>
 						</div>
 						<app-play-where
+							*ngIf="!is_paging"
 							[toggleEvent]="toggle_event.asObservable()"
 							[content_data]="selected_data"
 							(blocklist_changes_saved)="saveBlocklistChanges($event)"
