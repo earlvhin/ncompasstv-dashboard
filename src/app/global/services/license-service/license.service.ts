@@ -210,6 +210,14 @@ export class LicenseService {
 	}
 
 	/**
+	 * @description: Get Resource Usage By License Id and Date
+	 * @param license: string
+	 */
+	get_license_resource_logs(license: string, date: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`, this.httpOptions);
+	}
+
+	/**
 	 * @description: Get All Activities
 	 * @param license
 	 * @returns array of activities

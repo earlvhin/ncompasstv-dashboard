@@ -33,11 +33,11 @@ export class ResourceTabComponent implements OnInit {
   display_mode: string = "dateRange";
 
   contentsForm: FormGroup = this._form_builder.group({ 
-    start_date: [ '', Validators.required ],
-    end_date: [ '', Validators.required ],
+    select_date: [ new Date(), Validators.required ],
+    //end_date: [ '', Validators.required ],
 	});
 
-  start_date: Date;
+  select_date: Date = new Date();
   end_date: Date;
   current_date: any = moment().format('dddd	- MMMM D, YYYY');
 
@@ -58,13 +58,6 @@ export class ResourceTabComponent implements OnInit {
 	}
 
   //For Future Implementation/Reference
-  // onSelectStartDate(e) {
-  //   this.start_date = e.format('YYYY-MM-DD');
-  //   if(this.end_date){
-  //    this.getLicenseResourceUsage(this.license_id);
-  //   }
-  // }
-
   // onSelectEndDate(e){
   //   this.end_date = e.format('YYYY-MM-DD');
   //   if(this.start_date){
@@ -74,12 +67,20 @@ export class ResourceTabComponent implements OnInit {
 	// 	this.queried_date = currentDate.format('MMMM D, YYYY');
   // }
 
-  getLicenseResourceUsage(id: string) {
-  //let startDate = moment(this.start_date).format('YYYY-MM-DD');
-  //let endDate = moment(this.end_date).format('YYYY-MM-DD');
-  let currentDate = moment(this.current_date).format('YYYY-MM-DD');
+  onSelectDate(e) {
+    this.select_date = e.format('YYYY-MM-DD');
+    this.getLicenseResourceUsage(this.license_id);
+    // if(this.end_date){
+    //  this.getLicenseResourceUsage(this.license_id);
+    // }
+  }
 
-  this._license.get_license_resource(id)
+  getLicenseResourceUsage(id: string) {
+  let selectDate = moment(this.select_date).format('YYYY-MM-DD');
+  //let endDate = moment(this.end_date).format('YYYY-MM-DD');
+  //let currentDate = moment(this.current_date).format('YYYY-MM-DD');
+
+  this._license.get_license_resource_logs(id, selectDate)
     .pipe(takeUntil(this._unsubscribe))
     .subscribe(
       (data) => {
@@ -87,14 +88,8 @@ export class ResourceTabComponent implements OnInit {
         {
           this.dateRange_chart_updating = false;
           let result = data.paging;
+          this.resource_logs = result.entities;        
 
-          /*filtered based on start and end date
-          this.resource_logs = result.entities.filter(item => item.logDate.split("T")[0] >= startDate 
-                                                      && item.logDate.split("T")[0] <= endDate)
-                                                      .sort((a, b) => +new Date(a.logDate) - +new Date(b.logDate));
-          */
-          this.resource_logs = result.entities.filter(item => item.logDate.split("T")[0] === currentDate)
-                               .sort((a, b) => +new Date(a.logDate) - +new Date(b.logDate));;
           this.resource_data = [];
 
           //CPU Usage

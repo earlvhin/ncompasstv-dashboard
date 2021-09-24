@@ -5,27 +5,27 @@
             <p class="sm-text">CPU and RAM Average usage of the Player.</p>
             <br/>
         </div>
-        <!-- <form [formGroup]="contentsForm" *ngIf="contentsForm" class="col-lg-8">
+        <form [formGroup]="contentsForm" *ngIf="contentsForm" class="col-lg-8">
             <div class="text-right">
                 <mat-form-field class="mr-3" appearance="fill" appDefaultDateFormat>
-                    <mat-label class="md-text">Start Date</mat-label>
-                    <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                    <mat-label class="md-text">Select Date</mat-label>
+                    <input formControlName="select_date" (dateInput)="onSelectDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
                     <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
                 </mat-form-field>
-            
-                <mat-form-field class="mr-3" appearance="fill" appDefaultDateFormat>
+
+                <!-- <mat-form-field class="mr-3" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">End Date</mat-label>
                     <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date"
                         readonly>
                     <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker2></mat-datepicker>
-                </mat-form-field>
+                </mat-form-field> -->
             </div>
-        </form> -->
-        <div class="col-lg-8 text-right">
+        </form>
+        <!-- <div class="col-lg-8 text-right">
             <h2>{{current_date}}</h2>
-        </div>
+        </div> -->
     </div>
 
     <!-- <ng-container *ngIf="end_date"> -->
@@ -37,7 +37,7 @@
                             <div class="d-flex align-items-center">
                                 <h5>{{res.resourceName}}</h5>
                             </div>
-                            <app-data-graph 
+                            <app-data-graph
                                 [analytics_reload]="analytics_reload.asObservable()"
                                 [data_set]="res.resourceDataCount" [graph_id]="res.resourceName + '_dateRange'"
                                 [realtime_data_per_license]="realtime_data" [date_format]="display_mode"
@@ -77,7 +77,7 @@
         <div class="loader text-center py-5 d-flex align-items-center vh-50">
             <div class="w-100">
                 <h3 class="mt-4 mb-2">No Data Found</h3>
-                <p class="sm-text">There are no recorded logs of resource today.</p>
+                <p class="sm-text">There are no recorded logs of resource on the selected date.</p>
             </div>
         </div>
     </div>
