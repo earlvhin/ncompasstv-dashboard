@@ -5,6 +5,7 @@ import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver';
 import { environment as env } from '../../../../environments/environment';
 import { AuthService, ContentService, PlaylistService } from '../../../global/services';
 import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION } from '../../../global/models';
@@ -53,13 +54,13 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	end_date: Date;
 	content_logs_report: any[] = [];
 	content_logs_report_table_columns = [
-		'#',
-		'Host',
-		'Playlist',
-		'Total Play',
-		'Total Duraton',
-		'Date Started',
-		'Date Ended'
+		{name: '#', no_export: true},
+        {name: 'Host Name', key:'hostName'},
+        {name: 'Playlist', key:'playlistName'},
+        {name: 'Total Play', key:'totalPlay'},
+        {name: 'Total Duration', key:'totalDuration'},
+        {name: 'Start Date', key:'startDate'},
+        {name: 'End Date', key:'endDate'},
 	];
 
 	role: any;
@@ -81,6 +82,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+    content_to_export: any = [];
+    file_title: any;
 
 	content_metrics_table_column = [
         { name: 'Host', key:'hostName'},
@@ -138,14 +141,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	}
 
 	/**
-	 * Content Logs Report: Export Generated Report to Excel File
-	 * requires content_logs_report?
-	 */
-	exportAsFile() {
-		alert("EXPORTING :)");
-	}
-
-	/**
 	 * Content Logs Report: Generates Content Logs Report
 	 * requires startDate, endDate, contentId
 	 */
@@ -160,7 +155,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			}).subscribe((data: {total: number, contentLogsByHosts: CONTENT_LOGS_REPORT[]}) => {
 				this.generating_report = false;
 				this.report_generated = true;
-
+                this.content_to_export = data.contentLogsByHosts;
 				if (data.total > 0) {
 					let count = 1;
 
@@ -172,9 +167,9 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 									{ value: i.hostName, link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null, editable: false, hidden: false },
 									{ value: i.playlistName, link: null, hidden: false },
 									{ value: i.totalPlay, link: null , hidden: false },
-									{ value: moment.utc(i.totalDuration*1000).format('HH:mm:ss'), link: null , hidden: false },
-									{ value: i.startDate ? moment(new Date(i.startDate)).format('MMMM DD, YYYY') : 'No Data', link: null , hidden: false },
-									{ value: i.endDate ? moment(new Date(i.endDate)).format('MMMM DD, YY') : 'No Data', link: null , hidden: false }
+									{ value: i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0', link: null , hidden: false },
+									{ value: i.startDate ? moment(new Date(i.startDate)).format('MM/DD/YYYY') : '--', link: null , hidden: false },
+									{ value: i.endDate ? moment(new Date(i.endDate)).format('MM/DD/YYYY') : '--', link: null , hidden: false }
 								]
 							)
 						}
@@ -183,6 +178,28 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			})
 		}
 	}
+
+    msToTime(input) {
+        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+        totalSeconds = input;
+        totalMinutes = totalSeconds / 60;
+        totalHours = totalMinutes / 60;
+        seconds = Math.floor(totalSeconds) % 60;
+        minutes = Math.floor(totalMinutes) % 60;
+        hours = Math.floor(totalHours) % 60;
+        if (hours !== 0) {
+            result += hours+'h ';
+            if (minutes.toString().length == 1) {
+                minutes = '0'+minutes;
+            }
+        }
+        result += minutes+'m ';
+        if (seconds.toString().length == 1) {
+            seconds = '0'+seconds;
+        }
+        result += seconds + 's';
+        return result;
+    }
 
 	/** Content Logs Report: StarDate Picker */
 	onSelectStartDate(e) {
@@ -220,11 +237,56 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	}
 
 	exportTable() {
-		
+		const header = [];
+		this.workbook = new Excel.Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet(this.start_date +' - '+ this.end_date);
+        this.workbook_generation = true;
+        Object.keys(this.content_logs_report_table_columns).forEach(key => {
+            if(this.content_logs_report_table_columns[key].name && !this.content_logs_report_table_columns[key].no_export) {
+                header.push({ header: this.content_logs_report_table_columns[key].name, key: this.content_logs_report_table_columns[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+            }
+        });
+        this.worksheet.columns = header;
+		this.getDataForExport();    
+	}
+
+    getDataForExport() {
+        var tab = this.start_date + "-" + this.end_date;
+        this.content_to_export.forEach((item, i) => {
+            this.modifyItem(item);
+            this.worksheet.addRow(item).font ={
+                bold: false
+            };
+        });
+        this.generateExcel();
+    }
+
+    modifyItem(item) {
+        item.totalDuration = this.msToTime(item.totalDuration);
+        item.startDate = item.startDate ? moment(new Date(item.startDate)).format('MM/DD/YYYY'): '';
+        item.endDate = item.endDate ? moment(new Date(item.endDate)).format('MM/DD/YYYY'):'';
+    }
+
+    generateExcel() {
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        var filename = '';
+		let rowIndex = 1;
+		for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+			this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+		}
+		this.workbook.xlsx.writeBuffer().then((file: any) => {
+			const blob = new Blob([file], { type: EXCEL_TYPE });
+            filename =  this.file_title + '-_reports' +  '.xlsx';
+			FileSaver.saveAs(blob, filename);
+		});
+		this.workbook_generation = false;
 	}
 
 	private getContentInfo(content_id: string): void {
 		this.content$ = this._content.get_content_by_id(content_id);
+        this.content$.subscribe(val => this.file_title = val.title);
 	}
 
 	private getDailyStats(content_id: string, date: string): void {
