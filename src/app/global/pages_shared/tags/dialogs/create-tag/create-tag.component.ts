@@ -282,7 +282,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 			tagColor: [ null ],
 			selectedOwners: [ { value: [], disabled: true }, Validators.required ],
 			selectedTag: [ null ],
-			ownerFilter: [ null ]
+			ownerFilter: [ null, Validators.minLength(3) ]
 		});
 
 	}
@@ -533,8 +533,13 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		control.valueChanges
 			.pipe(
 				takeUntil(this._unsubscribe),
-				debounceTime(200),
-				map(keyword => this.searchOwner(keyword, this.tagType.name)),
+				debounceTime(1000),
+				map(
+					keyword => {
+						if (control.invalid) return;
+						this.searchOwner(keyword, this.tagType.name);
+					}
+				),
 			)
 			.subscribe(
 				() => this.ownerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId

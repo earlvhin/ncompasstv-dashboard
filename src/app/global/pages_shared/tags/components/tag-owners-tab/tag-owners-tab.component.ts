@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -23,7 +23,7 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 	isLoading = false;
 	owners: TAG_OWNER[] = [];
 	pagingData: PAGING;
-	searchFormControl = new FormControl();
+	searchFormControl = new FormControl(null, Validators.minLength(3));
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
@@ -104,7 +104,10 @@ export class TagOwnersTabComponent implements OnInit, OnDestroy {
 
 		this.searchFormControl.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
 			.subscribe(
-				keyword => this.searchOwnerTags(keyword, 0)
+				keyword => {
+					if (this.searchFormControl.invalid) return;
+					this.searchOwnerTags(keyword, 0);
+				}
 			);
 
 	}

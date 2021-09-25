@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
-import { FormControl } from '@angular/forms';
+import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
@@ -23,7 +23,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 	currentFilter = 'All';
 	isLoading = true;
 	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
-	searchFormControl = new FormControl();
+	searchFormControl = new FormControl(null, Validators.minLength(3));
 	tags: TAG[] = [];
 	pagingData: PAGING;
 
@@ -83,6 +83,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 		this.searchFormControl.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
 			.subscribe(
 				() => {
+					if (this.searchFormControl.invalid) return;
 					this.isLoading = true;
 					this.searchTags().add(() => this.isLoading = false);
 				}
