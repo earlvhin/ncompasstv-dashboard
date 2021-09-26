@@ -96,7 +96,8 @@
 
 			<hr>
 
-			<div class="play-credits">
+			<!-- PLAY CREDITS -->
+			<!-- <div class="play-credits">
 				<ng-container *ngIf="!host_license || host_license.length <= 0; else playCreditsSettings">
 					<div class="license-assignment-notice">
 						<p class="text-danger">* Assign the current playlist to a license to set play credits</p>
@@ -104,7 +105,6 @@
 				</ng-container>
 	
 				<ng-template #playCreditsSettings>
-					<!-- TOGGLE CREDITS -->
 					<div class="toggle-credits-setting">
 						<mat-slide-toggle
 							(change)="onToggleCredits()"
@@ -114,7 +114,6 @@
 						</mat-slide-toggle>
 					</div>
 		
-					<!-- PLAYLIST CREDITS -->
 					<div class="play-credits-settings mt-4" *ngIf="content_data.creditsEnabled">
 						<div class="d-flex align-items-baseline flex-column">
 							<mat-form-field class="w-50">
@@ -132,7 +131,7 @@
 	
 					<hr>
 				</ng-template>
-			</div>
+			</div> -->
 
 		</div>
 		<div class="col-lg-6">
