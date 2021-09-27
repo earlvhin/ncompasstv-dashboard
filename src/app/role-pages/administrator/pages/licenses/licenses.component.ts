@@ -56,8 +56,8 @@ export class LicensesComponent implements OnInit {
         activated: "",
         zone:"",
         status:"",
-        dealer:"",
-        host:"",
+        dealer:'',
+        host:'',
         label_status:"",
         label_zone:"",
         label_dealer: "",
@@ -354,8 +354,8 @@ export class LicensesComponent implements OnInit {
             activated: "",
             zone:"",
             status:"",
-            dealer:"",
-            host:"",
+            dealer:'',
+            host:'',
             label_status:"",
             label_zone:"",
             label_dealer: "",
@@ -394,7 +394,7 @@ export class LicensesComponent implements OnInit {
 
     getDataForExport(): void {
         this.pageSize = 0;
-        this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
+        this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
             data => {
                 if(!data.message) {
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';

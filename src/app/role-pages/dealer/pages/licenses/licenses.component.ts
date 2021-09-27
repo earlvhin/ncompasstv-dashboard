@@ -125,7 +125,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page) {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order).subscribe(
+			this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, '', '', '', '').subscribe(
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
