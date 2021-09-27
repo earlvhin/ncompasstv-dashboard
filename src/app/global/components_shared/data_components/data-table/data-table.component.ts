@@ -96,7 +96,6 @@ export class DataTableComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-
 		this.table_data.map(
 			data => {
 				Object.keys(data).forEach(key => {

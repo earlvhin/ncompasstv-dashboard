@@ -192,22 +192,6 @@
                             </div>
                         </div>
                     </mat-tab> -->
-                    <mat-tab label="In Playlist">
-                        <mat-card *ngIf="in_playlist.length > 0; else nodata" class="mt-4">
-                            <app-data-table 
-                            [table_data]="in_playlist"
-                            [table_columns]="in_playlist_table_columns"
-                            [new_table]="true"></app-data-table>
-                        </mat-card>
-                    </mat-tab>
-                    <mat-tab label="Playing Where">
-                        <mat-card *ngIf="playing_where.length > 0; else nodata" class="mt-4">
-                            <app-data-table 
-                            [table_data]="playing_where"
-                            [table_columns]="table_columns"
-                            [new_table]="true"></app-data-table>
-                        </mat-card>
-                    </mat-tab>
                     <mat-tab label="Reports">
                         <div class="row align-items-center mt-4 mb-4">
                             <div class="col-lg-6">
@@ -219,7 +203,7 @@
                                     <div class="flex-even">
                                         <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
                                             <mat-label class="md-text">Start Date</mat-label>
-                                            <input (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                                            <input (dateInput)="onSelectStartDate($event.value)" [(value)]="start_date" matInput [matDatepicker]="datePicker" readonly>
                                             <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
                                             <mat-datepicker #datePicker></mat-datepicker>
                                         </mat-form-field>
@@ -228,7 +212,7 @@
                                     <div class="flex-even mx-3">
                                         <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
                                             <mat-label class="md-text">End Date</mat-label>
-                                            <input (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date"
+                                            <input (dateInput)="onSelectEndDate($event.value)" [(value)]="end_date" matInput [matDatepicker]="datePicker2" [min]="start_date"
                                                 readonly>
                                             <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
                                             <mat-datepicker #datePicker2></mat-datepicker>
@@ -281,6 +265,22 @@
                             <app-data-table 
                             [table_data]="content_logs_report"
                             [table_columns]="content_logs_report_table_columns"
+                            [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="In Playlist">
+                        <mat-card *ngIf="in_playlist.length > 0; else nodata" class="mt-4">
+                            <app-data-table 
+                            [table_data]="in_playlist"
+                            [table_columns]="in_playlist_table_columns"
+                            [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="Playing Where">
+                        <mat-card *ngIf="playing_where.length > 0; else nodata" class="mt-4">
+                            <app-data-table 
+                            [table_data]="playing_where"
+                            [table_columns]="table_columns"
                             [new_table]="true"></app-data-table>
                         </mat-card>
                     </mat-tab>

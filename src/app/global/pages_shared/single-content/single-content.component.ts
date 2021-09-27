@@ -50,8 +50,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	generating_report: boolean = false;
 	report_generated: boolean = false;
-	start_date: Date;
-	end_date: Date;
+	start_date: any;
+	end_date: any;
 	content_logs_report: any[] = [];
 	content_logs_report_table_columns = [
 		{name: '#', no_export: true},
@@ -108,9 +108,9 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-		this.getPageParam();
-
 		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
+
+		this.getPageParam();
 	}
 
 	ngOnDestroy() {
@@ -308,18 +308,29 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	private getPageParam(): void {
 
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					this.content_id = this._params.snapshot.params.data;
-					this.getPlaylistsOfContent(this.content_id);
-					this.getMonthlyStats(this.content_id, this.current_date);
-					this.getDailyStats(this.content_id, this.current_date);
-					// this.getYearlyStats(this.content_id, this.current_date);
-					this.getContentInfo(this.content_id);
-					this.getPlayWhere(this.content_id);
-				}
-			);
+		.subscribe(
+			() => {
+				this.content_id = this._params.snapshot.params.data;
+				this.getPlaylistsOfContent(this.content_id);
+				this.getMonthlyStats(this.content_id, this.current_date);
+				this.getDailyStats(this.content_id, this.current_date);
+				// this.getYearlyStats(this.content_id, this.current_date);
+				this.getContentInfo(this.content_id);
+				this.getPlayWhere(this.content_id);
 
+				this.start_date = this._params.snapshot.queryParamMap.get('start_date') 
+								  ? moment(new Date(this._params.snapshot.queryParamMap.get('start_date'))).format('YYYY-MM-DD') 
+								  : null;
+								  
+				this.end_date = this._params.snapshot.queryParamMap.get('end_date') 
+								? moment(new Date(this._params.snapshot.queryParamMap.get('end_date'))).format('YYYY-MM-DD') 
+								: null;
+
+				if (this.start_date && this.end_date) {
+					this.generateReport();
+				}
+			}
+		);
 	}
 
     private getPlayWhere(id: string): void {
