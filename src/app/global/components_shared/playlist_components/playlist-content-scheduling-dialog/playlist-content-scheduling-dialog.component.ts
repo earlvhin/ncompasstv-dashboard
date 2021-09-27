@@ -59,6 +59,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	selected_days: any[] = [];
 	title = 'Set Schedule';
     today = new Date();
+    yesterday = new Date();
 	warning_text = '';
 
 	private _days: AbstractControl = this.form.get('days');
@@ -76,6 +77,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		private form_builder: FormBuilder) { }
 	
 	ngOnInit() {
+        this.yesterday.setDate(this.today. getDate() - 1);
 		this.setInitialFormValues();
 		this.setWarningText();
 		this.subscribeToFormChanges();
