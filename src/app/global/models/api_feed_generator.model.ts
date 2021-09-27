@@ -137,6 +137,8 @@ export type WEATHER_FEED_STYLE_DATA = {
     fontFamily: string,
     footerContentId: string,
     footerContents: API_CONTENT,
+    footerImageSize: number,
+    headerImageSize: number,
     numberDay: number,
     zipCode: string,
     numberDays?: number,

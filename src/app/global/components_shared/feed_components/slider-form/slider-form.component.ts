@@ -227,6 +227,24 @@ export class SliderFormComponent implements OnInit {
 		this.feed_items = this.feed_items.filter(i => i !== f);
 	}
 
+	/** Remove Selected Media File 
+	 * @param {string} control Clicked Upload Control Name
+	*/
+	removeSelectedMedia(control: string) {
+		this.slide_global_settings_form.controls[control].reset();
+
+		this.slide_global_settings.map(i => {
+			if (i.form_control_name === control) {
+				i.fileName = null;
+				i.imageUri = null;
+			}
+		})
+
+		if (control === 'bannerImage') {
+			this.selected_banner_image = '';
+		}
+	}
+
 	/**
 	 * Set Zooming Effect of Slide Image
 	 * @param e

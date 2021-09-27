@@ -187,6 +187,21 @@ export class NewsFormComponent implements OnInit {
 	/** Pass news feed data to parent component */
 	generateNewsFeed() {
 		this.news_feed_data.emit(this.news_form.value);
+		console.log(this.news_form.value);
+	}
+
+	/** Remove Selected Media File 
+	 * @param {string} control Clicked Upload Control Name
+	*/
+	removeSelectedMedia(control: string) {
+		this.news_form.controls[control].reset();
+
+		this.news_form_fields.map(i => {
+			if (i.form_control_name === control) {
+				i.fileName = '';
+				i.imageUri = '';
+			}
+		})
 	}
 
 	/** news Form Control Getter */

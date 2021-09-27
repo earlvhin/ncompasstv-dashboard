@@ -7,8 +7,8 @@ import { GenerateNewsFeed } from '../../../../global/models/api_feed_generator.m
 	templateUrl: './news-demo.component.html',
 	styleUrls: ['./news-demo.component.scss']
 })
-export class NewsDemoComponent implements OnInit {
 
+export class NewsDemoComponent implements OnInit {
 	@Input() news_data: GenerateNewsFeed;
 	news_demo_url: string;
 

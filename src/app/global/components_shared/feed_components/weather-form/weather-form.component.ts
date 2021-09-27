@@ -86,10 +86,24 @@ export class WeatherFormComponent implements OnInit {
 			required: false
 		},
 		{
+			label: 'Header Image Size in Pixels',
+			form_control_name: 'headerImageSize',
+			type: 'number',
+			width: 'col-lg-4', 
+			required: false
+		},
+		{
+			label: 'Footer Image Size in Pixels',
+			form_control_name: 'footerImageSize',
+			type: 'number',
+			width: 'col-lg-4', 
+			required: false
+		},
+		{
 			label: 'Days Font Color',
 			form_control_name: 'daysFontColor',
 			type: 'text',
-			width: 'col-lg-4', 
+			width: 'col-lg-3', 
 			viewType: 'colorpicker',
 			colorValue: '',
 			required: false
@@ -98,14 +112,14 @@ export class WeatherFormComponent implements OnInit {
 			label: 'Number of days to display, Maximum 5',
 			form_control_name: 'numberDays',
 			type: 'number',
-			width: 'col-lg-4', 
+			width: 'col-lg-3', 
 			required: false
 		},
 		{
 			label: 'Font Family',
 			form_control_name: 'fontFamily',
 			type: 'text',
-			width: 'col-lg-6', 
+			width: 'col-lg-3', 
 			viewType: 'select',
 			options: this.font_family,
 			required: false
@@ -115,7 +129,7 @@ export class WeatherFormComponent implements OnInit {
 			form_control_name: 'zipCode',
 			errorMsg: '',
 			type: 'text',
-			width: 'col-lg-6', 
+			width: 'col-lg-3', 
 			required: true
 		}
 	]
@@ -165,6 +179,20 @@ export class WeatherFormComponent implements OnInit {
 		})
 	}
 
+	/** Remove Selected Media File 
+	 * @param {string} control Clicked Upload Control Name
+	*/
+	removeSelectedMedia(control: string) {
+		this.weather_form.controls[control].reset();
+
+		this.weather_form_fields.map(i => {
+			if (i.form_control_name === control) {
+				i.fileName = null;
+				i.imageUri = null;
+			}
+		})
+	}
+
 
 	/** Pass weather feed data to parent component */
 	generateWeatherFeed() {
@@ -194,6 +222,10 @@ export class WeatherFormComponent implements OnInit {
 		this.weather_form = this._form.group(form_group_obj)
 		this.f.numberDays.setValidators([Validators.min(1), Validators.max(5)])
 		this.f.zipCode.setValidators([Validators.minLength(5), Validators.maxLength(5)])
+		this.f.headerImageSize.setValue(500);
+		this.f.footerImageSize.setValue(500);
+
+		console.log(this.edit_weather_data);
 
 		if (this.edit_weather_data) {
 			this.weather_form_fields.map(i => {
@@ -211,6 +243,8 @@ export class WeatherFormComponent implements OnInit {
 			this.f.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
 			this.f.footerContentId.setValue(this.edit_weather_data.footerContentId);
 			this.f.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
+			this.f.headerImageSize.setValue(this.edit_weather_data.headerImageSize || 500);
+			this.f.footerImageSize.setValue(this.edit_weather_data.footerImageSize || 500)
 			this.f.daysFontColor.setValue(this.edit_weather_data.daysFontColor);
 			this.f.numberDays.setValue(this.edit_weather_data.numberDays);
 			this.f.fontFamily.setValue(this.edit_weather_data.fontFamily);

@@ -13,6 +13,7 @@
                         <img [src]="s.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
                         <span class="sm-text label-when-filled" *ngIf="s.fileName">{{ s.label }}</span>
                         <p class="filename" [ngClass]="s.fileName ? 'filled' : ''" [title]="s.fileName">{{ s.fileName ? (s.fileName | substring:18) : '' || s.label }}</p>
+                        <button *ngIf="s.fileName" class="remove-button" (click)="$event.preventDefault(); removeSelectedMedia(s.form_control_name);"><span class="fas fa-times"></span></button>
                         <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(s.form_control_name, true);"><span class="fas fa-camera"></span></button>
                     </div>
 

@@ -11,6 +11,7 @@
                     <img [src]="w.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
                     <span class="sm-text label-when-filled" *ngIf="w.fileName">{{ w.label }}</span>
                         <p class="filename" [ngClass]="w.fileName ? 'filled' : ''" [title]="w.fileName">{{ w.fileName ? (w.fileName | substring:18) : '' || w.label }}</p>
+                    <button *ngIf="w.fileName" class="remove-button" (click)="$event.preventDefault(); removeSelectedMedia(w.form_control_name);"><span class="fas fa-times"></span></button>
                     <button class="upload-button" (click)="$event.preventDefault(); openMediaLibraryModal(w.form_control_name);"><span class="fas fa-camera"></span></button>
                 </div>
 
