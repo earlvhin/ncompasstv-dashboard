@@ -1153,7 +1153,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 			if (content.playlist_content_schedule) {
 				const schedule = content.playlist_content_schedule;
-				return schedule && schedule.type === 1 || (schedule.type === 3 && !moment().isAfter(moment(schedule.to, 'MM/DD/YYYY')));
+				return schedule && schedule.type === 1 || (schedule.type === 3 && !moment().isAfter(moment(`${schedule.to} ${schedule.playTimeEnd}`, 'MM/DD/YYYY hh:mm A')));
 			}
 
 		});
