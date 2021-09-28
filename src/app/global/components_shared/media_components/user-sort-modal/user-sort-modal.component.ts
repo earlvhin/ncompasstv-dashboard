@@ -74,15 +74,20 @@ export class UserSortModalComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-        if(this.data == 'license' || this.data.view == 'license') {
+
+        if (this.data && (this.data == 'license' || this.data.view == 'license')) {
+
             this.is_license = true;
-            if(this.data.is_dealer) {
+            
+			if (this.data.is_dealer) {
                 this.is_dealer = true;
                 this.dealer_id = this.data.dealer_id;
                 this.dealer_name = this.data.dealer_name;
                 this.dealerSelected(this.data.dealer_id)
             }
+			
         }
+
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
