@@ -59,8 +59,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     private licenses_to_export: any = [];
 	private next_month = '';
     private pageSize: number;
-    private search_data: string = "";
-	private selected_date: any;
+    private search_data = '';
+	private selected_date: string;
     private type: number = 0;
 	private view = '';
     private workbook: any;
@@ -307,7 +307,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		return data.map(
 			license => {
 				
-				const isPast = moment(license.installDate).isBefore(moment(this.selected_date, 'MM-DD-YYYY'));
+				const isPast = moment(license.installDate).isBefore(moment());
 				let backgroundColor = '';
 				let color = '';
 
