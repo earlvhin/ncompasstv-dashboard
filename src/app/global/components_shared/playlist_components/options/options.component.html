@@ -81,7 +81,7 @@
 					<mat-radio-group name="opList" fxLayout="column" 
 						[(ngModel)]="content_frequency" 
 						(change)="onSelectFrequency()"
-						[disabled]="total_contents <= 5"> 
+						[disabled]="total_contents <= 5 || is_child_frequency"> 
 						<mat-radio-button class="mr-3 md-text text-gray" name="frequencyList"
 							*ngFor="let frequency of frequencyList"
 							[value]="frequency.value">{{ frequency.label }}

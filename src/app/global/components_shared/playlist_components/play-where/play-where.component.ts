@@ -1,14 +1,10 @@
 import { Component, Input, OnInit, EventEmitter, Output } from '@angular/core';
-import { timeStamp } from 'console';
 import { Subject, Observable } from 'rxjs';
-import { API_BLOCKLIST_CONTENT } from 'src/app/global/models/api_blocklist-content.model';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
-import { API_HOST } from 'src/app/global/models/api_host.model';
-import { API_LICENSE_PROPS } from 'src/app/global/models/api_license.model';
-import { UI_HOST_LICENSE } from 'src/app/global/models/ui_host-license.model';
-import { UI_PLAYLIST_HOST_LICENSE } from 'src/app/global/models/ui_playlist-host-license.model';
-import { PlaylistService } from 'src/app/global/services/playlist-service/playlist.service';
-import { UI_PLAYLIST_BLOCKLIST_HOST_LICENSE } from '../../../../global/models/ui_content.model';
+
+import { API_BLOCKLIST_CONTENT, API_CONTENT, API_HOST, API_LICENSE_PROPS, 
+	UI_PLAYLIST_BLOCKLIST_HOST_LICENSE } from 'src/app/global/models';
+
+import { PlaylistService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-play-where',
@@ -120,7 +116,7 @@ export class PlayWhereComponent implements OnInit {
 		this._playlist.get_blacklisted_by_id(this.content_data.content.playlistContentId).subscribe(
 			data => {
 				this.blacklist_data = data.blacklistsContents || [];
-				this.blacklist_data_ready.emit(this.blacklist_data)
+				this.blacklist_data_ready.emit(this.blacklist_data);
 
                 if(!data.message) {
 					const blacklisted = [];

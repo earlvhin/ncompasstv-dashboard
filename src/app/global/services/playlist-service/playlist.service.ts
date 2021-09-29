@@ -1,13 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import 'rxjs/add/operator/map'
-import { AuthService } from '../auth-service/auth.service';
-import { API_PLAYLIST } from '../../models/api_playlists.model';
-import { environment } from '../../../../environments/environment';
-import { API_SINGLE_PLAYLIST } from '../../models/api_single-playlist.model';
-import { API_BLOCKLIST_CONTENT } from '../../models/api_blocklist-content.model';
-import { REMOVE_BLOCKLISTED_LICENSE } from '../../models/ui_single-playlist.model';
 import { map } from 'rxjs/operators';
+import 'rxjs/add/operator/map'
+
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { environment } from 'src/environments/environment';
+import { API_BLOCKLIST_CONTENT, API_SINGLE_PLAYLIST } from 'src/app/global/models';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +13,7 @@ import { map } from 'rxjs/operators';
 
 export class PlaylistService {
 
+	onBlacklistDataReady = new EventEmitter<API_BLOCKLIST_CONTENT[]>();
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {

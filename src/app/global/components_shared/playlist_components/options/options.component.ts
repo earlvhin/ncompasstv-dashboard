@@ -1,11 +1,12 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { AfterContentChecked, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material'
 import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
 import { environment as env } from 'src/environments/environment';
-import { API_CONTENT, API_BLOCKLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, API_LICENSE } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { API_CONTENT, API_BLOCKLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, API_LICENSE } from 'src/app/global/models';
+import { PlaylistService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-options',
@@ -13,12 +14,12 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 	styleUrls: ['./options.component.scss']
 })
 
-export class OptionsComponent implements OnInit {
+export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked {
 
 	balance: number = null;
 	blocklist_changes = { status: false };
-	blacklist_ready: boolean = false;
-    blacklist_count: number = 0;
+	blacklist_ready = false;
+    blacklist_count = 0;
 	blacklisted_content: API_BLOCKLIST_CONTENT[] = [];
 	can_toggle_credits = true;
 	c_index: number;
@@ -27,14 +28,17 @@ export class OptionsComponent implements OnInit {
     contents_list: any[] = [];
 	credits: number = null;
 	disable_animation = true;
-	feed_demo_url = `${env.third_party.filestack_screenshot}/`
+	feed_demo_url = `${env.third_party.filestack_screenshot}/`;
+	feed_url = '';
+	frequencyList = [ { label: '2x', value: 2 }, { label: '3x', value: 3 }, ];
 	has_schedule = false;
 	host_license: any;
 	is_base_frequency = false;
+	is_child_frequency = false;
+	is_paging = false;
 	initial_credits_status: number | boolean;
 	licenses: API_LICENSE['license'][] = [];
 	license_ids_for_credits: string[] = [];
-	feed_url = '';
 	playlist_changes_data: PLAYLIST_CHANGES = { content: null, blocklist: null, credits: null, credits_status: null };
     selected_data: any;
 	schedule = { date: '', days: '', time: '' };
@@ -42,21 +46,18 @@ export class OptionsComponent implements OnInit {
 	toggle_all: boolean;
 	toggle_event: Subject<void> = new Subject<void>();
 	total_contents: number;
-    total_whitelist: number = 0;
-    total_licenses : number =0;
-	unchanged_playlist: boolean = true;
+    total_whitelist = 0;
+    total_licenses = 0;
+	unchanged_playlist = true;
 
-	is_paging: boolean = false;
-
-	frequencyList = [ 
-		{ label: '2x', value: 2 },
-		{ label: '3x', value: 3 },
-	];
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: number, content: API_CONTENT, host_license: any, total_contents?: number, contents_list: any },
+		private _change_detector: ChangeDetectorRef,
 		private _dialog: MatDialog,
-		private _dialog_ref: MatDialogRef<OptionsComponent>
+		private _dialog_ref: MatDialogRef<OptionsComponent>,
+		private _playlist: PlaylistService,
 	) { }
 	
 	ngOnInit() {
@@ -76,8 +77,22 @@ export class OptionsComponent implements OnInit {
 		this.contents_list = this._dialog_data.contents_list;
         this.selected_data = this._dialog_data;	
         this.is_base_frequency = content.frequency === 22 || content.frequency === 33;
-
+		this.is_child_frequency = content.frequency === 2 || content.frequency === 3;
 		if (this.is_base_frequency) this.frequencyList.unshift({ label: '1x', value: 1 });
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+		clearTimeout(this.timeout);
+	}
+
+	ngAfterContentInit (): void {
+        this.timeout = setTimeout(() => this.disable_animation = false);
+	}
+
+	ngAfterContentChecked() {
+		this._change_detector.detectChanges();
 	}
 
     next() {
@@ -112,14 +127,6 @@ export class OptionsComponent implements OnInit {
 		setTimeout(() => {
 			this.is_paging = false;
 		}, 0)
-	}
-
-	ngOnDestroy() {
-		clearTimeout(this.timeout);
-	}
-
-	ngAfterContentInit (): void {
-        this.timeout = setTimeout(() => this.disable_animation = false);
 	}
     
 	canEditCreditsField() {
@@ -401,6 +408,8 @@ export class OptionsComponent implements OnInit {
 				this.schedule.time = DEFAULT;
 
 		}
-		this.has_schedule = true;		
+
+		this.has_schedule = true;
+
 	}
 }
