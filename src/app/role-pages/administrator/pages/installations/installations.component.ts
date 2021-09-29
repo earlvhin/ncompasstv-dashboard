@@ -308,24 +308,25 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			license => {
 				
 				const isPast = moment(license.installDate).isBefore(moment());
-				let backgroundColor = '';
-				let color = '';
+				// let past = false;
+				// let color = '';
 
-				if (isPast) {
-					backgroundColor = '#e08283';
-					color = '#ffffff';
-				}
+				// if (isPast) {
+				// 	past = true;
+				// 	// color = '#ffffff';
+				// }
+                console.log(isPast)
 
 				return new INSTALLATION(
 					{ value: license.licenseKey, link: null , editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false, backgroundColor, color },
-					{ value: license.licenseKey, link: `/${this.currentRole}/licenses/${license.licenseId}` , editable: false, hidden: false,  backgroundColor, color },
-					{ value: license.hostName != null ? license.hostName : '--', link: `/${this.currentRole}/hosts/${license.hostId}`, editable: false, hidden: false,  backgroundColor, color },
-					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  backgroundColor, color },
-					{ value: license.businessName, link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  backgroundColor, color },
-					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false,  backgroundColor, color },
-					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this.currentRole}/screens/${license.screenId}` : null , editable: false, hidden: false,  backgroundColor, color },
-					{ value: this._dates.transform(license.installDate, 'MMM d, y, h:mm a'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  backgroundColor, color },
+					{ value: count++, link: null , editable: false, hidden: false, past: isPast },
+					{ value: license.licenseKey, link: `/${this.currentRole}/licenses/${license.licenseId}` , editable: false, hidden: false,  past: isPast },
+					{ value: license.hostName != null ? license.hostName : '--', link: `/${this.currentRole}/hosts/${license.hostId}`, editable: false, hidden: false,  past: isPast },
+					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  past: isPast },
+					{ value: license.businessName, link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  past: isPast},
+					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false,  past: isPast },
+					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this.currentRole}/screens/${license.screenId}` : null , editable: false, hidden: false,  past: isPast },
+					{ value: this._dates.transform(license.installDate, 'MMM d, y, h:mm a'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  past: isPast },
 				);
 			}
 		);
