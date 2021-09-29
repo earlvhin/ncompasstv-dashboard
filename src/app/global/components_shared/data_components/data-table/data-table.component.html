@@ -47,8 +47,7 @@
 				<td class="p-3" 
 					*ngFor="let d of data | objectKeys; let i = index" 
 					[hidden]="data[d].hidden && !data[d].key" 
-					[ngClass]="data[d].hidden && data[d].key ? 'text-center': ''"
-					[style.backgroundColor]="data[d].backgroundColor">
+					[ngClass]="data[d].hidden && data[d].key ? 'text-center': ''">
 
 					<span *ngIf="data[d].hidden && data[d].key">
 						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
@@ -67,7 +66,7 @@
 								*ngIf="data[d].link != null; else no_link" 
 								[routerLink]="[data[d].link]" 
 								[queryParams]="query_params"
-								[style.color]="data[d].color">
+								[ngClass]="data[d].past ? 'text-danger' : ''">
 								
 								<ng-container>
 
@@ -114,7 +113,7 @@
 							<!-- END: BUSINESS HOURS SECTION -->
 
 							<ng-template #no_link>
-								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field }">
+								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field, 'text-danger': data[d].past}">
 
 									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultValue;">
 										{{ data[d].value | date: 'MMM dd, y' }}<br>
