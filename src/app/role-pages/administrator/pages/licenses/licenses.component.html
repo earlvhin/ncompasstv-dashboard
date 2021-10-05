@@ -154,6 +154,9 @@
                                                     </div>
                                                 </div>
                                             </div>
+                                            <div class="col-lg-12" *ngIf="!searching_licenses">
+                                                <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{paging_data_licenses.entities.length}}</span> out of <span class="text-danger">{{paging_data_licenses.totalEntities}}</span> licenses result.</span>
+                                            </div>
                                         </div>
                                         <div class="row" *ngIf="!initial_load_licenses">
                                             <div class="col-lg-12">

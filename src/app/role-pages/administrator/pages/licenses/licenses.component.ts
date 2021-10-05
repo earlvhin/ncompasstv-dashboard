@@ -270,6 +270,7 @@ export class LicensesComponent implements OnInit {
 			this._dealer.get_dealers_with_license(e, this.search_data).subscribe(
 				data => {
                     this.paging_data = data.paging;
+                    console.log("PD", this.paging_data)
                     if (data.dealers) {
 						this.dealers_data = this.dealers_mapToUIFormat(data.dealers);
 						this.filtered_data = this.dealers_mapToUIFormat(data.dealers);
