@@ -944,11 +944,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.warningModal('warning', 'Delete Licenses', 'Are you sure you want to delete ' + this.array_to_delete.length + ' licenses?','','license_delete', this.array_to_delete)
 	}
 
-	// Update Player to Version 2 Trigger
-	updateToVersion2(): void {
-		this.warningModal('warning', 'Upgrade Players to Version 2', 'Upgrade players with licenses below  to version 2?', 'Click OK to apply updates to licences below', 'upgrade_to_v2')
-	}
-
 	getColumnsAndOrder(data) {
 		this.sort_column = data.column;
 		this.sort_order = data.order;

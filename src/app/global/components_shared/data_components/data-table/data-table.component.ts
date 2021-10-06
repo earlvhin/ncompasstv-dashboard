@@ -185,6 +185,7 @@ export class DataTableComponent implements OnInit {
 				index: i,
 				content_array: this.media_array,
 				selected: this.media_array[i],
+                is_advertiser: true
 			}
 		});
 
