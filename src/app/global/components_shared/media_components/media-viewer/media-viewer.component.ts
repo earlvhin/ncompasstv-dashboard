@@ -28,7 +28,8 @@ export class MediaViewerComponent implements OnInit {
 	file_data: any;
     file_size_formatted: any;
 	subscription: Subscription = new Subscription;
-	is_edit = false;
+	is_advertiser = false;
+    is_edit = false;
 	is_dealer = false;
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`
 	
@@ -54,6 +55,7 @@ export class MediaViewerComponent implements OnInit {
 		}
 
 		this.file_data = this._dialog_data;
+        console.log("FILE DATA", this.file_data)
 		this.setSettings(this.file_data.selected);
 		
 		// for cycling through content withing the media viewer
