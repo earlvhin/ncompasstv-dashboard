@@ -119,14 +119,14 @@
                             <button mat-button mat-raised-button class="theme-btn mr-3"
 								[class.disabled]="!editable" 
 								(click)="triggerAssignLicenseModal()" 
-								[disabled]="!editable">
+								[disabled]="!editable" id="assignLicenseButton">
                                 <span class="button-label">Assign License</span>
                                 <span class="fas fa-barcode"></span>
                             </button>
                             <button mat-button mat-raised-button class="theme-btn"
 								[class.disabled]="!editable" 
 								(click)="checkRoute(single_host_data.dealer_id, single_host_data.host_id)" 
-								[disabled]="!editable">
+								[disabled]="!editable" id="createScreenButton">
                                 <span class="button-label">Create Screen</span>
                                 <span class="fas fa-tv"></span>
                             </button>
