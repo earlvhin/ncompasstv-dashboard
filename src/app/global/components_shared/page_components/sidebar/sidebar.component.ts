@@ -1,7 +1,7 @@
 import { Component, OnInit, EventEmitter, Output, Input, OnDestroy } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
-import { filter } from 'rxjs/operators';
-import { Subscription } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as moment from 'moment';
 
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
@@ -21,7 +21,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	installations_count = 0;
 	isDealer = false;
 
-	private subscription: Subscription = new Subscription();
+	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
 		private _auth: AuthService,
@@ -52,7 +52,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	toggleSideBar(): void {
@@ -60,9 +61,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
 		this.toggleEvent.emit(this.icons_only);
 	}
 
-	getInstallations(): void {
-		this.subscription.add(
-			this._license.get_statistics_by_installation(moment().format('MM/DD/YYYYY')).subscribe(
+	private getInstallations(): void {
+
+		this._license.get_statistics_by_installation(moment().format('MM/DD/YYYYY'))
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					if(!data.message) {
 						this.installations_count = data.licenseInstallationStats ? data.licenseInstallationStats.total : 0;
@@ -71,8 +74,8 @@ export class SidebarComponent implements OnInit, OnDestroy {
 					}
 				},
 				error => console.log('Error retrieving installation statistics', error)
-			)
-		);
+			);
+
 	}
 
 	private get currentUser() {
