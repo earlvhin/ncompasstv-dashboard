@@ -370,6 +370,14 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 		const media_content = data.map(
 			(m: API_CONTENT) => {
+				let fileThumbnailUrl = '';
+				
+				if (m.fileType === 'webm' || m.fileType === 'mp4') {
+					fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url)
+				} else {
+					fileThumbnailUrl = m.previewThumbnail || m.thumbnail
+				}
+
 				return new UI_CONTENT(
 					m.playlistContentId,
 					m.createdBy,
@@ -386,7 +394,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 					m.dateCreated,
 					m.isFullScreen,
 					m.filesize,
-					m.fileType !== 'webm' ? m.previewThumbnail || m.thumbnail : this.renameWebmThumb(m.fileName, m.url),
+					fileThumbnailUrl,
 					m.isActive,
 					m.isConverted,
 					m.uuid,

@@ -1120,6 +1120,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private mapPlaylistContentToUI(data: API_CONTENT[]): UI_CONTENT[] {
 		const content = data.map(
 			(c: API_CONTENT) => {
+				let fileThumbnailUrl = '';
+				
+				if (c.fileType === 'webm' || c.fileType === 'mp4') {
+					fileThumbnailUrl = this.renameWebmThumb(c.url)
+				} else {
+					fileThumbnailUrl = c.previewThumbnail || c.thumbnail
+				}
+
 				return new UI_CONTENT(
 					c.playlistContentId,
 					c.createdBy,
@@ -1136,7 +1144,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					c.dateCreated,
 					c.isFullScreen,
 					c.filesize,
-					c.fileType !== 'webm' ? c.previewThumbnail || c.thumbnail : this.renameWebmThumb(c.url),
+					fileThumbnailUrl,
 					c.isActive,
 					c.isConverted,
 					c.uuid,
@@ -1150,17 +1158,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		);
 
 		return content.filter(content => {
-
 			if (content.playlist_content_schedule) {
 				const schedule = content.playlist_content_schedule;
 				return schedule && schedule.type === 1 || (schedule.type === 3 && !moment().isAfter(moment(`${schedule.to} ${schedule.playTimeEnd}`, 'MM/DD/YYYY hh:mm A')));
 			}
-
 		});
 	}
 
 	private renameWebmThumb(source: string) {
-		return `${source.substr(0, source.lastIndexOf(".") + 1)}jpg`
+		return `${source.substr(0, source.lastIndexOf(".") + 1)}jpg`;
 	}
 
 	private mapScreenLicenseToUI(data): UI_SCREEN_LICENSE[] {
