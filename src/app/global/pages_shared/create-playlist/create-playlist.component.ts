@@ -276,6 +276,14 @@ export class CreatePlaylistComponent implements OnInit {
 		if (!data.message) {
 			let media_content = data.iContents.map(
 				(c: API_CONTENT) => {
+					let fileThumbnailUrl = '';
+				
+					if (c.fileType === 'webm' || c.fileType === 'mp4') {
+						fileThumbnailUrl = this.renameWebmThumb(c.fileName, c.url)
+					} else {
+						fileThumbnailUrl = c.previewThumbnail || c.thumbnail
+					}
+
 					return new UI_PLAYLIST_CONTENT (
 						new UI_CONTENT(
 							c.playlistContentId,
@@ -293,7 +301,7 @@ export class CreatePlaylistComponent implements OnInit {
 							c.dateCreated,
 							c.isFullScreen,
 							c.filesize,
-							c.fileType !== 'webm' ? c.previewThumbnail || c.thumbnail : this.renameWebmThumb(c.fileName, c.url),
+							fileThumbnailUrl,
 							c.isActive,
 							c.isConverted,
 							c.uuid,
@@ -308,9 +316,7 @@ export class CreatePlaylistComponent implements OnInit {
 	}
 
 	private renameWebmThumb(filename: string, source: string) {
-		let thumbnail = `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`
-		console.log('the thumb', thumbnail)
-		return thumbnail
+		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`
 	}
 
 	searchData(e) {

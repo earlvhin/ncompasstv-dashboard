@@ -8,6 +8,7 @@ import * as io from 'socket.io-client';
 import { UI_ROLE_DEFINITION } from '../../../../global/models';
 import { AuthService, ContentService } from '../../../../global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-thumbnail-card',
@@ -49,13 +50,14 @@ export class ThumbnailCardComponent implements OnInit {
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _content: ContentService
-	) { }
+	) { 
+	}
 
 	ngOnInit() {
 		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 
-		if (!this.disconnect_to_socket && this.filetype == 'webm' && this.is_converted == 0) {
+		if (!this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0) {
 			this._socket = io(environment.socket_server, {
 				transports: ['websocket'],
 				query: 'client=Dashboard__ThumbnailCardComponent',
@@ -74,6 +76,8 @@ export class ThumbnailCardComponent implements OnInit {
 					this.is_converted = 1;
 					this.converted.emit(true)
 				}
+
+				this.ngOnInit();
 			})
 		}
 	}
