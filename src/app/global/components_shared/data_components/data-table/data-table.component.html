@@ -129,7 +129,7 @@
                                                 </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="reportsDrop" ngbDropdownMenu>
                                                         <span class="md-text pl-2">Playing Where:</span>
-                                                        <a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="['/administrator/hosts', host.hostId]" target="_blank">
+                                                        <a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="[data[d].drop_link, host.hostId]" target="_blank">
                                                             {{host.hostName}}
                                                         </a>
                                                     </div>

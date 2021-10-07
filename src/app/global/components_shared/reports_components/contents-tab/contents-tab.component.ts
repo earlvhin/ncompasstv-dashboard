@@ -281,17 +281,14 @@ export class ContentsTabComponent implements OnInit {
 
     metrics_mapToUIFormat(data) {
 		let count = this.paging_data.pageStart;
+        const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		return data.map(
 			i => {
 				return new UI_TABLE_CONTENT_METRICS(
 					{ value:count++, link: null , editable: false, hidden: false},
 					{ value:i.contentId, link: null , editable: false, hidden: true},
-					{ 
-                        value:i.title, 
-                        link: '/administrator/media-library/'+ i.contentId, 
-                        new_tab_link: 'true'
-                    },
-					{ value:i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts},
+					{ value:i.title, link: `/${route}/media-library/`+ i.contentId, new_tab_link: 'true'},
+					{ value:i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts, drop_link: `/${route}/hosts/`},
 					{ value:i.playsTotal},
 					{ value:this.msToTime(i.durationsTotal)},
 				)
