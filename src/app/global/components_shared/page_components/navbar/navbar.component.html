@@ -1,40 +1,52 @@
 <nav class="navbar left-0 top-0 full-width sidebar-full p-fixed" [ngClass]="sidebar_state ? 'sidebar-fully' : ''">
     <div class="container-fluid d-flex p-0 align-items-center">
-		<!-- <div class="notification-area">
-			<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="notif">
-				<span class="fas fa-bell mr-2"></span>
-				<span class="navbar-btn-label inline-block mr-1">Notifications</span>
-				<span class="fas fa-angle-down"></span>
-			</button>
-			<mat-menu #notif="matMenu" class="mat-menu-custom-width">
-				<div class="notification-panel">
-					<div class="notification-item">
-						<h5>Notification Title 1</h5>
-						<p class="sm-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit...</p>
-					</div>
-					<div class="notification-item">
-						<h5>Notification Title 2</h5>
-						<p class="sm-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit...</p>
-					</div>
-				</div>
-			</mat-menu>
-		</div> -->
 		<div class="breadcrumbs flex-even">
 			<breadcrumb [allowBootstrap]="true"></breadcrumb>
 		</div>
-        <div class="navbar-menu flex-even text-right">
-			<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="menu">
-				<span class="navbar-btn-label inline-block mr-1">{{ current_username }}</span>
-				<span class="fas fa-angle-down"></span>
-			</button>
-			<mat-menu #menu="matMenu">
-				<button mat-menu-item [routerLink]="['user-profile', current_userid]">
-					User Profile</button>
-				<button *ngIf="is_dealer" mat-menu-item [routerLink]="['dealer-profile', current_userid]">
-					Dealer Profile</button>
-				<button mat-menu-item [routerLink]="['user-account-setting', current_userid]">Account Settings</button>
-				<button mat-menu-item (click)="logOut()">Logout</button>
-			</mat-menu>
+        <div class="navbar-menu d-flex justify-content-end flex-even text-right">
+			<div class="notification-area" *ngIf="notifications">
+				<button mat-button class="navbar-btn no-border position-relative" [matMenuTriggerFor]="notif">
+					<span class="fas fa-bell mr-2 alert-icon"  [ngClass]="has_alerts ? 'has-alerts' : ''"></span>
+					<span class="fas fa-angle-down"></span>
+				</button>
+				<mat-menu #notif="matMenu" class="mat-menu-custom-width">
+					<div class="notification-panel" *ngIf="notifications.length > 0; else no_notifications;">
+						<div class="notification-item" *ngFor="let n of notifications">
+							<h5>Notification Title 1</h5>
+							<p class="sm-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit...</p>
+						</div>
+					</div>
+				</mat-menu>
+
+				<ng-template #no_notifications>
+					<div class="notification-panel">
+						<div class="notification-item">
+							<h4>
+								You're all set!
+							</h4>
+							<p class="sm-text">No new alerts or notifications.</p>
+						</div>
+					</div>
+				</ng-template>
+			</div><!-- Notifications -->
+
+			<div>
+				<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="menu">
+					<span class="navbar-btn-label inline-block mr-1">{{ current_username }}</span>
+					<span class="fas fa-angle-down"></span>
+				</button>
+				<mat-menu #menu="matMenu">
+					<button mat-menu-item [routerLink]="['user-profile', current_userid]">
+						User Profile
+					</button>
+					<button *ngIf="is_dealer" mat-menu-item [routerLink]="['dealer-profile', current_userid]">
+						Dealer Profile
+					</button>
+					<button mat-menu-item [routerLink]="['user-account-setting', current_userid]">Account Settings</button>
+					<button mat-menu-item (click)="logOut()">Logout</button>
+				</mat-menu>
+			</div><!-- User -->
+			
         </div>
     </div>
 </nav>

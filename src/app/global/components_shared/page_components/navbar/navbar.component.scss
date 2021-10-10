@@ -21,3 +21,34 @@
 .mat-menu-custom-width {
 	width: 340px;
 }
+
+.notif-count {
+	color: rgb(238, 89, 89);
+	font-size: 12px;
+	font-weight: bold;
+}
+
+.alert-icon {
+	font-size: 20px !important;
+
+	&.has-alerts {
+		color:rgb(236, 49, 49);
+		animation: shake-animation 4.72s ease infinite;
+		transform-origin: 50% 50%;
+	}
+}
+
+@keyframes shake-animation {
+	0% { transform:translate(0,0) }
+   1.78571% { transform:translate(5px,0) }
+   3.57143% { transform:translate(0,0) }
+   5.35714% { transform:translate(5px,0) }
+   7.14286% { transform:translate(0,0) }
+   8.92857% { transform:translate(5px,0) }
+   10.71429% { transform:translate(0,0) }
+   11.78571% { transform:translate(5px,0) }
+   13.57143% { transform:translate(0,0) }
+   15.35714% { transform:translate(5px,0) }
+   18.92857% { transform:translate(0,0) }
+   100% { transform:translate(0,0) }
+ }
