@@ -189,7 +189,7 @@ export class HostsComponent implements OnInit {
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet('Installations');
+		this.worksheet = this.workbook.addWorksheet('HOSTS');
 		Object.keys(this.host_table_column).forEach(key => {
 			if(this.host_table_column[key].name && !this.host_table_column[key].no_export) {
 				header.push({ header: this.host_table_column[key].name, key: this.host_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
