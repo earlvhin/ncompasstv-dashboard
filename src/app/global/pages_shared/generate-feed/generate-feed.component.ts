@@ -9,7 +9,10 @@ import {
 	GenerateSlideFeed, 
 	GenerateWeatherFeed, 
 	NEWS_FEED_STYLE_DATA, 
-	GenerateNewsFeed 
+	GenerateNewsFeed,
+	FEED_FILLER_SETTINGS,
+	FEED_FILLERS,
+	GenerateFillerFeed
 } from '../../models/api_feed_generator.model'; 
 import { FeedItem } from '../../models/ui_feed_item.model';
 import { FeedService } from '../../services/feed-service/feed.service';
@@ -38,6 +41,7 @@ export class GenerateFeedComponent implements OnInit {
 	generated_slide_feed: GenerateSlideFeed;
 	generated_news_feed: GenerateNewsFeed;
 	generated_weather_feed: GenerateWeatherFeed;
+	generated_filler_feed: GenerateFillerFeed;
 	is_dealer: boolean = false;
 	
 	saving: boolean = false;
@@ -234,7 +238,22 @@ export class GenerateFeedComponent implements OnInit {
 			feed_data
 		)
 	}
+	
+	/** Construct Generated Weather Feed Payload to be sent to API */
+	structureFillerFeedToGenerate(
+	feed_data: { 
+		feedFillerSettings: FEED_FILLER_SETTINGS, 
+		feedFillers: FEED_FILLERS[]	
+	}): void {
+		this.generated_filler_feed = new GenerateFillerFeed(
+			this.feed_info,
+			feed_data.feedFillerSettings,
+			feed_data.feedFillers
+		)
 
+		console.log(this.generated_filler_feed);
+	}
+	
 	/** Set Selected Feed */
 	setSelectedFeedType(feedTypeId: string) {
 		if (!this.editing) return this.feed_types.filter(i => i.feedTypeId === feedTypeId)[0].name;
@@ -321,6 +340,35 @@ export class GenerateFeedComponent implements OnInit {
 		} else {
 			this.subscription.add(
 				this._feed.update_news_feed(this.generated_news_feed).subscribe(
+					data => {
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
+			)
+		}
+	}
+
+	/** POST Request to API with Generated News Feather Feed Payload*/
+	saveGeneratedFillerFeed(): void {
+		this.saving = true;
+
+		if (!this.editing) {
+			this.subscription.add(
+				this._feed.generate_feed(this.generated_filler_feed, 'fillers').subscribe(
+					data => {
+						this._router.navigate([`/${this.route}/feeds`])
+					},
+					error => {
+						console.log(error);
+					}
+				)
+			)
+		} else {
+			this.subscription.add(
+				this._feed.update_news_feed(this.generated_filler_feed).subscribe(
 					data => {
 						this._router.navigate([`/${this.route}/feeds`])
 					},

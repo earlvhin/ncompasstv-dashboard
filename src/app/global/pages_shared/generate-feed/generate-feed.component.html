@@ -67,6 +67,7 @@
                         <!-- Begin: Filler Maker -->
                         <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'">
                             <app-filler-form
+                            (filler_data)="structureFillerFeedToGenerate($event)"
                             [selected_dealer]>
                             </app-filler-form>
                         </div>
@@ -77,7 +78,7 @@
                     <!-- Begin: Step 4 -->
                     <mat-step>
                         <ng-template matStepLabel>Preview and Save</ng-template>
-                        <div *ngIf="feed_items.length > 0 || generated_weather_feed || generated_news_feed; else no_feed_content">
+                        <div *ngIf="feed_items.length > 0 || generated_weather_feed || generated_news_feed || generated_filler_feed; else no_feed_content">
                             <div class="row mb-5 mt-5">
                                 <div class="col-lg-12 text-center">
                                     <h3 class="mb-1">Here's a preview of your customized feed.</h3>
@@ -123,6 +124,16 @@
                                         </app-news-demo>
 
                                         <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedNewsFeed()">Save News Feed</button>
+                                    </ng-container>
+                                    <!-- End: Weather Feed Demo -->
+
+                                    <!-- Begin: Weather Feed Demo -->
+                                    <ng-container *ngIf="generated_filler_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'">
+                                        <app-filler-demo
+                                        [filler_data]="generated_filler_feed">
+                                        </app-filler-demo>
+
+                                        <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedFillerFeed()">Save Filler Feed</button>
                                     </ng-container>
                                     <!-- End: Weather Feed Demo -->
                                 </div>

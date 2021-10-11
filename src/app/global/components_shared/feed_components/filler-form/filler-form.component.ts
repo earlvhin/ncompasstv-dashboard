@@ -1,5 +1,9 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { FormGroup, Validators } from '@angular/forms';
+import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatDialog } from '@angular/material';
+import { API_CONTENT } from '../../../../global/models/api_content.model';
+import { FeedMediaComponent } from '../feed-media/feed-media.component';
+import { Sortable } from 'sortablejs';
 
 @Component({
     selector: 'app-filler-form',
@@ -10,17 +14,19 @@ import { FormGroup, Validators } from '@angular/forms';
 export class FillerFormComponent implements OnInit {
 
     @Input() selected_dealer: string;
+	@Output() filler_data = new EventEmitter();
+	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 
 	filler_settings_form: FormGroup;
-
+	filler_items: API_CONTENT[] = [];
+	filler_items_structured: { contentId: string, sequence?: number }[] = [];
 	filler_fields = [
 		{
 			label: 'Transition Skip',
 			form_control_name: 'num',
 			type: 'number',
-			viewType: 'text',
 			colorValue: '',
-			width: 'col-lg-3', 
+			width: 'col-lg-6', 
 			required: true,
 			value: 2,
 		},
@@ -28,22 +34,24 @@ export class FillerFormComponent implements OnInit {
 			label: 'Transition Time in minutes',
 			form_control_name: 'min',
 			type: 'number',
-			viewType: 'text',
 			colorValue: '',
-			width: 'col-lg-3', 
+			width: 'col-lg-6', 
 			required: true,
 			value: 30
 		}
 	]
 
-    constructor() { }
+    constructor(
+		private _form: FormBuilder,
+		private _dialog: MatDialog
+	) { }
 
     ngOnInit() {
-		// this.filler_settings_form = 
+		this.prepareForms();
     }
 
-	prepareForms(): void {
-
+	/** Prepare Forms */
+	private prepareForms(): void {
 		let form_group_obj = {};
 
 		/** Loop through form fields object and prepare for group */
@@ -54,5 +62,103 @@ export class FillerFormComponent implements OnInit {
 				})
 			}
 		)
+
+		this.filler_settings_form = this._form.group(form_group_obj)
+	}
+
+	/** Sortable JS Plugin Initialization */
+	private sortableJSInit(): void {
+		const set = (sortable) => {
+			let sorted_filler_items = [];
+			let sorted_filler_items_structured = [];
+			
+			sortable.toArray().forEach(i => {
+				this.filler_items.forEach((f, index) => {
+					if (i == f.contentId) {
+						sorted_filler_items.push(f);
+
+						sorted_filler_items_structured.push({
+							contentId: f.contentId
+						})
+					}
+				})
+			})
+			
+			this.filler_items = sorted_filler_items;
+			this.filler_items_structured = sorted_filler_items_structured;
+
+			console.log('#sortableJSInit Structured Filler Items', this.filler_items_structured);
+		}
+
+		setTimeout(() => {
+			new Sortable(this.draggables.nativeElement, {
+				swapThreshold: 1,
+				sort: true,
+				animation: 500,
+				ghostClass: 'dragging',
+				scrollSensitivity: 200,
+				multiDrag: true,
+				selectedClass: 'selected',
+				fallbackOnBody: true,
+				forceFallback: true,
+				group: 'feed_content_items',
+				fallbackTolerance: 10,
+				store: { set }
+			});
+		}, 0)
+	}
+
+	/** Slide Global Settings Form Control Getter */
+	private get f() {
+		return this.filler_settings_form.controls;
+	}
+
+	/** Structured Filler Settings and Filler Items Data */
+	passFillerData() {
+		const payload = {
+			feedFillerSettings: {
+				num: this.f.num.value,
+				min: this.f.min.value
+			},
+			feedFillers: [
+				...this.filler_items_structured.map((v, i) => {
+					return {
+						contentId: v.contentId,
+						sequence: i += 1 
+					}
+				})
+			]
+		}
+
+		this.filler_data.emit(payload)
+	}
+
+	/** Open Media Library where contents are assigned to selected dealer */
+	openMediaLibraryModal(form_control_name?: string): void {
+		/** Open Feed Media Modal */
+		let dialog = this._dialog.open(FeedMediaComponent, {
+			width: '1024px',
+			data: {
+				dealer: this.selected_dealer,
+				singleSelect: false
+			}
+		})
+
+		/** On Modal Close */
+		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
+			if (data && data.length > 0) {
+				this.filler_items.push(...data);
+
+				data.forEach((v, i) => {
+					this.filler_items_structured.push({
+						contentId: v.contentId
+					})
+				})
+
+				console.log('Structured Filler Items', this.filler_items_structured);
+
+				this.sortableJSInit();
+			}
+		})
 	}
 }

@@ -189,6 +189,7 @@ import {
 	MatIconModule,
 } from '@angular/material';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
+import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -381,7 +382,8 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
-		FillerFormComponent
+		FillerFormComponent,
+		FillerDemoComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
