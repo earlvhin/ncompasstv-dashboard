@@ -1,15 +1,9 @@
-<div id="tagsPage" class="theme-container">
+<div id="tags-page" class="theme-container">
 	<div class="title-section">
         <div class="d-flex align-items-center">
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
             </div>
-			<div class="flex-even text-right">
-				<button mat-button mat-raised-button class="theme-btn"
-					(click)="onAddTag()">
-					Add Tags
-				</button>
-			</div>
         </div>
     </div>
 
@@ -55,41 +49,39 @@
 		</div>
 	</div>
 
-    <div class="col-lg-12 mt-3 p-0 custom-mat-tab">
-        <mat-tab-group dynamicHeight animationDuration="0ms" [selectedIndex]="currentTabIndex" (selectedTabChange)="onChangeTab($event)">
+	<div class="content-container d-flex">
 
-            <!-- TAGS TAB -->
-            <mat-tab label="Tags">
-                <ng-template matTabContent>
-                    <app-tags-tab
-                        [columns]="tagsTableSettings.columns"
-                        [currentTabIndex]="currentTabIndex"
-                        [currentTagType]="currentTagType"
-                        [currentUserRole]="currentUserRole"
-                        [tagTypes]="tagTypes"
-                        (clickedTagName)="onClickTagName($event)">
-                    </app-tags-tab>
-                </ng-template>
-            </mat-tab>
-    
-            <!-- TAG OWNERS TAB -->
-            <mat-tab label="Owners">
-                <ng-template matTabContent>
-                    <app-tag-owners-tab
-                        [columns]="tagOwnersTableSettings.columns"
-                        [currentUserRole]="currentUserRole"
-                        [tagTypes]="tagTypesMutated"
-                        [searchKey]="ownersTabSearchKey">
-                    </app-tag-owners-tab>
-                </ng-template>
-            </mat-tab>
-        </mat-tab-group>
-    </div>
+		<!-- TAGS MANAGEMENT -->
+		<div class="tags-management-container">
+			<ng-container *ngIf="isContentReady; else loading;">
+				<app-tags-tab
+					[columns]="tagsTableSettings.columns"
+					[currentTagType]="currentTagType"
+					[currentUserRole]="currentUserRole"
+					[tagTypes]="tagTypes"
+					(onClickTagName)="clickedTagName($event)">
+				</app-tags-tab>
+			</ng-container>
+		</div>
+
+		<!-- TAG OWNERS -->
+		<div class="tag-owners-container">
+			<ng-container *ngIf="isContentReady; else loading;">
+				<app-tag-owners-tab
+					[columns]="tagOwnersTableSettings.columns"
+					[currentUserRole]="currentUserRole"
+					[tagTypes]="tagTypesMutated"
+					[searchKey]="ownersTabSearchKey">
+				</app-tag-owners-tab>
+			</ng-container>
+		</div>
+
+	</div>
 	
 </div>
 
 <ng-template #loading>
 	<div class="py-4">
-		<app-spinner [diameter]="60"></app-spinner>
+		<app-spinner [diameter]="100"></app-spinner>
 	</div>
 </ng-template>

@@ -1,18 +1,7 @@
-.search-container {
-		
-	mat-form-field {
-		width: 400px;
-	}
-}
-
-.dropdown-and-search-section {
+.title {
+	padding: 5px 0 5px 0;
 	margin-top: 20px;
-}
-
-.selected-filter {
-	background-color: #8EC641;
-
-	&:hover {
-		background-color: #8EC641 !important;
-	}
+	text-align: center;
+	color: #ffffff;
+	background-color: rgb(22, 31, 39);
 }

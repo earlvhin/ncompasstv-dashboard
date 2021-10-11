@@ -128,6 +128,7 @@ export const API_ENDPOINTS = {
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
 		search_owner_tags: 'tag/searchOwnerTag',
+		search_owners: 'tag/searchOwners',
 		search_tags: 'tag/search',
 		tag_types_by_type_id: 'tag/gettagsbytagtypeid?typeid=',
 		tag_types_get_all: 'tag/GetAllTypes',
@@ -169,6 +170,7 @@ export const API_ENDPOINTS = {
 		feed_clone: 'feed/clone',
 		sub_dealer_account: 'account/createsubaccount',
 		tag: 'tag/create',
+		tag_owners: 'tag/addOwners',
 		tag_type: 'tag/createtype'
 	},
 	third_party: {

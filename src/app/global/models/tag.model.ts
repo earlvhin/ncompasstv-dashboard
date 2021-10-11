@@ -2,7 +2,7 @@ import { API_ADVERTISER, API_DEALER, API_HOST, API_LICENSE } from '.';
 
 export interface TAG {
 	name: string;
-	tagId: number;
+	tagId: string;
 	tagColor: string;
 	count?: number;
 	dealer?: API_DEALER[];

@@ -1,0 +1,63 @@
+.preview {
+	mat-icon {
+		font-size: 12px;
+	}
+
+	.remove-btn {
+		text-align: center;
+
+		mat-icon {
+			line-height: 25px;
+		}
+	}
+
+	.owners-row {
+		margin-bottom: 20px;
+		
+		h4 {
+			margin-right: 20px;
+		}
+
+		.selected-owners-container {
+	
+			.owner {
+				background: #8ec641;
+				color: white;
+				font-size: 12px;
+				margin-right: 5px;
+				margin-bottom: 5px;
+				padding: 1px 5px;
+			}
+	
+		}
+	}
+
+	.tags-row {
+		h4 {
+			margin-right: 20px;
+		}
+	
+		.selected-tags-container {
+	
+			.tag {
+				margin-right: 5px;
+				margin-bottom: 5px;
+				padding: 1px 5px 1px 7px;
+				font-size: 12px;
+				border-radius: 5px;
+				text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
+				color: white;
+			}
+		}
+	
+	}
+
+}
+
+button[type="submit"] {
+	float: right;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	margin: 0 24px 24px 0;
+}
