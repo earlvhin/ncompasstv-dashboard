@@ -4,3 +4,13 @@
     height: 450px;
     overflow-y: scroll;
 }
+
+.selected, .marked {
+    .thumbnail-card {
+        box-shadow: 0 0 10px rgba(147, 202, 20, 0.945), 0 0 10px rgba(151, 209, 17, 0.938);
+    }
+}
+
+.thumbnail-card {
+    margin-bottom: 0;
+}

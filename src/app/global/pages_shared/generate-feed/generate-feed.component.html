@@ -68,6 +68,8 @@
                         <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'">
                             <app-filler-form
                             (filler_data)="structureFillerFeedToGenerate($event)"
+                            [filler_global_settings] = "fetched_feed ? fetched_feed.fillerGlobalSettings : null"
+                            [filler_items_structured]="fetched_feed ? fetched_feed.feedFillers : null"
                             [selected_dealer]>
                             </app-filler-form>
                         </div>

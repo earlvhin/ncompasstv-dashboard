@@ -61,9 +61,9 @@
             <div class="filler-playlist-panel-body">
                 <div id="draggables" class="row no-gutters" #draggables>
                     <ng-container *ngIf="filler_items && filler_items.length > 0; else no_filler_items">
-                        <div class="col-lg-1" *ngFor="let f of filler_items; let i = index" [attr.data-id]="f.contentId">
+                        <div class="col-lg-1 mb-2" *ngFor="let f of filler_items; let i = index" [attr.data-id]="f.contentId">
                             <div class="p-0 mx-1 thumbnail-card rounded-0 position-relative overflow-hidden">
-                                <img [src]="f.thumbnail" alt="f.title">
+                                <img [src]="f.thumbnail || 'https://cdn.filestackcontent.com/resize=width:100/' + f.handlerId" alt="f.title">
         
                                 <div class="thumbnail-title">
                                     <div class="d-flex">

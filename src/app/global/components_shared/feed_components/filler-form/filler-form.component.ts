@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { FeedMediaComponent } from '../feed-media/feed-media.component';
-import { Sortable } from 'sortablejs';
+import { Sortable, MultiDrag } from 'sortablejs';
 
 @Component({
     selector: 'app-filler-form',
@@ -14,12 +14,19 @@ import { Sortable } from 'sortablejs';
 export class FillerFormComponent implements OnInit {
 
     @Input() selected_dealer: string;
+	@Input() filler_global_settings: {feed_id: string, min: number, num: number};
+	@Input() filler_items_structured: {
+		contentId?: string,
+		contents?: API_CONTENT,
+		feedFillerId?: string,
+		feedId?: string,
+		sequence?: number
+	}[] = [];
 	@Output() filler_data = new EventEmitter();
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 
 	filler_settings_form: FormGroup;
 	filler_items: API_CONTENT[] = [];
-	filler_items_structured: { contentId: string, sequence?: number }[] = [];
 	filler_fields = [
 		{
 			label: 'Transition Skip',
@@ -64,10 +71,25 @@ export class FillerFormComponent implements OnInit {
 		)
 
 		this.filler_settings_form = this._form.group(form_group_obj)
+
+		if (this.filler_global_settings) {
+			this.f.num.setValue(this.filler_global_settings.num);
+			this.f.min.setValue(this.filler_global_settings.min);
+
+			if (this.filler_items_structured && this.filler_items_structured.length > 0) {
+				this.filler_items_structured.map((v: API_CONTENT, i) => {
+					this.filler_items.push(v.contents);
+				})
+
+				this.sortableJSInit();
+			}
+		}
 	}
 
 	/** Sortable JS Plugin Initialization */
 	private sortableJSInit(): void {
+		Sortable.mount(new MultiDrag());
+
 		const set = (sortable) => {
 			let sorted_filler_items = [];
 			let sorted_filler_items_structured = [];
@@ -86,8 +108,6 @@ export class FillerFormComponent implements OnInit {
 			
 			this.filler_items = sorted_filler_items;
 			this.filler_items_structured = sorted_filler_items_structured;
-
-			console.log('#sortableJSInit Structured Filler Items', this.filler_items_structured);
 		}
 
 		setTimeout(() => {
@@ -154,8 +174,6 @@ export class FillerFormComponent implements OnInit {
 						contentId: v.contentId
 					})
 				})
-
-				console.log('Structured Filler Items', this.filler_items_structured);
 
 				this.sortableJSInit();
 			}

@@ -77,6 +77,10 @@ export class FeedService {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions)
 	}
 
+	update_filler_feed(feed_data) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_filler_feed}`, feed_data, this.httpOptions);
+	}
+
 	update_slide_feed(feed_data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_slide_feed}`, feed_data, this.httpOptions);
 	}

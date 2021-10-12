@@ -368,7 +368,7 @@ export class GenerateFeedComponent implements OnInit {
 			)
 		} else {
 			this.subscription.add(
-				this._feed.update_news_feed(this.generated_filler_feed).subscribe(
+				this._feed.update_filler_feed(this.generated_filler_feed).subscribe(
 					data => {
 						this._router.navigate([`/${this.route}/feeds`])
 					},

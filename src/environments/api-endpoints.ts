@@ -204,6 +204,7 @@ export const API_ENDPOINTS = {
 		api_update_screenshot_settings: 'license/screenshotsettings',
 		api_update_speedtest_settings: 'license/speedtestsettings',
 		api_update_resource_settings: 'license/resourcesettings',
+		api_update_filler_feed: 'feed/update/fillers',
 		api_update_slide_feed: 'feed/update/slides',
 		api_update_content: 'content/unassigndealer',
 		api_update_user: 'user/update',
