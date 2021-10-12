@@ -140,7 +140,9 @@ export type API_GENERATED_FEED = {
     feedWeather: WEATHER_FEED_STYLE_DATA,
     feedNews: NEWS_FEED_STYLE_DATA,
     slideGlobalSettings: SLIDE_GLOBAL_SETTINGS,
-    bannerImageData: API_CONTENT
+    bannerImageData: API_CONTENT,
+    fillerGlobalSettings: FEED_FILLER_SETTINGS,
+    feedFillers: API_CONTENT[]
 }
 
 export type WEATHER_FEED_STYLE_DATA = {
@@ -162,7 +164,8 @@ export type WEATHER_FEED_STYLE_DATA = {
 
 export type FEED_FILLER_SETTINGS = {
     min: number,
-    num: number
+    num: number,
+    feedId?: string
 }
 
 export type FEED_FILLERS = {
