@@ -5,9 +5,9 @@ import { environment } from '../../../../environments/environment';
 import { UI_CURRENT_USER } from '../../models/ui_current-user.model';
 import { tokenNotExpired } from 'angular2-jwt';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { USER_LOGIN } from '../../models/api_user.model';
+import { map } from 'rxjs/operators';
+import { JWT_TOKEN, USER_LOGIN } from '../../models/api_user.model';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-
 
 @Injectable({
 	providedIn: 'root'
@@ -48,24 +48,61 @@ export class AuthService {
 		return this.session_status;
 	}
 
-	// Authenticate User
+	//Login - Authenticate User
 	authenticate_user(data) {
-		return this._http.post<USER_LOGIN>(`${environment.base_uri}${environment.auth.api_login}?username=${data.username}&password=${data.password}`, null);
+		return this._http.post<USER_LOGIN>(`${environment.base_uri}${environment.auth.api_login}?username=${data.username}&password=${data.password}`, {withCredentials: true})
+			.pipe(map(current_user => {
+				let currentUser = new UI_CURRENT_USER;
+				currentUser.user_id = current_user.userId;
+				currentUser.firstname = current_user.firstName;
+				currentUser.lastname = current_user.lastName;
+				currentUser.role_id = current_user.userRole.roleId;
+				currentUser.jwt = new JWT_TOKEN;
+				currentUser.jwt.token = current_user.token;
+				currentUser.jwt.refreshToken = current_user.refreshToken;
+				this.current_user_subject.next(currentUser);
+				return current_user;
+			}));
 	}
 
-	// Store User Info and Token to Local Storage
-	refresh_token() {
-		const refresh_option = {
-			headers: new HttpHeaders(
-				{'Authorization' :  `Bearer ${this.current_user_value.jwt.token}`}
-			)
-		}
-		
-		if (this._http.post(`${environment.base_uri}${environment.auth.api_refresh}`, JSON.stringify(this.current_user_value.jwt), refresh_option)) {
-			return true;
-		}
+	//Refresh Token
+	refresh_token() {		
+		return this._http.post<JWT_TOKEN>(`${environment.base_uri}${environment.auth.api_refresh}`, JSON.stringify(this.current_user_value.jwt), this.http_options)
+			.pipe(map(data => {
+				let currentUserStorage = JSON.parse(localStorage.getItem("current_user"));
+				currentUserStorage.jwt.token = data.token;
+				currentUserStorage.jwt.refreshToken = data.refreshToken;
+				localStorage.setItem('current_user', JSON.stringify(currentUserStorage));
 
-		return false;
+				let currentToken = JSON.parse(localStorage.getItem("current_token"));
+				currentToken.token = data.token;
+				localStorage.setItem('current_token', JSON.stringify(currentToken));
+
+				this.current_user_subject.next(currentUserStorage);
+				this.startRefreshTokenTimer();
+				return data;
+			}));
+	}
+
+	//Helper methods
+	private refreshTokenTimeout;
+
+	public startRefreshTokenTimer() {
+		if(this.current_user_value) {
+			//parse object to get jwt token expiry
+			const jwtTokenExpiry = (JSON.parse(atob(this.current_user_value.jwt.token.split('.')[1]))).exp;
+			const expires = new Date(0);
+			expires.setUTCSeconds(jwtTokenExpiry);
+			const dateNow = new Date();
+			const timeout = expires.getTime() - dateNow.getTime();
+			//1 minute before the expiration
+			const expiresTime = timeout - 60000;
+			this.refreshTokenTimeout = setTimeout(() => this.refresh_token().subscribe(), expiresTime);
+		}
+	}
+
+	private stopRefreshTokenTimer() {
+		clearTimeout(this.refreshTokenTimeout);
 	}
 
 	session_check(status) {
@@ -79,6 +116,8 @@ export class AuthService {
 	
 	// Remove user from local storage
 	logout() {
+		this.stopRefreshTokenTimer();
+		this.current_user_subject.next(null);
 		localStorage.removeItem('current_token');
 		localStorage.removeItem('current_user');
 		this._router.navigate(['/login']);
