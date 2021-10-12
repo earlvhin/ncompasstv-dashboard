@@ -84,13 +84,11 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	async onDeleteTagFromOwner(tagId: string, data: { owner: any }): Promise<void> {
+	async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
 	
 		const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
 		if (!response) return;
-
-		const ownerId = this.getOwnerId(data.owner);
 
 		this._tag.deleteTagByIdAndOwner(tagId, ownerId)
 			.pipe(takeUntil(this._unsubscribe))

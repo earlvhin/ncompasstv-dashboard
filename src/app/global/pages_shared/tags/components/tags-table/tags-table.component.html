@@ -42,7 +42,7 @@
 								[style.backgroundColor]="tag.tagColor">
 								<!-- TAG NAME -->
 								<div class="name">{{ tag.name }}</div>
-								<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId, data)">
+								<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId, data.ownerId)">
 									<mat-icon class="no-select">close</mat-icon>
 								</div>
 							</div>
