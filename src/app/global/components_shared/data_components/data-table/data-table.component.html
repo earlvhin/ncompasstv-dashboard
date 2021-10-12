@@ -129,7 +129,7 @@
                                                 </button>
                                                     <div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="reportsDrop" ngbDropdownMenu>
                                                         <span class="md-text pl-2">Playing Where:</span>
-                                                        <a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="['/administrator/hosts', host.hostId]" target="_blank">
+                                                        <a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="[data[d].drop_link, host.hostId]" target="_blank">
                                                             {{host.hostName}}
                                                         </a>
                                                     </div>
@@ -233,7 +233,7 @@
 				</td>
 
                 <td class="p-3 control-toggle text-center" *ngIf="content_metrics">
-					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value })"></i>
+					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value, count: data.play_count.value, duration: data.duration.value })"></i>
 					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
 

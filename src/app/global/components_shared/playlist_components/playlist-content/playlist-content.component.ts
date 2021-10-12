@@ -41,7 +41,7 @@ export class PlaylistContentComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		if (this.content.fileType === 'webm') {
+		if (this.content.fileType === 'webm' || this.content.fileType === 'mp4') {
 			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf(".") + 1)}jpg`
 		}
 
