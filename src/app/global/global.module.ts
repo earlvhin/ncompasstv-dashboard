@@ -64,6 +64,8 @@ import { FeedMediaComponent } from './components_shared/feed_components/feed-med
 import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
 import { FilenamePipe } from './pipes/filename.pipe';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
+import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
+import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
@@ -248,6 +250,8 @@ const ngComponents = [
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
+	FillerFormComponent,
+	FillerDemoComponent,
 	FooterComponent, 
 	GenerateFeedComponent,
 	HostCustomFieldsComponent,
@@ -438,7 +442,7 @@ const DIRECTIVES = [
 		NgbModule,
 		NgxMaterialTimepickerModule,
 		NgxPaginationModule,
-		ReactiveFormsModule,
+		ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
 		RouterModule,
 		NgxMatSelectSearchModule,
         BreadcrumbsModule,

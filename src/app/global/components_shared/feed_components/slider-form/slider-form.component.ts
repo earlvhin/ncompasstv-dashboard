@@ -336,7 +336,6 @@ export class SliderFormComponent implements OnInit {
 				})
 			})
 			
-			sorted_feed_items;
 			this.feed_items = sorted_feed_items;
 		}
 
