@@ -7,7 +7,7 @@
                     <input matInput formControlName="{{ f.form_control_name }}" [type]="f.type" [required]="f.required" autocomplete="off">
                 </mat-form-field>
 
-                <div class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="f.viewType == 'upload'">
+                <!-- <div class="full-width bg-gray mb-4 position-relative overflow-hidden upload-image-field" appearance="fill" *ngIf="f.viewType == 'upload'">
                     <img [src]="f.imageUri || '/assets/media-files/placeholder.png'" alt="Selected Image">
                     <span class="sm-text label-when-filled" *ngIf="f.fileName">{{ f.label }}</span>
                         <p class="filename" [ngClass]="f.fileName ? 'filled' : ''" [title]="f.fileName">{{ f.fileName ? (f.fileName | substring:18) : '' || f.label }}</p>
@@ -22,9 +22,9 @@
                             {{ filter.label }}
                         </mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
 
-                <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="f.viewType == 'colorpicker'">
+                <!-- <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="f.viewType == 'colorpicker'">
                     <mat-label>{{ f.label }}</mat-label>
 
                     <input
@@ -38,7 +38,7 @@
                     [value]="f.colorValue || ''"/>
 
                     <div class="color-showcase position-absolute" [style.background]="f.colorValue"></div>
-                </mat-form-field>
+                </mat-form-field> -->
 
                 <div class="error-message">
                     <p class="sm-text m-0"></p>

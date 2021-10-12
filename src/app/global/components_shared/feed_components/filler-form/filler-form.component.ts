@@ -55,6 +55,9 @@ export class FillerFormComponent implements OnInit {
 
     ngOnInit() {
 		this.prepareForms();
+		
+		/** Add Multidrag Feature */
+		Sortable.mount(new MultiDrag());
     }
 
 	/** Prepare Forms */
@@ -88,8 +91,6 @@ export class FillerFormComponent implements OnInit {
 
 	/** Sortable JS Plugin Initialization */
 	private sortableJSInit(): void {
-		Sortable.mount(new MultiDrag());
-
 		const set = (sortable) => {
 			let sorted_filler_items = [];
 			let sorted_filler_items_structured = [];
