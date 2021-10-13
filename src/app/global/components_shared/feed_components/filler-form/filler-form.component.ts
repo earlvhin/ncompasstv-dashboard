@@ -48,6 +48,9 @@ export class FillerFormComponent implements OnInit {
 		}
 	]
 
+	is_editing: boolean = false;
+	selected_items: string[] = [];
+
     constructor(
 		private _form: FormBuilder,
 		private _dialog: MatDialog
@@ -59,7 +62,7 @@ export class FillerFormComponent implements OnInit {
 		/** Add Multidrag Feature */
 		Sortable.mount(new MultiDrag());
     }
-
+	
 	/** Prepare Forms */
 	private prepareForms(): void {
 		let form_group_obj = {};
@@ -84,6 +87,7 @@ export class FillerFormComponent implements OnInit {
 					this.filler_items.push(v.contents);
 				})
 
+				this.is_editing = true;
 				this.sortableJSInit();
 			}
 		}
@@ -154,6 +158,32 @@ export class FillerFormComponent implements OnInit {
 		this.filler_data.emit(payload)
 	}
 
+	selectedItem(f: API_CONTENT) {
+		if (this.selected_items.includes(f.contentId)) {
+			this.selected_items = this.selected_items.filter(i => i !== f.contentId)
+		} else {
+			this.selected_items.push(f.contentId);
+		}
+	}
+
+	removeFillerItem(i?: API_CONTENT, bulk?: boolean) {
+
+		if (i && i.contentId) {
+			this.filler_items_structured = this.filler_items_structured.filter(f => f.contentId !== i.contentId)
+			this.filler_items = this.filler_items.filter(f => f.contentId !== i.contentId);
+		}
+
+		if (bulk) {
+			this.selected_items.forEach(s => {
+				this.filler_items_structured = this.filler_items_structured.filter(f => f.contentId !== s)
+				this.filler_items = this.filler_items.filter(f => f.contentId !== s);
+			})
+
+			this.selected_items = [];
+		}
+
+	}
+
 	/** Open Media Library where contents are assigned to selected dealer */
 	openMediaLibraryModal(form_control_name?: string): void {
 		/** Open Feed Media Modal */
@@ -170,13 +200,18 @@ export class FillerFormComponent implements OnInit {
 			if (data && data.length > 0) {
 				this.filler_items.push(...data);
 
+
+				console.log(data, this.filler_items_structured);
+
 				data.forEach((v, i) => {
 					this.filler_items_structured.push({
 						contentId: v.contentId
 					})
 				})
 
-				this.sortableJSInit();
+				if (!this.is_editing) {
+					this.sortableJSInit();
+				}
 			}
 		})
 	}

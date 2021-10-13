@@ -370,7 +370,7 @@ export class GenerateFeedComponent implements OnInit {
 			this.subscription.add(
 				this._feed.update_filler_feed(this.generated_filler_feed).subscribe(
 					data => {
-						this._router.navigate([`/${this.route}/feeds`])
+						this._router.navigate([`/${this.route}/feeds`]).then(_ =>  window.location.reload())
 					},
 					error => {
 						console.log(error);
