@@ -1,0 +1,32 @@
+.filler-playlist-panel-body {
+    border-top: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e0e0;
+    height: 450px;
+    overflow-y: scroll;
+}
+
+.selected, .marked {
+    .thumbnail-card {
+        box-shadow: 0 0 10px rgba(147, 202, 20, 0.945), 0 0 10px rgba(151, 209, 17, 0.938);
+    }
+}
+
+.thumbnail-card {
+    margin-bottom: 0;
+}
+
+.button-wrap {
+    background: rgba(0,0,0, 0.7);
+    padding: 0 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+.filler-item-remove-button {
+    background: none;
+    border: 0;
+    font-size: 12px;
+    font-weight: bold;
+}
