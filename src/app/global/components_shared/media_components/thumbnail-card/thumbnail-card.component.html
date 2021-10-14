@@ -21,7 +21,7 @@
 
 	<img [src]="image_uri" *ngIf="(filetype | isvideo) && file_url && is_converted == 1; else video_placeholder" alt="thumbnail">
 
-	<img [src]="fs_screenshot + '/' + file_url | sanitize" *ngIf="(filetype | isFeed)" alt="thumbnail">
+	<img [src]="file_url | sanitize" *ngIf="(filetype | isFeed)" alt="thumbnail">
 
     <div class="thumbnail-title">
 		<div class="d-flex">

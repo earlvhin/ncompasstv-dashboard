@@ -1,9 +1,10 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { UserSortModalComponent } from '../user-sort-modal/user-sort-modal.component';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FormControl, Validators } from '@angular/forms';
+import { debounceTime, distinctUntilChanged, map, startWith  } from 'rxjs/operators';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { Subscription } from 'rxjs/internal/Subscription';
+import { Observable } from 'rxjs/internal/Observable';
 
 @Component({
 	selector: 'app-media-library-options',
@@ -14,21 +15,36 @@ import { Subscription } from 'rxjs/internal/Subscription';
 export class MediaLibraryOptionsComponent implements OnInit {
 	
 	@Input() disable_user_filter: boolean = false;
+	@Input() fillers: { feedId: string, feedTitle: string}[] = [];
 	@Input() empty_s: boolean;
 	@Output() filetype = new EventEmitter;
 	@Output() sortAscend = new EventEmitter;
 	@Output() sortDescend = new EventEmitter;
 	@Output() sortUser = new EventEmitter;
 	@Output() searchKeyword = new EventEmitter;
+	@Output() filterByFiller = new EventEmitter;
+	filtered_options: Observable<{feedId: string, feedTitle: string}[]>;
 	subscription: Subscription = new Subscription;
+	filler_search: FormGroup;
+	selected_filler: string;
 	search_control = new FormControl();
 	search_form_invalid: boolean = false;
 	constructor(
-		private _dialog: MatDialog
+		private _dialog: MatDialog,
+		private _form: FormBuilder
 	) { }
 
 	ngOnInit() {
 		this.onSearch();
+
+		this.filler_search = this._form.group(
+			{
+				filler: [''],
+				filler_id: ['']
+			}
+		)
+		
+		this.matAutoFilter();
 	}
 
 	ngOnDestroy() {
@@ -62,6 +78,15 @@ export class MediaLibraryOptionsComponent implements OnInit {
 		)
 	}
 
+	filterByFeedId(data) {
+		this.filterByFiller.emit(data);
+	}
+
+	onSelectionChanged(e: { feedId: string, feedTitle: string}) {
+		this.f.filler.setValue(e.feedTitle);
+		this.filterByFeedId(e);
+	}
+
 	onSearch() {
 		this.search_control.setValidators([Validators.minLength(3)]);
 
@@ -87,6 +112,32 @@ export class MediaLibraryOptionsComponent implements OnInit {
 					this.search_form_invalid = true;
 				}
 			})
+		)
+	}
+
+	/** New Feed Form Control Getter */
+	get f() {
+		return this.filler_search.controls;
+	}
+
+	/**
+	 * Filter Method for the Angular Material Autocomplete
+	 * @param {string} value The entered phrase in the field
+	 * @returns {feedId: string, feedTitle: string} Array of filtered results
+	*/
+	private filter(value: string): {feedId: string, feedTitle: string}[] {
+		const filter_value = value ? value.toLowerCase() : '';
+
+		const filtered_result = this.fillers ? this.fillers.filter(i => i.feedTitle.toLowerCase().includes(filter_value)) : [];
+
+		return filtered_result;
+	}
+
+	/** Initialize Angular Material Autocomplete Component */
+	private matAutoFilter(): void {
+		this.filtered_options = this.f.filler.valueChanges.pipe(
+			startWith(''),
+			map(value => this.filter(value))
 		)
 	}
 }
