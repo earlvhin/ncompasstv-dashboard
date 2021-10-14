@@ -3,14 +3,15 @@ import { Injectable } from '@angular/core';
 import { retry, catchError, first, filter, switchMap, take } from 'rxjs/operators';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
-import { JWT_TOKEN } from '../../models/api_user.model';
+import { MatDialog } from '@angular/material';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
     private refreshingInProgress: boolean;
     private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService, private _dialog: MatDialog) {}
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let currentToken = JSON.parse(localStorage.getItem('current_token'));
         let token = currentToken ? currentToken.token : null;
@@ -32,7 +33,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 
                  // in case of 403 http error (refresh token failed)
                 if(error instanceof HttpErrorResponse && error.status === 403){
-                    this.authService.logout();
+                    this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
                 }
 
                 console.log(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
@@ -72,4 +73,27 @@ export class HttpErrorInterceptor implements HttpInterceptor {
         }));
     }
     }
+
+    private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
+
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '300px',
+			data: {
+				status: status,
+				message: message,
+				data: data,
+				return_msg: return_msg,
+				action: action
+			}
+		});
+
+		dialogRef.afterClosed().subscribe(
+			result => {
+        if (result == 'OK') {
+          this.authService.logout();
+        }
+			}
+		);
+	}
 }

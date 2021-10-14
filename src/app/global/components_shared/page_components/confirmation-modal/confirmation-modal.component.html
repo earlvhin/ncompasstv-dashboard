@@ -37,6 +37,16 @@
             <button mat-button mat-raised-button class="theme-btn mr-2" (click)="renameAllowed()" *ngIf="rename && !is_selection">Rename</button>
             <button mat-button mat-raised-button class="theme-btn" (click)="continueUpload()" *ngIf="rename && !is_selection">Continue Upload</button>
         </div>
+
+        <!-- Warn User to be Logged Out -->
+        <div class="text-center" *ngIf="status === 'logout'">
+            <app-warning-animation></app-warning-animation>
+            <h3 class="mb-1">{{ message }}</h3>
+            <p class="mb-0 sm-text font-weight-md">{{ data }}</p>
+            <button mat-button mat-raised-button [mat-dialog-close]="action || true" class="mt-4 theme-btn"
+                (click)="displaySuccess()">OK</button>
+        </div>
+
     
     </div>
 </div>
