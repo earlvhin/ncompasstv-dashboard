@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../../../global/services/auth-service/auth.service';
 import { ActivatedRoute } from '@angular/router';
+import { AuthService } from '../../../global/services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-administrator-layout',
@@ -39,10 +39,13 @@ export class AdministratorLayoutComponent implements OnInit {
 		{ path: 'reports', label: 'Reports', icon: 'fas fa-chart-bar'},
 	]
 
+	_socket: any;
+
 	constructor(
 		private _auth: AuthService,
 		private _activated_route: ActivatedRoute
-	) { }
+	) { 
+	}
 
 	ngOnInit() {
 		this._activated_route.data.subscribe(
