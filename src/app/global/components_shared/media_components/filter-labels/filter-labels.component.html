@@ -1,5 +1,5 @@
 <div class="d-flex align-items-center p-2 bg-gray-2" 
-	*ngIf="filters.filetype || filters.order || filters.user.dealer || filters.user.host || filters.user.advertiser">
+	*ngIf="filters.filetype || filters.order || filters.user.dealer || filters.user.host || filters.user.advertiser || filters.feedId">
 	<div class="filter-pills">
 		<div class="filetype-pill pill" *ngIf="filters.filetype">
 			File Type: <strong>{{ filters.filetype }}</strong>
@@ -19,6 +19,10 @@
 
 		<div class="advertiser-pill pill" *ngIf="filters.user.advertiser">
 			Advertiser: <strong>{{ filters.user.advertiser }}</strong>
+		</div>
+
+		<div class="fiiler-pill pill" *ngIf="filters.feedId">
+			Filler: <strong>{{ filters.feedTitle }}</strong>
 		</div>
 	</div>
 	<div class="control flex-even text-right">

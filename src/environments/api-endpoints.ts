@@ -55,6 +55,7 @@ export const API_ENDPOINTS = {
 		api_get_feeds_by_dealer: 'feed/getbydealerid',
 		api_get_feed_by_id: 'feed/getfeedbycontentid?contentid=',
 		api_get_feed_types: 'feedtype/getall',
+		api_get_fillers: 'feed/getallfillers',
 		api_get_host_by_dealer: 'host/getbydealer?dealerid=',
 		api_get_host_for_dealer: 'host/gethostbydealer?dealerid=',
 		api_get_host_total: 'host/gettotal',
