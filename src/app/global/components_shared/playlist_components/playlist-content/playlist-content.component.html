@@ -26,15 +26,15 @@
             <div class="d-flex align-items-center">
                 <p class="xsm-text flex-even">
 					<span *ngIf="array_index">{{ array_index }} - </span>
-					<span *ngIf="content.fileType !== 'webm' && content.fileType !== 'feed'">
+					<span *ngIf="content.fileType | isimage">
 						image
 					</span>
 
-					<span *ngIf="content.fileType === 'webm'">
+					<span *ngIf="content.fileType | isvideo">
 						video
 					</span>
 
-					<span *ngIf="content.fileType === 'feed'">
+					<span *ngIf="content.fileType | isFeed">
 						feed
 					</span>
 				</p>

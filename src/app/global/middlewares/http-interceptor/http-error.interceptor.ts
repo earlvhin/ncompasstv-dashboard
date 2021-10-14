@@ -1,17 +1,75 @@
 import { HttpEvent, HttpInterceptor, HttpHandler, HttpRequest, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { retry, catchError } from 'rxjs/operators';
-import { Observable, throwError } from 'rxjs';
+import { retry, catchError, first, filter, switchMap, take } from 'rxjs/operators';
+import { BehaviorSubject, Observable, throwError } from 'rxjs';
+import { AuthService } from '../../services/auth-service/auth.service';
+import { JWT_TOKEN } from '../../models/api_user.model';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
+    private refreshingInProgress: boolean;
+    private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+
+    constructor(private authService: AuthService) {}
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        return next.handle(request)
+        let currentToken = JSON.parse(localStorage.getItem('current_token'));
+        let token = currentToken ? currentToken.token : null;
+        return next.handle(this.addAuthorizationHeader(request, token))
           .pipe(retry(4),
-              catchError((error: HttpErrorResponse) => {
+              catchError((error) => {
+                // in case of 401 http error
+                if(error instanceof HttpErrorResponse && error.status === 401){
+                    const currentToken = localStorage.getItem('current_token');
+                    
+                    // if there are tokens then send refresh token request
+                    if(currentToken){
+                        return this.refreshToken(request, next);
+                    }
+                    
+                    // otherwise logout and redirect to login page
+                    this.authService.logout();
+                }
+
+                 // in case of 403 http error (refresh token failed)
+                if(error instanceof HttpErrorResponse && error.status === 403){
+                    this.authService.logout();
+                }
+
                 console.log(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
                 return throwError(error);
             })
-        )   
+        );  
+    }
+
+    private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
+         if (token) {
+            return request.clone({setHeaders: {Authorization: `Bearer ${token}`}});
+         }
+        return request;
+    }
+
+    private refreshToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>{
+        if (!this.refreshingInProgress) {
+      this.refreshingInProgress = true;
+      this.accessTokenSubject.next(null);
+
+      return this.authService.refresh_token().pipe(
+        switchMap((res) => {
+          this.refreshingInProgress = false;
+          this.accessTokenSubject.next(res.token);
+          // repeat failed request with new token
+          return next.handle(this.addAuthorizationHeader(request, res.token));
+        })
+      );
+    } else {
+      // wait while getting new token
+      return this.accessTokenSubject.pipe(
+        filter(token => token !== null),
+        take(1),
+        switchMap(token => {
+          // repeat failed request with new token
+          return next.handle(this.addAuthorizationHeader(request, token));
+        }));
+    }
     }
 }

@@ -2,7 +2,7 @@
 	<div class="icon-overlay">
 		<div class="type-icon sm-text">
 			<i class="far fa-image text-primary mr-1" *ngIf="filetype != 'webm' && filetype != 'feed'" title="Image"></i>
-			<i class="fas fa-video text-primary mr-1" *ngIf="filetype == 'webm'"  title="Video"></i>
+			<i class="fas fa-video text-primary mr-1" *ngIf="filetype == 'webm' || filetype == 'mp4'"  title="Video"></i>
 			<i class="fas fa-rss-square text-primary mr-1" *ngIf="filetype == 'feed'"  title="Feed"></i>
 			<i class="fas fa-user-circle mr-1" [ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'" [title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"></i>
 			<i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
@@ -17,14 +17,11 @@
 		</div>
 	</div>
 
-	<img [src]="image_uri" *ngIf="filetype !== 'feed' && file_url; else generated_feed_display" alt="thumbnail">
+	<img [src]="image_uri" *ngIf="(filetype | isimage) && file_url" alt="thumbnail">
 
-	<ng-template #generated_feed_display>
-		<div class="iframe-thumb-holder">
-			<div class="iframe-overlay"></div>
-			<img [src]=" fs_screenshot + '/' + file_url | sanitize">
-		</div>
-	</ng-template>
+	<img [src]="image_uri" *ngIf="(filetype | isvideo) && file_url && is_converted == 1; else video_placeholder" alt="thumbnail">
+
+	<img [src]="fs_screenshot + '/' + file_url | sanitize" *ngIf="(filetype | isFeed)" alt="thumbnail">
 
     <div class="thumbnail-title">
 		<div class="d-flex">
@@ -34,8 +31,12 @@
 			</a>
 		</div>
 	</div>
+
+	<ng-template #video_placeholder>
+		<img *ngIf="(filetype | isvideo)" src="assets/media-files/placeholder.png" alt="placeholder">
+	</ng-template>
 	
-	<div class="is_converting d-flex align-items-center justify-content-center px-2" *ngIf="filetype == 'webm' && is_converted == 0">
+	<div class="is_converting d-flex align-items-center justify-content-center px-2" *ngIf="(filetype | isvideo) && is_converted == 0">
 		<div>
 			<mat-progress-bar mode="indeterminate"></mat-progress-bar>
 			<p class="xsm-text text-white mt-1">Preparing Video</p>

@@ -93,7 +93,9 @@ export class LoginFormComponent implements OnInit {
 				if (response.userRole.roleName === 'Sub Dealer') user_data.roleInfo.permission = response.userRole.permission;
 				localStorage.setItem('current_user', JSON.stringify(user_data));
 				localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
-				this.refreshToken(response.userRole.roleId);
+				this._auth.startRefreshTokenTimer();
+				this.redirectToPage(response.userRole.roleId);
+				
 			},
 			error => {
 				this.show_overlay = false;
@@ -104,17 +106,6 @@ export class LoginFormComponent implements OnInit {
 		)
 	}
 
-	refreshToken(role) {
-		// Store User Info and Token to Local Storage
-		this.redirectToPage(role);
-		if(!this._auth.refresh_token()) {
-			// Invalid Tokens
-			this.auth_error = true;
-			this.error_msg = "Token Error";
-			console.log(this.error_msg);
-			return false;
-		}
-	}
 
 	async redirectToPage(role_definition: string): Promise<void> {
 		let role: string;

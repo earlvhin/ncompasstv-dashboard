@@ -1,5 +1,6 @@
 export enum VIDEO_FILETYPE {
-    webm = 1
+    webm = 1,
+    mp4 = 2
 }
 
 export enum IMAGE_FILETYPE {

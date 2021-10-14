@@ -1,6 +1,6 @@
 <div class="theme-container" id="generate-feed-page">
     <div class="row justify-content-center">
-        <div class="col-lg-10 pt-5">
+        <div class="col-lg-12 pt-5">
             <mat-card class="p-5">
                 <h1 class="mb-2 text-center page-title">{{ title }}</h1>
                 <p class="mb-5 text-center font-weight-md sm-text"> 
@@ -63,13 +63,24 @@
                             </app-news-form>
                         </div>
                         <!-- End: News Maker -->
+
+                        <!-- Begin: Filler Maker -->
+                        <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'">
+                            <app-filler-form
+                            (filler_data)="structureFillerFeedToGenerate($event)"
+                            [filler_global_settings] = "fetched_feed ? fetched_feed.fillerGlobalSettings : null"
+                            [filler_items_structured]="fetched_feed ? fetched_feed.feedFillers : []"
+                            [selected_dealer]>
+                            </app-filler-form>
+                        </div>
+                        <!-- End: Filler Maker -->
                     </mat-step>
                     <!-- End: Step 2 -->
 
                     <!-- Begin: Step 4 -->
                     <mat-step>
                         <ng-template matStepLabel>Preview and Save</ng-template>
-                        <div *ngIf="feed_items.length > 0 || generated_weather_feed || generated_news_feed; else no_feed_content">
+                        <div *ngIf="feed_items.length > 0 || generated_weather_feed || generated_news_feed || generated_filler_feed; else no_feed_content">
                             <div class="row mb-5 mt-5">
                                 <div class="col-lg-12 text-center">
                                     <h3 class="mb-1">Here's a preview of your customized feed.</h3>
@@ -115,6 +126,16 @@
                                         </app-news-demo>
 
                                         <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedNewsFeed()">Save News Feed</button>
+                                    </ng-container>
+                                    <!-- End: Weather Feed Demo -->
+
+                                    <!-- Begin: Weather Feed Demo -->
+                                    <ng-container *ngIf="generated_filler_feed && setSelectedFeedType(feed_info.feedTypeId) === 'Fillers'">
+                                        <app-filler-demo
+                                        [filler_data]="generated_filler_feed">
+                                        </app-filler-demo>
+
+                                        <button mat-button mat-raised-button class="theme-btn mt-4" (click)="saveGeneratedFillerFeed()">Save Filler Feed</button>
                                     </ng-container>
                                     <!-- End: Weather Feed Demo -->
                                 </div>

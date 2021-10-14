@@ -68,6 +68,8 @@ export class ContentsTabComponent implements OnInit {
     start_date: Date;
     search_data: string = "";
     selected_content: string;
+    selected_content_count: string;
+    selected_content_duration: string;
     selected_content_name: string;
     selected_dealer: string;
     selected_dealer_name: string = "";
@@ -166,6 +168,8 @@ export class ContentsTabComponent implements OnInit {
 
     setContentSelected(data) {
         this.selected_content = data.id;
+        this.selected_content_count = data.count;
+        this.selected_content_duration = data.duration;
         this.selected_content_name = data.name;
         this.exportTable('contents');
     }
@@ -281,17 +285,14 @@ export class ContentsTabComponent implements OnInit {
 
     metrics_mapToUIFormat(data) {
 		let count = this.paging_data.pageStart;
+        const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		return data.map(
 			i => {
 				return new UI_TABLE_CONTENT_METRICS(
 					{ value:count++, link: null , editable: false, hidden: false},
 					{ value:i.contentId, link: null , editable: false, hidden: true},
-					{ 
-                        value:i.title, 
-                        link: '/administrator/media-library/'+ i.contentId, 
-                        new_tab_link: 'true'
-                    },
-					{ value:i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts},
+					{ value:i.title, link: `/${route}/media-library/`+ i.contentId, new_tab_link: 'true'},
+					{ value:i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts, drop_link: `/${route}/hosts/`},
 					{ value:i.playsTotal},
 					{ value:this.msToTime(i.durationsTotal)},
 				)
@@ -381,7 +382,24 @@ export class ContentsTabComponent implements OnInit {
                         header.push({ header: this.content_metrics_table_column[key].name, key: this.content_metrics_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
                     }
                 });
+                const first_column = ['','Total Count','Total Duration'];
                 this.worksheet.columns = header;
+                this.worksheet.duplicateRow(1, true);
+                this.worksheet.getRow(1).values = [];
+                this.worksheet.getRow(1).values = first_column;
+                this.worksheet.getRow(1).height = 25;
+                this.worksheet.duplicateRow(1, true);
+                this.worksheet.getRow(2).values = [];
+                const second_column = ['',this.selected_content_count,this.selected_content_duration];
+                this.worksheet.getRow(2).values = second_column;
+                this.worksheet.getRow(2).height = 20;
+                this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
+                this.worksheet.getRow(1).font =  {
+                    bold: true,
+                    name: 'Arial',
+                    size: 11,
+                };
+        
                 this.getContentMetrics();	
                 break;
             default:

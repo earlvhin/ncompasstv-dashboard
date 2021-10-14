@@ -135,6 +135,7 @@
 														{{host.hostName}}
 													</a>
 												</div>
+												
                                             </div>
                                             <button class="fas fa-copy text-primary no-border" *ngIf="data[d].copy && data[d].value != '--'" (click)="copyToClipboard(data[d].value)" title="Copy {{data[d].label}}"></button>
                                         </div>
@@ -244,7 +245,7 @@
 				</td>
 
                 <td class="p-3 control-toggle text-center" *ngIf="content_metrics">
-					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value })"></i>
+					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value, count: data.play_count.value, duration: data.duration.value })"></i>
 					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
 
