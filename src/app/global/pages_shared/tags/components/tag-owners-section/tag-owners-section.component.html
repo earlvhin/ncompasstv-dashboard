@@ -1,0 +1,55 @@
+<!-- DROPDOWN AND SEARCH BOX ROW -->
+<div class="dropdown-and-search-section d-flex justify-content-between">
+
+	<div class="action-buttons-container">
+		<!-- ADD TAGS -->
+		<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
+			<span class="fas fa-stream"></span> <span class="ml-2 button_text_animation">Add Tags</span>
+		</button>
+
+		<!-- ASSIGN TAGS -->
+		<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _teal" title="Assign Tags" (click)="openDialog('assign_tags')">
+			<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation" >Assign Tags</span>
+		</button>
+
+		<!-- EXPORT TAGS -->
+		<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _primary" title="Export">
+			<span class="fas fa-file-excel"></span> <span class="ml-2 button_text_animation">Export</span>
+		</button>
+	</div>
+
+	<!-- SEARCH FIELD -->
+	<div class="search-container">
+		<mat-form-field class="full-width" *ngIf="!isLoading">
+			<mat-label>Search Tags or Assignees</mat-label>
+			<input matInput [formControl]="searchFormControl">
+		</mat-form-field>
+	</div>
+
+</div>
+
+<mat-card>
+	<ng-container *ngIf="!isLoading; else loading">
+		<!-- TABLE -->
+		<app-tags-table *ngIf="owners.length > 0; else noResults"
+			[tableType]="'tag-owners'"
+			[isLoading]="isLoading"
+			[paging]="pagingData"
+			[tableColumns]="columns"
+			[tableData]="owners"
+			[currentTagType]="currentTagType"
+			[currentUserRole]="currentUserRole"
+			(onClickPageNumber)="clickedPageNumber($event)">
+		</app-tags-table>
+	</ng-container>
+</mat-card>
+
+<ng-template #loading>
+	<div class="py-4">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #noResults>
+	<p>No results found</p>
+</ng-template>

@@ -1,14 +1,15 @@
-#tagsPage {
+#tags-page {
 	
-	.search-container {
+	.content-container {
 		
-		mat-form-field {
-			width: 400px;
+		.tags-management-container {
+			flex-basis: 25%;
+			margin-right: 20px;
 		}
-	}
 
-	.dropdown-and-search-section {
-		margin-top: 20px;
+		.tag-owners-container {
+			flex-basis: 75%;
+		}
 	}
 
 

@@ -87,3 +87,8 @@ export class DEALER_PROFILE {
     contactPerson: string;
     businessName: string;
 }
+
+export class JWT_TOKEN {
+    token: string;
+    refreshToken: string;
+}

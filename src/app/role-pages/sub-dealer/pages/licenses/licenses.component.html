@@ -56,26 +56,6 @@
             <div *ngIf="!no_licenses; else no_data">
                 <div class="row pt-2">
                     <div class="col-lg-8">
-                        <button mat-button mat-raised-button 
-                            class="theme-btn pi-control sm-text mr-2" 
-                            (click)="reloadLicense()"  
-                            title="Reload">
-                            <span class="fas fa-sync-alt"></span> 
-                            <span class="ml-2 button_text_animation">Reload</span>
-                        </button>
-
-                        <button mat-button mat-raised-button 
-                            class="theme-btn pi-control _cool sm-text mr-2" 
-                            [matMenuTriggerFor]="orderSort" 
-                            title="Order by License Status">
-                            <span class="fas fa-sort"></span> 
-                            <span class="ml-2 button_text_animation">Order by License Status</span>
-                        </button>
-                        <mat-menu #orderSort="matMenu">
-                            <button mat-menu-item (click)="sortList('desc')">Online</button>
-                            <button mat-menu-item (click)="sortList('asc')">Offline</button>
-                        </mat-menu>
-
                         <button mat-button mat-raised-button
                             class="theme-btn pi-control sm-text _primary mr-2" 
                             (click)="exportTable()"

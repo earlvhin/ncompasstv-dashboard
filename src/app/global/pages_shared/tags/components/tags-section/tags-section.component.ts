@@ -1,30 +1,30 @@
 import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
-import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { PAGING, TAG, TAG_TYPE } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 
 @Component({
-	selector: 'app-tags-tab',
-	templateUrl: './tags-tab.component.html',
-	styleUrls: ['./tags-tab.component.scss']
+	selector: 'app-tags-section',
+	templateUrl: './tags-section.component.html',
+	styleUrls: ['./tags-section.component.scss']
 })
-export class TagsTabComponent implements OnInit, OnDestroy {
+export class TagsSectionComponent implements OnInit, OnDestroy {
 
 	@Input() columns: { name: string, class: string }[];
-	@Input() currentTabIndex: number;
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserRole: string;
 	@Input() tagTypes: TAG_TYPE[];
-	@Output() clickedTagName = new EventEmitter<{ tag: string }>();
+	@Output() onClickTagName = new EventEmitter<{ tag: string }>();
 	
 	currentFilter = 'All';
 	isLoading = true;
 	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
 	searchFormControl = new FormControl(null, Validators.minLength(3));
 	tags: TAG[] = [];
+	title = 'tags management';
 	pagingData: PAGING;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -44,18 +44,17 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	onClickPageNumber(page: number): void {
-		this.searchTags(page);
+	clickedTagName(event: { tag: string }): void {
+		this.onClickTagName.emit(event);
 	}
 
-	onClickTagName(event: { tag: string }): void {
-		this.clickedTagName.emit(event);
+	clickedPageNumber(page: number): void {
+		this.searchTags(null, page);
 	}
 
-	private searchTags(page = 1) {
+	private searchTags(keyword = null, page = 1) {
 
 		this.isLoading = true;
-		const keyword = this.searchFormControl.value;
 		let request = this._tag.searchAllTags(keyword, page);
 		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags(page);
 
@@ -80,12 +79,12 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 
 	private subscribeToSearch(): void {
 
-		this.searchFormControl.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+		this._tag.onSearch.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => {
+				keyword => {
 					if (this.searchFormControl.invalid) return;
 					this.isLoading = true;
-					this.searchTags().add(() => this.isLoading = false);
+					this.searchTags(keyword).add(() => this.isLoading = false);
 				}
 			);
 

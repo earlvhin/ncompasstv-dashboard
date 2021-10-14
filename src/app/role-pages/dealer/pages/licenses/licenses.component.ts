@@ -65,6 +65,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus'},
 		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate' },
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated' },
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 	];
 
 	constructor(
@@ -226,10 +227,11 @@ export class LicensesComponent implements OnInit {
 
 	getDataForExport(id): void {
 		this.subscription.add(
-			this._license.get_license_by_dealer_id(id, 1, '', '', 0).subscribe(
+			this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, '', '', '', '').subscribe(
 				data => {
+                    console.log("DD", data)
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-					this.licenses_to_export = data.paging.entities;
+					this.licenses_to_export = data.licenseTemplateZoneExports;
 					this.licenses_to_export.forEach((item, i) => {
 						this.modifyItem(item);
 						this.worksheet.addRow(item).font ={
@@ -266,6 +268,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	modifyItem(item) {
+        item.zone = this.getZoneHours(item);
 		item.screenType =  this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
@@ -278,6 +281,64 @@ export class LicensesComponent implements OnInit {
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 	}
+
+    getZoneHours(data) {
+        if(data.templateName == 'Fullscreen') {
+            return "Main: " + this.msToTime(data.templateMain)
+        } else {
+            var data_to_return: any = '';
+            if(data.templateBackground != 'NO DATA') {
+                data_to_return = data_to_return + "Background: " + this.msToTime(data.templateBackground);
+            }
+            if (data.templateBottom != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Bottom: " + this.msToTime(data.templateBottom);
+            } 
+            if (data.templateHorizontal != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal: " + this.msToTime(data.templateHorizontal);
+            } 
+            if (data.templateHorizontalSmall != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
+            } 
+            if (data.templateLowerLeft != 'NO DATA') {
+                console.log("LL")
+                data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
+            } 
+            if (data.templateMain != 'NO DATA') {
+                console.log("M")
+                data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
+            } 
+            if (data.templateUpperLeft != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Upper Left: " + this.msToTime(data.templateUpperLeft)
+            } 
+            if (data.templateVertical != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Vertical: " + this.msToTime(data.templateVertical)
+            }
+            return data_to_return;
+        }
+    }
+
+    msToTime(input) {
+        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+        totalSeconds = input;
+        // totalSeconds = input / 1000;
+        totalMinutes = totalSeconds / 60;
+        totalHours = totalMinutes / 60;
+        seconds = Math.floor(totalSeconds) % 60;
+        minutes = Math.floor(totalMinutes) % 60;
+        hours = Math.floor(totalHours) % 60;
+        if (hours !== 0) {
+            result += hours+'h ';
+            if (minutes.toString().length == 1) {
+                minutes = '0'+minutes;
+            }
+        }
+        result += minutes+'m ';
+        if (seconds.toString().length == 1) {
+            seconds = '0'+seconds;
+        }
+        result += seconds + 's';
+        return result;
+    }
 
 	exportTable() {
 		this.workbook_generation = true;

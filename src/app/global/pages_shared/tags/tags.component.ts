@@ -1,11 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormGroup } from '@angular/forms';
-import { MatDialog } from '@angular/material';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
-import { CreateTagComponent } from './dialogs';
 import { AuthService, TagService, } from 'src/app/global/services';
 
 @Component({
@@ -16,8 +14,8 @@ import { AuthService, TagService, } from 'src/app/global/services';
 export class TagsComponent implements OnInit, OnDestroy {
 
 	count = { dealer: 0, host: 0, advertiser: 0, license: 0 };
-	currentTabIndex = 0;
 	currentTagType: TAG_TYPE;
+	isContentReady = false;
 	isLoadingCount = false;
 	isOwnersTabLoading = false;
 	owners: TAG_OWNER[] = [];
@@ -34,13 +32,13 @@ export class TagsComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		private _auth: AuthService,
-		private _dialog: MatDialog,
 		private _tag: TagService,
 	) { }
 	
 	ngOnInit() {
-		this.getAllTagTypes();
+		this.getAllTagTypes().add(() => this.isContentReady = true);
 		this.getTagsCount();
+		this.subscribeToTagsCountRefresh();
 	}
 
 	ngOnDestroy() {
@@ -48,54 +46,17 @@ export class TagsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	onAddTag(): void {
-		
-		const dialog = this._dialog.open(CreateTagComponent, {
-			width: '500px',
-			height: '700px',
-			data: { tagTypes: this.tagTypes, tagType: null },
-			panelClass: 'dialog-container-position-relative'
-		});
-
-		dialog.afterClosed()
-			.subscribe(
-				(response: boolean) => {
-
-					if (!response) return;
-
-					this.getTagsCount();
-
-					switch (this.currentTabIndex) {
-
-						case 1:
-							this._tag.onRefreshTagOwnersTable.emit();
-							break;
-
-						default:
-							this._tag.onRefreshTagsTable.emit();
-
-					}
-				}
-			);
-	}
-
-	onChangeTab(event: { index: number }): void {
-		this.currentTabIndex = event.index;
-		this.ownersTabSearchKey = null;
-	}
-
-	onClickTagName(event: { tag: string }): void {
+	clickedTagName(event: { tag: string }): void {
 		this.ownersTabSearchKey = event.tag;
-		this.currentTabIndex = 1;
 	}
 
 	get currentUserRole() {
 		return this._auth.current_role;
 	}
 
-	private getAllTagTypes(): void {
+	private getAllTagTypes() {
 
-		this._tag.getAllTagTypes()
+		return this._tag.getAllTagTypes()
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { tag_types: TAG_TYPE[] }) => {
@@ -111,7 +72,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	private getColumns(table = '') {
 
-		let columns = [
+		let columns: any[] = [
 			{ name: '#', class: 'p-3 index-column-width' },
 		];
 
@@ -119,8 +80,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 			case 'tag-owners':
 				columns.push(
-					{ name: 'Owner', class: 'p-3' },
-					{ name: 'Tag Type', class: 'p-3' },
+					{ name: 'Assignee', class: 'p-3' },
 					{ name: 'Tags', class: 'p-3' },
 				);
 
@@ -130,6 +90,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 				columns.push(
 					{ name: 'Name', class: 'p-3' },
+					{ name: 'Total', class: 'p-3' },
 				);
 
 				break;
@@ -155,5 +116,11 @@ export class TagsComponent implements OnInit, OnDestroy {
 			.add(() => this.isLoadingCount = false);
 
 	}
-	
+
+	private subscribeToTagsCountRefresh() {
+		
+		this._tag.onRefreshTagsCount.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.getTagsCount());
+	}
+
 }

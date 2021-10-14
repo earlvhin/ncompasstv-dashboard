@@ -104,9 +104,15 @@
     position: relative;
     .fas {
         font-size: $md;
-        top: 10px;
+        top: 15px;
         position: absolute;
         right: 10px;
+    }
+
+    .invalidator {
+        position: absolute;
+        right: 10px;
+        top: 35px;
     }
 }
 
@@ -607,6 +613,10 @@
 		display: inline;
 		opacity: 1;
 	}
+}
+
+.w-30 {
+	width: 30%;
 }
 
 .w-40 {

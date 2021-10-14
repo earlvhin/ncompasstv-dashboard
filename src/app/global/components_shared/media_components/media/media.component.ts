@@ -10,6 +10,7 @@ import { MediaViewerComponent } from '../media-viewer/media-viewer.component';
 import { UI_CONTENT } from 'src/app/global/models/ui_content.model';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
 import { SelectOwnerComponent } from '../../user_components/select-owner/select-owner.component';
+import { FeedService } from 'src/app/global/services';
 @Component({
 	selector: 'app-media',
 	templateUrl: './media.component.html',
@@ -25,6 +26,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	can_reassign = false;
 	empty_search = false;
+	fillers: Observable<{feedId: string, feedTitle: string}[]>;
 	filtered_content_data: UI_CONTENT[];
 	is_bulk_select = false;
 	is_zone_content = false;
@@ -37,6 +39,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 	filters: any = {
 		filetype: '',
 		order: '',
+		feedId: '',
 		user: {
 			dealer: '',
 			host: '',
@@ -59,6 +62,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 		private _auth: AuthService,
 		private _content: ContentService,
 		private _dialog: MatDialog,
+		private _feed: FeedService
 	) { }
 
 	ngOnInit() {
@@ -78,6 +82,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 		);
 
 		this.getContents();
+		this.getFillers();
 		this.sendStatCardsData();
 	}
 
@@ -91,6 +96,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 		this.filters = {
 			filetype: '',
 			order: '',
+			feedId: '',
+			feedTitle: '',
 			user: {
 				dealer: '',
 				host: '',
@@ -161,6 +168,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	}
 
+
+
 	getContents(): void {
 
 		if (this.filters.filetype == '') {
@@ -183,12 +192,20 @@ export class MediaComponent implements OnInit, OnDestroy {
 			this.filters.user.advertiser_label = '';
 		}
 
+		if (this.filters.feedId == '') {
+			this.filters.feedTitle = '';
+		}
+
 		this.pageRequested(1, false);
 	}
 
 	getPage(page: number): void {
 		this.filtered_content_data = [];
 		this.pageRequested(page, true);
+	}
+
+	getFillers() {
+		this.fillers = this._feed.get_fillers();
 	}
 
 	isDeleted(value: boolean): void {
@@ -281,6 +298,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 		if (this.is_dealer) this.filters.user.dealer_label = this._auth.current_user_value.roleInfo.dealerId;
 
 		const labels = {
+			feedId: this.filters.feedId,
+			feedTitle: this.filters.feedTitle,
 			filetype: this.filters.filetype_label,
 			order: this.filters.order_label,
 			dealer: this.filters.user.dealer_label,
@@ -289,7 +308,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 		};
 
 		this.subscription.add(
-			this._content.get_contents_with_page(page, labels.filetype, labels.order, labels.dealer, labels.host, labels.advertiser, this.key)
+			this._content.get_contents_with_page(page, labels.filetype, labels.order, labels.dealer, labels.host, labels.advertiser, this.key, this.filters.feedId)
 				.subscribe(
 					data => {
 						this.searching = false;
@@ -329,6 +348,18 @@ export class MediaComponent implements OnInit, OnDestroy {
 			this.getContents();
 		}
 		
+	}
+
+	filterByFiller(data: {feedId: string, feedTitle: string}) {
+		this.filters.feedId = '';
+		this.filters.feedTitle = '';
+
+		if (data) {
+			console.log('HIT', data)
+			this.filters.feedId = data.feedId;
+			this.filters.feedTitle = data.feedTitle;
+			this.getPage(1);
+		}
 	}
 	
 	sortAscendingOrder(value: boolean): void {

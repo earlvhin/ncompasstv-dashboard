@@ -1,9 +1,10 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
-import { API_LICENSE } from '../../models/api_license.model';
 import { Observable } from 'rxjs';
+
+import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { API_FILTERS, API_LICENSE, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -44,6 +45,25 @@ export class LicenseService {
 	get_all_licenses(page, key, column, order, pageSize, status?, activated?, zone?, dealer?, host?) {
         const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
+	}
+
+	get_by_tags(filters: API_FILTERS) {
+		let url = `${this.baseUri}${this.getters.license_by_tags}`;
+
+		Object.keys(filters).forEach(
+			key => {
+				
+				if (!url.includes('?')) url += `?${key}=`;
+				else url += `&${key}=`;
+
+				if (key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].includes('#')) filters['search'] = `#${filters['search']}`;
+				if (typeof filters[key] === 'string' && filters[key].includes('#')) url += encodeURIComponent(filters[key]); 
+				else url += filters[key];
+
+			}
+		);
+
+		return this._http.get<{ licenses: API_LICENSE['license'][], paging: PAGING }>(url, this.httpOptions);
 	}
 
 	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?, dealer="") {

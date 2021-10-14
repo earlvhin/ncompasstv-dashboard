@@ -96,7 +96,15 @@ export class HostsTabComponent implements OnInit {
                 }
             },
             colorAxis: {
-                min: 0
+                min: 1,
+                type: 'logarithmic',
+                minColor: '#e1fdbc',
+                maxColor: '#8EC641',
+                stops: [
+                    [0, '#e1fdbc'],
+                    [0.67, '#bceb7d'],
+                    [1, '#8EC641 ']
+                ]
             },
             series: [{
                 data: formatted,
@@ -104,7 +112,7 @@ export class HostsTabComponent implements OnInit {
                 name: 'Total Hosts Licenses',
                 states: {
                     hover: {
-                        color: '#8EC641'
+                        color: '#2c3e50'
                     }
                 },
                 dataLabels: {
