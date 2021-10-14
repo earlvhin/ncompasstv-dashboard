@@ -80,8 +80,9 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 	private searchLicenses(filters: API_FILTERS) {
 
 		this.isPageReady = false;
+		this.hasNoData = false;
 
-		this._license.get_by_tags(filters).pipe(takeUntil(this._unsubscribe))
+		this._license.get_by_tags(filters, true).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ licenses, paging }) => {
 
