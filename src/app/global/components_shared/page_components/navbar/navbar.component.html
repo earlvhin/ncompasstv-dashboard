@@ -4,16 +4,25 @@
 			<breadcrumb [allowBootstrap]="true"></breadcrumb>
 		</div>
         <div class="navbar-menu d-flex justify-content-end flex-even text-right">
-			<div class="notification-area" *ngIf="notifications">
+			<div class="notification-area" *ngIf="notifications; else loading_spinner">
 				<button mat-button class="navbar-btn no-border position-relative" [matMenuTriggerFor]="notif">
 					<span class="fas fa-bell mr-2 alert-icon"  [ngClass]="has_alerts ? 'has-alerts' : ''"></span>
 					<span class="fas fa-angle-down"></span>
+					<span class="notif-count">{{ notifications.length }}</span>
 				</button>
 				<mat-menu #notif="matMenu" class="mat-menu-custom-width">
-					<div class="notification-panel" *ngIf="notifications.length > 0; else no_notifications;">
+					<div class="notification-panel position-relative" *ngIf="notifications.length > 0; else no_notifications;">
+						<a class="see-all sm-text font-weight-bold text-center" href="#">
+							See All Notifications <i class="fas fa-long-arrow-alt-right ml-4"></i>
+						</a>
+
 						<div class="notification-item" *ngFor="let n of notifications">
-							<h5>Notification Title 1</h5>
-							<p class="sm-text">Lorem ipsum dolor sit, amet consectetur adipisicing elit...</p>
+							<div [routerLink]="[route + '/licenses', n.licenseId]">
+								<p class="sm-text mb-2">
+									<strong>{{ n.licenseAlias }}</strong> of {{ n.businessName }} has been offline for more than an hour now.
+								</p>
+								<p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }}</p>
+							</div>
 						</div>
 					</div>
 				</mat-menu>
@@ -29,6 +38,12 @@
 					</div>
 				</ng-template>
 			</div><!-- Notifications -->
+
+			<ng-template #loading_spinner>
+				<div class="notification-area pr-4">
+					<app-spinner [diameter]="20"></app-spinner>
+				</div>
+			</ng-template>
 
 			<div>
 				<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="menu">

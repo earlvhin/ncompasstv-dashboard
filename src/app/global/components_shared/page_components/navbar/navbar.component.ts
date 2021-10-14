@@ -20,6 +20,7 @@ export class NavbarComponent implements OnInit {
 	has_alerts: boolean = false;
 	
 	notifications: UserNotification[];
+	route: string;
 
 	_socket: any;
 
@@ -39,12 +40,23 @@ export class NavbarComponent implements OnInit {
 			this.current_username = firstname;
 			this.current_userid = user_id;
 
-			if(role_id === UI_ROLE_DEFINITION.administrator) this.is_admin = true;
+			if(role_id === UI_ROLE_DEFINITION.administrator) {
+				this.is_admin = true
+				this.route = '/administrator'
+			};
 
-			if (role_id === UI_ROLE_DEFINITION.dealer) this.is_dealer = true;
+			if (role_id === UI_ROLE_DEFINITION.dealer) {
+				this.is_dealer = true;
+				this.route = '/dealer'
+			};
 			
 			this.getUserNotifications();
 		}
+
+
+		this._socket.on('SS_notify', () => {
+			this.getUserNotifications();
+		})
 	}
 
 	logOut() {
@@ -54,8 +66,8 @@ export class NavbarComponent implements OnInit {
 	getUserNotifications() {
 		if (this.is_admin) {
 			this._notification.getAll().subscribe(
-				(data: UserNotification[]) => {
-					this.notifications = data;
+				(data: any) => {
+					this.notifications = data.entities;
 					this.checkNewNotifications();
 				}
 			)
@@ -72,7 +84,7 @@ export class NavbarComponent implements OnInit {
 	}
 
 	checkNewNotifications() {
-		this.has_alerts = this.notifications.filter((i: UserNotification) => i.isOpened == 1).length > 0  ? true : false;
+		this.has_alerts = this.notifications.filter((i: UserNotification) => i.isOpened == 0).length > 0  ? true : false;
 	}
 
 	protected get currentUser() {

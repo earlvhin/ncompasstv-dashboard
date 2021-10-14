@@ -1,5 +1,5 @@
 .notification-panel {
-	max-height: 400px;
+	max-height: 500px;
 }
 
 .notification-item {
@@ -20,6 +20,7 @@
 
 .mat-menu-custom-width {
 	width: 340px;
+	height: 400px !important;
 }
 
 .notif-count {
@@ -32,10 +33,27 @@
 	font-size: 20px !important;
 
 	&.has-alerts {
-		color:rgb(236, 49, 49);
+		color:rgb(226, 172, 21);
 		animation: shake-animation 4.72s ease infinite;
 		transform-origin: 50% 50%;
 	}
+}
+
+.notif-count {
+	position: absolute;
+	right: 27px;
+	top: -10px;
+}
+
+.see-all {
+	background-color: #ffffff;
+	border-bottom: 1px solid #ddd;
+	display: inline-block;
+	padding: 10px;
+	position: sticky;
+	top: 0;
+	left: 0;
+	width: 100%;
 }
 
 @keyframes shake-animation {
