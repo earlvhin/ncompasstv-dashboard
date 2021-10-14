@@ -10,11 +10,11 @@ import { CreateTagComponent } from '../../dialogs';
 import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.component';
 
 @Component({
-	selector: 'app-tag-owners-tab',
-	templateUrl: './tag-owners-tab.component.html',
-	styleUrls: ['./tag-owners-tab.component.scss']
+	selector: 'app-tag-owners-section',
+	templateUrl: './tag-owners-section.component.html',
+	styleUrls: ['./tag-owners-section.component.scss']
 })
-export class TagOwnersTabComponent implements OnInit, OnChanges, OnDestroy {
+export class TagOwnersSectionComponent implements OnInit, OnChanges, OnDestroy {
 	
 	@Input() columns: { name: string, class: string }[];
 	@Input() currentUserRole: string;

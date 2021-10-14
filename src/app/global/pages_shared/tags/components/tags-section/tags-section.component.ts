@@ -7,11 +7,11 @@ import { PAGING, TAG, TAG_TYPE } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 
 @Component({
-	selector: 'app-tags-tab',
-	templateUrl: './tags-tab.component.html',
-	styleUrls: ['./tags-tab.component.scss']
+	selector: 'app-tags-section',
+	templateUrl: './tags-section.component.html',
+	styleUrls: ['./tags-section.component.scss']
 })
-export class TagsTabComponent implements OnInit, OnDestroy {
+export class TagsSectionComponent implements OnInit, OnDestroy {
 
 	@Input() columns: { name: string, class: string }[];
 	@Input() currentTagType: TAG_TYPE;

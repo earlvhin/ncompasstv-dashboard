@@ -54,25 +54,25 @@
 		<!-- TAGS MANAGEMENT -->
 		<div class="tags-management-container">
 			<ng-container *ngIf="isContentReady; else loading;">
-				<app-tags-tab
+				<app-tags-section
 					[columns]="tagsTableSettings.columns"
 					[currentTagType]="currentTagType"
 					[currentUserRole]="currentUserRole"
 					[tagTypes]="tagTypes"
 					(onClickTagName)="clickedTagName($event)">
-				</app-tags-tab>
+				</app-tags-section>
 			</ng-container>
 		</div>
 
 		<!-- TAG OWNERS -->
 		<div class="tag-owners-container">
 			<ng-container *ngIf="isContentReady; else loading;">
-				<app-tag-owners-tab
+				<app-tag-owners-section
 					[columns]="tagOwnersTableSettings.columns"
 					[currentUserRole]="currentUserRole"
 					[tagTypes]="tagTypesMutated"
 					[searchKey]="ownersTabSearchKey">
-				</app-tag-owners-tab>
+				</app-tag-owners-section>
 			</ng-container>
 		</div>
 
