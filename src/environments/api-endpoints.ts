@@ -123,6 +123,7 @@ export const API_ENDPOINTS = {
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
+		license_by_tags: 'license/getByTags',
 		license_statistics: 'license/getstatisticsbydealerid',
 		license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
 		search_advertiser: 'advertiser/search?searchkey=',

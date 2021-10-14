@@ -1,19 +1,17 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs';
 import { DatePipe, TitleCasePipe } from '@angular/common'
-import { API_DEALER } from '../../../../global/models/api_dealer.model';
-import { HostService } from '../../../../global/services/host-service/host.service';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
-import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-license-by-dealer.model';
-import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
-import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
-import { environment } from '../../../../../environments/environment';
+import { Subscription } from 'rxjs';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
+
+import { environment } from 'src/environments/environment';
+import { LicenseService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { API_DEALER, UI_LICENSE, UI_TABLE_LICENSE_BY_DEALER } from 'src/app/global/models';
+import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 
 @Component({
 	selector: 'app-licenses',
@@ -165,12 +163,18 @@ export class LicensesComponent implements OnInit {
 		)
 	}
 
-    onTabChanged(e) {
-        if(e.index == 1) {
-            this.pageRequested(1);
-        } else {
-            this.getLicenses(1);
-        }
+    onTabChanged(e: { index: number }) {
+
+		switch (e.index) {
+			case 1:
+				this.pageRequested(1);
+				break;
+			case 2:
+				break;
+			default:
+				this.getLicenses(1);
+		}
+		
     }
 
     filterTable(type, value) {

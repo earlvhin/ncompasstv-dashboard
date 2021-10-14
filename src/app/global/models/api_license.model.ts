@@ -8,30 +8,49 @@ export class API_LICENSE {
 
 export interface API_LICENSE_PROPS {
 	alias: string;
-	anydeskId?: string;
-    contentsUpdated: string;
-	dateUpdated?: string;
-    licenseId: string;
-    licenseKey: string;
-    macAddress: string;
-    isRegistered: number;
-    isActivated: number;
-    dealerId: string;
-    hostId: string;
-    dateCreated: string;
-    internetType: string;
-    internetSpeed: string;
-    memory: string;
-    totalStorage: string;
-    freeStorage: string;
-	message: string;
+	anydeskId: string;
+	appVersion: string;
+	category: string;
+	contentsUpdated: string;
+	dateCreated: string
+	dateUpdated: string
+	dealerId: string;
+	displayStatus: number;
+	freeStorage: string;
+	hostAddress: string;
+	hostId: string;
+	hostName: string;
+	installDate: string;
+	internetInfo: string;
+	internetSpeed: string;
+	internetType: string;
+	isActivated: number;
+	isRegistered: number;
+	licenseId: string;
+	licenseKey: string;
+	macAddress: string;
+	memory: string;
+	piSocketId: string;
 	piStatus: number;
-    screenshotSettings?: number;
-    speedtestSettings?: number;
-    resourceSettings?: number;
-	timeIn?: string;
-	installDate?: string;
-    screenId?: string;
+	playerSocketId: any;
+	playerStatus: number;
+	resourceSettings: number;
+	screenId: string;
+	screenName: string;
+	screenType: string;
+	screenshotSettings: number;
+	screenshotUrl: string;
+	serverVersion: string;
+	speedtestSettings: number;
+	storeHours: string;
+	tags: { name: string, tagColor: string }[];
+	templateId: string;
+	templateName: string;
+	timeIn: string;
+	timeOut: string;
+	timezoneName: string;
+	totalStorage: string;
+	uiVersion: string;
 }
 
 interface screenInfo {
