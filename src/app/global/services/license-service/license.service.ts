@@ -47,22 +47,10 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
-	get_by_tags(filters: API_FILTERS) {
-		let url = `${this.baseUri}${this.getters.license_by_tags}`;
-
-		Object.keys(filters).forEach(
-			key => {
-				
-				if (!url.includes('?')) url += `?${key}=`;
-				else url += `&${key}=`;
-
-				if (key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].includes('#')) filters['search'] = `#${filters['search']}`;
-				if (typeof filters[key] === 'string' && filters[key].includes('#')) url += encodeURIComponent(filters[key]); 
-				else url += filters[key];
-
-			}
-		);
-
+	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
+		let baseUrl = `${this.baseUri}${this.getters.license_by_tags}`;
+		let params = this.setUrlParams(filters, enforceTagSearchKey);
+		const url = `${baseUrl}${params}`;
 		return this._http.get<{ licenses: API_LICENSE['license'][], paging: PAGING }>(url, this.httpOptions);
 	}
 
@@ -80,10 +68,11 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 	
-	get_license_by_dealer_id(id, page, key, arrangement, pageSize?: number) {
-		const params: any = this.httpParams({ dealerId: id,page, search: key, arrangement });
-		if (typeof pageSize !== 'undefined') params.pageSize = pageSize;
-		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+	get_license_by_dealer_id(dealerId: string, page: number, search: string, arrangement: any, pageSize?: number) {
+		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
+		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize });
+		const url = `${base}${params}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 
 	api_get_licenses_total_by_host_dealer(dealerId, hostId) {
@@ -273,6 +262,27 @@ export class LicenseService {
 
 	set_resource_status(data: any) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_resource_settings}`, data, this.httpOptions);
+	}
+
+	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
+
+		let result = '';
+		
+		Object.keys(filters).forEach(
+			key => {
+				
+				if (!result.includes('?')) result += `?${key}=`;
+				else result += `&${key}=`;
+
+				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+				else result += filters[key];
+
+			}
+		);
+
+		return result
+
 	}
 
 	protected get baseUri() {

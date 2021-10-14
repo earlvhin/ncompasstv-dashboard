@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
+import { API_FILTERS } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -34,8 +35,11 @@ export class AdvertiserService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertiser_total_by_dealer}${id}`, this.httpOptions);
 	}
 
-	get_advertisers_by_dealer_id(id, page, key, column='', order='') {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+	get_advertisers_by_dealer_id(dealer_id: string, page: number, search: string, sortColumn = '', sortOrder = '') {
+		const base = `${environment.base_uri}${environment.getters.api_get_advertisers_by_dealer_id}`;
+		const params = this.setUrlParams({ page, dealer_id, search, sortColumn, sortOrder });
+		const url = `${base}${params}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 	
     get_advertisers_unassigned_to_user(id, page, key, column='', order='') {
@@ -68,6 +72,27 @@ export class AdvertiserService {
 
 	remove_advertiser(id, force) {
 		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_advertiser}${id}&force=${force}`, null, this.httpOptions);
+	}
+
+	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
+
+		let result = '';
+		
+		Object.keys(filters).forEach(
+			key => {
+				
+				if (!result.includes('?')) result += `?${key}=`;
+				else result += `&${key}=`;
+
+				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+				else result += filters[key];
+
+			}
+		);
+
+		return result
+
 	}
 
 	protected get baseUri() {
