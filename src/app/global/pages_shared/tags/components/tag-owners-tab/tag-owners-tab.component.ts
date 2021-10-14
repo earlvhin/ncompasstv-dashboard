@@ -59,7 +59,7 @@ export class TagOwnersTabComponent implements OnInit, OnChanges, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	onClickPageNumber(page: number): void {
+	clickedPageNumber(page: number): void {
 		const keyword = this.searchFormControl.value;
 		this.searchOwnerTags(keyword, null, page);
 	}
