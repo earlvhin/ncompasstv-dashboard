@@ -76,6 +76,7 @@ export class AuthService {
 
 				let currentToken = JSON.parse(localStorage.getItem("current_token"));
 				currentToken.token = data.token;
+				currentToken.refreshToken = data.refreshToken;
 				localStorage.setItem('current_token', JSON.stringify(currentToken));
 
 				this.current_user_subject.next(currentUserStorage);

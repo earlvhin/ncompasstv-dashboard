@@ -18,7 +18,6 @@ import { ReassignDealerModule } from './global/pages_shared/edit-single-dealer/r
 import { SubDealerModule } from './role-pages/sub-dealer/sub-dealer.module';
 import { TechnicalModule } from './role-pages/technical/technical.module';
 import { ViewContentListModule } from './global/components_shared/playlist_components/view-content-list/view-content-list.module';
-import { AuthInterceptor } from './global/middlewares/http-interceptor/auth.interceptor';
 
 @NgModule({
 	declarations: [
@@ -42,7 +41,6 @@ import { AuthInterceptor } from './global/middlewares/http-interceptor/auth.inte
 	],
 	providers: [
 		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-		{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 		AuthService, 
 		AuthGuard
 	],
