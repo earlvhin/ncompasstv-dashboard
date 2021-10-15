@@ -30,8 +30,11 @@
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- OWNER NAME -->
 					<td class="p-3 w-30">
-						<div class="flex align-items-center">
-							<mat-icon class="owner-icon">{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</mat-icon>
+						<div class="owner-name-container flex align-items-center">
+							<!-- <mat-icon class="owner-icon">{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</mat-icon> -->
+							<div class="owner-icon">
+								<span>{{ownerIcons[data.tagTypeName.toLowerCase()]}}</span>
+							</div>
 							<a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
 						</div>
 					</td>

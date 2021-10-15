@@ -56,7 +56,7 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 		this.isLoading = true;
 		let request = this._tag.searchAllTags(keyword, page);
-		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags(page);
+		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags({ page });
 
 		return request.pipe(takeUntil(this._unsubscribe))
 			.subscribe(

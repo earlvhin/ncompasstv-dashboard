@@ -24,7 +24,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	isSearchingOwners = false;
 	isSearchingTags = false;
 	ownerFilterControl = new FormControl(null, [ Validators.required, Validators.minLength(3) ]);
-	tagFilterControl = new FormControl(null, [ Validators.required, Validators.minLength(3) ]);
+	tagFilterControl = new FormControl(null, [ Validators.minLength(3) ]);
 	selectedOwnersControl = this.form.get('selectedOwners');
 	selectedTagsControl = this.form.get('selectedTags');
 	title = 'Assign Tags';
@@ -38,6 +38,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	) { }
 	
 	ngOnInit() {
+		this.getAllRecentTags();
 		this.initializeSubscriptions();
 	}
 
@@ -81,6 +82,23 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	onRemoveTag(index: number) {
 		this.selectedTagsControl.value.splice(index, 1);
 		this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId;
+	}
+
+	private getAllRecentTags() {
+
+		this.isSearchingTags = true;
+
+		this._tag.getAllTags({ page: 1, sortColumn: 'DateCreated', sortOrder: 'desc' })
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				({ tags, message }) => {
+					if (message) return;
+					this.filteredTags.next(tags);
+				},
+				error => console.log('Error loading initial tags', error)
+			)
+			.add(() => this.isSearchingTags = false);
+
 	}
 
 	private initializeSubscriptions(): void {
@@ -169,7 +187,9 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 				map(
 					keyword => {
 						if (control.invalid) return;
-						this.searchTags(keyword);
+
+						if (keyword && keyword.trim().length > 0) this.searchTags(keyword);
+						else this.getAllRecentTags();
 					}
 				)
 			)

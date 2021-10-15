@@ -114,14 +114,14 @@
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
-                                                *ngIf="!initial_load_licenses"
-                                                [form_title]="'Search License ID, Host name or Anydesk'"
-                                                [placeholder]="'Example: License # 9'"
-                                                [data_reference]="licenses_data"
-                                                [primary_keyword]="'license_id'"
-                                                [secondary_keyword]="'alias'"
-                                                (searched)="filterData($event, 'licenses')"
-                                                [api_search]="true"
+													*ngIf="!initial_load_licenses"
+													[form_title]="'Search License ID, Host name, Anydesk, or #Tag'"
+													[placeholder]="'Example: License # 9'"
+													[data_reference]="licenses_data"
+													[primary_keyword]="'license_id'"
+													[secondary_keyword]="'alias'"
+													(searched)="filterData($event, 'licenses')"
+													[api_search]="true"
                                                 ></app-search-field>
                                             </div>
                                         </div>
@@ -196,14 +196,14 @@
                                             <div class="col-lg-8"></div>
                                             <div class="col-lg-4">
                                                 <app-search-field
-                                                *ngIf="!initial_load"
-                                                [form_title]="'Search Dealer Alias or Business Name'"
-                                                [placeholder]="'Example: N-Compass'"
-                                                [data_reference]="dealers_data"
-                                                [primary_keyword]="'business_name'"
-                                                [secondary_keyword]="'dealer_alias'"
-                                                (searched)="filterData($event, 'dealers')"
-                                                [api_search]="true"
+													*ngIf="!initial_load"
+													[form_title]="'Search Dealer Alias, Business Name, or #Tag'"
+													[placeholder]="'Example: N-Compass'"
+													[data_reference]="dealers_data"
+													[primary_keyword]="'business_name'"
+													[secondary_keyword]="'dealer_alias'"
+													(searched)="filterData($event, 'dealers')"
+													[api_search]="true"
                                                 ></app-search-field>
                                             </div>
                                         </div>
