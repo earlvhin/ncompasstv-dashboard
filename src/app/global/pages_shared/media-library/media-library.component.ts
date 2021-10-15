@@ -306,14 +306,14 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	removeIndexes(data): void {
-        this.removed_index = true;
-		
+	removeIndexes(data) {
 		if (data.indexOf('(') > 0) {
 			return data.slice(0, data.indexOf('('));
 		} else {
 			return data.slice(0, data.indexOf('.'));
 		}
+
+		this.removed_index = true;
 	}
 
 	postContentInfo(duplicateArray, data, upload): void {
