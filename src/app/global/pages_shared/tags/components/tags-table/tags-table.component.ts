@@ -17,17 +17,16 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	@Input() isLoading = true;
 	@Input() tableType = 'tags';
-	@Input() currentTabIndex: number;
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserRole: string;
 	@Input() paging: PAGING;
 	@Input() tagOwners: TAG_OWNER[];
 	@Input() tableColumns: any[];
-	@Input() tableData: TAG[] | { owner: { displayName: string }, tagTypeId: string, tags: TAG[] }[] = [];
+	@Input() tableData: TAG[] | TAG_OWNER[] = [];
+	@Output() onClickTagName = new EventEmitter<{ tag: string }>();
+	@Output() onClickPageNumber = new EventEmitter<number>();
 
-	@Output() clickedTagName = new EventEmitter<{ tag: string }>();
-	@Output() clickedPageNumber = new EventEmitter<number>();
-
+	ownerIcons: any;
 	page: number
 	selectedArray: any = [];
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -38,6 +37,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	) { }
 	
 	ngOnInit() {
+		this.ownerIcons = this.ownerIconsList;
 	}
 
 	ngOnDestroy() {
@@ -54,7 +54,11 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 		this._tag.deleteTag([id])
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this._tag.onRefreshTagsTable.emit(),
+				() => {
+					this._tag.onRefreshTagOwnersTable.emit();
+					this._tag.onRefreshTagsTable.emit();
+					this._tag.onRefreshTagsCount.emit();
+				},
 				error => console.log('Error deleting tag', error)
 			);
 
@@ -71,29 +75,49 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 		this._tag.deleteAllTagsFromOwner(ownerId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this._tag.onRefreshTagOwnersTable.emit(),
+				() => {
+					this._tag.onRefreshTagOwnersTable.emit();
+					this._tag.onRefreshTagsTable.emit();
+					this._tag.onRefreshTagsCount.emit();
+				},
 				error => console.log('Error deleting all tags from owner', error)
 			);
 	}
 
-	async onDeleteTagFromOwner(tagId: string, data: { owner: any }): Promise<void> {
+	async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
 	
 		const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
 		if (!response) return;
 
-		const ownerId = this.getOwnerId(data.owner);
-
 		this._tag.deleteTagByIdAndOwner(tagId, ownerId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this._tag.onRefreshTagOwnersTable.emit(),
+				() => {
+					this._tag.onRefreshTagOwnersTable.emit();
+					this._tag.onRefreshTagsTable.emit();
+					this._tag.onRefreshTagsCount.emit();
+				},
 				error => console.log('Error deleting tag from owner', error)
 			);
 
 	}
 
-	async onOpenDialog(type: string, data: TAG | any) {
+	clickedPageNumber(page: number): void {
+		this.selectedArray = [];
+		this.onClickPageNumber.emit(page);
+	}
+
+	clickedTagName(data: string): void {
+		this.onClickTagName.emit({ tag: data });
+	}
+
+	onPageChange(page: number): void {
+		this.page = page;
+		window.scrollTo(0, 0);
+	}
+
+	openDialog(type: string, data: TAG | any) {
 
 		let dialog: MatDialogRef<EditTagComponent | any>;
 
@@ -106,26 +130,30 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 		}
 
-		return await dialog.afterClosed().toPromise();
+		dialog.afterClosed()
+			.subscribe(
+				(response: boolean) => {
+					if (!response) return;
+				}
+			);
 
-	}
-
-	onClickPageNumber(page: number): void {
-		this.selectedArray = [];
-		this.clickedPageNumber.emit(page);
-	}
-
-	onClickTagName(data: string): void {
-		this.clickedTagName.emit({ tag: data });
-	}
-
-	onPageChange(page: number): void {
-		this.page = page;
-		window.scrollTo(0, 0);
 	}
 
 	setTagColor(value: string): string {
 		return value ? value : 'gray';
+	}
+
+	private get ownerIconsList() {
+		return { 
+			// dealer: 'work',
+			// license: 'topic',
+			// host: 'business',
+			// advertiser: 'assignment_ind' 
+			dealer: 'D',
+			license: 'L',
+			host: 'H',
+			advertiser: 'A' 
+		};
 	}
 
 	private getOwnerId(owner: any): string {

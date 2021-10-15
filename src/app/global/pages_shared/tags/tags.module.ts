@@ -6,21 +6,23 @@ import { GlobalModule } from '../../global.module';
 import { TagsComponent } from './tags.component';
 import { CreateTagComponent, EditTagComponent } from './dialogs';
 import { TagsTableComponent } from './components/tags-table/tags-table.component';
-import { TagsTabComponent } from './components/tags-tab/tags-tab.component';
-import { TagOwnersTabComponent } from './components/tag-owners-tab/tag-owners-tab.component';
+import { TagsSectionComponent } from './components/tags-section/tags-section.component';
+import { TagOwnersSectionComponent } from './components/tag-owners-section/tag-owners-section.component';
+import { AssignTagsComponent } from './dialogs/assign-tags/assign-tags.component';
 
 const DIALOGS = [
 	CreateTagComponent,
 	EditTagComponent,
+	AssignTagsComponent
 ];
 
 @NgModule({
 	declarations: [ 
 		DIALOGS, 
 		TagsComponent, 
-		TagOwnersTabComponent, 
+		TagOwnersSectionComponent, 
 		TagsTableComponent, 
-		TagsTabComponent, 
+		TagsSectionComponent,
 	],
 	entryComponents: [ DIALOGS ],
 	imports: [

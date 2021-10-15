@@ -50,7 +50,7 @@ export class ContentService {
 		this.httpOptions).map(i => i.iContents);
 	}
 
-	get_contents_with_page(page=1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, pageSize=60) {
+	get_contents_with_page(page=1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, feedId?, pageSize=60) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}
 		?pageSize=${pageSize}
 		&page=${page}
@@ -59,6 +59,7 @@ export class ContentService {
 		&dealerId=${dealerId || ''}
 		&hostId=${hostId || ''}
 		&advertiserId=${advertiserId || '' }
+		&feedId=${feedId || ''}
 		&search=${key || ''}`, this.httpOptions);
 	}
 	

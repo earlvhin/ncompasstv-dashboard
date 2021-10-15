@@ -124,20 +124,21 @@
 										<!-- DEFAULT DATA DISPLAY -->
 										<div *ngIf="!data[d].type">{{ data[d].value }}
                                             <div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].show_host">
+
                                                 <button class="hidden-button no-background" id="dropdownMenu1" ngbDropdownToggle>
                                                     <i class="pl-3 cursor-pointer text-right fas fa-map-marked text-primary" data-toggle="tooltip" title="Show Host List"></i>
                                                 </button>
-                                                    <div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="reportsDrop" ngbDropdownMenu>
-                                                        <span class="md-text pl-2">Playing Where:</span>
-                                                        <a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="[data[d].drop_link, host.hostId]" target="_blank">
-                                                            {{host.hostName}}
-                                                        </a>
-                                                    </div>
+
+												<div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="reportsDrop" ngbDropdownMenu>
+													<span class="md-text pl-2">Playing Where:</span>
+													<a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="['/administrator/hosts', host.hostId]" target="_blank">
+														{{host.hostName}}
+													</a>
+												</div>
+												
                                             </div>
                                             <button class="fas fa-copy text-primary no-border" *ngIf="data[d].copy && data[d].value != '--'" (click)="copyToClipboard(data[d].value)" title="Copy {{data[d].label}}"></button>
                                         </div>
-
-                                        
 
 										<!-- TOGGLE FIELD -->
 										<div *ngIf="data[d].type === 'toggle'">
@@ -150,6 +151,17 @@
 												</mat-slide-toggle>
 											</div>
 										</div>
+
+										<!-- TAGS -->
+										<ng-container *ngIf="data[d].type === 'tags'">
+											<div class="d-flex tags">
+												<div class="tag d-flex align-items-center" *ngFor="let tag of data[d].value"
+													[style.backgroundColor]="tag.tagColor">
+													<!-- TAG NAME -->
+													<div class="name">{{ tag.name }}</div>
+												</div>
+											</div>
+										</ng-container>
 									</ng-template>
 
 								</span>

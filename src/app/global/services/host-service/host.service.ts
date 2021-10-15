@@ -4,6 +4,7 @@ import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { API_HOST } from '../../models/api_host.model';
 import { CustomFieldGroup } from '../../models/host-custom-field-group';
+import { API_FILTERS } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -71,8 +72,11 @@ export class HostService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&pageSize='+`${pageSize}`, this.httpOptions);
 	}
 
-    get_host_by_dealer_id_with_sort(id, page, key, column, order, pageSize=15) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_id_optimized}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`+'&pageSize='+`${pageSize}`, this.httpOptions);
+    get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
+		const base = `${environment.base_uri}${environment.getters.api_get_host_by_id_optimized}`;
+		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize });
+		const url = `${base}${params}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 	
 	get_host_for_dealer_id(id) {
@@ -117,5 +121,26 @@ export class HostService {
 
 	create_field_group_value(data: any) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_fieldgroup_value_create}`, data, this.httpOptions);
+	}
+
+	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
+
+		let result = '';
+		
+		Object.keys(filters).forEach(
+			key => {
+				
+				if (!result.includes('?')) result += `?${key}=`;
+				else result += `&${key}=`;
+
+				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+				else result += filters[key];
+
+			}
+		);
+
+		return result
+
 	}
 }

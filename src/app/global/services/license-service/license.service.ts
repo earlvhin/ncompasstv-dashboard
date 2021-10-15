@@ -1,9 +1,10 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
-import { API_LICENSE } from '../../models/api_license.model';
 import { Observable } from 'rxjs';
+
+import { environment } from 'src/environments/environment';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { API_FILTERS, API_LICENSE, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -46,6 +47,13 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
+	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
+		let baseUrl = `${this.baseUri}${this.getters.license_by_tags}`;
+		let params = this.setUrlParams(filters, enforceTagSearchKey);
+		const url = `${baseUrl}${params}`;
+		return this._http.get<{ licenses: API_LICENSE['license'][], paging: PAGING }>(url, this.httpOptions);
+	}
+
 	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?, dealer="") {
 		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;
 		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}&search=${dealer}`;
@@ -60,10 +68,11 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 	
-	get_license_by_dealer_id(id, page, key, arrangement, pageSize?: number) {
-		const params: any = this.httpParams({ dealerId: id,page, search: key, arrangement });
-		if (typeof pageSize !== 'undefined') params.pageSize = pageSize;
-		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+	get_license_by_dealer_id(dealerId: string, page: number, search: string, arrangement: any, pageSize?: number) {
+		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
+		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize });
+		const url = `${base}${params}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 
 	api_get_licenses_total_by_host_dealer(dealerId, hostId) {
@@ -253,6 +262,27 @@ export class LicenseService {
 
 	set_resource_status(data: any) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_resource_settings}`, data, this.httpOptions);
+	}
+
+	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
+
+		let result = '';
+		
+		Object.keys(filters).forEach(
+			key => {
+				
+				if (!result.includes('?')) result += `?${key}=`;
+				else result += `&${key}=`;
+
+				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+				else result += filters[key];
+
+			}
+		);
+
+		return result
+
 	}
 
 	protected get baseUri() {

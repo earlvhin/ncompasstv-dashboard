@@ -53,6 +53,7 @@
         <div class="row m-0 p-0">
             <div class="col-lg-12 custom-mat-tab p-0">
                 <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
+					<!-- LICENSES TAB -->
                     <mat-tab label="Licenses View">
                         <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
                             <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
@@ -113,14 +114,14 @@
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
-                                                *ngIf="!initial_load_licenses"
-                                                [form_title]="'Search License ID, Host name or Anydesk'"
-                                                [placeholder]="'Example: License # 9'"
-                                                [data_reference]="licenses_data"
-                                                [primary_keyword]="'license_id'"
-                                                [secondary_keyword]="'alias'"
-                                                (searched)="filterData($event, 'licenses')"
-                                                [api_search]="true"
+													*ngIf="!initial_load_licenses"
+													[form_title]="'Search License ID, Host name, Anydesk, or #Tag'"
+													[placeholder]="'Example: License # 9'"
+													[data_reference]="licenses_data"
+													[primary_keyword]="'license_id'"
+													[secondary_keyword]="'alias'"
+													(searched)="filterData($event, 'licenses')"
+													[api_search]="true"
                                                 ></app-search-field>
                                             </div>
                                         </div>
@@ -184,6 +185,8 @@
                             </div>
                         </div>
                     </mat-tab>
+
+					<!-- DEALERS TAB -->
                     <mat-tab label="Dealers View">
                         <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 1">
                             <div>
@@ -193,14 +196,14 @@
                                             <div class="col-lg-8"></div>
                                             <div class="col-lg-4">
                                                 <app-search-field
-                                                *ngIf="!initial_load"
-                                                [form_title]="'Search Dealer Alias or Business Name'"
-                                                [placeholder]="'Example: N-Compass'"
-                                                [data_reference]="dealers_data"
-                                                [primary_keyword]="'business_name'"
-                                                [secondary_keyword]="'dealer_alias'"
-                                                (searched)="filterData($event, 'dealers')"
-                                                [api_search]="true"
+													*ngIf="!initial_load"
+													[form_title]="'Search Dealer Alias, Business Name, or #Tag'"
+													[placeholder]="'Example: N-Compass'"
+													[data_reference]="dealers_data"
+													[primary_keyword]="'business_name'"
+													[secondary_keyword]="'dealer_alias'"
+													(searched)="filterData($event, 'dealers')"
+													[api_search]="true"
                                                 ></app-search-field>
                                             </div>
                                         </div>
@@ -225,8 +228,16 @@
                             </div>
                         </div>
                     </mat-tab>
+					<!-- TAGS TAB -->
+					<mat-tab label="Tags View">
+						<ng-template matTabContent>
+							<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 2">
+								<app-tags-tab></app-tags-tab>
+							</div>	
+						</ng-template>
+					</mat-tab>                    
                     <mat-tab label="Hosts View">
-                        <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 2">
+                        <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 3">
                             <div>
                                 <div *ngIf="!initial_load_hosts; else loader">
                                     <div *ngIf="!no_host; else no_data">

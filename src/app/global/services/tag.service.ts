@@ -2,19 +2,25 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
-import { TAG } from '../models/tag.model';
-import { PAGING, TAG_OWNER } from '../models';
+import { API_FILTERS, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class TagService extends BaseService {
 
+	onRefreshTagsCount = new EventEmitter<void>();
 	onRefreshTagsTable = new EventEmitter<void>();
 	onRefreshTagOwnersTable = new EventEmitter<void>();
+	onSearch = new EventEmitter<string>();
+
+	assignTags(owners: { ownerId: string, tagTypeId: string }[], tagIds: string[]) {   
+		const body = { owners, tagIds };
+		return this.postRequest(this.creators.tag_owners, body);
+	}
 	
-	createTag(tagTypeId: number, tagColor: string, names: { name: string, tagColor: string }[], owners: string[]) {
-		const body = { tagTypeId, owners, names, tagColor };
+	createTag(data: { name: string, tagColor: string }[]) {
+		const body = { names: data };
 		return this.postRequest(this.creators.tag, body);
 	}
 
@@ -38,8 +44,9 @@ export class TagService extends BaseService {
 		return this.postRequest(url, {});
 	}
 
-	getAllTags(page = 1): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
-		const url = `${this.getters.tags_get_all}?page=${page}`;
+	getAllTags(filters: API_FILTERS): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
+		const params = this.setUrlParams(filters)
+		const url = `${this.getters.tags_get_all}${params}`;
 		return this.getRequest(url);
 	}
 
@@ -71,6 +78,17 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
 	}
 
+	searchAllTags(keyword = '', page = 1, pageSize = 10000): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
+		let url = `${this.getters.search_tags}?page=${page}&key=${keyword}&pageSize=${pageSize}`;
+		return this.getRequest(url);
+	}
+
+	searchOwners(key: string = null): Observable<{ owners: { displayName: string, ownerId: string, tagTypeId: string, tagTypeName: string }[] }> {
+		let url = `${this.getters.search_owners}`;
+		if (key) url += `?key=${key}`;
+		return this.getRequest(url);
+	}
+
 	searchOwnersByTagType(keyword = null, typeId = null, page = 1): Observable<{ tags?: TAG_OWNER[], paging?: PAGING, message?: string }> {
 		let url = `${this.getters.search_owner_tags}?page=${page}`;
 
@@ -94,13 +112,7 @@ export class TagService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	searchAllTags(keyword = '', typeId = 0, page = 1): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
-		let url = `${this.getters.search_tags}?page=${page}&key=${keyword}`;
-		if (typeId && typeId > 0) url += `&typeId=${typeId}`;
-		return this.getRequest(url);
-	}
-
-	updateTag(tagId: number, name: string, tagColor: string) {
+	updateTag(tagId: string, name: string, tagColor: string) {
 		const body = [{ tagId, name, tagColor }];
 		return this.postRequest(this.updaters.tag, body);
 	}

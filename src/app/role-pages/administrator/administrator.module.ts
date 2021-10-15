@@ -39,6 +39,7 @@ import { TagsModule } from 'src/app/global/pages_shared/tags/tags.module';
 import { TemplatesComponent } from './pages/templates/templates.component';
 import { UsersComponent } from './pages/users/users.component';
 import { UpdateComponent } from './pages/update/update.component';
+import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.component';
 
 @NgModule({
 	declarations: [
@@ -60,6 +61,7 @@ import { UpdateComponent } from './pages/update/update.component';
 		UsersComponent,
 		InstallationsComponent,
 		UpdateComponent,
+		TagsTabComponent,
 	],
 	imports: [
 		CommonModule,
