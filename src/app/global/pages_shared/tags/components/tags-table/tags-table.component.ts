@@ -204,11 +204,12 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 			case 'delete_tag_from_owner':
 				title = 'Remove Tag';
-				message = `Remove `;
+				message = `This will remove the tag from the assignee`;
+				break;
 
 			case 'delete_all_tags_from_owner':
-				title = 'Delete Owner Tags';
-				message = `ALL associated tags from owner will be removed`
+				title = 'Delete Assignee Tags';
+				message = `ALL tags from assignee will be removed`
 				return_msg = 'Confirmed deletion'
 				break;
 		}
