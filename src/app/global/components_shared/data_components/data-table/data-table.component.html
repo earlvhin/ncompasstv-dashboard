@@ -53,7 +53,7 @@
 						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
 
-					<span *ngIf="!data[d].hidden" class="d-inline-block" [style.color]="data[d].color">
+					<span *ngIf="!data[d].hidden" class="flex" [style.color]="data[d].color">
 
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
 							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
@@ -94,7 +94,7 @@
 							</a>
 
 							<!-- START: BUSINESS HOURS SECTION -->
-							<span *ngIf="data[d].business_hours" >
+							<span *ngIf="data[d].business_hours" class="ml-2">
 								<span class="fas fa-clock cursor-pointer text-gray-with-hover" placement="right" [ngbTooltip]="businessHoursTooltip"></span>
 							</span>
 							

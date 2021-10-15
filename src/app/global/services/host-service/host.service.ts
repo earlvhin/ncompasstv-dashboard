@@ -63,8 +63,8 @@ export class HostService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?search='+`${key}`, this.httpOptions);
 	}
 	
-	get_host_by_page(page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?page='+`${page}`+'&search='+`${key}` , this.httpOptions);
+	get_host_by_page(page, key, column?, order?, pageSize=15) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`+'&pageSize='+`${pageSize}` , this.httpOptions);
 	}
 
 	get_host_by_dealer_id(id, page, key, pageSize = 15) {

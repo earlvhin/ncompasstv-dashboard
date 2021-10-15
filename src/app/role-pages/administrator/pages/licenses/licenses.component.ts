@@ -8,12 +8,14 @@ import { LicenseService } from '../../../../global/services/license-service/lice
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
 import { UI_TABLE_LICENSE_BY_DEALER } from '../../../../global/models/ui_table-license-by-dealer.model';
+import { UI_HOST_VIEW } from '../../../../global/models/ui_host-license.model';
 import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
 import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { ActivatedRoute } from '@angular/router';
 import { environment } from '../../../../../environments/environment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-licenses',
@@ -25,27 +27,38 @@ import * as FileSaver from 'file-saver';
 export class LicensesComponent implements OnInit {
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	licenses_data: UI_LICENSE[] = [];
+	hosts_data: UI_HOST_VIEW[] = [];
 	no_dealer: boolean;
+	no_host: boolean;
 	no_licenses: boolean;
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
+	filtered_data_host: UI_HOST_VIEW[] = [];
 	filtered_data_licenses: UI_LICENSE[] = [];
 	subscription: Subscription = new Subscription();
 	title: string = "Licenses";
 	tab: any = { tab: 0 };
 	licenses_details: any;
+    now: any;
 	paging_data: any;
 	paging_data_licenses: any;
+	paging_data_host: any;
 	searching: boolean = false;
 	searching_licenses: boolean = false;
+	searching_hosts: boolean = false;
 	initial_load: boolean = true;
 	initial_load_licenses: boolean = true;
+	initial_load_hosts: boolean = true;
 	search_data: string = "";
 	search_data_licenses: string = "";
+	search_data_host: string = "";
     splitted_text: any;
     sort_column: string = "PiStatus";
 	sort_order: string = "desc";
+    sort_column_hosts: string = '';
+	sort_order_hosts: string = '';
 
     //for export
+    hosts_to_export: any = [];
     licenses_to_export: any = [];
     pageSize: number;
     workbook: any;
@@ -104,11 +117,27 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column:'DateCreated'},
 	]
 
+    hosts_table_column = [
+		{ name: '#', sortable: false, no_export: true},
+        { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true},
+        { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName'},
+        { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName'},
+		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
+		{ name: 'City', sortable: true, column:'City', key: 'city'},
+		{ name: 'Region', sortable: true, column:'Region', key: 'region'},
+		{ name: 'State', sortable: true, column:'State', key: 'state'},
+		{ name: 'Street', sortable: true, column:'Street', key:'street'},
+		{ name: 'Postal Code', sortable: true, column:'PostalCode', key:'postalCode'},
+		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName'},
+		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses'},
+	]
+
 	constructor(
 		private _route: ActivatedRoute,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _date: DatePipe,
+		private _host: HostService,
 		private _license: LicenseService,
 		private _title: TitleCasePipe,
         private cdr: ChangeDetectorRef,
@@ -127,10 +156,23 @@ export class LicensesComponent implements OnInit {
 		this.subscription.unsubscribe();
 	}
 
-    getColumnsAndOrder(data) {
-		this.sort_column = data.column;
-		this.sort_order = data.order;
-		this.getLicenses(1);
+    getColumnsAndOrder(data, tab) {
+        console.log(data, tab)
+        switch(tab) {
+            case 'licenses':
+                this.sort_column = data.column;
+		        this.sort_order = data.order;
+                this.getLicenses(1);
+                break;
+            case 'hosts':
+                this.sort_column_hosts = data.column;
+		        this.sort_order_hosts = data.order;
+                this.getHosts(1)
+                break;
+            default:
+        }
+		
+		
 	}
 
     sortList(order, page?): void {
@@ -139,12 +181,36 @@ export class LicensesComponent implements OnInit {
 			order: order
 		}
 
-		this.getColumnsAndOrder(filter)
+		this.getColumnsAndOrder(filter, 'licenses')
 	}
 
-	getLicenses(page) {
-        this.searching_licenses = true;
-		this.licenses_data = [];    
+	getHosts(page) {
+        this.searching_hosts = true;
+		this.hosts_data = [];    
+        this.subscription.add(
+			this._host.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts).subscribe(
+				data => {
+                    this.paging_data_host = data.paging;
+                    if (data) {
+						this.hosts_data = this.hosts_mapToUIFormat(data);
+						this.filtered_data_host = this.hosts_mapToUIFormat(data);
+					} else {
+						if(this.search_data_host == "") {
+							this.no_host = true;
+						}
+						this.filtered_data_host = [];
+					}
+					this.initial_load_hosts = false;
+					this.searching_hosts = false;
+                    console.log("DATA", data)
+				}
+			)
+		)
+	}
+
+    getLicenses(page) {
+        this.searching_hosts = true;
+		this.hosts_data = [];    
         this.subscription.add(
 			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
 				data => {
@@ -168,8 +234,10 @@ export class LicensesComponent implements OnInit {
     onTabChanged(e) {
         if(e.index == 1) {
             this.pageRequested(1);
-        } else {
+        } else if(e.index == 0){
             this.getLicenses(1);
+        } else {
+            this.getHosts(1)
         }
     }
 
@@ -226,6 +294,15 @@ export class LicensesComponent implements OnInit {
                 } else {
                     this.search_data_licenses = "";
                     this.getLicenses(1);
+                }    
+                break;
+            case 'hosts':
+                if (e) {
+                    this.search_data_host = e;
+                    this.getHosts(1);
+                } else {
+                    this.search_data_host = "";
+                    this.getHosts(1);
                 }    
                 break;
             default:
@@ -350,6 +427,48 @@ export class LicensesComponent implements OnInit {
 		);
 	}
 
+    hosts_mapToUIFormat(data): UI_HOST_VIEW[] {
+		let count = this.paging_data_host.pageStart;
+        console.log("DATA", data)
+		return data.host.map(
+			(h: any) => {
+				const table = new UI_HOST_VIEW(
+                    { value: count++, link: null , editable: false, hidden: false},
+					{ value: h.hostId, link: null , editable: false, hidden: true, key: false},
+					{ value: h.hostName, link: null, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true, business_hours: h.hostId ? true : false, business_hours_label: h.hostId ? this.getLabel(h) : null},
+					{ value: h.businessName ? h.businessName: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.address ? h.address: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.city ? h.city: '--', link: null, editable: false, hidden: false },
+					{ value: h.region ? h.region:'--', hidden: false },
+					{ value: h.state ? h.state:'--', hidden: false },
+					{ value: h.street ? h.street:'--', link: null, editable: false, hidden: false },
+					{ value: h.postalCode ? h.postalCode:'--', link: null, editable: false, hidden: false },
+					{ value: h.timezoneName ? h.timezoneName:'--', link: null, editable: false, hidden: false },
+					{ value: h.totalLicenses ? h.totalLicenses:'0', link: null, editable: false, hidden: false },
+				);
+				return table;
+			}
+		);
+	}
+
+    getLabel(data) {
+		this.now = moment().format('d');
+		this.now = this.now;
+        var storehours = JSON.parse(data.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
+		var modified_label = {
+			date : moment().format('LL'),
+			address: data.address,
+			schedule: storehours[this.now] && storehours[this.now].status ? (
+				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
+				? "Open 24 Hours" : storehours[this.now].periods.map(
+					i => {
+						return i.open + " - " + i.close
+					})) : "Closed"
+		}
+		return modified_label;
+	}
+
     clearFilter() {
         this.filters = {
             activated: "",
@@ -393,36 +512,72 @@ export class LicensesComponent implements OnInit {
 		});
 	}
 
-    getDataForExport(): void {
+    getDataForExport(tab): void {
         this.pageSize = 0;
-        this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
-            data => {
-                if(!data.message) {
-                    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-                    this.licenses_to_export = data.licenses;
-                    this.licenses_to_export.forEach((item, i) => {
-                        this.modifyItem(item);
-                        this.worksheet.addRow(item).font ={
-                            bold: false
-                        };
-                    });
-                    let rowIndex = 1;
-                    for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                        this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-                    }
-                    this.workbook.xlsx.writeBuffer()
-                        .then((file: any) => {
-                            const blob = new Blob([file], { type: EXCEL_TYPE });
-                            const filename = 'Licenses' +'.xlsx';
-                            FileSaver.saveAs(blob, filename);
+        switch(tab) {
+            case 'licenses':
+                this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
+                    data => {
+                        if(!data.message) {
+                            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                            this.licenses_to_export = data.licenses;
+                            this.licenses_to_export.forEach((item, i) => {
+                                this.modifyItem(item);
+                                this.worksheet.addRow(item).font ={
+                                    bold: false
+                                };
+                            });
+                            let rowIndex = 1;
+                            for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+                                this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                            }
+                            this.workbook.xlsx.writeBuffer()
+                                .then((file: any) => {
+                                    const blob = new Blob([file], { type: EXCEL_TYPE });
+                                    const filename = 'Licenses' +'.xlsx';
+                                    FileSaver.saveAs(blob, filename);
+                                }
+                            );
+                            this.workbook_generation = false;
+                        } else {
+                            this.licenses_to_export = [];
                         }
-                    );
-                    this.workbook_generation = false;
-                } else {
-                    this.licenses_to_export = [];
-                }
-            }
-        )
+                    }
+                )
+                break;
+            case 'hosts': 
+                this._host.get_host_by_page(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe(
+                    data => {
+                        if(!data.message) {
+                            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                            this.hosts_to_export = data.host;
+                            this.hosts_to_export.forEach((item, i) => {
+                                // this.modifyItem(item);
+                                this.worksheet.addRow(item).font ={
+                                    bold: false
+                                };
+                            });
+                            let rowIndex = 1;
+                            for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+                                this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                            }
+                            this.workbook.xlsx.writeBuffer()
+                                .then((file: any) => {
+                                    const blob = new Blob([file], { type: EXCEL_TYPE });
+                                    const filename = 'Hosts' +'.xlsx';
+                                    FileSaver.saveAs(blob, filename);
+                                }
+                            );
+                            this.workbook_generation = false;
+                        } else {
+                            this.hosts_to_export = [];
+                        }
+                    }
+                )
+                break;
+            default:
+        }
+        
 	}
 
 	modifyItem(item) {
@@ -442,20 +597,33 @@ export class LicensesComponent implements OnInit {
 		item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
 	}
 
-	exportTable() {
-		this.workbook_generation = true;
+	exportTable(tab) {
+        this.workbook_generation = true;
 		const header = [];
 		this.workbook = new Excel.Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet('License View');
-		Object.keys(this.license_table_column).forEach(key => {
-			if(this.license_table_column[key].name && !this.license_table_column[key].no_export) {
-				header.push({ header: this.license_table_column[key].name, key: this.license_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
-			}
-		});
+        switch(tab) {
+            case 'licenses': 
+                this.worksheet = this.workbook.addWorksheet('License View');
+                Object.keys(this.license_table_column).forEach(key => {
+                    if(this.license_table_column[key].name && !this.license_table_column[key].no_export) {
+                        header.push({ header: this.license_table_column[key].name, key: this.license_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+                    }
+                });
+                break;
+            case 'hosts':
+                this.worksheet = this.workbook.addWorksheet('Host View');
+                Object.keys(this.hosts_table_column).forEach(key => {
+                    if(this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
+                        header.push({ header: this.hosts_table_column[key].name, key: this.hosts_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+                    }
+                });
+                break;
+            default:
+        }
         this.worksheet.columns = header;
-		this.getDataForExport();		
+		this.getDataForExport(tab);		
 	}
 }
