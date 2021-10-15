@@ -464,7 +464,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	sortableJSInit(): void {
-		Sortable.mount(new MultiDrag());
+		// Sortable.mount(new MultiDrag());
 
 		const onDeselect = (e) => {
 			this.selected_content_count = e.newIndicies.length
