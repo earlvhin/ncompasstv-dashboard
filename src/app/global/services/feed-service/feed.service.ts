@@ -56,6 +56,10 @@ export class FeedService {
 	get_feed_types() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feed_types}`, this.httpOptions).map((data: any) => data.feedTypes);
 	}
+
+	get_fillers() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_fillers}`, this.httpOptions).map((data: any) => data.fillers);
+	}
 	
 	// get_search_feeds(key: string) {
 	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?search='+`${key}`, this.httpOptions);
