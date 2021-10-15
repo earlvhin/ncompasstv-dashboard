@@ -2,8 +2,7 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
-import { TAG } from '../models/tag.model';
-import { PAGING, TAG_OWNER } from '../models';
+import { API_FILTERS, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -45,8 +44,9 @@ export class TagService extends BaseService {
 		return this.postRequest(url, {});
 	}
 
-	getAllTags(page = 1): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
-		const url = `${this.getters.tags_get_all}?page=${page}`;
+	getAllTags(filters: API_FILTERS): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
+		const params = this.setUrlParams(filters)
+		const url = `${this.getters.tags_get_all}${params}`;
 		return this.getRequest(url);
 	}
 

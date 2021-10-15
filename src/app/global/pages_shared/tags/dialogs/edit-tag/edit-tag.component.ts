@@ -56,6 +56,8 @@ export class EditTagComponent implements OnInit, OnDestroy {
 				() => {
 					this._dialog_ref.close();
 					this._tag.onRefreshTagsTable.emit();
+					this._tag.onRefreshTagsCount.emit();
+					this._tag.onRefreshTagOwnersTable.emit();
 				},
 				error => console.log('Error updating tag', error)
 			);

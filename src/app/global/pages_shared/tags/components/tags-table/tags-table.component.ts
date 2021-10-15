@@ -103,23 +103,6 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	}
 
-	async openDialog(type: string, data: TAG | any) {
-
-		let dialog: MatDialogRef<EditTagComponent | any>;
-
-		switch (type) {
-
-			case 'edit_tag':
-				dialog = this._dialog.open(EditTagComponent, { width: '500px' })
-				dialog.componentInstance.tag = data;
-				break;
-
-		}
-
-		return await dialog.afterClosed().toPromise();
-
-	}
-
 	clickedPageNumber(page: number): void {
 		this.selectedArray = [];
 		this.onClickPageNumber.emit(page);
@@ -134,16 +117,42 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 		window.scrollTo(0, 0);
 	}
 
+	openDialog(type: string, data: TAG | any) {
+
+		let dialog: MatDialogRef<EditTagComponent | any>;
+
+		switch (type) {
+
+			case 'edit_tag':
+				dialog = this._dialog.open(EditTagComponent, { width: '500px' })
+				dialog.componentInstance.tag = data;
+				break;
+
+		}
+
+		dialog.afterClosed()
+			.subscribe(
+				(response: boolean) => {
+					if (!response) return;
+				}
+			);
+
+	}
+
 	setTagColor(value: string): string {
 		return value ? value : 'gray';
 	}
 
 	private get ownerIconsList() {
 		return { 
-			dealer: 'work',
-			license: 'topic',
-			host: 'business',
-			advertiser: 'assignment_ind' 
+			// dealer: 'work',
+			// license: 'topic',
+			// host: 'business',
+			// advertiser: 'assignment_ind' 
+			dealer: 'D',
+			license: 'L',
+			host: 'H',
+			advertiser: 'A' 
 		};
 	}
 
@@ -195,11 +204,12 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 			case 'delete_tag_from_owner':
 				title = 'Remove Tag';
-				message = `Remove `;
+				message = `This will remove the tag from the assignee`;
+				break;
 
 			case 'delete_all_tags_from_owner':
-				title = 'Delete Owner Tags';
-				message = `ALL associated tags from owner will be removed`
+				title = 'Delete Assignee Tags';
+				message = `ALL tags from assignee will be removed`
 				return_msg = 'Confirmed deletion'
 				break;
 		}
