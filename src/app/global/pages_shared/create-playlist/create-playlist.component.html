@@ -84,6 +84,7 @@
                         <div class="mb-3" *ngIf="!no_dealer_not_floating">
                             <app-media-library-options 
                             *ngIf="floating_content || media_library"
+                            [show_filler_search]="false"
                             (filetype)="sortByFiletype($event)"
                             (sortAscend)="sortAscendingOrder($event)"
                             (sortDescend)="sortDescendingOrder($event)"

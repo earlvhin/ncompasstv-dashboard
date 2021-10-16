@@ -14,9 +14,9 @@ import { Observable } from 'rxjs/internal/Observable';
 
 export class MediaLibraryOptionsComponent implements OnInit {
 	
-	@Input() show_filler_search: boolean;
+	@Input() show_filler_search: boolean = true;
 	@Input() disable_user_filter: boolean = false;
-	@Input() fillers: { feedId: string, feedTitle: string}[] = [];
+	@Input() fillers: { feedId: string, feedTitle: string }[] = [];
 	@Input() empty_s: boolean;
 	@Output() filetype = new EventEmitter;
 	@Output() sortAscend = new EventEmitter;
