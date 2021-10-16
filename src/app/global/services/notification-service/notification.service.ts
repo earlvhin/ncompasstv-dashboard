@@ -20,19 +20,19 @@ export class NotificationService {
 		private _http: HttpClient
 	) { }
 
-	getAll() {
-		return this._http.get(`${environment.base_uri}${environment.getters.api_get_all_notifications}`, this.httpOptions);
+	getAll(page?: number) {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_all_notifications}${ page > 0 ? '?page=' + page : ''}`, this.httpOptions);
 	}
 
-	getByDealerId(dealerId: string) {
-		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}`, this.httpOptions);
+	getByDealerId(dealerId: string, page?: number) {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}${ page > 0 ? '&page=' + page : ''}`, this.httpOptions);
 	}
 
 	getById() {
 		// return this._http
 	}
 
-	updateNotificationStatus() {
-
+	updateNotificationStatus(id: string) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_notification_status}${id}`, null, this.httpOptions);
 	}
 }

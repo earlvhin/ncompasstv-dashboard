@@ -20,6 +20,7 @@ import { FeedService } from 'src/app/global/services';
 export class MediaComponent implements OnInit, OnDestroy {
 	@Input() reload: Observable<void>;
 	@Input() sm_view: boolean;
+	@Input() show_filler_search: boolean;
 	@Input() is_view_only = false;
 	@Output() empty = new EventEmitter;
 	@Output() send_stats = new EventEmitter;

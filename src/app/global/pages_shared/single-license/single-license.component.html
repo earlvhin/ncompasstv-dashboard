@@ -271,7 +271,11 @@
 																Dealer
 															</span>
 															<h5 class="mb-0">
-																<a [routerLink]="dealer_route">{{ screen.assigned_dealer }}</a>
+																<a [routerLink]="dealer_route" *ngIf="is_admin; else is_self">{{ screen.assigned_dealer }}</a>
+																
+																<ng-template #is_self>
+																	<span>{{ screen.assigned_dealer }}</span>
+																</ng-template>
 															</h5>
 														</div>
 	

@@ -104,6 +104,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NohandlePipe } from './pipes/nohandle.pipe';
+import { NotificationsComponent } from './pages_shared/notifications/notifications.component';
 import { ObjectKeysPipe } from './pipes/object-keys.pipe';
 import { OptionsComponent } from './components_shared/playlist_components/options/options.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
@@ -285,6 +286,7 @@ const ngComponents = [
 	NewsDemoComponent,
 	NewsFormComponent,
 	NohandlePipe,
+	NotificationsComponent,
 	ObjectKeysPipe,
 	OptionsComponent,
 	PlayWhereComponent,

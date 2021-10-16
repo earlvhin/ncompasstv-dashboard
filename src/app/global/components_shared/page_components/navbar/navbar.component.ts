@@ -4,7 +4,7 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
 import { NotificationService } from '../../../../global/services/notification-service/notification.service';
 import { environment } from '../../../../../environments/environment';
-import { UserNotification } from '../../../../global/models/notification.model';
+import { NotificationsPaginated, Notification } from '../../../../global/models/api_notification.model';
 @Component({
 	selector: 'app-navbar',
 	templateUrl: './navbar.component.html',
@@ -19,7 +19,8 @@ export class NavbarComponent implements OnInit {
 	is_dealer : boolean = false;
 	has_alerts: boolean = false;
 	
-	notifications: UserNotification[];
+	notifications: Notification[];
+	notification_paginated: NotificationsPaginated;
 	route: string;
 
 	_socket: any;
@@ -67,6 +68,7 @@ export class NavbarComponent implements OnInit {
 		if (this.is_admin) {
 			this._notification.getAll().subscribe(
 				(data: any) => {
+					this.notification_paginated = data;
 					this.notifications = data.entities;
 					this.checkNewNotifications();
 				}
@@ -75,8 +77,9 @@ export class NavbarComponent implements OnInit {
 
 		if (this.is_dealer) {
 			this._notification.getByDealerId(this.currentUser.roleInfo.dealerId).subscribe(
-				(data: UserNotification[]) => {
-					this.notifications = data;
+				(data:NotificationsPaginated) => {
+					this.notification_paginated = data
+					this.notifications = data.entities;
 					this.checkNewNotifications();
 				}
 			);
@@ -84,7 +87,7 @@ export class NavbarComponent implements OnInit {
 	}
 
 	checkNewNotifications() {
-		this.has_alerts = this.notifications.filter((i: UserNotification) => i.isOpened == 0).length > 0  ? true : false;
+		this.has_alerts = this.notifications.filter((i: Notification) => i.isOpened == 0).length > 0  ? true : false;
 	}
 
 	protected get currentUser() {
