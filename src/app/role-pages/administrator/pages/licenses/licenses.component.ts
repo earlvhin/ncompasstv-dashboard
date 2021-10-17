@@ -204,26 +204,31 @@ export class LicensesComponent implements OnInit {
 	}
 
     getLicenses(page) {
-        this.searching_hosts = true;
+
+        this.searching_licenses = true;
 		this.hosts_data = [];    
-        this.subscription.add(
+        
+		this.subscription.add(
 			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
 				data => {
                     this.paging_data_licenses = data.paging;
+
                     if (data.licenses) {
 						this.licenses_data = this.licenses_mapToUIFormat(data.licenses);
 						this.filtered_data_licenses = this.licenses_mapToUIFormat(data.licenses);
 					} else {
-						if(this.search_data == "") {
+						
+						if (this.search_data == "") {
 							this.no_licenses = true;
 						}
+
 						this.filtered_data_licenses = [];
 					}
 					this.initial_load_licenses = false;
 					this.searching_licenses = false;
 				}
 			)
-		)
+		);
 	}
 
     onTabChanged(e: { index: number }) {
@@ -243,10 +248,11 @@ export class LicensesComponent implements OnInit {
 		
     }
 
-    filterTable(type, value) {
+    filterTable(type: string, value: any) {
+
         switch(type) {
             case 'status':
-                this.filters.status = value
+                this.filters.status = value;
                 this.filters.activated = "";
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
                 break;
@@ -261,6 +267,7 @@ export class LicensesComponent implements OnInit {
                 break;
             default:
         }
+
         this.getLicenses(1);
     }
 
