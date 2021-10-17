@@ -1,14 +1,12 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { API_HOST } from '../../../../global/models/api_host.model';
-import { API_DEALER } from '../../../../global/models/api_dealer.model';
-import { HostService } from '../../../../global/services/host-service/host.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { UI_TABLE_HOSTS_BY_DEALER } from '../../../../global/models/ui_table_hosts-by-dealer.model';
-import { UI_HOST_VIEW } from '../../../../global/models/ui_host-license.model';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
+
+import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
+import { AuthService, HostService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
 	selector: 'app-hosts',
@@ -75,6 +73,7 @@ export class HostsComponent implements OnInit {
 	]
 
 	constructor(
+		private _auth: AuthService,
 		private _host: HostService,
 		private _dealer: DealerService,
         private cdr: ChangeDetectorRef,
@@ -238,21 +237,21 @@ export class HostsComponent implements OnInit {
 					}
 					this.initial_load_hosts = false;
 					this.searching_hosts = false;
-                    console.log("DATA", data)
 				}
 			)
 		)
 	}
 
-    hosts_mapToUIFormat(data): UI_HOST_VIEW[] {
+    hosts_mapToUIFormat(data: { host: API_HOST[] }): UI_HOST_VIEW[] {
 		let count = this.paging_data_host.pageStart;
+
 		return data.host.map(
-			(h: any) => {
+			h => {
 				const table = new UI_HOST_VIEW(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: h.hostId, link: null , editable: false, hidden: true, key: false},
-					{ value: h.hostName, link: null, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true, business_hours: h.hostId ? true : false, business_hours_label: h.hostId ? this.getLabel(h) : null},
-					{ value: h.businessName ? h.businessName: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.hostName, link: `/${this.currentRole}/hosts/${h.hostId}`, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true, business_hours: h.hostId ? true : false, business_hours_label: h.hostId ? this.getLabel(h) : null},
+					{ value: h.businessName ? h.businessName: '--', link: `/${this.currentRole}/dealers/${h.dealerId}`, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: h.address ? h.address: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: h.city ? h.city: '--', link: null, editable: false, hidden: false },
 					{ value: h.region ? h.region:'--', hidden: false },
@@ -344,7 +343,6 @@ export class HostsComponent implements OnInit {
 	}
 
     getColumnsAndOrder(data, tab) {
-        console.log(data, tab)
         switch(tab) {
             case 'hosts':
                 this.sort_column_hosts = data.column;
@@ -353,5 +351,9 @@ export class HostsComponent implements OnInit {
                 break;
             default:
         }	
+	}
+
+	private get currentRole() {
+		return this._auth.current_role;
 	}
 }

@@ -38,4 +38,5 @@ export * from './ui_role_info.model';
 export * from './ui_single-screen.model';
 export * from './ui_single-playlist.model';
 export * from './ui_table-feed.model';
+export * from './ui_table_hosts-by-dealer.model';
 export * from './ui_table-license-by-dealer.model';

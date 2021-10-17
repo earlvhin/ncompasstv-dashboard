@@ -83,14 +83,14 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <app-search-field
-                                            *ngIf="!initial_load_hosts"
-                                            [form_title]="'Search Host Name or Dealer Name'"
-                                            [placeholder]="'Example: N-Compass Host'"
-                                            [data_reference]="hosts_data"
-                                            [primary_keyword]="'name'"
-                                            [secondary_keyword]="'name'"
-                                            (searched)="filterData($event, 'hosts')"
-                                            [api_search]="true"
+												*ngIf="!initial_load_hosts"
+												[form_title]="'Search Host Name or Dealer Name'"
+												[placeholder]="'Example: N-Compass Host'"
+												[data_reference]="hosts_data"
+												[primary_keyword]="'name'"
+												[secondary_keyword]="'name'"
+												(searched)="filterData($event, 'hosts')"
+												[api_search]="true"
                                             ></app-search-field>
                                         </div>
                                     </div>
