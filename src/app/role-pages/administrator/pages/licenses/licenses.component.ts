@@ -1,19 +1,15 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common'
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { UI_HOST_VIEW } from '../../../../global/models/ui_host-license.model';
-import { UI_LICENSE } from '../../../../global/models/ui_dealer-license.model';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
-import { LicenseService } from 'src/app/global/services';
+import { AuthService, HostService, LicenseService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { HostService } from 'src/app/global/services/host-service/host.service';
-import { API_DEALER, UI_TABLE_LICENSE_BY_DEALER } from 'src/app/global/models';
+import { API_DEALER, API_SINGLE_HOST, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 
@@ -133,7 +129,7 @@ export class LicensesComponent implements OnInit {
 	]
 
 	constructor(
-		private _route: ActivatedRoute,
+		private _auth: AuthService,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _date: DatePipe,
@@ -202,7 +198,6 @@ export class LicensesComponent implements OnInit {
 					}
 					this.initial_load_hosts = false;
 					this.searching_hosts = false;
-                    console.log("DATA", data)
 				}
 			)
 		)
@@ -434,16 +429,16 @@ export class LicensesComponent implements OnInit {
 		);
 	}
 
-    hosts_mapToUIFormat(data): UI_HOST_VIEW[] {
+    hosts_mapToUIFormat(data: { host: API_HOST[] }): UI_HOST_VIEW[] {
 		let count = this.paging_data_host.pageStart;
-        console.log("DATA", data)
+
 		return data.host.map(
-			(h: any) => {
+			(h: API_HOST) => {
 				const table = new UI_HOST_VIEW(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: h.hostId, link: null , editable: false, hidden: true, key: false},
-					{ value: h.hostName, link: null, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true, business_hours: h.hostId ? true : false, business_hours_label: h.hostId ? this.getLabel(h) : null},
-					{ value: h.businessName ? h.businessName: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.hostName, link: `/${this.currentRole}/hosts/${h.hostId}`, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true, business_hours: h.hostId ? true : false, business_hours_label: h.hostId ? this.getLabel(h) : null},
+					{ value: h.businessName ? h.businessName: '--', link: `/${this.currentRole}/dealers/${h.dealerId}`, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: h.address ? h.address: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: h.city ? h.city: '--', link: null, editable: false, hidden: false },
 					{ value: h.region ? h.region:'--', hidden: false },
@@ -453,6 +448,7 @@ export class LicensesComponent implements OnInit {
 					{ value: h.timezoneName ? h.timezoneName:'--', link: null, editable: false, hidden: false },
 					{ value: h.totalLicenses ? h.totalLicenses:'0', link: null, editable: false, hidden: false },
 				);
+
 				return table;
 			}
 		);
@@ -495,18 +491,6 @@ export class LicensesComponent implements OnInit {
         this.splitted_text = key.split("-");
         return this.splitted_text[this.splitted_text.length - 1];
     }
-
-    private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
-	}
 
 	openGenerateLicenseModal(): void {
 		let dialogRef = this._dialog.open(LicenseModalComponent, {
@@ -632,5 +616,21 @@ export class LicensesComponent implements OnInit {
         }
         this.worksheet.columns = header;
 		this.getDataForExport(tab);		
+	}
+
+	private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
+	}
+
+	private get currentRole() {
+		return this._auth.current_role;
 	}
 }

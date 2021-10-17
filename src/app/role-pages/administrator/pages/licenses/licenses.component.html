@@ -254,14 +254,14 @@
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field
-                                                *ngIf="!initial_load_hosts"
-                                                [form_title]="'Search Host Name or Dealer Name'"
-                                                [placeholder]="'Example: N-Compass Host'"
-                                                [data_reference]="hosts_data"
-                                                [primary_keyword]="'name'"
-                                                [secondary_keyword]="'name'"
-                                                (searched)="filterData($event, 'hosts')"
-                                                [api_search]="true"
+													*ngIf="!initial_load_hosts"
+													[form_title]="'Search Host Name or Dealer Name'"
+													[placeholder]="'Example: N-Compass Host'"
+													[data_reference]="hosts_data"
+													[primary_keyword]="'name'"
+													[secondary_keyword]="'name'"
+													(searched)="filterData($event, 'hosts')"
+													[api_search]="true"
                                                 ></app-search-field>
                                             </div>
                                         </div>
@@ -270,16 +270,16 @@
                                                 <ng-container *ngIf="!searching_hosts; else loader">
                                                     <mat-card *ngIf="filtered_data_host.length > 0;else nodata">
                                                         <app-data-table 
-                                                        [table_data]="filtered_data_host"
-                                                        [table_columns]="hosts_table_column"
-                                                        [new_table]="true"
-                                                        [paging_details]="paging_data_host"
-                                                        [query_params]="tab"
-                                                        (page_triggered)="getHosts($event)"
-                                                        (to_sort_column)="getColumnsAndOrder($event, 'hosts')"
-                                                        [active_tab]="sort_column_hosts"
-                                                        [sort_column]="sort_column_hosts"
-                                                        [sort_order]="sort_order_hosts">
+															[table_data]="filtered_data_host"
+															[table_columns]="hosts_table_column"
+															[new_table]="true"
+															[paging_details]="paging_data_host"
+															[query_params]="tab"
+															(page_triggered)="getHosts($event)"
+															(to_sort_column)="getColumnsAndOrder($event, 'hosts')"
+															[active_tab]="sort_column_hosts"
+															[sort_column]="sort_column_hosts"
+															[sort_order]="sort_order_hosts">
                                                         </app-data-table>
                                                     </mat-card>
                                                 </ng-container>
