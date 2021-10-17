@@ -64,8 +64,11 @@ export class HostService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?search='+`${key}`, this.httpOptions);
 	}
 	
-	get_host_by_page(page, key, column?, order?, pageSize=15) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`+'&pageSize='+`${pageSize}` , this.httpOptions);
+	get_host_by_page(page: number, search: string, sortColumn?, sortOrder?, pageSize = 15) {
+		const base = `${environment.base_uri}${environment.getters.api_get_hosts}`;
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize });
+		const url = `${base}${params}`;
+		return this._http.get<any>(url , this.httpOptions);
 	}
 
 	get_host_by_dealer_id(id, page, key, pageSize = 15) {
@@ -129,6 +132,8 @@ export class HostService {
 		
 		Object.keys(filters).forEach(
 			key => {
+
+				if (typeof filters[key] === 'undefined') return;
 				
 				if (!result.includes('?')) result += `?${key}=`;
 				else result += `&${key}=`;

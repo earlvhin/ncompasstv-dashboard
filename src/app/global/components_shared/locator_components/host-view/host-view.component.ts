@@ -135,8 +135,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		}
 		else this.loading_data = true;
 
-		getHostRequest
-			.pipe(takeUntil(this._unsubscribe))
+		getHostRequest.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { host: API_HOST[], paging: PAGING, message?: string }) => {
 

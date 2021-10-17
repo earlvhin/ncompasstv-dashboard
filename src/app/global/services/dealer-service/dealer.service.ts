@@ -140,6 +140,8 @@ export class DealerService {
 		
 		Object.keys(filters).forEach(
 			key => {
+
+				if (typeof filters[key] === 'undefined') return;
 				
 				if (!result.includes('?')) result += `?${key}=`;
 				else result += `&${key}=`;
