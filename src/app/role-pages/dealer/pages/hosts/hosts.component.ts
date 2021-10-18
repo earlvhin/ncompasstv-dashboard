@@ -46,6 +46,8 @@ export class HostsComponent implements OnInit {
 		{ name: 'Number of Licenses', key: 'totalLicenses'},
 		{ name: 'Category', key: 'category'},
 		{ name: 'Status', key: 'status'},
+        { name: 'Notes', sortable: false, key: 'notes'},
+        { name: 'Others', sortable: false, key: 'others'},
 	];
 
 	constructor(
@@ -142,6 +144,8 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.totalLicenses, link: null, editable: false, hidden: false},
 					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: false},
 					{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false},
+					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},
+					{ value: hosts.others ? hosts.others : '--', link: null, editable: false, hidden: false},
 				)
 			}
 		)
@@ -185,7 +189,7 @@ export class HostsComponent implements OnInit {
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet('Installations');
+		this.worksheet = this.workbook.addWorksheet('HOSTS');
 		Object.keys(this.host_table_column).forEach(key => {
 			if(this.host_table_column[key].name && !this.host_table_column[key].no_export) {
 				header.push({ header: this.host_table_column[key].name, key: this.host_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});

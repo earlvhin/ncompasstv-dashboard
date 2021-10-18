@@ -1,7 +1,8 @@
-<div class="create-dialog p-2" id="createTagsDialog">
+<div class="create-dialog p-2" id="create-tag-dialog">
 	<div class="d-flex heading">
 		<div class="flex-even">
 			<h3 class="p-0 col-lg-12">{{ title }}</h3>
+			<p class="sm-text">{{ description }}</p>
 		</div>
 		<div>
 			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
@@ -13,124 +14,40 @@
 	<div class="sections-container d-flex flex-column">
 		<!-- FORM SECTION -->
 		<div class="form-section">
-			<!-- <br><br> -->
 			<form [formGroup]="form" (ngSubmit)="onSubmit()">
-		
-				<!-- TAG TYPE SELECTION -->
-				<mat-form-field class="full-width">
-					<mat-label>Select Tag Type</mat-label>
-					<mat-select formControlName="tagTypeId" (selectionChange)="onSelectTagType($event.value)">
-						<mat-option *ngFor="let type of tagTypes" [value]="type.tagTypeId">
-							{{ type.name }}
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
 
-				<!-- TAG COLOR PICKER -->
-				<mat-form-field class="full-width">
-                    <mat-label>Tag Color</mat-label>
-                    <input matInput type="text"
-						[(colorPicker)]="selectedTagColor" 
-						[cpAlphaChannel]="'disabled'"
-						[cpDisableInput]="true"
-						[style.background]="selectedTagColor"
-						[value]="selectedTagColor || ''"
-						(colorPickerChange)="onSelectTagColor(selectedTagColor)">
-                </mat-form-field>
-				
-				<!-- TAG NAME FIELD -->
-				<mat-form-field class="full-width">
+				<div class="fields d-flex">
 
-					<mat-select placeholder="Tag Name" #tagSearchSelect formControlName="selectedTag">
-						<mat-option>
-							<ngx-mat-select-search 
-								formControlName="tagName" 
-								placeholderLabel="Input tag..."
-								noEntriesFoundLabel="No results"
-								[clearSearchInput]="true"
-								(keyup.space)="onAddTag($event.target.value)" 
-								(keyup.enter)="onAddTag($event.target.value)">
-							</ngx-mat-select-search>
-						</mat-option>
-				
-						<mat-option *ngFor="let tag of filteredTags | async" [value]="null">
-							<div class="tag" (click)="onSelectTag(tag)">
-								{{ tag.name }} ({{ tag.count }})
-							</div>
-						</mat-option>
-					</mat-select>
-				</mat-form-field>
-		
-				<!-- OWNER SELECT SEARCH FIELD -->
-				<mat-form-field class="full-width owner-select-search">
-					<mat-select #ownerMultiSelect formControlName="selectedOwners" 
-						[placeholder]="ownerSearchSettings.label" 
-						[multiple]="true">
+					<!-- TAG COLOR PICKER -->
+					<mat-form-field class="tag">
+						<mat-label>Tag Color</mat-label>
+						<input matInput type="text"
+							formControlName="tagColor"
+							autocomplete="off"
+							[(colorPicker)]="selectedTagColor"
+							[cpAlphaChannel]="'disabled'"
+							[cpDisableInput]="true"
+							[style.background]="selectedTagColor"
+							[value]="selectedTagColor || ''"
+							(colorPickerChange)="onSelectTagColor(selectedTagColor)">
 
-						<mat-option>
-							<ngx-mat-select-search 
-								formControlName="ownerFilter" 
-								noEntriesFoundLabel="No results"
-								[placeholderLabel]="ownerSearchSettings.placeholder"
-								[clearSearchInput]="false"
-								[searching]="isSearching">
-								<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
-							</ngx-mat-select-search>
-						</mat-option>
+					</mat-form-field>
 
-						<mat-option *ngFor="let owner of filteredOwners | async" [value]="owner">
-							<div class="displayName">
-								{{ owner.displayName | titlecase }}
-							</div>
-						</mat-option>
-					</mat-select>
-		
-				</mat-form-field>
+					<!-- TAG NAME -->
+					<mat-form-field>
+						<mat-label>Tag Name</mat-label>
+						<input matInput type="text" autocomplete="off" formControlName="tagName">
+					</mat-form-field>
+
+				</div>
 				
 				<!-- SUBMIT BUTTON -->
 				<div mat-dialog-actions>
-					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="!form.valid">Submit</button>
+					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="form.invalid">Submit</button>
 				</div>
 			</form>
 		</div>
 	
-		<!-- PREVIEW SECTION -->
-		<div class="preview-section">
-			<div class="d-flex flex-column">
-				<!-- TAGS ROW -->
-				<div class="tags-row d-flex">
-					<h4>Tags:</h4>
-
-					<!-- TAGS-LIST -->
-					<div class="pending-tags-container d-flex flex-row align-items-start flex-wrap" *ngIf="pendingTags.length > 0">
-						<div *ngFor="let tag of pendingTags; let i = index;" class="tag d-flex align-items-center"
-							[style.backgroundColor]="tag.tagColor">
-							<div class="name">{{ tag.name }}</div>
-							<div class="remove-btn cursor-pointer" (click)="onRemovePendingTag(i)"><mat-icon>close</mat-icon></div>
-						</div>
-					</div>
-				</div>
-				
-				<br>
-
-				<!-- OWNERS ROW -->
-				<div class="owners-row d-flex">
-					<ng-container *ngIf="tagType">
-						<h4>{{ tagType.name | titlecase }}s: </h4>
-						
-						<!-- OWNERS LIST -->
-						<div class="selected-owners-container d-flex flex-row align-items-start flex-wrap">
-		
-							<div *ngFor="let owner of selectedOwners; let i = index;" class="owner d-flex align-items-center">
-								<div class="business-name">{{ owner.displayName }}</div>
-								<div class="remove-btn cursor-pointer" (click)="onRemoveSelectedOwner(i)"><mat-icon>close</mat-icon></div>
-							</div>
-						</div>
-					</ng-container>
-				</div>
-
-			</div>
-		</div>
 	</div>
 
 </div>

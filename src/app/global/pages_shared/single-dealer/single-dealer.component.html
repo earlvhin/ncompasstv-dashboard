@@ -2,31 +2,31 @@
     <div *ngIf="dealer && loaded; else loading">
         <div class="position-relative">
             <app-banner
-            [single_image]="img"
-            [single_name]="dealer.businessName"
-            [single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
-            [editable]="true"
-            [refresh_banner]="true"
-            [dealer_data]="dealer_user_data"
-            (update_info)="ngOnInit()">
+				[single_image]="img"
+				[single_name]="dealer.businessName"
+				[single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
+				[editable]="true"
+				[refresh_banner]="true"
+				[dealer_data]="dealer_user_data"
+				(update_info)="ngOnInit()">
             </app-banner>
 
             <div class="select-dealer-field position-absolute">
                 <app-autocomplete-field
-                (data_value)="dealerSelected($event)"
-                [key_of_value]="'dealerId'"
-                [placeholder]="'N-Compass TV'"
-                [label]="'Selected Dealer'"
-                [data_reference]="dealers_data"
-                [search_keyword]="'businessName'"
-                [primary_keyword]="'businessName'"
-                [paging]="paging"
-                (call_next_page)="searchBoxTrigger($event)"
-                (searched)="searchData($event)"
-                [new_value]="dealer_name"
-                [initial_value]="dealer_name"
-                [loading_data]="loading_data"
-                [loading_search]="loading_search">
+					(data_value)="dealerSelected($event)"
+					[key_of_value]="'dealerId'"
+					[placeholder]="'N-Compass TV'"
+					[label]="'Selected Dealer'"
+					[data_reference]="dealers_data"
+					[search_keyword]="'businessName'"
+					[primary_keyword]="'businessName'"
+					[paging]="paging"
+					(call_next_page)="searchBoxTrigger($event)"
+					(searched)="searchData($event)"
+					[new_value]="dealer_name"
+					[initial_value]="dealer_name"
+					[loading_data]="loading_data"
+					[loading_search]="loading_search">
                 </app-autocomplete-field>
 
                 <span class="fas fa-search icon"></span>
@@ -39,43 +39,43 @@
                     <div class="col-lg-4">
                         <mat-card class="h-100">
                             <app-data-card-compare  
-                            *ngIf="license_card"
-                            [compare_basis]="license_card.basis" 
-                            [compare_basis_label]="license_card.basis_label"
-                            [good_value]="license_card.good_value" 
-                            [good_value_label]="license_card.good_value_label"
-                            [bad_value]="license_card.bad_value" 
-                            [bad_value_label]="license_card.bad_value_label"
-                            [online_value]="license_card.online_value"
-                            [online_value_label]="license_card.online_value_label"
-                            [offline_value]="license_card.offline_value"
-                            [offline_value_label]="license_card.offline_value_label">
+								*ngIf="license_card"
+								[compare_basis]="license_card.basis" 
+								[compare_basis_label]="license_card.basis_label"
+								[good_value]="license_card.good_value" 
+								[good_value_label]="license_card.good_value_label"
+								[bad_value]="license_card.bad_value" 
+								[bad_value_label]="license_card.bad_value_label"
+								[online_value]="license_card.online_value"
+								[online_value_label]="license_card.online_value_label"
+								[offline_value]="license_card.offline_value"
+								[offline_value_label]="license_card.offline_value_label">
                             </app-data-card-compare>
                         </mat-card>
                     </div>
                     <div class="col-lg-4">
                         <mat-card class="h-100">
                             <app-data-card-compare
-                            *ngIf="host_card" 
-                            [compare_basis]="host_card.basis" 
-                            [compare_basis_label]="host_card.basis_label"
-                            [good_value]="host_card.good_value" 
-                            [good_value_label]="host_card.good_value_label" 
-                            [bad_value]="host_card.bad_value"
-                            [bad_value_label]="host_card.bad_value_label">
+								*ngIf="host_card" 
+								[compare_basis]="host_card.basis" 
+								[compare_basis_label]="host_card.basis_label"
+								[good_value]="host_card.good_value" 
+								[good_value_label]="host_card.good_value_label" 
+								[bad_value]="host_card.bad_value"
+								[bad_value_label]="host_card.bad_value_label">
                             </app-data-card-compare>
                         </mat-card>
                     </div>
                     <div class="col-lg-4">
                         <mat-card class="h-100">
                             <app-data-card-compare 
-                            *ngIf="advertiser_card" 
-                            [compare_basis]="advertiser_card.basis" 
-                            [compare_basis_label]="advertiser_card.basis_label"
-                            [good_value]="advertiser_card.good_value" 
-                            [good_value_label]="advertiser_card.good_value_label" 
-                            [bad_value]="advertiser_card.bad_value"
-                            [bad_value_label]="advertiser_card.bad_value_label">
+								*ngIf="advertiser_card" 
+								[compare_basis]="advertiser_card.basis" 
+								[compare_basis_label]="advertiser_card.basis_label"
+								[good_value]="advertiser_card.good_value" 
+								[good_value_label]="advertiser_card.good_value_label" 
+								[bad_value]="advertiser_card.bad_value"
+								[bad_value_label]="advertiser_card.bad_value_label">
                             </app-data-card-compare>
                         </mat-card>
                     </div>
@@ -250,15 +250,6 @@
                                                         <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
                                                     </button>
     
-                                                    <button mat-button mat-raised-button
-                                                    [disabled]="remote_reboot_disabled || !licenses"
-                                                    class="theme-btn pi-control sm-text _dark mr-2" 
-                                                    (click)="updateToVersion2()" 
-                                                    title="Update to Version 2">
-                                                        <span class="font-weight-bold">2.0</span> 
-                                                        <span class="ml-2 button_text_animation">Upgrade to version 2</span>
-                                                    </button>
-    
                                                     <ng-template #disabled_remote_reboot_player>
                                                         <button mat-button mat-raised-button 
                                                         class="theme-btn pi-control sm-text _warning mr-2" 
@@ -312,7 +303,7 @@
                                                 
                                                 <app-search-field
                                                     *ngIf="!initial_load_license"
-                                                    [form_title]="'Search License Alias, Host Name or Anydesk'"
+                                                    [form_title]="'Search License Alias, Host Name, Anydesk, or #Tag'"
                                                     [placeholder]="'Example: License #100'"
                                                     [data_reference]="license_data"
                                                     [primary_keyword]="'alias'"
@@ -403,14 +394,14 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <app-search-field
-                                            *ngIf="!initial_load"
-                                            [form_title]="'Search Host Name, Address, City or Postal Code'"
-                                            [placeholder]="'Example: N-Compass'"
-                                            [data_reference]="host_data"
-                                            [primary_keyword]="'host_name'"
-                                            [secondary_keyword]="'host_name'"
-                                            (searched)="hostFilterData($event)"
-                                            [api_search]="true"
+												*ngIf="!initial_load"
+												[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+												[placeholder]="'Example: N-Compass'"
+												[data_reference]="host_data"
+												[primary_keyword]="'host_name'"
+												[secondary_keyword]="'host_name'"
+												(searched)="hostFilterData($event)"
+												[api_search]="true"
                                             ></app-search-field>
                                         </div>
                                     </div>
@@ -446,14 +437,14 @@
                                         </div>
                                         <div class="col-lg-4">
                                             <app-search-field
-                                            *ngIf="!initial_load_advertiser"
-                                            [form_title]="'Search Advertiser Name'"
-                                            [placeholder]="'Example: N-Compass'"
-                                            [data_reference]="advertiser_data"
-                                            [primary_keyword]="'name'"
-                                            [secondary_keyword]="'name'"
-                                            (searched)="advertiserFilterData($event)"
-                                            [api_search]="true"
+												*ngIf="!initial_load_advertiser"
+												[form_title]="'Search Advertiser Name or #Tag'"
+												[placeholder]="'Example: N-Compass'"
+												[data_reference]="advertiser_data"
+												[primary_keyword]="'name'"
+												[secondary_keyword]="'name'"
+												(searched)="advertiserFilterData($event)"
+												[api_search]="true"
                                             ></app-search-field>
                                         </div>
                                     </div>
@@ -462,17 +453,17 @@
                                             <ng-container *ngIf="!searching_advertiser; else loader">
                                                 <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
                                                     <app-data-table 
-                                                    [table_columns]="adv_table_col" 
-                                                    [table_data]="advertiser_filtered_data"
-                                                    [new_table]="true"
-                                                    [paging_details]="paging_data_advertiser"
-                                                    (page_triggered)="getDealerAdvertiser($event)"
-                                                    [advertiser_delete]="true"
-                                                    (update_info)="reloadAdvertiser()"
-                                                    (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
-                                                    [active_tab]="sort_column_advertisers"
-                                                    [sort_column]="sort_column_advertisers"
-                                                    [sort_order]="sort_order_advertisers">
+														[table_columns]="adv_table_col" 
+														[table_data]="advertiser_filtered_data"
+														[new_table]="true"
+														[paging_details]="paging_data_advertiser"
+														(page_triggered)="getDealerAdvertiser($event)"
+														[advertiser_delete]="true"
+														(update_info)="reloadAdvertiser()"
+														(to_sort_column)="getAdvertisersColumnsAndOrder($event)"
+														[active_tab]="sort_column_advertisers"
+														[sort_column]="sort_column_advertisers"
+														[sort_order]="sort_order_advertisers">
                                                     </app-data-table>
                                                 </mat-card>
                                             </ng-container>

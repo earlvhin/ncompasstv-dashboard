@@ -271,7 +271,11 @@
 																Dealer
 															</span>
 															<h5 class="mb-0">
-																<a [routerLink]="dealer_route">{{ screen.assigned_dealer }}</a>
+																<a [routerLink]="dealer_route" *ngIf="is_admin; else is_self">{{ screen.assigned_dealer }}</a>
+																
+																<ng-template #is_self>
+																	<span>{{ screen.assigned_dealer }}</span>
+																</ng-template>
 															</h5>
 														</div>
 	
@@ -633,10 +637,11 @@
 						<div class="row no-gutters" *ngIf="has_playlist">
 							<div class="col-md-1" *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
 								<div class="mr-2">
+									{{ a.thumbail }}
 									<app-thumbnail-card
 										(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
 										[file_url]="a.file_url"
-										[image_uri]="a.file_type !== 'feed' ?  a.thumbnail : a.thumbnail+a.file_url"
+										[image_uri]="a.thumbnail"
 										[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
 										[content_id]="a.content_id"
 										[filetype]="a.file_type"
@@ -654,7 +659,7 @@
 				</mat-tab>
 			
 				<!-- Analytics Tab -->
-				<mat-tab label="Analytics">
+				<!-- <mat-tab label="Analytics">
 					<ng-template matTabContent>
 						<app-analytics-tab
 							*ngIf="content_per_zone.length > 0"
@@ -664,7 +669,7 @@
 							[realtime_data]="realtime_data">
 						</app-analytics-tab>
 					</ng-template>
-				</mat-tab>
+				</mat-tab> -->
 
 				<!-- Terminal Tab -->
 				<mat-tab label="Terminal" *ngIf="is_admin">

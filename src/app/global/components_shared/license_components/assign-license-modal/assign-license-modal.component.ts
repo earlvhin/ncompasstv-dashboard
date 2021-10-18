@@ -49,7 +49,6 @@ export class AssignLicenseModalComponent implements OnInit {
 		this.subscription.add(
 			this._license.get_license_by_dealer_id(this._dialog_data.dealer_id, page, '', 'online').subscribe(
 				data => {
-                    console.log("DATA", data)
 					// Save page count returned from API
 					if(!data.message) {
 						const page_count = data.paging.pages;

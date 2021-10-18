@@ -12,13 +12,15 @@
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- TAG NAME -->
 					<td class="p-3 tags">
-						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="onClickTagName(data.name)">
-							{{ data.name }} ({{ data.count }})
+						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data.name)">
+							{{ data.name }}
 						</a>
 					</td>
+					<!-- TAG COUNT -->
+					<td class="p-3 tags">{{ data.count }}</td>
 					<!-- ACTION BTNS -->
-					<td class="p-3 action-buttons">
-						<mat-icon class="no-select" color="primary" (click)="onOpenDialog('edit_tag', data)">edit</mat-icon>
+					<td class="action-buttons">
+						<mat-icon class="no-select" color="primary" (click)="openDialog('edit_tag', data)">edit</mat-icon>
 						<mat-icon class="no-select text-danger" (click)="onDeleteTag(data.tagId)">delete</mat-icon>
 					</td>
 				</ng-container>
@@ -27,22 +29,23 @@
 				<ng-template #tagOwnersData>
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- OWNER NAME -->
-					<td class="p-3">
-						<a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
+					<td class="p-3 w-30">
+						<div class="owner-name-container flex align-items-center">
+							<!-- <mat-icon class="owner-icon">{{ ownerIcons[data.tagTypeName.toLowerCase()] }}</mat-icon> -->
+							<div class="owner-icon">
+								<span>{{ownerIcons[data.tagTypeName.toLowerCase()]}}</span>
+							</div>
+							<a [routerLink]="data.url" target="_blank">{{ data.displayName }}</a>
+						</div>
 					</td>
-					<!-- TAG TYPE NAME -->
-					<td class="p-3">{{ data.tagTypeName }}</td>
-
 					<!-- TAGS -->
 					<td class="p-3">
 						<div class="d-flex tags">
 							<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
 								[style.backgroundColor]="tag.tagColor">
 								<!-- TAG NAME -->
-								<div class="name">												
-									{{ tag.name }} ({{ tag.count }})
-								</div>
-								<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId, data)">
+								<div class="name">{{ tag.name }}</div>
+								<div class="remove-btn cursor-pointer" (click)="onDeleteTagFromOwner(tag.tagId, data.ownerId)">
 									<mat-icon class="no-select">close</mat-icon>
 								</div>
 							</div>
@@ -64,7 +67,7 @@
 	</div>
 </div>
 
-<app-pagination-field [paging_data]="paging" (get_page)="onClickPageNumber($event)"></app-pagination-field>
+<app-pagination-field [paging_data]="paging" (get_page)="clickedPageNumber($event)"></app-pagination-field>
 
 <ng-template #loading>
 	<div class="py-4">

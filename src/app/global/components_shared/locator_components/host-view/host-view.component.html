@@ -4,7 +4,7 @@
 			<ng-container *ngIf="hosts.length > 0; else no_host">
 				<app-autocomplete-field
 					[data_reference]="hosts_data"
-					[primary_keyword]="'name'"
+					[primary_keyword]="'hostName'"
 					[key_of_value]="'hostId'"
 					(data_value)="onSelectHost($event)"
 					[required]="true"

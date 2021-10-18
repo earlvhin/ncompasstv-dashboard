@@ -3,12 +3,15 @@
 		<div class="row mb-3">
 			<div class="col-lg-12">
 				<app-media-library-options 
+				*ngIf="fillers | async as f"
 				(filetype)="sortByFiletype($event)"
 				(sortAscend)="sortAscendingOrder($event)"
 				(sortDescend)="sortDescendingOrder($event)"
 				(sortUser)="filterByUser($event)"
 				(searchKeyword)="searchContent($event)"
-				[empty_s]="empty_search">
+				(filterByFiller)="filterByFiller($event)"
+				[empty_s]="empty_search"
+				[fillers]="f">
 				</app-media-library-options>
 			</div>
 		</div>
@@ -52,7 +55,7 @@
 								[image_uri]="content.thumbnail"
 								[classification]="content.classification"
 								[filename]="content.title"
-								[file_url]="content.file_url"
+								[file_url]="content.thumbnail"
 								[content_id]="content.content_id"
 								[filetype]="content.file_type"
 								[is_converted]="content.is_converted"

@@ -180,7 +180,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					// Do something async
 					this.all_media.map (
 						med => {
-                            console.log("MED", med)
 							if(med.title != null && !this.removed_index) {
 								med.fileName = med.title;
 								var name_no_index = this.removeIndexes(med.fileName);
@@ -194,12 +193,11 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					);
 
                     //Additional Checking for video conversion duplicate
-                    if(e.originalFile.type.includes("video")) {
-                        var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
-                        temp = temp + ".webm"
-                        e.originalFile.name = temp;
-                        
-                    }
+                    // if(e.originalFile.type.includes("video")) {
+                    //     var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
+                    //     temp = temp + ".webm"
+                    //     e.originalFile.name = temp;
+                    // }
 
                     e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
 					if(!this.is_dealer) {
@@ -215,7 +213,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
                             }
                         );
                     }
-                    
                     
 					if (this.duplicate_files.length > 0) {
 						this.data_to_upload.push(e);
@@ -243,6 +240,8 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				this.ngOnInit();
 			},
 			onUploadDone: (respond) => {
+				console.log('##ONUPLOADDONE', respond);
+
 				this.uploaded_files = respond.filesUploaded;
 				this.reload = true;
 				this.processUploadedFiles(this.uploaded_files, this.assigned_users);
@@ -301,21 +300,25 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	async processUploadedFiles(data, users): Promise<void> {
 		const file_data = await this._filestack.process_uploaded_files(data, users || '');
 		if (file_data) {
+			console.log("FILEDATA===>", file_data);
 			this.postContentInfo('', file_data, true);
 			this.processFiles();
 		}
 	}
 
-	removeIndexes(data): void {
+	removeIndexes(data) {
 		if (data.indexOf('(') > 0) {
 			return data.slice(0, data.indexOf('('));
 		} else {
 			return data.slice(0, data.indexOf('.'));
 		}
-        this.removed_index = true;
+
+		this.removed_index = true;
 	}
 
 	postContentInfo(duplicateArray, data, upload): void {
+		console.log("#POSTCONTENTINFO", data, upload)
+
 		data.map(
 			i => {
 				if(i.fileName) {

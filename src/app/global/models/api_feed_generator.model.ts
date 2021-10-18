@@ -88,6 +88,22 @@ export class GenerateWeatherFeed {
     }
 }
 
+export class GenerateFillerFeed {
+    feeds: FEED_INFO;
+    feedFillerSettings: FEED_FILLER_SETTINGS;
+    feedFillers: FEED_FILLERS[];
+    
+    constructor(
+        feeds: FEED_INFO, 
+        feedFillerSettings: FEED_FILLER_SETTINGS,
+        feedFillers: FEED_FILLERS[]
+    ) {
+        this.feeds = feeds;
+        this.feedFillerSettings = feedFillerSettings;
+        this.feedFillers = feedFillers;
+    }
+}
+
 /** Model from API via GET */
 export type API_GENERATED_FEED = {
     businessName: string,
@@ -124,7 +140,9 @@ export type API_GENERATED_FEED = {
     feedWeather: WEATHER_FEED_STYLE_DATA,
     feedNews: NEWS_FEED_STYLE_DATA,
     slideGlobalSettings: SLIDE_GLOBAL_SETTINGS,
-    bannerImageData: API_CONTENT
+    bannerImageData: API_CONTENT,
+    fillerGlobalSettings: FEED_FILLER_SETTINGS,
+    feedFillers: API_CONTENT[]
 }
 
 export type WEATHER_FEED_STYLE_DATA = {
@@ -142,6 +160,17 @@ export type WEATHER_FEED_STYLE_DATA = {
     numberDay: number,
     zipCode: string,
     numberDays?: number,
+}
+
+export type FEED_FILLER_SETTINGS = {
+    min: number,
+    num: number,
+    feedId?: string
+}
+
+export type FEED_FILLERS = {
+    contentId: string,
+    sequence: number
 }
 
 /** Weather Feed Model to be submitted to API via POST */

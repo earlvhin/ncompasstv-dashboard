@@ -1,10 +1,12 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
-import { API_HOST } from '../../../../global/models/api_host.model';
-import { API_DEALER } from '../../../../global/models/api_dealer.model';
-import { HostService } from '../../../../global/services/host-service/host.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { UI_TABLE_HOSTS_BY_DEALER } from '../../../../global/models/ui_table_hosts-by-dealer.model';
+import * as moment from 'moment';
+import * as Excel from 'exceljs';
+import * as FileSaver from 'file-saver';
+
+import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
+import { AuthService, HostService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
 	selector: 'app-hosts',
@@ -15,16 +17,30 @@ import { UI_TABLE_HOSTS_BY_DEALER } from '../../../../global/models/ui_table_hos
 export class HostsComponent implements OnInit {
 	dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
 	filtered_data: any = [];
+    filtered_data_host: UI_HOST_VIEW[] = [];
 	hosts$: Observable<API_HOST[]>;
+    hosts_data: UI_HOST_VIEW[] = [];
+    hosts_to_export: any = [];
+    initial_load_hosts: boolean = true;
 	no_dealer: boolean = false;
+    no_host: boolean;
+    now: any;
 	subscription: Subscription = new Subscription();
 	tab: any = { tab: 1 };
 	title: string = "Hosts by Dealer";
 	host_details : any;
 	paging_data: any;
+    paging_data_host: any;
 	searching: boolean = false;
 	initial_load: boolean = true;
 	search_data: string = "";
+    search_data_host: string = "";
+    searching_hosts: boolean = false;
+    sort_column_hosts: string = '';
+	sort_order_hosts: string = '';
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 
 	// UI Table Column Header
 	host_table_column: string[] = [
@@ -41,13 +57,31 @@ export class HostsComponent implements OnInit {
 		'Recently Added Host'
 	]
 
+    hosts_table_column = [
+		{ name: '#', sortable: false, no_export: true},
+        { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true},
+        { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName'},
+        { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName'},
+		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
+		{ name: 'City', sortable: true, column:'City', key: 'city'},
+		{ name: 'Region', sortable: true, column:'Region', key: 'region'},
+		{ name: 'State', sortable: true, column:'State', key: 'state'},
+		{ name: 'Street', sortable: true, column:'Street', key:'street'},
+		{ name: 'Postal Code', sortable: true, column:'PostalCode', key:'postalCode'},
+		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName'},
+		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses'},
+	]
+
 	constructor(
+		private _auth: AuthService,
 		private _host: HostService,
-		private _dealer: DealerService
+		private _dealer: DealerService,
+        private cdr: ChangeDetectorRef,
 	) { }
 
 	ngOnInit() {
-		this.pageRequested(1);
+		// this.pageRequested(1);
+        this.getHosts(1);
 		this.getHostTotal();
 	}
 
@@ -55,14 +89,33 @@ export class HostsComponent implements OnInit {
 		this.subscription.unsubscribe();
 	}
 
-	filterData(key) {
-		if (key) {
-			this.search_data = key;
-			this.pageRequested(1);
-		} else {
-			this.search_data = "";
-			this.pageRequested(1);
-		}
+    ngAfterContentChecked() : void {
+        this.cdr.detectChanges();
+    }
+
+    filterData(e, tab) {
+        switch(tab) {
+            case 'dealer':
+                if (e) {
+                    this.search_data = e;
+			        this.pageRequested(1);
+                } else {
+                    this.search_data = "";
+			        this.pageRequested(1);
+                }    
+                break;
+            case 'hosts':
+                if (e) {
+                    this.search_data_host = e;
+                    this.getHosts(1);
+                } else {
+                    this.search_data_host = "";
+                    this.getHosts(1);
+                }    
+                break;
+            default:
+        }
+  
 	}
 
 	getHostTotal() {
@@ -156,5 +209,151 @@ export class HostsComponent implements OnInit {
 				}
 			}
 		)
+	}
+
+    onTabChanged(e) {
+        if(e.index == 1) {
+            this.pageRequested(1);
+        } else {
+            this.getHosts(1)
+        }
+    }
+
+    getHosts(page) {
+        this.searching_hosts = true;
+		this.hosts_data = [];    
+        this.subscription.add(
+			this._host.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts).subscribe(
+				data => {
+                    this.paging_data_host = data.paging;
+                    if (data) {
+						this.hosts_data = this.hosts_mapToUIFormat(data);
+						this.filtered_data_host = this.hosts_mapToUIFormat(data);
+					} else {
+						if(this.search_data_host == "") {
+							this.no_host = true;
+						}
+						this.filtered_data_host = [];
+					}
+					this.initial_load_hosts = false;
+					this.searching_hosts = false;
+				}
+			)
+		)
+	}
+
+    hosts_mapToUIFormat(data: { host: API_HOST[] }): UI_HOST_VIEW[] {
+		let count = this.paging_data_host.pageStart;
+
+		return data.host.map(
+			h => {
+				const table = new UI_HOST_VIEW(
+                    { value: count++, link: null , editable: false, hidden: false},
+					{ value: h.hostId, link: null , editable: false, hidden: true, key: false},
+					{ value: h.hostName, link: `/${this.currentRole}/hosts/${h.hostId}`, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true, business_hours: h.hostId ? true : false, business_hours_label: h.hostId ? this.getLabel(h) : null},
+					{ value: h.businessName ? h.businessName: '--', link: `/${this.currentRole}/dealers/${h.dealerId}`, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.address ? h.address: '--', link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.city ? h.city: '--', link: null, editable: false, hidden: false },
+					{ value: h.region ? h.region:'--', hidden: false },
+					{ value: h.state ? h.state:'--', hidden: false },
+					{ value: h.street ? h.street:'--', link: null, editable: false, hidden: false },
+					{ value: h.postalCode ? h.postalCode:'--', link: null, editable: false, hidden: false },
+					{ value: h.timezoneName ? h.timezoneName:'--', link: null, editable: false, hidden: false },
+					{ value: h.totalLicenses ? h.totalLicenses:'0', link: null, editable: false, hidden: false },
+				);
+				return table;
+			}
+		);
+	}
+
+    getLabel(data) {
+		this.now = moment().format('d');
+		this.now = this.now;
+        var storehours = JSON.parse(data.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
+		var modified_label = {
+			date : moment().format('LL'),
+			address: data.address,
+			schedule: storehours[this.now] && storehours[this.now].status ? (
+				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
+				? "Open 24 Hours" : storehours[this.now].periods.map(
+					i => {
+						return i.open + " - " + i.close
+					})) : "Closed"
+		}
+		return modified_label;
+	}
+
+    exportTable(tab) {
+        this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Excel.Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+        switch(tab) {
+            case 'hosts':
+                this.worksheet = this.workbook.addWorksheet('Host View');
+                Object.keys(this.hosts_table_column).forEach(key => {
+                    if(this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
+                        header.push({ header: this.hosts_table_column[key].name, key: this.hosts_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+                    }
+                });
+                break;
+            default:
+        }
+        this.worksheet.columns = header;
+		this.getDataForExport(tab);		
+	}
+
+    getDataForExport(tab): void {
+        switch(tab) {
+            case 'hosts': 
+                this._host.get_host_by_page(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe(
+                    data => {
+                        if(!data.message) {
+                            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                            this.hosts_to_export = data.host;
+                            this.hosts_to_export.forEach((item, i) => {
+                                // this.modifyItem(item);
+                                this.worksheet.addRow(item).font ={
+                                    bold: false
+                                };
+                            });
+                            let rowIndex = 1;
+                            for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+                                this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+                            }
+                            this.workbook.xlsx.writeBuffer()
+                                .then((file: any) => {
+                                    const blob = new Blob([file], { type: EXCEL_TYPE });
+                                    const filename = 'Hosts' +'.xlsx';
+                                    FileSaver.saveAs(blob, filename);
+                                }
+                            );
+                            this.workbook_generation = false;
+                        } else {
+                            this.hosts_to_export = [];
+                        }
+                    }
+                )
+                break;
+            default:
+        }
+	}
+
+    getColumnsAndOrder(data, tab) {
+        switch(tab) {
+            case 'hosts':
+                this.sort_column_hosts = data.column;
+		        this.sort_order_hosts = data.order;
+                this.getHosts(1)
+                break;
+            default:
+        }	
+	}
+
+	private get currentRole() {
+		return this._auth.current_role;
 	}
 }

@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { fromEvent, Observable, Subject } from 'rxjs';
-import { Sortable } from 'sortablejs';
+import { Sortable, MultiDrag } from 'sortablejs';
 import * as moment from 'moment-timezone';
 
 import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
@@ -464,6 +464,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	sortableJSInit(): void {
+		// Sortable.mount(new MultiDrag());
 
 		const onDeselect = (e) => {
 			this.selected_content_count = e.newIndicies.length

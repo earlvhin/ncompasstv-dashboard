@@ -2,9 +2,9 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import 'rxjs/add/operator/map'
 
-import { API_DEALER } from '../../models/api_dealer.model';
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
+import { API_DEALER, API_FILTERS } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { environment } from 'src/environments/environment';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 
@@ -62,15 +62,18 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_directory}`+'?page='+`${page}`+'&search='+`${key}`+'&searchBy='+`${searchKey}`, this.httpOptions);
 	}
 
-	get_dealers_with_host(page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers_with_host}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+	get_dealers_with_host(page: number, search: string) {
+		const filters: API_FILTERS  = { page, search };
+		const base = `${environment.base_uri}${environment.getters.api_get_dealers_with_host}`;
+		const params = this.setUrlParams(filters);
+		const url = `${base}${params}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 	
-	get_dealers_with_advertiser(page, key, column?: string, order?: string) {
-		const baseUrl = `${environment.base_uri}${environment.getters.api_get_dealers_with_advertiser}`;
-		let url = `${baseUrl}?page=${page}&search=${key}`;
-		if (typeof column !== 'undefined') url += `&sortColumn=${column}`;
-		if (typeof order !== 'undefined') url += `&sortOrder=${order}`;
+	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string) {
+		const base = `${environment.base_uri}${environment.getters.api_get_dealers_with_advertiser}`;
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder });
+		const url = `${base}${params}`;
 		return this._http.get<any>(url, this.httpOptions);
 	}
 	
@@ -83,10 +86,12 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 
-	get_dealers_with_sort(page: number, key: string, column: string, order: string, filter_column?: string, min?, max?, status = '') {
-		const baseEndpoint = `${this.baseUri}${this.getters.api_get_dealers_with_sort}?page=${page}`;
-		const endpoint = `${baseEndpoint}&search=${key}&sortColumn=${column}&sortOrder=${order}&filter=${filter_column}&filterMin=${min}&filterMax=${max}&status=${status}`;
-		return this._http.get<any>(endpoint, this.httpOptions);
+	get_dealers_with_sort(page: number, search: string, sortColumn: string, sortOrder: string, filter?: string, filterMin?: any, filterMax?: any, status = '') {
+		const filters: API_FILTERS = { page, search, sortColumn, sortOrder, filter, filterMin, filterMax, status };
+		const base = `${this.baseUri}${this.getters.api_get_dealers_with_sort}`;
+		const params = this.setUrlParams(filters);
+		const url = `${base}${params}`;
+		return this._http.get<any>(url, this.httpOptions);
 	}
 
 	get_dealer_by_id(id: string) {
@@ -127,6 +132,29 @@ export class DealerService {
 	reassign_dealer(old_id: string, new_id: string) {
 		const data = { oldDealerId: old_id, newDealerId: new_id };
 		return this._http.post(`${environment.base_uri}${environment.update.reassign_dealer}`, data, this.httpOptions);
+	}
+
+	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
+
+		let result = '';
+		
+		Object.keys(filters).forEach(
+			key => {
+
+				if (typeof filters[key] === 'undefined') return;
+				
+				if (!result.includes('?')) result += `?${key}=`;
+				else result += `&${key}=`;
+
+				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+				else result += filters[key];
+
+			}
+		);
+
+		return result
+
 	}
 
 	protected get baseUri() {

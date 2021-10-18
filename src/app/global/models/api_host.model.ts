@@ -35,6 +35,9 @@ export class API_HOST {
 	status: string;
 	totalLicenses: number;
 	category: string;
+	hostName: string;
+	businessName: string;
+	timezoneName: string;
 }
 
 export class API_SINGLE_HOST {

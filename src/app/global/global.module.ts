@@ -64,6 +64,8 @@ import { FeedMediaComponent } from './components_shared/feed_components/feed-med
 import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
 import { FilenamePipe } from './pipes/filename.pipe';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
+import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
+import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
@@ -102,6 +104,7 @@ import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NohandlePipe } from './pipes/nohandle.pipe';
+import { NotificationsComponent } from './pages_shared/notifications/notifications.component';
 import { ObjectKeysPipe } from './pipes/object-keys.pipe';
 import { OptionsComponent } from './components_shared/playlist_components/options/options.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
@@ -248,6 +251,8 @@ const ngComponents = [
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
 	FilterLabelsComponent,
+	FillerFormComponent,
+	FillerDemoComponent,
 	FooterComponent, 
 	GenerateFeedComponent,
 	HostCustomFieldsComponent,
@@ -281,6 +286,7 @@ const ngComponents = [
 	NewsDemoComponent,
 	NewsFormComponent,
 	NohandlePipe,
+	NotificationsComponent,
 	ObjectKeysPipe,
 	OptionsComponent,
 	PlayWhereComponent,
@@ -438,7 +444,7 @@ const DIRECTIVES = [
 		NgbModule,
 		NgxMaterialTimepickerModule,
 		NgxPaginationModule,
-		ReactiveFormsModule,
+		ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
 		RouterModule,
 		NgxMatSelectSearchModule,
         BreadcrumbsModule,
