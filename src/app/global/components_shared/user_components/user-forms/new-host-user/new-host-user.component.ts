@@ -18,6 +18,8 @@ import { Router } from '@angular/router';
 
 export class NewHostUserComponent implements OnInit {
 
+	@Output() host_created = new EventEmitter();
+
 	form_title: string = "New Host User";
 	form_invalid: boolean = true;
 	is_submitted: boolean;
@@ -26,6 +28,7 @@ export class NewHostUserComponent implements OnInit {
 	hosts: API_HOST[] = [];
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
+	keywords = { search: 'hostName', primary: 'hostName' };
 	new_host_form: FormGroup;
 	no_host_place: boolean = false;
 	password_is_match: boolean;
@@ -33,10 +36,8 @@ export class NewHostUserComponent implements OnInit {
 	password_is_valid: boolean;
 	password_is_valid_msg: string;
 	subscription: Subscription = new Subscription;
-	@Output() host_created = new EventEmitter();
 	form_fields_view: any;
 	back_btn: string;
-
 	is_search: boolean = false;
 	paging: any;
 	loading_search: boolean = false;
@@ -55,16 +56,7 @@ export class NewHostUserComponent implements OnInit {
 
 	ngOnInit() {
 
-		const roleId = this._auth.current_user_value.role_id;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.back_btn = '/dealer/users/create-user';
-		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator){
-			this.back_btn = '/administrator/users/create-user';
-		} else if (roleId === subDealerRole) {
-			this.back_btn = '/sub-dealer/users/create-user';
-		}
+		this.back_btn = `${this.currentRole}/users/create-user`;
 
 		this.new_host_form = this._form.group(
 			{
@@ -193,6 +185,8 @@ export class NewHostUserComponent implements OnInit {
 		)
 		
 		this.getHostPlaces(1);
+		this.setAutocompleteParams();
+
 	}
 
 	ngOnDestroy() {
@@ -241,7 +235,7 @@ export class NewHostUserComponent implements OnInit {
 										} else {
 											this.hosts.push(i)
 										}
-										this.hosts_data.push(i)
+										this.hosts_data.push(i);
 									}
 								)
 								this.paging = data.paging
@@ -385,5 +379,21 @@ export class NewHostUserComponent implements OnInit {
 			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 			this._router.navigate([`/${route}/users/`]);
 		})
+	}
+
+	private setAutocompleteParams() {
+
+		let params = { search: 'hostName', primary: 'hostName' };
+
+		if (this.currentRole === 'dealer') {
+			params = { search: 'name', primary: 'name' };
+		}
+
+		this.keywords = params;
+
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }
