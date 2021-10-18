@@ -5,6 +5,7 @@ import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { MatDialog } from '@angular/material';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { environment } from '../../../../environments/environment';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
@@ -43,9 +44,11 @@ export class HttpErrorInterceptor implements HttpInterceptor {
     }
 
     private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
-         if (token) {
-            return request.clone({setHeaders: {Authorization: `Bearer ${token}`}});
-         }
+        // added url checker 
+        if (token && request.url.includes(environment.base_uri)) {
+          return request.clone({setHeaders: {Authorization: `Bearer ${token}`}});
+        }
+
         return request;
     }
 
