@@ -193,11 +193,11 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					);
 
                     //Additional Checking for video conversion duplicate
-                    // if(e.originalFile.type.includes("video")) {
-                    //     var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
-                    //     temp = temp + ".webm"
-                    //     e.originalFile.name = temp;
-                    // }
+                    if(e.originalFile.type.includes("video")) {
+                        var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
+                        temp = temp + ".webm"
+                        e.originalFile.name = temp;
+                    }
 
                     e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf("."));
 					if(!this.is_dealer) {
