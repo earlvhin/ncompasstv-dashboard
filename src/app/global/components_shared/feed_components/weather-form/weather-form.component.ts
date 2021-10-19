@@ -86,26 +86,35 @@ export class WeatherFormComponent implements OnInit {
 			required: false
 		},
 		{
+			label: 'Days Font Color',
+			form_control_name: 'daysFontColor',
+			type: 'text',
+			width: 'col-lg-4', 
+			viewType: 'colorpicker',
+			colorValue: '',
+			required: false
+		},
+		{
+			label: 'Font Family',
+			form_control_name: 'fontFamily',
+			type: 'text',
+			width: 'col-lg-4', 
+			viewType: 'select',
+			options: this.font_family,
+			required: false
+		},
+		{
 			label: 'Header Image Size in Pixels',
 			form_control_name: 'headerImageSize',
 			type: 'number',
-			width: 'col-lg-4', 
+			width: 'col-lg-3', 
 			required: false
 		},
 		{
 			label: 'Footer Image Size in Pixels',
 			form_control_name: 'footerImageSize',
 			type: 'number',
-			width: 'col-lg-4', 
-			required: false
-		},
-		{
-			label: 'Days Font Color',
-			form_control_name: 'daysFontColor',
-			type: 'text',
 			width: 'col-lg-3', 
-			viewType: 'colorpicker',
-			colorValue: '',
 			required: false
 		},
 		{
@@ -113,15 +122,6 @@ export class WeatherFormComponent implements OnInit {
 			form_control_name: 'numberDays',
 			type: 'number',
 			width: 'col-lg-3', 
-			required: false
-		},
-		{
-			label: 'Font Family',
-			form_control_name: 'fontFamily',
-			type: 'text',
-			width: 'col-lg-3', 
-			viewType: 'select',
-			options: this.font_family,
 			required: false
 		},
 		{
