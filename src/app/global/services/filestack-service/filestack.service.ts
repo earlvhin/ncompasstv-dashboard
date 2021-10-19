@@ -28,7 +28,8 @@ export class FilestackService {
 			let originalName = data.filename;
 
 			this.subscription.add(
-				this._http.get<any>(`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:h264,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`).subscribe(
+				this._http.get<any>(`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`)
+				.subscribe(
 					data => {
 						resolve(data);
 					},
@@ -50,7 +51,8 @@ export class FilestackService {
 	
 				// Change mp4 filetype/filename to webm
 				if (file.mimetype === 'video/mp4') {
-					filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
+					filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.webm`;
+					// filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
 
 					let convert_data = await this.convert_videos(file);
 
