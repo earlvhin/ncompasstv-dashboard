@@ -1124,6 +1124,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				
 				if (c.fileType === 'webm' || c.fileType === 'mp4') {
 					fileThumbnailUrl = this.renameWebmThumb(c.url)
+				} else if (c.fileType === 'feed') {
+					fileThumbnailUrl = c.thumbnail + c.url 
 				} else {
 					fileThumbnailUrl = c.previewThumbnail || c.thumbnail
 				}
