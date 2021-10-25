@@ -151,6 +151,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	// No_export: Dont Include to Export
 	host_table_col = [ 
 		{ name: '#', sortable: false, no_export: true},
+        { name: 'Dealer Name', sortable: false, key: 'businessName', hidden: true, no_show: true},
 		{ name: 'Host Name', sortable: true, column:'Name', key: 'name'},
 		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
 		{ name: 'City', sortable: true, column:'City', key: 'city'},
@@ -1008,6 +1009,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						data => {
 							this.hosts_to_export = data.paging.entities;
 							this.hosts_to_export.forEach((item, i) => {
+                                this.modifyItem(item, tab);
 								this.worksheet.addRow(item).font ={
 									bold: false
 								};
@@ -1053,7 +1055,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
 				item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
 				break;
-		}	
+            case 'Hosts':
+                item.businessName = this.dealer_user_data.businessName;
+                break;
+        }	
 	}
 
     getZoneHours(data) {
