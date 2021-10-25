@@ -48,3 +48,6 @@ testem.log
 Thumbs.db
 .vscode/settings.json
 debug.log
+
+# Local Environment
+src/environments/environment.local.ts
