@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 import { Subscription } from 'rxjs';
 
 import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';

@@ -2,7 +2,7 @@ import { Component, OnInit, Input, EventEmitter, OnDestroy, ElementRef } from '@
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Observable, Subject } from 'rxjs';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 
 @Component({
 	selector: 'app-data-graph',
@@ -100,9 +100,9 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 			)
 		}
 
-		Chart.defaults.global.defaultFontFamily = 'Poppins';
-		Chart.defaults.global.defaultFontSize = 12;
-		Chart.defaults.global.defaultFontStyle = '600';
+		// Chart.defaults.global.defaultFontFamily = 'Poppins';
+		// Chart.defaults.global.defaultFontSize = 12;
+		// Chart.defaults.global.defaultFontStyle = '600';
 
 		if (this.canvas) {
 			this.chart_initiated = true;
@@ -125,62 +125,71 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 		
 				// Configuration options go here
 				options: {   
-					legend: { display: false },
+					
 					responsive: true,
 					maintainAspectRatio: false,
-					showAllTooltips: true,
-					title: {
-						display: false,
-						text: 'Stats Summary',
-						fontSize: 16,
-						fontStyle: '500'
-					},
 					layout: {
 						padding: {
 							top: 40
 						}
 					},
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {enabled: true},
+                        title: {
+                            display: false,
+                            text: 'Stats Summary',
+                            font: {
+                                size: 16,
+                                style: 'normal'
+                            },
+                        },
+                    },
 					scales: {
-						xAxes: [{
+						x: {
 							ticks: {
-								fontSize: 10
+								font: {
+                                    size: 10
+                                }
 							}
-						}],
-						yAxes: [{
+                        },
+						y: {
 							ticks: {
 								precision: 0,
-								fontSize: 10
-							}
-						}]
-					},
-					plugins: {
-						datalabels: {
-							backgroundColor:  'rgb(72, 116, 15)',
-							borderRadius: 100,
-							color: '#ffff',
-							anchor: 'end',
-							align: 'center',
-							formatter: Math.round,
-							padding: {
-								left: 7,
-								right: 7,
-								top: 5,
-								bottom: 2
-							},
-							font: {
-								size: 9
+								font:{
+                                    size: 10
+                                }
 							}
 						}
-					}
+					},
+					// data: {
+					// 	datasets:,
+					// 		backgroundColor:  'rgb(72, 116, 15)',
+					// 		borderRadius: 100,
+					// 		color: '#ffff',
+					// 		anchor: 'end',
+					// 		align: 'center',
+					// 		formatter: Math.round,
+					// 		padding: {
+					// 			left: 7,
+					// 			right: 7,
+					// 			top: 5,
+					// 			bottom: 2
+					// 		},
+					// 		font: {
+					// 			size: 9
+					// 		}
+					// 	}
+					// }
 				}
 			});
 
 			//For Resource Logs
 			if(this.date_format === 'dateRange')
 			{
-				this.chart.options.plugins.datalabels.formatter = function(value, ctx) {
-						return Math.round(value) + '%'
-				}
+				// this.chart.options.plugins.legend.formatter = function(value, ctx) {
+				// 		return Math.round(value) + '%'
+				// }
 				this.chart.update();
 			}
 				

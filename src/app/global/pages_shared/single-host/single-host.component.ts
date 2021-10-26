@@ -337,7 +337,7 @@ export class SingleHostComponent implements OnInit {
 					total_ads: totalAd,
 					total_ads_label: 'Ads',
 					total_menu: totalMenu,
-					total_menu_label: 'Menus',
+					total_menu_label: 'Menu',
 					total_closed: totalClosed,
 					total_closed_label: 'Closed'
 				}
