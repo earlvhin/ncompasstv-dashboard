@@ -3,17 +3,16 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { UnassignHostLicenseComponent } from '../../components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { environment } from '../../../../environments/environment';
-import { CustomFields, FieldGroupFields } from '../../models/host-custom-field-group';
-
+import { environment } from 'src/environments/environment';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, API_LICENSE, UI_HOST_LICENSE, UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { takeUntil } from 'rxjs/operators';
+import { API_SINGLE_HOST, API_LICENSE, UI_HOST_LICENSE, HOST_LICENSE_STATISTICS, UI_ROLE_DEFINITION, 
+	CustomFields, FieldGroupFields } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-host',
@@ -35,7 +34,7 @@ export class SingleHostComponent implements OnInit {
 	host_license_api: API_LICENSE[];
 	host_data: API_SINGLE_HOST;
 	host_license: UI_HOST_LICENSE[] = [];
-	host_license_count: any;
+	host_license_count: HOST_LICENSE_STATISTICS;
 	host_fields: CustomFields[] = [];
 	host_field_title: string;
 	img: string = "assets/media_files/admin-icon.png";
@@ -51,7 +50,6 @@ export class SingleHostComponent implements OnInit {
 	no_case: boolean = true;
 	pi_updating: boolean;
 	single_host_data: any;
-	subscription: Subscription = new Subscription();
 	update_btn: string = "Update System and Restart";
 
 	host_license_table_col = [
@@ -108,14 +106,13 @@ export class SingleHostComponent implements OnInit {
 			this.is_administrator = true;
 		}
 
-		this.subscription.add(
-			this._params.paramMap.subscribe(
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				() => {
 					this.host_id = this._params.snapshot.params.data;
 					this.getLicenseByHostId(this._params.snapshot.params.data);
 				}
-			)
-		);
+			);
 			
 		this.getHostById();
 
@@ -128,52 +125,45 @@ export class SingleHostComponent implements OnInit {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-		this.subscription.unsubscribe();
 		this.business_hours_update_sub.unsubscribe();
 		this._socket.disconnect();
 	}
 
 	getHostFields(): void {
 
-		this.subscription.add(
-			this._host.get_fields().subscribe(
-				response => {
-					this.host_fields = response.paging.entities;
-				}, 
+		this._host.get_fields().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => this.host_fields = response.paging.entities, 
 				error => console.log('Error retrieving host fields', error)
-			)
-		);
+			);
 
 	}
 
 	getFieldGroup(id: string, title: string) {
 
-		this.subscription.add(
-			this._host.get_field_by_id(id)
-				.subscribe(
-					(response: any) => {
-						this.host_field_title = title;
-						this.field_group_fields = response.fields;
-					},
-					error => console.log('Error retrieving host field by id', error)
-				)
-		);
+		this._host.get_field_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: any) => {
+					this.host_field_title = title;
+					this.field_group_fields = response.fields;
+				},
+				error => console.log('Error retrieving host field by id', error)
+			);
 
 	}
 
 	openAssignLicenseModal(): void {
-		let dialogRef = this._dialog.open(AssignLicenseModalComponent, {
+
+		const dialogRef = this._dialog.open(AssignLicenseModalComponent, {
 			width: '500px',
 			data: this.single_host_data
-		})
+		});
 
 		dialogRef.afterClosed().subscribe(
 			data => {
-				if (data) {
-					this.ngOnInit();
-				}
+				if (data) this.ngOnInit()
 			}
-		)
+		);
 	}
 
 	toggledHours(e) {
@@ -201,9 +191,11 @@ export class SingleHostComponent implements OnInit {
 	getLicenseByHostId(id) {
 		this.host_license = [];
 		this.no_record = false;
-		this.subscription.add(
-			this._license.get_license_by_host_id(id).subscribe(
+
+		this._license.get_license_by_host_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
+
 					if(!data.message) {
 						// If not error
 						this.host_license_api = data;
@@ -214,9 +206,9 @@ export class SingleHostComponent implements OnInit {
 						this.no_record = true;
 						this.host_license = data;
 					}
-				}
-			)
-		);
+				},
+				error => console.log('Error retrieving licenses by host ID', error)
+			);
 	}
 
 	hostLicense_mapToUIFormat(data:any) {
@@ -320,30 +312,39 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	getLicenseTotalByHostIdDealerId() {
-	let dealerId = this.single_host_data.dealer_id;
-	let hostId = this.single_host_data.host_id;
-	this.subscription.add(
+
+		const dealerId = this.single_host_data.dealer_id;
+		const hostId = this.single_host_data.host_id;
+
 		this._license.api_get_licenses_total_by_host_dealer(dealerId, hostId).subscribe(
-			(data: any) => {
-				if(data)
-				{
-					this.host_license_count = {
-						total_count: data.total,
-						total_count_label: 'License(s)',
-						active_value: data.totalActive,
-						active_value_label: 'Active',
-						inactive_value: data.totalInActive,
-						inactive_value_label: 'Inactive',
-						online_value: data.totalOnline,
-						online_value_label: 'Online',
-						offline_value: data.totalOffline,
-						offline_value_label: 'Offline'
-					}
+			response => {
+
+				if (!response) return;
+			
+				const { total, totalActive, totalInActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed } = response;
+
+				this.host_license_count = {
+					total_count: total,
+					total_count_label: 'License(s)',
+					active_value: totalActive,
+					active_value_label: 'Active',
+					inactive_value: totalInActive,
+					inactive_value_label: 'Inactive',
+					online_value: totalOnline,
+					online_value_label: 'Online',
+					offline_value: totalOffline,
+					offline_value_label: 'Offline',
+					total_ads: totalAd,
+					total_ads_label: 'Ads',
+					total_menu: totalMenu,
+					total_menu_label: 'Menus',
+					total_closed: totalClosed,
+					total_closed_label: 'Closed'
 				}
+
 			},
 			error => console.log('Error retrieving total license count', error)
-		)
-	);
+		);
 	}
 
 	private getHostById() {

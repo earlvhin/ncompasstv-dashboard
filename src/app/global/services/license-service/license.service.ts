@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { API_FILTERS, API_LICENSE, PAGING } from 'src/app/global/models';
+import { API_FILTERS, API_LICENSE, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -78,7 +78,7 @@ export class LicenseService {
 	api_get_licenses_total_by_host_dealer(dealerId, hostId) {
 		const base = `${this.baseUri}${this.getters.api_get_licenses_total}`;
 		const endpoint = `${base}?dealerid=${dealerId}&hostid=${hostId}`;
-		return this._http.get<any>(endpoint, this.httpOptions);
+		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
 	} 
 	
     get_license_by_screen_id(id, page) {

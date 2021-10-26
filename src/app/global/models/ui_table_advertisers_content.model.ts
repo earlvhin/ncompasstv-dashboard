@@ -6,10 +6,7 @@ export class UI_TABLE_ADVERTISERS_CONTENT {
     playing_where: object;
     uploaded_by: object;
 
-    constructor(
-        id: object, index:object, name: object, 
-        type: object, playing_where: object, uploaded_by: object
-    ) {
+    constructor(id: object, index:object, name: object, type: object, playing_where: object, uploaded_by: object) {
         this.id = id;
         this.index = index;
         this.name = name;
