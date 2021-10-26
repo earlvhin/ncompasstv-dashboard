@@ -1,11 +1,10 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common'
-import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
-import { UI_TABLE_ADVERTISERS_CONTENT } from '../../models/ui_table_advertisers_content.model';
-
+import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT } from 'src/app/global/models';
 import { AdvertiserService, ContentService, AuthService, HelperService } from 'src/app/global/services';
 
 @Component({
@@ -25,21 +24,14 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	is_initial_load = true;
 	is_view_only = false;
 	selected_index: number;
-	subscription: Subscription = new Subscription;
-	
-	content_table_col = [
-		'#',
-		'Name',
-		'Type',
-		'Playing Where',
-		'Uploaded By'
-	];
+	table_columns = [ '#', 'Name', 'Type', 'Upload Date', 'Uploaded By' ];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _advertiser: AdvertiserService,
 		private _auth: AuthService,
+		private _date: DatePipe,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _content: ContentService,
@@ -49,8 +41,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 
-		this._params.paramMap
-			.pipe(takeUntil(this._unsubscribe))
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
 					this.advertiser_id = this._params.snapshot.params.data;
@@ -59,14 +50,9 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 				}
 			);
 
-		this._params.queryParams
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					this.selected_index = data.tab;
-				}
-			);
+		this._params.queryParams.pipe(takeUntil(this._unsubscribe)).subscribe(data => this.selected_index = data.tab);
 	}
+
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
@@ -94,34 +80,45 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 
 	}
 
-	getContents(id: string): void {
+	getContents(id: string) {
+		
 		this._content.get_content_by_advertiser_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
-					if (response.message) return;
+				(response: API_CONTENT[] | { message: string }) => {
+					this.content_data = response;
+					if (!Array.isArray(response)) return;
+					const data = response as API_CONTENT[];
 					this.array_to_preview = response;
-					this.content_data = this.contentTable_mapToUI(response);
+					this.content_data = this.mapContentsToTableUI(data);
 				},
 				error => console.log('Error retrieving advertiser contents', error)
 			);
+
 	}
 
-	private contentTable_mapToUI(data: any[]): UI_TABLE_ADVERTISERS_CONTENT[] {
+	private mapContentsToTableUI(contents: API_CONTENT[]): UI_TABLE_ADVERTISERS_CONTENT[] {
 		let count = 1;
 
-		return data.map(
-			h => {
-				return new UI_TABLE_ADVERTISERS_CONTENT(
-					{ value: h.advertiserId, link: null , editable: false, hidden: true},
-					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: h.fileName, link: null , editable: false, hidden: false},
-					{ value: h.fileType == 'jpeg' || h.fileType == 'jfif' || h.fileType == 'jpg' || h.fileType == 'png' ? 'Image' : 'Video', link: null , editable: false, hidden: false},
-					{ value: h.playing_where ? h.playing_where : '--', link: null , editable: false, hidden: false},
-					{ value:h.createdByName ? h.createdByName : '--', link: null , editable: false, hidden: false},
-				)
+		return contents.map(
+			content => {
+				return {
+					id: { value: content.advertiserId, link: null , editable: false, hidden: true} ,
+					index: { value: count++, link: null , editable: false, hidden: false },
+					name: { value: this.parseFileName(content.fileName), link: null , editable: false, hidden: false },
+					type: { value: content.fileType == 'jpeg' || content.fileType == 'jfif' || content.fileType == 'jpg' || content.fileType == 'png' ? 'Image' : 'Video', link: null , editable: false, hidden: false },
+					uploadDate: { value: this._date.transform(content.dateCreated, 'MMMM d, y') },
+					uploadedBy: { value: content.createdByName ? content.createdByName : '--', link: null , editable: false, hidden: false },
+				}
 			}
 		);
+	}
+
+	private parseFileName(name: string) {
+		if (name.split('_').length === 1) return name;
+		const segments = name.split('_');
+		segments.splice(0, 1);
+		return segments.join('');
 	}
 
 	protected get currentRole() {

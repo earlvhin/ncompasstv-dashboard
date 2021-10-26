@@ -46,7 +46,6 @@ export class AdvertisersComponent implements OnInit {
 		this.subscription.add(
 			this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
 				data => {
-					console.log(data)
 					this.advertiser_stats = {
 						basis: data.total,
 						basis_label: 'Advertiser(s)',
