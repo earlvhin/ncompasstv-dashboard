@@ -382,24 +382,26 @@ export class ContentsTabComponent implements OnInit {
                         header.push({ header: this.content_metrics_table_column[key].name, key: this.content_metrics_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
                     }
                 });
-                const first_column = ['','Total Count','Total Duration'];
+                const first_column = ['Filename', this.selected_content_name];
                 this.worksheet.columns = header;
-                this.worksheet.duplicateRow(1, true);
+                // this.worksheet.duplicateRow(1, true);
                 this.worksheet.getRow(1).values = [];
                 this.worksheet.getRow(1).values = first_column;
-                this.worksheet.getRow(1).height = 25;
-                this.worksheet.duplicateRow(1, true);
                 this.worksheet.getRow(2).values = [];
-                const second_column = ['',this.selected_content_count,this.selected_content_duration];
+                const second_column = ['','Total Count','Total Duration'];
                 this.worksheet.getRow(2).values = second_column;
                 this.worksheet.getRow(2).height = 20;
+                const third_column = ['',this.selected_content_count,this.selected_content_duration];
+                this.worksheet.getRow(3).values = third_column;
+                this.worksheet.getRow(3).height = 20;
                 this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
-                this.worksheet.getRow(1).font =  {
+                this.worksheet.getRow(2).font =  {
                     bold: true,
                     name: 'Arial',
                     size: 11,
                 };
-        
+                this.worksheet.mergeCells('B1:F1');
+                this.worksheet.getCell('B1').alignment = { horizontal: 'left' };
                 this.getContentMetrics();	
                 break;
             default:
