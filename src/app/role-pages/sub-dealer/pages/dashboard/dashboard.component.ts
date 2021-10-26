@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { Subject } from 'rxjs';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 import { takeUntil } from 'rxjs/operators';
 
 import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';

@@ -48,6 +48,8 @@ export class BannerComponent implements OnInit, OnDestroy {
 	show_hours = false;
 	status = '';
 	tags: TAG[];
+    temp_label: any = [];
+    temp_array: any = [];
 	notes: string = '';
 	view = '';
 
@@ -61,7 +63,14 @@ export class BannerComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-
+        if(this.host_license_count) {
+            this.temp_label.push(this.host_license_count.total_ads_label + ": " + this.host_license_count.total_ads);
+            this.temp_label.push(this.host_license_count.total_menu_label+ ": " + this.host_license_count.total_menu);
+            this.temp_label.push(this.host_license_count.total_closed_label+ ": " + this.host_license_count.total_closed);
+            this.temp_array.push(this.host_license_count.total_ads)
+            this.temp_array.push(this.host_license_count.total_menu)
+            this.temp_array.push(this.host_license_count.total_closed)
+        }
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		if (this.host_data) {

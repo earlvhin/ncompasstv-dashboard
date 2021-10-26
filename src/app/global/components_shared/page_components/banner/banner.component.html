@@ -89,9 +89,9 @@
                         </div>
                     </div>
                     
-                    <div class="col-lg-4 license_count" *ngIf="single_host_controls && host_license_count">
+                    <div class="col-lg-6 license_count" *ngIf="single_host_controls && host_license_count">
                         <div>
-                            <h1 style="text-align: center;">
+                            <!-- <h1 style="text-align: center;">
                                 <span class="text-primary font-weight-medium" id="licenseTotalCount">{{host_license_count.total_count}} </span>
                                 <span class="normal-text font-weight-medium">{{host_license_count.total_count_label}} </span>
                             </h1>
@@ -113,7 +113,19 @@
                                     <span class="font-weight-medium mr-2 text-danger">{{host_license_count.offline_value}} </span>
                                     <span class="sm-text font-weight-medium">{{host_license_count.offline_value_label}}</span>
                                 </div>
-                            </h3>
+                            </h3> -->
+                            <mat-card class="h-100 naked-btn">
+                                <app-data-card-graph
+                                [compare_basis]="host_license_count.total_count"
+                                [compare_basis_label]="host_license_count.total_count_label"
+                                [good_value]="host_license_count.online_value"
+                                [good_value_label]="host_license_count.online_value_label"
+                                [bad_value]="host_license_count.offline_value"
+                                [bad_value_label]="host_license_count.offline_value_label"
+                                [label_array]="temp_label"
+                                [value_array]="temp_array">
+                                </app-data-card-graph>
+                            </mat-card>
                         </div>
                     </div>
 

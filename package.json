@@ -35,7 +35,7 @@
         "@sam-1994/ngx-drag-and-drop-grid": "^1.0.0",
         "@types/file-saver": "^2.0.2",
         "angular2-jwt": "^0.2.3",
-        "chart.js": "^2.9.4",
+        "chart.js": "^3.6.0",
         "chartjs-plugin-datalabels": "^0.7.0",
         "exceljs": "^4.2.1",
         "file-saver": "^2.0.5",
