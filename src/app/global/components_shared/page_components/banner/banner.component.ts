@@ -5,14 +5,12 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import * as moment from 'moment-timezone';
 
-import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { AuthService } from '../../../services/auth-service/auth.service';
-import { EditSingleAdvertiserComponent } from '../../../../global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
-import { EditSingleDealerComponent } from '../../../../global/pages_shared/edit-single-dealer/edit-single-dealer.component';
-import { EditSingleHostComponent } from '../../../../global/pages_shared/edit-single-host/edit-single-host.component';
+import { API_DEALER, HOST_LICENSE_STATISTICS, TAG, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { EditSingleAdvertiserComponent } from 'src/app/global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
+import { EditSingleDealerComponent } from 'src/app/global/pages_shared/edit-single-dealer/edit-single-dealer.component';
+import { EditSingleHostComponent } from 'src/app/global/pages_shared/edit-single-host/edit-single-host.component';
 import { InformationModalComponent } from '../information-modal/information-modal.component';
-import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
-import { TAG } from 'src/app/global/models/tag.model';
 
 @Component({
 	selector: 'app-banner',
@@ -31,7 +29,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	@Input() advertiser_data: any;
     @Input() refresh_banner: boolean;
 	@Input() single_host_data: any;
-	@Input() host_license_count: any;
+	@Input() host_license_count: HOST_LICENSE_STATISTICS;
 	@Input() single_advertiser: any;
 	@Input() single_host_controls: boolean;
 	@Input() single_info: Array<any>;
