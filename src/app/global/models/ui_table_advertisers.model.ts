@@ -6,10 +6,8 @@ export class UI_TABLE_ADVERTISERS {
     city: object;
     state: object;
     status: object;
-    constructor(
-        id: object, index: object, name: object, 
-        region: object, city: object, state: object, status: object
-    ) {
+
+    constructor(id?: object, index?: object, name?: object, region?: object, city?: object, state?: object, status?: object) {
         this.id = id;
         this.index = index;
         this.name = name;

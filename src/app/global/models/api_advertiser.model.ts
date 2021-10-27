@@ -1,7 +1,11 @@
-import { TAG } from "./tag.model";
+import { TAG } from './tag.model';
 
 export class API_ADVERTISER {
+	address?: string;
     advertiserId: string;
+	advertiserUser?: any;
+	category?: string;
+	city?: string;
     createdBy: string;
     dateCreated: string;
     dateUpdated: string;
@@ -10,11 +14,15 @@ export class API_ADVERTISER {
     firstName: string;
     id: string;
     lastName: string;
+	latitude?: string;
+	longitude?: string;
     name: string;
+	postalCode?: string;
     region: string;
     state: string;
     status: string;
     updatedBy: string;
     userId: string;
 	tags?: TAG[];
+	totalAssets?: number;
 }

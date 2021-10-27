@@ -1,17 +1,10 @@
-export class UI_TABLE_ADVERTISERS_CONTENT {
-    id: object;
-    index: object;
-    name: object;
-    type: object;
-    playing_where: object;
-    uploaded_by: object;
+import { TABLE_ROW_FORMAT } from '.';
 
-    constructor(id: object, index:object, name: object, type: object, playing_where: object, uploaded_by: object) {
-        this.id = id;
-        this.index = index;
-        this.name = name;
-        this.type = type;
-        this.playing_where = playing_where;
-        this.uploaded_by = uploaded_by;
-    }
+export class UI_TABLE_ADVERTISERS_CONTENT {
+    id?: TABLE_ROW_FORMAT;
+    index?: TABLE_ROW_FORMAT;
+    name?: TABLE_ROW_FORMAT;
+    type?: TABLE_ROW_FORMAT;
+    uploadedBy?: TABLE_ROW_FORMAT;
+	uploadDate?: TABLE_ROW_FORMAT;
 }

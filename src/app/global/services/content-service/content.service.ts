@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map'
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { PlaylistContentSchedule } from '../../models/playlist-content-schedule.model';
-import { CREDITS_TO_SUBMIT } from '../../models';
+import { API_CONTENT, CREDITS_TO_SUBMIT } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
