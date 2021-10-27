@@ -1,16 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { API_HOST } from '../../../../global/models/api_host.model';
-import { API_DEALER } from '../../../../global/models/api_dealer.model';
-import { HostService } from '../../../../global/services/host-service/host.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { UI_DEALER_HOSTS } from '../../../../global/models/ui_dealer_hosts.model';
-import { UserService } from '../../../../global/services/user-service/user.service';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { TitleCasePipe } from '@angular/common'
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { Subscription } from 'rxjs';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver'; 
+
+import { UI_DEALER_HOSTS } from 'src/app/global/models';
+
+import { AuthService, HostService, UserService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
 	selector: 'app-hosts',
@@ -44,7 +41,6 @@ export class HostsComponent implements OnInit {
 		{ name: 'City', key: 'city'},
 		{ name: 'Postal Code', key: 'postalCode'},
 		{ name: 'Number of Licenses', key: 'totalLicenses'},
-		{ name: 'Category', key: 'category'},
 		{ name: 'Status', key: 'status'},
         { name: 'Notes', sortable: false, key: 'notes'},
         { name: 'Others', sortable: false, key: 'others'},
@@ -142,7 +138,7 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.city, link: null, editable: false, hidden: false},
 					{ value: hosts.postalCode, link: null, editable: false, hidden: false},
 					{ value: hosts.totalLicenses, link: null, editable: false, hidden: false},
-					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: false},
+					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: true },
 					{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false},
 					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},
 					{ value: hosts.others ? hosts.others : '--', link: null, editable: false, hidden: false},

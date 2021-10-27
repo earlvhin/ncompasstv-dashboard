@@ -31,6 +31,7 @@ export * from './tag-owner.model';
 export * from './tag-type.model';
 export * from './table-row-format.model';
 export * from './ui_advertiser.model';
+export * from './ui_dealer_hosts.model';
 export * from './ui_content.model';
 export * from './ui_current-user.model';
 export * from './ui_dealer-license.model';
