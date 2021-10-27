@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 import * as io from 'socket.io-client';
 import * as moment from 'moment-timezone';
 
@@ -1057,9 +1057,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			type: 'doughnut',
 			data: { labels, datasets: [{ data, backgroundColor, borderColor, }], },
 			options: {
-				tooltips: { enabled: false },
-				title: { text: title, display: true },
-				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center' },
+                plugins: {
+                    tooltip: { enabled: false },
+                    title: { text: title, display: true },
+                    legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center' },
+                },
 				responsive: false,
 				maintainAspectRatio: false
 			}
@@ -1101,9 +1103,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			type: 'doughnut',
 			data: { labels, datasets: [{ data, backgroundColor, borderColor, }], },
 			options: {
-				tooltips: { enabled: false },
-				title: { text: title, display: true },
-				legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center' },
+                plugins: {
+                    tooltip: { enabled: false },
+                    title: { text: title, display: true },
+                    legend: { labels: { boxWidth: 12 }, position: 'right', align: 'center' },
+                },
 				responsive: false,
 				maintainAspectRatio: false
 			}

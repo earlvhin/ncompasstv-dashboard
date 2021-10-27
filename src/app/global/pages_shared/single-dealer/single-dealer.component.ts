@@ -3,7 +3,7 @@ import { ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, QueryLi
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { Chart } from 'chart.js';
+import Chart from 'chart.js/auto';
 import { take } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
@@ -1213,7 +1213,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		}
 
-		const canvas = document.getElementById(canvasId);
+		const canvas =  <HTMLCanvasElement> document.getElementById(canvasId);
 
 		if (!canvas) return;
 
@@ -1228,8 +1228,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				}],
 			},
 			options: {
-				tooltips: false,
-				title: { text: title, display: true },
+                plugins: {
+                    tooltip: { enabled: false },
+				    title: { text: title, display: true },
+                },
 				responsive: true,
 				maintainAspectRatio: false
 			}

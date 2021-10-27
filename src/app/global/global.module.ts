@@ -36,6 +36,7 @@ import { CreateUserTypeComponent } from './pages_shared/create-user-type/create-
 import { DataCardCompareComponent } from './components_shared/data_components/data-card-compare/data-card-compare.component';
 import { DataCardComponent } from './components_shared/data_components/data-card/data-card.component';
 import { DataCardCountComponent } from './components_shared/data_components/data-card-count/data-card-count.component';
+import { DataCardGraphComponent } from './components_shared/data_components/data-card-graph/data-card-graph.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
@@ -223,6 +224,7 @@ const ngComponents = [
 	DataCardCompareComponent,
 	DataCardComponent,
 	DataCardCountComponent,
+    DataCardGraphComponent,
 	DataGraphComponent,
 	DataTableComponent,
 	DealerContentTabComponent,
@@ -385,7 +387,8 @@ const DIRECTIVES = [
 @NgModule({
 	declarations: [
 		ngComponents,
-		DIRECTIVES
+		DIRECTIVES,
+		DataCardGraphComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
