@@ -1,5 +1,5 @@
-export * from './auth-service/auth.service';
 export * from './advertiser-service/advertiser.service';
+export * from './auth-service/auth.service';
 export * from './content-service/content.service';
 export * from './feed-service/feed.service';
 export * from './form-service/form.service';
