@@ -106,7 +106,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 				return {
 					id: { value: content.advertiserId, link: null , editable: false, hidden: true} ,
 					index: { value: count++, link: null , editable: false, hidden: false },
-					name: { value: this.parseFileName(content.fileName), link: null , editable: false, hidden: false },
+					name: { value: this.parseFileName(content.fileName), link: `/${this.currentRole}/media-library/${content.contentId}`, new_tab_link: true, editable: false, hidden: false },
 					type: { value: content.fileType == 'jpeg' || content.fileType == 'jfif' || content.fileType == 'jpg' || content.fileType == 'png' ? 'Image' : 'Video', link: null , editable: false, hidden: false },
 					uploadDate: { value: this._date.transform(content.dateCreated, 'MMMM d, y') },
 					uploadedBy: { value: content.createdByName ? content.createdByName : '--', link: null , editable: false, hidden: false },
