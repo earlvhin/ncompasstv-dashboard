@@ -422,8 +422,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.searching_advertiser = false;
                     this.paging_data_advertiser = data.paging;
 					if (!data.message) {
-						this.advertiser_data = this.advertiser_mapToUI(data.paging.entities);
-						this.advertiser_filtered_data = this.advertiser_mapToUI(data.paging.entities);
+						const advertisers = this.advertiser_mapToUI(data.paging.entities);
+						this.advertiser_data = [...advertisers];
+						this.advertiser_filtered_data = [...advertisers];
 						this.no_advertisers = false;
 					} else {
 						if (this.search_data_advertiser == "") {

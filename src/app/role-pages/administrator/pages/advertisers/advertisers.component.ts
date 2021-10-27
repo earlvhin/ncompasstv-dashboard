@@ -77,18 +77,15 @@ export class AdvertisersComponent implements OnInit {
 	pageRequested(e) {
 		this.searching = true;
 		this.dealers_with_advertiser = [];
+		
 		this.subscription.add(
 			this._dealer.get_dealers_with_advertiser(e, this.search_data, this.sort_column, this.sort_order).subscribe(
 				data => {
-                    // console.log(JSON.parse(JSON.stringify(data)))
-                    console.log({data:data.dealers})
                     this.paging_data = data.paging;
 					if(data.dealers) {
-                        console.log("HERE")
 						this.dealers_with_advertiser = this.dealer_mapToUI(data.dealers);
 						this.filtered_data = this.dealer_mapToUI(data.dealers);
 					} else {
-                        console.log("THERE")
 						if(this.search_data == "") {
 							this.no_advertiser = true;
 						}

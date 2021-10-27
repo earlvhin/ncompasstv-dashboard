@@ -5,7 +5,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT } from 'src/app/global/models';
-import { AdvertiserService, ContentService, AuthService, HelperService } from 'src/app/global/services';
+import { AdvertiserService, ContentService, HelperService } from 'src/app/global/services';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-single-advertiser',
