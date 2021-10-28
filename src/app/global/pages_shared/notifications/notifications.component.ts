@@ -18,6 +18,7 @@ export class NotificationsComponent implements OnInit {
 	is_dealer: boolean;
 	route: string;
 	page: number = 1;
+	all_unresolved: boolean = false;
 
 	constructor(
 		private _auth: AuthService,
@@ -56,6 +57,40 @@ export class NotificationsComponent implements OnInit {
 		)
 	}
 
+	public updateAllNotifStatus() {
+		if (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer') {
+		this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, 1, 0).subscribe(
+				(data: any) => {
+					this.notification_items = [];
+					this.notification_items.push(...data.entities);
+					this.notification_items.forEach(notif => {
+						notif.isOpened = 1;
+					});
+					this._notification.updateNotificationStatusByDealerId(this.currentUser.roleInfo.dealerId).subscribe(
+					() => {
+						this.all_unresolved = false;
+					});					
+				}
+			);
+		}
+
+		if (this.currentRole === 'administrator') {
+			this._notification.getAll(1, 0).subscribe(
+				(data: any) => {
+					this.notification_items = [];
+					this.notification_items.push(...data.entities);
+					this.notification_items.forEach(notif => {
+						notif.isOpened = 1;
+					});
+					this._notification.updateAllNotificationStatus().subscribe(
+					() => {
+						this.all_unresolved = false;
+					});	
+				}
+			)
+		}
+	}
+
 	public getNotifications(page?: boolean) {
 		this.getting_notification_data = true;
 		
@@ -65,7 +100,10 @@ export class NotificationsComponent implements OnInit {
 				(data: any) => {
 					this.getting_notification_data = false;
 					this.notifications = data;
-					this.notification_items.push(...data.entities)
+					this.notification_items.push(...data.entities);
+					if(this.notifications.entities.length > 0){
+						this.all_unresolved = true;
+					}
 				}
 			);
 		}
@@ -76,7 +114,10 @@ export class NotificationsComponent implements OnInit {
 				(data: any) => {
 					this.getting_notification_data = false;
 					this.notifications = data;
-					this.notification_items.push(...data.entities)
+					this.notification_items.push(...data.entities);
+					if(this.notifications.entities.length > 0){
+						this.all_unresolved = true;
+					}
 				}
 			)
 		}

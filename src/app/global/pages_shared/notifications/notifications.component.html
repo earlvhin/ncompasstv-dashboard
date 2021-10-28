@@ -4,7 +4,8 @@
             <mat-card class="p-4">
                 <h3 class="mb-0">Notifications</h3>
                 <p class="sm-text">All unresolved offline licenses notification. Click "Mark as Resolved" to hide resolved issues.</p>
-                
+                <button class="mark-as-resolved" *ngIf="all_unresolved" (click)="updateAllNotifStatus()">Mark all as resolved</button>
+
                 <hr class="my-3">
                 
                 <div class="notification-item position-relative" *ngFor="let n of notification_items; let i = index">

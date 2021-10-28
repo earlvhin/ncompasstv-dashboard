@@ -60,6 +60,8 @@ export class LicensesComponent implements OnInit {
     workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+	temp_label: any = [];
+    temp_array: any = [];
 
     filters: any = {
         activated: "",
@@ -337,12 +339,39 @@ export class LicensesComponent implements OnInit {
 						good_value_label: 'Active',
 						bad_value: data.totalInActive,
 						bad_value_label: 'Inactive',
+						ad_value: data.totalAd,
+						ad_value_label: 'Ad',
+						menu_value: data.totalMenu,
+						menu_value_label: 'Menu',
+						closed_value: data.totalClosed,
+						closed_value_label: 'Closed',
+						unassigned_value: data.totalUnassignedScreenCount,
+						unassigned_value_label: 'Unassigned',
 						new_this_week_value: data.newLicensesThisWeek,
 						new_this_week_value_label: 'License(s)',
 						new_this_week_value_description: 'New this week',
 						new_last_week_value: data.newLicensesLastWeek,
 						new_last_week_value_label: 'License(s)',
-						new_last_week_value_description: 'New last week'
+						new_last_week_value_description: 'New last week',
+						this_week_ad_value: data.thisWeekTotalAd,
+						this_week_menu_value: data.thisWeekTotalMenu,
+						this_week_closed_value: data.thisWeekTotalClosed,
+						this_week_unassigned_value: data.thisWeekUnassignedCount,
+						last_week_ad_value: data.lastWeekTotalAd,
+						last_week_menu_value: data.lastWeekTotalMenu,
+						last_week_closed_value: data.lastWeekTotalClosed,
+						last_week_unassigned_value: data.lastWeekUnassignedCount,
+					}
+
+					if(this.licenses_details) {
+					this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);
+					this.temp_label.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.menu_value);
+					this.temp_label.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.closed_value);
+					this.temp_label.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.unassigned_value);
+					this.temp_array.push(this.licenses_details.ad_value);
+					this.temp_array.push(this.licenses_details.menu_value);
+					this.temp_array.push(this.licenses_details.closed_value);
+					this.temp_array.push(this.licenses_details.unassigned_value);
 					}
 				}
 			)

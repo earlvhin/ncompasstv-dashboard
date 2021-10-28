@@ -205,6 +205,8 @@ export const API_ENDPOINTS = {
 		api_update_internet_info: 'license/updateinternetinfo',
 		api_update_news_slide_feed: 'feed/update/news',
 		api_update_notification_status: 'notification/updateNotificationIsOpened?notificationId=',
+		api_update_all_notification_status: 'notification/updateAllNotificationIsOpened',
+		api_update_notification_status_by_dealer: 'notification/updateNotificationIsOpenedByDealerId?dealerId=',
 		api_update_playlist_content: 'playlists/addcontent',
 		api_update_playlist_info: 'playlists/updateplaylistinfo',
 		api_update_screen: 'screen/edit',
