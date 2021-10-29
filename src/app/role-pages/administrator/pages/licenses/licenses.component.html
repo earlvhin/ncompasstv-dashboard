@@ -20,52 +20,53 @@
         <div class="row">
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
-                    <app-data-card-graph *ngIf="licenses_details; else small_loader"
-                    [compare_basis]="licenses_details.basis"
-                    [compare_basis_label]="licenses_details.basis_label"
-                    [good_value]="licenses_details.good_value"
-                    [good_value_label]="licenses_details.good_value_label"
-                    [bad_value]="licenses_details.bad_value"
-                    [bad_value_label]="licenses_details.bad_value_label" 
-                    [label_array]="temp_label"
-                    [value_array]="temp_array">
-                    </app-data-card-graph>
+					<ng-container *ngIf="licenses_details; else small_loader"> 
+						<app-data-card-graph 
+							[id]="'license-statistics'"
+							[compare_basis]="licenses_details.basis"
+							[compare_basis_label]="licenses_details.basis_label"
+							[good_value]="licenses_details.good_value"
+							[good_value_label]="licenses_details.good_value_label"
+							[bad_value]="licenses_details.bad_value"
+							[bad_value_label]="licenses_details.bad_value_label" 
+							[label_array]="temp_label"
+							[value_array]="temp_array">
+						</app-data-card-graph>
+					</ng-container>
                 </mat-card>
             </div>
             <div class="col-12 col-lg">
                 <mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="licenses_details; else small_loader"
-						[data_value]="licenses_details.new_this_week_value"
-						[data_label]="licenses_details.new_this_week_value_label"
-						[data_description]="licenses_details.new_this_week_value_description"
-						[is_this_week]="true"
-						[this_week_ad_value]="licenses_details.this_week_ad_value"
-						[ad_value_label]="licenses_details.ad_value_label"
-						[this_week_menu_value]="licenses_details.this_week_menu_value"
-						[menu_value_label]="licenses_details.menu_value_label"
-						[this_week_closed_value]="licenses_details.this_week_closed_value"
-						[closed_value_label]="licenses_details.closed_value_label"
-						[this_week_unassigned_value]="licenses_details.this_week_unassigned_value"
-						[unassigned_value_label]="licenses_details.unassigned_value_label">
-                    </app-data-card-count>
+					<ng-container *ngIf="licenses_details; else small_loader">
+						<app-data-card-graph
+							[id]="'dealer-statistics'"
+							[compare_basis]="licenses_details.basis"
+							[compare_basis_label]="licenses_details.basis_label"
+							[good_value]="licenses_details.good_value"
+							[good_value_label]="licenses_details.good_value_label"
+							[bad_value]="licenses_details.bad_value"
+							[bad_value_label]="licenses_details.bad_value_label" 
+							[label_array]="temp_label"
+							[value_array]="temp_array">
+						</app-data-card-graph>
+					</ng-container>
                 </mat-card>
             </div>
             <div class="col-12 col-lg">
                 <mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="licenses_details; else small_loader"
-						[data_value]="licenses_details.new_last_week_value"
-						[data_label]="licenses_details.new_last_week_value_label"
-						[data_description]="licenses_details.new_last_week_value_description"
-						[is_last_week]="true"
-						[last_week_ad_value]="licenses_details.last_week_ad_value"
-						[ad_value_label]="licenses_details.ad_value_label"
-						[last_week_menu_value]="licenses_details.last_week_menu_value"
-						[menu_value_label]="licenses_details.menu_value_label"
-						[last_week_closed_value]="licenses_details.last_week_closed_value"
-						[closed_value_label]="licenses_details.closed_value_label"
-						[last_week_unassigned_value]="licenses_details.last_week_unassigned_value"
-						[unassigned_value_label]="licenses_details.unassigned_value_label">
-                    </app-data-card-count>
+                    <ng-container *ngIf="licenses_details; else small_loader">
+						<app-data-card-graph
+							[id]="'host-statistics'"
+							[compare_basis]="licenses_details.basis"
+							[compare_basis_label]="licenses_details.basis_label"
+							[good_value]="licenses_details.good_value"
+							[good_value_label]="licenses_details.good_value_label"
+							[bad_value]="licenses_details.bad_value"
+							[bad_value_label]="licenses_details.bad_value_label" 
+							[label_array]="temp_label"
+							[value_array]="temp_array">
+						</app-data-card-graph>
+					</ng-container>
                 </mat-card>
             </div>
         </div>
@@ -248,6 +249,7 @@
                             </div>
                         </div>
                     </mat-tab>
+
 					<!-- TAGS TAB -->
 					<mat-tab id="tags-view-tab" label="Tags View">
 						<ng-template matTabContent>
@@ -256,6 +258,8 @@
 							</div>	
 						</ng-template>
 					</mat-tab>                    
+
+					<!-- HOSTS TAB -->
                     <mat-tab id="hosts-view-tab" label="Hosts View">
                         <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 3">
                             <div>

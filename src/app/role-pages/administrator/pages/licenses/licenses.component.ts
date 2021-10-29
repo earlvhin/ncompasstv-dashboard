@@ -9,7 +9,7 @@ import * as moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { API_DEALER, API_SINGLE_HOST, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST } from 'src/app/global/models';
+import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 
@@ -363,15 +363,15 @@ export class LicensesComponent implements OnInit {
 						last_week_unassigned_value: data.lastWeekUnassignedCount,
 					}
 
-					if(this.licenses_details) {
-					this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);
-					this.temp_label.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.menu_value);
-					this.temp_label.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.closed_value);
-					this.temp_label.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.unassigned_value);
-					this.temp_array.push(this.licenses_details.ad_value);
-					this.temp_array.push(this.licenses_details.menu_value);
-					this.temp_array.push(this.licenses_details.closed_value);
-					this.temp_array.push(this.licenses_details.unassigned_value);
+					if (this.licenses_details) {
+						this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);
+						this.temp_label.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.menu_value);
+						this.temp_label.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.closed_value);
+						this.temp_label.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.unassigned_value);
+						this.temp_array.push(this.licenses_details.ad_value);
+						this.temp_array.push(this.licenses_details.menu_value);
+						this.temp_array.push(this.licenses_details.closed_value);
+						this.temp_array.push(this.licenses_details.unassigned_value);
 					}
 				}
 			)
