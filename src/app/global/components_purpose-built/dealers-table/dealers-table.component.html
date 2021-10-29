@@ -1,7 +1,39 @@
 <div class="dealer-table">
 	<div *ngIf="!initial_load; else loading">
 		<div class="row" *ngIf="!no_dealer; else no_data">
-			<div class="col-lg-9"></div>
+			<div class="col-lg-9">
+                <!-- <button mat-button mat-raised-button 
+                    class="theme-btn sm-text mr-2 h-45" 
+                    [matMenuTriggerFor]="age">
+                    <span class="button-label">Age</span>
+                    <span class="fas fa-angle-down"></span>
+                </button>
+                <mat-menu #age="matMenu">
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '0')">0-3 months</button>
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '4')">4-9 months</button>
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '10')">Above 10 months</button>
+                </mat-menu>
+                <button mat-button mat-raised-button 
+                    class="theme-btn sm-text mr-2 h-45" 
+                    [matMenuTriggerFor]="inactive">
+                    <span class="button-label">Inactive</span>
+                    <span class="fas fa-angle-down"></span>
+                </button>
+                <mat-menu #inactive="matMenu">
+                    <button mat-menu-item (click)="filterTable('status', '1')">less than 20%</button>
+                    <button mat-menu-item (click)="filterTable('status', '0')">greater than 10%</button>
+                    <button mat-menu-item (click)="filterTable('activated', 'false')">greater than 20%</button>
+                </mat-menu>
+                <button mat-button mat-raised-button 
+                    class="theme-btn sm-text mr-2 h-45" 
+                    [matMenuTriggerFor]="offline">
+                    <span class="button-label">Offline</span>
+                    <span class="fas fa-angle-down"></span>
+                </button>
+                <mat-menu #offline="matMenu">
+                    <button mat-menu-item (click)="filterTable('activated', 'false')">greater than 20%</button>
+                </mat-menu> -->
+            </div>
 			<div class="col-lg-3">
 				<app-search-field id="dealerFieldSearch" *ngIf="!initial_load"
 				[form_title]="'Search Dealer Alias, Business Name, or #Tag'"
