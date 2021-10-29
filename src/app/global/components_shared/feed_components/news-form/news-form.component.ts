@@ -32,12 +32,12 @@ export class NewsFormComponent implements OnInit {
 		{ label: 'Poppins' },
 		{ label: 'Roboto' },
 		{ label: 'Montserrat' }
-	]
+	];
 
 	orientation = [
 		{ label: 'Vertical' },
 		{ label: 'Horizontal' }
-	]
+	];
 
 	news_form: FormGroup;
 
@@ -52,7 +52,8 @@ export class NewsFormComponent implements OnInit {
 			imageUri: '',
 			fileName: '',
 			required: false,
-			api_key_ref: 'backgroundContents'
+			api_key_ref: 'backgroundContents',
+			options: null
 		},
 		{
 			label: 'Background Color',
@@ -63,6 +64,7 @@ export class NewsFormComponent implements OnInit {
 			width: 'col-lg-6', 
 			required: false,
 			value: '#768fb4',
+			options: null
 		},
 		{
 			label: 'Font Color',
@@ -73,6 +75,7 @@ export class NewsFormComponent implements OnInit {
 			width: 'col-lg-3', 
 			required: false,
 			value: '#000000',
+			options: null
 		},
 		{
 			label: 'Font Size',
@@ -81,7 +84,8 @@ export class NewsFormComponent implements OnInit {
 			type: 'number',
 			width: 'col-lg-3', 
 			required: false,
-			value: 44
+			value: 44,
+			options: null
 		},
 		{
 			label: 'Offset Left',
@@ -90,7 +94,8 @@ export class NewsFormComponent implements OnInit {
 			type: 'number',
 			width: 'col-lg-3', 
 			required: false,
-			value: 10
+			value: 10,
+			options: null
 		},
 		{
 			label: 'Offset Top',
@@ -99,7 +104,8 @@ export class NewsFormComponent implements OnInit {
 			type: 'value',
 			width: 'col-lg-3', 
 			required: false,
-			value: 23
+			value: 23,
+			options: null
 		},
 		{
 			label: 'RSS Feed URL',
@@ -107,7 +113,8 @@ export class NewsFormComponent implements OnInit {
 			errorMsg: '',
 			type: 'text',
 			width: 'col-lg-4', 
-			required: false
+			required: false,
+			options: null
 		},
 		{
 			label: 'Results',
@@ -116,7 +123,8 @@ export class NewsFormComponent implements OnInit {
 			type: 'number',
 			width: 'col-lg', 
 			required: false,
-			value: 3
+			value: 3,
+			options: null
 		},
 		{
 			label: 'Transition Time',
@@ -125,7 +133,8 @@ export class NewsFormComponent implements OnInit {
 			type: 'number',
 			width: 'col-lg', 
 			required: false,
-			value: 8
+			value: 8,
+			options: null
 		},
 		{
 			label: 'Loop Cycle',
@@ -134,7 +143,8 @@ export class NewsFormComponent implements OnInit {
 			type: 'number',
 			width: 'col-lg', 
 			required: false,
-			value: 9
+			value: 9,
+			options: null
 		},
 	]
 
