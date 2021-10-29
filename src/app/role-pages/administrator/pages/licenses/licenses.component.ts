@@ -62,6 +62,10 @@ export class LicensesComponent implements OnInit {
 	worksheet: any;
 	temp_label: any = [];
     temp_array: any = [];
+    temp_label_this_week: any = [];
+    temp_array_this_week: any = [];
+    temp_label_last_week: any = [];
+    temp_array_last_week: any = [];
 
     filters: any = {
         activated: "",
@@ -335,6 +339,7 @@ export class LicensesComponent implements OnInit {
 					this.licenses_details = {
 						basis: data.total,
 						basis_label: 'License(s)',
+						basis_sub_label: 'Current Count',
 						good_value: data.totalActive,
 						good_value_label: 'Active',
 						bad_value: data.totalInActive,
@@ -372,6 +377,24 @@ export class LicensesComponent implements OnInit {
 						this.temp_array.push(this.licenses_details.menu_value);
 						this.temp_array.push(this.licenses_details.closed_value);
 						this.temp_array.push(this.licenses_details.unassigned_value);
+
+                        this.temp_label_this_week.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.this_week_ad_value);
+						this.temp_label_this_week.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.this_week_menu_value);
+						this.temp_label_this_week.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.this_week_closed_value);
+						this.temp_label_this_week.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.this_week_unassigned_value);
+						this.temp_array_this_week.push(this.licenses_details.this_week_ad_value);
+						this.temp_array_this_week.push(this.licenses_details.this_week_menu_value);
+						this.temp_array_this_week.push(this.licenses_details.this_week_closed_value);
+						this.temp_array_this_week.push(this.licenses_details.this_week_unassigned_value);
+                        
+                        this.temp_label_last_week.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.last_week_ad_value);
+						this.temp_label_last_week.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.last_week_menu_value);
+						this.temp_label_last_week.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.last_week_closed_value);
+						this.temp_label_last_week.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.last_week_unassigned_value);
+						this.temp_array_last_week.push(this.licenses_details.last_week_ad_value);
+						this.temp_array_last_week.push(this.licenses_details.last_week_menu_value);
+						this.temp_array_last_week.push(this.licenses_details.last_week_closed_value);
+						this.temp_array_last_week.push(this.licenses_details.last_week_unassigned_value);
 					}
 				}
 			)

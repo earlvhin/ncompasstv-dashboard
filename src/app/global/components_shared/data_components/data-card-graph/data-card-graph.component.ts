@@ -13,6 +13,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 
 	@Input() compare_basis: number;
 	@Input() compare_basis_label: string;
+	@Input() compare_basis_sub_label: string;
 	@Input() good_value: number;
 	@Input() good_value_label: string;
 	@Input() bad_value: number;
@@ -33,7 +34,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 
 	has_selected_active = false;
 	has_selected_inactive = false;
-	
+
 	private chart: Chart;
 	protected _unsubscribe = new Subject<void>();
 

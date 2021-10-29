@@ -45,6 +45,13 @@ export class DealersTableComponent implements OnInit {
 		status: ''
 	};
 
+    filters: any = {
+        label_age:"",
+        label_inactive:"",
+        label_offline: "",
+    }
+
+
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -106,6 +113,44 @@ export class DealersTableComponent implements OnInit {
 		this.pageRequested(1);
 
 	}
+
+    filterTable(type: string, min: any) {
+
+        switch(type) {
+            case 'age':
+                // this.filters.status = value;
+                // this.filters.activated = "";
+                // this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                break;
+            case 'inactive':
+                // this.filters.zone = value
+                // this.filters.label_zone = value;
+                break;
+            case 'offline':
+                // this.filters.status = "";
+                // this.filters.activated = value;
+                // this.filters.label_status = 'Inactive';
+                break;
+            default:
+        }
+
+        this.getDealers(1);
+    }
+
+    clearFilter() {
+        this.filters = {
+            activated: "",
+            zone:"",
+            status:"",
+            dealer:'',
+            host:'',
+            label_status:"",
+            label_zone:"",
+            label_dealer: "",
+            label_host: ""
+        }
+        this.getDealers(1);
+    }
 
 	getDealers(page?: number): void {
 		if (page) {
