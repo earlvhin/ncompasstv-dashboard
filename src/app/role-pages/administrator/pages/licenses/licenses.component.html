@@ -25,6 +25,7 @@
 							[id]="'license-statistics'"
 							[compare_basis]="licenses_details.basis"
 							[compare_basis_label]="licenses_details.basis_label"
+							[compare_basis_sub_label]="licenses_details.basis_sub_label"
 							[good_value]="licenses_details.good_value"
 							[good_value_label]="licenses_details.good_value_label"
 							[bad_value]="licenses_details.bad_value"
@@ -40,14 +41,10 @@
 					<ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
 							[id]="'dealer-statistics'"
-							[compare_basis]="licenses_details.basis"
-							[compare_basis_label]="licenses_details.basis_label"
-							[good_value]="licenses_details.good_value"
-							[good_value_label]="licenses_details.good_value_label"
-							[bad_value]="licenses_details.bad_value"
-							[bad_value_label]="licenses_details.bad_value_label" 
-							[label_array]="temp_label"
-							[value_array]="temp_array">
+							[compare_basis]="licenses_details.new_this_week_value"
+							[compare_basis_sub_label]="licenses_details.new_this_week_value_description"
+							[label_array]="temp_label_this_week"
+							[value_array]="temp_array_this_week">
 						</app-data-card-graph>
 					</ng-container>
                 </mat-card>
@@ -57,14 +54,10 @@
                     <ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
 							[id]="'host-statistics'"
-							[compare_basis]="licenses_details.basis"
-							[compare_basis_label]="licenses_details.basis_label"
-							[good_value]="licenses_details.good_value"
-							[good_value_label]="licenses_details.good_value_label"
-							[bad_value]="licenses_details.bad_value"
-							[bad_value_label]="licenses_details.bad_value_label" 
-							[label_array]="temp_label"
-							[value_array]="temp_array">
+							[compare_basis]="licenses_details.new_last_week_value"
+							[compare_basis_sub_label]="licenses_details.new_last_week_value_description"
+							[label_array]="temp_label_last_week"
+							[value_array]="temp_array_last_week">
 						</app-data-card-graph>
 					</ng-container>
                 </mat-card>

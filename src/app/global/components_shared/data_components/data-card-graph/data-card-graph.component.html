@@ -1,14 +1,14 @@
 <div class="h-100 d-flex align-items-center">
 	<div class="p-3 w-100">
         <h4 class="mb-2">
-            <span class="text-dark font-weight-medium">
+            <span class="text-dark font-weight-medium" *ngIf="compare_basis_label">
                 Total {{ compare_basis_label }}
             </span>
         </h4>
         <div class="col-lg-12 p-0 flex">
             <div class="col-lg-3 p-0">
                 <span class="sm-text text-dark">
-                    Current Count
+                    {{ compare_basis_sub_label}}
                 </span>
                 <h2>
                     <span class="text-primary font-weight-medium">
@@ -20,7 +20,7 @@
                 <canvas id="breakdown-{{ id }}" height="150"></canvas>
             </div>
         </div>
-        <div class="col-xs-12 flex">
+        <div class="col-xs-12 flex" *ngIf="good_value && bad_value">
             <div class="col-xs-6 mr-2">
                 <span class="text-primary fas fa-circle mr-2 xsm-text">
                 </span>
