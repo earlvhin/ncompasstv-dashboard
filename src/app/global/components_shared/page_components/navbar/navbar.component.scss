@@ -24,9 +24,9 @@
 }
 
 .notif-count {
-  color: rgb(238, 89, 89);
+  background-color: rgb(238, 89, 89);
+  color: white;
   font-size: 12px;
-  font-weight: bold;
 }
 
 .alert-icon {
@@ -41,9 +41,11 @@
 
 .notif-count {
   position: absolute;
-  bottom: -20px;
-  left: 36%;
-  transform: translate(-36%, 0);
+  top: -7px;
+  left: 19%;
+  padding: 1px 8px;
+  border-radius: 10px;
+  line-height: normal;
 }
 
 .see-all {
