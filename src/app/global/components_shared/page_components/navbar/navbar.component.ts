@@ -21,6 +21,7 @@ export class NavbarComponent implements OnInit {
 	
 	notifications: Notification[];
 	notification_paginated: NotificationsPaginated;
+	notification_count: string;
 	route: string;
 
 	_socket: any;
@@ -69,6 +70,8 @@ export class NavbarComponent implements OnInit {
 			this._notification.getAll().subscribe(
 				(data: any) => {
 					this.notification_paginated = data;
+					this.notification_count = this.notification_paginated.totalEntities > 9 ?
+											  "9+" : this.notification_paginated.totalEntities.toString();
 					this.notifications = data.entities;
 					this.checkNewNotifications();
 				}
@@ -79,6 +82,8 @@ export class NavbarComponent implements OnInit {
 			this._notification.getByDealerId(this.currentUser.roleInfo.dealerId).subscribe(
 				(data:NotificationsPaginated) => {
 					this.notification_paginated = data
+					this.notification_count = this.notification_paginated.totalEntities > 9 ?
+											  "9+" : this.notification_paginated.totalEntities.toString();
 					this.notifications = data.entities;
 					this.checkNewNotifications();
 				}

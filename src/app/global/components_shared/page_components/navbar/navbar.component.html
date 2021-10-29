@@ -8,7 +8,7 @@
 				<button mat-button class="navbar-btn no-border position-relative" [matMenuTriggerFor]="notif">
 					<span class="fas fa-bell mr-2 alert-icon"  [ngClass]="has_alerts ? 'has-alerts' : ''"></span>
 					<span class="fas fa-angle-down"></span>
-					<span class="notif-count">{{ notification_paginated.totalEntities }}</span>
+					<span class="notif-count" *ngIf="notification_paginated.totalEntities > 0">{{ notification_count }}</span>
 				</button>
 				<mat-menu #notif="matMenu" class="mat-menu-custom-width">
 					<div class="notification-panel position-relative" *ngIf="notifications.length > 0; else no_notifications;">
