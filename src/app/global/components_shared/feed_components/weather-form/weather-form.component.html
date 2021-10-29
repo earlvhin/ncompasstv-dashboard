@@ -27,14 +27,13 @@
                 <mat-form-field class="full-width position-relative mb-2" appearance="fill" *ngIf="w.viewType == 'colorpicker'">
                     <mat-label>{{ w.label }}</mat-label>
 
-                    <input
-                    autocomplete="off"
-                    [(colorPicker)]="w.colorValue"
-                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
+                    <input matInput autocomplete="off"
                     formControlName="{{ w.form_control_name }}"
-                    [cpAlphaChannel]="'disabled'"
+                    (colorPickerChange)="colorPicker(w.colorValue, w.form_control_name)"
+                    [(colorPicker)]="w.colorValue"
+                    [type]="w.type"
+                    [cpAlphaChannel]="'enabled'"
                     [cpDisableInput]="true"
-                    matInput [type]="w.type"
                     [value]="w.colorValue || ''"/>
 
                     <div class="color-showcase position-absolute" [style.background]="w.colorValue"></div>

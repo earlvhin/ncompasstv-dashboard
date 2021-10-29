@@ -27,6 +27,7 @@ export class FillerFormComponent implements OnInit {
 
 	filler_settings_form: FormGroup;
 	filler_items: API_CONTENT[] = [];
+
 	filler_fields = [
 		{
 			label: 'Transition Skip',
@@ -36,6 +37,7 @@ export class FillerFormComponent implements OnInit {
 			width: 'col-lg-6', 
 			required: true,
 			value: 2,
+			viewType: null
 		},
 		{
 			label: 'Transition Time in minutes',
@@ -44,7 +46,8 @@ export class FillerFormComponent implements OnInit {
 			colorValue: '',
 			width: 'col-lg-6', 
 			required: true,
-			value: 30
+			value: 30,
+			viewType: null
 		}
 	]
 
