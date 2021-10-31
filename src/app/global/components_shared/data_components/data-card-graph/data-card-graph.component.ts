@@ -34,7 +34,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 
 	has_selected_active = false;
 	has_selected_inactive = false;
-	
+
 	private chart: Chart;
 	protected _unsubscribe = new Subject<void>();
 
