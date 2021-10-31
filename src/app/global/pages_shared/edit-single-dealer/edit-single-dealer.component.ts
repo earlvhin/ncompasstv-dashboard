@@ -44,62 +44,68 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		{
 			label: 'Dealer Alias',
 			control: 'dealer_alias',
-			col: 'col-lg-6'
+			col: 'col-lg-4'
 		},
 		{
 			label: 'Owner Firstname',
 			control: 'owner_f_name',
 			placeholder: 'Ex. John',
-			col: 'col-lg-6 p-0'
+			col: 'col-lg-4 p-0'
 		},
 		{
 			label: 'Owner Lastname',
 			control: 'owner_l_name',
 			placeholder: 'Ex. Doe',
-			col: 'col-lg-6'
+			col: 'col-lg-4'
 		},
 		{
 			label: 'Email Address',
 			control: 'email',
 			placeholder: 'Ex. dealer@mail.com',
-			col: 'col-lg-6 p-0',
+			col: 'col-lg-5',
 			type: 'email'
 		},
 		{
 			label: 'Contact Number',
 			control: 'c_number',
 			placeholder: 'Ex. 0123456789',
-			col: 'col-lg-6'
+			col: 'col-lg-3 p-0'
 		},
 		{
 			label: 'Contact Person',
 			control: 'c_person',
 			placeholder: 'Ex. John Doe',
-			col: 'col-lg-6 p-0'
+			col: 'col-lg-4'
 		},
 		{
 			label: 'Address',
 			control: 'address',
 			placeholder: 'Ex. 123 Lot 14, Blk 9',
-			col: 'col-lg-6'
+			col: 'col-lg-5'
 		},
 		{
 			label: 'City',
 			control: 'city',
 			placeholder: 'Ex. St. Peter',
-			col: 'col-lg-6 p-0',
+			col: 'col-lg-3 p-0',
 		},
 		{
 			label: 'State',
 			control: 'state',
 			placeholder: 'Ex. MO',
-			col: 'col-lg-3',
+			col: 'col-lg-2',
 		},
 		{
 			label: 'Region',
 			control: 'region',
 			placeholder: 'Ex. MW',
-			col: 'col-lg-3',
+			col: 'col-lg-2',
+		},
+        {
+			label: 'Player Count',
+			control: 'c_count',
+			placeholder: 'Ex. 23',
+			col: 'col-lg-2'
 		},
 		{
 			label: 'Status',
@@ -148,6 +154,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		this.f.email.setValue(data.email);
 		this.f.c_number.setValue(data.contactNumber);
 		this.f.c_person.setValue(data.contactPerson);
+		this.f.c_count.setValue(data.playerCount);
 		this.f.address.setValue(data.address);
 		this.f.city.setValue(data.city);
 		this.f.region.setValue(data.region);
@@ -311,6 +318,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			email: ['', Validators.required],
 			c_number: ['', Validators.required],
 			c_person: ['', Validators.required],
+			c_count: [''],
 			address: [''],
 			city: ['', Validators.required],
 			region: ['', Validators.required],
@@ -325,6 +333,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			this._dealer_data.userId,
 			this.f.dealer_id.value,
 			this.f.c_person.value,
+			this.f.c_count.value,
 			this.f.business_name.value,
 			this.f.dealer_alias.value,
 			this.f.email.value,
