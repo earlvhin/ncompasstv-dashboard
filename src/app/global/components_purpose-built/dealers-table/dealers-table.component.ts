@@ -21,7 +21,9 @@ export class DealersTableComponent implements OnInit {
 	dealers_data: UI_TABLE_DEALERS[];
 	no_dealer: boolean = false;
 	filtered_data:  UI_TABLE_DEALERS[] = [];
+    inactive_filter: boolean = false;
 	items_per_page: number = 25;
+    offline_filter: boolean = false;
 	pagination: number;
 	searching: boolean = false;
 	paging_data: any;
@@ -49,6 +51,9 @@ export class DealersTableComponent implements OnInit {
         label_age:"",
         label_inactive:"",
         label_offline: "",
+        percentage:"",
+        percentage_min:"",
+        percentage_max:""
     }
 
 
@@ -114,22 +119,26 @@ export class DealersTableComponent implements OnInit {
 
 	}
 
-    filterTable(type: string, min: any) {
+    filterTable(type: string, min: any, max: any, label?) {
 
         switch(type) {
-            case 'age':
-                // this.filters.status = value;
-                // this.filters.activated = "";
-                // this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+            case 'monthAsDealer':
+                this.filters.label_age = label;
+                this.filterByColumnName(type, min, max);
                 break;
-            case 'inactive':
-                // this.filters.zone = value
-                // this.filters.label_zone = value;
+            case 'inactiveLicensesPercent':
+                this.filters.percentage = type;
+                this.filters.percentage_min = min;
+                this.filters.percentage_max = max;
+                this.filters.label_inactive = label;
+                this.inactive_filter = true;
                 break;
-            case 'offline':
-                // this.filters.status = "";
-                // this.filters.activated = value;
-                // this.filters.label_status = 'Inactive';
+            case 'offlineLicensesPercent':
+                this.filters.percentage = type;
+                this.filters.percentage_min = min;
+                this.filters.percentage_max = max;
+                this.filters.label_offline = label;
+                this.offline_filter = true;
                 break;
             default:
         }
@@ -139,16 +148,15 @@ export class DealersTableComponent implements OnInit {
 
     clearFilter() {
         this.filters = {
-            activated: "",
-            zone:"",
-            status:"",
-            dealer:'',
-            host:'',
-            label_status:"",
-            label_zone:"",
-            label_dealer: "",
-            label_host: ""
+            label_age:"",
+            label_inactive:"",
+            label_offline: "",
+            percentage:"",
+            percentage_min:"",
+            percentage_max:""
         }
+        this.offline_filter = false;
+        this.inactive_filter = false;
         this.getDealers(1);
     }
 
@@ -177,8 +185,11 @@ export class DealersTableComponent implements OnInit {
 		const min = this.selected_filter.min_value;
 		const max = this.selected_filter.max_value;
 		const status = this.selected_filter.status;
+        const percentage_column = this.filters.percentage;
+        const percentage_min = this.filters.percentage_min;
+        const percentage_max = this.filters.percentage_max;
 
-		this._dealer.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status)
+		this._dealer.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {

@@ -10,6 +10,7 @@ import { TitleCasePipe, DatePipe } from '@angular/common';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { environment } from 'src/environments/environment';
+import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
 	selector: 'app-licenses',
@@ -68,6 +69,17 @@ export class LicensesComponent implements OnInit {
         { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 	];
 
+    filters: any = {
+        activated: "",
+        zone:"",
+        status:"",
+        host:"",
+        label_status:"",
+        label_zone:"",
+        label_dealer: "",
+        label_host: ""
+    }
+
 	constructor(
 		private _dialog: MatDialog,
 		private _license: LicenseService,
@@ -89,7 +101,42 @@ export class LicensesComponent implements OnInit {
 
 	filterData(data) {
 		this.filtered_data = data;
-	  }
+	}
+
+    filterTable(type, value) {
+        switch(type) {
+            case 'status':
+                this.filters.status = value
+                this.filters.activated = "";
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                break;
+            case 'zone':
+                this.filters.zone = value
+                this.filters.label_zone = value;
+                break;
+            case 'activated':
+                this.filters.status = "";
+                this.filters.activated = value;
+                this.filters.label_status = 'Inactive';
+                break;
+            default:
+        }
+        this.getLicenses(1);
+    }
+
+    clearFilter() {
+        this.filters = {
+            activated: "",
+            zone:"",
+            status:"",
+            host:"",
+            label_status:"",
+            label_zone:"",
+            label_dealer: "",
+            label_host: ""
+        }
+        this.getLicenses(1);
+    }
 	  
 	getTotalCount(id) {
 		this.subscription.add(
@@ -126,7 +173,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page) {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, '', '', '', '').subscribe(
+			this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
@@ -225,9 +272,33 @@ export class LicensesComponent implements OnInit {
 		this.ngOnInit();
 	}
 
+    sortByUser() {
+		let dialog = this._dialog.open(UserSortModalComponent, {
+			width: '500px',
+            data: {
+                view: 'license',
+                is_dealer: true,
+                dealer_id: this._auth.current_user_value.roleInfo.dealerId,
+                dealer_name: this.dealers_name
+            }
+		})
+
+		dialog.afterClosed().subscribe(
+			data => {
+				if (data) {
+					if(data.host.id) {
+                        this.filters.host = data.host.id;
+                        this.filters.label_host = data.host.name;
+                    }
+                    this.getLicenses(1);
+				}
+			}
+		)
+	}
+
 	getDataForExport(id): void {
 		this.subscription.add(
-			this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, '', '', '', '').subscribe(
+			this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				data => {
                     console.log("DD", data)
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';

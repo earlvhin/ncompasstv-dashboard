@@ -15,4 +15,7 @@ export interface API_FILTERS {
 	filterMin?: any;
 	filterMax?: any;
 	arrangement?: any;
+    filterPerc?: any;
+    filterPerMin?: any;
+    filterPercMax?: any;
 }

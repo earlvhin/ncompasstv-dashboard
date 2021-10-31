@@ -2,37 +2,37 @@
 	<div *ngIf="!initial_load; else loading">
 		<div class="row" *ngIf="!no_dealer; else no_data">
 			<div class="col-lg-9">
-                <!-- <button mat-button mat-raised-button 
+                <button mat-button mat-raised-button 
                     class="theme-btn sm-text mr-2 h-45" 
                     [matMenuTriggerFor]="age">
                     <span class="button-label">Age</span>
                     <span class="fas fa-angle-down"></span>
                 </button>
                 <mat-menu #age="matMenu">
-                    <button mat-menu-item (click)="filterTable('monthAsDealer', '0')">0-3 months</button>
-                    <button mat-menu-item (click)="filterTable('monthAsDealer', '4')">4-9 months</button>
-                    <button mat-menu-item (click)="filterTable('monthAsDealer', '10')">Above 10 months</button>
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '0', '3', '0-3 months')">0-3 months</button>
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">4-9 months</button>
+                    <button mat-menu-item (click)="filterTable('monthAsDealer', '10','','Above 10 months')">Above 10 months</button>
                 </mat-menu>
                 <button mat-button mat-raised-button 
                     class="theme-btn sm-text mr-2 h-45" 
-                    [matMenuTriggerFor]="inactive">
+                    [matMenuTriggerFor]="inactive" [disabled]="offline_filter">
                     <span class="button-label">Inactive</span>
-                    <span class="fas fa-angle-down"></span>
+                    <span class="fas fa-circle text-gray"></span>
                 </button>
                 <mat-menu #inactive="matMenu">
-                    <button mat-menu-item (click)="filterTable('status', '1')">less than 20%</button>
-                    <button mat-menu-item (click)="filterTable('status', '0')">greater than 10%</button>
-                    <button mat-menu-item (click)="filterTable('activated', 'false')">greater than 20%</button>
+                    <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '0', '20', 'less than 20%')">less than 20%</button>
+                    <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '10','', 'greater than 10%')">greater than 10%</button>
+                    <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
                 </mat-menu>
                 <button mat-button mat-raised-button 
                     class="theme-btn sm-text mr-2 h-45" 
-                    [matMenuTriggerFor]="offline">
+                    [matMenuTriggerFor]="offline" [disabled]="inactive_filter">
                     <span class="button-label">Offline</span>
-                    <span class="fas fa-angle-down"></span>
+                    <span class="fas fa-circle text-danger"></span>
                 </button>
                 <mat-menu #offline="matMenu">
-                    <button mat-menu-item (click)="filterTable('activated', 'false')">greater than 20%</button>
-                </mat-menu> -->
+                    <button mat-menu-item (click)="filterTable('offlineLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
+                </mat-menu>
             </div>
 			<div class="col-lg-3">
 				<app-search-field id="dealerFieldSearch" *ngIf="!initial_load"
@@ -46,6 +46,37 @@
                 (reset_search)="getDealers()"
 				></app-search-field>
 			</div>
+
+            <div class="row full-width m-0" *ngIf="filters.label_age || filters.label_inactive || filters.label_offline">
+                <div class="col-lg-12">
+                    <div class="d-flex align-items-center p-2 bg-gray-2" >
+                        <div class="filter-pills">
+                            <div class="filetype-pill pill" *ngIf="filters.label_age">
+                                Age: <strong>{{filters.label_age}}</strong>
+                            </div>
+
+                            <div class="order-pill pill" *ngIf="filters.label_inactive">
+                                Inactive: <strong>{{filters.label_inactive}}</strong>
+                            </div>
+
+                            <div class="dealer-pill pill" *ngIf="filters.label_offline">
+                                Offline: <strong>{{filters.label_offline}}</strong>
+                            </div>
+                        </div>
+                        <div class="control flex-even text-right">
+                            <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                                <span class="button-label">
+                                    Clear Filter
+                                </span>
+                                <span class="fas fa-times ml-2 sm-text"></span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12" *ngIf="!searching">
+                    <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{paging_data.entities.length}}</span> out of <span class="text-danger">{{paging_data.totalEntities}}</span> dealers result.</span>
+                </div>
+            </div>
 
 			<div class="col-lg-12">
 				<ng-container *ngIf="!searching; else loading">

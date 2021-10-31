@@ -54,6 +54,7 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
     userId: string;
     dealerId: string;
     contactPerson: string;
+    playerCount: string;
     businessName: string;
     dealerIdAlias: string;
     email: string;
@@ -64,10 +65,11 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
     state: string;
     updatedBy: string;
 
-    constructor(userId: string, dealerId: string, contactPerson: string, businessName: string, dealerIdAlias: string, email: string, contactNumber: string, address: string, region:string, city:string, state:string, updatedBy: string) {
+    constructor(userId: string, dealerId: string, contactPerson: string, playerCount: string, businessName: string, dealerIdAlias: string, email: string, contactNumber: string, address: string, region:string, city:string, state:string, updatedBy: string) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.contactPerson = contactPerson;
+        this.playerCount = playerCount;
         this.businessName = businessName;
         this.dealerIdAlias = dealerIdAlias;
         this.email = email;
