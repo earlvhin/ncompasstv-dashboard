@@ -788,6 +788,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.current_tab = 'advertisers';
 				break;
 
+			case 3:
+				this.current_tab = 'zone';
+				break;
+
 			default:
 
 				this.current_tab = 'licenses';
@@ -1274,6 +1278,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this._location.path().includes('tab=1');
 	}
 
+	private get isZoneTabOnLoad(): boolean {
+		return this._location.path().includes('tab=3');
+	}
+
 	private destroyCharts(): void {
 		if (this.license_statistics_charts.length <= 0) return;
 		this.license_statistics_charts.forEach(chart => chart.destroy());
@@ -1422,6 +1430,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.current_tab = 'advertisers';
 			return;
 		}
+
+		if (this.isZoneTabOnLoad) {
+			this.current_tab = 'zone';
+			return;
+		}
+
 
 		this.current_tab = 'licenses';
 
