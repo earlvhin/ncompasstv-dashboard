@@ -86,6 +86,11 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 
+	get_dealer_license_zone(key, dealerId, page){
+		const params = this.httpParams({ page, search: key})
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealer_license_zone}${dealerId}`, { ...this.httpOptions, params });
+	}
+
 	get_dealers_with_sort(page: number, search: string, sortColumn: string, sortOrder: string, filter?: string, filterMin?: any, filterMax?: any, status = '') {
 		const filters: API_FILTERS = { page, search, sortColumn, sortOrder, filter, filterMin, filterMax, status };
 		const base = `${this.baseUri}${this.getters.api_get_dealers_with_sort}`;
