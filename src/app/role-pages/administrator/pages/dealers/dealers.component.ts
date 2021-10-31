@@ -29,6 +29,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 		{ name: 'Business Name', key: 'businessName'},
 		{ name: 'Contact Person', key: 'contactPerson'},
 		{ name: 'Age', key: 'monthAsDealer'},
+		{ name: 'Player Count', key: 'playerCount', no_show: true},
 		{ name: 'Total', key: 'totalLicenses'},
 		{ name: 'Inactive', key: 'totalLicensesInactive'},
 		{ name: 'Online', key: 'totalLicensesOnline'},
@@ -81,7 +82,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 
 		});
 
-		const first_column = ['Dealer Alias','Business Name','Contact Person','Age','Licenses','','','', 'Hosts','','', 'Advertisers'];
+		const first_column = ['Dealer Alias','Business Name','Contact Person','Age','Player Count','Licenses','','','', 'Hosts','','', 'Advertisers'];
 		this.worksheet.columns = header;
 		this.worksheet.duplicateRow(1, true);
 		this.worksheet.getRow(1).values = [];
@@ -89,13 +90,14 @@ export class DealersComponent implements OnInit, OnDestroy {
 		this.worksheet.getRow(1).height = 25;
 		this.worksheet.getRow(2).height = 20;
 		this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
-		this.worksheet.mergeCells('E1:H1');
-		this.worksheet.mergeCells('I1:K1');
-		this.worksheet.mergeCells('L1:M1');
+		this.worksheet.mergeCells('F1:I1');
+		this.worksheet.mergeCells('J1:L1');
+		this.worksheet.mergeCells('M1:N1');
 		this.worksheet.mergeCells('A1:A2');
 		this.worksheet.mergeCells('B1:B2');
 		this.worksheet.mergeCells('C1:C2');
 		this.worksheet.mergeCells('D1:D2');
+		this.worksheet.mergeCells('E1:E2');
 
 		this.worksheet.getRow(1).font =  {
 			bold: true,
