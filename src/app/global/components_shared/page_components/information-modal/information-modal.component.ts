@@ -66,7 +66,12 @@ export class InformationModalComponent implements OnInit {
         var sum = 0;
         this.contents.dealers.map(
             i=> {
-                sum = sum + i.totalHosts;
+                if(i.totalHosts) {
+                    sum = sum + i.totalHosts;
+                } else if(i.totalLicenses) {
+                    sum = sum + i.totalLicenses;
+                } else {}
+                
             }
         )
         return sum;

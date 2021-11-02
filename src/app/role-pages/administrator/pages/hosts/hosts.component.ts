@@ -19,11 +19,9 @@ export class HostsComponent implements OnInit {
 	filtered_data: any = [];
     filtered_data_host: UI_HOST_VIEW[] = [];
     generate: boolean = false;
-    height_show: boolean = false;
 	hosts$: Observable<API_HOST[]>;
     hosts_data: UI_HOST_VIEW[] = [];
     hosts_to_export: any = [];
-    hosts_graph_data: any = [];
     initial_load_hosts: boolean = true;
 	no_dealer: boolean = false;
     no_host: boolean;
@@ -51,6 +49,7 @@ export class HostsComponent implements OnInit {
     label_graph_detailed: any = [];
     value_graph_detailed: any = [];
     total: number = 0;
+    total_detailed: number = 0;
     sub_title: string;
     sub_title_detailed: string;
     start_date: string = '';
@@ -59,6 +58,8 @@ export class HostsComponent implements OnInit {
     number_of_months: number = 0;
     average: number = 0;
     sum: number = 0;
+    height_show: boolean = false;
+    hosts_graph_data: any = [];
 
 	// UI Table Column Header
 	host_table_column: string[] = [
@@ -254,7 +255,7 @@ export class HostsComponent implements OnInit {
                         if(this.selected_dealer) {
                             data.hosts.map(
                                 i => {
-                                    this.total = this.total + i.totalHosts;
+                                    this.total_detailed = this.total_detailed + i.totalHosts;
                                     this.hosts_graph_data.push(i)
                                         this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalHosts)
                                         this.value_graph_detailed.push(i.totalHosts)
@@ -283,11 +284,6 @@ export class HostsComponent implements OnInit {
             )
         )
         this.sub_title = "Total Hosts as per year " + new Date().getFullYear();
-    }
-
-    monthDiff(dateFrom, dateTo) {
-        return dateTo.getMonth() - dateFrom.getMonth() + 
-          (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
     }
     
     compareVal( a, b ) {
@@ -440,19 +436,15 @@ export class HostsComponent implements OnInit {
 	}
 
     getStartDate(s_date) {
-        console.log("S DATE", s_date)
         this.start_date = s_date;
     }
     
     getEndDate(e_date) {
-        console.log("E DATE", e_date)
         this.end_date = e_date;
     }
     
     getDealerId(dealer) {
-        console.log("DEALER", dealer)
         this.selected_dealer = dealer;
-        console.log("Completer");
         this.getHostsStatistics();
     }
 }
