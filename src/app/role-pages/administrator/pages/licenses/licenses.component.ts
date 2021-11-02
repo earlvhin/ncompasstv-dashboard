@@ -259,7 +259,7 @@ export class LicensesComponent implements OnInit {
         switch(type) {
             case 'status':
                 this.filters.status = value;
-                this.filters.activated = "";
+                this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
                 break;
             case 'zone':

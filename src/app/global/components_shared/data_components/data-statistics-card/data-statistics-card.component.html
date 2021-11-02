@@ -1,0 +1,32 @@
+<div class="h-100 d-flex align-items-center">
+	<div class="p-3 w-100">
+        <h4 class="mb-2 text-center" *ngIf="!num_of_months; else average">
+            <span class="text-dark font-weight-medium">
+                Total <span class="text-primary">{{ total }}</span>
+            </span>
+        </h4>
+        <ng-template #average>
+            <h4 class="mb-2 text-center">
+                <span class="text-dark font-weight-medium">
+                    <span class="text-primary">{{num_of_months}}</span> Months Average = <span class="text-primary">{{averaging}}</span>
+                </span>
+            </h4>
+        </ng-template>
+        <h6 class="mb-2 text-center">
+            <span class="text-dark">
+                {{sub_title}}
+            </span>
+        </h6>
+        <div class="col-lg-12 p-0 flex">
+            <div class="col-lg-12 p-0">
+                <canvas id="stat-{{ id }}" height="300" width="400"></canvas>
+            </div>
+        </div>
+	</div>
+</div>
+
+<ng-template #loader>
+    <div class="vh-50 d-flex align-items-center justify-content-center">
+        <app-spinner></app-spinner>
+    </div>
+</ng-template>

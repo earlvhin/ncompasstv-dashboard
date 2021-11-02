@@ -1,6 +1,6 @@
 <div class="information-modal">
 	<button class="dismiss" mat-button mat-dialog-title [mat-dialog-close]="true"><mat-icon>close</mat-icon></button>
-	<h1 mat-dialog-title class="title">{{ title }}</h1>
+	<h6 mat-dialog-title class="title">{{ title }}</h6>
 
 	<!-- For textareas -->
 	<div mat-dialog-content *ngIf="isTextArea">
@@ -15,6 +15,19 @@
 					<b>{{ item.day }}: </b> <span *ngFor="let period of item.periods">{{ period }}<br></span>
 				</li>
 			</ul>
+		</div>
+        <div class="breakdown" *ngIf="isGraph">
+            <div class="row m-0">
+                <div class="col-lg-12 text-center">
+                    <span class="font-weight-bold">TOTAL : <span class="text-primary">{{getSum()}}</span></span>
+                </div>
+                <hr class="col-lg-12 p-0">
+                <ul class="col-lg-12 p-0 two-columns">
+                    <li class="md-text" *ngFor="let dealer of contents.dealers; let i = index">
+                        <span class="text-primary">{{ dealer.businessName }}: </span> <span> - {{dealer.totalHosts}}</span>
+                    </li>
+                </ul>
+            </div>
 		</div>
 	</div>
 </div>

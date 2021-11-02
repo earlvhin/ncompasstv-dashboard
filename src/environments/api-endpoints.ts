@@ -66,6 +66,7 @@ export const API_ENDPOINTS = {
 		api_get_host_licenses_by_state_details: 'host/getdealershostslicensesperstate?state=',
 		api_get_host_report: 'host/getaddedreport',
 		api_get_hosts: 'host/getall',
+		api_get_hosts_statistics: 'host/getmonthlytotal',
 		api_get_licenses: 'license/getall',
 		api_get_licenses_by_id: 'license/getlicensebyid?licenseid=',
 		api_get_licenses_by_dealer: 'license/getbydealer',

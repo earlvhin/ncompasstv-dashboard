@@ -60,6 +60,10 @@ export class HostService {
 		return this._http.get<API_HOST>(`${environment.base_uri}${environment.getters.api_get_hosts}`, this.httpOptions).map(data => data.host);
 	}
 	
+    get_host_statistics(dealer?, startDate?, endDate?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
+	}
+	
 	get_host_search(key) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?search='+`${key}`, this.httpOptions);
 	}

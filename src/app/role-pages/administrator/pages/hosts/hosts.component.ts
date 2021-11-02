@@ -18,16 +18,19 @@ export class HostsComponent implements OnInit {
 	dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
 	filtered_data: any = [];
     filtered_data_host: UI_HOST_VIEW[] = [];
+    generate: boolean = false;
+    height_show: boolean = true;
 	hosts$: Observable<API_HOST[]>;
     hosts_data: UI_HOST_VIEW[] = [];
     hosts_to_export: any = [];
+    hosts_graph_data: any = [];
     initial_load_hosts: boolean = true;
 	no_dealer: boolean = false;
     no_host: boolean;
     now: any;
 	subscription: Subscription = new Subscription();
 	tab: any = { tab: 1 };
-	title: string = "Hosts by Dealer";
+	title: string = "Hosts";
 	host_details : any;
 	paging_data: any;
     paging_data_host: any;
@@ -41,6 +44,21 @@ export class HostsComponent implements OnInit {
     workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+
+    //graph
+    label_graph: any = [];
+    value_graph: any = [];
+    label_graph_detailed: any = [];
+    value_graph_detailed: any = [];
+    total: number = 0;
+    sub_title: string;
+    sub_title_detailed: string;
+    start_date: string = '';
+    end_date: string = '';
+    selected_dealer: string = '';
+    number_of_months: number = 0;
+    average: number = 0;
+    sum: number = 0;
 
 	// UI Table Column Header
 	host_table_column: string[] = [
@@ -81,8 +99,10 @@ export class HostsComponent implements OnInit {
 
 	ngOnInit() {
 		// this.pageRequested(1);
+        this.getHostsStatistics();
         this.getHosts(1);
 		this.getHostTotal();
+
 	}
 
 	ngOnDestroy() {
@@ -91,6 +111,10 @@ export class HostsComponent implements OnInit {
 
     ngAfterContentChecked() : void {
         this.cdr.detectChanges();
+    }
+
+    toggleCharts() {
+        this.height_show = !this.height_show;
     }
 
     filterData(e, tab) {
@@ -218,6 +242,69 @@ export class HostsComponent implements OnInit {
             this.getHosts(1)
         }
     }
+
+    getHostsStatistics() {
+        this.subscription.add(
+			this._host.get_host_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
+                data => {
+                    if(data) {                        
+                        var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                        data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+
+                        if(this.selected_dealer) {
+                            //temporary frontend computation for average
+                            var start = new Date(this.start_date);
+                            var last = new Date(this.end_date);
+                            this.number_of_months = this.monthDiff(start,last);
+
+                            data.hosts.map(
+                                i => {
+                                    this.total = this.total + i.totalHosts;
+                                    this.hosts_graph_data.push(i)
+                                        this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalHosts)
+                                        this.value_graph_detailed.push(i.totalHosts)
+                                    this.sum = this.sum + i.totalHosts;
+                                }
+                            )
+
+                            this.average = this.sum / this.number_of_months; 
+                            this.sub_title_detailed = "Found " + data.hosts.length + " months with record as per shown in the graph."
+                            this.generate = true;
+                        } else {
+                            data.hosts.map(
+                                i => {
+                                    this.total = this.total + i.totalHosts;
+                                    this.hosts_graph_data.push(i)
+                                    if(i.year == new Date().getFullYear()) {
+                                        this.label_graph.push(months[i.month - 1] + " " + i.totalHosts)
+                                        this.value_graph.push(i.totalHosts)
+                                    }
+                                    
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+        )
+        this.sub_title = "Total Hosts as per year " + new Date().getFullYear();
+    }
+
+    monthDiff(dateFrom, dateTo) {
+        return dateTo.getMonth() - dateFrom.getMonth() + 
+          (12 * (dateTo.getFullYear() - dateFrom.getFullYear()))
+    }
+    
+    compareVal( a, b ) {
+        if ( a.last_nom < b.last_nom ){
+          return -1;
+        }
+        if ( a.last_nom > b.last_nom ){
+          return 1;
+        }
+        return 0;
+      }
+      
 
     getHosts(page) {
         this.searching_hosts = true;
@@ -356,4 +443,21 @@ export class HostsComponent implements OnInit {
 	private get currentRole() {
 		return this._auth.current_role;
 	}
+
+    getStartDate(s_date) {
+        console.log("S DATE", s_date)
+        this.start_date = s_date;
+    }
+    
+    getEndDate(e_date) {
+        console.log("E DATE", e_date)
+        this.end_date = e_date;
+    }
+    
+    getDealerId(dealer) {
+        console.log("DEALER", dealer)
+        this.selected_dealer = dealer;
+        console.log("Completer");
+        this.getHostsStatistics();
+    }
 }
