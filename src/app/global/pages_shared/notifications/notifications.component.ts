@@ -69,6 +69,8 @@ export class NotificationsComponent implements OnInit {
 					this._notification.updateNotificationStatusByDealerId(this.currentUser.roleInfo.dealerId).subscribe(
 					() => {
 						this.all_unresolved = false;
+						//Reload Page
+						window.location.reload();
 					});					
 				}
 			);
@@ -85,6 +87,8 @@ export class NotificationsComponent implements OnInit {
 					this._notification.updateAllNotificationStatus().subscribe(
 					() => {
 						this.all_unresolved = false;
+						//Reload Page
+						window.location.reload();
 					});	
 				}
 			)
