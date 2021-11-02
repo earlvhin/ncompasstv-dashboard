@@ -54,7 +54,8 @@
 				<hr>
 				<mat-slide-toggle
 				(change)="toggleFullscreen($event)"
-				[checked]="content_data.isFullScreen == 1 ? true : false">
+				[checked]="content_data.isFullScreen == 1 ? true : false"
+				[disabled]="is_child_frequency">
 					<h5 class="mb-0 ml-2">Set to Fullscreen</h5>
 				</mat-slide-toggle>
 			</div>
@@ -66,7 +67,7 @@
 						[(ngModel)]="content_data.duration"
 						(blur)="setDuration()"
 						(change)="setDuration()"
-						min="5" max="100" [disabled]="(content_data.fileType | isvideo)">
+						min="5" max="100" [disabled]="is_child_frequency || (content_data.fileType | isvideo)">
 					<mat-hint align="start"><strong>Applicable to feeds and images only. Min of 5 seconds.</strong> </mat-hint>
 				</mat-form-field>
 			</div>
@@ -162,7 +163,8 @@
 							<div class="ml-2" *ngIf="host_license && host_license.length > 0">
 								<mat-slide-toggle class="sm-text"
 								(change)="toggleAll($event)"
-								[checked]="total_licenses === total_whitelist">
+								[checked]="total_licenses === total_whitelist"
+								[disabled]="is_child_frequency">
 									<strong class="ml-2">Toggle All</strong>
 								</mat-slide-toggle>
 							</div>
@@ -173,7 +175,8 @@
 							[content_data]="selected_data"
 							(blocklist_changes_saved)="saveBlocklistChanges($event)"
 							(blacklist_data_ready)="blackListDataLoaded($event)"
-							(blacklist_count)="getCount($event)">
+							(blacklist_count)="getCount($event)"
+							[is_child_frequency]="is_child_frequency">
 						</app-play-where>
 					</div>
 				</div>

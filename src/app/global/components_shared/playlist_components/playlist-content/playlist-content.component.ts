@@ -32,6 +32,7 @@ export class PlaylistContentComponent implements OnInit {
 	contentTitle: string;
 	frequency: number;
 	isBaseFrequency = false;
+	isChildFrequency = false;
 	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
 
 	protected _unsubscribe: Subject<void> = new Subject();
@@ -53,6 +54,7 @@ export class PlaylistContentComponent implements OnInit {
 
 		if (this.page === 'single-playlist') {
 			this.isBaseFrequency = this.content.frequency === 22 || this.content.frequency === 33;
+			this.isChildFrequency = this.content.frequency === 2 || this.content.frequency === 3;
 			this.frequency = this.setFrequency(this.content.frequency);
 		}
 
@@ -69,7 +71,7 @@ export class PlaylistContentComponent implements OnInit {
 			content: this.content,
 			host_license: this.playlist_host_license,
 			total_contents: this.total_contents,
-            contents_list: this.playlist_contents	
+            contents_list: this.playlist_contents
 		};
 
 		const dialog = this._dialog.open(OptionsComponent, {

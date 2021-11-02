@@ -13,6 +13,7 @@ export class PlaylistHostComponent implements OnInit {
 	@Input() host_licenses: any;
 	@Input() blocklist_data: any;
 	@Input() toggleEvent: Observable<boolean>;
+	@Input() is_child_frequency: boolean;
 	@Output() blocklist_changes = new EventEmitter;
 	@Output() whitelisted = new EventEmitter;
  
