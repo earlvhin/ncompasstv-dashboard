@@ -66,11 +66,13 @@ export class NotificationsComponent implements OnInit {
 					this.notification_items.forEach(notif => {
 						notif.isOpened = 1;
 					});
+
 					this._notification.updateNotificationStatusByDealerId(this.currentUser.roleInfo.dealerId).subscribe(
 					() => {
 						this.all_unresolved = false;
-						//Reload Page
-						window.location.reload();
+
+						/** Fire ResolveAllEvent if request is successful */
+						this._notification.emitResolveAllEvent(true);
 					});					
 				}
 			);
@@ -87,8 +89,9 @@ export class NotificationsComponent implements OnInit {
 					this._notification.updateAllNotificationStatus().subscribe(
 					() => {
 						this.all_unresolved = false;
-						//Reload Page
-						window.location.reload();
+
+						/** Fire ResolveAllEvent if request is successful */
+						this._notification.emitResolveAllEvent(true);
 					});	
 				}
 			)

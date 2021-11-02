@@ -55,10 +55,23 @@ export class NavbarComponent implements OnInit {
 			this.getUserNotifications();
 		}
 
+		this.subscribeToResolvedAllEvent();
 
 		this._socket.on('SS_notify', () => {
 			this.getUserNotifications();
 		})
+	}
+
+	/** Subscribe to the resolve_all_event_emitted$ in NotificationService */
+	subscribeToResolvedAllEvent() {
+		this._notification.resolve_all_event_emitted$.subscribe(
+			data => {
+				if (data) {
+					this.notification_paginated.totalEntities = 0
+					this.has_alerts = false;
+				} 
+			}
+		)
 	}
 
 	logOut() {
