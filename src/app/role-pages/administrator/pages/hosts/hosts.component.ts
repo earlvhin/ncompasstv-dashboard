@@ -19,7 +19,7 @@ export class HostsComponent implements OnInit {
 	filtered_data: any = [];
     filtered_data_host: UI_HOST_VIEW[] = [];
     generate: boolean = false;
-    height_show: boolean = true;
+    height_show: boolean = false;
 	hosts$: Observable<API_HOST[]>;
     hosts_data: UI_HOST_VIEW[] = [];
     hosts_to_export: any = [];
@@ -252,11 +252,6 @@ export class HostsComponent implements OnInit {
                         data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
 
                         if(this.selected_dealer) {
-                            //temporary frontend computation for average
-                            var start = new Date(this.start_date);
-                            var last = new Date(this.end_date);
-                            this.number_of_months = this.monthDiff(start,last);
-
                             data.hosts.map(
                                 i => {
                                     this.total = this.total + i.totalHosts;
@@ -266,7 +261,7 @@ export class HostsComponent implements OnInit {
                                     this.sum = this.sum + i.totalHosts;
                                 }
                             )
-
+                            this.number_of_months = data.hosts.length;
                             this.average = this.sum / this.number_of_months; 
                             this.sub_title_detailed = "Found " + data.hosts.length + " months with record as per shown in the graph."
                             this.generate = true;
