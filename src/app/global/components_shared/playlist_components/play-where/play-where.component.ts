@@ -16,10 +16,12 @@ export class PlayWhereComponent implements OnInit {
 
 	@Input() content_data: UI_PLAYLIST_BLOCKLIST_HOST_LICENSE;
 	@Input() toggleEvent: Observable<void>;
+	@Input() is_child_frequency: boolean;
 	@Output() blocklist_changes_saved = new EventEmitter;
 	@Output() whitelisted = new EventEmitter;
 	@Output() blacklist_data_ready = new EventEmitter;
 	@Output() blacklist_count = new EventEmitter;
+	
 	toggleEvent_child: Subject<void> = new Subject<void>();
 	add_in_blocklist = [];
 	remove_in_blocklist = [];

@@ -30,6 +30,7 @@ import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { isNgTemplate } from '@angular/compiler';
 import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import { UI_DEALER_LICENSE_ZONE } from '../../models/ui_table_dealer-license-zone.model';
 
 
 @Component({
@@ -43,6 +44,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	advertiser_card: any;
 	advertiser_data:any = [];
 	advertiser_filtered_data: any = [];
+	license_zone_data:any = [];
+	license_zone_filtered_data: any = [];
 	apps: any;
 	array_to_delete: any = [];
 	combined_data: API_HOST[];
@@ -69,6 +72,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	initial_load_advertiser = true;
 	initial_load_charts = true;
 	initial_load_license = true;
+	initial_load_zone = true;
 	is_search: boolean = false;
 	license$: Observable<API_LICENSE[]>;
 	licenses: any[];
@@ -91,12 +95,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	no_case: boolean = true;
 	no_hosts = false;
 	no_licenses = false;
+	no_license_zone = false;
 	no_record: boolean = false;
 	now: any;
 	paging: any;
 	paging_data: any;
 	paging_data_advertiser: any;
 	paging_data_license: any;
+	paging_data_zone: any;
 	pi_updating: boolean = false;
 	remote_update_disabled = false;
 	remote_reboot_disabled = false;
@@ -104,9 +110,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	search_data: string = "";
 	search_data_advertiser: string = "";
 	search_data_license: string = "";
+	search_data_license_zone: string = "";
 	searching = false;
 	searching_advertiser = false;
 	searching_license = false;
+	searching_license_zone = false;
 	selected_index: number;
 	show_admin_buttons: boolean = false
 	single_info: Array<any>;
@@ -187,6 +195,27 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
+	];
+
+	license_zone_table_col = [
+		{ name: '#', sortable: false},
+		{ name: 'License ID', sortable: false, column:'LicenseKey'},
+		{ name: 'Alias', sortable: false, column:'LicenseAlias'},
+		{ name: 'Main', sortable: false, column:'MainDuration'},
+		{ name: 'Vertical', sortable: false, column:'VerticalDuration'},
+		{ name: 'Banner', sortable: false, column:'HorizontalDuration'},
+		{ name: 'Background', sortable: false, column:'BackgroundDuration'},
+		{ name: 'Assets', sortable: false, column:'MainTotalAsset'},
+		{ name: 'Hosts', sortable: false, column:'MainTotalHost'},
+		{ name: 'Hosts (%)', sortable: false, column:'MainTotalHostPercentage'},
+		{ name: 'Advertisers', sortable: false, column:'MainTotalAdvertiser'},
+		{ name: 'Advertisers (%)', sortable: false, column:'MainTotalAdvertiserPercentage'},
+		{ name: 'Fillers', sortable: false, column:'MainTotalFiller'},
+		{ name: 'Fillers (%)', sortable: false, column:'MainTotalFillerPercentage'},
+		{ name: 'Feeds', sortable: false, column:'MainTotalFeed'},
+		{ name: 'Feeds (%)', sortable: false, column:'MainTotalFeedPercentage'},
+		{ name: 'Other', sortable: false, column:'MainTotalOther'},
+		{ name: 'Other (%)', sortable: false, column:'MainTotalOtherPercentage'}
 	];
 
     filters: any = {
@@ -270,6 +299,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getLicenseTotalCount(this.dealer_id);
 					this.getAdvertiserTotalCount(this.dealer_id);
 					this.getHostTotalCount(this.dealer_id);
+					this.getDealerLicenseZone(1);
 					this.adminButton();
 					this.getDealerLicenses();
 				},
@@ -384,6 +414,60 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				)
 			}
 		);
+	}
+
+	licenseZoneFilterData(e): void {
+		if (e) {
+			this.search_data_license_zone = e;
+			this.getDealerLicenseZone(1);
+		} else {
+			this.search_data_license_zone = "";
+			this.getDealerLicenseZone(1);
+		}
+	}
+
+	license_zone_mapToUI(data: any[]): UI_DEALER_LICENSE_ZONE[] {
+		let count = this.paging_data_zone.pageStart;
+		return data.map(
+			i => {
+				return new UI_DEALER_LICENSE_ZONE(
+					{ value: i.licenseId, link: null , editable: false, hidden: true},
+					{ value: count++, link: null , editable: false, hidden: false},
+					{ value: i.licenseKey, link: '/administrator/licenses/' + i.licenseId , editable: false, hidden: false},
+					{ value: i.licenseAlias ? i.licenseAlias : '--', link: '/administrator/licenses/' + i.licenseId, editable: false, hidden: false},
+					{ value: this.calculateTime(i.mainDuration), link: null , editable: false, hidden: false},
+					{ value: this.calculateTime(i.verticalDuration), link: null , editable: false, hidden: false},
+					{ value: this.calculateTime(i.horizontalDuration), link: null , editable: false, hidden: false},
+					{ value: this.calculateTime(i.backgroundDuration), link: null , editable: false, hidden: false},
+					{ value: i.mainTotalAsset, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalHost, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalHostPercentage, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalAdvertiser, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalAdvertiserPercentage, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalFiller, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalFillerPercentage, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalFeed, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalFeedPercentage, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalOther, link: null , editable: false, hidden: false},
+					{ value: i.mainTotalOtherPercentage, link: null , editable: false, hidden: false}
+				)
+			}
+		);
+	}
+
+	private calculateTime(duration: number): string {
+		if (duration < 60) {
+			return `${Math.round(duration)}s`;
+		}
+
+		if (duration === 60) {
+			return '1m';
+		}
+
+		const minutes = Math.floor(duration / 60);
+		const seconds = Math.round(duration - minutes * 60);
+
+		return `${minutes}m ${seconds}s`;
 	}
 
 	deactivateLicense(e): void {
@@ -704,6 +788,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.current_tab = 'advertisers';
 				break;
 
+			case 3:
+				this.current_tab = 'zone';
+				break;
+
 			default:
 
 				this.current_tab = 'licenses';
@@ -769,6 +857,40 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				)
 			)
 		}
+	}
+
+	getDealerLicenseZone(page){
+		this.searching_license_zone = true;
+		this.subscription.add(
+			this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
+				data => {
+					if(data){
+						this.initial_load_zone= false;
+						this.searching_license_zone = false;
+						this.paging_data_zone= data;
+						if (data.entities.length > 0) {
+							const licenseContents = this.license_zone_mapToUI(data.entities);
+							this.license_zone_data = [...licenseContents];
+							this.license_zone_filtered_data = [...licenseContents];
+							this.no_license_zone = false;
+						} else {
+							if(this.search_data_license_zone == "") {
+								this.no_license_zone = true;
+							}
+							this.license_zone_data=[];
+							this.license_zone_filtered_data = [];
+						}
+					}
+				},
+				error => {
+					console.log('Error retrieving licenses content by dealer', error);
+					this.initial_load_zone= false;
+					this.searching_license_zone = false;
+					this.license_zone_data=[];
+					this.license_zone_filtered_data = [];
+				}
+			)
+		);
 	}
 
 	async dealerSelected(id: string): Promise<void> {
@@ -1156,6 +1278,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this._location.path().includes('tab=1');
 	}
 
+	private get isZoneTabOnLoad(): boolean {
+		return this._location.path().includes('tab=3');
+	}
+
 	private destroyCharts(): void {
 		if (this.license_statistics_charts.length <= 0) return;
 		this.license_statistics_charts.forEach(chart => chart.destroy());
@@ -1304,6 +1430,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.current_tab = 'advertisers';
 			return;
 		}
+
+		if (this.isZoneTabOnLoad) {
+			this.current_tab = 'zone';
+			return;
+		}
+
 
 		this.current_tab = 'licenses';
 

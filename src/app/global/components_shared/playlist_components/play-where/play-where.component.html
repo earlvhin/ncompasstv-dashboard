@@ -6,6 +6,7 @@
 					[content_data]="content"
 					[blocklist_data]="blacklist_data"
 					[host_licenses]="h"
+                    [is_child_frequency]="is_child_frequency"
 					[toggleEvent]="toggleEvent_child.asObservable()"
 					(blocklist_changes)="blacklistToggle($event)"
 					(whitelisted)="hasWhiteListed($event)">

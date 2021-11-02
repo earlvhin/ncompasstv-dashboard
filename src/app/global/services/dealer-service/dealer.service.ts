@@ -86,9 +86,13 @@ export class DealerService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealers}`+'?page='+`${page}`+'&search='+`${key}`, this.httpOptions);
 	}
 
-	get_dealers_with_sort(page: number, search: string, sortColumn: string, sortOrder: string, filter?: string, filterMin?: any, filterMax?: any, status = '', filterPerc?: string, filterPercMin?: number, filterPercMax?: number) {
-		const filters: API_FILTERS = { page, search, sortColumn, sortOrder, filter, filterMin, filterMax, status, filterPerc, filterPercMin, filterPercMax };
-		const base = `${this.baseUri}${this.getters.api_get_dealers_with_sort}`;
+get_dealers_with_sort(page: number, search: string, sortColumn: string, sortOrder: string, filter?: string, filterMin?: any, filterMax?: any, status = '', filterPerc?: string, filterPerMin?: number, filterPercMax?: number) {
+		const filters: API_FILTERS = { page, search, sortColumn, sortOrder, filter, filterMin, filterMax, status, filterPerc, filterPerMin, filterPercMax };
+get_dealer_license_zone(key, dealerId, page){
+		const params = this.httpParams({ page, search: key})
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_dealer_license_zone}${dealerId}`, { ...this.httpOptions, params });
+	}get_dealers_with_sort(page: number, search: string, sortColumn: string, sortOrder: string, filter?: string, filterMin?: any, filterMax?: any, status = '', filterPerc?: string, filterPercMin?: number, filterPercMax?: number) {
+		const filters: API_FILTERS = { page, search, sortColumn, sortOrder, filter, filterMin, filterMax, status, filterPerc, filterPercMin, filterPercMax };		const base = `${this.baseUri}${this.getters.api_get_dealers_with_sort}`;
 		const params = this.setUrlParams(filters);
 		const url = `${base}${params}`;
 		return this._http.get<any>(url, this.httpOptions);

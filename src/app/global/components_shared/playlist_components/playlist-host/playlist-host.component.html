@@ -5,7 +5,8 @@
 			class="align-middle"
 			[checked]="hasActiveLicenses() || remove_in_blocklist.length > 0"
 			(click)="$event.stopPropagation()"
-			(change)="blocklistingAllLicenses($event, host_licenses.host.hostId)">
+			(change)="blocklistingAllLicenses($event, host_licenses.host.hostId)"
+			[disabled]="is_child_frequency">
 				<h5 class="mb-0 ml-2">{{ cutString(host_licenses.host.name) }}</h5>
 			</mat-slide-toggle>
 		</div>
