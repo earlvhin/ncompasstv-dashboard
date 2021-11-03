@@ -21,6 +21,7 @@
 			<div class="flex-even align-middle">
 				<mat-slide-toggle class="align-middle"
 				(change)="blocklisting($event, l.licenseId)"
+				[disabled]="is_child_frequency"
 				[checked]="!incoming_blocklist.includes(l.licenseId) || remove_in_blocklist.includes(l.licenseId)">
 					<h5 class="mb-0 ml-2">{{ l.alias || l.licenseKey }}</h5>
 				</mat-slide-toggle>
