@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef  } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { Subject } from 'rxjs';
 import { InformationModalComponent } from '../../page_components/information-modal/information-modal.component';
@@ -27,12 +27,16 @@ export class DataStatisticsCardComponent implements OnInit {
 	private chart: Chart;
 	protected _unsubscribe = new Subject<void>();
 
+    
+
 	constructor(
         private _dialog: MatDialog,
+        private _changeDetector: ChangeDetectorRef
 	) { }
 
 	ngOnInit() {
         this.averaging = this.average;
+        this._changeDetector.markForCheck();
 	}
 
     ngOnChanges() {
