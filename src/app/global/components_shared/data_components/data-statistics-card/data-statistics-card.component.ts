@@ -42,6 +42,7 @@ export class DataStatisticsCardComponent implements OnInit {
     ngOnChanges() {
         this.value_array = this.value_array;
         this.label_array = this.label_array;
+        this.averaging = this.average;
         if(this.chart) {
             this.chart.destroy();
             this.generateChart();

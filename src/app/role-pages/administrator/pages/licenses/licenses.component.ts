@@ -188,6 +188,8 @@ export class LicensesComponent implements OnInit {
                     this.licenses_graph_data = [];
                     this.label_graph_detailed = [];
                     this.value_graph_detailed = [];
+                    this.average = 0;
+                    this.number_of_months = 0;
 
                     if(data) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
