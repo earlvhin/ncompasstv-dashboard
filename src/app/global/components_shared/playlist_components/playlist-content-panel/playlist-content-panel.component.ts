@@ -12,8 +12,9 @@ import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-sc
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 import { ContentService, PlaylistService } from 'src/app/global/services';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
-	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT } from 'src/app/global/models';
+	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT, API_CONTENT_HISTORY, API_CONTENT_HISTORY_LIST } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlist-content-panel',
@@ -54,6 +55,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	playlist_saving: boolean = false;
 	selected_contents: string[];
 	selected_content_count: number;
+	playlist_new_content: any[];
 	structured_updated_playlist: API_UPDATE_PLAYLIST_CONTENT;
 	structured_incoming_blocklist = [];
 	structured_remove_in_blocklist = [];
@@ -78,7 +80,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	constructor(
 		private _content: ContentService,
 		private _dialog: MatDialog,
-		private _playlist: PlaylistService
+		private _playlist: PlaylistService,
+		private _auth: AuthService
 	) { }
 
 	ngOnInit() {
@@ -188,7 +191,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		dialog.afterClosed()
 			.subscribe(
 				data => {
-					if (data) this.removePlaylistContents(this.selected_contents);
+					if (data) {
+						this.removePlaylistContents(this.selected_contents);
+					}
 				},
 				error => console.log('Error closing remove content dialog', error)
 			);
@@ -387,8 +392,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						if (localStorage.getItem('to_blocklist')) {
 							this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
 							this.structureAddedPlaylistContent(data);
+							this.logContentHistory(data);
 						} else {
 							this.structureAddedPlaylistContent(data);
+							this.logContentHistory(data);
 						}
 					} else {
 						localStorage.removeItem('to_blocklist');
@@ -635,6 +642,21 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.savePlaylistChanges(this.structureUpdatedPlaylist());
 	}
 
+	logContentHistory(data)
+	{
+		this.playlist_new_content = data;
+		this._playlist.log_content_history(this.structureContentHistory()).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.playlist_new_content = [];
+				},
+				error => {
+					console.log('Error logging content history', error);
+					this.playlist_new_content = [];
+				}
+			);
+	}
+
 	searchPlaylistContent(id: string): any {
 		return this.playlist_contents.filter(
 			content => {
@@ -664,11 +686,30 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		);
 
 		return this.structurePlaylistUpdatePayload(updated_playlist);
-
 	}
 
 	structurePlaylistUpdatePayload(updated_playlist_content): API_UPDATE_PLAYLIST_CONTENT {
 		return new API_UPDATE_PLAYLIST_CONTENT(this.playlist_id, updated_playlist_content);
+	}
+
+	structureContentHistory(): API_CONTENT_HISTORY_LIST {
+		let index =1;
+		let new_contents = this.playlist_new_content.map(
+			i => {
+				return new API_CONTENT_HISTORY(
+					i.contentId,
+					this.playlist_id,
+					"Added",
+					this._auth.current_user_value.user_id
+				)
+			}
+		);
+
+		return this.structureContentHistoryPayload(new_contents);
+	}
+
+	structureContentHistoryPayload(new_contents): API_CONTENT_HISTORY_LIST {
+		return new API_CONTENT_HISTORY_LIST(new_contents);
 	}
 
 	private filterExpiredContent(data: any[]): any[] {
@@ -848,6 +889,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				}
 			);
 
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 }

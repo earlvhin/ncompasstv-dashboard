@@ -66,6 +66,10 @@ export class ContentService {
     get_contents_playing_where(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_playing_where}`+`?contentid=`+`${id}`, this.httpOptions);
 	}
+
+	get_contents_history(id, page) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_history}${id}&page=${page}`, this.httpOptions);
+	}
 	
 	get_contents_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total}`, this.httpOptions);

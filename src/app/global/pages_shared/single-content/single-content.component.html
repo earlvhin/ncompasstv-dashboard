@@ -284,6 +284,16 @@
                             [new_table]="true"></app-data-table>
                         </mat-card>
                     </mat-tab>
+                    <mat-tab label="History">
+                        <mat-card *ngIf="content_history.length > 0; else nodata" class="mt-4">
+                            <app-data-table [table_data]="content_history"
+                             [table_columns]="content_history_table_columns"
+                             [paging_details]="paging_data_history" 
+                             (page_triggered)="onClickPageNumber($event)"
+                             [new_table]="true">
+                            </app-data-table>
+                        </mat-card>
+                    </mat-tab>
                 </mat-tab-group>
             </div>
         </div>

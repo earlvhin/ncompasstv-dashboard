@@ -115,3 +115,20 @@ export class UI_PLAYINGWHERE_CONTENT {
         this.screen_name = screen_name;
     }
 }
+
+export class UI_CONTENT_HISTORY {
+    index: object;
+    playlistId: object;
+    playlistName: object;
+    logAction: object;
+    logUser: object;
+    logDate: object;
+    constructor(index: object, playlistId: object, playlistName: object, logAction: object, logUser: object, logDate: object) {
+        this.index = index;
+        this.playlistId = playlistId;
+        this.playlistName = playlistName;
+        this.logAction = logAction;
+        this.logUser = logUser;
+        this.logDate = logDate;
+    }
+}
