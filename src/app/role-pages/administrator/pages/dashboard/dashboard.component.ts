@@ -7,7 +7,7 @@ import { HostService } from 'src/app/global/services/host-service/host.service';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
 import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { UI_TABLE_DEALERS_REPORT } from '../../../../global/models/ui_table_dealers.model';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-dashboard',
@@ -18,6 +18,7 @@ import { UI_TABLE_DEALERS_REPORT } from '../../../../global/models/ui_table_deal
 
 export class DashboardComponent implements OnInit {
 	advertiser_report_chart: any;
+    date: any;
 	dealer_report_chart: any;
 	host_report_chart: any;
 	latest_dealers: API_DEALER[];
@@ -27,18 +28,20 @@ export class DashboardComponent implements OnInit {
 	loading_host_report_chart: boolean = true;
 	loading_license_report_chart: boolean = true;
 	no_dealers: boolean;
-	subscription: Subscription = new Subscription;
-	title = 'Dashboard';
 	
-	latest_dealer_col = [
-		'#', 
-		'Business Name', 
-		'Owner',
-		'Contact Person',
-		'Region',
-		'State', 
-		'Creation Date'
-	]
+    subscription: Subscription = new Subscription;
+	title = 'Dashboard';
+    licenses_details: any;
+    dealer_stats: any;
+    playlists_details: any;
+    advertiser_stats: any;
+    screen_details: any;
+    temp_label: any = [];
+    temp_array: any = [];
+    user_name: string;
+
+    status_graph_label: any = [];
+    status_graph_value: any = [];
 
 	constructor(
 		private _auth: AuthService,
@@ -46,62 +49,69 @@ export class DashboardComponent implements OnInit {
 		private _dealer: DealerService,
 		private _host: HostService,
 		private _license: LicenseService,
-		private _date: DatePipe
+		private _date: DatePipe,
 	) { }
 
 	ngOnInit() {
+        if(this._auth.current_user_value.firstname) {
+            this.user_name = this._auth.current_user_value.firstname;
+        } else {
+            this.user_name = 'John Doe';
+        }
 
-		if (this.currentUser) {
-			const { firstname } = this.currentUser;
-			this.title = `Hello ${firstname}!`;
-		}
-
-		this.getDealerReport();
-		this.getHostReport();
-		this.getAdvertiserReport();
+        var date = new Date();
+        this.date = moment(date).format('LL') + ', ' +  moment(date).format('dddd');
 		this.getLicenseReport();
-		this.getDealers();
+		this.getAdvertiserReport();
 	}
 
-	getDealerReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium')
-		}
+    getLicenseReport() {
+        this._license.get_licenses_total().subscribe(
+            (data: any) => {
+                this.licenses_details = {
+                    basis: data.total,
+                    basis_label: 'License(s)',
+                    basis_sub_label: 'Current Count',
+                    good_value: data.totalActive,
+                    good_value_label: 'Active',
+                    bad_value: data.totalInActive,
+                    bad_value_label: 'Inactive',
+                    ad_value: data.totalAd,
+                    ad_value_label: 'Ad',
+                    menu_value: data.totalMenu,
+                    menu_value_label: 'Menu',
+                    closed_value: data.totalClosed,
+                    closed_value_label: 'Closed',
+                    unassigned_value: data.totalUnassignedScreenCount,
+                    unassigned_value_label: 'Unassigned',
+                    new_this_week_value: data.newLicensesThisWeek,
+                    this_week_ad_value: data.thisWeekTotalAd,
+                    this_week_menu_value: data.thisWeekTotalMenu,
+                    this_week_closed_value: data.thisWeekTotalClosed,
+                    this_week_unassigned_value: data.thisWeekUnassignedCount,
+                    last_week_ad_value: data.lastWeekTotalAd,
+                    last_week_menu_value: data.lastWeekTotalMenu,
+                    last_week_closed_value: data.lastWeekTotalClosed,
+                    last_week_unassigned_value: data.lastWeekUnassignedCount,
+                }
 
-		this.subscription.add(
-			this._dealer.get_dealer_report(filter).subscribe(
-				data => {
-					let dealer_report = data.list[0].monthly.filter(i => i.total > 0);
+                this.status_graph_label.push('Online: ' + data.totalOnline)
+                this.status_graph_label.push('Offline: ' + data.totalOffline)
+                this.status_graph_value.push(data.totalOnline)
+                this.status_graph_value.push(data.totalOffline)
 
-					if (dealer_report.length >  0) {
-						let latest_added = dealer_report[dealer_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.dealer_report_chart = {
-							title: 'Dealers',
-							stats: `${latest_added.total} latest added dealers on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'dealer_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						 dealer_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.dealer_report_chart.chart_data.push(i.total),
-								this.dealer_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-					} else {
-						this.dealer_report_chart = false;
-					}
-
-					this.loading_dealer_report_chart = false;
-				}
-			)
-		)
+                if (this.licenses_details) {
+                    this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);
+                    this.temp_label.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.menu_value);
+                    this.temp_label.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.closed_value);
+                    this.temp_label.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.unassigned_value);
+                    this.temp_array.push(this.licenses_details.ad_value);
+                    this.temp_array.push(this.licenses_details.menu_value);
+                    this.temp_array.push(this.licenses_details.closed_value);
+                    this.temp_array.push(this.licenses_details.unassigned_value);
+                }
+            }
+        )
 	}
 
 	getHostReport() {
@@ -150,128 +160,14 @@ export class DashboardComponent implements OnInit {
 	}
 
 	getAdvertiserReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium')
-		}
-
 		this.subscription.add(
-			this._advertiser.get_advertiser_report(filter).subscribe(
+			this._advertiser.get_advertisers_total().subscribe(
 				data => {
-					let advertiser_report = data.list[0].monthly.filter(i => i.total > 0);
-
-					if (advertiser_report.length > 0) {
-						let latest_added = advertiser_report[advertiser_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.advertiser_report_chart = {
-							title: 'Advertisers',
-							stats: `${latest_added.total} latest added advertisers on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'advertiser_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						 advertiser_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.advertiser_report_chart.chart_data.push(i.total),
-								this.advertiser_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-	
-						this.loading_advertiser_report_chart = false;
-					} else {
-						this.advertiser_report_chart = false;
-					}
-				}, 
-				error => {
-					console.log(error);
-				}
-			)
-		)
-	}
-
-	getLicenseReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium')
-		}
-
-		this.subscription.add(
-			this._license.get_license_report(filter).subscribe(
-				data => {
-					let license_report = data.list[0].monthly.filter(i => i.total > 0);
-
-					if (license_report.length > 0) {
-						let latest_added = license_report[license_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.license_report_chart = {
-							title: 'Licenses',
-							stats: `${latest_added.total} latest added licenses on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'license_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						license_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.license_report_chart.chart_data.push(i.total),
-								this.license_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-	
-						this.loading_license_report_chart = false;
-					} else {
-						this.license_report_chart = false;
-					}
-				}, 
-				error => {
-					console.log(error);
-				}
-			)
-		)
-	}
-
-	getDealers() {
-		this.subscription.add(
-			this._dealer.get_dealers().subscribe(
-				(data: API_DEALER[]) => {
-					if (data) {
-						this.latest_dealers = this.dealers_mapToUI(data).slice(0,5);
-					} else {
-						this.no_dealers = true;
+					this.advertiser_stats = {
+						basis: data.total,
 					}
 				}
 			)
-		)
-	}
-
-	dealers_mapToUI(data) {
-		let count = 1;
-		if (data) {
-			return data.map(
-				dealer => {
-					return new UI_TABLE_DEALERS_REPORT(
-						{ value: dealer.dealerId, link: null , editable: false, hidden: true},
-						{ value: count++, link: null , editable: false, hidden: false},
-						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false},
-						{ value: dealer.owner, link: null , editable: false, hidden: false},
-						{ value: dealer.contactPerson, link: null , editable: false, hidden: false},
-						{ value: dealer.region, link: null , editable: false, hidden: false},
-						{ value: dealer.state, link: null , editable: false, hidden: false},
-						{ value: this._date.transform(dealer.dateCreated, 'MMM dd, y'), link: null , editable: false, hidden: false},	
-					)
-				}
-			)
-		}
-	}
-
-	protected get currentUser() {
-		return this._auth.current_user_value;
+		);
 	}
 }

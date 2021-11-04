@@ -1,170 +1,158 @@
 <div class="theme-container">
-    <div class="title-section">
-        <h1 class="page-title">{{ title }}</h1>
-        <hr class="my-4">
+    <div class="title-section col-lg-12 p-0 flex mt-4">
+        <div class="col-lg-6 p-0 text-left">
+            <h1 class="page-title">{{ title }}</h1>
+        </div>
+        <div class="col-lg-6 p-0 text-right date-section">
+            <div class="text-gray md-text">{{ date }}</div>
+        </div>
     </div>
 
-    <div class="content-section">
-        <h3 class="section-title">Statistics</h3>
-        <div class="row mb-5">
-            <div class="col-lg-3 mb-4">
-				<ng-container *ngIf="dealer_report_chart != false; else no_data_dealer">
-					<app-expansion-panel
-					*ngIf="dealer_report_chart; else spinner"
-					[title]="dealer_report_chart.title"
-					[description]="dealer_report_chart.stats"
-					[expand]="dealer_report_chart.expand"
-					[chart_id]="dealer_report_chart.chart_id"
-					[chart_label]="dealer_report_chart.chart_label"
-					[chart_data]="dealer_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
+    <hr class="my-3">
 
-				<ng-template #no_data_dealer>
-					<mat-card class="p-5">
-						<h3>Oops! Not me.</h3>
-						<p class="sm-text mb-3">
-							There are no available dealers at the moment.
-						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-							Add Dealer
-							<span class="fas fa-plus ml-2 sm-text"></span>
-						</button>
-					</mat-card>
-				</ng-template>
-			</div>
-			
-			<div class="col-lg-3 mb-4">
-				<ng-container *ngIf="host_report_chart!= false; else no_data_host">
-					<app-expansion-panel
-					*ngIf="host_report_chart; else spinner"
-					[title]="host_report_chart.title"
-					[description]="host_report_chart.stats"
-					[expand]="host_report_chart.expand"
-					[chart_id]="host_report_chart.chart_id"
-					[chart_label]="host_report_chart.chart_label"
-					[chart_data]="host_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
-				
-				<ng-template #no_data_host>
-					<mat-card class="p-5">
-						<h3>Oh Snap!</h3>
-						<p class="sm-text mb-3">
-							There are no available hosts at the moment.
-						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/create-host']">
-							Add Host
-							<span class="fas fa-plus ml-2 sm-text"></span>
-						</button>
-					</mat-card>
-				</ng-template>
-			</div>
-			
-			<div class="col-lg-3 mb-4">
-				<ng-container *ngIf="advertiser_report_chart!= false; else no_data_advertiser">
-					<app-expansion-panel
-					*ngIf="advertiser_report_chart; else spinner"
-					[title]="advertiser_report_chart.title"
-					[description]="advertiser_report_chart.stats"
-					[expand]="advertiser_report_chart.expand"
-					[chart_id]="advertiser_report_chart.chart_id"
-					[chart_label]="advertiser_report_chart.chart_label"
-					[chart_data]="advertiser_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
-				
-				<ng-template #no_data_advertiser>
-					<mat-card class="p-5">
-						<h3>Ugh! Sorry.</h3>
-						<p class="sm-text mb-3">
-							There are no available advertisers at the moment.
-						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/create-advertiser']">
-							Add Advertiser
-							<span class="fas fa-plus ml-2 sm-text"></span>
-						</button>
-					</mat-card>
-				</ng-template>
-			</div>
-			<div class="col-lg-3 mb-4">
-				<ng-container *ngIf="license_report_chart!= false; else no_data_license">
-					<app-expansion-panel
-					*ngIf="license_report_chart; else spinner"
-					[title]="license_report_chart.title"
-					[description]="license_report_chart.stats"
-					[expand]="license_report_chart.expand"
-					[chart_id]="license_report_chart.chart_id"
-					[chart_label]="license_report_chart.chart_label"
-					[chart_data]="license_report_chart.chart_data">
-					</app-expansion-panel>
-				</ng-container>
-				
-				<ng-template #no_data_license>
-					<mat-card class="p-5">
-						<h3>Ugh! Sorry.</h3>
-						<p class="sm-text mb-3">
-							There are no available licenses at the moment.
-						</p>
-						<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/licenses']">
-							Generate Licenses
-							<span class="fas fa-plus ml-2 sm-text"></span>
-						</button>
-					</mat-card>
-				</ng-template>
-            </div>
-        </div>
-        <div class="row">
-            <!-- <div class="col-lg-4">
-                <h3 class="section-title">Billing Report</h3>
-                <div class="row">
-                    <div class="col-lg-12 mb-3">
-                        <app-expansion-panel
-                        [expand]="true"
-                        [title]="'Billing'"
-                        [description]="'Coming Soon'"
-                        [data_is_list]="true"
-                        [list_data]="[1, 2, 3]">
-                        </app-expansion-panel>
-                    </div>
+    <div class="row mb-3">
+        <div class="col-lg-3 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <div class="col-lg-12 p-3">
+                    <h4 class="mb-2">
+                        <span class="text-primary font-weight-medium xlg-text">
+                            <i class="fas fa-home"></i>
+                        </span>
+                    </h4>
                 </div>
-            </div> -->
-    
-            <div class="col-lg-12">
-                <div class="row mb-4">
-					<div class="col-lg-12">
-						<h3 class="section-title">Recently Added Dealers</h3>
-						<ng-container *ngIf="!no_dealers; else no_data_dealer_table">
-							<mat-card class="px-4" *ngIf="latest_dealers; else spinner">
-								<app-data-table
-								[table_data]="latest_dealers"
-								[table_columns]="latest_dealer_col"
-								[new_table]="true">
-								</app-data-table>
-							</mat-card>
-						</ng-container>
-
-						<ng-template #no_data_dealer_table>
-							<mat-card class="p-5">
-								<h3>Sorry Jim.</h3>
-								<p class="sm-text mb-3">
-									There are no available dealers at the moment.
-								</p>
-								<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-									Add Dealer
-									<span class="fas fa-plus ml-2 sm-text"></span>
-								</button>
-							</mat-card>
-						</ng-template>
-					</div>
-				</div>
-            </div>
+                <div class="col-lg-12">
+                    <h3>
+                        Welcome, {{user_name}}!
+                    </h3>
+                </div>
+                <div class="col-lg-12 mt-3">
+                    <span class="text-gray sm-text">
+                        N-Compass TV's Dealers are in 33 states and 90 Markets with over 1,700 locations and growing. Our commitment is to serving our Dealers with this unsurpassed business opportunity.
+                    </span>
+                </div>
+            </mat-card>
         </div>
-	</div>
+        <div class="col-lg-4 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <app-data-graph-compare
+                    [id]="'status'"
+                    [title]="'License Status'"
+                    [label_array]="status_graph_label"
+                    [value_array]="status_graph_value">
+                </app-data-graph-compare>
+            </mat-card>
+        </div>
+        <div class="col-lg-5 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <ng-container>
+                    <app-data-card-graph 
+                        [id]="'license-statistics'"
+                        [compare_basis]="licenses_details.basis"
+                        [compare_basis_label]="licenses_details.basis_label"
+                        [compare_basis_sub_label]="licenses_details.basis_sub_label"
+                        [good_value]="licenses_details.good_value"
+                        [good_value_label]="licenses_details.good_value_label"
+                        [bad_value]="licenses_details.bad_value"
+                        [bad_value_label]="licenses_details.bad_value_label" 
+                        [label_array]="temp_label"
+                        [value_array]="temp_array">
+                    </app-data-card-graph>
+                </ng-container>
+            </mat-card>
+				
+			<ng-template #no_data_license>
+				<mat-card class="p-5">
+					<h3>Ugh! Sorry.</h3>
+					<p class="sm-text mb-3">
+						There are no available licenses at the moment.
+					</p>
+					<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/licenses']">
+						Generate Licenses
+						<span class="fas fa-plus ml-2 sm-text"></span>
+					</button>
+				</mat-card>
+			</ng-template>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-lg-3 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <app-data-graph-compare
+                    [id]="'host-status'"
+                    [title]="'Hosts'"
+                    [label_array]="['Online: 70', 'Offline: 30', 'Install Schedule: 50']"
+                    [value_array]="[70, 30, 50]">
+                </app-data-graph-compare>
+            </mat-card>
+        </div>
+        <div class="col-lg-2 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <div class="col-lg-12 p-3 text-center">
+                    <h4 class="mb-2 text-center">
+                        <span class="text-dark font-weight-medium">
+                            <span class="text-dark">Advertisers</span>
+                        </span>
+                    </h4>
+                    <span class="text-dark md-text">
+                        <span>Total</span>
+                    </span>
+                </div>
+                <div class="col-lg-12 p-3">
+                    <h4 class="mb-2 text-center">
+                        <span class="cursor-pointer text-primary font-weight-medium">
+                            <a [routerLink]="['/administrator/advertisers/']" target="_blank" class="text-primary"><i class="fas fa-ad mr-3 f-35"></i><span class="f-35">{{advertiser_stats.basis}}</span></a>
+                        </span>
+                    </h4>
+                </div>
+            </mat-card>
+        </div>
+        <div class="col-lg-5 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <ng-container>
+                    <app-data-card-graph 
+                        [id]="'ad_average'"
+                        [compare_basis]="'30'"
+                        [compare_basis_label]="'Ad License'"
+                        [compare_basis_sub_label]="'Average Per Content'"
+                        [label_array]="temp_label"
+                        [value_array]="temp_array">
+                    </app-data-card-graph>
+                </ng-container>
+            </mat-card>
+        </div>
+        <div class="col-lg-2 mb-4">
+            <mat-card class="h-100" *ngIf="licenses_details; else spinner">
+                <div class="col-lg-12 p-3 text-center">
+                    <h4 class="mb-2 text-center">
+                        <span class="text-dark font-weight-medium">
+                            <span>Main Show Playlist</span>
+                        </span>
+                    </h4>
+                    <span class="text-dark md-text">
+                        <span>Average Duration</span>
+                    </span>
+                </div>
+                <div class="col-lg-12 p-3">
+                    <h4 class="mb-2 text-center">
+                        <span class="text-primary font-weight-medium">
+                            <span class="f-35">15.20 s</span>
+                        </span>
+                    </h4>
+                </div>
+            </mat-card>
+        </div>
+    </div>
 	
 	<ng-template #spinner>
 		<mat-card class="py-5">
 			<app-spinner [diameter]="85"></app-spinner>
+		</mat-card>
+	</ng-template>
+	
+    <ng-template #small_spinner>
+		<mat-card class="py-5">
+			<app-spinner [diameter]="55"></app-spinner>
 		</mat-card>
 	</ng-template>
 </div>
