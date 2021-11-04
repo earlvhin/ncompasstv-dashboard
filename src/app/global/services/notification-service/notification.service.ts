@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs/internal/Subject';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { AuthService } from '../auth-service/auth.service';
@@ -8,6 +9,9 @@ import { AuthService } from '../auth-service/auth.service';
 })
 
 export class NotificationService {
+
+	private resolve_all_event = new Subject<any>();
+    resolve_all_event_emitted$ = this.resolve_all_event.asObservable();
 
 	httpOptions = {
 		headers: new HttpHeaders(
@@ -20,16 +24,16 @@ export class NotificationService {
 		private _http: HttpClient
 	) { }
 
+	emitResolveAllEvent(change: any) {
+        this.resolve_all_event.next(change);
+    }
+
 	getAll(page?: number, pageSize?: number) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_all_notifications}${ page > 0 ? '?page=' + page : ''}${page > 0 && pageSize === 0 ? '&pageSize=' + pageSize: ''}`, this.httpOptions);
 	}
 
 	getByDealerId(dealerId: string, page?: number, pageSize?: number) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}${ page > 0 ? '&page=' + page : ''}${page > 0 && pageSize === 0 ? '&pageSize=' + pageSize: ''}`, this.httpOptions);
-	}
-
-	getById() {
-		// return this._http
 	}
 
 	updateNotificationStatus(id: string) {

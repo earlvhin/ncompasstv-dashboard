@@ -195,8 +195,9 @@
 }
 
 .page-title {
-    color: $dark;
+    color: $primary;
     font-size: $xlg;
+    font-weight: 500;
 }
 
 .section-title {
@@ -710,4 +711,22 @@ agm-map {
 
 .h-45 {
     height: 45px;
+}
+
+.two-columns {
+    columns: 2;
+}
+
+.three-columns {
+    columns: 3;
+}
+
+.breakdown {
+    height: 250px;
+    overflow-y: auto;
+}
+
+.card-graph {
+    min-height: 452px;
+    max-height: 452px;
 }

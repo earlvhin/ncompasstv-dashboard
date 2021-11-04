@@ -38,6 +38,8 @@ import { DataCardComponent } from './components_shared/data_components/data-card
 import { DataCardCountComponent } from './components_shared/data_components/data-card-count/data-card-count.component';
 import { DataCardGraphComponent } from './components_shared/data_components/data-card-graph/data-card-graph.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
+import { DataStatisticsCardComponent } from './components_shared/data_components/data-statistics-card/data-statistics-card.component';
+import { DataStatisticsCardWithPickerComponent } from './components_shared/data_components/data-statistics-card-with-picker/data-statistics-card-with-picker.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
 import { DealerDetailsTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-details-tab/dealer-details-tab.component';
@@ -224,6 +226,8 @@ const ngComponents = [
 	DataCardCountComponent,
     DataCardGraphComponent,
 	DataGraphComponent,
+    DataStatisticsCardComponent,
+    DataStatisticsCardWithPickerComponent,
 	DataTableComponent,
 	DealerContentTabComponent,
 	DealerDetailsTabComponent,

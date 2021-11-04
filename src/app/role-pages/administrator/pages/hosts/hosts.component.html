@@ -5,24 +5,21 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/hosts/create-host']">
-                    <span class="button-label">
-                        Add Host Place
-                    </span>
-                    <span class="fas fa-map-marker ml-2 sm-text"></span>
+                <button mat-button mat-raised-button 
+                    class="theme-btn pi-control _teal sm-text mr-2" 
+                    [routerLink]="['/administrator/hosts/create-host']"
+                    title="Add Host Place">
+                    <span class="fas fa-map-marker"></span> 
+                    <span class="ml-2 button_text_animation">Add Host Place</span>
                 </button>
-                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/administrator/users/create-user/host']">
-                    <span class="button-label">
-                        Add Host User
-                    </span>
-                    <span class="fas fa-user ml-2 sm-text"></span>
+
+                <button mat-button mat-raised-button 
+                    class="theme-btn pi-control _info sm-text mr-2" 
+                    [routerLink]="['/administrator/users/create-user/host']"
+                    title="Add Host User">
+                    <span class="fas fa-user"></span> 
+                    <span class="ml-2 button_text_animation">Add Host User</span>
                 </button>
-                <!-- <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/administrator/hosts-fields']">
-                    <span class="button-label">
-                        Create Host Fields
-                    </span>
-                    <span class="fab fa-wpforms ml-2 sm-text"></span>
-                </button> -->
             </div>
         </div>
         <hr class="my-4">
@@ -62,7 +59,50 @@
                 </mat-card>
             </div>
         </div>
-		<hr class="my-4">
+		<hr class="mb-0">
+        <div class="row mb-2">
+            <div class="col-md-12 text-right">
+                <button class="theme-btn _dark no_border_radius border_radius_bottom position-relative sm-text" (click)="toggleCharts()">
+                    <span *ngIf="!height_show; else hide">Show Statistics Charts</span>
+                    <ng-template #hide>
+                        <span>Hide Statistics Charts</span>
+                    </ng-template>
+                </button>
+            </div>
+        </div>
+        <div class="row statistics-graph" [ngClass]="!height_show ? 'height-toggle': 'mb-3'">
+            <div class="col-lg-5">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card *ngIf="value_graph.length > 0"
+                        [id]="'total-view'"
+						[total]="total"
+						[label_array]="label_graph"
+						[value_array]="value_graph"
+                        [whole_data]="hosts_graph_data"
+                        [sub_title]="sub_title"
+                        [no_click]="false">
+                    </app-data-statistics-card>
+                </mat-card>
+            </div>
+            <div class="col-lg-7">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card-with-picker
+                    (s_date)="getStartDate($event)"
+                    (e_date)="getEndDate($event)"
+                    (dealer_selected)="getDealerId($event)"
+                    [num_of_months]="number_of_months"
+                    [average]="average"
+                    [sub_title]="sub_title_detailed"
+                    [id]="'average-view'"
+					[total]="total_detailed"
+					[label_array]="label_graph_detailed"
+					[value_array]="value_graph_detailed"
+                    [whole_data]="hosts_graph_data"
+                    [generate_chart]="generate">
+                    </app-data-statistics-card-with-picker>
+                </mat-card>
+            </div>
+        </div>
         <div class="col-lg-12 custom-mat-tab p-0">
             <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
                 <mat-tab label="Hosts View">

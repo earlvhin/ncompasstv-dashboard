@@ -63,6 +63,14 @@ export class LicenseService {
 	get_licenses_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total}`, this.httpOptions);
 	}
+
+    get_licenses_statistics(dealer?, startDate?, endDate?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
+	}
+    
+    get_licenses_installation_statistics(dealer?, startDate?, endDate?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_installation_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
+	}
 	
 	get_licenses_total_by_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);

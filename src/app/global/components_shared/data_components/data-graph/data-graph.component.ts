@@ -68,7 +68,7 @@ export class DataGraphComponent implements OnInit, OnDestroy {
 	}
 
 	ngAfterViewInit() {
-		require('chartjs-plugin-datalabels');
+		// require('chartjs-plugin-datalabels');
 	}
 	
 	private initGraph(): void {

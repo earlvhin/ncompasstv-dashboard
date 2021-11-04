@@ -142,6 +142,16 @@
 	}
 }
 
+.statistics-graph {
+	margin-top: 25px;
+    max-height: 450px;
+    transition: max-height 1s ease-out;
+	canvas {
+		display: block;
+		margin: 0 auto;
+	}
+}
+
 .spinner-wrapper {
 	position: absolute;
 	left: 42%;

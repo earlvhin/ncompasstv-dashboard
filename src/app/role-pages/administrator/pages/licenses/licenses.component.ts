@@ -67,6 +67,25 @@ export class LicensesComponent implements OnInit {
     temp_label_last_week: any = [];
     temp_array_last_week: any = [];
 
+    //graph
+    label_graph: any = [];
+    value_graph: any = [];
+    label_graph_detailed: any = [];
+    value_graph_detailed: any = [];
+    total: number = 0;
+    total_detailed: number = 0;
+    sub_title: string;
+    sub_title_detailed: string;
+    start_date: string = '';
+    end_date: string = '';
+    selected_dealer: string = '';
+    number_of_months: number = 0;
+    average: number = 0;
+    sum: number = 0;
+    height_show: boolean = false;
+    licenses_graph_data: any = [];
+    generate: boolean = false;
+
     filters: any = {
         activated: "",
         zone:"",
@@ -146,6 +165,7 @@ export class LicensesComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+        this.getLicensesStatistics();
 		this.getLicensesTotal();
         this.getLicenses(1);
 	}
@@ -157,6 +177,74 @@ export class LicensesComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
+
+    getLicensesStatistics() {
+        this.subscription.add(
+			this._license.get_licenses_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
+                data => {
+                    //reset value
+                    this.total_detailed = 0;
+                    this.sum = 0;
+                    this.licenses_graph_data = [];
+                    this.label_graph_detailed = [];
+                    this.value_graph_detailed = [];
+                    this.average = 0;
+                    this.number_of_months = 0;
+
+                    if(data) {                        
+                        var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                        data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+
+                        if(this.selected_dealer) {
+                            data.licenses.map(
+                                i => {
+                                    this.total_detailed = this.total_detailed + i.totalLicenses;
+                                    this.licenses_graph_data.push(i)
+                                        this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalLicenses)
+                                        this.value_graph_detailed.push(i.totalLicenses)
+                                    this.sum = this.sum + i.totalLicenses;
+                                }
+                            )
+                            this.number_of_months = data.licenses.length;
+                            this.average = this.sum / this.number_of_months; 
+                            this.sub_title_detailed = "Found " + data.licenses.length + " months with record as per shown in the graph."
+                            this.generate = true;
+                        } else {
+                            data.licenses.map(
+                                i => {
+                                    this.total = this.total + i.totalLicenses;
+                                    this.licenses_graph_data.push(i)
+                                    if(i.year == new Date().getFullYear()) {
+                                        this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
+                                        this.value_graph.push(i.totalLicenses)
+                                    }
+                                    
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+        )
+        this.sub_title = "Total Licenses as per year " + new Date().getFullYear();
+    }
+
+    toggleCharts() {
+        this.height_show = !this.height_show;
+    }
+
+    getStartDate(s_date) {
+        this.start_date = s_date;
+    }
+    
+    getEndDate(e_date) {
+        this.end_date = e_date;
+    }
+    
+    getDealerId(dealer) {
+        this.selected_dealer = dealer;
+        this.getLicensesStatistics();
+    }
 
     getColumnsAndOrder(data, tab) {
         console.log(data, tab)
@@ -259,7 +347,7 @@ export class LicensesComponent implements OnInit {
         switch(type) {
             case 'status':
                 this.filters.status = value;
-                this.filters.activated = "";
+                this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
                 break;
             case 'zone':

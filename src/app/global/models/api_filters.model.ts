@@ -8,7 +8,7 @@ export interface API_FILTERS {
 	filterMin?: any;
 	filterMax?: any;
     filterPerc?: any;
-    filterPerMin?: any;
+    filterPercMin?: any;
     filterPercMax?: any;
 	hostId?: string;
 	pageSize?: any;
