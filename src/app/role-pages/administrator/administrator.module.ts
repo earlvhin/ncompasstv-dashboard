@@ -40,6 +40,7 @@ import { TemplatesComponent } from './pages/templates/templates.component';
 import { UsersComponent } from './pages/users/users.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.component';
+import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single-host.module';
 
 @NgModule({
 	declarations: [
@@ -82,6 +83,7 @@ import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.
 		SingleLicenseModule,
 		TagsModule,
 		FeedsModule,
+		SingleHostModule,
 		RouterModule.forChild(ADMINISTRATOR_ROUTES)
 	],
 	providers: [

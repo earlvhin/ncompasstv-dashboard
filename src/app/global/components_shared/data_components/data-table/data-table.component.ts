@@ -72,7 +72,6 @@ export class DataTableComponent implements OnInit {
 	@Output() delete_selected = new EventEmitter;
 	@Output() to_sort_column = new EventEmitter;
 
-	
 	active_table: string;
 	selected_array: any = [];
 	pagination: number;
@@ -96,6 +95,7 @@ export class DataTableComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+
 		this.table_data.map(
 			data => {
 				Object.keys(data).forEach(key => {
@@ -105,7 +105,7 @@ export class DataTableComponent implements OnInit {
 				});
 			}
 		);
-
+		
 		this.subscribeToEmailNotificationToggleResult();
 	}
 
@@ -169,6 +169,7 @@ export class DataTableComponent implements OnInit {
 	mediaViewer_open(i): void {
 		//prepare data to comply to media viewer component (because json structure is not the same as media library)
 		this.media_array[i].file_name === this.media_array.fileName;
+		
 		this.media_array.map(
 			i => {
 				i.file_name = i.fileName;

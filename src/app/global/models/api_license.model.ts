@@ -37,6 +37,8 @@ export interface API_LICENSE_PROPS {
 	resourceSettings: number;
 	screenId: string;
 	screenName: string;
+	screenTypeId?: string;
+	screenTypeName?: string;
 	screenType: string;
 	screenshotSettings: number;
 	screenshotUrl: string;

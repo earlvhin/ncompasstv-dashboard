@@ -4,12 +4,8 @@ import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as io from 'socket.io-client';
 
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
-import { UnassignHostLicenseComponent } from '../../components_shared/license_components/unassign-host-license/unassign-host-license.component';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { environment } from 'src/environments/environment';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
 import { API_SINGLE_HOST, API_LICENSE, UI_HOST_LICENSE, HOST_LICENSE_STATISTICS, UI_ROLE_DEFINITION, 
 	CustomFields, FieldGroupFields } from 'src/app/global/models';
@@ -42,8 +38,8 @@ export class SingleHostComponent implements OnInit {
 	is_dealer: boolean = false;
 	is_initial_load = true;
 	is_view_only = false;
-	lat: string;
-	long: string;
+	lat: number;
+	long: number;
 	margin_more: boolean = false;
 	margin_notes = false;
 	no_record: boolean = false;
@@ -51,6 +47,9 @@ export class SingleHostComponent implements OnInit {
 	pi_updating: boolean;
 	single_host_data: any;
 	update_btn: string = "Update System and Restart";
+
+	currentRole = this._auth.current_role;
+	currentUser = this._auth.current_user_value;
 
 	host_license_table_col = [
 		'#',
@@ -72,47 +71,20 @@ export class SingleHostComponent implements OnInit {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		private _allcaps: UpperCasePipe,
-		private _date: DatePipe,
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
 		private _params: ActivatedRoute,
-		private _titlecase: TitleCasePipe
 	) { }
 
 	ngOnInit() {
 
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket'],
-			query: 'client=Dashboard__SingleHostComponent'
-		});
-
-		this._socket.on('connect', () => {
-			console.log('#SingleHostComponent - Connected to Socket Server');
-		})
-		
-		this._socket.on('disconnect', () => {
-			console.log('#SingleHostComponent - Disconnnected to Socket Server');
-		})
-		
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.is_dealer = true;
-		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator) {
-			this.is_administrator = true;
-		}
-
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					this.host_id = this._params.snapshot.params.data;
-					this.getLicenseByHostId(this._params.snapshot.params.data);
-				}
-			);
+			.subscribe(() => this.host_id = this._params.snapshot.params.data);
 			
 		this.getHostById();
 
@@ -126,7 +98,6 @@ export class SingleHostComponent implements OnInit {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
 		this.business_hours_update_sub.unsubscribe();
-		this._socket.disconnect();
 	}
 
 	getHostFields(): void {
@@ -182,133 +153,6 @@ export class SingleHostComponent implements OnInit {
 
 		return false;
 
-	}
-
-	filterData(data) {
-		this.filtered_data = data;
-	}
-
-	getLicenseByHostId(id) {
-		this.host_license = [];
-		this.no_record = false;
-
-		this._license.get_license_by_host_id(id).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data: any) => {
-
-					if(!data.message) {
-						// If not error
-						this.host_license_api = data;
-						this.host_license = this.hostLicense_mapToUIFormat(this.host_license_api);
-						this.filtered_data = this.hostLicense_mapToUIFormat(this.host_license_api);
-					} else {
-						// If Error
-						this.no_record = true;
-						this.host_license = data;
-					}
-				},
-				error => console.log('Error retrieving licenses by host ID', error)
-			);
-	}
-
-	hostLicense_mapToUIFormat(data:any) {
-		let counter = 1;
-		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		return data.map(
-			l => {
-				return new UI_HOST_LICENSE(
-					{ value: l.licenseId, link: null , editable: false, hidden: true},
-					{ value: counter++, link: null , editable: false, hidden: false},
-					{ value: l.licenseKey, link: `/${route}/licenses/` + l.licenseId, editable: false, hidden: false, status: true},
-					{ value: l.alias ? l.alias : '--', link: `/${route}/licenses/` + l.licenseId, editable: true, label: 'License Alias', id: l.licenseId, hidden: false},
-					{ value: l.screenTypeId != null ? this._titlecase.transform(l.screenTypeName) : '--', link: null , editable: false, hidden: false},
-					{ value: l.screenId != null ? this._titlecase.transform(l.screenName) : '--', link: l.screenId != null ? `/${route}/screens/` + l.screenId : null , editable: false, hidden: false},
-					{ value: l.macAddress ? this._allcaps.transform(l.macAddress) : '--', link: null , editable: false, hidden: false},
-					{ value: l.internetType ? l.internetType : '--', link: null , editable: false, hidden: false},
-					{ value: l.internetSpeed ? l.internetSpeed: '--', link: null , editable: false, hidden: false},	
-					{ value: l.contentsUpdated ? this._date.transform(l.contentsUpdated): '--', link: null , editable: false, hidden: false},
-					{ value: l.timeIn ? this._date.transform(l.timeIn): '--', link: null , editable: false, hidden: false},
-					{ value: l.timeOut ? this._date.transform(l.timeOut): '--', link: null , editable: false, hidden: false},
-					{ value: l.installDate ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: l.licenseId },
-					{ value: l.piStatus, link: null , editable: false, hidden: true },
-				)
-			}
-		)
-	}
-
-	reloadLicense() {
-		this.host_license = [];
-		this.ngOnInit();
-	}
-
-	updateAndRestart() {
-		this.warningModal('warning', 'Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to push updates for this license', 'system_update');
-	}
-
-	pushUpdate() {
-		this.warningModal('warning', 'Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
-	}
-
-	warningModal(status, message, data, return_msg, action): void {
-		this._dialog.closeAll();
-		
-		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data,
-				return_msg: return_msg,
-				action: action
-			}
-		})
-
-		dialogRef.afterClosed().subscribe(result => {
-			if(result === 'system_update') {
-				this.host_license_api.forEach(
-					(i: any) => {
-						// console.log('SystemUpdate Emitted:', i.licenseId)
-						this._socket.emit('D_system_update_by_license', i.licenseId);
-					}
-				)
-
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing System Update';
-			} else if(result === 'update') {
-				this.host_license_api.forEach(
-					(i: any) => {
-						// console.log('D_update_player:', i.licenseId)
-						this._socket.emit('D_update_player', i.licenseId);
-					}
-				)
-
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing Content Update';
-			}  else if(result === 'upgrade_to_v2') {
-				this.host_license_api.forEach(
-					(i: any) => {
-						// console.log('D_upgrade_to_v2_by_license:', i.licenseId)
-						this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
-					}
-				)
-			}
-		});
-	}
-
-	unassignHostLicense() {
-		let dialog = this._dialog.open(UnassignHostLicenseComponent, {
-			width: '500px',
-			data: this.host_license_api ? this.host_license_api : null
-		})
-
-		dialog.afterClosed().subscribe(
-			data => {
-				if (data) {
-					this.reloadLicense();
-				}
-			}
-		);
 	}
 
 	getLicenseTotalByHostIdDealerId() {
@@ -371,8 +215,8 @@ export class SingleHostComponent implements OnInit {
 		this.single_host_data = { dealer_id: dealer.dealerId, host_id: this.host_id };
 		this.d_name = host.name;
 		this.d_desc = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
-		this.lat = host.latitude;
-		this.long = host.longitude;
+		this.lat = parseFloat(host.latitude);
+		this.long = parseFloat(host.longitude);
 		this.getLicenseTotalByHostIdDealerId();
 	}
 
@@ -391,11 +235,4 @@ export class SingleHostComponent implements OnInit {
 		);
 	}
 
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
-
-	protected get currentUser() {
-		return this._auth.current_user_value;
-	}
 }

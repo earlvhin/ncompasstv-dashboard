@@ -120,6 +120,7 @@ export const API_ENDPOINTS = {
 		api_apps_versions: 'playerapp/getappversions',
 		api_apps_version: 'playerapp/getlatestversion?appid=',
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
+		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
@@ -132,6 +133,7 @@ export const API_ENDPOINTS = {
 		license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
+		search_license_by_host: 'license/GetByHost/Search',
 		search_owner_tags: 'tag/searchOwnerTag',
 		search_owners: 'tag/searchOwners',
 		search_tags: 'tag/search',

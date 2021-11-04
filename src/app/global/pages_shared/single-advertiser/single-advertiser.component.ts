@@ -77,7 +77,8 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.advertiser = advertiser;
 				},
 				error => console.log('Error retrieving advertiser', error)
-			);
+			)
+			.add(() => this.is_initial_load = false);
 
 	}
 

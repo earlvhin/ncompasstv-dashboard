@@ -4,7 +4,7 @@ import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { API_HOST } from '../../models/api_host.model';
 import { CustomFieldGroup } from '../../models/host-custom-field-group';
-import { API_FILTERS } from '../../models';
+import { API_CONTENT, API_FILTERS, API_HOST_CONTENT, PAGING } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -50,6 +50,16 @@ export class HostService {
     
     get_licenses_per_state_details(state) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_licenses_by_state_details}${state}`, this.httpOptions).map(data => data.dealerState);
+	}
+
+	/**
+	 * @description Get all the contents assigned to a host
+	 * @param hostId 
+	 * @returns Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string }>
+	 */
+	get_contents(hostId: string, page = 1) {
+		const url = `${environment.base_uri}${environment.getters.contents_by_host}?hostId=${hostId}&page=${page}`;
+		return this._http.get<{ contents?: API_HOST_CONTENT[], paging?: PAGING, message?: string }>(url);
 	}
 
 	get_content_by_host_id(id: string) {

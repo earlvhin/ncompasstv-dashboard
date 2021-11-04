@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SingleHostComponent } from './single-host.component';
+import { ImagesTabComponent } from './images-tab.component';
 
-describe('SingleHostComponent', () => {
-  let component: SingleHostComponent;
-  let fixture: ComponentFixture<SingleHostComponent>;
+describe('ImagesTabComponent', () => {
+  let component: ImagesTabComponent;
+  let fixture: ComponentFixture<ImagesTabComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SingleHostComponent ]
+      declarations: [ ImagesTabComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SingleHostComponent);
+    fixture = TestBed.createComponent(ImagesTabComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
