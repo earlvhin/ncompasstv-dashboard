@@ -55,6 +55,17 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		{ name: 'Year', value: 'year', index: 3 },
 	];
 
+	installation_table_columns_init = [
+		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
+		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
+		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
+		{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
+		{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+		{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
+		{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
+		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+	]
+
     //graph
     label_graph: any = [];
     value_graph: any = [];
