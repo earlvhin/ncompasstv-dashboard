@@ -79,6 +79,7 @@ export const API_ENDPOINTS = {
 		api_get_licenses_total_by_dealer: 'license/gettotal?dealerid=',
         api_get_licenses_by_screen: 'license/getlicensesbyscreenid',
         api_get_licenses_statistics: 'license/getmonthlytotal',
+        api_get_licenses_installation_statistics: 'license/getmonthlyinstallation',
 		api_get_notifications: 'notification/getbyreceiverid?receiver_id=',
 		api_get_all_notifications: 'notification/getall',
 		api_get_dealer_notifications: 'notification/getbydealerid?dealer_id=',

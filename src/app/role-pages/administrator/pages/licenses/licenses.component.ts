@@ -182,6 +182,15 @@ export class LicensesComponent implements OnInit {
         this.subscription.add(
 			this._license.get_licenses_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
                 data => {
+                    //reset value
+                    this.total_detailed = 0;
+                    this.sum = 0;
+                    this.licenses_graph_data = [];
+                    this.label_graph_detailed = [];
+                    this.value_graph_detailed = [];
+                    this.average = 0;
+                    this.number_of_months = 0;
+
                     if(data) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));

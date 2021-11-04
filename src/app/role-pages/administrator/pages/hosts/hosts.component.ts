@@ -248,6 +248,15 @@ export class HostsComponent implements OnInit {
         this.subscription.add(
 			this._host.get_host_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
                 data => {
+                    //reset value
+                    this.total_detailed = 0;
+                    this.sum = 0;
+                    this.hosts_graph_data = [];
+                    this.label_graph_detailed = [];
+                    this.value_graph_detailed = [];
+                    this.average = 0;
+                    this.number_of_months = 0;
+
                     if(data) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
@@ -257,12 +266,13 @@ export class HostsComponent implements OnInit {
                                 i => {
                                     this.total_detailed = this.total_detailed + i.totalHosts;
                                     this.hosts_graph_data.push(i)
-                                        this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalHosts)
-                                        this.value_graph_detailed.push(i.totalHosts)
+                                    this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalHosts)
+                                    this.value_graph_detailed.push(i.totalHosts)
                                     this.sum = this.sum + i.totalHosts;
                                 }
                             )
                             this.number_of_months = data.hosts.length;
+                            console.log(this.sum, this.number_of_months)
                             this.average = this.sum / this.number_of_months; 
                             this.sub_title_detailed = "Found " + data.hosts.length + " months with record as per shown in the graph."
                             this.generate = true;

@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDatepicker } from '@angular/material';
-import { Subject } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
@@ -30,6 +30,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	searching: boolean = false;
 	sort_column: string = '';
 	sort_order: string = '';
+    subscription: Subscription = new Subscription();
 	workbook_generation: boolean = false;
 	
 	form = this._form_builder.group({ 
@@ -54,6 +55,36 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		{ name: 'Year', value: 'year', index: 3 },
 	];
 
+	installation_table_columns_init = [
+		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
+		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
+		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
+		{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
+		{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+		{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
+		{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
+		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+	]
+
+    //graph
+    label_graph: any = [];
+    value_graph: any = [];
+    label_graph_detailed: any = [];
+    value_graph_detailed: any = [];
+    total: number = 0;
+    total_detailed: number = 0;
+    sub_title: string;
+    sub_title_detailed: string;
+    start_date: string = '';
+    end_date: string = '';
+    selected_dealer: string = '';
+    number_of_months: number = 0;
+    average: number = 0;
+    sum: number = 0;
+    height_show: boolean = false;
+    licenses_graph_data: any = [];
+    generate: boolean = false;
+
 	private current_month = '';
 	private previous_month = '';
     private licenses_to_export: any = [];
@@ -77,13 +108,15 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	) { }
 	
 	ngOnInit() {
-		this.selected_date = moment().format('MM-DD-YYYY');
-		this.getLicenses(1);
-		this.getLicenseStatistics();
-		this.date = new Date();
-		this.previous_month = moment().subtract(1, 'month').format('MMMM');
+        this.date = new Date();
+        this.selected_date = moment().format('MM-DD-YYYY');
+        this.previous_month = moment().subtract(1, 'month').format('MMMM');
 		this.current_month = moment().format('MMMM');
 		this.next_month = moment().add(1, 'month').format('MMMM');
+
+        this.getLicensesInstallationStatistics();
+        this.getLicenseStatistics();
+		this.getLicenses(1);
 	}
 
 	ngOnDestroy() {
@@ -158,42 +191,29 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.getLicenses(1);
 	}
 	
-	getLicenses(page: number): void {
+	getLicenses(page: number) {
         this.pageSize = 15;
 		this.searching = true;
 		this.installations = [];
+        
+        //removed pipe take until because naghahang 
+		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data).subscribe(
+            data => {
+                console.log("DD", data)
+                let installations = [];
+				let filtered_data = [];
 
-		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data)
-			.pipe(
-				takeUntil(this._unsubscribe)
-			)
-			.subscribe(
-				(response: { message?: string, paging: PAGING }) => {
-
-					let installations = [];
-					let filtered_data = [];
-
-					if (!response.message) {
-						this.paging_data = response.paging;
-						installations = this.mapToTableFormat(response.paging.entities);
-						filtered_data = installations;
-					} 
-
-					this.installations = installations;
-					this.filtered_data = filtered_data;
-
-				},	
-				error => {
-					console.log('Error retreiving licenses by install date', error);
-					this.searching = false;
+				if (!data.message) {
+					this.paging_data = data.paging;
+					installations = this.mapToTableFormat(this.paging_data.entities);
+					filtered_data = installations;
 				}
-			).add(
-				() => {
-					this.initial_load = false;
-					this.searching = false;
-				}
-			);
-
+                this.installations = installations;
+				this.filtered_data = filtered_data;
+                this.initial_load = false;
+				this.searching = false; 
+            }
+        )
 	}
 
 	onSelectDate(value: moment.Moment): void {
@@ -229,18 +249,13 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	}
 
 	private getLicenseStatistics(): void {
-
-		this._license.get_statistics_by_installation(this.selected_date)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: { licenseInstallationStats, message?: string }) => {
-					let data = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 }; 
-					if (!response.message) data = response.licenseInstallationStats;
-					this.getTotalCount(data);
-				},
-				error => console.log('Error retrieving statistics', error)
-			);
-
+		this._license.get_statistics_by_installation(this.selected_date).subscribe(
+            data => {
+                let datas = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 }; 
+				if (!data.message) datas = data.licenseInstallationStats;
+				this.getTotalCount(datas);
+            }
+		);
 	}
 	
 	private getTotalCount(data: { currentMonth: number, nextMonth: number, previousMonth: number, total: number }): void {
@@ -332,5 +347,72 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	protected get currentRole() {
 		return this._auth.current_role;
 	}
+
+    getLicensesInstallationStatistics() {
+        this.subscription.add(
+			this._license.get_licenses_installation_statistics(this.selected_dealer, this.start_date, this.end_date).pipe(
+				takeUntil(this._unsubscribe)
+			)
+			.subscribe(data => {
+                    //reset value
+                    this.total_detailed = 0;
+                    this.sum = 0;
+                    this.licenses_graph_data = [];
+                    this.label_graph_detailed = [];
+                    this.value_graph_detailed = [];
+
+                    if(data) {                        
+                        var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                        data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+
+                        if(this.selected_dealer) {
+                            data.licenses.map(
+                                i => {
+                                    this.total_detailed = this.total_detailed + i.totalLicenses;
+                                    this.licenses_graph_data.push(i)
+                                        this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalLicenses)
+                                        this.value_graph_detailed.push(i.totalLicenses)
+                                    this.sum = this.sum + i.totalLicenses;
+                                }
+                            )
+                            this.number_of_months = data.licenses.length;
+                            this.average = this.sum / this.number_of_months; 
+                            this.sub_title_detailed = "Found " + data.licenses.length + " months with record as per shown in the graph."
+                            this.generate = true;
+                        } else {
+                            data.licenses.map(
+                                i => {
+                                    this.total = this.total + i.totalLicenses;
+                                    this.licenses_graph_data.push(i)
+                                    if(i.year == new Date().getFullYear()) {
+                                        this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
+                                        this.value_graph.push(i.totalLicenses)
+                                    }
+                                }
+                            )
+                        }
+                    }
+                }
+            )
+        )
+        this.sub_title = "Total Licenses Installation as per year " + new Date().getFullYear();
+    }
+
+    toggleCharts() {
+        this.height_show = !this.height_show;
+    }
+
+    getStartDate(s_date) {
+        this.start_date = s_date;
+    }
+    
+    getEndDate(e_date) {
+        this.end_date = e_date;
+    }
+    
+    getDealerId(dealer) {
+        this.selected_dealer = dealer;
+        this.getLicensesInstallationStatistics();
+    }
 
 }
