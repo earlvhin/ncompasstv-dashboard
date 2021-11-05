@@ -369,7 +369,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			);
     }
 
-	private onClickPageNumber(page:number) {
+	public onClickPageNumber(page:number) {
 		this.getContentHistory(this.content_id, page);
 	}
 
