@@ -192,6 +192,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { MatFileUploadModule } from 'angular-material-fileupload';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -452,6 +453,7 @@ const DIRECTIVES = [
 		RouterModule,
 		NgxMatSelectSearchModule,
         BreadcrumbsModule,
+		MatFileUploadModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
 		})
@@ -465,7 +467,8 @@ const DIRECTIVES = [
 		NgxMatSelectSearchModule,
 		NgxPaginationModule,
 		ColorPickerModule,
-		AgmCoreModule
+		AgmCoreModule,
+		MatFileUploadModule,
 	],
 	providers: [
 		MatDatepickerModule,

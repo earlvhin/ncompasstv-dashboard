@@ -2,13 +2,14 @@ import { UpperCasePipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import * as io from 'socket.io-client';
 
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, API_LICENSE, UI_HOST_LICENSE, HOST_LICENSE_STATISTICS, UI_ROLE_DEFINITION, 
-	CustomFields, FieldGroupFields } from 'src/app/global/models';
+import { API_SINGLE_HOST, API_LICENSE, HOST_LICENSE_STATISTICS, API_HOST, API_DEALER, TAG } from 'src/app/global/models';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-single-host',
@@ -20,55 +21,25 @@ import { API_SINGLE_HOST, API_LICENSE, UI_HOST_LICENSE, HOST_LICENSE_STATISTICS,
 export class SingleHostComponent implements OnInit {
 
 	_socket: any;
-	d_name: string;
-	d_desc: string ;
-	dealer_id: string;
-	field_group_fields: FieldGroupFields[] = [];
-	filtered_data: UI_HOST_LICENSE[] = [];
-	has_records: boolean = true;
-	host_id: string;
-	host_license_api: API_LICENSE[];
-	host_data: API_SINGLE_HOST;
-	host_license: UI_HOST_LICENSE[] = [];
-	host_license_count: HOST_LICENSE_STATISTICS;
-	host_fields: CustomFields[] = [];
-	host_field_title: string;
-	img: string = "assets/media_files/admin-icon.png";
-	is_administrator: boolean;
-	is_dealer: boolean = false;
-	is_initial_load = true;
-	is_view_only = false;
-	lat: number;
-	long: number;
-	margin_more: boolean = false;
-	margin_notes = false;
-	no_record: boolean = false;
-	no_case: boolean = true;
-	pi_updating: boolean;
-	single_host_data: any;
-	update_btn: string = "Update System and Restart";
-
+	address: string ;
 	currentRole = this._auth.current_role;
 	currentUser = this._auth.current_user_value;
+	hostName: string;
+	hostId: string;
+	host: API_SINGLE_HOST;
+	hostLicenseStatistics: HOST_LICENSE_STATISTICS;
+	isViewOnly = false;
+	placeholderImage = "assets/media_files/admin-icon.png";
+	singleHostData: { dealer_id: string, host_id: string };
+	lat: number;
+	long: number;
 
-	host_license_table_col = [
-		'#',
-		'License Key',
-		'License Alias',
-		'Type',
-        'Screen',
-		'Mac Address',
-		'Internet Type',
-		'Internet Speed',
-		'Last Push Update',
-		'Last Online Status',
-		'Last Offline Status',
-		'Installation Date'
-	];
-	
-	private business_hours_update_sub: Subscription;
+	private hostLicenses: API_LICENSE[];
+	private isInitialLoad = true;
+	private marginMore = false;
+	private marginNotes = false;
 
-	protected _unsubscribe: Subject<void> = new Subject<void>();
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
@@ -81,45 +52,30 @@ export class SingleHostComponent implements OnInit {
 
 	ngOnInit() {
 
-		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
+		this.initializeSocket();
+		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
 
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.host_id = this._params.snapshot.params.data);
+			.subscribe(() => this.hostId = this._params.snapshot.params.data);
 			
 		this.getHostById();
-
-		if (!this.business_hours_update_sub) this.subscribeToBusinessHoursUpdate();
-
-		this.getHostFields();
+		this.subscribeToBusinessHoursUpdate();
 
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-		this.business_hours_update_sub.unsubscribe();
+		if (this._socket) this._socket.disconnect();
 	}
 
-	getHostFields(): void {
+	didToggleNotesAndHours(): boolean {
 
-		this._host.get_fields().pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => this.host_fields = response.paging.entities, 
-				error => console.log('Error retrieving host fields', error)
-			);
+		if (this.marginNotes && this.marginMore) {
+			return true;
+		}
 
-	}
-
-	getFieldGroup(id: string, title: string) {
-
-		this._host.get_field_by_id(id).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: any) => {
-					this.host_field_title = title;
-					this.field_group_fields = response.fields;
-				},
-				error => console.log('Error retrieving host field by id', error)
-			);
+		return false;
 
 	}
 
@@ -127,7 +83,7 @@ export class SingleHostComponent implements OnInit {
 
 		const dialogRef = this._dialog.open(AssignLicenseModalComponent, {
 			width: '500px',
-			data: this.single_host_data
+			data: this.singleHostData
 		});
 
 		dialogRef.afterClosed().subscribe(
@@ -138,101 +94,113 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	toggledHours(e) {
-		this.margin_more = e;
+		this.marginMore = e;
 	}
 
 	toggledNotes(value: boolean): void {
-		this.margin_notes = value;
+		this.marginNotes = value;
 	}
 
-	didToggleNotesAndHours(): boolean {
+	private getLicenseTotalByHostIdDealerId() {
 
-		if (this.margin_notes && this.margin_more) {
-			return true;
-		}
+		const dealerId = this.singleHostData.dealer_id;
+		const hostId = this.singleHostData.host_id;
 
-		return false;
+		this._license.api_get_licenses_total_by_host_dealer(dealerId, hostId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
 
-	}
+					if (!response) return;
+				
+					const { total, totalActive, totalInActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed } = response;
 
-	getLicenseTotalByHostIdDealerId() {
+					this.hostLicenseStatistics = {
+						total_count: total,
+						total_count_label: 'License(s)',
+						active_value: totalActive,
+						active_value_label: 'Active',
+						inactive_value: totalInActive,
+						inactive_value_label: 'Inactive',
+						online_value: totalOnline,
+						online_value_label: 'Online',
+						offline_value: totalOffline,
+						offline_value_label: 'Offline',
+						total_ads: totalAd,
+						total_ads_label: 'Ads',
+						total_menu: totalMenu,
+						total_menu_label: 'Menu',
+						total_closed: totalClosed,
+						total_closed_label: 'Closed'
+					}
 
-		const dealerId = this.single_host_data.dealer_id;
-		const hostId = this.single_host_data.host_id;
-
-		this._license.api_get_licenses_total_by_host_dealer(dealerId, hostId).subscribe(
-			response => {
-
-				if (!response) return;
-			
-				const { total, totalActive, totalInActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed } = response;
-
-				this.host_license_count = {
-					total_count: total,
-					total_count_label: 'License(s)',
-					active_value: totalActive,
-					active_value_label: 'Active',
-					inactive_value: totalInActive,
-					inactive_value_label: 'Inactive',
-					online_value: totalOnline,
-					online_value_label: 'Online',
-					offline_value: totalOffline,
-					offline_value_label: 'Offline',
-					total_ads: totalAd,
-					total_ads_label: 'Ads',
-					total_menu: totalMenu,
-					total_menu_label: 'Menu',
-					total_closed: totalClosed,
-					total_closed_label: 'Closed'
-				}
-
-			},
-			error => console.log('Error retrieving total license count', error)
-		);
+				},
+				error => console.log('Error retrieving total license count', error)
+			);
 	}
 
 	private getHostById() {
 
-		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+		if (this.isInitialLoad && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setPageData(this._helper.singleHostData);
-			this.is_initial_load = false;
+			this.isInitialLoad = false;
 			return;
 		}
 
-		this._host.get_host_by_id(this.host_id)
+		this._host.get_host_by_id(this.hostId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { host, dealer, hostTags }) => this.setPageData(response),
+				(response: { host: API_HOST, dealer: API_DEALER, hostTags: TAG }) => this.setPageData(response),
 				error => console.log('Error retrieving host by ID', error)
 			);
+
+	}
+
+	private initializeSocket(): void {
+
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__SingleHostComponent'
+		});
+
+		this._socket.on('connect', () => {
+			console.log('#SingleHostComponent - Connected to Socket Server');
+		})
+		
+		this._socket.on('disconnect', () => {
+			console.log('#SingleHostComponent - Disconnnected to Socket Server');
+		});
 
 	}
 
 	private setPageData(response: { host, dealer, hostTags }) {
 		const { host, dealer, hostTags } = response;
 		host.tags = hostTags;
-		this.host_data = response.host;
-		this.single_host_data = { dealer_id: dealer.dealerId, host_id: this.host_id };
-		this.d_name = host.name;
-		this.d_desc = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
+		this.host = response.host;
+		this.singleHostData = { dealer_id: dealer.dealerId, host_id: this.hostId };
+		this.hostName = host.name;
+		this.address = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
 		this.lat = parseFloat(host.latitude);
 		this.long = parseFloat(host.longitude);
 		this.getLicenseTotalByHostIdDealerId();
 	}
 
 	private subscribeToBusinessHoursUpdate(): void {
-		this.business_hours_update_sub = this._host.onUpdateBusinessHours.subscribe(
-			(response: boolean) => {
-				if (response) {
-					this.host_license_api.forEach(
+
+		this._host.onUpdateBusinessHours.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: boolean) => {
+
+					if (!response) return;
+
+					this.hostLicenses.forEach(
 						(license: any) => {
 							console.log('System Update Emitted:', license.licenseId);
 							this._socket.emit('D_update_player', license.licenseId);
 						}
 					);
 				}
-			}
-		);
+			);
 	}
 
 }

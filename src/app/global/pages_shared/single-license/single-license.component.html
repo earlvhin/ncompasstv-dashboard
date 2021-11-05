@@ -637,7 +637,6 @@
 						<div class="row no-gutters" *ngIf="has_playlist">
 							<div class="col-md-1" *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
 								<div class="mr-2">
-									{{ a.thumbnail }}
 									<app-thumbnail-card
 										(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
 										[file_url]="a.file_url"

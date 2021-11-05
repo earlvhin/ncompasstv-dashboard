@@ -131,6 +131,7 @@ export const API_ENDPOINTS = {
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
+		host_files: 'host/GetHostFilesByType',
 		license_by_tags: 'license/getByTags',
 		license_statistics: 'license/getstatisticsbydealerid',
 		license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
@@ -152,6 +153,7 @@ export const API_ENDPOINTS = {
 		validate_rss_url: 'feed/news/validate?url='
 	},
 	create: {
+		amazon_s3_upload: 'host/AmazonS3Upload',
 		api_new_activity: 'activity/create',
 		api_create_global_settings: 'globalsettings/create',
 		api_new_admin: 'admin/create',
@@ -256,6 +258,7 @@ export const API_ENDPOINTS = {
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost?force=1',
 		host: 'host/delete',
+		host_file_amazon_s3: 'host/AmazonS3Delete',
 		tag: 'tag/delete',
 		tag_by_id_and_owner: 'tag/DeleteByOwnerIdAndTagId',
 		tag_by_owner_id: 'tag/DeleteByOwnerId?ownerid=',

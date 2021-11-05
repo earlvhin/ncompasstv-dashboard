@@ -40,6 +40,10 @@ export class HostService {
 		return this._http.post(`${environment.base_uri}${environment.delete.host}`, data, this.httpOptions);
 	}
 
+	delete_file(s3FileName: string) {
+		return this._http.post(`${environment.base_uri}${environment.delete.host_file_amazon_s3}?filename=${s3FileName}`, {}, this.httpOptions);
+	}
+
 	export_host(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
 	}
@@ -66,10 +70,24 @@ export class HostService {
 		return this._http.get(`${environment.base_uri}${environment.getters.content_by_host_id}?hostId=${id}`, this.httpOptions);
 	}
 
+	/**
+	 * @description Get all files of a host by type. Type 1 is images and 2 is for documents.
+	 * @param hostId: string 
+	 * @param type: number = 1 (images) | 2 (documents)
+	 * @param page: number
+	 * @returns PAGING
+	 */
+	get_files_by_type(hostId: string, type = 1, page = 1) {
+		const base = `${environment.base_uri}${environment.getters.host_files}`;
+		const params = this.setUrlParams({ hostId, type, page })
+		const url = `${base}${params}`;
+		return this._http.get<PAGING>(url);
+	}
+
 	get_host() {
 		return this._http.get<API_HOST>(`${environment.base_uri}${environment.getters.api_get_hosts}`, this.httpOptions).map(data => data.host);
 	}
-	
+
     get_host_statistics(dealer?, startDate?, endDate?) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
 	}

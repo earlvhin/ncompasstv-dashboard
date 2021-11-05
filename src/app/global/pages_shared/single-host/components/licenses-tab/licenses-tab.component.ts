@@ -2,15 +2,13 @@ import { DatePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
 import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { debounceTime, takeUntil, tap } from 'rxjs/operators';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import * as io from 'socket.io-client';
 
 import { UnassignHostLicenseComponent } from 'src/app/global/components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { API_LICENSE, PAGING, UI_CURRENT_USER, UI_HOST_LICENSE } from 'src/app/global/models';
 import { LicenseService } from 'src/app/global/services';
-import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-licenses-tab',
@@ -22,19 +20,17 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 	@Input() currentRole: string;
 	@Input() currentUser: UI_CURRENT_USER;
 	@Input() hostId: string;
+	@Input() socket: any;
 
-	_socket: any;
-
-	licenses: API_LICENSE['license'][] = [];
 	hasNoData = false;
+	isViewOnly = false;
+	isPiUpdating: boolean;
+	licenses: API_LICENSE['license'][] = [];
 	pagingData: PAGING;
 	searchFormControl = new FormControl('', Validators.minLength(3));
 	tableColumns: string[];
 	tableData: UI_HOST_LICENSE[] = [];
-
-	is_view_only = false;
-	pi_updating: boolean;
-	update_btn = 'Update System and Restart';
+	updateBtnText = 'Update System and Restart';
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -48,9 +44,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 	
 	ngOnInit() {
 		this.tableColumns = this.columns;
-		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
-		this.initializeSocket();
-		// this.getLicenses();
+		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
 		this.searchLicenses();
 	}
 
@@ -61,7 +55,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-		this._socket.disconnect();
 	}
 
 	filterData(data: UI_HOST_LICENSE[]) {
@@ -117,42 +110,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 		);
 	}
 
-	private getLicenses(): void {
-		this.hasNoData = false;
-
-		this._license.get_license_by_host_id(this.hostId).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-
-					if (typeof response === 'string') {
-						this.hasNoData = true;
-						return;
-					}
-
-					const licenses = response as API_LICENSE['license'][];
-					this.licenses = [...licenses];
-					this.tableData = this.mapToTable([...licenses]);
-
-				},
-				error => console.log('Error retrieving licenses by host ID', error)
-			);
-	}
-
-	private initializeSocket(): void {
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket'],
-			query: 'client=Dashboard__SingleHostComponent'
-		});
-
-		this._socket.on('connect', () => {
-			console.log('#SingleHostComponent - Connected to Socket Server');
-		})
-		
-		this._socket.on('disconnect', () => {
-			console.log('#SingleHostComponent - Disconnnected to Socket Server');
-		});
-	}
-
 	private mapToTable(data: API_LICENSE['license'][]): UI_HOST_LICENSE[] {
 
 		let counter = 1;
@@ -167,7 +124,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 					alias: { value: license.alias ? license.alias : '--', link: `/${this.currentRole}/licenses/` + license.licenseId, editable: true, label: 'License Alias', id: license.licenseId, hidden: false },
 					type: { value: license.screenTypeId != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false},
 					screen: { value: license.screenId != null ? this._titlecase.transform(license.screenName) : '--', link: license.screenId != null ? `/${this.currentRole}/screens/` + license.screenId : null , editable: false, hidden: false },
-					mac_address: { value: license.macAddress ? this._allcaps.transform(license.macAddress) : '--', link: null , editable: false, hidden: false },
 					internet_type: { value: license.internetType ? license.internetType : '--', link: null , editable: false, hidden: false },
 					internet_speed: { value: license.internetSpeed ? license.internetSpeed: '--', link: null , editable: false, hidden: false },	
 					last_push_update: { value: license.contentsUpdated ? this._date.transform(license.contentsUpdated): '--', link: null , editable: false, hidden: false },
@@ -197,37 +153,19 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			switch (result) {
 				
 				case 'system_update':
-
-					this.licenses.forEach(
-						(i: any) => {
-							this._socket.emit('D_system_update_by_license', i.licenseId);
-						}
-					)
-	
-					this.pi_updating = true;
-					this.update_btn = 'Ongoing System Update';
-
+					this.licenses.forEach(data => this.socket.emit('D_system_update_by_license', data.licenseId));
+					this.isPiUpdating = true;
+					this.updateBtnText = 'Ongoing System Update';
 					break;
 
 				case 'update':
-
-					this.licenses.forEach(
-						(i: any) => {
-							this._socket.emit('D_update_player', i.licenseId);
-						}
-					)
-	
-					this.pi_updating = true;
-					this.update_btn = 'Ongoing Content Update';
+					this.licenses.forEach(data => this.socket.emit('D_update_player', data.licenseId));
+					this.isPiUpdating = true;
+					this.updateBtnText = 'Ongoing Content Update';
 					break;
 
 				case 'upgrade_to_v2':
-
-					this.licenses.forEach(
-						(i: any) => {
-							this._socket.emit('D_upgrade_to_v2_by_license', i.licenseId);
-						}
-					)
+					this.licenses.forEach(data => this.socket.emit('D_upgrade_to_v2_by_license', data.licenseId))
 					break;
 
 			}
@@ -235,6 +173,8 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 	}
 
 	private searchLicenses(keyword: string = '') {
+
+		this.tableData = [];
 
 		this._license.search_license_by_host(this.hostId, keyword)
 			.pipe(takeUntil(this._unsubscribe))
@@ -263,7 +203,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 
 		const control = this.searchFormControl;
 
-		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000), tap(() => this.tableData = []))
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
 			.subscribe(keyword => this.searchLicenses(keyword));
 
 	}
@@ -275,7 +215,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			'License Alias',
 			'Type',
 			'Screen',
-			'Mac Address',
 			'Internet Type',
 			'Internet Speed',
 			'Last Push Update',

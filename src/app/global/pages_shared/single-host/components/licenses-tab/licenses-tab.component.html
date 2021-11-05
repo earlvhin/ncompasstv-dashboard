@@ -9,23 +9,23 @@
 
 			<button mat-button mat-raised-button class="theme-btn pi-control _danger sm-text mr-2" title="Unassign Licenses"
 				(click)="onUnassignLicense()" 
-				[disabled]="licenses.length == 0 || is_view_only">
+				[disabled]="licenses.length == 0 || isViewOnly">
 				<span class="fas fa-times"></span> 
 				<span class="ml-2 button_text_animation">Unassign Licenses</span>
 			</button>
 
 			<button mat-button mat-raised-button class="theme-btn pi-control _warning sm-text mr-2" title="Content Update"
 				(click)="onPushUpdate()"
-				[disabled]="pi_updating || is_view_only">
+				[disabled]="isPiUpdating || isViewOnly">
 				<span class="fas fa-upload"></span> 
 				<span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control _primary sm-text mr-2" title='{{ update_btn }}'
+			<button mat-button mat-raised-button class="theme-btn pi-control _primary sm-text mr-2" title='{{ updateBtnText }}'
 				(click)="onUpdateAndRestart()"
-				[disabled]="pi_updating || is_view_only">
+				[disabled]="isPiUpdating || isViewOnly">
 				<span class="fas fa-terminal"></span> 
-				<span class="ml-2 button_text_animation">{{ update_btn }}</span>
+				<span class="ml-2 button_text_animation">{{ updateBtnText }}</span>
 			</button>
 
 		</div>
@@ -44,7 +44,7 @@
 						[paging_details]=""
 						[new_table]="true"
 						[license_status_column]="true"
-						[is_view_only]="is_view_only"
+						[is_view_only]="isViewOnly"
 						(update_info)="onReloadLicense()">
 					</app-data-table>
 				</ng-container>

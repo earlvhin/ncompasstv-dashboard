@@ -1,16 +1,15 @@
-<app-banner
-	*ngIf="single_host_data"
-	[single_image]="img"
-	[single_name]="d_name"
-	[single_desc]="d_desc"
-	[single_host_data]="single_host_data"
-    [host_license_count]="host_license_count"
-	[host_data]="host_data"
+<app-banner *ngIf="singleHostData"
+	[single_image]="placeholderImage"
+	[single_name]="hostName"
+	[single_desc]="address"
+	[single_host_data]="singleHostData"
+    [host_license_count]="hostLicenseStatistics"
+	[host_data]="host"
 	[single_host_controls]="true"
 	(single_host_assign_license)="openAssignLicenseModal()"
 	(toggle_margin_top)="toggledHours($event)"
 	(toggle_margin_top_notes)="toggledNotes($event)"
-	[editable]="!is_view_only"
+	[editable]="!isViewOnly"
 	(update_info)="ngOnInit()"
 	[refresh_banner]="true">
 </app-banner>
@@ -24,9 +23,10 @@
                     <mat-tab label="Licenses">
                         <ng-template matTabContent>
 							<app-licenses-tab
+								[socket]="_socket"
 								[currentRole]="currentRole"
 								[currentUser]="currentUser"
-								[hostId]="host_id">
+								[hostId]="hostId">
 							</app-licenses-tab>
 						</ng-template>
                     </mat-tab>
@@ -35,14 +35,18 @@
                         <ng-template matTabContent>
 							<app-host-contents-tab 
 								[currentRole]="currentRole"
-								[hostId]="host_id">
+								[hostId]="hostId">
 							</app-host-contents-tab>
 						</ng-template>
                     </mat-tab>
 					<!-- PICS TAB -->
 					<mat-tab label="Pics">
-						<ng-template>
-							<app-images-tab></app-images-tab>
+						<ng-template matTabContent>
+							<app-images-tab 
+								[currentUser]="currentUser"
+								[currentRole]="currentRole"
+								[hostId]="hostId">
+							</app-images-tab>
 						</ng-template>
 					</mat-tab>
 					<!-- MAP TAB -->
@@ -56,8 +60,12 @@
                     </mat-tab>
 					<!-- DOCUMENTS TAB -->
 					<mat-tab label="Docs">
-						<ng-template>
-							<app-documents-tab></app-documents-tab>
+						<ng-template matTabContent>
+							<app-documents-tab 
+								[currentUser]="currentUser"
+								[currentRole]="currentRole"
+								[hostId]="hostId">
+							</app-documents-tab>
 						</ng-template>
 					</mat-tab>
                 </mat-tab-group>

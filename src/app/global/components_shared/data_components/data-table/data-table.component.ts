@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { AdvertiserService, AuthService, ContentService, FeedService, HelperService, LicenseService, PlaylistService,
+import { AdvertiserService, AuthService, ContentService, FeedService, HelperService, HostService, LicenseService, PlaylistService,
 	ScreenService, UserService, } from 'src/app/global/services';
 
 import { UI_CURRENT_USER, UI_ROLE_DEFINITION} from 'src/app/global/models';
@@ -33,7 +33,9 @@ export class DataTableComponent implements OnInit {
 	@Input() can_toggle_email_notifications = false;
 	@Input() current_user?: UI_CURRENT_USER;
 	@Input() has_action = false;
+	@Input() has_timestamp_beside_image = true;
 	@Input() is_dealer: boolean;
+	@Input() is_delete_enabled = false;
 	@Input() is_view_only = false;
 	@Input() license_delete: boolean;
 	@Input() license_status_column: boolean;
@@ -86,6 +88,7 @@ export class DataTableComponent implements OnInit {
 		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
+		private _host: HostService,
 		private _helper: HelperService,
 		private _license: LicenseService,
 		private _playlist: PlaylistService,
@@ -254,7 +257,7 @@ export class DataTableComponent implements OnInit {
 		this.warningModal('warning', 'Delete License', 'Are you sure you want to delete this license','','license_delete', id)
 	}
 
-	warningModal(status, message, data, return_msg, action, id): void {
+	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -290,6 +293,23 @@ export class DataTableComponent implements OnInit {
 					break;
 				case 'user_delete':
 					this.deleteUser(id);
+					break;
+				case 'delete-host-file':
+					
+					this._host.delete_file(id).subscribe(() => {
+
+						switch (this.page) {
+							case 'single-host-images-tab':
+								this._helper.onRefreshSingleHostImagesTab.emit();
+								break;
+
+							case 'single-host-documents-tab':
+								this._helper.onRefreshSingleHostDocumentsTab.emit();
+								break;
+						}
+
+					});
+
 					break;
 				default:
 			}
@@ -520,7 +540,34 @@ export class DataTableComponent implements OnInit {
 		this.to_sort_column.emit(filter);
 	}
 
-	onDeleteUser(userId: string, email: string): void {
+	onDelete(dataId: string | number) {
+
+		let status = 'warning';
+		let message = '';
+		let data = '';
+		let return_msg = '';
+		let action = '';
+
+		switch (this.page) {
+
+			case 'single-host-images-tab':
+				message = 'Delete Image';
+				data = 'Are you sure you want to delete this image?';
+				action = 'delete-host-file';
+				break;
+
+			case 'single-host-documents-tab':
+				message = 'Delete Dcocument';
+				data = 'Are you sure you want to delete this document?';
+				action = 'delete-host-file';
+				break;
+
+		}
+			
+		this.warningModal(status, message, data, return_msg, action, dataId);
+	}
+
+ 	onDeleteUser(userId: string, email: string): void {
 		this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`,'','user_delete', userId);
 	}
 

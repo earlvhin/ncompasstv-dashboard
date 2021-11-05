@@ -9,8 +9,13 @@ import { LicensesTabComponent } from './components/licenses-tab/licenses-tab.com
 import { MapTabComponent } from './components/map-tab/map-tab.component';
 import { ImagesTabComponent } from './components/images-tab/images-tab.component';
 import { DocumentsTabComponent } from './components/documents-tab/documents-tab.component';
+import { UploadImageDialogComponent } from './components/upload-image-dialog/upload-image-dialog.component';
+import { UploadDocumentDialogComponent } from './components/upload-document-dialog/upload-document-dialog.component';
 
-
+const DIALOGS = [
+	UploadImageDialogComponent,
+	UploadDocumentDialogComponent,
+];
 @NgModule({
 	declarations: [
 		SingleHostComponent,
@@ -19,11 +24,15 @@ import { DocumentsTabComponent } from './components/documents-tab/documents-tab.
 		MapTabComponent,
 		ImagesTabComponent,
 		DocumentsTabComponent,
+		DIALOGS,
+	],
+	entryComponents: [
+		DIALOGS
 	],
 	imports: [
 		CommonModule,
 		GlobalModule,
-		RouterModule
+		RouterModule,
 	]
 })
 export class SingleHostModule { }

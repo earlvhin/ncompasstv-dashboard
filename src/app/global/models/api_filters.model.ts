@@ -18,4 +18,5 @@ export interface API_FILTERS {
 	status?: string;
 	sortOrder?: string;
 	timezone?: string;
+	type?: any;
 }

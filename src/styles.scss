@@ -1,5 +1,10 @@
 @import '~@angular/material/theming';
 
+$dashboard-primary: mat-palette($mat-light-green, 500);
+$dashboard-accent: mat-palette($mat-grey, 900);
+$n-compass-theme: mat-light-theme($dashboard-primary, $dashboard-accent);
+@include angular-material-theme($n-compass-theme);
+
 $custom-typography: mat-typography-config($font-family: '"Poppins", sans-serif;');
 @include mat-core($custom-typography);
 
