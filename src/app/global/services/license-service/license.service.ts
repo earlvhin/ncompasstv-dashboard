@@ -67,6 +67,10 @@ export class LicenseService {
     get_licenses_statistics(dealer?, startDate?, endDate?) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
 	}
+    
+    get_licenses_installation_statistics(dealer?, startDate?, endDate?) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_installation_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
+	}
 	
 	get_licenses_total_by_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
@@ -88,6 +92,18 @@ export class LicenseService {
     get_license_by_screen_id(id, page) {
 		const params = this.httpParams({ screenId: id,page })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
+	}
+
+	/**
+	 * @description Search licenses of a specific host
+	 * @params hostId, search, page
+	 * @returns Observable<API_LICENSE['license'][] | { message: string }>
+	 */
+	search_license_by_host(hostId: string, search: string, page = 1) {
+		const base = `${this.baseUri}${this.getters.search_license_by_host}`;
+		const params = this.setUrlParams({ hostId, search, page });
+		const url = `${base}${params}`;
+		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(url);
 	}
 
 	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, activate?, zone?, host?) {
@@ -117,6 +133,10 @@ export class LicenseService {
 
 	get_license_total_per_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions)
+	}
+
+	get_ad_licenses_total() {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_ad_licenses_total}`, this.httpOptions);
 	}
 
 	get_statistics_by_dealer(id: string) {

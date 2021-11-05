@@ -1,13 +1,15 @@
 <div class="container">
-    <app-banner 
-        [single_image]="img"
-        [single_name]="advertiser.name"
-        [single_desc]="advertiser.state + ' ' + (advertiser.region ? advertiser.region : '')  + '  -  ' + 'Advertiser since ' + (advertiser.dateCreated | date)"
-        [editable]="!is_view_only"
-        [single_advertiser]="advertiser_id"
-        [advertiser_data]="advertiser"
-        (update_info)="ngOnInit()">
-    </app-banner>
+	<ng-container *ngIf="!is_initial_load; else loading;">
+		<app-banner 
+			[single_image]="img"
+			[single_name]="advertiser.name"
+			[single_desc]="advertiser.state + ' ' + (advertiser.region ? advertiser.region : '')  + '  -  ' + 'Advertiser since ' + (advertiser.dateCreated | date)"
+			[editable]="!is_view_only"
+			[single_advertiser]="advertiser_id"
+			[advertiser_data]="advertiser"
+			(update_info)="ngOnInit()">
+		</app-banner>
+	</ng-container>
 
     <div class="margin-top-extra-notes">
         <div class="content-section">
@@ -35,3 +37,9 @@
         </div> 
     </div>
 </div>
+
+<ng-template #loading>
+	<div class="loading-wrapper">
+		<app-spinner></app-spinner>
+	</div>
+</ng-template>

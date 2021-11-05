@@ -25,6 +25,7 @@ export class UnassignHostLicenseComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		console.log('dialog data', this._dialog_data);
 		this.licenses = this._dialog_data;
 		// console.log("LICENSES", this.licenses)
 	}

@@ -22,7 +22,7 @@ export class ScreenLicenseComponent implements OnInit {
 	assign_success: boolean = false;
 	assigned_licenses = [];
 	assigning_license:boolean = false;
-	license$: Observable<API_LICENSE[]>;
+	license$: Observable<API_LICENSE['license'][]>;
 	subscription: Subscription = new Subscription();
 	no_selected_license: boolean = true;
 	zone_contents: any[] = [];

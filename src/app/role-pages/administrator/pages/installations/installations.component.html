@@ -69,8 +69,51 @@
             </div>
 		</div>
 
-		
-	<hr class="my-4">
+		<hr class="mb-0">
+        <div class="row mb-2">
+            <div class="col-md-12 text-right">
+                <button class="theme-btn _dark no_border_radius border_radius_bottom position-relative sm-text" (click)="toggleCharts()">
+                    <span *ngIf="!height_show; else hide">Show Statistics Charts</span>
+                    <ng-template #hide>
+                        <span>Hide Statistics Charts</span>
+                    </ng-template>
+                </button>
+            </div>
+        </div>
+        <div class="row statistics-graph" [ngClass]="!height_show ? 'height-toggle': 'mb-3'">
+            <div class="col-lg-5">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card *ngIf="value_graph"
+                        [id]="'total-view'"
+						[total]="total"
+						[label_array]="label_graph"
+						[value_array]="value_graph"
+                        [whole_data]="licenses_graph_data"
+                        [sub_title]="sub_title"
+                        [no_click]="false">
+                    </app-data-statistics-card>
+                </mat-card>
+            </div>
+            <div class="col-lg-7">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card-with-picker *ngIf="value_graph_detailed"
+                    (s_date)="getStartDate($event)"
+                    (e_date)="getEndDate($event)"
+                    (dealer_selected)="getDealerId($event)"
+                    [num_of_months]="number_of_months"
+                    [average]="average"
+                    [sub_title]="sub_title_detailed"
+                    [id]="'average-view'"
+					[total]="total_detailed"
+					[label_array]="label_graph_detailed"
+					[value_array]="value_graph_detailed"
+                    [whole_data]="licenses_graph_data"
+                    [generate_chart]="generate">
+                    </app-data-statistics-card-with-picker>
+                </mat-card>
+            </div>
+        </div>
+        
         <div class="col-lg-12 flex p-0">
             <div class="col-lg-3 pl-0">
                 <button mat-button mat-raised-button
@@ -110,7 +153,7 @@
 									(to_sort_column)="getColumnsAndOrder($event)"
 									(update_info)="getLicenses(1)"
 									[table_data]="filtered_data"
-									[table_columns]="installation_table_columns"
+									[table_columns]="table_columns"
 									[new_table]="true"
 									[paging_details]="paging_data"
 									[active_tab]="sort_column"

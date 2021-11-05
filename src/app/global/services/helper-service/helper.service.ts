@@ -20,6 +20,8 @@ export class HelperService {
 	onSelectAnalyticsTab = new EventEmitter<string>();
 	onToggleEmailNotification = new EventEmitter<{ userId: string, value: boolean, tableDataIndex: number, currentEmail: string }>();
 	onResultToggleEmailNotification = new EventEmitter<{ tableDataIndex: number, updated: boolean }>();
+	onRefreshSingleHostImagesTab = new EventEmitter<void>();
+	onRefreshSingleHostDocumentsTab = new EventEmitter<void>();
 
 	singleAdvertiserData: API_ADVERTISER;
 	singleHostData: API_SINGLE_HOST;

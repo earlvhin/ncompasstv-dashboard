@@ -38,8 +38,10 @@ import { DataCardComponent } from './components_shared/data_components/data-card
 import { DataCardCountComponent } from './components_shared/data_components/data-card-count/data-card-count.component';
 import { DataCardGraphComponent } from './components_shared/data_components/data-card-graph/data-card-graph.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
+import { DataGraphCompareComponent } from './components_shared/data_components/data-graph-compare/data-graph-compare.component';
 import { DataStatisticsCardComponent } from './components_shared/data_components/data-statistics-card/data-statistics-card.component';
 import { DataStatisticsCardWithPickerComponent } from './components_shared/data_components/data-statistics-card-with-picker/data-statistics-card-with-picker.component';
+import { DataTotalComponent } from './components_shared/data_components/data-total/data-total.component';
 import { DataTableComponent } from './components_shared/data_components/data-table/data-table.component';
 import { DealerContentTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-content-tab/dealer-content-tab.component';
 import { DealerDetailsTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-details-tab/dealer-details-tab.component';
@@ -138,8 +140,6 @@ import { SingleBillingsComponent } from './pages_shared/single-billings/single-b
 import { SingleContentComponent } from './pages_shared/single-content/single-content.component';
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
-import { SingleHostComponent } from './pages_shared/single-host/single-host.component';
-// import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
@@ -194,6 +194,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { MatFileUploadModule } from 'angular-material-fileupload';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -228,8 +229,10 @@ const ngComponents = [
 	DataCardCountComponent,
     DataCardGraphComponent,
 	DataGraphComponent,
+    DataGraphCompareComponent,
     DataStatisticsCardComponent,
     DataStatisticsCardWithPickerComponent,
+    DataTotalComponent,
 	DataTableComponent,
 	DealerContentTabComponent,
 	DealerDetailsTabComponent,
@@ -325,8 +328,6 @@ const ngComponents = [
 	SingleContentComponent,
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
-	SingleHostComponent,
-	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
 	SingleTemplateComponent,
@@ -392,6 +393,8 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		DataCardGraphComponent,
+		ContentsTabComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -454,6 +457,7 @@ const DIRECTIVES = [
 		RouterModule,
 		NgxMatSelectSearchModule,
         BreadcrumbsModule,
+		MatFileUploadModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
 		})
@@ -467,6 +471,8 @@ const DIRECTIVES = [
 		NgxMatSelectSearchModule,
 		NgxPaginationModule,
 		ColorPickerModule,
+		AgmCoreModule,
+		MatFileUploadModule,
 	],
 	providers: [
 		MatDatepickerModule,

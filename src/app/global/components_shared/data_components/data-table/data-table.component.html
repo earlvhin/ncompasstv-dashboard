@@ -61,37 +61,50 @@
 
 						<ng-container *ngIf="!data[d].isImage; else isImage;">
 
-							<a class="cursor-pointer table-row-url" 
-								target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
-								*ngIf="data[d].link != null; else no_link" 
-								[routerLink]="[data[d].link]" 
-								[queryParams]="query_params"
-								[ngClass]="data[d].past ? 'text-danger' : ''">
-								
-								<ng-container>
+							<ng-container *ngIf="data[d].link; else no_link;">
 
-									<div *ngIf="!data[d].permission; else userWithPermission">
-										<span *ngIf="!data[d].compressed; else shortened_tooltip">
-											{{ data[d].value }}
-										</span>
+								<ng-container *ngIf="!data[d].isFile; else isFile">
+									<a class="cursor-pointer table-row-url" 
+										target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
+										[routerLink]="[data[d].link]" 
+										[queryParams]="query_params"
+										[ngClass]="data[d].past ? 'text-danger' : ''">
 
-										<ng-template #shortened_tooltip>
-											<span [title]="data[d].value">
-												{{ data[d].value | substring:10 }}
-											</span>
-										</ng-template>
-									</div>
+										<ng-container>
 
-									<ng-template #userWithPermission>
-										<div class="d-flex name-and-permission">
-											<div>{{ data[d].value }}</div>
-											<div class="permission-container">{{ data[d].permission }}</div>
-										</div>
-									</ng-template>
+											<div *ngIf="!data[d].permission; else userWithPermission">
+												<span *ngIf="!data[d].compressed; else shortened_tooltip">
+													{{ data[d].value }}
+												</span>
 
+												<ng-template #shortened_tooltip>
+													<span [title]="data[d].value">
+														{{ data[d].value | substring:10 }}
+													</span>
+												</ng-template>
+											</div>
+
+											<ng-template #userWithPermission>
+												<div class="d-flex name-and-permission">
+													<div>{{ data[d].value }}</div>
+													<div class="permission-container">{{ data[d].permission }}</div>
+												</div>
+											</ng-template>
+
+										</ng-container>
+									</a>
 								</ng-container>
 
-							</a>
+								<ng-template #isFile>
+									<a 	class="cursor-pointer table-row-url" 
+										target="_blank"
+										[href]="[data[d].link]" 
+										[ngClass]="data[d].past ? 'text-danger' : ''">
+										<span>{{ data[d].value }}</span>
+									</a>	
+								</ng-template>
+
+							</ng-container>
 
 							<!-- START: BUSINESS HOURS SECTION -->
 							<span *ngIf="data[d].business_hours" class="ml-2">
@@ -175,7 +188,7 @@
 									<img [src]="data[d].value" alt="screenshot" style="width: 50px; margin-bottom: 5px;">
 								</a>
 								<br>
-								<span>{{ data[d].value | screenshot }}</span>
+								<span *ngIf="has_timestamp_beside_image">{{ data[d].value | screenshot }}</span>
 							</ng-container>
 
 							<ng-template #noImage>
@@ -242,6 +255,10 @@
 
 				<td class="p-3 control-toggle text-center" *ngIf="is_user_delete_enabled">
 					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i>
+				</td>
+
+				<td class="p-3 control-toggle text-center" *ngIf="is_delete_enabled">
+					<i class="fas fa-trash cursor-pointer color-danger" (click)="onDelete(data.s3FileName.value)"></i>
 				</td>
 
                 <td class="p-3 control-toggle text-center" *ngIf="content_metrics">

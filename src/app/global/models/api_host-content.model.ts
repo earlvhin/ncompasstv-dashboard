@@ -1,0 +1,37 @@
+export interface API_HOST_CONTENT {
+	advertiserId: string;
+	classification: string;
+	contentId: string;
+	contentPlaysListCount: any;
+	createdBy: string;
+	createdByName: string;
+	creditsEnabled: null;
+	dateCreated: string;
+	dealerId: string;
+	description: string;
+	duration: number;
+	feedId: null
+	fileName: string;
+	fileType: string;
+	filesize: string;
+	handlerId: string;
+	hostId: string;
+	isActive: number;
+	isConverted: number;
+	isFullScreen: number;
+	ownerType: string;
+	playlistContentCredits: any;
+	playlistContentId: any;
+	playlistContentSchedule: any;
+	playlistContentsSchedule: any;
+	prefix: string;
+	previewThumbnail: string;
+	refContentId: string;
+	refDealerId: string;
+	seq: number;
+	thumbnail: string;
+	title: string;
+	totalPlayed: number;
+	url: string;
+	uuid: string;
+}

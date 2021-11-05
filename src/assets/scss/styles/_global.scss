@@ -75,3 +75,13 @@ hr {
 .index-column-width {
 	width: 3%;
 }
+
+.upload-host-files-buttons-override {
+
+	button.mat-raised-button {
+		margin-right: 10px !important;
+		float: left;
+		color: white;
+	}
+
+}

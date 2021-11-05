@@ -254,6 +254,8 @@ export class HostsComponent implements OnInit {
                     this.hosts_graph_data = [];
                     this.label_graph_detailed = [];
                     this.value_graph_detailed = [];
+                    this.average = 0;
+                    this.number_of_months = 0;
 
                     if(data) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
@@ -270,6 +272,7 @@ export class HostsComponent implements OnInit {
                                 }
                             )
                             this.number_of_months = data.hosts.length;
+                            console.log(this.sum, this.number_of_months)
                             this.average = this.sum / this.number_of_months; 
                             this.sub_title_detailed = "Found " + data.hosts.length + " months with record as per shown in the graph."
                             this.generate = true;

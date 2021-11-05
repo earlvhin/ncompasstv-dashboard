@@ -4,7 +4,7 @@ import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { API_HOST } from '../../models/api_host.model';
 import { CustomFieldGroup } from '../../models/host-custom-field-group';
-import { API_FILTERS } from '../../models';
+import { API_CONTENT, API_FILTERS, API_HOST_CONTENT, PAGING } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -40,6 +40,10 @@ export class HostService {
 		return this._http.post(`${environment.base_uri}${environment.delete.host}`, data, this.httpOptions);
 	}
 
+	delete_file(s3FileName: string) {
+		return this._http.post(`${environment.base_uri}${environment.delete.host_file_amazon_s3}?filename=${s3FileName}`, {}, this.httpOptions);
+	}
+
 	export_host(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
 	}
@@ -52,14 +56,38 @@ export class HostService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_licenses_by_state_details}${state}`, this.httpOptions).map(data => data.dealerState);
 	}
 
+	/**
+	 * @description Get all the contents assigned to a host
+	 * @param hostId 
+	 * @returns Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string }>
+	 */
+	get_contents(hostId: string, page = 1) {
+		const url = `${environment.base_uri}${environment.getters.contents_by_host}?hostId=${hostId}&page=${page}`;
+		return this._http.get<{ contents?: API_HOST_CONTENT[], paging?: PAGING, message?: string }>(url);
+	}
+
 	get_content_by_host_id(id: string) {
 		return this._http.get(`${environment.base_uri}${environment.getters.content_by_host_id}?hostId=${id}`, this.httpOptions);
+	}
+
+	/**
+	 * @description Get all files of a host by type. Type 1 is images and 2 is for documents.
+	 * @param hostId: string 
+	 * @param type: number = 1 (images) | 2 (documents)
+	 * @param page: number
+	 * @returns PAGING
+	 */
+	get_files_by_type(hostId: string, type = 1, page = 1) {
+		const base = `${environment.base_uri}${environment.getters.host_files}`;
+		const params = this.setUrlParams({ hostId, type, page })
+		const url = `${base}${params}`;
+		return this._http.get<PAGING>(url);
 	}
 
 	get_host() {
 		return this._http.get<API_HOST>(`${environment.base_uri}${environment.getters.api_get_hosts}`, this.httpOptions).map(data => data.host);
 	}
-	
+
     get_host_statistics(dealer?, startDate?, endDate?) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
 	}

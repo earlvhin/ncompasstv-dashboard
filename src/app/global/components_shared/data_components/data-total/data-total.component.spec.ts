@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { SingleHostComponent } from './single-host.component';
+import { DataTotalComponent } from './data-total.component';
 
-describe('SingleHostComponent', () => {
-  let component: SingleHostComponent;
-  let fixture: ComponentFixture<SingleHostComponent>;
+describe('DataTotalComponent', () => {
+  let component: DataTotalComponent;
+  let fixture: ComponentFixture<DataTotalComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SingleHostComponent ]
+      declarations: [ DataTotalComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(SingleHostComponent);
+    fixture = TestBed.createComponent(DataTotalComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -55,10 +55,9 @@ export class MediaViewerComponent implements OnInit {
 		}
 
 		this.file_data = this._dialog_data;
-        console.log("FILE DATA", this.file_data)
 		this.setSettings(this.file_data.selected);
 		
-		// for cycling through content withing the media viewer
+		// for cycling through content within the media viewer
 		this.file_data.content_array.map(
 			(data, index) => {
 
