@@ -139,6 +139,7 @@
 					(options_saved)="optionsSaved($event)"
 					(reset_playlist_content)="reloadPlaylist()"
 					(remove_playlist_content)="removePlaylistContent($event)"
+					(log_content_history)="logRemovedContent($event)"
                     [playlist_contents]="playlist_contents">
 				</app-playlist-content>
 
@@ -167,7 +168,7 @@
 					[is_list]="list_view_mode"
 					[is_view_only]="is_view_only"
 					(options_saved)="optionsSaved($event)"
-					(click)="selectedContent(content.playlistContentId)"
+					(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency)"
 					(reset_playlist_content)="reloadPlaylist()"
 					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>

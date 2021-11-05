@@ -45,7 +45,7 @@
 
 				<p  class="sm-text mb-0 cursor-pointer text-danger mx-1" 
 					*ngIf="!is_marking && !is_view_only && !isChildFrequency" 
-					(click)="removeContentToPlaylistModal(content.playlistContentId)">
+					(click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)">
 					<span class="fas fa-trash"></span>
 				</p>
 
