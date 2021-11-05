@@ -99,7 +99,7 @@
                 <p class="md-text text-primary mb-1" *ngIf="content.isFullScreen == 1">
                     <i class="fas fa-expand" [title]="content.isFullScreen ? 'Fullscreen' : 'Not Fullscreen'"></i>
                 </p>
-                <p (click)="removeContentToPlaylistModal(content.playlistContentId, , content.contentId)" class="md-text cursor-pointer text-danger mb-1" *ngIf="!is_marking">
+                <p (click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)" class="md-text cursor-pointer text-danger mb-1" *ngIf="!is_marking">
                     <span class="fas fa-trash" title="Delete"></span>
                 </p>    
                 <p (click)="optionsModal()" class="md-text cursor-pointer" *ngIf="!is_marking">
