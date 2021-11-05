@@ -16,14 +16,14 @@
 
 			<button mat-button mat-raised-button class="theme-btn pi-control _warning sm-text mr-2" title="Content Update"
 				(click)="onPushUpdate()"
-				[disabled]="isPiUpdating || isViewOnly">
+				[disabled]="licenses.length === 0 || isPiUpdating || isViewOnly">
 				<span class="fas fa-upload"></span> 
 				<span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
 			<button mat-button mat-raised-button class="theme-btn pi-control _primary sm-text mr-2" title='{{ updateBtnText }}'
 				(click)="onUpdateAndRestart()"
-				[disabled]="isPiUpdating || isViewOnly">
+				[disabled]="licenses.length === 0 || isPiUpdating || isViewOnly">
 				<span class="fas fa-terminal"></span> 
 				<span class="ml-2 button_text_animation">{{ updateBtnText }}</span>
 			</button>
