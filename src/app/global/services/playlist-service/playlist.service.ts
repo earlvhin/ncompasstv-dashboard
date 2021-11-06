@@ -124,6 +124,10 @@ export class PlaylistService {
 		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_in_blacklist}`, data, requestOptions);
 	}
 
+	log_content_history(data) {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_content_history_log}`, data, this.httpOptions);
+	}
+
 	update_playlist_info(playlist_data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_playlist_info}`, playlist_data, this.httpOptions);
 	}

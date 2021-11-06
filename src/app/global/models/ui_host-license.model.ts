@@ -1,39 +1,20 @@
-export class UI_HOST_LICENSE {
-    license_id: object;
-    index: object;
-    license_key: object;
-    alias: object;
-    type: object;
-    screen: object;
-    mac_address: object;
-    internet_type: object;
-    internet_speed: object;
-    last_push_update: object;
-    online_status: object;
-    offline_status: object;
-    pi_status: object;
-	install_date: object;
+import { TABLE_ROW_FORMAT } from '.';
 
-    constructor(
-        license_id: object, index: object, license_key: object, alias: object, type: object, screen: object, mac_address: object, 
-		internet_type: object, internet_speed: object, last_push_update: object, online_status: object, offline_status: object,
-		install_date: object, pi_status: object, 
-    ) {
-        this.license_id = license_id;
-        this.index = index;
-        this.license_key = license_key;
-        this.alias = alias;
-        this.type = type;
-        this.screen = screen;
-        this. mac_address = mac_address;
-        this.internet_type = internet_type;
-        this.internet_speed = internet_speed;
-        this.last_push_update = last_push_update;
-        this.online_status = online_status;
-        this.offline_status = offline_status;
-		this.install_date = install_date;
-        this.pi_status = pi_status;
-    }
+export class UI_HOST_LICENSE {
+    license_id?: TABLE_ROW_FORMAT;
+    index?: TABLE_ROW_FORMAT;
+    license_key?: TABLE_ROW_FORMAT;
+    alias?: TABLE_ROW_FORMAT;
+    type?: TABLE_ROW_FORMAT;
+    screen?: TABLE_ROW_FORMAT;
+    mac_address?: TABLE_ROW_FORMAT;
+    internet_type?: TABLE_ROW_FORMAT;
+    internet_speed?: TABLE_ROW_FORMAT;
+    last_push_update?: TABLE_ROW_FORMAT;
+    online_status?: TABLE_ROW_FORMAT;
+    offline_status?: TABLE_ROW_FORMAT;
+    pi_status?: TABLE_ROW_FORMAT;
+	install_date?: TABLE_ROW_FORMAT;
 }
 
 

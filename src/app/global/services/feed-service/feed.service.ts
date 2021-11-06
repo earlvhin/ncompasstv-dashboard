@@ -111,6 +111,10 @@ export class FeedService {
 	}
 
 	validate_rss_url(url: string) {
-		return this._http.post(`${environment.base_uri}${environment.getters.validate_rss_url}${url}`, null, this.httpOptions);
+		const base = environment.base_uri;
+		const endpoint = environment.getters.validate_rss_url;
+		const params = encodeURIComponent(url);
+		const requestUrl = `${base}${endpoint}${params}`;
+		return this._http.post(requestUrl, null, this.httpOptions);
 	}
 }

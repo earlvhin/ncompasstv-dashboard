@@ -32,12 +32,18 @@ export class DashboardComponent implements OnInit {
     subscription: Subscription = new Subscription;
 	title = 'Dashboard';
     licenses_details: any;
+	hosts_details: any;
+	ad_licenses_details: any;
     dealer_stats: any;
     playlists_details: any;
     advertiser_stats: any;
     screen_details: any;
     temp_label: any = [];
     temp_array: any = [];
+	host_label: any = [];
+    host_array: any = [];
+	ad_license_label: any = [];
+	ad_license_array: any = [];
     user_name: string;
 
     status_graph_label: any = [];
@@ -63,6 +69,8 @@ export class DashboardComponent implements OnInit {
         this.date = moment(date).format('LL') + ', ' +  moment(date).format('dddd');
 		this.getLicenseReport();
 		this.getAdvertiserReport();
+		this.getHostReport();
+		this.getAdLicenseReport();
 	}
 
     getLicenseReport() {
@@ -115,41 +123,27 @@ export class DashboardComponent implements OnInit {
 	}
 
 	getHostReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium')
-		}
-
 		this.subscription.add(
-			this._host.get_host_report(filter).subscribe(
+			this._host.get_host_total().subscribe(
 				data => {
-					let host_report = data.list[0].monthly.filter(i => i.total > 0);
+					this.hosts_details = {
+					active_value: data.totalActive,
+					active_label: 'Active',
+					inactive_value: data.totalInActive,
+					inactive_label: 'Inactive',
+					for_installation_value: data.forInstallationScheduled,
+					for_installation_label: 'Install Schedule'
+                	}
 
-					if (host_report.length > 0) {
-						let latest_added = host_report[host_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.host_report_chart = {
-							title: 'Hosts',
-							stats: `${latest_added.total} latest added hosts on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'host_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						 host_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.host_report_chart.chart_data.push(i.total),
-								this.host_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-					} else {
-						this.host_report_chart = false;
-					}
-
-					this.loading_host_report_chart = false;
+                if (this.hosts_details) {
+                    this.host_label.push(this.hosts_details.active_label + ": " + this.hosts_details.active_value);
+                    this.host_label.push(this.hosts_details.inactive_label+ ": " + this.hosts_details.inactive_value);
+                    this.host_label.push(this.hosts_details.for_installation_label+ ": " + this.hosts_details.for_installation_value);
+                    this.host_array.push(this.hosts_details.active_value);
+                    this.host_array.push(this.hosts_details.inactive_value);
+                    this.host_array.push(this.hosts_details.for_installation_value);
+                }
+            
 				}, 
 				error => {
 					console.log(error);
@@ -157,6 +151,63 @@ export class DashboardComponent implements OnInit {
 			)
 		)
 
+	}
+
+	getAdLicenseReport() {
+		this.subscription.add(
+			this._license.get_ad_licenses_total().subscribe(
+				data => {
+					this.ad_licenses_details = {
+				    basis: data.mainAverageAsset,
+                    basis_label: 'Ad License',
+                    basis_sub_label: 'Average Per Content',
+					hosts_value: data.mainAverageHost,
+					hosts_label: 'Hosts',
+					advertisers_value: data.mainAverageAdvertiser,
+					advertisers_label: 'Advertisers',
+					fillers_value: data.mainAverageFiller,
+					fillers_label: 'Fillers',
+					feeds_value: data.mainAverageFeed,
+					feeds_label: 'Feeds',
+					others_value: data.mainAverageOther,
+					others_label: 'Others',
+					average_duration: this.calculateTime(data.mainAverageDuration)
+                	}
+
+                if (this.ad_licenses_details) {
+                    this.ad_license_label.push(this.ad_licenses_details.hosts_label + ": " + this.ad_licenses_details.hosts_value);
+                    this.ad_license_label.push(this.ad_licenses_details.advertisers_label+ ": " + this.ad_licenses_details.advertisers_value);
+                    this.ad_license_label.push(this.ad_licenses_details.fillers_label+ ": " + this.ad_licenses_details.fillers_value);
+					this.ad_license_label.push(this.ad_licenses_details.feeds_label+ ": " + this.ad_licenses_details.feeds_value);
+					this.ad_license_label.push(this.ad_licenses_details.others_label+ ": " + this.ad_licenses_details.others_value);
+                    this.ad_license_array.push(this.ad_licenses_details.hosts_value);
+                    this.ad_license_array.push(this.ad_licenses_details.advertisers_value);
+                    this.ad_license_array.push(this.ad_licenses_details.fillers_value);
+					this.ad_license_array.push(this.ad_licenses_details.feeds_value);
+					this.ad_license_array.push(this.ad_licenses_details.others_value);
+                }
+            
+				}, 
+				error => {
+					console.log(error);
+				}
+			)
+		)
+	}
+
+	private calculateTime(duration: number): string {
+		if (duration < 60) {
+			return `${Math.round(duration)}s`;
+		}
+
+		if (duration === 60) {
+			return '1m';
+		}
+
+		const minutes = Math.floor(duration / 60);
+		const seconds = Math.round(duration - minutes * 60);
+
+		return `${minutes}m ${seconds}s`;
 	}
 
 	getAdvertiserReport() {

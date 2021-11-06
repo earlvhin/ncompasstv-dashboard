@@ -196,8 +196,9 @@ export class NewsFormComponent implements OnInit {
 
 	/** Pass news feed data to parent component */
 	generateNewsFeed() {
+		const feedUrl = this.news_form.value.rssFeedUrl;
+		this.news_form.value.rssFeedUrl = encodeURIComponent(feedUrl);
 		this.news_feed_data.emit(this.news_form.value);
-		console.log(this.news_form.value);
 	}
 
 	/** Remove Selected Media File 

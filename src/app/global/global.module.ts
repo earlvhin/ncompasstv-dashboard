@@ -140,8 +140,6 @@ import { SingleBillingsComponent } from './pages_shared/single-billings/single-b
 import { SingleContentComponent } from './pages_shared/single-content/single-content.component';
 import { SingleDealerComponent } from './pages_shared/single-dealer/single-dealer.component';
 import { SingleDealerSidebarComponent } from './components_purpose-built/single-dealer-sidebar/single-dealer-sidebar.component';
-import { SingleHostComponent } from './pages_shared/single-host/single-host.component';
-// import { SingleLicenseComponent } from './pages_shared/single-license/single-license.component';
 import { SinglePlaylistComponent } from './pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from './pages_shared/single-screen/single-screen.component';
 import { SingleTemplateComponent } from './pages_shared/single-template/single-template.component';
@@ -196,6 +194,7 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
+import { MatFileUploadModule } from 'angular-material-fileupload';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -329,8 +328,6 @@ const ngComponents = [
 	SingleContentComponent,
 	SingleDealerComponent,
 	SingleDealerSidebarComponent,
-	SingleHostComponent,
-	// SingleLicenseComponent,
 	SinglePlaylistComponent,
 	SingleScreenComponent,
 	SingleTemplateComponent,
@@ -396,6 +393,8 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		DataCardGraphComponent,
+		ContentsTabComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -458,6 +457,7 @@ const DIRECTIVES = [
 		RouterModule,
 		NgxMatSelectSearchModule,
         BreadcrumbsModule,
+		MatFileUploadModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
 		})
@@ -471,6 +471,8 @@ const DIRECTIVES = [
 		NgxMatSelectSearchModule,
 		NgxPaginationModule,
 		ColorPickerModule,
+		AgmCoreModule,
+		MatFileUploadModule,
 	],
 	providers: [
 		MatDatepickerModule,

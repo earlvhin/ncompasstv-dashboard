@@ -33,6 +33,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	sort_column: string = '';
 	sort_order: string = '';
     subscription: Subscription = new Subscription();
+	table_columns: any[];
 	workbook_generation: boolean = false;
 	
 	form = this._form_builder.group({ 
@@ -56,17 +57,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		{ name: 'Month', value: 'month', index: 2 },
 		{ name: 'Year', value: 'year', index: 3 },
 	];
-
-	installation_table_columns_init = [
-		{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
-		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
-		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
-		{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
-		{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
-		{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
-		{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
-		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
-	]
 
     //graph
     label_graph: any = [];
@@ -115,6 +105,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	) { }
 	
 	ngOnInit() {
+		this.table_columns = this.installation_table_columns;
         this.date = new Date();
         this.selected_date = moment().format('MM-DD-YYYY');
         this.previous_month = moment().subtract(1, 'month').format('MMMM');
@@ -129,28 +120,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	get date(): any {
-		return this._date.value;
-	}
-
-	set date(value: any) {
-		this._date.setValue(value);
-	}
-
-	get installation_table_columns() {
-
-		return [
-			{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
-			{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
-			{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
-			{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
-			{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
-			{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
-			{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
-			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
-		];
 	}
 
 	exportTable(): void {
@@ -203,24 +172,25 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.searching = true;
 		this.installations = [];
         
-        //removed pipe take until because naghahang 
-		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data).subscribe(
-            data => {
-                console.log("DD", data)
-                let installations = [];
-				let filtered_data = [];
+		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => {
+					console.log("DD", data)
+					let installations = [];
+					let filtered_data = [];
 
-				if (!data.message) {
-					this.paging_data = data.paging;
-					installations = this.mapToTableFormat(this.paging_data.entities);
-					filtered_data = installations;
+					if (!data.message) {
+						this.paging_data = data.paging;
+						installations = this.mapToTableFormat(this.paging_data.entities);
+						filtered_data = installations;
+					}
+					this.installations = installations;
+					this.filtered_data = filtered_data;
+					this.initial_load = false;
+					this.searching = false; 
 				}
-                this.installations = installations;
-				this.filtered_data = filtered_data;
-                this.initial_load = false;
-				this.searching = false; 
-            }
-        )
+			);
 	}
 
 	onSelectDate(value: moment.Moment): void {
@@ -253,6 +223,29 @@ export class InstallationsComponent implements OnInit, OnDestroy {
         this.type = index;
 		this.getLicenses(1);
 
+	}
+
+	private get installation_table_columns() {
+
+		return [
+			{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
+			{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
+			{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
+			{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
+			{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+			{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
+			{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
+			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+		];
+
+	}
+
+	private get date(): any {
+		return this._date.value;
+	}
+
+	private set date(value: any) {
+		this._date.setValue(value);
 	}
 
 	private getLicenseStatistics(): void {

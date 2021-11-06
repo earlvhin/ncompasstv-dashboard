@@ -12,8 +12,9 @@ import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-sc
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
 import { ContentService, PlaylistService } from 'src/app/global/services';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
-	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT } from 'src/app/global/models';
+	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT, API_CONTENT_HISTORY, API_CONTENT_HISTORY_LIST } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlist-content-panel',
@@ -53,7 +54,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	playlist_content_backup: API_CONTENT[];
 	playlist_saving: boolean = false;
 	selected_contents: string[];
+	selected_content_ids: string[];
 	selected_content_count: number;
+	playlist_new_content: any[];
 	structured_updated_playlist: API_UPDATE_PLAYLIST_CONTENT;
 	structured_incoming_blocklist = [];
 	structured_remove_in_blocklist = [];
@@ -78,7 +81,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	constructor(
 		private _content: ContentService,
 		private _dialog: MatDialog,
-		private _playlist: PlaylistService
+		private _playlist: PlaylistService,
+		private _auth: AuthService
 	) { }
 
 	ngOnInit() {
@@ -89,7 +93,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.getAssetCount();
 		this.currentContentFilter = this.contentFilterOptions[1].key;
 		this.playlist_saving = false;
+		this.playlist_new_content = [];
 		this.selected_contents = [];
+		this.selected_content_ids = [];
 		this.bulk_toggle = false;
 		this.is_marking = false;
 
@@ -120,6 +126,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		if (this.is_marking == false) {
 			this.selected_contents = [];
+			this.selected_content_ids = [];
 			this.can_set_schedule = false;
 			this.can_update_schedule = false;
 		}
@@ -188,7 +195,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		dialog.afterClosed()
 			.subscribe(
 				data => {
-					if (data) this.removePlaylistContents(this.selected_contents);
+					if (data) {
+						this.removePlaylistContents(this.selected_contents);
+						this.logContentHistory(this.selected_content_ids, false);
+					}
 				},
 				error => console.log('Error closing remove content dialog', error)
 			);
@@ -243,7 +253,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	selectAllContents(): void {
-		this.playlist_contents.forEach(i => this.selected_contents.push(i.playlistContentId));
+		this.playlist_contents.forEach(i => {
+			if(i.frequency !== 2 && i.frequency != 3) {
+			 	this.selected_contents.push(i.playlistContentId);
+				this.selected_content_ids.push(i.contentId);
+			}
+		});
+		
 		this.can_set_schedule = true;
 	}
 
@@ -387,8 +403,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						if (localStorage.getItem('to_blocklist')) {
 							this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
 							this.structureAddedPlaylistContent(data);
+							this.logContentHistory(data, true);
 						} else {
 							this.structureAddedPlaylistContent(data);
+							this.logContentHistory(data, true);
 						}
 					} else {
 						localStorage.removeItem('to_blocklist');
@@ -444,7 +462,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	/** Single Content Remove */
 	removePlaylistContent(data: any): void {
 		this.playlist_saving = true;
-
 		this._playlist.remove_playlist_content(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
 		.subscribe(
 			() => this.saveOrderChanges(),
@@ -474,6 +491,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					console.log('Valid');
 				} else {
 					this.selected_contents = [];
+					this.selected_content_ids = [];
 				}
 			}, 0);
 		}
@@ -521,12 +539,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	selectedContent(id: string): void {
-		
+	selectedContent(id: string, contentId: string, contentFrequency: number): void {
+		let isChildFrequency = contentFrequency === 2 || contentFrequency === 3;
+		if(isChildFrequency) return;
+
 		if (!this.selected_contents.includes(id)) {
-			this.selected_contents.push(id)
+			this.selected_contents.push(id);
+			this.selected_content_ids.push(contentId);
 		} else {
 			this.selected_contents = this.selected_contents.filter(i => i !== id)
+			this.selected_content_ids = this.selected_content_ids.filter(i => i !== contentId)
 		}
 		
 		if (this.selected_contents.length === 0) {
@@ -635,6 +657,38 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.savePlaylistChanges(this.structureUpdatedPlaylist());
 	}
 
+	logRemovedContent(data: any){
+		this.logContentHistory(data, false);
+	}
+
+	logContentHistory(data: any, isAdd: any)
+	{
+		if(isAdd){
+			this.playlist_new_content = data;
+		}
+		else {			
+			if(this.selected_content_ids.length > 0){
+				data.forEach(i => this.playlist_new_content.push(i));
+			}
+			else {
+				this.playlist_new_content.push(data);
+			}
+		}
+
+		this._playlist.log_content_history(this.structureContentHistory(isAdd)).pipe(takeUntil(this._unsubscribe))
+		.subscribe(
+			() => {
+				this.playlist_new_content = [];
+				this.selected_content_ids = [];
+			},
+			error => {
+				console.log('Error logging content history', error);
+				this.playlist_new_content = [];
+				this.selected_content_ids = [];
+			}
+		);
+	}
+
 	searchPlaylistContent(id: string): any {
 		return this.playlist_contents.filter(
 			content => {
@@ -664,11 +718,30 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		);
 
 		return this.structurePlaylistUpdatePayload(updated_playlist);
-
 	}
 
 	structurePlaylistUpdatePayload(updated_playlist_content): API_UPDATE_PLAYLIST_CONTENT {
 		return new API_UPDATE_PLAYLIST_CONTENT(this.playlist_id, updated_playlist_content);
+	}
+
+	structureContentHistory(isAdd: any): API_CONTENT_HISTORY_LIST {
+		let action = isAdd ? "Added" : "Removed";
+		let new_contents = this.playlist_new_content.map(
+			i => {
+				return new API_CONTENT_HISTORY(
+					isAdd ? i.contentId : i,
+					this.playlist_id,
+					action,
+					this._auth.current_user_value.user_id
+				)
+			}
+		);
+
+		return this.structureContentHistoryPayload(new_contents);
+	}
+
+	structureContentHistoryPayload(new_contents): API_CONTENT_HISTORY_LIST {
+		return new API_CONTENT_HISTORY_LIST(new_contents);
 	}
 
 	private filterExpiredContent(data: any[]): any[] {
@@ -848,6 +921,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				}
 			);
 
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 }

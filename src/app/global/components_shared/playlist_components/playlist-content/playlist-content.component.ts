@@ -28,6 +28,8 @@ export class PlaylistContentComponent implements OnInit {
 	@Output() options_saved = new EventEmitter();
 	@Output() reset_playlist_content = new EventEmitter();
 	@Output() remove_playlist_content = new EventEmitter();
+	@Output() log_content_history = new EventEmitter();
+
 
 	contentTitle: string;
 	frequency: number;
@@ -90,7 +92,7 @@ export class PlaylistContentComponent implements OnInit {
 			);
 	}
 
-	removeContentToPlaylistModal(id): void {
+	removeContentToPlaylistModal(id, contentId): void {
 
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
@@ -107,6 +109,7 @@ export class PlaylistContentComponent implements OnInit {
 				response => {
 					if (!response) return;
 					this.remove_playlist_content.emit(id); 
+					this.log_content_history.emit(contentId);
 				}
 			);
 	}

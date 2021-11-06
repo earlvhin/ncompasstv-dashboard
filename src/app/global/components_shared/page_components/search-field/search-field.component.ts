@@ -14,7 +14,7 @@ export class SearchFieldComponent implements OnInit {
 	@Input() placeholder: string;
 	@Input() search_keyword: string;
 	@Input() form_title: string;
-	@Input() data_reference: API_DEALER[];
+	@Input() data_reference: any[];
 	@Input() primary_keyword: string;
 	@Input() secondary_keyword: string;
 	@Input() api_search: boolean;

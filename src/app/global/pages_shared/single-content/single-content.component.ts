@@ -8,7 +8,7 @@ import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { environment as env } from '../../../../environments/environment';
 import { AuthService, ContentService, PlaylistService } from '../../../global/services';
-import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION } from '../../../global/models';
+import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_CONTENT_HISTORY, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION } from '../../../global/models';
 
 interface CONTENT_LOGS_REPORT {
 	durationTime: string,
@@ -38,11 +38,13 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	date_selected = this._date.transform(new Date(), 'longDate');
 	monthly_chart_updating = true;
     playing_where: any[] = [];
+	content_history: any[] = [];
 	in_playlist: any[] = [];
 	queried_date = moment();
 	realtime_data: EventEmitter<any> = new EventEmitter();
 	update_chart: EventEmitter<any> = new EventEmitter();
 	yearly_chart_updating = true;
+	paging_data_history: any;
 
 	host_count: number = 0;
 	license_count: number = 0;
@@ -72,6 +74,15 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		'Host',
         'Screen Name'
     ];
+
+	content_history_table_columns = [
+		{name: '#', no_export: true},
+        {name: 'Playlist Id', key:'playlistId'},
+		{name: 'Playlist Name', key:'playlistName'},
+        {name: 'Log Action', key:'logAction'},
+        {name: 'Log User', key:'logUser'},
+        {name: 'Log Date', key:'logDate'},
+	];
 
 	in_playlist_table_columns = [
 		'#',
@@ -317,6 +328,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 				// this.getYearlyStats(this.content_id, this.current_date);
 				this.getContentInfo(this.content_id);
 				this.getPlayWhere(this.content_id);
+				this.getContentHistory(this.content_id, 1);
 
 				this.start_date = this._params.snapshot.queryParamMap.get('start_date') 
 								  ? moment(new Date(this._params.snapshot.queryParamMap.get('start_date'))).format('YYYY-MM-DD') 
@@ -342,6 +354,24 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			);
 
     }
+
+	private getContentHistory(id: string, page): void {
+		this._content.get_contents_history(id, page).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					this.paging_data_history = response;
+					this.content_history = this.mapToUIContentHistoryFormat(response.entities);
+				},
+				error => {
+					this.paging_data_history = [];
+					console.log('Error retrieving content history logs', error);
+				}
+			);
+    }
+
+	public onClickPageNumber(page:number) {
+		this.getContentHistory(this.content_id, page);
+	}
 
 	private getMonthlyStats(content_id: string, date: string): void {
 
@@ -393,6 +423,27 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 						{ value: i.licenseAlias ? i.licenseAlias : i.licenseId, link: i.licenseId ? `/${role}/licenses/${i.licenseId}` : null , hidden: false },
 						{ value: i.hostName, link: i.hostId ? `/${role}/hosts/${i.hostId}` : null , hidden: false },
 						{ value: i.screenName, link: i.screenId ? `/${role}/screens/${i.screenId}` : null , hidden: false },
+					);
+				}
+			);
+		}
+
+		return [];
+    }
+
+		private mapToUIContentHistoryFormat(data: any[]): any[] {
+		if (data && data.length > 0) {
+			let count = this.paging_data_history.pageStart;
+			const role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
+			return data.map(
+				i => {
+					return new UI_CONTENT_HISTORY(
+						{ value: count++, link: null , editable: false, hidden: false },
+						{ value: i.playlistId, link: i.playlistId ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
+						{ value: i.playlistName, link: i.playlistName ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
+						{ value: i.logAction, link: null , editable: false, hidden: false },
+						{ value: `${i.firstName} ${i.lastName}`, link: null , editable: false, hidden: false },
+						{ value: this._date.transform(i.logDate, 'MMM dd, y h:mm a'), link: null , editable: false, hidden: false }		
 					);
 				}
 			);

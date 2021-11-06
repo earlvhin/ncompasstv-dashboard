@@ -42,3 +42,23 @@ export class API_CONTENT_PLAY_COUNT {
     dateTime: string;
     count: number;
 }
+
+export class API_CONTENT_HISTORY_LIST {
+    contentHistoryLogs: API_CONTENT_HISTORY[];
+    constructor(contents: API_CONTENT_HISTORY[]){
+        this.contentHistoryLogs = contents;
+    }
+}
+
+export class API_CONTENT_HISTORY {
+    contentId: string;
+    playlistId: string;
+    action: string;
+    userId: string;
+    constructor(contentId: string, playlistId: string, action: string, userId: string){
+        this.contentId = contentId;
+        this.playlistId = playlistId;
+        this.action = action;
+        this.userId = userId;
+    }
+}

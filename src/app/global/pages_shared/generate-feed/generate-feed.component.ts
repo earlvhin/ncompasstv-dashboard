@@ -236,7 +236,7 @@ export class GenerateFeedComponent implements OnInit {
 		this.generated_weather_feed = new GenerateWeatherFeed(
 			this.feed_info,
 			feed_data
-		)
+		);
 	}
 	
 	/** Construct Generated Weather Feed Payload to be sent to API */
