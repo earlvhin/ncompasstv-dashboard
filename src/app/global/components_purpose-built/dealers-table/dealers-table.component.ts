@@ -193,16 +193,17 @@ export class DealersTableComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
+                    console.log("response", response)
 					this.initial_load = false;
 					this.paging_data = response.paging;
 
-					if (!response.dealers) {
+					if (!response.paging.entities) {
 						this.filtered_data = [];
 						this.no_dealer = true;
 						return;
 					}
 
-					this.dealers_data = this.mapToUIFormat(response.dealers);
+					this.dealers_data = this.mapToUIFormat(response.paging.entities);
 					this.filtered_data = this.dealers_data;
 
 				},
@@ -240,15 +241,15 @@ export class DealersTableComponent implements OnInit {
 					dealer.region,
 					dealer.state,
 					dealer.monthAsDealer,
-					dealer.dealerStats.totalLicenses,
-					dealer.dealerStats.totalLicensesInactive,
-					dealer.dealerStats.totalLicensesOnline,
-					dealer.dealerStats.totalLicensesOffline,
-					dealer.dealerStats.totalLicenseScheduled,
-					dealer.dealerStats.totalHosts,
-					dealer.dealerStats.totalHostsActive,
-					dealer.dealerStats.totalAdvertisers,
-					dealer.dealerStats.totalAdvertisersActive,
+					dealer.totalLicenses,
+					dealer.totalLicensesInactive,
+					dealer.totalLicensesOnline,
+					dealer.totalLicensesOffline,
+					dealer.totalLicenseScheduled,
+					dealer.totalHosts,
+					dealer.totalHostsActive,
+					dealer.totalAdvertisers,
+					dealer.totalAdvertisersActive,
 				)
 			}
 		);

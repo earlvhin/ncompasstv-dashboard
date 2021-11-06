@@ -7,8 +7,11 @@
         </h4>
         <ng-template #average>
             <h4 class="mb-2 text-center">
-                <span class="text-dark font-weight-medium">
+                <span class="text-dark font-weight-medium" *ngIf="!installation">
                     <span class="text-primary">{{num_of_months}}</span> Month(s) Average = <span class="text-primary">{{averaging}}</span>
+                </span>
+                <span class="text-dark font-weight-medium" *ngIf="installation && start && end">
+                    <span class="text-primary">{{dealer_selected}}</span> : {{start}} - {{end}} <span class="text-primary"></span>
                 </span>
             </h4>
         </ng-template>

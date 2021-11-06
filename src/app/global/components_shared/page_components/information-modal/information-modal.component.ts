@@ -1,5 +1,6 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material'
+import { MAT_DIALOG_DATA } from '@angular/material';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-information-modal',
@@ -13,17 +14,19 @@ export class InformationModalComponent implements OnInit {
 	title: string;
 	type: string;
 	graph: boolean = false;
+	installation: boolean = false;
 	
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: { type: string, title: string, contents: any, character_limit?: number, graph?:boolean },
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: { type: string, title: string, contents: any, character_limit?: number, graph?:boolean, installation?:boolean },
 	) { }
 		
 	ngOnInit() {
-		const { contents, title, type, character_limit, graph } = this._dialog_data;
+		const { contents, title, type, character_limit, graph, installation } = this._dialog_data;
 		this.contents = contents;
 		this.title = title;
 		this.type = type;
         this.graph = graph;
+        this.installation = installation;
 		if (character_limit) this.character_limit = character_limit;
         console.log(this.contents)
 	}
@@ -34,6 +37,10 @@ export class InformationModalComponent implements OnInit {
 
     get isGraph(): boolean {
 		return this.graph;
+	}
+    
+    get isInstallation(): boolean {
+		return this.installation;
 	}
 
 	get isBusinessHours(): boolean {
@@ -77,4 +84,8 @@ export class InformationModalComponent implements OnInit {
         return sum;
     }
 
+
+    formatDate(date) {
+        return moment(date).format("ll");    
+    }
 }

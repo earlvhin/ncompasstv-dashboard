@@ -81,7 +81,7 @@
             </div>
         </div>
         <div class="row statistics-graph" [ngClass]="!height_show ? 'height-toggle': 'mb-3'">
-            <div class="col-lg-5">
+            <div class="col-lg-4">
                 <mat-card class="card-graph">
                     <app-data-statistics-card *ngIf="value_graph"
                         [id]="'total-view'"
@@ -90,11 +90,12 @@
 						[value_array]="value_graph"
                         [whole_data]="licenses_graph_data"
                         [sub_title]="sub_title"
-                        [no_click]="false">
+                        (click_graph)="getGraphPoints($event)"
+                        [installation_average]="true">
                     </app-data-statistics-card>
                 </mat-card>
             </div>
-            <div class="col-lg-7">
+            <div class="col-lg-8">
                 <mat-card class="card-graph">
                     <app-data-statistics-card-with-picker *ngIf="value_graph_detailed"
                     (s_date)="getStartDate($event)"
@@ -104,11 +105,11 @@
                     [average]="average"
                     [sub_title]="sub_title_detailed"
                     [id]="'average-view'"
-					[total]="total_detailed"
 					[label_array]="label_graph_detailed"
 					[value_array]="value_graph_detailed"
-                    [whole_data]="licenses_graph_data"
-                    [generate_chart]="generate">
+                    [whole_data]="licenses_graph_data_detailed"
+                    [generate_chart]="generate"
+                    [installation]="true">
                     </app-data-statistics-card-with-picker>
                 </mat-card>
             </div>

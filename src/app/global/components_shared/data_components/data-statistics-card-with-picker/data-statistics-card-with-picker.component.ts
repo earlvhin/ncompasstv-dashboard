@@ -40,6 +40,8 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     @Input() generate_chart: boolean;
     @Input() num_of_months: string;
     @Input() average: string;
+    @Input() installation: boolean = false;
+    @Input() total_dealer: boolean = false;
 
     @Output() s_date: EventEmitter<any> = new EventEmitter;
     @Output() e_date: EventEmitter<any> = new EventEmitter;
@@ -84,6 +86,10 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
             this.dealer_selected.emit(this.selected_dealer);
             console.log("YES")
         }
+    }
+
+    getGraphPoints(e) {
+        console.log("Emitted", e)
     }
 
     getDealers(e) {
