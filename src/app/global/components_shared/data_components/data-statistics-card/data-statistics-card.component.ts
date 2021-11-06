@@ -142,6 +142,11 @@ export class DataStatisticsCardComponent implements OnInit {
                                 autoSkip: false
                             }
                         },
+                        x: {
+                            ticks: {
+                                autoSkip: false
+                            }
+                        }
                     }       
                 },
             });
