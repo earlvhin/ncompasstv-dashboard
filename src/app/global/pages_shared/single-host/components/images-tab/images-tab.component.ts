@@ -90,7 +90,7 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 					thumbnail: { value: file.url, link: null, isImage: true, editable: false, hidden: false },
 					date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
 					fileName: { value: file.filename, link: null , editable: false, hidden: false },
-					s3FileName: { value: file.s3Filename },
+					s3FileName: { value: file.s3Filename, hidden: true },
 				};
 			}
 		);
@@ -103,7 +103,7 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 	}
 
 	protected get columns() {
-		return [ '#', 'Thumbnail', 'Upload Date', 'Filename', 'S3 Filename', 'Actions' ];
+		return [ '#', 'Thumbnail', 'Upload Date', 'Filename', 'Actions' ];
 	}
 	
 }

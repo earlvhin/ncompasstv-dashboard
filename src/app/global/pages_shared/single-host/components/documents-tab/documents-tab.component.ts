@@ -88,7 +88,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 					index: { value: count++, link: null , editable: false, hidden: false },
 					fileName: { value: file.filename, link: file.url, isFile: true, editable: false, hidden: false },
 					date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
-					s3FileName: { value: file.s3Filename },
+					s3FileName: { value: file.s3Filename, hidden: true },
 				};
 			}
 		);
@@ -101,7 +101,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 	}
 
 	protected get columns() {
-		return [ '#', 'File', 'Upload Date', 'S3 Filename', 'Actions' ];
+		return [ '#', 'File', 'Upload Date', 'Actions' ];
 	}
 	
 }

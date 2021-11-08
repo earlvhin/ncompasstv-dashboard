@@ -22,24 +22,25 @@ export class SingleHostComponent implements OnInit {
 
 	_socket: any;
 	address: string ;
+	currentImage: string;
 	currentRole = this._auth.current_role;
 	currentUser = this._auth.current_user_value;
 	hostName: string;
 	hostId: string;
-	host: API_SINGLE_HOST;
+	host: API_SINGLE_HOST['host'];
 	hostLicenseStatistics: HOST_LICENSE_STATISTICS;
 	isViewOnly = false;
-	placeholderImage = "assets/media_files/admin-icon.png";
 	singleHostData: { dealer_id: string, host_id: string };
 	lat: number;
 	long: number;
-
+	
 	private hostLicenses: API_LICENSE[];
 	private isInitialLoad = true;
 	private marginMore = false;
 	private marginNotes = false;
-
+	
 	protected _unsubscribe = new Subject<void>();
+	protected defaultImage = 'assets/media_files/admin-icon.png';
 
 	constructor(
 		private _auth: AuthService,
@@ -60,6 +61,7 @@ export class SingleHostComponent implements OnInit {
 			
 		this.getHostById();
 		this.subscribeToBusinessHoursUpdate();
+		this.currentImage = this.defaultImage;
 
 	}
 
@@ -173,10 +175,11 @@ export class SingleHostComponent implements OnInit {
 
 	}
 
-	private setPageData(response: { host, dealer, hostTags }) {
+	private setPageData(response: API_SINGLE_HOST) {
 		const { host, dealer, hostTags } = response;
 		host.tags = hostTags;
 		this.host = response.host;
+		this.currentImage = response.host.logo;
 		this.singleHostData = { dealer_id: dealer.dealerId, host_id: this.hostId };
 		this.hostName = host.name;
 		this.address = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';
