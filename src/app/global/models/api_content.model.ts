@@ -51,14 +51,25 @@ export class API_CONTENT_HISTORY_LIST {
 }
 
 export class API_CONTENT_HISTORY {
+    playlistContentId: string;
     contentId: string;
     playlistId: string;
     action: string;
     userId: string;
-    constructor(contentId: string, playlistId: string, action: string, userId: string){
+    constructor(playlistContentId: string, contentId: string, playlistId: string, action: string, userId: string){
+        this.playlistContentId = playlistContentId;
         this.contentId = contentId;
         this.playlistId = playlistId;
         this.action = action;
         this.userId = userId;
+    }
+}
+
+export class API_CONTENT_DATA {
+    playlistContentId: string;
+    contentId: string;
+    constructor(playlistContentId: string, contentId: string){
+        this.playlistContentId = playlistContentId;
+        this.contentId = contentId;
     }
 }
