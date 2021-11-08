@@ -1,6 +1,8 @@
 import { Component, OnInit, Input } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { Subject } from 'rxjs';
+import {Router} from "@angular/router"
+import { AuthService } from 'src/app/global/services';
 
 @Component({
   selector: 'app-data-graph-compare',
@@ -17,7 +19,7 @@ export class DataGraphCompareComponent implements OnInit {
 	private chart: Chart;
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(
+	constructor(private router: Router, private _auth: AuthService
 	) { }
 
 	ngOnInit() {
@@ -52,8 +54,14 @@ export class DataGraphCompareComponent implements OnInit {
                 }]
             },
             options: {
-                onClick: (e: any) => {
-                   
+                onClick: (evt, item) => {
+                    if(this.id === 'status'){
+                        if(item)
+                        {
+                            this.router.navigate([`/${this.currentRole}/licenses`, 
+                                        {status: item[0].index === 0 ? 'Online': 'Offline'}])
+                        }
+                    }
                 },
                 responsive: true,
                 maintainAspectRatio: false,
@@ -81,5 +89,9 @@ export class DataGraphCompareComponent implements OnInit {
 		});
         
     }
+
+    protected get currentRole() {
+		return this._auth.current_role;
+	}
 
 }

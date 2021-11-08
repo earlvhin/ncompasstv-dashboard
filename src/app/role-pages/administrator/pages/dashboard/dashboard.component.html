@@ -112,8 +112,8 @@
                 <ng-container>
                     <app-data-card-graph 
                         [id]="'ad_average'"
-                        [compare_basis]="ad_licenses_details.basis"
-                        [compare_basis_label]="ad_licenses_details.basis_label"
+                        [average_basis]="ad_licenses_details.basis"
+                        [average_basis_label]="ad_licenses_details.basis_label"
                         [compare_basis_sub_label]="ad_licenses_details.basis_sub_label"
                         [label_array]="ad_license_label"
                         [value_array]="ad_license_array">
@@ -126,12 +126,9 @@
                 <div class="col-lg-12 p-3 text-center">
                     <h4 class="mb-2 text-center">
                         <span class="text-dark font-weight-medium">
-                            <span>Main Show Playlist</span>
+                            <span>Average Main Show Playlist Duration</span>
                         </span>
                     </h4>
-                    <span class="text-dark md-text">
-                        <span>Average Duration</span>
-                    </span>
                 </div>
                 <div class="col-lg-12 p-3">
                     <h4 class="mb-2 text-center">

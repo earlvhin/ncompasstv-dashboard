@@ -184,7 +184,7 @@
 
 						<ng-template #isImage>
 							<ng-container *ngIf="data[d].value; else noImage">
-								<a [href]="data[d].value" target="_blank">
+								<a [href]="data[d].value" target="_blank" class="mr-2">
 									<img [src]="data[d].value" alt="screenshot" style="width: 50px; margin-bottom: 5px;">
 								</a>
 								<br>

@@ -24,6 +24,8 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	@Input() online_value_label: string;
 	@Input() offline_value: number;
 	@Input() offline_value_label: string;
+	@Input() average_basis: number;
+	@Input() average_basis_label: string;
 	@Input() id: string;
 	@Input() is_green: boolean;
     @Input() icon: string;
@@ -63,7 +65,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 			data: { labels, 
                 datasets: [{ 
                     data,
-                    backgroundColor: ["#c1ef82", "#97ddd3", "#9e96df", "gray"],
+                    backgroundColor: ["#c1ef82", "#97ddd3", "#9e96df", "gray", "#771c8a"],
                 }], 
             },
             options: {
