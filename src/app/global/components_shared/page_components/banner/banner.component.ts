@@ -21,7 +21,7 @@ import { InformationModalComponent } from '../information-modal/information-moda
 
 export class BannerComponent implements OnInit, OnDestroy {
 	@Input() editable: boolean;
-	@Input() single_image: string;
+	@Input() single_image = 'assets/media-files/admin-icon.png';
 	@Input() single_name: string;
 	@Input() single_desc: string;
 	@Input() dealer_data: any;
