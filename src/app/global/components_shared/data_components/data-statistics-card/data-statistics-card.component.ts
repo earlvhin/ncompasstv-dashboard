@@ -92,7 +92,6 @@ export class DataStatisticsCardComponent implements OnInit {
         const whole : any = this.whole_data;
 
         if(whole.length == 0) {
-            console.log("YES")
             this.no_data.emit(true);
         }
 
