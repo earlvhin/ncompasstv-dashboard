@@ -109,7 +109,7 @@ export class PlaylistContentComponent implements OnInit {
 				response => {
 					if (!response) return;
 					this.remove_playlist_content.emit(id); 
-					this.log_content_history.emit(contentId);
+					this.log_content_history.emit({id, contentId});
 				}
 			);
 	}

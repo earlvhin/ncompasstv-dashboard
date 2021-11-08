@@ -14,7 +14,7 @@ import { ViewSchedulesComponent } from '../view-schedules/view-schedules.compone
 import { ContentService, PlaylistService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
-	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT, API_CONTENT_HISTORY, API_CONTENT_HISTORY_LIST } from 'src/app/global/models';
+	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT, API_CONTENT_HISTORY, API_CONTENT_HISTORY_LIST, API_CONTENT_DATA } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlist-content-panel',
@@ -54,9 +54,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	playlist_content_backup: API_CONTENT[];
 	playlist_saving: boolean = false;
 	selected_contents: string[];
-	selected_content_ids: string[];
+	selected_content_ids: API_CONTENT_DATA[];
 	selected_content_count: number;
-	playlist_new_content: any[];
+	playlist_new_content:API_CONTENT_DATA[];
 	structured_updated_playlist: API_UPDATE_PLAYLIST_CONTENT;
 	structured_incoming_blocklist = [];
 	structured_remove_in_blocklist = [];
@@ -93,9 +93,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.getAssetCount();
 		this.currentContentFilter = this.contentFilterOptions[1].key;
 		this.playlist_saving = false;
-		this.playlist_new_content = [];
 		this.selected_contents = [];
 		this.selected_content_ids = [];
+		this.playlist_new_content = [];
 		this.bulk_toggle = false;
 		this.is_marking = false;
 
@@ -256,7 +256,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_contents.forEach(i => {
 			if(i.frequency !== 2 && i.frequency != 3) {
 			 	this.selected_contents.push(i.playlistContentId);
-				this.selected_content_ids.push(i.contentId);
+				this.selected_content_ids.push({playlistContentId: i.playlistContentId, 
+												contentId: i.contentId});
 			}
 		});
 		
@@ -403,10 +404,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						if (localStorage.getItem('to_blocklist')) {
 							this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
 							this.structureAddedPlaylistContent(data);
-							this.logContentHistory(data, true);
 						} else {
 							this.structureAddedPlaylistContent(data);
-							this.logContentHistory(data, true);
 						}
 					} else {
 						localStorage.removeItem('to_blocklist');
@@ -545,10 +544,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		if (!this.selected_contents.includes(id)) {
 			this.selected_contents.push(id);
-			this.selected_content_ids.push(contentId);
+			this.selected_content_ids.push({playlistContentId: id, contentId: contentId});
 		} else {
 			this.selected_contents = this.selected_contents.filter(i => i !== id)
-			this.selected_content_ids = this.selected_content_ids.filter(i => i !== contentId)
+			this.selected_content_ids = this.selected_content_ids.filter(i => i.playlistContentId !== id)
 		}
 		
 		if (this.selected_contents.length === 0) {
@@ -575,7 +574,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.addToBlocklist(to_block);
 	}
 
-	savePlaylistChanges(data: API_UPDATE_PLAYLIST_CONTENT, frequencyUpdate?: FREQUENCY, creditsToSubmit?: CREDITS_TO_SUBMIT, creditsStatusUpdate?: CREDITS_STATUS): void {
+	savePlaylistChanges(data: API_UPDATE_PLAYLIST_CONTENT, frequencyUpdate?: FREQUENCY, creditsToSubmit?: CREDITS_TO_SUBMIT, creditsStatusUpdate?: CREDITS_STATUS, isAdded?: true): void {
 		this.playlist_saving = true;
 		this.is_marking = false;
 
@@ -584,7 +583,15 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			this._playlist.update_playlist_contents(data).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					async (data: any) => {
+						if(isAdded){
+							if(data){
+								data.playlistContentsAdded.forEach(i => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, 
+		 															i.contentId)));
 
+								await this._playlist.log_content_history(this.structureContentHistory(true)).toPromise();
+								this.playlist_new_content = [];
+							}
+						}
 						if (frequencyUpdate) {
 
 							const { frequency, playlistContentId, playlistId } = frequencyUpdate;
@@ -622,6 +629,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						} else {
 							this.getPlaylistById();
 						}
+
 					},
 					error => console.log('Error updating playlist contents', error)
 				);
@@ -654,7 +662,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	structureAddedPlaylistContent(incoming_playlist_content: API_CONTENT_BLACKLISTED_CONTENTS[]): void {
 		this.playlist_contents = incoming_playlist_content.concat(this.playlist_contents);
-		this.savePlaylistChanges(this.structureUpdatedPlaylist());
+		this.savePlaylistChanges(this.structureUpdatedPlaylist(), null, null, null, true);
 	}
 
 	logRemovedContent(data: any){
@@ -663,28 +671,29 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	logContentHistory(data: any, isAdd: any)
 	{
-		if(isAdd){
-			this.playlist_new_content = data;
+		if(isAdd) {
+			data.forEach(i => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)));
 		}
-		else {			
+		else{
 			if(this.selected_content_ids.length > 0){
-				data.forEach(i => this.playlist_new_content.push(i));
-			}
-			else {
-				this.playlist_new_content.push(data);
+				data.forEach(i => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, 
+		 															i.contentId)));
+		 	}
+			else{
+				this.playlist_new_content.push(new API_CONTENT_DATA(data.id, data.contentId));
 			}
 		}
 
 		this._playlist.log_content_history(this.structureContentHistory(isAdd)).pipe(takeUntil(this._unsubscribe))
 		.subscribe(
-			() => {
-				this.playlist_new_content = [];
+			async () => {
 				this.selected_content_ids = [];
+				this.playlist_new_content = [];
 			},
 			error => {
 				console.log('Error logging content history', error);
-				this.playlist_new_content = [];
 				this.selected_content_ids = [];
+				this.playlist_new_content = [];
 			}
 		);
 	}
@@ -729,7 +738,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		let new_contents = this.playlist_new_content.map(
 			i => {
 				return new API_CONTENT_HISTORY(
-					isAdd ? i.contentId : i,
+					i.playlistContentId,
+					i.contentId,
 					this.playlist_id,
 					action,
 					this._auth.current_user_value.user_id
