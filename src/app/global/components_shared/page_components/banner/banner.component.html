@@ -3,8 +3,10 @@
         <div class="row">
             <div class="col-lg-12">
                 <div class="d-flex align-items-center">
-                    <div class="single-image mr-3" *ngIf="single_image">
-                        <img [src]="single_image" alt="admin">
+                    <div class="single-image mr-3">
+						<ng-container *ngIf="single_image">
+							<img class="host-image" [src]="single_image">
+						</ng-container>
                     </div>
                     <div class="single-info flex-even">
 						<div class="d-flex align-items-center">

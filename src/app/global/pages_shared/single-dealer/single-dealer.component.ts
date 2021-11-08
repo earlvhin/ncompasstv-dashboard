@@ -67,7 +67,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	host_data_api: API_HOST[];
 	host_filtered_data: any = [];
 	hosts_to_export: any = [];
-	img: string = "assets/media_files/admin-icon.png";
+	img: string = "assets/media-files/admin-icon.png";
 	initial_load = true;
 	initial_load_advertiser = true;
 	initial_load_charts = true;

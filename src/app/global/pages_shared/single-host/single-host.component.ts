@@ -22,7 +22,7 @@ export class SingleHostComponent implements OnInit {
 
 	_socket: any;
 	address: string ;
-	currentImage: string;
+	currentImage = 'assets/media-files/admin-icon.png';
 	currentRole = this._auth.current_role;
 	currentUser = this._auth.current_user_value;
 	hostName: string;
@@ -40,7 +40,6 @@ export class SingleHostComponent implements OnInit {
 	private marginNotes = false;
 	
 	protected _unsubscribe = new Subject<void>();
-	protected defaultImage = 'assets/media_files/admin-icon.png';
 
 	constructor(
 		private _auth: AuthService,
@@ -61,7 +60,6 @@ export class SingleHostComponent implements OnInit {
 			
 		this.getHostById();
 		this.subscribeToBusinessHoursUpdate();
-		this.currentImage = this.defaultImage;
 
 	}
 
@@ -179,7 +177,7 @@ export class SingleHostComponent implements OnInit {
 		const { host, dealer, hostTags } = response;
 		host.tags = hostTags;
 		this.host = response.host;
-		this.currentImage = response.host.logo;
+		if (response.host.logo) this.currentImage = response.host.logo;
 		this.singleHostData = { dealer_id: dealer.dealerId, host_id: this.hostId };
 		this.hostName = host.name;
 		this.address = host.address ? `${host.address}, ${host.city}, ${host.state} ${host.postalCode}` : 'No Address Available';

@@ -21,7 +21,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 	advertiser: any;
 	advertiser_id: string;
 	content_data: any = [];
-	img: string = "assets/media_files/admin-icon.png";
+	img: string = "assets/media-files/admin-icon.png";
 	is_initial_load = true;
 	is_view_only = false;
 	selected_index: number;
