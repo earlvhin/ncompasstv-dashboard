@@ -77,7 +77,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	content_history_table_columns = [
 		{name: '#', no_export: true},
-        {name: 'Playlist Id', key:'playlistId'},
+		{name: 'Playlist Content Id', key:'playlistContentId'},
 		{name: 'Playlist Name', key:'playlistName'},
         {name: 'Log Action', key:'logAction'},
         {name: 'Log User', key:'logUser'},
@@ -439,6 +439,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 				i => {
 					return new UI_CONTENT_HISTORY(
 						{ value: count++, link: null , editable: false, hidden: false },
+						{ value: i.playlistContentId, link: i.playlistId ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
 						{ value: i.playlistId, link: i.playlistId ? `/${role}/playlists/${i.playlistId}` : null , hidden: true },
 						{ value: i.playlistName, link: i.playlistName ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
 						{ value: i.logAction, link: null , editable: false, hidden: false },
