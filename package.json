@@ -1,6 +1,6 @@
 {
     "name": "ncompasstv-dashboard",
-    "version": "0.0.0",
+    "version": "1.23.2",
     "scripts": {
         "ng": "ng",
         "start": "ng serve",
