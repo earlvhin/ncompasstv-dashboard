@@ -12,9 +12,10 @@
 
 	<br>
 
-    <div class="text-center">        
+    <div class="text-center">  
 		<div [fileUploadInputFor]="imageUploadQueue" (onFileSelected)="onQueueImage()" class="upload-drop-zone d-flex flex-column align-items-center">
-			<h5>Just drag and drop files here</h5>
+			<h5>Drag and drop images here. Only these types are acceptable: </h5>
+			<h5>.png, .jpg, or .jpeg</h5>
 			<br>
 			<h5>or</h5>
 			<button mat-raised-button class="choose-file-btn theme-btn _primary" (click)="onClickChooseFilesBtn()">Choose an image</button>
@@ -27,7 +28,7 @@
 				class="upload-host-files-buttons-override"
 				[fileAlias]="'file'"
 				[httpUrl]="uploadUrl" multiple>
-				<mat-file-upload [file]="files" [id]="i" *ngFor="let files of imageUploadQueue.files; let i = index"></mat-file-upload>
+				<mat-file-upload (onUpload)="uploaded($event)" [file]="files" [id]="i" *ngFor="let files of imageUploadQueue.files; let i = index"></mat-file-upload>
 			</mat-file-upload-queue>
 		</div>
     </div>

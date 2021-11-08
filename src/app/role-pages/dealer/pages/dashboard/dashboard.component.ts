@@ -8,6 +8,7 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 import { HostService } from '../../../../global/services/host-service/host.service';
 import { LicenseService } from '../../../../global/services/license-service/license.service';
 import { UI_TABLE_HOSTS } from '../../../../global/models/ui_table_hosts_report.model';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-dashboard',
@@ -17,291 +18,209 @@ import { UI_TABLE_HOSTS } from '../../../../global/models/ui_table_hosts_report.
 })
 
 export class DashboardComponent implements OnInit {
-	title = "";
-	statTable: any = {};
-	nc: boolean= false;
-	now = new Date().getMonth();
-
-	// Advertiser Chart
 	advertiser_report_chart: any;
-	loading_advertiser_report_chart: boolean = true;
-
-	// Host Chart
+    date: any;
+	dealer_report_chart: any;
 	host_report_chart: any;
-	loading_host_report_chart: boolean = true;
-	
-	// License Chart
 	license_report_chart: any;
+	loading_advertiser_report_chart: boolean = true;
+	loading_dealer_report_chart: boolean = true;
+	loading_host_report_chart: boolean = true;
 	loading_license_report_chart: boolean = true;
-
-	// Latest Added Hosts
-	latest_hosts: any;
-	no_hosts: boolean;
-	latest_hosts_col = [
-		'#',
-		'Business Name', 
-		'Address',
-		'Region',
-		'City',
-		'State', 
-		'Creation Date'
-	];
-
-	subscription: Subscription = new Subscription();
-	displayedColumns_2: string[] = ['position', 'name'];
-	no_chart_to_show: boolean = true;
+	no_dealers: boolean;
 	
+    subscription: Subscription = new Subscription;
+	title = 'Dashboard';
+    licenses_details: any;
+	hosts_details: any;
+	ad_licenses_details: any;
+    dealer_stats: any;
+    playlists_details: any;
+    advertiser_stats: any;
+    screen_details: any;
+    temp_label: any = [];
+    temp_array: any = [];
+	host_label: any = [];
+    host_array: any = [];
+	ad_license_label: any = [];
+	ad_license_array: any = [];
+    user_name: string;
+
+    status_graph_label: any = [];
+    status_graph_value: any = [];
+
+	dealerId: any;
+
 	constructor(
 		private _auth: AuthService,
+		private _advertiser: AdvertiserService,
 		private _host: HostService,
 		private _license: LicenseService,
 		private _date: DatePipe,
-		private _advertiser: AdvertiserService,
 	) { }
 
 	ngOnInit() {
+        if(this._auth.current_user_value.firstname) {
+            this.user_name = this._auth.current_user_value.firstname;
+        } else {
+            this.user_name = 'John Doe';
+        }
 
-		if (this.currentUser) {
-			const { firstname, roleInfo } = this.currentUser;
-			const { dealerId } = roleInfo;
-
-			this.title = `Hello Dealer ${firstname}!`;
-			this.getStatTable(dealerId);
-			this.getHosts(dealerId);
-		}
-
+        var date = new Date();
+        this.date = moment(date).format('LL') + ', ' +  moment(date).format('dddd');
+		this.dealerId = this._auth.current_user_value.roleInfo.dealerId;
+		this.getLicenseReport();
 		this.getAdvertiserReport();
 		this.getHostReport();
-		this.getLicenseReport();
+		this.getAdLicenseReport();
 	}
 
-	generateChart(lan, wifi): void {
-		const canvas = <HTMLCanvasElement> document.getElementById('connectionChart');
-		
-		if (canvas) {
-			new Chart(canvas, {
-				type: 'doughnut',
-				data: {
-					labels: ['LAN', 'WIFI'],
-					datasets: [{
-						data: [lan, wifi],
-						backgroundColor: [
-							'rgba(91, 155, 213, 0.8)',
-							'rgba(237, 125, 49, 0.8)',
-						  ],
-						borderColor: [
-							'rgba(91, 155, 213, 1)',
-							'rgba(237, 125, 49, 1)',
-						],
-					}],
-				}
-			})
-		}
-	}
-	
-	getAdvertiserReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium'),
-			dealerId: this._auth.current_user_value.roleInfo.dealerId
-		}
+    getLicenseReport() {
+        this._license.get_licenses_total_by_dealer(this.dealerId).subscribe(
+            (data: any) => {
+                this.licenses_details = {
+                    basis: data.total,
+                    basis_label: 'License(s)',
+                    basis_sub_label: 'Current Count',
+                    good_value: data.totalActive,
+                    good_value_label: 'Active',
+                    bad_value: data.totalInActive,
+                    bad_value_label: 'Inactive',
+                    ad_value: data.totalAd,
+                    ad_value_label: 'Ad',
+                    menu_value: data.totalMenu,
+                    menu_value_label: 'Menu', 
+                    closed_value: data.totalClosed,
+                    closed_value_label: 'Closed',
+                    unassigned_value: data.totalUnassignedScreenCount,
+                    unassigned_value_label: 'Unassigned',
+                    new_this_week_value: data.newLicensesThisWeek,
+                    this_week_ad_value: data.thisWeekTotalAd,
+                    this_week_menu_value: data.thisWeekTotalMenu,
+                    this_week_closed_value: data.thisWeekTotalClosed,
+                    this_week_unassigned_value: data.thisWeekUnassignedCount,
+                    last_week_ad_value: data.lastWeekTotalAd,
+                    last_week_menu_value: data.lastWeekTotalMenu,
+                    last_week_closed_value: data.lastWeekTotalClosed,
+                    last_week_unassigned_value: data.lastWeekUnassignedCount,
+                }
 
-		this.subscription.add(
-			this._advertiser.get_advertiser_report(filter).subscribe(
-				data => {
-					let advertiser_report = data.list[0].monthly.filter(i => i.total > 0);
-					if (advertiser_report.length > 0) {
-						let latest_added = advertiser_report[advertiser_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-						this.advertiser_report_chart = {
-							title: 'Advertisers',
-							stats: `${latest_added.total} latest added advertisers on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'advertiser_report',
-							chart_label: [],
-							chart_data: []
-						}
-						advertiser_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.advertiser_report_chart.chart_data.push(i.total),
-								this.advertiser_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-						this.loading_advertiser_report_chart = false;
-					} else {
-						this.advertiser_report_chart = false;
-					}
+                this.status_graph_label.push('Online: ' + data.totalOnline)
+                this.status_graph_label.push('Offline: ' + data.totalOffline)
+                this.status_graph_value.push(data.totalOnline)
+                this.status_graph_value.push(data.totalOffline)
 
-					// console.log(this.advertiser_report_chart);
-				}, 
-				error => {
-					// console.log(error);
-				}
-			)
-		)
+                if (this.licenses_details) {
+                    this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);
+                    this.temp_label.push(this.licenses_details.menu_value_label+ ": " + this.licenses_details.menu_value);
+                    this.temp_label.push(this.licenses_details.closed_value_label+ ": " + this.licenses_details.closed_value);
+                    this.temp_label.push(this.licenses_details.unassigned_value_label+ ": " + this.licenses_details.unassigned_value);
+                    this.temp_array.push(this.licenses_details.ad_value);
+                    this.temp_array.push(this.licenses_details.menu_value);
+                    this.temp_array.push(this.licenses_details.closed_value);
+                    this.temp_array.push(this.licenses_details.unassigned_value);
+                }
+            }
+        )
 	}
 
 	getHostReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium'),
-			dealerId: this._auth.current_user_value.roleInfo.dealerId
-		}
-
 		this.subscription.add(
-			this._host.get_host_report(filter).subscribe(
+			this._host.get_host_total_per_dealer(this.dealerId).subscribe(
 				data => {
-					let host_report = data.list[0].monthly.filter(i => i.total > 0);
+					this.hosts_details = {
+					active_value: data.totalActive,
+					active_label: 'Active',
+					inactive_value: data.totalInActive,
+					inactive_label: 'Inactive',
+					for_installation_value: data.forInstallationScheduled,
+					for_installation_label: 'Install Schedule'
+                	}
 
-					if (host_report.length > 0) {
-						let latest_added = host_report[host_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.host_report_chart = {
-							title: 'Hosts',
-							stats: `${latest_added.total} latest added hosts on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'host_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						 host_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.host_report_chart.chart_data.push(i.total),
-								this.host_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-					} else {
-						this.host_report_chart = false;
-					}
-					this.loading_host_report_chart = false;
+                if (this.hosts_details) {
+                    this.host_label.push(this.hosts_details.active_label + ": " + this.hosts_details.active_value);
+                    this.host_label.push(this.hosts_details.inactive_label+ ": " + this.hosts_details.inactive_value);
+                    this.host_label.push(this.hosts_details.for_installation_label+ ": " + this.hosts_details.for_installation_value);
+                    this.host_array.push(this.hosts_details.active_value);
+                    this.host_array.push(this.hosts_details.inactive_value);
+                    this.host_array.push(this.hosts_details.for_installation_value);
+                }
+            
 				}, 
 				error => {
-					// console.log(error);
+					console.log(error);
 				}
 			)
 		)
 
 	}
-	
-	getLicenseReport() {
-		let filter =  {
-			type: 3,
-			date: this._date.transform(new Date(), 'medium'),
-			dealerId: this._auth.current_user_value.roleInfo.dealerId
-		}
 
+	getAdLicenseReport() {
 		this.subscription.add(
-			this._license.get_license_report(filter).subscribe(
+			this._license.get_ad_licenses_total_by_dealer(this.dealerId).subscribe(
 				data => {
-					// console.log('getLicenseReport', data);
-					let license_report = data.list[0].monthly.filter(i => i.total > 0);
+					this.ad_licenses_details = {
+				    basis: data.mainAverageAsset,
+                    basis_label: 'Average Content Per Ad License',
+                    basis_sub_label: 'Total',
+					hosts_value: data.mainAverageHost,
+					hosts_label: 'Hosts',
+					advertisers_value: data.mainAverageAdvertiser,
+					advertisers_label: 'Advertisers',
+					fillers_value: data.mainAverageFiller,
+					fillers_label: 'Fillers',
+					feeds_value: data.mainAverageFeed,
+					feeds_label: 'Feeds',
+					others_value: data.mainAverageOther,
+					others_label: 'Others',
+					average_duration: this.calculateTime(data.mainAverageDuration)
+                	}
 
-					if (license_report.length > 0) {
-						let latest_added = license_report[license_report.length - 1];
-						let latest_date = latest_added.month.split(" ")
-	
-						this.license_report_chart = {
-							title: 'Licenses',
-							stats: `${latest_added.total} latest added licenses on ${this._date.transform(latest_date[0], 'MMMM y')}`,
-							expand: true,
-							chart_id: 'licenses_report',
-							chart_label: [],
-							chart_data: []
-						}
-	
-						license_report.map(
-							i => {
-								let month = i.month.split(" ");
-								this.license_report_chart.chart_data.push(i.total),
-								this.license_report_chart.chart_label.push(this._date.transform(month[0], 'MMM'))
-							}
-						)
-					} else {
-						this.license_report_chart = false;
-					}
-					this.loading_license_report_chart = false;
+                if (this.ad_licenses_details) {
+                    this.ad_license_label.push(this.ad_licenses_details.hosts_label + ": " + this.ad_licenses_details.hosts_value);
+                    this.ad_license_label.push(this.ad_licenses_details.advertisers_label+ ": " + this.ad_licenses_details.advertisers_value);
+                    this.ad_license_label.push(this.ad_licenses_details.fillers_label+ ": " + this.ad_licenses_details.fillers_value);
+					this.ad_license_label.push(this.ad_licenses_details.feeds_label+ ": " + this.ad_licenses_details.feeds_value);
+					this.ad_license_label.push(this.ad_licenses_details.others_label+ ": " + this.ad_licenses_details.others_value);
+                    this.ad_license_array.push(this.ad_licenses_details.hosts_value);
+                    this.ad_license_array.push(this.ad_licenses_details.advertisers_value);
+                    this.ad_license_array.push(this.ad_licenses_details.fillers_value);
+					this.ad_license_array.push(this.ad_licenses_details.feeds_value);
+					this.ad_license_array.push(this.ad_licenses_details.others_value);
+                }
+            
 				}, 
 				error => {
-					// console.log(error);
-				}
-			)
-		)
-
-	}
-
-	getStatTable(id) {
-		var monthNames = ["January", "February", "March", "April", "May","June","July", "August", "September", "October", "November","December"];
-		let hostdata: any;
-		this.subscription.add(
-			this._host.get_host_total_per_dealer(id).subscribe(
-				(data: any) => {
-					this.statTable = {
-						title: 'Month of ' +monthNames[this.now],
-						hosts: data.total,
-						active_hosts: data.totalActive,
-						inactive_hosts: data.totalInActive,
-					}
-				}
-			)
-		)
-
-		this.subscription.add(
-			this._license.get_license_total_per_dealer(id).subscribe(
-				(data: any) => {
-					this.statTable.licenses =  data.total;
-					this.statTable.unassigned =  data.totalUnAssigned;
-					this.statTable.assigned =  data.totalAssigned;
-					this.generateChart(data.totalLan, data.totalWifi);
+					console.log(error);
 				}
 			)
 		)
 	}
 
-	getHosts(id) {
-		this.subscription.add(
-			this._host.get_host_by_dealer_id(id, 1, "").subscribe(
-				(data: any) => {
-					if (!data.message) {
-						var x = [];
-						data.paging.entities.map (
-							i => {
-								x.push(i);
-							}
-						)
-						this.latest_hosts = this.hosts_mapToUI(x).slice(0,5);
-					} else {
-						this.no_hosts = true;
-					}
-				}
-			)
-		)
-	}
-
-	hosts_mapToUI(data) {
-		let count = 1;
-		if (data) {
-			return data.map(
-				host => {
-					return new UI_TABLE_HOSTS(
-						{ value: host.hostId, link: null , editable: false, hidden: true},
-						{ value: count++, link: null , editable: false, hidden: false},
-						{ value: host.name, link: '/dealer/hosts/' + host.hostId , editable: false, hidden: false},
-						{ value: host.address, link: null , editable: false, hidden: false},
-						{ value: host.region != null ? host.region : '--', link: null , editable: false, hidden: false},
-						{ value: host.city, link: null , editable: false, hidden: false},
-						{ value: host.state, link: null , editable: false, hidden: false},
-						{ value: this._date.transform(host.dateCreated, 'MMM dd, y'), link: null , editable: false, hidden: false},	
-					)
-				}
-			)
+	private calculateTime(duration: number): string {
+		if (duration < 60) {
+			return `${Math.round(duration)}s`;
 		}
+
+		if (duration === 60) {
+			return '1m';
+		}
+
+		const minutes = Math.floor(duration / 60);
+		const seconds = Math.round(duration - minutes * 60);
+
+		return `${minutes}m ${seconds}s`;
 	}
 
-	protected get currentUser() {
-		return this._auth.current_user_value;
+	getAdvertiserReport() {
+		this.subscription.add(
+			this._advertiser.get_advertisers_total_by_dealer(this.dealerId).subscribe(
+				data => {
+					this.advertiser_stats = {
+						basis: data.total,
+					}
+				}
+			)
+		);
 	}
 }

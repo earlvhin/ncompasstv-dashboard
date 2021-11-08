@@ -143,6 +143,10 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_ad_licenses_total}`, this.httpOptions);
 	}
 
+	get_ad_licenses_total_by_dealer(id: string) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_ad_licenses_total_by_dealer}${id}`, this.httpOptions);
+	}
+
 	get_statistics_by_dealer(id: string) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.license_statistics}?dealerId=${id}`, this.httpOptions)
 	}

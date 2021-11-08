@@ -14,7 +14,8 @@
 
     <div class="text-center">        
 		<div [fileUploadInputFor]="documentUploadQueue" (onFileSelected)="onQueueDocument()" class="upload-drop-zone d-flex flex-column align-items-center">
-			<h5>Just drag and drop files here</h5>
+			<h5>Drag and drop files here. Only these types are acceptable:</h5>
+			<h5>.pdf, .doc, or .docx</h5>
 			<br>
 			<h5>or</h5>
 			<button mat-raised-button class="choose-file-btn theme-btn _primary" (click)="onClickChooseFilesBtn()">Choose a document</button>
@@ -27,7 +28,7 @@
 				class="upload-host-files-buttons-override"
 				[fileAlias]="'file'"
 				[httpUrl]="uploadUrl" multiple>
-				<mat-file-upload [file]="files" [id]="i" *ngFor="let files of documentUploadQueue.files; let i = index"></mat-file-upload>
+				<mat-file-upload (onUpload)="uploaded($event)" [file]="files" [id]="i" *ngFor="let files of documentUploadQueue.files; let i = index"></mat-file-upload>
 			</mat-file-upload-queue>
 		</div>
     </div>

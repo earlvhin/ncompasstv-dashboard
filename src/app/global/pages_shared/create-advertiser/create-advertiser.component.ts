@@ -277,7 +277,7 @@ export class CreateAdvertiserComponent implements OnInit {
 		this.location_selected = false;
 		this.subscription.add(
 			this._map.get_google_location_info(this.g.location.value).subscribe(
-				(data: API_GOOGLE_MAP[]) => {
+				(data: API_GOOGLE_MAP['google_search']) => {
 					if(data.length > 0) {
 						this.google_result = data;
 					} else {

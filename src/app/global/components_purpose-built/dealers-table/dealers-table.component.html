@@ -254,7 +254,7 @@
 										{{ d.index }}
 									</td>
 									<td class="xsm-text border-right p-3">
-										<a [routerLink]="[d.dealer_id]" target="_blank">{{ d.dealer_id_alias}}</a>
+										<a [routerLink]="[d.dealer_id, d.business_name]" target="_blank">{{ d.dealer_id_alias}}</a>
 									</td>
 									<td class="xsm-text border-right p-3">
 										<a [routerLink]="[d.dealer_id]" target="_blank">{{ d.business_name | titlecase}}</a>

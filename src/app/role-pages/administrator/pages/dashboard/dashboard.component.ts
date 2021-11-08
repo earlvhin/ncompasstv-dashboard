@@ -159,8 +159,8 @@ export class DashboardComponent implements OnInit {
 				data => {
 					this.ad_licenses_details = {
 				    basis: data.mainAverageAsset,
-                    basis_label: 'Ad License',
-                    basis_sub_label: 'Average Per Content',
+                    basis_label: 'Average Content Per Ad License',
+                    basis_sub_label: 'Total',
 					hosts_value: data.mainAverageHost,
 					hosts_label: 'Hosts',
 					advertisers_value: data.mainAverageAdvertiser,

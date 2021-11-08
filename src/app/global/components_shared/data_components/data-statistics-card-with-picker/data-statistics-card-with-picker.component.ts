@@ -63,7 +63,6 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 
     ngOnChanges() {
         // this.generate_chart = this.generate_chart;
-        console.log(this.generate_chart)
     }
 
     setDealerId(e) {
@@ -84,7 +83,6 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 
     onSelectEndDate(e) {
         this.end_date = e.format('YYYY-MM-DD');
-        console.log("E", this.end_date)
         this.checkIfCompleteData();
     }
 
@@ -93,12 +91,11 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
             this.s_date.emit(this.start_date);
             this.e_date.emit(this.end_date);
             this.dealer_selected.emit(this.selected_dealer);
-            console.log("YES")
         }
     }
 
     getGraphPoints(e) {
-        console.log("Emitted", e)
+        // console.log("Emitted", e)
     }
 
     getDealers(e) {

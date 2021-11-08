@@ -439,7 +439,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 				i => {
 					return new UI_CONTENT_HISTORY(
 						{ value: count++, link: null , editable: false, hidden: false },
-						{ value: i.playlistId, link: i.playlistId ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
+						{ value: i.playlistId, link: i.playlistId ? `/${role}/playlists/${i.playlistId}` : null , hidden: true },
 						{ value: i.playlistName, link: i.playlistName ? `/${role}/playlists/${i.playlistId}` : null , hidden: false },
 						{ value: i.logAction, link: null , editable: false, hidden: false },
 						{ value: `${i.firstName} ${i.lastName}`, link: null , editable: false, hidden: false },

@@ -134,6 +134,11 @@ export class HostService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_timezone}`, this.httpOptions)
 	}
 
+	get_host_place_images(placeId: string) {
+		const url = `${environment.base_uri}${environment.getters.host_place_images}?placeId=${placeId}`;
+		return this._http.get<{ images: string[] }>(url);
+	}
+
 	get_host_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_total}`, this.httpOptions)
 	}

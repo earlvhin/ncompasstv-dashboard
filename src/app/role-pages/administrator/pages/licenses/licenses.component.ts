@@ -5,6 +5,7 @@ import { Subscription } from 'rxjs';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
 
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
@@ -162,9 +163,14 @@ export class LicensesComponent implements OnInit {
 		private _license: LicenseService,
 		private _title: TitleCasePipe,
         private cdr: ChangeDetectorRef,
+		private _activatedRoute: ActivatedRoute
 	) { }
 
 	ngOnInit() {
+		let status = this._activatedRoute.snapshot.paramMap.get('status');
+		if(status){
+			this.filterTable('status', status === 'Online'? '1' : '0');
+		}
         this.getLicensesStatistics();
 		this.getLicensesTotal();
         this.getLicenses(1);

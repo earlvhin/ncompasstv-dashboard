@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogConfig } from '@angular/material';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { HostService } from '../../services/host-service/host.service';
@@ -11,7 +11,7 @@ import { UI_TABLE_DEALERS } from '../../models/ui_table_dealers.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { API_DEALER } from '../../models/api_dealer.model';
 import { MapService } from '../../services/map-service/map.service';
-import { API_GOOGLE_MAP } from '../../models/api_google-map.model';
+import { API_GOOGLE_MAP, GOOGLE_MAP_SEARCH_RESULT } from '../../models/api_google-map.model';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation-hours.model';
 import { API_CREATE_HOST } from '../../models/api_create-host.model';
@@ -20,6 +20,7 @@ import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
 import { RoleService } from '../../../global/services/role-service/role.service';
 import { TitleCasePipe } from '@angular/common';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
+import { ImageSelectionModalComponent } from '../../components_shared/page_components/image-selection-modal/image-selection-modal.component';
 
 @Component({
 	selector: 'app-create-host',
@@ -33,19 +34,22 @@ export class CreateHostComponent implements OnInit {
 	cat_data:  any = [];	
 	category_selected: string;
 	creating_host: boolean = false;
+	current_host_image: string;
 	dealer_id: string;
 	dealer_name: string;
 	dealers_data: Array<any> = [];
 	filtered_data:  UI_TABLE_DEALERS[] = [];
 	form_invalid: boolean = true;
-	google_result = [];
+	google_result: GOOGLE_MAP_SEARCH_RESULT[] = [];
 	no_result : boolean = false;
 	is_24hours: boolean = false;
+	is_current_user_admin = false;
 	lat: number = 39.7395247;
 	lng: number = -105.1524133;
 	location_field: boolean = true;
 	location_candidate_fetched: boolean = false;
 	location_selected: boolean = false;
+	logo_data: { images: string[], logo: string };
 	new_host_form: FormGroup;
 	google_place_form: FormGroup;
 	search_keyword: string = '';
@@ -56,6 +60,7 @@ export class CreateHostComponent implements OnInit {
 	is_dealer: boolean = false;
 	dealerControl = new FormControl();
 	paging: any;
+	place_id: string;
 	loading_data: boolean = true;
 	loading_search: boolean = false;
 	is_search: boolean = false;
@@ -172,7 +177,10 @@ export class CreateHostComponent implements OnInit {
 			periods: [],
 			status: false,
 		}
-	]
+	];
+
+	protected default_host_image = 'assets/media-files/admin-icon.png';
+
 	constructor(
 		private _auth: AuthService,
 		private _categories: CategoryService,
@@ -187,6 +195,9 @@ export class CreateHostComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+
+		this.is_current_user_admin = this.currentRole === 'administrator';
+		
 		this.new_host_form = this._form.group(
 			{
 				dealerId: ['', Validators.required],
@@ -201,7 +212,9 @@ export class CreateHostComponent implements OnInit {
 				timezone: ['', Validators.required],
 				createdBy: this._auth.current_user_value.user_id
 			}
-		)
+		);
+
+		this.current_host_image = this.default_host_image;
 
 		this.getDealers(1);
 
@@ -234,7 +247,7 @@ export class CreateHostComponent implements OnInit {
 					}
 				}
 			)
-		)
+		);
 
 		this.operation_days = this.google_operation_days.map(
 			h => {
@@ -246,9 +259,7 @@ export class CreateHostComponent implements OnInit {
 					h.status
 				)
 			}
-		)
-					
-
+		);
 		
 		this.subscription.add(
 			this._categories.get_parent_categories().subscribe(
@@ -261,7 +272,7 @@ export class CreateHostComponent implements OnInit {
 					this.categories_data = data;
 				}
 			)
-		)
+		);
 
 		// for dealer_users auto fill
 		const roleId = this._auth.current_user_value.role_id;
@@ -293,7 +304,6 @@ export class CreateHostComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_search_dealer(e).subscribe(
 				data => {
-					console.log("DATA", data)
 					if (data.paging.entities.length > 0) {
 						this.dealers_data = data.paging.entities;
 						this.loading_search = false;
@@ -370,18 +380,21 @@ export class CreateHostComponent implements OnInit {
 		this.google_result = [];
 		this.location_candidate_fetched = true;
 		this.location_selected = false;
+
 		this.subscription.add(
 			this._map.get_google_location_info(this.g.location.value).subscribe(
-				(data: API_GOOGLE_MAP[]) => {
-					if(data.length > 0) {
-						this.google_result = data;
-					} else {
+				(data: API_GOOGLE_MAP['google_search']) => {
+
+					if (data.length <= 0) {
 						this.no_result = true;
+						return;
 					}
+
+					this.google_result = data;
 					
 				}
 			)
-		)
+		);
 	}
 
 	mapOperationHours(data) {
@@ -418,11 +431,12 @@ export class CreateHostComponent implements OnInit {
 	}
 
 
-	plotToMap(data: API_GOOGLE_MAP) {
-		console.log(data);
+	plotToMap(data: GOOGLE_MAP_SEARCH_RESULT) {
 		let sliced_address = data.result.formatted_address.split(', ')
 		let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',')+1)
 		let category_one = data.result.types[0];
+		this.place_id = data.result.place_id;
+		this.current_host_image = this.default_host_image;
 		this.location_selected = true;
 		this.location_candidate_fetched = false;
 		this.selected_location = data.result;
@@ -438,7 +452,6 @@ export class CreateHostComponent implements OnInit {
 			this.f.state.setValue(state_zip[0]);
 			this.f.zip.setValue(state_zip[1]);
 		} else {
-			console.log(sliced_address);
 			if (sliced_address.length == 4) {
 				let state_zip = sliced_address[2].split(' ');
 				this.f.address.setValue(sliced_address[0]);
@@ -472,8 +485,10 @@ export class CreateHostComponent implements OnInit {
 			this.f.zip.value,
 			JSON.stringify(this.operation_days), 
 			this.f.category.value,
-			this.f.timezone.value
-		)
+			this.f.timezone.value,
+			this.logo_data.logo,
+			this.logo_data.images,
+		);
 
 		this.creating_host = true;
 
@@ -586,5 +601,30 @@ export class CreateHostComponent implements OnInit {
 			error => console.log('Error on closing bulk edit hours', error)
 		);
 		
+	}
+
+	onChoosePhotos() {
+
+		const config: MatDialogConfig = {
+			width: '700px',
+			disableClose: true,
+		};
+		
+		const dialog = this._dialog.open(ImageSelectionModalComponent, config);
+		dialog.componentInstance.placeId = this.place_id;
+		
+		dialog.afterClosed()
+			.subscribe(
+				(response: { images: string[], logo: string } | boolean) => {
+					if (!response) return;
+					const data = response as { images: string[], logo: string };
+					this.logo_data = data;
+					this.current_host_image = data.logo;
+				}
+			);
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }

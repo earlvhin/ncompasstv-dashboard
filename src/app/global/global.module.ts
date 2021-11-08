@@ -195,6 +195,7 @@ import {
 	MatIconModule,
 } from '@angular/material';
 import { MatFileUploadModule } from 'angular-material-fileupload';
+import { ImageSelectionModalComponent } from './components_shared/page_components/image-selection-modal/image-selection-modal.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -356,6 +357,7 @@ const ngComponents = [
 	ZoneListComponent,
   	PaginationFieldComponent,
 	ZoneExpansionPanelComponent,
+	ImageSelectionModalComponent,
 ];
 
 const MaterialModules = [
@@ -394,7 +396,8 @@ const DIRECTIVES = [
 		ngComponents,
 		DIRECTIVES,
 		DataCardGraphComponent,
-		ContentsTabComponent
+		ContentsTabComponent,
+		ImageSelectionModalComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -436,6 +439,7 @@ const DIRECTIVES = [
 		UserSortModalComponent,
 		ViewSchedulesComponent,
 		WarningPopupComponent,
+		ImageSelectionModalComponent,
 	],
 	imports: [
 		BrowserAnimationsModule,

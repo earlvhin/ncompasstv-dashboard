@@ -12,6 +12,7 @@ import * as FileSaver from 'file-saver';
 import { environment } from 'src/environments/environment';
 import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import * as moment from 'moment';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
 	selector: 'app-licenses',
@@ -87,10 +88,15 @@ export class LicensesComponent implements OnInit {
 		private _license: LicenseService,
 		private _auth: AuthService,
 		private _title: TitleCasePipe,
-		private _date: DatePipe
+		private _date: DatePipe,
+		private _activatedRoute: ActivatedRoute
 	) { }
 
 	ngOnInit() {
+		let status = this._activatedRoute.snapshot.paramMap.get('status');
+		if(status){
+			this.filterTable('status', status === 'Online'? '1' : '0');
+		}
 		this.dealers_name = this._auth.current_user_value.roleInfo.businessName;
         this.sortList('desc')
 		this.getLicenses(1);
