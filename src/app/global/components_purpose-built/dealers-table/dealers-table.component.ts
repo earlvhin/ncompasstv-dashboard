@@ -32,6 +32,7 @@ export class DealersTableComponent implements OnInit {
 	sortColumn: string = '';
 	sortOrder: string = 'desc';
 	tooltip: string = '';
+    ongoing_filter: boolean = false;
 
 	filter = [
 		{min_value: '0', max_value: '5', viewValue: '0-5'},
@@ -120,7 +121,7 @@ export class DealersTableComponent implements OnInit {
 	}
 
     filterTable(type: string, min: any, max: any, label?) {
-
+        this.ongoing_filter = true;
         switch(type) {
             case 'monthAsDealer':
                 this.filters.label_age = label;
@@ -157,6 +158,13 @@ export class DealersTableComponent implements OnInit {
         }
         this.offline_filter = false;
         this.inactive_filter = false;
+        this.active_filter_tab = "";
+        this.selected_filter = {
+            min_value: '',
+            max_value: '',
+            filter_column: '',
+            status: ''
+        };
         this.getDealers(1);
     }
 
@@ -193,7 +201,7 @@ export class DealersTableComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
-                    console.log("response", response)
+                    this.ongoing_filter = false;
 					this.initial_load = false;
 					this.paging_data = response.paging;
 

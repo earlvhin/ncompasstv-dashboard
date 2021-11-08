@@ -66,7 +66,7 @@
 								<ng-container *ngIf="!data[d].isFile; else isFile">
 									<a class="cursor-pointer table-row-url" 
 										target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
-										[routerLink]="[data[d].link]" 
+										[routerLink]="[data[d].link, data[d].value]" 
 										[queryParams]="query_params"
 										[ngClass]="data[d].past ? 'text-danger' : ''">
 
@@ -185,7 +185,7 @@
 						<ng-template #isImage>
 							<ng-container *ngIf="data[d].value; else noImage">
 								<a [href]="data[d].value" target="_blank">
-									<img [src]="data[d].value" alt="screenshot" style="width: 50px; margin-bottom: 5px;">
+									<img [src]="data[d].value" class="mr-2" alt="screenshot" style="width: 50px; margin-bottom: 5px;">
 								</a>
 								<br>
 								<span *ngIf="has_timestamp_beside_image">{{ data[d].value | screenshot }}</span>

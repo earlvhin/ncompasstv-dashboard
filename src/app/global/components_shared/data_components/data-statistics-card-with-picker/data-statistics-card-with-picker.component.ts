@@ -47,14 +47,23 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     @Output() e_date: EventEmitter<any> = new EventEmitter;
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter;
 
+    no_data: boolean = false;
+
     constructor(
         private _form_builder: FormBuilder,
         private _dealer: DealerService,
     ) { }
 
     ngOnInit() {
-        console.log(this.value_array)
+        if(this.value_array.length == 0) {
+            this.no_data = true;
+        }
         this.getDealers(1);
+    }
+
+    ngOnChanges() {
+        this.generate_chart = this.generate_chart;
+        console.log(this.generate_chart)
     }
 
     setDealerId(e) {

@@ -80,6 +80,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     generate: boolean = false;
     temp_start_date: any;
     temp_end_date: any;
+    loading_graph: boolean = false;
 
 	private current_month = '';
 	private previous_month = '';
@@ -394,24 +395,26 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     this.label_graph_detailed = [];
                     this.value_graph_detailed = [];
 
-                    if(data) {                        
+                    if(!data.message) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
                         this.whole_data = data.licenses;
+                        this.generate = true;
                         if(this.selected_dealer) {
                             this.getLicensesInstallationDetailed();
                         } else {
-                            data.licenses.map(
+                            this.whole_data = this.whole_data.filter(item => item.year == new Date().getFullYear());
+                            this.whole_data.map(
                                 i => {
                                     this.total = this.total + i.totalLicenses;
                                     this.licenses_graph_data.push(i)
-                                    if(i.year == new Date().getFullYear()) {
-                                        this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
-                                        this.value_graph.push(i.totalLicenses)
-                                    }
+                                    this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
+                                    this.value_graph.push(i.totalLicenses)
                                 }
                             )
                         }
+                    } else {
+                        this.generate = false;
                     }
 
                     
@@ -432,7 +435,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
     }
 
     getGraphPoints(e) {
-        console.log("Emitted", e)
+        this.loading_graph = true;
         var temp: any = {}
         temp = {
             year: this.whole_data[e].year,
@@ -440,17 +443,15 @@ export class InstallationsComponent implements OnInit, OnDestroy {
             day: 1,
             end_day: this.monthCheck(this.whole_data[e].month)
         }
-        // this.temp_start_date = '2021-02-01'
         this.temp_start_date = temp.year.toString() + "-" + temp.month.toString() + "-" + temp.day.toString()
         this.temp_end_date = temp.year.toString() + "-" + temp.month.toString() + "-" + temp.end_day.toString()
-        // this.temp_end_date = '2021-02-28'
        
         this.subscription.add(
 			this._license.get_licenses_installation_statistics_detailed('', this.temp_start_date, this.temp_end_date).pipe(
 				takeUntil(this._unsubscribe)
 			).subscribe(data => {
                 if(data.licenses) {
-                    console.log("DATA NEW", data)
+                    this.loading_graph = false;
                     this.showBreakdownModal('Breakdown:', data.licenses, 'list', 500, false, true);
                 }
             })

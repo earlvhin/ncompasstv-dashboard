@@ -1,4 +1,12 @@
-<div class="h-100 d-flex align-items-center">
+<div class="vh-50" *ngIf="loading_graph">
+    <div class="col-lg-12 p-0 text-center pt-3">
+        <strong>P R O C E S S I N G</strong>
+        <br>
+        <span class="sm-text">Please wait while we query our database for you.</span>
+    </div>
+    <app-spinner></app-spinner>
+</div>
+<div class="h-100 d-flex align-items-center" [ngClass]="loading_graph ? 'invisible' : 'visible'">
 	<div class="p-3 w-100">
         <h4 class="mb-2 text-center" *ngIf="!num_of_months; else average">
             <span class="text-dark font-weight-medium">

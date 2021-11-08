@@ -191,7 +191,7 @@ export class LicensesComponent implements OnInit {
                     this.average = 0;
                     this.number_of_months = 0;
 
-                    if(data) {                        
+                    if(!data.message) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
 
@@ -222,6 +222,8 @@ export class LicensesComponent implements OnInit {
                                 }
                             )
                         }
+                    } else {
+                        this.generate = false;
                     }
                 }
             )
