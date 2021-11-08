@@ -254,7 +254,7 @@
 										{{ d.index }}
 									</td>
 									<td class="xsm-text border-right p-3">
-										<a [routerLink]="[d.dealer_id]" target="_blank">{{ d.dealer_id_alias}}</a>
+										<a [routerLink]="[d.dealer_id, d.business_name]" target="_blank">{{ d.dealer_id_alias}}</a>
 									</td>
 									<td class="xsm-text border-right p-3">
 										<a [routerLink]="[d.dealer_id]" target="_blank">{{ d.business_name | titlecase}}</a>
@@ -309,6 +309,11 @@
 
 	<ng-template #loading>
 		<div class="vh-50 white-bg">
+            <div class="col-lg-12 p-0 text-center text-gray pt-5" *ngIf="ongoing_filter">
+                <strong>P R O C E S S I N G</strong>
+                <br>
+                <span class="sm-text">Please wait while we filter our database for you. Filtering may take up to 60seconds.</span>
+            </div>
 			<app-spinner></app-spinner>
 		</div>
 	</ng-template>

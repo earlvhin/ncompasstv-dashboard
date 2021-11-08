@@ -1,5 +1,5 @@
 <app-banner *ngIf="singleHostData"
-	[single_image]="placeholderImage"
+	[single_image]="currentImage"
 	[single_name]="hostName"
 	[single_desc]="address"
 	[single_host_data]="singleHostData"
@@ -14,7 +14,7 @@
 	[refresh_banner]="true">
 </app-banner>
 
-<div class="theme-container top-50">
+<div class="theme-container">
     <div class="content-section">
         <div class="row">
             <div class="col-lg-12 custom-mat-tab">

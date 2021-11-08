@@ -28,11 +28,13 @@ export class DataStatisticsCardComponent implements OnInit {
     @Input() s_date: any;
     @Input() e_date: any;
     @Input() dealer_selected: any;
+    @Input() loading_graph: boolean = false;
 
     start: any;
     end:any;
 
     @Output() click_graph: EventEmitter<any> = new EventEmitter;
+    @Output() no_data: EventEmitter<any> = new EventEmitter;
 
     averaging: string;
     generated: boolean = false;
@@ -58,6 +60,7 @@ export class DataStatisticsCardComponent implements OnInit {
         this.value_array = this.value_array;
         this.label_array = this.label_array;
         this.averaging = this.average;
+        this.loading_graph = this.loading_graph;
         if(this.chart) {
             this.chart.destroy();
             this.generateChart();
@@ -87,6 +90,10 @@ export class DataStatisticsCardComponent implements OnInit {
         const labels = this.label_array;
 		const data = this.value_array;
         const whole : any = this.whole_data;
+
+        if(whole.length == 0) {
+            this.no_data.emit(true);
+        }
 
         if(this.installation) {
             var min_value = this.time_conversion();
@@ -193,6 +200,13 @@ export class DataStatisticsCardComponent implements OnInit {
                             loop: false
                         }
                     },
+                    scales: {
+                        x: {
+                            ticks: {
+                                autoSkip: false
+                            }
+                        }
+                    }
                 },
             });
         }

@@ -1,0 +1,29 @@
+ul.images {
+	list-style: none;
+
+	li.image {
+
+		height: 40vh;
+		flex-grow: 1;
+		border: 2px solid black;
+		max-width: 200px;
+		max-height: 200px;
+		margin-bottom: 2%;
+
+		img {
+			height: 100%;
+			width: 100%;
+			object-fit: cover;
+			vertical-align: bottom;
+		}
+	}
+
+}
+
+.margin-left-auto {
+	margin-left: auto;
+}
+
+.selected-image {
+	border: 4px solid #8EC641 !important;
+}

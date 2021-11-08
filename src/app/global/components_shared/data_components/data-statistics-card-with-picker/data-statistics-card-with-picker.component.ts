@@ -47,14 +47,22 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     @Output() e_date: EventEmitter<any> = new EventEmitter;
     @Output() dealer_selected: EventEmitter<any> = new EventEmitter;
 
+    no_data: boolean = false;
+
     constructor(
         private _form_builder: FormBuilder,
         private _dealer: DealerService,
     ) { }
 
     ngOnInit() {
-        console.log(this.value_array)
+        if(this.value_array.length == 0) {
+            this.no_data = true;
+        }
         this.getDealers(1);
+    }
+
+    ngOnChanges() {
+        this.generate_chart = this.generate_chart;
     }
 
     setDealerId(e) {
@@ -75,7 +83,6 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 
     onSelectEndDate(e) {
         this.end_date = e.format('YYYY-MM-DD');
-        console.log("E", this.end_date)
         this.checkIfCompleteData();
     }
 
@@ -84,12 +91,11 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
             this.s_date.emit(this.start_date);
             this.e_date.emit(this.end_date);
             this.dealer_selected.emit(this.selected_dealer);
-            console.log("YES")
         }
     }
 
     getGraphPoints(e) {
-        console.log("Emitted", e)
+        // console.log("Emitted", e)
     }
 
     getDealers(e) {

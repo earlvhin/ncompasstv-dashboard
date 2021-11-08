@@ -200,6 +200,17 @@
                     </div>
                 </div>
 
+				<ng-container *ngIf="is_current_user_admin">
+					<div class="d-flex align-items-center select-image-container pt-4">
+						<div class="image-preview d-flex justify-content-center">
+							<div class="image-container">
+								<img [src]="current_host_image" alt="admin">
+							</div>
+						</div>
+						<button mat-raised-button class="select-image-button" color="primary" (click)="onChoosePhotos()" [disabled]="!place_id">Choose an image</button>
+					</div>
+				</ng-container>
+
                 <div class="map-wrapper mt-3">
                     <agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected"  [maxZoom]="19" >
                         <agm-marker 

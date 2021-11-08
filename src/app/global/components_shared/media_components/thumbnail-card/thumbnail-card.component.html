@@ -26,7 +26,7 @@
     <div class="thumbnail-title">
 		<div class="d-flex">
 			<span class="sequence">{{ sequence }}</span>
-			<a [routerLink]="[route]" class="flex-even text-center" target="_blank">
+			<a [routerLink]="[route, filename]" class="flex-even text-center" target="_blank">
 				<span>{{ filename | filename }}</span>
 			</a>
 		</div>

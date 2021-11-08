@@ -73,6 +73,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 component: SingleAdvertiserComponent,
             },
             { 
+                path: 'advertisers/:data/:breadcrumb', 
+                component: SingleAdvertiserComponent,
+            },
+            { 
                 path: 'create-advertiser', 
                 component: CreateAdvertiserComponent,
                 data: {
@@ -115,6 +119,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Single Dealers Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleDealerComponent,
+                    },
                 ]
             },
 			{ 
@@ -147,7 +155,11 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         data: {
                             breadcrumb: 'Edit Generated Feeds'
                         }
-                    }
+                    },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: GenerateFeedComponent,
+                    },
                 ]
             },
             { 
@@ -175,6 +187,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Single Hosts Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb',
+                        component: SingleHostComponent
+                    }
                 ]
             },
             { 
@@ -205,6 +221,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Single License Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleLicenseComponent
+                    }
                 ]
             },
             { 
@@ -224,23 +244,27 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                         path: '',
                         component: MediaLibraryComponent,
                     },
-                    { 
+                    {
                         path: ':data', 
                         component: SingleContentComponent,
                         data: {
                             breadcrumb: 'Single Content Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb',
+                        component: SingleContentComponent
+                    }
                 ]
             },
-            { 
+            {
                 path: 'notifications', 
                 component: NotificationsComponent,
                 data: {
                     breadcrumb: 'Notifications'
                 }
             },
-            { 
+            {
                 path: 'playlists', 
                 data: {
                     breadcrumb: 'Playlists'
@@ -257,16 +281,20 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Create Playlist'
                         },
                     },
-                    { 
+                    {
                         path: ':data', 
                         component: SinglePlaylistComponent,
                         data: {
                             breadcrumb: 'Single Playlist'
                         },
                     },
+                    {
+                        path: ':data/:breadcrumb', 
+                        component: SinglePlaylistComponent
+                    }
                 ]
             },
-            { 
+            {
                 path: 'reports', 
                 component: ReportsComponent,
                 data: {
@@ -304,6 +332,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Single Screen Page'
                         },
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleScreenComponent
+                    }
                 ]
             },
             { 
@@ -334,6 +366,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 						path: ':data',
 						component: SingleTemplateComponent,
 						data: {  breadcrumb: 'Single Template' },
+					},
+                    {
+						path: ':data/:breadcrumb',
+						component: SingleTemplateComponent
 					},
                 ]
             },
@@ -371,6 +407,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                                     breadcrumb: 'User Type'
                                 },
                             },
+                            { 
+                                path: ':data/:breadcrumb', 
+                                component: CreateUserTypeComponent
+                            }
                         ]
                     },
                     { 
@@ -380,6 +420,10 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                             breadcrumb: 'Single User Page'
                         },
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleUserComponent
+                    }
                 ]
             },
             { 
@@ -390,11 +434,19 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 }, 
             },
             { 
+                path: 'user-profile/:data/:breadcrumb', 
+                component: UserProfileComponent
+            },
+            { 
                 path: 'user-account-setting/:data', 
                 component: UserAccountSettingComponent,
                 data: {
                     breadcrumb: 'User Account Settings'
                 },  
+            },
+            { 
+                path: 'user-account-setting/:data/:breadcrumb', 
+                component: UserAccountSettingComponent 
             },
             { 
                 path: 'version-control', 

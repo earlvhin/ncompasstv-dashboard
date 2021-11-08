@@ -1,3 +1,4 @@
+import { TAG } from '.';
 import { API_DEALER } from './api_dealer.model';
 import { API_LICENSE } from './api_license.model';
 
@@ -17,6 +18,7 @@ export class API_HOST {
 	country: string;
 	groupId: string;
 	latitude: string;
+	logo?: string;
 	longitude: string;
 	timeZone: string;
 	storeHours: string;
@@ -33,6 +35,7 @@ export class API_HOST {
 	createdBy: string;
 	updatedBy: string;
 	status: string;
+	tags?: TAG[];
 	totalLicenses: number;
 	category: string;
 	hostName: string;
@@ -56,6 +59,7 @@ export class API_SINGLE_HOST {
 		country: string;
 		groupId: string;
 		latitude: string;
+		logo?: string;
 		longitude: string;
 		timeZone: string;
 		storeHours: string;
@@ -74,6 +78,7 @@ export class API_SINGLE_HOST {
 		status: string;
 		totalLicenses: number;
 		category: string;
+		tags?: TAG[];
 	};
 
 	timezone?:  {

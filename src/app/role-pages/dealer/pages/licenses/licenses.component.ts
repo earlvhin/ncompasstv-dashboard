@@ -11,6 +11,7 @@ import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import { environment } from 'src/environments/environment';
 import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import * as moment from 'moment';
 import { ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -34,6 +35,7 @@ export class LicensesComponent implements OnInit {
 	license_row_url: string = "/dealer/hosts";
 	licenses_to_export: any = [];
 	no_licenses: boolean = false;
+    now: any;
 	paging_data_license: any;
     splitted_text: any;
 	subscription: Subscription = new Subscription();
@@ -244,7 +246,7 @@ export class LicensesComponent implements OnInit {
 					},
                     { value: i.licenseKey, link: '/dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
                     { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
-                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? '/dealer/hosts/' + i.hostId : null, editable: false, hidden: false },
+                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? '/dealer/hosts/' + i.hostId : null, editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
                     { value: i.alias ? i.alias : '--', link: '/dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
                     { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
                     { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
@@ -259,6 +261,24 @@ export class LicensesComponent implements OnInit {
 				);
 			}
 		);
+	}
+
+    getLabel(data) {
+		this.now = moment().format('d');
+		this.now = this.now;
+        var storehours = JSON.parse(data.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
+		var modified_label = {
+			date : moment().format('LL'),
+			address: data.hostAddress,
+			schedule: storehours[this.now] && storehours[this.now].status ? (
+				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
+				? "Open 24 Hours" : storehours[this.now].periods.map(
+					i => {
+						return i.open + " - " + i.close
+					})) : "Closed"
+		}
+		return modified_label;
 	}
 
     splitKey(key) {
