@@ -72,6 +72,11 @@ export const SUB_DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Host Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleHostComponent,
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 
@@ -92,6 +97,11 @@ export const SUB_DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single License Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb',
+                        component: SingleLicenseComponent, 
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 
@@ -120,6 +130,11 @@ export const SUB_DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Advertiser Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleAdvertiserComponent,
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 
@@ -146,6 +161,13 @@ export const SUB_DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Content Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleContentComponent, 
+                        data: {
+                            breadcrumb: 'Single Content Page'
+                        }
+                    }
                 ]
             },
 			{ 
@@ -201,6 +223,11 @@ export const SUB_DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Playlist Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SinglePlaylistComponent, 
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 
@@ -229,6 +256,11 @@ export const SUB_DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Screen Component'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleScreenComponent,
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 

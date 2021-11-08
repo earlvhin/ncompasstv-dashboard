@@ -78,6 +78,11 @@ export const DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Host Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleHostComponent,
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
             { 
@@ -104,6 +109,11 @@ export const DEALER_ROUTES: Routes = [
                         data: {
                             breadcrumb: 'Single Screen Page'
                         }
+                    },
+                    { 
+                        path: ':data:/:breadcrumb', 
+                        component: SingleScreenComponent,
+						canActivate: [ OwnerGuard ]
                     },
                 ]
             },
@@ -132,6 +142,10 @@ export const DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Advertiser Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb',
+                        component: SingleAdvertiserComponent
+                    }
                 ]
             },
 			{ 
@@ -158,6 +172,10 @@ export const DEALER_ROUTES: Routes = [
                         data: {
                             breadcrumb: 'Edit Generated Feeds'
                         }
+                    },
+                    { 
+                        path: 'edit-generated/:data/:breadcrumb', 
+                        component: GenerateFeedComponent
                     }
                 ]
             },
@@ -179,6 +197,11 @@ export const DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single License Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleLicenseComponent,
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 
@@ -220,6 +243,11 @@ export const DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single Playlist Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SinglePlaylistComponent,
+						canActivate: [ OwnerGuard ]
+                    }
                 ]
             },
 			{ 
@@ -238,7 +266,11 @@ export const DEALER_ROUTES: Routes = [
                         data: {
                             breadcrumb: 'Single Content Page'
                         }
-                    },		
+                    },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleContentComponent
+                    }
                 ]
             },	
 			{ 
@@ -282,6 +314,10 @@ export const DEALER_ROUTES: Routes = [
                                     breadcrumb: 'User Type'
                                 }
                             },
+                            { 
+                                path: ':data/:breadcrumb', 
+                                component: CreateUserTypeComponent
+                            }
                         ]
                     },
                     { 
@@ -292,6 +328,10 @@ export const DEALER_ROUTES: Routes = [
                             breadcrumb: 'Single User Page'
                         }
                     },
+                    { 
+                        path: ':data/:breadcrumb', 
+                        component: SingleUserComponent
+                    }
                 ]
             },
 			{ 
@@ -314,6 +354,10 @@ export const DEALER_ROUTES: Routes = [
                 data: {
                     breadcrumb: 'User Account Settings'
                 }
+            },
+            { 
+                path: 'user-account-setting/:data/:breadcrumb', 
+                component: UserAccountSettingComponent
             }
 		]
 	}
