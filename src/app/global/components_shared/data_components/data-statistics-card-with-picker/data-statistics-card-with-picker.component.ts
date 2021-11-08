@@ -62,7 +62,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     }
 
     ngOnChanges() {
-        this.generate_chart = this.generate_chart;
+        // this.generate_chart = this.generate_chart;
         console.log(this.generate_chart)
     }
 

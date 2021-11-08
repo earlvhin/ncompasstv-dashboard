@@ -354,7 +354,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			this._license.get_licenses_installation_statistics_detailed(this.selected_dealer, this.start_date, this.end_date).pipe(
 				takeUntil(this._unsubscribe)
 			).subscribe(data => {
-                if(data) {
+                if(!data.message) {
+                    this.generate = true;
                     var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                     data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
                     data.licenses.map(
@@ -372,6 +373,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                     this.average = this.sum / this.number_of_months; 
                     this.sub_title_detailed = "Found " + data.licenses.length + "  Licenses Installation as per shown in the graph."
                     this.generate = true;
+                } else {
+                    this.generate = false;
                 }
             })
         )
@@ -399,7 +402,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
                         this.whole_data = data.licenses;
-                        this.generate = true;
                         if(this.selected_dealer) {
                             this.getLicensesInstallationDetailed();
                         } else {
