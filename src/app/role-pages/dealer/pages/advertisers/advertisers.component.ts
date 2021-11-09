@@ -30,7 +30,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-		this.table.columns = [ '#', 'Business Name', 'Total Assets', 'City', 'State', 'Status' ];
+		this.table.columns = [ '#', 'Business Name', 'Total Assets', 'Address', 'City', 'State', 'Status', 'Postal Code' ];
 		this.getAdvertiserByDealer(1);
 		this.getAdvertiserTotal(this.currentDealerId);
 	}
@@ -108,9 +108,11 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 					index: { value: count++, link: null , editable: false, hidden: false },
 					name: { value: advertiser.name, link: `${this.base_url}/${advertiser.id}`, editable: false, hidden: false },
 					totalAssets: { value: advertiser.totalAssets },
+					address: { value: advertiser.address },
 					city: { value: advertiser.city ? advertiser.city : '--', link: null, editable: false, hidden: false },
 					state: { value: advertiser.state ? advertiser.state : '--', link: null, editable: false, hidden: false },
 					status: { value: advertiser.status, link: null, editable: false, hidden: false },
+					postalCode: { value: advertiser.postalCode }
 				}
 			}
 		);
