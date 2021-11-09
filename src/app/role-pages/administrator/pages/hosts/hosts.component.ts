@@ -260,7 +260,7 @@ export class HostsComponent implements OnInit {
                     if(!data.message) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-
+                        this.hosts_graph_data = data.hosts;
                         if(this.selected_dealer) {
                             data.hosts.map(
                                 i => {
@@ -277,15 +277,12 @@ export class HostsComponent implements OnInit {
                             this.sub_title_detailed = "Found " + data.hosts.length + " months with record as per shown in the graph."
                             this.generate = true;
                         } else {
-                            data.hosts.map(
+                            this.hosts_graph_data = this.hosts_graph_data.filter(item => item.year == new Date().getFullYear());
+                            this.hosts_graph_data.map(
                                 i => {
                                     this.total = this.total + i.totalHosts;
-                                    this.hosts_graph_data.push(i)
-                                    if(i.year == new Date().getFullYear()) {
-                                        this.label_graph.push(months[i.month - 1] + " " + i.totalHosts)
-                                        this.value_graph.push(i.totalHosts)
-                                    }
-                                    
+                                    this.label_graph.push(months[i.month - 1] + " " + i.totalHosts)
+                                    this.value_graph.push(i.totalHosts)
                                 }
                             )
                         }
