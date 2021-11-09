@@ -42,6 +42,7 @@ export class UploadDocumentDialogComponent implements OnInit {
 			const acceptedTypes = [ '.pdf', '.doc', '.docx' ];
 			const files = [...this.queuedImages.files as File[]];
 			this.queuedImages.files = files.filter(file => acceptedTypes.some(type => file.name.includes(type)));
+			this.queuedForUploadCount = this.queuedImages.files.length;
 		}, 1000);
 		
 	}
