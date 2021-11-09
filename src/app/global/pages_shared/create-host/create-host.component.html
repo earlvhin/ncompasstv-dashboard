@@ -169,49 +169,56 @@
                 </mat-card>
             </div>
             <div class="col-lg-6">
-                <label for="ng-scrape-form" class="mb-3">Enter a Business Name</label>
-                <div class="ng-form-field">
-                    <form [formGroup]="google_place_form" (ngSubmit)="googleMap()">
-                        <input formControlName="location" autocomplete="off" type="text" name="ng-scrape-form" class="ng-input-form no-border full-width no-outline" placeholder="Business Name">
-                        <button class="ng-scrape-form-btn no-border right-0 top-0" [ngClass]="location_field ? 'disabled' : ''" [disabled]="location_field"><span class="fas fa-search"></span></button>
-                    </form>
-                    <div class="location-candidates material-shadow" *ngIf="location_candidate_fetched">
-                        <ul *ngIf="google_result.length != 0 ; else loading">
-                            <li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
-                                <div class="d-flex align-items-center">
-                                    <div class="mr-3">
-                                        <span class="fas fa-map-marker-alt text-danger"></span>
-                                    </div>
-                                    <div class="flex-even">
-                                        <h5>{{ loc.result.name }}</h5>
-                                        <p class="sm-text mb-0">{{ loc.result.formatted_address | titlecase }}</p>
+                <div class="col-lg-12 flex p-0">
+                    <div class="col-lg-3 p-0">
+                        <ng-container *ngIf="is_current_user_admin">
+                            <div class="col-lg-12 p-0 pt-4">
+                                <div class="col-lg-12">
+                                    <div class="image-container col-lg-12 text-center">
+                                        <img [src]="current_host_image" class="w-100-px h-100-px br-100" alt="admin">
                                     </div>
                                 </div>
-                            </li>
-                        </ul>
-                        <ng-template #loading>
-                            <div class="bg-light py-5" *ngIf="!no_result">
-                                <app-spinner></app-spinner>
+                                <div class="col-lg-12 pt-2">
+                                    <button mat-raised-button class="select-image-button" color="primary" (click)="onChoosePhotos()" [disabled]="!place_id">Choose icon image</button>
+                                </div>
                             </div>
-                            <div class="bg-light py-5" *ngIf="no_result">
-                                <span class="pl-3"> No Results Found. </span>
+                        </ng-container>
+                    </div>
+                    <div class="col-lg-9 pt-5 p-0">
+                        <label for="ng-scrape-form" class="pt-4 mb-3">Enter a Business Name</label>
+                        <div class="ng-form- pt-1">
+                            <form [formGroup]="google_place_form" (ngSubmit)="googleMap()">
+                                <input formControlName="location" autocomplete="off" type="text" name="ng-scrape-form" class="ng-input-form no-border full-width no-outline" placeholder="Business Name">
+                                <button class="ng-scrape-form-btn no-border right-0" [ngClass]="location_field ? 'disabled' : ''" [disabled]="location_field"><span class="fas fa-search"></span></button>
+                            </form>
+                            <div class="location-candidates material-shadow" *ngIf="location_candidate_fetched">
+                                <ul *ngIf="google_result.length != 0 ; else loading">
+                                    <li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
+                                        <div class="d-flex align-items-center">
+                                            <div class="mr-3">
+                                                <span class="fas fa-map-marker-alt text-danger"></span>
+                                            </div>
+                                            <div class="flex-even">
+                                                <h5>{{ loc.result.name }}</h5>
+                                                <p class="sm-text mb-0">{{ loc.result.formatted_address | titlecase }}</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ul>
+                                <ng-template #loading>
+                                    <div class="bg-light py-5" *ngIf="!no_result">
+                                        <app-spinner></app-spinner>
+                                    </div>
+                                    <div class="bg-light py-5" *ngIf="no_result">
+                                        <span class="pl-3"> No Results Found. </span>
+                                    </div>
+                                </ng-template>
                             </div>
-                        </ng-template>
+                        </div>
                     </div>
                 </div>
-
-				<ng-container *ngIf="is_current_user_admin">
-					<div class="d-flex align-items-center select-image-container pt-4">
-						<div class="image-preview d-flex justify-content-center">
-							<div class="image-container">
-								<img [src]="current_host_image" alt="admin">
-							</div>
-						</div>
-						<button mat-raised-button class="select-image-button" color="primary" (click)="onChoosePhotos()" [disabled]="!place_id">Choose an image</button>
-					</div>
-				</ng-container>
-
-                <div class="map-wrapper mt-3">
+                
+                <div class="col-lg-12 p-0 map-wrapper mt-3">
                     <agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected"  [maxZoom]="19" >
                         <agm-marker 
                         *ngIf="selected_location"
