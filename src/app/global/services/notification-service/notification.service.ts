@@ -28,11 +28,11 @@ export class NotificationService {
         this.resolve_all_event.next(change);
     }
 
-	getAll(page?: number, pageSize?: number) {
+	getAll(page?: number, pageSize: number = 50) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_all_notifications}${ page > 0 ? '?page=' + page : ''}${page > 0 && pageSize === 0 ? '&pageSize=' + pageSize: ''}`, this.httpOptions);
 	}
 
-	getByDealerId(dealerId: string, page?: number, pageSize?: number) {
+	getByDealerId(dealerId: string, page?: number, pageSize: number = 50) {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}${ page > 0 ? '&page=' + page : ''}${page > 0 && pageSize === 0 ? '&pageSize=' + pageSize: ''}`, this.httpOptions);
 	}
 
