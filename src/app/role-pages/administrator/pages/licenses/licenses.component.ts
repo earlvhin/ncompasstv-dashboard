@@ -185,6 +185,7 @@ export class LicensesComponent implements OnInit {
 	}
 
     getLicensesStatistics() {
+        console.log("called")
         this.subscription.add(
 			this._license.get_licenses_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
                 data => {
@@ -200,7 +201,7 @@ export class LicensesComponent implements OnInit {
                     if(!data.message) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-                        this.licenses_graph_data = data.licenses;
+                        this.licenses_graph_data = [...data.licenses];
                         if(this.selected_dealer) {
                             data.licenses.map(
                                 i => {
@@ -211,6 +212,7 @@ export class LicensesComponent implements OnInit {
                                     this.sum = this.sum + i.totalLicenses;
                                 }
                             )
+                            
                             this.number_of_months = data.licenses.length;
                             this.average = this.sum / this.number_of_months; 
                             this.sub_title_detailed = "Found " + data.licenses.length + " months with record as per shown in the graph."
