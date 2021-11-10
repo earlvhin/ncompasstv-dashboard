@@ -200,7 +200,7 @@ export class LicensesComponent implements OnInit {
                     if(!data.message) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-
+                        this.licenses_graph_data = data.licenses;
                         if(this.selected_dealer) {
                             data.licenses.map(
                                 i => {
@@ -216,15 +216,12 @@ export class LicensesComponent implements OnInit {
                             this.sub_title_detailed = "Found " + data.licenses.length + " months with record as per shown in the graph."
                             this.generate = true;
                         } else {
-                            data.licenses.map(
+                            this.licenses_graph_data = this.licenses_graph_data.filter(item => item.year == new Date().getFullYear());
+                            this.licenses_graph_data.map(
                                 i => {
                                     this.total = this.total + i.totalLicenses;
-                                    this.licenses_graph_data.push(i)
-                                    if(i.year == new Date().getFullYear()) {
-                                        this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
-                                        this.value_graph.push(i.totalLicenses)
-                                    }
-                                    
+                                    this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
+                                    this.value_graph.push(i.totalLicenses)    
                                 }
                             )
                         }
