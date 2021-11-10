@@ -28,12 +28,22 @@ export class NotificationService {
         this.resolve_all_event.next(change);
     }
 
-	getAll(page?: number, pageSize: number = 50) {
-		return this._http.get(`${environment.base_uri}${environment.getters.api_get_all_notifications}${ page > 0 ? '?page=' + page : ''}${page > 0 && pageSize === 0 ? '&pageSize=' + pageSize: ''}`, this.httpOptions);
+	getAll(page: number = 1, pageSize: number = 50) {
+		console.log(`${environment.base_uri}${environment.getters.api_get_all_notifications}?page=${page ? page : 1}&pageSize=${pageSize}`);
+
+		return this._http.get(
+			`${environment.base_uri}${environment.getters.api_get_all_notifications}?page=${page ? page : 1}&pageSize=${pageSize}`, 
+			this.httpOptions
+		);
 	}
 
-	getByDealerId(dealerId: string, page?: number, pageSize: number = 50) {
-		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}${ page > 0 ? '&page=' + page : ''}${page > 0 && pageSize === 0 ? '&pageSize=' + pageSize: ''}`, this.httpOptions);
+	getByDealerId(dealerId: string, page: number = 1, pageSize: number = 50) {
+		console.log(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}?page=${page ? page : 1}&pageSize=${pageSize}`);
+
+		return this._http.get(
+			`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}?page=${page ? page : 1}&pageSize=${pageSize}`, 
+			this.httpOptions
+		);
 	}
 
 	updateNotificationStatus(id: string) {
