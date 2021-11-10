@@ -100,7 +100,7 @@ export class HostService {
 		const base = `${environment.base_uri}${environment.getters.api_get_hosts}`;
 		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize });
 		const url = `${base}${params}`;
-		return this._http.get<any>(url , this.httpOptions);
+		return this._http.get<{  host?: API_HOST[], paging?: PAGING, message?: string }>(url , this.httpOptions);
 	}
 
 	get_host_by_dealer_id(id, page, key, pageSize = 15) {

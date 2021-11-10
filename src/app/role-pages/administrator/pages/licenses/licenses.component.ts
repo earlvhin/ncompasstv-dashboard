@@ -283,25 +283,33 @@ export class LicensesComponent implements OnInit {
 
 	getHosts(page) {
         this.searching_hosts = true;
-		this.hosts_data = [];    
+		this.hosts_data = [];
+		
         this.subscription.add(
-			this._host.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts).subscribe(
-				data => {
-                    this.paging_data_host = data.paging;
-                    if (data) {
-						this.hosts_data = this.hosts_mapToUIFormat(data);
-						this.filtered_data_host = this.hosts_mapToUIFormat(data);
-					} else {
-						if(this.search_data_host == "") {
-							this.no_host = true;
-						}
+			this._host.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+			.subscribe(
+				response => {
+
+					if (response.message) {
+						
+						if (this.search_data_host == '') this.no_host = true;
 						this.filtered_data_host = [];
+						return;
+
 					}
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
+
+					this.paging_data_host = response.paging;
+					const mappedData = this.hosts_mapToUIFormat(response.host);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+
 				}
 			)
-		)
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			})
+		);
 	}
 
     getLicenses(page) {
@@ -583,10 +591,10 @@ export class LicensesComponent implements OnInit {
 		);
 	}
 
-    hosts_mapToUIFormat(data: { host: API_HOST[] }): UI_HOST_VIEW[] {
+    hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
 		let count = this.paging_data_host.pageStart;
 
-		return data.host.map(
+		return data.map(
 			(h: API_HOST) => {
 				const table = new UI_HOST_VIEW(
                     { value: count++, link: null , editable: false, hidden: false},
