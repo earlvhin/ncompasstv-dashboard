@@ -260,7 +260,7 @@ export class HostsComponent implements OnInit {
                     if(!data.message) {                        
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-                        this.hosts_graph_data = data.hosts;
+                        this.hosts_graph_data = [...data.hosts];
                         if(this.selected_dealer) {
                             data.hosts.map(
                                 i => {
