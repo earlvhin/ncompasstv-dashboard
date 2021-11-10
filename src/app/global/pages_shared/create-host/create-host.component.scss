@@ -17,7 +17,18 @@
 		}
 	}
 
-	.select-image-button {
-		flex-basis: 25%;
-	}
+}
+
+.select-image-button {
+	flex-basis: 25%;
+	font-size: 12px;
+	max-width: 160px;
+}
+
+.flex-basis-80 {
+	flex-basis: 80%;
+}
+
+.flex-basis-100 {
+	flex-basis: 100%;
 }

@@ -185,6 +185,20 @@
     }
 }
 
+.google-search-field-btn {
+	background: $green_border;
+    color: $light;
+    height: 50px;
+    padding: 0 20px;
+    transition: 0.1s linear;
+    &.disabled {
+        background-color: $disabled !important;
+    }
+    &:hover {
+        background-color: $primary_focus;
+    }
+}
+
 .map-wrapper {
     border: 1px solid $gray_border;
     height: 650px;
