@@ -486,9 +486,12 @@ export class CreateHostComponent implements OnInit {
 			JSON.stringify(this.operation_days), 
 			this.f.category.value,
 			this.f.timezone.value,
-			this.logo_data.logo,
-			this.logo_data.images,
 		);
+
+		if (this.logo_data) {
+			newHostPlace.logo = this.logo_data.logo;
+			newHostPlace.images = this.logo_data.images; 
+		}
 
 		this.creating_host = true;
 
