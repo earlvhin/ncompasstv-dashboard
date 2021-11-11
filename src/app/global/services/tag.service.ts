@@ -9,6 +9,7 @@ import { API_FILTERS, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
 })
 export class TagService extends BaseService {
 
+	onClickTagName = new EventEmitter<{ tagId: string }>();
 	onRefreshTagsCount = new EventEmitter<void>();
 	onRefreshTagsTable = new EventEmitter<void>();
 	onRefreshTagOwnersTable = new EventEmitter<void>();
@@ -89,12 +90,13 @@ export class TagService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	searchOwnersByTagType(keyword = null, typeId = null, page = 1): Observable<{ tags?: TAG_OWNER[], paging?: PAGING, message?: string }> {
+	searchOwnersByTagType(keyword = null, tagId: string = null, typeId = null, page = 1): Observable<{ tags?: TAG_OWNER[], paging?: PAGING, message?: string }> {
 		let url = `${this.getters.search_owner_tags}?page=${page}`;
 
 		const params = [
 			{ name: 'search', value: keyword },
 			{ name: 'typeId', value: typeId },
+			{ name: 'tagId', value: tagId },
 		];
 
 		params.forEach(

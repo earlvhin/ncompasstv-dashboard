@@ -19,7 +19,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 	isLoadingCount = false;
 	isOwnersTabLoading = false;
 	owners: TAG_OWNER[] = [];
-	ownersTabSearchKey = null;
+	ownersTabTagId = null;
 	searchForm: FormGroup;
 	tagTypes: TAG_TYPE[] = [];
 	tagTypesMutated: TAG_TYPE[] = [];
@@ -47,7 +47,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 	}
 
 	clickedTagName(event: { tag: string }): void {
-		this.ownersTabSearchKey = event.tag;
+		this.ownersTabTagId = event.tag;
 	}
 
 	get currentUserRole() {

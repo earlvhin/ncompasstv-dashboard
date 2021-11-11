@@ -12,7 +12,7 @@
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- TAG NAME -->
 					<td class="p-3 tags">
-						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data.name)">
+						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data.tagId)">
 							{{ data.name }}
 						</a>
 					</td>

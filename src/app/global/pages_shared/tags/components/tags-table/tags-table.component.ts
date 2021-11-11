@@ -109,7 +109,8 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	}
 
 	clickedTagName(data: string): void {
-		this.onClickTagName.emit({ tag: data });
+		// this.onClickTagName.emit({ tag: data });
+		this._tag.onClickTagName.emit({ tagId: data });
 	}
 
 	onPageChange(page: number): void {

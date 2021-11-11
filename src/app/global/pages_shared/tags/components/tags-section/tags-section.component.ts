@@ -17,7 +17,6 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserRole: string;
 	@Input() tagTypes: TAG_TYPE[];
-	@Output() onClickTagName = new EventEmitter<{ tag: string }>();
 	
 	currentFilter = 'All';
 	isLoading = true;
@@ -42,10 +41,6 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	clickedTagName(event: { tag: string }): void {
-		this.onClickTagName.emit(event);
 	}
 
 	clickedPageNumber(page: number): void {

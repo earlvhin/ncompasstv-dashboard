@@ -1,4 +1,4 @@
-import { Component, Input, EventEmitter, OnDestroy, OnInit, Output, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, Input, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
 import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
@@ -14,12 +14,11 @@ import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.compo
 	templateUrl: './tag-owners-section.component.html',
 	styleUrls: ['./tag-owners-section.component.scss']
 })
-export class TagOwnersSectionComponent implements OnInit, OnChanges, OnDestroy {
+export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	
 	@Input() columns: { name: string, class: string }[];
 	@Input() currentUserRole: string;
 	@Input() tagTypes: TAG_TYPE[];
-	@Input() searchKey: string;
 	@Output() onRefreshTagsCount = new EventEmitter<void>();
 
 	currentFilter = 'All';
@@ -39,19 +38,10 @@ export class TagOwnersSectionComponent implements OnInit, OnChanges, OnDestroy {
 		const defaultType = this.tagTypes[0];
 		this.currentTagType = defaultType;
 		this.currentFilter = defaultType.name;
-		this.searchOwnerTags(this.searchKey, 0);
+		this.searchOwnerTags();
 		this.subscribeToRefreshTableData();
 		this.subscribeToSearch();
-	}
-
-	ngOnChanges(changes: SimpleChanges) {
-
-		if (changes.searchKey) {
-			const { searchKey } = changes;
-			this.searchFormControl.patchValue(searchKey.currentValue, { emitEvent: false, onlySelf: true });;
-			this.searchOwnerTags(searchKey.currentValue);
-		}
-
+		this.subscribeToTagNameClick();
 	}
 
 	ngOnDestroy() {
@@ -67,7 +57,7 @@ export class TagOwnersSectionComponent implements OnInit, OnChanges, OnDestroy {
 	onSelectTagType(type: TAG_TYPE): void {
 		this.currentTagType = type;
 		this.currentFilter = type.name;
-		this.searchOwnerTags(null, type.tagTypeId);
+		this.searchOwnerTags(null, null, type.tagTypeId);
 	}
 
 	openDialog(name: string): void {
@@ -112,14 +102,14 @@ export class TagOwnersSectionComponent implements OnInit, OnChanges, OnDestroy {
 
 	}
 
-	private searchOwnerTags(keyword = null, tagTypeId = null, page = 1): void {
+	private searchOwnerTags(keyword: string = null, tagId: string = null, tagTypeId: number = null, page = 1): void {
 
 		if (!this.currentTagType) return;
 		this.isLoading = true;
 
 		if (this.searchFormControl.value) keyword = this.searchFormControl.value;
 
-		this._tag.searchOwnersByTagType(keyword, tagTypeId, page)
+		this._tag.searchOwnersByTagType(keyword, tagId, tagTypeId, page)
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map(
@@ -163,10 +153,17 @@ export class TagOwnersSectionComponent implements OnInit, OnChanges, OnDestroy {
 			.subscribe(
 				keyword => {
 					if (this.searchFormControl.invalid) return;
-					this.searchOwnerTags(keyword, 0);
+					this.searchOwnerTags(keyword, null, 0);
 					this._tag.onSearch.emit(keyword);
 				}
 			);
+
+	}
+
+	private subscribeToTagNameClick(): void {
+
+		this._tag.onClickTagName.pipe(takeUntil(this._unsubscribe))
+			.subscribe(({ tagId }) => this.searchOwnerTags(null, tagId));
 
 	}
 	
