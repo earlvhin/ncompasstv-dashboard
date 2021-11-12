@@ -14,7 +14,7 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 
 	hasNoData = false;
 	images: string[];
-	isLoadingPhotos = true;
+	noDataMessage = 'No photos found';
 	selectedImageIndex: number;
 	selectedImageUrl: string;
 
@@ -64,9 +64,11 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 
 					this.images = response;
 				},
-				error => console.log('Error get host place images ', error)
-			)
-			.add(() => this.isLoadingPhotos = false);
+				error => {
+					console.log('No images found');
+					this.hasNoData = true;
+				}
+			);
 	}
 	
 }

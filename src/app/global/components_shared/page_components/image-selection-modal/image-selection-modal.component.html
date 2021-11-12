@@ -12,7 +12,7 @@
 
 	<br>
 
-	<ng-container *ngIf="!isLoadingPhotos; else loading;">
+	<ng-container *ngIf="images && images.length > 0; else loading;">
 		<ul class="d-flex flex-wrap justify-content-between images">
 			<li class="image" *ngFor="let image of images; let i = index;" 
 				[class.selected-image]="selectedImageIndex === i"
@@ -20,22 +20,23 @@
 				<img [src]="image">
 			</li>
 		</ul>
-
-		<button mat-raised-button color="primary" class="margin-left-auto" 
-			[mat-dialog-close]="returnSelectedImageData()"
-			[disabled]="!selectedImageUrl">Select</button>
 	</ng-container>
+
+	<button mat-raised-button color="primary" class="margin-left-auto"
+		[mat-dialog-close]="returnSelectedImageData()"
+		[disabled]="!selectedImageUrl">Select
+	</button>
 </div>
 
 <ng-template #loading>
-	<ng-container *ngIf="!hasNoData; else no_data">
+	<ng-container *ngIf="!hasNoData; else no_data;">
 		<div class="text-center py-4">
 			<app-spinner [diameter]="100"></app-spinner>
 			<h5 class="mt-3">Retrieving photos from Google. This may take a while.</h5>
-        </div>
+		</div>	
 	</ng-container>
 </ng-template>
 
 <ng-template #no_data>
-	<app-error-message></app-error-message>
+	<app-error-message [message]="noDataMessage"></app-error-message>
 </ng-template>

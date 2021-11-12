@@ -1,15 +1,17 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'app-error-message',
-  templateUrl: './error-message.component.html',
-  styleUrls: ['./error-message.component.scss']
+	selector: 'app-error-message',
+	templateUrl: './error-message.component.html',
+	styleUrls: ['./error-message.component.scss']
 })
 export class ErrorMessageComponent implements OnInit {
 
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+	@Input() message: string = 'No records found';
+	
+	constructor() { }
+	
+	ngOnInit() {
+	}
+	
 }
