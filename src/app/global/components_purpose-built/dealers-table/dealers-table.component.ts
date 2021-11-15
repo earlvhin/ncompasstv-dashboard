@@ -249,6 +249,7 @@ export class DealersTableComponent implements OnInit {
 					dealer.region,
 					dealer.state,
 					dealer.monthAsDealer,
+					dealer.playerCount,
 					dealer.totalLicenses,
 					dealer.totalLicensesInactive,
 					dealer.totalLicensesOnline,

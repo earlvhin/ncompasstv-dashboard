@@ -9,6 +9,7 @@ export class UI_TABLE_DEALERS {
     region: string;
     state: string;
     months_as_dealer: number;
+    player_count: number;
     l_total: number;
     l_inactive: number;
     l_online: number;
@@ -21,7 +22,7 @@ export class UI_TABLE_DEALERS {
 
     constructor(
         index: number, dealer_id: string, user_id: string, dealer_id_alias: string, business_name: string, business_owner: string,
-        contact_person: string, region: string, state: string, months_as_dealer: number,
+        contact_person: string, region: string, state: string, months_as_dealer: number, player_count: number,
         l_total: number, l_inactive: number, l_online: number, l_offline: number,
         h_scheduled: number, h_total: number, h_active: number,
         a_total: number, a_active: number
@@ -36,6 +37,7 @@ export class UI_TABLE_DEALERS {
         this.region = region;
         this.state = state;
         this.months_as_dealer = months_as_dealer;
+        this.player_count = player_count;
         this.l_total = l_total;
         this.l_inactive = l_inactive;
         this.l_online = l_online;
