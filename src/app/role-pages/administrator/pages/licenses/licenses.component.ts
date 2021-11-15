@@ -133,6 +133,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Display', sortable: true, key: 'displayStatus', column:'DisplayStatus'},
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
+		{ name: 'Pi Version', sortable: false, key:'piVersion', hidden: true, no_show: true, column:'PiVersion'},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId' },
 		{ name: 'Password', sortable: false, key:'password'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
@@ -185,7 +186,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     getLicensesStatistics() {
-        console.log("called")
         this.subscription.add(
 			this._license.get_licenses_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
                 data => {
@@ -207,8 +207,8 @@ export class LicensesComponent implements OnInit {
                                 i => {
                                     this.total_detailed = this.total_detailed + i.totalLicenses;
                                     this.licenses_graph_data.push(i)
-                                        this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalLicenses)
-                                        this.value_graph_detailed.push(i.totalLicenses)
+                                    this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalLicenses)
+                                    this.value_graph_detailed.push(i.totalLicenses)
                                     this.sum = this.sum + i.totalLicenses;
                                 }
                             )
@@ -321,7 +321,6 @@ export class LicensesComponent implements OnInit {
 			this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
 				data => {
                     this.paging_data_licenses = data.paging;
-
                     if (data.licenses) {
 						this.licenses_data = this.licenses_mapToUIFormat(data.licenses);
 						this.filtered_data_licenses = this.licenses_mapToUIFormat(data.licenses);
@@ -673,6 +672,15 @@ export class LicensesComponent implements OnInit {
                     data => {
                         if(!data.message) {
                             const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+                            data.licenses.map(
+                                i => {
+                                    if(i.appVersion) {
+                                        i.apps = JSON.parse(i.appVersion);
+                                    } else {
+                                        i.apps = null;
+                                    }	
+                                }
+                            );
                             this.licenses_to_export = data.licenses;
                             this.licenses_to_export.forEach((item, i) => {
                                 this.modifyItem(item);
@@ -734,6 +742,8 @@ export class LicensesComponent implements OnInit {
 	}
 
 	modifyItem(item) {
+        console.log("item", item)
+        item.piVersion = item.apps ? item.apps.rpi_model : '';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
         item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
