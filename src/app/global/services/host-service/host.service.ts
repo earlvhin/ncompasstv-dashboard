@@ -103,8 +103,8 @@ export class HostService {
 		return this._http.get<{  host?: API_HOST[], paging?: PAGING, message?: string }>(url , this.httpOptions);
 	}
 
-	get_host_by_dealer_id(id, page, key, pageSize = 15) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&pageSize='+`${pageSize}`, this.httpOptions);
+	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15) {
+		return this._http.get<{ paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&pageSize='+`${pageSize}`, this.httpOptions);
 	}
 
     get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
