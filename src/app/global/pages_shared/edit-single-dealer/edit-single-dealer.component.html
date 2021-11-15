@@ -22,8 +22,13 @@
 						<span class="validation-message warning sm-text py-1 text-danger" *ngIf="email_not_valid && field.control == 'email'">
                             The email format is invalid.
 						</span>
-						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}">
+						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" *ngIf="field.control !== 'password'">
+						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" *ngIf="field.control === 'password'"
+													[type]="is_password_field_type ? 'password' : 'text'">
+						<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()" *ngIf="field.control === 'password'">{{ is_password_field_type ?
+												'visibility_off' : 'visibility' }}</mat-icon>
 					</mat-form-field>
+
 				</div>
 			</div>
 			<button mat-button mat-raised-button type="submit" color="primary" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">

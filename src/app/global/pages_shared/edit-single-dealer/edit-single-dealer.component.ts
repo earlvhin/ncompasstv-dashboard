@@ -24,6 +24,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	dealer_form: FormGroup;
 	email_not_valid : boolean = false;
+	is_password_field_type = true;
 	enable_update_form : boolean = false;
 	has_duplicate_email : boolean = false;
 	is_set_to_active = false;
@@ -62,20 +63,27 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			label: 'Email Address',
 			control: 'email',
 			placeholder: 'Ex. dealer@mail.com',
-			col: 'col-lg-5',
+			col: 'col-lg-6',
 			type: 'email'
+		},
+		{
+			label: 'Password',
+			control: 'password',
+			placeholder: '',
+			col: 'col-lg-6 p-0',
+			type: 'password'
 		},
 		{
 			label: 'Contact Number',
 			control: 'c_number',
 			placeholder: 'Ex. 0123456789',
-			col: 'col-lg-3 p-0'
+			col: 'col-lg-6'
 		},
 		{
 			label: 'Contact Person',
 			control: 'c_person',
 			placeholder: 'Ex. John Doe',
-			col: 'col-lg-4'
+			col: 'col-lg-6'
 		},
 		{
 			label: 'Address',
@@ -152,6 +160,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		this.f.owner_f_name.setValue(data.firstName);
 		this.f.owner_l_name.setValue(data.lastName);
 		this.f.email.setValue(data.email);
+		this.f.password.setValue(data.password);
 		this.f.c_number.setValue(data.contactNumber);
 		this.f.c_person.setValue(data.contactPerson);
 		this.f.c_count.setValue(data.playerCount);
@@ -316,6 +325,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			owner_f_name: ['', Validators.required],
 			owner_l_name: ['', Validators.required],
 			email: ['', Validators.required],
+			password: [{value: '', disabled: true}, Validators.required],
 			c_number: ['', Validators.required],
 			c_person: ['', Validators.required],
 			c_count: [''],
@@ -417,6 +427,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
 	}
 
 }
