@@ -190,6 +190,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Password', sortable: false, key:'password'},
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
+		{ name: 'Pi Version', sortable: false, key:'piVersion', hidden: true, no_show: true, column:'PiVersion'},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
 		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},
         { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
@@ -1092,6 +1093,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.subscription.add(
             this._license.get_license_to_export(this.dealer_id).subscribe(
                 data => {
+                    data.licenses.map(
+                        i => {
+                            if(i.appVersion) {
+                                i.apps = JSON.parse(i.appVersion);
+                            } else {
+                                i.apps = null;
+                            }	
+                        }
+                    );
                     this.licenses = data.licenses;
                     if (this.licenses) this.resyncSocketConnection();
                 }
@@ -1114,6 +1124,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
 					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 						data => {
+                            console.log("DD", data)
+                            data.licenseTemplateZoneExports.map(
+                                i => {
+                                    if(i.appVersion) {
+                                        i.apps = JSON.parse(i.appVersion);
+                                    } else {
+                                        i.apps = null;
+                                    }	
+                                }
+                            );
                             this.licenses_to_export = data.licenseTemplateZoneExports;
 							this.licenses_to_export.forEach((item, i) => {
 								this.modifyItem(item, tab);
@@ -1162,6 +1182,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+                item.piVersion = item.apps ? item.apps.rpi_model : '';
                 item.zone = this.getZoneHours(item);
                 item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
                 item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
