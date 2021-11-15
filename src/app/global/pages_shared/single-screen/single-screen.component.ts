@@ -34,6 +34,8 @@ export class SingleScreenComponent implements OnInit {
 	dealer_hosts: API_HOST[] = [];
 	edit_screen_info: EDIT_SCREEN_INFO;
 	edit_screen_zone_playlist: EDIT_SCREEN_ZONE_PLAYLIST[];
+	host: API_SINGLE_SCREEN['host'];
+	hostUrl: string;
 	hosts_data: Array<any> = [];
 	initial_load: boolean = false;
 	is_dealer: boolean = false;
@@ -386,7 +388,7 @@ export class SingleScreenComponent implements OnInit {
 				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
 					data => {
 						if (data && data.paging.entities) {
-							data.paging.entities.map (
+							data.paging.entities.map(
 								i => {
 									this.dealer_hosts.push(i);
 									this.hosts_data.push(i);
@@ -708,6 +710,8 @@ export class SingleScreenComponent implements OnInit {
 
 	private setPageData(data: API_SINGLE_SCREEN) {
 		this.licenses = data.licenses;
+		this.host = data.host;
+		this.hostUrl = `/${this.currentRole}/hosts/${this.host.hostId}`;
 		this.sortLicenses('desc');
 
 		//sort screen zone template by order
@@ -744,12 +748,12 @@ export class SingleScreenComponent implements OnInit {
 			this.watchScreenInfo();	
 		}, 50);
 	}
-	
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }

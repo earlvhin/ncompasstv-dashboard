@@ -125,7 +125,9 @@
                 <mat-card class="p-4 mt-4">
                     <div class="d-flex">
                         <div class="flex-even">
-                            <h5 class="normal-text">{{ screen.assigned_host }}</h5>
+                            <h5 class="normal-text">
+								<a [href]="[hostUrl]">{{ screen.assigned_host }}</a>
+							</h5>
                             <p class="sm-text font-weight-medium">
                                 Playing in {{ screen.screen_license.length }} license(s)
                             </p>
