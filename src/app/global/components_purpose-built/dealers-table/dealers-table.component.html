@@ -110,13 +110,21 @@
 									[attr.data-column]="'contactPerson'">
 										Contact Person
 									</th>
-					
-									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'DateCreated' ? 'tab-active': ''"
+
+                                    <th class="border-right border-bottom p-3" [ngClass]="active_tab == 'DateCreated' ? 'tab-active': ''"
 									scope="col" 
 									rowspan="2" 
 									[attr.data-column]="'monthAsDealer'">
 										Age
 										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('DateCreated', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+									</th>
+					
+									<th class="border-right border-bottom p-3" [ngClass]="active_tab == 'PlayerCount' ? 'tab-active': ''"
+									scope="col" 
+									rowspan="2" 
+									[attr.data-column]="'playerCount'">
+										Player Count
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}"  (click)="sortByColumnName('playerCount', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
 									</th>
 					
 									<th class="border-right border-bottom p-3" 
@@ -264,6 +272,9 @@
 									</td>
 									<td class="xsm-text border-right text-center p-3">
 										{{ d.months_as_dealer }} month(s)
+									</td>
+									<td class="xsm-text border-right text-center p-3">
+										{{ d.player_count }}
 									</td>
 									<td class="xsm-text border-right text-center p-3">
 										{{ d.l_total }}
