@@ -50,3 +50,4 @@ export * from './ui_table_advertisers_content.model';
 export * from './ui_table-feed.model';
 export * from './ui_table_hosts-by-dealer.model';
 export * from './ui_table-license-by-dealer.model';
+export * from './ui_table-license-by-host.model';

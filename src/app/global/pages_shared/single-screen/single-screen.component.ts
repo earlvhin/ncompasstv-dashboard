@@ -16,7 +16,7 @@ import { environment } from 'src/environments/environment';
 
 import { API_CONTENT, API_HOST, API_LICENSE_PROPS, API_PLAYLIST, API_SCREEN_TEMPLATE_ZONE, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SINGLE_PLAYLIST, API_SINGLE_SCREEN, API_TEMPLATE,  EDIT_SCREEN_ZONE_PLAYLIST, EDIT_SCREEN_INFO, PAGING, UI_CONTENT, 
-	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS } from 'src/app/global/models';
+	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS, API_LICENSE } from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, LicenseService, PlaylistService, RoleService, 
 	ScreenService, TemplateService } from 'src/app/global/services';
@@ -34,6 +34,8 @@ export class SingleScreenComponent implements OnInit {
 	dealer_hosts: API_HOST[] = [];
 	edit_screen_info: EDIT_SCREEN_INFO;
 	edit_screen_zone_playlist: EDIT_SCREEN_ZONE_PLAYLIST[];
+	host: API_SINGLE_SCREEN['host'];
+	hostUrl: string;
 	hosts_data: Array<any> = [];
 	initial_load: boolean = false;
 	is_dealer: boolean = false;
@@ -41,7 +43,7 @@ export class SingleScreenComponent implements OnInit {
 	is_search: boolean = false;
 	is_view_only = false;
 	licenses_array: any;
-	licenses_array_api: any;
+	licenses: API_LICENSE['license'][];
 	license_tbl_row_url: string;
 	license_tbl_row_slug: string = "license_id";
 	loading_data_host: boolean = true;
@@ -79,7 +81,7 @@ export class SingleScreenComponent implements OnInit {
 		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
-		private _params: ActivatedRoute,
+		private _route: ActivatedRoute,
 		private _playlist: PlaylistService,
 		private _role: RoleService,
 		private _router: Router,
@@ -172,39 +174,32 @@ export class SingleScreenComponent implements OnInit {
 	}
 
 	getScreenIdOnRoute() {
-		this.subscription.add(
-			this._params.paramMap.subscribe(
-				data => {
-					this.screen_id = this._params.snapshot.params.data;
-					if(this._params.snapshot.queryParams.pid) {
-						this.playlist_id = this._params.snapshot.queryParams.pid;
-					}
-					this.getScreen(this.screen_id);
-				}
-			)
-		);
+		const routeSnapshot = this._route.snapshot;
+		const routeParams = routeSnapshot.paramMap;
+		this.screen_id = routeParams.get('data');
+		if (routeSnapshot.queryParams.pid) this.playlist_id = routeSnapshot.queryParams.pid;
+		this.getScreen(this.screen_id);
 	}
 
-    getScreenLicenses(e) {
+    getScreenLicenses(page: number) {
         this.searching = true;
-		this.subscription.add(
-			this._license.get_license_by_screen_id(this.screen_id, e).subscribe(
-				data => {
-                    this.searching = false;
-                    this.paging_data = data.paging;
-					if(!data.message) {
-                        this.screen_licenses = this.screenLicense_mapToUI(data.paging.entities);
-                        // this.filtered_data = this.screenLicense_mapToUI(data.cFeeds);
-                    } else {
-                        // if(this.search_data == "") {
-						// 	this.no_licenses = true;
-						// }
-						this.screen_licenses=[];
-						// this.filtered_data = [];
-                    }
+
+		this._license.get_license_by_screen_id(this.screen_id, page)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					this.searching = false;
+					this.paging_data = response.paging;
+
+					if (response.message) {
+						this.screen_licenses = [];
+						return;
+					}
+
+					this.screen_licenses = this.screenLicense_mapToUI(response.paging.entities);
+
 				}
-			)
-		)
+			);
 	}
 
     private getInternetType(value: string): string {
@@ -393,7 +388,7 @@ export class SingleScreenComponent implements OnInit {
 				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
 					data => {
 						if (data && data.paging.entities) {
-							data.hosts.map (
+							data.paging.entities.map(
 								i => {
 									this.dealer_hosts.push(i);
 									this.hosts_data.push(i);
@@ -489,7 +484,7 @@ export class SingleScreenComponent implements OnInit {
 
 	unassignLicenseModal_open() {
 		let dialog = this._dialog.open(UnassignLicenseComponent, {
-			data: { licenses: this.licenses_array_api, screen_id: this.screen.screen_id },
+			data: { licenses: this.licenses, screen_id: this.screen.screen_id },
 		});
 
 		this.subscription.add(
@@ -625,14 +620,18 @@ export class SingleScreenComponent implements OnInit {
 		)
 	}
 
-	sortList(order) {
+	private sortLicenses(order: string): void {
 		this.licenses_array = [];
-		if(order == 'desc') {
-			this.licenses_array_api = this.licenses_array_api.sort((a,b) => b.piStatus - a.piStatus);
-		} else {
-			this.licenses_array_api = this.licenses_array_api.sort((a,b) => a.piStatus - b.piStatus);
+
+		const licenses = [...this.licenses];
+
+		if (order === 'desc') {
+			this.licenses_array = licenses.sort((a, b) => b.piStatus - a.piStatus);
+			return;
 		}
-		this.licenses_array = this.licenses_array_api;
+
+		this.licenses_array = licenses.sort((a, b) => a.piStatus - b.piStatus);
+
 	}
 
 	// Screen Zone Map to UI
@@ -710,8 +709,10 @@ export class SingleScreenComponent implements OnInit {
 	}
 
 	private setPageData(data: API_SINGLE_SCREEN) {
-		this.licenses_array_api = data.licenses;
-		this.sortList('desc');
+		this.licenses = data.licenses;
+		this.host = data.host;
+		this.hostUrl = `/${this.currentRole}/hosts/${this.host.hostId}`;
+		this.sortLicenses('desc');
 
 		//sort screen zone template by order
 		data.screenZonePlaylistsContents = data.screenZonePlaylistsContents.sort((a,b)=>a.screenTemplateZonePlaylist.order - b.screenTemplateZonePlaylist.order);
@@ -747,12 +748,12 @@ export class SingleScreenComponent implements OnInit {
 			this.watchScreenInfo();	
 		}, 50);
 	}
-	
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }
