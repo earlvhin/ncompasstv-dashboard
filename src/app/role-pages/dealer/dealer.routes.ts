@@ -111,7 +111,7 @@ export const DEALER_ROUTES: Routes = [
                         }
                     },
                     { 
-                        path: ':data:/:breadcrumb', 
+                        path: ':data/:breadcrumb', 
                         component: SingleScreenComponent,
 						canActivate: [ OwnerGuard ]
                     },
@@ -144,7 +144,8 @@ export const DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data/:breadcrumb',
-                        component: SingleAdvertiserComponent
+                        component: SingleAdvertiserComponent,
+						canActivate: [ OwnerGuard ],
                     }
                 ]
             },
@@ -330,7 +331,8 @@ export const DEALER_ROUTES: Routes = [
                     },
                     { 
                         path: ':data/:breadcrumb', 
-                        component: SingleUserComponent
+                        component: SingleUserComponent,
+						canActivate: [ OwnerGuard ]
                     }
                 ]
             },

@@ -570,7 +570,7 @@ export class LicensesComponent implements OnInit {
 					},
 					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
-					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, new_tab_link: 'true', editable: false, hidden: false, business_hours: l.hostId ? true : false, business_hours_label: l.hostId ? this.getLabel(l) : null},
 					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: false, new_tab_link: 'true', label: 'License Alias', id: l.licenseId, hidden: false },
 					{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 					{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
@@ -616,6 +616,7 @@ export class LicensesComponent implements OnInit {
 	}
 
     getLabel(data) {
+        console.log("LABEL", data)
 		this.now = moment().format('d');
 		this.now = this.now;
         var storehours = JSON.parse(data.storeHours)

@@ -9,7 +9,7 @@ export class API_SINGLE_SCREEN {
     template: template;
     createdBy: createdBy
     screenZonePlaylistsContents: any = [];
-    licenses: API_LICENSE[];
+    licenses: API_LICENSE['license'][];
 	notes?: string;
 }
 
