@@ -56,7 +56,8 @@ export class UserService {
 	}
 
 	get_user_alldata_by_id(data) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_user_by_id}${data}`, this.httpOptions).map(data => data);
+		let isAdmin = this._auth.current_role == 'administrator' ? true : false;
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_user_by_id}${data}`+'&isAdmin='+`${isAdmin}`, this.httpOptions).map(data => data);
 	}
 
 	create_new_user(role: string, data: any) {
