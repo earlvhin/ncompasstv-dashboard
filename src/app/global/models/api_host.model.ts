@@ -37,6 +37,7 @@ export class API_HOST {
 	status: string;
 	tags?: TAG[];
 	totalLicenses: number;
+	totalLicences: number;
 	category: string;
 	hostName: string;
 	businessName: string;
