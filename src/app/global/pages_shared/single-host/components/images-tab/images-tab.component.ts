@@ -88,8 +88,9 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 					id: { value: file.id, link: null , editable: false, hidden: true} ,
 					index: { value: count++, link: null , editable: false, hidden: false },
 					thumbnail: { value: file.url, link: null, isImage: true, editable: false, hidden: false },
-					date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
 					fileName: { value: file.filename, link: null , editable: false, hidden: false },
+					alias: { value: file.alias, id: file.id, editable: true, label: 'Host Photo Alias', hidden: false },
+					date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
 					s3FileName: { value: file.s3Filename, hidden: true },
 				};
 			}
@@ -103,7 +104,7 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 	}
 
 	protected get columns() {
-		return [ '#', 'Thumbnail', 'Upload Date', 'Filename', 'Actions' ];
+		return [ '#', 'Thumbnail', 'Filename', 'Alias', 'Upload Date', 'Actions' ];
 	}
 	
 }

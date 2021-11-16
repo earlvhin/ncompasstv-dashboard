@@ -93,9 +93,9 @@ export class LicenseService {
 		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
 	} 
 	
-    get_license_by_screen_id(id, page) {
-		const params = this.httpParams({ screenId: id,page })
-		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
+    get_license_by_screen_id(id: string, page: number) {
+		const params = this.httpParams({ screenId: id, page });
+		return this._http.get<{ paging?: PAGING, message?: string }>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
 	}
 
 	/**

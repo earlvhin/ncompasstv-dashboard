@@ -1,4 +1,5 @@
 export interface API_HOST_FILE {
+	alias?: string;
 	createdBy: string;
 	dateCreated: string;
 	filename: string;

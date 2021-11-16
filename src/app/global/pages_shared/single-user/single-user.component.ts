@@ -225,7 +225,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		return this._user.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: API_USER_DATA) => this.setPageData(response), 
+				(response: API_USER_DATA) => {
+					console.log('get user by id', response);
+					this.setPageData(response);
+				}, 
 				error => console.log('Error retrieving user data', error)
 			);
 

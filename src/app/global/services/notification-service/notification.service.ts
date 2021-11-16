@@ -38,10 +38,8 @@ export class NotificationService {
 	}
 
 	getByDealerId(dealerId: string, page: number = 1, pageSize: number = 50) {
-		console.log(`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}?page=${page ? page : 1}&pageSize=${pageSize}`);
-
 		return this._http.get(
-			`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}?page=${page ? page : 1}&pageSize=${pageSize}`, 
+			`${environment.base_uri}${environment.getters.api_get_dealer_notifications}${dealerId}&page=${page ? page : 1}&pageSize=${pageSize}`, 
 			this.httpOptions
 		);
 	}

@@ -1,15 +1,19 @@
 button.reassign {
-	float: right;
+  float: right;
 }
 
 .mt-20 {
-	margin-top: 20px;
+  margin-top: 20px;
 }
 
 mat-slide-toggle {
-	margin-left: 15px;
+  margin-left: 15px;
 }
 
 button[type="submit"] {
-	background-color: #8EC641;
+  background-color: #8ec641;
+}
+
+.pw-visibility {
+  cursor: pointer;
 }

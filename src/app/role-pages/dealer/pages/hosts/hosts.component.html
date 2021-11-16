@@ -92,7 +92,7 @@
                                                 [table_columns]="host_table_column"
                                                 [table_data]="host_filtered_data"
                                                 [new_table]="true"
-                                                [paging_details]="paging_data"
+                                                [paging_details]="hostsPaging"
                                                 (page_triggered)="getHosts($event)">
                                                 </app-data-table>
                                             </mat-card>
@@ -202,7 +202,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-12 p-0" *ngIf="!searching_license">
-                                <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{paging_data_license.entities.length}}</span> out of <span class="text-danger">{{paging_data_license.totalEntities}}</span> licenses result.</span>
+                                <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{licensesPaging.entities.length}}</span> out of <span class="text-danger">{{licensesPaging.totalEntities}}</span> licenses result.</span>
                             </div>
                         </div>
 
@@ -216,7 +216,7 @@
                                         [new_table]="true"
                                         (update_info)="ngOnInit()"
                                         [license_status_column]="true"
-                                        [paging_details]="paging_data_license"
+                                        [paging_details]="licensesPaging"
                                         (page_triggered)="getLicenses($event)"
                                         (to_sort_column)="getColumnsAndOrder($event)"
                                         [active_tab]="sort_column"

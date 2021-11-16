@@ -41,6 +41,7 @@ export class API_HOST {
 	hostName: string;
 	businessName: string;
 	timezoneName: string;
+	others?: any;
 }
 
 export class API_SINGLE_HOST {
