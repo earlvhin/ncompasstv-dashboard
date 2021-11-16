@@ -373,14 +373,13 @@ export class DataTableComponent implements OnInit {
 
 	editField (fields: any, label: string, value: any): void {
 		let width = '500px';
-		const dialogParams: any = { 
-			width, 
-			data: { status: fields, message: label, data: value } 
-		};
-		if (fields.dropdown_edit) {
-			dialogParams.height = '220px';
-		}
+
+		const dialogParams: any = { width, data: { status: fields, message: label, data: value } };
+
+		if (fields.dropdown_edit) dialogParams.height = '220px';
+
 		const dialog = this._dialog.open(EditableFieldModalComponent, dialogParams);
+
 		const close = dialog.afterClosed().subscribe(
 			(response: string) => {
 				close.unsubscribe();
@@ -420,6 +419,14 @@ export class DataTableComponent implements OnInit {
 									error => console.log('Error editing screen', error)
 							)
 						);
+
+					case 'Host Document Alias':
+					case 'Host Photo Alias':
+						this._host.update_file_alias(fields.id, response)
+								.pipe(takeUntil(this._unsubscribe))
+								.subscribe(() => this.openConfirmationModal('success', 'Success!', 'Alias changed'))
+						break;
+
 					default:		
 				}
 			},

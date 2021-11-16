@@ -1,59 +1,62 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
-import { API_HOST } from '../../models/api_host.model';
-import { CustomFieldGroup } from '../../models/host-custom-field-group';
-import { API_CONTENT, API_FILTERS, API_HOST_CONTENT, PAGING } from '../../models';
+import { Observable } from 'rxjs';
+
+import { BaseService } from '../base.service';
+import { API_HOST, CustomFieldGroup, PAGING } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
 })
 
-export class HostService {
+export class HostService extends BaseService {
 
-	title: string = "Hosts";
-	token = JSON.parse(localStorage.getItem('tokens'));
 	onUpdateBusinessHours = new EventEmitter<boolean>();
 
-	httpOptions = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}`}
-		)
-	};
-
-	constructor(
-		private _http: HttpClient,
-		private _auth: AuthService
-	) { }
-
-	add_host(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_host}`, data, this.httpOptions);
+	add_host(data: any) {
+		const url = this.creators.api_new_host;
+		return this.postRequest(url, data);
 	}
 
-	add_host_place(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_host_place}`, data, this.httpOptions);
+	add_host_place(data: any) {
+		const url = this.creators.api_new_host_place;
+		return this.postRequest(url, data);
+	}
+
+	create_field_group(data: CustomFieldGroup) {
+		const url = `${this.creators.api_create_field_group}`;
+		return this.postRequest(url, data);
+	}
+
+	create_field_group_value(data: any) {
+		const url = `${this.creators.api_fieldgroup_value_create}`;
+		return this.postRequest(url, data);
 	}
 
 	delete_host(hostIds: string[], forceDelete: boolean) {
 		const data = { hostIds, forceDelete };
-		return this._http.post(`${environment.base_uri}${environment.delete.host}`, data, this.httpOptions);
+		const url = this.deleters.host;
+		return this.postRequest(url, data);
 	}
 
 	delete_file(s3FileName: string) {
-		return this._http.post(`${environment.base_uri}${environment.delete.host_file_amazon_s3}?filename=${s3FileName}`, {}, this.httpOptions);
+		const url = `${this.deleters.host_file_amazon_s3}?filename=${s3FileName}`;
+		const body = {};
+		return this.postRequest(url, body);
 	}
 
-	export_host(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_hosts}${id}`, this.httpOptions);
+	export_host(id: string) {
+		const url = `${this.getters.export_hosts}${id}`;
+		return this.getRequest(url);
 	}
 	
     get_licenses_per_state() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_licenses_by_state}`, this.httpOptions);
+		const url = this.getters.api_get_host_licenses_by_state;
+		return this.getRequest(url);
 	}
     
-    get_licenses_per_state_details(state) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_licenses_by_state_details}${state}`, this.httpOptions).map(data => data.dealerState);
+    get_licenses_per_state_details(state: string) {
+		const url = `${this.getters.api_get_host_licenses_by_state_details}${state}`;
+		return this.getRequest(url).map(data => data.dealerState);
 	}
 
 	/**
@@ -62,12 +65,13 @@ export class HostService {
 	 * @returns Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string }>
 	 */
 	get_contents(hostId: string, page = 1) {
-		const url = `${environment.base_uri}${environment.getters.contents_by_host}?hostId=${hostId}&page=${page}`;
-		return this._http.get<{ contents?: API_HOST_CONTENT[], paging?: PAGING, message?: string }>(url);
+		const url = `${this.getters.contents_by_host}?hostId=${hostId}&page=${page}`;
+		return this.getRequest(url);
 	}
 
 	get_content_by_host_id(id: string) {
-		return this._http.get(`${environment.base_uri}${environment.getters.content_by_host_id}?hostId=${id}`, this.httpOptions);
+		const url = `${this.getters.content_by_host_id}?hostId=${id}`;
+		return this.getRequest(url);
 	}
 
 	/**
@@ -77,112 +81,101 @@ export class HostService {
 	 * @param page: number
 	 * @returns PAGING
 	 */
-	get_files_by_type(hostId: string, type = 1, page = 1) {
-		const base = `${environment.base_uri}${environment.getters.host_files}`;
+	get_files_by_type(hostId: string, type = 1, page = 1): Observable<PAGING> {
+		const base = `${this.getters.host_files}`;
 		const params = this.setUrlParams({ hostId, type, page })
 		const url = `${base}${params}`;
-		return this._http.get<PAGING>(url);
+		return this.getRequest(url);
 	}
 
-	get_host() {
-		return this._http.get<API_HOST>(`${environment.base_uri}${environment.getters.api_get_hosts}`, this.httpOptions).map(data => data.host);
+	get_host(): Observable<API_HOST> {
+		const url = `${this.getters.api_get_hosts}`;
+		return this.getRequest(url).map(data => data.host);
 	}
 
-    get_host_statistics(dealer?, startDate?, endDate?) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts_statistics}`+'?dealerid='+`${dealer}`+'&startdate='+`${startDate}`+'&enddate='+`${endDate}`, this.httpOptions);
+    get_host_statistics(dealerId?: string, startDate?: string, endDate?: string) {
+		const url = `${this.getters.api_get_hosts_statistics}?dealerid=${dealerId}&startdate=${startDate}&enddate=${endDate}`;
+		return this.getRequest(url);
 	}
 	
-	get_host_search(key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_hosts}`+'?search='+`${key}`, this.httpOptions);
+	get_host_search(key: string) {
+		const url = `${this.getters.api_get_hosts}`+'?search='+`${key}`;
+		return this.getRequest(url);
 	}
 	
-	get_host_by_page(page: number, search: string, sortColumn?, sortOrder?, pageSize = 15) {
-		const base = `${environment.base_uri}${environment.getters.api_get_hosts}`;
+	get_host_by_page(page: number, search: string, sortColumn?, sortOrder?, pageSize = 15): Observable<{ host?: API_HOST[], paging?: PAGING, message?: string }> {
+		const base = `${this.getters.api_get_hosts}`;
 		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize });
 		const url = `${base}${params}`;
-		return this._http.get<{  host?: API_HOST[], paging?: PAGING, message?: string }>(url , this.httpOptions);
+		return this.getRequest(url);
 	}
 
-	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15) {
-		return this._http.get<{ paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_host_by_dealer}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&pageSize='+`${pageSize}`, this.httpOptions);
+	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15): Observable<{ paging?: PAGING, message?: string }> {
+		const url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&search=${key}&pageSize=${pageSize}`;
+		return this.getRequest(url);
 	}
 
     get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
-		const base = `${environment.base_uri}${environment.getters.api_get_host_by_id_optimized}`;
+		const base = `${this.getters.api_get_host_by_id_optimized}`;
 		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize });
 		const url = `${base}${params}`;
-		return this._http.get<any>(url, this.httpOptions);
+		return this.getRequest(url);
 	}
 	
-	get_host_for_dealer_id(id) {
-		return this._http.get<API_HOST[]>(`${environment.base_uri}${environment.getters.api_get_host_for_dealer}${id}`, this.httpOptions);
+	get_host_for_dealer_id(id: string): Observable<API_HOST[]> {
+		const url = `${this.getters.api_get_host_for_dealer}${id}`;
+		return this.getRequest(url);
 	}
 
-	get_host_by_id(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_by_id}${id}`, this.httpOptions);
+	get_host_by_id(id: string) {
+		const url = `${this.getters.api_get_host_by_id}${id}`;
+		return this.getRequest(url);
 	}
 
-	get_host_report(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_host_report}`, data, this.httpOptions);
+	get_host_report(data: any) {
+		const url = `${this.getters.api_get_host_report}`;
+		return this.postRequest(url, data);
 	}
 
-	update_single_host(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_host}`, data, this.httpOptions);
+	update_single_host(data: any) {
+		const url = `${this.updaters.api_update_host}`;
+		return this.postRequest(url, data);
 	}
 	
 	get_time_zones() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_timezone}`, this.httpOptions)
+		const url = `${this.getters.api_get_timezone}`;
+		return this.getRequest(url);
 	}
 
-	get_host_place_images(placeId: string) {
-		const url = `${environment.base_uri}${environment.getters.host_place_images}?placeId=${placeId}`;
-		return this._http.get<{ images: string[] }>(url);
+	get_host_place_images(placeId: string): Observable<{ images: string[] }> {
+		const url = `${this.getters.host_place_images}?placeId=${placeId}`;
+		return this.getRequest(url);
 	}
 
 	get_host_total() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_total}`, this.httpOptions)
+		const url = `${this.getters.api_get_host_total}`;
+		return this.getRequest(url);
 	}
 
-	get_host_total_per_dealer(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_total_per_dealer}${id}`, this.httpOptions)
+	get_host_total_per_dealer(id: string) {
+		const url = `${this.getters.api_get_host_total_per_dealer}${id}`;
+		return this.getRequest(url);
 	}
 
 	get_fields() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_fields}`, this.httpOptions);
+		const url = `${this.getters.api_get_host_fields}`;
+		return this.getRequest(url);
 	}
 
-	get_field_by_id(data: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_host_field_by_id}${data}`, this.httpOptions);
+	get_field_by_id(id: string) {
+		const url = `${this.getters.api_get_host_field_by_id}${id}`;
+		return this.getRequest(url);
 	}
 
-	create_field_group(data: CustomFieldGroup) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_create_field_group}`, data, this.httpOptions);
+	update_file_alias(id: string, alias: string) {
+		const url = this.updaters.host_file_alias;
+		const body = { id, alias };
+		return this.postRequest(url, body);
 	}
 
-	create_field_group_value(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_fieldgroup_value_create}`, data, this.httpOptions);
-	}
-
-	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
-
-		let result = '';
-		
-		Object.keys(filters).forEach(
-			key => {
-
-				if (typeof filters[key] === 'undefined') return;
-				
-				if (!result.includes('?')) result += `?${key}=`;
-				else result += `&${key}=`;
-
-				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
-				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
-				else result += filters[key];
-
-			}
-		);
-
-		return result
-
-	}
 }

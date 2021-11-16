@@ -20,7 +20,8 @@
 						[page]="'single-host-documents-tab'"
 						[paging_details]="pagingData"
 						[new_table]="true"
-						(page_triggered)="getDocuments($event)">
+						(page_triggered)="getDocuments($event)"
+						(update_info)="getDocuments()">
 					</app-data-table>
 				</ng-container>
 			</mat-card>

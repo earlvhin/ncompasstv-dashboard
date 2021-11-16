@@ -234,6 +234,7 @@ export const API_ENDPOINTS = {
 		api_update_weather_feed: 'feed/update/weather',
 		content_schedule: 'playlistcontentsschedule/update',
 		dealer_status: 'dealer/updatestatus',
+		host_file_alias: 'host/update/file/alias',
 		install_date: 'license/updateinstalldate',
 		install_date_list: 'license/updateinstalldatelist',
 		play_credits: 'playlists/addcredits',
