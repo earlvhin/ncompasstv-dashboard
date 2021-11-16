@@ -20,7 +20,8 @@
 						[page]="'single-host-images-tab'"
 						[paging_details]="pagingData"
 						[new_table]="true"
-						(page_triggered)="getImages($event)">
+						(page_triggered)="getImages($event)"
+						(update_info)="getImages()">
 					</app-data-table>
 				</ng-container>
 			</mat-card>
