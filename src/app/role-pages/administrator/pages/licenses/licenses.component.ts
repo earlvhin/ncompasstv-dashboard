@@ -623,7 +623,7 @@ export class LicensesComponent implements OnInit {
         storehours = storehours.sort((a, b) => {return a.id - b.id;});
 		var modified_label = {
 			date : moment().format('LL'),
-			address: data.address,
+			address: data.hostAddress,
 			schedule: storehours[this.now] && storehours[this.now].status ? (
 				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
 				? "Open 24 Hours" : storehours[this.now].periods.map(
