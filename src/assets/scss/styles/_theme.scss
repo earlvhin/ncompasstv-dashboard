@@ -39,6 +39,10 @@
     background: $green_light;
 }
 
+.grid {
+    display: grid;
+}
+
 .chart-thumbnail {
     height: 50px;
     width: 50px;
@@ -727,6 +731,22 @@ agm-map {
     height: 45px;
 }
 
+.h-40 {
+    height: 40px;
+}
+
+.w-40 {
+    width: 40px;
+}
+
+.lh-40 {
+    line-height: 40px;
+}
+
+.lh-120 {
+    line-height: 120px;
+}
+
 .two-columns {
     columns: 2;
 }
@@ -758,6 +778,10 @@ agm-map {
 
 .f-35 {
     font-size: 35px;
+}
+
+.f-20 {
+    font-size: 20px;
 }
 
 .w-100-px {

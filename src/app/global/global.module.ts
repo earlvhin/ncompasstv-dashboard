@@ -39,6 +39,7 @@ import { DataCardCountComponent } from './components_shared/data_components/data
 import { DataCardGraphComponent } from './components_shared/data_components/data-card-graph/data-card-graph.component';
 import { DataGraphComponent } from './components_shared/data_components/data-graph/data-graph.component';
 import { DataGraphCompareComponent } from './components_shared/data_components/data-graph-compare/data-graph-compare.component';
+import { DataQuickStatsComponent } from './components_shared/data_components/data-quick-stats/data-quick-stats.component';
 import { DataStatisticsCardComponent } from './components_shared/data_components/data-statistics-card/data-statistics-card.component';
 import { DataStatisticsCardWithPickerComponent } from './components_shared/data_components/data-statistics-card-with-picker/data-statistics-card-with-picker.component';
 import { DataTotalComponent } from './components_shared/data_components/data-total/data-total.component';
@@ -76,6 +77,7 @@ import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-fee
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
+import { ImageSelectionModalComponent } from './components_shared/page_components/image-selection-modal/image-selection-modal.component';
 import { InformationModalComponent } from './components_shared/page_components/information-modal/information-modal.component';
 import { IsEmptyPipe } from './pipes/is-empty.pipe';
 import { IsFeedPipe } from './pipes/is-feed.pipe';
@@ -86,6 +88,7 @@ import { ListItemComponent } from './components_shared/data_components/list-item
 import { LittleSpinnerComponent } from './components_shared/page_components/little-spinner/little-spinner.component';
 import { LocatorComponent } from './pages_shared/locator/locator.component';
 import { MatMomentDateModule, MomentDateModule } from '@angular/material-moment-adapter';
+import { MatFileUploadModule } from 'angular-material-fileupload';
 import { MediaComponent } from './components_shared/media_components/media/media.component';
 import { MediaLibraryComponent } from './pages_shared/media-library/media-library.component';
 import { MediaLibraryOptionsComponent } from './components_shared/media_components/media-library-options/media-library-options.component';
@@ -194,14 +197,10 @@ import {
 	MatTooltipModule,
 	MatIconModule,
 } from '@angular/material';
-import { MatFileUploadModule } from 'angular-material-fileupload';
-import { ImageSelectionModalComponent } from './components_shared/page_components/image-selection-modal/image-selection-modal.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
-	AssignLicenseModalComponent,
-	AutocompleteFieldComponent,
 	AutocompleteFieldComponent,
 	BannerComponent,
 	BulkEditBusinessHoursComponent,
@@ -231,6 +230,7 @@ const ngComponents = [
     DataCardGraphComponent,
 	DataGraphComponent,
     DataGraphCompareComponent,
+    DataQuickStatsComponent,
     DataStatisticsCardComponent,
     DataStatisticsCardWithPickerComponent,
     DataTotalComponent,
@@ -268,6 +268,7 @@ const ngComponents = [
 	HostCustomFieldsComponent,
 	HostViewComponent,
     HostsTabComponent,
+    ImageSelectionModalComponent,
 	InformationModalComponent,
 	IsEmptyPipe,
 	IsFeedPipe,
@@ -357,7 +358,6 @@ const ngComponents = [
 	ZoneListComponent,
   	PaginationFieldComponent,
 	ZoneExpansionPanelComponent,
-	ImageSelectionModalComponent,
 ];
 
 const MaterialModules = [
@@ -395,9 +395,6 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
-		DataCardGraphComponent,
-		ContentsTabComponent,
-		ImageSelectionModalComponent
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -417,6 +414,7 @@ const DIRECTIVES = [
 		EditSingleHostComponent,
 		EditableFieldModalComponent,
 		FeedMediaComponent,
+        ImageSelectionModalComponent,
 		InformationModalComponent,
 		LicenseModalComponent,
 		MediaModalComponent,
@@ -439,7 +437,6 @@ const DIRECTIVES = [
 		UserSortModalComponent,
 		ViewSchedulesComponent,
 		WarningPopupComponent,
-		ImageSelectionModalComponent,
 	],
 	imports: [
 		BrowserAnimationsModule,

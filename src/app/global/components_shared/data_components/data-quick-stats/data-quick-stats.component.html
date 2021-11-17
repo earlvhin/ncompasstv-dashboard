@@ -1,0 +1,41 @@
+<mat-card class="h-100">
+    <div class="p-3" *ngIf="total; else spinner">
+        <h4>
+            <span class="{{icon}} text-primary mr-3"></span>
+            <span class="">{{total_label}}</span>
+        </h4>
+        <hr class="mb-2">
+        <div class="col-lg-12 flex" *ngIf="active || inactive">
+            <div class="col-lg-6 grid p-2 text-center bg-primary">
+                <span class="xlg-text text-white">
+                    {{active}}
+                </span>
+                <span class="col-lg-12 p-0 xsm-text text-white">
+                    {{active_label}}
+                </span>
+            </div>
+            <div class="col-lg-6 grid p-2 ml-2 text-center bg-gray-2">
+                <span class="xlg-text text-white">
+                    {{inactive}}
+                </span>
+                <span class="col-lg-12 p-0 xsm-text text-white">
+                    {{inactive_label}}
+                </span>
+            </div>
+        </div>
+        <div class="col-lg-12 grid mt-2 text-center">
+            <span class="xlg-text text-primary">
+                {{total}}
+            </span>
+            <span class="col-lg-12 p-0 xsm-text text-gray">
+                TOTAL {{total_label}}
+            </span>
+        </div>
+    </div>
+</mat-card>
+
+<ng-template #spinner>
+    <div class="py-5">
+        <app-spinner [diameter]="85"></app-spinner>
+    </div>
+</ng-template>

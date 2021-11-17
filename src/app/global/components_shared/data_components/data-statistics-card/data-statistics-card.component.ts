@@ -91,7 +91,7 @@ export class DataStatisticsCardComponent implements OnInit {
 		const data = this.value_array;
         const whole : any = this.whole_data;
 
-        if(whole.length == 0) {
+        if(whole) {
             this.no_data.emit(true);
         }
 
@@ -167,7 +167,7 @@ export class DataStatisticsCardComponent implements OnInit {
                         backgroundColor: 'rgb(142, 198, 65)',
                         borderColor: 'rgb(64, 109, 2)',
                         data,
-                    }]
+                    }],
                 },
                 options: {
                     onClick: (e: any) => {

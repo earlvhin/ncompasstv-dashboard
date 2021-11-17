@@ -10,10 +10,219 @@
 
     <hr class="my-3">
 
-	
-	<ng-template #spinner>
-		<mat-card class="py-5">
-			<app-spinner [diameter]="85"></app-spinner>
-		</mat-card>
-	</ng-template>
+    <div class="row">
+        <div class="col-lg-12 p-0 mb-3 flex">
+            <div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
+                <span class="fas fa-user-shield text-white"></span>
+            </div>
+            <div class="ml-3">
+                <span class="lg-text text-primary f-20">Welcome back, Admin {{user_name}}</span>
+                <br>
+                <span class="text-gray sm-text">
+                    This is your N-Compass Dashboard. Look around and act.
+                </span>
+            </div>
+        </div>
+        <div class="col-lg-12 flex p-0">
+            <div class="col-lg-3">
+                <app-data-quick-stats
+                [total]="dealer_stats.total"
+                [total_label]="dealer_stats.total_label"
+                [active]="dealer_stats.active"
+                [active_label]="dealer_stats.active_label"
+                [inactive]="dealer_stats.inactive"
+                [inactive_label]="dealer_stats.inactive_label"
+                [icon]="dealer_stats.icon">
+                </app-data-quick-stats>
+            </div>
+            <div class="col-lg-3">
+                <app-data-quick-stats
+                [total]="host_stats.total"
+                [total_label]="host_stats.total_label"
+                [active]="host_stats.active"
+                [active_label]="host_stats.active_label"
+                [inactive]="host_stats.inactive"
+                [inactive_label]="host_stats.inactive_label"
+                [icon]="host_stats.icon"></app-data-quick-stats>
+            </div>
+            <div class="col-lg-3">
+                <app-data-quick-stats
+                [total]="advertiser_stats.total"
+                [total_label]="advertiser_stats.total_label"
+                [active]="advertiser_stats.active"
+                [active_label]="advertiser_stats.active_label"
+                [inactive]="advertiser_stats.inactive"
+                [inactive_label]="advertiser_stats.inactive_label"
+                [icon]="advertiser_stats.icon"></app-data-quick-stats>
+            </div>
+            <div class="col-lg-3">
+                <app-data-quick-stats
+                [total]="license_stats.total"
+                [total_label]="license_stats.total_label"
+                [active]="license_stats.active"
+                [active_label]="license_stats.active_label"
+                [inactive]="license_stats.inactive"
+                [inactive_label]="license_stats.inactive_label"
+                [icon]="license_stats.icon"></app-data-quick-stats>
+            </div>
+        </div>
+        <div class="col-lg-12 flex p-0 mt-4">
+            <div class="col-lg-3 h-100">
+                <app-data-quick-stats
+                [total]="installation_stats.total"
+                [total_label]="installation_stats.total_label"
+                [icon]="installation_stats.icon"></app-data-quick-stats>
+            </div>
+            <div class="col-lg-4">
+                <mat-card class="h-100">
+                    <div class="p-3">
+                        <h4>
+                            <span class="fas fa-calendar text-primary mr-3"></span>
+                            <span class="">SCHEDULED INSTALLATIONS STATISTICS</span>
+                        </h4>
+                        <hr class="mb-2">
+                        <div class="col-lg-12 pt-3 flex">
+                            <div class="col-lg-4">
+                                <div *ngIf="installation_stats.total; else spinner">
+                                    <span class="{{installation_stats.icon}} text-danger mr-3"></span>
+                                    <span class="xlg-text text-primary">
+                                        {{installation_stats.this_month}}
+                                    </span>
+                                    <span class="col-lg-12 p-0 sm-text text-gray">
+                                        CURRENT MONTH
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div *ngIf="installation_stats.total; else spinner">
+                                    <span class="{{installation_stats.icon}} text-gray mr-3"></span>
+                                    <span class="xlg-text text-primary">
+                                        {{installation_stats.last_month}}
+                                    </span>
+                                    <span class="col-lg-12 p-0 sm-text text-gray">
+                                        PREVIOUS MONTH
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4">
+                                <div *ngIf="license_stats.total; else spinner">
+                                    <span class="{{installation_stats.icon}} text-primary mr-3"></span>
+                                    <span class="xlg-text text-primary">
+                                        {{installation_stats.next_month}}
+                                    </span>
+                                    <br/>
+                                    <span class="col-lg-12 p-0 sm-text text-gray">
+                                        NEXT MONTH
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+            <div class="col-lg-5">
+                <mat-card class="h-100">
+                    <div class="p-3">
+                        <h4>
+                            <span class="fas fa-chart-bar text-primary mr-3"></span>
+                            <span class="">TOTAL STATISTICS AVERAGE FOR DEALER</span>
+                        </h4>
+                        <hr class="mb-2">
+                        <div class="col-lg-12 pt-3 flex">
+                            <div class="col-lg-4">
+                                <div *ngIf="host_stats.total; else spinner">
+                                    <span class="{{host_stats.icon}} text-primary mr-3"></span>
+                                    <span class="xlg-text text-primary">
+                                        {{getAverage(host_stats.total)}}
+                                    </span>
+                                    <span class="col-lg-12 p-0 sm-text text-gray">
+                                        {{host_stats.total_label}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 p-0">
+                                <div *ngIf="advertiser_stats.total; else spinner">
+                                    <span class="{{advertiser_stats.icon}} text-primary mr-3"></span>
+                                    <span class="xlg-text text-primary">
+                                        {{getAverage(advertiser_stats.total)}}
+                                    </span>
+                                    <span class="col-lg-12 p-0 sm-text text-gray">
+                                        {{advertiser_stats.total_label}}
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 p-0">
+                                <div *ngIf="license_stats.total; else spinner">
+                                    <span class="{{license_stats.icon}} text-primary mr-3"></span>
+                                    <span class="xlg-text text-primary">
+                                        {{getAverage(license_stats.total)}}
+                                    </span>
+                                    <span class="col-lg-12 p-0 sm-text text-gray">
+                                        {{license_stats.total_label}}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+        </div>
+
+        <div class="col-lg-12 flex p-0 mt-4">
+            <div class="col-lg-3">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card
+                        [id]="'dealer-view'"
+						[label_array]="['New Last Week', 'New This Week']"
+						[value_array]="[dealer_stats.last_week,dealer_stats.this_week]"
+                        [no_click]="true"
+                        [total]="dealer_stats.total_label"
+                        [sub_title]="'Graph for New Dealers this and last week'">
+                    </app-data-statistics-card>
+                </mat-card>
+            </div>
+            <div class="col-lg-3">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card
+                        [id]="'host-view'"
+						[label_array]="['New Last Week', 'New This Week']"
+						[value_array]="[host_stats.last_week,host_stats.this_week]"
+                        [no_click]="true"
+                        [total]="host_stats.total_label"
+                        [sub_title]="'Graph for New Hosts this and last week'">
+                    </app-data-statistics-card>
+                </mat-card>
+            </div>
+            <div class="col-lg-3">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card
+                        [id]="'advertiser-view'"
+						[label_array]="['New Last Week', 'New This Week']"
+						[value_array]="[advertiser_stats.last_week,advertiser_stats.this_week]"
+                        [no_click]="true"
+                        [total]="advertiser_stats.total_label"
+                        [sub_title]="'Graph for New Advertisers this and last week'">
+                    </app-data-statistics-card>
+                </mat-card>
+            </div>
+            <div class="col-lg-3">
+                <mat-card class="card-graph">
+                    <app-data-statistics-card
+                        [id]="'license-view'"
+						[label_array]="['New Last Week', 'New This Week']"
+						[value_array]="[license_stats.last_week,license_stats.this_week]"
+                        [no_click]="true"
+                        [total]="license_stats.total_label"
+                        [sub_title]="'Graph for New Licenses this and last week'">
+                    </app-data-statistics-card>
+                </mat-card>
+            </div>
+        </div>
+    </div>
 </div>
+
+<ng-template #spinner>
+    <div>
+        <app-spinner [diameter]="85"></app-spinner>
+    </div>
+</ng-template>

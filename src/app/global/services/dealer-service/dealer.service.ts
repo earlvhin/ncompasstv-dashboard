@@ -42,6 +42,10 @@ export class DealerService {
 		private _auth: AuthService
 	) { }
 	
+    api_get_dealer_total() {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_total}`, this.httpOptions)
+	}
+    
 	add_dealer(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_dealer}`, data);
 	}
