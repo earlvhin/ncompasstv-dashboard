@@ -20,7 +20,7 @@ export class TagService extends BaseService {
 		return this.postRequest(this.creators.tag_owners, body);
 	}
 	
-	createTag(data: { name: string, tagColor: string }[]) {
+	createTag(data: { name: string, tagColor: string, description?: string }[]) {
 		const body = { names: data };
 		return this.postRequest(this.creators.tag, body);
 	}
@@ -114,9 +114,10 @@ export class TagService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	updateTag(tagId: string, name: string, tagColor: string) {
-		const body = [{ tagId, name, tagColor }];
-		return this.postRequest(this.updaters.tag, body);
+	updateTag(tagId: string, name: string, tagColor: string, description?: string) {
+		const body: { tagId: string, name: string, tagColor: string, description?: string } = { tagId, name, tagColor };
+		if (description) body.description = description;
+		return this.postRequest(this.updaters.tag, [body]);
 	}
 
 	updateTagType(tagTypeId: number, name: string) {

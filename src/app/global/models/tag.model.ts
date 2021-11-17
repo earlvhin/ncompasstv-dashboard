@@ -6,6 +6,7 @@ export interface TAG {
 	tagColor: string;
 	count?: number;
 	dealer?: API_DEALER[];
+	description: string;
 	host?: API_HOST[];
 	license?: API_LICENSE[];
 	advertiser?: API_ADVERTISER[];

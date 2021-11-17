@@ -48,9 +48,9 @@ export class EditTagComponent implements OnInit, OnDestroy {
 	onSubmit() {
 
 		const { tagId } = this.tag;
-		const { tagColor, name } = this.form.value;
-
-		this._tag.updateTag(tagId, name, tagColor)
+		const { tagColor, name, description } = this.form.value;
+		
+		this._tag.updateTag(tagId, name, tagColor, description)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -71,7 +71,8 @@ export class EditTagComponent implements OnInit, OnDestroy {
 		this.form = this._form_builder.group({
 			tagId: [ data.tagId , Validators.required ],
 			name: [ data.name , Validators.required ],
-			tagColor: [ data.tagColor , Validators.required ]
+			tagColor: [ data.tagColor , Validators.required ],
+			description: [ data.description ]
 		});
 
 		this.selectedTagColor = this.form.get('tagColor').value;
