@@ -71,7 +71,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 				dialogConfig = { 
 					width: '500px',
-					height: '250px',
+					height: '400px',
 					panelClass: 'dialog-container-position-relative'
 				};
 
