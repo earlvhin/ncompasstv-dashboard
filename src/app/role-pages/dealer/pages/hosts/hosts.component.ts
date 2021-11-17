@@ -48,6 +48,10 @@ export class HostsComponent implements OnInit {
     search_data_license: string = "";
     sort_column: string = "";
 	sort_order: string = "";
+	host_sort_column: string = "";
+	host_sort_order: string = "";
+	adv_sort_column: string = "";
+	adv_sort_order: string = "";
 	initial_load_license: boolean = true;
     license_data_api: any;
     license_data: UI_TABLE_LICENSE_BY_HOST[] = [];
@@ -62,11 +66,11 @@ export class HostsComponent implements OnInit {
 
     host_table_column = [
 		{ name: '#', no_export: true},
-		{ name: 'Name', key: 'name'},
+		{ name: 'Name', sortable: true, key: 'name', column: 'Name'},
 		{ name: 'Address', key: 'address'},
-		{ name: 'City', key: 'city'},
+		{ name: 'City', sortable: true, key: 'city', column: 'City'},
 		{ name: 'Postal Code', key: 'postalCode'},
-		{ name: 'Number of Licenses', key: 'totalLicenses'},
+		{ name: 'Number of Licenses', sortable: true, key: 'totalLicences', column: 'TotalLicences'},
 		{ name: 'Status', key: 'status'},
         { name: 'Notes', sortable: false, key: 'notes'},
         { name: 'Others', sortable: false, key: 'others'},
@@ -118,7 +122,8 @@ export class HostsComponent implements OnInit {
 		this.getHosts(1);
         this.getLicenses(1);
 		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
-        this.table.columns = [ '#', 'Business Name', 'Total Assets', 'City', 'State', 'Status' ];
+        this.table.columns = [ '#', {name:'Business Name', sortable: true, column: 'Name'}, 
+					{name: 'Total Assets', sortable: true, column: 'TotalAssets'}, {name:'City', sortable: true, column:'City'}, 'State', 'Status' ];
 		this.getAdvertiserByDealer(1);
 	}
 
@@ -194,7 +199,8 @@ export class HostsComponent implements OnInit {
 	getAdvertiserByDealer(page: number) {
 		this.is_searching = true;
 
-		this._advertiser.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.keyword)
+		this._advertiser.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.keyword,
+			this.adv_sort_column, this.adv_sort_order)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
@@ -222,13 +228,26 @@ export class HostsComponent implements OnInit {
 		this.getLicenses(1);
 	}
 
+	getHostColumnsAndOrder(data: { column: string, order: string }) {
+		this.host_sort_column = data.column;
+		this.host_sort_order = data.order;
+		this.getHosts(1);
+	}
+
+	getAdvColumnsAndOrder(data: { column: string, order: string }) {
+		this.adv_sort_column = data.column;
+		this.adv_sort_order = data.order;
+		this.getAdvertiserByDealer(1);
+	}
+
 	getHosts(page: number) {
 		this.searching = true;
 		this.host_data = [];
 		this.host_filtered_data = [];
 		this.temp_array = [];
 
-		this._host.get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data)
+		this._host.get_host_by_dealer_id_with_sort(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data,
+			this.host_sort_column, this.host_sort_order)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
@@ -481,7 +500,7 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.address, link: null, editable: false, hidden: false},
 					{ value: hosts.city, link: null, editable: false, hidden: false},
 					{ value: hosts.postalCode, link: null, editable: false, hidden: false},
-					{ value: hosts.totalLicenses, link: null, editable: false, hidden: false},
+					{ value: hosts.totalLicences, link: null, editable: false, hidden: false},
 					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: true },
 					{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false},
 					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},

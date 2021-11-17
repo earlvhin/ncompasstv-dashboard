@@ -92,8 +92,13 @@
                                                 [table_columns]="host_table_column"
                                                 [table_data]="host_filtered_data"
                                                 [new_table]="true"
+                                                (update_info)="ngOnInit()"
                                                 [paging_details]="hostsPaging"
-                                                (page_triggered)="getHosts($event)">
+                                                (page_triggered)="getHosts($event)"
+                                                (to_sort_column)="getHostColumnsAndOrder($event)"
+                                                [active_tab]="host_sort_column"
+                                                [sort_column]="host_sort_column"
+                                                [sort_order]="host_sort_order">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>
@@ -258,7 +263,12 @@
                                                     [table_data]="table.data"
                                                     [new_table]="true"
                                                     [paging_details]="paging_data"
-                                                    (page_triggered)="getAdvertiserByDealer($event)">
+                                                    (update_info)="ngOnInit()"
+                                                    (page_triggered)="getAdvertiserByDealer($event)"
+                                                    (to_sort_column)="getAdvColumnsAndOrder($event)"
+                                                    [active_tab]="adv_sort_column"
+                                                    [sort_column]="adv_sort_column"
+                                                    [sort_order]="adv_sort_order">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>
