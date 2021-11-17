@@ -39,13 +39,19 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	onSubmit(): void {
 
+		let dataToSubmit: { name: string, tagColor: string, description?: string } = { name: null, tagColor: null };
 		let errorMessage = 'Error creating tag';
+
 		const form = this.form.value;
 		const name = form.tagName as string;
 		const tagColor = form.tagColor as string;
-		const data = [{ name, tagColor: tagColor }] ;
+		const description = form.description as string;
 
-		this._tag.createTag(data)
+		dataToSubmit.name = name;
+		dataToSubmit.tagColor = tagColor;
+		if (description) dataToSubmit.description = description;
+
+		this._tag.createTag([dataToSubmit])
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
@@ -63,6 +69,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		this.form = this._form_builder.group({
 			tagName: [ null, Validators.required ],
 			tagColor: [ null, Validators.required ],
+			description: [ null ]
 		});
 
 	}

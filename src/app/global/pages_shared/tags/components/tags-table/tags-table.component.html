@@ -12,9 +12,13 @@
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- TAG NAME -->
 					<td class="p-3 tags">
-						<a class="tag clickable" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data.tagId)">
+						<a class="tag clickable" placement="right" [ngbTooltip]="tagToolTip" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data.tagId)">
 							{{ data.name }}
 						</a>
+
+						<ng-template #tagToolTip>
+							<span class="sm-text">{{ data.description ? data.description : 'No description available' }}</span>
+						</ng-template>
 					</td>
 					<!-- TAG COUNT -->
 					<td class="p-3 tags">{{ data.count }}</td>
