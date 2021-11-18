@@ -208,6 +208,7 @@ export const API_ENDPOINTS = {
 		api_assign_license_to_host: 'license/assignhost',
 		api_assign_template_to_dealer: 'template/assigntodealer',
 		api_blocklist_content: 'blacklistedcontents/create',
+		api_blacklist_cloned_content: 'blacklistedcontents/createforclone',
 		api_deactivate_license: 'license/deactivate?licenseKey=',
 		api_display_status: 'license/updatedisplaystatus',
 		api_update_advertiser: 'advertiser/updateadvertiser',
