@@ -15,7 +15,6 @@ import { takeUntil } from 'rxjs/operators';
 export class EditTagComponent implements OnInit, OnDestroy {
 
 	@Input() tag: TAG;
-
 	columns = [];
 	form: FormGroup;
 	hasUpdated = false;

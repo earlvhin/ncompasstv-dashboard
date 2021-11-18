@@ -5,7 +5,7 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn" [routerLink]="[base_url + '/create-advertiser']">
+                <button mat-button mat-raised-button class="theme-btn" [routerLink]="[base_url + '/create-advertiser']" [disabled]="is_view_only">
                     <span class="button-label">
                         Add Advertiser Profile
                     </span>
@@ -58,7 +58,7 @@
                     <div class="col-lg-4">
                         <app-search-field
                             *ngIf="!initial_load_advertiser"
-                            [form_title]="'Search Business Name, Address, City, State, or Postal Code'"
+                            [form_title]="'Search Business Name, Address, City, State, Postal Code, or #Tag'"
                             [placeholder]="'Example: N-Compass'"
                             [data_reference]="table.data"
                             [primary_keyword]="'name'"
@@ -77,6 +77,7 @@
                                     [table_data]="table.data"
                                     [new_table]="true"
                                     [paging_details]="paging_data"
+									[is_view_only]="is_view_only"
                                     (page_triggered)="getAdvertiserByDealer($event)">
                                 </app-data-table>
                             </mat-card>
@@ -93,7 +94,7 @@
             <p class="sm-text mb-3">
                 There are no available advertisers at the moment.
             </p>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="[base_url + '/create-advertiser']">
+            <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="[base_url + '/create-advertiser']" [disabled]="is_view_only">
                 Add Advertiser Profile
                 <span class="fas fa-plus ml-2 sm-text"></span>
             </button>

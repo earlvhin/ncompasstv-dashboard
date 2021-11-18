@@ -1,18 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { API_LICENSE } from '../../../../global/models/api_license.model';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
-import { UI_TABLE_LICENSE_BY_HOST } from '../../../../global/models/ui_table-license-by-host.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { TitleCasePipe, DatePipe } from '@angular/common';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
-import { environment } from 'src/environments/environment';
-import { UserSortModalComponent } from '../../../../global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import * as moment from 'moment';
-import { ActivatedRoute } from '@angular/router';
+
+import { environment } from 'src/environments/environment';
+import { AuthService, LicenseService } from 'src/app/global/services';
+import { API_LICENSE, UI_TABLE_LICENSE_BY_HOST } from 'src/app/global/models';
+import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
+import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
 	selector: 'app-licenses',
@@ -29,10 +28,10 @@ export class LicensesComponent implements OnInit {
 	license_data_api: any;
 	filtered_data: UI_TABLE_LICENSE_BY_HOST[] = [];
 	row_slug: string = "license_id";
-	row_url: string = "/dealer/licenses";
+	row_url: string = `/${this.currentRole}/licenses`;
 	license_filtered_data: any = [];
 	license_row_slug: string = "host_id";
-	license_row_url: string = "/dealer/hosts";
+	license_row_url: string = `/${this.currentRole}/hosts`;
 	licenses_to_export: any = [];
 	no_licenses: boolean = false;
     now: any;
@@ -51,6 +50,7 @@ export class LicensesComponent implements OnInit {
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+	is_view_only = false;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true},
@@ -97,10 +97,11 @@ export class LicensesComponent implements OnInit {
 		if(status){
 			this.filterTable('status', status === 'Online'? '1' : '0');
 		}
-		this.dealers_name = this._auth.current_user_value.roleInfo.businessName;
+		this.dealers_name = this.currentUser.roleInfo.businessName;
         this.sortList('desc')
 		this.getLicenses(1);
-		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
+		this.getTotalCount(this.currentUser.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -181,7 +182,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page) {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
+			this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
@@ -244,10 +245,10 @@ export class LicensesComponent implements OnInit {
 						hidden: false, 
 						isImage: true
 					},
-                    { value: i.licenseKey, link: '/dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
+                    { value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, editable: false, hidden: false, status: true },
                     { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
-                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? '/dealer/hosts/' + i.hostId : null, editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
-                    { value: i.alias ? i.alias : '--', link: '/dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
+                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? `/${this.currentRole}/hosts/` + i.hostId : null, editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
+                    { value: i.alias ? i.alias : '--', link: `/${this.currentRole}/licenses/` + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
                     { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
                     { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
                     { value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
@@ -304,7 +305,7 @@ export class LicensesComponent implements OnInit {
             data: {
                 view: 'license',
                 is_dealer: true,
-                dealer_id: this._auth.current_user_value.roleInfo.dealerId,
+                dealer_id: this.currentUser.roleInfo.dealerId,
                 dealer_name: this.dealers_name
             }
 		})
@@ -326,7 +327,6 @@ export class LicensesComponent implements OnInit {
 		this.subscription.add(
 			this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				data => {
-                    console.log("DD", data)
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 					this.licenses_to_export = data.licenseTemplateZoneExports;
 					this.licenses_to_export.forEach((item, i) => {
@@ -397,11 +397,9 @@ export class LicensesComponent implements OnInit {
                 data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
             } 
             if (data.templateLowerLeft != 'NO DATA') {
-                console.log("LL")
                 data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
             } 
             if (data.templateMain != 'NO DATA') {
-                console.log("M")
                 data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
             } 
             if (data.templateUpperLeft != 'NO DATA') {
@@ -450,7 +448,15 @@ export class LicensesComponent implements OnInit {
 			}
 		});
 		this.worksheet.columns = header;
-		this.getDataForExport(this._auth.current_user_value.roleInfo.dealerId);		
+		this.getDataForExport(this.currentUser.roleInfo.dealerId);		
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }
 

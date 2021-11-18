@@ -9,8 +9,7 @@ import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 import { API_ADVERTISER, API_HOST, API_LICENSE, PAGING, UI_ADVERTISER, UI_DEALER_HOSTS, UI_TABLE_LICENSE_BY_HOST } from 'src/app/global/models';
-import { AuthService, AdvertiserService, HostService, LicenseService, UserService } from 'src/app/global/services';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { AuthService, AdvertiserService, HostService, LicenseService } from 'src/app/global/services';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
@@ -21,6 +20,7 @@ import { UserSortModalComponent } from 'src/app/global/components_shared/media_c
 })
 
 export class HostsComponent implements OnInit {
+	createHostLink: string;
 	filtered_data: any = [];
 	host_data: any = [];
 	host_filtered_data: any = [];
@@ -56,6 +56,7 @@ export class HostsComponent implements OnInit {
     now: any;
     splitted_text: any;
     dealers_name: string;
+	is_view_only = false;
 
     private keyword = '';
     protected _unsubscribe = new Subject<void>();
@@ -120,6 +121,8 @@ export class HostsComponent implements OnInit {
 		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
         this.table.columns = [ '#', 'Business Name', 'Total Assets', 'City', 'State', 'Status' ];
 		this.getAdvertiserByDealer(1);
+		this.createHostLink  = `/${this.currentRole}/hosts/create-host`; 
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -525,6 +528,10 @@ export class HostsComponent implements OnInit {
 				);
 			}
 		);
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 	protected get currentRole() {

@@ -20,6 +20,7 @@
 						[page]="'single-host-images-tab'"
 						[paging_details]="pagingData"
 						[new_table]="true"
+						[is_view_only]="isViewOnly"
 						(page_triggered)="getImages($event)"
 						(update_info)="getImages()">
 					</app-data-table>

@@ -5,7 +5,7 @@
 
 			<div class="alias-container">
 				<h1 class="page-title mb-1" *ngIf="!enable_edit_alias else edit_alias">{{ title }}</h1>
-				<mat-icon class="edit-alias" *ngIf="!enable_edit_alias" (click)="activateEdit(true)">edit</mat-icon>
+				<mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only " (click)="activateEdit(true)">edit</mat-icon>
 
 				<ng-template #edit_alias>
 					<form class="edit-alias-form" [formGroup]="update_alias">
