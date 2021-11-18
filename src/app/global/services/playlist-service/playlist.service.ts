@@ -40,6 +40,11 @@ export class PlaylistService {
 		return this._http.post<API_BLOCKLIST_CONTENT[]>(`${environment.base_uri}${environment.update.api_blocklist_content}`, data, this.httpOptions)
 	}
 
+	blacklist_cloned_content(playlistContentId, playlistId, contentId) {
+		return this._http.post<API_BLOCKLIST_CONTENT[]>(`${environment.base_uri}${environment.update.api_blacklist_cloned_content}`
+										+'?playlistContentId='+`${playlistContentId}`+'&playlistId='+`${playlistId}`+ '&contentId='+`${contentId}`, this.httpOptions)
+	}
+
 	export_playlist(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_content_playlist}${id}`, this.httpOptions);
 	}

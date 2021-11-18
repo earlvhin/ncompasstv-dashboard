@@ -601,7 +601,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 								request = this._content.revert_frequency(playlistContentId);
 							}
 							
-							await request.toPromise();
+							await request.toPromise().then(async (response: any) => {
+								if(response){
+									const { contentId } = response.playlistContent;
+									await this._playlist.blacklist_cloned_content(playlistContentId,
+										playlistId, contentId).toPromise();
+								}
+							});
 
 						}
 
