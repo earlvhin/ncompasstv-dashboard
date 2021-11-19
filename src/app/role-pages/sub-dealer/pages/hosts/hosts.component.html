@@ -73,14 +73,14 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <app-search-field
-                                        *ngIf="!initial_load"
-                                        [form_title]="'Search Host Name, Address, City or Postal Code'"
-                                        [placeholder]="'Example: N-Compass'"
-                                        [data_reference]="host_data"
-                                        [primary_keyword]="'host_name'"
-                                        [secondary_keyword]="'host_name'"
-                                        (searched)="hostFilterData($event)"
-                                        [api_search]="true"
+											*ngIf="!initial_load"
+											[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+											[placeholder]="'Example: N-Compass'"
+											[data_reference]="host_data"
+											[primary_keyword]="'host_name'"
+											[secondary_keyword]="'host_name'"
+											(searched)="hostFilterData($event)"
+											[api_search]="true"
                                         ></app-search-field>
                                     </div>
                                 </div>

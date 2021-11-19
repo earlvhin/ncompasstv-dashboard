@@ -94,7 +94,7 @@
             <div *ngIf="!no_dealer_selected && hosts.length > 0">
                 <app-autocomplete-field
                     *ngIf="no_host_selected; else host_selected"
-                    (data_value)="hostSelected($event)"
+					[autocompleteSetting]="'off'"
                     [key_of_value]="'hostId'"
                     [placeholder]="'Select A Host'"
                     [label]="'Select A Host'"
@@ -102,11 +102,12 @@
                     [search_keyword]="'name'"
                     [primary_keyword]="'name'"
                     [paging]="paging_host"
-                    (call_next_page)="hostSearchBoxTrigger($event)"
-                    (searched)="searchHostData($event)"
                     [loading_data]="loading_data_host"
                     [loading_search]="loading_search_host"
-                    [initial_load]="initial_load">
+                    [initial_load]="initial_load"
+					(data_value)="hostSelected($event)"
+                    (call_next_page)="hostSearchBoxTrigger($event)"
+                    (searched)="searchHostData($event)">
                 </app-autocomplete-field>
 
                 <ng-template #host_selected>

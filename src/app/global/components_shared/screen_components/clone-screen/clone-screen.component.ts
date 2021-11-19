@@ -1,19 +1,15 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { Subscription } from 'rxjs';
-
-import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { API_HOST } from 'src/app/global/models/api_host.model';
-import { API_SCREENTYPE } from 'src/app/global/models/api_screentype.model';
-import { AuthService } from '../../../services/auth-service/auth.service';
-import { DealerService } from '../../../services/dealer-service/dealer.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
-import { HostService } from '../../../services/host-service/host.service';
-import { ScreenService } from  '../../../services/screen-service/screen.service';
-import { SCREEN_INFO, API_NEW_SCREEN, SCREEN_ZONE_PLAYLIST } from 'src/app/global/models/api_new-screen.model';
-import { UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST } from '../../../../global/models/ui_single-screen.model';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
+import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { API_DEALER, API_HOST, API_NEW_SCREEN, API_SCREENTYPE, SCREEN_INFO, SCREEN_ZONE_PLAYLIST, UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, 
+	UI_SCREEN_ZONE_PLAYLIST } from 'src/app/global/models';
+
+import { AuthService, HostService, ScreenService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
 	selector: 'app-clone-screen',
@@ -68,8 +64,8 @@ export class CloneScreenComponent implements OnInit {
 	private dealer_id: string;
 	private is_search: boolean = false;
 	private role: string;
-	private search_host_data = '';
-	private subscription: Subscription = new Subscription;
+	private searchHostKeyword = '';
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public screen_data: UI_SINGLE_SCREEN,
@@ -111,8 +107,8 @@ export class CloneScreenComponent implements OnInit {
 
 		this.form_submitted = false;
 
-		this.subscription.add(
-			this._screen.create_screen(screen).subscribe(
+		this._screen.create_screen(screen).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.form_submitted = false;
 					this.clone_success = true;
@@ -121,8 +117,7 @@ export class CloneScreenComponent implements OnInit {
 				error => {
 					console.log('Error creating cloned screen', error);
 				}
-			)
-		);
+			);
 	}
 	
 	dealerSelected(id: any): void {
@@ -152,41 +147,37 @@ export class CloneScreenComponent implements OnInit {
 
 		if (page > 1) {
 
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '')
-					.subscribe(
-						data => {
-							data.dealers.map (dealer => this.all_dealers.push(dealer));
-							this.paging = data.paging;
-							this.loading_data = false;
-						},
-						error => console.log('Error retrieving dealers', error)
-					)
+			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+						data.dealers.map (dealer => this.all_dealers.push(dealer));
+						this.paging = data.paging;
+						this.loading_data = false;
+					},
+					error => console.log('Error retrieving dealers', error)
 				);
 
 		} else {
 
 			if (this.is_search) this.loading_search = true;
 
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '')
-					.subscribe(
-						data => {
-							this.all_dealers = data.dealers;
-							this.dealers_data = data.dealers;
-							this.paging = data.paging;
-							this.loading_data = false;
-							this.loading_search = false;
-						},
-						error => console.log('Error searching for dealers ', error)
-					)
-			);
+			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+						this.all_dealers = data.dealers;
+						this.dealers_data = data.dealers;
+						this.paging = data.paging;
+						this.loading_data = false;
+						this.loading_search = false;
+					},
+					error => console.log('Error searching for dealers ', error)
+				);
 		}
 	}
 
 	hostSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
 		this.is_search = event.is_search;
-		if(this.is_search) this.search_host_data = '';
+		if(this.is_search) this.searchHostKeyword = '';
 		this.getHostByDealer(event.page);
 	}
 
@@ -210,8 +201,8 @@ export class CloneScreenComponent implements OnInit {
 	searchData(event: string | number): void {
 		this.loading_search = true;
 
-		this.subscription.add(
-			this._dealer.get_search_dealer(event).subscribe(
+		this._dealer.get_search_dealer(event).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 
 					if (data.paging.entities.length > 0) {
@@ -225,12 +216,12 @@ export class CloneScreenComponent implements OnInit {
 
 					this.paging = data.paging;
 				}
-			)
-		);
+			);
 	}
 
 	searchHostData(event: string): void {
-		this.search_host_data = event;
+		console.log('search host data', event);
+		this.searchHostKeyword = event;
 		this.getHostByDealer(1);
 	}
 
@@ -275,70 +266,57 @@ export class CloneScreenComponent implements OnInit {
 
 	private getHostByDealer(page: number): void {
 
-		this.loading_data_host = true;
+		const keyword = this.searchHostKeyword;
 
 		if (page > 1) {
 
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId, page, this.search_host_data)
-					.subscribe(
-						data => {
-
-							data.paging.entities.map (
-								host => {
-									this.hosts.push(host);
-									this.hosts_data.push(host);
-								}
-							);
-							
-							this.paging_host = data.paging;
-							this.loading_data_host = false;
-						},
-						error => console.log('Error retrieving hosts by dealer', error)
-					)
-			);
+			this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId, page, this.searchHostKeyword)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					response => {
+						const hosts = response.paging.entities as API_HOST[];
+						this.hosts.concat([...hosts]);
+						this.hosts_data.concat([...hosts]);
+						this.paging_host = response.paging;
+						this.loading_data_host = false;
+					},
+					error => console.log('Error retrieving hosts by dealer', error)
+				)
+				.add(() => this.loading_data_host = false);
 
 		} else {
 
 			this.hosts_data = [];
 			this.initial_load = false;
 			
-			if (this.is_search || this.search_host_data != '') this.loading_search_host = true;
+			if (this.is_search || this.searchHostKeyword != '') this.loading_search_host = true;
 
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId || this.selected_dealer, page, this.search_host_data)
-					.subscribe(
-						data => {
+			this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId || this.selected_dealer, page, this.searchHostKeyword)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					response => {
 
-							if (!data.message) {
-
-								if (this.search_host_data == '') {
-
-									data.paging.entities.map (
-										host => {
-											this.hosts.push(host);
-											this.hosts_data.push(host);
-										}
-									)
-								} else {
-									if (data.paging.entities.length > 0) {
-										this.hosts_data = data.paging.entities;
-										this.loading_search = false;
-									}
-								}
-								this.paging_host = data.paging;
-							} else {
-								this.selected_host = [];
-								if(this.search_host_data != "") {
-									this.hosts_data = [];
-									this.loading_search = false;
-								}
+						if (response.message) {
+							
+							this.selected_host = [];
+							
+							if (!keyword || keyword.trim().length <= 0) {
+								this.hosts_data = [];
 							}
-							this.loading_data_host = false;
-							this.loading_search_host = false;
+
+							return;
 						}
-					)
+
+						const hosts = response.paging.entities as API_HOST[];
+						this.hosts = [...hosts];
+						this.hosts_data = [...hosts];
+					}
 				)
+				.add(() => {
+					this.loading_search = false;
+					this.loading_data_host = false;
+					this.loading_search_host = false;
+				});
 		}
 	}
 
@@ -346,15 +324,14 @@ export class CloneScreenComponent implements OnInit {
 
 		const screenTypeId = this.screen_data.type;
 
-		this.subscription.add(
-			this._screen.get_screens_type().subscribe(
+		this._screen.get_screens_type().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: API_SCREENTYPE[]) => {
 					this.screen_types = data;
 					this.screen_type = data.filter(type => type.screenTypeId === screenTypeId)[0];
 				},
 				error => console.log('Error retrieving screen types', error)
-			)
-		);
+			);
 
 	}
 
@@ -379,14 +356,14 @@ export class CloneScreenComponent implements OnInit {
 	}
 
 	private subscribeToCloneScreenFormChanges(): void {
-		this.subscription.add(
-			this.clone_screen_form.valueChanges.subscribe(
+
+		this.clone_screen_form.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				() => {
 					if (this.clone_screen_form.valid) this.form_valid = false; 
 					else this.form_valid = true;
 				}
-			)
-		);
+			);
 	}
 
 	private zonePlaylist_mapToUI(): SCREEN_ZONE_PLAYLIST[] {
