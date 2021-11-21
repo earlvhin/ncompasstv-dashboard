@@ -16,6 +16,16 @@
                     <app-contents-tab *ngIf="tabGroup.selectedIndex === 1"></app-contents-tab>
                 </div>
             </mat-tab>
+            <mat-tab label="Licenses" #licensesTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-licenses-tab-reports *ngIf="tabGroup.selectedIndex === 2"></app-licenses-tab-reports>
+                </div>
+            </mat-tab>
+            <mat-tab label="Installations" #installationsTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-installations-tab *ngIf="tabGroup.selectedIndex === 3"></app-installations-tab>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>

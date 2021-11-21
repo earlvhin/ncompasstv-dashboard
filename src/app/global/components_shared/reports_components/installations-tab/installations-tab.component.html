@@ -1,0 +1,41 @@
+<div class="statistics-graph col-lg-12 p-0 flex mb-3" *ngIf="value_graph.length > 0; else spinner">
+    <div class="col-lg-4">
+        <mat-card class="card-graph">
+            <app-data-statistics-card *ngIf="value_graph"
+                [id]="'total-view'"
+                [total]="total"
+                [label_array]="label_graph"
+                [value_array]="value_graph"
+                [whole_data]="licenses_graph_data"
+                [sub_title]="sub_title"
+                (click_graph)="getGraphPoints($event)"
+                [installation_average]="true"
+                [loading_graph]="loading_graph">
+            </app-data-statistics-card>
+        </mat-card>
+    </div>
+    <div class="col-lg-8">
+        <mat-card class="card-graph">
+            <app-data-statistics-card-with-picker *ngIf="value_graph_detailed"
+            (s_date)="getStartDate($event)"
+            (e_date)="getEndDate($event)"
+            (dealer_selected)="getDealerId($event)"
+            [num_of_months]="number_of_months"
+            [average]="average"
+            [sub_title]="sub_title_detailed"
+            [id]="'average-view'"
+            [label_array]="label_graph_detailed"
+            [value_array]="value_graph_detailed"
+            [whole_data]="licenses_graph_data_detailed"
+            [generate_chart]="generate"
+            [installation]="true">
+            </app-data-statistics-card-with-picker>
+        </mat-card>
+    </div>
+</div>
+
+<ng-template #spinner>
+    <div class="py-5">
+        <app-spinner [diameter]="85"></app-spinner>
+    </div>
+</ng-template>
