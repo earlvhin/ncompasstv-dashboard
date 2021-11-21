@@ -87,10 +87,12 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     }
 
     checkIfCompleteData() {
-        if(this.end_date && this.start_date && this.selected_dealer) {
+        if(this.end_date && this.start_date) {
             this.s_date.emit(this.start_date);
             this.e_date.emit(this.end_date);
-            this.dealer_selected.emit(this.selected_dealer);
+            if(this.selected_dealer) {
+                this.dealer_selected.emit(this.selected_dealer);
+            }
         }
     }
 
