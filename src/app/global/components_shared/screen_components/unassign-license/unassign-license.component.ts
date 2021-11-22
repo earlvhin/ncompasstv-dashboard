@@ -36,7 +36,6 @@ export class UnassignLicenseComponent implements OnInit {
 	}
 
 	ngOnInit() {
-		console.log(this._dialog_data);
 		this.licenses = this._dialog_data.licenses;
 		
 		this._socket.on('connect', () => {

@@ -15,6 +15,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 	base_url = `/${this.currentRole}/advertisers`;
 	initial_load_advertiser = true;
 	is_searching = false;
+	is_view_only = false;
 	no_advertisers = false;
 	paging_data: PAGING;
 	tab: any = { tab: 2 };
@@ -33,6 +34,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 		this.table.columns = [ '#', 'Business Name', 'Total Assets', 'Address', 'City', 'State', 'Status', 'Postal Code' ];
 		this.getAdvertiserByDealer(1);
 		this.getAdvertiserTotal(this.currentDealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -124,5 +126,9 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 }
