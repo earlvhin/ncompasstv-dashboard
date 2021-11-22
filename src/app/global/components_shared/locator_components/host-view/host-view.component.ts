@@ -169,7 +169,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 	private getLicenseByHostId(id: string) {
 		this.loading_license_count = true;
 
-		this._license.get_license_by_host_id(id)
+		this._license.get_licenses_by_host_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
