@@ -1,37 +1,29 @@
-import { Component, OnInit } from '@angular/core';
-import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service'
-import { Subscription } from 'rxjs';
-import { UI_TABLE_ADVERTISERS } from 'src/app/global/models/ui_table_advertisers.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
+import { AuthService, AdvertiserService } from 'src/app/global/services';
+import { API_ADVERTISER, PAGING, UI_ADVERTISER } from 'src/app/global/models';
 @Component({
 	selector: 'app-advertisers',
 	templateUrl: './advertisers.component.html',
 	styleUrls: ['./advertisers.component.scss']
 })
-export class AdvertisersComponent implements OnInit {
-	advertiser_data:any = [];
-	advertiser_filtered_data: any = [];
-	advertiser_stats:any;
-	advertiser_table_column = [
-		'#',
-		'Business Name',
-		'Region',
-		'City',
-		'State',
-		'Status'
-	]
-	filtered_data: UI_TABLE_ADVERTISERS[] = [];
-	initial_load_advertiser: boolean = true;
-	no_advertisers: boolean = false;
-	table_loading: boolean = true;
-	paging_data_advertiser: any;
-	searching_advertiser: boolean = false;
-	search_data_advertiser: string = "";
-	subscription: Subscription = new Subscription;
-	tab: any = { tab: 2 };
-	title: string = "Advertisers";
+export class AdvertisersComponent implements OnInit, OnDestroy {
+
+	advertiser_stats: any;
+	base_url = `/${this.currentRole}/advertisers`;
+	initial_load_advertiser = true;
+	is_searching = false;
 	is_view_only = false;
+	no_advertisers = false;
+	paging_data: PAGING;
+	tab: any = { tab: 2 };
+	table = { columns: [], data: [] as UI_ADVERTISER[] };
+	title: string = 'Advertisers';
+	
+	private keyword = '';
+	protected _unsubscribe = new Subject<void>();
 	
 	constructor(
 		private _advertiser: AdvertiserService,
@@ -39,14 +31,54 @@ export class AdvertisersComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.table.columns = [ '#', 'Business Name', 'Total Assets', 'Address', 'City', 'State', 'Status', 'Postal Code' ];
 		this.getAdvertiserByDealer(1);
-		this.getAdvertiserTotal(this._auth.current_user_value.roleInfo.dealerId);
+		this.getAdvertiserTotal(this.currentDealerId);
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
-	getAdvertiserTotal(id) {
-		this.subscription.add(
-			this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	getAdvertiserByDealer(page) {
+		this.is_searching = true;
+
+		this._advertiser.get_advertisers_by_dealer_id(this.currentDealerId, page, this.keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => {
+					
+					if (data.message) {
+						this.table.data = [];
+
+						if (this.keyword === '') this.no_advertisers = true;
+						return;
+					}
+ 
+					this.paging_data = data.paging;
+					const advertisers = this.mapToDataTable(data.advertisers);
+					this.table.data = [...advertisers];
+				}
+			)
+			.add(() => {
+				this.initial_load_advertiser = false;
+				this.is_searching = false;
+			});
+	}
+
+	onSearchAdvertiser(keyword: string) {
+		if (keyword) this.keyword = keyword;
+		else this.keyword = '';
+		this.getAdvertiserByDealer(1); 
+	}
+
+	private getAdvertiserTotal(id) {
+
+		this._advertiser.get_advertisers_total_by_dealer(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					this.advertiser_stats = {
 						basis: data.total,
@@ -63,61 +95,40 @@ export class AdvertisersComponent implements OnInit {
 						new_last_week_description: 'New last week',
 					}
 				}
-			)
-		);
+			);
+
 	}
 	
-	advertiserFilterData(e) {
-		if (e) {
-			this.search_data_advertiser = e;
-			this.getAdvertiserByDealer(1);
-		} else {
-			this.search_data_advertiser = "";
-			this.getAdvertiserByDealer(1);
-		}
-	}
+	private mapToDataTable(data: API_ADVERTISER[]): UI_ADVERTISER[]  {
 
-	getAdvertiserByDealer(page) {
-		this.searching_advertiser = true;
-		this.subscription.add(
-			this._advertiser.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_advertiser).subscribe(
-				data => {
-					this.initial_load_advertiser = false;
-					this.searching_advertiser = false;
-                    this.paging_data_advertiser = data.paging;
-					if(!data.message) {
-						this.advertiser_data = this.advertiser_mapToUI(data.advertisers);
-						this.advertiser_filtered_data = this.advertiser_mapToUI(data.advertisers);
-					} else {
-						if(this.search_data_advertiser == "") {
-							this.no_advertisers = true;
-						}
-						this.advertiser_data=[];
-						this.advertiser_filtered_data = [];
-					}
-				}
-			)
-		)
-	}
+		let count = this.paging_data.pageStart;
 
-	advertiser_mapToUI(data): UI_TABLE_ADVERTISERS[]  {
-		let count = this.paging_data_advertiser.pageStart;
 		return data.map(
-			i => {
-				return new UI_TABLE_ADVERTISERS(
-					{ value: i.id, link: null , editable: false, hidden: true},
-					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: i.name, link: '/sub-dealer/advertisers/' + i.id, editable: false, hidden: false},
-					{ value: i.region ? i.region : '--', link: null, editable: false, hidden: false},
-					{ value: i.city ? i.city : '--', link: null, editable: false, hidden: false},
-					{ value: i.state ? i.state : '--', link: null, editable: false, hidden: false},
-					{ value: i.status, link: null, editable: false, hidden: false},
-				)
+			advertiser => {
+				return {
+					advertiserId: { value: advertiser.id, link: null , editable: false, hidden: true },
+					index: { value: count++, link: null , editable: false, hidden: false },
+					name: { value: advertiser.name, link: `${this.base_url}/${advertiser.id}`, editable: false, hidden: false },
+					totalAssets: { value: advertiser.totalAssets },
+					address: { value: advertiser.address },
+					city: { value: advertiser.city ? advertiser.city : '--', link: null, editable: false, hidden: false },
+					state: { value: advertiser.state ? advertiser.state : '--', link: null, editable: false, hidden: false },
+					status: { value: advertiser.status, link: null, editable: false, hidden: false },
+					postalCode: { value: advertiser.postalCode }
+				}
 			}
-		)
+		);
 	}
 
-	private get currentUser() {
+	private get currentDealerId() {
+		return this._auth.current_user_value.roleInfo.dealerId;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
 		return this._auth.current_user_value;
 	}
 }

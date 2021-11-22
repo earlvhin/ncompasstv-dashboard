@@ -1,7 +1,10 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
+import { API_SINGLE_SCREEN, CREATE_SCREEN_RESPONSE } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -26,8 +29,8 @@ export class ScreenService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_assign_license_to_screen}`, data, this.httpOptions)
 	}
 
-	create_screen(data) {
-		return this._http.post(`${environment.base_uri}${environment.create.api_new_screen}`, data, this.httpOptions);
+	create_screen(data): Observable<CREATE_SCREEN_RESPONSE> {
+		return this._http.post<CREATE_SCREEN_RESPONSE>(`${environment.base_uri}${environment.create.api_new_screen}`, data, this.httpOptions);
 	}
 
 	edit_screen(data) {
@@ -46,12 +49,10 @@ export class ScreenService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_type}`, this.httpOptions);
 	}
 
-	get_screen_by_id(id, licenseId?) {
-		if (licenseId) {
-			return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_id}${id}&licenseId=${licenseId}`, this.httpOptions);
-		} else {
-			return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_id}${id}`, this.httpOptions);
-		}
+	get_screen_by_id(id: string, licenseId?: string): Observable<API_SINGLE_SCREEN> {
+		let url = `${environment.base_uri}${environment.getters.api_get_screen_by_id}${id}`;
+		if (licenseId) url += `&licenseId=${licenseId}`;
+		return this._http.get<API_SINGLE_SCREEN>(url, this.httpOptions);
 	}
 
 	get_screen_by_dealer_id(id) {

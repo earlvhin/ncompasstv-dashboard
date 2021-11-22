@@ -5,12 +5,12 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="onCreateUrlFeed()">
+                <button mat-button mat-raised-button class="theme-btn mr-2" (click)="onCreateUrlFeed()" [disabled]="is_view_only">
                     <span class="button-label">Add a URL Feed</span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>
 
-                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['generate']">
+                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['generate']" [disabled]="is_view_only">
                     <span class="button-label">Generate a Feed</span>
                     <span class="fas fa-plus ml-2 sm-text"></span>
                 </button>
@@ -71,15 +71,16 @@
                                     [feed_preview]="true"
                                     [feed_delete]="true"
                                     [feed_edit]="true"
-                                    (page_triggered)="getFeeds($event)"
-                                    (reload_page)="reloadPage($event)"
-                                    (to_sort_column)="getColumnsAndOrder($event)"
                                     [active_tab]="sort_column"
                                     [sort_column]="sort_column"
                                     [sort_order]="sort_order"
                                     [page]="'feeds'"
                                     [has_action]="true"
-									[current_user]="currentUser"
+									[current_user]="current_user"
+									[is_view_only]="is_view_only"
+									(page_triggered)="getFeeds($event)"
+                                    (reload_page)="reloadPage($event)"
+                                    (to_sort_column)="getColumnsAndOrder($event)"
                                     (update_info)="reloadPage($event)">
 								</app-data-table>
 							</mat-card>

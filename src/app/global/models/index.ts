@@ -1,6 +1,7 @@
 export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
 export * from './api_content.model';
+export * from './api_create-screen-response.model';
 export * from './api_dealer.model';
 export * from './api_edit-screen.model';
 export * from './api_feed.model';
@@ -10,7 +11,9 @@ export * from './api_host-content.model';
 export * from './api_host-file.model'
 export * from './api_license.model';
 export * from './api_license-total-statistics.model';
+export * from './api_new-screen.model';
 export * from './api_playlists.model';
+export * from './api_screentype.model';
 export * from './api_single-playlist.model';
 export * from './api_single-screen.model';
 export * from './api_template.model';

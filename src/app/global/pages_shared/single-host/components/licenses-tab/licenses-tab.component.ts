@@ -1,5 +1,5 @@
-import { DatePipe, TitleCasePipe, UpperCasePipe } from '@angular/common';
-import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { DatePipe, TitleCasePipe } from '@angular/common';
+import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -35,7 +35,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
-		private _allcaps: UpperCasePipe,
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _license: LicenseService,
@@ -46,6 +45,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.tableColumns = this.columns;
 		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
 		this.searchLicenses();
+		this.subscribeToRefresh();
 	}
 
 	ngAfterViewInit() {
@@ -78,8 +78,9 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 		);
 	}
 
-	onReloadLicense(): void {
+	onReloadLicenses(): void {
 		this.tableData = [];
+		this.licenses = [];
 		this.ngOnInit();
 	}
 
@@ -93,7 +94,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 		dialog.afterClosed().subscribe(
 			response => {
 				if (!response) return;
-				this.onReloadLicense();
+				this.onReloadLicenses();
 			}
 		);
 	}
@@ -106,7 +107,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			'Are you sure you want to update the player and restart the pi?', 
 			'Click OK to push updates for this license', 
 			'system_update'
-
 		);
 	}
 
@@ -197,6 +197,11 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 				error => console.log('Error searching for licenses of host', error)
 			);
 
+	}
+
+	private subscribeToRefresh(): void {
+		this._license.onRefreshLicensesTab.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.onReloadLicenses());
 	}
 
 	private subscribeToSearch(): void {
