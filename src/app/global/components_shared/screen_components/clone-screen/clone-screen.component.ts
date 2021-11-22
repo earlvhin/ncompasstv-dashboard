@@ -8,7 +8,7 @@ import { takeUntil } from 'rxjs/operators';
 import { API_DEALER, API_HOST, API_NEW_SCREEN, API_SCREENTYPE, SCREEN_INFO, SCREEN_ZONE_PLAYLIST, UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, 
 	UI_SCREEN_ZONE_PLAYLIST } from 'src/app/global/models';
 
-import { AuthService, HostService, ScreenService } from 'src/app/global/services';
+import { AuthService, HelperService, HostService, ScreenService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
@@ -73,6 +73,7 @@ export class CloneScreenComponent implements OnInit {
 		private _dealer: DealerService,
 		private _dialog_ref: MatDialogRef<CloneScreenComponent>,
 		private _form: FormBuilder,
+		private _helper: HelperService,
 		private _host: HostService,
 		private _router: Router,
 		private _screen: ScreenService,
@@ -86,7 +87,7 @@ export class CloneScreenComponent implements OnInit {
 		this.subscribeToCloneScreenFormChanges();
 	}
 
-	cloneScreen(): void {
+	async cloneScreen(): Promise<void> {
 		this.form_submitted = true;
 		let screenTypeId = this.screen_type.screenTypeId;
 		if (!this.is_dealer) screenTypeId = this.f.type.value;
@@ -107,17 +108,16 @@ export class CloneScreenComponent implements OnInit {
 
 		this.form_submitted = false;
 
-		this._screen.create_screen(screen).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data: any) => {
-					this.form_submitted = false;
-					this.clone_success = true;
-					this.cloned_screen_id = data.screenId;
-				},
-				error => {
-					console.log('Error creating cloned screen', error);
-				}
-			);
+		try {
+			const cloneResponse = await this._screen.create_screen(screen).pipe(takeUntil(this._unsubscribe)).toPromise();
+			this.cloned_screen_id = cloneResponse.screenId;
+			const clonedScreenData = await this._screen.get_screen_by_id(this.cloned_screen_id).pipe(takeUntil(this._unsubscribe)).toPromise();
+			this._helper.singleScreenData = clonedScreenData;
+			this.form_submitted = false;
+			this.clone_success = true;
+		} catch (e) {
+			console.log('Error cloning screen', e);
+		}
 	}
 	
 	dealerSelected(id: any): void {
@@ -188,7 +188,7 @@ export class CloneScreenComponent implements OnInit {
 	}
 
 	redirectToClonedScreen(): void {
-		this._dialog_ref.close();
+		this._dialog_ref.close(true);
 		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this._router.navigate([`/${this.role}/screens/`, this.cloned_screen_id]);
 	}
@@ -220,7 +220,6 @@ export class CloneScreenComponent implements OnInit {
 	}
 
 	searchHostData(event: string): void {
-		console.log('search host data', event);
 		this.searchHostKeyword = event;
 		this.getHostByDealer(1);
 	}
@@ -344,6 +343,10 @@ export class CloneScreenComponent implements OnInit {
 				host_id: ['', Validators.required],
 			}
 		);
+	}
+
+	private reloadPage() {
+
 	}
 
 	private setToDealer(e: any): void {

@@ -86,11 +86,14 @@ export class SingleHostComponent implements OnInit {
 			data: this.singleHostData
 		});
 
-		dialogRef.afterClosed().subscribe(
-			data => {
-				if (data) this.ngOnInit()
-			}
-		);
+		dialogRef.afterClosed()
+			.subscribe(
+				response => {
+					if (!response) return;
+					this._license.onRefreshLicensesTab.emit();
+				}
+			);
+
 	}
 
 	toggledHours(e) {

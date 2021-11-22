@@ -2,7 +2,7 @@
 	<div class="row">
 		<div class="col-lg-8">
 			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2" title="Reload"
-				(click)="onReloadLicense()">
+				(click)="onReloadLicenses()">
 				<span class="fas fa-sync-alt"></span> 
 				<span class="ml-2 button_text_animation">Reload</span>
 			</button>
@@ -41,11 +41,11 @@
 					<app-data-table
 						[table_columns]="tableColumns"
 						[table_data]="tableData"
-						[paging_details]=""
+						[paging_details]="pagingData"
 						[new_table]="true"
 						[license_status_column]="true"
 						[is_view_only]="isViewOnly"
-						(update_info)="onReloadLicense()">
+						(update_info)="onReloadLicenses()">
 					</app-data-table>
 				</ng-container>
 			</mat-card>
