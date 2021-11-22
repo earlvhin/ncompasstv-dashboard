@@ -7,4 +7,6 @@ export interface UI_HOST_CONTENT {
 	type?: TABLE_ROW_FORMAT;
 	uploadDate?: TABLE_ROW_FORMAT;
 	uploadedBy?: TABLE_ROW_FORMAT;
+	totalDuration?: TABLE_ROW_FORMAT;
+	totalPlayCount?: TABLE_ROW_FORMAT;
 }
