@@ -346,7 +346,7 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	getLicenseByHostId(id): void {
-		this.license$ = this._license.get_license_by_host_id(id);
+		this.license$ = this._license.get_licenses_by_host_id(id);
 
 		const get = this.license$.subscribe(
 			response => {

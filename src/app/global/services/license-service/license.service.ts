@@ -116,8 +116,8 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
-	get_license_by_host_id(id: string): Observable<API_LICENSE_PROPS | { message: string }> {
-		return this._http.get<API_LICENSE_PROPS | { message: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_by_host}${id}`, this.httpOptions);
+	get_licenses_by_host_id(id: string): Observable<API_LICENSE_PROPS[] | { message: string }> {
+		return this._http.get<API_LICENSE_PROPS[] | { message: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_by_host}${id}`, this.httpOptions);
 	}
 
 	get_license_by_id(id) {

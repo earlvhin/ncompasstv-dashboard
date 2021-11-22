@@ -157,7 +157,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	private getLicenseByHost(id: string): void {
 		this.loading_license_count = true;
 
-		this._license.get_license_by_host_id(id)
+		this._license.get_licenses_by_host_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {

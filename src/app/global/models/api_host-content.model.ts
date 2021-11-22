@@ -10,6 +10,7 @@ export interface API_HOST_CONTENT {
 	dealerId: string;
 	description: string;
 	duration: number;
+	durationsTotal: number;
 	feedId: null
 	fileName: string;
 	fileType: string;
@@ -24,6 +25,7 @@ export interface API_HOST_CONTENT {
 	playlistContentId: any;
 	playlistContentSchedule: any;
 	playlistContentsSchedule: any;
+	playsTotal: number;
 	prefix: string;
 	previewThumbnail: string;
 	refContentId: string;

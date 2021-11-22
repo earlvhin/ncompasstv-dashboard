@@ -156,7 +156,7 @@ export class ScreenLicenseComponent implements OnInit {
 
 		this.licenses = [];
 		
-		this._license.get_license_by_host_id(this.licenseId).pipe(takeUntil(this._unsubscribe))
+		this._license.get_licenses_by_host_id(this.licenseId).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
 
