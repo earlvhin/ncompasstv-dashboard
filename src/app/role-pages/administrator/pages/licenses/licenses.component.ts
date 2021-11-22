@@ -528,7 +528,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     getLabel(data) {
-        console.log("LABEL", data)
 		this.now = moment().format('d');
 		this.now = this.now;
         var storehours = JSON.parse(data.storeHours)
