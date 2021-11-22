@@ -217,6 +217,7 @@ export const API_ENDPOINTS = {
 		api_update_feed: 'feed/update',
 		api_update_generated_feed: 'feed/edit',
 		api_update_host: 'host/updatehost',
+		api_update_license_boot_delay: 'license/bootdelay',
 		api_update_internet_info: 'license/updateinternetinfo',
 		api_update_news_slide_feed: 'feed/update/news',
 		api_update_notification_status: 'notification/updateNotificationIsOpened?notificationId=',

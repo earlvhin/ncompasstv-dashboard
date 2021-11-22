@@ -186,6 +186,14 @@ export class LicenseService {
 	}
 
 	/**
+	 *  Updates the license's boot delay
+	 * 	@param data: {licenseId: string, bootDelayDuration: number}
+	*/
+	update_license_boot_delay(data: {licenseId: string, bootDelay: number}) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_license_boot_delay}`, data, this.httpOptions);
+	}
+
+	/**
 	 *  Updates the license installation date
 	 * 	
 	 * 	@param licenseId: string
