@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { API_FILTERS } from '../models';
 import { AuthService } from './auth-service/auth.service';
 import { environment } from 'src/environments/environment';
+import { Type } from '@angular/compiler/src/core';
 
 @Injectable({
 	providedIn: 'root'

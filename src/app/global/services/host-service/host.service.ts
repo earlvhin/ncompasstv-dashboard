@@ -111,8 +111,16 @@ export class HostService extends BaseService {
 	}
 
 	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15): Observable<{ paging?: PAGING, message?: string }> {
-		const url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&search=${key}&pageSize=${pageSize}`;
+
+		let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}`;
+		
+		if (key && key.trim().length > 0) {
+			const search = encodeURIComponent(key);
+			url += `&search=${search}`
+		}
+
 		return this.getRequest(url);
+		
 	}
 
     get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {

@@ -172,7 +172,10 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		this._license.get_license_by_host_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data: API_LICENSE_PROPS[]) => {
+				response => {
+
+					if (!Array.isArray(response)) return;
+					const data = response as API_LICENSE_PROPS[];
 
 					let online = 0;
 					this.licenses = data;

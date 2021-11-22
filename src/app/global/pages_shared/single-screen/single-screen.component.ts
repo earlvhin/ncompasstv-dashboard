@@ -161,8 +161,8 @@ export class SingleScreenComponent implements OnInit {
 		this.getScreenIdOnRoute();
         this.getScreenLicenses(1);
 		this.getScreenType();
-		this.license_tbl_row_url = `/${this._role.get_user_role()}/licenses/`
-		this.playlist_route = `/${this._role.get_user_role()}/playlists/`
+		this.license_tbl_row_url = `/${this._role.get_user_role()}/licenses/`;
+		this.playlist_route = `/${this._role.get_user_role()}/playlists/`;
 	}
 
 	ngOnDestroy() {
@@ -170,7 +170,6 @@ export class SingleScreenComponent implements OnInit {
 		this._unsubscribe.complete();
 		this.subscription.unsubscribe();
 		this._socket.disconnect();
-		this._helper.singleScreenData = null;
 	}
 
 	getScreenIdOnRoute() {
@@ -259,22 +258,25 @@ export class SingleScreenComponent implements OnInit {
 		)
 	}
 
-	// Clone Screen
 	cloneScreen() {
-		let dialog = this._dialog.open(CloneScreenComponent, {
+
+		const dialog = this._dialog.open(CloneScreenComponent, {
 			minWidth: '500px',
 			minHeight: '500px',
 			data: this.screen,
 			panelClass: 'no-overflow'
 		});
 
-		this.subscription.add(
-			dialog.afterClosed().subscribe(
-				data => {
-					// console.log(data);
+		dialog.afterClosed()
+			.subscribe(
+				async (response: boolean) => {
+					if (!response) return;
+					await this._router.navigate([`/${this.currentRole}/screens/`, this._helper.singleScreenData.screen.screenId]);
+					this.setPageData(this._helper.singleScreenData);
+					this.getScreenLicenses(1);
+					this.getScreenType();
 				}
-			)
-		)
+			);
 	}
 
 	deleteScreen() {
@@ -290,23 +292,23 @@ export class SingleScreenComponent implements OnInit {
 			}
 		})
 
-		delete_dialog.afterClosed().subscribe(result => {
-			if(result == 'delete') {
-				var array_to_delete = [];
-				array_to_delete.push(this.screen_id);
-				this.subscription.add(
-					this._screen.delete_screen(array_to_delete).subscribe(
-						data => {
-							const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-							this._router.navigate([`/${route}/screens`]);
-						}, 
-						error => {
-							// console.log('error', error);
-						}
-					)
-				)
-			} else {}
-		} );
+		delete_dialog.afterClosed()
+			.subscribe(
+				result => {
+					if (result == 'delete') {
+						let array_to_delete = [];
+						array_to_delete.push(this.screen_id);
+
+						this.subscription.add(
+							this._screen.delete_screen(array_to_delete).subscribe(
+								() => {
+									const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+									this._router.navigate([`/${route}/screens`]);
+								}
+							)
+						)
+					}
+				} );
 	}
 
 	// Structure of Edit Screen Body
@@ -468,22 +470,25 @@ export class SingleScreenComponent implements OnInit {
 	// Open Assign License Modal
 	assignLicenseModal_open() {
 		// console.log('#screen', this.screen)
-		let dialog = this._dialog.open(ScreenLicenseComponent, {
+		const dialog = this._dialog.open(ScreenLicenseComponent, {
+			disableClose: true,
 			data: { license_id: this.screen.assigned_host_id , screen_id: this.screen.screen_id, zone_contents: this.screen.screen_zone_playlist },
 		});
 
 		this.subscription.add(
 			dialog.afterClosed().subscribe(
-				data => {
-					// console.log(data);
+				response => {
+					if (!response) return;
 					this.ngOnInit();
 				}
 			)
-		)
+		);
 	}
 
 	unassignLicenseModal_open() {
-		let dialog = this._dialog.open(UnassignLicenseComponent, {
+
+		const dialog = this._dialog.open(UnassignLicenseComponent, {
+			disableClose: true,
 			data: { licenses: this.licenses, screen_id: this.screen.screen_id },
 		});
 

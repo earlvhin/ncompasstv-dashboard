@@ -15,18 +15,20 @@ import { API_FEED, FEED, PAGING, UI_TABLE_FEED } from 'src/app/global/models';
 })
 export class FeedsComponent implements OnInit, OnDestroy {
 
-	title = 'Feeds';
+	current_user = this._auth.current_user_value;
 	feed_data: UI_TABLE_FEED[] = [];
 	feed_stats: any = {};
 	feeds_stats: any = {};
 	filtered_data: any = [];
 	initial_load = true;
+	is_view_only = false;
 	no_feeds = false;
 	paging_data: any;
 	search_data = '';
 	searching = false;
     sort_column = 'DateCreated';
 	sort_order = 'desc';
+	title = 'Feeds';
 
 	feeds_table_column = [
         { name: '#', sortable: false },
@@ -50,15 +52,12 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.getFeedsTotal();
 		this.getFeeds(1);
+		this.is_view_only = this.current_user.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	get currentUser() {
-		return this._auth.current_user_value;
 	}
 
 	get isCurrentRoleDealer() {
@@ -86,7 +85,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		this.searching = true;
 		this.feed_data = [];
 		let request = this._feed.get_feeds(page, this.search_data, this.sort_column, this.sort_order);
-		if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) request = this._feed.get_feeds_by_dealer(this.currentUser.roleInfo.dealerId, page, this.search_data);
+		if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) request = this._feed.get_feeds_by_dealer(this.current_user.roleInfo.dealerId, page, this.search_data);
 
 		request.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -136,7 +135,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		let request = this._feed.get_feeds_total();
 
 		if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) {
-			const id = this.currentUser.roleInfo.dealerId;
+			const id = this.current_user.roleInfo.dealerId;
 			request = this._feed.get_feeds_total_by_dealer(id);
 		}
 

@@ -94,7 +94,7 @@
             <div *ngIf="!no_dealer_selected && hosts.length > 0">
                 <app-autocomplete-field
                     *ngIf="no_host_selected; else host_selected"
-                    (data_value)="hostSelected($event)"
+					[autocompleteSetting]="'off'"
                     [key_of_value]="'hostId'"
                     [placeholder]="'Select A Host'"
                     [label]="'Select A Host'"
@@ -102,11 +102,12 @@
                     [search_keyword]="'name'"
                     [primary_keyword]="'name'"
                     [paging]="paging_host"
-                    (call_next_page)="hostSearchBoxTrigger($event)"
-                    (searched)="searchHostData($event)"
                     [loading_data]="loading_data_host"
                     [loading_search]="loading_search_host"
-                    [initial_load]="initial_load">
+                    [initial_load]="initial_load"
+					(data_value)="hostSelected($event)"
+                    (call_next_page)="hostSearchBoxTrigger($event)"
+                    (searched)="searchHostData($event)">
                 </app-autocomplete-field>
 
                 <ng-template #host_selected>
@@ -121,7 +122,7 @@
             <button mat-button mat-raised-button class="theme-btn mt-4 mr-2" [disabled]="form_valid">
                 Submit
             </button>
-            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="true">
+            <button mat-button mat-raised-button class="theme-btn mt-4 bg-danger" [mat-dialog-close]="false">
                 Cancel
             </button>
         </form>
@@ -141,7 +142,7 @@
             <app-success-animation></app-success-animation>
             <h3 class="mb-1">Screen Cloned Successfully!</h3>
             <p class="mb-0 sm-text font-weight-md">Click the button below to continue</p>
-            <button mat-button mat-raised-button class="theme-btn mt-4" (click)="redirectToClonedScreen()">
+            <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
                 Continue
             </button>
         </div>
