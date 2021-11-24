@@ -29,8 +29,6 @@ export class NotificationService {
     }
 
 	getAll(page: number = 1, pageSize: number = 50) {
-		console.log(`${environment.base_uri}${environment.getters.api_get_all_notifications}?page=${page ? page : 1}&pageSize=${pageSize}`);
-
 		return this._http.get(
 			`${environment.base_uri}${environment.getters.api_get_all_notifications}?page=${page ? page : 1}&pageSize=${pageSize}`, 
 			this.httpOptions

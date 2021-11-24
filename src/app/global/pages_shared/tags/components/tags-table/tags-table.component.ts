@@ -16,7 +16,7 @@ import { EditTagComponent } from '../../dialogs';
 export class TagsTableComponent implements OnInit, OnDestroy {
 
 	@Input() isLoading = true;
-	@Input() tableType = 'tags';
+	@Input() tableType: 'tags' | 'tag-owners' = 'tags';
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserRole: string;
 	@Input() paging: PAGING;
@@ -64,13 +64,11 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 	}
 
-	async onDeleteAllTagsFromOwner(owner: any): Promise<void> {
+	async onDeleteAllTagsFromOwner(ownerId: string): Promise<void> {
 
 		const response = await this.openConfirmAPIRequestDialog('delete_all_tags_from_owner').toPromise();
 
 		if (!response) return;
-
-		const ownerId = this.getOwnerId(owner);
 
 		this._tag.deleteAllTagsFromOwner(ownerId)
 			.pipe(takeUntil(this._unsubscribe))
@@ -108,9 +106,8 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 		this.onClickPageNumber.emit(page);
 	}
 
-	clickedTagName(data: string): void {
-		// this.onClickTagName.emit({ tag: data });
-		this._tag.onClickTagName.emit({ tagId: data });
+	clickedTagName(data: TAG): void {
+		this._tag.onClickTagName.emit({ tag: data });
 	}
 
 	onPageChange(page: number): void {

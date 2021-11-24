@@ -61,9 +61,6 @@ export class SingleHostComponent implements OnInit {
 		this.getHostById();
 		this.subscribeToBusinessHoursUpdate();
 
-		this._license.get_licenses_by_host_id(this.hostId).pipe(takeUntil(this._unsubscribe))
-				.subscribe(response => console.log('host licenses', response));
-
 	}
 
 	ngOnDestroy() {

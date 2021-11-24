@@ -1504,13 +1504,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(name: string) => {
-
-					if (name === this.current_zone_name_selected) {
-						console.log('Same zone selected!');
-						return;
-					}
-
-					console.log('Zone selected!');
+					if (name === this.current_zone_name_selected) return;
 					this.current_zone_name_selected = name;
 					this.zoneSelected(name);
 					if (name === 'Background') this.background_zone_selected = true;
@@ -1531,15 +1525,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private updateAssetsChart(): void {
-		const config = { duration: 800, easing: 'easeOutBounce' };
-		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0];
+		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0] as Chart;
 		const { advertisers, feeds, fillers, hosts, others } = this.assets_breakdown;
 		
 		const currentZone = this.screen_zone ? this.screen_zone.zone : this.content_per_zone[0].zone_name;
 		const description = `${currentZone} Zone: ${this.number_of_contents} items`;
 		const title = ['Assets Breakdown', description];
 
-		chart.options.title.text = title;
+		chart.options.plugins.title = { display: true, text: title };
 
 		chart.data.labels = [ 
 			`Hosts: ${hosts}`, 
@@ -1550,17 +1543,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		];
 
 		chart.data.datasets[0].data = [hosts, advertisers, fillers, feeds, others];
-		chart.update(config);
+		chart.update();
 	}
 
 	private updateDurationChart(): void {
-		const config = { duration: 800, easing: 'easeOutBounce' };
-		const chart = this.charts.filter(chart => chart.canvas.id === 'durationBreakdown')[0];
+		const chart = this.charts.filter(chart => chart.canvas.id === 'durationBreakdown')[0] as Chart;
 		const { advertisers, feeds, fillers, hosts, others } = this.duration_breakdown;
 		const description = `Total playtime: ${this.duration_breakdown_text.total}`;
 		const title = ['Duration Breakdown', description];
 
-		chart.options.title.text = title;
+		chart.options.plugins.title = { display: true, text: title }
 		
 		chart.data.labels = [
 			`Hosts: ${this.calculateTime(hosts)}`,
@@ -1573,7 +1565,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let data = [hosts, advertisers, fillers, feeds, others];
 		data = data.map(time => Math.round(time));
 		chart.data.datasets[0].data = data;
-		chart.update(config);
+		chart.update();
 	}
 
 	private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
