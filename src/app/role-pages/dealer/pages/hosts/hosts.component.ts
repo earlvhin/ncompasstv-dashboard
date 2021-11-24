@@ -503,7 +503,7 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.address, link: null, editable: false, hidden: false},
 					{ value: hosts.city, link: null, editable: false, hidden: false},
 					{ value: hosts.postalCode, link: null, editable: false, hidden: false},
-					{ value: hosts.totalLicenses, link: null, editable: false, hidden: false},
+					{ value: hosts.totalLicences, link: null, editable: false, hidden: false},
 					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: true },
 					{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false},
 					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},
