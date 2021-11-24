@@ -12,7 +12,7 @@
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- TAG NAME -->
 					<td class="p-3 tags">
-						<a class="tag clickable" placement="right" [ngbTooltip]="tagToolTip" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data.tagId)">
+						<a class="tag clickable" placement="right" [ngbTooltip]="tagToolTip" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data)">
 							{{ data.name }}
 						</a>
 
@@ -56,7 +56,7 @@
 						</div>
 					</td>
 					<td class="p-3 action-buttons">
-						<mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.owner)">delete</mat-icon>
+						<mat-icon class="no-select text-danger" (click)="onDeleteAllTagsFromOwner(data.ownerId)">delete</mat-icon>
 					</td>
 				</ng-template>
 			</tr>

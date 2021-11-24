@@ -20,6 +20,7 @@ export * from './api_template.model';
 export * from './api_update-playlist-content.model';
 export * from './api_user-data.model';
 export * from './api_zone.model';
+export * from './owner.model';
 export * from './constant_activity_code';
 export * from './credits.model';
 export * from './credits-status.model';

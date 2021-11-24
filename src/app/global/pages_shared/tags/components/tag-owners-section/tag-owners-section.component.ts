@@ -4,7 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { PAGING, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
+import { PAGING, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 import { CreateTagComponent } from '../../dialogs';
 import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.component';
@@ -23,10 +23,12 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 	currentFilter = 'All';
 	currentTagType: TAG_TYPE;
+	hasTagSelected = false;
 	isLoading = false;
 	owners: TAG_OWNER[] = [];
 	pagingData: PAGING;
 	searchFormControl = new FormControl(null, Validators.minLength(3));
+	selectedTag: TAG;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
@@ -51,7 +53,12 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 	clickedPageNumber(page: number): void {
 		const keyword = this.searchFormControl.value;
-		this.searchOwnerTags(keyword, null, page);
+		this.searchOwnerTags(keyword, null, null, page);
+	}
+
+	onClearSelectedTag(): void {
+		this.clearSelectedTag();
+		this.searchOwnerTags();
 	}
 
 	onSelectTagType(type: TAG_TYPE): void {
@@ -100,6 +107,11 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 				}
 			);
 
+	}
+
+	private clearSelectedTag(): void {
+		this.hasTagSelected = false;
+		this.selectedTag = null;
 	}
 
 	private searchOwnerTags(keyword: string = null, tagId: string = null, tagTypeId: number = null, page = 1): void {
@@ -153,6 +165,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 			.subscribe(
 				keyword => {
 					if (this.searchFormControl.invalid) return;
+					this.clearSelectedTag();
 					this.searchOwnerTags(keyword, null, 0);
 					this._tag.onSearch.emit(keyword);
 				}
@@ -163,7 +176,11 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	private subscribeToTagNameClick(): void {
 
 		this._tag.onClickTagName.pipe(takeUntil(this._unsubscribe))
-			.subscribe(({ tagId }) => this.searchOwnerTags(null, tagId));
+			.subscribe(({ tag }) => {
+				this.selectedTag = tag;
+				this.searchOwnerTags(null, tag.tagId);
+				this.hasTagSelected = true;
+			});
 
 	}
 	

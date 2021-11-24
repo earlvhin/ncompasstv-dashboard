@@ -2,14 +2,14 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
-import { API_FILTERS, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
+import { API_FILTERS, OWNER, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class TagService extends BaseService {
 
-	onClickTagName = new EventEmitter<{ tagId: string }>();
+	onClickTagName = new EventEmitter<{ tag: TAG }>();
 	onRefreshTagsCount = new EventEmitter<void>();
 	onRefreshTagsTable = new EventEmitter<void>();
 	onRefreshTagOwnersTable = new EventEmitter<void>();
@@ -80,11 +80,11 @@ export class TagService extends BaseService {
 	}
 
 	searchAllTags(keyword = '', page = 1, pageSize = 10000): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
-		let url = `${this.getters.search_tags}?page=${page}&key=${keyword}&pageSize=${pageSize}`;
+		let url = `${this.getters.search_tags}?page=${page}&key=${encodeURIComponent(keyword)}&pageSize=${pageSize}`;
 		return this.getRequest(url);
 	}
 
-	searchOwners(key: string = null): Observable<{ owners: { displayName: string, ownerId: string, tagTypeId: string, tagTypeName: string }[] }> {
+	searchOwners(key: string = null): Observable<{ owners: OWNER[] }> {
 		let url = `${this.getters.search_owners}`;
 		if (key) url += `?key=${key}`;
 		return this.getRequest(url);
@@ -105,11 +105,13 @@ export class TagService extends BaseService {
 				if (param.value) {
 					if (url.includes('?')) url += '&';
 					else url += '?';
-					url += `${param.name}=${param.value}`;
+					url += `${param.name}=${encodeURIComponent(param.value)}`;
 				}
 
 			}
 		);
+
+		
 		
 		return this.getRequest(url);
 	}
