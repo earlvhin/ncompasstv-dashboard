@@ -1,7 +1,6 @@
 import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter  } from '@angular/core';
 import Chart from 'chart.js/auto';
 import { Subject } from 'rxjs';
-import { InformationModalComponent } from '../../page_components/information-modal/information-modal.component';
 import { MatDialog } from '@angular/material/dialog';
 import 'chartjs-adapter-moment';
 import * as moment from 'moment';
@@ -29,6 +28,7 @@ export class DataStatisticsCardComponent implements OnInit {
     @Input() e_date: any;
     @Input() dealer_selected: any;
     @Input() loading_graph: boolean = false;
+    @Input() picker: boolean = false;
 
     start: any;
     end:any;
@@ -42,10 +42,7 @@ export class DataStatisticsCardComponent implements OnInit {
 	private chart: Chart;
 	protected _unsubscribe = new Subject<void>();
 
-    
-
 	constructor(
-        private _dialog: MatDialog,
         private _changeDetector: ChangeDetectorRef
 	) { }
 
@@ -57,8 +54,6 @@ export class DataStatisticsCardComponent implements OnInit {
 	}
 
     ngOnChanges() {
-        this.value_array = this.value_array;
-        this.label_array = this.label_array;
         this.averaging = this.average;
         this.loading_graph = this.loading_graph;
         if(this.chart) {
@@ -172,13 +167,8 @@ export class DataStatisticsCardComponent implements OnInit {
                 options: {
                     onClick: (e: any) => {
                         if(this.no_click) {
-    
                         } else {
-                            if(this.installation_average) {
-                                this.click_graph.emit(e.chart.tooltip.dataPoints[0].dataIndex);
-                            } else {
-                                this.showBreakdownModal('Breakdown:', this.whole_data[e.chart.tooltip.dataPoints[0].dataIndex], 'list', 500, true);
-                            }   
+                            this.click_graph.emit(e.chart.tooltip.dataPoints[0].dataIndex);
                         }
                     },
                     responsive: true,
@@ -211,14 +201,4 @@ export class DataStatisticsCardComponent implements OnInit {
             });
         }
     }
-
-    showBreakdownModal(title: string, contents: any, type: string, character_limit?: number, graph?: boolean): void {
-		this._dialog.open(InformationModalComponent, {
-			width:'600px',
-			height: '350px',
-			data:  { title, contents, type, character_limit, graph },
-			panelClass: 'information-modal',
-			autoFocus: false
-		});
-	}
 }

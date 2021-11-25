@@ -70,6 +70,7 @@ export const API_ENDPOINTS = {
 		api_get_hosts: 'host/getall',
 		api_get_hosts_statistics: 'host/getmonthlytotal',
 		api_get_licenses: 'license/getall',
+		api_get_licenses_all_duration: 'license/getallwithduration',
 		api_get_licenses_by_id: 'license/getlicensebyid?licenseid=',
 		api_get_licenses_by_dealer: 'license/getbydealer',
 		api_get_license_by_dealer_temp: 'license/getbydealerold?dealerid=',

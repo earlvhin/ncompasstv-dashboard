@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
-import { HostService } from '../../../../global/services/host-service/host.service';
+import { HostService } from 'src/app/global/services/host-service/host.service';
 import { UpperCasePipe } from '@angular/common';
+import { MatDialog } from '@angular/material/dialog';
+import { InformationModalComponent } from 'src/app/global/components_shared/page_components/information-modal/information-modal.component';
 
 var Highcharts = require("highcharts/highmaps.js");  
 var usMap = require("@highcharts/map-collection/countries/us/us-all.geo.json");  
@@ -46,11 +48,13 @@ export class HostsTabComponent implements OnInit {
     sum: number = 0;
     height_show: boolean = false;
     hosts_graph_data: any = [];
+    hosts_graph_data_detailed: any = [];
     generate: boolean = false;
 
 	constructor(
         private _host: HostService,
         private _uppercase: UpperCasePipe,
+        private _dialog: MatDialog,
     ) { }
 
 	ngOnInit() {
@@ -177,31 +181,52 @@ export class HostsTabComponent implements OnInit {
             }
         });
     } 
+
+    getGraphPoints(e) {
+        var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+        console.log(e)
+        console.log(this.hosts_graph_data_detailed)
+        var data_formulated = {
+            dealers: this.hosts_graph_data_detailed[e].dealers,
+            month: months[e] + " " + new Date().getFullYear()
+        }
+        this.showBreakdownModal('Breakdown:', data_formulated, 'list', 500, false, true);
+    }
+
+    showBreakdownModal(title: string, contents: any, type: string, character_limit?: number, graph?: boolean, installation?: boolean): void {
+		this._dialog.open(InformationModalComponent, {
+			width:'600px',
+			height: '350px',
+			data:  { title, contents, type, character_limit, graph, installation },
+			panelClass: 'information-modal',
+			autoFocus: false
+		});
+	}
     
     getHostsStatistics() {
-        this.subscription.add(
-			this._host.get_host_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
-                data => {
-                    //reset value
-                    this.total_detailed = 0;
-                    this.sum = 0;
-                    this.hosts_graph_data = [];
-                    this.label_graph_detailed = [];
-                    this.value_graph_detailed = [];
-                    this.average = 0;
-                    this.number_of_months = 0;
+        //reset value
+        this.total_detailed = 0;
+        this.sum = 0;
+        this.hosts_graph_data = [];
+        this.label_graph = [];
+        this.value_graph = [];
+        this.average = 0;
+        this.number_of_months = 0;
 
-                    if(!data.message) {                        
-                        var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-                        data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-                        this.hosts_graph_data = [...data.hosts];
-                        if(this.selected_dealer || this.start_date && this.end_date) {
+        if(this.selected_dealer || this.start_date && this.end_date) {
+            this.subscription.add(
+                this._host.get_host_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
+                    data => {
+                        if(!data.message) {                        
+                            var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                            data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+                            this.hosts_graph_data = [...data.hosts];
                             data.hosts.map(
                                 i => {
                                     this.total_detailed = this.total_detailed + i.totalHosts;
                                     this.hosts_graph_data.push(i)
-                                    this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalHosts)
-                                    this.value_graph_detailed.push(i.totalHosts)
+                                    this.label_graph.push(months[i.month - 1] + " " + i.totalHosts)
+                                    this.value_graph.push(i.totalHosts)
                                     this.sum = this.sum + i.totalHosts;
                                 }
                             )
@@ -211,36 +236,45 @@ export class HostsTabComponent implements OnInit {
                             this.sub_title_detailed = "Found " + data.hosts.length + " months with record as per shown in the graph."
                             this.generate = true;
                         } else {
-                            this.hosts_graph_data = this.hosts_graph_data.filter(item => item.year == new Date().getFullYear());
-                            this.hosts_graph_data.map(
+                            this.generate = false;
+                        }
+                    }
+                )
+            )
+        } else {
+            this.subscription.add(
+                this._host.get_host_statistics('', '', '').subscribe(
+                    data => {
+                        if(!data.message) {                        
+                            var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
+                            data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+                            this.hosts_graph_data_detailed = [...data.hosts];
+                            this.hosts_graph_data_detailed = this.hosts_graph_data_detailed.filter(item => item.year == new Date().getFullYear());
+                            this.hosts_graph_data_detailed.map(
                                 i => {
                                     this.total = this.total + i.totalHosts;
-                                    this.label_graph.push(months[i.month - 1] + " " + i.totalHosts)
-                                    this.value_graph.push(i.totalHosts)
+                                    this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalHosts)
+                                    this.value_graph_detailed.push(i.totalHosts)
                                 }
                             )
+                        } else {
+                            this.generate = false;
                         }
-                    } else {
-                        this.generate = false;
                     }
-                }
+                )
             )
-        )
+        }
+        
         this.sub_title = "Total Hosts as per year " + new Date().getFullYear();
     }
 
     getStartDate(s_date) {
         this.start_date = s_date;
-        if(this.end_date) {
-            this.getHostsStatistics();
-        }
     }
     
     getEndDate(e_date) {
         this.end_date = e_date;
-        if(this.start_date) {
-            this.getHostsStatistics();
-        }
+        this.getHostsStatistics();
     }
     
     getDealerId(dealer) {
