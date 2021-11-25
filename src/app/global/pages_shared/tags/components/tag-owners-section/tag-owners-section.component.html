@@ -12,6 +12,15 @@
 			<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation" >Assign Tags</span>
 		</button>
 
+		<ng-container *ngIf="hasTagSelected">
+			<div class="pill selected-tag">
+				<div class="d-flex align-items-center">
+					<div>Tag: <strong>{{ selectedTag.name }}</strong></div>
+					<mat-icon (click)="onClearSelectedTag()">close</mat-icon>
+				</div>
+			</div>
+		</ng-container>
+
 		<!-- EXPORT TAGS -->
 		<!-- <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _primary" title="Export">
 			<span class="fas fa-file-excel"></span> <span class="ml-2 button_text_animation">Export</span>
@@ -21,7 +30,7 @@
 	<!-- SEARCH FIELD -->
 	<div class="search-container">
 		<mat-form-field class="full-width" *ngIf="!isLoading">
-			<mat-label>Search by tag</mat-label>
+			<mat-label>Search by tag or @assignee</mat-label>
 			<input matInput [formControl]="searchFormControl">
 		</mat-form-field>
 	</div>

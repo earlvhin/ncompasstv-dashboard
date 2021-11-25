@@ -37,6 +37,7 @@ export class API_HOST {
 	street: string;
 	tags?: TAG[];
 	totalLicenses: number;
+	totalLicences: number;
 	timeZone: string;
 	timezoneName: string;
 	updatedBy: string;

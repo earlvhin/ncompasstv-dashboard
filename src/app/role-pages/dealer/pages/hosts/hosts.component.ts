@@ -71,7 +71,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Address', key: 'address'},
 		{ name: 'City', sortable: true, key: 'city', column: 'City'},
 		{ name: 'Postal Code', key: 'postalCode'},
-		{ name: 'Number of Licenses', sortable: true, key: 'totalLicences', column: 'TotalLicences'},
+		{ name: 'Number of Licenses', sortable: true, key: 'totalLicenses', column: 'TotalLicenses'},
 		{ name: 'Status', key: 'status'},
         { name: 'Notes', sortable: false, key: 'notes'},
         { name: 'Others', sortable: false, key: 'others'},
@@ -232,6 +232,9 @@ export class HostsComponent implements OnInit {
 	}
 
 	getHostColumnsAndOrder(data: { column: string, order: string }) {
+	    if(data.column === "TotalLicenses") {
+			data.column = "TotalLicences";
+		}
 		this.host_sort_column = data.column;
 		this.host_sort_order = data.order;
 		this.getHosts(1);
@@ -503,7 +506,7 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.address, link: null, editable: false, hidden: false},
 					{ value: hosts.city, link: null, editable: false, hidden: false},
 					{ value: hosts.postalCode, link: null, editable: false, hidden: false},
-					{ value: hosts.totalLicenses, link: null, editable: false, hidden: false},
+					{ value: hosts.totalLicences, link: null, editable: false, hidden: false},
 					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: true },
 					{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false},
 					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},

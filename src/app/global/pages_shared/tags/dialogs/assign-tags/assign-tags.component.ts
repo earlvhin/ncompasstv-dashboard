@@ -5,7 +5,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { TagService } from 'src/app/global/services';
-import { TAG, TAG_OWNER } from 'src/app/global/models';
+import { OWNER, TAG, TAG_OWNER } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -18,7 +18,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	@ViewChild('ownerMultiSelect', { static: true }) ownerMultiSelect: MatSelect;
 	@ViewChild('tagMultiSelect', { static: true }) tagMultiSelect: MatSelect;
 	description = 'Assign tags to the appropriate owner';
-	filteredOwners = new ReplaySubject <TAG_OWNER[]>(1);
+	filteredOwners = new ReplaySubject <OWNER[]>(1);
 	filteredTags = new ReplaySubject<TAG[]>(1);
 	form = this._form_builder.group({ selectedOwners: [ [], Validators.required ], selectedTags: [ [], Validators.required ]});
 	isSearchingOwners = false;
@@ -84,6 +84,16 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 		this.tagMultiSelect.compareWith = (a, b) => a && b && a.tagId === b.tagId;
 	}
 
+	private assignOwnerPrefix(data: OWNER[]): OWNER[] {
+		return data.map(
+			owner => {
+				const result = owner;
+				result.prefix = result.tagTypeName.charAt(0).toUpperCase();
+				return result;
+			}
+		);
+	}
+
 	private getAllRecentTags() {
 
 		this.isSearchingTags = true;
@@ -112,11 +122,12 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 
 		this._tag.searchOwners(key).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { owners: { displayName: string, ownerId: string, tagTypeId: string, tagTypeName: string }[] }) => {
+				(response: { owners: OWNER[] }) => {
 
 					const merged = this.selectedOwnersControl.value.concat(response.owners);
 					const unique = merged.filter((owner, index, merged) => merged.findIndex(mergedOwner => (mergedOwner.ownerId === owner.ownerId) ) === index);
-					this.filteredOwners.next(unique);
+					const assignedPrefix = this.assignOwnerPrefix(unique);
+					this.filteredOwners.next(assignedPrefix);
 
 				},
 				error => console.log('Error searching for owners', error)
