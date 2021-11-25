@@ -1,4 +1,4 @@
-<div class="statistics-graph col-lg-12 p-0 flex" *ngIf="value_graph || value_graph_detailed; else spinner">
+<div class="statistics-graph col-lg-12 p-0 flex" *ngIf="value_graph.length > 0 || value_graph_detailed.length > 0; else spinner">
     <div class="col-lg-5">
         <mat-card class="card-graph">
             <app-data-statistics-card *ngIf="value_graph_detailed.length > 0"

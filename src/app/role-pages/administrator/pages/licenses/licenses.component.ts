@@ -655,6 +655,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	modifyItem(item) {
+        console.log("item",item)
         item.zone = this.getZoneHours(item);
         item.piVersion = item.apps ? item.apps.rpi_model : '';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
