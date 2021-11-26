@@ -47,6 +47,11 @@ export class LicenseService {
         const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
+	
+    get_all_licenses_duration(page, key, column, order, pageSize, status?, activated?, zone?, dealer?, host?) {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_all_duration}`, { ...this.httpOptions, params });
+	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
 		let baseUrl = `${this.baseUri}${this.getters.license_by_tags}`;

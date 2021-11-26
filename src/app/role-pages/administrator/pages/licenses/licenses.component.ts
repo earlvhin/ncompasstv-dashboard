@@ -120,6 +120,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Password', sortable: false, key:'password'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate' },
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column:'DateCreated' },
+		{ name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 		{ name: 'Tags', key:'tagsToString', no_show: true },
 	];
 
@@ -595,7 +596,85 @@ export class LicensesComponent implements OnInit {
         
 	}
 
-	exportTable(tab: string) {
+	modifyItem(item) {
+        console.log("item",item)
+        item.zone = this.getZoneHours(item);
+        item.piVersion = item.apps ? item.apps.rpi_model : '';
+        item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
+        item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
+        item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
+        item.screenType =  this._title.transform(item.screenType);
+        item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
+        item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
+        item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
+        item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
+        item.internetType = this.getInternetType(item.internetType);
+        item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
+        item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
+        var parse_version = JSON.parse(item.appVersion);
+		item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
+		item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
+	}
+
+    getZoneHours(data) {
+        if(data.templateName == 'Fullscreen') {
+            return "Main: " + this.msToTime(data.templateMain)
+        } else {
+            var data_to_return: any = '';
+            if(data.templateBackground != 'NO DATA') {
+                data_to_return = data_to_return + "Background: " + this.msToTime(data.templateBackground);
+            }
+            if (data.templateBottom != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Bottom: " + this.msToTime(data.templateBottom);
+            } 
+            if (data.templateHorizontal != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal: " + this.msToTime(data.templateHorizontal);
+            } 
+            if (data.templateHorizontalSmall != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
+            } 
+            if (data.templateLowerLeft != 'NO DATA') {
+                console.log("LL")
+                data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
+            } 
+            if (data.templateMain != 'NO DATA') {
+                console.log("M")
+                data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
+            } 
+            if (data.templateUpperLeft != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Upper Left: " + this.msToTime(data.templateUpperLeft)
+            } 
+            if (data.templateVertical != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Vertical: " + this.msToTime(data.templateVertical)
+            }
+            return data_to_return;
+        }
+    }
+
+    msToTime(input) {
+        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+        totalSeconds = input;
+        // totalSeconds = input / 1000;
+        totalMinutes = totalSeconds / 60;
+        totalHours = totalMinutes / 60;
+        seconds = Math.floor(totalSeconds) % 60;
+        minutes = Math.floor(totalMinutes) % 60;
+        hours = Math.floor(totalHours) % 60;
+        if (hours !== 0) {
+            result += hours+'h ';
+            if (minutes.toString().length == 1) {
+                minutes = '0'+minutes;
+            }
+        }
+        result += minutes+'m ';
+        if (seconds.toString().length == 1) {
+            seconds = '0'+seconds;
+        }
+        result += seconds + 's';
+        return result;
+    }
+
+	exportTable(tab) {
         this.workbook_generation = true;
 		const header = [];
 		this.workbook = new Excel.Workbook();
