@@ -130,7 +130,7 @@
 
                         <app-search-field
                         *ngIf="!initial_load_license"
-                        [form_title]="'Search License ID, Hostname or Anydesk Id'"
+                        [form_title]="'Search License ID, Hostname, Anydesk Id, or #Tag'"
                         [placeholder]="'Example: License #100'"
                         [data_reference]="license_data"
                         [primary_keyword]="'alias'"
@@ -185,7 +185,8 @@
                                 (to_sort_column)="getColumnsAndOrder($event)"
                                 [active_tab]="sort_column"
                                 [sort_column]="sort_column"
-                                [sort_order]="sort_order">
+                                [sort_order]="sort_order"
+								[is_view_only]="is_view_only">
                                 </app-data-table>
                             </mat-card>
                         </ng-container>

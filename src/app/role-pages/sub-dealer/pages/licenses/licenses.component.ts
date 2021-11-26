@@ -1,15 +1,17 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Subscription } from 'rxjs';
-import { API_LICENSE } from '../../../../global/models/api_license.model';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
-import { UI_TABLE_LICENSE_BY_HOST } from '../../../../global/models/ui_table-license-by-host.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { TitleCasePipe, DatePipe } from '@angular/common';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
+import * as moment from 'moment';
+
 import { environment } from 'src/environments/environment';
+import { AuthService, LicenseService } from 'src/app/global/services';
+import { API_LICENSE, UI_TABLE_LICENSE_BY_HOST } from 'src/app/global/models';
+import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
+import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
 	selector: 'app-licenses',
@@ -21,18 +23,18 @@ import { environment } from 'src/environments/environment';
 export class LicensesComponent implements OnInit {
 	dealers_name: string;
 	initial_load_license: boolean = true;
-	is_view_only = false;
 	license_info: API_LICENSE[]; 
 	license_data: UI_TABLE_LICENSE_BY_HOST[] = [];
 	license_data_api: any;
 	filtered_data: UI_TABLE_LICENSE_BY_HOST[] = [];
 	row_slug: string = "license_id";
-	row_url: string = "/dealer/licenses";
+	row_url: string = `/${this.currentRole}/licenses`;
 	license_filtered_data: any = [];
 	license_row_slug: string = "host_id";
-	license_row_url: string = "/dealer/hosts";
+	license_row_url: string = `/${this.currentRole}/hosts`;
 	licenses_to_export: any = [];
 	no_licenses: boolean = false;
+    now: any;
 	paging_data_license: any;
     splitted_text: any;
 	subscription: Subscription = new Subscription();
@@ -48,6 +50,7 @@ export class LicensesComponent implements OnInit {
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+	is_view_only = false;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true},
@@ -66,23 +69,39 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus'},
 		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate' },
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated' },
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 	];
+
+    filters: any = {
+        activated: "",
+        zone:"",
+        status:"",
+        host:"",
+        label_status:"",
+        label_zone:"",
+        label_dealer: "",
+        label_host: ""
+    }
 
 	constructor(
 		private _dialog: MatDialog,
 		private _license: LicenseService,
 		private _auth: AuthService,
 		private _title: TitleCasePipe,
-		private _date: DatePipe
+		private _date: DatePipe,
+		private _activatedRoute: ActivatedRoute
 	) { }
 
 	ngOnInit() {
-		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
-		this.dealers_name = this._auth.current_user_value.roleInfo.businessName;
-		console.log('current user value', this._auth.current_user_value);
-        this.sortList('desc');
+		let status = this._activatedRoute.snapshot.paramMap.get('status');
+		if(status){
+			this.filterTable('status', status === 'Online'? '1' : '0');
+		}
+		this.dealers_name = this.currentUser.roleInfo.businessName;
+        this.sortList('desc')
 		this.getLicenses(1);
-		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
+		this.getTotalCount(this.currentUser.roleInfo.dealerId);
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -91,7 +110,42 @@ export class LicensesComponent implements OnInit {
 
 	filterData(data) {
 		this.filtered_data = data;
-	  }
+	}
+
+    filterTable(type, value) {
+        switch(type) {
+            case 'status':
+                this.filters.status = value
+                this.filters.activated = "";
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                break;
+            case 'zone':
+                this.filters.zone = value
+                this.filters.label_zone = value;
+                break;
+            case 'activated':
+                this.filters.status = "";
+                this.filters.activated = value;
+                this.filters.label_status = 'Inactive';
+                break;
+            default:
+        }
+        this.getLicenses(1);
+    }
+
+    clearFilter() {
+        this.filters = {
+            activated: "",
+            zone:"",
+            status:"",
+            host:"",
+            label_status:"",
+            label_zone:"",
+            label_dealer: "",
+            label_host: ""
+        }
+        this.getLicenses(1);
+    }
 	  
 	getTotalCount(id) {
 		this.subscription.add(
@@ -128,7 +182,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page) {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order).subscribe(
+			this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				data => {
 					this.initial_load_license = false;
 					this.searching_license = false;
@@ -191,10 +245,10 @@ export class LicensesComponent implements OnInit {
 						hidden: false, 
 						isImage: true
 					},
-                    { value: i.licenseKey, link: '/sub-dealer/licenses/' + i.licenseId, editable: false, hidden: false, status: true },
+                    { value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, editable: false, hidden: false, status: true },
                     { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
-                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? '/sub-dealer/hosts/' + i.hostId : null, editable: false, hidden: false },
-                    { value: i.alias ? i.alias : '--', link: '/sub-dealer/licenses/' + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
+                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? `/${this.currentRole}/hosts/` + i.hostId : null, editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
+                    { value: i.alias ? i.alias : '--', link: `/${this.currentRole}/licenses/` + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
                     { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
                     { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
                     { value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
@@ -208,6 +262,24 @@ export class LicensesComponent implements OnInit {
 				);
 			}
 		);
+	}
+
+    getLabel(data) {
+		this.now = moment().format('d');
+		this.now = this.now;
+        var storehours = JSON.parse(data.storeHours)
+        storehours = storehours.sort((a, b) => {return a.id - b.id;});
+		var modified_label = {
+			date : moment().format('LL'),
+			address: data.hostAddress,
+			schedule: storehours[this.now] && storehours[this.now].status ? (
+				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
+				? "Open 24 Hours" : storehours[this.now].periods.map(
+					i => {
+						return i.open + " - " + i.close
+					})) : "Closed"
+		}
+		return modified_label;
 	}
 
     splitKey(key) {
@@ -227,12 +299,36 @@ export class LicensesComponent implements OnInit {
 		this.ngOnInit();
 	}
 
+    sortByUser() {
+		let dialog = this._dialog.open(UserSortModalComponent, {
+			width: '500px',
+            data: {
+                view: 'license',
+                is_dealer: true,
+                dealer_id: this.currentUser.roleInfo.dealerId,
+                dealer_name: this.dealers_name
+            }
+		})
+
+		dialog.afterClosed().subscribe(
+			data => {
+				if (data) {
+					if(data.host.id) {
+                        this.filters.host = data.host.id;
+                        this.filters.label_host = data.host.name;
+                    }
+                    this.getLicenses(1);
+				}
+			}
+		)
+	}
+
 	getDataForExport(id): void {
 		this.subscription.add(
-			this._license.get_license_by_dealer_id(id, 1, '', '', 0).subscribe(
+			this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 				data => {
                     const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-					this.licenses_to_export = data.paging.entities;
+					this.licenses_to_export = data.licenseTemplateZoneExports;
 					this.licenses_to_export.forEach((item, i) => {
 						this.modifyItem(item);
 						this.worksheet.addRow(item).font ={
@@ -256,7 +352,20 @@ export class LicensesComponent implements OnInit {
 		);
 	}
 
+	private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
+	}
+
 	modifyItem(item) {
+        item.zone = this.getZoneHours(item);
 		item.screenType =  this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
@@ -269,6 +378,62 @@ export class LicensesComponent implements OnInit {
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 	}
+
+    getZoneHours(data) {
+        if(data.templateName == 'Fullscreen') {
+            return "Main: " + this.msToTime(data.templateMain)
+        } else {
+            var data_to_return: any = '';
+            if(data.templateBackground != 'NO DATA') {
+                data_to_return = data_to_return + "Background: " + this.msToTime(data.templateBackground);
+            }
+            if (data.templateBottom != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Bottom: " + this.msToTime(data.templateBottom);
+            } 
+            if (data.templateHorizontal != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal: " + this.msToTime(data.templateHorizontal);
+            } 
+            if (data.templateHorizontalSmall != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
+            } 
+            if (data.templateLowerLeft != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
+            } 
+            if (data.templateMain != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
+            } 
+            if (data.templateUpperLeft != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Upper Left: " + this.msToTime(data.templateUpperLeft)
+            } 
+            if (data.templateVertical != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Vertical: " + this.msToTime(data.templateVertical)
+            }
+            return data_to_return;
+        }
+    }
+
+    msToTime(input) {
+        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+        totalSeconds = input;
+        // totalSeconds = input / 1000;
+        totalMinutes = totalSeconds / 60;
+        totalHours = totalMinutes / 60;
+        seconds = Math.floor(totalSeconds) % 60;
+        minutes = Math.floor(totalMinutes) % 60;
+        hours = Math.floor(totalHours) % 60;
+        if (hours !== 0) {
+            result += hours+'h ';
+            if (minutes.toString().length == 1) {
+                minutes = '0'+minutes;
+            }
+        }
+        result += minutes+'m ';
+        if (seconds.toString().length == 1) {
+            seconds = '0'+seconds;
+        }
+        result += seconds + 's';
+        return result;
+    }
 
 	exportTable() {
 		this.workbook_generation = true;
@@ -283,23 +448,15 @@ export class LicensesComponent implements OnInit {
 			}
 		});
 		this.worksheet.columns = header;
-		this.getDataForExport(this._auth.current_user_value.roleInfo.dealerId);		
-	}
-
-	private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
+		this.getDataForExport(this.currentUser.roleInfo.dealerId);		
 	}
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
 	}
 }
 

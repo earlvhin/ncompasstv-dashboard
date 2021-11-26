@@ -19,6 +19,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     is_search: boolean = false;
     loading_data: boolean = true;
     loading_search: boolean = false;
+    clear_dealer: boolean = false;
     paging: any;
     searching: boolean = false;
     selected_dealer: string;
@@ -42,6 +43,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
     @Input() average: string;
     @Input() installation: boolean = false;
     @Input() total_dealer: boolean = false;
+    @Input() detailed: boolean = false;
 
     @Output() s_date: EventEmitter<any> = new EventEmitter;
     @Output() e_date: EventEmitter<any> = new EventEmitter;
@@ -65,6 +67,13 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
         // this.generate_chart = this.generate_chart;
     }
 
+    unselectDealer() {
+        this.selected_dealer = "";
+        this.selected_dealer_name = "";
+        this.clear_dealer = true;
+        this.dealer_selected.emit('')
+    }
+
     setDealerId(e) {
 		if (e) {
 			this.selected_dealer = e;
@@ -83,15 +92,16 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 
     onSelectEndDate(e) {
         this.end_date = e.format('YYYY-MM-DD');
-        this.checkIfCompleteData();
+        this.checkIfCompleteData();  
     }
 
     checkIfCompleteData() {
-        if(this.end_date && this.start_date && this.selected_dealer) {
-            this.s_date.emit(this.start_date);
-            this.e_date.emit(this.end_date);
+        if(this.selected_dealer) {
             this.dealer_selected.emit(this.selected_dealer);
-        }
+        } else if(this.end_date && this.start_date) {
+            this.s_date.emit(this.start_date);
+            this.e_date.emit(this.end_date);   
+        } else {}
     }
 
     getGraphPoints(e) {

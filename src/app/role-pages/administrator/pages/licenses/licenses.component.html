@@ -63,52 +63,8 @@
                 </mat-card>
             </div>
         </div>
-        <hr class="mb-0">
-        <div class="row mb-2">
-            <div class="col-md-12 text-right">
-                <button class="theme-btn _dark no_border_radius border_radius_bottom position-relative sm-text" (click)="toggleCharts()">
-                    <span *ngIf="!height_show; else hide">Show Statistics Charts</span>
-                    <ng-template #hide>
-                        <span>Hide Statistics Charts</span>
-                    </ng-template>
-                </button>
-            </div>
-        </div>
-        <div class="row statistics-graph" [ngClass]="!height_show ? 'height-toggle': 'mb-3'">
-            <div class="col-lg-5">
-                <mat-card class="card-graph">
-                    <app-data-statistics-card *ngIf="value_graph.length > 0"
-                        [id]="'total-view'"
-						[total]="total"
-						[label_array]="label_graph"
-						[value_array]="value_graph"
-                        [whole_data]="licenses_graph_data"
-                        [sub_title]="sub_title"
-                        [no_click]="false">
-                    </app-data-statistics-card>
-                </mat-card>
-            </div>
-            <div class="col-lg-7">
-                <mat-card class="card-graph">
-                    <app-data-statistics-card-with-picker
-                    (s_date)="getStartDate($event)"
-                    (e_date)="getEndDate($event)"
-                    (dealer_selected)="getDealerId($event)"
-                    [num_of_months]="number_of_months"
-                    [average]="average"
-                    [sub_title]="sub_title_detailed"
-                    [id]="'average-view'"
-					[total]="total_detailed"
-					[label_array]="label_graph_detailed"
-					[value_array]="value_graph_detailed"
-                    [whole_data]="licenses_graph_data"
-                    [generate_chart]="generate"
-                    [installation]="false">
-                    </app-data-statistics-card-with-picker>
-                </mat-card>
-            </div>
-        </div>
-        <div class="row m-0 p-0">
+       
+        <div class="row m-0 p-0 mt-5">
             <div class="col-lg-12 custom-mat-tab p-0">
                 <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
 					<!-- LICENSES TAB -->
@@ -351,6 +307,17 @@
                             </div>
                         </div>
                     </mat-tab>
+
+                    <!-- Advertisers Tab -->
+                    <mat-tab id="tags-view-tab" label="Advertisers View">
+						<ng-template matTabContent>
+							<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 4">
+								<app-advertisers
+                                [call_to_other_page]="true"
+                                ></app-advertisers>
+							</div>	
+						</ng-template>
+					</mat-tab>                    
                 </mat-tab-group>
             </div>
         </div>

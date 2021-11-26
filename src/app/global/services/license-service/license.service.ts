@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { API_FILTERS, API_LICENSE, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
+import { API_FILTERS, API_LICENSE, API_LICENSE_PROPS, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -35,6 +35,7 @@ export class LicenseService {
 	};
 
 	onSortLicenseByColumn = new EventEmitter<{ column: string, order: string }>();
+	onRefreshLicensesTab = new EventEmitter<void>();
 	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } })
 	
 	constructor(
@@ -45,6 +46,11 @@ export class LicenseService {
 	get_all_licenses(page, key, column, order, pageSize, status?, activated?, zone?, dealer?, host?) {
         const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
+	}
+	
+    get_all_licenses_duration(page, key, column, order, pageSize, status?, activated?, zone?, dealer?, host?) {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_all_duration}`, { ...this.httpOptions, params });
 	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
@@ -87,7 +93,7 @@ export class LicenseService {
 		return this._http.get<any>(url, this.httpOptions);
 	}
 
-	api_get_licenses_total_by_host_dealer(dealerId, hostId) {
+	api_get_licenses_total_by_host_dealer(dealerId: string, hostId: string) {
 		const base = `${this.baseUri}${this.getters.api_get_licenses_total}`;
 		const endpoint = `${base}?dealerid=${dealerId}&hostid=${hostId}`;
 		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
@@ -115,8 +121,8 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
-	get_license_by_host_id(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_by_host}${id}`, this.httpOptions);
+	get_licenses_by_host_id(id: string): Observable<API_LICENSE_PROPS[] | { message: string }> {
+		return this._http.get<API_LICENSE_PROPS[] | { message: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_by_host}${id}`, this.httpOptions);
 	}
 
 	get_license_by_id(id) {
@@ -183,6 +189,14 @@ export class LicenseService {
 	
 	update_alias(data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_alias}`, data, this.httpOptions);
+	}
+
+	/**
+	 *  Updates the license's boot delay
+	 * 	@param data: {licenseId: string, bootDelayDuration: number}
+	*/
+	update_license_boot_delay(data: {licenseId: string, bootDelay: number}) {
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_license_boot_delay}`, data, this.httpOptions);
 	}
 
 	/**

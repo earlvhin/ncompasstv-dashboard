@@ -24,22 +24,28 @@
             <div class="md-text col-lg-12 p-0">
                 Select Dealer
             </div>
-            <div class="col-lg-12 p-0">
-                <app-autocomplete-field
-                    (data_value)="setDealerId($event)"
-                    [data_reference]="dealers_data"
-                    [key_of_value]="'dealerId'"
-                    [label]="'Choose A Dealer'"
-                    [placeholder]="'Choose A Dealer'"
-                    [primary_keyword]="'businessName'"
-                    [search_keyword]="'dealer'"
-                    [paging]="paging"
-                    (call_next_page)="searchBoxTrigger($event)"
-                    (searched)="searchData($event)"
-                    [loading_data]="loading_data"
-                    [loading_search]="loading_search"
-                    [disabled]="((!start_date && !end_date))">							
-                </app-autocomplete-field>
+            <div class="col-lg-12 flex p-0">
+                <div class="col-lg-11 p-0">
+                    <app-autocomplete-field
+                        (data_value)="setDealerId($event)"
+                        [data_reference]="dealers_data"
+                        [key_of_value]="'dealerId'"
+                        [label]="'Choose A Dealer'"
+                        [placeholder]="'Choose A Dealer'"
+                        [primary_keyword]="'businessName'"
+                        [search_keyword]="'dealer'"
+                        [paging]="paging"
+                        (call_next_page)="searchBoxTrigger($event)"
+                        (searched)="searchData($event)"
+                        [loading_data]="loading_data"
+                        [loading_search]="loading_search"
+                        [disabled]="((!start_date || !end_date))"
+                        [reset_value]="clear_dealer">							
+                    </app-autocomplete-field>
+                </div>
+                <div class="col-lg-1 p-0 pt-3 text-left">
+                    <button class="hidden-button white-bg fas fa-times" [ngClass]="selected_dealer ? 'text-danger cursor-pointer' : 'text-gray drop-cursor'" title="Unselect Dealer" [disabled]="!selected_dealer" (click)="unselectDealer()"></button>
+                </div>
             </div>
         </form>
     </div>
@@ -58,7 +64,9 @@
                 [e_date]="end_date"
                 [dealer_selected]="selected_dealer_name"
                 [whole_data]="whole_data"
-                [no_click]="true">
+                [no_click]="true"
+                [picker]="true"
+                [total]="total">
             </app-data-statistics-card>
         </mat-card>
     </div>

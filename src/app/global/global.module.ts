@@ -79,11 +79,13 @@ import { HostViewComponent } from './components_shared/locator_components/host-v
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
 import { ImageSelectionModalComponent } from './components_shared/page_components/image-selection-modal/image-selection-modal.component';
 import { InformationModalComponent } from './components_shared/page_components/information-modal/information-modal.component';
+import { InstallationsTabComponent } from './components_shared/reports_components/installations-tab/installations-tab.component';
 import { IsEmptyPipe } from './pipes/is-empty.pipe';
 import { IsFeedPipe } from './pipes/is-feed.pipe';
 import { IsimagePipe } from './pipes/isimage.pipe';
 import { IsvideoPipe } from './pipes/isvideo.pipe';
 import { LicenseModalComponent } from './components_shared/license_components/license-modal/license-modal.component';
+import { LicensesTabReportsComponent } from './components_shared/reports_components/licenses-tab-reports/licenses-tab-reports.component';
 import { ListItemComponent } from './components_shared/data_components/list-item/list-item.component';
 import { LittleSpinnerComponent } from './components_shared/page_components/little-spinner/little-spinner.component';
 import { LocatorComponent } from './pages_shared/locator/locator.component';
@@ -270,11 +272,13 @@ const ngComponents = [
     HostsTabComponent,
     ImageSelectionModalComponent,
 	InformationModalComponent,
+	InstallationsTabComponent,
 	IsEmptyPipe,
 	IsFeedPipe,
 	IsimagePipe,
 	IsvideoPipe,
 	LicenseModalComponent,
+	LicensesTabReportsComponent,
 	ListItemComponent,
 	LittleSpinnerComponent,
 	LocatorComponent,

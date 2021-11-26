@@ -9,8 +9,7 @@ import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 import { API_ADVERTISER, API_HOST, API_LICENSE, PAGING, UI_ADVERTISER, UI_DEALER_HOSTS, UI_TABLE_LICENSE_BY_HOST } from 'src/app/global/models';
-import { AuthService, AdvertiserService, HostService, LicenseService, UserService } from 'src/app/global/services';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { AuthService, AdvertiserService, HostService, LicenseService } from 'src/app/global/services';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 
 @Component({
@@ -21,6 +20,7 @@ import { UserSortModalComponent } from 'src/app/global/components_shared/media_c
 })
 
 export class HostsComponent implements OnInit {
+	createHostLink: string;
 	filtered_data: any = [];
 	host_data: any = [];
 	host_filtered_data: any = [];
@@ -60,6 +60,7 @@ export class HostsComponent implements OnInit {
     now: any;
     splitted_text: any;
     dealers_name: string;
+	is_view_only = false;
 
     private keyword = '';
     protected _unsubscribe = new Subject<void>();
@@ -70,7 +71,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Address', key: 'address'},
 		{ name: 'City', sortable: true, key: 'city', column: 'City'},
 		{ name: 'Postal Code', key: 'postalCode'},
-		{ name: 'Number of Licenses', sortable: true, key: 'totalLicences', column: 'TotalLicences'},
+		{ name: 'Number of Licenses', sortable: true, key: 'totalLicenses', column: 'TotalLicenses'},
 		{ name: 'Status', key: 'status'},
         { name: 'Notes', sortable: false, key: 'notes'},
         { name: 'Others', sortable: false, key: 'others'},
@@ -125,6 +126,8 @@ export class HostsComponent implements OnInit {
         this.table.columns = [ '#', {name:'Business Name', sortable: true, column: 'Name'}, 
 					{name: 'Total Assets', sortable: true, column: 'TotalAssets'}, {name:'City', sortable: true, column:'City'}, 'State', 'Status' ];
 		this.getAdvertiserByDealer(1);
+		this.createHostLink  = `/${this.currentRole}/hosts/create-host`; 
+		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
 
 	ngOnDestroy() {
@@ -229,6 +232,9 @@ export class HostsComponent implements OnInit {
 	}
 
 	getHostColumnsAndOrder(data: { column: string, order: string }) {
+	    if(data.column === "TotalLicenses") {
+			data.column = "TotalLicences";
+		}
 		this.host_sort_column = data.column;
 		this.host_sort_order = data.order;
 		this.getHosts(1);
@@ -500,7 +506,7 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.address, link: null, editable: false, hidden: false},
 					{ value: hosts.city, link: null, editable: false, hidden: false},
 					{ value: hosts.postalCode, link: null, editable: false, hidden: false},
-					{ value: hosts.totalLicenses, link: null, editable: false, hidden: false},
+					{ value: hosts.totalLicences, link: null, editable: false, hidden: false},
 					{ value: hosts.category ? this._title.transform(hosts.category.replace(/_/g , " ")) : '--', link: null, editable: false, hidden: true },
 					{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false},
 					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},
@@ -544,6 +550,10 @@ export class HostsComponent implements OnInit {
 				);
 			}
 		);
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 	protected get currentRole() {

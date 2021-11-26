@@ -8,7 +8,7 @@ import * as io from 'socket.io-client';
 
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, API_LICENSE, HOST_LICENSE_STATISTICS, API_HOST, API_DEALER, TAG } from 'src/app/global/models';
+import { API_SINGLE_HOST, API_LICENSE, HOST_LICENSE_STATISTICS, API_HOST, API_DEALER, TAG, API_LICENSE_PROPS } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -86,11 +86,14 @@ export class SingleHostComponent implements OnInit {
 			data: this.singleHostData
 		});
 
-		dialogRef.afterClosed().subscribe(
-			data => {
-				if (data) this.ngOnInit()
-			}
-		);
+		dialogRef.afterClosed()
+			.subscribe(
+				response => {
+					if (!response) return;
+					this._license.onRefreshLicensesTab.emit();
+				}
+			);
+
 	}
 
 	toggledHours(e) {
@@ -194,12 +197,23 @@ export class SingleHostComponent implements OnInit {
 
 					if (!response) return;
 
-					this.hostLicenses.forEach(
-						(license: any) => {
-							console.log('System Update Emitted:', license.licenseId);
-							this._socket.emit('D_update_player', license.licenseId);
-						}
-					);
+					this._license.get_licenses_by_host_id(this.hostId).pipe(takeUntil(this._unsubscribe))
+						.subscribe(
+							response => {
+
+								if (!Array.isArray(response)) return;
+
+								const licenses = response as API_LICENSE_PROPS[];
+
+								licenses.forEach(
+									license => {
+										console.log('System Update Emitted:', license.licenseId);
+										this._socket.emit('D_update_player', license.licenseId);
+									}
+								);
+
+							}
+						);
 				}
 			);
 	}

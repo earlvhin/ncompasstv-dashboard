@@ -1,10 +1,11 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { DatePipe, formatNumber } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
 
 import { HostService } from 'src/app/global/services';
 import { API_HOST_CONTENT, PAGING, UI_HOST_CONTENT } from 'src/app/global/models';
-import { DatePipe } from '@angular/common';
 
 @Component({
 	selector: 'app-host-contents-tab',
@@ -62,7 +63,16 @@ export class ContentsTabComponent implements OnInit {
 
 				},
 				error => console.log('Error retrieving host contents', error)
-			)
+			);
+	}
+
+	private parseTotalDuration(data: number): string {
+		if (!data) return '0';
+		const duration = moment.duration(data, 'seconds');
+		const hours = duration.hours();
+		const minutes = duration.minutes();
+		const seconds = duration.seconds();
+		return `${hours}h ${minutes}m ${seconds}s`;
 	}
 
 	private mapToTable(data: API_HOST_CONTENT[]): UI_HOST_CONTENT[] {
@@ -71,12 +81,13 @@ export class ContentsTabComponent implements OnInit {
 		
 		return data.map(
 			content => {
-
 				return {
 					id: { value: content.advertiserId, link: null , editable: false, hidden: true} ,
 					index: { value: count++, link: null , editable: false, hidden: false },
 					name: { value: this.parseFileName(content.fileName), link: `/${this.currentRole}/media-library/${content.contentId}`, new_tab_link: true, editable: false, hidden: false },
 					type: { value: content.fileType == 'jpeg' || content.fileType == 'jfif' || content.fileType == 'jpg' || content.fileType == 'png' ? 'Image' : 'Video', link: null , editable: false, hidden: false },
+					totalPlayCount: { value: formatNumber(content.playsTotal, 'en'), editable: false, hidden: false },
+					totalDuration: { value: this.parseTotalDuration(content.durationsTotal), editable: false, hidden: false },
 					uploadDate: { value: this._date.transform(content.dateCreated, 'MMMM d, y') },
 					uploadedBy: { value: content.createdByName ? content.createdByName : '--', link: null , editable: false, hidden: false },
 				}
@@ -137,6 +148,8 @@ export class ContentsTabComponent implements OnInit {
 			'#',
 			'Name',
 			'Type',
+			'Total Play Count',
+			'Total Duration',
 			'Upload Date',
 			'Uploaded By',
 		];

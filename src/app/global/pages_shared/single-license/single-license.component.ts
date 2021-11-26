@@ -42,7 +42,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	content_id: string;
 	content_per_zone: UI_CONTENT_PER_ZONE[] = [];
 	content_play_count: API_CONTENT[] = [];
-	content_search_control: FormControl = new FormControl(null);
+	content_search_control: FormControl = new FormControl(null);;
 	content_time_update: string;
 	contents: API_CONTENT[] = [];
 	contents_array: any = [];
@@ -71,6 +71,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	license_data: any;
 	license_id: string;
 	license_key: string;
+	license_settings_form: FormGroup;
 	minimap_width = '400px';
 	no_screen_assigned = false;
 	number_of_contents: any;
@@ -115,6 +116,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
+
+	license_settings_form_fields = [
+		{
+			label: 'Boot Delay',
+			form_control_name: 'bootDelay',
+			type: 'number',
+			colorValue: '',
+			width: 'col-lg-6',
+			required: true,
+			value: 0,
+			viewType: null
+		},
+	]
+
+	saving_license_settings: boolean = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -329,7 +345,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				}
 			)
 		);
-
 	}
 
 	getFormValue(): void {
@@ -357,6 +372,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.setPageData(data);
 					this.getScreenById(data.screen.screenId, this.license_id);
 					this.getFormValue();
+					this.prepareLicenseSettingsForm();
 				},
 				error => console.log('Error retrieving license by ID', error)
 			)
@@ -543,6 +559,22 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.showInformationModal('600px', '350px', 'Notes', this.host.notes, 'textarea', 500);
 	}
 
+	saveLicenseSettings(): void {
+		this.saving_license_settings = true;
+
+		const license_boot_delay = {
+			licenseId: this.license_id,
+			bootDelay: this.license_settings_form.controls['bootDelay'].value
+		}
+
+		this._license.update_license_boot_delay(license_boot_delay).subscribe(
+			_ => {
+				alert('Boot Delay has been saved for this license');
+				this.saving_license_settings = false;
+			}
+		)
+	}
+
 	setPopupBackground(): string {
 
 		if (this.popup_type === 'error') return 'bg-danger'
@@ -566,6 +598,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				console.log(error)
 			}
 		)
+	}
+
+	prepareLicenseSettingsForm() {
+		let form_group_obj = {};
+
+		/** Loop through form fields object and prepare for group */
+		this.license_settings_form_fields.map(
+			i => {
+				return Object.assign(form_group_obj, {
+					[i.form_control_name]: [this.license_data.bootDelay ? this.license_data.bootDelay : null, i.required ? Validators.required : null]
+				})
+			}
+		)
+
+		this.license_settings_form = this._form.group(form_group_obj);
 	}
 
 	splitKey(key) {
@@ -1427,32 +1474,28 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToContentSearch(): void {
-
 		this.content_search_control.valueChanges
-			.pipe(takeUntil(this._unsubscribe), debounceTime(200))
-			.subscribe(
-				(response: string) => {
+		.pipe(takeUntil(this._unsubscribe), debounceTime(200))
+		.subscribe(
+			(response: string) => {
 
-					const backupContents = this.contents_backup[this.selected_zone_index].contents;
+				const backupContents = this.contents_backup[this.selected_zone_index].contents;
 
-					if (!response || response.length === 0) {
-						this.content_per_zone[this.selected_zone_index].contents = backupContents;
-						return;
-					};
+				if (!response || response.length === 0) {
+					this.content_per_zone[this.selected_zone_index].contents = backupContents;
+					return;
+				};
 
-					this.content_per_zone[this.selected_zone_index].contents = backupContents.filter(
-						content => {
-							const fileName = content.file_name ? content.file_name : '';
-							const title = content.title ? content.title : '';
-							const haystack = `${fileName}${title}`;
-							return haystack.toLowerCase().includes(response.toLowerCase());
-						}
-					);
-
-
-				}
-			);
-
+				this.content_per_zone[this.selected_zone_index].contents = backupContents.filter(
+					content => {
+						const fileName = content.file_name ? content.file_name : '';
+						const title = content.title ? content.title : '';
+						const haystack = `${fileName}${title}`;
+						return haystack.toLowerCase().includes(response.toLowerCase());
+					}
+				);
+			}
+		);
 	}
 
 	private subscribeToZoneSelect(): void {
@@ -1461,13 +1504,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(name: string) => {
-
-					if (name === this.current_zone_name_selected) {
-						console.log('Same zone selected!');
-						return;
-					}
-
-					console.log('Zone selected!');
+					if (name === this.current_zone_name_selected) return;
 					this.current_zone_name_selected = name;
 					this.zoneSelected(name);
 					if (name === 'Background') this.background_zone_selected = true;
@@ -1488,15 +1525,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private updateAssetsChart(): void {
-		const config = { duration: 800, easing: 'easeOutBounce' };
-		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0];
+		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0] as Chart;
 		const { advertisers, feeds, fillers, hosts, others } = this.assets_breakdown;
 		
 		const currentZone = this.screen_zone ? this.screen_zone.zone : this.content_per_zone[0].zone_name;
 		const description = `${currentZone} Zone: ${this.number_of_contents} items`;
 		const title = ['Assets Breakdown', description];
 
-		chart.options.title.text = title;
+		chart.options.plugins.title = { display: true, text: title };
 
 		chart.data.labels = [ 
 			`Hosts: ${hosts}`, 
@@ -1507,17 +1543,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		];
 
 		chart.data.datasets[0].data = [hosts, advertisers, fillers, feeds, others];
-		chart.update(config);
+		chart.update();
 	}
 
 	private updateDurationChart(): void {
-		const config = { duration: 800, easing: 'easeOutBounce' };
-		const chart = this.charts.filter(chart => chart.canvas.id === 'durationBreakdown')[0];
+		const chart = this.charts.filter(chart => chart.canvas.id === 'durationBreakdown')[0] as Chart;
 		const { advertisers, feeds, fillers, hosts, others } = this.duration_breakdown;
 		const description = `Total playtime: ${this.duration_breakdown_text.total}`;
 		const title = ['Duration Breakdown', description];
 
-		chart.options.title.text = title;
+		chart.options.plugins.title = { display: true, text: title }
 		
 		chart.data.labels = [
 			`Hosts: ${this.calculateTime(hosts)}`,
@@ -1530,7 +1565,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let data = [hosts, advertisers, fillers, feeds, others];
 		data = data.map(time => Math.round(time));
 		chart.data.datasets[0].data = data;
-		chart.update(config);
+		chart.update();
 	}
 
 	private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {

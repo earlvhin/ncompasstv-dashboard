@@ -8,7 +8,7 @@
             </div>
             <div class="col-lg-2">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn" [routerLink]="['/dealer/hosts/create-host']">
+                    <button mat-button mat-raised-button class="theme-btn" [routerLink]="createHostLink" [disabled]="is_view_only">
                         <span class="button-label">
                             Add Host Place
                         </span>
@@ -73,14 +73,14 @@
                                     </div>
                                     <div class="col-lg-4">
                                         <app-search-field
-                                        *ngIf="!initial_load"
-                                        [form_title]="'Search Host Name, Address, City or Postal Code'"
-                                        [placeholder]="'Example: N-Compass'"
-                                        [data_reference]="host_data"
-                                        [primary_keyword]="'host_name'"
-                                        [secondary_keyword]="'host_name'"
-                                        (searched)="hostFilterData($event)"
-                                        [api_search]="true"
+											*ngIf="!initial_load"
+											[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+											[placeholder]="'Example: N-Compass'"
+											[data_reference]="host_data"
+											[primary_keyword]="'host_name'"
+											[secondary_keyword]="'host_name'"
+											(searched)="hostFilterData($event)"
+											[api_search]="true"
                                         ></app-search-field>
                                     </div>
                                 </div>
@@ -89,16 +89,17 @@
                                         <ng-container *ngIf="!searching; else loader">
                                             <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
                                                 <app-data-table
-                                                [table_columns]="host_table_column"
-                                                [table_data]="host_filtered_data"
-                                                [new_table]="true"
-                                                (update_info)="ngOnInit()"
-                                                [paging_details]="hostsPaging"
-                                                (page_triggered)="getHosts($event)"
-                                                (to_sort_column)="getHostColumnsAndOrder($event)"
-                                                [active_tab]="host_sort_column"
-                                                [sort_column]="host_sort_column"
-                                                [sort_order]="host_sort_order">
+													[table_columns]="host_table_column"
+													[table_data]="host_filtered_data"
+													[new_table]="true"
+													[paging_details]="hostsPaging"
+													[active_tab]="host_sort_column"
+													[sort_column]="host_sort_column"
+													[sort_order]="host_sort_order"
+													[is_view_only]="is_view_only"
+													(update_info)="ngOnInit()"
+													(page_triggered)="getHosts($event)"
+													(to_sort_column)="getHostColumnsAndOrder($event)">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>
@@ -169,7 +170,7 @@
                             <div class="col-lg-4">
                                 <app-search-field
                                 *ngIf="!initial_load_license"
-                                [form_title]="'Search License ID, Hostname or Anydesk Id'"
+                                [form_title]="'Search License ID, Hostname, Anydesk Id, or #Tag'"
                                 [placeholder]="'Example: License #100'"
                                 [data_reference]="license_data"
                                 [primary_keyword]="'alias'"
@@ -216,17 +217,18 @@
                                 <ng-container *ngIf="!searching_license; else loader">
                                     <mat-card *ngIf="license_filtered_data.length > 0; else nodata">
                                         <app-data-table 
-                                        [table_data]="filtered_data"
-                                        [table_columns]="license_table_columns"
-                                        [new_table]="true"
-                                        (update_info)="ngOnInit()"
-                                        [license_status_column]="true"
-                                        [paging_details]="licensesPaging"
-                                        (page_triggered)="getLicenses($event)"
-                                        (to_sort_column)="getColumnsAndOrder($event)"
-                                        [active_tab]="sort_column"
-                                        [sort_column]="sort_column"
-                                        [sort_order]="sort_order">
+											[table_data]="filtered_data"
+											[table_columns]="license_table_columns"
+											[new_table]="true"
+											(update_info)="ngOnInit()"
+											[license_status_column]="true"
+											[paging_details]="licensesPaging"
+											(page_triggered)="getLicenses($event)"
+											(to_sort_column)="getColumnsAndOrder($event)"
+											[active_tab]="sort_column"
+											[sort_column]="sort_column"
+											[sort_order]="sort_order"
+											[is_view_only]="is_view_only">
                                         </app-data-table>
                                     </mat-card>
                                 </ng-container>
@@ -244,7 +246,7 @@
                                     <div class="col-lg-4">
                                         <app-search-field
                                             *ngIf="!initial_load_advertiser"
-                                            [form_title]="'Search Business Name or City'"
+                                            [form_title]="'Search Business Name, City, or #Tag'"
                                             [placeholder]="'Example: N-Compass'"
                                             [data_reference]="table.data"
                                             [primary_keyword]="'name'"
@@ -263,12 +265,14 @@
                                                     [table_data]="table.data"
                                                     [new_table]="true"
                                                     [paging_details]="paging_data"
-                                                    (update_info)="ngOnInit()"
-                                                    (page_triggered)="getAdvertiserByDealer($event)"
-                                                    (to_sort_column)="getAdvColumnsAndOrder($event)"
                                                     [active_tab]="adv_sort_column"
                                                     [sort_column]="adv_sort_column"
                                                     [sort_order]="adv_sort_order">
+													[is_view_only]="is_view_only"
+                                                    (update_info)="ngOnInit()"
+                                                    (page_triggered)="getAdvertiserByDealer($event)"
+                                                    (to_sort_column)="getAdvColumnsAndOrder($event)"
+                                                    (page_triggered)="getAdvertiserByDealer($event)">
                                                 </app-data-table>
                                             </mat-card>
                                         </ng-container>
@@ -318,7 +322,7 @@
 				<p class="sm-text mb-3">
 					There are no available hosts at the moment.
 				</p>
-				<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/dealer/hosts/create-host']">
+				<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="createHostLink" [disabled]="is_view_only">
 					Add Host Place
 					<span class="fas fa-plus ml-2 sm-text"></span>
 				</button>

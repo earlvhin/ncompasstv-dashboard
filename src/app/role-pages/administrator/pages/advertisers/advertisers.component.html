@@ -1,5 +1,5 @@
 <div class="theme-container">
-    <div class="title-section">
+    <div class="title-section" *ngIf="!call_to_other_page">
         <div class="d-flex align-items-center">
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
@@ -21,7 +21,7 @@
     </div>
 
     <div class="content-section">
-        <div class="row">
+        <div class="row" *ngIf="!call_to_other_page">
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
                     <app-data-card-compare
@@ -54,7 +54,7 @@
                 </mat-card>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" *ngIf="!call_to_other_page">
         <div *ngIf="!initial_load; else loader">
             <div *ngIf="!no_advertiser; else no_data">
                 <div class="row">
@@ -62,7 +62,7 @@
                     <div class="col-lg-4">
                         <app-search-field
                             *ngIf="!initial_load"
-                            [form_title]="'Search Dealer Alias, Business Name, or #Tag'"
+                            [form_title]="{{!call_to_other_page: 'Search Dealer Alias, Business Name, or #Tag': 'Search Advertiser Name or Business Name'}}"
                             [placeholder]="'Example: N-Compass'"
                             [data_reference]="dealers_with_advertiser"
                             [primary_keyword]="'name'"

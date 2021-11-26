@@ -68,25 +68,6 @@ export class LicensesComponent implements OnInit {
     temp_label_last_week: any = [];
     temp_array_last_week: any = [];
 
-    //graph
-    label_graph: any = [];
-    value_graph: any = [];
-    label_graph_detailed: any = [];
-    value_graph_detailed: any = [];
-    total: number = 0;
-    total_detailed: number = 0;
-    sub_title: string;
-    sub_title_detailed: string;
-    start_date: string = '';
-    end_date: string = '';
-    selected_dealer: string = '';
-    number_of_months: number = 0;
-    average: number = 0;
-    sum: number = 0;
-    height_show: boolean = false;
-    licenses_graph_data: any = [];
-    generate: boolean = false;
-
     filters: any = {
         activated: "",
         zone:"",
@@ -138,6 +119,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Password', sortable: false, key:'password'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column:'DateCreated'},
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 	]
 
     hosts_table_column = [
@@ -172,7 +154,6 @@ export class LicensesComponent implements OnInit {
 		if(status){
 			this.filterTable('status', status === 'Online'? '1' : '0');
 		}
-        this.getLicensesStatistics();
 		this.getLicensesTotal();
         this.getLicenses(1);
 	}
@@ -184,74 +165,6 @@ export class LicensesComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
-
-    getLicensesStatistics() {
-        this.subscription.add(
-			this._license.get_licenses_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe(
-                data => {
-                    //reset value
-                    this.total_detailed = 0;
-                    this.sum = 0;
-                    this.licenses_graph_data = [];
-                    this.label_graph_detailed = [];
-                    this.value_graph_detailed = [];
-                    this.average = 0;
-                    this.number_of_months = 0;
-
-                    if(!data.message) {                        
-                        var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-                        data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-                        this.licenses_graph_data = [...data.licenses];
-                        if(this.selected_dealer) {
-                            data.licenses.map(
-                                i => {
-                                    this.total_detailed = this.total_detailed + i.totalLicenses;
-                                    this.licenses_graph_data.push(i)
-                                    this.label_graph_detailed.push(months[i.month - 1] + " " + i.totalLicenses)
-                                    this.value_graph_detailed.push(i.totalLicenses)
-                                    this.sum = this.sum + i.totalLicenses;
-                                }
-                            )
-                            
-                            this.number_of_months = data.licenses.length;
-                            this.average = this.sum / this.number_of_months; 
-                            this.sub_title_detailed = "Found " + data.licenses.length + " months with record as per shown in the graph."
-                            this.generate = true;
-                        } else {
-                            this.licenses_graph_data = this.licenses_graph_data.filter(item => item.year == new Date().getFullYear());
-                            this.licenses_graph_data.map(
-                                i => {
-                                    this.total = this.total + i.totalLicenses;
-                                    this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
-                                    this.value_graph.push(i.totalLicenses)    
-                                }
-                            )
-                        }
-                    } else {
-                        this.generate = false;
-                    }
-                }
-            )
-        )
-        this.sub_title = "Total Licenses as per year " + new Date().getFullYear();
-    }
-
-    toggleCharts() {
-        this.height_show = !this.height_show;
-    }
-
-    getStartDate(s_date) {
-        this.start_date = s_date;
-    }
-    
-    getEndDate(e_date) {
-        this.end_date = e_date;
-    }
-    
-    getDealerId(dealer) {
-        this.selected_dealer = dealer;
-        this.getLicensesStatistics();
-    }
 
     getColumnsAndOrder(data, tab) {
         console.log(data, tab)
@@ -616,7 +529,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     getLabel(data) {
-        console.log("LABEL", data)
 		this.now = moment().format('d');
 		this.now = this.now;
         var storehours = JSON.parse(data.storeHours)
@@ -669,7 +581,7 @@ export class LicensesComponent implements OnInit {
         this.pageSize = 0;
         switch(tab) {
             case 'licenses':
-                this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
+                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host).subscribe(
                     data => {
                         if(!data.message) {
                             const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -743,7 +655,8 @@ export class LicensesComponent implements OnInit {
 	}
 
 	modifyItem(item) {
-        console.log("item", item)
+        console.log("item",item)
+        item.zone = this.getZoneHours(item);
         item.piVersion = item.apps ? item.apps.rpi_model : '';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
@@ -760,6 +673,64 @@ export class LicensesComponent implements OnInit {
 		item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
 		item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
 	}
+
+    getZoneHours(data) {
+        if(data.templateName == 'Fullscreen') {
+            return "Main: " + this.msToTime(data.templateMain)
+        } else {
+            var data_to_return: any = '';
+            if(data.templateBackground != 'NO DATA') {
+                data_to_return = data_to_return + "Background: " + this.msToTime(data.templateBackground);
+            }
+            if (data.templateBottom != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Bottom: " + this.msToTime(data.templateBottom);
+            } 
+            if (data.templateHorizontal != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal: " + this.msToTime(data.templateHorizontal);
+            } 
+            if (data.templateHorizontalSmall != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
+            } 
+            if (data.templateLowerLeft != 'NO DATA') {
+                console.log("LL")
+                data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
+            } 
+            if (data.templateMain != 'NO DATA') {
+                console.log("M")
+                data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
+            } 
+            if (data.templateUpperLeft != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Upper Left: " + this.msToTime(data.templateUpperLeft)
+            } 
+            if (data.templateVertical != 'NO DATA') {
+                data_to_return = data_to_return + "\n" + "Vertical: " + this.msToTime(data.templateVertical)
+            }
+            return data_to_return;
+        }
+    }
+
+    msToTime(input) {
+        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+        totalSeconds = input;
+        // totalSeconds = input / 1000;
+        totalMinutes = totalSeconds / 60;
+        totalHours = totalMinutes / 60;
+        seconds = Math.floor(totalSeconds) % 60;
+        minutes = Math.floor(totalMinutes) % 60;
+        hours = Math.floor(totalHours) % 60;
+        if (hours !== 0) {
+            result += hours+'h ';
+            if (minutes.toString().length == 1) {
+                minutes = '0'+minutes;
+            }
+        }
+        result += minutes+'m ';
+        if (seconds.toString().length == 1) {
+            seconds = '0'+seconds;
+        }
+        result += seconds + 's';
+        return result;
+    }
 
 	exportTable(tab) {
         this.workbook_generation = true;
