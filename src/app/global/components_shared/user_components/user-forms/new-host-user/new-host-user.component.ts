@@ -20,6 +20,7 @@ export class NewHostUserComponent implements OnInit {
 
 	@Output() host_created = new EventEmitter();
 
+	create_host_link = `/${this.currentRole}/hosts/create-host`;
 	form_title: string = "New Host User";
 	form_invalid: boolean = true;
 	is_submitted: boolean;
