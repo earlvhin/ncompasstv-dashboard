@@ -39,6 +39,8 @@ export class HostViewComponent implements OnInit, OnDestroy {
 	paging: PAGING;
 	selected_host: API_HOST;
 	storehours: any;
+	primaryKeyword: string = "hostName";
+	isOpened: any = true;
 
 	private is_search = false;
 	private search_key = '';
@@ -55,6 +57,9 @@ export class HostViewComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		if (this.currentUserIsDealer) this.is_dealer = true
 		this.currentRole = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
+		if(this.currentRole === 'dealer'){
+			this.primaryKeyword = "name";
+		}
 		this.getHosts(1);
 	}
 
@@ -92,7 +97,13 @@ export class HostViewComponent implements OnInit, OnDestroy {
 						this.storehours = JSON.parse(this.selected_host.storeHours);
 					}
 
+					this.selected_host.latitude ? this.selected_host.latitude = parseFloat(this.selected_host.latitude).toFixed(5) : 
+					this.selected_host.latitude = "-";
+					this.selected_host.longitude ? this.selected_host.longitude = parseFloat(this.selected_host.longitude).toFixed(5) :
+					this.selected_host.longitude = "-";
+
 					this.location_selected = true;
+					this.isOpened = true;
 					this.getLicenseByHostId(this.selected_host.hostId);
 
 				},
@@ -205,6 +216,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 					}, 1000)
 
 					this.map_markers = this.mapMarkersToUI(online);
+					this.selected_host.icon_url = this.map_markers.icon_url;
 				},
 				error => console.log('Error retrieving host license', error)
 			);
@@ -230,7 +242,13 @@ export class HostViewComponent implements OnInit, OnDestroy {
 			this.selected_host.latitude,
 			this.selected_host.longitude,
 			license_online_percentage,
-			icon_url
+			icon_url,
+			this.selected_host.address,
+			this.selected_host.category,
+			this.storehours,
+			this.selected_host.state,
+			this.selected_host.postalCode,
+			this.selected_host.city
 		);
 
 	}
