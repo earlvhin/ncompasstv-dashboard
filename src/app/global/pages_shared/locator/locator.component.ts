@@ -11,7 +11,6 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 export class LocatorComponent implements OnInit {
 	
 	title = 'Locator';
-	is_host_view = true;
 	is_dealer = false;
 
 	constructor(
@@ -28,4 +27,5 @@ export class LocatorComponent implements OnInit {
 		}
 	}
 
+	
 }

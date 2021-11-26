@@ -1,4 +1,4 @@
-<mat-form-field class="full-width custom-autocomplete p-relative" appearance="standard">
+<mat-form-field class="full-width custom-autocomplete p-relative" [appearance]="isLocator ? 'fill':'standard'">
     <mat-label>{{ label }}</mat-label>
 
     <input id="autocomplete-field-paginated" type="text" autocomplete="nope" matInput appearance="fill" class="skip-blur"
@@ -18,7 +18,7 @@
 		(click)="initializeSearch($event)"
 		[required]="required"
 		[disabled]="disabled">
-
+    
     <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
         <div *ngIf="loading_search">
             <div class="py-4 white-bg">

@@ -43,6 +43,8 @@ export class API_HOST {
 	businessName: string;
 	timezoneName: string;
 	others?: any;
+	parsedStoreHours?: any;
+    icon_url?: any;
 }
 
 export class API_SINGLE_HOST {
