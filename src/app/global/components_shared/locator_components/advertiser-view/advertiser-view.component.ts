@@ -150,6 +150,12 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 					this.entered_advertiser_data = response;
 					this.location_selected = true;
 					this.map_markers = this.mapMarkersToUI();
+					this.entered_advertiser_data.icon_url = this.map_markers.icon_url;
+					// this.entered_advertiser_data.forEach(x => {
+					// 	x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
+					// 	x.latitude ? x.latitude = parseFloat(x.latitude).toFixed(5) : "-";
+					// 	x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
+					// });
 				},
 				error => console.log('Error retrieving advertiser by id', error)
 			);
@@ -167,7 +173,13 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 			this.entered_advertiser_data.name,
 			this.entered_advertiser_data.latitude,
 			this.entered_advertiser_data.longitude,
-			icon_url
+			icon_url,
+			this.entered_advertiser_data.address,
+			this.entered_advertiser_data.category,
+			this.entered_advertiser_data.parsedStoreHours,
+			this.entered_advertiser_data.state,
+			this.entered_advertiser_data.postalCode,
+			this.entered_advertiser_data.city
 		);
 	}
 

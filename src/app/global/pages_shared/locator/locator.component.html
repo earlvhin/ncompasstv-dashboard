@@ -1,36 +1,38 @@
 <div class="theme-container">
     <div class="title-section">
-        <div class="d-flex">
-            <div class="flex-even">
-                <h1 class="page-title">{{ title }}</h1>
-            </div>
-            <div class="text-right d-flex">
-				<div class="button-group mb-4 mr-4">
-					<button mat-button mat-raised-button class="theme-btn" (click)="is_host_view = !is_host_view" [ngClass]="!is_host_view ? '_disabled' : ''">
-						Host View
-					</button>
-					<button *ngIf="!is_dealer" mat-button mat-raised-button class="theme-btn" (click)="is_host_view = !is_host_view" [ngClass]="is_host_view ? '_disabled' : ''">
-						Dealer View
-					</button>
-					<button *ngIf="is_dealer" mat-button mat-raised-button class="theme-btn" (click)="is_host_view = !is_host_view" [ngClass]="is_host_view ? '_disabled' : ''">
-						Advertiser View
-					</button>
-				</div>
-            </div>
-        </div>
+		<div class="d-flex">
+			<div class="flex-even">
+				<h1 class="page-title">{{ title }}</h1>
+			</div>
+		</div>
         <hr class="my-4">
     </div>
-	<div *ngIf="!is_dealer">
-		<app-host-view *ngIf="is_host_view; else dealer_view"></app-host-view>
+	<div class="content-section">
+		<div class="row m-0 p-0">
+			<div class="col-lg-12 custom-mat-tab p-0">
+				<mat-tab-group dynamicHeight #tabGroup>
+					<!-- DEALERS TAB -->
+					<mat-tab id="dealers-view-tab" label="Dealers View" *ngIf="!is_dealer">
+						<div class="col-lg-12 pl-0 pr-0 pb-4">
+							<app-dealer-view></app-dealer-view>
+						</div>
+					</mat-tab>
+
+					<!-- HOSTS TAB -->
+					<mat-tab id="hosts-view-tab" label="Hosts View">
+						<div class="col-lg-12 pl-0 pr-0 pb-4">
+							<app-host-view></app-host-view>
+						</div>
+					</mat-tab>
+
+					<!-- ADVERTISERS TAB -->
+					<mat-tab id="advertisers-view-tab" label="Advertisers View" *ngIf="is_dealer">
+						<div class="col-lg-12 pl-0 pr-0 pb-4" >
+							<app-advertiser-view></app-advertiser-view>
+						</div>
+					</mat-tab>
+				</mat-tab-group>
+			</div>
+		</div>
 	</div>
-	<div *ngIf="is_dealer">
-		<app-host-view *ngIf="is_host_view; else advertiser_view"></app-host-view>
-	</div>
-	
-	<ng-template #dealer_view>
-		<app-dealer-view></app-dealer-view>
-	</ng-template>
-	<ng-template #advertiser_view>
-		<app-advertiser-view></app-advertiser-view>
-	</ng-template>
 </div>
