@@ -36,6 +36,7 @@ export class API_HOST {
 	storeHours: string;
 	street: string;
 	tags?: TAG[];
+	tagsToString?: string;
 	totalLicenses: number;
 	totalLicences: number;
 	timeZone: string;

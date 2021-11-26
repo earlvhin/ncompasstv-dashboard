@@ -10,12 +10,13 @@ export interface API_LICENSE_PROPS {
 	alias: string;
 	anydeskId: string;
 	appVersion: string;
+	apps?: any;
 	category: string;
 	contentsUpdated: string;
 	dateCreated: string
 	dateUpdated: string
 	dealerId: string;
-	displayStatus: number;
+	displayStatus?: any;
 	freeStorage: string;
 	hostAddress: string;
 	hostId: string;
@@ -24,14 +25,15 @@ export interface API_LICENSE_PROPS {
 	internetInfo: string;
 	internetSpeed: string;
 	internetType: string;
-	isActivated: number;
+	isActivated?: any;
 	isRegistered: number;
 	licenseId: string;
 	licenseKey: string;
 	macAddress: string;
 	memory: string;
+	password?: string;
 	piSocketId: string;
-	piStatus: number;
+	piStatus?: any;
 	playerSocketId: any;
 	playerStatus: number;
 	resourceSettings: number;
@@ -45,7 +47,8 @@ export interface API_LICENSE_PROPS {
 	serverVersion: string;
 	speedtestSettings: number;
 	storeHours: string;
-	tags: { name: string, tagColor: string }[];
+	tags?: { name: string, tagColor: string }[] | string[];
+	tagsToString?: string;
 	templateId: string;
 	templateName: string;
 	timeIn: string;
@@ -53,6 +56,7 @@ export interface API_LICENSE_PROPS {
 	timezoneName: string;
 	totalStorage: string;
 	uiVersion: string;
+	zone?: string;
 }
 
 interface screenInfo {

@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 import * as moment from 'moment';
@@ -32,12 +33,11 @@ export class LicensesComponent implements OnInit {
 	license_filtered_data: any = [];
 	license_row_slug: string = "host_id";
 	license_row_url: string = `/${this.currentRole}/hosts`;
-	licenses_to_export: any = [];
+	licenses_to_export: API_LICENSE['license'][] = [];
 	no_licenses: boolean = false;
     now: any;
 	paging_data_license: any;
     splitted_text: any;
-	subscription: Subscription = new Subscription();
 	title: string = "Licenses"
 	no_record: boolean;
 	no_case: boolean = true;
@@ -53,23 +53,24 @@ export class LicensesComponent implements OnInit {
 	is_view_only = false;
 
 	license_table_columns = [
-		{ name: '#', sortable: false, no_export: true},
-		{ name: 'Screenshot', sortable: false, no_export: true },
-        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
-		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey'},
-        { name: 'Type', sortable: true, key: 'screenType', column:'ScreenType'},
-		{ name: 'Host', sortable: true, key: 'hostName', column:'HostName' },
-		{ name: 'Alias', sortable: true, key: 'alias', column:'Alias' },
-		{ name: 'Last Push', sortable: true, key: 'contentsUpdated', column:'ContentsUpdated'},
-		{ name: 'Last Online', sortable: true, key: 'timeIn', column:'TimeIn'},
-		{ name: 'Net Type', sortable: true, key:'internetType', column: 'InternetType'},
-		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column: 'InternetSpeed'},
-		{ name: 'Anydesk', sortable: true, key:'anydeskId', column: 'AnydeskId'},
-		{ name: 'Password', sortable: false, key:'password'},
-		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus'},
-		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate' },
-		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated' },
-        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
+		{ name: '#', sortable: false, no_export: true },
+		{ name: 'Screenshot', sortable: false, no_export: true  },
+        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
+		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey' },
+        { name: 'Type', sortable: true, key: 'screenType', column:'ScreenType' },
+		{ name: 'Host', sortable: true, key: 'hostName', column:'HostName'  },
+		{ name: 'Alias', sortable: true, key: 'alias', column:'Alias'  },
+		{ name: 'Last Push', sortable: true, key: 'contentsUpdated', column:'ContentsUpdated' },
+		{ name: 'Last Online', sortable: true, key: 'timeIn', column:'TimeIn' },
+		{ name: 'Net Type', sortable: true, key:'internetType', column: 'InternetType' },
+		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column: 'InternetSpeed' },
+		{ name: 'Anydesk', sortable: true, key:'anydeskId', column: 'AnydeskId' },
+		{ name: 'Password', sortable: false, key:'password' },
+		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus' },
+		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate'  },
+		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated'  },
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true },
+        { name: 'Tags', key: 'tagsToString', no_show: true },
 	];
 
     filters: any = {
@@ -81,7 +82,9 @@ export class LicensesComponent implements OnInit {
         label_zone:"",
         label_dealer: "",
         label_host: ""
-    }
+    };
+
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _dialog: MatDialog,
@@ -94,9 +97,7 @@ export class LicensesComponent implements OnInit {
 
 	ngOnInit() {
 		let status = this._activatedRoute.snapshot.paramMap.get('status');
-		if(status){
-			this.filterTable('status', status === 'Online'? '1' : '0');
-		}
+		if (status) this.filterTable('status', status === 'Online'? '1' : '0');
 		this.dealers_name = this.currentUser.roleInfo.businessName;
         this.sortList('desc')
 		this.getLicenses(1);
@@ -105,14 +106,15 @@ export class LicensesComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
-	filterData(data) {
+	filterData(data: UI_TABLE_LICENSE_BY_HOST[]) {
 		this.filtered_data = data;
 	}
 
-    filterTable(type, value) {
+    filterTable(type: string, value: any) {
         switch(type) {
             case 'status':
                 this.filters.status = value
@@ -147,9 +149,10 @@ export class LicensesComponent implements OnInit {
         this.getLicenses(1);
     }
 	  
-	getTotalCount(id) {
-		this.subscription.add(
-			this._license.get_licenses_total_by_dealer(id).subscribe(
+	getTotalCount(id: string): void {
+
+		this._license.get_licenses_total_by_dealer(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.licenses_count = {
 						basis: data.total,
@@ -174,94 +177,57 @@ export class LicensesComponent implements OnInit {
 						bad_value_label: 'Offline'
 					};
 					
-				}
-			)
-		);
+				},
+				error => console.log('Error retrieving license statistics ', error)
+			);
 	}
 
-	getLicenses(page) {
+	getLicenses(page: number) {
 		this.searching_license = true;
-		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
+
+		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
-					this.initial_load_license = false;
-					this.searching_license = false;
-                    this.paging_data_license = data.paging;
-					if(!data.message) {
-						this.license_data_api = data.paging.entities;
-						this.license_data = this.licenseTable_mapToUI(this.license_data_api);
-						this.filtered_data = this.licenseTable_mapToUI(this.license_data_api);
-						this.license_filtered_data = this.licenseTable_mapToUI(this.license_data_api);
-					} else {
-						if(this.search_data_license == "") {
-							this.no_licenses = true;
-						}
-						this.license_data=[];
+
+					if (data.message) {
+						if (this.search_data_license == "") this.no_licenses = true;
+						this.license_data = [];
 						this.license_filtered_data = [];
+						return;
 					}
-				}
+
+					this.paging_data_license = data.paging;
+					this.license_data_api = data.paging.entities;
+					const licenses = data.paging.entities as API_LICENSE['license'][];
+					const mapped = this.mapToLicensesTable(licenses);
+					this.license_data = [...mapped];
+					this.filtered_data = [...mapped];
+					this.license_filtered_data = [...mapped];
+
+				},
+				error => console.log('Error retrieving licenses ', error)
 			)
-		)
+			.add(() => {
+				this.initial_load_license = false;
+				this.searching_license = false;
+			});
 	}
 
-	licenseFilterData(e) {
-		if (e) {
-			this.search_data_license = e;
-			this.getLicenses(1);
-		} else {
-			this.search_data_license = "";
-			this.getLicenses(1);
-		}
-	}
-
-	sortList(order): void {
-		var filter = {
-			column: 'PiStatus',
-			order: order
-		}
-		this.getColumnsAndOrder(filter)
-	}
-
-    getColumnsAndOrder(data) {
-		this.sort_column = data.column;
-		this.sort_order = data.order;
+	licenseFilterData(keyword = ''): void {
+		this.search_data_license = keyword;
 		this.getLicenses(1);
 	}
 
+	sortList(order: string): void {
+		const filter = { column: 'PiStatus', order: order };
+		this.getColumnsAndOrder(filter)
+	}
 
-	licenseTable_mapToUI(data): UI_TABLE_LICENSE_BY_HOST[] {
-		let count = this.paging_data_license.pageStart;
-		
-		return data.map(
-			i => {
-				return new UI_TABLE_LICENSE_BY_HOST(
-					{ value: i.licenseId, link: null , editable: false, hidden: true },
-					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false },
-					{ 
-						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null,
-						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null, 
-						editable: false, 
-						hidden: false, 
-						isImage: true
-					},
-                    { value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, editable: false, hidden: false, status: true },
-                    { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
-                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? `/${this.currentRole}/hosts/` + i.hostId : null, editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
-                    { value: i.alias ? i.alias : '--', link: `/${this.currentRole}/licenses/` + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
-                    { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
-                    { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
-                    { value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
-                    { value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-                    { value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-                    { value: i.anydeskId ? this.splitKey(i.licenseId) : '--', link: null, editable: false, hidden: false, copy:true, label: 'Anydesk Password' },
-                    { value: i.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
-					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
-					{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
-					{ value: i.piStatus, link: null, editable: false, hidden: true }
-				);
-			}
-		);
+    getColumnsAndOrder(data: { column: string, order: string }) {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.getLicenses(1);
 	}
 
     getLabel(data) {
@@ -323,18 +289,22 @@ export class LicensesComponent implements OnInit {
 		)
 	}
 
-	getDataForExport(id): void {
-		this.subscription.add(
-			this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
+	getDataForExport(id: string): void {
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+
+		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
-                    const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 					this.licenses_to_export = data.licenseTemplateZoneExports;
-					this.licenses_to_export.forEach((item, i) => {
-						this.modifyItem(item);
-						this.worksheet.addRow(item).font ={
-							bold: false
-						};
-					});
+
+					this.licenses_to_export.forEach(
+						(item) => {
+							this.modifyItem(item);
+							this.worksheet.addRow(item).font = { bold: false };
+						}
+					);
+
 					let rowIndex = 1;
 					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
 						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
@@ -348,23 +318,11 @@ export class LicensesComponent implements OnInit {
 					);
 					this.workbook_generation = false;
 				}
-			)
-		);
+			);
+
 	}
 
-	private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
-	}
-
-	modifyItem(item) {
+	modifyItem(item: API_LICENSE['license']) {
         item.zone = this.getZoneHours(item);
 		item.screenType =  this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
@@ -377,6 +335,7 @@ export class LicensesComponent implements OnInit {
         item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
+		item.tagsToString = item.tags.join(',');
 	}
 
     getZoneHours(data) {
@@ -412,8 +371,8 @@ export class LicensesComponent implements OnInit {
         }
     }
 
-    msToTime(input) {
-        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
+    msToTime(input: number) {
+        let totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result = '';
         totalSeconds = input;
         // totalSeconds = input / 1000;
         totalMinutes = totalSeconds / 60;
@@ -421,16 +380,20 @@ export class LicensesComponent implements OnInit {
         seconds = Math.floor(totalSeconds) % 60;
         minutes = Math.floor(totalMinutes) % 60;
         hours = Math.floor(totalHours) % 60;
+
         if (hours !== 0) {
             result += hours+'h ';
             if (minutes.toString().length == 1) {
                 minutes = '0'+minutes;
             }
         }
+
         result += minutes+'m ';
+
         if (seconds.toString().length == 1) {
             seconds = '0'+seconds;
         }
+
         result += seconds + 's';
         return result;
     }
@@ -449,6 +412,51 @@ export class LicensesComponent implements OnInit {
 		});
 		this.worksheet.columns = header;
 		this.getDataForExport(this.currentUser.roleInfo.dealerId);		
+	}
+
+	private getInternetType(value: string): string {
+
+		if (!value) return '--';
+
+		if (value.includes('w')) return 'WiFi';
+
+		if (value.includes('eth')) return 'LAN';
+		
+	}
+
+	private mapToLicensesTable(data: API_LICENSE['license'][]): UI_TABLE_LICENSE_BY_HOST[] {
+		let count = this.paging_data_license.pageStart;
+		
+		return data.map(
+			i => {
+				return new UI_TABLE_LICENSE_BY_HOST(
+					{ value: i.licenseId, link: null , editable: false, hidden: true },
+					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
+					{ value: count++, link: null , editable: false, hidden: false },
+					{ 
+						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null,
+						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace("/API/", "")}` : null, 
+						editable: false, 
+						hidden: false, 
+						isImage: true
+					},
+                    { value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, editable: false, hidden: false, status: true },
+                    { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
+                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? `/${this.currentRole}/hosts/` + i.hostId : null, editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
+                    { value: i.alias ? i.alias : '--', link: `/${this.currentRole}/licenses/` + i.licenseId, editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
+                    { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
+                    { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
+                    { value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
+                    { value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
+                    { value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
+                    { value: i.anydeskId ? this.splitKey(i.licenseId) : '--', link: null, editable: false, hidden: false, copy:true, label: 'Anydesk Password' },
+                    { value: i.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
+					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
+					{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
+					{ value: i.piStatus, link: null, editable: false, hidden: true }
+				);
+			}
+		);
 	}
 
 	protected get currentUser() {

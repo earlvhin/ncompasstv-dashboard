@@ -2,7 +2,7 @@ import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { TitleCasePipe, DatePipe } from '@angular/common'
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver'; 
 import * as moment from 'moment';
@@ -24,9 +24,8 @@ export class HostsComponent implements OnInit {
 	filtered_data: any = [];
 	host_data: any = [];
 	host_filtered_data: any = [];
-    hosts_to_export: any = [];
+    hosts_to_export: API_HOST[] = [];
     initial_load: boolean = true;
-	subscription: Subscription = new Subscription();
 	host_count: any;
 	no_hosts: boolean = false;
     pageSize: number;
@@ -66,35 +65,36 @@ export class HostsComponent implements OnInit {
     protected _unsubscribe = new Subject<void>();
 
     host_table_column = [
-		{ name: '#', no_export: true},
-		{ name: 'Name', sortable: true, key: 'name', column: 'Name'},
-		{ name: 'Address', key: 'address'},
-		{ name: 'City', sortable: true, key: 'city', column: 'City'},
-		{ name: 'Postal Code', key: 'postalCode'},
-		{ name: 'Number of Licenses', sortable: true, key: 'totalLicenses', column: 'TotalLicenses'},
-		{ name: 'Status', key: 'status'},
-        { name: 'Notes', sortable: false, key: 'notes'},
-        { name: 'Others', sortable: false, key: 'others'},
+		{ name: '#', no_export: true },
+		{ name: 'Name', sortable: true, key: 'name', column: 'Name' },
+		{ name: 'Address', key: 'address' },
+		{ name: 'City', sortable: true, key: 'city', column: 'City' },
+		{ name: 'Postal Code', key: 'postalCode' },
+		{ name: 'Number of Licenses', sortable: true, key: 'totalLicenses', column: 'TotalLicenses' },
+		{ name: 'Status', key: 'status' },
+        { name: 'Notes', sortable: false, key: 'notes' },
+        { name: 'Others', sortable: false, key: 'others' },
+        { name: 'Tags', key: 'tagsToString', no_show: true },
 	];
 
     license_table_columns = [
-		{ name: '#', sortable: false, no_export: true},
-		{ name: 'Screenshot', sortable: false, no_export: true },
-        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true},
-		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey'},
-        { name: 'Type', sortable: true, key: 'screenType', column:'ScreenType'},
-		{ name: 'Host', sortable: true, key: 'hostName', column:'HostName' },
-		{ name: 'Alias', sortable: true, key: 'alias', column:'Alias' },
-		{ name: 'Last Push', sortable: true, key: 'contentsUpdated', column:'ContentsUpdated'},
-		{ name: 'Last Online', sortable: true, key: 'timeIn', column:'TimeIn'},
-		{ name: 'Net Type', sortable: true, key:'internetType', column: 'InternetType'},
-		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column: 'InternetSpeed'},
-		{ name: 'Anydesk', sortable: true, key:'anydeskId', column: 'AnydeskId'},
-		{ name: 'Password', sortable: false, key:'password'},
-		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus'},
-		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate' },
-		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated' },
-        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
+		{ name: '#', sortable: false, no_export: true },
+		{ name: 'Screenshot', sortable: false, no_export: true  },
+        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
+		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey' },
+        { name: 'Type', sortable: true, key: 'screenType', column:'ScreenType' },
+		{ name: 'Host', sortable: true, key: 'hostName', column:'HostName'  },
+		{ name: 'Alias', sortable: true, key: 'alias', column:'Alias'  },
+		{ name: 'Last Push', sortable: true, key: 'contentsUpdated', column:'ContentsUpdated' },
+		{ name: 'Last Online', sortable: true, key: 'timeIn', column:'TimeIn' },
+		{ name: 'Net Type', sortable: true, key:'internetType', column: 'InternetType' },
+		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column: 'InternetSpeed' },
+		{ name: 'Anydesk', sortable: true, key:'anydeskId', column: 'AnydeskId' },
+		{ name: 'Password', sortable: false, key:'password' },
+		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus' },
+		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate'  },
+		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated'  },
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true },		
 	];
 
     filters: any = {
@@ -133,7 +133,6 @@ export class HostsComponent implements OnInit {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-		this.subscription.unsubscribe();
 	}
 
     ngAfterContentChecked() : void {
@@ -385,34 +384,41 @@ export class HostsComponent implements OnInit {
 
 	private getDataForExport(): void {
         this.pageSize = 0;
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
         this._host.get_host_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, 1, '', this.pageSize)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => {
-					if(!data.message) {
-						const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-						this.hosts_to_export = data.paging.entities;
-						this.hosts_to_export.forEach((item, i) => {
-							this.worksheet.addRow(item).font ={
-								bold: false
-							};
-						});
-						let rowIndex = 1;
-						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-						}
-						this.workbook.xlsx.writeBuffer()
-							.then((file: any) => {
-								const blob = new Blob([file], { type: EXCEL_TYPE });
-								const filename = this._auth.current_user_value.roleInfo.businessName+'-HOSTS' +'.xlsx';
-								FileSaver.saveAs(blob, filename);
-							}
-						);
-						this.workbook_generation = false;
-					} else {
+				response => {
+
+					if (response.message) {
 						this.hosts_to_export = [];
+						return;
 					}
+
+					const hosts = response.paging.entities as API_HOST[];
+					this.hosts_to_export = this.mapForExport([...hosts]);
+
+					this.hosts_to_export.forEach((item) => {
+						this.worksheet.addRow(item).font = { bold: false };
+					});
+
+					let rowIndex = 1;
+
+					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+					}
+
+					this.workbook.xlsx.writeBuffer()
+						.then((file: any) => {
+							const blob = new Blob([file], { type: EXCEL_TYPE });
+							const filename = this._auth.current_user_value.roleInfo.businessName+'-HOSTS' +'.xlsx';
+							FileSaver.saveAs(blob, filename);
+						}
+					);
+
+					this.workbook_generation = false;
+					
 				}
 			);
 	}
@@ -469,6 +475,10 @@ export class HostsComponent implements OnInit {
 				}
 			);
 
+	}
+
+	private mapForExport(hosts: API_HOST[]): API_HOST[] {
+		return hosts.map(host => { host.tagsToString = host.tags.join(','); return host });
 	}
 
 	private mapToAdvertisersTable(data: API_ADVERTISER[]): UI_ADVERTISER[]  {

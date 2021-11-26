@@ -43,9 +43,9 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
-	get_all_licenses(page, key, column, order, pageSize, status?, activated?, zone?, dealer?, host?) {
+	get_all_licenses(page: number, key: string, column: string, order: string, pageSize: number, status?: string, activated?: boolean, zone?: string, dealer?: string, host?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
         const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
+		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
@@ -132,8 +132,8 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealer_licenses}${id}`, this.httpOptions);
 	}
 	
-    get_license_to_export_duration(id,key,column, order, pageSize?, status?, activate?, zone?, host?) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}&search=${key}&sortColumn=${column}&sortOrder=${order}&pageSize=${pageSize}&piStatus=${status}&active=${activate}&timeZone=${zone}&hostId=${host}`, this.httpOptions);
+    get_license_to_export_duration(id: string, key: string, column: string, order: string, pageSize?: number, status?: string, activate?: boolean, zone?: string, host?: string): Observable<{ licenseTemplateZoneExports: API_LICENSE['license'][] }> {
+		return this._http.get<{ licenseTemplateZoneExports: API_LICENSE['license'][] }>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}&search=${key}&sortColumn=${column}&sortOrder=${order}&pageSize=${pageSize}&piStatus=${status}&active=${activate}&timeZone=${zone}&hostId=${host}`, this.httpOptions);
 	}
 
 	get_license_total_per_dealer(id) {

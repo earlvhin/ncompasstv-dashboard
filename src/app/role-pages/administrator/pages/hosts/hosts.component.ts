@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
@@ -20,12 +21,11 @@ export class HostsComponent implements OnInit {
     filtered_data_host: UI_HOST_VIEW[] = [];
 	hosts$: Observable<API_HOST[]>;
     hosts_data: UI_HOST_VIEW[] = [];
-    hosts_to_export: any = [];
+    hosts_to_export: API_HOST[] = [];
     initial_load_hosts: boolean = true;
 	no_dealer: boolean = false;
     no_host: boolean;
     now: any;
-	subscription: Subscription = new Subscription();
 	tab: any = { tab: 1 };
 	title: string = "Hosts";
 	host_details : any;
@@ -43,17 +43,20 @@ export class HostsComponent implements OnInit {
 	worksheet: any;
 
     hosts_table_column = [
-		{ name: '#', sortable: false, no_export: true},
-        { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true},
-        { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName'},
-        { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName'},
-		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
-		{ name: 'City', sortable: true, column:'City', key: 'city'},
-		{ name: 'State', sortable: true, column:'State', key: 'state'},
-		{ name: 'Postal Code', sortable: true, column:'PostalCode', key:'postalCode'},
-		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName'},
-		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses'},
-	]
+		{ name: '#', sortable: false, no_export: true },
+        { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
+        { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName' },
+        { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName' },
+		{ name: 'Address', sortable: true, column:'Address', key: 'address' },
+		{ name: 'City', sortable: true, column:'City', key: 'city' },
+		{ name: 'State', sortable: true, column:'State', key: 'state' },
+		{ name: 'Postal Code', sortable: true, column:'PostalCode', key:'postalCode' },
+		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName' },
+		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses' },
+		{ name: 'Tags', hidden: true, no_show: true, key:'tagsToString' },
+	];
+
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
@@ -69,7 +72,8 @@ export class HostsComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
     ngAfterContentChecked() : void {
@@ -101,9 +105,10 @@ export class HostsComponent implements OnInit {
   
 	}
 
-	getHostTotal() {
-		this.subscription.add(
-			this._host.get_host_total().subscribe(
+	getHostTotal(): void {
+
+		this._host.get_host_total().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.host_details = {
 						basis: data.total,
@@ -119,23 +124,25 @@ export class HostsComponent implements OnInit {
 						new_last_week_value_label: 'Host(s)',
 						new_last_week_value_description: 'New last week'
 					}					
-				}
-			)
-		)
+				},
+				error => console.log('Error retrieving host total', error)
+			);
+
 	}
 
-	pageRequested(e) {
+	pageRequested(page: number) {
 		this.dealers_data = [];
 		this.searching = true;
-		this.subscription.add(
-			this._dealer.get_dealers_with_host(e, this.search_data).subscribe(
+
+		this._dealer.get_dealers_with_host(page, this.search_data).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					this.initial_load = false;
 					this.searching = false;
-					this.setData(data)
-				}
-			)
-		)
+					this.setData(data);
+				},
+				error => console.log('Error retrieving dealer hosts', error)
+			);
 	}
 
 	setData(data) {
@@ -202,31 +209,31 @@ export class HostsComponent implements OnInit {
         }
     }
 
-    getHosts(page) {
+    getHosts(page: number): void {
         this.searching_hosts = true;
 		this.hosts_data = [];
-        this.subscription.add(
-			this._host.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.subscribe(
-					response => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.hosts_mapToUIFormat(response.host);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-
+		this._host.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
 					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				})
-		);
+
+					this.paging_data_host = response.paging;
+					const mappedData = this.hosts_mapToUIFormat(response.host);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+
+				}
+			)
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			});
 	}
 
     hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
@@ -290,38 +297,50 @@ export class HostsComponent implements OnInit {
 		this.getDataForExport(tab);		
 	}
 
-    getDataForExport(tab): void {
-        switch(tab) {
+    getDataForExport(tab: string): void {
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+
+        switch (tab) {
             case 'hosts': 
-                this._host.get_host_by_page(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe(
-                    data => {
-                        if(!data.message) {
-                            const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-                            this.hosts_to_export = data.host;
-                            this.hosts_to_export.forEach((item, i) => {
-                                // this.modifyItem(item);
-                                this.worksheet.addRow(item).font ={
-                                    bold: false
-                                };
-                            });
-                            let rowIndex = 1;
-                            for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-                                this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-                            }
-                            this.workbook.xlsx.writeBuffer()
-                                .then((file: any) => {
-                                    const blob = new Blob([file], { type: EXCEL_TYPE });
-                                    const filename = 'Hosts' +'.xlsx';
-                                    FileSaver.saveAs(blob, filename);
-                                }
-                            );
-                            this.workbook_generation = false;
-                        } else {
-                            this.hosts_to_export = [];
-                        }
-                    }
-                )
+                this._host.get_host_by_page(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						response => {
+
+							if (response.message) {
+								this.hosts_to_export = [];
+								return;
+							}
+
+							const mutatedResponse = this.modifyDataForExport([...response.host]);
+							this.hosts_to_export = mutatedResponse;
+
+							this.hosts_to_export.forEach(
+								(item) => {
+									this.worksheet.addRow(item).font = { bold: false };
+								}
+							);
+
+							let rowIndex = 1;
+
+							for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+								this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+							}
+
+							this.workbook.xlsx.writeBuffer()
+								.then((file: any) => {
+									const blob = new Blob([file], { type: EXCEL_TYPE });
+									const filename = 'Hosts' +'.xlsx';
+									FileSaver.saveAs(blob, filename);
+								}
+							);
+
+							this.workbook_generation = false;
+						}
+					);
+
                 break;
+
             default:
         }
 	}
@@ -339,5 +358,9 @@ export class HostsComponent implements OnInit {
 
 	private get currentRole() {
 		return this._auth.current_role;
+	}
+
+	private modifyDataForExport(data: API_HOST[]): API_HOST[] {
+		return data.map(host => { host.tagsToString = host.tags.join(','); return host });
 	}
 }

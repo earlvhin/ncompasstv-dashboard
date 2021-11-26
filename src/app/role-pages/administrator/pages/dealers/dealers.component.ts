@@ -5,9 +5,10 @@ import { Subject } from 'rxjs';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { LicenseModalComponent } from '../../../../global/components_shared/license_components/license-modal/license-modal.component';
-import { StatisticsService } from '../../../../global/services/statistics-service/statistics.service';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { StatisticsService } from 'src/app/global/services/statistics-service/statistics.service';
+import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
+import { API_EXPORT_DEALER } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-dealers',
@@ -18,7 +19,7 @@ import { StatisticsService } from '../../../../global/services/statistics-servic
 export class DealersComponent implements OnInit, OnDestroy {
 	title: string = "Dealers";
 	dealer_stats: any;
-	dealers_to_export: any = [];
+	dealers_to_export: API_EXPORT_DEALER[] = [];
 	update_info: boolean = false;
 	workbook: any;
 	workbook_generation: boolean = false;
@@ -29,7 +30,8 @@ export class DealersComponent implements OnInit, OnDestroy {
 		{ name: 'Business Name', key: 'businessName'},
 		{ name: 'Contact Person', key: 'contactPerson'},
 		{ name: 'Age', key: 'monthAsDealer'},
-		{ name: 'Player Count', key: 'playerCount', no_show: true},
+		{ name: 'Tags', key: 'tagsToString' },
+		{ name: 'Player Count', key: 'playerCount', no_show: true },
 		{ name: 'Total', key: 'totalLicenses'},
 		{ name: 'Inactive', key: 'totalLicensesInactive'},
 		{ name: 'Online', key: 'totalLicensesOnline'},
@@ -82,7 +84,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 
 		});
 
-		const first_column = ['Dealer Alias','Business Name','Contact Person','Age','Player Count','Licenses','','','', 'Hosts','','', 'Advertisers'];
+		const first_column = [ 'Dealer Alias','Business Name','Contact Person','Age', 'Tags', 'Player Count','Licenses','','','Hosts','','', 'Advertisers' ];
 		this.worksheet.columns = header;
 		this.worksheet.duplicateRow(1, true);
 		this.worksheet.getRow(1).values = [];
@@ -90,14 +92,15 @@ export class DealersComponent implements OnInit, OnDestroy {
 		this.worksheet.getRow(1).height = 25;
 		this.worksheet.getRow(2).height = 20;
 		this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
-		this.worksheet.mergeCells('F1:I1');
-		this.worksheet.mergeCells('J1:L1');
-		this.worksheet.mergeCells('M1:N1');
-		this.worksheet.mergeCells('A1:A2');
-		this.worksheet.mergeCells('B1:B2');
-		this.worksheet.mergeCells('C1:C2');
-		this.worksheet.mergeCells('D1:D2');
-		this.worksheet.mergeCells('E1:E2');
+		this.worksheet.mergeCells('A1:A2'); // Dealer AliAs
+		this.worksheet.mergeCells('B1:B2'); // Business Name
+		this.worksheet.mergeCells('C1:C2'); // Contact Person
+		this.worksheet.mergeCells('D1:D2'); // Age
+		this.worksheet.mergeCells('E1:E2'); // Tags
+		this.worksheet.mergeCells('F1:F2'); // Player Count
+		this.worksheet.mergeCells('G1:I1'); // Licenses
+		this.worksheet.mergeCells('J1:L1'); // Hosts
+		this.worksheet.mergeCells('M1:O1'); // Advertisers
 
 		this.worksheet.getRow(1).font =  {
 			bold: true,
@@ -152,10 +155,12 @@ export class DealersComponent implements OnInit, OnDestroy {
 					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 					this.dealers_to_export = response;
 
-					this.dealers_to_export.forEach((item, i) => {
-						this.modifyItem(item);
-						this.worksheet.addRow(item).font = { bold: false };
-					});
+					this.dealers_to_export.forEach(
+						dealer => {
+							this.modifyExportData(dealer);
+							this.worksheet.addRow(dealer).font = { bold: false };
+						}
+					);
 
 					let rowIndex = 1;
 					
@@ -177,9 +182,10 @@ export class DealersComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	private modifyItem(item: { totalScheduled: number, monthAsDealer: string }): void {
+	private modifyExportData(item: API_EXPORT_DEALER): void {
 		item.totalScheduled = 0;
 		item.monthAsDealer = `${item.monthAsDealer} month(s)`;
+		item.tagsToString = item.tags.join(',');
 	}
 
 }

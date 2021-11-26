@@ -6,6 +6,7 @@ export * from './api_dealer.model';
 export * from './api_edit-screen.model';
 export * from './api_feed.model';
 export * from './api_filters.model';
+export * from './api_export-dealer.model';
 export * from './api_host.model';
 export * from './api_host-content.model';
 export * from './api_host-file.model'

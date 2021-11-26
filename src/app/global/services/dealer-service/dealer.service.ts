@@ -2,9 +2,10 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import 'rxjs/add/operator/map'
 
-import { API_DEALER, API_FILTERS } from 'src/app/global/models';
+import { API_DEALER, API_EXPORT_DEALER, API_FILTERS } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { environment } from 'src/environments/environment';
+import { Observable } from 'rxjs';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 
@@ -54,8 +55,8 @@ export class DealerService {
 		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_dealers_content_metrics}`, data);
 	}
 
-	export_dealers() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealers}`, this.httpOptions).map(data => data.dealers);
+	export_dealers(): Observable<API_EXPORT_DEALER[]> {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealers}`, this.httpOptions).map(response => response.dealers);
 	}
 
 	get_dealers() {
