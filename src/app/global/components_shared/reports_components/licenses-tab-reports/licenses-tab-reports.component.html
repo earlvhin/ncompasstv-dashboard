@@ -1,14 +1,15 @@
-<div class="statistics-graph col-lg-12 p-0 flex" *ngIf="value_graph.length > 0; else spinner">
+<div class="statistics-graph col-lg-12 p-0 flex" *ngIf="value_graph.length > 0 || value_graph_detailed.length > 0; else spinner">
     <div class="col-lg-5">
         <mat-card class="card-graph">
-            <app-data-statistics-card *ngIf="value_graph.length > 0"
+            <app-data-statistics-card *ngIf="value_graph_detailed.length > 0"
                 [id]="'total-view'"
                 [total]="total"
-                [label_array]="label_graph"
-                [value_array]="value_graph"
-                [whole_data]="licenses_graph_data"
+                [label_array]="label_graph_detailed"
+                [value_array]="value_graph_detailed"
+                [whole_data]="licenses_graph_data_detailed"
                 [sub_title]="sub_title"
-                [no_click]="false">
+                [no_click]="false"
+                (click_graph)="getGraphPoints($event)">
             </app-data-statistics-card>
         </mat-card>
     </div>
@@ -23,11 +24,12 @@
             [sub_title]="sub_title_detailed"
             [id]="'average-view'"
             [total]="total_detailed"
-            [label_array]="label_graph_detailed"
-            [value_array]="value_graph_detailed"
+            [label_array]="label_graph"
+            [value_array]="value_graph"
             [whole_data]="licenses_graph_data"
             [generate_chart]="generate"
-            [installation]="false">
+            [installation]="false"
+            [detailed]="true">
             </app-data-statistics-card-with-picker>
         </mat-card>
     </div>

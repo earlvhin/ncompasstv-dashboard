@@ -32,7 +32,13 @@
                 [active_label]="dealer_stats.active_label"
                 [inactive]="dealer_stats.inactive"
                 [inactive_label]="dealer_stats.inactive_label"
-                [icon]="dealer_stats.icon">
+                [icon]="dealer_stats.icon"
+                [sub_label_left]="'New this week'"
+                [sub_label_left_value]="dealer_stats.this_week"
+                [sub_label_left_icon]="'fas fa-arrow-up'"
+                [sub_label_right]="'New last week'"
+                [sub_label_right_value]="dealer_stats.last_week"
+                [sub_label_right_icon]="'fas fa-arrow-up'">
                 </app-data-quick-stats>
             </div>
             <div class="col-lg-3">
@@ -43,7 +49,13 @@
                 [active_label]="host_stats.active_label"
                 [inactive]="host_stats.inactive"
                 [inactive_label]="host_stats.inactive_label"
-                [icon]="host_stats.icon"></app-data-quick-stats>
+                [icon]="host_stats.icon"
+                [sub_label_left]="'New this week'"
+                [sub_label_left_value]="host_stats.this_week"
+                [sub_label_left_icon]="'fas fa-arrow-up'"
+                [sub_label_right]="'New last week'"
+                [sub_label_right_value]="host_stats.last_week"
+                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
             </div>
             <div class="col-lg-3">
                 <app-data-quick-stats
@@ -53,7 +65,13 @@
                 [active_label]="advertiser_stats.active_label"
                 [inactive]="advertiser_stats.inactive"
                 [inactive_label]="advertiser_stats.inactive_label"
-                [icon]="advertiser_stats.icon"></app-data-quick-stats>
+                [icon]="advertiser_stats.icon"
+                [sub_label_left]="'New this week'"
+                [sub_label_left_value]="advertiser_stats.this_week"
+                [sub_label_left_icon]="'fas fa-arrow-up'"
+                [sub_label_right]="'New last week'"
+                [sub_label_right_value]="advertiser_stats.last_week"
+                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
             </div>
             <div class="col-lg-3">
                 <app-data-quick-stats
@@ -63,7 +81,13 @@
                 [active_label]="license_stats.active_label"
                 [inactive]="license_stats.inactive"
                 [inactive_label]="license_stats.inactive_label"
-                [icon]="license_stats.icon"></app-data-quick-stats>
+                [icon]="license_stats.icon"
+                [sub_label_left]="'New this week'"
+                [sub_label_left_value]="license_stats.this_week"
+                [sub_label_left_icon]="'fas fa-arrow-up'"
+                [sub_label_right]="'New last week'"
+                [sub_label_right_value]="license_stats.last_week"
+                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
             </div>
         </div>
         <div class="col-lg-12 flex p-0 mt-4">
@@ -164,57 +188,6 @@
                             </div>
                         </div>
                     </div>
-                </mat-card>
-            </div>
-        </div>
-
-        <div class="col-lg-12 flex p-0 mt-4">
-            <div class="col-lg-3">
-                <mat-card class="card-graph">
-                    <app-data-statistics-card
-                        [id]="'dealer-view'"
-						[label_array]="['New Last Week', 'New This Week']"
-						[value_array]="[dealer_stats.last_week,dealer_stats.this_week]"
-                        [no_click]="true"
-                        [total]="dealer_stats.total_label"
-                        [sub_title]="'Graph for New Dealers this and last week'">
-                    </app-data-statistics-card>
-                </mat-card>
-            </div>
-            <div class="col-lg-3">
-                <mat-card class="card-graph">
-                    <app-data-statistics-card
-                        [id]="'host-view'"
-						[label_array]="['New Last Week', 'New This Week']"
-						[value_array]="[host_stats.last_week,host_stats.this_week]"
-                        [no_click]="true"
-                        [total]="host_stats.total_label"
-                        [sub_title]="'Graph for New Hosts this and last week'">
-                    </app-data-statistics-card>
-                </mat-card>
-            </div>
-            <div class="col-lg-3">
-                <mat-card class="card-graph">
-                    <app-data-statistics-card
-                        [id]="'advertiser-view'"
-						[label_array]="['New Last Week', 'New This Week']"
-						[value_array]="[advertiser_stats.last_week,advertiser_stats.this_week]"
-                        [no_click]="true"
-                        [total]="advertiser_stats.total_label"
-                        [sub_title]="'Graph for New Advertisers this and last week'">
-                    </app-data-statistics-card>
-                </mat-card>
-            </div>
-            <div class="col-lg-3">
-                <mat-card class="card-graph">
-                    <app-data-statistics-card
-                        [id]="'license-view'"
-						[label_array]="['New Last Week', 'New This Week']"
-						[value_array]="[license_stats.last_week,license_stats.this_week]"
-                        [no_click]="true"
-                        [total]="license_stats.total_label"
-                        [sub_title]="'Graph for New Licenses this and last week'">
-                    </app-data-statistics-card>
                 </mat-card>
             </div>
         </div>

@@ -232,6 +232,9 @@ export class HostsComponent implements OnInit {
 	}
 
 	getHostColumnsAndOrder(data: { column: string, order: string }) {
+	    if(data.column === "TotalLicenses") {
+			data.column = "TotalLicences";
+		}
 		this.host_sort_column = data.column;
 		this.host_sort_order = data.order;
 		this.getHosts(1);
