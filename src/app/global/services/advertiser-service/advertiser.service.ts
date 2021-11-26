@@ -9,8 +9,12 @@ import { API_ADVERTISER, PAGING } from 'src/app/global/models';
 })
 
 export class AdvertiserService extends BaseService {
-	get_advertisers() {
-		return this.getRequest(`${this.getters.api_get_advertisers}`).map(data => data.advertisers);
+	get_advertisers(page: number, search: string, sortColumn?: string, sortOrder?: string) {
+		// return this.getRequest(`${this.getters.api_get_advertisers}`).map(data => data.advertisers);
+        const base = `${this.getters.api_get_advertisers}`;
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder });
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 	
 	get_advertisers_total() {
