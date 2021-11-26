@@ -13,6 +13,8 @@ import { API_ADVERTISER } from 'src/app/global/models/api_advertiser.model';
 	styleUrls: ['./advertisers.component.scss']
 })
 export class AdvertisersComponent implements OnInit {
+    @Input() call_to_other_page: boolean = false;
+
     advertiser_table_column: any = {};
 	advertiser_stats: any;
 	title: string = "Advertisers";
@@ -26,10 +28,9 @@ export class AdvertisersComponent implements OnInit {
 	searching: boolean = false;
 	initial_load: boolean = true;
 	search_data: string = "";
+	search_field_placeholder = !this.call_to_other_page ? 'Search Dealer Alias, Business Name, or #Tag' : 'Search Advertiser Name or Business Name';
     sort_column: string = '';
 	sort_order: string = '';
-
-    @Input() call_to_other_page: boolean = false;
 
 	constructor(
 		private _advertiser: AdvertiserService,

@@ -62,7 +62,7 @@
                     <div class="col-lg-4">
                         <app-search-field
                             *ngIf="!initial_load"
-                            [form_title]="{{!call_to_other_page: 'Search Dealer Alias, Business Name, or #Tag': 'Search Advertiser Name or Business Name'}}"
+                            [form_title]="search_field_placeholder"
                             [placeholder]="'Example: N-Compass'"
                             [data_reference]="dealers_with_advertiser"
                             [primary_keyword]="'name'"
