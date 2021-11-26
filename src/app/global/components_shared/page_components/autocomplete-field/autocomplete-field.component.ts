@@ -39,6 +39,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	@Input() initial_load: boolean;
 	@Input() reset_value: boolean;
 	@Input() type?: string;
+	@Input() isLocator?: boolean;
 
 	view_value: string;
 	search_result: Array<any>;
