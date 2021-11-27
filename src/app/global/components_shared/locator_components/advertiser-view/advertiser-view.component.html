@@ -42,7 +42,7 @@
 			<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
 				<agm-marker *ngIf="map_markers as h" [latitude]="h.latitude" [longitude]="h.longitude" [agmFitBounds]="true"
 					[iconUrl]="h.icon_url">
-					<agm-info-window [isOpen]="expansion_id == h.hostId" #window>
+					<agm-info-window #window>
 						<h4 class="font-weight-bold">{{ h.name }}</h4>
 						<div class="mt-2">
 							<tr>
