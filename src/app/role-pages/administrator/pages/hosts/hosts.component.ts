@@ -42,6 +42,17 @@ export class HostsComponent implements OnInit {
 	workbook_generation: boolean = false;
 	worksheet: any;
 
+	dealers_table_columns = [
+		'#',
+		'Dealer Alias',
+		'Business Name',
+		'Contact Person',
+		'Total',
+		'Active',
+		'To Install',
+		'Recently Added Host'
+	];
+
     hosts_table_column = [
 		{ name: '#', sortable: false, no_export: true },
         { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },

@@ -1,33 +1,160 @@
 <div class="content-section">
-	<div class="col-lg-12">
-		<div class="row mb-2">
-			<div class="col-lg-4">
-				<app-autocomplete-field [data_reference]="hosts_data" [primary_keyword]="primaryKeyword" [key_of_value]="'hostId'"
-					(data_value)="onSelectHost($event)" [required]="true" [label]="'Type in a Host name here'" [paging]="paging"
-					(call_next_page)="searchBoxTrigger($event)" [loading_data]="loading_data" (searched)="searchData($event)"
+	<div class="row" *ngIf="!loading_hosts; else loader">
+		<div class="col-lg-6" >
+			<ng-container *ngIf="hosts.length > 0; else no_host">
+				<app-autocomplete-field
+					[data_reference]="hosts_data"
+					[primary_keyword]="'hostName'"
+					[key_of_value]="'hostId'"
+					(data_value)="onSelectHost($event)"
+					[required]="true"
+					[label]="'Type in a Host name here'"
+					[paging]="paging"
+					(call_next_page)="searchBoxTrigger($event)"
+					[loading_data]="loading_data"
+					(searched)="searchData($event)"
 					[loading_search]="loading_search">
 				</app-autocomplete-field>
-			</div>
-			<div class="col-lg-8">
-				<div class="float-container d-flex">
-					<div class="d-flex align-items-center mr-2">
-						<p class="sm-text">LEGEND:</p>
+
+				<mat-card class="p-4" *ngIf="selected_host as host; else no_record">
+
+					<!-- HOST DETAILS -->
+					<div class="align-items-center d-flex mb-3">
+						<div class="flex-even">
+							<h3>{{ host.name }}</h3>
+							<p class="sm-text">{{ host.address }}, {{ host.state }} {{ host.postalCode }}</p>
+						</div>
+						<div class="text-right">
+							<span class="sm-text">{{ host.category }}</span>
+						</div>
 					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_all.png" alt="online-all">
-						<p class="sm-text ml-1">All licenses are online</p>
+
+					<hr>
+
+					<!-- DEALER DETAILS -->
+					<div class="row">
+						<div class="col-lg">
+							<span class="sm-text w-100">Dealer</span>
+							<p>
+								<a [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
+									{{ host_dealer.businessName }}
+								</a>
+							</p>
+						</div>
+						<div class="col-lg">
+							<span class="sm-text w-100">Dealer Alias</span>
+							<p>
+								<a [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
+									{{ host_dealer.dealerIdAlias }}
+								</a>
+							</p>
+						</div>
 					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all">
-						<p class="sm-text ml-1">More than 75% of licenses are online</p>
+
+					<br>
+
+					<!-- LATITUDE AND LONGITUDE -->
+					<div class="row">
+						<div class="col-lg">
+							<span class="sm-text w-100">Latitude</span>
+							<p>{{ host.latitude || '--' }}</p>
+						</div>
+
+						<div class="col-lg">
+							<span class="sm-text w-100">Longitude</span>
+							<p>{{ host.longitude || '--' }}</p>
+						</div>
 					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_few.png" alt="online-all">
-						<p class="sm-text ml-1">Less than 75% of licenses are online</p>
+
+					<hr>
+
+					<!-- LICENSES -->
+					<div class="row licenses">
+						<div class="col-lg" *ngIf="licenses">
+							<span class="sm-text w-100">Licenses</span>
+							<ul *ngIf="licenses.length > 0">
+								<li *ngFor="let license of licenses">
+									<a [routerLink]="getLink('licenses', license.licenseId)" target="_blank">
+										{{ (license.alias && license.alias.length > 0) ? license.alias : license.licenseKey }}
+									</a>
+								</li>
+							</ul>
+						</div>
 					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/offline.png" alt="online-all">
-						<p class="sm-text ml-1">All licenses are offline</p>
+
+					<hr>
+
+					<!-- STORE HOURS -->
+					<div class="row">
+						<div class="col-lg-12">
+							<div *ngFor="let ops of storehours" class="bg-gray mb-3 p-3 border-bottom">
+								<div class="mr-4">
+									<p class="text-primary font-weight-md">{{ ops.day }}</p>
+								</div>
+								<div class="flex-even">
+									<ul class="list-unstyled p-0 m-0">
+										<li *ngFor="let hrs of ops.periods">
+											<div class="d-flex">
+												<div class="flex-even">
+													<span class="sm-text">Open</span>
+													<p>{{ hrs.open }}</p>
+												</div>
+												<div class="flex-even">
+													<span class="sm-text">Close</span>
+													<p>{{ hrs.close }}</p>
+												</div>
+											</div>
+										</li>
+									</ul>
+								</div>
+							</div>
+						</div>
+					</div>
+
+				</mat-card>
+			</ng-container>
+		</div>
+
+		<div class="col-6 col-lg" *ngIf="hosts.length > 0">
+			<mat-card class="mb-4" *ngIf="licenses; else no_host_selected">
+				<ng-container *ngIf="!loading_license_count; else loader_sm">
+					<app-data-card-compare  
+						*ngIf="license_card"
+						[compare_basis]="license_card.basis" 
+						[compare_basis_label]="license_card.basis_label"
+						[good_value]="license_card.good_value" 
+						[good_value_label]="license_card.good_value_label"
+						[bad_value]="license_card.bad_value" 
+						[bad_value_label]="license_card.bad_value_label">
+					</app-data-card-compare>
+				</ng-container>
+			</mat-card>
+			<div class="row mb-4">
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/online_all.png" alt="online-all">
+						<p class="sm-text ml-2">All licenses are online</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/online_many.png" alt="online-all">
+						<p class="sm-text ml-2">More than 75% of licenses are online</p>
+					</div>
+				</div>
+				
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/online_few.png" alt="online-all">
+						<p class="sm-text ml-2">Less than 75% of licenses are online</p>
+					</div>
+				</div>
+
+				<div class="col-lg-3">
+					<div class="d-flex align-items-center">
+						<img src="assets/media-files/markers/offline.png" alt="online-all">
+						<p class="sm-text ml-2">All licenses are offline</p>
 					</div>
 				</div>
 			</div>
@@ -85,11 +212,11 @@
 						<ng-container *ngIf="!loading_hosts; else loader">
 								<ng-container *ngIf="hosts.length > 0; else no_host">
 									<mat-card class="p-4 search-result" *ngIf="selected_host as host;">
-									
+
 										<!-- HOST DETAILS -->
 										<div class="align-items-center d-flex mb-3">
 											<div class="mr-1">
-												<img class="map-header-status" [src]="host.icon_url" [alt]="Status">
+												<img class="map-header-status" [src]="host.icon_url" alt="Status">
 											</div>
 											<div class="flex-even">
 												<h3>{{ host.name }}</h3>
