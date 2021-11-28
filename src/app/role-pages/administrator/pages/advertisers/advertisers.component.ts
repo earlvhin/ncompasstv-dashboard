@@ -37,6 +37,7 @@ export class AdvertisersComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+        console.log("OTHER", this.call_to_other_page)
 		this.pageRequested(1);
 		this.getAdvertiserTotal();
 	}
@@ -182,4 +183,12 @@ export class AdvertisersComponent implements OnInit {
 			}
 		)
 	}
+
+    getSearchLabel() {
+        if(this.call_to_other_page) {
+            return 'Search Advertiser Name or Business Name'
+        } else {
+            return 'Search Dealer Alias, Business Name, or #Tag'
+        }
+    }
 }
