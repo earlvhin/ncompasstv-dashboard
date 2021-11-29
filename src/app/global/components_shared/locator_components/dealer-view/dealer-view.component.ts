@@ -304,10 +304,12 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.filterStatus = value;
 		this.filterLabelStatus = value == 1? 'Online': 'Offline';
 		this.selected_dealer_hosts = this.unfiltered_dealer_hosts;
+		this.selected_licenses = this.unfiltered_licenses;
 		this.selected_dealer_hosts.forEach(x => {
 			this.getLicenseByHost(x.hostId);
 		});
 		this.filtered_licenses = this.selected_licenses.filter(x => x.piStatus === value);
+		this.selected_licenses = this.filtered_licenses;
 		if(value == 1){
 			this.online_licenses = this.filtered_licenses.length;
 		}
@@ -328,6 +330,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.filterStatus = "";
 		this.filterLabelStatus = "";
 		this.selected_dealer_hosts = this.unfiltered_dealer_hosts;
+		this.selected_licenses = this.unfiltered_licenses;
 		this.selected_dealer_hosts.forEach(x => {
 		 	this.getLicenseByHost(x.hostId);
 		 });
