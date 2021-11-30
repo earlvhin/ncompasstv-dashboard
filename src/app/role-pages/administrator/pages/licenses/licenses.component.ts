@@ -120,7 +120,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Password', sortable: false, key:'password'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate' },
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column:'DateCreated' },
-		{ name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
+		{ name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true },		
 		{ name: 'Tags', key:'tagsToString', no_show: true },
 	];
 
@@ -508,7 +508,7 @@ export class LicensesComponent implements OnInit {
 
         switch (tab) {
             case 'licenses':
-                this._license.get_all_licenses(1, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host)
+                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						data => {
@@ -596,26 +596,6 @@ export class LicensesComponent implements OnInit {
         
 	}
 
-	modifyItem(item) {
-        console.log("item",item)
-        item.zone = this.getZoneHours(item);
-        item.piVersion = item.apps ? item.apps.rpi_model : '';
-        item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
-        item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
-        item.piStatus =  item.piStatus == 0 ? 'Offline':'Online';
-        item.screenType =  this._title.transform(item.screenType);
-        item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
-        item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a'): '';
-        item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
-        item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
-        item.internetType = this.getInternetType(item.internetType);
-        item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
-        item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
-        var parse_version = JSON.parse(item.appVersion);
-		item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
-		item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
-	}
-
     getZoneHours(data) {
         if(data.templateName == 'Fullscreen') {
             return "Main: " + this.msToTime(data.templateMain)
@@ -634,11 +614,9 @@ export class LicensesComponent implements OnInit {
                 data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
             } 
             if (data.templateLowerLeft != 'NO DATA') {
-                console.log("LL")
                 data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
             } 
             if (data.templateMain != 'NO DATA') {
-                console.log("M")
                 data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
             } 
             if (data.templateUpperLeft != 'NO DATA') {
@@ -717,6 +695,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapLicensesForExport(item) {
+        item.zone = this.getZoneHours(item);
         item.piVersion = item.apps ? item.apps.rpi_model : '';
         item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
         item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';

@@ -49,8 +49,16 @@ export interface API_LICENSE_PROPS {
 	storeHours: string;
 	tags?: { name: string, tagColor: string }[] | string[];
 	tagsToString?: string;
+	templateBackground: string;
+	templateBottom: string;
+	templateHorizontal: string;
+	templateHorizontalSmall: string;
 	templateId: string;
+	templateLowerLeft: string;
+	templateMain: string;
 	templateName: string;
+	templateUpperLeft: string;
+	templateVertical: string;
 	timeIn: string;
 	timeOut: string;
 	timezoneName: string;
