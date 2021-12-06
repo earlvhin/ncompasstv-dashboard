@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import * as moment from 'moment-timezone';
 
-import { API_DEALER, HOST_LICENSE_STATISTICS, TAG, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_DEALER, API_SINGLE_HOST, HOST_LICENSE_STATISTICS, TAG, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { EditSingleAdvertiserComponent } from 'src/app/global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from 'src/app/global/pages_shared/edit-single-dealer/edit-single-dealer.component';
@@ -25,10 +25,10 @@ export class BannerComponent implements OnInit, OnDestroy {
 	@Input() single_name: string;
 	@Input() single_desc: string;
 	@Input() dealer_data: any;
-	@Input() host_data: any;
+	@Input() host_data: API_SINGLE_HOST;
 	@Input() advertiser_data: any;
     @Input() refresh_banner: boolean;
-	@Input() single_host_data: any;
+	@Input() single_host_data: { dealer_id: string, host_id: string };
 	@Input() host_license_count: HOST_LICENSE_STATISTICS;
 	@Input() single_advertiser: any;
 	@Input() single_host_controls: boolean;
@@ -74,10 +74,10 @@ export class BannerComponent implements OnInit, OnDestroy {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		if (this.host_data) {
-			this.category = this._titlecase.transform(this.host_data.category);
+			this.category = this._titlecase.transform(this.host_data.host.category);
 			
-			if (this.host_data.storeHours) {
-				this.business_hours = JSON.parse(this.host_data.storeHours);
+			if (this.host_data.host.storeHours) {
+				this.business_hours = JSON.parse(this.host_data.host.storeHours);
 
 				for (let i = 0; i < this.business_hours.length; i++) {
 					if (this.business_hours[i].periods.length > 0) this.count = this.count + 1;
@@ -128,20 +128,20 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 	onShowNotes(button) {
         if(button == 'notes') {
-            this.showNotesModal('Notes', this.host_data.notes, 'textarea', 500);
+            this.showNotesModal('Notes', this.host_data.host.notes, 'textarea', 500);
         } else {
-            this.showNotesModal('Others', this.host_data.others, 'textarea', 500);
+            this.showNotesModal('Others', this.host_data.host.others, 'textarea', 500);
         }
 	}
 
     partialNotes(button) {
         if (button == 'notes') {
-            const notes = this.host_data.notes;
+            const notes = this.host_data.host.notes;
             if (!notes || notes.trim().length <= 0)
             return '';
             return notes.substr(0, 41);
         } else {
-            const others = this.host_data.others;
+            const others = this.host_data.host.others;
             if (!others || others.trim().length <= 0)
             return '';
             return others.substr(0, 41);
@@ -259,7 +259,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 		switch (this.view) {
 			case 'host':
-				tags = this.host_data.tags;
+				tags = this.host_data.host.tags;
 				break;
 			case 'advertiser':
 				tags = this.advertiser_data.tags;
