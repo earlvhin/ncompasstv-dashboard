@@ -24,7 +24,7 @@ export class AdministratorLayoutComponent implements OnInit {
 		{ path: 'licenses', label: 'Licenses', icon: 'fas fa-barcode'},
 		{ path: 'advertisers', label: 'Advertisers', icon: 'fas fa-ad'},
 		{ path: 'locator', label: 'Locator', icon: 'fas fa-map-marker'},
-		{ path: 'tags', label: 'Tags', icon: 'fas fa-stream'},
+		{ path: 'tags', label: 'Tags', icon: 'fas fa-tags'},
 		{ path: 'media-library', label: 'Media Library', icon: 'fas fa-photo-video'},
 		{ path: 'feeds', label: 'Feeds', icon: 'fas fa-newspaper'},
 		{ path: 'playlists', label: 'Playlists', icon: 'fas fa-play'},
