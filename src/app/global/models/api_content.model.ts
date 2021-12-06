@@ -36,6 +36,7 @@ export class API_CONTENT {
 	uploaded_by?: any;
 	classification?: string;
 	frequency: number;
+	parentId?: string;
 }
 
 export class API_CONTENT_PLAY_COUNT {
