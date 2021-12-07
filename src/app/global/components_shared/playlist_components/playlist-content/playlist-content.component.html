@@ -1,6 +1,11 @@
 <div class="bg-white border m-1 playlist-content-thumb"
 [attr.title]="!is_list ? content.title : ''">
-    <div *ngIf="!is_list; else list_mode" class="h-100 w-100" [class.future-schedule]="schedule_status === 'future'" [class.inactive-schedule]="schedule_status === 'inactive'">
+    <div *ngIf="!is_list; else list_mode" class="h-100 w-100"
+		(mouseenter)="setHoveredBaseFrequency(content)"
+		(mouseleave)="unsetHoveredBaseFrequency()"
+		[class.frequency-hover-grid]="canSetFrequencyBorder"
+		[class.future-schedule]="schedule_status === 'future'" 
+		[class.inactive-schedule]="schedule_status === 'inactive'">
     <!-- <div class="h-100 w-100"> -->
         <div class="content-thumbnail inline-block">
 
@@ -62,7 +67,12 @@
         </div>
     </div>
     <ng-template #list_mode>
-        <div class="p-2 flex full-width" [class.future-schedule]="schedule_status === 'future'" [class.inactive-schedule]="schedule_status === 'inactive'">
+        <div class="p-2 flex full-width" 
+			(mouseenter)="setHoveredBaseFrequency(content)"
+			(mouseleave)="unsetHoveredBaseFrequency()"
+			[class.frequency-hover-list]="canSetFrequencyBorder"
+			[class.future-schedule]="schedule_status === 'future'" 
+			[class.inactive-schedule]="schedule_status === 'inactive'">
             <div class="col-lg-2 p-0">
                 <img [src]="content.thumbnail" alt="thumbnail" class="full-width max-height-90 height-100 border-bottom">
             </div>
