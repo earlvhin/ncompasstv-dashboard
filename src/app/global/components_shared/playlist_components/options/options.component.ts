@@ -6,8 +6,7 @@ import * as moment from 'moment';
 import { environment as env } from 'src/environments/environment';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { API_CONTENT, API_BLOCKLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, API_LICENSE } from 'src/app/global/models';
-import { PlaylistService } from 'src/app/global/services';
-
+import { AuthService } from 'src/app/global/services';
 @Component({
 	selector: 'app-options',
 	templateUrl: './options.component.html',
@@ -27,6 +26,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 	content_frequency: number;
     contents_list: any[] = [];
 	credits: number = null;
+	current_role = this._auth.current_role;
 	disable_animation = true;
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`;
 	feed_url = '';
@@ -39,6 +39,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 	initial_credits_status: number | boolean;
 	licenses: API_LICENSE['license'][] = [];
 	license_ids_for_credits: string[] = [];
+	media_content_base_url = `${this.current_role}/media-library`;
 	playlist_changes_data: PLAYLIST_CHANGES = { content: null, blocklist: null, credits: null, credits_status: null };
     selected_data: any;
 	schedule = { date: '', days: '', time: '' };
@@ -54,10 +55,10 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: { index: number, content: API_CONTENT, host_license: any, total_contents?: number, contents_list: any },
+		private _auth: AuthService,
 		private _change_detector: ChangeDetectorRef,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<OptionsComponent>,
-		private _playlist: PlaylistService,
 	) { }
 	
 	ngOnInit() {
@@ -412,4 +413,5 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 		this.has_schedule = true;
 
 	}
+
 }
