@@ -188,6 +188,7 @@ export const API_ENDPOINTS = {
 		api_save_activity: 'activity/log',
 		content_schedule: 'playlistcontentsschedule/create',
 		feed_clone: 'feed/clone',
+		host_s3_files: 'host/saveS3Files',
 		sub_dealer_account: 'account/createsubaccount',
 		tag: 'tag/create',
 		tag_owners: 'tag/addOwners',
