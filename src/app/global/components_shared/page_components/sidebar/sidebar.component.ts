@@ -2,11 +2,9 @@ import { Component, OnInit, EventEmitter, Output, Input, OnDestroy } from '@angu
 import { Router, NavigationEnd } from '@angular/router';
 import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import * as moment from 'moment';
 
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { LicenseService } from 'src/app/global/services/license-service/license.service';
-import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
+import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-sidebar',
@@ -25,6 +23,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	
 	constructor(
 		private _auth: AuthService,
+		private _helper: HelperService,
 		private _license: LicenseService,
         private _router: Router
 	) { }
@@ -46,7 +45,10 @@ export class SidebarComponent implements OnInit, OnDestroy {
 			const { role_id } = this.currentUser;
 			this.isDealer = role_id === UI_ROLE_DEFINITION.dealer;
 
-			if (!this.isDealer) this.getInstallations();
+			if (!this.isDealer) {
+				this.getInstallationStats();
+				this.subscribeToUpdateInstallationDate();
+			}
 		}
 
 	}
@@ -61,17 +63,13 @@ export class SidebarComponent implements OnInit, OnDestroy {
 		this.toggleEvent.emit(this.icons_only);
 	}
 
-	private getInstallations(): void {
+	private getInstallationStats(): void {
 
-		this._license.get_statistics_by_installation(moment().format('MM/DD/YYYYY'))
+		this._license.get_installation_statistics()
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => {
-					if(!data.message) {
-						this.installations_count = data.licenseInstallationStats ? data.licenseInstallationStats.total : 0;
-					} else {
-						this.installations_count = 0;
-					}
+				response => {
+					this.installations_count = response.licenseInstallationStats.total;
 				},
 				error => console.log('Error retrieving installation statistics', error)
 			);
@@ -80,6 +78,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
 
 	private get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	private subscribeToUpdateInstallationDate() {
+		this._helper.onUpdateInstallationDate.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.getInstallationStats());
 	}
 }
 	

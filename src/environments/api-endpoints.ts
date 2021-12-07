@@ -139,6 +139,7 @@ export const API_ENDPOINTS = {
 		host_files: 'host/GetHostFilesByType',
 		host_place_images: 'googleapi/GetLogoByPlaceId',
 		license_by_tags: 'license/getByTags',
+		license_installation_statistics: 'license/getinstallationstats',
 		license_statistics: 'license/getstatisticsbydealerid',
 		license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
 		search_advertiser: 'advertiser/search?searchkey=',
