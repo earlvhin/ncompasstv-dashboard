@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_HOST, CustomFieldGroup, PAGING } from 'src/app/global/models';
+import { API_HOST, CustomFieldGroup, HOST_S3_FILE, PAGING } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -183,6 +183,11 @@ export class HostService extends BaseService {
 	update_file_alias(id: string, alias: string) {
 		const url = this.updaters.host_file_alias;
 		const body = { id, alias };
+		return this.postRequest(url, body);
+	}
+
+	upload_s3_files(body: HOST_S3_FILE) {
+		const url = this.creators.host_s3_files;
 		return this.postRequest(url, body);
 	}
 
