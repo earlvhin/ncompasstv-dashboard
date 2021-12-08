@@ -6,10 +6,10 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
+import { environment } from 'src/environments/environment';
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, API_LICENSE, HOST_LICENSE_STATISTICS, API_HOST, API_DEALER, TAG, API_LICENSE_PROPS } from 'src/app/global/models';
-import { environment } from 'src/environments/environment';
+import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_HOST, API_DEALER, TAG, API_LICENSE_PROPS } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-host',
@@ -27,14 +27,13 @@ export class SingleHostComponent implements OnInit {
 	currentUser = this._auth.current_user_value;
 	hostName: string;
 	hostId: string;
-	host: API_SINGLE_HOST['host'];
+	host: API_SINGLE_HOST;
 	hostLicenseStatistics: HOST_LICENSE_STATISTICS;
 	isViewOnly = false;
 	singleHostData: { dealer_id: string, host_id: string };
 	lat: number;
 	long: number;
 	
-	private hostLicenses: API_LICENSE[];
 	private isInitialLoad = true;
 	private marginMore = false;
 	private marginNotes = false;
@@ -179,7 +178,7 @@ export class SingleHostComponent implements OnInit {
 	private setPageData(response: API_SINGLE_HOST) {
 		const { host, dealer, hostTags } = response;
 		host.tags = hostTags;
-		this.host = response.host;
+		this.host = response;
 		if (response.host.logo) this.currentImage = response.host.logo;
 		this.singleHostData = { dealer_id: dealer.dealerId, host_id: this.hostId };
 		this.hostName = host.name;

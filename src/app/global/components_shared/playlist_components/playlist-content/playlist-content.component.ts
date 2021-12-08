@@ -1,10 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
-import { environment } from '../../../../../environments/environment';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { OptionsComponent } from '../options/options.component';
+import { API_CONTENT } from 'src/app/global/models';
+import { HelperService } from 'src/app/global/services';
+import { environment } from 'src/environments/environment';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-playlist-content',
@@ -12,10 +15,10 @@ import { OptionsComponent } from '../options/options.component';
 	styleUrls: ['./playlist-content.component.scss']
 })
 
-export class PlaylistContentComponent implements OnInit {
+export class PlaylistContentComponent implements OnInit, OnDestroy {
 
 	@Input() array_index: number;
-	@Input() content: any;
+	@Input() content: API_CONTENT;
 	@Input() playlist_host_license: any;
 	@Input() is_marking: boolean;
 	@Input() is_list: boolean;
@@ -30,17 +33,19 @@ export class PlaylistContentComponent implements OnInit {
 	@Output() remove_playlist_content = new EventEmitter();
 	@Output() log_content_history = new EventEmitter();
 
-
+	canSetFrequencyBorder = false;
 	contentTitle: string;
 	frequency: number;
+	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`;
+	hoveredPlaylistContentId: string;
 	isBaseFrequency = false;
 	isChildFrequency = false;
-	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
 
 	protected _unsubscribe: Subject<void> = new Subject();
 
 	constructor(
 		private _dialog: MatDialog,
+		private _helper: HelperService,
 	) { }
 
 	ngOnInit() {
@@ -65,6 +70,13 @@ export class PlaylistContentComponent implements OnInit {
 		if (this.contentTitle.length >= 15) {
 			this.contentTitle = `${this.contentTitle.substr(0, 12)}...`;
 		}
+
+		this.subscribeToContentHover();
+	}
+
+	ngOnDestroy() {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	optionsModal(): void {
@@ -118,6 +130,18 @@ export class PlaylistContentComponent implements OnInit {
 		return file_name.substring(file_name.indexOf('_') + 1);
 	}
 
+	setHoveredBaseFrequency(content: API_CONTENT) {
+		let id: string;
+		if (this.isBaseFrequency) id = content.playlistContentId;
+		else id = content.parentId;
+		if (!id) return;
+		this._helper.onHoverContent.emit({ playlistContentId: id });
+	}
+
+	unsetHoveredBaseFrequency() {
+		this._helper.onHoverContent.emit({ playlistContentId: undefined });
+	}
+
 	private setFrequency(value: number): number {
 
 		let result: number;
@@ -141,6 +165,20 @@ export class PlaylistContentComponent implements OnInit {
 
 		return result;
 
+	}
+
+	private subscribeToContentHover() {
+		this._helper.onHoverContent.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					let result = false;
+					if (!response) return;
+					const { playlistContentId } = response;
+					if (this.isBaseFrequency) result = this.content.playlistContentId === playlistContentId;
+					else result = this.content.parentId === playlistContentId;
+					this.canSetFrequencyBorder = result;
+				}
+			);
 	}
 
 }

@@ -15,6 +15,7 @@ export class HelperService {
 	onClickAllDealers = new EventEmitter<void>();
 	onClickActiveDealers = new EventEmitter<void>();
 	onClickInactiveDealers = new EventEmitter<void>();
+	onHoverContent = new EventEmitter<{ playlistContentId: string }>();
 	onRefreshUsersPage = new EventEmitter<void>();
     onResetAutocompleteField = new EventEmitter<string>();
 	onSelectAnalyticsTab = new EventEmitter<string>();

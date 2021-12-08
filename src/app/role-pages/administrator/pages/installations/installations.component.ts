@@ -26,7 +26,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	installations: INSTALLATION[] = [];
 	installation_count: any;
 	loading = false;
-	paging_data: any;
+	paging_data: PAGING;
 	searching: boolean = false;
 	sort_column: string = '';
 	sort_order: string = '';
@@ -149,7 +149,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
-					console.log("DD", data)
 					let installations = [];
 					let filtered_data = [];
 
@@ -158,6 +157,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 						installations = this.mapToTableFormat(this.paging_data.entities);
 						filtered_data = installations;
 					}
+
 					this.installations = installations;
 					this.filtered_data = filtered_data;
 					this.initial_load = false;
@@ -290,7 +290,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	}
 
 	private mapToTableFormat(data: any[]): INSTALLATION[] {
-		let count = 1;
+		let count = this.paging_data.pageStart;
 
 		return data.map(
 			license => {
