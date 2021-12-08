@@ -5,32 +5,30 @@ import { Subject } from 'rxjs';
 
 import { API_HOST } from '../../../models/api_host.model';
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { API_LICENSE, API_LICENSE_PROPS } from '../../../models/api_license.model';
+import { API_DEALER_LICENSE, API_LICENSE, API_LICENSE_PROPS } from '../../../models/api_license.model';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { DealerService } from '../../../services/dealer-service/dealer.service';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
 import { UI_DEALER_LOCATOR_EXPORT, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models/ui_host-locator.model';
-import { THIS_EXPR } from '@angular/compiler/src/output/output_ast';
+import { HostService } from '../../../services/host-service/host.service';
 
 @Component({
-  selector: 'app-dealer-view',
-  templateUrl: './dealer-view.component.html',
-  styleUrls: ['./dealer-view.component.scss']
+  selector: 'app-license-view',
+  templateUrl: './license-view.component.html',
+  styleUrls: ['./license-view.component.scss']
 })
-export class DealerViewComponent implements OnInit, OnDestroy {
-
+export class LicenseViewComponent implements OnInit {
 	current_host_id_selected = '';
 	clicked_marker_id: string;
 	dealers: API_DEALER[];
-	dealers_data: Array<any> = [];
+	dealer_licenses_data: Array<any> = [];
 	expansion_id: string;
 	host_licenses: API_LICENSE_PROPS[] = [];
 	is_search: boolean = false;
 	lat: number = 39.7395247;
-	license_card:any;
 	lng: number = -105.1524133;
 	loading_data: boolean = true;
-	loading_hosts: boolean = true;
+	loading_licenses: boolean = true;
 	loading_license_count: boolean = false;
 	loading_search: boolean = false;
 	location_selected: boolean = false;
@@ -46,6 +44,8 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	filterLabelStatus: any;
 	selected_licenses: Array<any> = [];
 	filtered_licenses: Array<any> = [];
+	search_license: any;
+	search_license_id: any;
 	selected_hosts: Array<any> = [];
 	isFiltered: any = false;
 	online_licenses: number = 0;
@@ -54,6 +54,11 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	host_offline_licenses: any;
 	exported_map_marker: UI_DEALER_LOCATOR_EXPORT[];
 	markStoreHours: any;
+  	is_dealer: any;
+	businessName: any;
+	search_keyword: any = false;
+	license_page_count: number = 1;
+
 
 	labelOptions = {
 		color: 'black',
@@ -63,21 +68,23 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		text: "some text"
 	};
 
-	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
-	constructor(
-		private _auth: AuthService,
-		private _dealer: DealerService,
-		private _license: LicenseService
-	) { }
+  	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	ngOnInit() {
-		this.getDealers(1);
-		this.online_licenses = 0;
-		this.offline_licenses = 0;
-	}
+  	constructor(private _auth: AuthService,
+    	private _host: HostService,
+		private _license: LicenseService) { }
 
-	ngOnDestroy() {
+  	ngOnInit() {
+    this.online_licenses = 0;
+	this.offline_licenses = 0;
+    this.selected_dealer_hosts = [];
+    this.selected_licenses = [];
+	this.dealer_licenses_data = [];
+    this.getDealerHosts(1);
+    this.getDealerLicenses(this.license_page_count++);
+  	}
+
+  	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
 	}
@@ -99,13 +106,18 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.previous_marker = window;
 	}
 
-	onSelectDealer(id: string): void {
+	onSelectLicense(id: string): void {
+		this.search_keyword = true;
 		this.online_licenses = 0;
 		this.offline_licenses = 0;
-		this.selected_dealer = this.dealers.filter(dealer => dealer.dealerId === id)[0];
-		this.selected_dealer_hosts = this.selected_dealer.hosts;
-		this.selected_licenses = this.selected_dealer.licenses;
-
+		this.search_license = this.selected_licenses.filter(license => license.licenseId === id);
+		this.search_license_id = id;
+		this.selected_licenses = this.search_license;
+		this.selected_hosts = this.search_license.map(t => t.hostId);
+		this.selected_dealer_hosts = this.selected_dealer_hosts.filter(x => this.selected_hosts.includes(x.hostId))
+		this.selected_dealer_hosts.forEach(x => {
+			this.getLicenseByHost(x.hostId);
+		});
 		this.selected_licenses.forEach(
 			license => {
 				if (license.piStatus == 1) this.online_licenses += 1;
@@ -113,63 +125,70 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		);
 
 		this.offline_licenses = this.selected_licenses.length - this.online_licenses;
-
 		this.selected_dealer_hosts.forEach(x => {
-			x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
-			x.latitude ? x.latitude = parseFloat(x.latitude).toFixed(5) : "-";
-			x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
-			//x.name.length > 40 ? x.name = x.name.substring(0, 40).concat('...') : x.name = x.name;
-			let selectedLicense = new API_LICENSE;
 			x.licenses = [];
-			this.selected_dealer.licenses.forEach((license :API_LICENSE_PROPS) => {
+			this.selected_licenses.forEach((license :API_LICENSE_PROPS) => {
 				if(license.hostId === x.hostId){
+					let selectedLicense = new API_LICENSE;
 					selectedLicense.license = license;
 					x.licenses.push(selectedLicense);
 				}
+				});
 			});
-		});
 
-		this.unfiltered_dealer_hosts = this.selected_dealer_hosts;
-		this.unfiltered_licenses = this.selected_licenses;
-		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_dealer.licenses);
+		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 		this.selected_dealer_hosts.forEach(x => {x.icon_url = this.map_marker.filter(y => y.hostId === x.hostId)[0].icon_url});
-		this.location_selected = true;
 		if(this.isFiltered)
 		{
 			this.filterDealerHosts(this.filterStatus);
 		}
 	}
 
-	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
+	searchBoxTrigger(event: { is_search: boolean, page: number, no_keyword: boolean}): void {
 		this.is_search = event.is_search;
-		this.getDealers(event.page);
+		if(event.no_keyword){
+			this.dealer_licenses_data = [];
+			this.selected_licenses = [];
+			this.selected_dealer_hosts = [];
+			this.license_page_count = 1;
+			this.clicked_marker_id = "";
+			this.expansion_id = "";
+			this.getDealerHosts(event.page);
+			this.search_keyword = false;
+			this.search_license = undefined;
+		}
+    	this.getDealerLicenses(this.license_page_count++);
 	}
 
 	searchData(key: string): void {
 		this.loading_search = true;
-			
-		this._dealer.get_search_dealer_with_host(key)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: { dealers: API_DEALER[], paging: { entities: any[] }}) => {
+		const currentDealerId = this.currentUser.roleInfo.dealerId;
 
-					const { dealers, paging } = response;
-					const { entities } = paging;
+		this._license.search_license(key)
+		.pipe(takeUntil(this._unsubscribe))
+				.subscribe((response: any) => {
+			if(response){
+				const { licenses } = response;
 
-					this.paging = paging;
-
-					if (entities.length <= 0) {
-						this.dealers_data = [];
-						return;
-					}
-
-					this.dealers_data = dealers;
-					this.dealers = dealers;
-				},
-				error => console.log('Error searching dealer with host', error)
-			)
-			.add(() => this.loading_search = false);
-
+				if (licenses.length <= 0) {
+					this.dealer_licenses_data = [];
+					return;
+				}
+				const dealer_license: API_DEALER_LICENSE[] = licenses;
+				this.dealer_licenses_data = [];
+				
+				dealer_license.map((h:any) => {
+				if(h.dealerId === currentDealerId){
+					let dealerLicense = new API_DEALER_LICENSE(h.dealerId, h.hostId, h.licenseAlias === null ? h.licenseKey : h.licenseAlias,
+														h.licenseId, h.licenseKey)
+					this.dealer_licenses_data.push(dealerLicense);
+				}
+				});
+			}
+		},
+      	error => console.log('Error searching license', error)
+      	)
+     	 .add(() => this.loading_search = false);
 	}
 
 	setLink(licenseId: string) {
@@ -180,28 +199,124 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		return this._auth.current_role;
 	}
 
-	private getDealers(page: number): void {
+	private getDealerHosts(page: number): void {
+    const currentDealerId = this.currentUser.roleInfo.dealerId;
+	this.businessName = this.currentUser.roleInfo.businessName;
+	this.selected_dealer_hosts = [];
+	this._host.get_host_by_dealer_id(currentDealerId, page, '')
+		.pipe(takeUntil(this._unsubscribe))
+		.subscribe(
+			(response:any ) => {
 
+		// no records found
+		if (response.message) return;
+
+		const { paging } = response;
+		const { entities } = paging;
+		const hosts: API_HOST[] = entities;
+
+		this.paging = paging;
+		hosts.map(
+			host => {
+				this.selected_dealer_hosts.push(host);
+			}
+		);
+	
+		this.selected_dealer_hosts.forEach(x => {
+		x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
+		x.latitude ? x.latitude = parseFloat(x.latitude).toFixed(5) : "-";
+		x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
+			});
+		
+		if(this.selected_licenses.length > 0){
+			this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
+			this.selected_dealer_hosts.forEach(x => {x.icon_url = this.map_marker.filter(y => y.hostId === x.hostId)[0].icon_url});
+		}
+		},
+			error => console.log('Error retrieving dealer with hosts', error)
+		).add(() => {
+				this.loading_licenses = false;
+			});;;
+
+
+	}
+
+	private getDealerLicenses(page: number): void {
 		if (page > 1) this.loading_data = true;
-		else this.loading_search = true;
+			else this.loading_search = true;
 
-		this._dealer.get_dealers_with_host(page, '')
+		const currentDealerId = this.currentUser.roleInfo.dealerId;
+		this._license.get_license_by_dealer_id(currentDealerId, page, '')
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { dealers: API_DEALER[], paging: { entities: any[] }}) => {
-					const { dealers, paging } = response;
-					this.paging = paging;
-					this.dealers = dealers;
-					this.dealers_data = dealers;
-					this.loading_data = false;
-				},
-				error => console.log('Error retrieving dealers with host', error)
-			)
-			.add(() => {
-				this.loading_search = false;
-				this.loading_hosts = false;
-				this.loading_data = false;
+				data => {
+				// Save page count returned from API
+			if (!data.message) {
+			
+			const page_count = data.paging.pages;
+
+			//Dealer licenses
+			const dealerLicenses = data.paging.entities;
+			dealerLicenses.forEach(
+				license => {
+					if(license.hostId !== null && license.hostId !== ""){
+						this.selected_licenses.push(license);
+					}
 			});
+			
+			this.selected_licenses.forEach(
+				license => {
+					if (license.piStatus == 1) this.online_licenses += 1;
+			});
+
+			dealerLicenses.map((h: any) => {
+				let dealerLicense = new API_DEALER_LICENSE(h.dealerId, h.hostId, h.alias === null ? h.licenseKey : h.alias,
+														h.licenseId, h.licenseKey)
+				this.dealer_licenses_data.push(dealerLicense);
+				}
+			);
+
+			this.loading_data = false;
+			
+			this.offline_licenses = this.selected_licenses.length - this.online_licenses;
+
+			this.selected_dealer_hosts.forEach(x => {
+			x.licenses = [];
+			this.selected_licenses.forEach((license :API_LICENSE_PROPS) => {
+				if(license.hostId === x.hostId){
+					let selectedLicense = new API_LICENSE;
+					selectedLicense.license = license;
+					x.licenses.push(selectedLicense);
+				}
+				});
+			});
+
+			this.unfiltered_dealer_hosts = this.selected_dealer_hosts;
+			this.unfiltered_licenses = this.selected_licenses;
+			if(this.selected_dealer_hosts.length > 0){
+				this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
+				this.selected_dealer_hosts.forEach(x => {x.icon_url = this.map_marker.filter(y => y.hostId === x.hostId)[0].icon_url});
+			}
+
+			this.location_selected = true;
+			if(this.isFiltered){
+				this.filterDealerHosts(this.filterStatus);
+			}
+			
+			if (this.license_page_count <= page_count) {
+				this.getDealerLicenses(this.license_page_count++)
+			}
+			} else {
+				// Hide Spinner on UI
+				this.loading_data = false;
+			}			
+			},
+				error => console.log('Error retrieving licenses by dealer id', error)
+			).add(() => {
+				this.loading_search = false;
+				this.loading_licenses = false;
+				//this.loading_data = false;
+			});;
 	}
 
 	private getLicenseByHost(id: string): void {
@@ -213,26 +328,20 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 				(response: any) => {
 
 					let online = 0;
-					const statistics = {
-						basis: 0,
-						basis_label: 'Licenses',
-						good_value: 0,
-						good_value_label: 'Online',
-						bad_value: 0,
-						bad_value_label: 'Offline'
-					};
-
 					if (response.message) {
 						this.host_licenses = [];
-						this.license_card = statistics;
 						return;
 					}
 
 					const licenses: API_LICENSE_PROPS[] = response;
 					this.host_licenses = response;
 
-					if(this.filterStatus !== null){
-						this.host_licenses.filter(x => x.piStatus === this.filterStatus);
+					if(this.filterStatus !== undefined && this.filterStatus !== ""){
+						this.host_licenses = this.host_licenses.filter(x => x.piStatus === this.filterStatus);
+					}
+
+					if(this.search_license !== undefined){
+						this.host_licenses = this.host_licenses.filter(x => x.licenseId === this.search_license_id);
 					}
 
 					licenses.forEach(
@@ -242,11 +351,6 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					);
 					this.host_online_licenses = online;
 					this.host_offline_licenses = licenses.length - online;
-					statistics.basis = licenses.length;
-					statistics.good_value = online;
-					statistics.bad_value = licenses.length - online;
-					this.license_card = statistics;
-
 				},
 				error => console.log('Error retrieving license by host ID', error)
 			)
@@ -334,7 +438,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.selected_dealer_hosts.forEach(x => {
 		 	this.getLicenseByHost(x.hostId);
 		 });
-		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_dealer.licenses);
+		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 		this.online_licenses = 0;
 		this.offline_licenses = 0;
 		this.selected_licenses.forEach(
@@ -397,9 +501,12 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		csv.unshift(header.join(','));
 		let csvArray = csv.join('\r\n');
 
-		var blob = new Blob([csvArray], {type: 'text/csv' })
-		let fileName = this.selected_dealer.businessName + "_MapLocator.csv";
+		var blob = new Blob([csvArray], {type: 'text/csv' });
+		let fileName = this.businessName + "_MapLocator.csv";
 		saveAs(blob, fileName);
 	}
 
+  	protected get currentUser() {
+		return this._auth.current_user_value;
+	}
 }
