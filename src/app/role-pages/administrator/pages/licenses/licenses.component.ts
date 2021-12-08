@@ -106,6 +106,7 @@ export class LicensesComponent implements OnInit {
         { name: 'Screenshot', sortable: false, no_export: true },
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey' },
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType' },
+		{ name: 'Dealer', sortable: true, hidden: true, no_show: true, key: 'businessName' },
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName' },
 		{ name: 'Alias', sortable: true, column:'Alias', key: 'alias' },
 		{ name: 'Last Push', sortable: true, column:'ContentsUpdated', key:'contentsUpdated' },
@@ -115,7 +116,9 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Display', sortable: true, key: 'displayStatus', column:'DisplayStatus' },
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion' },
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion' },
-		{ name: 'Pi Version', sortable: false, key:'piVersion', hidden: true, no_show: true, column:'PiVersion' },
+		{ name: 'Pi Version', sortable: false, key:'piVersion', hidden: true, no_show: true},
+		{ name: 'Memory', sortable: false, key:'memory', hidden: true, no_show: true },
+		{ name: 'Storage', sortable: false, key:'totalStorage', hidden: true, no_show: true},
 		{ name: 'Anydesk', sortable: true, column:'AnydeskId', key:'anydeskId' },
 		{ name: 'Password', sortable: false, key:'password'},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate' },
@@ -512,7 +515,6 @@ export class LicensesComponent implements OnInit {
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						data => {
-
 							if (data.message) {
 								this.licenses_to_export = [];
 								return;
@@ -524,6 +526,7 @@ export class LicensesComponent implements OnInit {
 									else license.apps = null;
 								}
 							);
+                            console.log("DATA", data)
 
 							this.licenses_to_export = data.licenses;
 

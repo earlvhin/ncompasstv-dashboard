@@ -179,6 +179,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Screenshot', sortable: false, no_export: true},
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey'},
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType'},
+		{ name: 'Dealer', sortable: true, key: 'dealer', hidden: true, no_show: true},
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName'},
 		{ name: 'Alias', sortable: true, column:'Alias', key: 'alias'},
 		{ name: 'Last Push', sortable: true, column:'ContentsUpdated', key:'contentsUpdated'},
@@ -190,7 +191,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Password', sortable: false, key:'password'},
 		{ name: 'PS Version', sortable: true, key:'server', column:'ServerVersion'},
 		{ name: 'UI Version', sortable: true, key:'ui', column:'UiVersion'},
-		{ name: 'Pi Version', sortable: false, key:'piVersion', hidden: true, no_show: true, column:'PiVersion'},
+		{ name: 'Pi Version', sortable: false, key:'piVersion', hidden: true, no_show: true},
+		{ name: 'Memory', sortable: false, key:'memory', hidden: true, no_show: true },
+		{ name: 'Storage', sortable: false, key:'totalStorage', hidden: true, no_show: true},
 		{ name: 'Screen', sortable: true, column:'ScreenName', key:'screenName' },
 		{ name: 'Template', sortable: true, column:'TemplateName', key:'templateName'},
         { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
@@ -1182,6 +1185,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch(tab) {
 			case 'Licenses':
+                item.dealer = this.dealer_user_data.businessName;
                 item.piVersion = item.apps ? item.apps.rpi_model : '';
                 item.zone = this.getZoneHours(item);
                 item.displayStatus = item.displayStatus == 1 ? 'ON' : "";
