@@ -37,10 +37,9 @@
 			</div>
 
 			<div class="mb-4">
-				<!-- <h4 class="word-break mb-1" [attr.title]="content_data.fileType != 'feed' ? removeFilenameHandle(content_data.fileName) : content_data.title"> -->
 				<h4 class="word-break mb-1">
 					<span *ngIf="content_data.fileType != 'feed'; else feed">
-						{{ content_data.title }}
+						<a [routerLink]="[media_content_base_url, content_data.contentId]" target="_blank">{{ content_data.title }}</a>
 					</span>
 
 					<ng-template #feed>

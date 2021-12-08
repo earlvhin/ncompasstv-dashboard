@@ -18,11 +18,12 @@ export class HelperService {
 	onHoverContent = new EventEmitter<{ playlistContentId: string }>();
 	onRefreshUsersPage = new EventEmitter<void>();
     onResetAutocompleteField = new EventEmitter<string>();
-	onSelectAnalyticsTab = new EventEmitter<string>();
-	onToggleEmailNotification = new EventEmitter<{ userId: string, value: boolean, tableDataIndex: number, currentEmail: string }>();
 	onResultToggleEmailNotification = new EventEmitter<{ tableDataIndex: number, updated: boolean }>();
 	onRefreshSingleHostImagesTab = new EventEmitter<void>();
 	onRefreshSingleHostDocumentsTab = new EventEmitter<void>();
+	onSelectAnalyticsTab = new EventEmitter<string>();
+	onToggleEmailNotification = new EventEmitter<{ userId: string, value: boolean, tableDataIndex: number, currentEmail: string }>();
+	onUpdateInstallationDate = new EventEmitter<void>();
 
 	singleAdvertiserData: API_ADVERTISER;
 	singleHostData: API_SINGLE_HOST;

@@ -8,7 +8,7 @@ import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 
-import { AuthService, LicenseService } from 'src/app/global/services';
+import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
 import { INSTALLATION, PAGING } from 'src/app/global/models';
 
 @Component({
@@ -74,6 +74,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		private _auth: AuthService,
 		private _dates: DatePipe,
 		private _form_builder: FormBuilder,
+		private _helper: HelperService,
 		private _license: LicenseService,
 		private _titlecase: TitleCasePipe,
 	) { }
@@ -86,8 +87,9 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.current_month = moment().format('MMMM');
 		this.next_month = moment().add(1, 'month').format('MMMM');
 
-        this.getLicenseStatistics();
+        this.getInstallationStats();
 		this.getLicenses(1);
+		this.subscribeToUpdateInstallationDate();
 	}
 
 	ngOnDestroy() {
@@ -177,7 +179,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.datePicker.close();
 		this.selected_date = value.format('MM-DD-YYYY');
 		this.installation_count = null;
-		this.getLicenseStatistics();
+		this.getInstallationStats();
 		this.getLicenses(1);
 	}
 
@@ -221,12 +223,12 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this._date.setValue(value);
 	}
 
-	private getLicenseStatistics(): void {
-		this._license.get_statistics_by_installation(this.selected_date).subscribe(
-            data => {
-                let datas = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 }; 
-				if (!data.message) datas = data.licenseInstallationStats;
-				this.getTotalCount(datas);
+	private getInstallationStats(): void {
+		this._license.get_installation_statistics(this.selected_date).subscribe(
+            response => {
+                let stats = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 };
+				if (response.licenseInstallationStats) stats = response.licenseInstallationStats;
+				this.getTotalCount(stats);
             }
 		);
 	}
@@ -315,6 +317,11 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	private modifyItem(item: { screenTypeName: string, installDate: string }): void {
 		item.screenTypeName = this._titlecase.transform(item.screenTypeName);
         item.installDate = this._dates.transform(item.installDate, 'MMM d, y, h:mm a')
+	}
+
+	private subscribeToUpdateInstallationDate() {
+		this._helper.onUpdateInstallationDate.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.getInstallationStats());
 	}
 
 	protected get currentRole() {

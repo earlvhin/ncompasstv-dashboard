@@ -164,6 +164,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	}
 
 	uploadContent(): void {
+		
 		const filestack_option = {
 			accept: [
 				'image/jpg',
@@ -249,7 +250,8 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 			onClose: (respond) => {
 				this.loading_overlay = false;
 			}
-		}
+		};
+
 		this.filestack_client.picker(filestack_option).open();
 	}
 

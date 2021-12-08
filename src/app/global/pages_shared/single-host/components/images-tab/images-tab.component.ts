@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogConfig } from '@angular/material';
+import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import * as filestack from 'filestack-js';
 
-import { API_HOST_FILE, PAGING, UI_CURRENT_USER, UI_HOST_FILE } from 'src/app/global/models';
+import { environment } from 'src/environments/environment';
+import { API_HOST_FILE, HOST_S3_FILE, PAGING, UI_CURRENT_USER, UI_HOST_FILE } from 'src/app/global/models';
 import { HelperService, HostService } from 'src/app/global/services';
-import { UploadImageDialogComponent } from '../upload-image-dialog/upload-image-dialog.component';
 
 @Component({
 	selector: 'app-images-tab',
@@ -71,11 +72,8 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 	}
 
 	onClickUploadBtn() {
-		const config: MatDialogConfig = { width: '600px', disableClose: true };
-		const dialog = this._dialog.open(UploadImageDialogComponent, config);
-		dialog.componentInstance.hostId = this.hostId;
-		dialog.componentInstance.currentUser = this.currentUser;
-		dialog.afterClosed().subscribe(() => this.getImages());
+		const client = filestack.init(environment.third_party.filestack_api_key);
+		client.picker(this.filestackOptions).open();
 	}
 
 	private mapToTable(data: API_HOST_FILE[]): UI_HOST_FILE[] {
@@ -105,6 +103,44 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 
 	protected get columns() {
 		return [ '#', 'Thumbnail', 'Filename', 'Alias', 'Upload Date', 'Actions' ];
+	}
+
+	protected get filestackOptions(): filestack.PickerOptions {
+		return {
+			storeTo: {
+				location: 's3',
+				container: 'n-compass-files',
+				region: 'us-east-1',
+			},
+			accept: [
+				'image/jpg',
+				'image/jpeg',
+				'image/png',
+			],
+			maxFiles: 10,
+			imageMax: [720, 640],
+			onUploadDone: (response) => {
+
+				const files = response.filesUploaded.map(uploaded => {
+					const { filename, key } = uploaded;
+					return { oldFile: filename, newFile: key };
+				});
+
+				const toUpload: HOST_S3_FILE = {
+					hostId: this.hostId,
+					type: 1,
+					createdBy: this.currentUser.user_id,
+					files
+				};
+
+				this._host.upload_s3_files(toUpload).pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						() => this.ngOnInit(),
+						error => console.log('Error uploading host S3 images', error)
+					);
+
+			},
+		};
 	}
 	
 }
