@@ -84,7 +84,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 
 		});
 
-		const first_column = [ 'Dealer Alias','Business Name','Contact Person','Age', 'Tags', 'Player Count','Licenses','','','Hosts','','', 'Advertisers' ];
+		const first_column = [ 'Dealer Alias','Business Name','Contact Person','Age', 'Tags', 'Player Count','Licenses','','','','Hosts','','', 'Advertisers','' ];
 		this.worksheet.columns = header;
 		this.worksheet.duplicateRow(1, true);
 		this.worksheet.getRow(1).values = [];
@@ -98,9 +98,9 @@ export class DealersComponent implements OnInit, OnDestroy {
 		this.worksheet.mergeCells('D1:D2'); // Age
 		this.worksheet.mergeCells('E1:E2'); // Tags
 		this.worksheet.mergeCells('F1:F2'); // Player Count
-		this.worksheet.mergeCells('G1:I1'); // Licenses
-		this.worksheet.mergeCells('J1:L1'); // Hosts
-		this.worksheet.mergeCells('M1:O1'); // Advertisers
+		this.worksheet.mergeCells('G1:J1'); // Licenses
+		this.worksheet.mergeCells('K1:M1'); // Hosts
+		this.worksheet.mergeCells('N1:O1'); // Advertisers
 
 		this.worksheet.getRow(1).font =  {
 			bold: true,
