@@ -61,24 +61,10 @@
 			</div>
 			<div class="row">
 				<div class="col-lg-12 mr-2">
-					<!-- 
-						<mat-card class="mb-4" *ngIf="host_licenses && host_licenses.length > 0; else no_host_selected">
-							<ng-container *ngIf="!loading_license_count; else loader_sm">
-								<app-data-card-compare 
-									*ngIf="license_card"
-									[compare_basis]="license_card.basis" 
-									[compare_basis_label]="license_card.basis_label"
-									[good_value]="license_card.good_value" 
-									[good_value_label]="license_card.good_value_label"
-									[bad_value]="license_card.bad_value" 
-									[bad_value_label]="license_card.bad_value_label">
-								</app-data-card-compare>
-							</ng-container>
-						</mat-card> -->
 						<div id="wrapper">
 							<div id="google_map">
 								<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
-									<agm-marker id="{{ h.hostId }}" *ngFor="let h of map_marker" (markerClick)="onMarkerClick(h.hostId, window)"
+									<agm-marker id="{{ h.hostId }}" *ngFor="let h of map_marker" (markerClick)="onMarkerClick(h.hostId, h.dealerId, window)"
 										[latitude]="h.latitude" [longitude]="h.longitude" [agmFitBounds]="true" [iconUrl]="h.icon_url">
 								
 										<agm-info-window [isOpen]="expansion_id == h.hostId" #window>
@@ -126,43 +112,59 @@
 							</div>
 							<div id="over_map">							
 								<ng-container *ngIf="!loading_hosts; else loader">
-										<!-- <app-autocomplete-field [data_reference]="dealers_data" [primary_keyword]="'businessName'" [key_of_value]="'dealerId'"
-											(data_value)="onSelectDealer($event)" [required]="true" [label]="'Type in a Dealer business name here'"
-											[paging]="paging" (call_next_page)="searchBoxTrigger($event)" [loading_data]="loading_data"
-											(searched)="searchData($event)" [loading_search]="loading_search">
-										</app-autocomplete-field> -->
-									<!-- <div class="search-bar p-4">
-										<label>Enter a Business Name</label>
-										<mat-form-field class="search-input">
-											<input matInput type="text" placeholder="Business Name" [formControl]="search_control">
-										</mat-form-field>
-										<button class="btn search-button" type="button">
-											<i class="fa fa-search"></i>
-										</button>							
-									</div> -->
-									
-									<!-- <div class="search-bar p-3"> -->
-										<div class="search-bar pl-3 pt-2">
-											<label class="mb-2">Enter a Business Name</label>
+									<div class="search-bar pl-3 pt-2">
+										<form [formGroup]="form" (ngSubmit)="onSubmit()">
 											<div class="d-flex">
 												<div class="search-input">
-													<app-autocomplete-field [data_reference]="dealers_data" [primary_keyword]="'businessName'"
-														[key_of_value]="'dealerId'" (data_value)="onSelectDealer($event)" [required]="true" [label]="'Business Name'"
-														[paging]="paging" (call_next_page)="searchBoxTrigger($event)" [loading_data]="loading_data"
-														(searched)="searchData($event)" [loading_search]="loading_search" [isLocator]="true">
-													</app-autocomplete-field>
+														<mat-form-field class="full-width">
+															<mat-select #dealerMultiSelect formControlName="selectedDealers" [placeholder]="'Select Business Name(s)'" [multiple]="true">
+																<mat-option>
+																	<ngx-mat-select-search noEntriesFoundLabel="No results" [formControl]="dealerFilterControl"
+																		[placeholderLabel]="'Search a Business Name'" [clearSearchInput]="false" [searching]="loading_search">
+																		<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+																	</ngx-mat-select-search>
+																</mat-option>
+														
+																<mat-option *ngFor="let dealer of filteredDealers | async" [value]="dealer">
+																	<div class="dealer">
+																		{{ dealer.businessName }}
+																	</div>
+																</mat-option>
+															</mat-select>
+														</mat-form-field>
 												</div>
-												<span class="fas fa-search search-button"></span>
+												<div mat-dialog-actions>
+													<button mat-button mat-raised-button class="submit fas fa-search theme-btn _primary search-button" type="submit"
+														[disabled]="form.invalid || isFiltered"></button>
+												</div>
 											</div>
-										</div>
-										
-									<!-- </div> -->
-
+											<div class="preview">
+												<!-- DEALERS ROW -->
+												<div class="dealers-row d-flex">
+													<h4>Business Name(s):</h4>
+												
+													<!-- DEALERS-LIST -->
+													<div class="selected-dealers-container d-flex flex-row align-items-start flex-wrap"
+														*ngIf="selectedDealersControl.value.length > 0">
+														<div *ngFor="let dealer of selectedDealersControl.value; let i = index;" class="dealer d-flex align-items-center"
+														[ngClass]="!isFiltered ? 'dealer': 'disable-dealer'">
+															<div class="name">{{ dealer.businessName }}</div>
+															<div class="remove-btn cursor-pointer" (click)="onRemoveDealer(i)">
+																<mat-icon>close</mat-icon>
+															</div>
+														</div>
+													</div>
+												</div>
+											</div>
+										</form>
+									</div>
+									
 									<div class="search-result" *ngIf="selected_dealer_hosts">
-										<div class="mb-3 d-flex justify-content-center bg-gray" >
-											<span class="sm-text">Showing <span
-											class="text-danger">{{selected_dealer_hosts.length}}</span> Host/s and <span
-											class="text-danger">{{selected_licenses.length}}</span> License/s
+										<div class="mb-2 d-flex justify-content-center bg-gray" >
+											<span class="sm-text font-weight-bold">  <span class="text-primary">{{selected_dealer.length}}</span> Dealer(s) |
+											<span
+											class="text-primary">{{selected_dealer_hosts.length}}</span> Host(s) | 
+											<span class="text-primary">{{selected_licenses.length}}</span> License(s)
 											<br/>
 											<span class="text-primary fas fa-circle mr-1 ml-4"></span> <span class="text-primary">{{online_licenses}}</span>
 											Online |
@@ -173,53 +175,90 @@
 										</div>
 										<mat-accordion>
 											<div class="row">
-												<div class="col-lg-12" *ngFor="let h of selected_dealer_hosts">
-													<mat-expansion-panel class="mb-3" hideToggle (click)="onExpandHost(h.hostId)"
-														[expanded]='h.hostId == clicked_marker_id' #example id="outer-mat" [class.panelBorder]="example.expanded"
-														[class.online]="h.icon_url ==='assets/media-files/markers/online_all.png'"
-														[class.onlinemany]="h.icon_url ==='assets/media-files/markers/online_many.png'"
-														[class.onlinefew]="h.icon_url ==='assets/media-files/markers/online_few.png'"
-														[class.offline]="h.icon_url ==='assets/media-files/markers/offline.png'">
-								
+												<div class="col-lg-12">
+													<mat-expansion-panel class="mb-3"
+														*ngFor="let dealer of selected_dealer; let i = index" [expanded]='dealer.dealerId === clicked_dealer_id' hideToggle="true" #example id="outer-mat">
 														<mat-expansion-panel-header class="pr-0 pl-0 mt-2">
 															<mat-panel-title class="md-text p-0">
-																<div class="col-lg-1 mt-1 text-left">
-																	<img class="map-header-status" [src]="h.icon_url" alt="Status">
-																</div>
-																<p class="col-lg-10 ml-1 text-left">
+																<p class="col-lg-11 text-left">
 																	<span class="font-weight-bold ">
-																		{{ h.name }}
+																		{{dealer.businessName}}
+																	</span>
+																	<br/>
+																	<span class="bg-gray "> 
+																		<span class="text-primary font-weight-bold">{{dealer.hosts.length}}</span>
+																		Host(s) |
+																		<span class="text-primary font-weight-bold">  {{dealer.licenses.length}}</span>
+																		License(s)
 																	</span>
 																	<br />
-																	<span class="sm-text">
-																		{{ h.city}} {{ h.state }} {{ h.postalCode }}
+																	<span>
+																		<span class="text-primary fas fa-circle"></span>
+																		<span class="text-primary font-weight-bold"> {{dealer.onlineLicenseCount}}</span>
+																		Online |
+																		<span class="text-danger fas fa-circle"></span>
+																		<span class="text-danger font-weight-bold"> {{dealer.offlineLicenseCount}}</span>
+																		Offline
 																	</span>
 																</p>
-																<div class="col-lg-1 p-0 pt-1 text-right">
+																<div class="col-lg-1 p-0 pt-3 text-right" *ngIf="dealer.hosts.length > 0">
 																	<div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
 																	<div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
 																</div>
 															</mat-panel-title>
 														</mat-expansion-panel-header>
-								
-														<div class="pt-2" *ngIf="!loading_license_count; else loader_sm_no_text">
-															<div class="host-licenses-list" *ngIf="host_licenses.length > 0; else no_licenses_text">
-	
-																<div class="col-xs-6 mr-3" *ngFor="let license of host_licenses">
-																	<div *ngIf="isFiltered ? license.piStatus === filterStatus: true ">
-																		<span class="fas fa-circle mr-1 sm-text" [ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
-																		<a [routerLink]="setLink(license.licenseId)" target="_blank">
-																			{{ (license.alias && license.alias.length > 0) ? license.alias :
-																			license.licenseKey }}
-																		</a>
+														<div class="row" *ngIf="dealer.hosts.length > 0">
+															<div class="col-lg-12" *ngFor="let h of dealer.hosts">
+																<mat-expansion-panel class="mb-3"  hideToggle (click)="onExpandHost(h.hostId)"
+																	[expanded]='h.hostId == clicked_marker_id' #example id="outer-mat" [class.panelBorder]="example.expanded"
+																	[class.online]="h.icon_url ==='assets/media-files/markers/online_all.png'"
+																	[class.onlinemany]="h.icon_url ==='assets/media-files/markers/online_many.png'"
+																	[class.onlinefew]="h.icon_url ==='assets/media-files/markers/online_few.png'"
+																	[class.offline]="h.icon_url ==='assets/media-files/markers/offline.png'">
+																
+																	<mat-expansion-panel-header class="pr-0 pl-0 mt-2">
+																		<mat-panel-title class="md-text p-0">
+																			<div class="col-lg-1 p-0 mt-2 mr-2 ml-2 text-left">
+																				<img class="map-header-status" [src]="h.icon_url" alt="Status">
+																			</div>
+																			<p class="col-lg-9 p-0 mt-1 mr-2 text-left">
+																				<span class="font-weight-bold ">
+																					{{ h.name }}
+																				</span>
+																				<br />
+																				<span class="sm-text">
+																					{{ h.city}} {{ h.state }} {{ h.postalCode }}
+																				</span>
+																			</p>
+																			<div class="col-lg-2 p-0 pt-2 text-right">
+																				<div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+																				<div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+																			</div>
+																		</mat-panel-title>
+																	</mat-expansion-panel-header>
+																
+																	<div class="pt-2" *ngIf="!loading_license_count; else loader_sm_no_text">
+																		<div class="host-licenses-list" *ngIf="host_licenses.length > 0; else no_licenses_text">
+																
+																			<div class="col-xs-6 mr-3" *ngFor="let license of host_licenses">
+																				<div *ngIf="isFiltered ? license.piStatus === filterStatus: true ">
+																					<span class="fas fa-circle mr-1 sm-text"
+																						[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
+																					<a [routerLink]="setLink(license.licenseId)" target="_blank">
+																						{{ (license.alias && license.alias.length > 0) ? license.alias :
+																						license.licenseKey }}
+																					</a>
+																				</div>
+																			</div>
+																		</div>
+																
+																		<ng-template #no_licenses_text>
+																			<p>No licenses for this host</p>
+																		</ng-template>
 																	</div>
-																</div>
+																</mat-expansion-panel>
 															</div>
-								
-															<ng-template #no_licenses_text>
-																<p>No licenses for this host</p>
-															</ng-template>
-														</div>
+														</div>														
 													</mat-expansion-panel>
 												</div>
 											</div>

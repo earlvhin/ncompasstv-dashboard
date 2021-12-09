@@ -394,7 +394,8 @@ export class LicenseViewComponent implements OnInit {
 						h.parsedStoreHours,
 						h.state,
 						h.postalCode,
-						h.city
+						h.city,
+						h.dealerId
 					);
 				}
 			)
