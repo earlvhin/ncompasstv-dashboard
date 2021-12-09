@@ -1,10 +1,11 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { API_FILTERS, API_LICENSE, API_LICENSE_PROPS, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
+import { API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_LICENSE_PROPS, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -86,7 +87,7 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 	
-	get_license_by_dealer_id(dealerId: string, page: number, search: string, arrangement: any, pageSize = 15) {
+	get_license_by_dealer_id(dealerId: string, page: number, search?: string, arrangement?: any, pageSize = 15) {
 		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
 		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize });
 		const url = `${base}${params}`;
@@ -151,6 +152,13 @@ export class LicenseService {
 
 	get_ad_licenses_total_by_dealer(id: string) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_ad_licenses_total_by_dealer}${id}`, this.httpOptions);
+	}
+
+	get_installation_statistics(date: string = null): Observable<{ licenseInstallationStats: API_INSTALLATION_STATS }> {
+		if (!date) date = moment().format('MM-DD-YYYY');
+		const base = `${this.baseUri}${this.getters.license_installation_statistics}`;
+		const url = `${base}?installDate=${date}`;
+		return this._http.get<{ licenseInstallationStats: API_INSTALLATION_STATS }>(url);
 	}
 
 	get_statistics_by_dealer(id: string) {

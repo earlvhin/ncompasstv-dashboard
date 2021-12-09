@@ -10,6 +10,7 @@ export * from './api_export-dealer.model';
 export * from './api_host.model';
 export * from './api_host-content.model';
 export * from './api_host-file.model'
+export * from './api_installation-statistics.model';
 export * from './api_license.model';
 export * from './api_license-total-statistics.model';
 export * from './api_new-screen.model';
@@ -29,6 +30,7 @@ export * from './credits-to-submit.model';
 export * from './feed.model';
 export * from './frequency.model';
 export * from './host-custom-field-group';
+export * from './host-s3-file.model';
 export * from './installation.model';
 export * from './paging.model';
 export * from './playlist-changes.model';

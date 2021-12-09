@@ -4,6 +4,7 @@ export class API_LICENSE {
 	license: API_LICENSE_PROPS;
 	host: API_HOST;
 	screen: screenInfo;
+	dealer_license: API_DEALER_LICENSE;
 }
 
 export interface API_LICENSE_PROPS {
@@ -78,4 +79,20 @@ interface screenInfo {
     dateCreated: string;
 	dateUpdated: string;
 	templateName?: string;
+}
+
+export class API_DEALER_LICENSE {
+	dealerId: string;
+	hostId: string;
+	licenseAlias: string;
+	licenseId: string;
+	licenseKey: string;
+
+	constructor(dealerId,  hostId, licenseAlias, licenseId, licenseKey){
+		this.dealerId = dealerId;
+		this.hostId = hostId;
+		this.licenseAlias = licenseAlias;
+		this.licenseId = licenseId;
+		this.licenseKey = licenseKey;
+	}
 }

@@ -398,9 +398,11 @@ export class DataTableComponent implements OnInit {
 					case 'Install Date':
 						this.subscription.add (
 							this._license.update_install_date(fields.id, response).subscribe(
-								() => 
-									this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!'),
-									error => console.log('Error updating license installation date ', error)
+								() => {
+									this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!');
+									this._helper.onUpdateInstallationDate.emit();
+								},
+								error => console.log('Error updating license installation date ', error)
 							)
 						);
 						break;

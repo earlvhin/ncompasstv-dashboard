@@ -170,6 +170,7 @@ import { WeatherDemoComponent } from './components_shared/feed_components/weathe
 import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
 import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
+import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -269,6 +270,7 @@ const ngComponents = [
 	GenerateFeedComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
+	LicenseViewComponent,
     HostsTabComponent,
     ImageSelectionModalComponent,
 	InformationModalComponent,
