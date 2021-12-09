@@ -81,10 +81,11 @@ export class ContentsTabComponent implements OnInit {
 		
 		return data.map(
 			content => {
+                console.log("content",content)
 				return {
 					id: { value: content.advertiserId, link: null , editable: false, hidden: true} ,
 					index: { value: count++, link: null , editable: false, hidden: false },
-					name: { value: this.parseFileName(content.fileName), link: `/${this.currentRole}/media-library/${content.contentId}`, new_tab_link: true, editable: false, hidden: false },
+					name: { value: content.title ? content.title : '', link: `/${this.currentRole}/media-library/${content.contentId}`, new_tab_link: true, editable: false, hidden: false },
 					type: { value: content.fileType == 'jpeg' || content.fileType == 'jfif' || content.fileType == 'jpg' || content.fileType == 'png' ? 'Image' : 'Video', link: null , editable: false, hidden: false },
 					totalPlayCount: { value: formatNumber(content.playsTotal, 'en'), editable: false, hidden: false },
 					totalDuration: { value: this.parseTotalDuration(content.durationsTotal), editable: false, hidden: false },
@@ -136,12 +137,12 @@ export class ContentsTabComponent implements OnInit {
 		);
 	}
 
-	private parseFileName(name: string) {
-		if (name.split('_').length === 1) return name;
-		const segments = name.split('_');
-		segments.splice(0, 1);
-		return segments.join('');
-	}
+	// private parseFileName(name: string) {
+	// 	if (name.split('_').length === 1) return name;
+	// 	const segments = name.split('_');
+	// 	segments.splice(0, 1);
+	// 	return segments.join('');
+	// }
 
 	protected get columns(): string[] {
 		return [
