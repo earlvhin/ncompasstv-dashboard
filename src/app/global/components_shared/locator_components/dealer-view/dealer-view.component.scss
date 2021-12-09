@@ -58,7 +58,7 @@
   background: #8ec641;
   color: #ffffff;
   width: 38px;
-  height: 43px;
+  height: 44px;
   justify-content: center;
   display: flex;
   align-items: center;
@@ -86,5 +86,43 @@
   }
   &.offline {
     border-color: #ec122b;
+  }
+}
+
+.preview {
+  mat-icon {
+    font-size: 12px;
+  }
+
+  .remove-btn {
+    text-align: center;
+
+    mat-icon {
+      line-height: 25px;
+    }
+  }
+
+  .dealers-row {
+    h4 {
+      margin-right: 20px;
+    }
+
+    .selected-dealers-container {
+      .dealer {
+        margin-right: 5px;
+        margin-bottom: 5px;
+        padding: 1px 5px 1px 7px;
+        font-size: 12px;
+        border-radius: 5px;
+        color: white;
+        border: 1px solid gray;
+        background-color: #8ec641;
+      }
+
+      .disable-dealer {
+        pointer-events: none;
+        background-color: gray;
+      }
+    }
   }
 }

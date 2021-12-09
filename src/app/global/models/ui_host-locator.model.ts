@@ -42,10 +42,11 @@ export class UI_HOST_LOCATOR_MARKER_DEALER_MODE {
 	state: string;
 	postalCode: string;
 	city: string;
+	dealerId: string;
 
 	constructor(id: string, name: string, lat: string, long: string, l_status: number, icon: string,
 				address: string, category: string, storeHours: string, state: string, 
-				postalCode: string, city: string) {
+				postalCode: string, city: string, dealerId: string) {
 		this.hostId = id;
 		this.name = name;
 		this.latitude = lat;
@@ -58,6 +59,7 @@ export class UI_HOST_LOCATOR_MARKER_DEALER_MODE {
 		this.state = state;
 		this.postalCode = postalCode;
 		this.city = city;
+		this.dealerId = dealerId;
 	}
 }
 

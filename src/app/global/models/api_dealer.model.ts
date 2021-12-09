@@ -32,4 +32,6 @@ export class API_DEALER {
     contractDetails: string;
 	advertisers: any;
 	tags: { dateCreated: string, name: string, ownerId: string, tagId: number, tagTypeId: number }[];
+    onlineLicenseCount?: number = 0;
+    offlineLicenseCount?: number = 0;
 }
