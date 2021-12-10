@@ -102,6 +102,16 @@ export class HostService extends BaseService {
 		const url = `${this.getters.api_get_hosts}`+'?search='+`${key}`;
 		return this.getRequest(url);
 	}
+
+	get_host_categories(page: number, key: string, dealerId: string, pageSize= 15) {
+		const url = `${this.getters.api_get_hosts_categories}?search=${key}&page=${page}&pageSize=${pageSize}&dealerId=${dealerId}`;
+		return this.getRequest(url);
+	}
+
+	get_host_states(page: number, key: string, dealerId: string, pageSize = 15) {
+		const url = `${this.getters.api_get_hosts_states}?search=${key}&page=${page}&pageSize=${pageSize}&dealerId=${dealerId}`;
+		return this.getRequest(url);
+	}
 	
 	get_host_by_page(page: number, search: string, sortColumn?, sortOrder?, pageSize = 15): Observable<{ host?: API_HOST[], paging?: PAGING, message?: string }> {
 		const base = `${this.getters.api_get_hosts}`;

@@ -1,14 +1,17 @@
 <div class="content-section">
 	<div class="col-lg-12">
 		<div class="row mb-2">
-			<div class="col-lg-4">
-				<app-autocomplete-field [data_reference]="hosts_data" [primary_keyword]="primaryKeyword"
-					[key_of_value]="'hostId'" (data_value)="onSelectHost($event)" [required]="true"
-					[label]="'Type in a Host name here'" [paging]="paging" (call_next_page)="searchBoxTrigger($event)"
-					[loading_data]="loading_data" (searched)="searchData($event)" [loading_search]="loading_search">
-				</app-autocomplete-field>
+			<div class="col-lg-3">
+				<mat-form-field class="full-width content-filter-dropdown">
+					<mat-label>Search Options</mat-label>
+					<mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" [disabled]="loading_hosts"> 
+						<mat-option [value]="'host'">Search by Host</mat-option>
+						<mat-option [value]="'state'">Search by State</mat-option>
+						<mat-option [value]="'category'">Search by Category</mat-option>
+					</mat-select> 
+				</mat-form-field>
 			</div>
-			<div class="col-lg-8">
+			<div class="col-lg-9 float-right">
 				<div class="float-container d-flex">
 					<div class="d-flex align-items-center mr-2">
 						<p class="sm-text">LEGEND:</p>
@@ -36,12 +39,11 @@
 			<div class="col-lg-12 mr-2">
 				<div id="wrapper">
 					<div id="google_map">
-						<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected"
-							[maxZoom]="19">
-							<agm-marker *ngIf="map_markers as h" [latitude]="h.latitude" [longitude]="h.longitude"
-								[agmFitBounds]="true" [iconUrl]="h.icon_url">
-								<agm-info-window #window [isOpen]="isOpened">
-									<h4 class="font-weight-bold">{{ h.name }}</h4>
+							<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
+								<agm-marker id="{{h.hostId}}" *ngFor="let h of map_markers" [latitude]="h.latitude" [longitude]="h.longitude" [agmFitBounds]="true"
+									[iconUrl]="h.icon_url" (markerClick)="onMarkerClick(h.hostId, window)">
+								<agm-info-window #window [isOpen]="currentSearchOption === 'host' ? isOpened: expansion_id == h.hostId">
+									<h4 class="font-weight-bold" >{{ h.name }}</h4>
 									<div class="mt-2">
 										<tr>
 											<th>
@@ -64,7 +66,7 @@
 												<h5 class="font-weight-bold">Operation Hours: </h5>
 											</th>
 											<td>
-										<tr *ngFor="let ops of storehours">
+										<tr *ngFor="let ops of h.storeHours">
 											<th class="pr-4">
 												<h5>{{ ops.day }} </h5>
 											</th>
@@ -72,6 +74,7 @@
 												<h5>{{ hrs.open }} - {{ hrs.close }}</h5>
 											</td>
 										</tr>
+										
 										</td>
 										</tr>
 									</div>
@@ -86,65 +89,175 @@
 					</div>
 					<div id="over_map">
 						<ng-container *ngIf="!loading_hosts; else loader">
-							<ng-container *ngIf="hosts.length > 0; else no_host">
-								<mat-card class="p-4 search-result" *ngIf="selected_host as host;">
-
-									<!-- HOST DETAILS -->
-									<div class="align-items-center d-flex mb-3">
-										<div class="mr-1">
-											<img class="map-header-status" [src]="host.icon_url" alt="Status">
+							<ng-container *ngIf="currentSearchOption === 'host'">
+								<div class="search-bar pl-3 pt-2">
+									<label class="mb-2">Enter a Host Name</label>
+									<div class="d-flex">
+										<div class="search-input">
+											<app-autocomplete-field [data_reference]="hosts_data" [primary_keyword]="primaryKeyword" [key_of_value]="'hostId'"
+												(data_value)="onSelectHost($event)" [required]="true" [label]="'Host Name'" [paging]="paging"
+												(call_next_page)="searchBoxTrigger($event)" [loading_data]="loading_data" (searched)="searchData($event)"
+												[loading_search]="loading_search">
+											</app-autocomplete-field>
 										</div>
-										<div class="flex-even">
-											<h3>{{ host.name }}</h3>
-											<p class="sm-text">{{ host.address }}, {{ host.city }}, {{ host.state }} {{
-												host.postalCode }}
-											</p>
-										</div>
+										<span class="fas fa-search search-button"></span>
 									</div>
-
-									<hr>
-
-									<!-- DEALER DETAILS -->
-									<div class="row">
-										<div class="col-lg">
-											<span class="sm-text w-100">Dealer</span>
-											<p>
-												<a [routerLink]="getLink('dealers', host_dealer.dealerId)"
-													target="_blank">
-													{{ host_dealer.businessName }}
-												</a>
-											</p>
+								</div>
+								<ng-container *ngIf="hosts.length > 0; else no_host">
+									<mat-card class="p-4 search-host-result" *ngIf="selected_host as host;">
+							
+										<!-- HOST DETAILS -->
+										<div class="align-items-center d-flex mb-3">
+											<div class="mr-1">
+												<img class="map-header-status" [src]="host.icon_url" alt="Status">
+											</div>
+											<div class="flex-even">
+												<h3>{{ host.name }}</h3>
+												<p class="sm-text">{{ host.address }}, {{ host.city }}, {{ host.state }} {{
+													host.postalCode }}
+												</p>
+											</div>
 										</div>
-										<div class="col-lg">
-											<span class="sm-text w-100">Dealer Alias</span>
-											<p>
-												<a [routerLink]="getLink('dealers', host_dealer.dealerId)"
-													target="_blank">
-													{{ host_dealer.dealerIdAlias }}
-												</a>
-											</p>
-										</div>
-									</div>
-
-									<!-- LICENSES -->
-									<div class="row licenses">
-										<div class="col-lg" *ngIf="licenses">
-											<span class="sm-text w-100">Licenses</span>
-											<div *ngIf="licenses.length > 0">
-												<div *ngFor="let license of licenses">
-													<span class="fas fa-circle mr-1 sm-text"
-														[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
-													<a [routerLink]="getLink('licenses', license.licenseId)"
-														target="_blank">
-														{{ (license.alias && license.alias.length > 0) ? license.alias :
-														license.licenseKey
-														}}
+							
+										<hr>
+							
+										<!-- DEALER DETAILS -->
+										<div class="row">
+											<div class="col-lg">
+												<span class="sm-text w-100">Dealer</span>
+												<p>
+													<a [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
+														{{ host_dealer.businessName }}
 													</a>
+												</p>
+											</div>
+											<div class="col-lg">
+												<span class="sm-text w-100">Dealer Alias</span>
+												<p>
+													<a [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
+														{{ host_dealer.dealerIdAlias }}
+													</a>
+												</p>
+											</div>
+										</div>
+							
+										<!-- LICENSES -->
+										<div class="row licenses">
+											<div class="col-lg" *ngIf="host_licenses">
+												<span class="sm-text w-100">Licenses</span>
+												<div *ngIf="host_licenses.length > 0">
+													<div *ngFor="let license of host_licenses">
+														<span class="fas fa-circle mr-1 sm-text"
+															[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
+														<a [routerLink]="getLink('licenses', license.licenseId)" target="_blank">
+															{{ (license.alias && license.alias.length > 0) ? license.alias :
+															license.licenseKey
+															}}
+														</a>
+													</div>
 												</div>
 											</div>
 										</div>
+									</mat-card>
+								</ng-container>
+							</ng-container>
+					
+							<ng-container *ngIf="currentSearchOption === 'state' || currentSearchOption === 'category'">
+							 <div class="search-bar pl-3 pt-2" *ngIf="currentSearchOption === 'state'">
+									<label class="mb-2">Enter a State</label>
+									<div class="d-flex">
+										<div class="search-input">
+											<app-autocomplete-field [data_reference]="states_data" [primary_keyword]="'state'" [key_of_value]="'state'"
+												(data_value)="onSelectState($event)" [required]="true" [label]="'State'" [paging]="state_paging"
+												(call_next_page)="searchBoxStateTrigger($event)" [loading_data]="loading_state_data" (searched)="searchState($event)"
+												[loading_search]="loading_state_search">
+											</app-autocomplete-field>
+										</div>
+										<span class="fas fa-search search-button"></span>
+										
 									</div>
-								</mat-card>
+								</div> 
+								<div class="search-bar pl-3 pt-2" *ngIf="currentSearchOption === 'category'">
+									<label class="mb-2">Enter a Category</label>
+									<div class="d-flex">
+										<div class="search-input">
+											<app-autocomplete-field [data_reference]="categories_data" [primary_keyword]="'category'" [key_of_value]="'category'"
+												(data_value)="onSelectCategory($event)" [required]="true" [label]="'Category'" [paging]="category_paging"
+												(call_next_page)="searchBoxCategoryTrigger($event)" [loading_data]="loading_category_data"
+												(searched)="searchCategory($event)" [loading_search]="loading_category_search">
+											</app-autocomplete-field>
+										</div>
+										<span class="fas fa-search search-button"></span>
+									</div>
+								</div>
+								<div class="search-result"  *ngIf="isFilteredHosts">
+									<div class="mb-3 d-flex justify-content-center bg-gray">
+										<span class="sm-text font-weight-bold"><span class="text-danger">{{host_results.length}}</span> Host(s) | <span
+												class="text-danger">{{selected_licenses.length}}</span> License(s)
+											<br />
+											<span class="text-primary fas fa-circle mr-1"></span> <span class="text-primary">{{online_licenses}}</span>
+											Online |
+											<span class="text-danger fas fa-circle mr-1"></span> <span class="text-danger">{{offline_licenses}}</span>
+											Offline
+										</span>
+									
+									</div>
+									<mat-accordion *ngIf="host_results.length > 0;">
+										<div class="row">
+											<div class="col-lg-12" *ngFor="let h of host_results">
+												<mat-expansion-panel class="mb-3" hideToggle (click)="onExpandHost(h.hostId)"
+													[expanded]='h.hostId == clicked_marker_id' #example id="outer-mat"
+													[class.panelBorder]="example.expanded"
+													[class.online]="h.icon_url ==='assets/media-files/markers/online_all.png'"
+													[class.onlinemany]="h.icon_url ==='assets/media-files/markers/online_many.png'"
+													[class.onlinefew]="h.icon_url ==='assets/media-files/markers/online_few.png'"
+													[class.offline]="h.icon_url ==='assets/media-files/markers/offline.png'">
+									
+													<mat-expansion-panel-header class="pr-0 pl-0 mt-2">
+														<mat-panel-title class="md-text p-0">
+															<div class="col-lg-1 mt-1 text-left">
+																<img class="map-header-status" [src]="h.icon_url" alt="Status">
+															</div>
+															<p class="col-lg-10 ml-1 text-left">
+																<span class="font-weight-bold ">
+																	{{ h.hostName }}
+																</span>
+																<br />
+																<span class="sm-text">
+																	{{ h.city}} {{ h.state }} {{ h.postalCode }}
+																</span>
+															</p>
+															<div class="col-lg-1 p-0 pt-1 text-right">
+																<div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+																<div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+															</div>
+														</mat-panel-title>
+													</mat-expansion-panel-header>
+									
+													 <div class="pt-2" *ngIf="!loading_license_count; else loader_sm">
+														<div class="host-licenses-list" *ngIf="host_licenses.length > 0;">
+															<div class="col-xs-6 mr-3" *ngFor="let license of host_licenses">
+																<div>
+																	<span class="fas fa-circle mr-1 sm-text"
+																		[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
+																	 <a [routerLink]="setLink(license.licenseId)" target="_blank">
+																		{{ (license.alias && license.alias.length > 0) ? license.alias :
+																		license.licenseKey }}
+																	</a>
+																</div>
+															</div>
+														</div>
+									
+														<ng-template #no_licenses_text>
+															<p>No licenses for this host</p>
+														</ng-template>
+													</div>
+												</mat-expansion-panel>
+											</div>
+										</div>
+									</mat-accordion>
+								</div>
+							
 							</ng-container>
 						</ng-container>
 					</div>

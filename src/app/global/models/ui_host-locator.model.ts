@@ -1,4 +1,5 @@
 export class UI_HOST_LOCATOR_MARKER {
+	hostId: string;
 	name: string;
 	latitude: string;
 	longitude: string;
@@ -11,9 +12,10 @@ export class UI_HOST_LOCATOR_MARKER {
 	postalCode: string;
 	city: string;
 
-	constructor(name: string, lat: string, long: string, l_status: number, icon: string,
+	constructor(hostId: string, name: string, lat: string, long: string, l_status: number, icon: string,
 				address: string, category: string, storeHours: string, state: string, 
 				postalCode: string, city: string) {
+		this.hostId = hostId;
 		this.name = name;
 		this.latitude = lat;
 		this.longitude = long;

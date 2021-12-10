@@ -133,7 +133,8 @@ export class DashboardComponent implements OnInit {
         this._license.get_statistics_by_installation(this.selected_date).subscribe(
             (data:any) => {
                 this.installation_stats = {
-                    total: data.licenseInstallationStats.total,
+                   total: data.licenseInstallationStats.total === 0 ? '0' :
+                          data.licenseInstallationStats.total,
                     total_label: 'INSTALLATIONS',
                     icon: 'fas fa-calendar',
                     this_month: data.licenseInstallationStats.currentMonth,
