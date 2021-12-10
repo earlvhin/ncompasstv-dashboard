@@ -288,6 +288,15 @@ export class LicensesComponent implements OnInit {
                 this.filters.status = value;
                 this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                if(value == 0) {
+                    var filter = {
+                        column: 'TimeIn',
+                        order: 'desc'
+                    }
+                    this.getColumnsAndOrder(filter, 'licenses')
+                } else {
+                    this.sortList('desc');
+                }
                 break;
             case 'zone':
                 this.filters.zone = value
@@ -486,6 +495,7 @@ export class LicensesComponent implements OnInit {
             label_dealer: "",
             label_host: ""
         }
+        this.sortList('desc');
         this.getLicenses(1);
     }
 

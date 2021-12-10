@@ -394,6 +394,10 @@ export class ContentsTabComponent implements OnInit {
                 const third_column = ['',this.selected_content_count,this.selected_content_duration];
                 this.worksheet.getRow(3).values = third_column;
                 this.worksheet.getRow(3).height = 20;
+                this.worksheet.getRow(4).values = [];
+                this.worksheet.getRow(4).height = 20;
+                this.worksheet.getRow(5).values = ['Host','Play Count', 'Play Duration'];
+                this.worksheet.getRow(5).height = 20;
                 this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
                 this.worksheet.getRow(2).font =  {
                     bold: true,

@@ -75,6 +75,9 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         'Screen Name'
     ];
 
+    total_duration: any;
+    total_playcount: any;
+
 	content_history_table_columns = [
 		{name: '#', no_export: true},
 		{name: 'Playlist Name', key:'playlistName'},
@@ -185,9 +188,24 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 						}
 					);
 				}
+                this.getTotalDurationAndPlayCount(data.contentLogsByHosts)
 			})
 		}
 	}
+
+    getTotalDurationAndPlayCount(data) {
+        console.log("DD", data)
+        var count = 0;
+        var play_count = 0;
+        data.map (
+            i => {
+                count = count + i.totalDuration;
+                play_count = play_count + i.totalPlay;
+            }
+        )
+        this.total_duration =this.msToTime(count);
+        this.total_playcount = play_count;
+    }
 
     msToTime(input) {
         var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
@@ -258,8 +276,32 @@ export class SingleContentComponent implements OnInit, OnDestroy {
                 header.push({ header: this.content_logs_report_table_columns[key].name, key: this.content_logs_report_table_columns[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
             }
         });
+        
+        const first_column = ['Filename', this.file_title];
         this.worksheet.columns = header;
-		this.getDataForExport();    
+        this.worksheet.getRow(1).values = [];
+        this.worksheet.getRow(1).values = first_column;
+        this.worksheet.getRow(2).values = [];
+        const second_column = ['','', 'Total Count','Total Duration'];
+        this.worksheet.getRow(2).values = second_column;
+        this.worksheet.getRow(2).height = 20;
+        const third_column = ['','',200,300];
+        // const third_column = ['',this.selected_content_count,this.selected_content_duration];
+        this.worksheet.getRow(3).values = third_column;
+        this.worksheet.getRow(3).height = 20;
+        this.worksheet.getRow(4).values = [];
+        this.worksheet.getRow(4).height = 20;
+        this.worksheet.getRow(5).values = ['Host', 'Playlist', 'Play Count', 'Play Duration', 'Start Date', 'End Date'];
+        this.worksheet.getRow(5).height = 20;
+        this.worksheet.getCell('A1').alignment = { vertical: 'top', horizontal: 'left' };
+        this.worksheet.getRow(2).font =  {
+            bold: true,
+            name: 'Arial',
+            size: 11,
+        };
+        this.worksheet.mergeCells('B1:F1');
+        this.worksheet.getCell('B1').alignment = { horizontal: 'left' };
+        this.getDataForExport();    
 	}
 
     getDataForExport() {
