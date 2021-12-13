@@ -285,7 +285,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         const second_column = ['','', 'Total Count','Total Duration'];
         this.worksheet.getRow(2).values = second_column;
         this.worksheet.getRow(2).height = 20;
-        const third_column = ['','',200,300];
+        const third_column = ['','',this.total_playcount, this.total_duration];
         // const third_column = ['',this.selected_content_count,this.selected_content_duration];
         this.worksheet.getRow(3).values = third_column;
         this.worksheet.getRow(3).height = 20;
@@ -303,6 +303,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         this.worksheet.getCell('B1').alignment = { horizontal: 'left' };
         this.getDataForExport();    
 	}
+
+
 
     getDataForExport() {
         var tab = this.start_date + "-" + this.end_date;
