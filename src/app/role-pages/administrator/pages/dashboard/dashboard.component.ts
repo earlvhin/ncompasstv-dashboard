@@ -42,7 +42,7 @@ export class DashboardComponent implements OnInit {
         if(this._auth.current_user_value.firstname) {
             this.user_name = this._auth.current_user_value.firstname;
         } else {
-            this.user_name = 'John Doe';
+            this.user_name = "John Doe";
         }
 
         var date = new Date();
