@@ -80,6 +80,7 @@ export class UI_LICENSE {
     screenshot: object;
     license_key: object;
 	type: object;
+    dealer: object;
 	host_name: object;
     alias: object;
     last_push: object;
@@ -100,7 +101,8 @@ export class UI_LICENSE {
 		id: object, 
         screenshot: object,
 		key: object, 
-		type: object, 
+		type: object,
+        dealer: object, 
 		host: object, 
 		alias: object, 
 		last_push: object, 
@@ -121,6 +123,7 @@ export class UI_LICENSE {
         this.screenshot = screenshot;
         this.license_key = key;
 		this.type = type;
+        this.dealer = dealer;
         this.host_name = host;
 		this.alias = alias;
         this.last_push = last_push;

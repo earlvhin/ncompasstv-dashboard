@@ -1509,6 +1509,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 this.filters.status = value
                 this.filters.activated = "";
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                if(value == 0) {
+                    var filter = {
+                        column: 'TimeIn',
+                        order: 'desc'
+                    }
+                    this.getColumnsAndOrder(filter)
+                } else {
+                    this.sortList('desc');
+                }
                 break;
             case 'zone':
                 this.filters.zone = value
@@ -1560,6 +1569,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             label_dealer: "",
             label_host: ""
         }
+        this.sortList('desc')
         this.getLicensesofDealer(1);
     }
 }

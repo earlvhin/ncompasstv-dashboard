@@ -106,7 +106,7 @@ export class LicensesComponent implements OnInit {
         { name: 'Screenshot', sortable: false, no_export: true },
 		{ name: 'License Key', sortable: true, column:'LicenseKey', key: 'licenseKey' },
 		{ name: 'Type', sortable: true, column:'ScreenType', key: 'screenType' },
-		{ name: 'Dealer', sortable: true, hidden: true, no_show: true, key: 'businessName' },
+		{ name: 'Dealer', sortable: true, column:'BusinessName', key: 'businessName' },
 		{ name: 'Host', sortable: true, column:'HostName', key: 'hostName' },
 		{ name: 'Alias', sortable: true, column:'Alias', key: 'alias' },
 		{ name: 'Last Push', sortable: true, column:'ContentsUpdated', key:'contentsUpdated' },
@@ -783,6 +783,7 @@ export class LicensesComponent implements OnInit {
 		let count = this.paging_data_licenses.pageStart;
 		return data.map(
 			(l: any) => {
+                console.log("L", l)
 				const table = new UI_LICENSE(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: l.licenseId, link: null , editable: false, hidden: true, key: false, table: 'license'},
@@ -795,6 +796,7 @@ export class LicensesComponent implements OnInit {
 					},
 					{ value: l.licenseKey, link: '/administrator/licenses/' + l.licenseId, new_tab_link: 'true', compressed: true, editable: false, hidden: false, status: true},
 					{ value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
+					{ value: l.dealerId ? l.businessName : '--', link: '/administrator/dealers/' + l.dealerId, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: l.hostId ? l.hostName : '--', link: l.hostId ? '/administrator/hosts/' + l.hostId : null, new_tab_link: 'true', editable: false, hidden: false, business_hours: l.hostId ? true : false, business_hours_label: l.hostId ? this.getLabel(l) : null},
 					{ value: l.alias ? l.alias : '--', link: '/administrator/licenses/' + l.licenseId, editable: false, new_tab_link: 'true', label: 'License Alias', id: l.licenseId, hidden: false },
 					{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
