@@ -199,6 +199,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
+		{ name: 'Tags', key:'tagsToString', hidden: true },
 	];
 
 	license_zone_table_col = [
@@ -1127,7 +1128,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
 					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
 						data => {
-                            console.log("DD", data)
                             data.licenseTemplateZoneExports.map(
                                 i => {
                                     if(i.appVersion) {
@@ -1202,6 +1202,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				var parse_version = JSON.parse(item.appVersion);
 				item.ui = parse_version && parse_version.ui  ? parse_version.ui : '1.0.0';
 				item.server = parse_version && parse_version.server  ? parse_version.server : '1.0.0';
+				item.tagsToString = item.tags.join(',');
 				break;
             case 'Hosts':
                 item.businessName = this.dealer_user_data.businessName;
@@ -1227,11 +1228,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 data_to_return = data_to_return + "\n" + "Horizontal Small: " + this.msToTime(data.templateHorizontalSmall)
             } 
             if (data.templateLowerLeft != 'NO DATA') {
-                console.log("LL")
                 data_to_return = data_to_return + "\n" + "Lower Left: " + this.msToTime(data.templateLowerLeft)
             } 
             if (data.templateMain != 'NO DATA') {
-                console.log("M")
                 data_to_return = data_to_return + "\n" + "Main: " + this.msToTime(data.templateMain)
             } 
             if (data.templateUpperLeft != 'NO DATA') {
