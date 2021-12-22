@@ -1032,7 +1032,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let result: string;
 		let timezone: string;
 		const defaultTimezone = 'US/Central';
-		timezone = this.host.timeZone ? this.host.timeZone : defaultTimezone;
+		timezone = this.timezone ? this.timezone.name : defaultTimezone;
 		result = moment.tz(timezone).format('dddd');
 		if (!result) result = moment.tz(defaultTimezone).format('dddd');
 		return result;
