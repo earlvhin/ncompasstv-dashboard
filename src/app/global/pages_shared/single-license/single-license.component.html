@@ -546,19 +546,8 @@
 												<a class="playlist-name" [routerLink]="playlist_route">{{ screen_zone.playlistName }}</a>
 											</div>
 										</div>
-										<div class="description">
-											<!-- <span class="sm-text" *ngIf="has_playlist; else no_playlist">
-												This playlist has <strong>{{ number_of_contents }}</strong> items on <strong>{{ screen_zone.zone ? screen_zone.zone : content_per_zone[0].zone_name }}</strong> zone.<br>
-												Total playtime of <b>{{ duration_breakdown_text.total }}</b>.
-											</span> -->
-										</div>
 										<br>
-										<div>
-											<span class="sm-text"><b>Duration Breakdown</b></span>
-										</div>
-										<!-- <div class="total-duration">
-											<span class="sm-text">Total {{ current_zone_selected }}: {{ duration_breakdown_text.total }}</span>
-										</div> -->
+										<div><span class="sm-text"><b>Duration Breakdown</b></span></div>
 										<div class="hosts-duration">
 											<span class="sm-text">Hosts: {{ duration_breakdown_text.hosts }}</span>
 										</div>
@@ -573,6 +562,9 @@
 										</div>
 										<div class="others-duration">
 											<span class="sm-text">Other: {{ duration_breakdown_text.others }}</span>
+										</div>
+										<div class="total-duration">
+											<span class="sm-text"><b>Total playtime: {{ duration_breakdown_text.total }}</b></span>
 										</div>
 										<ng-template #no_playlist>
 											<span class="sm-text">No playlist for this zone</span>
