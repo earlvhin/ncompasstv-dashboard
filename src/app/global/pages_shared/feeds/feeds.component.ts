@@ -165,17 +165,20 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				const { contentId, dealerId, feedId, url, title, businessName, classification, createdByName, 
 					dateCreated, description } = data;
 
+				let dealerUrl = null;
+				if (dealerId) dealerUrl = `${this.currentRole}/dealers/${data.dealerId}`;
+
 				return new UI_TABLE_FEED(
-					{ value: contentId, link: null , editable: false, hidden: true },
-					{ value: feedId, link: null, editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false },
+					{ value: contentId , editable: false, hidden: true },
+					{ value: feedId, editable: false, hidden: true },
+					{ value: count++ , editable: false, hidden: false },
 					{ value: title, link: `/${this.currentRole}/media-library/${contentId}`, editable: false, hidden: false },
-					{ value: businessName, link: `/${this.currentRole}/dealers/${data.dealerId}`, id: dealerId, editable: false, hidden: false },
-					{ value: data.classification ? classification : '--', link: null, editable: false, hidden: false },
+					{ value: businessName, link: dealerUrl, id: dealerId, editable: false, hidden: false },
+					{ value: data.classification ? classification : '--', editable: false, hidden: false },
 					{ value: createdByName, editable: false, hidden: false },
-					{ value: this._date.transform(dateCreated, 'MMMM d, y'), link: null, editable: false, hidden: false },
+					{ value: this._date.transform(dateCreated, 'MMMM d, y'), editable: false, hidden: false },
 					{ value: title, link: url, editable: false, hidden: true },
-					{ value: description, link: null, editable: false, hidden: true },
+					{ value: description, editable: false, hidden: true },
 				);
 			}
 		);
