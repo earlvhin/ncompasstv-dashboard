@@ -38,7 +38,6 @@ export class AdvertisersComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-        console.log("OTHER", this.call_to_other_page)
 		this.pageRequested(1);
 		this.getAdvertiserTotal();
 	}
