@@ -19,7 +19,10 @@
 
                     <div *ngIf="is_admin">
                         <p class="mt-0 mb-1">
-                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank"><strong>{{ n.licenseAlias }}</strong></a> 
+                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
+                                <strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
+                                <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
+                        </a> 
                             of <a [routerLink]="[route + '/dealers', n.dealerId]" target="_blank"><strong class="font-italic">{{ n.businessName }}</strong></a> 
                             has been offline for more than an hour now.
                         </p>
@@ -28,7 +31,10 @@
 
                     <div *ngIf="is_dealer">
                         <p class="mt-0 mb-1">
-                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank"><strong>{{ n.licenseAlias }}</strong></a> 
+                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
+                                <strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
+                                <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
+                            </a> 
                             has been offline for more than an hour now.
                         </p>
                         <p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>

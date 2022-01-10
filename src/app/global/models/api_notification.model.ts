@@ -19,5 +19,6 @@ export interface Notification {
     licenseKey: string,
     notificationId: string,
     status: number,
-    timeZone: string
+    timeZone: string,
+    hostName: string
 }
