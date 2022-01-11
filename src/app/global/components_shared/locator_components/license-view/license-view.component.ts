@@ -491,7 +491,8 @@ export class LicenseViewComponent implements OnInit {
 					});
 				});
 				let locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
-				let marker = new UI_DEALER_LOCATOR_EXPORT(license.name, locatorAddress, license.category, this.markStoreHours,
+				let businessName = this.currentUser.roleInfo.businessName;
+				let marker = new UI_DEALER_LOCATOR_EXPORT(businessName, license.name, locatorAddress, license.category, this.markStoreHours,
 															license.latitude, license.longitude);
 				this.exported_map_marker.push(marker);
 			}
