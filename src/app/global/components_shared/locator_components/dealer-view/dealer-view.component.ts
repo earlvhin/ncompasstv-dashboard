@@ -128,13 +128,15 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					this.paging = paging;
 
 					if (entities.length <= 0) {
-						this.dealers_data = [];
+						this.dealers_data = [];					
 						return;
 					}
 
 					this.dealers_data = dealers;
-					this.dealers = dealers;
-					this.filteredDealers.next(dealers);
+					const merged = this.selectedDealersControl.value.concat(dealers);
+					const unique = merged.filter((dealer, index, merged) => merged.findIndex(mergedDealer => (mergedDealer.dealerId === dealer.dealerId)) === index);
+					this.dealers = unique;
+					this.filteredDealers.next(unique);
 				},
 				error => console.log('Error searching dealer with host', error)
 			)
@@ -161,8 +163,10 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 				(response: { dealers: API_DEALER[], paging: { entities: any[] }}) => {
 					const { dealers, paging } = response;
 					this.paging = paging;
-					this.dealers = dealers;
-					this.filteredDealers.next(dealers);
+					const merged = this.selectedDealersControl.value.concat(dealers);
+					const unique = merged.filter((dealer, index, merged) => merged.findIndex(mergedDealer => (mergedDealer.dealerId === dealer.dealerId)) === index);
+					this.dealers = unique;
+					this.filteredDealers.next(unique);
 					this.dealers_data = dealers;
 					this.loading_data = false;
 				},
@@ -378,7 +382,8 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					});
 				});
 				let locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
-				let marker = new UI_DEALER_LOCATOR_EXPORT(license.name, locatorAddress, license.category, this.markStoreHours,
+				let businessName = this.selected_dealer.find(dealer => dealer.dealerId === license.dealerId).businessName;
+				let marker = new UI_DEALER_LOCATOR_EXPORT(businessName, license.name, locatorAddress, license.category, this.markStoreHours,
 															license.latitude, license.longitude);
 				this.exported_map_marker.push(marker);
 			}
@@ -416,7 +421,9 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 						if (control.invalid) return;
 
 						if (keyword && keyword.trim().length > 0) this.searchData(keyword);
-						else this.getDealers(1);
+						else {
+							this.getDealers(1);
+						};
 					}
 				)
 			)
