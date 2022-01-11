@@ -19,11 +19,11 @@
 						<div class="notification-item" *ngFor="let n of notifications">
 							<div [routerLink]="[route + '/licenses', n.licenseId]">
 								<p class="sm-text mb-2" *ngIf="is_admin">
-									<strong>{{ n.licenseAlias }}</strong> of {{ n.businessName }} has been offline for more than an hour now.
+									<strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong> <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong> of {{ n.businessName }} has been offline for more than an hour now.
 								</p>
 
 								<p class="sm-text mb-2" *ngIf="is_dealer">
-									<strong>{{ n.licenseAlias }}</strong> has been offline for more than an hour now.
+									<strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong> <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong> has been offline for more than an hour now.
 								</p>
 
 								<p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }}</p>
