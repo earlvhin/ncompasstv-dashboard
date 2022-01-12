@@ -22,6 +22,8 @@ export class HostsComponent implements OnInit {
 	hosts$: Observable<API_HOST[]>;
     hosts_data: UI_HOST_VIEW[] = [];
     hosts_to_export: API_HOST[] = [];
+    hour_diff: any;
+    hour_diff_temp: any;
     initial_load_hosts: boolean = true;
 	no_dealer: boolean = false;
     no_host: boolean;
@@ -65,6 +67,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName' },
 		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses' },
 		{ name: 'Tags', hidden: true, no_show: true, key:'tagsToString' },
+        { name: 'Total Business Hours', sortable: false, key:'storeHours', hidden: true, no_show: true},
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -321,10 +324,15 @@ export class HostsComponent implements OnInit {
 							if (response.message) {
 								this.hosts_to_export = [];
 								return;
-							}
-
-							const mutatedResponse = this.modifyDataForExport([...response.host]);
-							this.hosts_to_export = mutatedResponse;
+							} else {
+                                response.host.map(
+                                    host => {
+                                        host.storeHours = this.getTotalHours(host)
+                                        this.modifyDataForExport(host);
+                                    }
+                                )
+							    this.hosts_to_export = [...response.host];
+                            }
 
 							this.hosts_to_export.forEach(
 								(item) => {
@@ -356,6 +364,51 @@ export class HostsComponent implements OnInit {
         }
 	}
 
+    getTotalHours(data) {
+        console.log("DD",data) 
+        if (data.storeHours) {
+            data.storeHours = JSON.parse(data.storeHours)
+            this.hour_diff_temp = [];
+            data.storeHours.map(
+                hours => {
+                    if(hours.status) {
+                        hours.periods.map (
+                            period => {
+                                if(period.open && period.close) {
+                                    var close = moment(period.close,"H:mm A");
+                                    var open = moment(period.open,"H:mm A");
+    
+                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss")).getHours();
+                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss")).getHours();
+                                    
+                                    if(time_start > time_end) {
+                                        time_end = time_end + 24;
+                                        var diff_hours = time_end - time_start;
+                                    } else {
+                                        var diff_hours = time_end - time_start;
+                                    }
+                                } else {
+                                    var diff_hours = 24;
+                                }
+                                this.hour_diff_temp.push(diff_hours)
+                            }
+                        )
+                    } else {
+
+                    }
+                }
+            )
+            this.hour_diff = 0;
+            this.hour_diff_temp.map(
+                hour => {
+                    this.hour_diff += hour;
+                }
+            )
+        } else {
+        }
+        return this.hour_diff; 
+    }
+
     getColumnsAndOrder(data, tab) {
         switch(tab) {
             case 'hosts':
@@ -371,7 +424,8 @@ export class HostsComponent implements OnInit {
 		return this._auth.current_role;
 	}
 
-	private modifyDataForExport(data: API_HOST[]): API_HOST[] {
-		return data.map(host => { host.tagsToString = host.tags.join(','); return host });
+	private modifyDataForExport(data) {
+		data.storeHours = data.storeHours * 60 + " minutes" ;
+        data.tagsToString = data.tags.join(','); 
 	}
 }

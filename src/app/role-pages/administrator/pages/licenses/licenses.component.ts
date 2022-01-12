@@ -23,11 +23,14 @@ import { LicenseModalComponent } from 'src/app/global/components_shared/license_
 	providers: [DatePipe, TitleCasePipe]
 })
 
+
 export class LicensesComponent implements OnInit {
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	licenses_data: UI_LICENSE[] = [];
 	hosts_data: UI_HOST_VIEW[] = [];
-	no_dealer: boolean;
+    hour_diff: any;
+    hour_diff_temp: any;
+    no_dealer: boolean;
 	no_host: boolean;
 	no_licenses: boolean;
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
@@ -139,6 +142,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName' },
 		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses' },
 		{ name: 'Tags', key:'tagsToString', no_show: true },
+        { name: 'Total Business Hours', sortable: false, key:'storeHours', hidden: true, no_show: true},
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -219,7 +223,7 @@ export class LicensesComponent implements OnInit {
 					}
 
 					this.paging_data_host = response.paging;
-					const mappedData = this.mapToHostsTable(response.host);
+					const mappedData = this.mapToHostsTable([...response.host]);
 					this.hosts_data = [...mappedData];
 					this.filtered_data_host = [...mappedData];
 
@@ -472,7 +476,7 @@ export class LicensesComponent implements OnInit {
         storehours = storehours.sort((a, b) => {return a.id - b.id;});
 		var modified_label = {
 			date : moment().format('LL'),
-			address: data.hostAddress,
+			address: data.address,
 			schedule: storehours[this.now] && storehours[this.now].status ? (
 				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
 				? "Open 24 Hours" : storehours[this.now].periods.map(
@@ -536,8 +540,6 @@ export class LicensesComponent implements OnInit {
 									else license.apps = null;
 								}
 							);
-                            console.log("DATA", data)
-
 							this.licenses_to_export = data.licenses;
 
 							this.licenses_to_export.forEach(
@@ -574,10 +576,16 @@ export class LicensesComponent implements OnInit {
 							if (response.message) {
 								this.hosts_to_export = [];
 								return;
-							}
-
-							const mapped = this.mapHostsForExport([...response.host]);
-							this.hosts_to_export = mapped;
+							} else {
+                                response.host.map(
+                                    host => {
+                                        host.storeHours = this.getTotalHours(host)
+                                        this.mapHostsForExport(host);
+                                    }
+                                )
+							    this.hosts_to_export = [...response.host];
+                            }
+							
 
 							this.hosts_to_export.forEach(
 								(item) => {
@@ -608,6 +616,51 @@ export class LicensesComponent implements OnInit {
         }
         
 	}
+
+    getTotalHours(data) {
+        console.log("DD",data) 
+        if (data.storeHours) {
+            data.storeHours = JSON.parse(data.storeHours)
+            this.hour_diff_temp = [];
+            data.storeHours.map(
+                hours => {
+                    if(hours.status) {
+                        hours.periods.map (
+                            period => {
+                                if(period.open && period.close) {
+                                    var close = moment(period.close,"H:mm A");
+                                    var open = moment(period.open,"H:mm A");
+    
+                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss")).getHours();
+                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss")).getHours();
+                                    
+                                    if(time_start > time_end) {
+                                        time_end = time_end + 24;
+                                        var diff_hours = time_end - time_start;
+                                    } else {
+                                        var diff_hours = time_end - time_start;
+                                    }
+                                } else {
+                                    var diff_hours = 24;
+                                }
+                                this.hour_diff_temp.push(diff_hours)
+                            }
+                        )
+                    } else {
+
+                    }
+                }
+            )
+            this.hour_diff = 0;
+            this.hour_diff_temp.map(
+                hour => {
+                    this.hour_diff += hour;
+                }
+            )
+        } else {
+        }
+        return this.hour_diff; 
+    }
 
     getZoneHours(data) {
         if(data.templateName == 'Fullscreen') {
@@ -817,8 +870,9 @@ export class LicensesComponent implements OnInit {
 		);
 	}
 
-	private mapHostsForExport(data: API_HOST[]): API_HOST[] {
-		return data.map(host => { host.tagsToString = host.tags.join(','); return host }) as API_HOST[];
+	private mapHostsForExport(data) {
+        data.storeHours = data.storeHours * 60 + " minutes" ;
+        data.tagsToString = data.tags.join(','); 
 	}
 
 	private get currentRole() {

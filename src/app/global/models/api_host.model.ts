@@ -33,7 +33,7 @@ export class API_HOST {
 	region: string;
 	state: string;
 	status: string;
-	storeHours: string;
+	storeHours: any;
 	street: string;
 	tags?: TAG[];
 	tagsToString?: string;
@@ -81,7 +81,7 @@ export class API_SINGLE_HOST {
 		region: string;
 		state: string;
 		status: string;
-		storeHours: string;
+		storeHours: any;
 		street: string;
 		tags?: TAG[];
 		timeZone: string;
