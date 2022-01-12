@@ -45,3 +45,11 @@ html {
 .mat-tab-list {
 	padding-bottom: 0 !important;
 }
+
+.mat-form-field-no-padding-bottom .mat-form-field-wrapper {
+	margin-bottom: -1.25em;
+}
+
+.margin-left-auto {
+	margin-left: auto;
+}

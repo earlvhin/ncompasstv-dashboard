@@ -4,144 +4,87 @@
 			<div class="flex-even">
 				<h1 class="page-title">Installations</h1>
 			</div>
-			<form [formGroup]="form">
-				<div class="d-flex flex-column">
-					<mat-form-field appearance="fill" appDefaultDateFormat>
-						<mat-label>Current / Selected Date</mat-label>
-						<input formControlName="date" (dateInput)="onSelectDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
-						<mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
-						<mat-datepicker #datePicker></mat-datepicker>
-					</mat-form-field>
-
-					<div class="col-lg-12 p-0 btn-group btn-group-toggle mode-selection" ngbRadioGroup name="radioView" formControlName="view">
-                        <div *ngFor="let view of views" class="p-0 black-bg" [ngClass]="view.index == 2 ? 'col-lg-4': (view.index == 0 ? 'col-lg-2' : 'col-lg-3')">
-                            <label ngbButtonLabel class="theme-btn no_border_radius text-center" [ngClass]="activeIndex == view.index && view.index != 0 ? '_primary' : '_neutral' " (click)="onSelectView(view.index)">
-                                <input class="hidden" *ngIf="view.index != 0; else closebutton" ngbButton type="radio" [disabled]="searching">{{view.name}}
-                                <ng-template #closebutton> 
-                                    <span class="fas fa-times" data-toggle="tooltip" title="Clear Filter"></span> 
-                                </ng-template>
-                            </label>
-                        </div>
-					</div>
-				</div>
-			</form>
 		</div>
 		<hr>
 	</div>
 
 	<div class="content-section">
-		<div class="row">
-            <div class="col-3 col-lg">
-                <mat-card class="h-100 dealer-card">
+		<div class="d-flex">
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
 					<app-data-card-count *ngIf="installation_count; else small_loader"
-                    [data_value]="installation_count.scheduled"
-                    [data_label]="installation_count.scheduled_label"
-                    [data_description]="installation_count.scheduled_description">
-                    </app-data-card-count>
-                </mat-card>
-            </div>
-			<div class="col-3 col-lg">
-                <mat-card class="h-100 dealer-card">
+						[data_value]="installation_count.scheduled"
+						[data_label]="installation_count.scheduled_label"
+						[data_description]="installation_count.scheduled_description">
+					</app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
 					<app-data-card-count *ngIf="installation_count; else small_loader"
-                    [data_value]="installation_count.prev"
-                    [data_label]="installation_count.prev_label"
-                    [data_description]="installation_count.prev_description">
-                    </app-data-card-count>
-                </mat-card>
-            </div>
-			<div class="col-3 col-lg">
-                <mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="installation_count; else small_loader"
-                    [data_value]="installation_count.current"
-                    [data_label]="installation_count.current_label"
-                    [data_description]="installation_count.current_description">
-                    </app-data-card-count>
-                </mat-card>
-            </div>
-            <div class="col-3 col-lg">
-                <mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="installation_count; else small_loader"
-                    [data_value]="installation_count.next"
-                    [data_label]="installation_count.next_label"
-                    [data_description]="installation_count.next_description">
-                    </app-data-card-count>
-                </mat-card>
-            </div>
-		</div>        
-        <div class="col-lg-12 flex p-0 mt-5">
-            <div class="col-lg-3 pl-0">
-                <button mat-button mat-raised-button
-                    class="theme-btn pi-control sm-text _primary mr-2" 
-                    (click)="exportTable()"
-                    [disabled]="workbook_generation"  
-                    title="Export to CSV">
-                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                    <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
-                </button>
-            </div>
-			<div class="offset-6 col-lg-3 pr-0">
-				<app-search-field *ngIf="!initial_load"
-					[form_title]="'Search Dealer Business Name'"
-					[placeholder]="'Example: N-Compass'"
-					[data_reference]="installations"
-					[primary_keyword]="'business_name'"
-					[secondary_keyword]="'business_name'"
-					(searched)="filterData($event)"
-					[api_search]="true"
-				></app-search-field>
+						[data_value]="installation_count.prev"
+						[data_label]="installation_count.prev_label"
+						[data_description]="installation_count.prev_description">
+					</app-data-card-count>
+				</mat-card>
 			</div>
-        </div>
-        <div class="mb-3 col-lg-12 p-0">
-            <span class="sm-text">
-                Note: Licenses colored in Red are expired installations.
-            </span>
-        </div>
-        <div *ngIf="!initial_load; else loader">
-            <div>
-				<div class="row" *ngIf="!initial_load">
-					<div class="col-lg-12">
-						<ng-container *ngIf="!searching; else loader">
-							<mat-card *ngIf="filtered_data.length > 0; else no_data">
-								<app-data-table
-									(page_triggered)="getLicenses($event)"
-									(to_sort_column)="getColumnsAndOrder($event)"
-									(update_info)="getLicenses(1)"
-									[table_data]="filtered_data"
-									[table_columns]="table_columns"
-									[new_table]="true"
-									[paging_details]="paging_data"
-									[active_tab]="sort_column"
-									[sort_column]="sort_column"
-									[sort_order]="sort_order">
-								</app-data-table>
-							</mat-card>
-						</ng-container>
-					</div>
-				</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count *ngIf="installation_count; else small_loader"
+						[data_value]="installation_count.current"
+						[data_label]="installation_count.current_label"
+						[data_description]="installation_count.current_description">
+					</app-data-card-count>
+				</mat-card>
 			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count *ngIf="installation_count; else small_loader"
+						[data_value]="installation_count.next"
+						[data_label]="installation_count.next_label"
+						[data_description]="installation_count.next_description">
+					</app-data-card-count>
+				</mat-card>
+			</div>
+		</div>
+
+		<div class="col-lg-12 custom-mat-tab mt-5 p-0">
+			<mat-tab-group dynamicHeight #tabGroup animationDuration="0ms" (selectedTabChange)="resetCurrentFilters($event)">
+
+				<ng-container *ngFor="let tab of tabs">
+					<mat-tab [label]="tab.label">
+						<ng-template matTabContent>
+							<app-tab-content
+								[currentFilters]="currentFilters"
+								[filteredData]="filteredData"
+								[isExporting]="isExporting"
+								[initialLoad]="initialLoad"
+								[installation_count]="installation_count"
+								[installations]="installations"
+								[isDatePickerEnabled]="tab.isDatePickerEnabled"
+								[isDatePickerViewEnabled]="tab.isDatePickerViewEnabled"
+								[pagingData]="pagingData"
+								[resetDatePicker]="onResetDatePicker.asObservable()"
+								[searching]="searching"
+								[tableColumns]="installationTableColumns"
+								(onExport)="exportTable()"
+								(onLoadInitialData)="loadInstallationsData(tab.name)"
+								(onSearch)="searchInstallations($event, tab.name)"
+								(onSelectDate)="dateSelected($event, tab.name)"
+								(onSelectDateView)="dateViewSelected($event)"
+								(onSelectPage)="pageSelected($event, tab.name)"
+								(onSortByColumnAndOrder)="sortByColumnAndOrder($event, tab.name)"
+								(onTableRefresh)="loadInstallationsData(tab.name)">
+							</app-tab-content>
+						</ng-template>
+					</mat-tab>
+				</ng-container>
+
+			</mat-tab-group>
 		</div>
 	</div>
 </div>
 
-<ng-template #loader>
-	<div class="py-4">
-		<mat-card>
-			<app-spinner [diameter]="60"></app-spinner>
-		</mat-card>
-	</div>
-</ng-template>
-
-<ng-template #no_data>
-	<mat-card class="p-5">
-		<h3>Oh Boy.</h3>
-		<p class="sm-text mb-3">
-			There are no scheduled installations at the moment.
-		</p>
-	</mat-card>
-</ng-template>
-
 <ng-template #small_loader>
-	<div class="py-4 white-bg">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+	<div class="py-4 white-bg"><app-spinner [diameter]="60"></app-spinner></div>
 </ng-template>

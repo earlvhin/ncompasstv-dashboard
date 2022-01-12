@@ -20,7 +20,6 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FeedsModule } from 'src/app/global/pages_shared/feeds/feeds.module';
 import { GlobalModule } from '../../global/global.module';
 import { HostsComponent } from './pages/hosts/hosts.component';
-import { InstallationsComponent } from './pages/installations/installations.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -41,6 +40,7 @@ import { UsersComponent } from './pages/users/users.component';
 import { UpdateComponent } from './pages/update/update.component';
 import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.component';
 import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single-host.module';
+import { InstallationsModule } from './pages/installations/installations.module';
 
 @NgModule({
 	declarations: [
@@ -60,7 +60,6 @@ import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single
 		ScreensComponent,
 		RolesComponent,
 		UsersComponent,
-		InstallationsComponent,
 		UpdateComponent,
 		TagsTabComponent,
 	],
@@ -84,6 +83,7 @@ import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single
 		TagsModule,
 		FeedsModule,
 		SingleHostModule,
+		InstallationsModule,
 		RouterModule.forChild(ADMINISTRATOR_ROUTES)
 	],
 	providers: [

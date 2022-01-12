@@ -1,15 +1,14 @@
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { FormBuilder, Validators } from '@angular/forms';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TitleCasePipe, DatePipe } from '@angular/common';
-import { MatDatepicker } from '@angular/material';
-import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as moment from 'moment';
 import * as Excel from 'exceljs';
 import * as FileSaver from 'file-saver';
 
 import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
-import { INSTALLATION, PAGING } from 'src/app/global/models';
+import { API_FILTERS, INSTALLATION, PAGING } from 'src/app/global/models';
+import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
 	selector: 'app-installations',
@@ -18,77 +17,40 @@ import { INSTALLATION, PAGING } from 'src/app/global/models';
 	providers: [ TitleCasePipe, DatePipe ]
 })
 export class InstallationsComponent implements OnInit, OnDestroy {
-	@ViewChild('datePicker', { static: false }) datePicker: MatDatepicker<Date>;
-
-    activeIndex: number;
-	filtered_data = [];
-	initial_load: boolean = true;
-	installations: INSTALLATION[] = [];
+	currentFilters: API_FILTERS = { page: 1, installDate: moment().format('MM-DD-YYYY') };
+	filteredData = [];
+	initialLoad = false;
 	installation_count: any;
-	loading = false;
-	paging_data: PAGING;
-	searching: boolean = false;
-	sort_column: string = '';
-	sort_order: string = '';
-    subscription: Subscription = new Subscription();
-	table_columns: any[];
-	workbook_generation: boolean = false;
+	installations: INSTALLATION[] = [];
+	installationTableColumns = this._tableColumns;
+	isExporting = false;
+	onResetDatePicker = new Subject<void>();
+	pagingData: PAGING;
+	searching = false;
+	tabs = this._tabs;
 	
-	form = this._form_builder.group({ 
-		date: [ '', Validators.required ],
-		view: [ '' ]
-	});
-
-    licenses_table_column_for_export = [
-		{ name: 'License Key', key: 'licenseKey'},
-		{ name: 'Host', key: 'hostName'},
-		{ name: 'Dealer Alias', key: 'dealerIdAlias'},
-		{ name: 'Business Name', key: 'businessName'},
-		{ name: 'License Type', key: 'screenTypeName'},
-		{ name: 'Screen', key: 'screenName'},
-		{ name: 'Installation Date', key: 'installDate'},
-	];
-
-    views = [ 
-        { name: '', value: '', index: 0 },
-		{ name: 'Day', value: 'day', index: 1 },
-		{ name: 'Month', value: 'month', index: 2 },
-		{ name: 'Year', value: 'year', index: 3 },
-	];
-
-	private current_month = '';
-	private previous_month = '';
-    private licenses_to_export: any = [];
-	private next_month = '';
-    private pageSize: number;
-    private search_data = '';
-	private selected_date: string;
-    private type: number = 0;
-	private view = '';
-    private workbook: any;
+	private licenses_to_export = [];
+	private currentMonth = '';
+	private nextMonth = '';
+	private previousMonth = '';
+	private workbook: any;
 	private worksheet: any;
-	private _date = this.form.get('date');
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
 		private _dates: DatePipe,
-		private _form_builder: FormBuilder,
 		private _helper: HelperService,
 		private _license: LicenseService,
 		private _titlecase: TitleCasePipe,
 	) { }
 	
 	ngOnInit() {
-		this.table_columns = this.installation_table_columns;
-        this.date = new Date();
-        this.selected_date = moment().format('MM-DD-YYYY');
-        this.previous_month = moment().subtract(1, 'month').format('MMMM');
-		this.current_month = moment().format('MMMM');
-		this.next_month = moment().add(1, 'month').format('MMMM');
-
-        this.getInstallationStats();
-		this.getLicenses(1);
+		this.previousMonth = moment().subtract(1, 'month').format('MMMM');
+		this.currentMonth = moment().format('MMMM');
+		this.nextMonth = moment().add(1, 'month').format('MMMM');
+		this.loadInstallationsData();
+		this.getInstallationStats();
 		this.subscribeToUpdateInstallationDate();
 	}
 
@@ -97,24 +59,40 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	dateSelected(value: moment.Moment, type = 'default'): void {
+		this.currentFilters = { page: 1, installDate: value.format('MM-DD-YYYY') };
+		this.loadInstallationsData(type);		
+	}
+
+	dateViewSelected(type: number): void {
+		
+		if (type === 0) {
+			this.currentFilters = { page: 1, installDate: moment().format('MM-DD-YYYY') };
+			this.onResetDatePicker.next();
+		}
+        
+        this.currentFilters.type = type;
+		this.loadInstallationsData();
+	}
+
 	exportTable(): void {
 
 		const header = [];
-		this.workbook_generation = true;
+		this.isExporting = true;
 		this.workbook = new Excel.Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet('Installations');
 		
-		Object.keys(this.licenses_table_column_for_export).forEach(key => {
+		Object.keys(this._columnsForExport).forEach(key => {
 
-			if (this.licenses_table_column_for_export[key].name && !this.licenses_table_column_for_export[key].no_export) {
+			if (this._columnsForExport[key].name && !this._columnsForExport[key].no_export) {
 
 				header.push(
 					{ 
-						header: this.licenses_table_column_for_export[key].name, 
-						key: this.licenses_table_column_for_export[key].key, 
+						header: this._columnsForExport[key].name, 
+						key: this._columnsForExport[key].key, 
 						width: 30, style: { font: { name: 'Arial', bold: true } }
 					}
 				);
@@ -124,136 +102,40 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		});
 
         this.worksheet.columns = header;
-		this.getDataForExport();		
+		this.isExporting = true;
+		this.getDataForExport().add(() => this.isExporting = false);		
 	}
 
-	filterData(keyword = ''): void {
-		this.search_data = keyword;
-		this.getLicenses(1);
-	}
-
-	filterLicensesThisMonth(data: { host, license, screen, screenType }[]): { host, license, screen, screenType }[] {
-		return data.filter(response => (!moment(response.license.installDate).isBefore(this.date, 'month')));
-	}
-
-	getColumnsAndOrder(data: { column: string, order: string }): void {
-		this.sort_column = data.column;
-		this.sort_order = data.order;
-		this.getLicenses(1);
-	}
-	
-	getLicenses(page: number) {
-        this.pageSize = 15;
+	loadInstallationsData(type = 'default'): void {
 		this.searching = true;
-		this.installations = [];
-        
-		this._license.get_licenses_by_install_date(page, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					let installations = [];
-					let filtered_data = [];
-
-					if (!data.message) {
-						this.paging_data = data.paging;
-						installations = this.mapToTableFormat(this.paging_data.entities);
-						filtered_data = installations;
-					}
-
-					this.installations = installations;
-					this.filtered_data = filtered_data;
-					this.initial_load = false;
-					this.searching = false; 
-				}
-			);
+		this.getInstallations(type).add(() => this.searching = false);
 	}
 
-	onSelectDate(value: moment.Moment): void {
-		this.view = 'default';
-		this.sort_column = '';
-		this.sort_order = '';
-		this.date = value;
-		this.previous_month = moment(value).subtract(1, 'month').format('MMMM');
-		this.current_month = moment(value).format('MMMM');
-		this.next_month = moment(value).add(1, 'month').format('MMMM');
-		this.datePicker.close();
-		this.selected_date = value.format('MM-DD-YYYY');
-		this.installation_count = null;
-		this.getInstallationStats();
-		this.getLicenses(1);
+	pageSelected(data: number, type = 'default'): void {
+		this.currentFilters.page = data;
+		this.loadInstallationsData(type);
 	}
 
-	onSelectView(index: number): void {
-
-		if (this.searching) return;
-		
-		if (index === 0) {
-			const currentDate = moment();
-			const longDate = currentDate.format('MM-DD-YYYY');
-			this.selected_date = longDate;
-			this.form.get('date').setValue(currentDate);
-		}
-        
-		this.activeIndex = index;
-        this.type = index;
-		this.getLicenses(1);
-
+	resetCurrentFilters(event: MatTabChangeEvent): void {
+		this.currentFilters = { page: 1, installDate: moment().format('MM-DD-YYYY') };
+		const type = this.tabs.filter(tab => tab.index === event.index)[0].name;
+		this.loadInstallationsData(type);
 	}
 
-	private get installation_table_columns() {
-
-		return [
-			{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
-			{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
-			{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
-			{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
-			{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
-			{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
-			{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
-			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
-		];
-
+	searchInstallations(keyword = '', type = 'default'): void {
+		this.currentFilters.page = 1;
+		this.currentFilters.search = keyword;
+		this.loadInstallationsData(type);
 	}
 
-	private get date(): any {
-		return this._date.value;
+	sortByColumnAndOrder(data: { column: string, order: string }, type = 'default'): void {
+		this.currentFilters.sortColumn = data.column;
+		this.currentFilters.sortOrder = data.order;
+		this.loadInstallationsData(type);
 	}
 
-	private set date(value: any) {
-		this._date.setValue(value);
-	}
-
-	private getInstallationStats(): void {
-		this._license.get_installation_statistics(this.selected_date).subscribe(
-            response => {
-                let stats = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 };
-				if (response.licenseInstallationStats) stats = response.licenseInstallationStats;
-				this.getTotalCount(stats);
-            }
-		);
-	}
-	
-	private getTotalCount(data: { currentMonth: number, nextMonth: number, previousMonth: number, total: number }): void {
-		this.installation_count = {
-			scheduled: data.total,
-			scheduled_label: 'Installation(s)',
-			scheduled_description: 'Scheduled Installations',
-			prev: data.previousMonth,
-			prev_label: 'Installation(s)',
-			prev_description: 'Last Month of ' + this.previous_month,
-			current: data.currentMonth,
-			current_label: 'Installation(s)',
-			current_description: 'This Month of ' + this.current_month,
-			next: data.nextMonth,
-			next_label: 'Installation(s)',
-			next_description: 'Next Month of ' + this.next_month,
-		}
-	}
-
-    private getDataForExport(): void {
-        this.pageSize = 0;
-		
-        this._license.get_licenses_by_install_date(1, this.selected_date, this.sort_column, this.sort_order, this.type, this.pageSize, this.search_data)
+	private getDataForExport() {		
+        return this._license.get_installations(this.currentFilters)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { paging: PAGING, message: string }) => {
@@ -281,18 +163,66 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 					this.workbook.xlsx.writeBuffer()
 						.then((file: any) => {
 							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = 'Installations for ' + this.selected_date +'.xlsx';
+							const filename = 'Installations for ' + this.currentFilters.installDate +'.xlsx';
 							FileSaver.saveAs(blob, filename);
 						}
 					);
 
-					this.workbook_generation = false;
 				}
 			);
 	}
 
+	private getInstallations(type = 'default') {
+        
+		return this._license.get_installations(this.currentFilters, type).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => {
+					let installations = [];
+					let filtered_data = [];
+
+					if (!data.message) {
+						this.pagingData = data.paging;
+						installations = this.mapToTableFormat(this.pagingData.entities);
+						filtered_data = installations;
+					}
+
+					this.installations = installations;
+					this.filteredData = filtered_data;
+					this.initialLoad = false;
+				}
+			);
+
+	}
+
+	private getInstallationStats(): void {
+		this._license.get_installation_statistics().subscribe(
+            response => {
+                let stats = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 };
+				if (response.licenseInstallationStats) stats = response.licenseInstallationStats;
+				this.getTotalCount(stats);
+            }
+		);
+	}
+	
+	private getTotalCount(data: { currentMonth: number, nextMonth: number, previousMonth: number, total: number }): void {
+		this.installation_count = {
+			scheduled: data.total,
+			scheduled_label: 'Installation(s)',
+			scheduled_description: 'Scheduled Installations',
+			prev: data.previousMonth,
+			prev_label: 'Installation(s)',
+			prev_description: 'Last Month of ' + this.previousMonth,
+			current: data.currentMonth,
+			current_label: 'Installation(s)',
+			current_description: 'This Month of ' + this.currentMonth,
+			next: data.nextMonth,
+			next_label: 'Installation(s)',
+			next_description: 'Next Month of ' + this.nextMonth,
+		};
+	}
+
 	private mapToTableFormat(data: any[]): INSTALLATION[] {
-		let count = this.paging_data.pageStart;
+		let count = this.pagingData.pageStart;
 
 		return data.map(
 			license => {
@@ -302,12 +232,12 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				return new INSTALLATION(
 					{ value: license.licenseKey, link: null , editable: false, hidden: true },
 					{ value: count++, link: null , editable: false, hidden: false, past: isPast },
-					{ value: license.licenseKey, link: `/${this.currentRole}/licenses/${license.licenseId}` , editable: false, hidden: false,  past: isPast },
-					{ value: license.hostName != null ? license.hostName : '--', link: `/${this.currentRole}/hosts/${license.hostId}`, editable: false, hidden: false,  past: isPast },
-					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  past: isPast },
-					{ value: license.businessName, link: `/${this.currentRole}/dealers/${license.dealerId}`, editable: false, hidden: false,  past: isPast},
+					{ value: license.licenseKey, link: `/${this._currentRole}/licenses/${license.licenseId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast },
+					{ value: license.hostName != null ? license.hostName : '--', link: `/${this._currentRole}/hosts/${license.hostId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast },
+					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/${this._currentRole}/dealers/${license.dealerId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast },
+					{ value: license.businessName, link: `/${this._currentRole}/dealers/${license.dealerId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast},
 					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false,  past: isPast },
-					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this.currentRole}/screens/${license.screenId}` : null , editable: false, hidden: false,  past: isPast },
+					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this._currentRole}/screens/${license.screenId}` : null, new_tab_link: true, editable: false, hidden: false,  past: isPast },
 					{ value: this._dates.transform(license.installDate, 'MMM d, y, h:mm a'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  past: isPast },
 				);
 			}
@@ -324,7 +254,43 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			.subscribe(() => this.getInstallationStats());
 	}
 
-	protected get currentRole() {
+	protected get _tableColumns() {
+		return [
+			{ name: '#', sortable: false, key: 'licenseKey', hidden: true },
+			{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
+			{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
+			{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
+			{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+			{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
+			{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
+			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+		];
+	}
+
+	protected get _columnsForExport() {
+		return [
+			{ name: 'License Key', key: 'licenseKey' },
+			{ name: 'Host', key: 'hostName'},
+			{ name: 'Dealer Alias', key: 'dealerIdAlias' },
+			{ name: 'Business Name', key: 'businessName' },
+			{ name: 'License Type', key: 'screenTypeName' },
+			{ name: 'Screen', key: 'screenName' },
+			{ name: 'Installation Date', key: 'installDate' },
+		];
+	}
+
+	protected get _currentRole() {
 		return this._auth.current_role;
 	}
+
+	protected get _tabs() {
+		return [
+			{ index: 0, name: 'default', label: 'Default', isDatePickerEnabled: true, isDatePickerViewEnabled: true },
+			{ index: 1, name: 'upcoming', label: 'Upcoming', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
+			{ index: 2, name: 'recent', label: 'Recent', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
+			{ index: 3, name: 'next-week', label: 'Next Week', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
+			{ index: 4, name: 'next-month', label: 'Next Month', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
+		];
+	}
+
 }

@@ -199,6 +199,7 @@ import {
 	MatProgressBarModule,
 	MatTooltipModule,
 	MatIconModule,
+	MatButtonToggleModule
 } from '@angular/material';
 
 const ngComponents = [
@@ -389,7 +390,8 @@ const MaterialModules = [
 	MatDatepickerModule,
 	MatNativeDateModule,
 	MatProgressBarModule,
-	MatTooltipModule
+	MatTooltipModule,
+	MatButtonToggleModule,
 ];
 
 const DIRECTIVES = [
