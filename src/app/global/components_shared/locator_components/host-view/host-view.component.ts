@@ -282,9 +282,9 @@ export class HostViewComponent implements OnInit, OnDestroy {
 
 		if (license_online_percentage == 100) {
 			icon_url = 'assets/media-files/markers/online_all.png';
-		} else if(license_online_percentage >= 75 && license_online_percentage < 100) {
+		} else if(license_online_percentage >= 51 && license_online_percentage < 100) {
 			icon_url = 'assets/media-files/markers/online_many.png';
-		} else if (license_online_percentage < 75 && license_online_percentage > 0) {
+		} else if (license_online_percentage < 51 && license_online_percentage > 0) {
 			icon_url = 'assets/media-files/markers/online_few.png';
 		} else {
 			icon_url = 'assets/media-files/markers/offline.png';

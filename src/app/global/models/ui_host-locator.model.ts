@@ -67,14 +67,16 @@ export class UI_HOST_LOCATOR_MARKER_DEALER_MODE {
 
 
 export class UI_DEALER_LOCATOR_EXPORT {
-	name: string;
+	businessName: string;
+	host: string;
 	address: string;
 	latitude: string;
 	longitude: string;
 	category: string;
 	storeHours: string;
-	constructor(name: string, address: string, category: string, storeHours: string, latitude: string, longitude: string){
-		this.name = name;
+	constructor(businessName: string, host: string, address: string, category: string, storeHours: string, latitude: string, longitude: string){
+		this.businessName = businessName;
+		this.host = host;
 		this.address = address;
 		this.category = category;
 		this.storeHours = storeHours;

@@ -374,9 +374,9 @@ export class LicenseViewComponent implements OnInit {
 		
 					if (license_online_percentage == 100) {
 						icon_url = 'assets/media-files/markers/online_all.png';
-					} else if(license_online_percentage >= 75 && license_online_percentage < 100) {
+					} else if(license_online_percentage >= 51 && license_online_percentage < 100) {
 						icon_url = 'assets/media-files/markers/online_many.png';
-					} else if (license_online_percentage < 75 && license_online_percentage > 0) {
+					} else if (license_online_percentage < 51 && license_online_percentage > 0) {
 						icon_url = 'assets/media-files/markers/online_few.png';
 					} else {
 						icon_url = 'assets/media-files/markers/offline.png';
@@ -491,7 +491,8 @@ export class LicenseViewComponent implements OnInit {
 					});
 				});
 				let locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
-				let marker = new UI_DEALER_LOCATOR_EXPORT(license.name, locatorAddress, license.category, this.markStoreHours,
+				let businessName = this.currentUser.roleInfo.businessName;
+				let marker = new UI_DEALER_LOCATOR_EXPORT(businessName, license.name, locatorAddress, license.category, this.markStoreHours,
 															license.latitude, license.longitude);
 				this.exported_map_marker.push(marker);
 			}
