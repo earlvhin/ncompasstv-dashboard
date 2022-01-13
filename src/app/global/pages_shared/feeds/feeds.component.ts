@@ -162,11 +162,16 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		return feeds.map(
 			(data: FEED) => {
 
-				const { contentId, dealerId, feedId, url, title, businessName, classification, createdByName, 
+				const { contentId, dealerId, feedId, url, title, classification, createdByName, 
 					dateCreated, description } = data;
 
 				let dealerUrl = null;
-				if (dealerId) dealerUrl = `${this.currentRole}/dealers/${data.dealerId}`;
+				let businessName = '--';
+
+				if (dealerId) { 
+					dealerUrl = `${this.currentRole}/dealers/${data.dealerId}`;
+					businessName = data.businessName;
+				}
 
 				return new UI_TABLE_FEED(
 					{ value: contentId , editable: false, hidden: true },

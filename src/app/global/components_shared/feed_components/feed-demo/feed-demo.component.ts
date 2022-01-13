@@ -30,9 +30,6 @@ export class FeedDemoComponent implements OnInit {
 			this.controlFeedDisplay(this.current_display_index);
 		}
 
-		console.log('feedItems', this.feed_items);
-		console.log('globalSettings', this.global_settings);
-
 		this.slide_demo_url = `${env.third_party.filestack_screenshot}/${env.base_uri}${env.create.api_new_slide_feed_demo}?
 		imageContentId=${this.feed_items[0].image.content_id}&
 		bannerImageContentId=${this.global_settings.bannerImage}&

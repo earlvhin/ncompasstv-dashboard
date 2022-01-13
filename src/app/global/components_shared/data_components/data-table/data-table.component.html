@@ -225,10 +225,7 @@
 					</i>
 
 					<ng-template #edit_generated_feed>
-						<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit Generated Feed?"
-							*ngIf="!is_view_only"
-							(click)="editGeneratedFeed(data)">
-						</i>
+						<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit Generated Feed" *ngIf="!is_view_only" (click)="editGeneratedFeed(data)"></i>
 					</ng-template>
 					
 					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete && !is_view_only" (click)="deleteFeed(data.id.value)"></i>

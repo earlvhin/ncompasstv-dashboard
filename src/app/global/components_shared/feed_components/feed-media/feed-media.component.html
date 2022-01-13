@@ -24,9 +24,7 @@
             <ng-container *ngIf="is_admin">
                 <div class="d-flex align-items-center" *ngIf="floating_content.length > 0; else spinner;">
                     <div class="mr-3">
-                        <mat-slide-toggle
-                        (change)="showFloatingContent($event)">
-                        </mat-slide-toggle>
+                        <mat-slide-toggle [checked]="show_floating_contents_toggle" (change)="showFloatingContent($event)" [disabled]="show_only_floating_contents"></mat-slide-toggle>
                     </div>
                     <div class="flex-even">
                         <h6 class="sm-text">Display Floating Contents</h6>
