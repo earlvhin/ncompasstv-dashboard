@@ -5,6 +5,7 @@ export * from './api_create-screen-response.model';
 export * from './api_dealer.model';
 export * from './api_edit-screen.model';
 export * from './api_feed.model';
+export * from './api_feed_generator.model';
 export * from './api_filters.model';
 export * from './api_export-dealer.model';
 export * from './api_host.model';

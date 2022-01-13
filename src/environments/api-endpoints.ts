@@ -144,6 +144,9 @@ export const API_ENDPOINTS = {
 		license_installation_statistics: 'license/getinstallationstats',
 		license_statistics: 'license/getstatisticsbydealerid',
 		license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
+		next_month_installations: 'license/getNextMonthInstall',
+		next_week_installations: 'license/getNextWeekInstall',
+		recent_installations: 'license/getRecentInstall',
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
 		search_license_by_host: 'license/GetByHost/Search',
@@ -157,6 +160,7 @@ export const API_ENDPOINTS = {
 		tags_by_tag_name_and_type: 'tag/gettagsbytagnameandtypeid',
 		tags_count: 'tag/getalltagscount',
 		tags_get_all: 'tag/getall',
+		upcoming_installations: 'license/getUpComingInstall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
 		validate_rss_url: 'feed/news/validate?url='

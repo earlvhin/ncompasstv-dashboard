@@ -172,7 +172,6 @@ export class SliderFormComponent implements OnInit {
 
 	/** Open Media Library where contents are assigned to selected dealer */
 	openMediaLibraryModal(form_control_name?: string, singleSelect?: boolean): void {
-		console.log(this.selected_dealer);
 
 		let dialog = this._dialog.open(FeedMediaComponent, {
 			width: '1024px',

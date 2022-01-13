@@ -14,14 +14,16 @@
 
                         <div class="row justify-content-center pt-4">
                             <div class="col-lg-8">
-                                <app-feed-info
-                                [feed_types]="feed_types"
-                                [fetched_feed]="fetched_feed"
-                                [dealers]="dealers"
-                                [is_dealer]="is_dealer"
-                                [editing]="editing"
-                                (feed_info)="prepareFeedInfo($event)">
-                                </app-feed-info>
+								<ng-container *ngIf="dealers && dealers.length > 0; else spinner;">
+									<app-feed-info
+										[feed_types]="feed_types"
+										[fetched_feed]="fetched_feed"
+										[dealers]="dealers"
+										[is_dealer]="is_dealer"
+										[editing]="editing"
+										(feed_info)="prepareFeedInfo($event)">
+									</app-feed-info>
+								</ng-container>
                             </div>
                         </div>
                     </mat-step>
@@ -34,12 +36,11 @@
                         <!-- Begin: Slider Form -->
                         <div class="bg-gray mt-5 p-4" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Slide Feed'">
                             <app-slider-form 
-                            *ngIf="selected_dealer" 
-                            (structured_slide_feed)="structureSlideFeedToGenerate($event)"
-                            [banner_image_data]="fetched_feed ? fetched_feed.bannerImageData : null"
-                            [global_settings]="slide_global_settings"
-                            [feed_items]="feed_items"
-                            [selected_dealer]="selected_dealer">
+								(structured_slide_feed)="structureSlideFeedToGenerate($event)"
+								[banner_image_data]="fetched_feed ? fetched_feed.bannerImageData : null"
+								[global_settings]="slide_global_settings"
+								[feed_items]="feed_items"
+								[selected_dealer]="selected_dealer">
                             </app-slider-form>
                         </div>
                         <!-- End: Slider Form -->
@@ -47,9 +48,9 @@
                         <!-- Begin: Weather Maker -->
                         <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'Weather Feed'">
                             <app-weather-form 
-                            (weather_feed_data)="structureWeatherFeedToGenerate($event)"
-                            [edit_weather_data]="fetched_feed ? fetched_feed.feedWeather : null"
-                            [selected_dealer]="selected_dealer">
+								(weather_feed_data)="structureWeatherFeedToGenerate($event)"
+								[edit_weather_data]="fetched_feed ? fetched_feed.feedWeather : null"
+								[selected_dealer]="selected_dealer">
                             </app-weather-form>
                         </div>
                         <!-- End: Weather Maker -->
@@ -57,9 +58,9 @@
                         <!-- Begin: News Maker -->
                         <div class="mt-5" *ngIf="feed_info && setSelectedFeedType(feed_info.feedTypeId) === 'News'">
                             <app-news-form 
-                            (news_feed_data)="structureNewsFeedToGenerate($event)"
-                            [edit_news_data]="fetched_feed ? fetched_feed.feedNews : null"
-                            [selected_dealer]="selected_dealer">
+								(news_feed_data)="structureNewsFeedToGenerate($event)"
+								[edit_news_data]="fetched_feed ? fetched_feed.feedNews : null"
+								[selected_dealer]="selected_dealer">
                             </app-news-form>
                         </div>
                         <!-- End: News Maker -->

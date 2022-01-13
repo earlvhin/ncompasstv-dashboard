@@ -214,7 +214,10 @@ export class DataTableComponent implements OnInit {
 		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data: e });
 
 		dialogRef.afterClosed().subscribe(
-			() => this.reload_page.emit(true),
+			response => {
+				if (!response) return;
+				this.reload_page.emit(true);
+			},
 			error => console.log('Error on edit feed dialog', error)
 		);
 	}

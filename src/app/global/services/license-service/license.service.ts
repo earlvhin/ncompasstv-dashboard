@@ -44,6 +44,12 @@ export class LicenseService {
 		private _auth: AuthService
 	) { }
 
+	api_get_licenses_total_by_host_dealer(dealerId: string, hostId: string) {
+		const base = `${this.baseUri}${this.getters.api_get_licenses_total}`;
+		const endpoint = `${base}?dealerid=${dealerId}&hostid=${hostId}`;
+		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
+	} 
+
 	get_all_licenses(page: number, key: string, column: string, order: string, pageSize: number, status?: string, activated?: boolean, zone?: string, dealer?: string, host?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
         const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activated, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
@@ -61,10 +67,34 @@ export class LicenseService {
 		return this._http.get<{ licenses: API_LICENSE['license'][], paging: PAGING }>(url, this.httpOptions);
 	}
 
-	get_licenses_by_install_date(page: number, installDate: string, column: string, order: string, type = 0, pageSize?, dealer="") {
-		const base = `${this.baseUri}${this.getters.all_license_by_install_date}`;
-		const endpoint = `${base}?page=${page}&installDate=${installDate}&sortColumn=${column}&sortOrder=${order}&type=${type}&pageSize=${pageSize}&search=${dealer}`;
-		return this._http.get<any>(endpoint, this.httpOptions);
+	get_installations(filters: API_FILTERS, type = 'default'): Observable<{ paging?: PAGING, message?: string }>{
+		let endpoint = this.baseUri;
+
+		switch (type) {
+			case 'next-week':
+				endpoint += this.getters.next_week_installations;
+				break;
+
+			case 'next-month':
+				endpoint += this.getters.next_month_installations;
+				break;
+
+			case 'recent':
+				endpoint += this.getters.recent_installations;
+				break;
+
+			case 'upcoming':
+				endpoint += this.getters.upcoming_installations;
+				break;
+
+			default:
+				endpoint += this.getters.all_license_by_install_date;
+		}
+
+		const params = this.setUrlParams(filters);
+		const url = `${endpoint}${params}`;
+		return this._http.get(url, this.httpOptions);
+
 	}
 
 	get_licenses_total() {
@@ -93,12 +123,6 @@ export class LicenseService {
 		const url = `${base}${params}`;
 		return this._http.get<any>(url, this.httpOptions);
 	}
-
-	api_get_licenses_total_by_host_dealer(dealerId: string, hostId: string) {
-		const base = `${this.baseUri}${this.getters.api_get_licenses_total}`;
-		const endpoint = `${base}?dealerid=${dealerId}&hostid=${hostId}`;
-		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
-	} 
 	
     get_license_by_screen_id(id: string, page: number) {
 		const params = this.httpParams({ screenId: id, page });
@@ -325,7 +349,7 @@ export class LicenseService {
 		Object.keys(filters).forEach(
 			key => {
 
-				if (typeof filters[key] === 'undefined') return;
+				if (typeof filters[key] === 'undefined' || !filters[key]) return;
 				
 				if (!result.includes('?')) result += `?${key}=`;
 				else result += `&${key}=`;

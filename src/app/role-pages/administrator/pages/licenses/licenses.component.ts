@@ -836,7 +836,6 @@ export class LicensesComponent implements OnInit {
 		let count = this.paging_data_licenses.pageStart;
 		return data.map(
 			(l: any) => {
-                console.log("L", l)
 				const table = new UI_LICENSE(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: l.licenseId, link: null , editable: false, hidden: true, key: false, table: 'license'},

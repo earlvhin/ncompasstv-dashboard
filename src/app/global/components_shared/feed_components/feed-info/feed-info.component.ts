@@ -3,9 +3,8 @@ import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
-import { API_FEED_TYPES } from '../../../../global/models/api_feed.model';
-import { API_GENERATED_FEED, GenerateSlideFeed } from '../../../../global/models/api_feed_generator.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
+
+import { API_FEED_TYPES, API_GENERATED_FEED, GenerateSlideFeed } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feed-info',
@@ -14,31 +13,26 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 })
 
 export class FeedInfoComponent implements OnInit {
-	@Input() dealers: {
-		dealerId: string,
-		businessName: string
-	}[];
-	@Input() is_dealer: boolean = false;
+
+	@Input() dealers: { dealerId: string, businessName: string }[];
 	@Input() editing: boolean = false;
 	@Input() fetched_feed: API_GENERATED_FEED;
 	@Input() feed_types: API_FEED_TYPES[];
+	@Input() is_dealer: boolean = false;
 	@Output() feed_info = new EventEmitter();
 
+	existing: any;
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
 	generated_feed: GenerateSlideFeed;
 	new_feed_form: FormGroup;
 	selected_dealer: string;
 
-	existing: any;
-
 	constructor(
-		private _auth: AuthService,
 		private _form: FormBuilder
 	) { }
 
 	ngOnInit() {
 		this.prepareFeedInfoForm();
-		this.matAutoFilter();
 	}
 
 	/** Structure Feed Information and Pass */
@@ -48,41 +42,11 @@ export class FeedInfoComponent implements OnInit {
 		} else {
 			/** Temp workaround (For some reason assign_to_id field value is not reflecting ) */
 			this.feed_info.emit({
-				feed_title: this.f.feed_title.value,
-				description: this.f.description.value,
+				feed_title: this.new_feed_form.controls.feed_title.value,
+				description: this.new_feed_form.controls.description.value,
 				feed_type: this.fetched_feed.feedType.feedTypeId,
 				assign_to_id: this.fetched_feed.dealerId
 			});
-		}
-	}
-
-	/** New Feed Form Control Getter */
-	get f() {
-		return this.new_feed_form.controls;
-	}
-
-	/** Build Feed Information Form with fields of feed_title, description, assign_to */
-	private prepareFeedInfoForm(): void {
-		if (this.editing) {
-			this.new_feed_form = this._form.group(
-				{
-					feed_title: [this.fetched_feed.feedTitle, Validators.required],
-					description: [this.fetched_feed.description],
-					feed_type: [{value: this.fetched_feed.feedType.feedTypeId, disabled: true},  Validators.required],
-					assign_to: [{value: this.fetched_feed.dealer.businessName, disabled: true}, Validators.required],
-					assign_to_id: [this.fetched_feed.dealer.dealerId, Validators.required]
-				}
-			)
-		} else {
-			this.new_feed_form = this._form.group(
-				{
-					feed_title: ['', Validators.required],
-					description: ['',],
-					feed_type: ['', Validators.required],
-					assign_to: [this.is_dealer ? this.dealers[0].businessName : '', Validators.required],
-					assign_to_id: [this.is_dealer ? this.dealers[0].dealerId : '', Validators.required]
-				}
-			)
 		}
 	}
 
@@ -97,17 +61,52 @@ export class FeedInfoComponent implements OnInit {
 
 		if (!this.is_dealer) {
 			this.selected_dealer = filtered_result[0] && value ? filtered_result[0].dealerId : null;
-			this.f.assign_to_id.setValue(this.selected_dealer) 
+			this.new_feed_form.controls.assign_to_id.setValue(this.selected_dealer);
 		}
 
 		return filtered_result;
 	}
 
+	/** Build Feed Information Form with fields of feed_title, description, assign_to */
+	private prepareFeedInfoForm(): void {
+
+		let config: { [ key: string ]: any };
+		const feed = this.fetched_feed;
+
+		config = {
+			feed_title: [ '', Validators.required ],
+			description: [ '' ],
+			feed_type: [ '', Validators.required ],
+			assign_to: [ this.is_dealer ? this.dealers[0].businessName : '' ],
+			assign_to_id: [ this.is_dealer ? this.dealers[0].dealerId : '' ]
+		};
+
+		if (this.editing) {
+
+			config['feed_title'] = [ feed.feedTitle, Validators.required ];
+			config['description'] = [ feed.description ];
+			config['feed_type'] = [ { value: feed.feedType.feedTypeId, disabled: true },  Validators.required ];
+			config['assign_to'] = [ { value: null, disabled: true } ];
+			config['assign_to_id'] = [ { value: null, disabled: true } ];
+
+			if (feed.dealerId) {
+				config['assign_to'] = [ { value: feed.dealer.businessName, disabled: true } ];
+				config['assign_to_id'] = [ { value: this.dealers.filter(dealer => dealer.dealerId === feed.dealerId), disabled: true } ];
+			}
+
+		}
+
+		this.new_feed_form = this._form.group(config);
+		this.matAutoFilter();
+	}
+
 	/** Initialize Angular Material Autocomplete Component */
 	private matAutoFilter(): void {
-		this.filtered_options = this.f.assign_to.valueChanges.pipe(
-			startWith(''),
-			map(value => this.filter(value))
-		)
+		this.filtered_options = this.new_feed_form.controls.assign_to.valueChanges
+			.pipe(
+				startWith(''),
+				map(value => this.filter(value))
+			);
 	}
+
 }
