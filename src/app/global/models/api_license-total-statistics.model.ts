@@ -12,5 +12,6 @@ export interface LICENSE_TOTAL_STATISTICS {
 	totalOffline: number;
 	totalOnline: number;
 	totalUnAssigned: number;
+	totalUnassignedScreenCount: number;
 	totalWifi: number;
 }

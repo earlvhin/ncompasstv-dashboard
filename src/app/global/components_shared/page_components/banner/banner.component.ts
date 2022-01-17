@@ -67,9 +67,11 @@ export class BannerComponent implements OnInit, OnDestroy {
             this.temp_label.push(this.host_license_count.total_ads_label + ": " + this.host_license_count.total_ads);
             this.temp_label.push(this.host_license_count.total_menu_label+ ": " + this.host_license_count.total_menu);
             this.temp_label.push(this.host_license_count.total_closed_label+ ": " + this.host_license_count.total_closed);
-            this.temp_array.push(this.host_license_count.total_ads)
+            this.temp_label.push(this.host_license_count.unassigned_value_label+ ": " + this.host_license_count.unassigned_value);
+			this.temp_array.push(this.host_license_count.total_ads)
             this.temp_array.push(this.host_license_count.total_menu)
             this.temp_array.push(this.host_license_count.total_closed)
+			this.temp_array.push(this.host_license_count.unassigned_value)
         }
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
