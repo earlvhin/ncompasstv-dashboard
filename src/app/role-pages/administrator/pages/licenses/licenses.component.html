@@ -78,14 +78,29 @@
                                                 <button id="filter-by-license-status-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
                                                     [matMenuTriggerFor]="licenseStatus" >
-                                                    <span class="button-label">Filter by License Status</span>
-                                                    <span class="fas fa-circle text-primary"></span>
+                                                    <span class="button-label">Filter by Status</span>
+                                                    <span class="fas fa-circle text-white"></span>
                                                 </button>
                                                 <mat-menu #licenseStatus="matMenu">
-                                                    <button mat-menu-item (click)="filterTable('status', '1')">Online</button>
-                                                    <button mat-menu-item (click)="filterTable('status', '0')">Offline</button>
-                                                    <button mat-menu-item (click)="filterTable('activated', 'false')">Inactive</button>
+                                                    <button mat-menu-item (click)="filterTable('status', '1')">
+                                                        <span class="fas fa-circle text-primary mr-3"></span>Online
+                                                    </button>
+                                                    <button mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
+                                                        <span class="fas fa-circle text-danger mr-3"></span>Offline
+                                                    </button>
+                                                    <button mat-menu-item (click)="filterTable('activated', 'false')">
+                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                    </button>
+                                                    <button mat-menu-item (click)="filterTable('recent', '7')">
+                                                        <span class="far fa-clock text-gray mr-3"></span>Recent Installs
+                                                    </button>
                                                 </mat-menu>
+
+                                                <mat-menu #offlineSubMenu="matMenu">
+                                                    <button mat-menu-item (click)="filterTable('days_offline', '7', '7 days')">7 Days</button>
+                                                    <button mat-menu-item (click)="filterTable('days_offline', '30', '30 days')">30 Days</button>
+                                                    <button mat-menu-item (click)="filterTable('days_offline', '31', 'Long Time')">Long Time</button>
+                                                 </mat-menu>
 
                                                 <button id="filter-by-timezone-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
@@ -125,6 +140,17 @@
                                                     <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
                                                     <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
                                                 </button>
+                                                <button mat-button mat-raised-button
+                                                    class="theme-btn pi-control sm-text _info mr-2" 
+                                                    [matMenuTriggerFor]="adminOption"
+                                                    title="Admin Licenses">
+                                                    <span class="fas fa-user-shield"></span> 
+                                                    <span class="ml-2 button_text_animation">Show/Hide Admin Licenses</span>
+                                                </button>
+                                                <mat-menu #adminOption="matMenu">
+                                                    <button mat-menu-item (click)="showAdminLicenses('true')">Show</button>
+                                                    <button mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
+                                                </mat-menu>
                                             </div>
                                             <div class="col-lg-4">
                                                 <app-search-field id="licenses-tab-search-field"
@@ -139,7 +165,7 @@
 												</app-search-field>
                                             </div>
                                         </div>
-                                        <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host">
+                                        <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host || filters.admin_licenses">
                                             <div class="col-lg-12">
                                                 <div class="d-flex align-items-center p-2 bg-gray-2" >
                                                     <div class="filter-pills">
@@ -158,6 +184,10 @@
                                                         <div class="host-pill pill" *ngIf="filters.label_host">
                                                             Host: <strong>{{filters.label_host}}</strong>
                                                         </div>
+                                                        
+                                                        <div class="host-pill pill" *ngIf="filters.admin_licenses">
+                                                            Show Admin Licenses: <strong>{{filters.admin_licenses}}</strong>
+                                                        </div>
                                                     </div>
                                                     <div class="control flex-even text-right">
                                                         <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
@@ -170,7 +200,9 @@
                                                 </div>
                                             </div>
                                             <div class="col-lg-12" *ngIf="!searching_licenses">
-                                                <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{paging_data_licenses.entities.length}}</span> out of <span class="text-danger">{{paging_data_licenses.totalEntities}}</span> licenses result.</span>
+                                                <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{paging_data_licenses.entities.length}}</span> out of <span class="text-danger">{{paging_data_licenses.totalEntities}}</span> licenses result. 
+                                                <span class="text-danger" *ngIf="filters.admin_licenses != 'false'">Including admin licenses.</span>
+                                            </span>
                                             </div>
                                         </div>
                                         <div class="row" *ngIf="!initial_load_licenses">

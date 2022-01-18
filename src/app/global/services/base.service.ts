@@ -57,27 +57,19 @@ export class BaseService {
 		return environment.delete;
 	}
 
-	protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
-
-		let result = '';
-		
-		Object.keys(filters).forEach(
-			key => {
-
-				if (typeof filters[key] === 'undefined' || !filters[key]) return;
-				
-				if (!result.includes('?')) result += `?${key}=`;
-				else result += `&${key}=`;
-
-				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
-				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
-				else result += filters[key];
-
-			}
-		);
-
-		return result
-
-	}
+    protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
+        let result = '';
+        Object.keys(filters).forEach(
+            key => {
+                if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
+                if (!result.includes('?')) result += `?${key}=`;
+                else result += `&${key}=`;
+                if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+                if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+                else result += filters[key];
+            }
+        );
+        return result
+    }
 
 }

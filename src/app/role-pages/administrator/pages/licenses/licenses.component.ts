@@ -73,15 +73,18 @@ export class LicensesComponent implements OnInit {
     temp_array_last_week: any = [];
 
     filters: any = {
+        admin_licenses: false,
         activated: "",
         zone:"",
         status:"",
         dealer:'',
         host:'',
+        recent:'',
+        days_offline:'',
         label_status:"",
         label_zone:"",
         label_dealer: "",
-        label_host: ""
+        label_admin: "",
     }
 
 	// UI Table Column Header
@@ -165,6 +168,7 @@ export class LicensesComponent implements OnInit {
 			this.filterTable('status', status === 'Online'? '1' : '0');
 		}
 		this.getLicensesTotal();
+
         this.getLicenses(1);
 	}
 
@@ -242,7 +246,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.hosts_data = [];
 
-		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host)
+		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -285,10 +289,10 @@ export class LicensesComponent implements OnInit {
 		
     }
 
-    filterTable(type: string, value: any) {
-
+    filterTable(type: string, value: any, days?:any) {
         switch(type) {
             case 'status':
+                this.resetFilterStatus();
                 this.filters.status = value;
                 this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline'
@@ -307,14 +311,34 @@ export class LicensesComponent implements OnInit {
                 this.filters.label_zone = value;
                 break;
             case 'activated':
+                this.resetFilterStatus();
                 this.filters.status = "";
                 this.filters.activated = value;
                 this.filters.label_status = 'Inactive';
+                break;
+            case 'recent':
+                this.resetFilterStatus();
+                this.filters.status = "";
+                this.filters.recent = value;
+                this.filters.label_status = 'Recent Installs';
+                break;
+            case 'days_offline':
+                this.resetFilterStatus();
+                this.filters.status = 0;
+                this.filters.days_offline = value;
+                this.filters.label_status = 'Offline for ' + days;
                 break;
             default:
         }
 
         this.getLicenses(1);
+    }
+
+    resetFilterStatus() {
+        this.filters.recent = "";
+        this.filters.activated = "";
+        this.filters.days_offline = "";
+        this.filters.status = "";
     }
 
     sortByUser() {
@@ -489,7 +513,10 @@ export class LicensesComponent implements OnInit {
 
     clearFilter() {
         this.filters = {
+            admin_licenses: "",
             activated: "",
+            recent: "",
+            days_offline: "",
             zone:"",
             status:"",
             dealer:'',
@@ -497,7 +524,8 @@ export class LicensesComponent implements OnInit {
             label_status:"",
             label_zone:"",
             label_dealer: "",
-            label_host: ""
+            label_host: "",
+            label_admin: "",
         }
         this.sortList('desc');
         this.getLicenses(1);
@@ -525,7 +553,7 @@ export class LicensesComponent implements OnInit {
 
         switch (tab) {
             case 'licenses':
-                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.dealer, this.filters.host)
+                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						data => {
@@ -616,6 +644,11 @@ export class LicensesComponent implements OnInit {
         }
         
 	}
+
+    showAdminLicenses(value) {
+        this.filters.admin_licenses = value;
+        this.getLicenses(1);
+    }
 
     getTotalHours(data) {
         console.log("DD",data) 
@@ -870,7 +903,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapHostsForExport(data) {
-        data.storeHours = data.storeHours * 60 + " minutes" ;
+        data.storeHours = data.storeHours + " hours" ;
         data.tagsToString = data.tags.join(','); 
 	}
 
