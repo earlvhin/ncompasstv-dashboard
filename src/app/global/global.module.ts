@@ -171,6 +171,7 @@ import { WeatherFormComponent } from './components_shared/feed_components/weathe
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
 import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
 import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
+import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -351,6 +352,7 @@ const ngComponents = [
 	ToolsComponent,
 	UnassignHostLicenseComponent,
 	UnassignLicenseComponent,
+	UpcomingInstallModalComponent,
 	UserAccountSettingComponent,
 	UserProfileComponent,
 	UserSortModalComponent,
@@ -445,6 +447,7 @@ const DIRECTIVES = [
 		UserSortModalComponent,
 		ViewSchedulesComponent,
 		WarningPopupComponent,
+		UpcomingInstallModalComponent,
 	],
 	imports: [
 		BrowserAnimationsModule,
