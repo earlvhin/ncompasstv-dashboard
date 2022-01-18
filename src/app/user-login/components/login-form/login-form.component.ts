@@ -8,6 +8,9 @@ import { first } from 'rxjs/operators';
 import { AuthService } from '../../../global/services/auth-service/auth.service';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
 import { USER_LOGIN } from 'src/app/global/models/api_user.model';
+import { UpcomingInstallModalComponent } from '../../../global/pages_shared/upcoming-install-modal/upcoming-install-modal.component';
+import { MatDialog } from '@angular/material';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-login-form',
@@ -30,10 +33,13 @@ export class LoginFormComponent implements OnInit {
 	mode: ProgressSpinnerMode = 'determinate';
 	value = 50;
 
+	isUpcomingInstallChecked: boolean = false;
+
 	constructor(
 		private _auth: AuthService,
 		private _form: FormBuilder,
-		private _router: Router
+		private _router: Router,
+		 private _dialog: MatDialog
 	) { }
 
 	control: string = 'username';
@@ -95,7 +101,25 @@ export class LoginFormComponent implements OnInit {
 				localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
 				this._auth.startRefreshTokenTimer();
 				this.redirectToPage(response.userRole.roleId);
-				
+				if(response.userRole.roleId === UI_ROLE_DEFINITION.administrator ||
+					 response.userRole.roleId === UI_ROLE_DEFINITION.tech){
+					//Show Modal
+					let item = JSON.parse(localStorage.getItem('installation_ischecked'));
+					if(item){
+						let isNextDay = this.compareTime(item.timestamp, moment().toDate());
+						if(isNextDay){
+							this.openUpcomingInstallModal();
+						}
+						else{
+							if(!item.value){
+								this.openUpcomingInstallModal();
+							}
+						}
+					}
+					else{
+						this.openUpcomingInstallModal();
+					}
+				}
 			},
 			error => {
 				this.show_overlay = false;
@@ -105,7 +129,22 @@ export class LoginFormComponent implements OnInit {
 			}
 		)
 	}
+	
+	 compareTime(dateString:any, now:any){
+        return moment(now).isAfter(dateString, 'day');
+    }
+	
+	openUpcomingInstallModal(){
+        let dialogRef = this._dialog.open(UpcomingInstallModalComponent, {
+			height: '250px',
+			width: '500px',
+            disableClose: true
+		});
 
+		dialogRef.afterClosed().subscribe(result => {
+            this.isUpcomingInstallChecked = result;
+		});
+    }
 
 	async redirectToPage(role_definition: string): Promise<void> {
 		let role: string;
@@ -135,6 +174,7 @@ export class LoginFormComponent implements OnInit {
 
 
 		await this._router.navigate([role]);
+
 	}
 
 	togglePasswordFieldType(): void {
