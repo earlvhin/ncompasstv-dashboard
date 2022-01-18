@@ -17,7 +17,7 @@
                 font-size: $md;
                 transition: 0.1s linear;
 
-				.count {
+				.count, .badge {
 					background-color: $primary;					
 				}
 
@@ -28,7 +28,7 @@
                 &.is-active {
                     background-color: $primary;
 
-					.count {
+					.count, .badge {
 						background-color: $dark;
 					}
                 }
