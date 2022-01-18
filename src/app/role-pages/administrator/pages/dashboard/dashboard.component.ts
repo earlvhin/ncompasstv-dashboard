@@ -130,7 +130,7 @@ export class DashboardComponent implements OnInit {
     }
 
     getInstallationStats() {
-        this._license.get_statistics_by_installation(this.selected_date).subscribe(
+        this._license.get_installation_statistics().subscribe(
             (data:any) => {
                 this.installation_stats = {
                    total: data.licenseInstallationStats.total === 0 ? '0' :

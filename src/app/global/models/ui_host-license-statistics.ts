@@ -15,4 +15,6 @@ export interface HOST_LICENSE_STATISTICS {
 	total_menu_label?: string;
 	total_closed?: number;
 	total_closed_label?: string;
+	unassigned_value?: number;
+	unassigned_value_label?: 'Unassigned';
 }

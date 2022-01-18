@@ -115,7 +115,7 @@ export class SingleHostComponent implements OnInit {
 
 					if (!response) return;
 				
-					const { total, totalActive, totalInActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed } = response;
+					const { total, totalActive, totalInActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed, totalUnassignedScreenCount } = response;
 
 					this.hostLicenseStatistics = {
 						total_count: total,
@@ -133,7 +133,9 @@ export class SingleHostComponent implements OnInit {
 						total_menu: totalMenu,
 						total_menu_label: 'Menu',
 						total_closed: totalClosed,
-						total_closed_label: 'Closed'
+						total_closed_label: 'Closed',
+						unassigned_value: totalUnassignedScreenCount,
+						unassigned_value_label: 'Unassigned',	
 					}
 
 				},

@@ -144,7 +144,13 @@ export class FeedMediaComponent implements OnInit {
 		if (typeof dealer_id === 'undefined' || !dealer_id) {
 			this.show_only_floating_contents = true;
 			this.show_floating_contents_toggle = true;
-			this.getFloatingContents().add(() => this.showFloatingContent({ checked: true }));
+
+			this.getFloatingContents()
+				.add(() => {
+					this.showFloatingContent({ checked: true });
+					this.pageEnd = true;
+				});
+
 			return;
 		}
 
@@ -178,9 +184,7 @@ export class FeedMediaComponent implements OnInit {
 	private getFloatingContents() {
 		return this._content.get_floating_contents().pipe(takeUntil(this._unsubsribe))
 			.subscribe(
-				data => {
-					this.floating_content = data.filter(i => this._is_image.transform(i.fileType));
-				},
+				data => this.floating_content = data.filter(i => this._is_image.transform(i.fileType)),
 				error => console.log('Error retrieving floating contents', error)
 			);
 	}
