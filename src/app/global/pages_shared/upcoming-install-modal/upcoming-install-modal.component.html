@@ -1,0 +1,56 @@
+<div class="p-2 col-lg-12">
+<h3>Installations</h3>
+
+<div class="col-lg-12 pt-3 flex">
+    <div class="col-lg-4 text-center">
+        <div *ngIf="installation_stats.total; else spinner">
+            <span class="col-lg-12 p-0 sm-text text-gray">
+                TODAY
+            </span>
+            <br/>
+            <span class="text-primary">
+                <h2>{{installation_stats.today}}</h2>
+            </span>
+        </div>
+    </div>
+    <div class="col-lg-4 text-center">
+        <div *ngIf="installation_stats.total; else spinner">
+            <span class="col-lg-12 p-0 sm-text text-gray">
+                TOMORROW
+            </span>
+            <br/>
+            <span class="text-primary">
+                <h2>{{installation_stats.tomorrow}}</h2>
+            </span>
+        </div>
+    </div>
+    <div class="col-lg-4 text-center">
+        <div *ngIf="installation_stats.total; else spinner">
+            <span class="col-lg-12 p-0 sm-text text-gray">
+                NEXT 3 DAYS
+            </span>
+            <br />
+            <span class="text-primary">
+                <h2>{{installation_stats.nextThreeDays}}</h2>
+            </span>
+        </div>
+    </div>
+</div>
+
+<div class="row pl-3 pt-3">
+<mat-checkbox class="example-margin" [(ngModel)]="isChecked">Do not show for today</mat-checkbox>
+</div>
+
+<div style="display: flex; justify-content: flex-end">
+    <mat-dialog-actions>
+        <button class="mat-raised-button" (click)="closeDialog()">Close</button>
+    </mat-dialog-actions>
+</div>
+</div>
+
+
+<ng-template #spinner>
+    <div>
+        <app-spinner [diameter]="40"></app-spinner>
+    </div>
+</ng-template>
