@@ -425,7 +425,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	private modifyDataForExport(data) {
-		data.storeHours = data.storeHours * 60 + " minutes" ;
+		data.storeHours = data.storeHours + " hours" ;
         data.tagsToString = data.tags.join(','); 
 	}
 }
