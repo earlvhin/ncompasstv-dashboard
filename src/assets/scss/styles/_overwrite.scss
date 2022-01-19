@@ -246,3 +246,12 @@ breadcrumb {
         display: none !important;
     }
 }
+
+.custom-modalbox {
+    mat-dialog-container {
+        background: $dark;
+        .mat-checkbox-inner-container {
+            background: $light;
+        }
+    }
+}
