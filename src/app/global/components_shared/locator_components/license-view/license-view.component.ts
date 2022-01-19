@@ -245,6 +245,8 @@ export class LicenseViewComponent implements OnInit {
 		if (page > 1) this.loading_data = true;
 			else this.loading_search = true;
 
+	    this.online_licenses = 0;
+		this.offline_licenses = 0;
 		const currentDealerId = this.currentUser.roleInfo.dealerId;
 		this._license.get_license_by_dealer_id(currentDealerId, page, '')
 			.pipe(takeUntil(this._unsubscribe))
