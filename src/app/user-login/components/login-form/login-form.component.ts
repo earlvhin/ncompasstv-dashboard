@@ -129,7 +129,7 @@ export class LoginFormComponent implements OnInit {
 			}
 		)
 	}
-	
+
 	 compareTime(dateString:any, now:any){
         return moment(now).isAfter(dateString, 'day');
     }
