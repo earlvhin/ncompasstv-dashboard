@@ -136,9 +136,10 @@ export class LoginFormComponent implements OnInit {
 	
 	openUpcomingInstallModal(){
         let dialogRef = this._dialog.open(UpcomingInstallModalComponent, {
-			height: '250px',
-			width: '500px',
-            disableClose: true
+			height: '525px',
+			width: '600px',
+            disableClose: true,
+            panelClass: 'custom-modalbox'
 		});
 
 		dialogRef.afterClosed().subscribe(result => {

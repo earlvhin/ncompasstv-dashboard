@@ -513,7 +513,7 @@ export class LicensesComponent implements OnInit {
 
     clearFilter() {
         this.filters = {
-            admin_licenses: "",
+            admin_licenses: false,
             activated: "",
             recent: "",
             days_offline: "",
