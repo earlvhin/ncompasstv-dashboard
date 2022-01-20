@@ -33,6 +33,13 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
     @Input() value_array: [];
 	@Input() page?: string;
 	@Input() has_dealer_status_filter? = false;
+    @Input() has_breakdown? = false;
+    @Input() breakdown1_value? : number;
+    @Input() breakdown1_label? : string;
+    @Input() breakdown2_value? : number;
+    @Input() breakdown2_label? : string;
+    @Input() breakdown3_value? : number;
+    @Input() breakdown3_label? : string;
 
 	has_selected_active = false;
 	has_selected_inactive = false;
@@ -79,6 +86,10 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
                     },
                     tooltip: {
                         enabled: false
+                    },
+                    title: {
+                        text: 'Screen Type Count',
+                        display: true
                     }
                },                
             },
