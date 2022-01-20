@@ -16,6 +16,7 @@ import { BulkEditBusinessHoursComponent } from './components_shared/page_compone
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
 import { CategoryModalComponent } from './components_shared/category_components/category-modal/category-modal.component';
+import { ChangeTemplateComponent } from './components_shared/screen_components/change-template/change-template.component';
 import { CloneFeedDialogComponent } from './components_shared/data_components/data-table/dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ClonePlaylistComponent } from './components_shared/playlist_components/clone-playlist/clone-playlist.component';
 import { CloneScreenComponent } from './components_shared/screen_components/clone-screen/clone-screen.component';
@@ -211,7 +212,7 @@ const ngComponents = [
 	BulkOptionsComponent,
 	BulkPlaywhereComponent,
 	CategoryModalComponent,
-	CloneFeedDialogComponent,
+	ChangeTemplateComponent,
 	CloneFeedDialogComponent,
 	ClonePlaylistComponent,
 	CloneScreenComponent,
@@ -409,6 +410,7 @@ const DIRECTIVES = [
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
 		CategoryModalComponent,
+		ChangeTemplateComponent,
 		CloneFeedDialogComponent,
 		ClonePlaylistComponent,
 		CloneScreenComponent,

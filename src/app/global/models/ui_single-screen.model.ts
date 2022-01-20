@@ -1,3 +1,4 @@
+import { TABLE_ROW_FORMAT } from '.';
 import { UI_CONTENT } from './ui_content.model';
 
 export class UI_SINGLE_SCREEN {
@@ -15,12 +16,12 @@ export class UI_SINGLE_SCREEN {
     date_created: string;
     notes?: string;
     screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[];
-    screen_license: UI_SCREEN_LICENSE[];
+    screen_license: SCREEN_LICENSE_TABLE_FORMAT[];
 
     constructor(
         id: string, title: string, description: string, dealer_id: string, dealer_name: string,
         host_id: string, host_name: string, template_id: string, template_name: string,
-        created_by: string, date_created: string, screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[], licenses: UI_SCREEN_LICENSE[]
+        created_by: string, date_created: string, screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[], licenses: SCREEN_LICENSE_TABLE_FORMAT[]
     ) {
         this.screen_id = id;
         this.screen_title = title;
@@ -126,4 +127,15 @@ export class UI_SCREEN_LICENSE_SCREENS {
         this.is_registered = is_registered;
         this.pi_status = pi_status;
     }
+}
+
+interface SCREEN_LICENSE_TABLE_FORMAT {
+	license_id: TABLE_ROW_FORMAT;
+    index: TABLE_ROW_FORMAT;
+    license_key: TABLE_ROW_FORMAT;
+    alias: TABLE_ROW_FORMAT;
+    internet_type: TABLE_ROW_FORMAT;
+    internet_speed: TABLE_ROW_FORMAT;
+    is_activated: TABLE_ROW_FORMAT;
+    is_registered: TABLE_ROW_FORMAT;
 }
