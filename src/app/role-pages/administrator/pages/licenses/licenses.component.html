@@ -18,7 +18,7 @@
 
     <div class="content-section">
         <div class="row">
-            <div class="col-12 col-lg">
+            <div class="col-12 col-lg-4">
                 <mat-card class="h-100">
 					<ng-container *ngIf="licenses_details; else small_loader"> 
 						<app-data-card-graph 
@@ -31,12 +31,19 @@
 							[bad_value]="licenses_details.bad_value"
 							[bad_value_label]="licenses_details.bad_value_label" 
 							[label_array]="temp_label"
-							[value_array]="temp_array">
+							[value_array]="temp_array"
+                            [has_breakdown]="true"
+                            [breakdown1_value]="licenses_details.breakdown1_value"
+                            [breakdown1_label]="licenses_details.breakdown1_label"
+                            [breakdown2_value]="licenses_details.breakdown2_value"
+                            [breakdown2_label]="licenses_details.breakdown2_label"
+                            [breakdown3_value]="licenses_details.breakdown3_value"
+                            [breakdown3_label]="licenses_details.breakdown3_label">
 						</app-data-card-graph>
 					</ng-container>
                 </mat-card>
             </div>
-            <div class="col-12 col-lg">
+            <div class="col-12 col-lg-4">
                 <mat-card class="h-100 dealer-card">
 					<ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
@@ -49,7 +56,7 @@
 					</ng-container>
                 </mat-card>
             </div>
-            <div class="col-12 col-lg">
+            <div class="col-12 col-lg-4">
                 <mat-card class="h-100 dealer-card">
                     <ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph

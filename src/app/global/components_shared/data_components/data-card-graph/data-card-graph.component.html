@@ -28,19 +28,46 @@
                 <canvas id="breakdown-{{ id }}" height="150"></canvas>
             </div>
         </div>
-        <div class="col-xs-12 flex" *ngIf="good_value && bad_value">
-            <div class="col-xs-6 mr-2">
-                <span class="text-primary fas fa-circle mr-2 xsm-text">
-                </span>
-                <span class="sm-text text-dark">
-                    <span class="text-primary font-weight-medium">{{ good_value }}</span> {{ good_value_label }}
-                </span>
+        <div class="col-lg-12 p-0" *ngIf="good_value && bad_value">
+            <div class="col-lg-12 sm-text p-0 font-weight-medium" *ngIf="has_breakdown">
+                {{ compare_basis_sub_label}} Breakdown:
             </div>
-            <div class="col-xs-6">
-                <span class="text-danger fas fa-circle mr-2 xsm-text">
-                </span>
+            <div class="col-lg-12 p-0 flex">
+                <div class="col-lg-6 p-0 mr-2">
+                    <span class="text-primary fas fa-circle mr-2 xsm-text" *ngIf="!has_breakdown; else breakdown_icon">
+                    </span>
+                    <ng-template #breakdown_icon>
+                        <span class="fas fa-user mr-2 xsm-text text-primary"></span>
+                    </ng-template>
+                    <span class="sm-text text-dark">
+                        <span class="text-primary font-weight-medium">{{ good_value }}</span> {{ good_value_label }}
+                    </span>
+                </div>
+                <div class="col-lg-6 p-0">
+                    <span class="text-danger fas fa-circle mr-2 xsm-text" *ngIf="!has_breakdown; else breakdown_icon_disable">
+                    </span>
+                    <ng-template #breakdown_icon_disable>
+                        <span class="fas fa-user mr-2 xsm-text text-gray"></span>
+                    </ng-template>
+                    <span class="sm-text text-dark">
+                        <span class="text-gray font-weight-medium">{{ bad_value }}</span> {{ bad_value_label }}
+                    </span>
+                </div>
+            </div>
+            <div class="col-lg-12 p-0" *ngIf="has_breakdown">
+                <span class="text-primary fas fa-circle mr-2 xsm-text"></span>
                 <span class="sm-text text-dark">
-                    <span class="text-danger font-weight-medium">{{ bad_value }}</span> {{ bad_value_label }}
+                    <span class="text-gray font-weight-medium">{{ breakdown1_value }}</span> {{ breakdown1_label }}
+                </span>
+                <br>
+                <span class="text-danger fas fa-circle mr-2 xsm-text"></span>
+                <span class="sm-text text-dark">
+                    <span class="text-gray font-weight-medium">{{ breakdown2_value }}</span> {{ breakdown2_label }}
+                </span>
+                <br>
+                <span class="text-light-gray fas fa-circle mr-2 xsm-text"></span>
+                <span class="sm-text text-dark">
+                    <span class="text-gray font-weight-medium">{{ breakdown3_value }}</span> {{ breakdown3_label }}
                 </span>
             </div>
         </div>
