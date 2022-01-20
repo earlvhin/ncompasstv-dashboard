@@ -2,21 +2,22 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
+import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
-import { ScreenLicenseComponent } from '../../components_shared/screen_components/screen-license/screen-license.component';
-import { CloneScreenComponent } from '../../components_shared/screen_components/clone-screen/clone-screen.component';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UnassignLicenseComponent } from '../../components_shared/screen_components/unassign-license/unassign-license.component';
-
 import { environment } from 'src/environments/environment';
+import { ScreenLicenseComponent } from 'src/app/global/components_shared/screen_components/screen-license/screen-license.component';
+import { CloneScreenComponent } from 'src/app/global/components_shared/screen_components/clone-screen/clone-screen.component';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { UnassignLicenseComponent } from 'src/app/global/components_shared/screen_components/unassign-license/unassign-license.component';
+import { ChangeTemplateComponent } from 'src/app/global/components_shared/screen_components/change-template/change-template.component';
 
 import { API_CONTENT, API_HOST, API_LICENSE_PROPS, API_PLAYLIST, API_SCREEN_TEMPLATE_ZONE, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SINGLE_PLAYLIST, API_SINGLE_SCREEN, API_TEMPLATE,  EDIT_SCREEN_ZONE_PLAYLIST, EDIT_SCREEN_INFO, PAGING, UI_CONTENT, 
-	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS, API_LICENSE } from 'src/app/global/models';
+	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS, API_LICENSE } 
+from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, LicenseService, PlaylistService, RoleService, 
 	ScreenService, TemplateService } from 'src/app/global/services';
@@ -42,7 +43,7 @@ export class SingleScreenComponent implements OnInit {
 	is_initial_load_for_dealer = true;
 	is_search: boolean = false;
 	is_view_only = false;
-	licenses_array: any;
+	licenses_array: any[];
 	licenses: API_LICENSE['license'][];
 	license_tbl_row_url: string;
 	license_tbl_row_slug: string = "license_id";
@@ -56,7 +57,7 @@ export class SingleScreenComponent implements OnInit {
 	playlist_id: string;
 	playlist_route: string;
 	playlist_contents: UI_CONTENT[];
-	screen: any;
+	screen: UI_SINGLE_SCREEN;
 	screen_init: string;
     screen_licenses: Array<any> = [];
 	screen_types: Array<any> = [];
@@ -64,11 +65,13 @@ export class SingleScreenComponent implements OnInit {
     searching: boolean = false;
 	screen_id: string;
 	screen_info: FormGroup;
-	subscription: Subscription = new Subscription;
 	screen_zone_playlist_contents: UI_SCREEN_ZONE_PLAYLIST[];
 	screen_template: UI_ZONE_PLAYLIST;
 	screen_zone: any;
-	templates: any;
+	
+	private currentTemplate: API_TEMPLATE;
+	private screenZonePlaylists: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[];
+	private templates: API_TEMPLATE[];
 
 	_socket: any;
 
@@ -140,7 +143,10 @@ export class SingleScreenComponent implements OnInit {
 			width: 'col-lg-12',
 			type: 'textarea'
 		}
-	]
+	];
+
+	// Convenience getter for easy access to form fields
+	get s() { return this.screen_info.controls; }
 
 	ngOnInit() {
 		this._socket = io(environment.socket_server, {
@@ -168,8 +174,111 @@ export class SingleScreenComponent implements OnInit {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-		this.subscription.unsubscribe();
 		this._socket.disconnect();
+	}
+
+	// Had to change this.screen type to ANY due to extra fields that are non existent in the UI_SINGLE_SCREEN type
+	activateLicense(id: string) {
+		this._license.activate_license(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					const license = this.screen.screen_license.filter(i => i.license_key.value === id)[0];
+					console.log('License Activated');
+					this._socket.emit('D_activated', license.license_id.value);
+				},
+				error => console.log('Error activating license', error)
+			);
+	}
+
+	cloneScreen() {
+
+		const dialog = this._dialog.open(CloneScreenComponent, {
+			minWidth: '500px',
+			minHeight: '500px',
+			data: this.screen,
+			panelClass: 'no-overflow'
+		});
+
+		dialog.afterClosed()
+			.subscribe(
+				async (response: boolean) => {
+					if (!response) return;
+					await this._router.navigate([`/${this.currentRole}/screens/`, this._helper.singleScreenData.screen.screenId]);
+					this.setPageData(this._helper.singleScreenData);
+					this.getScreenLicenses(1);
+					this.getScreenType();
+				}
+			);
+	}
+
+	deactivateLicense(id: string) {
+		this._license.deactivate_license(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => console.log('License Deactivated'),
+				error => console.log('Error deactivating license', error)
+			);
+	}
+
+	deleteScreen() {
+		let delete_dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status: 'warning',
+				message: 'Delete Screen',
+				data: 'Are you sure you want to delete this screen',
+				return_msg: '',
+				action: 'delete'
+			}
+		})
+
+		delete_dialog.afterClosed().subscribe(
+			result => {
+				if (result == 'delete') {
+					let array_to_delete = [];
+					array_to_delete.push(this.screen_id);
+
+					this._screen.delete_screen(array_to_delete).pipe(takeUntil(this._unsubscribe))
+						.subscribe(
+							() => {
+								const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+								this._router.navigate([`/${route}/screens`]);
+							},
+							error => console.log('Error deleting screen', error)
+						);
+				}
+			} 
+		);
+	}
+
+	// Structure of Edit Screen Body
+	editScreenInfo() {
+		// Set Edit Screen Info
+
+		this.edit_screen_info = new EDIT_SCREEN_INFO(
+			this.screen_id,
+			this.s.screen_title.value,
+			this.s.description.value,
+			this.screen.type,
+			this.screen.assigned_host_id,
+			this.screen.assigned_template_id
+		)
+
+		// Structure Data to be sent
+		const final_screen_info = {
+			screen: (this.edit_screen_info != undefined) ? this.edit_screen_info : this.screen_info.value,
+			screenZonePlaylists: this.edit_screen_zone_playlist
+		}
+
+		// Send Data to API
+		this._screen.edit_screen(final_screen_info).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.no_changes = true;
+					this.openConfirmationModal('success', 'Success!', 'Screen successfully updated!');
+				},
+				error => console.log('Error editing screen', error)
+			);
 	}
 
 	getScreenIdOnRoute() {
@@ -195,162 +304,10 @@ export class SingleScreenComponent implements OnInit {
 						return;
 					}
 
-					this.screen_licenses = this.screenLicense_mapToUI(response.paging.entities);
+					this.screen_licenses = this.mapToScreenLicenseUI(response.paging.entities);
 
 				}
 			);
-	}
-
-    private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
-	}
-
-	toggleActivateDeactivate(e) {
-		if (e.status) {
-			this.activateLicense(e.id);
-		} else {
-			this.deactivateLicense(e.id);
-		}
-	}
-
-	// Had to change this.screen type to ANY due to extra fields that are non existent in the UI_SINGLE_SCREEN type
-	activateLicense(e) {
-		this.subscription.add(
-			this._license.activate_license(e).subscribe(
-				data => {
-					const license = this.screen.screen_license.filter(i => i.license_key.value === e)[0]
-					console.log('License Activated', this.screen.screen_license, license, e);
-					this._socket.emit('D_activated', license.license_id.value);
-				}
-			)
-		)
-	}
-
-	deactivateLicense(e) {
-		this.subscription.add(
-			this._license.deactivate_license(e).subscribe(
-				data => {
-					console.log('License is Deactivated -', e);
-				}
-			)
-		)
-	}
-
-	// Convenience getter for easy access to form fields
-	get s() { return this.screen_info.controls; }
-
-	// Watch changes of Screen Info Form
-	watchScreenInfo() {
-		this.subscription.add(
-			this.screen_info.valueChanges.subscribe(
-				data => {				
-					this.no_changes = false;
-				}
-			)
-		)
-	}
-
-	cloneScreen() {
-
-		const dialog = this._dialog.open(CloneScreenComponent, {
-			minWidth: '500px',
-			minHeight: '500px',
-			data: this.screen,
-			panelClass: 'no-overflow'
-		});
-
-		dialog.afterClosed()
-			.subscribe(
-				async (response: boolean) => {
-					if (!response) return;
-					await this._router.navigate([`/${this.currentRole}/screens/`, this._helper.singleScreenData.screen.screenId]);
-					this.setPageData(this._helper.singleScreenData);
-					this.getScreenLicenses(1);
-					this.getScreenType();
-				}
-			);
-	}
-
-	deleteScreen() {
-		let delete_dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: 'warning',
-				message: 'Delete Screen',
-				data: 'Are you sure you want to delete this screen',
-				return_msg: '',
-				action: 'delete'
-			}
-		})
-
-		delete_dialog.afterClosed()
-			.subscribe(
-				result => {
-					if (result == 'delete') {
-						let array_to_delete = [];
-						array_to_delete.push(this.screen_id);
-
-						this.subscription.add(
-							this._screen.delete_screen(array_to_delete).subscribe(
-								() => {
-									const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-									this._router.navigate([`/${route}/screens`]);
-								}
-							)
-						)
-					}
-				} );
-	}
-
-	// Structure of Edit Screen Body
-	editScreenInfo() {
-		// Set Edit Screen Info
-
-		this.edit_screen_info = new EDIT_SCREEN_INFO(
-			this.screen_id,
-			this.s.screen_title.value,
-			this.s.description.value,
-			this.screen.type,
-			this.screen.assigned_host_id,
-			this.screen.assigned_template_id
-		)
-
-		// Structure Data to be sent
-		const final_screen_info = {
-			screen: (this.edit_screen_info != undefined) ? this.edit_screen_info : this.screen_info.value,
-			screenZonePlaylists: this.edit_screen_zone_playlist
-		}
-
-		// Send Data to API
-		this.subscription.add(
-			this._screen.edit_screen(final_screen_info).subscribe(
-				data => {
-					this.no_changes = true;
-					this.openConfirmationModal('success', 'Success!', 'Screen successfully updated!');
-					// this.ngOnInit();
-					// console.log('editScreenInfo', data);
-				}
-			)
-		)
-	}
-
-	openConfirmationModal(status, message, data): void {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
-			height: '350px',
-			data:  { status, message, data }
-		})
-
-		dialog.afterClosed().subscribe(() => this.ngOnInit());
 	}
 
 	// Get Playlist By Dealer ID
@@ -369,25 +326,15 @@ export class SingleScreenComponent implements OnInit {
 			
 	}
 
-	hostSearchBoxTrigger (event) {
-		this.is_search = event.is_search;
-		if(this.is_search) {
-			this.search_host_data = "";
-		}
-		this.getHostByDealer(event.page);
-	}
-
-	searchHostData(e) {
-		this.search_host_data = e;
-		this.getHostByDealer(1);
-	}
-
 	// Get Host By Dealer
-	getHostByDealer(e) {
+	getHostByDealer(page: number) {
 		this.loading_data_host = true;
-		if(e > 1) {
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
+
+		if (page > 1) {
+
+			this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, page, this.search_host_data)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					data => {
 						if (data && data.paging.entities) {
 							data.paging.entities.map(
@@ -399,113 +346,82 @@ export class SingleScreenComponent implements OnInit {
 							this.paging_host = data.paging;
 							this.loading_data_host = false;
 						}
-					}
-				)
-			)
+					},
+					error => console.log('Error retrieving dealer host', error)
+				);
+
 		} else {
 			this.hosts_data = [];
 			this.initial_load = false;
-			if(this.is_search || this.search_host_data != "") {
-				this.loading_search_host = true;
-			}
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, e, this.search_host_data).subscribe(
+			if (this.is_search || this.search_host_data != "") this.loading_search_host = true;
+
+			this._host.get_host_by_dealer_id(this.screen.assigned_dealer_id, page, this.search_host_data)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					data => {
-						if(!data.message && data.paging.entities) {
-							if(this.search_host_data == "") {
-								data.paging.entities.map (
+
+						if (!data.message && data.paging.entities) {
+							if (this.search_host_data == "") {
+
+								data.paging.entities.map(
 									i => {
 										this.dealer_hosts.push(i);
 										this.hosts_data.push(i);
 									}
-								)
+								);
+
 							} else {
+
 								if (data.paging.entities.length > 0) {
 									this.hosts_data = data.paging.entities;
 									this.loading_search = false;
+
 								}
 							}
+
 							this.paging_host = data.paging;
+
 						} else {
 							this.screen.assigned_host_id = "";
-							if(this.search_host_data != "") {
+
+							if (this.search_host_data != "") {
 								this.hosts_data = [];
 								this.loading_search = false;
 							}
 						}
+
 						this.loading_data_host = false;
 						this.loading_search_host = false;
-					}
-				)
-			)
+					},
+					error => console.log('Error retrieving dealer host', error)
+				);
+
 		}
 	}
 
-	// Get Templates
-	getTemplate() {
-		this.subscription.add(
-			this._template.get_templates().subscribe(
-				(data: API_TEMPLATE[]) => {
-					this.templates = data.map(
-						(t: API_TEMPLATE) => {
-							return (
-								{
-									template_id: t.template.templateId,
-									template_name: t.template.name
-								}
-							)
-						}
-					)
-				}
-			)
-		)
+	getScreenType() {
+
+		this._screen.get_screens_type().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => this.screen_types = data,
+				error => console.log('Error retrieving screen type', error)
+			);
+
+	}
+
+	hostSearchBoxTrigger(event: { is_search: boolean, page: number }) {
+		this.is_search = event.is_search;
+		if (this.is_search) this.search_host_data = "";
+		this.getHostByDealer(event.page);
 	}
 
 	// Host is Selected
 	hostSelected(data) {
-		// console.log(data);
 		this.screen.assigned_host_id = data;
-	}
-
-	// Open Assign License Modal
-	assignLicenseModal_open() {
-		// console.log('#screen', this.screen)
-		const dialog = this._dialog.open(ScreenLicenseComponent, {
-			disableClose: true,
-			data: { license_id: this.screen.assigned_host_id , screen_id: this.screen.screen_id, zone_contents: this.screen.screen_zone_playlist },
-		});
-
-		this.subscription.add(
-			dialog.afterClosed().subscribe(
-				response => {
-					if (!response) return;
-					this.ngOnInit();
-				}
-			)
-		);
-	}
-
-	unassignLicenseModal_open() {
-
-		const dialog = this._dialog.open(UnassignLicenseComponent, {
-			disableClose: true,
-			data: { licenses: this.licenses, screen_id: this.screen.screen_id },
-		});
-
-		this.subscription.add(
-			dialog.afterClosed().subscribe(
-				data => {
-					if (data == true) {
-						// this.getScreen(this.screen_id);
-                        this.getScreenLicenses(1);
-						this.licenseUnassigned();
-					}
-				}
-			)
-		)
-	}
+	}	
 
 	licenseUnassigned() {
+
 		this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -514,11 +430,81 @@ export class SingleScreenComponent implements OnInit {
 				message: 'License Successfully',
 				data: 'Press OK to continue.'
 			}
+		});
+
+	}
+
+	// Open Assign License Modal
+	onAssignLicense() {
+
+		const dialog = this._dialog.open(ScreenLicenseComponent, {
+			disableClose: true,
+			data: { license_id: this.screen.assigned_host_id , screen_id: this.screen.screen_id, zone_contents: this.screen.screen_zone_playlist },
+		});
+
+		dialog.afterClosed().subscribe(
+			response => {
+				if (!response) return;
+				this.ngOnInit();
+			}
+		);
+	}
+
+	onChangeTemplate(): void {
+
+		const config: MatDialogConfig = {
+			height: '600px',
+			minWidth: '800px',
+			disableClose: true,
+			data: {
+				currentTemplate: this.currentTemplate,
+				dealerPlaylists: this.dealer_playlist,
+				playlistId: this.playlist_id,
+				playlistRoute: this.playlist_route,
+				screenZonePlaylists: this.screen.screen_zone_playlist,
+				templates: this.templates,
+			}
+		};
+
+		const dialog: MatDialogRef<ChangeTemplateComponent> = this._dialog.open(ChangeTemplateComponent, config);
+
+		dialog.afterClosed().subscribe(
+			response => {
+				if (!response) return;
+			}
+		);
+
+	}
+
+	onUnassignLicense() {
+
+		const dialog = this._dialog.open(UnassignLicenseComponent, {
+			disableClose: true,
+			data: { licenses: this.licenses, screen_id: this.screen.screen_id },
+		});
+
+		dialog.afterClosed().subscribe(
+			data => {
+				if (!data) return;
+				this.getScreenLicenses(1);
+				this.licenseUnassigned();
+			}
+		);
+	}
+
+	openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width:'500px',
+			height: '350px',
+			data:  { status, message, data }
 		})
+
+		dialog.afterClosed().subscribe(() => this.ngOnInit());
 	}
 
 	// Playlist is selected
-	playlistSelected(playlist_id, zone_id){
+	playlistSelected(playlist_id: string, zone_id: string) {
+
 		this.edit_screen_zone_playlist.forEach(
 			z => {
 				if(z.templateZoneId ===  zone_id && z.playlistId !== playlist_id) {
@@ -526,19 +512,42 @@ export class SingleScreenComponent implements OnInit {
 					z.playlistId = playlist_id;
 				}
 			}
-		)
+		);
+
+	}
+
+	searchHostData(keyword: string) {
+		this.search_host_data = keyword;
+		this.getHostByDealer(1);
+	}
+
+	// Template Selected
+	templateSelected(data) {
+		this.s.template.setValue(data);
+	}
+
+	toggleActivateDeactivate(event: { id: string, status: any }) {
+
+		if (event.status) {
+			this.activateLicense(event.id);
+		} else {
+			this.deactivateLicense(event.id);
+
+		}
 	}
 
 	//Unassign Playlist
-	unassignPlaylist(zone_id){
+	unassignPlaylist(zone_id: string) {
+
 		this.edit_screen_zone_playlist.forEach(
 			z => {
-				if(z.templateZoneId ===  zone_id) {
+				if (z.templateZoneId ===  zone_id) {
 					this.no_changes = false;
 					z.playlistId = "";
 				}
 			}
-		)
+		);
+
 		this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -547,13 +556,56 @@ export class SingleScreenComponent implements OnInit {
 				message: 'Playlist Successfully Removed',
 				data: 'Press OK to continue.'
 			}
-		})
+		});
+
 		this.editScreenInfo();
 	
 	}
 
+	// Watch changes of Screen Info Form
+	watchScreenInfo() {
+		this.screen_info.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.no_changes = false);
+	}
+
+	private getInternetType(value: string): string {
+		if(value) {
+			value = value.toLowerCase();
+			if (value.includes('w')) {
+				return 'WiFi';
+			}
+			if (value.includes('eth')) {
+				return 'LAN';
+			}
+		}
+	}
+
+	private getScreen(id: string) {
+
+		if (this.is_initial_load_for_dealer && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+			this.setPageData(this._helper.singleScreenData);
+			this.is_initial_load_for_dealer = false;
+			return;
+		}
+
+		this._screen.get_screen_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: API_SINGLE_SCREEN) => this.setPageData(response),
+				error => console.log('Error retrieving screen', error)
+			);
+	}
+
+	private getTemplates() {
+
+		return this._template.get_templates().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: API_TEMPLATE[]) => this.templates = data,
+				error => console.log('Error retrieving templates ', error)
+			);
+
+	}
+
 	// Playlist Contents and Properties Map to UI
-	playlistContent_mapToUI(data: API_CONTENT[]) {
+	private mapToPlaylistContentUI(data: API_CONTENT[]) {
 		if (data) {
 			return data.map(
 				(c: API_CONTENT) => {
@@ -579,86 +631,17 @@ export class SingleScreenComponent implements OnInit {
 						c.uuid
 					)
 				}
-			)
+			);
 		}
-	}
-
-	// Final UI Data Model
-	screen_mapToUI(data: API_SINGLE_SCREEN) {
-		const screen = new UI_SINGLE_SCREEN (
-			data.screen.screenId,
-			data.screen.screenName,
-			data.screen.description,
-			// data.screen.screenTypeId,
-			data.dealer.dealerId,
-			data.dealer.businessName,
-			(data.host.hostId != null) ? data.host.hostId : '',
-			(data.host.name != null) ? data.host.name : '',
-			(data.template.templateId != null) ? data.template.templateId : '',
-			(data.template.name != null) ? data.template.name : '',
-			`${data.createdBy.firstName} ${data.createdBy.lastName}`,
-			'',
-			this.screenZone_mapToUI(data.screenZonePlaylistsContents),
-			this.screenLicense_mapToUI(this.licenses_array)
-		);
-
-		
-		if(data.screen.screenTypeId != null) {
-			screen.type = data.screen.screenTypeId;
-		}
-
-		if (data.host.notes && data.host.notes.trim().length > 0) {
-			screen.notes = data.host.notes;
-
-		}
-
-		return screen;
-	}
-
-	getScreenType() {
-		this.subscription.add(
-			this._screen.get_screens_type().subscribe(
-				data => {
-					this.screen_types = data;
-				}
-			)
-		)
-	}
-
-	private sortLicenses(order: string): void {
-		this.licenses_array = [];
-
-		const licenses = [...this.licenses];
-
-		if (order === 'desc') {
-			this.licenses_array = licenses.sort((a, b) => b.piStatus - a.piStatus);
-			return;
-		}
-
-		this.licenses_array = licenses.sort((a, b) => a.piStatus - b.piStatus);
-
-	}
-
-	// Screen Zone Map to UI
-	screenZone_mapToUI(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]) {
-		return data.map(
-			(s: API_SCREEN_ZONE_PLAYLISTS_CONTENTS) => {
-				// console.log('screenZone', data)
-				return new UI_SCREEN_ZONE_PLAYLIST(
-					this.zonePlaylist_mapToUI(s.screenTemplateZonePlaylist),
-					this.playlistContent_mapToUI(s.contents)
-				)
-			}
-		)
 	}
 
 	// Get Licenses where THIS screen is playing
-	screenLicense_mapToUI(data) {
+	private mapToScreenLicenseUI(data: any) {
 		let counter = 1;
 		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+
 		return data.map(
 			(l: API_LICENSE_PROPS) => {
-				// console.log('API_LICENSE', l);
 				return new UI_SCREEN_LICENSE_SCREENS(
 					{ value: l.licenseId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
@@ -671,17 +654,47 @@ export class SingleScreenComponent implements OnInit {
 					{ value: l.piStatus, link: null , editable: false, hidden: true},
 				)
 			}
-		)
+		);
 	}
 
-	// Template Selected
-	templateSelected(data) {
-		// console.log(data);
-		this.s.template.setValue(data);
+	// Final UI Data Model
+	private mapToScreenUI(data: API_SINGLE_SCREEN): UI_SINGLE_SCREEN {
+
+		const screen = new UI_SINGLE_SCREEN (
+			data.screen.screenId,
+			data.screen.screenName,
+			data.screen.description,
+			data.dealer.dealerId,
+			data.dealer.businessName,
+			(data.host.hostId != null) ? data.host.hostId : '',
+			(data.host.name != null) ? data.host.name : '',
+			(data.template.templateId != null) ? data.template.templateId : '',
+			(data.template.name != null) ? data.template.name : '',
+			`${data.createdBy.firstName} ${data.createdBy.lastName}`,
+			'',
+			this.mapToScreenZoneUI(data.screenZonePlaylistsContents),
+			this.mapToScreenLicenseUI(this.licenses_array)
+		);
+
+		if(data.screen.screenTypeId != null) screen.type = data.screen.screenTypeId;
+		if (data.host.notes && data.host.notes.trim().length > 0) screen.notes = data.host.notes;
+		return screen;
+	}
+
+	// Screen Zone Map to UI
+	private mapToScreenZoneUI(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]) {
+		return data.map(
+			(s: API_SCREEN_ZONE_PLAYLISTS_CONTENTS) => {
+				return new UI_SCREEN_ZONE_PLAYLIST(
+					this.mapToZonePlaylistUI(s.screenTemplateZonePlaylist),
+					this.mapToPlaylistContentUI(s.contents)
+				);
+			}
+		);
 	}
 
 	// Zone Properties Map to UI
-	zonePlaylist_mapToUI(data: API_SCREEN_TEMPLATE_ZONE) {
+	private mapToZonePlaylistUI(data: API_SCREEN_TEMPLATE_ZONE) {
 		return new UI_ZONE_PLAYLIST(
 			data.screenId,
 			data.templateId,
@@ -695,45 +708,34 @@ export class SingleScreenComponent implements OnInit {
 			data.name,
 			data.description,
 			data.order
-		)
-	}
-
-	private getScreen(id: string) {
-
-		if (this.is_initial_load_for_dealer && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
-			this.setPageData(this._helper.singleScreenData);
-			this.is_initial_load_for_dealer = false;
-			return;
-		}
-
-		this.subscription.add(
-			this._screen.get_screen_by_id(id).subscribe(
-				(response: API_SINGLE_SCREEN) => this.setPageData(response)
-			)
 		);
 	}
 
 	private setPageData(data: API_SINGLE_SCREEN) {
 		this.licenses = data.licenses;
+		this.screenZonePlaylists = data.screenZonePlaylistsContents;
+		// this.currentTemplate = data.template;
 		this.host = data.host;
 		this.hostUrl = `/${this.currentRole}/hosts/${this.host.hostId}`;
 		this.sortLicenses('desc');
 
 		//sort screen zone template by order
 		data.screenZonePlaylistsContents = data.screenZonePlaylistsContents.sort((a,b)=>a.screenTemplateZonePlaylist.order - b.screenTemplateZonePlaylist.order);
-		
-		this.screen = this.screen_mapToUI(data);
+		this.screen = this.mapToScreenUI(data);
+
 		this.edit_screen_zone_playlist = data.screenZonePlaylistsContents.map(
 			(i: API_SCREEN_ZONE_PLAYLISTS_CONTENTS) => {
 				return new EDIT_SCREEN_ZONE_PLAYLIST(
 					i.screenTemplateZonePlaylist.templateZoneId,
 					i.screenTemplateZonePlaylist.playlistId
-				)
+				);
 			}
-		)
+		);
+		
 		this.getPlaylistByDealer(this.screen.assigned_dealer_id);
 		this.getHostByDealer(1);
-		this.getTemplate();
+
+		this.getTemplates().add(() => this.currentTemplate = this.templates.filter(data => data.template.templateId === this.screen.assigned_template_id)[0]);
 		
 		// Form Screen Information
 		this.screen_info = this._form.group(
@@ -752,6 +754,20 @@ export class SingleScreenComponent implements OnInit {
 		setTimeout(() => {
 			this.watchScreenInfo();	
 		}, 50);
+	}
+
+	private sortLicenses(order: string): void {
+		this.licenses_array = [];
+
+		const licenses = [...this.licenses];
+
+		if (order === 'desc') {
+			this.licenses_array = licenses.sort((a, b) => b.piStatus - a.piStatus);
+			return;
+		}
+
+		this.licenses_array = licenses.sort((a, b) => a.piStatus - b.piStatus);
+
 	}
 
 	protected get currentUser() {

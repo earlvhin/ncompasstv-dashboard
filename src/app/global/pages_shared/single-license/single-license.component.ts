@@ -83,7 +83,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	popup_type = '';
 	realtime_data: EventEmitter<any> = new EventEmitter();
 	routes: string;
-	screen: any;
+	screen: UI_SINGLE_SCREEN;
 	screen_loading = true;
 	screen_route: string;
 	screenshot_message: string = "Taking Screenshot, Please wait. . .";
@@ -1254,7 +1254,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			`${data.createdBy.firstName} ${data.createdBy.lastName}`,
 			'test',
 			this.mapScreenZoneToUI(data.screenZonePlaylistsContents),
-			this.mapScreenLicenseToUI(data.licenses)
+			[]
 		);
 	}
 

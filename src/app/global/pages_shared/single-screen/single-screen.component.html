@@ -39,8 +39,19 @@
                 <!-- Screen Demo -->
 
                 <!-- Screen Zone and Playlist -->
-                <h3>{{ screen.assigned_template }} Template</h3>
-                <p class="mb-3 sm-text">Below are the zones of {{ screen.assigned_template }} template. Click a zone to edit its playlist.</p>
+				<div class="d-flex flex-column screen-zone-playlist-header">
+					<div class="d-flex align-items-center">
+						<h3>{{ screen.assigned_template }} Template</h3>
+
+						<!-- TEMPORARILY HIDDEN DO NOT DELETE -->
+						<!-- <button mat-button mat-raised-button class="theme-btn mr-2 change-template"
+							(click)="onChangeTemplate()"
+							[disabled]="is_view_only">Change Template
+						</button> -->
+
+					</div>
+					<p class="mb-3 sm-text">Below are the zones of {{ screen.assigned_template }} template. Click a zone to edit its playlist.</p>
+				</div>
                 <mat-accordion>
                     <mat-expansion-panel *ngFor="let z of screen.screen_zone_playlist">
                         <mat-expansion-panel-header>
@@ -134,14 +145,14 @@
                         </div>
                         <div>
 							<button mat-button mat-raised-button class="theme-btn mr-2" 
-								(click)="unassignLicenseModal_open()"
+								(click)="onUnassignLicense()"
 								[disabled]="is_view_only">
 								Unassign License
 								<span class="sm-text fas fa-minus ml-2"></span>
 							</button>
 							
                             <button mat-button mat-raised-button class="theme-btn" 
-								(click)="assignLicenseModal_open()"
+								(click)="onAssignLicense()"
 								[disabled]="is_view_only">
 								Assign License
 								<span class="sm-text fas fa-plus ml-2"></span>

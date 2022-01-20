@@ -2,15 +2,15 @@ import { API_CONTENT } from './api_content.model';
 import { API_LICENSE } from './api_license.model';
 
 export class API_SINGLE_SCREEN {
-    screen: screenInfo;
+    createdBy: createdBy;
     dealer: dealer;
     host: host;
-    screenTypeId?: string;
-    template: template;
-    createdBy: createdBy
-    screenZonePlaylistsContents: any = [];
     licenses: API_LICENSE['license'][];
 	notes?: string;
+    screen: screenInfo;
+    screenTypeId?: string;
+    screenZonePlaylistsContents: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[] = [];
+    template: template;
 }
 
 class screenInfo {
