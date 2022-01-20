@@ -75,7 +75,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.loadInstallationsData();
 	}
 
-	exportTable(): void {
+	exportTable(tab = 'default'): void {
 
 		const header = [];
 		this.isExporting = true;
@@ -103,7 +103,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
         this.worksheet.columns = header;
 		this.isExporting = true;
-		this.getDataForExport().add(() => this.isExporting = false);		
+		this.getDataForExport(tab).add(() => this.isExporting = false);		
 	}
 
 	loadInstallationsData(type = 'default'): void {
@@ -134,11 +134,16 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.loadInstallationsData(type);
 	}
 
-	private getDataForExport() {		
-        return this._license.get_installations(this.currentFilters)
+	private getDataForExport(tab = 'default') {
+
+		this.currentFilters.pageSize = 10000;
+        
+		return this._license.get_installations(this.currentFilters, tab)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { paging: PAGING, message: string }) => {
+
+					delete this.currentFilters.pageSize;
 
 					if (response.message) {
 						this.licenses_to_export = [];
@@ -163,13 +168,14 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 					this.workbook.xlsx.writeBuffer()
 						.then((file: any) => {
 							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = 'Installations for ' + this.currentFilters.installDate +'.xlsx';
+							const filename = `${this._titlecase.transform(tab)} Installations for ${this.currentFilters.installDate}.xlsx`;
 							FileSaver.saveAs(blob, filename);
 						}
 					);
 
 				}
 			);
+
 	}
 
 	private getInstallations(type = 'default') {

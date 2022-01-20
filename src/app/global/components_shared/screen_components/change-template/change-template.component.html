@@ -1,0 +1,147 @@
+<div class="dialog-container change-template-dialog d-flex flex-column p-2">
+	
+	<div class="d-flex align-items-center heading">
+		<div class="flex-even">
+			<h1 mat-dialog-title>{{ title }}</h1>
+		</div>
+		<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false"><span class="fas fa-times"></span></button>
+	</div>
+
+	<div mat-dialog-content>
+
+		<div class="content-container d-flex justify-content-between">
+			<!-- CURRENT TEMPLATE -->
+			<div class="template current-template d-flex flex-column">
+		
+				<!-- TEMPLATE -->
+				<mat-form-field>
+					<input matInput type="text" [value]="currentTemplate.template.name" [disabled]="true">
+				</mat-form-field>
+		
+				<!-- ZONE PLAYLISTS -->
+				<mat-accordion>
+					<mat-expansion-panel *ngFor="let zone of screenZonePlaylists">
+						<mat-expansion-panel-header>
+							<mat-panel-title class="font-weight-medium">
+								{{ zone.screen_template.name | titlecase }} Zone
+							</mat-panel-title>
+							<mat-panel-description class="align-items-center" *ngIf="playlistId">
+								Playlist: <a [ngClass]="{'text-danger': playlistId === zone.screen_template.playlist_id}" [routerLink]="[playlistRoute, playlistId]" class="sm-text font-weight-bold ml-2 text-primary">{{ zone.screen_template.playlist_name }}</a>
+							</mat-panel-description>
+						</mat-expansion-panel-header>
+						<mat-form-field [ngClass]="(playlistId === zone.screen_template.playlist_id) ? 'col-lg-11' : 'full-width'">
+							
+							<mat-select [(value)]="zone.screen_template.playlist_id" [disabled]="true">
+								<mat-option *ngFor="let zonePlaylist of mappedZones"
+									[attr.data-zone-id]="zonePlaylist.playlist_id"
+									[value]="zonePlaylist.playlist_id">
+									{{ zonePlaylist.playlist_name }}
+								</mat-option>
+							</mat-select>
+							
+						</mat-form-field>
+					</mat-expansion-panel>
+				</mat-accordion>
+			</div>
+	
+			<!-- PREVIEW TEMPLATE -->
+			<div class="template preview-template d-flex flex-column">
+	
+				<ng-container *ngIf="isFormReady; else loading;">
+					<form [formGroup]="changeTemplateForm" class="d-flex flex-column">
+						<ng-container *ngFor="let control of formControls">
+
+							<ng-container *ngIf="fieldInputList.includes(control.type);">
+								<mat-form-field>
+					
+									<ng-container *ngIf="control.type === 'select'; else defaultInputField;">
+										<mat-select [formControlName]="control.name" [placeholder]="control.label">
+											<mat-option *ngFor="let option of control.options" [value]="option">
+												{{ option[control.option_label] }}
+											</mat-option>
+										</mat-select>
+									</ng-container>
+					
+									<ng-template #defaultInputField>
+										<input matInput [formControlName]="control.name" [placeholder]="control.label">
+									</ng-template>
+					
+								</mat-form-field>
+							</ng-container>
+
+						</ng-container>
+
+						<ng-container *ngIf="hasSelectedTemplate">
+							<mat-accordion formArrayName="zones">
+								<mat-expansion-panel *ngFor="let zone of selectedZonesFormArray.controls; let i = index;">
+									<mat-expansion-panel-header [formGroupName]="i">
+										<mat-panel-title class="font-weight-medium">
+											{{ zone.value.name | titlecase }} Zone
+										</mat-panel-title>
+									</mat-expansion-panel-header>
+									<mat-form-field [ngClass]="(playlistId === zone.value.playlist_id) ? 'col-lg-11' : 'full-width'">
+										
+										<mat-select [(value)]="zone.value.playlist_id" [placeholder]="'Select playlist...'">
+											<mat-option *ngFor="let zonePlaylist of mappedZones"
+												[attr.data-zone-id]="zonePlaylist.playlist_id"
+												[value]="zonePlaylist.playlist_id">
+												{{ zonePlaylist.playlist_name }}
+											</mat-option>
+										</mat-select>
+										
+									</mat-form-field>
+								</mat-expansion-panel>
+							</mat-accordion>
+						</ng-container>
+						
+					</form>
+				</ng-container>
+	
+			</div>
+		</div>
+	</div>
+
+	<div mat-dialog-actions>
+		<div class="actions-container d-flex">
+			<button mat-raised-button color="primary" class="margin-left-auto" [mat-dialog-close]="true">Submit</button>
+			<button mat-raised-button color="warn" class="margin-left-auto" [mat-dialog-close]="false">Cancel</button>
+		</div>
+	</div>
+</div>
+
+<ng-template #loading>
+	<div class="d-flex align-items-center justify-content-center w-100 h-100 py-5">
+		<div class="py-5">
+			<app-spinner></app-spinner>
+			<h5 class="mt-4 text-center">Please wait...</h5>
+		</div>
+	</div>
+</ng-template>
+
+<!-- BACKUP -->
+<ng-template>
+	<!-- <mat-accordion>
+		<mat-expansion-panel *ngFor="let zone of screenZonePlaylists">
+			<mat-expansion-panel-header>
+				<mat-panel-title class="font-weight-medium">
+					{{ zone.screen_template.name | titlecase }} Zone
+				</mat-panel-title>
+				<mat-panel-description class="align-items-center" *ngIf="playlistId">
+					Playlist: <a [ngClass]="{'text-danger': playlistId === zone.screen_template.playlist_id}" [routerLink]="[playlistRoute, playlistId]" class="sm-text font-weight-bold ml-2 text-primary">{{ zone.screen_template.playlist_name }}</a>
+				</mat-panel-description>
+			</mat-expansion-panel-header>
+			<mat-form-field [ngClass]="(playlistId === zone.screen_template.playlist_id) ? 'col-lg-11' : 'full-width'">
+				<mat-label>Select Playlist for {{ zone.screen_template.name }}</mat-label>
+				
+				<mat-select [(value)]="zone.screen_template.playlist_id" [disabled]="true">
+					<mat-option *ngFor="let zonePlaylist of mappedZones"
+						[attr.data-zone-id]="zonePlaylist.playlist_id"
+						[value]="zonePlaylist.playlist_id">
+						{{ zonePlaylist.playlist_name }}
+					</mat-option>
+				</mat-select>
+				
+			</mat-form-field>
+		</mat-expansion-panel>
+	</mat-accordion> -->
+</ng-template>
