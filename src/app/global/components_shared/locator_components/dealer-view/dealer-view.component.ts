@@ -346,14 +346,24 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	{
 		const replacer = (key, value) => value === null ? '' : value;
 		this.exported_map_marker = [];
+		let isStatus = true;
 		this.map_marker.forEach(
 			license => {
 				const data = [...license.storeHours];
 				this.markStoreHours = "";
 				data.forEach(obj => {
-					Object.entries(obj).forEach(([key,value]) => {
+					Object.entries(obj).forEach(([key,value]) => {						
 						if(key === 'day'){
 							this.markStoreHours += value;
+						}
+
+						if(key === 'status'){
+							if(value){
+								isStatus = true;
+							}
+							else {
+								isStatus = false;
+							}
 						}
 
 						if(key === 'periods')
@@ -365,7 +375,14 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 										if(value !== ""){
 											this.markStoreHours += " (" + value + " - ";
 										}
-										
+										else{
+											if(isStatus){
+												this.markStoreHours += " ( Open 24 hours ) ";
+											}
+											else{
+												this.markStoreHours += " ( Closed ) ";
+											}
+										}
 									}
 									if(key === 'close'){
 										if(value !== ""){

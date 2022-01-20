@@ -70,9 +70,19 @@
 											<th class="pr-4">
 												<h5>{{ ops.day }} </h5>
 											</th>
-											<td *ngFor="let hrs of ops.periods">
-												<h5>{{ hrs.open }} - {{ hrs.close }}</h5>
-											</td>
+											<span *ngIf="ops.periods[0]; else close">
+												<td *ngFor="let hrs of ops.periods; let j = index">
+													<h5 *ngIf="j > 0"> & </h5>
+													<h5 *ngIf="hrs.open == '' && hrs.close =='' && ops.status"> - Open 24 hours</h5>
+													<h5 *ngIf="hrs.open == '' && hrs.close =='' && !ops.status"> - Closed</h5>
+													<h5 *ngIf="hrs.open != '' && hrs.close !=''">
+														{{hrs.open}} - {{ hrs.close }}
+													</h5>
+												</td>
+											</span>
+											<ng-template #close>
+												- CLOSED
+											</ng-template>
 										</tr>
 										
 										</td>
