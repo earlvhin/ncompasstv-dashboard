@@ -21,6 +21,16 @@ export class DataCardCompareComponent implements OnInit, OnDestroy {
 	@Input() offline_value: number;
 	@Input() offline_value_label: string;
 	@Input() is_green: boolean;
+	@Input() assigned_value: number;
+	@Input() assigned_value_label: string;
+	@Input() unassigned_value: number;
+	@Input() unassigned_value_label: string;
+	@Input() inactive_value: number;
+	@Input() inactive_value_label: string;
+	@Input() license_online_value: number;
+	@Input() license_online_value_label: string;
+	@Input() license_offline_value: number;
+	@Input() license_offline_value_label: string;
 
 	@Input() page?: string;
 	@Input() has_dealer_status_filter? = false;
