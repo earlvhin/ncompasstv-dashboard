@@ -2,9 +2,9 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
-import { API_SINGLE_SCREEN, CREATE_SCREEN_RESPONSE } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { environment } from 'src/environments/environment';
+import { API_CHANGE_TEMPLATE, API_SINGLE_SCREEN, API_CHANGE_TEMPLATE_RESPONSE, CREATE_SCREEN_RESPONSE } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -27,6 +27,11 @@ export class ScreenService {
 
 	assign_license(data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_assign_license_to_screen}`, data, this.httpOptions)
+	}
+
+	change_template(body: API_CHANGE_TEMPLATE): Observable<API_CHANGE_TEMPLATE_RESPONSE> {
+		const url = `${environment.base_uri}${environment.update.screen_template}`;
+		return this._http.post<API_CHANGE_TEMPLATE_RESPONSE>(url, body);
 	}
 
 	create_screen(data): Observable<CREATE_SCREEN_RESPONSE> {
