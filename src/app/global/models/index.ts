@@ -1,5 +1,7 @@
 export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
+export * from './api_change-template.model';
+export * from './api_change-template-response.model'
 export * from './api_content.model';
 export * from './api_create-screen-response.model';
 export * from './api_dealer.model';

@@ -7,46 +7,35 @@
 		<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false"><span class="fas fa-times"></span></button>
 	</div>
 
+	<br>
 	<div mat-dialog-content>
 
 		<div class="content-container d-flex justify-content-between">
 			<!-- CURRENT TEMPLATE -->
 			<div class="template current-template d-flex flex-column">
+
+				<h4><b>Current Template:</b></h4><br>
 		
 				<!-- TEMPLATE -->
-				<mat-form-field>
-					<input matInput type="text" [value]="currentTemplate.template.name" [disabled]="true">
-				</mat-form-field>
+				<h4><u>{{ currentTemplate.template.name }}</u></h4><br>
 		
 				<!-- ZONE PLAYLISTS -->
-				<mat-accordion>
-					<mat-expansion-panel *ngFor="let zone of screenZonePlaylists">
-						<mat-expansion-panel-header>
-							<mat-panel-title class="font-weight-medium">
-								{{ zone.screen_template.name | titlecase }} Zone
-							</mat-panel-title>
-							<mat-panel-description class="align-items-center" *ngIf="playlistId">
-								Playlist: <a [ngClass]="{'text-danger': playlistId === zone.screen_template.playlist_id}" [routerLink]="[playlistRoute, playlistId]" class="sm-text font-weight-bold ml-2 text-primary">{{ zone.screen_template.playlist_name }}</a>
-							</mat-panel-description>
-						</mat-expansion-panel-header>
-						<mat-form-field [ngClass]="(playlistId === zone.screen_template.playlist_id) ? 'col-lg-11' : 'full-width'">
-							
-							<mat-select [(value)]="zone.screen_template.playlist_id" [disabled]="true">
-								<mat-option *ngFor="let zonePlaylist of mappedZones"
-									[attr.data-zone-id]="zonePlaylist.playlist_id"
-									[value]="zonePlaylist.playlist_id">
-									{{ zonePlaylist.playlist_name }}
-								</mat-option>
-							</mat-select>
-							
-						</mat-form-field>
-					</mat-expansion-panel>
-				</mat-accordion>
+				<ng-container *ngFor="let zone of screenZonePlaylists">
+					<mat-card class="playlist-zones" >
+						<div class="d-flex align-items-center justify-content-between">
+							<label class="zone-name"><b>{{ zone.screen_template.name | titlecase }} Zone</b></label>
+							<p class="playlist-name">Playlist: {{ zone.screen_template.playlist_name }}</p>
+						</div>
+					</mat-card>
+					<br>
+				</ng-container>
 			</div>
 	
 			<!-- PREVIEW TEMPLATE -->
 			<div class="template preview-template d-flex flex-column">
-	
+
+				<h4><b>New Template:</b></h4>
+
 				<ng-container *ngIf="isFormReady; else loading;">
 					<form [formGroup]="changeTemplateForm" class="d-flex flex-column">
 						<ng-container *ngFor="let control of formControls">
@@ -72,23 +61,21 @@
 						</ng-container>
 
 						<ng-container *ngIf="hasSelectedTemplate">
-							<mat-accordion formArrayName="zones">
-								<mat-expansion-panel *ngFor="let zone of selectedZonesFormArray.controls; let i = index;">
-									<mat-expansion-panel-header [formGroupName]="i">
+							<mat-accordion>
+								<mat-expansion-panel *ngFor="let zone of selectedTemplate.templateZones;">
+									<mat-expansion-panel-header>
 										<mat-panel-title class="font-weight-medium">
-											{{ zone.value.name | titlecase }} Zone
+											{{ zone.name | titlecase }} Zone
 										</mat-panel-title>
 									</mat-expansion-panel-header>
-									<mat-form-field [ngClass]="(playlistId === zone.value.playlist_id) ? 'col-lg-11' : 'full-width'">
-										
-										<mat-select [(value)]="zone.value.playlist_id" [placeholder]="'Select playlist...'">
+									<mat-form-field>
+										<mat-select [placeholder]="'Select playlist...'" (selectionChange)="onSelectPlaylist(zone, $event)">
 											<mat-option *ngFor="let zonePlaylist of mappedZones"
 												[attr.data-zone-id]="zonePlaylist.playlist_id"
-												[value]="zonePlaylist.playlist_id">
+												[value]="zonePlaylist">
 												{{ zonePlaylist.playlist_name }}
 											</mat-option>
 										</mat-select>
-										
 									</mat-form-field>
 								</mat-expansion-panel>
 							</mat-accordion>
@@ -102,9 +89,9 @@
 	</div>
 
 	<div mat-dialog-actions>
-		<div class="actions-container d-flex">
-			<button mat-raised-button color="primary" class="margin-left-auto" [mat-dialog-close]="true">Submit</button>
-			<button mat-raised-button color="warn" class="margin-left-auto" [mat-dialog-close]="false">Cancel</button>
+		<div class="actions-container d-flex margin-left-auto">
+			<button mat-raised-button class="submit" color="primary" (click)="onSubmit()" [disabled]="changeTemplateForm.invalid">Submit</button>
+			<button mat-raised-button color="warn" [mat-dialog-close]="false">Cancel</button>
 		</div>
 	</div>
 </div>

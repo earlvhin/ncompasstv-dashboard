@@ -196,7 +196,6 @@ export class CreateScreenComponent implements OnInit {
 			this._screen.get_screens_type().subscribe(
 				data => {
 					this.screen_types = data;
-					console.log("Screen Type", data)
 				}
 			)
 		)

@@ -9,9 +9,34 @@
 
 	.template {
 		min-width: 300px;
+
+		&.current-template {
+			max-width: 350px;
+		}
+	}
+}
+
+.margin-left-auto {
+	margin-left: auto;
+}
+
+.current-template {
+	.playlist-zones {
+		.zone-name {
+			margin-right: 20px;
+			font-size: 14px;
+		}
+
+		.playlist-name {
+			font-size: 12px;
+		}
 	}
 }
 
 .mat-dialog-actions {
-	margin-top: 50px;
+	margin-top: 105px;
+
+	button.submit {
+		color: white;
+	}
 }

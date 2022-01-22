@@ -252,6 +252,7 @@ export const API_ENDPOINTS = {
 		reassign_content: 'content/reassigncontent',
 		reassign_dealer: 'dealer/reassigndealer',
 		revert_frequency: 'playlists/revertFrequency',
+		screen_template: 'screen/change/template',
 		set_content_frequency: 'playlists/setFrequency',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',

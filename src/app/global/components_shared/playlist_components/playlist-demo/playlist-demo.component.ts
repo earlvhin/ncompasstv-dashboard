@@ -51,6 +51,7 @@ export class PlaylistDemoComponent implements OnInit {
 				this.getPlaylistById();
 			}
 		}
+
 	}
 
 	mediaFileError(e) {
@@ -89,7 +90,7 @@ export class PlaylistDemoComponent implements OnInit {
 		this.current_filetype = filetype;
 
 		if (i > 0) {
-			if (this.playlist_content[i].file_name == this.playlist_content[i-1].file_name) {
+			if (this.playlist_content[i].file_name == this.playlist_content[i-1].file_name && this.videoplayer) {
 				this.videoplayer.nativeElement.play();
 			}
 		}

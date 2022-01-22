@@ -16,7 +16,7 @@ import { ChangeTemplateComponent } from 'src/app/global/components_shared/screen
 
 import { API_CONTENT, API_HOST, API_LICENSE_PROPS, API_PLAYLIST, API_SCREEN_TEMPLATE_ZONE, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SINGLE_PLAYLIST, API_SINGLE_SCREEN, API_TEMPLATE,  EDIT_SCREEN_ZONE_PLAYLIST, EDIT_SCREEN_INFO, PAGING, UI_CONTENT, 
-	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS, API_LICENSE } 
+	UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, UI_SCREEN_ZONE_PLAYLIST, UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE_SCREENS, API_LICENSE, API_CHANGE_TEMPLATE } 
 from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, LicenseService, PlaylistService, RoleService, 
@@ -68,10 +68,10 @@ export class SingleScreenComponent implements OnInit {
 	screen_zone_playlist_contents: UI_SCREEN_ZONE_PLAYLIST[];
 	screen_template: UI_ZONE_PLAYLIST;
 	screen_zone: any;
+	templates: API_TEMPLATE[];
 	
 	private currentTemplate: API_TEMPLATE;
 	private screenZonePlaylists: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[];
-	private templates: API_TEMPLATE[];
 
 	_socket: any;
 
@@ -454,24 +454,38 @@ export class SingleScreenComponent implements OnInit {
 
 		const config: MatDialogConfig = {
 			height: '600px',
-			minWidth: '800px',
+			minWidth: '900px',
 			disableClose: true,
 			data: {
 				currentTemplate: this.currentTemplate,
 				dealerPlaylists: this.dealer_playlist,
 				playlistId: this.playlist_id,
 				playlistRoute: this.playlist_route,
+				screen: this.screen,
 				screenZonePlaylists: this.screen.screen_zone_playlist,
-				templates: this.templates,
+				templates: this.templates.filter(data => data.template.templateId !== this.currentTemplate.template.templateId),
 			}
 		};
 
 		const dialog: MatDialogRef<ChangeTemplateComponent> = this._dialog.open(ChangeTemplateComponent, config);
 
 		dialog.afterClosed().subscribe(
-			response => {
+			(response: boolean | API_CHANGE_TEMPLATE) => {
 				if (!response) return;
-			}
+				
+				this._screen.change_template(response as API_CHANGE_TEMPLATE).pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						async response => {
+							await this._router.navigate([`/${this.currentRole}/screens/`, response.screenId]);
+							const screen = await this._screen.get_screen_by_id(response.screenId).toPromise();
+							this.setPageData(screen);
+							this.getScreenLicenses(1);
+							this.getScreenType();
+						},
+						error => console.log('Error change template', error)
+					);
+			},
+			error => console.log('Error changing screen template', error)
 		);
 
 	}
@@ -714,7 +728,6 @@ export class SingleScreenComponent implements OnInit {
 	private setPageData(data: API_SINGLE_SCREEN) {
 		this.licenses = data.licenses;
 		this.screenZonePlaylists = data.screenZonePlaylistsContents;
-		// this.currentTemplate = data.template;
 		this.host = data.host;
 		this.hostUrl = `/${this.currentRole}/hosts/${this.host.hostId}`;
 		this.sortLicenses('desc');

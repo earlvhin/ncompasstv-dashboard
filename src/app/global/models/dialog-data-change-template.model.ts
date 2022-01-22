@@ -1,4 +1,4 @@
-import { API_SINGLE_PLAYLIST, API_TEMPLATE, UI_SCREEN_ZONE_PLAYLIST } from '.';
+import { API_SINGLE_PLAYLIST, API_TEMPLATE, UI_SCREEN_ZONE_PLAYLIST, UI_SINGLE_SCREEN } from '.';
 
 export interface DIALOG_DATA_CHANGE_TEMPLATE {
 	currentTemplate: API_TEMPLATE;
@@ -6,5 +6,6 @@ export interface DIALOG_DATA_CHANGE_TEMPLATE {
 	screenZonePlaylists: UI_SCREEN_ZONE_PLAYLIST[];
 	playlistId: string;
 	playlistRoute: string;
+	screen: UI_SINGLE_SCREEN;
 	templates: API_TEMPLATE[];
 }

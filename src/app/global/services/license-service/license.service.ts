@@ -126,7 +126,7 @@ export class LicenseService {
 	
     get_license_by_screen_id(id: string, page: number) {
 		const params = this.httpParams({ screenId: id, page });
-		return this._http.get<{ paging?: PAGING, message?: string }>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
+		return this._http.get<{ paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_by_screen}`, { ...this.httpOptions, params });
 	}
 
 	/**
