@@ -1,4 +1,4 @@
-<div class="theme-container" *ngIf="screen">
+<div class="theme-container" *ngIf="screen; else page_loading;">
     <div class="title-section">
         <div class="d-flex align-items-center">
             <div class="flex-even">
@@ -189,3 +189,12 @@
         </div>
     </div>
 </div>
+
+<ng-template #page_loading>
+	<div class="loader text-center py-5 d-flex align-items-center vh-50">
+		<div class="w-100">
+			<app-spinner></app-spinner>
+			<h3 class="mt-4 mb-2">Please Wait</h3>
+		</div>
+	</div>
+</ng-template>

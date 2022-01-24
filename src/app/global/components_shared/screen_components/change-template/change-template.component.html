@@ -70,10 +70,10 @@
 									</mat-expansion-panel-header>
 									<mat-form-field>
 										<mat-select [placeholder]="'Select playlist...'" (selectionChange)="onSelectPlaylist(zone, $event)">
-											<mat-option *ngFor="let zonePlaylist of mappedZones"
-												[attr.data-zone-id]="zonePlaylist.playlist_id"
-												[value]="zonePlaylist">
-												{{ zonePlaylist.playlist_name }}
+											<mat-option *ngFor="let playlist of dealerPlaylists"
+												[attr.data-zone-id]="playlist.playlistId"
+												[value]="playlist">
+												{{ playlist.name }}
 											</mat-option>
 										</mat-select>
 									</mat-form-field>
@@ -103,32 +103,4 @@
 			<h5 class="mt-4 text-center">Please wait...</h5>
 		</div>
 	</div>
-</ng-template>
-
-<!-- BACKUP -->
-<ng-template>
-	<!-- <mat-accordion>
-		<mat-expansion-panel *ngFor="let zone of screenZonePlaylists">
-			<mat-expansion-panel-header>
-				<mat-panel-title class="font-weight-medium">
-					{{ zone.screen_template.name | titlecase }} Zone
-				</mat-panel-title>
-				<mat-panel-description class="align-items-center" *ngIf="playlistId">
-					Playlist: <a [ngClass]="{'text-danger': playlistId === zone.screen_template.playlist_id}" [routerLink]="[playlistRoute, playlistId]" class="sm-text font-weight-bold ml-2 text-primary">{{ zone.screen_template.playlist_name }}</a>
-				</mat-panel-description>
-			</mat-expansion-panel-header>
-			<mat-form-field [ngClass]="(playlistId === zone.screen_template.playlist_id) ? 'col-lg-11' : 'full-width'">
-				<mat-label>Select Playlist for {{ zone.screen_template.name }}</mat-label>
-				
-				<mat-select [(value)]="zone.screen_template.playlist_id" [disabled]="true">
-					<mat-option *ngFor="let zonePlaylist of mappedZones"
-						[attr.data-zone-id]="zonePlaylist.playlist_id"
-						[value]="zonePlaylist.playlist_id">
-						{{ zonePlaylist.playlist_name }}
-					</mat-option>
-				</mat-select>
-				
-			</mat-form-field>
-		</mat-expansion-panel>
-	</mat-accordion> -->
 </ng-template>

@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MatSelectChange, MAT_DIALOG_DATA } from '@angu
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_TEMPLATE, API_ZONE, DIALOG_DATA_CHANGE_TEMPLATE, FORM_CONTROL, UI_SCREEN_ZONE_PLAYLIST, UI_SINGLE_SCREEN, UI_ZONE_PLAYLIST } from 'src/app/global/models';
+import { API_PLAYLIST, API_SINGLE_PLAYLIST, API_TEMPLATE, API_ZONE, DIALOG_DATA_CHANGE_TEMPLATE, FORM_CONTROL, UI_SCREEN_ZONE_PLAYLIST, UI_SINGLE_SCREEN, UI_ZONE_PLAYLIST } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -16,6 +16,7 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
 	
 	currentTemplate: API_TEMPLATE;
 	changeTemplateForm: FormGroup;
+	dealerPlaylists: API_PLAYLIST[];
 	fieldInputList = [ 'text', 'number', 'select' ];
 	otherInputList = [ 'accordion-select' ];
 	formControls: FORM_CONTROL[];
@@ -82,12 +83,12 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
 
 	onSelectPlaylist(zone: API_ZONE, event: MatSelectChange) {
 		const { templateZoneId } = zone; 
-		const { playlist_id } = event.value as UI_ZONE_PLAYLIST;
+		const { playlistId } = event.value as API_PLAYLIST;
 		const control = this.changeTemplateForm.get('zones');
 		let currentPlaylists = [...control.value] as { templateZoneId: string, playlistId: string }[];
 		const assignedZoneIndex = currentPlaylists.findIndex(data => data.templateZoneId === zone.templateZoneId);
 		if (assignedZoneIndex !== -1) currentPlaylists.splice(assignedZoneIndex, 1);
-		currentPlaylists.push({ templateZoneId, playlistId: playlist_id });
+		currentPlaylists.push({ templateZoneId, playlistId });
 		control.setValue(currentPlaylists);
 	}
 
@@ -133,8 +134,9 @@ export class ChangeTemplateComponent implements OnInit, OnDestroy {
 	}
 
 	private setDialogData() {
-		const { currentTemplate, screenZonePlaylists, playlistId, playlistRoute, screen, templates } = this._dialog_data;
+		const { currentTemplate, dealerPlaylists, screenZonePlaylists, playlistId, playlistRoute, screen, templates } = this._dialog_data;
 		this.currentTemplate = currentTemplate;
+		this.dealerPlaylists = dealerPlaylists;
 		this.screenZonePlaylists = [...screenZonePlaylists];
 		this.playlistId = playlistId;
 		this.playlistRoute = playlistRoute;

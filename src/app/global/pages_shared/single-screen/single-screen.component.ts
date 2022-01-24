@@ -420,14 +420,14 @@ export class SingleScreenComponent implements OnInit {
 		this.screen.assigned_host_id = data;
 	}	
 
-	licenseUnassigned() {
+	licenseListUpdated(type = 'assign') {
 
 		this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: {
 				status: 'success',
-				message: 'License Successfully',
+				message: `License(s) sucessfully ${type}ed`,
 				data: 'Press OK to continue.'
 			}
 		});
@@ -445,7 +445,9 @@ export class SingleScreenComponent implements OnInit {
 		dialog.afterClosed().subscribe(
 			response => {
 				if (!response) return;
+				this.getScreenLicenses(1);
 				this.ngOnInit();
+				this.licenseListUpdated();
 			}
 		);
 	}
@@ -472,6 +474,8 @@ export class SingleScreenComponent implements OnInit {
 		dialog.afterClosed().subscribe(
 			(response: boolean | API_CHANGE_TEMPLATE) => {
 				if (!response) return;
+
+				this.screen = null;
 				
 				this._screen.change_template(response as API_CHANGE_TEMPLATE).pipe(takeUntil(this._unsubscribe))
 					.subscribe(
@@ -498,10 +502,11 @@ export class SingleScreenComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(
-			data => {
-				if (!data) return;
+			response => {
+				if (!response) return;
 				this.getScreenLicenses(1);
-				this.licenseUnassigned();
+				this.ngOnInit();
+				this.licenseListUpdated('unassign');
 			}
 		);
 	}
