@@ -208,25 +208,13 @@ export class SingleContentComponent implements OnInit, OnDestroy {
     }
 
     msToTime(input) {
-        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
-        totalSeconds = input;
-        totalMinutes = totalSeconds / 60;
-        totalHours = totalMinutes / 60;
-        seconds = Math.floor(totalSeconds) % 60;
-        minutes = Math.floor(totalMinutes) % 60;
-        hours = Math.floor(totalHours) % 60;
-        if (hours !== 0) {
-            result += hours+'h ';
-            if (minutes.toString().length == 1) {
-                minutes = '0'+minutes;
-            }
-        }
-        result += minutes+'m ';
-        if (seconds.toString().length == 1) {
-            seconds = '0'+seconds;
-        }
-        result += seconds + 's';
-        return result;
+        let totalSeconds = input
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+
+        return hours + "h " + minutes + "m " + seconds + "s "
     }
 
 	/** Content Logs Report: StarDate Picker */

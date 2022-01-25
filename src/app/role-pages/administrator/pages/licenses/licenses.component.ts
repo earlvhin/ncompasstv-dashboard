@@ -15,6 +15,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
+import { time } from 'console';
 
 @Component({
 	selector: 'app-licenses',
@@ -28,7 +29,7 @@ export class LicensesComponent implements OnInit {
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	licenses_data: UI_LICENSE[] = [];
 	hosts_data: UI_HOST_VIEW[] = [];
-    hour_diff: any;
+    hour_diff: number;
     hour_diff_temp: any;
     no_dealer: boolean;
 	no_host: boolean;
@@ -72,8 +73,13 @@ export class LicensesComponent implements OnInit {
     temp_label_last_week: any = [];
     temp_array_last_week: any = [];
 
+    diff_hours: any;
+
     filters: any = {
         admin_licenses: false,
+        assigned: "",
+        online: "",
+        inactive: "",
         activated: "",
         zone:"",
         status:"",
@@ -182,7 +188,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     getColumnsAndOrder(data, tab) {
-        console.log(data, tab)
         switch(tab) {
             case 'licenses':
                 this.sort_column = data.column;
@@ -230,7 +235,6 @@ export class LicensesComponent implements OnInit {
 					const mappedData = this.mapToHostsTable([...response.host]);
 					this.hosts_data = [...mappedData];
 					this.filtered_data_host = [...mappedData];
-
 				},
 				error => console.log('Error retrieving hosts by page ', error)
 			)
@@ -246,7 +250,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.hosts_data = [];
 
-		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host)
+		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -295,7 +299,11 @@ export class LicensesComponent implements OnInit {
                 this.resetFilterStatus();
                 this.filters.status = value;
                 this.filters.activated = true;
-                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+                if(value == 1) {
+                    this.filters.online = true
+                }
+                this.filters.assigned = true;
                 if(value == 0) {
                     var filter = {
                         column: 'TimeIn',
@@ -327,6 +335,17 @@ export class LicensesComponent implements OnInit {
                 this.filters.status = 0;
                 this.filters.days_offline = value;
                 this.filters.label_status = 'Offline for ' + days;
+                break;
+            case 'assigned':
+                this.resetFilterStatus();
+                this.filters.assigned = value;
+                this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
+                break;
+            case 'inactive':
+                this.resetFilterStatus();
+                this.filters.assigned = true;
+                this.filters.inactive = value;
+                this.filters.label_status = value == 'true' ? 'Inactive':'';
                 break;
             default:
         }
@@ -507,7 +526,7 @@ export class LicensesComponent implements OnInit {
         storehours = storehours.sort((a, b) => {return a.id - b.id;});
 		var modified_label = {
 			date : moment().format('LL'),
-			address: data.address,
+			address: data.hostAddress,
 			schedule: storehours[this.now] && storehours[this.now].status ? (
 				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
 				? "Open 24 Hours" : storehours[this.now].periods.map(
@@ -521,6 +540,9 @@ export class LicensesComponent implements OnInit {
     clearFilter() {
         this.filters = {
             admin_licenses: false,
+            assigned: "",
+            online: "",
+            inactive: "",
             activated: "",
             recent: "",
             days_offline: "",
@@ -658,7 +680,6 @@ export class LicensesComponent implements OnInit {
     }
 
     getTotalHours(data) {
-        console.log("DD",data) 
         if (data.storeHours) {
             data.storeHours = JSON.parse(data.storeHours)
             this.hour_diff_temp = [];
@@ -667,23 +688,24 @@ export class LicensesComponent implements OnInit {
                     if(hours.status) {
                         hours.periods.map (
                             period => {
+                                this.diff_hours = 0;
                                 if(period.open && period.close) {
                                     var close = moment(period.close,"H:mm A");
                                     var open = moment(period.open,"H:mm A");
     
-                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss")).getHours();
-                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss")).getHours();
+                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss"));
+                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss"));
                                     
-                                    if(time_start > time_end) {
-                                        time_end = time_end + 24;
-                                        var diff_hours = time_end - time_start;
+                                    if(time_start.getTime() > time_end.getTime()) {
+                                        time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
+                                        this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                                     } else {
-                                        var diff_hours = time_end - time_start;
+                                        this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                                     }
                                 } else {
-                                    var diff_hours = 24;
+                                    this.diff_hours = 86400;
                                 }
-                                this.hour_diff_temp.push(diff_hours)
+                                this.hour_diff_temp.push(this.diff_hours)
                             }
                         )
                     } else {
@@ -699,7 +721,7 @@ export class LicensesComponent implements OnInit {
             )
         } else {
         }
-        return this.hour_diff; 
+        return this.msToTime(this.hour_diff); 
     }
 
     getZoneHours(data) {
@@ -736,26 +758,13 @@ export class LicensesComponent implements OnInit {
     }
 
     msToTime(input) {
-        var totalHours, totalMinutes, totalSeconds, hours, minutes, seconds, result='';
-        totalSeconds = input;
-        // totalSeconds = input / 1000;
-        totalMinutes = totalSeconds / 60;
-        totalHours = totalMinutes / 60;
-        seconds = Math.floor(totalSeconds) % 60;
-        minutes = Math.floor(totalMinutes) % 60;
-        hours = Math.floor(totalHours) % 60;
-        if (hours !== 0) {
-            result += hours+'h ';
-            if (minutes.toString().length == 1) {
-                minutes = '0'+minutes;
-            }
-        }
-        result += minutes+'m ';
-        if (seconds.toString().length == 1) {
-            seconds = '0'+seconds;
-        }
-        result += seconds + 's';
-        return result;
+        let totalSeconds = input
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+
+        return hours + "h " + minutes + "m " + seconds + "s "
     }
 
 	exportTable(tab) {
@@ -910,7 +919,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapHostsForExport(data) {
-        data.storeHours = data.storeHours + " hours" ;
+        data.storeHours = data.storeHours;
         data.tagsToString = data.tags.join(','); 
 	}
 

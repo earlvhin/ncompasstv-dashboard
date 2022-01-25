@@ -17,6 +17,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 
 export class HostsComponent implements OnInit {
 	dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
+    diff_hours: any;
 	filtered_data: any = [];
     filtered_data_host: UI_HOST_VIEW[] = [];
 	hosts$: Observable<API_HOST[]>;
@@ -365,7 +366,6 @@ export class HostsComponent implements OnInit {
 	}
 
     getTotalHours(data) {
-        console.log("DD",data) 
         if (data.storeHours) {
             data.storeHours = JSON.parse(data.storeHours)
             this.hour_diff_temp = [];
@@ -374,23 +374,24 @@ export class HostsComponent implements OnInit {
                     if(hours.status) {
                         hours.periods.map (
                             period => {
+                                this.diff_hours = 0;
                                 if(period.open && period.close) {
                                     var close = moment(period.close,"H:mm A");
                                     var open = moment(period.open,"H:mm A");
     
-                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss")).getHours();
-                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss")).getHours();
+                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss"));
+                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss"));
                                     
-                                    if(time_start > time_end) {
-                                        time_end = time_end + 24;
-                                        var diff_hours = time_end - time_start;
+                                    if(time_start.getTime() > time_end.getTime()) {
+                                        time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
+                                        this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                                     } else {
-                                        var diff_hours = time_end - time_start;
+                                        this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
                                     }
                                 } else {
-                                    var diff_hours = 24;
+                                    this.diff_hours = 86400;
                                 }
-                                this.hour_diff_temp.push(diff_hours)
+                                this.hour_diff_temp.push(this.diff_hours)
                             }
                         )
                     } else {
@@ -406,7 +407,17 @@ export class HostsComponent implements OnInit {
             )
         } else {
         }
-        return this.hour_diff; 
+        return this.msToTime(this.hour_diff); 
+    }
+
+    msToTime(input) {
+        let totalSeconds = input
+        let hours = Math.floor(totalSeconds / 3600);
+        totalSeconds %= 3600;
+        let minutes = Math.floor(totalSeconds / 60);
+        let seconds = totalSeconds % 60;
+
+        return hours + "h " + minutes + "m " + seconds + "s "
     }
 
     getColumnsAndOrder(data, tab) {
@@ -425,7 +436,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	private modifyDataForExport(data) {
-		data.storeHours = data.storeHours + " hours" ;
+		data.storeHours = data.storeHours;
         data.tagsToString = data.tags.join(','); 
 	}
 }

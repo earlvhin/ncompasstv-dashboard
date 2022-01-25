@@ -89,24 +89,33 @@
                                                     <span class="fas fa-circle text-white"></span>
                                                 </button>
                                                 <mat-menu #licenseStatus="matMenu">
-                                                    <button mat-menu-item (click)="filterTable('status', '1')">
-                                                        <span class="fas fa-circle text-primary mr-3"></span>Online
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
+                                                        <span class="fas fa-user text-primary mr-3"></span>Assigned
                                                     </button>
-                                                    <button mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
-                                                        <span class="fas fa-circle text-danger mr-3"></span>Offline
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
+                                                        <span class="fas fa-user text-gray mr-3"></span>Unassigned
                                                     </button>
-                                                    <button mat-menu-item (click)="filterTable('activated', 'false')">
-                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
-                                                    </button>
-                                                    <button mat-menu-item (click)="filterTable('recent', '7')">
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
                                                         <span class="far fa-clock text-gray mr-3"></span>Recent Installs
                                                     </button>
                                                 </mat-menu>
 
-                                                <mat-menu #offlineSubMenu="matMenu">
-                                                    <button mat-menu-item (click)="filterTable('days_offline', '7', '7 days')">7 Days</button>
-                                                    <button mat-menu-item (click)="filterTable('days_offline', '30', '30 days')">30 Days</button>
-                                                    <button mat-menu-item (click)="filterTable('days_offline', '31', 'Long Time')">Long Time</button>
+                                                <mat-menu #assignedSubMenu="matMenu">
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+                                                        <span class="fas fa-circle text-primary mr-3"></span>Online
+                                                    </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
+                                                        <span class="fas fa-circle text-danger mr-3"></span>Offline
+                                                    </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('inactive', 'true')">
+                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                    </button>
+                                                 </mat-menu>
+                                                
+                                                 <mat-menu #offlineSubMenu="matMenu">
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '7', '7 days')">7 Days</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '30', '30 days')">30 Days</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', 'Long Time')">Long Time</button>
                                                  </mat-menu>
 
                                                 <button id="filter-by-timezone-btn" mat-button mat-raised-button 
@@ -116,10 +125,10 @@
                                                     <span class="fas fa-sort"></span>
                                                 </button>
                                                 <mat-menu #timezone="matMenu">
-                                                    <button mat-menu-item (click)="filterTable('zone','Central')">Central</button>
-                                                    <button mat-menu-item (click)="filterTable('zone','Eastern')">Eastern</button>
-                                                    <button mat-menu-item (click)="filterTable('zone','Mountain')">Mountain</button>
-                                                    <button mat-menu-item (click)="filterTable('zone','Pacific')">Pacific</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Central')">Central</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Eastern')">Eastern</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Mountain')">Mountain</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Pacific')">Pacific</button>
                                                 </mat-menu>
 
                                                 <button id="filter-by-user-btn" mat-button mat-raised-button 
@@ -136,8 +145,8 @@
                                                     <span class="ml-2 button_text_animation">Order by License Status</span>
                                                 </button>
                                                 <mat-menu #orderSort="matMenu">
-                                                    <button mat-menu-item (click)="sortList('desc')">Online</button>
-                                                    <button mat-menu-item (click)="sortList('asc')">Offline</button>
+                                                    <button class="md-text" mat-menu-item (click)="sortList('desc')">Online</button>
+                                                    <button class="md-text" mat-menu-item (click)="sortList('asc')">Offline</button>
                                                 </mat-menu>
                                                 <button id="export-licenses-btn-licenses-tab" mat-button mat-raised-button
                                                     class="theme-btn pi-control sm-text _primary mr-2" 
@@ -155,8 +164,8 @@
                                                     <span class="ml-2 button_text_animation">Show/Hide Admin Licenses</span>
                                                 </button>
                                                 <mat-menu #adminOption="matMenu">
-                                                    <button mat-menu-item (click)="showAdminLicenses('true')">Show</button>
-                                                    <button mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
+                                                    <button class="md-text" mat-menu-item (click)="showAdminLicenses('true')">Show</button>
+                                                    <button class="md-text" mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
                                                 </mat-menu>
                                             </div>
                                             <div class="col-lg-4">
@@ -208,7 +217,7 @@
                                             </div>
                                             <div class="col-lg-12" *ngIf="!searching_licenses">
                                                 <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{paging_data_licenses.entities.length}}</span> out of <span class="text-danger">{{paging_data_licenses.totalEntities}}</span> licenses result. 
-                                                <span class="text-danger" *ngIf="filters.admin_licenses != 'false'">Including admin licenses.</span>
+                                                <span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
                                             </span>
                                             </div>
                                         </div>

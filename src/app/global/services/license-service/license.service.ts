@@ -50,8 +50,8 @@ export class LicenseService {
 		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
 	} 
 
-	get_all_licenses(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?: boolean, recent?:string, zone?: string, dealer?: string, host?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
-        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active: activated,  daysInstalled: recent, timezone: zone, dealerId: dealer, hostId:host })
+	get_all_licenses(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?: boolean, recent?:string, zone?: string, dealer?: string, host?: string, assigned?: string, inactive?:string, online?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize, includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active: activated,  daysInstalled: recent, timezone: zone, dealerId: dealer, hostId:host, assigned, inactive, online })
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 	
