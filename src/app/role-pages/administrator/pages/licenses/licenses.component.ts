@@ -297,7 +297,7 @@ export class LicensesComponent implements OnInit {
         switch(type) {
             case 'status':
                 this.resetFilterStatus();
-                this.filters.status = value;
+                // this.filters.status = value;
                 this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline';
                 if(value == 1) {
