@@ -302,6 +302,8 @@ export class LicensesComponent implements OnInit {
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline';
                 if(value == 1) {
                     this.filters.online = true
+                } else {
+                    this.filters.online = false
                 }
                 this.filters.assigned = true;
                 if(value == 0) {
