@@ -14,10 +14,16 @@
                     <app-data-card-compare *ngIf="licenses_count; else small_loader"
                     [compare_basis]="licenses_count.basis"
                     [compare_basis_label]="licenses_count.basis_label"
-                    [good_value]="licenses_count.good_value"
-                    [good_value_label]="licenses_count.good_value_label"
-                    [bad_value]="licenses_count.bad_value"
-                    [bad_value_label]="licenses_count.bad_value_label">
+                    [assigned_value]="licenses_count.assigned_value"
+                    [assigned_value_label]="licenses_count.assigned_value_label"
+                    [unassigned_value]="licenses_count.unassigned_value"
+                    [unassigned_value_label]="licenses_count.unassigned_value_label"
+                    [license_online_value]="licenses_count.license_online_value"
+                    [license_online_value_label]="licenses_count.license_online_value_label"
+                    [license_offline_value]="licenses_count.license_offline_value"
+                    [license_offline_value_label]="licenses_count.license_offline_value_label"
+                    [inactive_value_label]="licenses_count.inactive_value_label"
+                    [inactive_value]="licenses_count.inactive_value">
                     </app-data-card-compare>
                 </mat-card>
             </div>
@@ -39,17 +45,6 @@
                     </app-data-card-count>
                 </mat-card>
 			</div>
-			<div class="col-3 col-lg">
-                <mat-card class="h-100 dealer-card">
-					<app-data-card-compare *ngIf="licenses_status; else small_loader"
-                    [compare_basis_label]="licenses_status.basis_label"
-                    [good_value]="licenses_status.good_value"
-                    [good_value_label]="licenses_status.good_value_label"
-                    [bad_value]="licenses_status.bad_value"
-                    [bad_value_label]="licenses_status.bad_value_label">
-                    </app-data-card-compare>
-                </mat-card>
-            </div>
         </div>
         <hr class="my-4">
         <div *ngIf="!initial_load_license; else loader">

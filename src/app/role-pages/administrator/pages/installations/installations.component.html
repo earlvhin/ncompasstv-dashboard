@@ -67,7 +67,7 @@
 								[resetDatePicker]="onResetDatePicker.asObservable()"
 								[searching]="searching"
 								[tableColumns]="installationTableColumns"
-								(onExport)="exportTable()"
+								(onExport)="exportTable(tab.name)"
 								(onLoadInitialData)="loadInstallationsData(tab.name)"
 								(onSearch)="searchInstallations($event, tab.name)"
 								(onSelectDate)="dateSelected($event, tab.name)"

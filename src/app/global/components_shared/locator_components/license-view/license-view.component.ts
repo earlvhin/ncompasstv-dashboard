@@ -457,6 +457,7 @@ export class LicenseViewComponent implements OnInit {
 	{
 		const replacer = (key, value) => value === null ? '' : value;
 		this.exported_map_marker = [];
+		let isStatus = true;
 		this.map_marker.forEach(
 			license => {
 				const data = [...license.storeHours];
@@ -465,6 +466,15 @@ export class LicenseViewComponent implements OnInit {
 					Object.entries(obj).forEach(([key,value]) => {
 						if(key === 'day'){
 							this.markStoreHours += value;
+						}
+
+						if(key === 'status'){
+							if(value){
+								isStatus = true;
+							}
+							else {
+								isStatus = false;
+							}
 						}
 
 						if(key === 'periods')
@@ -476,7 +486,14 @@ export class LicenseViewComponent implements OnInit {
 										if(value !== ""){
 											this.markStoreHours += " (" + value + " - ";
 										}
-										
+										else{
+											if(isStatus){
+												this.markStoreHours += " ( Open 24 hours ) ";
+											}
+											else{
+												this.markStoreHours += " ( Closed ) ";
+											}
+										}
 									}
 									if(key === 'close'){
 										if(value !== ""){

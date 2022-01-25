@@ -1,5 +1,7 @@
 export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
+export * from './api_change-template.model';
+export * from './api_change-template-response.model'
 export * from './api_content.model';
 export * from './api_create-screen-response.model';
 export * from './api_dealer.model';
@@ -28,7 +30,9 @@ export * from './constant_activity_code';
 export * from './credits.model';
 export * from './credits-status.model';
 export * from './credits-to-submit.model';
+export * from './dialog-data-change-template.model';
 export * from './feed.model';
+export * from './form-controls.model';
 export * from './frequency.model';
 export * from './host-custom-field-group';
 export * from './host-s3-file.model';
