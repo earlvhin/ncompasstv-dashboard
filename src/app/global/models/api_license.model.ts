@@ -12,12 +12,15 @@ export interface API_LICENSE_PROPS {
 	anydeskId: string;
 	appVersion: string;
 	apps?: any;
+	bootDelay?: any;
 	category: string;
 	contentsUpdated: string;
+	d?: any;
 	dateCreated: string
 	dateUpdated: string
 	dealerId: string;
 	displayStatus?: any;
+	emailSettings?: number;
 	freeStorage: string;
 	hostAddress: string;
 	hostId: string;
@@ -32,6 +35,7 @@ export interface API_LICENSE_PROPS {
 	licenseKey: string;
 	macAddress: string;
 	memory: string;
+	notificationSettings?: number;
 	password?: string;
 	piSocketId: string;
 	piStatus?: any;

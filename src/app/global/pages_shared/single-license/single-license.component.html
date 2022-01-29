@@ -744,6 +744,40 @@
 								</div>
 							</mat-card>
 
+							<!-- EMAIL SETTINGS -->
+							<mat-card class="p-4 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even">
+										<h4>Enable Email Settings</h4>
+										<p class="sm-text mb-0">
+										This will send the player’s CPU and RAM average usage every 2 hours. Requires data usage, toggle off to disable.
+										</p>
+									</div>
+									<div class="ml-5 text-right">
+										<mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'email')"
+											[checked]="license_data.emailSettings == 1 ? true : false">
+										</mat-slide-toggle>
+									</div>
+								</div>
+							</mat-card>
+
+							<!-- NOTIFICATION SETTINGS -->
+							<mat-card class="p-4 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even">
+										<h4>Enable Notification Settings</h4>
+										<p class="sm-text mb-0">
+										This will send the player’s CPU and RAM average usage every 2 hours. Requires data usage, toggle off to disable.
+										</p>
+									</div>
+									<div class="ml-5 text-right">
+										<mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'notification')"
+											[checked]="license_data.notificationSettings == 1 ? true : false">
+										</mat-slide-toggle>
+									</div>
+								</div>
+							</mat-card>
+
 							<mat-card class="p-4 mb-3">
 								<div class="d-flex align-items-center">
 									<div class="flex-even">

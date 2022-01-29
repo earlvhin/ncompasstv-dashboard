@@ -248,6 +248,7 @@ export const API_ENDPOINTS = {
 		host_file_alias: 'host/update/file/alias',
 		install_date: 'license/updateinstalldate',
 		install_date_list: 'license/updateinstalldatelist',
+		license_notification_settings: 'license/update/notification/settings',
 		play_credits: 'playlists/addcredits',
 		reassign_content: 'content/reassigncontent',
 		reassign_dealer: 'dealer/reassigndealer',

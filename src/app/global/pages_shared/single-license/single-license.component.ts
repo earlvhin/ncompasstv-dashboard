@@ -1,7 +1,7 @@
-import { DatePipe } from '@angular/common';
+import { TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSlideToggleChange } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -24,7 +24,7 @@ import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE,
 	selector: 'app-single-license',
 	templateUrl: './single-license.component.html',
 	styleUrls: ['./single-license.component.scss'],
-	providers: [DatePipe]
+	providers: [TitleCasePipe]
 })
 
 export class SingleLicenseComponent implements OnInit, OnDestroy {
@@ -68,7 +68,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	is_initial_load = true;
 	is_new_standard_template = false;
 	is_view_only = false;
-	license_data: any;
+	license_data: API_LICENSE_PROPS;
 	license_id: string;
 	license_key: string;
 	license_settings_form: FormGroup;
@@ -137,7 +137,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	constructor(
 		private _auth: AuthService,
 		private _content: ContentService,
-		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _helper: HelperService,
@@ -145,6 +144,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _params: ActivatedRoute,
 		private _router: Router,
 		private _screen: ScreenService,
+		private _titleCasePipe: TitleCasePipe,
 		private _template: TemplateService
 	) { }
 
@@ -557,6 +557,29 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	onShowNotes(): void {
 		this.showInformationModal('600px', '350px', 'Notes', this.host.notes, 'textarea', 500);
+	}
+
+	onUpdateNotificationSettings(event: MatSlideToggleChange, type: string) {
+
+		let body: { licenseId: string, notificationSettings?: number, emailSettings?: number } = { licenseId: this.license_id };
+
+		switch (type) {
+			case 'notification':
+				body.notificationSettings = event.checked ? 1 : 0;
+				break;
+
+			default:
+				body.emailSettings = event.checked ? 1 : 0;
+		}
+
+		this._license.update_notification_settings(body).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.openConfirmationModal('success', 'Success!', `${this._titleCasePipe.transform(type)} setting updated`);
+				},
+				error => console.log('Error updating notification setting', error)
+			);
+
 	}
 
 	saveLicenseSettings(): void {

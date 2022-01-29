@@ -272,6 +272,11 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_display_status}`, data, this.httpOptions);
 	}
 
+	update_notification_settings(body: { licenseId: string, notificationSettings?: number, emailSettings?: number }) {
+		const url = `${this.baseUri}${environment.update.license_notification_settings}`;
+		return this._http.post(url, body);
+	}
+
 	delete_screenshots(id) {
 		return this._http.get(`${environment.base_uri_old}${environment.delete.api_remove_screenshots}${id}`, this.httpOptions);
 	}
