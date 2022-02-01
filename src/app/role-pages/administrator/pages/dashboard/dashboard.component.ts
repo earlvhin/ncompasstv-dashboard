@@ -117,10 +117,10 @@ export class DashboardComponent implements OnInit {
                 this.license_stats = {
                     total: data.total,
                     total_label: 'LICENSES',
-                    active: data.totalActive,
-                    active_label: 'ACTIVE',
-                    inactive: data.totalInActive,
-                    inactive_label: 'INACTIVE',
+                    active: data.totalAssigned,
+                    active_label: 'ASSIGNED',
+                    inactive: data.totalUnAssigned,
+                    inactive_label: 'UNASSIGNED',
                     this_week: data.newLicensesThisWeek,
                     last_week: data.newLicensesLastWeek,
                     icon: 'fas fa-barcode'
