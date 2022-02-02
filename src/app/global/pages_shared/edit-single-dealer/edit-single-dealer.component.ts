@@ -273,7 +273,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 		if (page == 1) {
 
-			this._user.get_users_by_page(page, '').pipe(takeUntil(this._unsubscribe))
+			this._user.get_users_by_filters({ page, search: '' }).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					data => {
 						this.other_users = data.users;
@@ -285,7 +285,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 		} else {
 
-			this._user.get_users_by_page(page, '').pipe(takeUntil(this._unsubscribe))
+			this._user.get_users_by_filters({ page, search: '' }).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data:any) => {
 						data.users.map (
