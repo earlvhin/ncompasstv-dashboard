@@ -76,19 +76,43 @@
         <div *ngIf="!initial_load; else loader">
             <div *ngIf="!no_user; else no_data">
                 <div class="row">
-                    <div class="col-lg-8"></div>
+                    <div class="col-lg-8">
+
+						<div class="d-flex">
+
+							<!-- USER ROLES SELECTION -->
+							<button mat-button mat-raised-button [matMenuTriggerFor]="roleMenu" mat-raised-button class="theme-btn">
+								<span class="button-label">User Roles</span>
+								<span class="fas fa-angle-down ml-2"></span>
+							</button>
+							<mat-menu #roleMenu="matMenu">
+								<button mat-menu-item *ngFor="let role of roles" (click)="onFilterByRole(role)">
+									{{ role.roleName }}
+								</button>
+							</mat-menu>
+
+							<ng-container *ngIf="current_filters.roleId">
+								<div class="pill selected-role">
+									<div class="d-flex align-items-center">
+										<div>Role: <strong>{{ current_role_selected }}</strong></div>
+										<mat-icon (click)="onClearSelectedRole()">close</mat-icon>
+									</div>
+								</div>
+							</ng-container>
+
+						</div>
+					</div>
                     <div class="col-lg-4">
-                        <app-search-field
-                        *ngIf="!initial_load"
-                        [form_title]="'Search Name or Email Address'"
-                        [placeholder]="'Example: N-Compass'"
-                        [data_reference]="users"
-                        [primary_keyword]="'name'"
-                        [secondary_keyword]="'email'"
-                        (searched)="filterData($event)"
-                        [api_search]="true"
-                        (reset_search)="getAllusers()"
-                        ></app-search-field>
+                        <app-search-field *ngIf="!initial_load"
+							[form_title]="'Search Name or Email Address'"
+							[placeholder]="'Example: N-Compass'"
+							[data_reference]="users"
+							[primary_keyword]="'name'"
+							[secondary_keyword]="'email'"
+							(searched)="filterData($event)"
+							[api_search]="true"
+							(reset_search)="getAllusers()">
+						</app-search-field>
                     </div>
                 </div>
                 <div class="row" *ngIf="!initial_load">

@@ -15,6 +15,7 @@ export interface API_FILTERS {
 	installDate?: string;
 	pageSize?: any;
 	piStatus?: string;
+	roleId?: string;
 	search?: string;
 	sortColumn?: string;
 	status?: string;

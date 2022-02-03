@@ -5,6 +5,8 @@ import { API_USER_ROLES } from '../../models/api_user-role.model';
 import { environment } from '../../../../environments/environment';
 import 'rxjs/add/operator/map'
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { USER_ROLE } from '../../models';
+import { Observable } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
@@ -26,7 +28,7 @@ export class RoleService {
 	) { }
 
 	get_roles() {
-		return this._http.get<API_USER_ROLES>(`${environment.base_uri}${environment.getters.api_get_roles}`, this.httpOptions).map(data => data.roles);
+		return this._http.get<{ roles: USER_ROLE[] }>(`${environment.base_uri}${environment.getters.api_get_roles}`, this.httpOptions).map(data => data.roles);
 	}
 
 	get_user_role() {

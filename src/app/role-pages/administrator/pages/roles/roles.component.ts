@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
-import { RoleService } from '../../../../global/services/role-service/role.service';
-import { API_USER_ROLES } from '../../../../global/models/api_user-role.model';
+
+import { RoleService } from 'src/app/global/services';
+import { USER_ROLE } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-roles',
@@ -12,7 +13,7 @@ import { API_USER_ROLES } from '../../../../global/models/api_user-role.model';
 export class RolesComponent implements OnInit {
 
 	title: string = "Roles";
-	roles$: Observable<API_USER_ROLES[]>;
+	roles$: Observable<USER_ROLE[]>;
 	roles_array: Array<any> = [];
 
 	compare = {
@@ -63,9 +64,11 @@ export class RolesComponent implements OnInit {
 
 	getAllRoles() {
 		this.roles$ = this._role.get_roles();
+
 		this.roles$.subscribe(
-			(data: API_USER_ROLES[]) => {
+			(data) => {
 				let counter = 1;
+
 				data.forEach(r => {
 					const user_role = {
 						id: r.roleId,
@@ -78,6 +81,6 @@ export class RolesComponent implements OnInit {
 					counter++;
 				});
 			}
-		)
+		);
 	}
 }

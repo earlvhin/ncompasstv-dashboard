@@ -52,8 +52,10 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	}
 
 	clickedPageNumber(page: number): void {
+		let tagId = null;
 		const keyword = this.searchFormControl.value;
-		this.searchOwnerTags(keyword, this.selectedTag.tagId, null, page);
+		if (this.selectedTag && this.selectedTag.tagId) tagId = this.selectedTag.tagId;
+		this.searchOwnerTags(keyword, tagId, null, page);
 	}
 
 	onClearSelectedTag(): void {
