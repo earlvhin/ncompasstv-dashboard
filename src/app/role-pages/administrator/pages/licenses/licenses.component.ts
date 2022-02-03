@@ -436,6 +436,8 @@ export class LicensesComponent implements OnInit {
                         breakdown2_label: 'Offline',
                         breakdown3_value: data.totalInActive,
                         breakdown3_label: 'Inactive',
+                        third_value: data.totalAdminLicenses,
+                        third_value_label: 'Admin',
 
 						ad_value: data.totalAd,
 						ad_value_label: 'Ad',
