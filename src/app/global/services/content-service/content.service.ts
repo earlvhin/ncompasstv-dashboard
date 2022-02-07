@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map'
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { PlaylistContentSchedule } from '../../models/playlist-content-schedule.model';
-import { API_CONTENT, CREDITS_TO_SUBMIT } from '../../models';
+import { API_CONTENT, CREDITS_TO_SUBMIT, UI_CONTENT } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -146,6 +146,12 @@ export class ContentService {
 
 	update_content_schedule(data: PlaylistContentSchedule): Observable<any> {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.content_schedule}`, data, this.httpOptions);		
+	}
+
+	update_content_to_filler(body: { contentId: string, isFiller: boolean }) {
+		const base = environment.base_uri;
+		const endpoint = `${base}${environment.update.content_to_filler}`;
+		return this._http.post<{ data: UI_CONTENT, message?: string }>(endpoint, body);
 	}
 
 	sort_ascending(files) {
