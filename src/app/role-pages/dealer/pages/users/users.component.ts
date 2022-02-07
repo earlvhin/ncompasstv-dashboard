@@ -11,6 +11,7 @@ import { UI_TABLE_USERS } from 'src/app/global/models/ui_table-users.model';
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
 import { USER } from 'src/app/global/models/api_user.model';
 import { UserService } from 'src/app/global/services/user-service/user.service';
+import { UI_USER_STATS } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-users',
@@ -27,7 +28,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 	row_slug = 'user_id';
 	row_url = '/dealer/users/';
 	title: string = 'Users';
-	user_details: any;
+	user_details: UI_USER_STATS;
 	users: UI_TABLE_USERS[] = [];
 
 	users_table_column = [

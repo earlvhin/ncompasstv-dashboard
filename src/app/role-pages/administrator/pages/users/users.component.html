@@ -27,20 +27,49 @@
                 </mat-card>
             </div>
             <div class="col-12 col-lg">
-                <mat-card class="h-100 dealer-card">
+                <!-- <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
-                    [data_value]="user_details.total_administrator"
-                    [data_label]="user_details.total_administrator_label">
+                    [data_value]="user_details.super_admin_count"
+                    [data_label]="user_details.super_admin_label"
+					[sub_data]="{ value: user_details.admin_count, label: user_details.admin_label }">
                     </app-data-card-count>
-                </mat-card>
+                </mat-card> -->
+				<mat-card>
+					<h2 class="mb-2">
+						<div class="d-flex flex-column">
+							<div class="d-flex align-items-center">
+								<p class="text-primary font-weight-medium mr-2">{{ user_details.super_admin_count }}</p>
+								<p class="sm-text font-weight-medium">{{ user_details.super_admin_label }}</p>
+							</div>
+							<div class="d-flex align-items-center">
+								<p class="text-primary font-weight-medium mr-2">{{ user_details.admin_count }}</p>
+								<p class="sm-text font-weight-medium">{{ user_details.admin_label }}</p>
+							</div>
+						</div>
+					</h2>
+				</mat-card>
             </div>
             <div class="col-12 col-lg">
-                <mat-card class="h-100 dealer-card">
+                <!-- <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
                     [data_value]="user_details.total_dealer"
                     [data_label]="user_details.total_dealer_label">
                     </app-data-card-count>
-                </mat-card>
+                </mat-card> -->
+				<mat-card>
+					<h2 class="mb-2">
+						<div class="d-flex flex-column">
+							<div class="d-flex align-items-center">
+								<p class="text-primary font-weight-medium mr-2">{{ user_details.total_dealer }}</p>
+								<p class="sm-text font-weight-medium">{{ user_details.total_dealer_label }}</p>
+							</div>
+							<div class="d-flex align-items-center">
+								<p class="text-primary font-weight-medium mr-2">{{ user_details.sub_dealer_count }}</p>
+								<p class="sm-text font-weight-medium">{{ user_details.sub_dealer_label }}</p>
+							</div>
+						</div>
+					</h2>
+				</mat-card>
             </div>
             <div class="col-12 col-lg">
                 <mat-card class="h-100 dealer-card">
