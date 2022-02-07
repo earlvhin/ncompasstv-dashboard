@@ -1,19 +1,52 @@
 <div class="theme-container">
     <div class="content-section">
         <div class="row">
-            <div class="col-lg-10">
+            <div class="col-lg-8">
                 <div class="flex-even">
                     <h1 class="page-title">Hosts</h1>
                 </div>
             </div>
-            <div class="col-lg-2">
+            <div class="col-lg-4">
                 <div class="flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn" [routerLink]="createHostLink" [disabled]="is_view_only">
-                        <span class="button-label">
-                            Add Host Place
-                        </span>
-                        <span class="fas fa-map-marker ml-2 sm-text"></span>
+                    <button mat-button mat-raised-button
+                        class="theme-btn pi-control sm-text mr-2" 
+                        [routerLink]="createHostLink"
+                        [disabled]="is_view_only"
+                        title="Add Host Place">
+                        <span class="fas fa-map-marker"></span> 
+                        <span class="ml-2 button_text_animation">Add Host Place</span>
                     </button>
+
+                    <!-- Hosts Tab Button -->
+                    <button mat-button mat-raised-button *ngIf="tabGroup.selectedIndex === 0"
+                        class="theme-btn pi-control sm-text _primary mr-2" 
+                        (click)="exportTable()"
+                        [disabled]="workbook_generation"  
+                        title="Export to CSV">
+                        <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                        <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                    </button>
+
+                    <!-- Licenses Tab Button -->
+                    <button mat-button mat-raised-button *ngIf="tabGroup.selectedIndex === 1"
+                        class="theme-btn pi-control sm-text mr-2" 
+                        (click)="reloadLicense()"  
+                        title="Reload">
+                        <span class="fas fa-sync-alt"></span> 
+                        <span class="ml-2 button_text_animation">Reload</span>
+                    </button>
+                    <button mat-button mat-raised-button *ngIf="tabGroup.selectedIndex === 1"
+                        class="theme-btn pi-control _cool sm-text mr-2" 
+                        [matMenuTriggerFor]="orderSort" 
+                        title="Order by License Status">
+                        <span class="fas fa-sort"></span> 
+                        <span class="ml-2 button_text_animation">Order by License Status</span>
+                    </button>
+                                
+                    <mat-menu #orderSort="matMenu">
+                        <button mat-menu-item (click)="sortList('desc')">Online</button>
+                        <button mat-menu-item (click)="sortList('asc')">Offline</button>
+                    </mat-menu>
                 </div>
             </div>
         </div>
@@ -51,9 +84,7 @@
             </div>
         </div>
         <hr class="my-4">
-        <!-- <div class="mb-3">
-            
-        </div> -->
+
         <div class="col-lg-12 custom-mat-tab p-0">
             <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
                 <mat-tab id="hosts-view-tab" label="Host View">
@@ -62,14 +93,6 @@
                             <div *ngIf="!no_hosts; else nodata">
                                 <div class="row mt-3">
                                     <div class="col-lg-8">
-                                        <button mat-button mat-raised-button
-                                            class="theme-btn pi-control sm-text _primary mr-2" 
-                                            (click)="exportTable()"
-                                            [disabled]="workbook_generation"  
-                                            title="Export to CSV">
-                                            <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                                            <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
-                                        </button>
                                     </div>
                                     <div class="col-lg-4">
                                         <app-search-field
@@ -114,12 +137,11 @@
                     <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 1">
                         <div class="row pt-2 mt-3">
                             <div class="col-lg-8">
-
                                 <button mat-button mat-raised-button 
-                                    class="theme-btn sm-text mr-2 h-45" 
+                                    class="theme-btn bg-dark sm-text mr-2 h-45" 
                                     [matMenuTriggerFor]="licenseStatus" >
-                                    <span class="button-label">Filter by License Status</span>
-                                    <span class="fas fa-circle text-primary"></span>
+                                    <span class="button-label">License Status</span>
+                                    <span class="fas fa-circle xsm-text"></span>
                                 </button>
                                 <mat-menu #licenseStatus="matMenu">
                                     <button mat-menu-item (click)="filterTable('status', '1')">Online</button>
@@ -130,8 +152,8 @@
                                 <button mat-button mat-raised-button 
                                     class="theme-btn sm-text mr-2 h-45" 
                                     [matMenuTriggerFor]="timezone">
-                                    <span class="button-label">Filter by Timezone</span>
-                                    <span class="fas fa-sort"></span>
+                                    <span class="button-label">Timezone</span>
+                                    <span class="fas fa-sort xsm-text"></span>
                                 </button>
                                 <mat-menu #timezone="matMenu">
                                     <button mat-menu-item (click)="filterTable('zone','Central')">Central</button>
@@ -142,30 +164,10 @@
         
                                 <button mat-button mat-raised-button 
                                     class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
-                                    <span class="button-label">Filter by User</span>
-                                    <span class="fas fa-user"></span>
+                                    <span class="button-label">User</span>
+                                    <span class="fas fa-user xsm-text"></span>
                                 </button>
         
-                                <button mat-button mat-raised-button 
-                                    class="theme-btn pi-control sm-text mr-2" 
-                                    (click)="reloadLicense()"  
-                                    title="Reload">
-                                    <span class="fas fa-sync-alt"></span> 
-                                    <span class="ml-2 button_text_animation">Reload</span>
-                                </button>
-        
-                                <button mat-button mat-raised-button 
-                                    class="theme-btn pi-control _cool sm-text mr-2" 
-                                    [matMenuTriggerFor]="orderSort" 
-                                    title="Order by License Status">
-                                    <span class="fas fa-sort"></span> 
-                                    <span class="ml-2 button_text_animation">Order by License Status</span>
-                                </button>
-                                
-                                <mat-menu #orderSort="matMenu">
-                                    <button mat-menu-item (click)="sortList('desc')">Online</button>
-                                    <button mat-menu-item (click)="sortList('asc')">Offline</button>
-                                </mat-menu>
                             </div>
                             <div class="col-lg-4">
                                 <app-search-field

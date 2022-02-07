@@ -18,6 +18,8 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	@Input() good_value_label: string;
 	@Input() bad_value: number;
 	@Input() bad_value_label: string; 
+	@Input() third_value: number;
+	@Input() third_value_label: string; 
 	@Input() additional_value: number;
 	@Input() additional_value_label: string;
 	@Input() online_value: number;
@@ -55,11 +57,15 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	}
 
 	ngAfterViewInit() {
-		this.generateChart();
+        if(this.label_array) {
+            this.generateChart();
+        }
 	}
 
 	ngOnDestroy() {
-		this.chart.destroy();
+        if(this.label_array) {
+		    this.chart.destroy();
+        }
 	}
 
 	generateChart() {

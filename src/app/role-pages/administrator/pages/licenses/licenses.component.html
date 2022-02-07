@@ -5,11 +5,12 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button id="generate-license-btn" mat-button mat-raised-button class="theme-btn" (click)="openGenerateLicenseModal()">
-                    <span class="button-label">
-                        Generate License
-                    </span>
-                    <span class="fas fa-plus ml-2 sm-text"></span>
+                <button mat-button mat-raised-button 
+                    class="theme-btn pi-control _info sm-text mr-2" 
+                    (click)="openGenerateLicenseModal()"
+                    title="Generate License">
+                    <span class="fas fa-plus"></span> 
+                    <span class="ml-2 button_text_animation">Generate License</span>
                 </button>
             </div>
         </div>
@@ -38,7 +39,9 @@
                             [breakdown2_value]="licenses_details.breakdown2_value"
                             [breakdown2_label]="licenses_details.breakdown2_label"
                             [breakdown3_value]="licenses_details.breakdown3_value"
-                            [breakdown3_label]="licenses_details.breakdown3_label">
+                            [breakdown3_label]="licenses_details.breakdown3_label"
+                            [third_value]="licenses_details.third_value"
+                            [third_value_label]="licenses_details.third_value_label">
 						</app-data-card-graph>
 					</ng-container>
                 </mat-card>
@@ -85,8 +88,8 @@
                                                 <button id="filter-by-license-status-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
                                                     [matMenuTriggerFor]="licenseStatus" >
-                                                    <span class="button-label">Filter by Status</span>
-                                                    <span class="fas fa-circle text-white"></span>
+                                                    <span class="button-label">License Status</span>
+                                                    <span class="fas fa-circle xsm-text"></span>
                                                 </button>
                                                 <mat-menu #licenseStatus="matMenu">
                                                     <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
@@ -115,14 +118,14 @@
                                                  <mat-menu #offlineSubMenu="matMenu">
                                                     <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '7', '7 days')">7 Days</button>
                                                     <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '30', '30 days')">30 Days</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', 'Long Time')">Long Time</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', 'Long Time')">> 30 Days</button>
                                                  </mat-menu>
 
                                                 <button id="filter-by-timezone-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
                                                     [matMenuTriggerFor]="timezone">
-                                                    <span class="button-label">Filter by Timezone</span>
-                                                    <span class="fas fa-sort"></span>
+                                                    <span class="button-label">Timezone</span>
+                                                    <span class="fas fa-sort xsm-text"></span>
                                                 </button>
                                                 <mat-menu #timezone="matMenu">
                                                     <button class="md-text" mat-menu-item (click)="filterTable('zone','Central')">Central</button>
@@ -133,8 +136,8 @@
 
                                                 <button id="filter-by-user-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
-                                                    <span class="button-label">Filter by User</span>
-                                                    <span class="fas fa-user"></span>
+                                                    <span class="button-label">User</span>
+                                                    <span class="fas fa-user xsm-text"></span>
                                                 </button>
 
                                                 <button mat-button mat-raised-button 
