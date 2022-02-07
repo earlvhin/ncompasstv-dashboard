@@ -70,6 +70,7 @@ export interface API_LICENSE_PROPS {
 	totalStorage: string;
 	uiVersion: string;
 	zone?: string;
+	tvDisplaySettings?: number;
 }
 
 interface screenInfo {
