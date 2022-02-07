@@ -22,6 +22,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	@Input() data_reference: Array<any>;
 	@Input() paging: any;
 	@Input() disabled: boolean;
+	@Input() white_label: boolean = false;
 	@Input() autocompleteSetting: string = 'nope';
 	@Input() key_of_value: string; 
 	@Input() label: string;

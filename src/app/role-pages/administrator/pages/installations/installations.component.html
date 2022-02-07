@@ -9,8 +9,8 @@
 	</div>
 
 	<div class="content-section">
-		<div class="d-flex">
-			<div class="col-lg-3">
+		<div class="row">
+            <div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count *ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.scheduled"
@@ -19,7 +19,7 @@
 					</app-data-card-count>
 				</mat-card>
 			</div>
-			<div class="col-lg-3">
+			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count *ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.prev"
@@ -28,7 +28,7 @@
 					</app-data-card-count>
 				</mat-card>
 			</div>
-			<div class="col-lg-3">
+			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count *ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.current"
@@ -37,7 +37,7 @@
 					</app-data-card-count>
 				</mat-card>
 			</div>
-			<div class="col-lg-3">
+			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count *ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.next"

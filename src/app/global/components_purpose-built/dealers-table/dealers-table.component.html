@@ -178,11 +178,11 @@
 					
 									<!-- NO DATA AVAILABLE -->
 									<th 
-									class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesInactive' ? 'tab-active': ''"
+									class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesUnassigned' ? 'tab-active': ''"
 									rowspan="2"
 									valign="middle">
-										Inactive 
-										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesInactive', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+										Unassigned 
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesUnassigned', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
 									</th>
 									<!-- NO DATA AVAILABLE -->
 					
@@ -280,7 +280,7 @@
 										{{ d.l_total }}
 									</td>
 									<td class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
-										{{ d.l_inactive }}
+										{{ d.l_unassigned }}
 									</td>
 									<td class="xsm-text border-right text-center p-3 text-primary font-weight-bold">
 										{{ d.l_online }}

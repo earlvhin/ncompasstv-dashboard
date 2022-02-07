@@ -28,7 +28,6 @@ import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { UserService } from '../../services/user-service/user.service';
 import { AuthService } from '../../services/auth-service/auth.service';
-import { isNgTemplate } from '@angular/compiler';
 import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { UI_DEALER_LICENSE_ZONE } from '../../models/ui_table_dealer-license-zone.model';
 
@@ -70,7 +69,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	img: string = "assets/media-files/admin-icon.png";
 	initial_load = true;
 	initial_load_advertiser = true;
-	initial_load_charts = true;
 	initial_load_license = true;
 	initial_load_zone = true;
 	is_search: boolean = false;
@@ -83,7 +81,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	license_filtered_data: any = [];
 	license_row_slug: string = "host_id";
 	license_row_url: string = "/dealer/hosts";
-	license_statistics_charts = [];
 	license_tbl_row_slug: string = "license_id";
 	license_tbl_row_url: string = "/administrator/licenses/";
 	licenses_to_export: any = [];
@@ -128,6 +125,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	statistics: API_LICENSE_STASTICS;
 	subscription: Subscription = new Subscription;
 	temp_array: any = [];
+    temp_label: any = [];
+    temp_array_value: any = [];
 	timeout_duration: number;
 	timeout_message: string;
 	title: string = "The Dealer";
@@ -199,7 +198,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
 		{ name: 'Installation Date', sortable: true, column:'InstallDate', key:'installDate'},
 		{ name: 'Creation Date', sortable: false, key:'dateCreated'},
-		{ name: 'Tags', key:'tagsToString', hidden: true },
+		{ name: 'Tags', key:'tagsToString', hidden: true, no_show: true },
 	];
 
 	license_zone_table_col = [
@@ -241,7 +240,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		public _router: Router,
 		private _advertiser: AdvertiserService,
 		private _auth: AuthService,
-		private _change_detector: ChangeDetectorRef,
 		private _date: DatePipe,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
@@ -254,8 +252,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		private _user: UserService
 	) { }
 
-	@ViewChildren('canvas') canvasses: QueryList<HTMLCanvasElement>;
-
 	ngOnInit() {
 		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
@@ -266,7 +262,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		this._params.queryParams.subscribe(params => {
 			this.saved_tab = params['tab'] || 0;
-
 			if (this.saved_tab == 0) {
 				this.saved_license_page = params['page'] || 1;
 			} else if(this.saved_tab == 1) {
@@ -291,7 +286,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._params.paramMap.subscribe(
 				() => {
-
 					if (!this.from_change) {
 						this.dealer_id = this._params.snapshot.params.data;
 					} else {
@@ -325,40 +319,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getDealers(1);
 	}
 
-	ngAfterViewInit() {
-
-		this.subscription.add(
-			this.canvasses.changes.pipe(take(1)).subscribe(
-				() => {
-					console.log('Canvasses ready');	
-									
-					if (this.initial_load_charts && this.current_tab === 'licenses') {
-						this.getLicenseStatisticsByDealer(this.dealer_id);
-					}
-
-				},
-				error => console.log('Error on canvas subscription', error)
-			)
-		);
-
+	ngAfterViewInit() {				
+		if (this.current_tab === 'licenses') {
+			this.getLicenseStatisticsByDealer(this.dealer_id);
+		}
 	}
 
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
-		this.destroyCharts();
 		this._socket.disconnect();
 		this._unsubscribe.next();
         this._unsubscribe.complete();
-	}
-
-	callCharts(): void {
-
-		setTimeout(() => {
-			this.generateCharts();
-			this._change_detector.detectChanges();
-
-		}, 1000);
-
 	}
 
 	activateLicense(e): void {
@@ -490,11 +461,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				data => {
 					this.advertiser_card = {
 						basis: data.total,
-						basis_label: 'Advertisers',
+						basis_label: 'ADVERTISERS',
 						good_value: data.totalActive,
-						good_value_label: 'Active',
+						good_value_label: 'ACTIVE',
 						bad_value: data.totalInActive,
-						bad_value_label: 'Inactive'
+						bad_value_label: 'INACTIVE'
 					}
 				},
 				error => console.log('Error retrieving total advertiser count', error)
@@ -593,13 +564,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._host.get_host_total_per_dealer(id).subscribe(
 				(data: any) => {
+                    console.log("DD", data)
 					this.host_card = {
 						basis: data.total,
-						basis_label: 'Hosts',
+						basis_label: 'HOSTS',
 						good_value: data.totalActive,
-						good_value_label: 'Active',
+						good_value_label: 'ACTIVE',
 						bad_value: data.totalInActive,
-						bad_value_label: 'Inactive'
+						bad_value_label: 'INACTIVE'
 					}
 				},
 				error => console.log('Error retrieving total host count', error)
@@ -664,15 +636,43 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.license_card = {
 						basis: data.total,
 						basis_label: 'Licenses',
-						good_value: data.totalActive,
-						good_value_label: 'Active',
-						bad_value: data.totalInActive,
-						bad_value_label: 'Inactive',
-						online_value: data.totalOnline,
-						online_value_label: 'Online',
-						offline_value: data.totalOffline,
-						offline_value_label: 'Offline'
+                        basis_sub_label: 'Current Count',
+						good_value: data.totalAssigned,
+						good_value_label: 'Assigned',
+						bad_value: data.totalUnAssigned,
+						bad_value_label: 'Unassigned',
+                        breakdown1_value: data.totalOnline,
+                        breakdown1_label: 'Online',
+                        breakdown2_value: data.totalOffline,
+                        breakdown2_label: 'Offline',
+                        breakdown3_value: data.totalInActive,
+                        breakdown3_label: 'Inactive',
+                        breakdown4_sub_label: 'Connection Status Breakdown :',
+                        breakdown4_value: data.totalOffline,
+                        breakdown4_label: 'LAN',
+                        breakdown5_value: data.totalInActive,
+                        breakdown5_label: 'WIFI',
+
+                        ad_value: data.totalAd,
+						ad_value_label: 'Ad',
+						menu_value: data.totalMenu,
+						menu_value_label: 'Menu',
+						closed_value: data.totalClosed,
+						closed_value_label: 'Closed',
+						unassigned_value: data.totalUnassignedScreenCount,
+						unassigned_value_label: 'Unassigned',
 					}
+
+                    if (this.license_card) {
+						this.temp_label.push(this.license_card.ad_value_label + ": " + this.license_card.ad_value);
+						this.temp_label.push(this.license_card.menu_value_label+ ": " + this.license_card.menu_value);
+						this.temp_label.push(this.license_card.closed_value_label+ ": " + this.license_card.closed_value);
+						this.temp_label.push(this.license_card.unassigned_value_label+ ": " + this.license_card.unassigned_value);
+						this.temp_array_value.push(this.license_card.ad_value);
+						this.temp_array_value.push(this.license_card.menu_value);
+						this.temp_array_value.push(this.license_card.closed_value);
+						this.temp_array_value.push(this.license_card.unassigned_value);
+                    }
 				},
 				error => console.log('Error retrieving total license count', error)
 			)
@@ -801,7 +801,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 				this.current_tab = 'licenses';
 
-				if (!this.no_licenses && this.initial_load_charts) {
+				if (!this.no_licenses) {
 					this.getLicenseStatisticsByDealer(this.dealer_id);
 				}
 		}
@@ -1293,92 +1293,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this._location.path().includes('tab=3');
 	}
 
-	private destroyCharts(): void {
-		if (this.license_statistics_charts.length <= 0) return;
-		this.license_statistics_charts.forEach(chart => chart.destroy());
-		this.license_statistics_charts = [];
-	}
-
-	private generateCharts(): void {
-		if (!this.statistics) return;
-		this.initial_load_charts = false;
-		this.generatePieChart('activity');
-		this.generatePieChart('connection');
-		this.generatePieChart('screen');
-		this.generatePieChart('status');
-	}
-
-	private generatePieChart(type: string): void {
-		if (!type) return;
-		type = type.toLowerCase();
-		let canvasId: string;
-		let data: number[];
-		let labels: string[];
-		let title: string;
-
-		switch (type) {
-			case 'activity':
-				const { activityActive, activityInactive } = this.statistics;
-				canvasId = 'activityStatistics';
-				data = [ parseInt(activityActive), parseInt(activityInactive) ];
-				labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
-				title = 'Activity';
-				break;
-
-			case 'connection':
-				const { connectionTypeLan, connectionTypeWifi } = this.statistics;
-				canvasId = 'connectionStatistics';
-				data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
-				labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
-				title = 'Connection Type';
-				break;
-
-			case 'screen':
-				const { screenTypeAd, screenTypeMenu, screenTypeClosed } = this.statistics;
-				canvasId = 'screenStatistics';
-				data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
-				labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ]
-				title = 'Screen Type';
-				break;
-
-			default:
-				const { statusOffline, statusOnline } = this.statistics;
-				canvasId = 'statusStatistics';
-				data = [ parseInt(statusOnline), parseInt(statusOffline) ];
-				labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
-				title = 'Status';
-
-		}
-
-		const canvas =  <HTMLCanvasElement> document.getElementById(canvasId);
-
-		if (!canvas) return;
-
-		const chart = new Chart(canvas, {
-			type: 'doughnut',
-			data: {
-				labels: labels,
-				datasets: [{
-					data: data,
-					backgroundColor: [ 'rgba(91, 155, 213, 0.8)', 'rgba(237, 125, 49, 0.8)', ],
-					borderColor: [ 'rgba(91, 155, 213, 1)', 'rgba(237, 125, 49, 1)', ],
-				}],
-			},
-			options: {
-                plugins: {
-                    tooltip: { enabled: false },
-				    title: { text: title, display: true },
-                },
-				responsive: true,
-				maintainAspectRatio: false
-			}
-		});
-
-		this.license_statistics_charts.push(chart);
-		this.loading_statistics[type] = false;
-
-	}
-
 	private getInternetType(value: string): string {
 		if(value) {
 			value = value.toLowerCase();
@@ -1420,10 +1334,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						} 
 						
 						this.statistics = response;
-
-						if (reload) this.updateCharts();
-						else this.callCharts();
-
 					},
 					error => console.log('Error retrieving license statistics by dealer', error)
 				)
@@ -1460,34 +1370,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			)
 		);
 	}
-
-	private updateCharts(): void {
-		setTimeout(() => {
-			const config = { duration: 800, easing: 'easeOutBounce' };
-			const activityChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'activityStatistics')[0];
-			const connectionChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'connectionStatistics')[0];
-			const screenChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'screenStatistics')[0];
-			const statusChart = this.license_statistics_charts.filter(chart => chart.canvas.id === 'statusStatistics')[0];
-			const { activityActive, activityInactive, connectionTypeLan, connectionTypeWifi, screenTypeAd, screenTypeClosed, screenTypeMenu, 
-				statusOffline, statusOnline } = this.statistics;
-			activityChart.data.labels = [ `Active: ${activityActive}`, `Inactive: ${activityInactive}` ];
-			activityChart.data.datasets[0].data = [ parseInt(activityActive), parseInt(activityInactive) ];
-			connectionChart.data.labels = [ `LAN: ${connectionTypeLan}`, `WiFi: ${connectionTypeWifi}` ];
-			connectionChart.data.datasets[0].data = [ parseInt(connectionTypeLan), parseInt(connectionTypeWifi) ];
-			screenChart.data.labels = [ `Ad: ${screenTypeAd}`, `Menu: ${screenTypeMenu}`, `Closed: ${screenTypeClosed}` ];
-			screenChart.data.datasets[0].data = [ parseInt(screenTypeAd), parseInt(screenTypeMenu), parseInt(screenTypeClosed) ];
-			statusChart.data.labels = [ `Online: ${statusOnline}`, `Offline: ${statusOffline}` ];
-			statusChart.data.datasets[0].data = [ parseInt(statusOnline), parseInt(statusOffline) ];
-			activityChart.update(config);
-			connectionChart.update(config);
-			screenChart.update(config);
-			statusChart.update(config);
-		}, 1000);
-	}
-	
-    toggleCharts() {
-        this.height_show = !this.height_show;
-    }
 
     filterTable(type, value) {
         switch(type) {

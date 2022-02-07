@@ -42,6 +42,11 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
     @Input() breakdown2_label? : string;
     @Input() breakdown3_value? : number;
     @Input() breakdown3_label? : string;
+    @Input() breakdown4_value? : number;
+    @Input() breakdown4_label? : string;
+    @Input() breakdown4_sub_label? : string;
+    @Input() breakdown5_value? : number;
+    @Input() breakdown5_label? : string;
 
 	has_selected_active = false;
 	has_selected_inactive = false;

@@ -87,7 +87,7 @@
 							</button>
 							<mat-menu #roleMenu="matMenu">
 								<button mat-menu-item *ngFor="let role of roles" (click)="onFilterByRole(role)">
-									{{ role.roleName }}
+									<span class="md-text">{{ role.roleName }}</span>
 								</button>
 							</mat-menu>
 

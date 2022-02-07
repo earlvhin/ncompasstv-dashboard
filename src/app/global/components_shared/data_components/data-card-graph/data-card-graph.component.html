@@ -26,13 +26,36 @@
                 <div class="col-lg-12 p-0" *ngIf="!label_array; else breakdownpart">
                 </div>
             </div>
-            <div class="col-lg-6 p-0" *ngIf="label_array; else breakdownpart" [ngClass]="label_array && has_breakdown ? 'col-lg-6':'col-lg-8 mt-1'">
-                <canvas id="breakdown-{{ id }}" height="150"></canvas>
+            <div class="col-lg-6 p-0" [ngClass]="label_array && has_breakdown ? 'col-lg-6':'col-lg-8 mt-1'">
+                <div *ngIf="label_array; else breakdownpart" class="col-lg-12">
+                    <canvas id="breakdown-{{ id }}" height="150"></canvas>
+                </div>
+                <div class="col-lg-12 p-0">
+                    <div class="p-0 mt-2" *ngIf="has_breakdown && breakdown4_label">
+                        <div class="col-lg-12 sm-text p-0 text-gray font-weight-medium">
+                            {{ breakdown4_sub_label }}
+                        </div>
+                        <div class="col-lg-12 p-0 flex">
+                            <div class="col-lg-3 pl-0">
+                                <span class="fas fa-circle mr-2 text-light-gray xsm-text"></span>
+                                <span class="sm-text text-dark">
+                                    <span class="font-weight-medium">{{ breakdown4_value }}</span> {{ breakdown4_label }}
+                                </span>
+                            </div>
+                            <div class="col-lg-3">
+                                <span class="fas fa-circle text-light-gray mr-2 xsm-text"></span>
+                                <span class="sm-text text-dark">
+                                    <span class="font-weight-medium">{{ breakdown5_value }}</span> {{ breakdown5_label }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
         <ng-template #breakdownpart>
-            <div class="col-lg-12 p-0 mt-1" *ngIf="good_value && bad_value">
+            <div class="col-lg-12 p-0 mt-1" *ngIf="good_value || bad_value">
                 <div class="col-lg-12 sm-text p-0 text-gray font-weight-medium" *ngIf="has_breakdown">
                     {{ compare_basis_sub_label}} Breakdown:
                 </div>
