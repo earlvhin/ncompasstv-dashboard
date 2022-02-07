@@ -524,7 +524,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const duration = content[index].duration;
 		content[index].duration = Math.round(duration);
 
-		this._dialog.open(MediaViewerComponent, {
+		const dialog = this._dialog.open(MediaViewerComponent, {
 			panelClass: 'app-media-viewer-dialog',
 			data: {
 				index,
@@ -533,6 +533,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				zoneContent: true
 			}
 		});
+
+		dialog.componentInstance.page = 'single-license';
 		
 	}
 
@@ -969,17 +971,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		contents.forEach(content => {
 			const { advertiser_id, classification, file_type, host_id } = content;
 
-			if (file_type === 'feed') {
+			switch (classification) {
 
-				if (classification && classification === 'filler') breakdown.fillers++;
-				else breakdown.feeds++;
+				case 'filler':
+					breakdown.fillers++;
+					break;
 
-			} else {
+				default:
 
-				if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others++;
-				if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers++;
-				if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts++;
-
+					if (file_type === 'feed') { 
+						breakdown.feeds++;
+					} else {
+						if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others++;
+						if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers++;
+						if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts++;
+					}
 			}
 		});
 
@@ -1001,17 +1007,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		contents.forEach(content => {
 			const { advertiser_id, classification, file_type, host_id, duration } = content;
 
-			if (file_type === 'feed') {
+			switch (classification) {
 
-				if (classification && classification === 'filler') breakdown.fillers += duration;
-				else breakdown.feeds += duration;
+				case 'filler':
+					breakdown.fillers += duration;
+					break;
 
-			} else {
+				default:
 
-				if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others += duration;
-				if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers += duration;
-				if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts += duration;
-
+					if (file_type === 'feed') { 
+						breakdown.feeds += duration;
+					} else {
+						if (this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.others += duration;
+						if (!this.isBlank(advertiser_id) && this.isBlank(host_id)) breakdown.advertisers += duration;
+						if (!this.isBlank(host_id) && this.isBlank(advertiser_id)) breakdown.hosts += duration;
+					}
 			}
 
 			breakdown.total += duration;
@@ -1150,7 +1160,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			`Hosts: ${this.calculateTime(hosts)}`,
 			`Advertisers: ${this.calculateTime(advertisers)}`,
 			`Fillers: ${this.calculateTime(fillers)}`, 
-			`Feeds: ${this.calculateTime(fillers)}`,
+			`Feeds: ${this.calculateTime(feeds)}`,
 			`Others: ${this.calculateTime(others)}` 
 		];
 
@@ -1581,7 +1591,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			`Hosts: ${this.calculateTime(hosts)}`,
 			`Advertisers: ${this.calculateTime(advertisers)}`,
 			`Fillers: ${this.calculateTime(fillers)}`, 
-			`Feeds: ${this.calculateTime(fillers)}`,
+			`Feeds: ${this.calculateTime(feeds)}`,
 			`Others: ${this.calculateTime(others)}` 
 		];
 
