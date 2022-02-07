@@ -277,6 +277,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		)
 	}
 
+	turnOffDisplay(e) {
+		this._license.set_tvdisplay_status(
+			{
+				licenseId: this.license_id,
+				tvdisplaySettings: e.checked ? 1 : 0
+			}
+		).subscribe(
+			data => {
+				alert(`TV Display ${e.checked ? 'ON' : 'OFF'} for this license`);
+				console.log(data);
+			}
+		)
+	}
+
 	dismissPopup(): void {
 		this.show_popup = false;
 		this.popup_type = '';
@@ -533,7 +547,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				zoneContent: true
 			}
 		});
-
+		
 		dialog.componentInstance.page = 'single-license';
 		
 	}
