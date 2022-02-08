@@ -30,19 +30,19 @@
                 <div *ngIf="label_array; else breakdownpart" class="col-lg-12">
                     <canvas id="breakdown-{{ id }}" height="150"></canvas>
                 </div>
-                <div class="col-lg-12 p-0">
+                <div class="col-lg-12 p-0 text-center">
                     <div class="p-0 mt-2" *ngIf="has_breakdown && breakdown4_label">
                         <div class="col-lg-12 sm-text p-0 text-gray font-weight-medium">
                             {{ breakdown4_sub_label }}
                         </div>
                         <div class="col-lg-12 p-0 flex">
-                            <div class="col-lg-3 pl-0">
+                            <div class="col-lg-6 pl-0">
                                 <span class="fas fa-circle mr-2 text-light-gray xsm-text"></span>
                                 <span class="sm-text text-dark">
                                     <span class="font-weight-medium">{{ breakdown4_value }}</span> {{ breakdown4_label }}
                                 </span>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-6">
                                 <span class="fas fa-circle text-light-gray mr-2 xsm-text"></span>
                                 <span class="sm-text text-dark">
                                     <span class="font-weight-medium">{{ breakdown5_value }}</span> {{ breakdown5_label }}
