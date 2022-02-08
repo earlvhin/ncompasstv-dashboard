@@ -5,7 +5,7 @@ import { USER } from '../../models/api_user.model';
 import { environment } from '../../../../environments/environment';
 import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
 import 'rxjs/add/operator/map'
-import { API_FILTERS } from '../../models';
+import { API_FILTERS, API_USER_STATS } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -52,7 +52,7 @@ export class UserService {
 	}
 	
 	get_user_total() {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
+		return this._http.get<API_USER_STATS>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
 	}
 
 	get_user_by_id(data) {
