@@ -6,5 +6,5 @@ export interface API_USER_STATS {
 	totalSuperAdmin: number;
 	totalTech: number;
 	totalUsers: number;
-	totalSubdealers: number;
+	totalSubDealer: number;
 }

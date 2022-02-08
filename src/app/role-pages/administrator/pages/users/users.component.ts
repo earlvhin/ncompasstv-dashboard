@@ -175,7 +175,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 						total_tech_label: 'Tech(s)',
 						admin_count: response.totalAdmin,
 						admin_label: 'Admin(s)',
-						sub_dealer_count: response.totalSubdealers,
+						sub_dealer_count: response.totalSubDealer,
 						sub_dealer_label: 'Sub-dealer (s)'
 					}
 				},
