@@ -15,7 +15,7 @@
         <button  class="navi" [disabled]="file_data.selected.index === file_data.content_array.length - 1" (click)="fetchNextMedia(file_data.selected.index)" data-toggle="tooltip" title="Next">
             <i class="fa fa-chevron-right"></i>
         </button>
-        <button mat-dialog-close class="close" data-toggle="tooltip" title="Close">
+        <button [mat-dialog-close]="onCloseMediaViewer()" class="close" data-toggle="tooltip" title="Close">
             <i class="fa fa-times"></i>
         </button>
     </div>

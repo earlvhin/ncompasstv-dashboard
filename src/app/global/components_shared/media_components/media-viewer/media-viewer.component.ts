@@ -10,7 +10,7 @@ import { MediaModalComponent } from '../../../components_shared/media_components
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
 import { environment as env } from 'src/environments/environment';
-import { UI_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
@@ -26,51 +26,32 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	// file_data: any;
 	file_data: { content_array: UI_CONTENT[], index: number, selected: UI_CONTENT, is_advertiser?: boolean, zoneContent?: boolean };
     file_size_formatted: any;
+	feed_demo_url = `${env.third_party.filestack_screenshot}/`;
+	has_updated_content = false;
 	is_advertiser = false;
     is_edit = false;
 	is_dealer = false;
-	feed_demo_url = `${env.third_party.filestack_screenshot}/`;
+	updated_content: UI_CONTENT;
 
 	protected _unsubscribe = new Subject<void>();
 	
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
-		private _dealer: DealerService,
-		private _advertiser: AdvertiserService,
-		private _host: HostService,
-		private _dialog: MatDialog,
-		private _content: ContentService,
 		private _auth: AuthService,
+		private _advertiser: AdvertiserService,
+		private _content: ContentService,
+		private _dealer: DealerService,
+		private _dialog: MatDialog,
+		private _host: HostService,
 	) { }
 
 	ngOnInit() {
-
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-		
-		if (roleId === dealerRole || roleId === subDealerRole) {
-			this.is_dealer = true;
-		}
-		
+		if (roleId === dealerRole || roleId === subDealerRole) this.is_dealer = true
 		this.file_data = this._dialog_data;
-		this.configureSelectedContent(this.file_data.selected);
-
-		
-		// for cycling through content within the media viewer
-		this.file_data.content_array.map(
-			(data, index) => {
-
-				if (data.content_data) {
-					data.content_data.index = index
-					data = data.content_data
-				} else {
-					data.index = index; 
-				}
-				
-			}
-		);
-
+		this.configureContents();
 	}
 
 	ngOnDestroy(): void {
@@ -95,13 +76,26 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		this.configureSelectedContent(this.file_data.selected);
 	}
 
+	onCloseMediaViewer() {
+		if (this.has_updated_content) return this.updated_content;
+		return false;
+	}
+
 	onSetContentAsFiller(event: MatSlideToggleChange) {
 		const contentId = this.file_data.selected.content_id;
 
 		this._content.update_content_to_filler({ contentId, isFiller: event.checked })
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => {},
+				async () => {
+					this.has_updated_content = true;
+					this.updated_content = this.mapContentsToUI([await this._content.get_content_by_id(contentId).toPromise()])[0];
+					const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(content => content.content_id === this.updated_content.content_id);
+					this._dialog_data.content_array[index] = this.updated_content;
+					this._dialog_data.selected = this.updated_content;
+					this.file_data = this._dialog_data;
+					this.configureContents();
+				},
 				error => console.log('Error updating content to filler', error)
 			);
 	}
@@ -118,6 +112,25 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			disableClose: true,
 			data: temp,  
 		})
+	}
+
+	private configureContents() {
+		this.configureSelectedContent(this.file_data.selected);
+
+		
+		// for cycling through content within the media viewer
+		this.file_data.content_array.map(
+			(data, index) => {
+
+				if (data.content_data) {
+					data.content_data.index = index
+					data = data.content_data
+				} else {
+					data.index = index; 
+				}
+				
+			}
+		);
 	}
 	
 	private configureSelectedContent(selected: UI_CONTENT) {
@@ -190,6 +203,48 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	private mapContentsToUI(data: API_CONTENT[]): UI_CONTENT[] {
+
+		return data.map(
+			(m: API_CONTENT) => {
+				let fileThumbnailUrl = '';
+				
+				if (m.fileType === 'webm' || m.fileType === 'mp4') {
+					fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url);
+				} else {
+					fileThumbnailUrl = m.previewThumbnail || m.thumbnail;
+				}
+
+				return new UI_CONTENT(
+					m.playlistContentId,
+					m.createdBy,
+					m.contentId,
+					m.createdByName,
+					m.dealerId,
+					m.duration,
+					m.hostId,
+					m.advertiserId,
+					m.fileName,
+					m.url,
+					m.fileType,
+					m.handlerId,
+					m.dateCreated,
+					m.isFullScreen,
+					m.filesize,
+					fileThumbnailUrl,
+					m.isActive,
+					m.isConverted,
+					m.uuid,
+					m.title,
+					'',
+					m.createdByName,
+					m.classification
+				)
+			}
+		);
+
+	}
+
 	private openWarningModal(status: string, message: string, data: string, return_msg: string, action: string) {
 		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
@@ -216,6 +271,10 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			}
 
 		});
+	}
+
+	private renameWebmThumb(filename: string, source: string) {
+		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`;
 	}
 
 }

@@ -281,6 +281,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 		
 		const dialog = this._dialog.open(MediaViewerComponent, {
 			panelClass: 'app-media-viewer-dialog',
+			disableClose: true,
 			data: {
 				index: i,
 				content_array: contents,
@@ -289,6 +290,16 @@ export class MediaComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.componentInstance.is_view_only = this.is_view_only;
+
+		dialog.afterClosed()
+			.subscribe(
+				(response: false | UI_CONTENT) => {
+					if (!response) return;
+					const data = response as UI_CONTENT;
+					const index = this.content_data.findIndex(content => content.content_id === data.content_id);
+					this.content_data[index] = data;
+				}
+			);
 
 	}
 
