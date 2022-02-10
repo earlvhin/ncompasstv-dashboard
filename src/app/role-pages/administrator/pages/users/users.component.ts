@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common'
 import { MatDialog } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { HelperService, RoleService, UserService } from 'src/app/global/services';
@@ -148,7 +148,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 	}
 
 	private getAllUserRoles() {
-		this._role.get_roles().pipe(takeUntil(this._unsubscribe))
+		this._role.get_roles()
+			.pipe(
+				takeUntil(this._unsubscribe),
+				map(roles => roles.filter(role => role.roleName.toLowerCase() !== 'admin'))
+			)
 			.subscribe(
 				response => this.roles = response,
 				error => console.log('Error retrieving user roles', error)
