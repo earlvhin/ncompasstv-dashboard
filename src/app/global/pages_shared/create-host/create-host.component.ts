@@ -398,6 +398,7 @@ export class CreateHostComponent implements OnInit {
 	}
 
 	mapOperationHours(data) {
+        console.log("MAPPING", data)
 		let count = 0;
 		this.operation_hours = data.map(
 			h => {
@@ -471,42 +472,83 @@ export class CreateHostComponent implements OnInit {
 			this.mapOperationHours(data.result.opening_hours.periods);
 		}
 	}
+
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+		this._dialog.closeAll();
+		
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data, return_msg, action }
+		});
+
+		dialogRef.afterClosed().subscribe(() => this.form_invalid = false);
+	}
 	
 	newHostPlace() {
-		const newHostPlace = new API_CREATE_HOST(
-			this.f.dealerId.value,
-			this.f.businessName.value,
-			this._auth.current_user_value.user_id,
-			this.f.lat.value,
-			this.f.long.value,
-			this.f.address.value,
-			this.f.city.value,
-			this.f.state.value,
-			this.f.zip.value,
-			JSON.stringify(this.operation_days), 
-			this.f.category.value,
-			this.f.timezone.value,
-		);
 
-		if (this.logo_data) {
-			newHostPlace.logo = this.logo_data.logo;
-			newHostPlace.images = this.logo_data.images; 
-		}
+        this.operation_days.map (
+            data => {
+                if(data.status && data.periods.length > 0) {
+                    data.periods.map (
+                        period => {
+                            console.log({open: period.open, close: period.close})
+                            if(period.open !='' && period.close == '') {
+                                this.form_invalid = true;
+                                this.warningModal('error', 'Failed to create host', 'Kindly verify that all business hours opening should have closing time.', null, null);
+                            } else if (period.close !='' && period.open == '') {
+                                this.form_invalid = true;
+                                this.warningModal('error', 'Failed to create host', 'Kindly verify that all business hours opening should have closing time.', null, null);
+                            } else {
+                                this.form_invalid = false;
+                            }
+                        }
+                    )
+                }
+            }
+        )
+        
 
-		this.creating_host = true;
+        console.log("OPERATION DAYS", this.operation_days)
 
-		if (this.creating_host = true) {
-			this.subscription.add(
-				this._host.add_host_place(newHostPlace).subscribe(
-					(data: any) => {
-						this.confirmationModal('success', 'Host Place Created!', 'Hurray! You successfully created a Host Place', data.hostId);
-					}, error => {
-						this.creating_host = false;
-						this.confirmationModal('error', 'Host Place Creation Failed', 'Sorry, There\'s an error with your submission', null);
-					}
-				)
-			)
-		}
+        // this.form_invalid = false;
+        if(!this.form_invalid) {
+            const newHostPlace = new API_CREATE_HOST(
+                this.f.dealerId.value,
+                this.f.businessName.value,
+                this._auth.current_user_value.user_id,
+                this.f.lat.value,
+                this.f.long.value,
+                this.f.address.value,
+                this.f.city.value,
+                this.f.state.value,
+                this.f.zip.value,
+                JSON.stringify(this.operation_days), 
+                this.f.category.value,
+                this.f.timezone.value,
+            );
+    
+            if (this.logo_data) {
+                newHostPlace.logo = this.logo_data.logo;
+                newHostPlace.images = this.logo_data.images; 
+            }
+    
+            this.creating_host = true;
+    
+            if (this.creating_host = true) {
+                this.subscription.add(
+                    this._host.add_host_place(newHostPlace).subscribe(
+                        (data: any) => {
+                            this.confirmationModal('success', 'Host Place Created!', 'Hurray! You successfully created a Host Place', data.hostId);
+                        }, error => {
+                            this.creating_host = false;
+                            this.confirmationModal('error', 'Host Place Creation Failed', 'Sorry, There\'s an error with your submission', null);
+                        }
+                    )
+                )
+            }
+        }
+		
 	}
 
 	setToDealer(e) {
@@ -533,6 +575,7 @@ export class CreateHostComponent implements OnInit {
 	}
 
 	operationDays(data) {
+        console.log("OPERATION DAYS", data)
 		data.periods.length = 0;
 		const hours = {
 			id: uuid.v4(),
@@ -540,11 +583,13 @@ export class CreateHostComponent implements OnInit {
 			open: '',
 			close: '',
 		}
-		data.status = !data.status;
-		data.periods.push(hours)
+        data.status = !data.status;
+        data.periods.push(hours)
+		
 	}
 
 	addHours(data) {
+        console.log("ADD HOURS", data)
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,

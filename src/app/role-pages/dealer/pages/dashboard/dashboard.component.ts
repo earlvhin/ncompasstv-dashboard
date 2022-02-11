@@ -82,10 +82,10 @@ export class DashboardComponent implements OnInit {
                     basis: data.total,
                     basis_label: 'License(s)',
                     basis_sub_label: 'Current Count',
-                    good_value: data.totalActive,
-                    good_value_label: 'Active',
-                    bad_value: data.totalInActive,
-                    bad_value_label: 'Inactive',
+                    good_value: data.totalAssigned,
+                    good_value_label: 'Assigned',
+                    bad_value: data.totalUnAssigned,
+                    bad_value_label: 'Unassigned',
                     ad_value: data.totalAd,
                     ad_value_label: 'Ad',
                     menu_value: data.totalMenu,
@@ -107,8 +107,10 @@ export class DashboardComponent implements OnInit {
 
                 this.status_graph_label.push('Online: ' + data.totalOnline)
                 this.status_graph_label.push('Offline: ' + data.totalOffline)
+                this.status_graph_label.push('Inactive: ' + data.totalInActive)
                 this.status_graph_value.push(data.totalOnline)
                 this.status_graph_value.push(data.totalOffline)
+                this.status_graph_value.push(data.totalInActive)
 
                 if (this.licenses_details) {
                     this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);
