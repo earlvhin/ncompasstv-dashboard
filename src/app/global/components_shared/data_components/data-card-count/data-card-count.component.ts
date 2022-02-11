@@ -18,7 +18,6 @@ export class DataCardCountComponent implements OnInit {
 	@Input() closed_value: number;
 	@Input() closed_value_label: string;
 	@Input() unassigned_value_label: string;
-
 	@Input() has_screen_type: boolean;
 	@Input() this_week_ad_value: number;
 	@Input() this_week_menu_value: number;
@@ -30,6 +29,7 @@ export class DataCardCountComponent implements OnInit {
 	@Input() last_week_unassigned_value: number;
 	@Input() is_this_week: boolean;
 	@Input() is_last_week: boolean;
+	@Input() sub_data?: { value: number, label: string };
 
 	constructor() { }
 

@@ -1,11 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common'
 import { MatDialog } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { HelperService, RoleService, UserService } from 'src/app/global/services';
-import { API_FILTERS, UI_TABLE_USERS, USER, USER_ROLE } from 'src/app/global/models';
+import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -27,7 +27,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 	searching = false;
 	title: string = 'Users';
 	users: UI_TABLE_USERS[] = [];
-	user_details: any;
+	user_details: UI_USER_STATS;
 
 	users_table_columns = [
 		{ name: '#', },
@@ -148,7 +148,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 	}
 
 	private getAllUserRoles() {
-		this._role.get_roles().pipe(takeUntil(this._unsubscribe))
+		this._role.get_roles()
+			.pipe(
+				takeUntil(this._unsubscribe),
+				map(roles => roles.filter(role => role.roleName.toLowerCase() !== 'admin'))
+			)
 			.subscribe(
 				response => this.roles = response,
 				error => console.log('Error retrieving user roles', error)
@@ -163,8 +167,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 					this.user_details = {
 						basis: response.totalUsers,
 						basis_label: 'User(s)',
-						total_administrator: response.totalSuperAdmin,
-						total_administrator_label: 'Admin(s)',
+						super_admin_count: response.totalSuperAdmin,
+						super_admin_label: 'Super Admin(s)',
 						total_dealer: response.totalDealer,
 						total_dealer_label: 'Dealer(s)',
 						total_host: response.totalHost,
@@ -172,7 +176,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 						total_advertiser: response.totalAdvertisers,
 						total_advertiser_label: 'Advertiser(s)',
 						total_tech: response.totalTech,
-						total_tech_label: 'Tech(s)'
+						total_tech_label: 'Tech(s)',
+						admin_count: response.totalAdmin,
+						admin_label: 'Admin(s)',
+						sub_dealer_count: response.totalSubDealer,
+						sub_dealer_label: 'Sub-dealer (s)'
 					}
 				},
 				error => console.log('Error retrieving user total', error)
