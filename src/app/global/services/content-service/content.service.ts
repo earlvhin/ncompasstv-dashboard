@@ -6,7 +6,7 @@ import 'rxjs/add/operator/map'
 import { AuthService } from '../auth-service/auth.service';
 import { environment } from '../../../../environments/environment';
 import { PlaylistContentSchedule } from '../../models/playlist-content-schedule.model';
-import { API_CONTENT, CREDITS_TO_SUBMIT } from '../../models';
+import { API_CONTENT, CREDITS_TO_SUBMIT, PAGING, UI_CONTENT } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -51,16 +51,16 @@ export class ContentService {
 	}
 
 	get_contents_with_page(page=1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, feedId?, pageSize=60) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}
-		?pageSize=${pageSize}
-		&page=${page}
-		&fileCategory=${type || ''}
-		&sort=${sort || ''}
-		&dealerId=${dealerId || ''}
-		&hostId=${hostId || ''}
-		&advertiserId=${advertiserId || '' }
-		&feedId=${feedId || ''}
-		&search=${key || ''}`, this.httpOptions);
+		return this._http.get<{ iContents: API_CONTENT[], paging: PAGING }>(`${environment.base_uri}${environment.getters.api_get_assets}
+			?pageSize=${pageSize}
+			&page=${page}
+			&fileCategory=${type || ''}
+			&sort=${sort || ''}
+			&dealerId=${dealerId || ''}
+			&hostId=${hostId || ''}
+			&advertiserId=${advertiserId || '' }
+			&feedId=${feedId || ''}
+			&search=${key || ''}`, this.httpOptions);
 	}
 	
     get_contents_playing_where(id) {
@@ -83,8 +83,8 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total_by_dealer}${id}`, this.httpOptions);
 	}
 
-	get_content_by_id(data) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_id}${data}`, this.httpOptions).map(data => data.content)
+	get_content_by_id(contentId: string) {
+		return this._http.get<{ content: API_CONTENT }>(`${environment.base_uri}${environment.getters.api_get_content_by_id}${contentId}`, this.httpOptions).map(data => data.content)
 	}
 
 	get_content_by_advertiser_id(data) {
@@ -146,6 +146,12 @@ export class ContentService {
 
 	update_content_schedule(data: PlaylistContentSchedule): Observable<any> {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.content_schedule}`, data, this.httpOptions);		
+	}
+
+	update_content_to_filler(body: { contentId: string, isFiller: boolean }) {
+		const base = environment.base_uri;
+		const endpoint = `${base}${environment.update.content_to_filler}`;
+		return this._http.post<{ data: UI_CONTENT, message?: string }>(endpoint, body);
 	}
 
 	sort_ascending(files) {

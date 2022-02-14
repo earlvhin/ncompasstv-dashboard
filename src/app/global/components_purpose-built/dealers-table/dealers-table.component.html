@@ -13,7 +13,7 @@
                     <button mat-menu-item (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">4-9 months</button>
                     <button mat-menu-item (click)="filterTable('monthAsDealer', '10','','Above 10 months')">Above 10 months</button>
                 </mat-menu>
-                <button mat-button mat-raised-button 
+                <!-- <button mat-button mat-raised-button 
                     class="theme-btn sm-text mr-2 h-45" 
                     [matMenuTriggerFor]="inactive" [disabled]="offline_filter">
                     <span class="button-label">Inactive</span>
@@ -23,7 +23,7 @@
                     <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '0', '20', 'less than 20%')">less than 20%</button>
                     <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '10','', 'greater than 10%')">greater than 10%</button>
                     <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
-                </mat-menu>
+                </mat-menu> -->
                 <button mat-button mat-raised-button 
                     class="theme-btn sm-text mr-2 h-45" 
                     [matMenuTriggerFor]="offline" [disabled]="inactive_filter">
@@ -178,11 +178,11 @@
 					
 									<!-- NO DATA AVAILABLE -->
 									<th 
-									class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesInactive' ? 'tab-active': ''"
+									class="border-right border-bottom p-3" [ngClass]="active_tab == 'totalLicensesUnassigned' ? 'tab-active': ''"
 									rowspan="2"
 									valign="middle">
-										Inactive 
-										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesInactive', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
+										Unassigned 
+										<i class="sort cursor-pointer ml-2 fas fa-angle-{{sortOrder == 'desc' ? 'down' : 'up'}}" (click)="sortByColumnName('totalLicensesUnassigned', sortOrder == 'desc' ? 'asc' : 'desc')" data-toggle="tooltip" title="Sorted by {{sortOrder == 'desc' ? 'Descending' : 'Ascending'}} Order"></i>
 									</th>
 									<!-- NO DATA AVAILABLE -->
 					
@@ -280,7 +280,7 @@
 										{{ d.l_total }}
 									</td>
 									<td class="xsm-text border-right text-center p-3 text-danger font-weight-bold">
-										{{ d.l_inactive }}
+										{{ d.l_unassigned }}
 									</td>
 									<td class="xsm-text border-right text-center p-3 text-primary font-weight-bold">
 										{{ d.l_online }}

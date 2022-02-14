@@ -130,7 +130,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 	}
 
 	createHostPlace() {
-		this._router.navigate([`/${this.currentRole}/create-host/`]);
+		this._router.navigate([`/${this.currentRole}/hosts/create-host/`]);
 	}
 
 	getLink(page: string, id: string) {

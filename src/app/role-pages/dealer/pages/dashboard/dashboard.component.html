@@ -43,12 +43,16 @@
 		<div class="col-lg-5 mb-4">
 			<mat-card class="h-100" *ngIf="licenses_details; else spinner">
 				<ng-container>
-					<app-data-card-graph [id]="'license-statistics'" [compare_basis]="licenses_details.basis"
+					<app-data-card-graph 
+                        [id]="'license-statistics'" 
+                        [compare_basis]="licenses_details.basis"
 						[compare_basis_label]="licenses_details.basis_label"
 						[compare_basis_sub_label]="licenses_details.basis_sub_label"
 						[good_value]="licenses_details.good_value"
-						[good_value_label]="licenses_details.good_value_label" [bad_value]="licenses_details.bad_value"
-						[bad_value_label]="licenses_details.bad_value_label" [label_array]="temp_label"
+						[good_value_label]="licenses_details.good_value_label" 
+                        [bad_value]="licenses_details.bad_value"
+						[bad_value_label]="licenses_details.bad_value_label" 
+                        [label_array]="temp_label"
 						[value_array]="temp_array">
 					</app-data-card-graph>
 				</ng-container>

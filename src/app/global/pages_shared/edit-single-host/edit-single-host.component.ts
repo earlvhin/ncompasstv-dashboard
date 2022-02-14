@@ -38,6 +38,7 @@ export class EditSingleHostComponent implements OnInit {
 	dealer_name: string = '';
 	dealers_data: API_DEALER[] = [];
 	disable_business_name: boolean = true;
+    form_invalid: boolean = false;
 	has_bulk_selected_business_hours = false;
 	has_content = false;
 	host_data:  any = [];
@@ -361,47 +362,80 @@ export class EditSingleHostComponent implements OnInit {
 		);
 	}
 
-	newHostPlace(): void {
-		const newHostPlace = new API_UPDATE_HOST(
-			this._host_data,
-			this.f.dealerId.value,
-			this.f.businessName.value,
-			this.f.lat.value,
-			this.f.long.value,
-			this.f.city.value,
-			this.f.state.value,
-			this.f.zip.value,
-			this.f.region.value,
-			this.f.address.value,
-			this.f.category.value,
-			JSON.stringify(this.business_hours),
-			this.f.timezone.value,
-			this.f.vistar_venue_id.value
-		);
+    warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data, return_msg, action }
+		});
 
-		if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
-			newHostPlace.notes = this.f.notes.value;
-		}
-
-        if (this.f.others.value && this.f.others.value.trim().length > 0) {
-			newHostPlace.others = this.f.others.value;
-		}
-
-		if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
-
-		this.subscription.add(
-			this._host.update_single_host(newHostPlace).subscribe(
-				(data: any) => {
-					this.confirmationModal('success', 'Host Profile Details Updated!', 'Hurray! You successfully updated the Host Profile Details', data.host.hostId);
-				}, error => {
-					console.log(error);
-					this.confirmationModal('error', 'Host Profile Details Update Failed', 'Sorry, There\'s an error with your submission', null);
-				}
-			)
-		);
+		dialogRef.afterClosed().subscribe(() => this.form_invalid = false);
 	}
 
-	confirmationModal(status: string, message: string, data: any, id: string): void {
+	newHostPlace() {
+        this.business_hours.map (
+            data => {
+                if(data.status && data.periods.length > 0) {
+                    data.periods.map (
+                        period => {
+                            console.log({open: period.open, close: period.close})
+                            if(period.open !='' && period.close == '') {
+                                this.form_invalid = true;
+                            } else if (period.close !='' && period.open == '') {
+                                this.form_invalid = true;
+                            } else {
+                                this.form_invalid = false;
+                            }
+                        }
+                    )
+                }
+            }
+        )
+        if(this.form_invalid) {
+            this.warningModal('error', 'Failed to update host', 'Kindly verify that all business hours opening should have closing time.', null, null);
+        } else {
+            const newHostPlace = new API_UPDATE_HOST(
+                this._host_data,
+                this.f.dealerId.value,
+                this.f.businessName.value,
+                this.f.lat.value,
+                this.f.long.value,
+                this.f.city.value,
+                this.f.state.value,
+                this.f.zip.value,
+                this.f.region.value,
+                this.f.address.value,
+                this.f.category.value,
+                JSON.stringify(this.business_hours),
+                this.f.timezone.value,
+                this.f.vistar_venue_id.value
+            );
+    
+            if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
+                newHostPlace.notes = this.f.notes.value;
+            }
+    
+            if (this.f.others.value && this.f.others.value.trim().length > 0) {
+                newHostPlace.others = this.f.others.value;
+            }
+    
+            if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
+    
+            this.subscription.add(
+                this._host.update_single_host(newHostPlace).subscribe(
+                    (data: any) => {
+                        const dialogRef =  this.confirmationModal('success', 'Host Profile Details Updated!', 'Hurray! You successfully updated the Host Profile Details', data.host.hostId);
+                    }, error => {
+                        console.log(error);
+                        this.confirmationModal('error', 'Host Profile Details Update Failed', 'Sorry, There\'s an error with your submission', null);
+                    }
+                )
+            );
+        }
+            
+	}
+
+	confirmationModal(status: string, message: string, data: any, id: string) {
 
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
@@ -413,7 +447,12 @@ export class EditSingleHostComponent implements OnInit {
 			}
 		});
 
-		dialog.afterClosed().subscribe(() => this.ngOnInit());
+		dialog.afterClosed().subscribe(() => {
+            if(status) {
+                this.ngOnInit();
+                this._dialog.closeAll()
+            }
+        });
 	}
 
 	onDeleteHost(): void {

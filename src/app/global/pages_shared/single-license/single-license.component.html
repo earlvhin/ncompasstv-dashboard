@@ -793,6 +793,23 @@
 									</div>
 								</div>
 							</mat-card>
+
+							<!-- Automatic TV Display ON/OFF -->
+							<mat-card class="p-4 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even">
+										<h4>Enable Automatic Display ON/OFF</h4>
+										<p class="sm-text mb-0">
+											Setting Display ON will automatically turn the TV on during its operation hours and off during if its not within operation hours.
+										</p>
+									</div>
+									<div class="ml-5 text-right">
+										<mat-slide-toggle (change)="turnOffDisplay($event)"
+											[checked]="license_data.tvDisplaySettings == 1 ? true : false">
+										</mat-slide-toggle>
+									</div>
+								</div>
+							</mat-card>
 						</div>
 
 						<div class="col-lg-7">

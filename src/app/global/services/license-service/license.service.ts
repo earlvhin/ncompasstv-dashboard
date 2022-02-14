@@ -347,6 +347,10 @@ export class LicenseService {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_resource_settings}`, data, this.httpOptions);
 	}
 
+	set_tvdisplay_status(data: any) {
+		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`, data, this.httpOptions);
+	}
+
 	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
 
 		let result = '';

@@ -18,6 +18,8 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	@Input() good_value_label: string;
 	@Input() bad_value: number;
 	@Input() bad_value_label: string; 
+	@Input() third_value: number;
+	@Input() third_value_label: string; 
 	@Input() additional_value: number;
 	@Input() additional_value_label: string;
 	@Input() online_value: number;
@@ -40,6 +42,11 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
     @Input() breakdown2_label? : string;
     @Input() breakdown3_value? : number;
     @Input() breakdown3_label? : string;
+    @Input() breakdown4_value? : number;
+    @Input() breakdown4_label? : string;
+    @Input() breakdown4_sub_label? : string;
+    @Input() breakdown5_value? : number;
+    @Input() breakdown5_label? : string;
 
 	has_selected_active = false;
 	has_selected_inactive = false;
@@ -55,11 +62,15 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	}
 
 	ngAfterViewInit() {
-		this.generateChart();
+        if(this.label_array) {
+            this.generateChart();
+        }
 	}
 
 	ngOnDestroy() {
-		this.chart.destroy();
+        if(this.label_array) {
+		    this.chart.destroy();
+        }
 	}
 
 	generateChart() {

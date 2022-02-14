@@ -6,30 +6,35 @@ import { PlaylistContentSchedule } from './playlist-content-schedule.model';
 import { UI_PLAYLIST_HOST_LICENSE } from './ui_playlist-host-license.model';
 
 export class UI_CONTENT {
-	advertiser_id: string;
-    playlist_content_id: string;
-	classification: string;
+	advertiser_id?: string;
+	classification?: string;
+    content_id: string;
+	content_data?: any;
     created_by: string;
     created_by_name: string;
-    content_id: string;
+    date_uploaded: string;
 	dealer_id: string;
 	duration: number;
-    host_id: string;
     file_name: string;
-    file_url: string;
-    file_type: string;
-    handler_id: string;
-    date_uploaded: string;
-    is_fullscreen: number;
     file_size: number;
-	thumbnail: string;
+    file_type: string;
+    file_url: string;
+    handler_id: string;
+    host_id: string;
+	index: number;
 	is_active: number;
 	is_converted: number;
-    uuid: string;
+    is_fullscreen: number;
+	owner_name: string;
+	owner_type: string;
+    playlist_content_id?: string;
+	playlist_content_schedule?: PlaylistContentSchedule;
+    seq?: number;
+	thumbnail: string
+	time_uploaded: string;
     title: string;
     uploaded_by: string;
-	playlist_content_schedule: PlaylistContentSchedule;
-    seq?: number;
+    uuid: string;
 
     constructor(
         playlist_content_id: string, created_by: string, content_id: string, created_by_name: string, dealer_id: string, 

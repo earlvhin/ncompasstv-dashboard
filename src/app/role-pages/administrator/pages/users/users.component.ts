@@ -1,13 +1,11 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common'
 import { MatDialog } from '@angular/material';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { HelperService } from 'src/app/global/services/helper-service/helper.service';
-import { UserService } from '../../../../global/services/user-service/user.service';
-import { UI_TABLE_USERS } from '../../../../global/models/ui_table-users.model';
-import { USER } from 'src/app/global/models/api_user.model';
+import { HelperService, RoleService, UserService } from 'src/app/global/services';
+import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -19,15 +17,17 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 
 export class UsersComponent implements OnInit, OnDestroy {
 
+	current_filters: API_FILTERS = { page: 1 };
+	current_role_selected: string;
 	filtered_data = [];
 	initial_load = true;
 	no_user: boolean = false;
 	paging_data: any;
+	roles: USER_ROLE[] = [];
 	searching = false;
-	search_data = '';
 	title: string = 'Users';
 	users: UI_TABLE_USERS[] = [];
-	user_details: any;
+	user_details: UI_USER_STATS;
 
 	users_table_columns = [
 		{ name: '#', },
@@ -47,12 +47,14 @@ export class UsersComponent implements OnInit, OnDestroy {
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _helper: HelperService,
+		private _role: RoleService,
 		private _user: UserService,
 	) { }
 
 	ngOnInit() {
 		this.getUserTotal();
 		this.getAllusers();
+		this.getAllUserRoles();
 		this.subscribeToToggleEmailNotification();
 		this.subscribeToPageRefresh();
 	}
@@ -63,27 +65,39 @@ export class UsersComponent implements OnInit, OnDestroy {
 	}
 
 	getAllusers() {
-		this.pageRequested(1);
+		this.pageRequested();
 	}
 
 	filterData(event: string): void {
 		let keyword = '';
 		if (event) keyword = event;
-		this.search_data = keyword;
-		this.pageRequested(1);
+		this.current_filters.search = keyword;
+		this.pageRequested();
 	}
 
-	pageRequested(page: number): void {
+	onClearSelectedRole() {
+		delete this.current_filters.roleId;
+		this.pageRequested();
+	}
+	
+	onFilterByRole(data: USER_ROLE) {
+		this.current_filters.roleId = data.roleId;
+		this.current_role_selected = data.roleName;
+		this.pageRequested();
+	}
+
+	pageRequested(page: number = 1): void {
+		this.current_filters.page = page;
 		this.searching = true;
 		this.users = [];
 
-		this._user.get_users_by_page(page, this.search_data).pipe(takeUntil(this._unsubscribe))
+		this._user.get_users_by_filters(this.current_filters).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
 
 					if (!response.users) {
 						this.filtered_data = [];
-						if (this.search_data == '') this.no_user = true;
+						if (this.current_filters.search === '') this.no_user = true;
 						return;
 					}
 
@@ -104,6 +118,46 @@ export class UsersComponent implements OnInit, OnDestroy {
 			);
 
 	}
+
+	private confirmEmailNotificationToggle(userId: string, value: boolean, tableDataIndex: number, currentEmail: string): void {
+
+		let type = 'Enable';
+		if (!value) type = 'Disable';
+		const status = 'warning';
+		const message = `${type} email notifications`;
+		const data = `Proceed update for ${currentEmail}?`;
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});	
+
+		dialog.afterClosed()
+			.subscribe(
+				(response: boolean) => {
+
+					if (!response) {
+						this._helper.onResultToggleEmailNotification.emit({ updated: false, tableDataIndex });
+						return;
+					}
+
+					this.updateEmailNotification(userId, value);
+				}
+			);
+	}
+
+	private getAllUserRoles() {
+		this._role.get_roles()
+			.pipe(
+				takeUntil(this._unsubscribe),
+				map(roles => roles.filter(role => role.roleName.toLowerCase() !== 'admin'))
+			)
+			.subscribe(
+				response => this.roles = response,
+				error => console.log('Error retrieving user roles', error)
+			);
+	}
 	
 	private getUserTotal(): void {
 
@@ -113,8 +167,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 					this.user_details = {
 						basis: response.totalUsers,
 						basis_label: 'User(s)',
-						total_administrator: response.totalSuperAdmin,
-						total_administrator_label: 'Admin(s)',
+						super_admin_count: response.totalSuperAdmin,
+						super_admin_label: 'Super Admin(s)',
 						total_dealer: response.totalDealer,
 						total_dealer_label: 'Dealer(s)',
 						total_host: response.totalHost,
@@ -122,7 +176,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 						total_advertiser: response.totalAdvertisers,
 						total_advertiser_label: 'Advertiser(s)',
 						total_tech: response.totalTech,
-						total_tech_label: 'Tech(s)'
+						total_tech_label: 'Tech(s)',
+						admin_count: response.totalAdmin,
+						admin_label: 'Admin(s)',
+						sub_dealer_count: response.totalSubDealer,
+						sub_dealer_label: 'Sub-dealer (s)'
 					}
 				},
 				error => console.log('Error retrieving user total', error)
@@ -183,34 +241,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 	}
 
-	private confirmEmailNotificationToggle(userId: string, value: boolean, tableDataIndex: number, currentEmail: string): void {
-
-		let type = 'Enable';
-		if (!value) type = 'Disable';
-		const status = 'warning';
-		const message = `${type} email notifications`;
-		const data = `Proceed update for ${currentEmail}?`;
-
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data }
-		});	
-
-		dialog.afterClosed()
-			.subscribe(
-				(response: boolean) => {
-
-					if (!response) {
-						this._helper.onResultToggleEmailNotification.emit({ updated: false, tableDataIndex });
-						return;
-					}
-
-					this.updateEmailNotification(userId, value);
-				}
-			);
-	}
-
 	private updateEmailNotification(userId: string, value: boolean): void {
 		this._user.update_email_notifications(userId, value)
 			.pipe(takeUntil(this._unsubscribe))
@@ -220,5 +250,4 @@ export class UsersComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	
 }

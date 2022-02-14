@@ -33,7 +33,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 		{ name: 'Tags', key: 'tagsToString' },
 		{ name: 'Player Count', key: 'playerCount', no_show: true },
 		{ name: 'Total', key: 'totalLicenses'},
-		{ name: 'Inactive', key: 'totalLicensesInactive'},
+		{ name: 'Unassigned', key: 'totalLicensesUnassigned'},
 		{ name: 'Online', key: 'totalLicensesOnline'},
 		{ name: 'Offline', key: 'totalLicensesOffline'},
 		{ name: 'Scheduled', key: 'totalScheduled'},

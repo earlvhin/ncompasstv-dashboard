@@ -11,12 +11,13 @@
 				(update_info)="ngOnInit()">
             </app-banner>
 
-            <div class="select-dealer-field position-absolute">
+            <div class="select-dealer-field text-white position-absolute">
                 <app-autocomplete-field
 					(data_value)="dealerSelected($event)"
 					[key_of_value]="'dealerId'"
 					[placeholder]="'N-Compass TV'"
 					[label]="'Selected Dealer'"
+                    [white_label]="true"
 					[data_reference]="dealers_data"
 					[search_keyword]="'businessName'"
 					[primary_keyword]="'businessName'"
@@ -29,156 +30,113 @@
 					[loading_search]="loading_search">
                 </app-autocomplete-field>
 
-                <span class="fas fa-search icon"></span>
+                <span class="fas fa-search icon text-white"></span>
             </div>
         </div>
         
-        <div class="stat-cards top-50 mb-4">
+        <div class="stat-cards top-120 mb-4">
             <div class="theme-container">
                 <div class="row">
-                    <div class="col-lg-4">
+                    <div class="col-lg-6">
                         <mat-card class="h-100">
-                            <app-data-card-compare  
-								*ngIf="license_card"
-								[compare_basis]="license_card.basis" 
-								[compare_basis_label]="license_card.basis_label"
-								[good_value]="license_card.good_value" 
-								[good_value_label]="license_card.good_value_label"
-								[bad_value]="license_card.bad_value" 
-								[bad_value_label]="license_card.bad_value_label"
-								[online_value]="license_card.online_value"
-								[online_value_label]="license_card.online_value_label"
-								[offline_value]="license_card.offline_value"
-								[offline_value_label]="license_card.offline_value_label">
-                            </app-data-card-compare>
+                            <app-data-card-graph 
+                                [id]="'license-statistics'"
+                                [compare_basis]="license_card.basis"
+                                [compare_basis_label]="license_card.basis_label"
+                                [compare_basis_sub_label]="license_card.basis_sub_label"
+                                [good_value]="license_card.good_value"
+                                [good_value_label]="license_card.good_value_label"
+                                [bad_value]="license_card.bad_value"
+                                [bad_value_label]="license_card.bad_value_label" 
+                                [label_array]="temp_label"
+                                [value_array]="temp_array_value"
+                                [has_breakdown]="true"
+                                [breakdown1_value]="license_card.breakdown1_value"
+                                [breakdown1_label]="license_card.breakdown1_label"
+                                [breakdown2_value]="license_card.breakdown2_value"
+                                [breakdown2_label]="license_card.breakdown2_label"
+                                [breakdown3_value]="license_card.breakdown3_value"
+                                [breakdown3_label]="license_card.breakdown3_label"
+                                [breakdown4_value]="license_card.breakdown4_value"
+                                [breakdown4_label]="license_card.breakdown4_label"
+                                [breakdown4_sub_label]="license_card.breakdown4_sub_label"
+                                [breakdown5_value]="license_card.breakdown5_value"
+                                [breakdown5_label]="license_card.breakdown5_label">
+                            </app-data-card-graph>
                         </mat-card>
                     </div>
-                    <div class="col-lg-4">
-                        <mat-card class="h-100">
-                            <app-data-card-compare
-								*ngIf="host_card" 
-								[compare_basis]="host_card.basis" 
-								[compare_basis_label]="host_card.basis_label"
-								[good_value]="host_card.good_value" 
-								[good_value_label]="host_card.good_value_label" 
-								[bad_value]="host_card.bad_value"
-								[bad_value_label]="host_card.bad_value_label">
-                            </app-data-card-compare>
-                        </mat-card>
+
+                    <div class="col-lg-3">
+                        <app-data-quick-stats
+                            [total]="host_card.basis"
+                            [total_label]="host_card.basis_label"
+                            [active]="host_card.good_value"
+                            [active_label]="host_card.good_value_label"
+                            [inactive]="host_card.bad_value"
+                            [inactive_label]="host_card.bad_value_label"
+                            [icon]="'fas fa-briefcase'">
+                        </app-data-quick-stats>
                     </div>
-                    <div class="col-lg-4">
-                        <mat-card class="h-100">
-                            <app-data-card-compare 
-								*ngIf="advertiser_card" 
-								[compare_basis]="advertiser_card.basis" 
-								[compare_basis_label]="advertiser_card.basis_label"
-								[good_value]="advertiser_card.good_value" 
-								[good_value_label]="advertiser_card.good_value_label" 
-								[bad_value]="advertiser_card.bad_value"
-								[bad_value_label]="advertiser_card.bad_value_label">
-                            </app-data-card-compare>
-                        </mat-card>
+                    
+                    <div class="col-lg-3">
+                        <app-data-quick-stats
+                            [total]="advertiser_card.basis"
+                            [total_label]="advertiser_card.basis_label"
+                            [active]="advertiser_card.good_value"
+                            [active_label]="advertiser_card.good_value_label"
+                            [inactive]="advertiser_card.bad_value"
+                            [inactive_label]="advertiser_card.bad_value_label"
+                            [icon]="'fas fa-ad'">
+                        </app-data-quick-stats>
                     </div>
                 </div>
             </div>
         </div>
         
-        <div class="theme-container top-50 pb-5">
+        <div class="theme-container top-90 pb-5">
             <div class="row">
-                <div class="dealer-picker position-absolute col-lg-3 offset-9">
-                    <div class="dealer-field full-width r-15">
-                        
-                    </div>
-                </div>
                 <div class="col-lg-12 custom-mat-tab">
                     <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
 						<!-- LICENSES TAB -->
                         <mat-tab label="Licenses">
                             <div>
-                                <!-- PIE CHARTS -->
-                                <div class="theme-container">
-                                    <div class="row">
-                                        <div class="col-md-12 text-right">
-                                            <button class="theme-btn _dark no_border_radius border_radius_bottom position-relative sm-text" (click)="toggleCharts()">
-                                                <span *ngIf="!height_show; else hide">Show Charts</span>
-                                                <ng-template #hide>
-                                                    <span>Hide Charts</span>
-                                                </ng-template>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div class="row statistics" [ngClass]="!height_show ? 'height-toggle': 'mb-3'">
-                                        <div class="col-sm-3">
-                                            <mat-card id="activityContainer">
-                                                <div class="spinner-wrapper">
-                                                    <mat-spinner *ngIf="loading_statistics.activity" mode="indeterminate" [diameter]="48"></mat-spinner>
-                                                </div>
-                                                <canvas id="activityStatistics" height="250px"></canvas>
-                                            </mat-card>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <mat-card id="statusContainer">
-                                                <div class="spinner-wrapper">
-                                                    <mat-spinner *ngIf="loading_statistics.status" mode="indeterminate" [diameter]="48"></mat-spinner>
-                                                </div>
-                                                <canvas id="statusStatistics" height="250px"></canvas>
-                                            </mat-card>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <mat-card id="connectionContainer">
-                                                <div class="spinner-wrapper">
-                                                    <mat-spinner *ngIf="loading_statistics.connection" mode="indeterminate" [diameter]="48"></mat-spinner>
-                                                </div>
-                                                <canvas id="connectionStatistics" height="250px"></canvas>
-                                            </mat-card>
-                                        </div>
-                                        <div class="col-sm-3">
-                                            <mat-card id="screenContainer">
-                                                <div class="spinner-wrapper">
-                                                    <mat-spinner *ngIf="loading_statistics.screen" mode="indeterminate" [diameter]="48"></mat-spinner>
-                                                </div>
-                                                <canvas id="screenStatistics" height="250px"></canvas>
-                                            </mat-card>
-                                        </div>
-                                    </div>
-                                </div>
-                                
                                 <div *ngIf="!no_licenses; else no_data">
                                     <div *ngIf="!initial_load_license; else loader">
                                         <!-- BUTTONS ROW -->
-                                        <div class="row pt-2">
-                                            <div class="col-lg-9">
-                                                <!-- <button mat-button mat-raised-button class="theme-btn mt-2 mr-2" (click)="reloadLicense()" [disabled]="searching_license"> <i class="fas fa-sync-alt"></i></button> -->
-                                                
+                                        <div class="row mt-4">
+                                            <div class="col-lg-8">
                                                 <button mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
                                                     [matMenuTriggerFor]="licenseStatus" >
-                                                    <span class="button-label">Filter by License Status</span>
-                                                    <span class="fas fa-circle text-primary"></span>
+                                                    <span class="button-label">License Status</span>
+                                                    <span class="fas fa-circle xsm-text"></span>
                                                 </button>
                                                 <mat-menu #licenseStatus="matMenu">
-                                                    <button mat-menu-item (click)="filterTable('status', '1')">Online</button>
-                                                    <button mat-menu-item (click)="filterTable('status', '0')">Offline</button>
-                                                    <button mat-menu-item (click)="filterTable('activated', 'false')">Inactive</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+                                                        <span class="fas fa-circle xsm-text text-primary mr-3"></span>Online</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '0')">
+                                                        <span class="fas fa-circle xsm-text text-danger mr-3"></span>Offline</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('activated', 'false')">
+                                                        <span class="fas fa-circle xsm-text text-gray mr-3"></span>Inactive</button>
                                                 </mat-menu>
 
                                                 <button mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
                                                     [matMenuTriggerFor]="timezone">
-                                                    <span class="button-label">Filter by Timezone</span>
-                                                    <span class="fas fa-sort"></span>
+                                                    <span class="button-label">Timezone</span>
+                                                    <span class="fas fa-sort xsm-text"></span>
                                                 </button>
                                                 <mat-menu #timezone="matMenu">
-                                                    <button mat-menu-item (click)="filterTable('zone','Central')">Central</button>
-                                                    <button mat-menu-item (click)="filterTable('zone','Eastern')">Eastern</button>
-                                                    <button mat-menu-item (click)="filterTable('zone','Mountain')">Mountain</button>
-                                                    <button mat-menu-item (click)="filterTable('zone','Pacific')">Pacific</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Central')">Central</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Eastern')">Eastern</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Mountain')">Mountain</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('zone','Pacific')">Pacific</button>
                                                 </mat-menu>
 
                                                 <button mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
-                                                    <span class="button-label">Filter by User</span>
-                                                    <span class="fas fa-user"></span>
+                                                    <span class="button-label">User</span>
+                                                    <span class="fas fa-user xsm-text"></span>
                                                 </button>
 
                                                 <button mat-button mat-raised-button 
@@ -198,14 +156,14 @@
                                                     <span class="ml-2 button_text_animation">Order by License Status</span>
                                                 </button>
                                                 <mat-menu #orderSort="matMenu">
-                                                    <button mat-menu-item (click)="sortList('desc')">Online</button>
-                                                    <button mat-menu-item (click)="sortList('asc')">Offline</button>
+                                                    <button mat-menu-item (click)="sortList('desc')"><span class="fas fa-circle text-primary xsm-text mr-3"></span>Online</button>
+                                                    <button mat-menu-item (click)="sortList('asc')"><span class="fas fa-circle xsm-text text-danger mr-3"></span>Offline</button>
                                                 </mat-menu>
     
                                                 <ng-container *ngIf="show_admin_buttons">
                                                     <button mat-button mat-raised-button 
                                                     *ngIf="!remote_update_disabled; else disabled_remote_update" 
-                                                    class="theme-btn pi-control sm-text _primary mr-2" 
+                                                    class="theme-btn pi-control sm-text bg-dark-light mr-2" 
                                                     [disabled]="remote_update_disabled || !licenses" 
                                                     (click)="updateAndRestart()"  
                                                     title="Update System">
@@ -299,11 +257,11 @@
                                                     </button>
                                                 </ng-container>
                                             </div>
-                                            <div class="col-lg-3">
+                                            <div class="col-lg-4">
                                                 
                                                 <app-search-field
                                                     *ngIf="!initial_load_license"
-                                                    [form_title]="'Search License Alias, Host Name, Anydesk, or #Tag'"
+                                                    [form_title]="'Search License Alias, Host Name, Anydesk or #Tag'"
                                                     [placeholder]="'Example: License #100'"
                                                     [data_reference]="license_data"
                                                     [primary_keyword]="'alias'"

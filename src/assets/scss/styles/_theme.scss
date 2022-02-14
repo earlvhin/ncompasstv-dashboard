@@ -12,7 +12,11 @@
 }
 
 .bg-dark {
-    background-color: $dark;
+    background-color: $dark !important;
+}
+
+.bg-dark-light {
+    background-color: #7a8590 !important;
 }
 
 .bg-primary {
@@ -348,6 +352,10 @@
 
 .hidden-button {
     border: none;
+}
+
+.info-text {
+    color: rgb(32, 131, 189);
 }
 
 .dropdown-menu {

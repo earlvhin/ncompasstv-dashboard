@@ -1,5 +1,5 @@
 <mat-form-field class="full-width custom-autocomplete p-relative" [appearance]="isLocator ? 'fill':'standard'">
-    <mat-label>{{ label }}</mat-label>
+    <mat-label [ngClass]="white_label ? 'text-white':''">{{ label }}</mat-label>
 
     <input id="autocomplete-field-paginated" type="text" [autocomplete]="autocompleteSetting" matInput appearance="fill" class="skip-blur"
 		*ngIf="!paging"
@@ -26,7 +26,7 @@
             </div>
         </div>
         <div *ngIf="!loading_search && !disabled" class="skip-blur">
-            <ul class="m-0 p-0 list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
+            <ul class="m-0 p-0 text-dark list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
                 <li class="cursor-pointer p-3" *ngFor="let s of search_result" 
                 (click)="dataSelected($event)" 
                 [attr.data-text]="s[primary_keyword]" 
