@@ -380,10 +380,8 @@ export class EditSingleHostComponent implements OnInit {
                         period => {
                             console.log({open: period.open, close: period.close})
                             if(period.open !='' && period.close == '') {
-                                this.warningModal('error', 'Failed to update host', 'Kindly verify that all business hours opening should have closing time.', null, null);
                                 this.form_invalid = true;
                             } else if (period.close !='' && period.open == '') {
-                                this.warningModal('error', 'Failed to update host', 'Kindly verify that all business hours opening should have closing time.', null, null);
                                 this.form_invalid = true;
                             } else {
                                 this.form_invalid = false;
@@ -393,7 +391,9 @@ export class EditSingleHostComponent implements OnInit {
                 }
             }
         )
-        if(!this.form_invalid) {
+        if(this.form_invalid) {
+            this.warningModal('error', 'Failed to update host', 'Kindly verify that all business hours opening should have closing time.', null, null);
+        } else {
             const newHostPlace = new API_UPDATE_HOST(
                 this._host_data,
                 this.f.dealerId.value,
@@ -432,6 +432,7 @@ export class EditSingleHostComponent implements OnInit {
                 )
             );
         }
+            
 	}
 
 	confirmationModal(status: string, message: string, data: any, id: string) {
