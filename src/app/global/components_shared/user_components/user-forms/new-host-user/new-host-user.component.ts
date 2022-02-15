@@ -1,14 +1,12 @@
 import { Component, OnInit, EventEmitter, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs';
-import { UI_ROLE_DEFINITION } from '../../../../models/ui_role-definition.model';
-import { AuthService } from '../../../../services/auth-service/auth.service';
-import { HostService } from '../../../../services/host-service/host.service';
-import { API_HOST } from '../../../../models/api_host.model';
-import { UserService } from '../../../../services/user-service/user.service';
-import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+
+import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
+import { AuthService, HostService, UserService } from 'src/app/global/services';
+import { API_HOST, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-new-host-user',

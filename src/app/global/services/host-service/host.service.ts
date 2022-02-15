@@ -113,12 +113,10 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 	
-	get_host_by_page(page: number, search: string, sortColumn?, sortOrder?, pageSize = 15): Observable<{ host?: API_HOST[], paging?: PAGING, message?: string }> {
-		console.log("PS", pageSize)
+	get_host_by_page(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15): Observable<{ host?: API_HOST[], paging?: PAGING, message?: string }> {
         const base = `${this.getters.api_get_hosts}`;
 		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
-        // const url = `${base}?page=${page}&search=${search}&sortColumn=${sortColumn}&sortOrder=${sortOrder}&pageSize=${pageSize}`;
 		return this.getRequest(url);
 	}
 
