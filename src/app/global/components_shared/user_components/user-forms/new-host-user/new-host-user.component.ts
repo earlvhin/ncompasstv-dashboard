@@ -55,7 +55,7 @@ export class NewHostUserComponent implements OnInit {
 
 	ngOnInit() {
 
-		this.back_btn = `${this.currentRole}/users/create-user`;
+		this.back_btn = `/${this.currentRole}/users/create-user`;
 
 		this.new_host_form = this._form.group(
 			{
