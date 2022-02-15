@@ -1,26 +1,20 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { Subscription, Observable } from 'rxjs';
-import { MatDialog, MatDialogConfig } from '@angular/material';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { DealerService } from '../../services/dealer-service/dealer.service';
-import { HostService } from '../../services/host-service/host.service';
-import { CategoryService } from '../../services/category-service/category.service';
-import { UI_TABLE_DEALERS } from '../../models/ui_table_dealers.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
-import { API_DEALER } from '../../models/api_dealer.model';
-import { MapService } from '../../services/map-service/map.service';
-import { API_GOOGLE_MAP, GOOGLE_MAP_SEARCH_RESULT } from '../../models/api_google-map.model';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation-hours.model';
-import { API_CREATE_HOST } from '../../models/api_create-host.model';
-import * as uuid from 'uuid';
-import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
-import { RoleService } from '../../../global/services/role-service/role.service';
 import { TitleCasePipe } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { MatDialog, MatDialogConfig } from '@angular/material';
+import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import * as uuid from 'uuid';
+
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { ImageSelectionModalComponent } from '../../components_shared/page_components/image-selection-modal/image-selection-modal.component';
+
+import { API_CREATE_HOST, API_GOOGLE_MAP, API_PARENTCATEGORY, GOOGLE_MAP_SEARCH_RESULT, UI_OPERATION_HOURS, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, 
+	UI_TABLE_DEALERS } from 'src/app/global/models';
+
+import { AuthService, CategoryService, MapService, HostService, RoleService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
 	selector: 'app-create-host',
