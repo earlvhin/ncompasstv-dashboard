@@ -1,16 +1,15 @@
 import { Component, OnInit, Inject, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { MatSlideToggleChange, MAT_DIALOG_DATA } from '@angular/material'
 import { MatDialog } from '@angular/material/dialog';
-import { VIDEO_FILETYPE, IMAGE_FILETYPE } from '../../../models/ui_filetype';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { MediaModalComponent } from '../../../components_shared/media_components/media-modal/media-modal.component';
+import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
 import { environment as env } from 'src/environments/environment';
-import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
@@ -23,11 +22,11 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	@Input() is_view_only = false;
 	@Input() page = 'media-library';
 
-	// file_data: any;
 	file_data: { content_array: UI_CONTENT[], index: number, selected: UI_CONTENT, is_advertiser?: boolean, zoneContent?: boolean };
     file_size_formatted: any;
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`;
 	has_updated_content = false;
+	is_admin = this._isAdmin;
 	is_advertiser = false;
     is_edit = false;
 	is_dealer = false;
@@ -49,7 +48,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-		if (roleId === dealerRole || roleId === subDealerRole) this.is_dealer = true
+		if (roleId === dealerRole || roleId === subDealerRole) this.is_dealer = true;
 		this.file_data = this._dialog_data;
 		this.configureContents();
 	}
@@ -100,6 +99,18 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			);
 	}
 
+	onToggleContentLock(event: { stopPropagation() }): void {
+
+		// const isLocked = this.file_data.selected.is_locked;
+		// const message = 'Lock Content' ? isLocked : 'Unlock Content';
+		// const status = 'lock' ? isLocked : 'unlock';
+		// const data = `Are you sure you want to ${status} the content?`;
+
+		const message = 'Lock Content';
+		const data = 'Are you sure you want to lock the content?'; 
+		this.openWarningModal('warning', message, data);
+		event.stopPropagation();
+	}
 
 	reassignMedia(e) {
 		var temp = [];
@@ -245,8 +256,8 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 
 	}
 
-	private openWarningModal(status: string, message: string, data: string, return_msg: string, action: string) {
-		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+	private openWarningModal(status: string, message: string, data: string, return_msg: string = '', action: string = '') {
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: {
@@ -256,14 +267,20 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 				return_msg: return_msg,
 				action: action
 			}
-		})
+		});
 
-		dialogRef.afterClosed().subscribe(result => {
+		dialogRef.afterClosed().subscribe((response: boolean | string) => {
 
-			if (result == 'delete') {
+			if (typeof response === 'boolean' && !response) return;
 
+			if (typeof response === 'boolean' && response) {
+				// INSERT API HERE FOR LOCK CONTENT
+				return;
+			}
+
+			if (typeof response === 'string' && response === 'delete') {
 				const filter = [{ 'contentid': this.file_data.selected.content_id }];
-
+	
 				this._content.remove_content(filter).subscribe(
 					() => this._dialog.closeAll(),
 					error => console.log('Error removing content', error)
@@ -275,6 +292,10 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 
 	private renameWebmThumb(filename: string, source: string) {
 		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`;
+	}
+
+	protected get _isAdmin() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
 	}
 
 }

@@ -3,6 +3,9 @@
         <h3>Media Details</h3>
     </div>
     <div class="col-lg-3 text-right p-0">
+        <button class="navi" data-toggle="tooltip" title="Lock Content" *ngIf="is_admin" (click)="onToggleContentLock($event)">
+            <i class="fa fa-unlock"></i>
+        </button>
         <button class="navi" data-toggle="tooltip" title="Settings" *ngIf="!file_data.zoneContent && !is_dealer && !file_data.is_advertiser" (click)="reassignMedia($event)">
             <i class="fa fa-cog"></i>
         </button>
