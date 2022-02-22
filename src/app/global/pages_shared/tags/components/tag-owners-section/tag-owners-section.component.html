@@ -1,7 +1,7 @@
 <!-- DROPDOWN AND SEARCH BOX ROW -->
 <div class="dropdown-and-search-section d-flex justify-content-between">
 
-	<div class="action-buttons-container">
+	<div class="action-buttons-container d-inline-flex">
 		<!-- ADD TAGS -->
 		<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
 			<span class="fas fa-tags"></span> <span class="ml-2 button_text_animation">Add Tags</span>
@@ -12,6 +12,7 @@
 			<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation" >Assign Tags</span>
 		</button>
 
+		<!-- SELECTED TAG INDICATOR -->
 		<ng-container *ngIf="hasTagSelected">
 			<div class="pill selected-tag">
 				<div class="d-flex align-items-center">
@@ -20,6 +21,17 @@
 				</div>
 			</div>
 		</ng-container>
+
+		<!-- FILTER TAG BY OWNER TYPE -->
+		<button mat-button mat-raised-button [matMenuTriggerFor]="tagOwnerTypeMenu" mat-raised-button class="theme-btn">
+			<span class="button-label">Owner Types</span>
+			<span class="fas fa-angle-down ml-2"></span>
+		</button>
+		<mat-menu #tagOwnerTypeMenu="matMenu">
+			<button mat-menu-item *ngFor="let owner of ownerTypes" (click)="onFilterByOwnerType(owner)">
+				<span class="md-text">{{ owner.name | titlecase }}</span>
+			</button>
+		</mat-menu>
 
 		<!-- EXPORT TAGS -->
 		<!-- <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _primary" title="Export">

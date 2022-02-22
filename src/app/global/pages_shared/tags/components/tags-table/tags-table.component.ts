@@ -142,45 +142,12 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	}
 
 	private get ownerIconsList() {
-		return { 
-			// dealer: 'work',
-			// license: 'topic',
-			// host: 'business',
-			// advertiser: 'assignment_ind' 
+		return {
 			dealer: 'D',
 			license: 'L',
 			host: 'H',
 			advertiser: 'A' 
 		};
-	}
-
-	private getOwnerId(owner: any): string {
-
-		let result = null;
-		const type = this.currentTagType.name.toLowerCase();
-
-		switch (type) {
-			case 'host':
-			case 'hosts':
-				result = owner.hostId;
-				break;
-
-			case 'license':
-			case 'licenses':
-				result = owner.licenseId;
-				break;
-			
-			case 'advertiser':
-			case 'advertisers':
-				result = owner.id;
-				break;
-
-			default:
-				result = owner.dealerId;
-		}
-
-		return result;
-
 	}
 
 	private openConfirmAPIRequestDialog(type: string, data = {}) {

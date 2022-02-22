@@ -26,6 +26,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	hasTagSelected = false;
 	isLoading = false;
 	owners: TAG_OWNER[] = [];
+	ownerTypes = this._tagOwnerTypes;
 	pagingData: PAGING;
 	searchFormControl = new FormControl(null, Validators.minLength(3));
 	selectedTag: TAG;
@@ -61,6 +62,10 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	onClearSelectedTag(): void {
 		this.clearSelectedTag();
 		this.searchOwnerTags();
+	}
+
+	onFilterByOwnerType(data: { id: number, name: string }): void {
+
 	}
 
 	openDialog(name: string): void {
@@ -178,6 +183,15 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 				this.hasTagSelected = true;
 			});
 
+	}
+
+	protected get _tagOwnerTypes() {
+		return [
+			{ id: 1, name: 'dealer' },
+			{ id: 2, name: 'license' },
+			{ id: 3, name: 'host' },
+			{ id: 4, name: 'advertiser' },
+		];
 	}
 	
 }
