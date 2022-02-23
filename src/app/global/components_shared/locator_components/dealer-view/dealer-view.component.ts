@@ -84,6 +84,12 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.online_licenses = 0;
 		this.offline_licenses = 0;
 		this.subscribeToDealerSearch();
+
+        this.form.valueChanges.subscribe(() => {
+            if (!this.form.invalid && !this.isFiltered) {
+                this.onSubmit()
+            }
+        })
 	}
 
 	ngOnDestroy() {

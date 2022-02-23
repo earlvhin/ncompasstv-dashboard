@@ -52,6 +52,7 @@
   left: 10px;
   z-index: 99;
   width: 400px;
+  padding-bottom: 10px;
 }
 
 .search-button {
@@ -64,12 +65,11 @@
   align-items: center;
 }
 
-.search-input {
-  width: 330px;
-}
-
 .search-bar {
   background-color: white;
+  form {
+      margin-bottom: 10px;
+  }
 }
 
 .panelBorder {
@@ -103,10 +103,6 @@
   }
 
   .dealers-row {
-    h4 {
-      margin-right: 20px;
-    }
-
     .selected-dealers-container {
       .dealer {
         margin-right: 5px;

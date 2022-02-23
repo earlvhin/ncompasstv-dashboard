@@ -5,17 +5,21 @@
                 <button id="filter-by-license-status-btn" mat-button mat-raised-button
                     class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="licenseStatus"
                     [disabled]="search_keyword">
-                    <span class="button-label">Filter by License Status</span>
-                    <span class="fas fa-circle text-primary"></span>
+                    <span class="button-label">License Status</span>
+                    <span class="fas fa-circle text-gray"></span>
                 </button>
                 <mat-menu #licenseStatus="matMenu">
-                    <button mat-menu-item (click)="filterDealerHosts(1)">Online</button>
-                    <button mat-menu-item (click)="filterDealerHosts(0)">Offline</button>
+                    <button mat-menu-item (click)="filterDealerHosts(1)"><span class="fas fa-circle text-primary mr-2 xsm-text"></span>Online</button>
+                    <button mat-menu-item (click)="filterDealerHosts(0)"><span class="fas fa-circle text-danger mr-2 xsm-text"></span>Offline</button>
                 </mat-menu>
-                <button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2"
-                    (click)="exportToCSV()" [disabled]="!selected_dealer_hosts" title="Export to CSV">
-                    <span class="fas fa-file-csv"></span>
-                </button>
+                <button mat-button mat-raised-button
+                        class="theme-btn pi-control sm-text _primary mr-2" 
+                        (click)="exportToCSV()"
+                        [disabled]="!selected_dealer_hosts"  
+                        title="Export to CSV">
+                        <span class="fas fa-file-excel"></span> 
+                        <span class="ml-2 button_text_animation">Export</span>
+                    </button>
             </div>
             <div class="col-lg-8">
                 <div class="float-container d-flex">
@@ -127,10 +131,10 @@
                     </div>
                     <div id="over_map">
                         <ng-container *ngIf="!loading_licenses; else loader">
-                            <div class="search-bar pl-3 pt-2">
+                            <div id="licenseSearch" class="search-bar pr-3 pl-3 pt-2">
                                 <label class="mb-2">Enter a License Alias or Key</label>
-                                <div class="d-flex">
-                                    <div class="search-input">
+                                <div class="">
+                                    <div class="search-input full-width">
                                         <app-autocomplete-field [data_reference]="dealer_licenses_data"
                                             [primary_keyword]="'licenseAlias'" [key_of_value]="'licenseId'"
                                             (data_value)="onSelectLicense($event)" [required]="true"
@@ -140,7 +144,7 @@
                                             [isLocator]="true">
                                         </app-autocomplete-field>
                                     </div>
-                                    <span class="fas fa-search search-button"></span>
+                                    <!-- <span class="fas fa-search search-button"></span> -->
                                 </div>
                             </div>
                             <div class="search-result" *ngIf="selected_dealer_hosts">
@@ -149,10 +153,13 @@
                                             class="text-danger">{{selected_dealer_hosts.length}}</span> Host/s and <span
                                             class="text-danger">{{selected_licenses.length}}</span> License/s
                                         <br />
-                                        <span class="text-primary fas fa-circle mr-1 ml-4"></span> <span
+                                        <span class="pl-2 pr-2 right-border">
+                                            <span class="text-primary fas fa-circle mr-1 ml-4 xsm-text"></span> <span
                                             class="text-primary">{{online_licenses}}</span>
-                                        Online |
-                                        <span class="text-danger fas fa-circle mr-1"></span> <span
+                                                Online
+                                        </span>
+                                        
+                                        <span class="pl-2 text-danger fas fa-circle mr-1 xsm-text"></span> <span
                                             class="text-danger">{{offline_licenses}}</span>
                                         Offline
                                     </span>
