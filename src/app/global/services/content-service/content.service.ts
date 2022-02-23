@@ -29,6 +29,10 @@ export class ContentService {
 		private _auth: AuthService
 	) { }
 
+	create_content_schedule(data: PlaylistContentSchedule[]): Observable<any> {
+		return this._http.post<any>(`${environment.base_uri}${environment.create.content_schedule}`, data, this.httpOptions);
+	}
+
     get_all_contents() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=0`, this.httpOptions);
 	}
@@ -140,8 +144,9 @@ export class ContentService {
 		?contentId=${data.contentId}&startDate=${data.start}&endDate=${data.end}`, this.httpOptions);
 	}
 
-	create_content_schedule(data: PlaylistContentSchedule[]): Observable<any> {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.content_schedule}`, data, this.httpOptions);
+	update_content_protection(body: { contentId: string, isProtected: 0 | 1 }) {
+		const url = `${environment.base_uri}${environment.update.content_protection}`;
+		return this._http.post(url, body);
 	}
 
 	update_content_schedule(data: PlaylistContentSchedule): Observable<any> {

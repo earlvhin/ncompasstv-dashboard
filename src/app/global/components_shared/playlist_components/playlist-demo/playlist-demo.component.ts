@@ -200,6 +200,7 @@ export class PlaylistDemoComponent implements OnInit {
 						p.thumbnail,
 						p.isActive,
 						p.isConverted,
+						p.isProtected,
 						p.uuid
 					)
 				}

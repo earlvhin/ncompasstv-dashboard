@@ -637,6 +637,7 @@
 										[content_id]="a.content_id"
 										[filetype]="a.file_type"
 										[is_converted]="a.is_converted"
+										[is_protected]="a.is_protected"
 										[uuid]="a.uuid"
 										[zone_content]="true"
 										[is_fullscreen]="a.is_fullscreen"
@@ -818,16 +819,20 @@
 
 								<form *ngIf="license_data && license_settings_form" [formGroup]="license_settings_form" (ngSubmit)="saveLicenseSettings()">
 									<div class="row">
-										<div *ngFor="let f of license_settings_form_fields" class="col-lg-6">
+										<div *ngFor="let control of license_settings_form_fields" class="col-lg-6">
+											
 											<mat-form-field class="full-width">
-												<mat-label>Player Boot Delay</mat-label>
-												<input 
-												formControlName="{{ f.form_control_name }}"
-												matInput 
-												appearance="fill" 
-												placeholder="Enter number of seconds, ex: 20" 
-												[type]="f.type">
+												<mat-label>{{ control.label }}</mat-label>
+
+												<!-- <ng-container *ngIf="control.type === 'date'; else defaultField;">
+													<ngb-timepicker [formControlName]="control.form_control_name" [meridian]="true"></ngb-timepicker>
+												</ng-container> -->
+												<input matInput appearance="fill" placeholder="Enter number of seconds, ex: 20" 
+													[formControlName]="control.form_control_name" 
+													[type]="f.type">
+
 											</mat-form-field>
+
 										</div>
 									</div>
 

@@ -79,15 +79,9 @@ export class PlaylistHostComponent implements OnInit {
 	}
 
 	hasActiveLicenses() {
-
-		console.log('blocklist', this.incoming_blocklist);
-		console.log('host licenses', this.host_licenses);
-
 		return this.host_licenses.licenses.some(i => {
-			if (!this.incoming_blocklist.includes(i.licenseId)) {
-				return true
-			} 
-		})
+			if (!this.incoming_blocklist.includes(i.licenseId)) return true;
+		});
 	}
 
 	blocklistStatus(e) {

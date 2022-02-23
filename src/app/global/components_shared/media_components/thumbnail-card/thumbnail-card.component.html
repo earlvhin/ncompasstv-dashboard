@@ -7,9 +7,11 @@
 			<i class="fas fa-user-circle mr-1" [ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'" [title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"></i>
 			<i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
 		</div>
-		<div class="type-icon trash-icon sm-text" *ngIf="!zone_content && !multiple_delete && !is_view_only">
+
+		<div class="type-icon trash-icon sm-text" *ngIf="!zone_content && !multiple_delete && !is_view_only && ((is_protected === 0 && is_dealer) || is_admin)">
 			<i class="fas fa-times text-danger" (click)="deleteMedia($event)" title="Delete Content"></i>
 		</div>
+
 		<div class="type-icon select-icon text-right sm-text" *ngIf="!zone_content && multiple_delete">
 			<mat-checkbox
 			(change)="deleteContentArray($event, content_id)" [checked]="is_checked" (click)="$event.stopPropagation()">

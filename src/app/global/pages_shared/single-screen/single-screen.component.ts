@@ -648,6 +648,7 @@ export class SingleScreenComponent implements OnInit {
 						c.thumbnail,
 						c.isActive,
 						c.isConverted,
+						c.isProtected,
 						c.uuid
 					)
 				}

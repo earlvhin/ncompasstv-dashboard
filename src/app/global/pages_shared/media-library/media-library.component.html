@@ -54,7 +54,8 @@
 		<app-media
 			(send_stats)="displayStats($event)"
 			[reload]="eventsSubject.asObservable()"
-			[is_view_only]="is_view_only">
+			[is_view_only]="is_view_only"
+			[is_dealer]="is_dealer">
 		</app-media>
 	</div>
 

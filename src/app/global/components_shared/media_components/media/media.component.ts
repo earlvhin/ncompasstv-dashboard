@@ -18,17 +18,20 @@ import { FeedService } from 'src/app/global/services';
 })
 
 export class MediaComponent implements OnInit, OnDestroy {
+	@Output() empty = new EventEmitter;
+	@Output() send_stats = new EventEmitter;
+
+	@Input() is_dealer = false;
+	@Input() is_view_only = false;
 	@Input() reload: Observable<void>;
 	@Input() sm_view: boolean;
 	@Input() show_filler_search: boolean;
-	@Input() is_view_only = false;
-	@Output() empty = new EventEmitter;
-	@Output() send_stats = new EventEmitter;
 
 	can_reassign = false;
 	empty_search = false;
 	fillers: Observable<{feedId: string, feedTitle: string}[]>;
 	filtered_content_data: UI_CONTENT[];
+	// is_dealer = false;
 	is_bulk_select = false;
 	is_zone_content = false;
 	no_content: boolean;
@@ -50,7 +53,6 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	private content_data: UI_CONTENT[];
 	private eventsSubscription: Subscription;
-	private is_dealer = false;
 	private key = '';
 	private no_refresh = false;
 	private role_id: string;
@@ -67,11 +69,6 @@ export class MediaComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-		this.role_id = this._auth.current_user_value.role_id;
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-		if (this.role_id === dealerRole || this.role_id === subDealerRole) this.is_dealer = true;
 
 		this.reload.subscribe(
 			() =>  {
@@ -293,8 +290,13 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed()
 			.subscribe(
-				(response: false | UI_CONTENT) => {
-					if (!response) return;
+				(response: boolean | UI_CONTENT) => {
+
+					if (typeof response === 'boolean') {
+						if (!response) return;
+						return this.getPage(1);
+					}
+
 					const data = response as UI_CONTENT;
 					const index = this.content_data.findIndex(content => content.content_id === data.content_id);
 					this.content_data[index] = data;
@@ -440,6 +442,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 					fileThumbnailUrl,
 					m.isActive,
 					m.isConverted,
+					m.isProtected,
 					m.uuid,
 					m.title,
 					'',

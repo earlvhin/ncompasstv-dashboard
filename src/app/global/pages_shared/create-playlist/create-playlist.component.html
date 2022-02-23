@@ -121,17 +121,18 @@
 											cdkDrag [cdkDragDisabled]="(a.content_data.is_converted == 1 && a.content_data.file_type == 'webm') || a.content_data.file_type != 'webm' ? false : true">
 												<div class="mx-1">
 													<app-thumbnail-card
-                                                    [classification]="a.content_data.classification"
-                                                    [filename]="a.content_data.title"
-                                                    [file_url]="a.content_data.file_url"
-													[image_uri]="a.content_data.thumbnail"
-													[filetype]="a.content_data.file_type"
-													[is_converted]="a.content_data.is_converted"
-													[dealer]="a.content_data.dealer_id"
-													[uuid]="a.content_data.uuid"
-													(click)="mediaViewer_open(a, media_library, i)"
-													[content_id]="a.content_data.content_id"
-													(converted)="isDraggable($event, i)">
+														[classification]="a.content_data.classification"
+														[filename]="a.content_data.title"
+														[file_url]="a.content_data.file_url"
+														[image_uri]="a.content_data.thumbnail"
+														[filetype]="a.content_data.file_type"
+														[is_converted]="a.content_data.is_converted"
+														[is_protected]="a.content_data.is_protected"
+														[dealer]="a.content_data.dealer_id"
+														[uuid]="a.content_data.uuid"
+														(click)="mediaViewer_open(a, media_library, i)"
+														[content_id]="a.content_data.content_id"
+														(converted)="isDraggable($event, i)">
 													</app-thumbnail-card>
 												</div>
 												<!-- Drag Handle -->

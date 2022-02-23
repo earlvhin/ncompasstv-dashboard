@@ -117,18 +117,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
 
-	license_settings_form_fields = [
-		{
-			label: 'Boot Delay',
-			form_control_name: 'bootDelay',
-			type: 'number',
-			colorValue: '',
-			width: 'col-lg-6',
-			required: true,
-			value: 0,
-			viewType: null
-		},
-	]
+	license_settings_form_fields = this._licenseSettingsFormFields;
 
 	saving_license_settings: boolean = false;
 
@@ -567,6 +556,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._template.onSelectZone.emit('Background');
 	}
 
+	onSelectRebootTime(): void {
+		
+	}
+
 	onShowHours(): void {
 		this.showInformationModal('400px', 'auto', 'Business Hours', this.business_hours, 'list');
 	}
@@ -604,14 +597,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const license_boot_delay = {
 			licenseId: this.license_id,
 			bootDelay: this.license_settings_form.controls['bootDelay'].value
-		}
+		};
 
-		this._license.update_license_boot_delay(license_boot_delay).subscribe(
-			_ => {
-				alert('Boot Delay has been saved for this license');
-				this.saving_license_settings = false;
-			}
-		)
+		this._license.update_license_boot_delay(license_boot_delay).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					alert('Boot Delay has been saved for this license');
+					this.saving_license_settings = false;
+				}
+			);
 	}
 
 	setPopupBackground(): string {
@@ -643,13 +637,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let form_group_obj = {};
 
 		/** Loop through form fields object and prepare for group */
-		this.license_settings_form_fields.map(
+		this._licenseSettingsFormFields.map(
 			i => {
 				return Object.assign(form_group_obj, {
 					[i.form_control_name]: [this.license_data.bootDelay ? this.license_data.bootDelay : null, i.required ? Validators.required : null]
 				})
 			}
-		)
+		);
 
 		this.license_settings_form = this._form.group(form_group_obj);
 	}
@@ -1247,6 +1241,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					fileThumbnailUrl,
 					c.isActive,
 					c.isConverted,
+					c.isProtected,
 					c.uuid,
 					c.title,
 					c.playlistContentSchedule,
@@ -1503,13 +1498,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
-	// private setTags(data: { name: string, tagId: number, tagTypeId: number, ownerId: string }[]): Tag[] {
-	// 	return data.map(tag => {
-	// 		const { name, tagColor } = tag;
-	// 		return { name, tagColor };
-	// 	});
-	// }
-
 	private showInformationModal(width: string, height: string, title: string, contents: any, type: string, character_limit?: number): void {
 		this._dialog.open(InformationModalComponent, {
 			width: width,
@@ -1695,5 +1683,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get _licenseSettingsFormFields() {
+		return [
+			{ label: 'Player Boot Delay', form_control_name: 'bootDelay', type: 'number', colorValue: '', width: 'col-lg-6', required: true, value: 0, viewType: null },
+			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'date', width: 'col-lg-6', required: true, value: 0, viewType: null },
+		];
 	}
 }

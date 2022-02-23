@@ -304,6 +304,7 @@ export class CreatePlaylistComponent implements OnInit {
 							fileThumbnailUrl,
 							c.isActive,
 							c.isConverted,
+							c.isProtected,
 							c.uuid,
 							c.title
 						),

@@ -3,6 +3,7 @@ export * from './auth-service/auth.service';
 export * from './category-service/category.service';
 export * from './content-service/content.service';
 export * from './feed-service/feed.service';
+export * from './filestack-service/filestack.service';
 export * from './form-service/form.service';
 export * from './helper-service/helper.service';
 export * from './host-service/host.service';

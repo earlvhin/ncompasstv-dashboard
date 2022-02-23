@@ -1,14 +1,13 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { environment } from '../../../../../environments/environment';
 import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
-import { UI_ROLE_DEFINITION } from '../../../../global/models';
-import { AuthService, ContentService } from '../../../../global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { Router } from '@angular/router';
+import { environment } from 'src/environments/environment';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService, ContentService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-thumbnail-card',
@@ -22,6 +21,7 @@ export class ThumbnailCardComponent implements OnInit {
 	@Input() filename: string;
 	@Input() content_id: string;
 	@Input() is_converted: number;
+	@Input() is_protected: number;
 	@Input() filetype: string;
 	@Input() file_url: string;
 	@Input() is_checked: boolean;
@@ -36,8 +36,10 @@ export class ThumbnailCardComponent implements OnInit {
 	@Output() converted: EventEmitter<boolean> = new EventEmitter();
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Output() content_to_delete = new EventEmitter;
-
+	
 	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
+	is_admin = this._isAdmin;
+	is_dealer = this._isDealer;
 	route: string;
 	
 	private return_mes: string;
@@ -132,4 +134,16 @@ export class ThumbnailCardComponent implements OnInit {
 				} 
 			);
     }
+
+	protected get _isAdmin() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
+	}
+
+	protected get _isDealer() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
+	}
+
+	protected get _isSubDealer() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
+	}
 }

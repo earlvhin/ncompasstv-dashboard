@@ -1,11 +1,10 @@
 import { Component, OnInit, Inject, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
 import { MatSlideToggleChange, MAT_DIALOG_DATA } from '@angular/material'
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { MediaModalComponent } from '../../../components_shared/media_components/media-modal/media-modal.component';
 import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
@@ -29,7 +28,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	is_admin = this._isAdmin;
 	is_advertiser = false;
     is_edit = false;
-	is_dealer = false;
+	is_dealer = this._isDealer || this._isSubDealer;
 	updated_content: UI_CONTENT;
 
 	protected _unsubscribe = new Subject<void>();
@@ -41,14 +40,11 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		private _content: ContentService,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
+		private _dialog_ref: MatDialogRef<MediaViewerComponent>,
 		private _host: HostService,
 	) { }
 
 	ngOnInit() {
-		const roleId = this._auth.current_user_value.role_id;
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-		if (roleId === dealerRole || roleId === subDealerRole) this.is_dealer = true;
 		this.file_data = this._dialog_data;
 		this.configureContents();
 	}
@@ -56,11 +52,6 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	deleteMedia(event: { stopPropagation() }) {
-		this.openWarningModal('warning', 'Delete Content', 'Are you sure you want to delete this content','','delete')
-		event.stopPropagation();
 	}
 
 	fetchNextMedia(index: number) {
@@ -86,43 +77,53 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		this._content.update_content_to_filler({ contentId, isFiller: event.checked })
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				async () => {
-					this.has_updated_content = true;
-					this.updated_content = this.mapContentsToUI([await this._content.get_content_by_id(contentId).toPromise()])[0];
-					const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(content => content.content_id === this.updated_content.content_id);
-					this._dialog_data.content_array[index] = this.updated_content;
-					this._dialog_data.selected = this.updated_content;
-					this.file_data = this._dialog_data;
-					this.configureContents();
-				},
+				async () => await this.updateContentsArray(contentId),
 				error => console.log('Error updating content to filler', error)
 			);
 	}
 
-	onToggleContentLock(event: { stopPropagation() }): void {
-
-		// const isLocked = this.file_data.selected.is_locked;
-		// const message = 'Lock Content' ? isLocked : 'Unlock Content';
-		// const status = 'lock' ? isLocked : 'unlock';
-		// const data = `Are you sure you want to ${status} the content?`;
-
-		const message = 'Lock Content';
-		const data = 'Are you sure you want to lock the content?'; 
-		this.openWarningModal('warning', message, data);
-		event.stopPropagation();
+	reassignMedia() {
+		const temp = [];
+		temp.push({ 'is_edit': true });
+		temp.push({ 'id': this.file_data.selected.content_id });
+		this.is_edit = true;
 	}
 
-	reassignMedia(e) {
-		var temp = [];
-		temp.push({'is_edit': true})
-		temp.push({'id': this.file_data.selected.content_id})
-		this.is_edit = true;
-		let dialogRef = this._dialog.open(MediaModalComponent, {
-			width: '600px',
-			panelClass: 'app-media-modal',
-			disableClose: true,
-			data: temp,  
-		})
+	async onDeleteMedia(event: { stopPropagation() }) {
+		event.stopPropagation();
+		const response: boolean | string = await this.openWarningModal('warning', 'Delete Content', 'Are you sure you want to delete this content','','delete').toPromise();
+
+		if (!response || typeof response !== 'string' || response !== 'delete') return;
+
+		const filter = [{ 'contentid': this.file_data.selected.content_id }];
+	
+		this._content.remove_content(filter).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this._dialog_ref.close(true),
+				error => console.log('Error removing content', error)
+			);
+
+	}
+
+	async onToggleContentProtection(event: { stopPropagation() }) {
+
+		// event.stopPropagation();
+		const isLocked = this.file_data.selected.is_protected;
+		const message = isLocked === 1 ? 'Unlock Content' : 'Lock Content';
+		const status = isLocked === 1 ? 'unlock' : 'lock';
+		const data = `Are you sure you want to ${status} the content?`;
+		const response: boolean | string = await this.openWarningModal('warning', message, data).toPromise();
+
+		if ((typeof response === 'boolean' && !response) || typeof response === 'string') return;
+
+		const { content_id, is_protected } = this.file_data.selected;
+
+		this._content.update_content_protection({ contentId: content_id, isProtected: is_protected ? 0 : 1 })
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				async () => await this.updateContentsArray(content_id),
+				error => console.log('Error updating content protection', error)
+			);
 	}
 
 	private configureContents() {
@@ -245,12 +246,13 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 					fileThumbnailUrl,
 					m.isActive,
 					m.isConverted,
+					m.isProtected,
 					m.uuid,
 					m.title,
 					'',
 					m.createdByName,
 					m.classification
-				)
+				);
 			}
 		);
 
@@ -269,33 +271,39 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		dialogRef.afterClosed().subscribe((response: boolean | string) => {
-
-			if (typeof response === 'boolean' && !response) return;
-
-			if (typeof response === 'boolean' && response) {
-				// INSERT API HERE FOR LOCK CONTENT
-				return;
-			}
-
-			if (typeof response === 'string' && response === 'delete') {
-				const filter = [{ 'contentid': this.file_data.selected.content_id }];
-	
-				this._content.remove_content(filter).subscribe(
-					() => this._dialog.closeAll(),
-					error => console.log('Error removing content', error)
-				);
-			}
-
-		});
+		return dialogRef.afterClosed();
 	}
 
 	private renameWebmThumb(filename: string, source: string) {
 		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`;
 	}
 
+	private async updateContentsArray(contentId: string): Promise<void> {
+
+		try {
+			this.has_updated_content = true;
+			this.updated_content = this.mapContentsToUI([await this._content.get_content_by_id(contentId).toPromise()])[0];
+			const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(content => content.content_id === this.updated_content.content_id);
+			this._dialog_data.content_array[index] = this.updated_content;
+			this._dialog_data.selected = this.updated_content;
+			this.file_data = this._dialog_data;
+			this.configureContents();
+		} catch (e) {
+			console.log('Error updating contents array', e)
+		}
+
+	}
+
 	protected get _isAdmin() {
 		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
+	}
+
+	protected get _isDealer() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
+	}
+
+	protected get _isSubDealer() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
 	}
 
 }

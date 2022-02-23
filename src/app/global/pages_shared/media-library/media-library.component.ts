@@ -1,17 +1,15 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as filestack from 'filestack-js';
+import { Subject } from 'rxjs';
 
-import { AuthService } from '../../services/auth-service/auth.service';
-import { ContentService } from 'src/app/global/services/content-service/content.service';
+import { environment } from 'src/environments/environment';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService, ContentService, FilestackService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { environment } from '../../../../environments/environment';
-import { FilestackService } from '../../services/filestack-service/filestack.service';
 import { MediaModalComponent } from '../../components_shared/media_components/media-modal/media-modal.component';
 import { RenameModalComponent } from '../../components_shared/media_components/rename-modal/rename-modal.component';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
  
 @Component({
 	selector: 'app-media-library',
@@ -48,10 +46,10 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		private _filestack: FilestackService,
-		private _dialog: MatDialog,
 		private _auth: AuthService,
 		private _content: ContentService,
+		private _dialog: MatDialog,
+		private _filestack: FilestackService,
 	) { }
 
 	ngOnInit() {
