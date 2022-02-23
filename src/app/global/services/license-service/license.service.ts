@@ -231,6 +231,11 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_license_boot_delay}`, data, this.httpOptions);
 	}
 
+	update_license_reboot_time(body: any) {
+		const url = `${this.baseUri}${environment.update.license_reboot_time}`;
+		return this._http.post(url, body);
+	}
+
 	/**
 	 *  Updates the license installation date
 	 * 	

@@ -1,9 +1,9 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
-import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatSlideToggleChange } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Subscription, Observable, Subject } from 'rxjs';
+import { Subscription, Observable, Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import Chart from 'chart.js/auto';
 import * as io from 'socket.io-client';
@@ -592,20 +592,52 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	saveLicenseSettings(): void {
+
 		this.saving_license_settings = true;
+		let requests = [];
+		const controls = this.license_settings_form.controls;
 
-		const license_boot_delay = {
-			licenseId: this.license_id,
-			bootDelay: this.license_settings_form.controls['bootDelay'].value
-		};
+		Object.keys(controls).forEach(
+			key => {
 
-		this._license.update_license_boot_delay(license_boot_delay).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					alert('Boot Delay has been saved for this license');
-					this.saving_license_settings = false;
+				const control = controls[key] as FormControl;
+
+				if (control.invalid) return;
+
+				if (key === 'bootDelay') {
+					const bootDelayBody = { licenseId: this.license_id, bootDelay: this.license_settings_form.controls['bootDelay'].value };
+					requests.push(this._license.update_license_boot_delay(bootDelayBody).pipe(takeUntil(this._unsubscribe)))
+				};
+
+				if (key === 'rebootTime') {
+					const rebootTime = control.value as { hour: number, minute: number, second: 0 };
+					const { hour, minute } = rebootTime;
+					const rebootTimeBody = { time: `${hour}:${minute}`, licenseId: this.license_id };
+					requests.push(this._license.update_license_reboot_time(rebootTimeBody).pipe(takeUntil(this._unsubscribe)));
 				}
-			);
+
+			}
+		);
+
+		if (requests.length <= 0) {
+			this.saving_license_settings = false;
+			return; 
+		}
+
+		forkJoin(requests).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				([ bootDelayResponse, rebootTimeResponse ]) => {
+
+					if (bootDelayResponse) alert('Boot delay has been saved for this license');
+
+					if (rebootTimeResponse) {
+						console.log('sucessfully updated license reboot time', rebootTimeResponse);
+					}
+
+				},
+				error => console.log('Error updating additional license settings', error)
+			)
+			.add(() => this.saving_license_settings = false);
 	}
 
 	setPopupBackground(): string {
@@ -1688,7 +1720,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	protected get _licenseSettingsFormFields() {
 		return [
 			{ label: 'Player Boot Delay', form_control_name: 'bootDelay', type: 'number', colorValue: '', width: 'col-lg-6', required: true, value: 0, viewType: null },
-			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'date', width: 'col-lg-6', required: true, value: 0, viewType: null },
+			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'time', width: 'col-lg-6', required: true, value: 0, viewType: null },
 		];
 	}
 }

@@ -818,37 +818,45 @@
 								<h4 class="mb-4">Additional Settings</h4>
 
 								<form *ngIf="license_data && license_settings_form" [formGroup]="license_settings_form" (ngSubmit)="saveLicenseSettings()">
-									<div class="row">
+									<div class="row align-items-center">
 										<div *ngFor="let control of license_settings_form_fields" class="col-lg-6">
 											
-											<mat-form-field class="full-width">
-												<mat-label>{{ control.label }}</mat-label>
 
-												<!-- <ng-container *ngIf="control.type === 'date'; else defaultField;">
-													<ngb-timepicker [formControlName]="control.form_control_name" [meridian]="true"></ngb-timepicker>
-												</ng-container> -->
-												<input matInput appearance="fill" placeholder="Enter number of seconds, ex: 20" 
-													[formControlName]="control.form_control_name" 
-													[type]="f.type">
+											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes;">
+												<mat-form-field class="full-width">
+													<mat-label>{{ control.label }}</mat-label>
+	
+													<input matInput appearance="fill" placeholder="Enter number of seconds, ex: 20" 
+														[formControlName]="control.form_control_name" [type]="f.type">
+	
+												</mat-form-field>
+											</ng-container>
 
-											</mat-form-field>
+											<ng-template #otherFieldTypes>
+
+												<ng-container *ngIf="control.type === 'time'">
+
+													<div class="d-flex align-items-center justify-content-around">
+														<span>Reboot Time:</span>
+														<ngb-timepicker 
+															[formControlName]="control.form_control_name" 
+															[meridian]="true" 
+															[size]="'small'">
+														</ngb-timepicker>
+													</div>
+
+												</ng-container>
+
+											</ng-template>
+
 
 										</div>
 									</div>
 
 
 									<div class="d-flex">
-										<button 
-										mat-button 
-										mat-raised-button 
-										class="theme-btn mr-2" 
-										[disabled]="saving_license_settings">
-											Save
-										</button>
-	
-										<app-spinner 
-										*ngIf="saving_license_settings" 
-										[diameter]="20"></app-spinner>
+										<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="saving_license_settings">Save</button>
+										<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
 									</div>
 								</form>
 							</mat-card>
