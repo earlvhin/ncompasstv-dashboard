@@ -100,17 +100,16 @@
 					<div id="over_map">
 						<ng-container *ngIf="!loading_hosts; else loader">
 							<ng-container *ngIf="currentSearchOption === 'host'">
-								<div class="search-bar pl-3 pt-2">
+								<div class="search-bar pl-3 pt-2 pr-3">
 									<label class="mb-2">Enter a Host Name</label>
 									<div class="d-flex">
-										<div class="search-input">
+										<div class="search-input full-width">
 											<app-autocomplete-field [data_reference]="hosts_data" [primary_keyword]="primaryKeyword" [key_of_value]="'hostId'"
 												(data_value)="onSelectHost($event)" [required]="true" [label]="'Host Name'" [paging]="paging"
 												(call_next_page)="searchBoxTrigger($event)" [loading_data]="loading_data" (searched)="searchData($event)"
 												[loading_search]="loading_search">
 											</app-autocomplete-field>
 										</div>
-										<span class="fas fa-search search-button"></span>
 									</div>
 								</div>
 								<ng-container *ngIf="hosts.length > 0; else no_host">
@@ -134,17 +133,17 @@
 										<!-- DEALER DETAILS -->
 										<div class="row">
 											<div class="col-lg">
-												<span class="sm-text w-100">Dealer</span>
+												<span class="sm-text w-100 font-weight-bold">Dealer</span>
 												<p>
-													<a [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
+													<a class="sm-text" [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
 														{{ host_dealer.businessName }}
 													</a>
 												</p>
 											</div>
 											<div class="col-lg">
-												<span class="sm-text w-100">Dealer Alias</span>
+												<span class="sm-text w-100 font-weight-bold">Dealer Alias</span>
 												<p>
-													<a [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
+													<a class="sm-text" [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
 														{{ host_dealer.dealerIdAlias }}
 													</a>
 												</p>
@@ -154,12 +153,12 @@
 										<!-- LICENSES -->
 										<div class="row licenses">
 											<div class="col-lg" *ngIf="host_licenses">
-												<span class="sm-text w-100">Licenses</span>
+												<span class="sm-text w-100 font-weight-bold">Licenses</span>
 												<div *ngIf="host_licenses.length > 0">
 													<div *ngFor="let license of host_licenses">
-														<span class="fas fa-circle mr-1 sm-text"
+														<span class="fas fa-circle mr-1 xsm-text"
 															[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
-														<a [routerLink]="getLink('licenses', license.licenseId)" target="_blank">
+														<a class="sm-text" [routerLink]="getLink('licenses', license.licenseId)" target="_blank">
 															{{ (license.alias && license.alias.length > 0) ? license.alias :
 															license.licenseKey
 															}}

@@ -4,17 +4,21 @@
 				<div class="col-lg-4">
 					<button id="filter-by-license-status-btn" mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45"
 						[matMenuTriggerFor]="licenseStatus" [disabled]="!selected_dealer_hosts">
-						<span class="button-label">Filter by License Status</span>
-						<span class="fas fa-circle text-primary"></span>
+						<span class="button-label">License Status</span>
+						<span class="fas fa-circle text-gray"></span>
 					</button>
 					<mat-menu #licenseStatus="matMenu">
-						<button mat-menu-item (click)="filterDealerHosts(1)">Online</button>
-						<button mat-menu-item (click)="filterDealerHosts(0)">Offline</button>
+						<button class="md-text" mat-menu-item (click)="filterDealerHosts(1)"><span class="fas fa-circle text-primary mr-2"></span> Online</button>
+						<button class="md-text" mat-menu-item (click)="filterDealerHosts(0)"><span class="fas fa-circle text-danger mr-2"></span> Offline</button>
 					</mat-menu>
-					<button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" (click)="exportToCSV()"
-						[disabled]="!selected_dealer_hosts" title="Export to CSV">
-						<span class="fas fa-file-csv"></span>
-					</button>
+                    <button mat-button mat-raised-button
+                        class="theme-btn pi-control sm-text _primary mr-2" 
+                        (click)="exportToCSV()"
+                        [disabled]="!selected_dealer_hosts"  
+                        title="Export to CSV">
+                        <span class="fas fa-file-excel"></span> 
+                        <span class="ml-2 button_text_animation">Export</span>
+                    </button>
 				</div>
 				<div class="col-lg-8">
 					<div class="float-container d-flex">
@@ -122,17 +126,19 @@
 							</div>
 							<div id="over_map">							
 								<ng-container *ngIf="!loading_hosts; else loader">
-									<div class="search-bar pl-3 pt-2">
-										<form [formGroup]="form" (ngSubmit)="onSubmit()">
+									<div class="search-bar pl-3 pt-2 pr-3">
+										<form [formGroup]="form" >
+                                            <!-- (ngSubmit)="onSubmit()" -->
 											<div class="d-flex">
-												<div class="search-input">
+												<div class="search-input full-width">
 														<mat-form-field class="full-width">
-															<mat-select #dealerMultiSelect formControlName="selectedDealers" [placeholder]="'Select Business Name(s)'" [multiple]="true">
+															<mat-select #dealerMultiSelect formControlName="selectedDealers" [placeholder]="'Select Business Name(s)'" [multiple]="true" disableOptionCentering>
 																<mat-option>
 																	<ngx-mat-select-search noEntriesFoundLabel="No results" [formControl]="dealerFilterControl"
 																		[placeholderLabel]="'Search a Business Name'" [clearSearchInput]="false" [searching]="loading_search">
 																		<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
 																	</ngx-mat-select-search>
+                                                                    
 																</mat-option>
 														
 																<mat-option *ngFor="let dealer of filteredDealers | async" [value]="dealer">
@@ -143,18 +149,21 @@
 															</mat-select>
 														</mat-form-field>
 												</div>
-												<div mat-dialog-actions>
-													<button mat-button mat-raised-button class="submit fas fa-search theme-btn _primary search-button" type="submit"
+												<!-- <div mat-dialog-actions>
+													<button mat-button mat-raised-button class="submit theme-btn _primary search-button" type="submit"
 														[disabled]="form.invalid || isFiltered"></button>
-												</div>
+												</div> -->
 											</div>
 											<div class="preview">
 												<!-- DEALERS ROW -->
-												<div class="dealers-row d-flex">
-													<h4>Business Name(s):</h4>
-												
+												<div class="dealers-row p-0 pb-3">
+													<div class="col-lg-12 p-0 pb-1">
+                                                        <h5>Business Name(s):</h5>
+                                                    </div>
+                                                    
+                                                    
 													<!-- DEALERS-LIST -->
-													<div class="selected-dealers-container d-flex flex-row align-items-start flex-wrap"
+													<div class="col-lg-12 p-0 selected-dealers-container d-flex flex-row align-items-start flex-wrap"
 														*ngIf="selectedDealersControl.value.length > 0">
 														<div *ngFor="let dealer of selectedDealersControl.value; let i = index;" class="dealer d-flex align-items-center"
 														[ngClass]="!isFiltered ? 'dealer': 'disable-dealer'">
@@ -170,18 +179,31 @@
 									</div>
 									
 									<div class="search-result" *ngIf="selected_dealer_hosts">
-										<div class="mb-2 d-flex justify-content-center bg-gray" >
-											<span class="sm-text font-weight-bold">  <span class="text-primary">{{selected_dealer.length}}</span> Dealer(s) |
-											<span
-											class="text-primary">{{selected_dealer_hosts.length}}</span> Host(s) | 
-											<span class="text-primary">{{selected_licenses.length}}</span> License(s)
-											<br/>
-											<span class="text-primary fas fa-circle mr-1 ml-4"></span> <span class="text-primary">{{online_licenses}}</span>
-											Online |
-											<span class="text-danger fas fa-circle mr-1"></span> <span class="text-danger">{{offline_licenses}}</span>
-											Offline
-											</span>
-										
+										<div class="mb-2 text-center bg-gray p-3">
+											<div class="col-lg-12 p-0 sm-text font-weight-bold"> 
+                                                <span class="pr-2 right-border">
+                                                    <span class="text-primary">{{selected_dealer.length}}</span>
+                                                    Dealer(s)
+                                                </span>
+                                                <span class="pl-2 pr-2 right-border">
+                                                    <span class="text-primary">{{selected_dealer_hosts.length}}</span>
+                                                    Host(s)
+                                                </span>
+                                                <span class="pl-2">
+                                                    <span class="text-primary">{{selected_licenses.length}}</span>
+                                                    License(s)
+                                                </span>
+                                            </div>
+                                            <div class="col-lg-12 mt-1 p-0 sm-text font-weight-bold">
+                                                <span class="pr-2 right-border">
+                                                    <span class="text-primary xsm-text fas fa-circle mr-1 ml-4"></span> <span class="text-primary">{{online_licenses}}</span>
+											        Online
+                                                </span> 
+											    <span class="pl-2">
+                                                    <span class="text-danger xsm-text fas fa-circle mr-1"></span> <span class="text-danger">{{offline_licenses}}</span>
+                                                    Offline    
+                                                </span>
+                                            </div>
 										</div>
 										<mat-accordion>
 											<div class="row">
@@ -195,7 +217,7 @@
 																		{{dealer.businessName}}
 																	</span>
 																	<br/>
-																	<span class="bg-gray "> 
+																	<span class=""> 
 																		<span class="text-primary font-weight-bold">{{dealer.hosts.length}}</span>
 																		Host(s) |
 																		<span class="text-primary font-weight-bold">  {{dealer.licenses.length}}</span>
@@ -203,12 +225,16 @@
 																	</span>
 																	<br />
 																	<span>
-																		<span class="text-primary fas fa-circle"></span>
-																		<span class="text-primary font-weight-bold"> {{dealer.onlineLicenseCount}}</span>
-																		Online |
-																		<span class="text-danger fas fa-circle"></span>
-																		<span class="text-danger font-weight-bold"> {{dealer.offlineLicenseCount}}</span>
-																		Offline
+																		<span class="text-primary xsm-text fas fa-circle"></span>
+                                                                        <span class="pr-2 right-border">
+                                                                            <span class="text-primary font-weight-bold"> {{dealer.onlineLicenseCount}}</span>
+																		    Online
+                                                                        </span>
+																		<span class="pl-2">
+                                                                            <span class="text-danger xsm-text fas fa-circle"></span>
+                                                                            <span class="text-danger font-weight-bold"> {{dealer.offlineLicenseCount}}</span>
+                                                                            Offline
+                                                                        </span>
 																	</span>
 																</p>
 																<div class="col-lg-1 p-0 pt-3 text-right" *ngIf="dealer.hosts.length > 0">

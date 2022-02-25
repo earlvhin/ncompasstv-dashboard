@@ -258,3 +258,10 @@ breadcrumb {
 .mat-menu-item {
     line-height: 40px !important;
 }
+
+#licenseSearch {
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        background: none !important;
+        padding: 0px !important;
+    }
+}
