@@ -13,7 +13,7 @@ import { ImageSelectionModalComponent } from '../../components_shared/page_compo
 import { API_CREATE_HOST, API_GOOGLE_MAP, API_PARENTCATEGORY, GOOGLE_MAP_SEARCH_RESULT, UI_OPERATION_HOURS, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, 
 	UI_TABLE_DEALERS } from 'src/app/global/models';
 
-import { AuthService, CategoryService, MapService, HostService, RoleService } from 'src/app/global/services';
+import { AuthService, CategoryService, MapService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
@@ -64,50 +64,58 @@ export class CreateHostComponent implements OnInit {
 			label: 'Host Business Name',
 			control: 'businessName',
 			placeholder: 'Ex. SM Center Pasig',
-			col: 'col-lg-6'
+			col: 'col-lg-6',
+			is_required: true,
 		},
 		{
 			label: 'Category',
 			control: 'category',
 			placeholder: 'Ex. School',
 			col: 'col-lg-6',
-			autocomplete: true
+			autocomplete: true,
+			is_required: true,
 		},	
 		{
 			label: 'Latitude',
 			control: 'lat',
 			placeholder: 'Ex. 58.933',
-			col: 'col-lg-6'
+			col: 'col-lg-6',
+			is_required: true,
 		},
 		{
 			label: 'Longitude',
 			control: 'long',
 			placeholder: 'Ex. 58.933',
-			col: 'col-lg-6'
+			col: 'col-lg-6',
+			is_required: true,
 		},
 		{
 			label: 'Address',
 			control: 'address',
 			placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-			col: 'col-lg-6'
+			col: 'col-lg-6',
+			is_required: true,
 		},
 		{
 			label: 'City',
 			control: 'city',
 			placeholder: 'Ex. Chicago',
-			col: 'col-lg-6'
+			col: 'col-lg-6',
+			is_required: true,
 		},
 		{
 			label: 'State',
 			control: 'state',
 			placeholder: 'Ex. IL',
-			col: 'col-lg-4'
+			col: 'col-lg-4',
+			is_required: true,
 		},
 		{
 			label: 'Zip Code',
 			control: 'zip',
 			placeholder: 'Ex. 54001',
-			col: 'col-lg-4'
+			col: 'col-lg-4',
+			is_required: true,
 		},
 		{
 			label: 'Timezone',
@@ -115,6 +123,7 @@ export class CreateHostComponent implements OnInit {
 			placeholder: 'Ex. US/Central',
 			col: 'col-lg-4',
 			autocomplete: true,
+			is_required: true,
 		}
 	]
 
@@ -184,7 +193,6 @@ export class CreateHostComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _map: MapService,
 		private _router: Router,
-		private _role: RoleService,
 		private _titlecase: TitleCasePipe
 	) { }
 
@@ -198,7 +206,7 @@ export class CreateHostComponent implements OnInit {
 				businessName: ['', Validators.required],
 				address: ['', Validators.required],
 				city: ['', Validators.required],
-				state: ['', Validators.required],
+				state: ['',  [ Validators.required, Validators.minLength(2), Validators.maxLength(2), Validators.pattern('[a-zA-Z]*') ] ],
 				zip: ['', Validators.required],
 				category: ['', Validators.required],
 				long: ['', Validators.required],

@@ -15,59 +15,53 @@
                             <div class="row mb-4">
                                 <div class="col-lg-12 mb-3">
                                     <app-autocomplete-field
-                                    [data_reference]="dealers_data"
-                                    [primary_keyword]="'businessName'"
-                                    [key_of_value]="'dealerId'"
-                                    (data_value)="setToDealer($event)"
-                                    [required]="true"
-                                    [label]="'Type in a Dealer Business Name'"
-                                    [initial_value]="dealer_name"
-                                    [new_value]="dealer_name"
-                                    [disabled]="is_dealer"
-                                    [paging]="paging"
-                                    (call_next_page)="searchBoxTrigger($event)"
-                                    [loading_data]="loading_data"
-                                    (searched)="searchData($event)"
-                                    [loading_search]="loading_search">
+										(data_value)="setToDealer($event)"
+										(call_next_page)="searchBoxTrigger($event)"
+										(searched)="searchData($event)"
+										[data_reference]="dealers_data"
+										[primary_keyword]="'businessName'"
+										[key_of_value]="'dealerId'"
+										[required]="true"
+										[label]="'Type in a Dealer Business Name'"
+										[initial_value]="dealer_name"
+										[new_value]="dealer_name"
+										[disabled]="is_dealer"
+										[paging]="paging"
+										[loading_data]="loading_data"
+										[loading_search]="loading_search">
                                     </app-autocomplete-field>
                                 </div>
-                                <div 
-                                *ngFor="let field of host_form_view" 
-                                class="{{ field.col }} mb-3">
-                                    <mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
+                                <div *ngFor="let field of host_form_view" class="{{ field.col }} mb-3">
+                                    <mat-form-field *ngIf="!field.autocomplete; else autocomplete_field;" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
                                         <mat-label>{{ field.label }}</mat-label>
-                                        <input formControlName="{{ field.control }}" 
-                                        matInput placeholder="{{ field.placeholder }}">
+                                        <input matInput [formControlName]="field.control" [placeholder]="field.placeholder" [required]="field.is_required">
                                     </mat-form-field>
     
                                     <ng-template #autocomplete_field>
-										<app-autocomplete-field 
-										*ngIf="field.control == 'category' && !no_category; else no_category_selected"
-                                        [data_reference]="categories"
-                                        [primary_keyword]="'categoryName'"
-                                        [key_of_value]="'slug'"
-                                        (data_value)="setToCategory($event)"
-                                        [required]="true"
-                                        [label]="'Choose Category'"
-                                        [initial_value]="category_selected">
+										<app-autocomplete-field *ngIf="field.control == 'category' && !no_category; else no_category_selected;"
+											(data_value)="setToCategory($event)"
+											[data_reference]="categories"
+											[primary_keyword]="'categoryName'"
+											[key_of_value]="'slug'"
+											[required]="field.is_required"
+											[label]="field.label"
+											[initial_value]="category_selected">
 										</app-autocomplete-field>
 
 										<ng-template #no_category_selected>
-											<mat-form-field class="full-width" *ngIf="field.control == 'category'">
+											<mat-form-field *ngIf="field.control === 'category'" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
 												<mat-label>Choose Category</mat-label>
-												<input formControlName="category" 
-												matInput placeholder="Category">
+												<input matInput formControlName="category" placeholder="Category" [required]="field.is_required">
 											</mat-form-field>
 										</ng-template>
 										
-										<app-autocomplete-field
-										*ngIf="field.control == 'timezone'"
-                                        [data_reference]="timezone"
-                                        [primary_keyword]="'name'"
-                                        [key_of_value]="'id'"
-                                        (data_value)="setTimezone($event)"
-                                        [required]="true"
-                                        [label]="'Timezone'">
+										<app-autocomplete-field *ngIf="field.control == 'timezone'"
+											(data_value)="setTimezone($event)"
+											[data_reference]="timezone"
+											[primary_keyword]="'name'"
+											[key_of_value]="'id'"
+											[required]="field.is_required"
+											[label]="field.label">
                                         </app-autocomplete-field>
                                     </ng-template>
                                 </div>
@@ -78,10 +72,7 @@
 											<h3 class="mb-1">Operation Hours</h3>
 											<p class="mb-4 sm-text">Set business operation hours by clicking the initial of day inside the gray circle.</p>
 										</div>
-
-										<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" 
-											(click)="onBulkAddHours()">Bulk Add
-										</button>
+										<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkAddHours()">Bulk Add</button>
 									</div>
 
                                     <div class="d-flex mb-4" *ngFor="let h of operation_days">
@@ -98,12 +89,12 @@
                                                                 <div class="time-picker">
                                                                     <mat-label class="sm-text">Opening Hours</mat-label>
                                                                     <input matInput class="input-border-bottom" 
-                                                                    placeholder="Opening Hours"
-                                                                    aria-label="12hr format" 
-                                                                    [ngxTimepicker]="opening" 
-                                                                    [(ngModel)]="t.open" 
-                                                                    [ngModelOptions]="{standalone: true}" 
-                                                                    readonly>
+																		placeholder="Opening Hours"
+																		aria-label="12hr format" 
+																		[ngxTimepicker]="opening" 
+																		[(ngModel)]="t.open" 
+																		[ngModelOptions]="{standalone: true}" 
+																		readonly>
                                                                     <ngx-material-timepicker #opening></ngx-material-timepicker>
                                                                 </div>
                                                                 <div class="d-inline-block mx-3">
@@ -112,12 +103,12 @@
                                                                 <div class="time-picker">
                                                                     <mat-label class="sm-text">Closing Hours</mat-label>
                                                                     <input matInput class="input-border-bottom" 
-                                                                    placeholder="Closing Hours" 
-                                                                    aria-label="12hr format" 
-                                                                    [ngxTimepicker]="closing" 
-                                                                    [(ngModel)]="t.close" 
-                                                                    [ngModelOptions]="{standalone: true}" 
-                                                                    readonly>
+																		placeholder="Closing Hours" 
+																		aria-label="12hr format" 
+																		[ngxTimepicker]="closing" 
+																		[(ngModel)]="t.close" 
+																		[ngModelOptions]="{standalone: true}" 
+																		readonly>
                                                                     <ngx-material-timepicker #closing></ngx-material-timepicker>
                                                                 </div>
                                                             </div>
@@ -129,9 +120,7 @@
                                                         </div>
                                                     </div>
                                                     <div>
-                                                        <span class="add-hours-btn" (click)="addHours(h)">
-                                                            Add Hours
-                                                            <span class="fas fa-plus ml-2"></span>
+                                                        <span class="add-hours-btn" (click)="addHours(h)">Add Hours<span class="fas fa-plus ml-2"></span>
                                                         </span>
                                                     </div>
                                                 </ng-container>
@@ -218,11 +207,10 @@
                 
                 <div class="col-lg-12 p-0 map-wrapper mt-3">
                     <agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected"  [maxZoom]="19" >
-                        <agm-marker 
-                        *ngIf="selected_location"
-                        [latitude]="selected_location.geometry.location.lat" 
-                        [longitude]="selected_location.geometry.location.lng"
-                        [agmFitBounds]="true">
+                        <agm-marker *ngIf="selected_location"
+							[latitude]="selected_location.geometry.location.lat" 
+							[longitude]="selected_location.geometry.location.lng"
+							[agmFitBounds]="true">
                         </agm-marker>
                     </agm-map>
                 </div>
