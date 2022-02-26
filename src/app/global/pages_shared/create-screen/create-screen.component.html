@@ -44,7 +44,7 @@
                                     </div>
                                     <div class="row"></div>
                                     <div class="col-lg-12 mb-4">
-                                        <ng-container *ngIf="dealerid && is_dealer_present; else no_dealer">
+                                        <ng-container *ngIf="dealerId && is_dealer_present; else no_dealer">
                                             <mat-form-field class="full-width mt-3">
                                                 <mat-label class="text-dark">You are creating a screen for:</mat-label>
                                                 <input matInput disabled value="{{ is_dealer_present.name }}" class="text-dark">
@@ -186,7 +186,7 @@
                                 </div>
 
                                 <div class="mb-3">
-                                    <ng-container *ngIf="hostid && is_host_present; else no_host">
+                                    <ng-container *ngIf="hostId && is_host_present; else no_host">
                                         <mat-form-field class="full-width mt-3">
                                             <mat-label class="text-dark">You are creating a screen for:</mat-label>
                                             <input matInput disabled value="{{ is_host_present.name }}" class="text-dark">
@@ -224,7 +224,7 @@
                                 </div>
 
                                 <ng-container *ngIf="licenses && licenses.length > 0; else no_license">
-                                    <div class="text-left" *ngIf="!licenses.message; else no_license">
+                                    <div class="text-left" *ngIf="!has_no_licenses; else no_license">
 										<div class="licenses-heading">
 											<h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
 											<button mat-button mat-raised-button class="col-lg-6 theme-btn flex-even mx-1" (click)="onBulkSetInstallDate()" [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
@@ -234,11 +234,10 @@
 										</div>
                                         <div *ngFor="let l of licenses; let i = index">
                                             <ng-container *ngIf="l.screenId != null; else unused_license">
-                                                <mat-slide-toggle
-                                                class="mb-3"
-                                                (change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
-                                                [checked]="true"
-                                                [disabled]="true">
+                                                <mat-slide-toggle class="mb-3"
+													(change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
+													[checked]="true"
+													[disabled]="true">
                                                     <span class="md-text">{{ l.licenseKey }}</span>
                                                 </mat-slide-toggle>
                                             </ng-container>
@@ -246,18 +245,15 @@
                                             <ng-template #unused_license>
 												<div class="row">
 													<div class="col-lg-7">
-														<mat-slide-toggle
-														class="mb-3"
-														(change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
-														[(ngModel)]="slide_toggle_status[i]">
+														<mat-slide-toggle class="mb-3" 
+															(change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
+															[(ngModel)]="slide_toggle_status[i]">
 															<span class="md-text">{{ l.licenseKey }}</span>
 														</mat-slide-toggle>
 													</div>
 													<div class="col-lg-5 install-date" [ngClass]="{ 'disabled' : !assigned_licenses || !assigned_licenses.includes(l.licenseId) }">
 														<span>Installed: {{ l.installDate ? (l.installDate | date: 'MMM dd, y') : '--' }}</span>
 														<mat-icon (click)="onSetInstallDate(l.licenseId, l.installDate, i)">calendar_today</mat-icon>
-														<ng-template #setInstallDate>
-														</ng-template>
 													</div>
 												</div>
                                             </ng-template>
@@ -270,7 +266,7 @@
                                     <p class="sm-text">Assign a License to this Host to continue.</p>
                                 </ng-template>
                                 
-                                <button *ngIf="hostid" mat-button mat-raised-button matStepperNext class="theme-btn mt-4" (click)="publishScreen()" [disabled]="creating_screen">
+                                <button *ngIf="hostId" mat-button mat-raised-button matStepperNext class="theme-btn mt-4" (click)="publishScreen()" [disabled]="creating_screen">
                                     Publish Screen
                                 </button>
 

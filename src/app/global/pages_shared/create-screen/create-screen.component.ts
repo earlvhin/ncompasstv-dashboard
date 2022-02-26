@@ -2,22 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormControl, FormArray } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { Router, ActivatedRoute } from '@angular/router';
-import { forkJoin, Observable, Subscription } from 'rxjs';
+import { forkJoin, Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { API_TEMPLATE } from '../../models/api_template.model';
-import { API_HOST } from '../../models/api_host.model';
-import { API_ZONE } from '../../models/api_zone.model';
-import { API_DEALER } from '../../models/api_dealer.model';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { DealerService } from '../../services/dealer-service/dealer.service';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_ZONE, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService, HostService, LicenseService, PlaylistService, ScreenService, TemplateService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { EditableFieldModalComponent } from '../../components_shared/page_components/editable-field-modal/editable-field-modal.component';
-import { HostService } from '../../services/host-service/host.service';
-import { LicenseService } from '../../services/license-service/license.service';
-import { PlaylistService } from '../../services/playlist-service/playlist.service';
 import { ScreenCreatedModalComponent } from '../../components_shared/screen_components/screen-created-modal/screen-created-modal.component';
-import { ScreenService } from '../../services/screen-service/screen.service';
-import { TemplateService } from '../../services/template-service/template.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-create-screen',
@@ -27,72 +20,52 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 export class CreateScreenComponent implements OnInit {
 
-	subscription: Subscription = new Subscription;
-
-	assigned_licenses: Array<any> = [];
-	dealer$: Observable<API_DEALER[]>;
-	host$: Observable<API_HOST[]>;
-	license$: Observable<any>;
-	playlist: any;
-	template$: Observable<API_TEMPLATE[]>;
-	templates$: Observable<API_TEMPLATE[]>;
-
-	creating_screen: boolean = false;
-	dealers: any;
-	dealerid: string;
+	assigned_licenses = [];
+	creating_screen = false;
 	dealer_name: string;
-	is_dealer: boolean = false;
+	dealerId: string;
+	dealers: API_DEALER[];
+	dealers_data: API_DEALER[] = [];
+	has_no_licenses = false;
 	hosts: API_HOST[] = [];
-	hostid: string;
+	hosts_data = [];
+	hostId: string;
+	initial_load = false;
+	is_dealer = false;
 	is_dealer_present: any;
 	is_host_present: any;
-	new_screen_form: FormGroup;
-	screen_params: any;
-	screen_info_error = true;
-	no_chosen_template: boolean = true;
-	selected_template_id: string;
-	selected_template_zones: Array<any>;
-	slide_toggle_status = [];
-	title: string = "Create Screen";
-	zone_playlist_form: FormGroup;
-	zone: string;
-	paging: any;
-	loading_data: boolean = true;
-
-	dealers_data: Array<any> = [];
-	screen_types: Array<any> = [];
-	loading_search: boolean = false;
-	is_search: boolean = false;
-	reset_screen: boolean = false;
+	licenses: API_LICENSE_PROPS[];
+	loading_data = true;
+	loading_data_host = true;
 	loading_playlist = true;
+	loading_search = false;
+	loading_search_host = false;
+	new_screen_form: FormGroup;
+	new_screen_form_view = this._createScreenFields;
+	no_chosen_template = true;
 	no_playlist_data = false;
-
-	new_screen_form_view = [
-		{
-			label: 'Screen Name *',
-			control: 'screen_name',
-			width: 'col-lg-12',
-			placeholder: 'Ex: This Screen Name'
-		},
-		{
-			label: 'Description',
-			control: 'description',
-			width: 'col-lg-12',
-			placeholder: 'Ex: Describe this Screen'
-		}
-	]
-
-	paging_host: any;
-	hosts_data: Array<any> = [];
-	search_host_data: string = "";
-	search_dealer_data = '';
-	loading_data_host: boolean = true;
-	initial_load: boolean = false;
-	loading_search_host: boolean = false;
+	paging: PAGING;
+	paging_host: PAGING;
+	playlist: any;
+	reset_screen = false;
+	screen_info_error = true;
 	screen_selected: string = null;
+	screen_types = [];
+	slide_toggle_status = [];
+	template$: Observable<API_TEMPLATE[]>;
+	templates$: Observable<API_TEMPLATE[]>;
+	title = 'Create Screen';
+	zone: string;
+	zone_playlist_form: FormGroup;
 
-	licenses: any;
+	private is_search = false;
+	private search_dealer_data = '';
+	private search_host_data = '';
 	private queued_install_dates: { licenseId: string, installDate: string }[] = [];
+	private selected_template_id: string;
+	private selected_template_zones: any[];
+
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
@@ -109,44 +82,33 @@ export class CreateScreenComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		this.new_screen_form = this._form.group(
-			{
-				screen_name: ['', Validators.required],
-				description: [''],
-			}
-		)
 
-		this.zone_playlist_form = this._form.group(
-			{
-				screenZonePlaylist: this._form.array([])
-			}
-		)
+		this.new_screen_form = this._form.group({ screen_name: ['', Validators.required], description: [''], });
+		this.zone_playlist_form = this._form.group({ screenZonePlaylist: this._form.array([]) });
 
-		this.subscription.add(
-			this._param.queryParamMap.subscribe(
+		this._param.queryParamMap.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					if (data.get('dealer_id') && data.get('host_id')) {
-						this.dealerid = data.get('dealer_id');
-						this.hostid = data.get('host_id');
-						this.getDealerById(this.dealerid);
-						this.getPlaylistsByDealerId(this.dealerid);
+						this.dealerId = data.get('dealer_id');
+						this.hostId = data.get('host_id');
+						this.getDealerById(this.dealerId);
+						this.getPlaylistsByDealerId(this.dealerId);
 						this.getHostsByDealerId(1);
-						this.getHostById(this.hostid);
-						this.getLicenseByHostId(this.hostid);
+						this.getHostById(this.hostId);
+						this.getLicenseByHostId(this.hostId);
 					}
 				}
-			)
-		)
+			);
 
-		this.subscription.add(
-			this.new_screen_form.valueChanges.subscribe(
+		this.new_screen_form.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				f => {
-					if ((this.dealerid != undefined && this.new_screen_form.valid) && (this.screen_selected != undefined && this.new_screen_form.valid)) {
+					if ((this.dealerId != undefined && this.new_screen_form.valid) && (this.screen_selected != undefined && this.new_screen_form.valid)) {
 						this.screen_info_error = false;
 					}
 				}
-			)
-		)
+			);
 
 		this.getScreenType();
 		this.getDealers(1);
@@ -159,19 +121,16 @@ export class CreateScreenComponent implements OnInit {
 
 		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
-			this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
+			this.dealerId = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-			this.setToDealer(this.dealerid);
+			this.setToDealer(this.dealerId);
 		}
 	}
 
 	ngDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
-
-	// Convenience getter for easy access to form fields
-	get i() { return this.new_screen_form.controls; }
-	get p() { return this.zone_playlist_form.controls; }
 
 	addPlaylistButton() {
 		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
@@ -184,26 +143,11 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	checkIfStep1Complete() {
-		if ((this.dealerid != undefined && this.new_screen_form.valid) && (this.screen_selected != undefined && this.new_screen_form.valid)) {
+		if ((this.dealerId != undefined && this.new_screen_form.valid) && (this.screen_selected != undefined && this.new_screen_form.valid)) {
 			this.screen_info_error = false;
 		} else {
 			this.screen_info_error = true;
 		}
-	}
-
-	getScreenType() {
-		this.subscription.add(
-			this._screen.get_screens_type().subscribe(
-				data => {
-					this.screen_types = data;
-				}
-			)
-		)
-	}
-
-	setScreenType(type): void {
-		this.screen_selected = type;
-		this.reset_screen = false;
 	}
 
 	clearScreenType(): void {
@@ -211,228 +155,46 @@ export class CreateScreenComponent implements OnInit {
 		this.reset_screen = true;
 	}
 
-	getDealers(page: number): void {
-		this.loading_data = true;
-
-		if (page > 1) {
-
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '').subscribe(
-					data => {
-						data.dealers.map(dealer => this.dealers.push(dealer));
-						this.paging = data.paging;
-						this.loading_data = false;
-					},
-					error => {
-						console.log('Error retrieving dealer data', error);
-						this.loading_data = false;
-					}
-				)
-			);
-
-		} else {
-
-			if (this.is_search || this.search_dealer_data != '') {
-				this.loading_search = true;
-			}
-
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '').subscribe(
-					data => {
-						this.dealers = data.dealers;
-						this.paging = data.paging;
-						this.loading_data = false;
-						this.dealers_data = data.dealers;
-						this.loading_search = false;
-					}, 
-					error => {
-						console.log('Error searching for dealers', error);
-						this.loading_data = false;
-						this.loading_search = false;
-					}
-				)
-			);
-		}
-	}
-
-	searchBoxTrigger(event): void {
-		this.is_search = event.is_search;
-		this.getDealers(event.page);	
-	}
-
-	getDealerById(id): void {
-
-		this.subscription.add(
-			this._dealer.get_dealer_by_id(id).subscribe(
-				(data: API_DEALER) => {
-					this.is_dealer_present = { id: data.dealerId, name: data.businessName }
-				}
-			)
-		);
-	}
-
-	getHostsByDealerId(e): void {
-		this.loading_data_host = true;
-
-		if (e > 1) {
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.dealerid, e, this.search_host_data).subscribe(
-					data => {
-						data.paging.entities.map (
-							i => {
-								this.hosts.push(i);
-								this.hosts_data.push(i);
-							}
-						)
-						this.paging_host = data.paging;
-						this.loading_data_host = false;
-					}
-				)
-			);
-		} else {
-
-			this.hosts_data = [];
-			this.initial_load = false;
-
-			if (this.is_search || this.search_host_data != "") {
-				this.loading_search_host = true;
-			}
-
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.dealerid, e, this.search_host_data).subscribe(
-					data => {
-						if(!data.message) {
-							if(this.search_host_data == "") {
-								data.paging.entities.map (
-									i => {
-										this.hosts.push(i);
-										this.hosts_data.push(i);
-									}
-								)
-							} else {
-								if (data.paging.entities.length > 0) {
-									this.hosts_data = data.paging.entities;
-									this.loading_search = false;
-								}
-							}
-							this.paging_host = data.paging;
-						} else {
-							this.hostid = "";
-							if(this.search_host_data != "") {
-								this.hosts_data = [];
-								this.loading_search = false;
-							}
-						}
-						this.loading_data_host = false;
-						this.loading_search_host = false;
-					}
-				)
-			);
-		}
-	}
-
-	getHostById(id) {
-		this.subscription.add(
-			this._host.get_host_by_id(id).subscribe(
-				(data: any) => {
-					this.is_host_present = {
-						id: data.host.dealerId,
-						name: data.host.name
-					}
-				}
-			)
-		);
-	}
-
-	getLicenseByHostId(id): void {
-		this.license$ = this._license.get_licenses_by_host_id(id);
-
-		const get = this.license$.subscribe(
-			response => {
-				get.unsubscribe();
-				this.licenses = response;
-			},
-			error => console.log('Error retrieving licenses', error)
-		);
-	}
-
-	getPlaylistsByDealerId(id): void {
-		this.loading_playlist = true;
-		this.no_playlist_data = false;
-
-		this.subscription.add(
-			this._playlist.get_playlist_by_dealer_id(id).subscribe(
-				(data: any) => {
-					this.playlist = data;
-					this.loading_playlist = false;
-					if (this.playlist.length <= 0) this.no_playlist_data = true;
-				},
-				error => {
-					console.log('Error retrieving dealer playlists', error);
-					this.loading_playlist = false;
-					this.no_playlist_data = true;
-				}
-			)
-		);
-	}
-
-	getTemplates() {
-		this.templates$ = this._template.get_templates();
-	}
-
-	getTemplateById(id): void {
-		this.no_chosen_template = false;
-		this.selected_template_id = id;
-
-		this.zone_playlist_form = this._form.group(
-			{
-				screenZonePlaylist: this._form.array([])
-			}
-		);
-
-		this.selected_template_zones = [];
-		this.template$ = this._template.get_template_by_id(id);
-
-		this.subscription.add(
-			this.template$.subscribe(
-				(data: API_TEMPLATE[]) => {
-					data.forEach(t => {
-						t.templateZones.forEach(z => {
-							this.selected_template_zones.push(z);
-							this.zonePlaylistForm(z);
-						})
-					});
-				}
-			)
-		);
-	}
-
-	dealerSearchBoxTrigger(event): void {
+	dealerSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
 		this.is_search = event.is_search;
 		if (this.is_search) this.search_dealer_data = '';
 		this.getDealers(event.page);
 	}
 
-	hostSearchBoxTrigger(event): void {
+	getTemplateById(id: string): void {
+		this.no_chosen_template = false;
+		this.selected_template_id = id;
+		this.zone_playlist_form = this._form.group({ screenZonePlaylist: this._form.array([]) });
+		this.selected_template_zones = [];
+		this.template$ = this._template.get_template_by_id(id);
+
+		this.template$.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: API_TEMPLATE[]) => {
+					
+					data.forEach(t => {
+						t.templateZones.forEach(z => {
+							this.selected_template_zones.push(z);
+							this.zonePlaylistForm(z);
+						});
+					});
+
+				},
+				error => console.log('Error retrieving template zones', error)
+			);
+	}
+
+	hostSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
 		this.is_search = event.is_search;
 		if (this.is_search) this.search_host_data = '';
 		this.getHostsByDealerId(event.page);
-	}
-
-	searchHostData(e): void {
-		this.search_host_data = e;
-		this.getHostsByDealerId(1);
-	}
-
-	searchDealerData(keyword: string): void {
-		this.search_dealer_data = keyword;
-		this.getDealers(1);
 	}
 
 	licenseSelected(status: boolean, licenseId: string, index: number): void {
 
 		if (status) {
 			this.assigned_licenses.push(licenseId);
+			console.log('assigned license', this.assigned_licenses);
 			return;
 		}
 		
@@ -442,7 +204,6 @@ export class CreateScreenComponent implements OnInit {
 		this.assigned_licenses.splice(assignedIndex, 1);
 		this.queued_install_dates.splice(queuedIndex, 1);
 		this.licenses[index].installDate = null;
-		
 	}
 
 	onBulkSetInstallDate(): void {
@@ -506,24 +267,13 @@ export class CreateScreenComponent implements OnInit {
 
 	}
 
-	openConfirmationModal(): void {
-		let dialog = this._dialog.open(ScreenCreatedModalComponent, {
-			disableClose: true,
-			width: '600px',
-			data: this.i.screen_name.value
-		});
-
-		this.subscription.add(
-			dialog.afterClosed().subscribe(
-				() => {
-					const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-					this._router.navigate([`/${route}/screens`]);
-				}
-			)
-		);
-	}
-
 	publishScreen(): void {
+
+		if (this.hasUnusedLicenseWithoutInstallDate) {
+			this.openErrorDialog();
+			return;
+		}
+
 		let screen_licenses = [];
 		let zone_playlist_data_trim = [];
 		const zone_playlist_data = this.zone_playlist_form.get('screenZonePlaylist').value;
@@ -548,11 +298,11 @@ export class CreateScreenComponent implements OnInit {
 		// Structuring data to be sent
 		const created_screen = {
 			screen: {
-				screenName:  this.i.screen_name.value,
-				description: this.i.description.value,
+				screenName:  this.new_screen_form_controls.screen_name.value,
+				description: this.new_screen_form_controls.description.value,
 				screenTypeId: this.screen_selected,
-				dealerid: this.dealerid,
-				hostid: this.hostid,
+				dealerid: this.dealerId,
+				hostid: this.hostId,
 				templateid: this.selected_template_id,
 				createdby: 	this._auth.current_user_value.user_id
 			},
@@ -564,40 +314,46 @@ export class CreateScreenComponent implements OnInit {
 
 			// if installation dates are set
 			if (this.queued_install_dates.length > 0) {
+
 				const publish = {
 					screen: this._screen.create_screen(created_screen),
 					install_dates: this._license.update_install_date_list(this.queued_install_dates)
 				};
 	
-				this.subscription.add(forkJoin([ publish.screen, publish.install_dates ]).subscribe(
-					() => {
-						this.openConfirmationModal();
-						this.creating_screen = false;
-					},
-					error => console.log('Error publishing screen/installing dates', error)
-				));
+				forkJoin([ publish.screen, publish.install_dates ]).pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						() => {
+							this.openCreateScreenDialog();
+							this.creating_screen = false;
+						},
+						error => console.log('Error publishing screen/installing dates', error)
+					);
 
 				return;
 			}
 
-			this.subscription.add(
-				this._screen.create_screen(created_screen).subscribe(
+			this._screen.create_screen(created_screen).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					() => {
-						this.openConfirmationModal();
+						this.openCreateScreenDialog();
 						this.creating_screen = false;
 					},
 					error => console.log('Error publishing screen', error)
-				)
-			);
+				);
 
 		}
 	}
 
-	searchData(e): void {
+	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
+		this.is_search = event.is_search;
+		this.getDealers(event.page);	
+	}
+
+	searchData(page: number): void {
 		this.loading_search = true;
 
-		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe(
+		this._dealer.get_search_dealer(page).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					if (data.paging.entities.length > 0) {
 						this.dealers = data.paging.entities;
@@ -608,28 +364,231 @@ export class CreateScreenComponent implements OnInit {
 						this.loading_search = false;
 					}
 					this.paging = data.paging;
-				}
-			)
-		);
+				},
+				error => console.log('Error searching for dealer', error)
+			);
 	}
-	
-	setToDealer(dealer): void {
-		this.dealerid = dealer;
-		this.getPlaylistsByDealerId(dealer);
+
+	searchDealerData(keyword: string): void {
+		this.search_dealer_data = keyword;
+		this.getDealers(1);
+	}
+
+	searchHostData(keyword: string): void {
+		this.search_host_data = keyword;
 		this.getHostsByDealerId(1);
 	}
 
-	setToHost(host): void {
-		this.hostid = host;
-		this.getLicenseByHostId(host);
+	setScreenType(type): void {
+		this.screen_selected = type;
+		this.reset_screen = false;
 	}
 
-	zonePlaylistForm(z): void {
+	setToDealer(id: string): void {
+		this.dealerId = id;
+		this.getPlaylistsByDealerId(id);
+		this.getHostsByDealerId(1);
+	}
+
+	setToHost(id: string): void {
+		this.hostId = id;
+		this.getLicenseByHostId(id);
+	}
+
+	private get new_screen_form_controls() { 
+		return this.new_screen_form.controls; 
+	}
+	
+	private getDealerById(id: string): void {
+
+		this._dealer.get_dealer_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: API_DEALER) => {
+					this.is_dealer_present = { id: data.dealerId, name: data.businessName };
+				},
+				error => console.log('Error retrieving dealer by ID', error)
+			);
+	}
+
+	private getDealers(page: number): void {
+		this.loading_data = true;
+
+		if (page > 1) {
+
+			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+						data.dealers.map(dealer => this.dealers.push(dealer));
+						this.paging = data.paging;
+						this.loading_data = false;
+					},
+					error => {
+						console.log('Error retrieving dealer data', error);
+						this.loading_data = false;
+					}
+				);
+
+		} else {
+
+			if (this.is_search || this.search_dealer_data != '') {
+				this.loading_search = true;
+			}
+
+			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+						this.dealers = data.dealers;
+						this.paging = data.paging;
+						this.loading_data = false;
+						this.dealers_data = data.dealers;
+						this.loading_search = false;
+					}, 
+					error => {
+						console.log('Error searching for dealers', error);
+						this.loading_data = false;
+						this.loading_search = false;
+					}
+				);
+		}
+	}
+
+	private getHostsByDealerId(page: number): void {
+		this.loading_data_host = true;
+
+		if (page > 1) {
+
+			this._host.get_host_by_dealer_id(this.dealerId, page, this.search_host_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+
+						data.paging.entities.map(
+							i => {
+								this.hosts.push(i);
+								this.hosts_data.push(i);
+							}
+						);
+
+						this.paging_host = data.paging;
+						this.loading_data_host = false;
+					},
+					error => console.log('Error host by dealer ID', error)
+				);
+
+		} else {
+
+			this.hosts_data = [];
+			this.initial_load = false;
+
+			if (this.is_search || this.search_host_data != "") {
+				this.loading_search_host = true;
+			}
+
+			this._host.get_host_by_dealer_id(this.dealerId, page, this.search_host_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+						if(!data.message) {
+							if(this.search_host_data == "") {
+								data.paging.entities.map (
+									i => {
+										this.hosts.push(i);
+										this.hosts_data.push(i);
+									}
+								)
+							} else {
+								if (data.paging.entities.length > 0) {
+									this.hosts_data = data.paging.entities;
+									this.loading_search = false;
+								}
+							}
+							this.paging_host = data.paging;
+						} else {
+							this.hostId = "";
+							if(this.search_host_data != "") {
+								this.hosts_data = [];
+								this.loading_search = false;
+							}
+						}
+						this.loading_data_host = false;
+						this.loading_search_host = false;
+					},
+					error => console.log('Error retrieving host by dealer ID', error)
+				);
+		}
+	}
+
+	private getHostById(id: string) {
+		
+		this._host.get_host_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					this.is_host_present = {
+						id: data.host.dealerId,
+						name: data.host.name
+					}
+				},
+				error => console.log('Error retrieving host by ID', error)
+			);
+
+	}
+
+	private getLicenseByHostId(id: string): void {
+
+		this._license.get_licenses_by_host_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+
+					if (!Array.isArray(response)) {
+						this.has_no_licenses = true;
+						return;	
+					};
+
+					const licenses = response as API_LICENSE_PROPS[];
+					this.licenses = [...licenses];
+
+				},
+				error => console.log('Error retrieving licenses', error)
+			);
+	}
+
+	private getPlaylistsByDealerId(id: string): void {
+		this.loading_playlist = true;
+		this.no_playlist_data = false;
+
+		this._playlist.get_playlist_by_dealer_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					this.playlist = data;
+					this.loading_playlist = false;
+					if (this.playlist.length <= 0) this.no_playlist_data = true;
+				},
+				error => {
+					console.log('Error retrieving dealer playlists', error);
+					this.loading_playlist = false;
+					this.no_playlist_data = true;
+				}
+			);
+	}
+
+	private getScreenType() {
+
+		this._screen.get_screens_type().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => this.screen_types = data,
+				error => console.log('Error retrieving screen types', error)
+			);
+
+	}
+
+	private getTemplates() {
+		this.templates$ = this._template.get_templates();
+	}
+
+	private zonePlaylistForm(data: API_ZONE): void {
 		const zonesPlaylistForms = this.zone_playlist_form.get('screenZonePlaylist') as FormArray;
-		zonesPlaylistForms.push(this.zonePlaylist(z));
+		zonesPlaylistForms.push(this.zonePlaylist(data));
 	}
 
-	zonePlaylist(zone: API_ZONE): FormGroup {
+	private zonePlaylist(zone: API_ZONE): FormGroup {
 		return new FormGroup(
 			{
 				'templateName': new FormControl(zone.name),
@@ -637,6 +596,58 @@ export class CreateScreenComponent implements OnInit {
 				'templateZoneId': new FormControl(zone.templateZoneId),
 				'zonePlaylist': new FormControl()
 			}
-		)
+		);
+	}
+
+	private openCreateScreenDialog(): void {
+		const dialog = this._dialog.open(ScreenCreatedModalComponent, {
+			disableClose: true,
+			width: '600px',
+			data: this.new_screen_form_controls.screen_name.value
+		});
+
+		dialog.afterClosed().subscribe(
+			() => {
+				const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+				this._router.navigate([`/${route}/screens`]);
+			}
+		);
+	}
+
+	private openErrorDialog() {
+
+		const status = 'error';
+		const message = 'Installation Dates Required';
+		const data = 'Please make sure that licenses to be assigned have install dates';
+
+		const config = {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data, }
+		};
+
+		this._dialog.open(ConfirmationModalComponent, config);
+
+	}
+
+	private get hasUnusedLicenseWithoutInstallDate() {
+		return typeof this.licenses.find(license => this.assigned_licenses.includes(license.licenseId) && !license.installDate) !== 'undefined';
+	}
+
+	protected get _createScreenFields() {
+		return [
+			{
+				label: 'Screen Name *',
+				control: 'screen_name',
+				width: 'col-lg-12',
+				placeholder: 'Ex: This Screen Name'
+			},
+			{
+				label: 'Description',
+				control: 'description',
+				width: 'col-lg-12',
+				placeholder: 'Ex: Describe this Screen'
+			}
+		];
 	}
 }
