@@ -160,15 +160,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: '#', sortable: false, no_export: true},
         { name: 'Dealer Name', sortable: false, key: 'businessName', hidden: true, no_show: true},
 		{ name: 'Host Name', sortable: true, column:'Name', key: 'name'},
+        { name: 'Category', no_show:true, hidden: true, key: 'category'},
 		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
 		{ name: 'City', sortable: true, column:'City', key: 'city'},
 		{ name: 'State', sortable: true, column:'State', key: 'state'},
 		{ name: 'Postal Code', sortable: true, column:'PostalCode', key: 'postalCode'},
 		{ name: 'License Count', sortable: true, column:'TotalLicences', key: 'totalLicences'},
 		{ name: 'Vistar Venue ID', no_show:true, key: 'vistarVenueId'},
-		{ name: 'Notes', no_show:true, key: 'notes'},
-		{ name: 'Others', no_show:true, key: 'others'},
-        { name: 'Status', sortable: true, column: 'Status',no_export: true},
+		{ name: 'Notes', no_show:true, hidden: true, key: 'notes'},
+		{ name: 'Others', no_show:true, hidden: true, key: 'others'},
+        { name: 'Status', sortable: true, column: 'Status',no_export: true, hidden: true},
 	];
 
 	license_table_columns = [

@@ -26,6 +26,11 @@
                     <app-installations-tab *ngIf="tabGroup.selectedIndex === 3"></app-installations-tab>
                 </div>
             </mat-tab>
+            <mat-tab label="Exports" #exportsTab>
+                <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                    <app-exports-tab *ngIf="tabGroup.selectedIndex === 4"></app-exports-tab>
+                </div>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>
