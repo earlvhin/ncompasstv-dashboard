@@ -225,6 +225,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 	onSelectContent(content: UI_CONTENT, index: number): void {
 
+		if (this.is_dealer && this.is_bulk_select && content.is_protected) return;
+
 		const id = content.content_id;
 
 		if (this.is_bulk_select) {
