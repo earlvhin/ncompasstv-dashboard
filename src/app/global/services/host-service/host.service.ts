@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_HOST, CustomFieldGroup, HOST_S3_FILE, PAGING } from 'src/app/global/models';
+import { API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -160,7 +160,7 @@ export class HostService extends BaseService {
 		return this.postRequest(url, data);
 	}
 	
-	get_time_zones() {
+	get_time_zones(): Observable<API_TIMEZONE[]> {
 		const url = `${this.getters.api_get_timezone}`;
 		return this.getRequest(url);
 	}
