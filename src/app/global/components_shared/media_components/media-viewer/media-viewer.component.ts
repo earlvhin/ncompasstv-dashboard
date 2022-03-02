@@ -9,6 +9,7 @@ import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILE
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
 import { environment as env } from 'src/environments/environment';
+import { MediaModalComponent } from '../media-modal/media-modal.component';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
@@ -87,6 +88,13 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		temp.push({ 'is_edit': true });
 		temp.push({ 'id': this.file_data.selected.content_id });
 		this.is_edit = true;
+
+		this._dialog.open(MediaModalComponent, {
+			width: '600px',
+			panelClass: 'app-media-modal',
+			disableClose: true,
+			data: temp,  
+		});
 	}
 
 	async onDeleteMedia(event: { stopPropagation() }) {
