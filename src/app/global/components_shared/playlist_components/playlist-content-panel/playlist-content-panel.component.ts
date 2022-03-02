@@ -75,7 +75,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		{ label: 'Inactive', key: 'inactive' },
 	];
 
-	// private playlist_contents: API_CONTENT[] = [];
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
@@ -99,13 +98,19 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.bulk_toggle = false;
 		this.is_marking = false;
 
+		if (this.playlist_content_backup.length <= 0) return;
+
 		this.contents_with_schedules = this.playlist_content_backup.filter(content => {
-			const schedule = content.playlistContentsSchedule;
+			let schedule = null;
+			schedule = content.playlistContentsSchedule || content.playlistContentsSchedule;
+			if (!schedule) return;
 			if (schedule.type === 3) return content; 
 		});
 
 		this.contents_without_schedules = this.playlist_content_backup.filter(content => {
-			const schedule = content.playlistContentsSchedule;
+			let schedule = null;
+			schedule = content.playlistContentsSchedule || content.playlistContentsSchedule;
+			if (!schedule) return;
 			if (schedule.type !== 3) return content;
 		});
 
@@ -254,10 +259,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	selectAllContents(): void {
 		this.playlist_contents.forEach(i => {
-			if(i.frequency !== 2 && i.frequency != 3) {
+			if (i.frequency !== 2 && i.frequency != 3) {
 			 	this.selected_contents.push(i.playlistContentId);
-				this.selected_content_ids.push({playlistContentId: i.playlistContentId, 
-												contentId: i.contentId});
+				this.selected_content_ids.push({playlistContentId: i.playlistContentId, contentId: i.contentId});
 			}
 		});
 		
@@ -771,14 +775,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			content => {
 				let status = 'inactive';
 				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
-				const { type } = schedule;
-				const { playlistContentCredits, creditsEnabled } = content;
 
 				// no schedule
 				if (!schedule) {
 					content.scheduleStatus = status;
 					return content;
 				}
+
+				const type = schedule.type;
+				const playlistContentCredits = content.playlistContentCredits;
+				const creditsEnabled = content.creditsEnabled;
 
 				// credits depleted to 0
 				if (creditsEnabled === 1 && playlistContentCredits && playlistContentCredits.length > 0) {
