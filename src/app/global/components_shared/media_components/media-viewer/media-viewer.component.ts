@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { MediaModalComponent } from '../media-modal/media-modal.component';
 import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
@@ -87,6 +88,13 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		temp.push({ 'is_edit': true });
 		temp.push({ 'id': this.file_data.selected.content_id });
 		this.is_edit = true;
+
+		this._dialog.open(MediaModalComponent, {
+			width: '600px',
+			panelClass: 'app-media-modal',
+			disableClose: true,
+			data: temp,  
+		});
 	}
 
 	async onDeleteMedia(event: { stopPropagation() }) {
