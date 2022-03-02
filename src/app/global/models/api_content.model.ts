@@ -30,8 +30,8 @@ export class API_CONTENT {
 	parentId?: string;
 	playlistContentCredits?: CREDITS[];
     playlistContentId: string;
-	playlistContentSchedule?: PlaylistContentSchedule;
-	playlistContentsSchedule?: PlaylistContentSchedule;
+	playlistContentSchedule?: PlaylistContentSchedule; // used by pi_download & get_content_by_license_id
+	playlistContentsSchedule?: PlaylistContentSchedule; // used by playlist and screen
 	playsTotal: number;
 	prefix?: string;
     previewThumbnail?: string;
