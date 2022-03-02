@@ -23,7 +23,7 @@
 		</ng-container>
 
 		<!-- FILTER TAG BY OWNER TYPE -->
-		<button mat-button mat-raised-button [matMenuTriggerFor]="tagOwnerTypeMenu" mat-raised-button class="theme-btn">
+		<!-- <button mat-button mat-raised-button [matMenuTriggerFor]="tagOwnerTypeMenu" mat-raised-button class="theme-btn">
 			<span class="button-label">Owner Types</span>
 			<span class="fas fa-angle-down ml-2"></span>
 		</button>
@@ -31,7 +31,7 @@
 			<button mat-menu-item *ngFor="let owner of ownerTypes" (click)="onFilterByOwnerType(owner)">
 				<span class="md-text">{{ owner.name | titlecase }}</span>
 			</button>
-		</mat-menu>
+		</mat-menu> -->
 
 		<!-- EXPORT TAGS -->
 		<!-- <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _primary" title="Export">
