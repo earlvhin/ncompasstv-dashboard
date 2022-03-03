@@ -20,6 +20,8 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 	@Input() array_index: number;
 	@Input() content: API_CONTENT;
 	@Input() playlist_host_license: any;
+	@Input() is_admin? = false;
+	@Input() is_dealer? = false;
 	@Input() is_marking: boolean;
 	@Input() is_list: boolean;
 	@Input() is_view_only = false;

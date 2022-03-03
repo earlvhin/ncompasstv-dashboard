@@ -26,6 +26,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Input() dealer_id: string;
+	@Input() is_admin? = false;
+	@Input() is_dealer? = false;
 	@Input() is_view_only = false;
 	@Input() page? = '';
 	@Input() playlist_contents: any[];
@@ -543,8 +545,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	selectedContent(id: string, contentId: string, contentFrequency: number): void {
+
+		const selected = this.playlist_contents.find(content => content.contentId === contentId) as API_CONTENT;
+		
+		if (typeof selected !== 'undefined' && selected.isProtected) return;
+
 		let isChildFrequency = contentFrequency === 2 || contentFrequency === 3;
-		if(isChildFrequency) return;
+
+		if (isChildFrequency) return;
 
 		if (!this.selected_contents.includes(id)) {
 			this.selected_contents.push(id);
