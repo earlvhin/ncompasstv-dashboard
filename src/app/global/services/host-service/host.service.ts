@@ -135,7 +135,7 @@ export class HostService extends BaseService {
 
     get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
 		const base = `${this.getters.api_get_host_by_id_optimized}`;
-		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize });
+		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
