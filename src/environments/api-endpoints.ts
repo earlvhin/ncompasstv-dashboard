@@ -78,7 +78,7 @@ export const API_ENDPOINTS = {
 		api_get_licenses_by_dealer: 'license/getbydealer',
 		api_get_license_by_dealer_temp: 'license/getbydealerold?dealerid=',
 		api_get_licenses_by_host: 'license/getbyhost?hostid=',
-		api_get_licenses_duration: 'license/exportbydealerduration?dealerid=',
+		api_get_licenses_duration: 'license/exportbydealerduration',
 		api_get_license_report: 'license/getaddedreport',
 		api_get_licenses_total: 'license/gettotal',
 		api_get_licenses_total_by_dealer: 'license/gettotal?dealerid=',
