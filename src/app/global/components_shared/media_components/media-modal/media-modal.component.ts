@@ -1,17 +1,11 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
-import { API_HOST } from '../../../models/api_host.model';
-import { API_DEALER } from '../../../models/api_dealer.model';
-import { API_ADVERTISER } from '../../../models/api_advertiser.model';
-import { DealerService } from '../../../services/dealer-service/dealer.service';
-import { HostService } from '../../../services/host-service/host.service';
-import { ContentService } from '../../../services/content-service/content.service';
-import { AdvertiserService } from '../../../services/advertiser-service/advertiser.service';
-import { AuthService } from '../../../services/auth-service/auth.service';
-import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
-import { timeStamp } from 'console';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { Subscription } from 'rxjs';
+
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { API_ADVERTISER, API_HOST, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
 @Component({
 	selector: 'app-media-modal',
@@ -51,8 +45,8 @@ export class MediaModalComponent implements OnInit {
 	is_search_host: boolean = false;
 	is_search_advertiser: boolean = false;
 	loading_data: boolean = true;
-	loading_data_advertiser: boolean = false;
-	loading_data_host: boolean = false;
+	loading_advertiser_data: boolean = false;
+	loading_host_data: boolean = false;
 	loading_form: boolean = false;
 	loading_search: boolean = false;
 	loading_search_advertiser: boolean = false;
@@ -108,6 +102,7 @@ export class MediaModalComponent implements OnInit {
 					this._content.get_content_by_id(this.data_before_modal[1].id).subscribe(
 						data => {
 							this.content_data = data;
+
 							if(this.content_data.fileType != 'feed') {
 								if(this.content_data.dealerId == "" && this.content_data.advertiserId == "" && this.content_data.hostId == "") {
 									this.is_floating = true;
@@ -341,7 +336,7 @@ export class MediaModalComponent implements OnInit {
 		}
 	}
 
-	hostSearchBoxTrigger (event) {
+	hostSearchBoxTrigger(event) {
 		this.is_search_host = event.is_search;
 		if(this.is_search_host) {
 			this.search_host_data = "";
@@ -376,13 +371,15 @@ export class MediaModalComponent implements OnInit {
 	}
 
 	dealerSelected(e) {
-		this.loading_form = true;
+		this.loading_form = false;
 		this.no_dealer = false;
 		this.assign_data.dealer = e;
 		this.initial_load_host = false;
-		if(this._is_edit) {
+
+		if (this._is_edit) {
 			this.loading_data = false;
-			if(this.content_data.fileType != 'feed') {
+			
+			if (this.content_data.fileType != 'feed') {
 				this.hosts = [];
 				this.hosts_data = [];
 				this.advertiser_data = [];
@@ -392,18 +389,18 @@ export class MediaModalComponent implements OnInit {
 				this.assign_data.advertiser = "";
 				this.advertiser_name = "";
 				this.to_empty = true;
-				this.loading_form = true;
+				this.loading_form = false;
 				this.getHostByDealerId(1);
 				this.getAdvertiserByDealerId(1);
 			}
-			if(e != this.temp_dname) {
-				// this.loading_search = true;
-				
+
+			if (e != this.temp_dname) {
 				this.assign_data.host = "";
 				this.host_name = "";
 				this.assign_data.advertiser = "";
 				this.advertiser_name = "";
 			}
+
 		} else {
 			this.hosts = [];
 			this.hosts_data = [];
@@ -414,7 +411,7 @@ export class MediaModalComponent implements OnInit {
 			this.assign_data.advertiser = "";
 			this.advertiser_name = "";
 			this.to_empty = true;
-			this.loading_form = true;
+			this.loading_form = false;
 			this.getHostByDealerId(1);
 			this.getAdvertiserByDealerId(1);
 		}
@@ -422,7 +419,7 @@ export class MediaModalComponent implements OnInit {
 
 	getHostByDealerId(e) {
 		if(e > 1) {
-			this.loading_data_host = true;
+			this.loading_host_data = true;
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.assign_data.dealer, e, this.search_host_data).subscribe(
 					data => {
@@ -433,7 +430,7 @@ export class MediaModalComponent implements OnInit {
 							}
 						)
 						this.paging_host = data.paging;
-						this.loading_data_host = false;
+						this.loading_host_data = false;
 						this.loading_search_host = false;
 					}
 				)
@@ -457,7 +454,7 @@ export class MediaModalComponent implements OnInit {
 							this.no_host_found = false;
 						}
 						this.to_empty = false;
-						this.loading_data_host= false;
+						this.loading_host_data= false;
 						this.loading_search_host = false;
 						this.loading_form = false;
 					}
@@ -472,7 +469,7 @@ export class MediaModalComponent implements OnInit {
 
 	getAdvertiserByDealerId(e) {
 		if(e > 1) {
-			this.loading_data_advertiser = true;
+			this.loading_advertiser_data = true;
 			this.subscription.add(
 				this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, e, this.search_advertiser_data).subscribe(
 					data => {
@@ -483,7 +480,7 @@ export class MediaModalComponent implements OnInit {
 							}
 						)
 						this.paging_advertiser = data.paging;
-						this.loading_data_advertiser = false;
+						this.loading_advertiser_data = false;
 						this.loading_search_advertiser = false;
 					}
 				)
@@ -507,7 +504,7 @@ export class MediaModalComponent implements OnInit {
 							this.no_advertiser_found = false;
 						}
 						this.to_empty = false;
-						this.loading_data_advertiser = false;
+						this.loading_advertiser_data = false;
 						this.loading_search_advertiser = false;
 						this.loading_form = false;
 					}

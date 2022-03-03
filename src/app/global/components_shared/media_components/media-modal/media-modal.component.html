@@ -54,7 +54,7 @@
                 [paging]="paging_host"
                 (call_next_page)="hostSearchBoxTrigger($event)"
                 (searched)="searchHostData($event)"
-                [loading_data]="loading_data_host"
+                [loading_data]="loading_host_data"
                 [loading_search]="loading_search_host"
                 [initial_load]="initial_load_host"
                 [initial_value]="host_name"
@@ -62,7 +62,7 @@
                 >
                 </app-autocomplete-field>
 
-                <div class="form-spinner" *ngIf="loading_form">
+                <div class="form-spinner" *ngIf="loading_host_data">
                     <app-little-spinner></app-little-spinner>
                 </div>
                 <div class="no-data-found" *ngIf="no_host_found">
@@ -86,12 +86,12 @@
                 [paging]="paging_advertiser"
                 (call_next_page)="advertiserSearchBoxTrigger($event)"
                 (searched)="searchAdvertiserData($event)"
-                [loading_data]="loading_data_advertiser"
+                [loading_data]="loading_advertiser_data"
                 [loading_search]="loading_search_advertiser"
                 [initial_load]="initial_load_advertiser"
                 [reset_value]="to_empty">
                 </app-autocomplete-field>
-                <div class="form-spinner" *ngIf="loading_form">
+                <div class="form-spinner" *ngIf="loading_advertiser_data">
                     <app-little-spinner></app-little-spinner>
                 </div>
                 <div class="no-data-found" *ngIf="no_advertiser_found">
