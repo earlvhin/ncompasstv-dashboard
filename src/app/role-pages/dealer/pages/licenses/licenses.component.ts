@@ -366,7 +366,7 @@ export class LicensesComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
-					this.licenses_to_export = data.licenses;
+					this.licenses_to_export = data.licenseTemplateZoneExports;
 
 					this.licenses_to_export.forEach(
 						(item) => {
