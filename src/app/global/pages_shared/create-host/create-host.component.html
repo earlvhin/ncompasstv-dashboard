@@ -8,7 +8,7 @@
         <div class="row">
             <div class="col-lg-6">
                 <mat-card class="p-5">
-                    <ng-container *ngIf="dealers_data.length > 0 && categories_data as categories; else loading">
+                    <ng-container *ngIf="is_page_ready; else loading">
                         <h3 class="mb-1">Host Information</h3>
                         <p class="sm-text mb-4">You can fill on the forms manually or search all these information via Google Scrape.</p>
                         <form [formGroup]="new_host_form" (ngSubmit)="onCreateHostPlace()" class="text-left">
@@ -40,7 +40,7 @@
                                     <ng-template #autocomplete_field>
 										<app-autocomplete-field *ngIf="field.control == 'category' && !no_category; else no_category_selected;"
 											(data_value)="setToCategory($event)"
-											[data_reference]="categories"
+											[data_reference]="categories_data"
 											[primary_keyword]="'categoryName'"
 											[key_of_value]="'slug'"
 											[required]="field.is_required"
@@ -138,15 +138,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid" *ngIf="!creating_host; else publishing">
-                                Save Host Place
+                            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host">
+                                {{ is_creating_host ?  'Saving Host Place...' : 'Submit'  }}
 							</button>
-							
-							<ng-template #publishing>
-								<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="true">
-									Saving Host Place . . .
-								</button>
-							</ng-template>
                         </form>
                     </ng-container>
 

@@ -1,23 +1,21 @@
 <mat-form-field class="full-width custom-autocomplete p-relative" [appearance]="isLocator ? 'fill':'standard'">
     <mat-label [ngClass]="white_label ? 'text-white':''">{{ label }}</mat-label>
 
-    <input id="autocomplete-field-paginated" type="text" [autocomplete]="autocompleteSetting" matInput appearance="fill" class="skip-blur"
+    <input id="autocomplete-field-paginated" type="text" [autocomplete]="autocompleteSetting" [formControl]="paginated_input_field_control" matInput appearance="fill" class="skip-blur"
 		*ngIf="!paging"
 		[(ngModel)]="view_value"
 		[placeholder]="placeholder"
 		(keyup)="search($event)"
 		(click)="initializeSearch($event)"
-		[required]="required"
-		[disabled]="disabled">
+		[required]="required">
 
-    <input id="autocomplete-field" type="text" [autocomplete]="autocompleteSetting" matInput appearance="fill" class="skip-blur"
+    <input id="autocomplete-field" type="text" [autocomplete]="autocompleteSetting" [formControl]="input_field_control" matInput appearance="fill" class="skip-blur"
 		*ngIf="paging"
 		[(ngModel)]="view_value"
 		[placeholder]="placeholder"
 		(keyup)="search_by_api($event)"
 		(click)="initializeSearch($event)"
-		[required]="required"
-		[disabled]="disabled">
+		[required]="required">
     
     <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
         <div *ngIf="loading_search">

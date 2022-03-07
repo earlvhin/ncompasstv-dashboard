@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig } from '@angular/material';
 import { Router } from '@angular/router';
-import { Subject } from 'rxjs';
+import { forkJoin, ObservableInput, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as uuid from 'uuid';
 
@@ -14,8 +14,7 @@ import { ImageSelectionModalComponent } from '../../components_shared/page_compo
 import { API_CREATE_HOST, API_DEALER, API_GOOGLE_MAP, API_PARENTCATEGORY, GOOGLE_MAP_SEARCH_RESULT, PAGING, UI_OPERATION_HOURS, 
 	UI_OPERATION_DAYS, API_TIMEZONE, } from 'src/app/global/models';
 
-import { AuthService, CategoryService, MapService, HostService } from 'src/app/global/services';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-create-host',
@@ -28,7 +27,6 @@ export class CreateHostComponent implements OnInit {
 
 	categories_data: API_PARENTCATEGORY[];
 	category_selected: string;
-	creating_host = false;
 	current_host_image: string;
 	dealers_data: API_DEALER[] = [];
 	dealer_name: string;
@@ -38,7 +36,10 @@ export class CreateHostComponent implements OnInit {
 	google_result: GOOGLE_MAP_SEARCH_RESULT[] = [];
 	is_always_open = false;
 	is_admin = this.isAdmin;
+	is_creating_host = false;
 	is_dealer = this.isDealer;
+	is_loading_categories = true;
+	is_page_ready = false;
 	lat = 39.7395247;
 	lng = -105.1524133;
 	loading_data = true;
@@ -59,7 +60,7 @@ export class CreateHostComponent implements OnInit {
 
 	private dealer_id: string;
 	private logo_data: { images: string[], logo: string };
-	private is_search: boolean = false;
+	private is_search = false;
 	private operation_hours: UI_OPERATION_HOURS[];
 	protected default_host_image = 'assets/media-files/admin-icon.png';
 	protected _unsubscribe = new Subject<void>();
@@ -68,6 +69,7 @@ export class CreateHostComponent implements OnInit {
 		private _auth: AuthService,
 		private _categories: CategoryService,
 		private _form: FormBuilder,
+		private _helper: HelperService,
 		private _host: HostService,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
@@ -78,12 +80,11 @@ export class CreateHostComponent implements OnInit {
 
 	ngOnInit() {
 
-		this.initializeCreateHostForm();
 		this.current_host_image = this.default_host_image;
-		this.getDealers(1);
+		this.initializeCreateHostForm();
 		this.initializeGooglePlaceForm();
+		this.loadInitialData();
 		this.setOperationDays();
-		this.getParentCategories();
 
 		if (this.isDealer || this.isSubDealer) {
 			this.dealer_id = this.roleInfo.dealerId;
@@ -91,7 +92,6 @@ export class CreateHostComponent implements OnInit {
 			this.setToDealer(this.dealer_id);
 		}
 
-		this.getTimeZones();
 		this.watchCategoryField();
 	}
 
@@ -116,7 +116,7 @@ export class CreateHostComponent implements OnInit {
 		data.periods.splice(index, 1);
 	}
 
-	setToCategory(event) {
+	setToCategory(event: string) {
 		this.no_category = true;
 		this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, " "));
 	}
@@ -165,9 +165,8 @@ export class CreateHostComponent implements OnInit {
         this.operation_days.map(
             data => {
                 if(data.status && data.periods.length > 0) {
-                    data.periods.map (
+                    data.periods.map(
                         period => {
-                            console.log({open: period.open, close: period.close})
                             if(period.open !='' && period.close == '') {
                                 this.form_invalid = true;  
                             } else if (period.close !='' && period.open == '') {
@@ -205,9 +204,9 @@ export class CreateHostComponent implements OnInit {
                     newHostPlace.images = this.logo_data.images; 
                 }
         
-                this.creating_host = true;
+                this.is_creating_host = true;
         
-                if (this.creating_host = true) {
+                if (this.is_creating_host = true) {
 					this._host.add_host_place(newHostPlace).pipe(takeUntil(this._unsubscribe))
 						.subscribe(
 							(data: any) => {
@@ -215,7 +214,7 @@ export class CreateHostComponent implements OnInit {
 							}, 
 							error => {
 								console.log('Error creating host place', error);
-								this.creating_host = false;
+								this.is_creating_host = false;
 								this.openConfirmationModal('error', 'Host Place Creation Failed', 'Sorry, There\'s an error with your submission', null);
 							}
 						);
@@ -313,6 +312,10 @@ export class CreateHostComponent implements OnInit {
 		if (data.result.opening_hours) {
 			this.mapOperationHours(data.result.opening_hours.periods);
 		}
+
+		this.new_host_form.markAllAsTouched();
+		this._helper.onTouchPaginatedAutoCompleteField.emit();
+		
 	}
 
 	searchBoxTrigger(event: { is_search: boolean, page: number }) {
@@ -326,20 +329,15 @@ export class CreateHostComponent implements OnInit {
 		this._dealer.get_search_dealer(keyword).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
-
-					if (data.paging.entities.length > 0) {
-						this.dealers_data = data.paging.entities;
-						this.loading_search = false;
-					} else {
-						this.dealers_data = [];
-						this.loading_search = false;
-						this.getDealers(1);
-					}
-
+					if (data.paging.entities && data.paging.entities.length > 0) this.dealers_data = data.paging.entities;
+					else this.dealers_data = [];
 					this.paging = data.paging;
 				},
 				error => console.log('Error searching for dealer', error)
-			);
+			)
+			.add(() => {
+				this.loading_search = false;
+			});
 	}
 
 	setTimezone(data) {
@@ -365,7 +363,7 @@ export class CreateHostComponent implements OnInit {
 			this._dealer.get_dealers_with_page(page, "").pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					data => {
-						data.dealers.map(dealer => this.dealers_data.push(dealer));
+						this.dealers_data = data.dealers;
 						this.paging = data.paging
 						this.loading_data = false;
 					},
@@ -376,7 +374,6 @@ export class CreateHostComponent implements OnInit {
 			
 			if (this.is_search) this.loading_search = true;
 
-			
 			this._dealer.get_dealers_with_page(page, "").pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					data => {
@@ -388,35 +385,6 @@ export class CreateHostComponent implements OnInit {
 					error => console.log('Error retrieving dealers by page', error)
 				);
 		}
-	}
-
-	private getParentCategories() {
-
-		this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => {
-					
-					response.map(
-						category => {
-							category.categoryName = this._titlecase.transform(category.categoryName);
-						}
-					);
-
-					this.categories_data = response;
-				},
-				error => console.log('Error retrieving parent categories', error)
-			);
-
-	}
-
-	private getTimeZones() {
-
-		this._host.get_time_zones().pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => this.timezone = data,
-				error => console.log('Error retrieving time zones', error)
-			);
-
 	}
 
 	private initializeCreateHostForm() {
@@ -463,6 +431,41 @@ export class CreateHostComponent implements OnInit {
 					}
 				}
 			);
+	}
+
+	private loadInitialData() {
+
+		const requests: ObservableInput<any> = [
+			this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe)),
+			this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
+			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
+		];
+
+		forkJoin(requests).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				([ getCategories, getDealers, getTimeZones ]) => {
+
+					const categories = getCategories as API_PARENTCATEGORY[];
+					const dealersData = getDealers as { dealers: API_DEALER[], paging: PAGING };
+					const timezones = getTimeZones as API_TIMEZONE[];
+
+					this.categories_data = categories.map(
+						category => {
+							category.categoryName = this._titlecase.transform(category.categoryName);
+							return category;
+						}
+					);
+
+					this.timezone = timezones;
+					this.dealers_data = dealersData.dealers;
+					this.paging = dealersData.paging
+					this.loading_data = false;
+					this.is_page_ready = true;
+
+				},
+				error => console.log('Error loading initial data', error)
+			);
+
 	}
 
 	private mapOperationHours(data: { close: { day: number, time: number}, open: { day: number, time: number} }[]): void {
