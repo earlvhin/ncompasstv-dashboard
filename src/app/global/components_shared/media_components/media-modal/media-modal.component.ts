@@ -1,9 +1,10 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { API_ADVERTISER, API_HOST, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_ADVERTISER, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
@@ -13,59 +14,55 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 	styleUrls: ['./media-modal.component.scss']
 })
 
-export class MediaModalComponent implements OnInit {
+export class MediaModalComponent implements OnInit, OnDestroy {
 	
-	advertiser: API_ADVERTISER[] = [];
-	advertiserid: string;
-	advertiser_data: Array<any> = [];
-	advertiser_name: string = "";
-	advertiser_field_disabled: boolean = true;
-	assign_data = {
-		dealer:'',
-		host:'',
-		advertiser:''
-	}
-	content_data: any;
-	dealerid: string;
+	advertisers: API_ADVERTISER[] = [];
+	advertiser_data: any[] = [];
+	advertiser_name = '';
+	assign_data = { dealer: '', host: '', advertiser: '' };
 	dealers: any = [];
-	dealer_name: string = "";
+	dealer_name = '';
 	dealers_data: any = [];
-	filter: any = [];
-	hostid: string;
-	host_name: string = "";
-	hosts_data: Array<any> = [];
-	host_field_disabled: boolean = true;
+	host_name = '';
+	hosts_data: any[] = [];
 	hosts: API_HOST[] = [];
-	initial_load: boolean = false;
-	initial_load_host: boolean = false;
-	initial_load_advertiser: boolean = false;
-	is_dealer: boolean = false;
-	is_floating: boolean = false;
-	is_search: boolean = false;
-	is_search_host: boolean = false;
-	is_search_advertiser: boolean = false;
-	loading_data: boolean = true;
-	loading_advertiser_data: boolean = false;
-	loading_host_data: boolean = false;
-	loading_form: boolean = false;
-	loading_search: boolean = false;
-	loading_search_advertiser: boolean = false;
-	loading_search_host: boolean = false;
-	no_advertiser_found: boolean = true;
-	no_dealer: boolean = true;
+	initial_load = false;
+	initial_load_host = false;
+	initial_load_advertiser = false;
+	is_dealer = false;
+	is_edit: any;
+	is_floating = false;
+	loading_data = true;
+	loading_advertiser_data = false;
+	loading_host_data = false;
+	loading_form = false;
+	loading_search = false;
+	loading_search_advertiser = false;
+	loading_search_host = false;
+	no_advertiser_found = true;
+	no_dealer = true;
 	no_dealer_data: boolean;
-	no_host_found: boolean = true;
-	paging: any;
-	paging_advertiser: any;
-	paging_host: any;
-	search_advertiser_data: string = "";
-	search_dealer_data: string = "";
-	search_host_data: string = "";
-	subscription: Subscription = new Subscription;	
-	temp: any = {};
-	temp_dname: "";
-	_is_edit: any;
-	to_empty: boolean = false;
+	no_host_found = true;
+	paging: PAGING;
+	paging_advertiser: PAGING;
+	paging_host: PAGING;
+	to_empty = false;
+	
+	private advertiserid: string;
+	private content_data: any;
+	private dealerid: string;
+	private filter: any = [];
+	private hostid: string;
+	private is_search = false;
+	private is_search_host = false;
+	private is_search_advertiser = false;
+	private search_advertiser_data = '';
+	private search_dealer_data = '';
+	private search_host_data = '';
+	private temp: any = {};
+	private temp_dname = '';
+
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public data_before_modal: any,
@@ -80,60 +77,185 @@ export class MediaModalComponent implements OnInit {
 	ngOnInit() {
 		this.getDealers(1);
 
-		if (this.data_before_modal) {
-			this._is_edit = this.data_before_modal[0].is_edit;
-		} else {
-			this._is_edit = false;
-		}
+		if (this.data_before_modal) this.is_edit = this.data_before_modal[0].is_edit; 
+		else this.is_edit = false;
 
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 		
-		// for dealer_users auto fill
 		if (roleId === dealerRole || roleId === subDealerRole) {
+
 			this.is_dealer = true;
 			this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			this.dealerSelected(this.dealerid);
+
 		} else {
-			if(this._is_edit) {
-				this.subscription.add(
-					this._content.get_content_by_id(this.data_before_modal[1].id).subscribe(
+
+			if (this.is_edit) {
+				
+				this._content.get_content_by_id(this.data_before_modal[1].id).pipe(takeUntil(this._unsubscribe))
+					.subscribe(
 						data => {
 							this.content_data = data;
 
 							if(this.content_data.fileType != 'feed') {
-								if(this.content_data.dealerId == "" && this.content_data.advertiserId == "" && this.content_data.hostId == "") {
+								if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
 									this.is_floating = true;
 								} else {
 									this.hostid = data.hostId;
-									this.getHostName(this.hostid);
+									this.getHostById(this.hostid);
 									this.advertiserid = data.advertiserId;
-									this.getAdvertiserName(this.advertiserid);
+									this.getAdvertiserById(this.advertiserid);
 									this.dealerid = data.dealerId;
-									this.getDealerName(data.dealerId);
+									this.getDealerById(data.dealerId);
 								}
 							} else {
-								if(this.content_data.dealerId == "") {
+
+								if (this.content_data.dealerId == '') {
 									this.is_floating = true;
 								} else {
 									this.dealerid = data.dealerId;
-									this.getDealerName(data.dealerId);
+									this.getDealerById(data.dealerId);
 								}
+
 							}
-						}
-					)
-				)
+						},
+						error => console.log('Error retrieving content by ID', error)
+					);
+
 			}
 		}
 	}
 
-	floatingToggle(e) {
-		this.is_floating = e.checked;
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	advertiserSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
+
+		this.is_search_advertiser = event.is_search;
 		
-		//clear data
-		if(this.is_floating) {
+		if (this.is_search_advertiser) {
+			this.search_advertiser_data = '';
+			this.advertiser_data = [];
+			this.loading_search_advertiser = true;
+		}
+
+		if (this.paging.hasNextPage || this.is_search_advertiser) this.getAdvertiserByDealerId(event.page);
+
+	}
+
+	advertiserSelected(id: string) {
+		this.assign_data.advertiser = id;
+	}
+
+	checkInitialLoad(): boolean {
+
+		if (this.is_edit) {
+
+			if (!this.is_floating) {
+
+				if (this.dealers && this.hosts && this.advertisers && this.dealer_name) {
+					return true;
+				}
+
+				if (this.content_data) {
+
+					if (this.dealers && this.content_data.fileType == 'feed') {
+						return true;
+					}
+
+					if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
+						return true;
+					}
+
+				}
+			} else {
+				return true;
+			}
+			
+		} else {
+			if (this.dealers.length > 0) return true;
+		}
+	}
+
+	dealerSelected(id: string): void {
+
+		this.loading_form = false;
+		this.no_dealer = false;
+		this.assign_data.dealer = id;
+		this.initial_load_host = false;
+
+		if (this.is_edit) {
+			
+			this.loading_data = false;
+			
+			if (this.content_data.fileType != 'feed') {
+				this.hosts = [];
+				this.hosts_data = [];
+				this.advertiser_data = [];
+				this.advertisers = [];
+				this.assign_data.host = '';
+				this.host_name = '';
+				this.assign_data.advertiser = '';
+				this.advertiser_name = '';
+				this.to_empty = true;
+				this.loading_form = false;
+				this.getHostByDealerId(1);
+				this.getAdvertiserByDealerId(1);
+			}
+
+			if (id != this.temp_dname) {
+				this.assign_data.host = '';
+				this.host_name = '';
+				this.assign_data.advertiser = '';
+				this.advertiser_name = '';
+			}
+
+		} else {
+
+			this.hosts = [];
+			this.hosts_data = [];
+			this.advertiser_data = [];
+			this.advertisers = [];
+			this.assign_data.host = '';
+			this.host_name = '';
+			this.assign_data.advertiser = '';
+			this.advertiser_name = '';
+			this.to_empty = true;
+			this.loading_form = false;
+			this.getHostByDealerId(1);
+			this.getAdvertiserByDealerId(1);
+
+		}
+	}
+
+	hostSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
+
+		this.is_search_host = event.is_search;
+
+		if (this.is_search_host) {
+			this.search_host_data = '';
+			this.hosts_data = [];
+			this.loading_search_host = true;
+		}
+
+		if (this.paging_host.hasNextPage || this.is_search_host) this.getHostByDealerId(event.page);
+
+	}
+
+	hostSelected(id: string): void {
+		this.assign_data.host = id;
+	}
+
+	onToggleFloatingContent(event: { checked: boolean }): void {
+		this.is_floating = event.checked;
+		
+		if (this.is_floating) {
+
 			this.temp = {
 				hostid : this.hostid,
 				host_name : this.host_name,
@@ -141,150 +263,181 @@ export class MediaModalComponent implements OnInit {
 				advertiser_name : this.advertiser_name,
 				dealerid : this.dealerid,
 				dealer_name : this.dealer_name
-			}
-			this.hostid = "";
-			this.host_name = "";
-			this.advertiserid = "";
-			this.advertiser_name = "";
-			this.dealerid = "";
-			this.dealer_name = "";
+			};
+
+			this.hostid = '';
+			this.host_name = '';
+			this.advertiserid = '';
+			this.advertiser_name = '';
+			this.dealerid = '';
+			this.dealer_name = '';
 			this.no_advertiser_found = true;
 			this.no_host_found = true;
+
 		} else {
-			if(this.content_data.dealerId != "" && this.content_data.advertiserid != "" && this.content_data.hostid != "") {
+
+			if (this.content_data.dealerId != '' && this.content_data.advertiserid != '' && this.content_data.hostid != '') {
 				this.hostid = this.temp.hostid;
 				this.advertiserid = this.temp.advertiserid;
 				this.dealerid = this.temp.dealerid;
-				this.getHostName(this.hostid);
-				this.getAdvertiserName(this.advertiserid);
-				this.getDealerName(this.dealerid);
+				this.getHostById(this.hostid);
+				this.getAdvertiserById(this.advertiserid);
+				this.getDealerById(this.dealerid);
 			}
+
 		}
 	}
 
-	checkInitialLoad() {
-		if(this._is_edit) {
-			if(!this.is_floating) {
-				if(this.dealers && this.hosts && this.advertiser && this.dealer_name) {
-					return true;
-				}
-				if(this.content_data) {
-					if(this.dealers && this.content_data.fileType == 'feed') {
-						return true;
-					}
-					if(this.content_data.dealerId == "" && this.content_data.advertiserId == "" && this.content_data.hostId == "") {
-						return true;
-					}
-				}
-			} else {
-				return true;
-			}
-			
-		} else {
-			if(this.dealers.length > 0) {
-				return true;
-			}
-		}
+	searchAdvertiserData(keyword: string): void {
+		this.search_advertiser_data = keyword;
+		this.getAdvertiserByDealerId(1);
 	}
 
-	updateData() {
-		if(!this.is_floating) {
-			var filter = {
+	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
+
+		this.is_search = event.is_search;
+
+		if (this.is_search) {
+			this.search_dealer_data = '';
+			this.dealers_data = [];
+			this.loading_search = true;
+			this.assign_data.dealer = '';
+			this.assign_data.host = '';
+			this.assign_data.advertiser = '';
+		}
+
+		if (this.paging.hasNextPage || this.is_search) this.getDealers(event.page);
+
+	}
+
+	searchData(keyword: string) {
+		this.search_dealer_data = keyword;
+		this.getDealers(1);
+	}
+
+	searchHostData(keyword: string): void {
+		this.search_host_data = keyword;
+		this.getHostByDealerId(1);
+	}
+	
+	updateData(): void {
+
+		let filter = {};
+
+		if (!this.is_floating) {
+
+			filter = {
 				contentid: this.content_data.contentId,
 				dealerid: this.assign_data.dealer,
 				hostid: this.assign_data.host,
 				advertiserid: this.assign_data.advertiser
-			}
+			};
+
 		} else {
-			var filter = {
+
+			filter = {
 				contentid: this.content_data.contentId,
 				dealerid: this.dealerid,
 				hostid: this.hostid,
 				advertiserid: this.advertiserid
-			}
+			};
 		}
 		
-		this.filter.push(filter)
-		// if(this.is_floating) {
-		this._content.unassign_content(this.filter).subscribe(
-			data => {
-				if(data) {
-					this.confirmationModal('success', 'Content assignment successfully edited.','Click OK to continue');
-				}
-			}
-		)
-		// }
-	}
+		this.filter.push(filter);
 
-	confirmationModal(status, message, data) {
-		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
-			height: '350px',
-			data:  {
-				status: status,
-				message: message,
-				data: data
-			}
-		})
+		this._content.unassign_content(this.filter).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
 
-		dialogRef.afterClosed().subscribe(
-			data => {
-				this._dialog.closeAll();
-			}
-		)
-	}
-
-	getDealerName(e) {
-		this.subscription.add(
-			this._dealer.get_dealer_by_id(e).subscribe(
-				data => {
-					this.dealer_name = data.businessName;
-					this.temp_dname = data.dealerId;
-					this.dealerSelected(data.dealerId);
-				}
-			)
-		)
-	}
-
-	getHostName(e) {
-		this.subscription.add(
-			this._host.get_host_by_id(e).subscribe(
-				data => {
-					if(!data.message) {
-						this.host_name = data.host.name;
-						this.hostSelected(data.host.hostId);
-					}
+					if (!response) return;
+					this.openConfirmationModal('success', 'Content assignment successfully edited.', 'Click OK to continue');
 					
-				}
-			)
-		)
+				},
+				error => console.log('Error unassigning content', error)
+			);
 	}
 
-	getAdvertiserName(e) {
-		this.subscription.add(
-			this._advertiser.get_advertiser_by_id(e).subscribe(
-				data => {
-					if(data) {
-						this.advertiser_name = data.name;
-						this.advertiserSelected(data.id);
-					}
-				}
-			)
-		)
+	private getAdvertiserById(id: string) {
+		
+		this._advertiser.get_advertiser_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if (response.message) return;
+					this.advertiser_name = response.advertiser.name;
+					this.advertiserSelected(response.advertiser.id);
+				},
+				error => console.log('Error retrieving advertiser by ID', error)
+			);
+
 	}
 
-	searchData(e) {
-		this.search_dealer_data = e;
-		this.getDealers(1);
-	}
+	private getAdvertiserByDealerId(page: number) {
 
-	getDealers(e) {
-		if(e > 1) {
-			this.loading_data = true;
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, this.search_dealer_data).subscribe(
+		if (page > 1) {
+
+			this.loading_advertiser_data = true;
+			
+			this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					data => {
-						data.dealers.map (
+
+						data.advertisers.map(
+							i => {
+								this.advertisers.push(i);
+								this.advertiser_data.push(i);
+							}
+						);
+
+						this.paging_advertiser = data.paging;
+						this.loading_advertiser_data = false;
+						this.loading_search_advertiser = false;
+					},
+					error => console.log('Error retrieving advertisers by dealer ID', error)
+				);
+
+		} else {
+
+			if (this.search_advertiser_data != '') {
+				this.loading_search_advertiser = true;
+				this.advertiser_data = [];
+			}
+
+			this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+
+						if(!data.message) {
+							
+							data.advertisers.map(
+								i => {
+									this.advertisers.push(i);
+									this.advertiser_data.push(i);
+								}
+							);
+
+							this.paging_advertiser = data.paging;
+							this.no_advertiser_found = false;
+						}
+
+						this.to_empty = false;
+						this.loading_advertiser_data = false;
+						this.loading_search_advertiser = false;
+						this.loading_form = false;
+					},
+					error => console.log('Error retrieving dealers by ID ', error)
+				);
+		}
+	}
+
+	private getDealers(page: number) {
+
+		if (page > 1) {
+			this.loading_data = true;
+			
+			this._dealer.get_dealers_with_page(page, this.search_dealer_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					data => {
+						data.dealers.map(
 							i => {
 								this.dealers.push(i)
 								this.dealers_data.push(i)
@@ -293,137 +446,63 @@ export class MediaModalComponent implements OnInit {
 						this.paging = data.paging;
 						this.loading_data = false;
 						this.loading_search = false;
-					}
-				)
-			)
+					},
+					error => console.log('Error retrieving dealers by page', error)
+				);
+
 		} else {
-			if(this.search_dealer_data != "") {
+
+			if(this.search_dealer_data != '') {
 				this.loading_search = true;
 				this.dealers_data = [];
 			}
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, this.search_dealer_data).subscribe(
+			
+			this._dealer.get_dealers_with_page(page, this.search_dealer_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					data => {
-						if(data.dealers.length > 0) {
-							data.dealers.map (
+
+						if (data.dealers.length > 0) {
+
+							data.dealers.map(
 								i => {
 									this.dealers.push(i)
 									this.dealers_data.push(i)
 								}
-							)
+							);
+
 							this.paging = data.paging;
 						}
+
 						this.loading_data = false;
 						this.loading_search = false;
-					}
-				)
-			)
+					},
+					error => console.log('Error retrieving dealers by page', error)
+				);
 		}
 	}
 
-	searchBoxTrigger (event) {
-		this.is_search = event.is_search;
-		if(this.is_search) {
-			this.search_dealer_data = "";
-			this.dealers_data = [];
-			this.loading_search = true;
-			this.assign_data.dealer = '';
-			this.assign_data.host = '';
-			this.assign_data.advertiser = '';
-		}
-		if(this.paging.hasNextPage || this.is_search) {
-			this.getDealers(event.page);	
-		}
+	private getDealerById(id: string) {
+		
+		this._dealer.get_dealer_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					this.dealer_name = response.businessName;
+					this.temp_dname = response.dealerId;
+					this.dealerSelected(response.dealerId);
+				},
+				error => console.log('Error retrieving dealer by ID', error)
+			);
 	}
 
-	hostSearchBoxTrigger(event) {
-		this.is_search_host = event.is_search;
-		if(this.is_search_host) {
-			this.search_host_data = "";
-			this.hosts_data = [];
-			this.loading_search_host = true;
-		}
-		if(this.paging_host.hasNextPage || this.is_search_host) {
-			this.getHostByDealerId(event.page);	
-		}
-	}
+	private getHostByDealerId(page: number): void {
 
-	advertiserSearchBoxTrigger (event) {
-		this.is_search_advertiser = event.is_search;
-		if(this.is_search_advertiser) {
-			this.search_advertiser_data = "";
-			this.advertiser_data = [];
-			this.loading_search_advertiser = true;
-		}
-		if(this.paging.hasNextPage || this.is_search_advertiser) {
-			this.getAdvertiserByDealerId(event.page);
-		}
-	}
-
-	searchHostData(e) {
-		this.search_host_data = e;
-		this.getHostByDealerId(1);
-	}
-	
-	searchAdvertiserData(e) {
-		this.search_advertiser_data = e;
-		this.getAdvertiserByDealerId(1);
-	}
-
-	dealerSelected(e) {
-		this.loading_form = false;
-		this.no_dealer = false;
-		this.assign_data.dealer = e;
-		this.initial_load_host = false;
-
-		if (this._is_edit) {
-			this.loading_data = false;
-			
-			if (this.content_data.fileType != 'feed') {
-				this.hosts = [];
-				this.hosts_data = [];
-				this.advertiser_data = [];
-				this.advertiser = [];
-				this.assign_data.host = "";
-				this.host_name = "";
-				this.assign_data.advertiser = "";
-				this.advertiser_name = "";
-				this.to_empty = true;
-				this.loading_form = false;
-				this.getHostByDealerId(1);
-				this.getAdvertiserByDealerId(1);
-			}
-
-			if (e != this.temp_dname) {
-				this.assign_data.host = "";
-				this.host_name = "";
-				this.assign_data.advertiser = "";
-				this.advertiser_name = "";
-			}
-
-		} else {
-			this.hosts = [];
-			this.hosts_data = [];
-			this.advertiser_data = [];
-			this.advertiser = [];
-			this.assign_data.host = "";
-			this.host_name = "";
-			this.assign_data.advertiser = "";
-			this.advertiser_name = "";
-			this.to_empty = true;
-			this.loading_form = false;
-			this.getHostByDealerId(1);
-			this.getAdvertiserByDealerId(1);
-		}
-	}
-
-	getHostByDealerId(e) {
-		if(e > 1) {
+		if (page > 1) {
 			this.loading_host_data = true;
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.assign_data.dealer, e, this.search_host_data).subscribe(
+			
+			this._host.get_host_by_dealer_id(this.assign_data.dealer, page, this.search_host_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					data => {
-						data.paging.entities.map (
+						data.paging.entities.map(
 							i => {
 								this.hosts.push(i);
 								this.hosts_data.push(i);
@@ -432,92 +511,73 @@ export class MediaModalComponent implements OnInit {
 						this.paging_host = data.paging;
 						this.loading_host_data = false;
 						this.loading_search_host = false;
-					}
-				)
-			)
+					},
+					error => console.log('Error retrieving host by dealer ID', error)
+				);
+
 		} else {
-			if(this.search_host_data != "") {
+
+			if (this.search_host_data != '') {
 				this.loading_search_host = true;
 				this.hosts_data = [];
 			}
-			this.subscription.add(
-				this._host.get_host_by_dealer_id(this.assign_data.dealer, e, this.search_host_data).subscribe(
+			
+			this._host.get_host_by_dealer_id(this.assign_data.dealer, page, this.search_host_data).pipe(takeUntil(this._unsubscribe))
+				.subscribe(
 					data => {
-						if(!data.message) {
-							data.paging.entities.map (
+
+						if (!data.message) {
+
+							data.paging.entities.map(
 								i => {
 									this.hosts.push(i)
 									this.hosts_data.push(i)
 								}
-							)
+							);
+
 							this.paging_host = data.paging;
 							this.no_host_found = false;
 						}
+
 						this.to_empty = false;
 						this.loading_host_data= false;
 						this.loading_search_host = false;
 						this.loading_form = false;
-					}
-				)
-			)
+					},
+					error => console.log('Error retrieving host by dealer ID', error)
+				);
 		}
 	}
 
-	hostSelected(e) {
-		this.assign_data.host = e;
+	private getHostById(id: string) {
+		
+		this._host.get_host_by_id(id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+
+					if (response.message) return;
+					this.host_name = response.host.name;
+					this.hostSelected(response.host.hostId);
+					
+				},
+				error => console.log('Error retrieving host by ID', error)
+			);
+
 	}
 
-	getAdvertiserByDealerId(e) {
-		if(e > 1) {
-			this.loading_advertiser_data = true;
-			this.subscription.add(
-				this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, e, this.search_advertiser_data).subscribe(
-					data => {
-						data.advertisers.map (
-							i => {
-								this.advertiser.push(i);
-								this.advertiser_data.push(i);
-							}
-						)
-						this.paging_advertiser = data.paging;
-						this.loading_advertiser_data = false;
-						this.loading_search_advertiser = false;
-					}
-				)
-			)
-		} else {
-			if(this.search_advertiser_data != "") {
-				this.loading_search_advertiser = true;
-				this.advertiser_data = [];
+	private openConfirmationModal(status: string, message: string, data: string) {
+		
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width:'500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialogRef.afterClosed().subscribe(
+			() => {
+				this._dialog.closeAll();
 			}
-			this.subscription.add(
-				this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, e, this.search_advertiser_data).subscribe(
-					data => {
-						if(!data.message) {
-							data.advertisers.map (
-								i => {
-									this.advertiser.push(i);
-									this.advertiser_data.push(i);
-								}
-							)
-							this.paging_advertiser = data.paging;
-							this.no_advertiser_found = false;
-						}
-						this.to_empty = false;
-						this.loading_advertiser_data = false;
-						this.loading_search_advertiser = false;
-						this.loading_form = false;
-					}
-				)
-			)
-		}
+		)
 	}
 
-	advertiserSelected(e) {
-		this.assign_data.advertiser = e;
-	}
-
-	onNoClick() {
-		this
-	}
 }

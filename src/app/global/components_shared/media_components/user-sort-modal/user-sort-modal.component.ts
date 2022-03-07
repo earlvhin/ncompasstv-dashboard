@@ -108,7 +108,7 @@ export class UserSortModalComponent implements OnInit {
 		this.subscription.add(
 			this._advertiser.get_advertiser_by_id(e).subscribe(
 				data => {
-					this.filter_data.advertiser.name = data.name;
+					this.filter_data.advertiser.name = data.advertiser.name;
 				}
 			)
 		)
@@ -179,7 +179,7 @@ export class UserSortModalComponent implements OnInit {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(e, "").subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers.push(i)
 							}
@@ -250,7 +250,7 @@ export class UserSortModalComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.dealer_id, e, this.search_host_data).subscribe(
 					data => {
-						data.paging.entities.map (
+						data.paging.entities.map(
 							i => {
 								this.hosts.push(i);
 								this.hosts_data.push(i);
@@ -275,7 +275,7 @@ export class UserSortModalComponent implements OnInit {
 					data => {
 						if(!data.message) {
 							if(this.search_host_data == "") {
-								data.paging.entities.map (
+								data.paging.entities.map(
 									i => {
 										this.hosts.push(i);
 										this.hosts_data.push(i);
@@ -309,7 +309,7 @@ export class UserSortModalComponent implements OnInit {
 			this.subscription.add(
 				this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, e, this.search_advertiser_data).subscribe(
 					data => {
-						data.advertisers.map (
+						data.advertisers.map(
 							i => {
 								this.advertisers.push(i);
 								this.advertisers_data.push(i);
@@ -336,7 +336,7 @@ export class UserSortModalComponent implements OnInit {
 					data => {
 						if(!data.message) {
 							if(this.search_advertiser_data == "") {
-								data.advertisers.map (
+								data.advertisers.map(
 									i => {
 										this.advertisers.push(i);
 										this.advertisers_data.push(i);
