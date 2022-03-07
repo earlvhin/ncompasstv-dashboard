@@ -180,7 +180,7 @@ export class ContentsTabComponent implements OnInit {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(e, "").subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers.push(i)
 							}

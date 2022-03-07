@@ -76,7 +76,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 				.subscribe(
 					response => {
 
-						response.advertisers.map (
+						response.advertisers.map(
 							i => {
 								this.advertiser.push(i);
 								this.advertiser_data.push(i);
@@ -146,8 +146,8 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 
 		this._advertiser.get_advertiser_by_id(e).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: any) => {
-					this.entered_advertiser_data = response;
+				({ advertiser }) => {
+					this.entered_advertiser_data = advertiser;
 					this.location_selected = true;
 					this.map_markers = this.mapMarkersToUI();
 					this.entered_advertiser_data.icon_url = this.map_markers.icon_url;

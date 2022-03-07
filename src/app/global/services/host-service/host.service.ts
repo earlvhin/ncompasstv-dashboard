@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING } from 'src/app/global/models';
+import { API_DEALER, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -145,7 +145,7 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_host_by_id(id: string) {
+	get_host_by_id(id: string): Observable<{ message?: string, host?: API_HOST, hostTags?: TAG[], dealer?: API_DEALER, dealerTags?: TAG[], timezone?: API_TIMEZONE, fieldGroups?: any[] }> {
 		const url = `${this.getters.api_get_host_by_id}${id}`;
 		return this.getRequest(url);
 	}

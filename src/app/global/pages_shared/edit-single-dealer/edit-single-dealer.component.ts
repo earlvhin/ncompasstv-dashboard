@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Subject, Observable } from 'rxjs';
 
 import { API_UPDATE_DEALER_PROFILE_BY_ADMIN } from '../../models/api_update-user-info.model';
-import { API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN } from '../../models/api_update-user-info.model';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
@@ -288,7 +287,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			this._user.get_users_by_filters({ page, search: '' }).pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data:any) => {
-						data.users.map (
+						data.users.map(
 							i => {
 								this.other_users.push(i)
 							}

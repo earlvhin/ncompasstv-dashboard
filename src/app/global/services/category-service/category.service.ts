@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AuthService } from '../../../global/services/auth-service/auth.service';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { API_CATEGORY } from '../../models/api_category.model';
-import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
+import { API_CATEGORY, API_PARENTCATEGORY } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -30,7 +30,7 @@ export class CategoryService {
 	}
 	
 	get_parent_categories() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_parent_categories}`, this.http_options).map(data => data.parentCategory);
+		return this._http.get<{ parentCategory: API_PARENTCATEGORY[] }>(`${environment.base_uri}${environment.getters.api_get_parent_categories}`, this.http_options).map(data => data.parentCategory);
 	}
 
 }

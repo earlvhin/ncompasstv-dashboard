@@ -154,7 +154,10 @@ export class SingleHostComponent implements OnInit {
 		this._host.get_host_by_id(this.hostId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { host: API_HOST, dealer: API_DEALER, hostTags: TAG }) => this.setPageData(response),
+				response => {
+					if (response.message) return;
+					this.setPageData({ host: response.host, dealer: response.dealer, hostTags: response.hostTags });
+				},
 				error => console.log('Error retrieving host by ID', error)
 			);
 

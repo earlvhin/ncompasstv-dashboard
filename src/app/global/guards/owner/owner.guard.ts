@@ -55,12 +55,12 @@ export class OwnerGuard implements CanActivate {
 	private isAllowed(page: string, id: string) {
 
 		let request: Observable<any>;
-		let result: API_LICENSE | API_SINGLE_HOST | API_SINGLE_PLAYLIST | API_SINGLE_SCREEN | API_USER_DATA | { advertiser: API_ADVERTISER, tags: TAG[] };
+		let result: any;
 
 		switch (page) {
 
 			case 'advertisers':
-				request = this._advertiser.get_advertiser_by_id(id, 'single-advertiser');
+				request = this._advertiser.get_advertiser_by_id(id);
 				break;
 
 			case 'hosts':

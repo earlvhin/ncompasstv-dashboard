@@ -50,7 +50,7 @@ export const API_ENDPOINTS = {
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
 		api_get_dealers_with_license: 'dealer/getdealerswithlicense',
 		api_get_dealer_report: 'dealer/getaddedreport',
-		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone?dealerId=',
+		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone',
 		api_get_generated_feed_by_id: 'feed/getbyfeedid?feedid=',
 		api_get_feeds: 'feed/getall',
 		api_get_feeds_total: 'feed/gettotal',

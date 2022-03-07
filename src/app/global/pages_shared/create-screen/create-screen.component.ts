@@ -488,7 +488,7 @@ export class CreateScreenComponent implements OnInit {
 					data => {
 						if(!data.message) {
 							if(this.search_host_data == "") {
-								data.paging.entities.map (
+								data.paging.entities.map(
 									i => {
 										this.hosts.push(i);
 										this.hosts_data.push(i);

@@ -564,7 +564,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._host.get_host_total_per_dealer(id).subscribe(
 				(data: any) => {
-                    console.log("DD", data)
 					this.host_card = {
 						basis: data.total,
 						basis_label: 'HOSTS',
@@ -836,7 +835,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(e, "").subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers.push(i)
 							}

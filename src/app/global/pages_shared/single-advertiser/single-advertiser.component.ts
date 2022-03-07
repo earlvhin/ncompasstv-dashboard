@@ -68,10 +68,10 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this._advertiser.get_advertiser_by_id(id, 'single-advertiser')
+		this._advertiser.get_advertiser_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { advertiser, tags }) => {
+				(response) => {
 					const { advertiser, tags } = response;
 					advertiser.tags = tags;
 					this.advertiser = advertiser;
