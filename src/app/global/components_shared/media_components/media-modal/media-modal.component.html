@@ -62,7 +62,7 @@
                 >
                 </app-autocomplete-field>
 
-                <div class="form-spinner" *ngIf="loading_host_data">
+                <div class="form-spinner" *ngIf="loading_form">
                     <app-little-spinner></app-little-spinner>
                 </div>
                 <div class="no-data-found" *ngIf="no_host_found">
@@ -91,7 +91,7 @@
                 [initial_load]="initial_load_advertiser"
                 [reset_value]="to_empty">
                 </app-autocomplete-field>
-                <div class="form-spinner" *ngIf="loading_advertiser_data">
+                <div class="form-spinner" *ngIf="loading_form">
                     <app-little-spinner></app-little-spinner>
                 </div>
                 <div class="no-data-found" *ngIf="no_advertiser_found">
