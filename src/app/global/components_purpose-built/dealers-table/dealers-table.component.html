@@ -13,20 +13,20 @@
                     <button mat-menu-item (click)="filterTable('monthAsDealer', '4', '9', '4-9 months')">4-9 months</button>
                     <button mat-menu-item (click)="filterTable('monthAsDealer', '10','','Above 10 months')">Above 10 months</button>
                 </mat-menu>
-                <!-- <button mat-button mat-raised-button 
-                    class="theme-btn sm-text mr-2 h-45" 
-                    [matMenuTriggerFor]="inactive" [disabled]="offline_filter">
-                    <span class="button-label">Inactive</span>
-                    <span class="fas fa-circle text-gray"></span>
-                </button>
-                <mat-menu #inactive="matMenu">
-                    <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '0', '20', 'less than 20%')">less than 20%</button>
-                    <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '10','', 'greater than 10%')">greater than 10%</button>
-                    <button mat-menu-item (click)="filterTable('inactiveLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
-                </mat-menu> -->
                 <button mat-button mat-raised-button 
                     class="theme-btn sm-text mr-2 h-45" 
-                    [matMenuTriggerFor]="offline" [disabled]="inactive_filter">
+                    [matMenuTriggerFor]="unassigned" [disabled]="offline_filter">
+                    <span class="button-label">Unassigned</span>
+                    <span class="fas fa-circle text-gray"></span>
+                </button>
+                <mat-menu #unassigned="matMenu">
+                    <button mat-menu-item (click)="filterTable('unassignedLicensesPercent', '0', '20', 'less than 20%')">less than 20%</button>
+                    <button mat-menu-item (click)="filterTable('unassignedLicensesPercent', '10','', 'greater than 10%')">greater than 10%</button>
+                    <button mat-menu-item (click)="filterTable('unassignedLicensesPercent', '20', '', 'greater than 20%')">greater than 20%</button>
+                </mat-menu>
+                <button mat-button mat-raised-button 
+                    class="theme-btn sm-text mr-2 h-45" 
+                    [matMenuTriggerFor]="offline" [disabled]="unassigned_filter">
                     <span class="button-label">Offline</span>
                     <span class="fas fa-circle text-danger"></span>
                 </button>
@@ -47,7 +47,7 @@
 				></app-search-field>
 			</div>
 
-            <div class="row full-width m-0" *ngIf="filters.label_age || filters.label_inactive || filters.label_offline">
+            <div class="row full-width m-0" *ngIf="filters.label_age || filters.label_unassigned || filters.label_offline">
                 <div class="col-lg-12">
                     <div class="d-flex align-items-center p-2 bg-gray-2" >
                         <div class="filter-pills">
@@ -55,8 +55,8 @@
                                 Age: <strong>{{filters.label_age}}</strong>
                             </div>
 
-                            <div class="order-pill pill" *ngIf="filters.label_inactive">
-                                Inactive: <strong>{{filters.label_inactive}}</strong>
+                            <div class="order-pill pill" *ngIf="filters.label_unassigned">
+                                Unassigned: <strong>{{filters.label_unassigned}}</strong>
                             </div>
 
                             <div class="dealer-pill pill" *ngIf="filters.label_offline">
