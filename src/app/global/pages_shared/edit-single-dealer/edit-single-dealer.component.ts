@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Output, EventEmitter, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Subject, Observable } from 'rxjs';
 
@@ -10,6 +10,8 @@ import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.compo
 import { UserService } from '../../services/user-service/user.service';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService } from '../../services/auth-service/auth.service';
+import { DeleteDealerDialogComponent } from './delete-dealer-dialog/delete-dealer-dialog.component';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-edit-single-dealer',
@@ -28,6 +30,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	has_duplicate_email : boolean = false;
 	is_set_to_active = false;
 	other_users: any;
+	is_admin = this.isAdmin;
 	
 	dealer_form_view = [
 		{
@@ -134,7 +137,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		private _form: FormBuilder,
 		private _user: UserService,
 		private _dialog: MatDialog,
-		private _dealer: DealerService
+		private _dealer: DealerService,
+		private _router: Router,
 	) { }
 
 	ngOnInit() {
@@ -173,6 +177,29 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		else this.is_set_to_active = true;
 
 		if (this.dealer_form.valid) this.enable_update_form = true;
+
+	}
+
+	onDeleteDealer(): void {
+		
+		const config: MatDialogConfig = {
+			width: '520px',
+			height: '380px',
+			disableClose: true,
+		};
+
+		const dialog = this._dialog.open(DeleteDealerDialogComponent, config);
+		dialog.componentInstance.businessName = this.f.business_name.value;
+		dialog.componentInstance.dealerId = this.f.dealer_id.value;
+		dialog.componentInstance.userId = this.currentUser.user_id;
+
+		dialog.afterClosed().subscribe(
+			response => {
+				if (!response) return;
+				this._dialog_ref.close();
+				this._router.navigate([`${this.currentRole}/dealers`]);
+			}
+		);
 
 	}
 
@@ -266,6 +293,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		this.is_set_to_active = !this.is_set_to_active;
 		if (this.is_set_to_active) this.status = 'active';
 		else this.status = 'inactive';
+	}
+
+	togglePasswordFieldType(): void {
+		this.is_password_field_type = !this.is_password_field_type;
 	}
 
 	private getOtherUsers(page: number): void {
@@ -424,12 +455,18 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		return this._dealer.update_status(id, status).pipe(takeUntil(this._unsubscribe));
 	}
 
+	protected get currentRole() {
+		return this._auth.current_role;
+	}
+
 	protected get currentUser() {
 		return this._auth.current_user_value;
 	}
 
-	togglePasswordFieldType(): void {
-		this.is_password_field_type = !this.is_password_field_type;
+	protected get isAdmin() {
+		return this.currentRole === 'administrator';
 	}
+
+	
 
 }

@@ -26,6 +26,10 @@ export class DealerService extends BaseService {
 		return this.postRequest(`${this.getters.api_get_dealers_content_metrics}`, data);
 	}
 
+	delete_dealer(body: { dealerId: string, userId: string, retainContents: boolean }) {
+		return this.postRequest(`${this.deleters.delete_dealer}`, body);
+	}
+
 	export_dealers(): Observable<API_EXPORT_DEALER[]> {
 		return this.getRequest(`${this.getters.export_dealers}`).map(response => response.dealers);
 	}
