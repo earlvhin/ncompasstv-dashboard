@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { Subject } from 'rxjs';
 
@@ -14,7 +14,7 @@ import { FormControl } from '@angular/forms';
 	providers: [TitleCasePipe]
 })
 
-export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewInit {
+export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 	@Output() data_value = new EventEmitter;
 	@Output() change_value = new EventEmitter;
 	@Output() call_next_page = new EventEmitter;
@@ -67,6 +67,37 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 		}
 
         document.addEventListener('click',this.customBlur);
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+
+		if(this.reset_value) {
+			this.view_value = "";
+		}
+
+		this.data_reference = this.data_reference;
+
+		if(this.no_edit) {
+			this.view_value = this.initial_value;
+		} else {
+			if(this.paging && this.search_via_api && this.data_reference.length > 0) {
+				this.data_reference = this.data_reference;
+				this.search_result = this.data_reference;
+			}
+		}
+
+		if (changes.disabled as SimpleChange) {
+			
+			if (changes.disabled.currentValue) {
+				this.input_field_control.disable();
+				this.paginated_input_field_control.disable();
+				return;
+			} 
+
+			this.input_field_control.enable();
+			this.paginated_input_field_control.enable();
+
+		}
 	}
 
 	ngAfterViewInit(): void {
@@ -145,22 +176,6 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 
 	onChangeData(e) {
 		this.change_value.emit(e.target.getAttribute('data-value'))
-	}
-
-	ngOnChanges() {
-		if(this.reset_value) {
-			this.view_value = "";
-		}
-		this.data_reference = this.data_reference;
-		if(this.no_edit) {
-			this.view_value = this.initial_value;
-		} else {
-			if(this.paging && this.search_via_api && this.data_reference.length > 0) {
-				this.data_reference = this.data_reference;
-				this.search_result = this.data_reference;
-			} else {
-			}
-		}
 	}
 	
 	onScroll(event) {
