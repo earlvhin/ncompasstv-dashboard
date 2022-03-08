@@ -55,9 +55,14 @@ export class LicenseService {
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 	
-    get_all_licenses_duration(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?: boolean, recent?:string, zone?: string, dealer?: string, host?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
+    get_all_licenses_duration(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?, recent?:string, zone?: string, dealer?: string, host?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
         const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize,includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId:host })
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_all_duration}`, { ...this.httpOptions, params });
+	}
+    
+    get_all_licenses_duration_clone(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?, recent?:string, zone?: string, dealer?: string, host?: string): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize,includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId:host })
+		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_all_duration_clone}`, { ...this.httpOptions, params });
 	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
@@ -141,8 +146,8 @@ export class LicenseService {
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(url);
 	}
 
-	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, activate?, zone?, host?) {
-		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, active:activate, timezone: zone, hostId:host })
+	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?) {
+		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, inactive, online })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
 	}
 
@@ -162,8 +167,11 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealer_licenses}${id}`, this.httpOptions);
 	}
 	
-    get_license_to_export_duration(id: string, key: string, column: string, order: string, pageSize?: number, status?: string, activate?: boolean, zone?: string, host?: string): Observable<{ licenseTemplateZoneExports: API_LICENSE['license'][] }> {
-		return this._http.get<{ licenseTemplateZoneExports: API_LICENSE['license'][] }>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}&search=${key}&sortColumn=${column}&sortOrder=${order}&pageSize=${pageSize}&piStatus=${status}&active=${activate}&timeZone=${zone}&hostId=${host}`, this.httpOptions);
+
+    get_license_to_export_duration(id: string, key: string, column: string, order: string, pageSize?: number, status?: string, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?) {
+        const params = this.httpParams({ dealerId: id, page:1, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, inactive, online })
+		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_duration}`, { ...this.httpOptions, params });
+		// return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}`, this.httpOptions);
 	}
 
 	get_license_total_per_dealer(id) {

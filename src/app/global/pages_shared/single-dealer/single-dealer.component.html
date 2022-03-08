@@ -112,13 +112,25 @@
                                                     <span class="fas fa-circle xsm-text"></span>
                                                 </button>
                                                 <mat-menu #licenseStatus="matMenu">
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
-                                                        <span class="fas fa-circle xsm-text text-primary mr-3"></span>Online</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '0')">
-                                                        <span class="fas fa-circle xsm-text text-danger mr-3"></span>Offline</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('activated', 'false')">
-                                                        <span class="fas fa-circle xsm-text text-gray mr-3"></span>Inactive</button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
+                                                        <span class="fas fa-user text-primary mr-3"></span>Assigned
+                                                    </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
+                                                        <span class="fas fa-user text-gray mr-3"></span>Unassigned
+                                                    </button>
                                                 </mat-menu>
+                        
+                                                <mat-menu #assignedSubMenu="matMenu">
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+                                                        <span class="fas fa-circle text-primary mr-3"></span>Online
+                                                    </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('status', '0')">
+                                                        <span class="fas fa-circle text-danger mr-3"></span>Offline
+                                                    </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('inactive', 'true')">
+                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                    </button>
+                                                 </mat-menu>
 
                                                 <button mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 

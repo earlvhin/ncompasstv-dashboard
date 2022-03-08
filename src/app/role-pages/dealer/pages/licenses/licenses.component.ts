@@ -74,15 +74,21 @@ export class LicensesComponent implements OnInit {
 	];
 
     filters: any = {
+        admin_licenses: false,
+        assigned: "",
+        online: "",
+        inactive: "",
         activated: "",
         zone:"",
         status:"",
-        host:"",
+        host:'',
+        recent:'',
+        days_offline:'',
         label_status:"",
         label_zone:"",
         label_dealer: "",
-        label_host: ""
-    };
+        label_admin: "",
+    }
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -114,38 +120,95 @@ export class LicensesComponent implements OnInit {
 		this.filtered_data = data;
 	}
 
-    filterTable(type: string, value: any) {
+    filterTable(type: string, value: any, days?:any) {
         switch(type) {
             case 'status':
-                this.filters.status = value
-                this.filters.activated = "";
-                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                this.resetFilterStatus();
+                // this.filters.status = value;
+                this.filters.activated = true;
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+                if(value == 1) {
+                    this.filters.online = true
+                } else {
+                    this.filters.online = false
+                }
+                this.filters.assigned = true;
+                if(value == 0) {
+                    var filter = {
+                        column: 'TimeIn',
+                        order: 'desc'
+                    }
+                    this.getColumnsAndOrder(filter)
+                    // this.getColumnsAndOrder(filter, 'licenses')
+                } else {
+                    this.sortList('desc');
+                }
                 break;
             case 'zone':
                 this.filters.zone = value
                 this.filters.label_zone = value;
                 break;
             case 'activated':
+                this.resetFilterStatus();
                 this.filters.status = "";
                 this.filters.activated = value;
                 this.filters.label_status = 'Inactive';
                 break;
+            case 'recent':
+                this.resetFilterStatus();
+                this.filters.status = "";
+                this.filters.recent = value;
+                this.filters.label_status = 'Recent Installs';
+                break;
+            case 'days_offline':
+                this.resetFilterStatus();
+                this.filters.status = 0;
+                this.filters.days_offline = value;
+                this.filters.label_status = 'Offline for ' + days;
+                break;
+            case 'assigned':
+                this.resetFilterStatus();
+                this.filters.assigned = value;
+                this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
+                break;
+            case 'inactive':
+                this.resetFilterStatus();
+                this.filters.assigned = true;
+                this.filters.inactive = value;
+                this.filters.label_status = value == 'true' ? 'Inactive':'';
+                break;
             default:
         }
+
         this.getLicenses(1);
+    }
+
+    resetFilterStatus() {
+        this.filters.recent = "";
+        this.filters.activated = "";
+        this.filters.days_offline = "";
+        this.filters.status = "";
     }
 
     clearFilter() {
         this.filters = {
+            admin_licenses: false,
+            assigned: "",
+            online: "",
+            inactive: "",
             activated: "",
+            recent: "",
+            days_offline: "",
             zone:"",
             status:"",
-            host:"",
+            host:'',
             label_status:"",
             label_zone:"",
             label_dealer: "",
-            label_host: ""
+            label_host: "",
+            label_admin: "",
         }
+        this.sortList('desc');
         this.getLicenses(1);
     }
 	  
@@ -155,19 +218,6 @@ export class LicensesComponent implements OnInit {
 			.subscribe(
 				(data: any) => {
 					this.licenses_count = {
-						// basis: data.total,
-						// basis_label: 'License(s)',
-						// assigned_value: data.totalAssigned,
-						// assigned_value_label: 'Assigned',
-						// unassigned_value: data.totalUnAssigned,
-						// unassigned_value_label: 'Unassigned',
-						// license_online_value: data.totalOnline,
-						// license_online_value_label: 'Online',
-						// license_offline_value: data.totalOffline,
-						// license_offline_value_label: 'Offline',
-						// inactive_value: data.totalInActive,
-						// inactive_value_label: 'Inactive',
-
                         basis: data.total,
 						basis_label: 'License(s)',
 						basis_sub_label: 'Current Count',
@@ -206,7 +256,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page: number) {
 		this.searching_license = true;
 
-		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host)
+		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -312,8 +362,7 @@ export class LicensesComponent implements OnInit {
 
 	getDataForExport(id: string): void {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
-		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host)
+		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {

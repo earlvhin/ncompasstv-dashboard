@@ -67,6 +67,7 @@ export class HostsComponent implements OnInit {
     host_table_column = [
 		{ name: '#', no_export: true },
 		{ name: 'Name', sortable: true, key: 'name', column: 'Name' },
+		{ name: 'Category', key: 'category', no_show: true, hidden: true },
 		{ name: 'Address', key: 'address' },
 		{ name: 'City', sortable: true, key: 'city', column: 'City' },
 		{ name: 'Postal Code', key: 'postalCode' },
@@ -74,7 +75,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Status', key: 'status' },
         { name: 'Notes', sortable: false, key: 'notes' },
         { name: 'Others', sortable: false, key: 'others' },
-        { name: 'Tags', key: 'tagsToString', no_show: true },
+        { name: 'Tags', key: 'tagsToString', no_show: true, hidden: true },
 	];
 
     license_table_columns = [

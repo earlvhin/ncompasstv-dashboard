@@ -143,6 +143,7 @@ export class LicensesComponent implements OnInit {
 		{ name: '#', sortable: false, no_export: true },
         { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
         { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName' },
+        { name: 'Category', key:'category', no_show: true, hidden: true },
         { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName' },
 		{ name: 'Address', sortable: true, column:'Address', key: 'address' },
 		{ name: 'City', sortable: true, column:'City', key: 'city' },
@@ -150,7 +151,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Postal Code', sortable: true, column:'PostalCode', key:'postalCode' },
 		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName' },
 		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses' },
-		{ name: 'Tags', key:'tagsToString', no_show: true },
+		{ name: 'Tags', key:'tagsToString', no_show: true, hidden: true },
         { name: 'Total Business Hours', sortable: false, key:'storeHours', hidden: true, no_show: true},
 	];
 
