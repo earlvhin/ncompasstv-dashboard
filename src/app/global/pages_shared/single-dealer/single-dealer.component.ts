@@ -225,6 +225,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
     filters: any = {
         admin_licenses: false,
+        isactivated: "",
         assigned: "",
         online: "",
         inactive: "",
@@ -585,7 +586,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online).subscribe(
+			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
 				(response: { paging, statistics, message }) => {	
 
 					if (response.message) {
@@ -1129,7 +1130,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			case 'Licenses': 
 				this.subscription.add(
 					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
-					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online).subscribe(
+					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
 						data => {
                             data.licenseTemplateZoneExports.map(
                                 i => {
@@ -1392,6 +1393,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                     this.filters.online = false
                 }
                 this.filters.assigned = true;
+                this.filters.isactivated = 1;
                 if(value == 0) {
                     var filter = {
                         column: 'TimeIn',
@@ -1415,6 +1417,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             case 'assigned':
                 this.resetFilterStatus();
                 this.filters.assigned = value;
+                value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
                 break;
             case 'inactive':
@@ -1455,6 +1458,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     clearFilter() {
         this.filters = {
             admin_licenses: false,
+            isactivated: "",
             assigned: "",
             online: "",
             inactive: "",

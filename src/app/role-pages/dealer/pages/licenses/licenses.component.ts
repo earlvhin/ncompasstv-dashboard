@@ -75,6 +75,7 @@ export class LicensesComponent implements OnInit {
 
     filters: any = {
         admin_licenses: false,
+        isactivated: "",
         assigned: "",
         online: "",
         inactive: "",
@@ -127,6 +128,7 @@ export class LicensesComponent implements OnInit {
                 // this.filters.status = value;
                 this.filters.activated = true;
                 this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+                this.filters.isactivated = 1;
                 if(value == 1) {
                     this.filters.online = true
                 } else {
@@ -170,6 +172,7 @@ export class LicensesComponent implements OnInit {
                 this.resetFilterStatus();
                 this.filters.assigned = value;
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
+                value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 break;
             case 'inactive':
                 this.resetFilterStatus();
@@ -193,6 +196,7 @@ export class LicensesComponent implements OnInit {
     clearFilter() {
         this.filters = {
             admin_licenses: false,
+            isactivated: "",
             assigned: "",
             online: "",
             inactive: "",
@@ -256,7 +260,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page: number) {
 		this.searching_license = true;
 
-		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online)
+		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -362,7 +366,7 @@ export class LicensesComponent implements OnInit {
 
 	getDataForExport(id: string): void {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online)
+		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {

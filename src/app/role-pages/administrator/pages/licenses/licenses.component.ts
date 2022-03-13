@@ -77,6 +77,7 @@ export class LicensesComponent implements OnInit {
 
     filters: any = {
         admin_licenses: false,
+        isactivated: "",
         assigned: "",
         online: "",
         inactive: "",
@@ -251,7 +252,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.hosts_data = [];
 
-		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online)
+		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -307,6 +308,7 @@ export class LicensesComponent implements OnInit {
                     this.filters.online = false
                 }
                 this.filters.assigned = true;
+                this.filters.isactivated = 1;
                 if(value == 0) {
                     var filter = {
                         column: 'TimeIn',
@@ -342,6 +344,7 @@ export class LicensesComponent implements OnInit {
             case 'assigned':
                 this.resetFilterStatus();
                 this.filters.assigned = value;
+                value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
                 break;
             case 'inactive':
@@ -546,6 +549,7 @@ export class LicensesComponent implements OnInit {
         this.filters = {
             admin_licenses: false,
             assigned: "",
+            isactivated: "",
             online: "",
             inactive: "",
             activated: "",
@@ -587,7 +591,7 @@ export class LicensesComponent implements OnInit {
 
         switch (tab) {
             case 'licenses':
-                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host)
+                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.isactivated)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						data => {
