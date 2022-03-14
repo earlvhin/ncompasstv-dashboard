@@ -3,19 +3,18 @@
         <h3>Media Details</h3>
     </div>
     <div class="col-lg-3 text-right p-0">
-        <!-- <button class="navi" data-toggle="tooltip" title="Lock Content" *ngIf="is_admin" (click)="onToggleContentProtection($event)">
+        <button class="navi" data-toggle="tooltip" title="Lock Content" *ngIf="is_admin" (click)="onToggleContentProtection($event)">
 
 			<ng-container [ngSwitch]="file_data.selected.is_protected">
 				<i class="fa fa-unlock" *ngSwitchCase="0"></i>
 				<i class="fa fa-lock" *ngSwitchDefault></i>
 			</ng-container>
 
-        </button> -->
+        </button>
         <button class="navi" data-toggle="tooltip" title="Settings" *ngIf="!file_data.zoneContent && !is_dealer && !file_data.is_advertiser" (click)="reassignMedia()">
             <i class="fa fa-cog"></i>
         </button>
-        <!-- <button class="navi" data-toggle="tooltip" title="Delete" *ngIf="!file_data.zoneContent && !file_data.is_advertiser" (click)="onDeleteMedia($event)" [disabled]="is_view_only || (is_dealer && file_data.selected.is_protected === 1)"> -->
-        <button class="navi" data-toggle="tooltip" title="Delete" *ngIf="!file_data.zoneContent && !file_data.is_advertiser" (click)="onDeleteMedia($event)" [disabled]="is_view_only">
+        <button class="navi" data-toggle="tooltip" title="Delete" *ngIf="!file_data.zoneContent && !file_data.is_advertiser" (click)="onDeleteMedia($event)" [disabled]="is_view_only || (is_dealer && file_data.selected.is_protected === 1)">
             <i class="fa fa-trash-alt"></i>
         </button>
         <button class="navi" [disabled]="file_data.selected.index === 0" (click)="fetchPrevMedia(file_data.selected.index)" data-toggle="tooltip" title="Prev">
