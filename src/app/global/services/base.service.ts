@@ -5,7 +5,6 @@ import { Observable } from 'rxjs';
 import { API_FILTERS } from '../models';
 import { AuthService } from './auth-service/auth.service';
 import { environment } from 'src/environments/environment';
-import { Type } from '@angular/compiler/src/core';
 
 @Injectable({
 	providedIn: 'root'
@@ -27,14 +26,18 @@ export class BaseService {
 		return this._auth.current_user_value;
 	}
 
-	protected getRequest(endpoint: string): Observable<any> {
+	protected getRequest(endpoint: string, options: any = null): Observable<any> {
+		let headers = this.headers;
+		if (options) headers = { ...this.headers, ...options };
 		const url = `${this.baseUri}${endpoint}`;
-		return this._http.get(url, this.headers);
+		return this._http.get(url, headers);
 	}
 
-	protected postRequest(endpoint: string, body: object): Observable<any> {
+	protected postRequest(endpoint: string, body: object, options: any = null): Observable<any> {
+		let headers = this.headers;
+		if (options) headers = { ...this.headers, ...options };
 		const url = `${this.baseUri}${endpoint}`;
-		return this._http.post(url, body, this.headers);
+		return this._http.post(url, body, headers);
 	}
 
 	protected get baseUri() {

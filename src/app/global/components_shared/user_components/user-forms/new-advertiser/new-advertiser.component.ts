@@ -252,7 +252,7 @@ export class NewAdvertiserComponent implements OnInit {
 			this.subscription.add(
 				this._dealer.get_dealers_with_advertiser(e, this.search_data).subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers.push(i)
 							}
@@ -310,7 +310,7 @@ export class NewAdvertiserComponent implements OnInit {
 			this.subscription.add(
 				this._advertiser.get_advertisers_unassigned_to_user(this.selected_dealer, e, this.search_data_adv, '', '').subscribe(
 					data => {
-						data.advertisers.map (
+						data.advertisers.map(
 							i => {
 								this.advertisers.push(i)
 							}

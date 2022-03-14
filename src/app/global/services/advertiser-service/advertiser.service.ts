@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_ADVERTISER, PAGING } from 'src/app/global/models';
+import { API_ADVERTISER, PAGING, TAG } from 'src/app/global/models';
 
 @Injectable({ 
 	providedIn: 'root'
@@ -36,10 +36,9 @@ export class AdvertiserService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_advertisers_unassigned}${id}`+'&page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, );
 	}
 
-	get_advertiser_by_id(id, page = ''): Observable<any | { advertiser: any, tags: any[]}> {
+	get_advertiser_by_id(id: string): Observable<{ message?: string, advertiser?: API_ADVERTISER, tags?: TAG[] }> {
 		const url = `${this.getters.api_get_advertisers_by_id}${id}`;
-		const request = this.getRequest(url, );
-		if (page !== 'single-advertiser') return request.map(data => data.advertiser);
+		const request = this.getRequest(url);
 		return request;
 	}
 

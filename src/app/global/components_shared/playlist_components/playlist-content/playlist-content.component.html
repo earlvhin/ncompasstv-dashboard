@@ -1,5 +1,4 @@
-<div class="bg-white border m-1 playlist-content-thumb"
-[attr.title]="!is_list ? content.title : ''">
+<div class="bg-white border m-1 playlist-content-thumb" [attr.title]="!is_list ? content.title : ''" [class.is-protected]="content.isProtected && is_marking">
     <div *ngIf="!is_list; else list_mode" class="h-100 w-100"
 		(mouseenter)="setHoveredBaseFrequency(content)"
 		(mouseleave)="unsetHoveredBaseFrequency()"
@@ -48,8 +47,7 @@
 					<i class="fas fa-expand"></i>
 				</p>
 
-				<p  class="sm-text mb-0 cursor-pointer text-danger mx-1" 
-					*ngIf="!is_marking && !is_view_only && !isChildFrequency" 
+				<p *ngIf="!is_marking && !is_view_only && !isChildFrequency && !(is_dealer && content.isProtected === 1)" class="sm-text mb-0 cursor-pointer text-danger mx-1" 
 					(click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)">
 					<span class="fas fa-trash"></span>
 				</p>
@@ -109,7 +107,7 @@
                 <p class="md-text text-primary mb-1" *ngIf="content.isFullScreen == 1">
                     <i class="fas fa-expand" [title]="content.isFullScreen ? 'Fullscreen' : 'Not Fullscreen'"></i>
                 </p>
-                <p (click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)" class="md-text cursor-pointer text-danger mb-1" *ngIf="!is_marking">
+                <p class="md-text cursor-pointer text-danger mb-1" *ngIf="!is_marking && !(is_dealer && content.isProtected === 1)" (click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)">
                     <span class="fas fa-trash" title="Delete"></span>
                 </p>    
                 <p (click)="optionsModal()" class="md-text cursor-pointer" *ngIf="!is_marking">

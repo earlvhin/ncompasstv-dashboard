@@ -197,7 +197,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
         console.log("DD", data)
         var count = 0;
         var play_count = 0;
-        data.map (
+        data.map(
             i => {
                 count = count + i.totalDuration;
                 play_count = play_count + i.totalPlay;

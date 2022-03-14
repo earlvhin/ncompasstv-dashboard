@@ -1,9 +1,10 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { Subject } from 'rxjs';
 
 import { HelperService } from 'src/app/global/services/helper-service/helper.service';
 import { takeUntil } from 'rxjs/operators';
+import { FormControl } from '@angular/forms';
 @HostListener('scroll', ['$event'])
 
 @Component({
@@ -13,7 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 	providers: [TitleCasePipe]
 })
 
-export class AutocompleteFieldComponent implements OnInit, OnDestroy {
+export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewInit, OnChanges {
 	@Output() data_value = new EventEmitter;
 	@Output() change_value = new EventEmitter;
 	@Output() call_next_page = new EventEmitter;
@@ -42,7 +43,9 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	@Input() type?: string;
 	@Input() isLocator?: boolean;
 
+	input_field_control = new FormControl();
 	view_value: string;
+	paginated_input_field_control = new FormControl();
 	search_result: Array<any>;
 	search_via_api : boolean = false;
 	timeOut;
@@ -57,7 +60,48 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.view_value = this.initial_value;
 		this.subscribeToResetField();
-        document.addEventListener('click',this.customBlur)
+
+		if (this.disabled) {
+			this.input_field_control.disable();
+			this.paginated_input_field_control.disable();
+		}
+
+        document.addEventListener('click',this.customBlur);
+	}
+
+	ngOnChanges(changes: SimpleChanges) {
+
+		if(this.reset_value) {
+			this.view_value = "";
+		}
+
+		this.data_reference = this.data_reference;
+
+		if(this.no_edit) {
+			this.view_value = this.initial_value;
+		} else {
+			if(this.paging && this.search_via_api && this.data_reference.length > 0) {
+				this.data_reference = this.data_reference;
+				this.search_result = this.data_reference;
+			}
+		}
+
+		if (changes.disabled as SimpleChange) {
+			
+			if (changes.disabled.currentValue) {
+				this.input_field_control.disable();
+				this.paginated_input_field_control.disable();
+				return;
+			} 
+
+			this.input_field_control.enable();
+			this.paginated_input_field_control.enable();
+
+		}
+	}
+
+	ngAfterViewInit(): void {
+		this.subscribeToMarkAsTouched();
 	}
 
 	ngOnDestroy() {
@@ -133,22 +177,6 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 	onChangeData(e) {
 		this.change_value.emit(e.target.getAttribute('data-value'))
 	}
-
-	ngOnChanges() {
-		if(this.reset_value) {
-			this.view_value = "";
-		}
-		this.data_reference = this.data_reference;
-		if(this.no_edit) {
-			this.view_value = this.initial_value;
-		} else {
-			if(this.paging && this.search_via_api && this.data_reference.length > 0) {
-				this.data_reference = this.data_reference;
-				this.search_result = this.data_reference;
-			} else {
-			}
-		}
-	}
 	
 	onScroll(event) {
 
@@ -174,6 +202,11 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy {
 			error => console.log('Error on reset auto complete subscription', error)
 		);
 
+	}
+
+	private subscribeToMarkAsTouched() {
+		this._helper.onTouchPaginatedAutoCompleteField.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.paginated_input_field_control.markAllAsTouched());
 	}
 
 }

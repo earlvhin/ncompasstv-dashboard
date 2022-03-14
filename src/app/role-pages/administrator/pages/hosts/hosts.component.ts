@@ -373,7 +373,7 @@ export class HostsComponent implements OnInit {
             data.storeHours.map(
                 hours => {
                     if(hours.status) {
-                        hours.periods.map (
+                        hours.periods.map(
                             period => {
                                 this.diff_hours = 0;
                                 if(period.open && period.close) {

@@ -23,6 +23,7 @@ export class HelperService {
 	onRefreshSingleHostDocumentsTab = new EventEmitter<void>();
 	onSelectAnalyticsTab = new EventEmitter<string>();
 	onToggleEmailNotification = new EventEmitter<{ userId: string, value: boolean, tableDataIndex: number, currentEmail: string }>();
+	onTouchPaginatedAutoCompleteField = new EventEmitter<void>();
 	onUpdateInstallationDate = new EventEmitter<void>();
 
 	singleAdvertiserData: API_ADVERTISER;

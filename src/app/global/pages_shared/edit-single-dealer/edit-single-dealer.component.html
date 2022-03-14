@@ -23,10 +23,10 @@
                             The email format is invalid.
 						</span>
 						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" *ngIf="field.control !== 'password'">
-						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" *ngIf="field.control === 'password'"
-													[type]="is_password_field_type ? 'password' : 'text'">
-						<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()" *ngIf="field.control === 'password'">{{ is_password_field_type ?
-												'visibility_off' : 'visibility' }}</mat-icon>
+						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" *ngIf="field.control === 'password'" [type]="is_password_field_type ? 'password' : 'text'">
+						<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()" *ngIf="field.control === 'password'">
+							{{ is_password_field_type ? 'visibility_off' : 'visibility' }}
+						</mat-icon>
 					</mat-form-field>
 
 				</div>
@@ -37,7 +37,16 @@
 			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
 				Cancel
 			</button>
-			<button mat-button mat-raised-button class="theme-btn mt-4 reassign bg-danger" type="button" (click)="onReassignDealer()">
+			
+			<!-- DELETE DEALER BUTTON -->
+			<!-- <ng-container *ngIf="is_admin">
+				<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteDealer()">
+					Delete Dealer
+				</button>
+			</ng-container> -->
+
+			<!-- RE-ASSIGN DEALER BUTTON -->
+			<button mat-button mat-raised-button class="theme-btn mt-4 mr-2 reassign bg-danger" type="button" (click)="onReassignDealer()">
 				Re-assign Dealer
 			</button>
 		</form>

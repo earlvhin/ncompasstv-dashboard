@@ -150,7 +150,7 @@ export class CloneScreenComponent implements OnInit {
 			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					data => {
-						data.dealers.map (dealer => this.all_dealers.push(dealer));
+						data.dealers.map(dealer => this.all_dealers.push(dealer));
 						this.paging = data.paging;
 						this.loading_data = false;
 					},

@@ -224,15 +224,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	];
 
     filters: any = {
+        admin_licenses: false,
+        isactivated: "",
+        assigned: "",
+        online: "",
+        inactive: "",
         activated: "",
         zone:"",
         status:"",
-        dealer:"",
-        host:"",
+        host:'',
         label_status:"",
         label_zone:"",
         label_dealer: "",
-        label_host: ""
+        label_admin: "",
     }
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -565,7 +569,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._host.get_host_total_per_dealer(id).subscribe(
 				(data: any) => {
-                    console.log("DD", data)
 					this.host_card = {
 						basis: data.total,
 						basis_label: 'HOSTS',
@@ -583,7 +586,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
+			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
 				(response: { paging, statistics, message }) => {	
 
 					if (response.message) {
@@ -837,7 +840,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(e, "").subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers.push(i)
 							}
@@ -1127,7 +1130,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			case 'Licenses': 
 				this.subscription.add(
 					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
-					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host).subscribe(
+					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
 						data => {
                             data.licenseTemplateZoneExports.map(
                                 i => {
@@ -1251,7 +1254,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         let minutes = Math.floor(totalSeconds / 60);
         let seconds = totalSeconds % 60;
 
-        return hours + "h " + minutes + "m " + seconds + "s "
+        return hours.toFixed(0) + "h " + minutes.toFixed(0) + "m " + seconds.toFixed(0) + "s "
     }
 
 	exportTable(tab) {
@@ -1372,18 +1375,32 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		);
 	}
 
-    filterTable(type, value) {
+    resetFilterStatus() {
+        this.filters.activated = "";
+        this.filters.status = "";
+        this.filters.assigned = "";
+    }
+
+    filterTable(type: string, value: any, days?:any) {
         switch(type) {
             case 'status':
-                this.filters.status = value
-                this.filters.activated = "";
-                this.filters.label_status = value == 1 ? 'Online' : 'Offline'
+                this.resetFilterStatus();
+                // this.filters.status = value;
+                this.filters.activated = true;
+                this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+                if(value == 1) {
+                    this.filters.online = true
+                } else {
+                    this.filters.online = false
+                }
+                this.filters.assigned = true;
+                this.filters.isactivated = 1;
                 if(value == 0) {
                     var filter = {
                         column: 'TimeIn',
                         order: 'desc'
                     }
-                    this.getColumnsAndOrder(filter)
+                    // this.getColumnsAndOrder(filter, 'licenses')
                 } else {
                     this.sortList('desc');
                 }
@@ -1393,9 +1410,22 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 this.filters.label_zone = value;
                 break;
             case 'activated':
+                this.resetFilterStatus();
                 this.filters.status = "";
                 this.filters.activated = value;
                 this.filters.label_status = 'Inactive';
+                break;
+            case 'assigned':
+                this.resetFilterStatus();
+                this.filters.assigned = value;
+                value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
+                this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
+                break;
+            case 'inactive':
+                this.resetFilterStatus();
+                this.filters.assigned = true;
+                this.filters.inactive = value;
+                this.filters.label_status = value == 'true' ? 'Inactive':'';
                 break;
             default:
         }
@@ -1428,15 +1458,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
     clearFilter() {
         this.filters = {
+            admin_licenses: false,
+            isactivated: "",
+            assigned: "",
+            online: "",
+            inactive: "",
             activated: "",
             zone:"",
             status:"",
-            dealer:"",
-            host:"",
+            host:'',
             label_status:"",
             label_zone:"",
             label_dealer: "",
-            label_host: ""
+            label_host: "",
+            label_admin: "",
         }
         this.sortList('desc')
         this.getLicensesofDealer(1);

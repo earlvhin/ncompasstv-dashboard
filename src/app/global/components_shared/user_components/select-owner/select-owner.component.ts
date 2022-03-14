@@ -114,7 +114,7 @@ export class SelectOwnerComponent implements OnInit {
 
 		this.subscription.add(
 			this._advertiser.get_advertiser_by_id(value).subscribe(
-				data => this.filter_data.advertiser.name = data.name
+				data => this.filter_data.advertiser.name = data.advertiser.name
 			)
 		);
 	}
@@ -240,7 +240,7 @@ export class SelectOwnerComponent implements OnInit {
 				this._advertiser.get_advertisers_by_dealer_id(this.dealer_id, page, this.search_advertiser_data).subscribe(
 					data => {
 
-						data.advertisers.map (
+						data.advertisers.map(
 							advertiser => {
 								this.advertisers.push(advertiser);
 								this.advertisers_data.push(advertiser);
@@ -270,7 +270,7 @@ export class SelectOwnerComponent implements OnInit {
 
 							if (this.search_advertiser_data == '') {
 
-								data.advertisers.map (
+								data.advertisers.map(
 									advertiser => {
 										this.advertisers.push(advertiser);
 										this.advertisers_data.push(advertiser);
@@ -313,7 +313,7 @@ export class SelectOwnerComponent implements OnInit {
 				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
 
-						data.dealers.map (
+						data.dealers.map(
 							dealer => {
 								this.dealers.push(dealer)
 							}
@@ -349,7 +349,7 @@ export class SelectOwnerComponent implements OnInit {
 			this.subscription.add(
 				this._host.get_host_by_dealer_id(this.dealer_id, page, this.search_host_data).subscribe(
 					data => {
-						data.paging.entities.map (
+						data.paging.entities.map(
 							i => {
 								this.hosts.push(i);
 								this.hosts_data.push(i);
@@ -375,7 +375,7 @@ export class SelectOwnerComponent implements OnInit {
 
 							if (this.search_host_data == '') {
 
-								data.paging.entities.map (
+								data.paging.entities.map(
 									host => {
 										this.hosts.push(host);
 										this.hosts_data.push(host);

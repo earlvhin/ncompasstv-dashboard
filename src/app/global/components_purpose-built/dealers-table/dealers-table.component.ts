@@ -21,7 +21,7 @@ export class DealersTableComponent implements OnInit {
 	dealers_data: UI_TABLE_DEALERS[];
 	no_dealer: boolean = false;
 	filtered_data:  UI_TABLE_DEALERS[] = [];
-    inactive_filter: boolean = false;
+    unassigned_filter: boolean = false;
 	items_per_page: number = 25;
     offline_filter: boolean = false;
 	pagination: number;
@@ -50,7 +50,7 @@ export class DealersTableComponent implements OnInit {
 
     filters: any = {
         label_age:"",
-        label_inactive:"",
+        label_unassigned:"",
         label_offline: "",
         percentage:"",
         percentage_min:"",
@@ -127,12 +127,12 @@ export class DealersTableComponent implements OnInit {
                 this.filters.label_age = label;
                 this.filterByColumnName(type, min, max);
                 break;
-            case 'inactiveLicensesPercent':
+            case 'unassignedLicensesPercent':
                 this.filters.percentage = type;
                 this.filters.percentage_min = min;
                 this.filters.percentage_max = max;
-                this.filters.label_inactive = label;
-                this.inactive_filter = true;
+                this.filters.label_unassigned = label;
+                this.unassigned_filter = true;
                 break;
             case 'offlineLicensesPercent':
                 this.filters.percentage = type;
@@ -150,14 +150,14 @@ export class DealersTableComponent implements OnInit {
     clearFilter() {
         this.filters = {
             label_age:"",
-            label_inactive:"",
+            label_unassigned:"",
             label_offline: "",
             percentage:"",
             percentage_min:"",
             percentage_max:""
         }
+        this.unassigned_filter = false;
         this.offline_filter = false;
-        this.inactive_filter = false;
         this.active_filter_tab = "";
         this.selected_filter = {
             min_value: '',

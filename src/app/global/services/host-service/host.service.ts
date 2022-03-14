@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_HOST, CustomFieldGroup, HOST_S3_FILE, PAGING } from 'src/app/global/models';
+import { API_DEALER, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -135,7 +135,7 @@ export class HostService extends BaseService {
 
     get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
 		const base = `${this.getters.api_get_host_by_id_optimized}`;
-		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize });
+		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -145,7 +145,7 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_host_by_id(id: string) {
+	get_host_by_id(id: string): Observable<{ message?: string, host?: API_HOST, hostTags?: TAG[], dealer?: API_DEALER, dealerTags?: TAG[], timezone?: API_TIMEZONE, fieldGroups?: any[] }> {
 		const url = `${this.getters.api_get_host_by_id}${id}`;
 		return this.getRequest(url);
 	}
@@ -160,7 +160,7 @@ export class HostService extends BaseService {
 		return this.postRequest(url, data);
 	}
 	
-	get_time_zones() {
+	get_time_zones(): Observable<API_TIMEZONE[]> {
 		const url = `${this.getters.api_get_timezone}`;
 		return this.getRequest(url);
 	}

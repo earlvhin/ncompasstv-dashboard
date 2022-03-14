@@ -1,4 +1,4 @@
-<mat-card class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden" data-placement="top" [attr.title]="filename">
+<mat-card class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden" data-placement="top" [attr.title]="filename" [class.is-protected]="is_dealer && is_protected && multiple_delete">
 	<div class="icon-overlay">
 		<div class="type-icon sm-text">
 			<i class="far fa-image text-primary mr-1" *ngIf="filetype != 'webm' && filetype != 'feed'" title="Image"></i>

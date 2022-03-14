@@ -26,6 +26,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	@ViewChild('draggables', { static: false }) draggables: ElementRef<HTMLCanvasElement>;
 	@Input() dealer_id: string;
+	@Input() is_admin? = false;
+	@Input() is_dealer? = false;
 	@Input() is_view_only = false;
 	@Input() page? = '';
 	@Input() playlist_contents: any[];
@@ -75,7 +77,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		{ label: 'Inactive', key: 'inactive' },
 	];
 
-	// private playlist_contents: API_CONTENT[] = [];
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 	
 	constructor(
@@ -99,13 +100,19 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.bulk_toggle = false;
 		this.is_marking = false;
 
+		if (this.playlist_content_backup.length <= 0) return;
+
 		this.contents_with_schedules = this.playlist_content_backup.filter(content => {
-			const schedule = content.playlistContentsSchedule;
+			let schedule = null;
+			schedule = content.playlistContentsSchedule || content.playlistContentsSchedule;
+			if (!schedule) return;
 			if (schedule.type === 3) return content; 
 		});
 
 		this.contents_without_schedules = this.playlist_content_backup.filter(content => {
-			const schedule = content.playlistContentsSchedule;
+			let schedule = null;
+			schedule = content.playlistContentsSchedule || content.playlistContentsSchedule;
+			if (!schedule) return;
 			if (schedule.type !== 3) return content;
 		});
 
@@ -254,10 +261,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	selectAllContents(): void {
 		this.playlist_contents.forEach(i => {
-			if(i.frequency !== 2 && i.frequency != 3) {
+			if (i.frequency !== 2 && i.frequency != 3) {
 			 	this.selected_contents.push(i.playlistContentId);
-				this.selected_content_ids.push({playlistContentId: i.playlistContentId, 
-												contentId: i.contentId});
+				this.selected_content_ids.push({playlistContentId: i.playlistContentId, contentId: i.contentId});
 			}
 		});
 		
@@ -539,8 +545,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	selectedContent(id: string, contentId: string, contentFrequency: number): void {
+
+		const selected = this.playlist_contents.find(content => content.contentId === contentId) as API_CONTENT;
+		
+		if (typeof selected !== 'undefined' && selected.isProtected) return;
+
 		let isChildFrequency = contentFrequency === 2 || contentFrequency === 3;
-		if(isChildFrequency) return;
+
+		if (isChildFrequency) return;
 
 		if (!this.selected_contents.includes(id)) {
 			this.selected_contents.push(id);
@@ -771,14 +783,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			content => {
 				let status = 'inactive';
 				const schedule = content.playlistContentsSchedule ? content.playlistContentsSchedule : null;
-				const { type } = schedule;
-				const { playlistContentCredits, creditsEnabled } = content;
 
 				// no schedule
 				if (!schedule) {
 					content.scheduleStatus = status;
 					return content;
 				}
+
+				const type = schedule.type;
+				const playlistContentCredits = content.playlistContentCredits;
+				const creditsEnabled = content.creditsEnabled;
 
 				// credits depleted to 0
 				if (creditsEnabled === 1 && playlistContentCredits && playlistContentCredits.length > 0) {

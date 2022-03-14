@@ -9,7 +9,6 @@ import * as uuid from 'uuid';
 import { API_CONTENT } from '../../models/api_content.model';
 import { API_DEALER } from '../../models/api_dealer.model';
 import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
-import { API_SINGLE_HOST } from '../../models/api_host.model';
 import { API_UPDATE_HOST } from '../../models/api_update-host.model';
 import { AuthService } from '../../services/auth-service/auth.service';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
@@ -30,7 +29,7 @@ import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation
 export class EditSingleHostComponent implements OnInit {
 
 	business_hours: UI_OPERATION_DAYS[];
-	categories_data: Observable<API_PARENTCATEGORY[]>;
+	categories_data: API_PARENTCATEGORY[];
 	category_selected: string;
 	closed_without_edit: boolean = false;
 	current_dealer: any;
@@ -275,10 +274,11 @@ export class EditSingleHostComponent implements OnInit {
 	getHostData(id: string): void {
 		this.subscription.add(
 			this._host.get_host_by_id(id).subscribe(
-				(data: API_SINGLE_HOST) => {
-					this.dealer_id = data.host.dealerId;
-					this.host_data = data.host;
-					this.host_timezone = data.timezone;
+				(response) => {
+					if (response.message) return;
+					this.dealer_id = response.host.dealerId;
+					this.host_data = response.host;
+					this.host_timezone = response.timezone;
 					this.initial_business_hours = JSON.parse(this.host_data.storeHours);
 					this.business_hours = JSON.parse(this.host_data.storeHours);
 					this.fillForm(this.host_data, this.host_timezone);
@@ -308,7 +308,7 @@ export class EditSingleHostComponent implements OnInit {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(page, '').subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers_data.push(i)
 							}
@@ -373,10 +373,10 @@ export class EditSingleHostComponent implements OnInit {
 	}
 
 	newHostPlace() {
-        this.business_hours.map (
+        this.business_hours.map(
             data => {
                 if(data.status && data.periods.length > 0) {
-                    data.periods.map (
+                    data.periods.map(
                         period => {
                             console.log({open: period.open, close: period.close})
                             if(period.open !='' && period.close == '') {

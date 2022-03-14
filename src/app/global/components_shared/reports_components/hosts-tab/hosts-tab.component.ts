@@ -90,7 +90,7 @@ export class HostsTabComponent implements OnInit {
     }
 
     formatData(data) {
-        data.map (
+        data.map(
             list => {
                 this.formatted.push({'stateCode': this._uppercase.transform(list.state), 'value': list.count })
             }

@@ -54,6 +54,7 @@ import { DealerMapTabComponent } from './components_purpose-built/single-dealer-
 import { DealerViewComponent } from './components_shared/locator_components/dealer-view/dealer-view.component';
 import { DealersTableComponent } from './components_purpose-built/dealers-table/dealers-table.component';
 import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
+import { DeleteDealerDialogComponent } from './pages_shared/edit-single-dealer/delete-dealer-dialog/delete-dealer-dialog.component';
 import { DeletePlaylistComponent } from './components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { DemoZoneComponent } from './components_shared/zone_components/demo-zone/demo-zone.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
@@ -250,6 +251,7 @@ const ngComponents = [
 	DealerMapTabComponent,
 	DealerViewComponent,
 	DealersTableComponent,
+	DeleteDealerDialogComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
 	EditFeedComponent,
@@ -421,6 +423,7 @@ const DIRECTIVES = [
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
 		CreateFeedComponent,
+		DeleteDealerDialogComponent,
 		DeletePlaylistComponent,
 		EditFeedComponent,
 		EditSingleAdvertiserComponent,

@@ -8,16 +8,16 @@
         <div class="row">
             <div class="col-lg-6">
                 <mat-card class="p-5">
-                    <ng-container *ngIf="dealers_data.length > 0 && categories_data as categories; else loading">
+                    <ng-container *ngIf="is_page_ready; else loading">
                         <h3 class="mb-1">Host Information</h3>
                         <p class="sm-text mb-4">You can fill on the forms manually or search all these information via Google Scrape.</p>
-                        <form [formGroup]="new_host_form" (ngSubmit)="newHostPlace()" class="text-left">
+                        <form [formGroup]="new_host_form" (ngSubmit)="onCreateHostPlace()" class="text-left">
                             <div class="row mb-4">
                                 <div class="col-lg-12 mb-3">
                                     <app-autocomplete-field
 										(data_value)="setToDealer($event)"
 										(call_next_page)="searchBoxTrigger($event)"
-										(searched)="searchData($event)"
+										(searched)="searchDealer($event)"
 										[data_reference]="dealers_data"
 										[primary_keyword]="'businessName'"
 										[key_of_value]="'dealerId'"
@@ -31,7 +31,7 @@
 										[loading_search]="loading_search">
                                     </app-autocomplete-field>
                                 </div>
-                                <div *ngFor="let field of host_form_view" class="{{ field.col }} mb-3">
+                                <div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-3">
                                     <mat-form-field *ngIf="!field.autocomplete; else autocomplete_field;" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
                                         <mat-label>{{ field.label }}</mat-label>
                                         <input matInput [formControlName]="field.control" [placeholder]="field.placeholder" [required]="field.is_required">
@@ -40,7 +40,7 @@
                                     <ng-template #autocomplete_field>
 										<app-autocomplete-field *ngIf="field.control == 'category' && !no_category; else no_category_selected;"
 											(data_value)="setToCategory($event)"
-											[data_reference]="categories"
+											[data_reference]="categories_data"
 											[primary_keyword]="'categoryName'"
 											[key_of_value]="'slug'"
 											[required]="field.is_required"
@@ -76,12 +76,12 @@
 									</div>
 
                                     <div class="d-flex mb-4" *ngFor="let h of operation_days">
-                                        <div class="round-label mr-3" (click)="operationDays(h)" [ngClass]="h.status ? 'active' : ''">
+                                        <div class="round-label mr-3" (click)="onSelectDay(h)" [ngClass]="h.status ? 'active' : ''">
                                             <span class="font-weight-bold">{{ h.label }}</span>
                                         </div>
                                         
                                         <div class="flex-even">
-                                            <ng-container *ngIf="!is_24hours; else always_open">
+                                            <ng-container *ngIf="!is_always_open; else always_open">
                                                 <ng-container *ngIf="h.status; else closed">
                                                     <div class="mb-3" *ngFor="let t of h.periods; let i = index">
                                                         <div class="d-flex align-items-center">
@@ -138,15 +138,9 @@
                                     </div>
                                 </div>
                             </div>
-                            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid" *ngIf="!creating_host; else publishing">
-                                Save Host Place
+                            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host">
+                                {{ is_creating_host ?  'Saving Host Place...' : 'Submit'  }}
 							</button>
-							
-							<ng-template #publishing>
-								<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="true">
-									Saving Host Place . . .
-								</button>
-							</ng-template>
                         </form>
                     </ng-container>
 
@@ -159,7 +153,7 @@
             </div>
             <div class="col-lg-6">
                 <div class="d-flex justify-content-between p-0">
-                    <div class="flex-basis-auto p-0" *ngIf="is_current_user_admin">
+                    <div class="flex-basis-auto p-0" *ngIf="is_admin">
                         <ng-container >
                             <div class="d-flex flex-column align-items-center p-0 pt-4">
 								<div class="image-container text-center">
@@ -169,10 +163,10 @@
                             </div>
                         </ng-container>
                     </div>
-                    <div class="p-0" [ngClass]="is_current_user_admin ? 'flex-basis-80' : 'flex-basis-100'" [class.pt-5]="is_current_user_admin">
+                    <div class="p-0" [ngClass]="is_admin ? 'flex-basis-80' : 'flex-basis-100'" [class.pt-5]="is_admin">
                         <label for="ng-scrape-form" class="pt-4 mb-3">Enter a Business Name</label>
                         <div class="ng-form pt-1">
-                            <form [formGroup]="google_place_form" (ngSubmit)="googleMap()">
+                            <form [formGroup]="google_place_form" (ngSubmit)="onSearchBusiness()">
 								<div class="d-flex">
 									<input formControlName="location" autocomplete="off" type="text" name="ng-scrape-form" class="ng-input-form no-border full-width no-outline" placeholder="Business Name">
 									<button class="google-search-field-btn no-border right-0" [ngClass]="location_field ? 'disabled' : ''" [disabled]="location_field"><span class="fas fa-search"></span></button>

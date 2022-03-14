@@ -58,19 +58,49 @@
                         <button mat-button mat-raised-button 
                             class="theme-btn sm-text mr-2 h-45" 
                             [matMenuTriggerFor]="licenseStatus" >
-                            <span class="button-label">Filter by License Status</span>
-                            <span class="fas fa-circle text-primary"></span>
+                            <span class="button-label">License Status</span>
+                            <span class="fas fa-circle text-gray"></span>
                         </button>
+                        <!-- <mat-menu #licenseStatus="matMenu">
+                            <button mat-menu-item (click)="filterTable('status', '1')"><span class="fas fa-circle xsm-text mr-2 text-primary"></span>Online</button>
+                            <button mat-menu-item (click)="filterTable('status', '0')"><span class="fas fa-circle xsm-text mr-2 text-danger"></span>Offline</button>
+                            <button mat-menu-item (click)="filterTable('activated', 'false')"><span class="fas fa-circle mr-2 xsm-text text-gray"></span>Inactive</button>
+                        </mat-menu> -->
+
                         <mat-menu #licenseStatus="matMenu">
-                            <button mat-menu-item (click)="filterTable('status', '1')">Online</button>
-                            <button mat-menu-item (click)="filterTable('status', '0')">Offline</button>
-                            <button mat-menu-item (click)="filterTable('activated', 'false')">Inactive</button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'true')" [matMenuTriggerFor]="assignedSubMenu">
+                                <span class="fas fa-user text-primary mr-3"></span>Assigned
+                            </button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
+                                <span class="fas fa-user text-gray mr-3"></span>Unassigned
+                            </button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
+                                <span class="far fa-clock text-gray mr-3"></span>Recent Installs
+                            </button>
                         </mat-menu>
+
+                        <mat-menu #assignedSubMenu="matMenu">
+                            <button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+                                <span class="fas fa-circle text-primary mr-3"></span>Online
+                            </button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
+                                <span class="fas fa-circle text-danger mr-3"></span>Offline
+                            </button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('inactive', 'true')">
+                                <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                            </button>
+                         </mat-menu>
+                        
+                         <mat-menu #offlineSubMenu="matMenu">
+                            <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '7', '7 days')">7 Days</button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '30', '30 days')">30 Days</button>
+                            <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', 'Long Time')">> 30 Days</button>
+                         </mat-menu>
 
                         <button mat-button mat-raised-button 
                             class="theme-btn sm-text mr-2 h-45" 
                             [matMenuTriggerFor]="timezone">
-                            <span class="button-label">Filter by Timezone</span>
+                            <span class="button-label">Timezone</span>
                             <span class="fas fa-sort"></span>
                         </button>
                         <mat-menu #timezone="matMenu">
@@ -82,7 +112,7 @@
 
                         <button mat-button mat-raised-button 
                             class="theme-btn sm-text mr-2 h-45" (click)="sortByUser()">
-                            <span class="button-label">Filter by User</span>
+                            <span class="button-label">User</span>
                             <span class="fas fa-user"></span>
                         </button>
 

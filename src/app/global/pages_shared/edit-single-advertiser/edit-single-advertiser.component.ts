@@ -13,6 +13,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
+import { API_ADVERTISER } from '../../models';
 
 @Component({
   selector: 'app-edit-single-advertiser',
@@ -21,7 +22,7 @@ import { Router } from '@angular/router';
   providers: [TitleCasePipe]
 })
 export class EditSingleAdvertiserComponent implements OnInit {
-	categories_data: Observable<API_PARENTCATEGORY[]>;
+	categories_data: API_PARENTCATEGORY[];
 	cat_data:  any = [];
 	subscription: Subscription = new Subscription();
 	dealer_name: string;
@@ -133,7 +134,8 @@ export class EditSingleAdvertiserComponent implements OnInit {
 						category => {
 							category.categoryName = this._titlecase.transform(category.categoryName);
 						}
-					)
+					);
+
 					this.categories_data = data;
 				}
 			)
@@ -145,9 +147,8 @@ export class EditSingleAdvertiserComponent implements OnInit {
 	getAdvertiserData(id) {
 		this.subscription.add(
 			this._advertiser.get_advertiser_by_id(id).subscribe(
-				(data: any) => {
-					this.fillForm(data);
-				}
+				response => this.fillForm(response.advertiser),
+				error => console.log('Error retrieving advertiser by ID', error)
 			)
 		)
 	  }
@@ -158,7 +159,7 @@ export class EditSingleAdvertiserComponent implements OnInit {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(e, "").subscribe(
 					data => {
-						data.dealers.map (
+						data.dealers.map(
 							i => {
 								this.dealers_data.push(i)
 							}
@@ -180,7 +181,7 @@ export class EditSingleAdvertiserComponent implements OnInit {
 		}
 	}
 
-	fillForm(data: any) {
+	fillForm(data: API_ADVERTISER) {
 		this.f.businessName.setValue(data.name);
 		this.f.lat.setValue(data.latitude);
 		this.f.long.setValue(data.longitude);

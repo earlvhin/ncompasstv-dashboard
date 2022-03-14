@@ -1,5 +1,6 @@
 export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
+export * from './api_category.model';
 export * from './api_change-template.model';
 export * from './api_change-template-response.model'
 export * from './api_content.model';
@@ -25,6 +26,7 @@ export * from './api_screentype.model';
 export * from './api_single-playlist.model';
 export * from './api_single-screen.model';
 export * from './api_template.model';
+export * from './api_timezone.model';
 export * from './api_update-playlist-content.model';
 export * from './api_user.model';
 export * from './api_user-data.model';

@@ -10,6 +10,7 @@ import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILE
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
 import { environment as env } from 'src/environments/environment';
+import { MediaModalComponent } from '../media-modal/media-modal.component';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
@@ -178,7 +179,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	private getAdvertiser(id: string) {
 		this._advertiser.get_advertiser_by_id(id).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => this.file_data.selected.owner_name = data.name,
+				data => this.file_data.selected.owner_name = data.advertiser.name,
 				error => console.log('Error retrieving advertiser by ID', error)
 			);
 	}

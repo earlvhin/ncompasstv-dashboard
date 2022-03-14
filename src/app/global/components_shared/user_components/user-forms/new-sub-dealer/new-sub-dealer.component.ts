@@ -10,6 +10,7 @@ import { ConfirmationModalComponent } from '../../../page_components/confirmatio
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { UI_ROLE_DEFINITION } from '../../../../models/ui_role-definition.model';
 import { UserService } from 'src/app/global/services/user-service/user.service';
+import { PAGING } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-new-sub-dealer',
@@ -30,7 +31,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 	is_retype_password_field_type = true;
 	is_submitted: boolean;
 	form: FormGroup;
-	paging = 1;
+	paging: PAGING;
 	password_is_match: boolean;
 	password_match_msg: string;
 	password_is_valid: boolean;

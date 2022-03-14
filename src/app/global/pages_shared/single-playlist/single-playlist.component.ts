@@ -28,6 +28,8 @@ export class SinglePlaylistComponent implements OnInit {
 
 	description: string;
 	host_url: string;
+	is_admin = this.isAdmin;
+	is_dealer = this.isDealer;
 	is_initial_load = true;
 	is_view_only = false;
 	license_to_update = [];
@@ -297,5 +299,13 @@ export class SinglePlaylistComponent implements OnInit {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get isAdmin() {
+		return this._auth.current_role === 'administrator';
+	}
+
+	protected get isDealer() {
+		return this._auth.current_role === 'dealer';
 	}
 }
