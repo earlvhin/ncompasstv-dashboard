@@ -364,6 +364,11 @@ export class LicenseService {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`, data, this.httpOptions);
 	}
 
+	update_reboot_time(body: { licenseId: string, rebootTime: string }) {
+		const url = `${environment.base_uri}${environment.update.license_reboot_time}`;
+		return this._http.post(url, body);
+	}
+
 	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
 
 		let result = '';
