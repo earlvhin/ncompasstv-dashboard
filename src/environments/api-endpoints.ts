@@ -253,7 +253,7 @@ export const API_ENDPOINTS = {
 		install_date: 'license/updateinstalldate',
 		install_date_list: 'license/updateinstalldatelist',
 		license_notification_settings: 'license/update/notification/settings',
-		license_reboot_time: 'license/rebootTime',
+		license_reboot_time: 'license/update/reboot/time',
 		play_credits: 'playlists/addcredits',
 		reassign_content: 'content/reassigncontent',
 		reassign_dealer: 'dealer/reassigndealer',
