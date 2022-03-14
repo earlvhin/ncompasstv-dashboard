@@ -176,6 +176,7 @@ export class LicensesComponent implements OnInit {
                 break;
             case 'inactive':
                 this.resetFilterStatus();
+                this.filters.isactivated = 1;
                 this.filters.assigned = true;
                 this.filters.inactive = value;
                 this.filters.label_status = value == 'true' ? 'Inactive':'';
@@ -192,6 +193,8 @@ export class LicensesComponent implements OnInit {
         this.filters.days_offline = "";
         this.filters.status = "";
         this.filters.assigned = "";
+        this.filters.inactive = "";
+        this.filters.online = "";
     }
 
     clearFilter() {

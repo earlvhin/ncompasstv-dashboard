@@ -1379,6 +1379,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.filters.activated = "";
         this.filters.status = "";
         this.filters.assigned = "";
+        this.filters.inactive = "";
+        this.filters.online = "";
     }
 
     filterTable(type: string, value: any, days?:any) {
@@ -1423,6 +1425,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 break;
             case 'inactive':
                 this.resetFilterStatus();
+                this.filters.isactivated = 1;
                 this.filters.assigned = true;
                 this.filters.inactive = value;
                 this.filters.label_status = value == 'true' ? 'Inactive':'';
