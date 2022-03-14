@@ -1378,6 +1378,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     resetFilterStatus() {
         this.filters.activated = "";
         this.filters.status = "";
+        this.filters.assigned = "";
     }
 
     filterTable(type: string, value: any, days?:any) {

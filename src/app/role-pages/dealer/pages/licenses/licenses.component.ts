@@ -191,6 +191,7 @@ export class LicensesComponent implements OnInit {
         this.filters.activated = "";
         this.filters.days_offline = "";
         this.filters.status = "";
+        this.filters.assigned = "";
     }
 
     clearFilter() {
