@@ -5,11 +5,11 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { MediaModalComponent } from '../media-modal/media-modal.component';
 import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
 import { environment as env } from 'src/environments/environment';
-import { MediaModalComponent } from '../media-modal/media-modal.component';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
