@@ -1,6 +1,9 @@
 export interface API_FILTERS {
 	active?: string;
 	arrangement?: any;
+	assigned?: any;
+	daysInstalled?: any;
+	daysOffline?: any;
 	dealer?: string;
 	dealer_id?: string;
 	dealerId?: string;
@@ -12,7 +15,10 @@ export interface API_FILTERS {
     filterPercMin?: any;
     filterPercMax?: any;
 	hostId?: string;
+	inactive?: any;
 	installDate?: string;
+	isActivated?: any;
+	online?: any;
 	pageSize?: any;
 	piStatus?: string;
 	roleId?: string;

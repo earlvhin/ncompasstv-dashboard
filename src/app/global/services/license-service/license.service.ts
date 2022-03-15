@@ -147,8 +147,11 @@ export class LicenseService {
 	}
 
 	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?, isActivated?) {
-		const params = this.httpParams({ dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, inactive, online, isActivated })
-		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`, { ...this.httpOptions, params });
+		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
+		const filters = { dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline, active: activated, daysInstalled: recent, timezone: zone, hostId: host, assigned, inactive, online, isActivated };
+		const params = this.setUrlParams(filters, false, false);
+		const url = `${base}${params}`;
+		return this._http.get<any>(url);
 	}
 
 	get_licenses_by_host_id(id: string): Observable<API_LICENSE_PROPS[] | { message: string }> {
@@ -369,28 +372,20 @@ export class LicenseService {
 		return this._http.post(url, body);
 	}
 
-	private setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false) {
-
-		let result = '';
-		
-		Object.keys(filters).forEach(
-			key => {
-
-				if (typeof filters[key] === 'undefined' || !filters[key]) return;
-				
-				if (!result.includes('?')) result += `?${key}=`;
-				else result += `&${key}=`;
-
-				if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
-				if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
-				else result += filters[key];
-
-			}
-		);
-
-		return result
-
-	}
+	protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
+        let result = '';
+        Object.keys(filters).forEach(
+            key => {
+                if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
+                if (!result.includes('?')) result += `?${key}=`;
+                else result += `&${key}=`;
+                if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
+                if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
+                else result += filters[key];
+            }
+        );
+        return result
+    }
 
 	protected get baseUri() {
 		return `${environment.base_uri}`;

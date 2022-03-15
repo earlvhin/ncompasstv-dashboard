@@ -1129,7 +1129,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		switch(tab) {
 			case 'Licenses': 
 				this.subscription.add(
-					// this._license.sort_license_by_dealer_id(id, 1, '', '', '', 0).subscribe(
 					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
 						data => {
                             data.licenseTemplateZoneExports.map(
