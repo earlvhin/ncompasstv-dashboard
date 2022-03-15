@@ -1,10 +1,10 @@
 import { Component, OnInit, EventEmitter, Output, Input } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { UserSortModalComponent } from '../user-sort-modal/user-sort-modal.component';
 import { debounceTime, distinctUntilChanged, map, startWith  } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { Subscription } from 'rxjs/internal/Subscription';
-import { Observable } from 'rxjs/internal/Observable';
+
+import { UserSortModalComponent } from '../user-sort-modal/user-sort-modal.component';
 
 @Component({
 	selector: 'app-media-library-options',

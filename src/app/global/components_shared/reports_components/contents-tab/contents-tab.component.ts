@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, Validators, FormGroup } from '@angular/forms';
-import * as moment from 'moment';
 import { Subscription } from 'rxjs';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 import { API_DEALER } from '../../../../global/models/api_dealer.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
@@ -11,6 +10,7 @@ import { ContentService } from '../../../../global/services/content-service/cont
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { UI_TABLE_CONTENT_METRICS } from '../../../../global/models/ui_table_content_metrics';
 import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
+
 
 @Component({
   selector: 'app-contents-tab',
@@ -328,7 +328,7 @@ export class ContentsTabComponent implements OnInit {
                     break;
                 default:
             }
-			FileSaver.saveAs(blob, filename);
+			saveAs(blob, filename);
 		});
 		this.workbook_generation = false;
 	}
@@ -349,7 +349,7 @@ export class ContentsTabComponent implements OnInit {
 
 	exportTable(tab) {
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet(this.start_date +' - '+ this.end_date);

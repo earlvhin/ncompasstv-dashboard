@@ -1,13 +1,11 @@
 import { DatePipe, Location, TitleCasePipe } from '@angular/common'
-import { ChangeDetectorRef, Component, OnInit, AfterViewInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import Chart from 'chart.js/auto';
-import { take } from 'rxjs/operators';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
 import * as io from 'socket.io-client';
 
 import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
@@ -1181,7 +1179,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.workbook.xlsx.writeBuffer().then((file: any) => {
 			const blob = new Blob([file], { type: EXCEL_TYPE });
 			const filename = this.dealer_user_data.businessName	+ '-' + tab +  '.xlsx';
-			FileSaver.saveAs(blob, filename);
+			saveAs(blob, filename);
 		});
 		this.workbook_generation = false;
 	}
@@ -1260,7 +1258,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	exportTable(tab) {
 		this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet(tab);

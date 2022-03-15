@@ -3,9 +3,9 @@ import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
 import { environment as env } from '../../../../environments/environment';
 import { AuthService, ContentService, PlaylistService } from '../../../global/services';
 import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_CONTENT_HISTORY, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION } from '../../../global/models';
@@ -254,7 +254,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	exportTable() {
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet(this.start_date +' - '+ this.end_date);
@@ -321,7 +321,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		this.workbook.xlsx.writeBuffer().then((file: any) => {
 			const blob = new Blob([file], { type: EXCEL_TYPE });
             filename =  this.file_title + '-_reports' +  '.xlsx';
-			FileSaver.saveAs(blob, filename);
+			saveAs(blob, filename);
 		});
 		this.workbook_generation = false;
 	}

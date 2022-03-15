@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs/internal/Subscription';
+import { Subscription } from 'rxjs';
 import { NEWS_FEED_STYLE_DATA } from '../../../../global/models/api_feed_generator.model';
 import { API_CONTENT } from '../../../../global/models/api_content.model';
 import { FeedMediaComponent } from '../feed-media/feed-media.component';
