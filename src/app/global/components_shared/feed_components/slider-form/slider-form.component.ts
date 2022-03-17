@@ -335,7 +335,7 @@ export class SliderFormComponent implements OnInit {
 				colorValue: '',
 				width: 'col-lg-3',
 				value: null, 
-				required: false
+				required: true
 			},
 			{
 				label: 'Headline Color',

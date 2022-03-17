@@ -132,6 +132,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 
 				if (field.required) validators.push(Validators.required);
 				if (field.viewType === 'colorpicker') validators.push(Validators.pattern(/^#[0-9A-F]{6}$/i));
+				if (field.form_control_name === 'results') validators.push(Validators.max(10));
 
 				Object.assign(formConfig, {
 					[field.form_control_name]: [field.value ? field.value : null, validators]
@@ -226,7 +227,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 				viewType: 'colorpicker',
 				colorValue: '#768fb4',
 				width: 'col-lg-6', 
-				required: false,
+				required: true,
 				value: '#768fb4',
 				options: null
 			},
@@ -237,7 +238,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 				viewType: 'colorpicker',
 				colorValue: '#000000',
 				width: 'col-lg-3', 
-				required: false,
+				required: true,
 				value: '#000000',
 				options: null
 			},
