@@ -45,19 +45,19 @@
             </div>
         </div>
 
-        <div class="alert alert-primary" *ngIf="f.zipCode.valid && zipcode_checking">
-            <p class="sm-text font-weight-bold">Checking zipcode {{f.zipCode.value}} validity ...</p>
+        <div class="alert alert-primary" *ngIf="formControls.zipCode.valid && zipcode_checking">
+            <p class="sm-text font-weight-bold">Checking zipcode {{ formControls.zipCode.value }} validity ...</p>
         </div>
 
         <div class="alert alert-success" *ngIf="zipcode_valid === true && !zipcode_checking">
-            <p class="sm-text font-weight-bold">Zipcode {{f.zipCode.value}} is a valid location.</p>
+            <p class="sm-text font-weight-bold">Zipcode {{ formControls.zipCode.value }} is a valid location.</p>
         </div>
 
         <div class="alert alert-danger" *ngIf="zipcode_valid === false && !zipcode_checking">
-            <p class="sm-text font-weight-bold">Zipcode {{f.zipCode.value}} is not a valid location.</p>
+            <p class="sm-text font-weight-bold">Zipcode {{ formControls.zipCode.value }} is not a valid location.</p>
         </div>
 
-        <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!zipcode_valid || zipcode_checking || !weather_form.valid" (click)="generateWeatherFeed()">
+        <button mat-button mat-raised-button matStepperNext class="theme-btn" [disabled]="!zipcode_valid || zipcode_checking || weather_form.invalid" (click)="generateWeatherFeed()">
             Next <span class="fas fa-long-arrow-right"></span>
         </button>
     </form>

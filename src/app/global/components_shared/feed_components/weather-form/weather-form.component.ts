@@ -1,12 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { Subscription } from 'rxjs/internal/Subscription';
-import { WEATHER_FEED_STYLE_DATA } from '../../../../global/models/api_feed_generator.model';
-import { API_CONTENT } from '../../../../global/models/api_content.model';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+
+import { API_CONTENT, WEATHER_FEED_STYLE_DATA } from 'src/app/global/models';
 import { FeedMediaComponent } from '../feed-media/feed-media.component';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { FeedService } from '../../../../global/services/feed-service/feed.service';
+import { FeedService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-weather-form',
@@ -14,12 +14,11 @@ import { FeedService } from '../../../../global/services/feed-service/feed.servi
 	styleUrls: ['./weather-form.component.scss']
 })
 
-export class WeatherFormComponent implements OnInit {
+export class WeatherFormComponent implements OnInit, OnDestroy {
 	@Input() selected_dealer: string;
 	@Input() edit_weather_data: WEATHER_FEED_STYLE_DATA;
 	@Output() open_media_library: EventEmitter<any> = new EventEmitter;
 	@Output() weather_feed_data: EventEmitter<any> = new EventEmitter;
-	subscription: Subscription = new Subscription;
 	
 	is_marking: boolean = false;
 	selected_background_image: string;
@@ -32,107 +31,16 @@ export class WeatherFormComponent implements OnInit {
 		{ label: 'Poppins' },
 		{ label: 'Roboto' },
 		{ label: 'Montserrat' }
-	]
+	];
 
 	orientation = [
 		{ label: 'Vertical' },
 		{ label: 'Horizontal' }
-	]
+	];
 
 	weather_form: FormGroup;
-
-	/** Form Control Names (form_control_name) have been set with the same keys required by the API */
-	weather_form_fields = [
-		{
-			label: 'Background Image',
-			form_control_name: 'backgroundContentId',
-			type: 'text',
-			width: 'col-lg-4', 
-			viewType: 'upload',
-			imageUri: '',
-			fileName: '',
-			required: false,
-			api_key_ref: 'backgroundContents'
-		},
-		{
-			label: 'Header Image',
-			form_control_name: 'bannerContentId',
-			type: 'text',
-			width: 'col-lg-4', 
-			viewType: 'upload',
-			imageUri: '',
-			fileName: '',
-			required: false,
-			api_key_ref: 'bannerContents'
-		},
-		{
-			label: 'Footer Image',
-			form_control_name: 'footerContentId',
-			type: 'text',
-			width: 'col-lg-4', 
-			viewType: 'upload',
-			imageUri: '',
-			fileName: '',
-			required: false,
-			api_key_ref: 'footerContents'
-		},
-		{
-			label: 'Box Background Color',
-			form_control_name: 'boxBackgroundColor',
-			type: 'text',
-			viewType: 'colorpicker',
-			colorValue: '',
-			width: 'col-lg-4', 
-			required: false
-		},
-		{
-			label: 'Days Font Color',
-			form_control_name: 'daysFontColor',
-			type: 'text',
-			width: 'col-lg-4', 
-			viewType: 'colorpicker',
-			colorValue: '',
-			required: false
-		},
-		{
-			label: 'Font Family',
-			form_control_name: 'fontFamily',
-			type: 'text',
-			width: 'col-lg-4', 
-			viewType: 'select',
-			options: this.font_family,
-			required: false
-		},
-		{
-			label: 'Header Image Size in Pixels',
-			form_control_name: 'headerImageSize',
-			type: 'number',
-			width: 'col-lg-3', 
-			required: false
-		},
-		{
-			label: 'Footer Image Size in Pixels',
-			form_control_name: 'footerImageSize',
-			type: 'number',
-			width: 'col-lg-3', 
-			required: false
-		},
-		{
-			label: 'Number of days to display, Maximum 5',
-			form_control_name: 'numberDays',
-			type: 'number',
-			width: 'col-lg-3', 
-			required: false
-		},
-		{
-			label: 'US Zip Code',
-			form_control_name: 'zipCode',
-			errorMsg: '',
-			type: 'text',
-			width: 'col-lg-3', 
-			required: true
-		}
-	]
+	weather_form_fields = this._weatherFormFields;
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _form: FormBuilder,
@@ -144,21 +52,27 @@ export class WeatherFormComponent implements OnInit {
 		this.prepareForms();
 	}
 
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
 	/** On Color Picker Field Changed */
-	colorPicker(e, form_control_name) {
-		this.weather_form.get(form_control_name).setValue(e);
+	colorPicker(color: string, controlName: string) {
+		this.weather_form.get(controlName).setValue(color);
 	}
 
 	/** Open Media Library where contents are assigned to selected dealer */
 	openMediaLibraryModal(form_control_name: string): void {
+
 		/** Open Feed Media Modal */
-		let dialog = this._dialog.open(FeedMediaComponent, {
+		const dialog = this._dialog.open(FeedMediaComponent, {
 			width: '1024px',
 			data: {
 				dealer: this.selected_dealer,
 				singleSelect: true
 			}
-		})
+		});
 
 		/** On Modal Close */
 		dialog.afterClosed().subscribe((data: API_CONTENT[]) => {
@@ -174,7 +88,7 @@ export class WeatherFormComponent implements OnInit {
 							i.fileName = data[0].title;
 						}
 					}
-				)
+				);
 			}
 		})
 	}
@@ -200,7 +114,7 @@ export class WeatherFormComponent implements OnInit {
 	}
 
 	/** Weather Form Control Getter */
-	get f() {
+	get formControls() {
 		return this.weather_form.controls;
 	}
 
@@ -208,24 +122,27 @@ export class WeatherFormComponent implements OnInit {
 	private prepareForms(): void {
 		console.log(this.edit_weather_data);
 
-		let form_group_obj = {};
+		let formConfig = {};
 
 		/** Loop through form fields object and prepare for group */
 		this.weather_form_fields.map(
-			i => {
-				Object.assign(form_group_obj, {
-					[i.form_control_name]: ['', i.required ? Validators.required : null]
-				})
+			field => {
+				const validators: any[] = [];
+
+				if (field.required) validators.push(Validators.required);
+				if (field.viewType === 'colorpicker') validators.push(Validators.pattern(/^#[0-9A-F]{6}$/i));
+
+				Object.assign(formConfig, {
+					[field.form_control_name]: [field.value ? field.value : null, validators]
+				});
 			}
 		)
 
-		this.weather_form = this._form.group(form_group_obj)
-		this.f.numberDays.setValidators([Validators.min(1), Validators.max(5)])
-		this.f.zipCode.setValidators([Validators.minLength(5), Validators.maxLength(5)])
-		this.f.headerImageSize.setValue(500);
-		this.f.footerImageSize.setValue(500);
-
-		console.log(this.edit_weather_data);
+		this.weather_form = this._form.group(formConfig)
+		this.formControls.numberDays.setValidators([Validators.min(1), Validators.max(5)])
+		this.formControls.zipCode.setValidators([Validators.minLength(5), Validators.maxLength(5)])
+		this.formControls.headerImageSize.setValue(500);
+		this.formControls.footerImageSize.setValue(500);
 
 		if (this.edit_weather_data) {
 			this.weather_form_fields.map(i => {
@@ -239,54 +156,150 @@ export class WeatherFormComponent implements OnInit {
 				}
 			})
 
-			this.f.backgroundContentId.setValue(this.edit_weather_data.backgroundContentId);
-			this.f.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
-			this.f.footerContentId.setValue(this.edit_weather_data.footerContentId);
-			this.f.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
-			this.f.headerImageSize.setValue(this.edit_weather_data.headerImageSize || 500);
-			this.f.footerImageSize.setValue(this.edit_weather_data.footerImageSize || 500)
-			this.f.daysFontColor.setValue(this.edit_weather_data.daysFontColor);
-			this.f.numberDays.setValue(this.edit_weather_data.numberDays);
-			this.f.fontFamily.setValue(this.edit_weather_data.fontFamily);
-			this.f.zipCode.setValue(this.edit_weather_data.zipCode);
+			this.formControls.backgroundContentId.setValue(this.edit_weather_data.backgroundContentId);
+			this.formControls.bannerContentId.setValue(this.edit_weather_data.bannerContentId);
+			this.formControls.footerContentId.setValue(this.edit_weather_data.footerContentId);
+			this.formControls.boxBackgroundColor.setValue(this.edit_weather_data.boxBackgroundColor);
+			this.formControls.headerImageSize.setValue(this.edit_weather_data.headerImageSize || 500);
+			this.formControls.footerImageSize.setValue(this.edit_weather_data.footerImageSize || 500)
+			this.formControls.daysFontColor.setValue(this.edit_weather_data.daysFontColor);
+			this.formControls.numberDays.setValue(this.edit_weather_data.numberDays);
+			this.formControls.fontFamily.setValue(this.edit_weather_data.fontFamily);
+			this.formControls.zipCode.setValue(this.edit_weather_data.zipCode);
 
-			this.validateZipCode(this.f.zipCode.value);
+			this.validateZipCode(this.formControls.zipCode.value);
 		}
 
 		/** No Debounce for UI Alert Display */
-		this.subscription.add(
-			this.f.zipCode.valueChanges.subscribe(_ => 
-				{
-					this.zipcode_checking = true;
-					this.zipcode_valid = undefined;
-				}
-			)
-		)
+		this.formControls.zipCode.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => {
+				this.zipcode_checking = true;
+				this.zipcode_valid = undefined;
+			});
 
 		/** Debounce for Field Validity and API Call */
-		this.subscription.add(
-			this.f.zipCode.valueChanges
-			.pipe(debounceTime(1000), distinctUntilChanged())
-			.subscribe(_ => {
-				if (this.f.zipCode.valid) {
-					this.validateZipCode(this.f.zipCode.value);
+		this.formControls.zipCode.valueChanges.pipe(debounceTime(1000), distinctUntilChanged(), takeUntil(this._unsubscribe))
+			.subscribe(() => {
+				if (this.formControls.zipCode.valid) {
+					this.validateZipCode(this.formControls.zipCode.value);
 				}
-			})
-		)
+			});
 	}
 
 	/** Validate Zipcode if is within API jurisdiction
 	 * @param {string} zipCode Entered Zipcode
 	 */
 	private validateZipCode(zipCode: string) {
-		this._feed.validate_weather_zip(zipCode).subscribe(
-			(data: {success: boolean}) => {
-				this.zipcode_valid = data.success;
-				this.zipcode_checking = false;
-			}, 
-			error => {
-				console.log(error);
+
+		this._feed.validate_weather_zip(zipCode).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: {success: boolean}) => this.zipcode_valid = data.success,
+				error => console.log('Error validating zip code', error)
+			)
+			.add(() => this.zipcode_checking = false);
+	}
+
+	protected get _weatherFormFields() {
+		return [
+			{
+				label: 'Background Image',
+				form_control_name: 'backgroundContentId',
+				type: 'text',
+				width: 'col-lg-4', 
+				viewType: 'upload',
+				imageUri: '',
+				fileName: '',
+				required: false,
+				value: null,
+				api_key_ref: 'backgroundContents'
+			},
+			{
+				label: 'Header Image',
+				form_control_name: 'bannerContentId',
+				type: 'text',
+				width: 'col-lg-4', 
+				viewType: 'upload',
+				imageUri: '',
+				fileName: '',
+				required: false,
+				value: null,
+				api_key_ref: 'bannerContents'
+			},
+			{
+				label: 'Footer Image',
+				form_control_name: 'footerContentId',
+				type: 'text',
+				width: 'col-lg-4', 
+				viewType: 'upload',
+				imageUri: '',
+				fileName: '',
+				required: false,
+				value: null,
+				api_key_ref: 'footerContents'
+			},
+			{
+				label: 'Box Background Color',
+				form_control_name: 'boxBackgroundColor',
+				type: 'text',
+				viewType: 'colorpicker',
+				colorValue: '',
+				width: 'col-lg-4',
+				value: null,
+				required: false
+			},
+			{
+				label: 'Days Font Color',
+				form_control_name: 'daysFontColor',
+				type: 'text',
+				width: 'col-lg-4',
+				value: null, 
+				viewType: 'colorpicker',
+				colorValue: '',
+				required: false
+			},
+			{
+				label: 'Font Family',
+				form_control_name: 'fontFamily',
+				type: 'text',
+				width: 'col-lg-4', 
+				viewType: 'select',
+				options: this.font_family,
+				value: null,
+				required: false
+			},
+			{
+				label: 'Header Image Size in Pixels',
+				form_control_name: 'headerImageSize',
+				type: 'number',
+				width: 'col-lg-3', 
+				value: null,
+				required: false
+			},
+			{
+				label: 'Footer Image Size in Pixels',
+				form_control_name: 'footerImageSize',
+				type: 'number',
+				width: 'col-lg-3',
+				value: null, 
+				required: false
+			},
+			{
+				label: 'Number of days to display, Maximum 5',
+				form_control_name: 'numberDays',
+				type: 'number',
+				width: 'col-lg-3',
+				value: null, 
+				required: false
+			},
+			{
+				label: 'US Zip Code',
+				form_control_name: 'zipCode',
+				errorMsg: '',
+				type: 'text',
+				width: 'col-lg-3', 
+				value: null,
+				required: true
 			}
-		)
+		];
 	}
 }

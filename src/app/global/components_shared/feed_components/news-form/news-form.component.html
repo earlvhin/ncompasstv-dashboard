@@ -45,8 +45,8 @@
             </div>
         </div>
 
-        <div class="alert alert-primary" *ngIf="f.rssFeedUrl.valid && rss_url_checking">
-            <p class="sm-text font-weight-bold">Checking RSS URL: {{ f.rssFeedUrl.value }} format</p>
+        <div class="alert alert-primary" *ngIf="formControls.rssFeedUrl.valid && rss_url_checking">
+            <p class="sm-text font-weight-bold">Checking RSS URL: {{ formControls.rssFeedUrl.value }} format</p>
         </div>
 
         <div class="alert alert-success" *ngIf="rss_url_valid === true && !rss_url_checking">

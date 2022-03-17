@@ -55,6 +55,7 @@ export * from './ui_content.model';
 export * from './ui_current-user.model';
 export * from './ui_dealer_hosts.model';
 export * from './ui_dealer-license.model';
+export * from './ui_feed_item.model';
 export * from './ui_filetype';
 export * from './ui_host-content.model';
 export * from './ui_host-file.model';
