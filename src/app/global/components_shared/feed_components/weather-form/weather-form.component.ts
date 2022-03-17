@@ -20,7 +20,6 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
 	@Output() open_media_library: EventEmitter<any> = new EventEmitter;
 	@Output() weather_feed_data: EventEmitter<any> = new EventEmitter;
 	
-	is_marking: boolean = false;
 	selected_background_image: string;
 	selected_banner_image: string;
 	zipcode_valid: boolean;
@@ -120,7 +119,6 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
 
 	/** Prepare Forms */
 	private prepareForms(): void {
-		console.log(this.edit_weather_data);
 
 		let formConfig = {};
 
@@ -138,9 +136,9 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
 			}
 		)
 
-		this.weather_form = this._form.group(formConfig)
-		this.formControls.numberDays.setValidators([Validators.min(1), Validators.max(5)])
-		this.formControls.zipCode.setValidators([Validators.minLength(5), Validators.maxLength(5)])
+		this.weather_form = this._form.group(formConfig);
+		this.formControls.numberDays.setValidators([Validators.min(1), Validators.max(5)]);
+		this.formControls.zipCode.setValidators([Validators.minLength(5), Validators.maxLength(5)]);
 		this.formControls.headerImageSize.setValue(500);
 		this.formControls.footerImageSize.setValue(500);
 
@@ -242,20 +240,20 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
 				form_control_name: 'boxBackgroundColor',
 				type: 'text',
 				viewType: 'colorpicker',
-				colorValue: '',
+				colorValue: '#FFFFFF',
+				value: '#FFFFFF',
 				width: 'col-lg-4',
-				value: null,
-				required: false
+				required: true
 			},
 			{
 				label: 'Days Font Color',
 				form_control_name: 'daysFontColor',
 				type: 'text',
 				width: 'col-lg-4',
-				value: null, 
 				viewType: 'colorpicker',
-				colorValue: '',
-				required: false
+				colorValue: '#000000',
+				value: '#000000',
+				required: true
 			},
 			{
 				label: 'Font Family',

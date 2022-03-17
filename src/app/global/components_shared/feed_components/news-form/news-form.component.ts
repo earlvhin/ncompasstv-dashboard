@@ -182,7 +182,6 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 		this.formControls.rssFeedUrl.valueChanges.pipe(debounceTime(2000), distinctUntilChanged(), takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					console.log('is valid feed url', this.formControls.rssFeedUrl.valid);
 					if (this.formControls.rssFeedUrl.valid) {
 						this.validateRssUrl(this.formControls.rssFeedUrl.value);
 					}

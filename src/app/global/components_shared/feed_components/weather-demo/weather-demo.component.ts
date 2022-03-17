@@ -24,6 +24,7 @@ export class WeatherDemoComponent implements OnInit {
 		footerContentId=${this.weather_data.feedWeather.footerContentId}&
 		numberDays=${this.weather_data.feedWeather.numberDays}&
 		headerImageSize=${this.weather_data.feedWeather.headerImageSize}&
-		footerImageSize=${this.weather_data.feedWeather.footerImageSize}`
+		footerImageSize=${this.weather_data.feedWeather.footerImageSize}`;
+
 	}
 }
