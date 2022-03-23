@@ -94,6 +94,9 @@
             "staging": {
               "browserTarget": "dashboard-material:build:staging"
             },
+            "feature": {
+              "browserTarget": "dashboard-material:build:feature"
+            },
 			"local": {
 				"browserTarget": "dashboard-material:build:local"
 			}
