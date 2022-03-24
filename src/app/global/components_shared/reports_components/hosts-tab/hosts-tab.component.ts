@@ -3,10 +3,10 @@ import { Subscription } from 'rxjs';
 import { HostService } from 'src/app/global/services/host-service/host.service';
 import { UpperCasePipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
-import { InformationModalComponent } from 'src/app/global/components_shared/page_components/information-modal/information-modal.component';
+import { geojson, mapChart } from 'highcharts/highmaps';
+const usMap = require("@highcharts/map-collection/countries/us/us-all.geo.json");
 
-var Highcharts = require("highcharts/highmaps.js");  
-var usMap = require("@highcharts/map-collection/countries/us/us-all.geo.json");  
+import { InformationModalComponent } from 'src/app/global/components_shared/page_components/information-modal/information-modal.component';
 
 @Component({
   selector: 'app-hosts-tab',
@@ -22,7 +22,6 @@ export class HostsTabComponent implements OnInit {
     formatted: any = [];
     has_data : boolean = false;
     has_state_details : boolean = false;
-    Highcharts: typeof Highcharts = Highcharts;
     loading_details: boolean = false; 
     panelOpenState = false;
     raw_details : any = [];
@@ -100,7 +99,7 @@ export class HostsTabComponent implements OnInit {
     }
 
     generateCharts(formatted) {
-        Highcharts.mapChart('host-map', {
+        mapChart('host-map', {
             chart: {
                 map: usMap
             },
@@ -146,7 +145,7 @@ export class HostsTabComponent implements OnInit {
             }, {
                 name: 'Separators',
                 type: 'mapline',
-                data: Highcharts.geojson(usMap, 'mapline'),
+                data: geojson(usMap, 'mapline'),
                 color: 'silver',
                 nullColor: 'silver',
                 showInLegend: false,

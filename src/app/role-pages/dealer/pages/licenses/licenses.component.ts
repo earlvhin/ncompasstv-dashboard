@@ -4,8 +4,8 @@ import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
@@ -391,7 +391,7 @@ export class LicensesComponent implements OnInit {
 						.then((file: any) => {
 							const blob = new Blob([file], { type: EXCEL_TYPE });
 							const filename = this.dealers_name	+ '.xlsx';
-							FileSaver.saveAs(blob, filename);
+							saveAs(blob, filename);
 						}
 					);
 					this.workbook_generation = false;
@@ -462,7 +462,7 @@ export class LicensesComponent implements OnInit {
 	exportTable() {
 		this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet('Licenses');

@@ -1,5 +1,3 @@
-import { time } from "highcharts";
-
 export class UI_TABLE_LICENSE_BY_HOST {
     license_id: object;
     host_id: object;

@@ -2,8 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common'
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { LicenseService } from 'src/app/global/services';
@@ -67,7 +67,7 @@ export class ExportsTabComponent implements OnInit {
     exportHostsTable(tab) {
         this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
@@ -161,7 +161,7 @@ export class ExportsTabComponent implements OnInit {
 								.then((file: any) => {
 									const blob = new Blob([file], { type: EXCEL_TYPE });
 									const filename = 'Licenses' +'.xlsx';
-									FileSaver.saveAs(blob, filename);
+									saveAs(blob, filename);
 								}
 							);
 

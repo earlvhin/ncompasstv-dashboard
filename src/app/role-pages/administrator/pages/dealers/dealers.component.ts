@@ -2,8 +2,8 @@ import { Component, OnDestroy, OnInit} from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { StatisticsService } from 'src/app/global/services/statistics-service/statistics.service';
@@ -63,7 +63,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 	exportTable(): void {
 		this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
@@ -172,7 +172,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 						.then((file: any) => {
 							const blob = new Blob([file], { type: EXCEL_TYPE });
 							const filename = 'Dealers.xlsx';
-							FileSaver.saveAs(blob, filename);
+							saveAs(blob, filename);
 						}
 					);
 

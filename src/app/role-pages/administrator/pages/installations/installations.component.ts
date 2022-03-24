@@ -2,9 +2,9 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
 
 import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
 import { API_FILTERS, INSTALLATION, PAGING } from 'src/app/global/models';
@@ -79,7 +79,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 		const header = [];
 		this.isExporting = true;
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
@@ -169,7 +169,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 						.then((file: any) => {
 							const blob = new Blob([file], { type: EXCEL_TYPE });
 							const filename = `${this._titlecase.transform(tab)} Installations for ${this.currentFilters.installDate}.xlsx`;
-							FileSaver.saveAs(blob, filename);
+							saveAs(blob, filename);
 						}
 					);
 

@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
-import { API_SINGLE_PLAYLIST } from '../../../../global/models/api_single-playlist.model';
 import { Subscription } from 'rxjs';
 import { UI_DEALER_PLAYLIST } from 'src/app/global/models/ui_dealer-playlist.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { DatePipe, TitleCasePipe } from '@angular/common';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
 	selector: 'app-playlists',
@@ -164,7 +163,7 @@ export class PlaylistsComponent implements OnInit {
 							.then((file: any) => {
 								const blob = new Blob([file], { type: EXCEL_TYPE });
 								const filename = filter.name +'.xlsx';
-								FileSaver.saveAs(blob, filename);
+								saveAs(blob, filename);
 							}
 						);
 						this.workbook_generation = false;
@@ -182,7 +181,7 @@ export class PlaylistsComponent implements OnInit {
 	exportPlaylist(data) {
 		this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();

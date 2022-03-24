@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
+import { Buffer, Column, Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
 
 
 @Injectable({
@@ -33,15 +33,15 @@ export class ExportService {
 			}
 		);
 
-		const file: Excel.Buffer = await this.workbook.xlsx.writeBuffer();
+		const file: Buffer = await this.workbook.xlsx.writeBuffer();
 		const blob = new Blob([file], { type: EXCEL_TYPE });
 		const timestamp = moment().format('YYYY-DD-MM-hhssmm');
 		const fileName = `tags-export-${timestamp}.xlsx`;
-		FileSaver.saveAs(blob, fileName);
+		saveAs(blob, fileName);
 
 	}
 
-	private mapColumns(data: { name: string, key: string }[]): Excel.Column[] {
+	private mapColumns(data: { name: string, key: string }[]): Column[] {
 
 		return data.map(
 			column => {
@@ -51,14 +51,14 @@ export class ExportService {
 				const outlineLevel = 1;
 				const hidden = false;
 				const style = { font: { name: 'Arial', bold: true } };
-				return { header, key, width, outlineLevel, hidden, style } as Excel.Column;
+				return { header, key, width, outlineLevel, hidden, style } as Column;
 			}
 		);
 
 	}
 
 	protected get workbook() {
-		const workbook = new Excel.Workbook();
+		const workbook = new Workbook();
 		workbook.creator = 'NCompass TV';
 		workbook.created = new Date();
 		return workbook;

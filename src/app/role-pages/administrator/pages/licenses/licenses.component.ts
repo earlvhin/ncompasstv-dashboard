@@ -4,9 +4,8 @@ import { MatDialog } from '@angular/material';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
@@ -15,7 +14,6 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
-import { time } from 'console';
 
 @Component({
 	selector: 'app-licenses',
@@ -627,7 +625,7 @@ export class LicensesComponent implements OnInit {
 								.then((file: any) => {
 									const blob = new Blob([file], { type: EXCEL_TYPE });
 									const filename = 'Licenses' +'.xlsx';
-									FileSaver.saveAs(blob, filename);
+									saveAs(blob, filename);
 								}
 							);
 
@@ -673,7 +671,7 @@ export class LicensesComponent implements OnInit {
 								.then((file: any) => {
 									const blob = new Blob([file], { type: EXCEL_TYPE });
 									const filename = 'Hosts' +'.xlsx';
-									FileSaver.saveAs(blob, filename);
+									saveAs(blob, filename);
 								}
 							);
 
@@ -782,7 +780,7 @@ export class LicensesComponent implements OnInit {
 	exportTable(tab) {
         this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();

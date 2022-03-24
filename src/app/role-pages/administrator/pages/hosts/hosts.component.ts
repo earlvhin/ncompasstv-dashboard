@@ -1,9 +1,9 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import * as Excel from 'exceljs';
-import * as FileSaver from 'file-saver';
 
 import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
 import { AuthService, HostService } from 'src/app/global/services';
@@ -294,7 +294,7 @@ export class HostsComponent implements OnInit {
     exportTable(tab) {
         this.workbook_generation = true;
 		const header = [];
-		this.workbook = new Excel.Workbook();
+		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
@@ -352,7 +352,7 @@ export class HostsComponent implements OnInit {
 								.then((file: any) => {
 									const blob = new Blob([file], { type: EXCEL_TYPE });
 									const filename = 'Hosts' +'.xlsx';
-									FileSaver.saveAs(blob, filename);
+									saveAs(blob, filename);
 								}
 							);
 
