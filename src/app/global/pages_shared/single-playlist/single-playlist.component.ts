@@ -9,10 +9,7 @@ import { ClonePlaylistComponent } from '../../components_shared/playlist_compone
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
 import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
-
-import { API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, UI_ROLE_DEFINITION, 
-	UI_PLAYLIST_SCREENS_NEW } from 'src/app/global/models';
-
+import { API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, UI_ROLE_DEFINITION, UI_PLAYLIST_SCREENS_NEW } from 'src/app/global/models';
 import { AuthService, HelperService, PlaylistService, RoleService } from 'src/app/global/services';
 import { environment } from 'src/environments/environment';
 
