@@ -28,7 +28,6 @@
 							{{ is_password_field_type ? 'visibility_off' : 'visibility' }}
 						</mat-icon>
 					</mat-form-field>
-
 				</div>
 			</div>
 			<button mat-button mat-raised-button type="submit" color="primary" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">
@@ -39,11 +38,11 @@
 			</button>
 			
 			<!-- DELETE DEALER BUTTON -->
-			<!-- <ng-container *ngIf="is_admin">
+			<ng-container *ngIf="is_admin">
 				<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteDealer()">
 					Delete Dealer
 				</button>
-			</ng-container> -->
+			</ng-container>
 
 			<!-- RE-ASSIGN DEALER BUTTON -->
 			<button mat-button mat-raised-button class="theme-btn mt-4 mr-2 reassign bg-danger" type="button" (click)="onReassignDealer()">
