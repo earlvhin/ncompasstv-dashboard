@@ -2,7 +2,7 @@ export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
 export * from './api_category.model';
 export * from './api_change-template.model';
-export * from './api_change-template-response.model'
+export * from './api_change-template-response.model';
 export * from './api_content.model';
 export * from './api_create-host.model';
 export * from './api_create-screen-response.model';
@@ -15,7 +15,7 @@ export * from './api_filters.model';
 export * from './api_google-map.model';
 export * from './api_host.model';
 export * from './api_host-content.model';
-export * from './api_host-file.model'
+export * from './api_host-file.model';
 export * from './api_installation-statistics.model';
 export * from './api_license.model';
 export * from './api_license-total-statistics.model';
@@ -61,6 +61,7 @@ export * from './ui_host-content.model';
 export * from './ui_host-file.model';
 export * from './ui_host-license.model';
 export * from './ui_host-license-statistics';
+export * from './ui_host-locator.model';
 export * from './ui_license_by_tags.model';
 export * from './ui_operation-hours.model';
 export * from './ui_role-definition.model';
