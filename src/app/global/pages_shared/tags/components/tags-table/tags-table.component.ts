@@ -15,13 +15,14 @@ import { EditTagComponent } from '../../dialogs';
 })
 export class TagsTableComponent implements OnInit, OnDestroy {
 
-	@Input() isLoading = true;
-	@Input() tableType: 'tags' | 'tag-owners' = 'tags';
 	@Input() currentTagType: TAG_TYPE;
+	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
+	@Input() isLoading = true;
 	@Input() paging: PAGING;
-	@Input() tagOwners: TAG_OWNER[];
 	@Input() tableColumns: any[];
+	@Input() tableType: 'tags' | 'tag-owners' = 'tags';
+	@Input() tagOwners: TAG_OWNER[];
 	@Input() tableData: TAG[] | TAG_OWNER[] = [];
 	@Output() onClickTagName = new EventEmitter<{ tag: string }>();
 	@Output() onClickPageNumber = new EventEmitter<number>();
@@ -115,15 +116,16 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 		window.scrollTo(0, 0);
 	}
 
-	openDialog(type: string, data: TAG | any) {
+	openDialog(type: string, data: TAG | TAG_OWNER) {
 
-		let dialog: MatDialogRef<EditTagComponent | any>;
+		let dialog: MatDialogRef<EditTagComponent>;
 
 		switch (type) {
 
 			case 'edit_tag':
-				dialog = this._dialog.open(EditTagComponent, { width: '500px' })
-				dialog.componentInstance.tag = data;
+				dialog = this._dialog.open(EditTagComponent, { width: '500px' }) as MatDialogRef<EditTagComponent>;
+				dialog.componentInstance.tag = data as TAG;
+				dialog.componentInstance.currentUserId = this.currentUserId;
 				break;
 
 		}

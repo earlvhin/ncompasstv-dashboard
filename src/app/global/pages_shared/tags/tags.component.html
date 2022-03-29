@@ -57,6 +57,7 @@
 				<app-tags-section
 					[columns]="tagsTableSettings.columns"
 					[currentTagType]="currentTagType"
+					[currentUserId]="currentUserId"
 					[currentUserRole]="currentUserRole"
 					[tagTypes]="tagTypes"
 					(onClickTagName)="clickedTagName($event)">
@@ -69,6 +70,7 @@
 			<ng-container *ngIf="isContentReady; else loading;">
 				<app-tag-owners-section
 					[columns]="tagOwnersTableSettings.columns"
+					[currentUserId]="currentUserId"
 					[currentUserRole]="currentUserRole"
 					[tagTypes]="tagTypesMutated">
 				</app-tag-owners-section>

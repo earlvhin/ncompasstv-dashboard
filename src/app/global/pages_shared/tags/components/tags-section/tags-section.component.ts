@@ -15,6 +15,7 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 	@Input() columns: { name: string, class: string }[];
 	@Input() currentTagType: TAG_TYPE;
+	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
 	@Input() tagTypes: TAG_TYPE[];
 	

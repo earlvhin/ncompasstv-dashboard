@@ -14,6 +14,7 @@ import { TagService } from 'src/app/global/services';
 })
 export class CreateTagComponent implements OnInit, OnDestroy {
 	
+	currentUserId: string;
 	description = 'Choose a color and type the name of the tag';
 	form: FormGroup;
 	selectedTagColor: string;
@@ -39,7 +40,12 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	onSubmit(): void {
 
-		let dataToSubmit: { name: string, tagColor: string, description?: string } = { name: null, tagColor: null };
+		let dataToSubmit: { name: string, tagColor: string, description?: string, createdBy: string } = { 
+			name: null,
+			tagColor: null,
+			createdBy: this.currentUserId
+		};
+		
 		let errorMessage = 'Error creating tag';
 
 		const form = this.form.value;

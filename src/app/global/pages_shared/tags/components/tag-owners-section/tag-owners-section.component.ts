@@ -4,7 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { PAGING, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
+import { PAGING, TAG, TAG_OWNER, TAG_TYPE, UI_CURRENT_USER } from 'src/app/global/models';
 import { TagService,  } from 'src/app/global/services';
 import { CreateTagComponent } from '../../dialogs';
 import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.component';
@@ -17,6 +17,7 @@ import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.compo
 export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	
 	@Input() columns: { name: string, class: string }[];
+	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
 	@Input() tagTypes: TAG_TYPE[];
 	@Output() onRefreshTagsCount = new EventEmitter<void>();
@@ -71,7 +72,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	openDialog(name: string): void {
 
 		let dialogConfig: MatDialogConfig = null;
-		let dialog: MatDialogRef<any> = null;
+		let dialog: MatDialogRef<CreateTagComponent | AssignTagsComponent> = null;
 
 		switch (name) {
 
@@ -80,10 +81,13 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 				dialogConfig = { 
 					width: '500px',
 					height: '400px',
-					panelClass: 'dialog-container-position-relative'
+					panelClass: 'dialog-container-position-relative',
+					data: { user: this.currentUserId }
 				};
 
-				dialog = this._dialog.open(CreateTagComponent, dialogConfig)
+				dialog = this._dialog.open(CreateTagComponent, dialogConfig);
+				(dialog as MatDialogRef<CreateTagComponent>).componentInstance.currentUserId = this.currentUserId;
+
 				break;
 
 			case 'assign_tags':
