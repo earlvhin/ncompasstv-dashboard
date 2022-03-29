@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { AgmInfoWindow } from '@agm/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { saveAs } from 'file-saver';
 
 import { API_HOST } from '../../../models/api_host.model';
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';

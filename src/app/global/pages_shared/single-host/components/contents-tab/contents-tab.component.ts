@@ -42,9 +42,7 @@ export class ContentsTabComponent implements OnInit {
 	}
 
 	getContents(page = 1): void {
-
 		this.contents = [];
-
 		this._host.get_contents(this.hostId, page)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -57,9 +55,17 @@ export class ContentsTabComponent implements OnInit {
 					}
 
 					this.pagingData = response.paging;
-					this.contents = [...response.contents];
-					this.contentsForDialog = this.mapToMediaPreviewDialog([...response.contents]);
-					this.tableData = this.mapToTable([...response.contents]);
+					this.contents = response.contents;
+                    
+                    //for preview
+                    this.contents.map (
+                        content => {
+                            content.url = content.url.replace('https://n-compass-filestack.s3.amazonaws.com/','');
+                        }
+                    )
+
+                    this.contentsForDialog = this.mapToMediaPreviewDialog(this.contents);
+					this.tableData = this.mapToTable(response.contents);
 
 				},
 				error => console.log('Error retrieving host contents', error)
@@ -99,24 +105,21 @@ export class ContentsTabComponent implements OnInit {
 	}
 
 	private mapToMediaPreviewDialog(data: API_HOST_CONTENT[]) {
-
 		return data.map(
-			content => {
-
+            content => {
 				let {
 					advertiserId,
 					dealerId,
 					duration,
 					hostId,
-					fileName, 
-					fileType, 
+                    url,
+                    fileType, 
 					filesize, 
 					dateCreated, 
 					createdByName, 
 					previewThumbnail, 
 					title 
 				} = content;
-
 				duration = Math.round(duration);
 
 				return {
@@ -124,7 +127,7 @@ export class ContentsTabComponent implements OnInit {
 					dealer_id: dealerId,
 					duration,
 					host_id: hostId,
-					fileName,
+					fileName: url,
 					fileType,
 					filesize,
 					dateCreated,
@@ -136,13 +139,6 @@ export class ContentsTabComponent implements OnInit {
 			}
 		);
 	}
-
-	// private parseFileName(name: string) {
-	// 	if (name.split('_').length === 1) return name;
-	// 	const segments = name.split('_');
-	// 	segments.splice(0, 1);
-	// 	return segments.join('');
-	// }
 
 	protected get columns(): string[] {
 		return [
