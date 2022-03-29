@@ -78,8 +78,9 @@ export class MediaComponent implements OnInit, OnDestroy {
 				this.sendStatCardsData();
 			}
 		);
-
-		this.getContents();
+        
+        this.role_id = this._auth.current_user_value.role_id;
+        this.getContents();
 		this.getFillers();
 		this.sendStatCardsData();
 	}
@@ -483,7 +484,8 @@ export class MediaComponent implements OnInit, OnDestroy {
 	}
 
 	private sendStatCardsData(): void {
-
+        console.log("ROLE_ID", this.role_id)
+        console.log("DEALER_DEF", UI_ROLE_DEFINITION.dealer)
 		if (this.role_id === UI_ROLE_DEFINITION.dealer || this.role_id === UI_ROLE_DEFINITION['sub-dealer']) {
 
 			this.subscription.add(
