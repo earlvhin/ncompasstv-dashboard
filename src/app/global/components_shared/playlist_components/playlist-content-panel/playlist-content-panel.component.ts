@@ -3,7 +3,7 @@ import { FormControl } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { fromEvent, Observable, Subject } from 'rxjs';
-import { Sortable, MultiDrag } from 'sortablejs';
+import { Sortable } from 'sortablejs';
 import * as moment from 'moment-timezone';
 
 import { BulkOptionsComponent } from '../bulk-options/bulk-options.component';
@@ -11,10 +11,10 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
-import { ContentService, PlaylistService } from 'src/app/global/services';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, 
-	FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, CREDITS, PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT, API_CONTENT_HISTORY, API_CONTENT_HISTORY_LIST, API_CONTENT_DATA } from 'src/app/global/models';
+import { AuthService, ContentService, PlaylistService } from 'src/app/global/services';
+
+import { API_BLOCKLIST_CONTENT, API_CONTENT, API_CONTENT_BLACKLISTED_CONTENTS, API_UPDATE_PLAYLIST_CONTENT, FREQUENCY, API_UPDATED_PLAYLIST_CONTENT, 
+	PLAYLIST_CHANGES, CREDITS_STATUS, CREDITS_TO_SUBMIT, API_CONTENT_HISTORY, API_CONTENT_HISTORY_LIST, API_CONTENT_DATA } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlist-content-panel',
@@ -464,27 +464,32 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	/** Single Content Remove */
-	removePlaylistContent(data: any): void {
+	removePlaylistContent(contentId: string): void {
 		this.playlist_saving = true;
-		this._playlist.remove_playlist_content(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
-		.subscribe(
-			() => {
-				this.playlist_contents = this.playlist_content_backup.filter((p: API_CONTENT) => p.playlistContentId != data);
-				this.saveOrderChanges();
-			},
-			error => console.log('Error removing playlist content', error)
-		);
+
+		this._playlist.remove_playlist_content(this.playlist_id, contentId).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.playlist_contents = this.playlist_content_backup.filter((p: API_CONTENT) => p.playlistContentId != contentId);
+					this.saveOrderChanges();
+				},
+				error => console.log('Error removing playlist content', error)
+			);
 	}
 
 	/** Bulk Content Remove */
-	removePlaylistContents(data: any): void {
+	removePlaylistContents(contentIdsToDelete: string[]): void {
 		this.playlist_saving = true;
 
-		this._playlist.remove_playlist_contents(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
-		.subscribe(
-			() => this.saveOrderChanges(),
-			error => console.log('Error removing playlist contents', error)
-		);
+		this._playlist.remove_playlist_contents(this.playlist_id, contentIdsToDelete).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					const contents = [...this.playlist_content_backup];
+					this.playlist_contents = contents.filter(content => contentIdsToDelete.includes(content.contentId)); 
+					this.saveOrderChanges();
+				},
+				error => console.log('Error removing playlist contents', error)
+			);
 	}
 
 	sortableJSInit(): void {
