@@ -26,13 +26,13 @@ import { PlaylistContentScheduleDialog } from 'src/app/global/models/playlist-co
 export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnInit {
 
 	days_list = [
-		{ value: 0, name: 'Sun', checked: false },
-		{ value: 1, name: 'Mon', checked: false },
-		{ value: 2, name: 'Tue', checked: false },
-		{ value: 3, name: 'Wed', checked: false },
-		{ value: 4, name: 'Thu', checked: false },
-		{ value: 5, name: 'Fri', checked: false },
-		{ value: 6, name: 'Sat', checked: false },
+		{ value: 1, name: 'Sun', checked: false },
+		{ value: 2, name: 'Mon', checked: false },
+		{ value: 3, name: 'Tue', checked: false },
+		{ value: 4, name: 'Wed', checked: false },
+		{ value: 5, name: 'Thu', checked: false },
+		{ value: 6, name: 'Fri', checked: false },
+		{ value: 7, name: 'Sat', checked: false },
 	];
 
 	form : FormGroup = this.form_builder.group(
