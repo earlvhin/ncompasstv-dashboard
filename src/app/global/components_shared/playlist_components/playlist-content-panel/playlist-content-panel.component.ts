@@ -387,7 +387,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		if (typeof data.credits_status !== 'undefined') creditsStatusUpdate = data.credits_status;
 
-		console.log('credits to submit', creditsData);
 		this.savePlaylistChanges(dataToSubmit, frequencyUpdate, creditsData, creditsStatusUpdate);
 	}
 
@@ -469,7 +468,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_saving = true;
 		this._playlist.remove_playlist_content(this.playlist_id, data).pipe(takeUntil(this._unsubscribe))
 		.subscribe(
-			() => this.saveOrderChanges(),
+			() => {
+				this.playlist_contents = this.playlist_content_backup.filter((p: API_CONTENT) => p.playlistContentId != data);
+				this.saveOrderChanges();
+			},
 			error => console.log('Error removing playlist content', error)
 		);
 	}
