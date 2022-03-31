@@ -3,7 +3,7 @@ import { AgmInfoWindow } from '@agm/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_DEALER_LICENSE, API_HOST, API_LICENSE, API_LICENSE_PROPS, PAGING, UI_DEALER_LOCATOR_EXPORT, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
+import { API_DEALER_LICENSE, API_HOST, API_LICENSE_PROPS, PAGING, UI_DEALER_LOCATOR_EXPORT, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
 @Component({
 	selector: 'app-license-view',
@@ -37,6 +37,7 @@ export class LicenseViewComponent implements OnInit {
 	private current_host_id_selected = '';
 	private exported_map_marker: UI_DEALER_LOCATOR_EXPORT[];
 	private filtered_licenses: API_LICENSE_PROPS[] = [];
+	private currentHostsPage = 1;
 	private license_page_count: number = 1;
 	private license_search_results: API_LICENSE_PROPS[];
 	private markStoreHours: string;
@@ -222,9 +223,7 @@ export class LicenseViewComponent implements OnInit {
 			this.selected_licenses.forEach(
 				license => {
 					if (license.hostId !== host.hostId) return;
-					let selectedLicense = new API_LICENSE();
-					selectedLicense.license = license;
-					host.licenses.push(selectedLicense);
+					host.licenses.push(license);
 				}
 			);
 		});
@@ -306,35 +305,29 @@ export class LicenseViewComponent implements OnInit {
 		this.businessName = this.currentUser.roleInfo.businessName;
 		this.selected_dealer_hosts = [];
 
-		this._host.get_host_by_dealer_id(currentDealerId, page, '').pipe(takeUntil(this._unsubscribe))
+		this._host.get_host_by_dealer_id(currentDealerId, page, '', 1000).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
-					if (response.message) return;
+
+					if (response.message || response.paging.entities.length <= 0) return;
 
 					const { paging } = response;
 					const { entities } = paging;
 					const hosts: API_HOST[] = entities;
 					this.paging = paging;
 
-					hosts.map((host) => {
-						this.selected_dealer_hosts.push(host);
-					});
+					this.selected_dealer_hosts = [...hosts];
+					this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 
-					this.selected_dealer_hosts.forEach((host) => {
-						host.storeHours ? (host.parsedStoreHours = JSON.parse(host.storeHours)) : (host.parsedStoreHours = '-');
-						host.latitude ? (host.latitude = parseFloat(host.latitude).toFixed(5)) : '-';
-						host.longitude ? (host.longitude = parseFloat(host.longitude).toFixed(5)) : '-';
-					});
+					this.selected_dealer_hosts.forEach(
+						host => {
+							host.storeHours ? (host.parsedStoreHours = JSON.parse(host.storeHours)) : (host.parsedStoreHours = '-');
+							host.latitude ? (host.latitude = parseFloat(host.latitude).toFixed(5)) : '-';
+							host.longitude ? (host.longitude = parseFloat(host.longitude).toFixed(5)) : '-';
+							host.icon_url = host.icon_url = this.map_markers.filter(marker => marker.hostId === host.hostId)[0].icon_url;
+						}
+					);
 
-					if (this.selected_licenses.length > 0) {
-						this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
-
-						this.selected_dealer_hosts.forEach(
-							host => {
-								host.icon_url = this.map_markers.filter(marker => marker.hostId === host.hostId)[0].icon_url;
-							}
-						);
-					}
 				},
 				error => console.log('Error retrieving dealer with hosts', error)
 			)
@@ -392,9 +385,7 @@ export class LicenseViewComponent implements OnInit {
 							this.selected_licenses.forEach(
 								license => {
 									if (license.hostId !== host.hostId) return;
-									let selectedLicense = new API_LICENSE();
-									selectedLicense.license = license;
-									host.licenses.push(selectedLicense);
+									host.licenses.push(license);
 								}
 							);
 						}

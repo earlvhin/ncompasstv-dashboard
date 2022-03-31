@@ -1,6 +1,5 @@
-import { API_TIMEZONE, TAG } from '.';
+import { API_LICENSE_PROPS, API_TIMEZONE, TAG } from '.';
 import { API_DEALER } from './api_dealer.model';
-import { API_LICENSE } from './api_license.model';
 
 export class API_HOST {
 	address: string;
@@ -22,7 +21,7 @@ export class API_HOST {
 	installDate: string;
 	internet: string;
 	latitude: string;
-	licenses: API_LICENSE[];
+	licenses: API_LICENSE_PROPS[];
 	logo?: string;
 	longitude: string;
 	monthlyTraffic: string;
