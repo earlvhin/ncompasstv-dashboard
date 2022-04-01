@@ -526,7 +526,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			this.search_control.setValue('');
 		}
 		
-		new Sortable(this.draggables.nativeElement, {
+		const sortable = new Sortable(this.draggables.nativeElement, {
 			swapThreshold: 1,
 			sort: true,
 			animation: 500,
@@ -539,18 +539,20 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			group: 'playlist_content',
 			fallbackTolerance: 10,
 			store: { set },
+			filter: '.undraggable',
 			onSelect,
 			onDeselect,
 			onStart,
 			onEnd
 		});
+
 	}
 
 	selectedContent(id: string, contentId: string, contentFrequency: number): void {
 
 		const selected = this.playlist_contents.find(content => content.contentId === contentId) as API_CONTENT;
 		
-		if (typeof selected !== 'undefined' && selected.isProtected) return;
+		if (typeof selected !== 'undefined' && (selected.isProtected === 1 && this.is_dealer)) return;
 
 		let isChildFrequency = contentFrequency === 2 || contentFrequency === 3;
 
