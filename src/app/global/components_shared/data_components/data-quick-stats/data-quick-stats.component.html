@@ -31,6 +31,11 @@
                 TOTAL {{total_label}}
             </span>
         </div>
+        <div class="col-lg-12 grid mt-2 text-center" *ngIf="notes">
+            <span class="col-lg-12 p-0 xsm-text text-danger">
+                {{notes}}
+            </span>
+        </div>
         <div class="col-lg-12 flex mt-2" *ngIf="sub_label_left && sub_label_right">
             <div class="col-lg-6 p-0 sm-text text-left">
                 <span class="{{sub_label_left_icon}} text-primary"></span>

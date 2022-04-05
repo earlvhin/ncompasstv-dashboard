@@ -237,8 +237,10 @@ export class LicensesComponent implements OnInit {
                         breakdown1_label: 'Online',
                         breakdown2_value: data.totalOffline,
                         breakdown2_label: 'Offline',
-                        breakdown3_value: data.totalInActive,
-                        breakdown3_label: 'Inactive',
+                        breakdown3_value: data.totalPending,
+                        breakdown3_label: 'Pending',
+                        fourth_value: data.totalDisabled,
+                        fourth_value_label: 'Inactive',
 
 						new_this_week_value: data.newLicensesThisWeek,
 						new_this_week_label: 'License(s)',

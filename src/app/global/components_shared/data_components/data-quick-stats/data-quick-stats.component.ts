@@ -15,6 +15,7 @@ export class DataQuickStatsComponent implements OnInit {
     @Input() inactive_label: string;
     @Input() id: string;
     @Input() icon: string;
+    @Input() notes: string;
     @Input() sub_label_left: string;
     @Input() sub_label_left_value: string;
     @Input() sub_label_left_icon: string;

@@ -123,6 +123,7 @@ export class DashboardComponent implements OnInit {
                     inactive_label: 'UNASSIGNED',
                     this_week: data.newLicensesThisWeek,
                     last_week: data.newLicensesLastWeek,
+                    notes: data.totalDisabled + ' licenses were inactive.',
                     icon: 'fas fa-barcode'
                 }
             }

@@ -20,6 +20,8 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	@Input() bad_value_label: string; 
 	@Input() third_value: number;
 	@Input() third_value_label: string; 
+	@Input() fourth_value: number;
+	@Input() fourth_value_label: string; 
 	@Input() additional_value: number;
 	@Input() additional_value_label: string;
 	@Input() online_value: number;
