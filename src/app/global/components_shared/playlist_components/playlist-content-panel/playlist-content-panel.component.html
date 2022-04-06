@@ -120,9 +120,10 @@
 
 	<div class="playlist-content-panel" [ngClass]="is_marking ? 'd-none' : null">
 		<div class="row no-gutters" #draggables id="draggables">
-			<div *ngFor="let content of playlist_contents; let i = index" 
+			<div id="{{ 'drg_' + content.playlistContentId }}" 
+				*ngFor="let content of playlist_contents; let i = index;"
+				[class.undraggable]="content.isProtected && is_dealer"
 				[attr.data-id]="content.playlistContentId"
-				id="{{ 'drg_' + content.playlistContentId }}"
 				[ngClass]="{'marked' : selected_contents.includes(content.playlistContentId), 'col-lg-4': list_view_mode, 'col-lg-1': !list_view_mode}">
 				
 				<app-playlist-content
@@ -130,7 +131,7 @@
 					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
 					[dealer]="content.dealerId"
 					[content]="content"
-					[is_marking]="false"
+					[is_marking]="is_marking"
 					[schedule_status]="content.scheduleStatus"
 					[page]="page"
 					[total_contents]="playlist_contents.length"
@@ -151,9 +152,10 @@
 
 	<div class="playlist-content-panel" [ngClass]="is_marking ? null : 'd-none'" *ngIf="!is_loading; else loader">
 		<div class="row no-gutters">
-			<div *ngFor="let content of playlist_contents; let i = index" 
+			<div id="{{ 'drg_' + content.playlistContentId }}" 
+				*ngFor="let content of playlist_contents; let i = index"
 				[attr.data-id]="content.playlistContentId"
-				id="{{ 'drg_' + content.playlistContentId }}"
+				[class.undraggable]="content.isProtected && is_dealer"
 				[class.future-schedule]="content.scheduleStatus === 'future'"
 				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
 				[ngClass]="{'marked' : selected_contents.includes(content.playlistContentId), 'col-lg-1' : !list_view_mode, 'col-lg-4': list_view_mode}">
@@ -163,12 +165,14 @@
 					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
 					[content]="content"
 					[dealer]="content.dealerId"
-					[is_marking]="true"
+					[is_marking]="is_marking"
 					[schedule_status]="content.scheduleStatus"
 					[page]="page"
 					[total_contents]="playlist_contents.length"
 					[is_list]="list_view_mode"
 					[is_view_only]="is_view_only"
+					[is_admin]="is_admin"
+					[is_dealer]="is_dealer"
 					(options_saved)="optionsSaved($event)"
 					(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency)"
 					(reset_playlist_content)="reloadPlaylist()"

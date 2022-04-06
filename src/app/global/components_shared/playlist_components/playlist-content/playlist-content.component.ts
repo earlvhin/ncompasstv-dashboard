@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnDestroy, OnChanges, SimpleChanges, SimpleChange } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
 
@@ -51,6 +51,7 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+
 		if (this.content.fileType === 'webm' || this.content.fileType === 'mp4') {
 			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf(".") + 1)}jpg`
 		}

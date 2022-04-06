@@ -1,4 +1,7 @@
-<div class="bg-white border m-1 playlist-content-thumb" [attr.title]="!is_list ? content.title : ''" [class.is-protected]="content.isProtected && is_marking">
+<div class="bg-white border m-1 playlist-content-thumb" 
+	[attr.title]="!is_list ? content.title : ''" 
+	[class.is-protected]="content.isProtected === 1 && is_dealer && is_marking"
+	[class.cursor-not-allowed]="content.isProtected === 1 && is_dealer">
     <div *ngIf="!is_list; else list_mode" class="h-100 w-100"
 		(mouseenter)="setHoveredBaseFrequency(content)"
 		(mouseleave)="unsetHoveredBaseFrequency()"
