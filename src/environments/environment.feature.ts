@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from './api-endpoints';
+import { API_ENDPOINTS } from "./api-endpoints";
 
 export const environment = {
 	production: true,
@@ -12,5 +12,5 @@ export const environment = {
 	create: API_ENDPOINTS.create,
 	third_party: API_ENDPOINTS.third_party,
 	update: API_ENDPOINTS.update,
-	delete: API_ENDPOINTS.delete
+	delete: API_ENDPOINTS.delete,
 };

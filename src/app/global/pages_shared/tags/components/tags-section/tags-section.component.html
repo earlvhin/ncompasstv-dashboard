@@ -7,6 +7,7 @@
 		<!-- TABLE -->
 		<app-tags-table *ngIf="tags.length > 0; else noResults"
 			[currentTagType]="currentTagType"
+			[currentUserId]="currentUserId"
 			[currentUserRole]="currentUserRole"
 			[isLoading]="isLoading"
 			[paging]="pagingData"

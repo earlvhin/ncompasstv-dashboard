@@ -50,6 +50,10 @@ export class TagsComponent implements OnInit, OnDestroy {
 		this.ownersTabTagId = event.tag;
 	}
 
+	get currentUserId() {
+		return this._auth.current_user_value.user_id;
+	}
+
 	get currentUserRole() {
 		return this._auth.current_role;
 	}

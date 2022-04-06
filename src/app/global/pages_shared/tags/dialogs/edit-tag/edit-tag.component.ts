@@ -14,12 +14,13 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class EditTagComponent implements OnInit, OnDestroy {
 
-	@Input() tag: TAG;
 	columns = [];
+	currentUserId: string;
 	form: FormGroup;
 	hasUpdated = false;
 	isLoading = true;
 	selectedTagColor: string;
+	tag: TAG;
 	title = 'Edit Tag';
 	
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -49,7 +50,7 @@ export class EditTagComponent implements OnInit, OnDestroy {
 		const { tagId } = this.tag;
 		const { tagColor, name, description } = this.form.value;
 		
-		this._tag.updateTag(tagId, name, tagColor, description)
+		this._tag.updateTag(tagId, name, tagColor, this.currentUserId, description)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
