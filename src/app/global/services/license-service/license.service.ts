@@ -5,7 +5,7 @@ import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_LICENSE_PROPS, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
+import { API_DEALER_LICENSE, API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_LICENSE_PROPS, LICENSE_TOTAL_STATISTICS, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -126,7 +126,7 @@ export class LicenseService {
 		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
 		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize });
 		const url = `${base}${params}`;
-		return this._http.get<any>(url, this.httpOptions);
+		return this._http.get<{ paging?: PAGING, message?: string }>(url, this.httpOptions);
 	}
 	
     get_license_by_screen_id(id: string, page: number) {
@@ -171,8 +171,8 @@ export class LicenseService {
 	}
 	
 
-    get_license_to_export_duration(id: string, key: string, column: string, order: string, pageSize?: number, status?: string, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?, isActivated?) {
-        const params = this.httpParams({ dealerId: id, page:1, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, inactive, online, isActivated })
+    get_license_to_export_duration(dealerId: string, key: string, column: string, order: string, pageSize?: number, status?: string, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?, isActivated?) {
+        const params = this.httpParams({ dealerId, page:1, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, inactive, online, isActivated })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_duration}`, { ...this.httpOptions, params });
 		// return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}`, this.httpOptions);
 	}
@@ -225,9 +225,9 @@ export class LicenseService {
 		return this._http.get(`${environment.base_uri_old}${environment.getters.api_get_screenshots}${id}`, this.httpOptions).map( (data: any) => data.files );
 	}
 
-	search_license(keyword = '') {
+	search_license(keyword = ''): Observable<{ licenses: API_DEALER_LICENSE[] }> {
 		const url = `${this.baseUri}${this.getters.search_license}${keyword}`;
-		return this._http.get(url, this.httpOptions);
+		return this._http.get<{ licenses: API_DEALER_LICENSE[] }>(url, this.httpOptions);
 	}
 	
 	update_alias(data) {

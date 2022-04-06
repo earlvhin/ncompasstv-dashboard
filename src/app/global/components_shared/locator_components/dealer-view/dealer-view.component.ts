@@ -1,18 +1,14 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormControl, Validators } from '@angular/forms';
+import { MatSelect } from '@angular/material';
 import { AgmInfoWindow } from '@agm/core';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 
-import { API_HOST } from '../../../models/api_host.model';
-import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { API_LICENSE, API_LICENSE_PROPS } from '../../../models/api_license.model';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { DealerService } from '../../../services/dealer-service/dealer.service';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, UI_DEALER_LOCATOR_EXPORT, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
+import { AuthService, DealerService } from 'src/app/global/services';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
-import { UI_DEALER_LOCATOR_EXPORT, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models/ui_host-locator.model';
-import { FormBuilder, FormControl, Validators } from '@angular/forms';
-import { MatSelect } from '@angular/material';
 
 @Component({
   selector: 'app-dealer-view',
@@ -494,12 +490,10 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 			x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
 			x.latitude ? x.latitude = parseFloat(x.latitude).toFixed(5) : "-";
 			x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
-			let selectedLicense = new API_LICENSE;
 			x.licenses = [];
-			this.selected_licenses.forEach((license :API_LICENSE_PROPS) => {
+			this.selected_licenses.forEach((license: API_LICENSE_PROPS) => {
 				if(license.hostId === x.hostId){
-					selectedLicense.license = license;
-					x.licenses.push(selectedLicense);
+					x.licenses.push(license);
 				}
 			});
 		});
