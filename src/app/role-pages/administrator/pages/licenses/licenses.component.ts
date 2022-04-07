@@ -78,7 +78,7 @@ export class LicensesComponent implements OnInit {
         isactivated: "",
         assigned: "",
         online: "",
-        inactive: "",
+        pending: "",
         activated: "",
         zone:"",
         status:"",
@@ -250,7 +250,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.hosts_data = [];
 
-		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
+		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -345,12 +345,12 @@ export class LicensesComponent implements OnInit {
                 value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
                 break;
-            case 'inactive':
+            case 'pending':
                 this.resetFilterStatus();
                 this.filters.assigned = true;
                 this.filters.isactivated = 1;
-                this.filters.inactive = value;
-                this.filters.label_status = value == 'true' ? 'Inactive':'';
+                this.filters.pending = value;
+                this.filters.label_status = value == 'true' ? 'Pending':'';
                 break;
             default:
         }
@@ -364,7 +364,7 @@ export class LicensesComponent implements OnInit {
         this.filters.days_offline = "";
         this.filters.status = "";
         this.filters.assigned = "";
-        this.filters.inactive = "";
+        this.filters.pending = "";
         this.filters.online = "";
     }
 
@@ -555,7 +555,7 @@ export class LicensesComponent implements OnInit {
             assigned: "",
             isactivated: "",
             online: "",
-            inactive: "",
+            pending: "",
             activated: "",
             recent: "",
             days_offline: "",
