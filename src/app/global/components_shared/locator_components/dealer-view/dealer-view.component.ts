@@ -2,6 +2,7 @@ import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/co
 import { AgmInfoWindow } from '@agm/core';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
+import { saveAs } from 'file-saver';
 
 import { API_HOST } from '../../../models/api_host.model';
 import { API_DEALER } from 'src/app/global/models/api_dealer.model';

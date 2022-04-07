@@ -1,0 +1,42 @@
+<div class="col-lg-12 mt-3 pl-0 pr-0">
+    <div class="col-lg-4 white-bg p-3">
+        <h4 class="text-center text-primary">CHECKLIST CONTROL</h4>
+        <div class="col-lg-12 mt-3">
+            <!-- <form [formGroup]="create_checklist" class=""> -->
+            <form [formGroup]="form">
+                <h5>Add Section:</h5>
+                <span class="xsm-text text-danger">
+                    Note: This will be shown to all licenses
+                </span>
+                <div class="col-lg-12 p-0 flex">
+                    <mat-form-field class="col-lg-11 p-0">
+                        <mat-label>Title:</mat-label>
+                        <input formControlName="categoryName" matInput placeholder="Ex: Day 1 - Installation" type="text">
+                    </mat-form-field>
+                    <div class="col-lg-1 text-center pt-3 text-primary clickable" (click)="saveTitle()">
+                        <span class="fas fa-save"></span>
+                    </div>
+                </div> 
+
+                <div formArrayName="tasks">
+                    <div *ngFor="let task of form.get('tasks').controls; let i = index" [formGroupName]="i" class="col-lg-12 p-0 flex">
+                        <mat-form-field class="col-lg-11 p-0">
+                            <input matInput formControlName="task" placeholder="Ex. Call Customer">
+                        </mat-form-field>
+                        <div class="col-lg-1 text-center pt-3">
+                            <span class="fas fa-times text-danger clickable" (click)="removeTaskItems(i)"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <button mat-button class="theme-btn _info mb-2 mr-2" (click)="addTaskItems()" [disabled]="!section_title">Add Task</button>
+                <button mat-button class="theme-btn mt-4" (click)="getFormValues()" [disabled]="!task_items.value">
+                    <span class="button-label">
+                        Save Section
+                    </span>
+                </button>
+            <!-- </form> -->
+            </form>
+        </div>
+    </div>
+</div>
