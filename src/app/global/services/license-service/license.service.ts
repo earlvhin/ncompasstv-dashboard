@@ -55,8 +55,8 @@ export class LicenseService {
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses}`, { ...this.httpOptions, params });
 	}
 	
-    get_all_licenses_duration(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?, recent?:string, zone?: string, dealer?: string, host?: string, isActivated?): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
-        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize,includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId:host, isActivated })
+    get_all_licenses_duration(page: number, key: string, column: string, order: string, pageSize: number, adminLicenses: boolean, status?: string, daysOffline?: string, activated?, recent?:string, zone?: string, dealer?: string, host?: string, assigned?: string, pending?:string, online?: string, isActivated?): Observable<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }> {
+        const params = this.httpParams({ page, search: key, sortColumn: column, sortOrder: order, pageSize,includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId:host, assigned, pending, online, isActivated })
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_all_duration}`, { ...this.httpOptions, params });
 	}
     

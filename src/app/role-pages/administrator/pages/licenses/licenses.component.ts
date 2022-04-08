@@ -595,7 +595,7 @@ export class LicensesComponent implements OnInit {
 
         switch (tab) {
             case 'licenses':
-                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.isactivated)
+                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						data => {
