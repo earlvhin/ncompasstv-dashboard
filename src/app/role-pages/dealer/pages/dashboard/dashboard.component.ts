@@ -94,23 +94,27 @@ export class DashboardComponent implements OnInit {
                     closed_value_label: 'Closed',
                     unassigned_value: data.totalUnassignedScreenCount,
                     unassigned_value_label: 'Unassigned',
-                    new_this_week_value: data.newLicensesThisWeek,
-                    this_week_ad_value: data.thisWeekTotalAd,
-                    this_week_menu_value: data.thisWeekTotalMenu,
-                    this_week_closed_value: data.thisWeekTotalClosed,
-                    this_week_unassigned_value: data.thisWeekUnassignedCount,
-                    last_week_ad_value: data.lastWeekTotalAd,
-                    last_week_menu_value: data.lastWeekTotalMenu,
-                    last_week_closed_value: data.lastWeekTotalClosed,
-                    last_week_unassigned_value: data.lastWeekUnassignedCount,
+                    breakdown1_value: data.totalOnline,
+                    breakdown1_label: 'Online',
+                    breakdown2_value: data.totalOffline,
+                    breakdown2_label: 'Offline',
+                    breakdown3_value: data.totalPending,
+                    breakdown3_label: 'Pending',
+                    breakdown4_sub_label: 'Connection Status Breakdown :',
+                    breakdown4_value: data.totalLan,
+                    breakdown4_label: 'LAN',
+                    breakdown5_value: data.totalWifi,
+                    breakdown5_label: 'WIFI',
+                    third_value: data.totalDisabled,
+                    third_value_label: 'Disabled',
                 }
 
                 this.status_graph_label.push('Online: ' + data.totalOnline)
                 this.status_graph_label.push('Offline: ' + data.totalOffline)
-                this.status_graph_label.push('Inactive: ' + data.totalInActive)
+                this.status_graph_label.push('Pending: ' + data.totalPending)
                 this.status_graph_value.push(data.totalOnline)
                 this.status_graph_value.push(data.totalOffline)
-                this.status_graph_value.push(data.totalInActive)
+                this.status_graph_value.push(data.totalPending)
 
                 if (this.licenses_details) {
                     this.temp_label.push(this.licenses_details.ad_value_label + ": " + this.licenses_details.ad_value);

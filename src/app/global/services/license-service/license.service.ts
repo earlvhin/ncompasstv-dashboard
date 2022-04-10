@@ -146,9 +146,9 @@ export class LicenseService {
 		return this._http.get<{ licenses?: API_LICENSE['license'][], paging?: PAGING, message?: string }>(url);
 	}
 
-	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?, isActivated?) {
+	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, daysOffline?, activated?, recent?, zone?, host?, assigned?, pending?, online?, isActivated?) {
 		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
-		const filters = { dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline, active: activated, daysInstalled: recent, timezone: zone, hostId: host, assigned, inactive, online, isActivated };
+		const filters = { dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline, active: activated, daysInstalled: recent, timezone: zone, hostId: host, assigned, pending, online, isActivated };
 		const params = this.setUrlParams(filters, false, false);
 		const url = `${base}${params}`;
 		return this._http.get<any>(url);
@@ -171,8 +171,8 @@ export class LicenseService {
 	}
 	
 
-    get_license_to_export_duration(id: string, key: string, column: string, order: string, pageSize?: number, status?: string, daysOffline?, activated?, recent?, zone?, host?, assigned?, inactive?, online?, isActivated?) {
-        const params = this.httpParams({ dealerId: id, page:1, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, inactive, online, isActivated })
+    get_license_to_export_duration(id: string, key: string, column: string, order: string, pageSize?: number, status?: string, daysOffline?, activated?, recent?, zone?, host?, assigned?, pending?, online?, isActivated?) {
+        const params = this.httpParams({ dealerId: id, page:1, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline: daysOffline, active:activated, daysInstalled: recent, timezone: zone, hostId:host, assigned, pending, online, isActivated })
 		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_duration}`, { ...this.httpOptions, params });
 		// return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}`, this.httpOptions);
 	}
