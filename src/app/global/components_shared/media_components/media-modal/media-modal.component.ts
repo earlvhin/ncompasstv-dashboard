@@ -554,11 +554,9 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		this._host.get_host_by_id(id).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
-
 					if (response.message) return;
 					this.host_name = response.host.name;
 					this.hostSelected(response.host.hostId);
-					
 				},
 				error => console.log('Error retrieving host by ID', error)
 			);
@@ -574,7 +572,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		});
 
 		dialogRef.afterClosed().subscribe(
-			() => {
+			response => {
 				this._dialog.closeAll();
 			}
 		)

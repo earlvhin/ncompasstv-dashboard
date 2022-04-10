@@ -78,7 +78,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 				this.sendStatCardsData();
 			}
 		);
-        
+
         this.role_id = this._auth.current_user_value.role_id;
         this.getContents();
 		this.getFillers();
@@ -136,7 +136,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 	}
 
 	filterByUser(event: any): void {
-
+        console.log("EMITTED", event)
 		if (event.dealer.id && event.host.id && event.advertiser.id) { // by dealer, host, and advertiser
 			this.filters.user.dealer = event.dealer.name;
 			this.filters.user.host = event.host.name;
@@ -293,19 +293,27 @@ export class MediaComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed()
 			.subscribe(
-				(response: boolean | UI_CONTENT) => {
+				response => {
+                    console.log(response)
+                    if(response !== false) {
+                        this.getPage(1);
+                    }
+                    // else {
+                    //     if (typeof response === 'boolean') {
+                    //         if (!response) return;
+                    //         return this.getPage(1);
+                    //     }
 
-					if (typeof response === 'boolean') {
-						if (!response) return;
-						return this.getPage(1);
-					}
-
-					const data = response as UI_CONTENT;
-					const index = this.content_data.findIndex(content => content.content_id === data.content_id);
-					this.content_data[index] = data;
+                    // const data = response as UI_CONTENT;
+                    // const index = this.content_data.findIndex(
+                    //     content => {
+                    //         content.content_id === data.content_id
+                    //     }
+                    // );
+                    // this.content_data[index] = data;
+                    // }
 				}
 			);
-
 	}
 
 	pageRequested(page: number, filter: boolean): void {
