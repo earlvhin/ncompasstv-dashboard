@@ -1,0 +1,169 @@
+<div class="row m-0 p-0 mb-4 tabs">
+    <div class="col-lg-12 mt-5 flex" *ngIf="is_dealer">
+        <div class="col-12 col-lg">
+            <mat-card class="h-100" *ngIf="!loading_license; else spinner">
+				<div class="col-lg-12 p-3 text-center">
+					<h4 class="mb-2 text-center">
+						<span class="text-dark font-weight-medium">
+							<span class="text-dark">Licenses</span>
+						</span>
+					</h4>
+					<span class="text-dark md-text">
+						<span>Total</span>
+					</span>
+				</div>
+				<div class="col-lg-12 p-3">
+					<h4 class="mb-2 text-center">
+						<span class="cursor-pointer text-primary font-weight-medium">
+							<a [routerLink]="['/dealer/licenses/']" target="_blank" class="text-primary">
+                                <i class="fas fa-barcode mr-3 f-20"></i>
+                                <span class="f-20">{{license_details.basis}}</span>
+                            </a>
+						</span>
+					</h4>
+				</div>
+			</mat-card>
+        </div>
+        <div class="col-12 col-lg">
+            <mat-card class="h-100" *ngIf="!loading_advertiser; else spinner">
+				<div class="col-lg-12 p-3 text-center">
+					<h4 class="mb-2 text-center">
+						<span class="text-dark font-weight-medium">
+							<span class="text-dark">Advertisers</span>
+						</span>
+					</h4>
+					<span class="text-dark md-text">
+						<span>Total</span>
+					</span>
+				</div>
+				<div class="col-lg-12 p-3">
+					<h4 class="mb-2 text-center">
+						<span class="cursor-pointer text-primary font-weight-medium">
+							<a [routerLink]="['/dealer/advertisers/']" target="_blank" class="text-primary">
+                                <i class="fas fa-ad mr-3 f-20"></i>
+                                <span class="f-20">{{advertiser_details.basis}}</span>
+                            </a>
+						</span>
+					</h4>
+				</div>
+			</mat-card>
+        </div>
+        <div class="col-12 col-lg">
+            <mat-card class="h-100" *ngIf="!loading_host; else spinner">
+				<div class="col-lg-12 p-3 text-center">
+					<h4 class="mb-2 text-center">
+						<span class="text-dark font-weight-medium">
+							<span class="text-dark">Hosts</span>
+						</span>
+					</h4>
+					<span class="text-dark md-text">
+						<span>Total</span>
+					</span>
+				</div>
+				<div class="col-lg-12 p-3">
+					<h4 class="mb-2 text-center">
+						<span class="cursor-pointer text-primary font-weight-medium">
+							<a [routerLink]="['/dealer/hosts/']" target="_blank" class="text-primary">
+                                <i class="fas fa-map mr-3 f-20"></i>
+                                <span class="f-20">{{host_details.basis}}</span>
+                            </a>
+						</span>
+					</h4>
+				</div>
+			</mat-card>
+        </div>
+        <div class="col-12 col-lg">
+            <mat-card class="h-100" *ngIf="!loading_content; else spinner">
+				<div class="col-lg-12 p-3 text-center">
+					<h4 class="mb-2 text-center">
+						<span class="text-dark font-weight-medium">
+							<span class="text-dark">Media Library</span>
+						</span>
+					</h4>
+					<span class="text-dark md-text">
+						<span>Total</span>
+					</span>
+				</div>
+				<div class="col-lg-12 p-3">
+					<h6 class="mb-2 text-center">
+						<span class="cursor-pointer text-primary font-weight-medium">
+							<a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary mr-5">
+                                <i class="fas fa-image mr-3 f-20"></i>
+                                <span class="f-20">{{content_details.images}}</span>
+                            </a>
+							<a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary mr-5">
+                                <i class="fas fa-video mr-3 f-20"></i>
+                                <span class="f-20">{{content_details.videos}}</span>
+                            </a>
+							<a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
+                                <i class="fas fa-newspaper mr-3 f-20"></i>
+                                <span class="f-20">{{content_details.feeds}}</span>
+                            </a>
+						</span>
+					</h6>
+				</div>
+			</mat-card>
+        </div>
+        <ng-template #spinner>
+            <mat-card class="py-5">
+                <app-spinner [diameter]="65"></app-spinner>
+            </mat-card>
+        </ng-template>        
+    </div>
+
+    <!-- TABS -->
+    <div class="col-lg-12 min-height-500 custom-mat-tab mt-5">
+        <div class="col-lg-12">
+            <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event);">
+                <mat-tab label="Dealer" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="theme-container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <app-dealer-setting>
+                                    </app-dealer-setting>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="User" *ngIf="!is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="theme-container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <app-user-setting>
+                                    </app-user-setting>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Billing" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="theme-container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <app-single-billings>
+                                    </app-single-billings>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Security">
+                    <div class="col-lg-12 p-0">
+                        <div class="theme-container">
+                            <div class="row">
+                                <div class="col-lg-12">
+                                    <app-credential-setting>
+                                    </app-credential-setting>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
+</div>

@@ -4,7 +4,6 @@ import { AdministratorLayoutComponent } from './administrator-layout/administrat
 // Pages
 import { AdvertisersComponent } from './pages/advertisers/advertisers.component';
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
-import { BillingsComponent } from './pages/billings/billings.component';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CreateAdvertiserComponent } from '../../global/pages_shared/create-advertiser/create-advertiser.component';
 import { CreateHostComponent } from '../../global/pages_shared/create-host/create-host.component';
@@ -26,6 +25,7 @@ import { LocatorComponent } from '../../global/pages_shared/locator/locator.comp
 import { MediaLibraryComponent } from '../../global/pages_shared/media-library/media-library.component';
 import { NotificationsComponent } from '../../global/pages_shared/notifications/notifications.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
+import { ProfileSettingComponent } from '../../global/pages_shared/profile-setting/profile-setting.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { RolesComponent } from './pages/roles/roles.component';
 import { ScreensComponent } from './pages/screens/screens.component';
@@ -43,8 +43,8 @@ import { TemplatesComponent } from './pages/templates/templates.component';
 import { ToolsComponent } from '../../global/pages_shared/tools/tools.component';
 import { UI_ROLE_DEFINITION } from '../../global/models/ui_role-definition.model';
 import { UpdateComponent } from './pages/update/update.component';
-import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
-import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
+// import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
+// import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
 import { UsersComponent } from './pages/users/users.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
@@ -81,13 +81,6 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 component: CreateAdvertiserComponent,
                 data: {
                     breadcrumb: 'Create Advertiser'
-                }
-            },
-            { 
-                path: 'billings', 
-                component: BillingsComponent,
-                data: {
-                    breadcrumb: 'Billings'
                 }
             },
             { 
@@ -426,28 +419,35 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                     }
                 ]
             },
+            // { 
+            //     path: 'user-profile/:data', 
+            //     component: UserProfileComponent,
+            //     data: {
+            //         breadcrumb: 'User Profile'
+            //     }, 
+            // },
+            // { 
+            //     path: 'user-profile/:data/:breadcrumb', 
+            //     component: UserProfileComponent
+            // },
             { 
-                path: 'user-profile/:data', 
-                component: UserProfileComponent,
+                path: 'profile-setting/:data', 
+                component: ProfileSettingComponent,
                 data: {
-                    breadcrumb: 'User Profile'
-                }, 
-            },
-            { 
-                path: 'user-profile/:data/:breadcrumb', 
-                component: UserProfileComponent
-            },
-            { 
-                path: 'user-account-setting/:data', 
-                component: UserAccountSettingComponent,
-                data: {
-                    breadcrumb: 'User Account Settings'
+                    breadcrumb: 'Profile Settings'
                 },  
             },
-            { 
-                path: 'user-account-setting/:data/:breadcrumb', 
-                component: UserAccountSettingComponent 
-            },
+            // { 
+            //     path: 'user-account-setting/:data', 
+            //     component: UserAccountSettingComponent,
+            //     data: {
+            //         breadcrumb: 'User Account Settings'
+            //     },  
+            // },
+            // { 
+            //     path: 'user-account-setting/:data/:breadcrumb', 
+            //     component: UserAccountSettingComponent 
+            // },
             { 
                 path: 'version-control', 
                 component: UpdateComponent,

@@ -8,7 +8,6 @@ import { ADMINISTRATOR_ROUTES } from './administrator.routes';
 import { AdministratorLayoutComponent } from './administrator-layout/administrator-layout.component';
 import { AdvertisersComponent } from './pages/advertisers/advertisers.component';
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
-import { BillingsComponent } from './pages/billings/billings.component';
 import { BreadcrumbsModule } from "ng6-breadcrumbs";
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CreateTemplateComponent } from './pages/create-template/create-template.component';
@@ -46,7 +45,6 @@ import { InstallationsModule } from './pages/installations/installations.module'
 	declarations: [
 		AdministratorLayoutComponent, 
 		AdvertisersComponent, 
-		BillingsComponent, 
 		CategoriesComponent,
 		DashboardComponent,
 		DealersComponent,

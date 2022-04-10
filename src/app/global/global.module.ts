@@ -34,6 +34,7 @@ import { CreatePlaylistContentComponent } from './components_shared/playlist_com
 import { CreateScreenComponent } from './pages_shared/create-screen/create-screen.component';
 import { CreateUserComponent } from './pages_shared/create-user/create-user.component';
 import { CreateUserTypeComponent } from './pages_shared/create-user-type/create-user-type.component';
+import { CredentialSettingComponent } from './pages_shared/profile-setting/credential-setting/credential-setting.component';
 import { DataCardCompareComponent } from './components_shared/data_components/data-card-compare/data-card-compare.component';
 import { DataCardComponent } from './components_shared/data_components/data-card/data-card.component';
 import { DataCardCountComponent } from './components_shared/data_components/data-card-count/data-card-count.component';
@@ -53,6 +54,7 @@ import { DealerInvoicesTabComponent } from './components_purpose-built/single-de
 import { DealerMapTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-map-tab/dealer-map-tab.component';
 import { DealerViewComponent } from './components_shared/locator_components/dealer-view/dealer-view.component';
 import { DealersTableComponent } from './components_purpose-built/dealers-table/dealers-table.component';
+import { DealerSettingComponent } from './pages_shared/profile-setting/dealer-setting/dealer-setting.component';
 import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
 import { DeleteDealerDialogComponent } from './pages_shared/edit-single-dealer/delete-dealer-dialog/delete-dealer-dialog.component';
 import { DeletePlaylistComponent } from './components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -132,6 +134,7 @@ import { PlaylistHostComponent } from './components_shared/playlist_components/p
 import { PlaylistInfoComponent } from './components_shared/playlist_components/playlist-info/playlist-info.component';
 import { PlaylistMediaComponent } from './components_shared/playlist_components/playlist-media/playlist-media.component';
 import { PlaylistMediaThumbnailComponent } from './components_shared/playlist_components/playlist-media-thumbnail/playlist-media-thumbnail.component';
+import { ProfileSettingComponent } from './pages_shared/profile-setting/profile-setting.component';
 import { PushUpdateComponent } from './components_shared/playlist_components/push-update/push-update.component';
 import { RenameModalComponent } from './components_shared/media_components/rename-modal/rename-modal.component';
 import { SanitizePipe } from './pipes/sanitize.pipe';
@@ -162,8 +165,6 @@ import { ThumbnailCardComponent } from './components_shared/media_components/thu
 import { ToolsComponent } from './pages_shared/tools/tools.component';
 import { UnassignHostLicenseComponent } from './components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { UnassignLicenseComponent } from './components_shared/screen_components/unassign-license/unassign-license.component';
-import { UserAccountSettingComponent } from './pages_shared/user-account-setting/user-account-setting.component';
-import { UserProfileComponent } from './pages_shared/user-profile/user-profile.component';
 import { UserSortModalComponent } from './components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { UserTypeComponent } from './components_shared/user_components/user-type/user-type.component';
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
@@ -175,6 +176,7 @@ import { ZoneListComponent } from './components_shared/zone_components/zone-list
 import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
 import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
+import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -232,6 +234,7 @@ const ngComponents = [
 	CreateScreenComponent,
 	CreateUserComponent,
 	CreateUserTypeComponent,
+    CredentialSettingComponent,
 	DataCardCompareComponent,
 	DataCardComponent,
 	DataCardCountComponent,
@@ -249,8 +252,9 @@ const ngComponents = [
 	DealerHostTabComponent,
 	DealerInvoicesTabComponent,
 	DealerMapTabComponent,
-	DealerViewComponent,
+    DealerSettingComponent,
 	DealersTableComponent,
+    DealerViewComponent,
 	DeleteDealerDialogComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
@@ -326,6 +330,7 @@ const ngComponents = [
 	PlaylistInfoComponent,
 	PlaylistMediaComponent,
 	PlaylistMediaThumbnailComponent,
+    ProfileSettingComponent,
 	PushUpdateComponent,
 	RenameModalComponent,
 	SanitizePipe,
@@ -358,9 +363,7 @@ const ngComponents = [
 	UnassignHostLicenseComponent,
 	UnassignLicenseComponent,
 	UpcomingInstallModalComponent,
-	UserAccountSettingComponent,
-	UserProfileComponent,
-	UserSortModalComponent,
+    UserSettingComponent,
 	UserSortModalComponent,
 	UserTypeComponent,
 	ViewSchedulesComponent,

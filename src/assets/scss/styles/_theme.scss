@@ -23,6 +23,20 @@
     background-color: $primary;
 }
 
+.table-row {
+    display: table-row;
+}
+
+.table-cell {
+    display: table-cell;
+}
+
+button {
+    &:disabled {
+        opacity: 0.3;
+    }
+}
+
 .bg-gray {
     background-color: $gray !important;
 }
@@ -587,6 +601,14 @@
     color: $light;
 }
 
+.br-5 {
+    border-radius: 5px;
+}
+
+.f-500 {
+    font-weight: 500;
+}
+
 .disabled a {
     pointer-events:none; 
     opacity:0.6;
@@ -786,6 +808,10 @@ agm-map {
 
 .f-35 {
     font-size: 35px;
+}
+
+.f-25 {
+    font-size: 25px;
 }
 
 .f-20 {

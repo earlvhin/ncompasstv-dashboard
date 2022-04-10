@@ -4,7 +4,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
 
 import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
 import { API_UPDATE_DEALER_PROFILE } from '../../../../global/models/api_update-user-info.model';
@@ -16,15 +15,17 @@ import { DealerService } from '../../../../global/services/dealer-service/dealer
 import { LicenseService } from '../../../../global/services/license-service/license.service';
 import { HostService } from '../../../../global/services/host-service/host.service';
 import { UserService } from '../../../../global/services/user-service/user.service';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
-	selector: 'app-dealer-profile',
-	templateUrl: './dealer-profile.component.html',
-	styleUrls: ['./dealer-profile.component.scss'],
-	providers: [DatePipe]
+  selector: 'app-dealer-setting',
+  templateUrl: './dealer-setting.component.html',
+  styleUrls: ['./dealer-setting.component.scss'],
+  providers: [DatePipe]
 })
-export class DealerProfileComponent implements OnInit, OnDestroy {
-	advertiser_details: any = {}; 
+export class DealerSettingComponent implements OnInit {
+
+    advertiser_details: any = {}; 
 	content_data: any;
 	content_details: any = {};
 	form_fields_view = [{
@@ -109,60 +110,29 @@ export class DealerProfileComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-  	constructor(
-		private _license: LicenseService,
-		private _advertiser: AdvertiserService,
-		private _auth: AuthService,
-		private _host: HostService,
+    constructor(
+        private _auth: AuthService,
 		private _form: FormBuilder,
 		private _params: ActivatedRoute,
 		private _dealer: DealerService,
 		private _user: UserService,
 		private _date: DatePipe,
 		private _dialog: MatDialog,
-		private _content: ContentService,
-	) { }
+    ) { }
 
-  	ngOnInit() {
-
-		this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
-		this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
-		this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
-		this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
-
-		this.update_info_form_disabled = false;
+    ngOnInit() {
+        this.update_info_form_disabled = false;
 
 		this.update_user = this._form.group(
 			this._params.paramMap
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(() => this.getUserById(this._params.snapshot.params.data))
 		);
+    }
 
-  	}
-	
-	ngOnDestroy() {
+    ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-  	getTotalContents(id) {
-
-		this._content.get_contents_total_by_dealer(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data: any) => {
-					this.content_details.basis = data.total;
-					this.content_details.basis_label = 'Media Library';
-					this.content_details.good_value = data.totalImages;
-					this.content_details.good_value_label = 'Images';
-					this.content_details.bad_value =  data.totalVideos;
-					this.content_details.bad_value_label = 'Videos';
-					this.content_details.additional_value = data.totalFeeds;
-					this.content_details.additional_value_label = 'Feed';
-					this.loading_content = false;
-				},
-				error => console.log('Error retrieving content total by dealer ', error)
-			);
 	}
 
 	getUserById(id) {
@@ -218,11 +188,13 @@ export class DealerProfileComponent implements OnInit, OnDestroy {
 			this.update_user.controls['business_name'].enable(); 
 			this.update_user.controls['owner_f_name'].enable(); 
 			this.update_user.controls['owner_l_name'].enable(); 
+			this.update_user.controls['contact'].enable(); 
 		} else {
 			this.update_user.controls['contact_person'].disable();
 			this.update_user.controls['business_name'].disable();
 			this.update_user.controls['owner_f_name'].disable(); 
 			this.update_user.controls['owner_l_name'].disable();  
+			this.update_user.controls['contact'].disable();  
 			this.readyUpdateForm();   
 		}
 		this.update_info_form_disabled = x;
@@ -234,13 +206,14 @@ export class DealerProfileComponent implements OnInit, OnDestroy {
 			this.user_data.dealerId,
 			this.f.contact_person.value,
 			this.f.business_name.value,
-			this.user_data.userId
+			this.f.contact.value,
+			this.user_data.userId,
 		)
 	}
   
 	mapUserInfoChanges() {
 
-		const { owner_f_name, owner_l_name } = this.update_user.value;
+		const { owner_f_name, owner_l_name, contact } = this.update_user.value;
 		const { userId, dealerId } = this.user_data;
 		const updatedBy = this.currentUser.user_id;
 		
@@ -250,6 +223,7 @@ export class DealerProfileComponent implements OnInit, OnDestroy {
 			dealerId,
 			firstName: owner_f_name,
 			lastName: owner_l_name,
+			contactNumber: contact,
 		};
 
 	}
@@ -290,61 +264,8 @@ export class DealerProfileComponent implements OnInit, OnDestroy {
 		return this.update_info_form_disabled;
 	}
 
-  	getTotalLicenses(id) {
-    
-		this._license.get_license_total_per_dealer(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data: any) => {
-					this.license_details.basis = data.total;
-					this.license_details.basis_label = 'Licenses';
-					this.license_details.good_value = data.totalActive;
-					this.license_details.good_value_label = 'Active';
-					this.license_details.bad_value = data.totalInActive;
-					this.license_details.bad_value_label = 'Inactive';
-					this.loading_license = false;
-				},
-				error => console.log('Error retrieving total licenses by dealer ', error)
-			);
-  	}
-
-	getTotalAdvertisers(id) {
-		
-		this._advertiser.get_advertisers_total_by_dealer(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					this.advertiser_details.basis = data.total;
-					this.advertiser_details.basis_label = 'Advertisers';
-					this.advertiser_details.good_value = data.totalActive;
-					this.advertiser_details.good_value_label = 'Active';
-					this.advertiser_details.bad_value = data.totalInActive;
-					this.advertiser_details.bad_value_label = 'Inactive';
-					this.loading_advertiser = false;
-				},
-				error => console.log('Error retrieving total advertisers by dealer', error)
-			);
-	}
-
-  	getTotalHosts(id) {
-
-		this._host.get_host_total_per_dealer(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					this.host_details.basis = data.total;
-					this.host_details.basis_label = 'Hosts';
-					this.host_details.good_value = data.totalActive;
-					this.host_details.good_value_label = 'Active';
-					this.host_details.bad_value = data.totalInActive;
-					this.host_details.bad_value_label = 'Inactive';
-					this.loading_host = false;
-				},
-				error => console.log('Error retrieving total hosts by dealer ', error)
-			);
-  	}
-
 	protected get currentUser() {
 		return this._auth.current_user_value;
 	}
+
 }

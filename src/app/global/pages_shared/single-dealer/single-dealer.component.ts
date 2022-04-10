@@ -803,6 +803,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.current_tab = 'zone';
 				break;
 
+            case 4:
+				this.current_tab = 'billing';
+				break;
+
 			default:
 
 				this.current_tab = 'licenses';

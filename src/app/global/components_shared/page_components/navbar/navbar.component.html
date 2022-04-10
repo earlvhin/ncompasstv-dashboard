@@ -7,7 +7,7 @@
 			<div class="notification-area" *ngIf="(is_admin || is_dealer) && notifications; else loading_spinner">
 				<button mat-button class="navbar-btn no-border position-relative" [matMenuTriggerFor]="notif">
 					<span class="fas fa-bell mr-2 alert-icon"  [ngClass]="has_alerts ? 'has-alerts' : ''"></span>
-					<span class="fas fa-angle-down"></span>
+					<span class="fas fa-angle-down xsm-text"></span>
 					<span class="notif-count" *ngIf="notification_paginated.totalEntities > 0">{{ notification_count }}</span>
 				</button>
 				<mat-menu #notif="matMenu" class="mat-menu-custom-width">
@@ -15,17 +15,14 @@
 						<a class="see-all sm-text font-weight-bold text-center" [routerLink]="[route + '/notifications']">
 							See All Notifications <i class="fas fa-long-arrow-alt-right ml-4"></i>
 						</a>
-
 						<div class="notification-item" *ngFor="let n of notifications">
 							<div [routerLink]="[route + '/licenses', n.licenseId]">
 								<p class="sm-text mb-2" *ngIf="is_admin">
 									<strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong> <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong> of {{ n.businessName }} has been offline for more than an hour now.
 								</p>
-
 								<p class="sm-text mb-2" *ngIf="is_dealer">
 									<strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong> <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong> has been offline for more than an hour now.
 								</p>
-
 								<p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }}</p>
 							</div>
 						</div>
@@ -42,7 +39,7 @@
 						</div>
 					</div>
 				</ng-template>
-			</div><!-- Notifications -->
+			</div>
 
 			<ng-template #loading_spinner>
 				<div class="notification-area pr-4">
@@ -52,21 +49,21 @@
 
 			<div>
 				<button mat-button class="navbar-btn no-border" [matMenuTriggerFor]="menu">
-					<span class="navbar-btn-label inline-block mr-1">{{ current_username }}</span>
-					<span class="fas fa-angle-down"></span>
+                    <span class="bg-gray br-100 mr-2 pl-3 pr-3 pt-2 pb-2">
+                        <span class="fas fa-user xsm-text text-gray"></span>
+                    </span>
+                    <span class="navbar-btn-label inline-block mr-1">{{ current_username }}</span>
+					<span class="fas fa-angle-down xsm-text"></span>
 				</button>
 				<mat-menu #menu="matMenu">
-					<button mat-menu-item [routerLink]="['user-profile', current_userid]">
-						User Profile
-					</button>
-					<button *ngIf="is_dealer" mat-menu-item [routerLink]="['dealer-profile', current_userid]">
-						Dealer Profile
-					</button>
-					<button mat-menu-item [routerLink]="['user-account-setting', current_userid]">Account Settings</button>
-					<button mat-menu-item (click)="logOut()">Logout</button>
+                    <button mat-menu-item [routerLink]="['profile-setting', current_userid]" class="md-text">
+                        <span class="fas fa-user mr-3"></span>Profile Settings
+                    </button>
+					<button mat-menu-item (click)="logOut()" class="md-text">
+                        <span class="fa fa-sign-out mr-3"></span>Logout
+                    </button>
 				</mat-menu>
-			</div><!-- User -->
-			
+			</div>
         </div>
     </div>
 </nav>
