@@ -226,7 +226,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         isactivated: "",
         assigned: "",
         online: "",
-        inactive: "",
+        pending: "",
         activated: "",
         zone:"",
         status:"",
@@ -584,7 +584,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
 		this.subscription.add(
-			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
+			this._license.sort_license_by_dealer_id(this.dealer_id, page, this.search_data_license, this.sort_column, this.sort_order,  15, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated).subscribe(
 				(response: { paging, statistics, message }) => {	
 
 					if (response.message) {
@@ -656,6 +656,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                         breakdown5_label: 'WIFI',
                         third_value: data.totalPending,
                         third_value_label: 'Pending',
+                        fourth_value: data.totalDisabled,
+                        fourth_value_label: 'Inactive',
 
                         ad_value: data.totalAd,
 						ad_value_label: 'Ad',
@@ -1129,7 +1131,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		switch(tab) {
 			case 'Licenses': 
 				this.subscription.add(
-					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated).subscribe(
+					this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, "", this.filters.activated, "", this.filters.zone, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated).subscribe(
 						data => {
                             data.licenseTemplateZoneExports.map(
                                 i => {
@@ -1378,7 +1380,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.filters.activated = "";
         this.filters.status = "";
         this.filters.assigned = "";
-        this.filters.inactive = "";
+        this.filters.pending = "";
         this.filters.online = "";
     }
 
@@ -1422,12 +1424,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
                 value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
                 break;
-            case 'inactive':
+            case 'pending':
                 this.resetFilterStatus();
                 this.filters.isactivated = 1;
                 this.filters.assigned = true;
-                this.filters.inactive = value;
-                this.filters.label_status = value == 'true' ? 'Inactive':'';
+                this.filters.pending = value;
+                this.filters.label_status = value == 'true' ? 'Pending':'';
                 break;
             default:
         }

@@ -241,6 +241,8 @@ export class LicensesComponent implements OnInit {
                         breakdown3_label: 'Pending',
                         third_value: data.totalDisabled,
                         third_value_label: 'Disabled',
+                        fourth_value: data.totalDisabled,
+                        fourth_value_label: 'Inactive',
 
 						new_this_week_value: data.newLicensesThisWeek,
 						new_this_week_label: 'License(s)',

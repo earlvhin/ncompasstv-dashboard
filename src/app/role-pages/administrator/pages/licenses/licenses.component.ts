@@ -78,7 +78,7 @@ export class LicensesComponent implements OnInit {
         isactivated: "",
         assigned: "",
         online: "",
-        inactive: "",
+        pending: "",
         activated: "",
         zone:"",
         status:"",
@@ -250,7 +250,7 @@ export class LicensesComponent implements OnInit {
         this.searching_licenses = true;
 		this.hosts_data = [];
 
-		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
+		this._license.get_all_licenses(page, this.search_data_licenses, this.sort_column, this.sort_order, 15, this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -345,12 +345,12 @@ export class LicensesComponent implements OnInit {
                 value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
                 break;
-            case 'inactive':
+            case 'pending':
                 this.resetFilterStatus();
                 this.filters.assigned = true;
                 this.filters.isactivated = 1;
-                this.filters.inactive = value;
-                this.filters.label_status = value == 'true' ? 'Inactive':'';
+                this.filters.pending = value;
+                this.filters.label_status = value == 'true' ? 'Pending':'';
                 break;
             default:
         }
@@ -364,7 +364,7 @@ export class LicensesComponent implements OnInit {
         this.filters.days_offline = "";
         this.filters.status = "";
         this.filters.assigned = "";
-        this.filters.inactive = "";
+        this.filters.pending = "";
         this.filters.online = "";
     }
 
@@ -440,10 +440,12 @@ export class LicensesComponent implements OnInit {
                         breakdown1_label: 'Online',
                         breakdown2_value: data.totalOffline,
                         breakdown2_label: 'Offline',
-                        breakdown3_value: data.totalInActive,
-                        breakdown3_label: 'Inactive',
+                        breakdown3_value: data.totalPending,
+                        breakdown3_label: 'Pending',
                         third_value: data.totalAdminLicenses,
                         third_value_label: 'Admin',
+                        fourth_value: data.totalDisabled,
+                        fourth_value_label: 'Inactive',
 
 						ad_value: data.totalAd,
 						ad_value_label: 'Ad',
@@ -553,7 +555,7 @@ export class LicensesComponent implements OnInit {
             assigned: "",
             isactivated: "",
             online: "",
-            inactive: "",
+            pending: "",
             activated: "",
             recent: "",
             days_offline: "",
@@ -593,7 +595,7 @@ export class LicensesComponent implements OnInit {
 
         switch (tab) {
             case 'licenses':
-                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.isactivated)
+                this._license.get_all_licenses_duration(0, this.search_data_licenses, this.sort_column, this.sort_order, 0,  this.filters.admin_licenses, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.dealer, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						data => {
