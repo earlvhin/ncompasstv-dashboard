@@ -11,7 +11,6 @@ import { AdvertisersComponent } from './pages/advertisers/advertisers.component'
 import { AuthGuard } from 'src/app/global/guards/auth/auth.guard';
 import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { FeedsModule } from 'src/app/global/pages_shared/feeds/feeds.module';
 import { GlobalModule } from 'src/app/global/global.module';
 import { HostsComponent } from './pages/hosts/hosts.component';
@@ -26,7 +25,6 @@ import { UsersComponent } from './pages/users/users.component';
 	declarations: [ 
 		AdvertisersComponent,
 		DashboardComponent,
-		DealerProfileComponent,
 		HostsComponent,
 		LicensesComponent,
 		ScreensComponent,

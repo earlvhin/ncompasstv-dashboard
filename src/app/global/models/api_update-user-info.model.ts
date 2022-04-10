@@ -40,13 +40,15 @@ export class API_UPDATE_DEALER_PROFILE {
     contactPerson: string;
     businessName: string;
     updatedBy: string;
+    contactNumber: string;
 
-    constructor(userId: string, dealerId: string, contactPerson: string, businessName: string, updatedBy: string) {
+    constructor(userId: string, dealerId: string, contactPerson: string, businessName: string, updatedBy: string, contactNumber: string) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.contactPerson = contactPerson;
         this.businessName = businessName;
         this.updatedBy = updatedBy;
+        this.contactNumber = contactNumber;
     }
 }
 

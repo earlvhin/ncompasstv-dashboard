@@ -26,7 +26,11 @@
                         [breakdown2_value]="licenses_count.breakdown2_value"
                         [breakdown2_label]="licenses_count.breakdown2_label"
                         [breakdown3_value]="licenses_count.breakdown3_value"
-                        [breakdown3_label]="licenses_count.breakdown3_label">
+                        [breakdown3_label]="licenses_count.breakdown3_label"
+                        [third_value]="licenses_count.third_value"
+                        [third_value_label]="licenses_count.third_value_label">
+                        [fourth_value]="licenses_count.fourth_value"
+                        [fourth_value_label]="licenses_count.fourth_value_label">
 					</app-data-card-graph>
                 </mat-card>
             </div>
@@ -86,8 +90,8 @@
                             <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
                                 <span class="fas fa-circle text-danger mr-3"></span>Offline
                             </button>
-                            <button class="md-text" mat-menu-item (click)="filterTable('inactive', 'true')">
-                                <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                            <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
+                                <span class="fas fa-circle text-gray mr-3"></span>Pending
                             </button>
                          </mat-menu>
                         

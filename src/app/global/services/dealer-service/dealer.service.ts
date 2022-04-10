@@ -29,6 +29,16 @@ export class DealerService extends BaseService {
 	delete_dealer(body: { dealerId: string, userId: string, retainContents: boolean }) {
 		return this.postRequest(`${this.deleters.delete_dealer}`, body);
 	}
+	
+    delete_contract_details(filename) {
+        const body = {};
+		return this.postRequest(`${this.deleters.api_delete_contract_details}${filename}`, body);
+	}
+
+    delete_territory_details(filename) {
+        const body = {};
+		return this.postRequest(`${this.deleters.api_delete_territory_details}${filename}`, body);
+	}
 
 	export_dealers(): Observable<API_EXPORT_DEALER[]> {
 		return this.getRequest(`${this.getters.export_dealers}`).map(response => response.dealers);
@@ -83,6 +93,18 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealer_by_id}${id}`).map(data => data.dealer);
 	}
 	
+    get_dealer_values_by_id(id: string) {
+		return this.getRequest(`${this.getters.api_get_dealer_values}${id}`);
+	}
+
+    get_dealer_contract_files(id: string) {
+		return this.getRequest(`${this.getters.api_get_dealer_contract_files}${id}`);
+	}
+
+    get_dealer_territory_files(id: string) {
+		return this.getRequest(`${this.getters.api_get_dealer_territory_files}${id}`);
+	}
+	
 	get_search_dealer(key: number | string) {
 		return this.getRequest(`${this.getters.api_search_dealer}${key}`);
 	}
@@ -102,6 +124,10 @@ export class DealerService extends BaseService {
 	update_dealer(data) {
 		return this.postRequest(`${this.updaters.api_update_dealer}`, data);
 	}
+	
+    update_dealer_values(data) {
+		return this.postRequest(`${this.updaters.api_update_dealer_values}`, data);
+	}
 
 	update_status(id: string, status: string) {
 		const requestUrl = `${this.updaters.dealer_status}`;
@@ -113,5 +139,13 @@ export class DealerService extends BaseService {
 	reassign_dealer(old_id: string, new_id: string) {
 		const data = { oldDealerId: old_id, newDealerId: new_id };
 		return this.postRequest(`${this.updaters.reassign_dealer}`, data);
+	}
+
+    upload_contract_files(data) {
+		return this.postRequest(`${this.creators.dealer_contract_files}`, data);
+	}
+    
+    upload_territory_files(data) {
+		return this.postRequest(`${this.creators.dealer_territory_files}`, data);
 	}
 }

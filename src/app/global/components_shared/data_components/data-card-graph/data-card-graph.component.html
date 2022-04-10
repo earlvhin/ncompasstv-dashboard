@@ -67,6 +67,12 @@
                                 <span class="info-text font-weight-medium">{{ third_value }}</span> {{ third_value_label }}
                             </span>
                         </div>
+                        <div class="p-0" *ngIf="fourth_value_label">
+                            <span class="fas fa-user mr-2 xsm-text info-text"></span>
+                            <span class="sm-text info-text">
+                                <span class="text-gray font-weight-medium">{{ fourth_value }}</span> {{ fourth_value_label }}
+                            </span>
+                        </div>
                         <span class="text-danger fas fa-circle mr-2 xsm-text" *ngIf="!has_breakdown; else breakdown_icon_disable">
                         </span>
                         <ng-template #breakdown_icon_disable>

@@ -5,24 +5,25 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { AuthService } from '../../services/auth-service/auth.service';
-import { API_USER_DATA } from '../../models/api_user-data.model';
-import { API_UPDATE_USER_INFO } from '../../models/api_update-user-info.model';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { AuthService } from '../../../services/auth-service/auth.service';
+import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
+import { API_USER_DATA } from '../../../models/api_user-data.model';
+import { API_UPDATE_USER_INFO } from '../../../models/api_update-user-info.model';
+import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
-import { UserService } from '../../services/user-service/user.service';
+import { UserService } from '../../../services/user-service/user.service';
 
 @Component({
-  selector: 'app-user-account-setting',
-  templateUrl: './user-account-setting.component.html',
-  styleUrls: ['./user-account-setting.component.scss']
+  selector: 'app-credential-setting',
+  templateUrl: './credential-setting.component.html',
+  styleUrls: ['./credential-setting.component.scss']
 })
+export class CredentialSettingComponent implements OnInit {
 
-export class UserAccountSettingComponent implements OnInit, OnDestroy {
-
-	change_password: FormGroup;
+    change_password: FormGroup;
 	change_password_form_disabled: boolean = true;
 	current_password_validation_message: string;
+	is_dealer : boolean = false;
 	is_password_field_type = true;
 	is_new_password_field_type = true;
 	is_retype_password_field_type = true;
@@ -47,7 +48,9 @@ export class UserAccountSettingComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-
+        if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+            this.is_dealer = true;
+        }
 		this.change_password = this._form.group(
 			this._params.paramMap
 				.pipe(takeUntil(this._unsubscribe))

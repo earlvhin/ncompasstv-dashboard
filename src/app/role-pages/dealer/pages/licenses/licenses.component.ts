@@ -174,12 +174,12 @@ export class LicensesComponent implements OnInit {
                 this.filters.label_status = value == 'true' ? 'Assigned':'Unassigned';
                 value == 'true' ? this.filters.isactivated = 1 : this.filters.isactivated = "";
                 break;
-            case 'inactive':
+            case 'pending':
                 this.resetFilterStatus();
                 this.filters.isactivated = 1;
                 this.filters.assigned = true;
-                this.filters.inactive = value;
-                this.filters.label_status = value == 'true' ? 'Inactive':'';
+                this.filters.pending = value;
+                this.filters.label_status = value == 'true' ? 'Pending':'';
                 break;
             default:
         }
@@ -193,7 +193,7 @@ export class LicensesComponent implements OnInit {
         this.filters.days_offline = "";
         this.filters.status = "";
         this.filters.assigned = "";
-        this.filters.inactive = "";
+        this.filters.pending = "";
         this.filters.online = "";
     }
 
@@ -203,7 +203,7 @@ export class LicensesComponent implements OnInit {
             isactivated: "",
             assigned: "",
             online: "",
-            inactive: "",
+            pending: "",
             activated: "",
             recent: "",
             days_offline: "",
@@ -237,8 +237,12 @@ export class LicensesComponent implements OnInit {
                         breakdown1_label: 'Online',
                         breakdown2_value: data.totalOffline,
                         breakdown2_label: 'Offline',
-                        breakdown3_value: data.totalInActive,
-                        breakdown3_label: 'Inactive',
+                        breakdown3_value: data.totalPending,
+                        breakdown3_label: 'Pending',
+                        third_value: data.totalDisabled,
+                        third_value_label: 'Disabled',
+                        fourth_value: data.totalDisabled,
+                        fourth_value_label: 'Inactive',
 
 						new_this_week_value: data.newLicensesThisWeek,
 						new_this_week_label: 'License(s)',
@@ -264,7 +268,7 @@ export class LicensesComponent implements OnInit {
 	getLicenses(page: number) {
 		this.searching_license = true;
 
-		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
+		this._license.sort_license_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
@@ -370,18 +374,21 @@ export class LicensesComponent implements OnInit {
 
 	getDataForExport(id: string): void {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.inactive, this.filters.online, this.filters.isactivated)
+		this._license.get_license_to_export_duration(id, this.search_data_license, this.sort_column, this.sort_order, 0, this.filters.status, this.filters.days_offline, this.filters.activated, this.filters.recent, this.filters.zone, this.filters.host, this.filters.assigned, this.filters.pending, this.filters.online, this.filters.isactivated)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				data => {
-					this.licenses_to_export = data.licenseTemplateZoneExports;
+                    if(!data.message) {
+                        this.licenses_to_export = data.licenseTemplateZoneExports;
 
-					this.licenses_to_export.forEach(
-						(item) => {
-							this.modifyItem(item);
-							this.worksheet.addRow(item).font = { bold: false };
-						}
-					);
+                        this.licenses_to_export.forEach(
+                            (item) => {
+                                this.modifyItem(item);
+                                this.worksheet.addRow(item).font = { bold: false };
+                            }
+                        );
+                    }   
+					
 
 					let rowIndex = 1;
 					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {

@@ -89,12 +89,18 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		temp.push({ 'id': this.file_data.selected.content_id });
 		this.is_edit = true;
 
-		this._dialog.open(MediaModalComponent, {
+		const dialogRef = this._dialog.open(MediaModalComponent, {
 			width: '600px',
 			panelClass: 'app-media-modal',
 			disableClose: true,
 			data: temp,  
 		});
+
+        dialogRef.afterClosed().subscribe(
+			response => {
+				console.log("VIEWER", response)
+			}
+		)
 	}
 
 	async onDeleteMedia(event: { stopPropagation() }) {

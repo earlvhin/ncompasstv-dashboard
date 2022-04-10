@@ -4,20 +4,19 @@ import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 
-import { API_UPDATE_USER_PROFILE } from '../../../global/models/api_update-user-info.model';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { ConfirmationModalComponent } from '../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UserService } from '../../../global/services/user-service/user.service';
-import { USER_PROFILE } from '../../../global/models/api_user.model';
+import { API_UPDATE_USER_PROFILE } from '../../../models/api_update-user-info.model';
+import { AuthService } from '../../../services/auth-service/auth.service';
+import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { UserService } from '../../../services/user-service/user.service';
+import { USER_PROFILE } from '../../../models/api_user.model';
 
 @Component({
-  selector: 'app-user-profile',
-  templateUrl: './user-profile.component.html',
-  styleUrls: ['./user-profile.component.scss']
+  selector: 'app-user-setting',
+  templateUrl: './user-setting.component.html',
+  styleUrls: ['./user-setting.component.scss']
 })
-
-export class UserProfileComponent implements OnInit, OnDestroy {
-	subscription: Subscription = new Subscription;
+export class UserSettingComponent implements OnInit {
+    subscription: Subscription = new Subscription;
 	update_user: FormGroup;
 	user_data: USER_PROFILE;
   	update_info_form_disabled: boolean = false;

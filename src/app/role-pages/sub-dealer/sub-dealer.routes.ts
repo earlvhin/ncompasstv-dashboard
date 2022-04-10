@@ -6,7 +6,6 @@ import { CreateScreenComponent } from 'src/app/global/pages_shared/create-screen
 import { CreatePlaylistComponent } from 'src/app/global/pages_shared/create-playlist/create-playlist.component';
 import { CreateAdvertiserComponent } from 'src/app/global/pages_shared/create-advertiser/create-advertiser.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
-import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { FeedsComponent } from 'src/app/global/pages_shared/feeds/feeds.component';
 import { GenerateFeedComponent } from 'src/app/global/pages_shared/generate-feed/generate-feed.component';
 import { HostsComponent } from '../dealer/pages/hosts/hosts.component';
@@ -14,6 +13,7 @@ import { LicensesComponent } from '../dealer/pages/licenses/licenses.component';
 import { LocatorComponent } from 'src/app/global/pages_shared/locator/locator.component';
 import { MediaLibraryComponent } from 'src/app/global/pages_shared/media-library/media-library.component';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
+import { ProfileSettingComponent } from 'src/app/global/pages_shared/profile-setting/profile-setting.component';
 import { ScreensComponent } from './pages/screens/screens.component';
 import { SingleAdvertiserComponent } from 'src/app/global/pages_shared/single-advertiser/single-advertiser.component';
 import { SingleContentComponent } from 'src/app/global/pages_shared/single-content/single-content.component';
@@ -22,8 +22,6 @@ import { SingleLicenseComponent } from 'src/app/global/pages_shared/single-licen
 import { SinglePlaylistComponent } from 'src/app/global/pages_shared/single-playlist/single-playlist.component';
 import { SingleScreenComponent } from 'src/app/global/pages_shared/single-screen/single-screen.component';
 import { SubDealerLayoutComponent } from './sub-dealer-layout/sub-dealer-layout.component';
-import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
-import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
 
 import { AuthGuard, OwnerGuard, PermissionGuard } from 'src/app/global/guards';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models';
@@ -264,26 +262,12 @@ export const SUB_DEALER_ROUTES: Routes = [
                 ]
             },
 			{ 
-                path: 'user-profile/:data', 
-                component: UserProfileComponent, 
+                path: 'profile-setting/:data', 
+                component: ProfileSettingComponent, 
                 data: {
-                    breadcrumb: 'User Profile'
+                    breadcrumb: 'Profile Settings'
                 }
-            },
-			{ 
-                path: 'user-account-setting/:data', 
-                component: UserAccountSettingComponent, 
-                data: {
-                    breadcrumb: 'User Account Settings'
-                }
-            },
-			{ 
-                path: 'dealer-profile/:data', 
-                component: DealerProfileComponent, 
-                data :{
-                    breadcrumb: 'Dealer Profile'
-                }
-            },
+            }
         ],
     }
 ];

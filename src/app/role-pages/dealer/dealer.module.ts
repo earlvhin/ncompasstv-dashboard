@@ -6,11 +6,9 @@ import { MatMenuModule } from '@angular/material/menu';
 import { RouterModule } from '@angular/router';
 
 import { AdvertisersComponent } from './pages/advertisers/advertisers.component';
-import { BillingsComponent } from './pages/billings/billings.component';
 import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DealerLayoutComponent } from './dealer-layout/dealer-layout.component';
-import { DealerProfileComponent } from './pages/dealer-profile/dealer-profile.component';
 import { DEALER_ROUTES } from './dealer.routes';
 import { FeedsModule } from 'src/app/global/pages_shared/feeds/feeds.module';
 import { GlobalModule } from '../../global/global.module';
@@ -35,10 +33,8 @@ import { AuthGuard } from 'src/app/global/guards';
 		LocatorComponent, 
 		PlaylistsComponent, 
 		ScreensComponent, 
-		BillingsComponent, 
 		ReportsComponent, 
 		UsersComponent, 
-		DealerProfileComponent,
 	],
 	imports: [
 		CommonModule,

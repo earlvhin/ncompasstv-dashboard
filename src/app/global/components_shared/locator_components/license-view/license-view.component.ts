@@ -275,7 +275,7 @@ export class LicenseViewComponent implements OnInit {
 
 					const dealerLicenses: API_DEALER_LICENSE[] = licenses;
 					this.dealer_licenses_data = [];
-
+				
 					dealerLicenses.map(
 						license => {
 							if (license.dealerId !== currentDealerId) return;
@@ -316,10 +316,10 @@ export class LicenseViewComponent implements OnInit {
 					const { entities } = paging;
 					const hosts: API_HOST[] = entities;
 					this.paging = paging;
-
+	
 					this.selected_dealer_hosts = [...hosts];
 					this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
-
+		
 					this.selected_dealer_hosts.forEach(
 						host => {
 							host.storeHours ? (host.parsedStoreHours = JSON.parse(host.storeHours)) : (host.parsedStoreHours = '-');
@@ -346,12 +346,12 @@ export class LicenseViewComponent implements OnInit {
 		this._license.get_license_by_dealer_id(currentDealerId, page, '').pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
-
+			
 					if (response.message) {
 						this.loading_data = false;
 						return;
 					}
-
+			
 					const dealerLicenses = response.paging.entities as API_LICENSE_PROPS[];
 					const pageCount = response.paging.pages;
 
@@ -368,7 +368,7 @@ export class LicenseViewComponent implements OnInit {
 							if (license.piStatus === 1) this.online_licenses += 1;
 						}
 					);
-
+			
 					dealerLicenses.map(
 						license => {
 							let dealerLicense = new API_DEALER_LICENSE(license.dealerId, license.hostId, license.alias === null ? license.licenseKey : license.alias, license.licenseId, license.licenseKey);
@@ -391,7 +391,7 @@ export class LicenseViewComponent implements OnInit {
 							);
 						}
 					);
-
+			
 					this.unfiltered_dealer_hosts = this.selected_dealer_hosts;
 					this.unfiltered_licenses = this.selected_licenses;
 
@@ -432,7 +432,7 @@ export class LicenseViewComponent implements OnInit {
 
 					const licenses = response as API_LICENSE_PROPS[];
 					this.host_licenses = [...licenses];
-					
+
 					if (this.filterStatus !== undefined && !this.filterStatus) {
 						this.host_licenses = this.host_licenses.filter((license) => license.piStatus === this.filterStatus);
 					}
@@ -450,14 +450,14 @@ export class LicenseViewComponent implements OnInit {
 	private mapMarkersToUI(hosts: API_HOST[], licenses: API_LICENSE_PROPS[]): UI_HOST_LOCATOR_MARKER_DEALER_MODE[] {
 
 		if (!hosts || hosts.length <= 0) return;
-
+	
 		return hosts.map(
 			host => {
 				let icon_url: string;
 				let online: any = 0;
 				let license_online_percentage: number;
 				const host_licenses: API_LICENSE_PROPS[] = licenses.filter(license => license.hostId === host.hostId);
-
+		
 				if (host_licenses.length > 0) {
 					online = host_licenses.filter(license => license.piStatus === 1);
 					license_online_percentage = (online.length / host_licenses.length) * 100;

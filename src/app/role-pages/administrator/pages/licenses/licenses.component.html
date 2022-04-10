@@ -41,7 +41,9 @@
                             [breakdown3_value]="licenses_details.breakdown3_value"
                             [breakdown3_label]="licenses_details.breakdown3_label"
                             [third_value]="licenses_details.third_value"
-                            [third_value_label]="licenses_details.third_value_label">
+                            [third_value_label]="licenses_details.third_value_label"
+                            [fourth_value]="licenses_details.fourth_value"
+                            [fourth_value_label]="licenses_details.fourth_value_label">
 						</app-data-card-graph>
 					</ng-container>
                 </mat-card>
@@ -110,8 +112,8 @@
                                                     <button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
                                                         <span class="fas fa-circle text-danger mr-3"></span>Offline
                                                     </button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('inactive', 'true')">
-                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
+                                                        <span class="fas fa-circle text-gray mr-3"></span>Pending
                                                     </button>
                                                  </mat-menu>
                                                 
