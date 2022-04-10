@@ -878,7 +878,8 @@
                 <!-- Resource Tab -->
 				<mat-tab label="Installation">
 					<ng-template matTabContent>
-						<app-installation-tab>
+						<app-installation-tab
+                        [license_id]="license_id">
 						</app-installation-tab>
 					</ng-template>
 				</mat-tab>

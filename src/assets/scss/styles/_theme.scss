@@ -39,6 +39,10 @@
     background-color: $light;
 }
 
+.bg-light-gray {
+    background-color: $navbar_border;
+}
+
 .tab-active {
     background: $green_light;
 }
@@ -798,4 +802,16 @@ agm-map {
 
 .h-100-px {
     height: 100px !important;
+}
+
+.strike {
+    text-decoration: line-through;
+}
+
+.non-strike {
+    text-decoration: none;
+}
+
+.no-style {
+    list-style: none;
 }
