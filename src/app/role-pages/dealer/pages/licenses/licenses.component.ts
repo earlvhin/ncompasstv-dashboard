@@ -78,7 +78,7 @@ export class LicensesComponent implements OnInit {
         isactivated: "",
         assigned: "",
         online: "",
-        inactive: "",
+        pending: "",
         activated: "",
         zone:"",
         status:"",
