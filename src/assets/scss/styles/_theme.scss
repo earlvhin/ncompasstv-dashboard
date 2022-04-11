@@ -622,6 +622,10 @@ button {
     height: 500px;
 }
 
+.h-400 {
+    height: 400px;
+}
+
 .clickable {
     cursor: pointer;
 }
@@ -759,6 +763,10 @@ agm-map {
 
 .overflow-auto {
     overflow: auto;
+}
+
+.overflow-y-auto {
+    overflow-y: auto;
 }
 
 .h-45 {

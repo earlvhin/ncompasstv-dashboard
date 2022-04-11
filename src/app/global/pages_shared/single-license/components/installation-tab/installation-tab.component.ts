@@ -166,7 +166,7 @@ export class InstallationTabComponent implements OnInit {
             data => {
                 this.confirmationModal('success', 'Checklist Title has been added successfully', 'Click OK to continue')
                 this.form.reset();
-                this.getChecklistTitles();
+                this.ngOnInit();
             }
         )
     }
