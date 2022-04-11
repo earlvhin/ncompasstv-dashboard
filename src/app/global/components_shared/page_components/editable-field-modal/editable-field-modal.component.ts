@@ -28,6 +28,7 @@ export class EditableFieldModalComponent implements OnInit {
 	) { }
 		
 	ngOnInit() {
+        console.log("DD", this._dialog_data)
 		this.status = this._dialog_data.status;
 		this.message = this._dialog_data.message;
 		this.data = this._dialog_data.data;

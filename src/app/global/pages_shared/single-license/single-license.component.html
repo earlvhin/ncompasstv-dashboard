@@ -873,7 +873,17 @@
 							[realtime_data]="realtime_data">
 						</app-resource-tab>
 					</ng-template>
-				</mat-tab> 
+				</mat-tab>
+
+                <!-- Resource Tab -->
+				<mat-tab label="Installation">
+					<ng-template matTabContent>
+						<app-installation-tab
+                        [license_id]="license_id">
+						</app-installation-tab>
+					</ng-template>
+				</mat-tab>
+                
             </mat-tab-group>
         </div>
     </div>
