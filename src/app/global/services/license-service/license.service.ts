@@ -147,9 +147,10 @@ export class LicenseService {
 	}
 
 	sort_license_by_dealer_id(id, page, key, column, order, pageSize=15, status?, daysOffline?, activated?, recent?, zone?, host?, assigned?, pending?, online?, isActivated?) {
-		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
+		console.log("ONLINE", online)
+        const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
 		const filters = { dealerId: id,page, search: key, sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline, active: activated, daysInstalled: recent, timezone: zone, hostId: host, assigned, pending, online, isActivated };
-		const params = this.setUrlParams(filters, false, false);
+		const params = this.setUrlParams(filters, false, true);
 		const url = `${base}${params}`;
 		return this._http.get<any>(url);
 	}
@@ -365,7 +366,7 @@ export class LicenseService {
 	set_tvdisplay_status(data: any) {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`, data, this.httpOptions);
 	}
-	
+
     create_installation_checklist_title(data: any) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_installation_checklist_title_add}`, data, this.httpOptions);
 	}
