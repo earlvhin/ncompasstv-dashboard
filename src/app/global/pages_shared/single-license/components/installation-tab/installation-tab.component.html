@@ -5,20 +5,23 @@
         <div class="col-lg-12 mt-3">
             <!-- <form [formGroup]="create_checklist" class=""> -->
             <form [formGroup]="form">
-                <h5>Add Title:</h5>
+                <span class="sm-text mb-2">
+                    Fill up this section if the title you are looking for is not existing on the available title list.
+                </span>
+                <h5 class="mt-3">Add Title:</h5>
                 <span class="sm-text text-danger">
                     Note: This will be the headline per checklist.
                 </span>
                 <div class="col-lg-12 p-0 flex">
-                    <mat-form-field class="col-lg-11 p-0">
+                    <mat-form-field class="col-lg-10 p-0">
                         <mat-label>Title:</mat-label>
                         <input formControlName="categoryName" matInput placeholder="Ex: Day 1 - Installation" type="text">
                     </mat-form-field>
-                    <div class="col-lg-1 text-center pt-3 text-primary clickable" (click)="saveTitle()">
-                        <span class="fas fa-save" title="Save Title"></span>
+                    <div class="col-lg-2 text-center pt-3 text-primary clickable" >
+                        <button mat-button class="theme-btn _info mb-2 mr-2 sm-text" (click)="saveTitle()">Save Title</button>
                     </div>
                 </div>
-                <div class="col-md-12 p-0" *ngIf="titles; else spinner">
+                <div class="col-md-12 h-400 overflow-y-auto" *ngIf="titles; else spinner">
                     <h5 class="mb-3">Available Titles:</h5>
                     <ul class="col-lg-12" *ngIf="titles.length > 0; else no_title">
                         <div *ngFor="let title of titles" class="col-lg-12 flex p-2">
@@ -39,6 +42,9 @@
                 </div> 
                 
                 <hr>
+                <span class="sm-text mb-2">
+                    For existing title, click Add Task button to add a checklist item, then click Save Task to publish.
+                </span>
                 <div class="col-lg-12 p-0" *ngIf="task_field_open">
                     <h5>Add Task Lists:</h5>
                     <span class="sm-text text-danger">
