@@ -212,12 +212,13 @@ export class HostViewComponent implements OnInit, OnDestroy {
 						});
 
 						this.selected_licenses.forEach(
-						license => {
-							if (license.piStatus == 1) this.online_licenses += 1;
-						}
+							license => {
+								if (!license.hostId) return;
+								if (license.piStatus === 1) this.online_licenses += 1;
+								else this.offline_licenses += 1;
+							}
 						);
 
-						this.offline_licenses = this.selected_licenses.length - this.online_licenses;
 					}
 
 					this.paging = paging;
