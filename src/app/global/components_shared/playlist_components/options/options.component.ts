@@ -349,25 +349,27 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 
 			switch (numeric) {
 				case '1':
-					result.push('Mon');
+					result.push('Sun');
 					break;
 				case '2':
-					result.push('Tue');
+					result.push('Mon');
 					break;
 				case '3':
-					result.push('Wed');
+					result.push('Tue');
 					break;
 				case '4':
-					result.push('Thu');
+					result.push('Wed');
 					break;
 				case '5':
-					result.push('Fri');
+					result.push('Thu');
 					break;
 				case '6':
+					result.push('Fri');
+					break;
+				case '7':
 					result.push('Sat');
 					break;
 				default:
-					result.push('Sun');
 			}
 
 		});
