@@ -1,14 +1,14 @@
 <div class="theme-container">
     <div class="content-section">
-        <div class="row">
+        <div class="row" *ngIf="!no_header">
             <div class="col-lg-6">
                 <div class="flex-even">
                     <h1 class="page-title">Licenses</h1>
                 </div>
             </div>
         </div>
-        <hr class="my-4">
-        <div class="row">
+        <hr class="my-4" *ngIf="!no_header">
+        <div class="row" *ngIf="!no_header">
             <div class="col-3 col-lg">
                 <mat-card class="h-100">
                     <app-data-card-graph *ngIf="licenses_count; else small_loader"
@@ -53,7 +53,7 @@
                 </mat-card>
 			</div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" *ngIf="!no_header">
         <div *ngIf="!initial_load_license; else loader">
             <div *ngIf="!no_licenses; else no_data">
                 <div class="row pt-2">

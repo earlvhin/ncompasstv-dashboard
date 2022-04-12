@@ -7,10 +7,8 @@ import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver'; 
 import * as moment from 'moment';
 
-import { environment } from 'src/environments/environment';
 import { API_ADVERTISER, API_HOST, API_LICENSE, PAGING, UI_ADVERTISER, UI_DEALER_HOSTS, UI_TABLE_LICENSE_BY_HOST } from 'src/app/global/models';
-import { AuthService, AdvertiserService, HostService, LicenseService } from 'src/app/global/services';
-import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
+import { AuthService, AdvertiserService, HostService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-hosts',
@@ -77,37 +75,7 @@ export class HostsComponent implements OnInit {
         { name: 'Others', sortable: false, key: 'others' },
         { name: 'Tags', key: 'tagsToString', no_show: true, hidden: true },
 	];
-
-    license_table_columns = [
-		{ name: '#', sortable: false, no_export: true },
-		{ name: 'Screenshot', sortable: false, no_export: true  },
-        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
-		{ name: 'License Key', sortable: true, key: 'licenseKey', column:'LicenseKey' },
-        { name: 'Type', sortable: true, key: 'screenType', column:'ScreenType' },
-		{ name: 'Host', sortable: true, key: 'hostName', column:'HostName'  },
-		{ name: 'Alias', sortable: true, key: 'alias', column:'Alias'  },
-		{ name: 'Last Push', sortable: true, key: 'contentsUpdated', column:'ContentsUpdated' },
-		{ name: 'Last Online', sortable: true, key: 'timeIn', column:'TimeIn' },
-		{ name: 'Net Type', sortable: true, key:'internetType', column: 'InternetType' },
-		{ name: 'Net Speed', sortable: true, key:'internetSpeed', column: 'InternetSpeed' },
-		{ name: 'Anydesk', sortable: true, key:'anydeskId', column: 'AnydeskId' },
-		{ name: 'Password', sortable: false, key:'password' },
-		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus' },
-		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate'  },
-		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated'  },
-        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true },		
-	];
-
-    filters: any = {
-        activated: "",
-        zone:"",
-        status:"",
-        host:"",
-        label_status:"",
-        label_zone:"",
-        label_dealer: "",
-        label_host: ""
-    }
+    
 
 	constructor(
         private _advertiser: AdvertiserService,
@@ -116,17 +84,14 @@ export class HostsComponent implements OnInit {
         private _date: DatePipe,
         private _dialog: MatDialog,
 		private _host: HostService,
-        private _license: LicenseService,
 		private _title: TitleCasePipe,
 	) { }
 
 	ngOnInit() {
 		this.getHosts(1);
-        this.getLicenses(1);
 		this.getTotalCount(this._auth.current_user_value.roleInfo.dealerId);
         this.table.columns = [ '#', {name:'Business Name', sortable: true, column: 'Name'}, 
 					{name: 'Total Assets', sortable: true, column: 'TotalAssets'}, {name:'City', sortable: true, column:'City'}, 'State', 'Status' ];
-		this.getAdvertiserByDealer(1);
 		this.createHostLink  = `/${this.currentRole}/hosts/create-host`; 
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 	}
@@ -138,22 +103,6 @@ export class HostsComponent implements OnInit {
 
     ngAfterContentChecked() : void {
         this._change_detector.detectChanges();
-    }
-
-	clearFilter(): void {
-
-        this.filters = {
-            activated: "",
-            zone:"",
-            status:"",
-            host:"",
-            label_status:"",
-            label_zone:"",
-            label_dealer: "",
-            label_host: ""
-        };
-
-        this.getLicenses(1);
     }
 
 	exportTable(): void {
@@ -175,60 +124,9 @@ export class HostsComponent implements OnInit {
 		this.getDataForExport();		
 	}
 
-	filterTable(type: string, value: any) {
-
-        switch (type) {
-            case 'status':
-                this.filters.status = value
-                this.filters.activated = '';
-                this.filters.label_status = value == 1 ? 'Online' : 'Offline';
-                break;
-            case 'zone':
-                this.filters.zone = value
-                this.filters.label_zone = value;
-                break;
-            case 'activated':
-                this.filters.status = '';
-                this.filters.activated = value;
-                this.filters.label_status = 'Inactive';
-                break;
-            default:
-        }
-
-        this.getLicenses(1);
-
-    }
-
-	getAdvertiserByDealer(page: number) {
-		this.is_searching = true;
-
-		this._advertiser.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.keyword,
-			this.adv_sort_column, this.adv_sort_order)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => {
-					
-					if (response.message) {
-						this.table.data = [];
-						if (this.keyword === '') this.no_advertisers = true;
-						return;
-					}
- 
-					this.advertisersPaging = response.paging;
-					const advertisers = this.mapToAdvertisersTable(response.advertisers);
-					this.table.data = [...advertisers];
-				}
-			)
-			.add(() => {
-				this.initial_load_advertiser = false;
-				this.is_searching = false;
-			});
-	}
-
 	getColumnsAndOrder(data: { column: string, order: string }) {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
-		this.getLicenses(1);
 	}
 
 	getHostColumnsAndOrder(data: { column: string, order: string }) {
@@ -238,12 +136,6 @@ export class HostsComponent implements OnInit {
 		this.host_sort_column = data.column;
 		this.host_sort_order = data.order;
 		this.getHosts(1);
-	}
-
-	getAdvColumnsAndOrder(data: { column: string, order: string }) {
-		this.adv_sort_column = data.column;
-		this.adv_sort_order = data.order;
-		this.getAdvertiserByDealer(1);
 	}
 
 	getHosts(page: number) {
@@ -280,51 +172,9 @@ export class HostsComponent implements OnInit {
 			});
 	}
 
-    getLicenses(page: number) {
-		this.searching_license = true;
-
-		this._license.sort_license_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_data_license, this.sort_column, this.sort_order, 15, this.filters.status, this.filters.activated, this.filters.zone, this.filters.host)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => {
-					
-					this.licensesPaging = response.paging;
-
-					if (response.message) {
-						if (this.search_data_license == '') this.no_licenses = true;
-						this.license_data = [];
-						this.license_filtered_data = [];
-						return;
-					}
-
-					const data = response.paging.entities as API_LICENSE['license'][];
-					const mappedData = this.mapToLicensesTable([...data]);
-					this.license_data_api = data;
-					this.license_data = [...mappedData];
-					this.filtered_data = [...mappedData];
-					this.license_filtered_data = [...mappedData];
-				}
-			)
-			.add(() => {
-				this.initial_load_license = false;
-				this.searching_license = false;
-			});
-	}
-
 	hostFilterData(keyword: string = '') {
 		this.search_data = keyword;
 		this.getHosts(1);
-	}
-
-	licenseFilterData(keyword: string = '') {
-		this.search_data_license = keyword;
-		this.getLicenses(1);
-	}
-
-	onSearchAdvertiser(keyword: string) {
-		if (keyword) this.keyword = keyword;
-		else this.keyword = '';
-		this.getAdvertiserByDealer(1); 
 	}
 
 	onTabChanged(e: { index: number }) {
@@ -347,43 +197,6 @@ export class HostsComponent implements OnInit {
 	reloadLicense() {
 		this.license_data = [];
 		this.ngOnInit();
-	}
-
-	sortByUser() {
-		let dialog = this._dialog.open(UserSortModalComponent, {
-			width: '500px',
-            data: {
-                view: 'license',
-                is_dealer: true,
-                dealer_id: this._auth.current_user_value.roleInfo.dealerId,
-                dealer_name: this.dealers_name
-            }
-		})
-
-		dialog.afterClosed().subscribe(
-			data => {
-				if (data) {
-					if(data.host.id) {
-                        this.filters.host = data.host.id;
-                        this.filters.label_host = data.host.name;
-                    }
-                    this.getLicenses(1);
-				}
-			}
-		)
-	}
-
-    splitKey(key) {
-        this.splitted_text = key.split("-");
-        return this.splitted_text[this.splitted_text.length - 1];
-    }
-
-    sortList(order): void {
-		var filter = {
-			column: 'PiStatus',
-			order: order
-		}
-		this.getColumnsAndOrder(filter)
 	}
 
 	private getDataForExport(): void {
@@ -427,38 +240,7 @@ export class HostsComponent implements OnInit {
 			);
 	}
 
-	private getInternetType(value: string): string {
-		if(value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
-	}
-
-	private getLabel(data) {
-		this.now = moment().format('d');
-		this.now = this.now;
-        var storehours = JSON.parse(data.storeHours)
-        storehours = storehours.sort((a, b) => {return a.id - b.id;});
-		var modified_label = {
-			date : moment().format('LL'),
-			address: data.hostAddress,
-			schedule: storehours[this.now] && storehours[this.now].status ? (
-				storehours[this.now].periods[0].open == "" && storehours[this.now].periods[0].close == "" 
-				? "Open 24 Hours" : storehours[this.now].periods.map(
-					i => {
-						return i.open + " - " + i.close
-					})) : "Closed"
-		}
-		return modified_label;
-	}
-
 	private getTotalCount(id: string): void {
-
 		this._host.get_host_total_per_dealer(id).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
@@ -485,25 +267,6 @@ export class HostsComponent implements OnInit {
 		return hosts.map(host => { host.tagsToString = host.tags.join(','); return host });
 	}
 
-	private mapToAdvertisersTable(data: API_ADVERTISER[]): UI_ADVERTISER[]  {
-
-		let count = this.advertisersPaging.pageStart;
-
-		return data.map(
-			advertiser => {
-				return {
-					advertiserId: { value: advertiser.id, link: null , editable: false, hidden: true },
-					index: { value: count++, link: null , editable: false, hidden: false },
-					name: { value: advertiser.name, link: `/${this.currentRole}/advertisers/` + advertiser.id, new_tab_link: 'true', editable: false, hidden: false },
-					totalAssets: { value: advertiser.totalAssets },
-					city: { value: advertiser.city ? advertiser.city : '--', link: null, editable: false, hidden: false },
-					state: { value: advertiser.state ? advertiser.state : '--', link: null, editable: false, hidden: false },
-					status: { value: advertiser.status, link: null, editable: false, hidden: false },
-				}
-			}
-		);
-	}
-
 	private mapToHostsTable(data: API_HOST[]): UI_DEALER_HOSTS[] {
 		
 		let count = this.hostsPaging.pageStart;
@@ -523,42 +286,6 @@ export class HostsComponent implements OnInit {
 					{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false},
 					{ value: hosts.others ? hosts.others : '--', link: null, editable: false, hidden: false},
 				)
-			}
-		);
-	}
-
-	private mapToLicensesTable(data: API_LICENSE['license'][]): UI_TABLE_LICENSE_BY_HOST[] {
-
-		let count = this.licensesPaging.pageStart;
-		
-		return data.map(
-			i => {
-				return new UI_TABLE_LICENSE_BY_HOST(
-					{ value: i.licenseId, link: null , editable: false, hidden: true },
-					{ value: i.hostId ? i.hostId : '--', link: null , editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false },
-					{ 
-						value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace('/API/', '')}` : null,
-						link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace('/API/', '')}` : null, 
-						editable: false, 
-						hidden: false, 
-						isImage: true
-					},
-                    { value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, new_tab_link: 'true', editable: false, hidden: false, status: true },
-                    { value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable:false, hidden: false },
-                    { value: i.hostId ? i.hostName: '--', link: i.hostId ? `/${this.currentRole}/hosts/` + i.hostId : null, new_tab_link: 'true', editable: false, hidden: false, business_hours: i.hostId ? true : false, business_hours_label: i.hostId ? this.getLabel(i) : null },
-                    { value: i.alias ? i.alias : '--', link: `/${this.currentRole}/licenses/` + i.licenseId, new_tab_link: 'true', editable: true, label: 'License Alias', id: i.licenseId, hidden: false },
-                    { value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
-                    { value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
-                    { value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
-                    { value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-                    { value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-                    { value: i.anydeskId ? this.splitKey(i.licenseId) : '--', link: null, editable: false, hidden: false, copy:true, label: 'Anydesk Password' },
-                    { value: i.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
-					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
-					{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
-					{ value: i.piStatus, link: null, editable: false, hidden: true }
-				);
 			}
 		);
 	}

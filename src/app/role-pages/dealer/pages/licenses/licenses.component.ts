@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { TitleCasePipe, DatePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
@@ -22,6 +22,7 @@ import { UserSortModalComponent } from 'src/app/global/components_shared/media_c
 })
 
 export class LicensesComponent implements OnInit {
+    @Input() no_header: boolean = false;
 	dealers_name: string;
 	initial_load_license: boolean = true;
 	license_info: API_LICENSE[]; 

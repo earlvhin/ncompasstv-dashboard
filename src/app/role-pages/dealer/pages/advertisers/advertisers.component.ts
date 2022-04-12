@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { API_ADVERTISER, PAGING, UI_ADVERTISER } from 'src/app/global/models';
 	styleUrls: ['./advertisers.component.scss']
 })
 export class AdvertisersComponent implements OnInit, OnDestroy {
-
+    @Input() no_header: boolean = false;
 	advertiser_stats: any;
 	base_url = `/${this.currentRole}/advertisers`;
 	initial_load_advertiser = true;

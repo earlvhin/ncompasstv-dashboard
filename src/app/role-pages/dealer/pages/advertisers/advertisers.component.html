@@ -1,5 +1,5 @@
 <div class="theme-container">
-    <div class="title-section">
+    <div class="title-section" *ngIf="!no_header">
         <div class="d-flex align-items-center">
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
@@ -17,7 +17,7 @@
     </div>
 
     <div class="content-section">
-        <div class="row">
+        <div class="row" *ngIf="!no_header">
             <div class="col-12 col-lg">
                 <mat-card class="h-100">
                     <app-data-card-compare
@@ -50,7 +50,7 @@
                 </mat-card>
             </div>
         </div>
-        <hr class="my-4">
+        <hr class="my-4" *ngIf="!no_header">
         <div *ngIf="!initial_load_advertiser; else loader">
             <div *ngIf="!no_advertisers; else no_data">
                 <div class="row pt-2">
