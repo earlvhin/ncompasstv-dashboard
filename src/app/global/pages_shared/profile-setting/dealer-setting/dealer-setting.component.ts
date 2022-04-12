@@ -206,13 +206,13 @@ export class DealerSettingComponent implements OnInit {
 			this.user_data.dealerId,
 			this.f.contact_person.value,
 			this.f.business_name.value,
-			this.f.contact.value,
 			this.user_data.userId,
+            this.f.contact.value,
 		)
 	}
   
 	mapUserInfoChanges() {
-
+        console.log("UVAL", this.update_user.value)
 		const { owner_f_name, owner_l_name, contact } = this.update_user.value;
 		const { userId, dealerId } = this.user_data;
 		const updatedBy = this.currentUser.user_id;
