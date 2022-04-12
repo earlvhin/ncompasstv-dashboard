@@ -338,11 +338,17 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.offline_licenses = 0;
 		this.selected_licenses.forEach(
 			license => {
-				if (license.piStatus == 1) this.online_licenses += 1;
+				// if (license.piStatus == 1) this.online_licenses += 1;
+				if (license.piStatus === 1) this.online_licenses += 1;
+				else {
+					if (!license.hostId) return;
+					console.log('offline license', license);
+					this.offline_licenses += 1;
+				}
 			}
 		);
 
-		this.offline_licenses = this.selected_licenses.length - this.online_licenses;
+		// this.offline_licenses = this.selected_licenses.length - this.online_licenses;
 	}
 
 	exportToCSV()
@@ -469,22 +475,44 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.selected_licenses = [];
 		this.selected_dealer = this.dealers.filter(dealer => selectedDealers.includes(dealer.dealerId));
 		this.unfiltered_selected_dealer = this.dealers.filter(dealer => selectedDealers.includes(dealer.dealerId));
-		this.selected_dealer.forEach(dealer => {
-			 dealer.hosts.map(host => {
-				 this.selected_dealer_hosts.push(host);
-			 });
-			 dealer.licenses.map(license => {
-				 this.selected_licenses.push(license);
-			 });
-		});
 
-		this.selected_licenses.forEach(
-			license => {
-				if (license.piStatus == 1) this.online_licenses += 1;
+		this.selected_dealer.forEach(
+			dealer => {
+				dealer.onlineLicenseCount = 0;
+				dealer.offlineLicenseCount = 0;
+
+				dealer.hosts.map(
+					host => {
+						this.selected_dealer_hosts.push(host);
+					}
+				);
+
+				dealer.licenses.map(
+					license => {
+						if (!license.hostId) return;
+						this.selected_licenses.push(license);
+					}
+				);
+
+				this.selected_licenses.forEach(
+					license => {
+
+						if (!license.hostId) return;
+
+						if (license.piStatus === 1) {
+							this.online_licenses += 1;
+							dealer.onlineLicenseCount += 1;
+							return;
+						} 
+						
+						this.offline_licenses += 1;
+						dealer.offlineLicenseCount += 1;
+					
+					}
+				);
 			}
 		);
 
-		this.offline_licenses = this.selected_licenses.length - this.online_licenses;
 
 		this.selected_dealer_hosts.forEach(x => {
 			x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
