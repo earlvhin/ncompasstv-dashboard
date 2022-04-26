@@ -216,9 +216,8 @@ export class DealersTableComponent implements OnInit {
 
 				},
 				error => console.log('Error retrieving dealers', error)
-			).add(
-				() => this.searching = false
-			);
+			)
+			.add(() => this.searching = false);
 
 	}
 
