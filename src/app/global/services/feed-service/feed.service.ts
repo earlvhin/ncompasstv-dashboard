@@ -1,9 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
-import { FEED_INFO, WEATHER_FEED_STYLE_DATA } from '../../models/api_feed_generator.model';
+import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
+
+import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
 	providedIn: 'root'
@@ -116,5 +118,35 @@ export class FeedService {
 		const params = encodeURIComponent(url);
 		const requestUrl = `${base}${endpoint}${params}`;
 		return this._http.post(requestUrl, null, this.httpOptions);
+	}
+
+	validateColorFieldValues(control: FormControl): { [s: string]: boolean } {
+
+		if (!control || !control.value) return;
+
+		const controlValue = (control.value as string).toLowerCase();
+		const hexPattern = new RegExp(/^#[0-9A-F]{6}$/i);
+
+		if (controlValue.includes('rgba')) {
+
+			const lastCharIndex = controlValue.length - 1;
+
+			if (controlValue.substring(lastCharIndex) !== ')') return { invalidColor: true };
+
+			const colorValuesEnclosed = controlValue.substring(5, lastCharIndex);
+			const colorValues = colorValuesEnclosed.split(',');
+
+			for (let i = 0; i < colorValues.length; i++) {
+	
+				if ((i !== colorValues.length - 1) && colorValues[i].length > 3) return { invalidColor: true };
+				if (i === colorValues.length - 1 && parseFloat(colorValues[i]) > 1) return { invalidColor: true };
+				
+			}
+
+			return null;
+		}
+
+		if (hexPattern.test(controlValue)) return null;
+		return { invalidColor: true };
 	}
 }

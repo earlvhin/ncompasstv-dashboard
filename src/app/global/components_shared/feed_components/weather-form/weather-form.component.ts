@@ -128,7 +128,7 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
 				const validators: any[] = [];
 
 				if (field.required) validators.push(Validators.required);
-				if (field.viewType === 'colorpicker') validators.push(Validators.pattern(/^#[0-9A-F]{6}$/i));
+				if (field.viewType === 'colorpicker') validators.push(this._feed.validateColorFieldValues.bind(this));
 
 				Object.assign(formConfig, {
 					[field.form_control_name]: [field.value ? field.value : null, validators]
