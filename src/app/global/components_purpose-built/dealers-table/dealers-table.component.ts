@@ -45,7 +45,7 @@ export class DealersTableComponent implements OnInit {
 		min_value: '',
 		max_value: '',
 		filter_column: '',
-		status: ''
+		status: 'A'
 	};
 
     filters: any = {
