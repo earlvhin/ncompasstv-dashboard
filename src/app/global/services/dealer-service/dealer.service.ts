@@ -93,6 +93,10 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealer_by_id}${id}`).map(data => data.dealer);
 	}
 	
+    get_all_dealer_values(page) {
+		return this.getRequest(`${this.getters.api_get_all_dealer_values}`+'?page='+`${page}`);
+	}
+    
     get_dealer_values_by_id(id: string) {
 		return this.getRequest(`${this.getters.api_get_dealer_values}${id}`);
 	}

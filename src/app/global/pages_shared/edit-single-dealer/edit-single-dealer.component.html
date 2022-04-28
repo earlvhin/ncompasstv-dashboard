@@ -11,7 +11,7 @@
 		</div>
 	</div>
 	<div *ngIf="other_users;else loading">
-		<form [formGroup]="dealer_form" (ngSubmit)="onSubmit()" class="text-left" >
+		<form [formGroup]="dealer_form" (ngSubmit)="onSubmit()" class="text-left" id="edit-dealer-form">
 			<div class="row mb-4">
 				<div *ngFor="let field of dealer_form_view" class="{{ field.col }} mb-3">
 					<mat-form-field class="full-width" *ngIf="field.type !== 'toggle'; else toggle">
@@ -29,6 +29,14 @@
 						</mat-icon>
 					</mat-form-field>
 				</div>
+                <div class="col-lg-4">
+                    <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
+                        <mat-label class="md-text">Start Date</mat-label>
+                        <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="startDatePicker" [max]="today" [(value)]="start_date" readonly>
+                        <mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+                        <mat-datepicker #startDatePicker></mat-datepicker>
+                    </mat-form-field>
+                </div>
 			</div>
 			<button mat-button mat-raised-button type="submit" color="primary" class="theme-btn mt-4 mr-2" [disabled]="!enable_update_form">
 				Update

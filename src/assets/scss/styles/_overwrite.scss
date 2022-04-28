@@ -265,3 +265,33 @@ breadcrumb {
         padding: 0px !important;
     }
 }
+
+#edit-dealer-form {
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        background: none;
+        padding: 0px;
+    }
+}
+
+#billing-controls {
+    .mat-radio-outer-circle, .mat-radio-inner-circle {
+        width: 15px;
+        height: 15px;
+    }
+}
+
+#billing-tab {
+    .custom-mat-tab {
+        .mat-tab-label {
+            &:before {
+                width: 160px;
+            }
+        }
+    }
+}
+
+#billingTable {
+    table {
+        margin-bottom: 3em;
+    }
+}

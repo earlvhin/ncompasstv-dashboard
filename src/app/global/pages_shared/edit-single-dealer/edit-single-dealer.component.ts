@@ -2,6 +2,7 @@ import { Component, OnInit, Inject, Output, EventEmitter, OnDestroy } from '@ang
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { forkJoin, Subject, Observable } from 'rxjs';
+import * as moment from 'moment';
 
 import { API_UPDATE_DEALER_PROFILE_BY_ADMIN } from '../../models/api_update-user-info.model';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -31,6 +32,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	is_set_to_active = false;
 	other_users: any;
 	is_admin = this.isAdmin;
+    start_date: any;
+    today: Date ;
 	
 	dealer_form_view = [
 		{
@@ -121,7 +124,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			label: 'Status',
 			control: 'status',
 			type: 'toggle',
-			col: 'col-lg-6 p-0 mt-20'
+			col: 'col-lg-2 p-0 mt-20'
 		}
 	];
 
@@ -172,6 +175,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		this.f.region.setValue(data.region);
 		this.f.state.setValue(data.state);
 		this.f.status.setValue(data.status);
+        if(data.startDate != null) {
+            this.onSelectStartDate(data.startDate, true);
+        }
+        
 
 		if (data.status !== 'A') this.is_set_to_active = false;
 		else this.is_set_to_active = true;
@@ -363,10 +370,23 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			city: ['', Validators.required],
 			region: ['', Validators.required],
 			state: ['', Validators.required],
-			status: [ '', Validators.required ]
+			status: [ '', Validators.required ],
+            start_date: ['', Validators.required ],
 		});
-
 	}
+
+    onSelectStartDate(e, hasValue?) {
+        if(hasValue) {
+            let value: any = moment(new Date(e));
+			if (!e || e.trim().length <= 0 || e.includes('--')) value = moment();
+            this.start_date = value;
+            this.dealer_form.get('start_date').setValidators(null); 
+            this.dealer_form.get('start_date').updateValueAndValidity();
+        } else {
+            this.start_date = e.format('YYYY-MM-DD');
+        }
+        
+    }
 
 	private mapDealerInfoChanges(): API_UPDATE_DEALER_PROFILE_BY_ADMIN {
 		return new API_UPDATE_DEALER_PROFILE_BY_ADMIN(
@@ -382,7 +402,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			this.f.region.value,
 			this.f.city.value,
 			this.f.state.value,
-			this._dealer_data.userId
+            this.start_date,
+			this._dealer_data.userId,
 		);
 	}
   

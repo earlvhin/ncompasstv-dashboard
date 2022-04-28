@@ -65,9 +65,10 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
     region: string;
     city: string;
     state: string;
+    startDate: Date;
     updatedBy: string;
 
-    constructor(userId: string, dealerId: string, contactPerson: string, playerCount: string, businessName: string, dealerIdAlias: string, email: string, contactNumber: string, address: string, region:string, city:string, state:string, updatedBy: string) {
+    constructor(userId: string, dealerId: string, contactPerson: string, playerCount: string, businessName: string, dealerIdAlias: string, email: string, contactNumber: string, address: string, region:string, city:string, state:string, startDate: Date, updatedBy: string) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.contactPerson = contactPerson;
@@ -80,6 +81,7 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
         this.region = region;
         this.city = city;
         this.state = state;
+        this.startDate = startDate;
         this.updatedBy = updatedBy;
     }
 }

@@ -26,6 +26,7 @@ export class DataTableComponent implements OnInit {
 
 	@Input() active_tab: string;
 	@Input() advertiser_delete: boolean;
+	@Input() billing_action: boolean;
     @Input() content_metrics: boolean;
 	@Input() ctrl_column_label: string;
 	@Input() ctrl_column: boolean;
@@ -98,7 +99,7 @@ export class DataTableComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-
+        console.log("TD", this.table_data)
 		this.table_data.map(
 			data => {
 				Object.keys(data).forEach(key => {
@@ -234,6 +235,19 @@ export class DataTableComponent implements OnInit {
 		)
 		
 	}
+
+    autoCharge(id) {
+		// this._content.get_content_by_advertiser_id(id).subscribe(
+		// 	data => {
+		// 		this.warningModal('warning', 'Delete Advertiser', data.message ? 'Are you sure you want to delete this advertiser?' : 'This advertiser has assigned contents. If you wish to continue, the contents of the advertiser will be unassigned.','', data.message ? 'advertiser_delete' : 'advertiser_delete_force', id)
+		// 	}
+		// )
+		console.log(id)
+	}
+
+    autoChargeToggle(e) {
+        console.log("AC TOggle", e)
+    }
 	
 	deleteScreen(id) {
 		this.warningModal('warning', 'Delete Screen', 'Are you sure you want to delete this screen?','','screen_delete', id)

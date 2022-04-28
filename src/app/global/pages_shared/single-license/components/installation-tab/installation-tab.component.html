@@ -21,7 +21,7 @@
                         <button mat-button class="theme-btn _info mb-2 mr-2 sm-text" (click)="saveTitle()">Save Title</button>
                     </div>
                 </div>
-                <div class="col-md-12 h-400 overflow-y-auto" *ngIf="titles; else spinner">
+                <div class="col-md-12 h-200 overflow-y-auto" *ngIf="titles; else spinner">
                     <h5 class="mb-3">Available Titles:</h5>
                     <ul class="col-lg-12" *ngIf="titles.length > 0; else no_title">
                         <div *ngFor="let title of titles" class="col-lg-12 flex p-2">

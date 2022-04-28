@@ -22,6 +22,7 @@ export const API_ENDPOINTS = {
 		api_get_content_summary: 'content/getalllimitedfields',
 		api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',
 		api_get_categories: 'category/getall',
+		api_get_all_dealer_values: 'dealer/getdealervalues',
 		api_get_dealer_total:'dealer/gettotal',
 		api_get_dealer_contract_files:'dealer/getcontractfiles?dealerid=',
 		api_get_dealer_territory_files:'dealer/getterritoryfiles?dealerid=',

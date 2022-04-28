@@ -207,6 +207,8 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { DealersViewComponent } from './pages_shared/single-billings/dealers-view/dealers-view.component';
+import { BillingsViewComponent } from './pages_shared/single-billings/billings-view/billings-view.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -413,6 +415,8 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		DealersViewComponent,
+		BillingsViewComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

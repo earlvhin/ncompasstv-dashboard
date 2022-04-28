@@ -1,5 +1,5 @@
 import { DatePipe, Location, TitleCasePipe } from '@angular/common'
-import { Component, OnInit, AfterViewInit, OnDestroy, QueryList, ViewChildren } from '@angular/core';
+import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef} from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
@@ -99,6 +99,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	paging_data_license: any;
 	paging_data_zone: any;
 	pi_updating: boolean = false;
+    reload_billing: boolean = false;
 	remote_update_disabled = false;
 	remote_reboot_disabled = false;
 	screenshot_disabled = false;
@@ -252,7 +253,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		private _params: ActivatedRoute,
 		private _role: RoleService,
 		private _titlecase: TitleCasePipe,
-		private _user: UserService
+		private _user: UserService,
+        private cd: ChangeDetectorRef
 	) { }
 
 	ngOnInit() {
@@ -1301,6 +1303,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	private get isZoneTabOnLoad(): boolean {
 		return this._location.path().includes('tab=3');
 	}
+	
+    private get isBillingTabOnLoad(): boolean {
+		return this._location.path().includes('tab=4');
+	}
 
 	private getInternetType(value: string): string {
 		if(value) {
@@ -1363,6 +1369,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		if (this.isZoneTabOnLoad) {
 			this.current_tab = 'zone';
+			return;
+		}
+		
+        if (this.isBillingTabOnLoad) {
+			this.current_tab = 'billing';
+            this.reload_billing = true;
+            this.cd.detectChanges();
 			return;
 		}
 

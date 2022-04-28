@@ -102,7 +102,7 @@
                     <mat-tab-group dynamicHeight (selectedTabChange)="onSelectTab($event)" [selectedIndex]="selected_index">
 						<!-- LICENSES TAB -->
                         <mat-tab label="Licenses">
-                            <div>
+                            <div *ngIf="current_tab === 'licenses'">
                                 <div *ngIf="!no_licenses; else no_data">
                                     <div *ngIf="!initial_load_license; else loader">
                                         <!-- BUTTONS ROW -->
@@ -352,49 +352,51 @@
 						
 						<!-- HOSTS TAB -->
                         <mat-tab label="Hosts">
-                            <div *ngIf="!initial_load; else loader">
-                                <div *ngIf="!no_hosts; else no_data">
-                                    <div class="row pt-3">
-                                        <div class="col-lg-8">
-                                            <button mat-button mat-raised-button
-                                            class="theme-btn pi-control sm-text _primary mr-2" 
-                                            (click)="exportTable('Hosts')"
-                                            [disabled]="workbook_generation"  
-                                            title="Export to CSV">
-                                                <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                                                <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
-                                            </button>
+                            <div *ngIf="current_tab === 'hosts'">
+                                <div *ngIf="!initial_load; else loader">
+                                    <div *ngIf="!no_hosts; else no_data">
+                                        <div class="row pt-3">
+                                            <div class="col-lg-8">
+                                                <button mat-button mat-raised-button
+                                                class="theme-btn pi-control sm-text _primary mr-2" 
+                                                (click)="exportTable('Hosts')"
+                                                [disabled]="workbook_generation"  
+                                                title="Export to CSV">
+                                                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                                                    <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                                                </button>
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <app-search-field
+                                                    *ngIf="!initial_load"
+                                                    [form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+                                                    [placeholder]="'Example: N-Compass'"
+                                                    [data_reference]="host_data"
+                                                    [primary_keyword]="'host_name'"
+                                                    [secondary_keyword]="'host_name'"
+                                                    (searched)="hostFilterData($event)"
+                                                    [api_search]="true"
+                                                ></app-search-field>
+                                            </div>
                                         </div>
-                                        <div class="col-lg-4">
-                                            <app-search-field
-												*ngIf="!initial_load"
-												[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
-												[placeholder]="'Example: N-Compass'"
-												[data_reference]="host_data"
-												[primary_keyword]="'host_name'"
-												[secondary_keyword]="'host_name'"
-												(searched)="hostFilterData($event)"
-												[api_search]="true"
-                                            ></app-search-field>
-                                        </div>
-                                    </div>
-                                    <div class="row" *ngIf="!initial_load">
-                                        <div class="col-lg-12">
-                                            <ng-container *ngIf="!searching; else loader">
-                                                <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
-                                                    <app-data-table
-                                                    [table_columns]="host_table_col"
-                                                    [table_data]="host_filtered_data"
-                                                    [new_table]="true"
-                                                    [paging_details]="paging_data"
-                                                    (page_triggered)="getDealerHost($event)"
-                                                    (to_sort_column)="getHostsColumnsAndOrder($event)"
-                                                    [active_tab]="sort_column_hosts"
-                                                    [sort_column]="sort_column_hosts"
-                                                    [sort_order]="sort_order_hosts">
-                                                    </app-data-table>
-                                                </mat-card>
-                                            </ng-container>
+                                        <div class="row" *ngIf="!initial_load">
+                                            <div class="col-lg-12">
+                                                <ng-container *ngIf="!searching; else loader">
+                                                    <mat-card *ngIf="host_filtered_data.length > 0; else no_data">
+                                                        <app-data-table
+                                                        [table_columns]="host_table_col"
+                                                        [table_data]="host_filtered_data"
+                                                        [new_table]="true"
+                                                        [paging_details]="paging_data"
+                                                        (page_triggered)="getDealerHost($event)"
+                                                        (to_sort_column)="getHostsColumnsAndOrder($event)"
+                                                        [active_tab]="sort_column_hosts"
+                                                        [sort_column]="sort_column_hosts"
+                                                        [sort_order]="sort_order_hosts">
+                                                        </app-data-table>
+                                                    </mat-card>
+                                                </ng-container>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -403,43 +405,45 @@
 
 						<!-- ADVERTISERS TAB -->
                         <mat-tab label="Advertisers">
-                            <div *ngIf="!initial_load_advertiser; else loader">
-                                <div *ngIf="!no_advertisers; else no_data">
-                                    <div class="row pt-2">
-                                        <div class="col-lg-8">
+                            <div *ngIf="current_tab === 'advertisers'">
+                                <div *ngIf="!initial_load_advertiser; else loader">
+                                    <div *ngIf="!no_advertisers; else no_data">
+                                        <div class="row pt-2">
+                                            <div class="col-lg-8">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <app-search-field
+                                                    *ngIf="!initial_load_advertiser"
+                                                    [form_title]="'Search Advertiser Name or #Tag'"
+                                                    [placeholder]="'Example: N-Compass'"
+                                                    [data_reference]="advertiser_data"
+                                                    [primary_keyword]="'name'"
+                                                    [secondary_keyword]="'name'"
+                                                    (searched)="advertiserFilterData($event)"
+                                                    [api_search]="true"
+                                                ></app-search-field>
+                                            </div>
                                         </div>
-                                        <div class="col-lg-4">
-                                            <app-search-field
-												*ngIf="!initial_load_advertiser"
-												[form_title]="'Search Advertiser Name or #Tag'"
-												[placeholder]="'Example: N-Compass'"
-												[data_reference]="advertiser_data"
-												[primary_keyword]="'name'"
-												[secondary_keyword]="'name'"
-												(searched)="advertiserFilterData($event)"
-												[api_search]="true"
-                                            ></app-search-field>
-                                        </div>
-                                    </div>
-                                    <div class="row" *ngIf="!initial_load_advertiser">
-                                        <div class="col-lg-12">
-                                            <ng-container *ngIf="!searching_advertiser; else loader">
-                                                <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
-                                                    <app-data-table 
-														[table_columns]="adv_table_col" 
-														[table_data]="advertiser_filtered_data"
-														[new_table]="true"
-														[paging_details]="paging_data_advertiser"
-														(page_triggered)="getDealerAdvertiser($event)"
-														[advertiser_delete]="true"
-														(update_info)="reloadAdvertiser()"
-														(to_sort_column)="getAdvertisersColumnsAndOrder($event)"
-														[active_tab]="sort_column_advertisers"
-														[sort_column]="sort_column_advertisers"
-														[sort_order]="sort_order_advertisers">
-                                                    </app-data-table>
-                                                </mat-card>
-                                            </ng-container>
+                                        <div class="row" *ngIf="!initial_load_advertiser">
+                                            <div class="col-lg-12">
+                                                <ng-container *ngIf="!searching_advertiser; else loader">
+                                                    <mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
+                                                        <app-data-table 
+                                                            [table_columns]="adv_table_col" 
+                                                            [table_data]="advertiser_filtered_data"
+                                                            [new_table]="true"
+                                                            [paging_details]="paging_data_advertiser"
+                                                            (page_triggered)="getDealerAdvertiser($event)"
+                                                            [advertiser_delete]="true"
+                                                            (update_info)="reloadAdvertiser()"
+                                                            (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
+                                                            [active_tab]="sort_column_advertisers"
+                                                            [sort_column]="sort_column_advertisers"
+                                                            [sort_order]="sort_order_advertisers">
+                                                        </app-data-table>
+                                                    </mat-card>
+                                                </ng-container>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -448,50 +452,54 @@
 
                         <!-- ZONE TAB -->
                         <mat-tab label="Zone">
-                            <div *ngIf="!initial_load_zone; else loader">
-                                <div *ngIf="!no_license_zone; else no_data">
-                                    <div class="row pt-2">
-                                        <div class="col-lg-8">
+                            <div *ngIf="current_tab === 'zone'">
+                                <div *ngIf="!initial_load_zone; else loader">
+                                    <div *ngIf="!no_license_zone; else no_data">
+                                        <div class="row pt-2">
+                                            <div class="col-lg-8">
+                                            </div>
+                                            <div class="col-lg-4">
+                                                <app-search-field 
+                                                    *ngIf="!initial_load_zone"
+                                                    [form_title]="'Search License ID or Alias'"
+                                                    [placeholder]="'Example: License # 9'" 
+                                                    [data_reference]="license_zone_data" 
+                                                    [primary_keyword]="'licenseKey'"
+                                                    [secondary_keyword]="'licenseAlias'" 
+                                                    (searched)="licenseZoneFilterData($event)" 
+                                                    [api_search]="true">
+                                                </app-search-field>
+                                            </div>
                                         </div>
-                                        <div class="col-lg-4">
-                                            <app-search-field 
-                                                *ngIf="!initial_load_zone"
-                                                [form_title]="'Search License ID or Alias'"
-                                                [placeholder]="'Example: License # 9'" 
-                                                [data_reference]="license_zone_data" 
-                                                [primary_keyword]="'licenseKey'"
-                                                [secondary_keyword]="'licenseAlias'" 
-                                                (searched)="licenseZoneFilterData($event)" 
-                                                [api_search]="true">
-                                            </app-search-field>
-                                        </div>
-                                    </div>
-                                    <div class="row" *ngIf="!initial_load_zone">
-                                        <div class="col-lg-12">
-                                            <ng-container *ngIf="!searching_license_zone; else loader">
-                                                <mat-card *ngIf="license_zone_filtered_data.length > 0;else no_data">
-                                                    <app-data-table 
-                                                        [table_data]="license_zone_filtered_data" 
-                                                        [table_columns]="license_zone_table_col"
-                                                        [new_table]="true" 
-                                                        [paging_details]="paging_data_zone"             
-                                                        (page_triggered)="getDealerLicenseZone($event)">
-                                                    </app-data-table>
-                                                </mat-card>
-                                            </ng-container>
+                                        <div class="row" *ngIf="!initial_load_zone">
+                                            <div class="col-lg-12">
+                                                <ng-container *ngIf="!searching_license_zone; else loader">
+                                                    <mat-card *ngIf="license_zone_filtered_data.length > 0;else no_data">
+                                                        <app-data-table 
+                                                            [table_data]="license_zone_filtered_data" 
+                                                            [table_columns]="license_zone_table_col"
+                                                            [new_table]="true" 
+                                                            [paging_details]="paging_data_zone"             
+                                                            (page_triggered)="getDealerLicenseZone($event)">
+                                                        </app-data-table>
+                                                    </mat-card>
+                                                </ng-container>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
+                            
                         </mat-tab>
 
                         <mat-tab label="Billing">
-                            <div class="col-lg-12 p-0">
+                            <div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
                                 <div class="theme-container">
                                     <div class="row">
                                         <div class="col-lg-12">
                                             <app-single-billings
-                                            [dealer]="dealer_id">
+                                            [dealer]="dealer_id"
+                                            [reload]="reload_billing">
                                             </app-single-billings>
                                         </div>
                                     </div>

@@ -35,7 +35,7 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics" class="text-right" class="p-3">
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
@@ -206,8 +206,8 @@
 				<td class="p-3 control-toggle text-center" *ngIf="ctrl_column">
 					<mat-slide-toggle 
 						*ngIf="ctrl_toggle"
-						(change)="controlToggle(data.license_key.value, $event)"
-						[checked]="data.is_activated.value == 1 ? 'checked' : 'false'"
+						(change)="data.is_activated ? controlToggle(data.license_key.value, $event) : autoChargeToggle($event) "
+						[checked]="data.is_activated ? (data.is_activated.value === 1 ? 'checked' : 'false') : (data.autocharge.value === 1 ? 'checked' : 'false')"
 						[disabled]="is_view_only">
 					</mat-slide-toggle>
 				</td>
@@ -235,6 +235,11 @@
 
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
+				</td>
+				
+                <td class="p-3 control-toggle" *ngIf="billing_action">
+					<i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
+					<!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="screen_delete">
