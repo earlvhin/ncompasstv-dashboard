@@ -1,8 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DealerService } from '../../../services/dealer-service/dealer.service';
 import { Subscription, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { AuthService } from 'src/app/global/services';
+import { AuthService, DealerService } from 'src/app/global/services';
 import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model';
 
 @Component({

@@ -1,29 +1,11 @@
-<div class="col-lg-12 p-0 pt-5" id="billing-tab">
-    <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event);">
-        <mat-tab label="Dealer View">
-            <div class="col-lg-12 p-0" *ngIf="current_tab === 'Dealer'">
-                <div class="theme-container">
-                    <div class="row">
-                        <div class="col-lg-12">
-                            <app-dealers-view
-                            [dealer]="dealer"
-                            [reload]="reload_billing"></app-dealers-view>
-                        </div>
-                    </div>
-                </div>
+<div class="col-lg-12 p-0" id="billing-tab">
+    <div class="theme-container">
+        <div class="row">
+            <div class="col-lg-12">
+                <app-dealers-view
+                    [dealer]="dealer"
+                    [reload]="reload_billing"></app-dealers-view>
             </div>
-        </mat-tab>
-        <mat-tab label="Bills Mngt" *ngIf="!isdealer">
-            <div class="col-lg-12" *ngIf="current_tab === 'Bills'">
-                <div class="theme-container">
-                    <div class="row">
-                        <div class="col-lg-12 bg-white">
-                            <app-billings-view class="full-width"
-                            ></app-billings-view>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </mat-tab>
-    </mat-tab-group>
+        </div>
+    </div>
 </div>

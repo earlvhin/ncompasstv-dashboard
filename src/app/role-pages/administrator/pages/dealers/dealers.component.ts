@@ -17,6 +17,7 @@ import { API_EXPORT_DEALER } from 'src/app/global/models';
 })
 
 export class DealersComponent implements OnInit, OnDestroy {
+    current_tab: string = 'Dealer';
 	title: string = "Dealers";
 	dealer_stats: any;
 	dealers_to_export: API_EXPORT_DEALER[] = [];
@@ -187,5 +188,18 @@ export class DealersComponent implements OnInit, OnDestroy {
 		item.monthAsDealer = `${item.monthAsDealer} month(s)`;
 		item.tagsToString = item.tags.join(',');
 	}
+
+    tabSelected(event: { index: number }): void {
+        console.log(event)
+        switch (event.index) {
+            case 0:
+                this.current_tab = 'Dealer';
+                break;
+            case 1:
+                this.current_tab = 'Bills';
+                break;
+            default:
+        }
+    }
 
 }

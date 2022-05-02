@@ -53,6 +53,7 @@ import { DealerHostTabComponent } from './components_purpose-built/single-dealer
 import { DealerInvoicesTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-invoices-tab/dealer-invoices-tab.component';
 import { DealerMapTabComponent } from './components_purpose-built/single-dealer-tabs/dealer-map-tab/dealer-map-tab.component';
 import { DealerViewComponent } from './components_shared/locator_components/dealer-view/dealer-view.component';
+import { DealersViewComponent } from './pages_shared/single-billings/dealers-view/dealers-view.component';
 import { DealersTableComponent } from './components_purpose-built/dealers-table/dealers-table.component';
 import { DealerSettingComponent } from './pages_shared/profile-setting/dealer-setting/dealer-setting.component';
 import { DefaultDateFormatDirective } from './directives/default-date-format/default-date-format.directive';
@@ -207,8 +208,6 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { DealersViewComponent } from './pages_shared/single-billings/dealers-view/dealers-view.component';
-import { BillingsViewComponent } from './pages_shared/single-billings/billings-view/billings-view.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -257,6 +256,7 @@ const ngComponents = [
     DealerSettingComponent,
 	DealersTableComponent,
     DealerViewComponent,
+    DealersViewComponent,
 	DeleteDealerDialogComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
@@ -415,8 +415,6 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
-		DealersViewComponent,
-		BillingsViewComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

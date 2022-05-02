@@ -83,6 +83,33 @@
 			</div>
         </ng-template>
         <hr class="my-4">
-        <app-dealers-table [update_info]="update_info"></app-dealers-table>
+
+        <div class="custom-mat-tab">
+            <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event);">
+                <mat-tab label="Dealers View">
+                    <div class="col-lg-12 p-0" *ngIf="current_tab === 'Dealer'">
+                        <div class="theme-container">
+                            <div class="row">
+                                <div class="col-lg-12 mt-4">
+                                     <app-dealers-table [update_info]="update_info"></app-dealers-table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Billings">
+                    <div class="col-lg-12" *ngIf="current_tab === 'Bills'">
+                        <div class="theme-container">
+                            <div class="row">
+                                <div class="col-lg-12 bg-white mt-4">
+                                    <app-billings-view class="full-width"
+                                    ></app-billings-view>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
     </div>
 </div>

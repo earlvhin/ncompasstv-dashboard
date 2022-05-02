@@ -40,6 +40,7 @@ import { UpdateComponent } from './pages/update/update.component';
 import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.component';
 import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single-host.module';
 import { InstallationsModule } from './pages/installations/installations.module';
+import { BillingsViewComponent } from './pages/dealers/billings-view/billings-view.component';
 
 @NgModule({
 	declarations: [
@@ -60,6 +61,7 @@ import { InstallationsModule } from './pages/installations/installations.module'
 		UsersComponent,
 		UpdateComponent,
 		TagsTabComponent,
+		BillingsViewComponent,
 	],
 	imports: [
 		CommonModule,
