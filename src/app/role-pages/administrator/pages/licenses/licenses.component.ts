@@ -75,7 +75,7 @@ export class LicensesComponent implements OnInit {
 
     filters: any = {
         admin_licenses: false,
-        isactivated: "",
+        isactivated: 1,
         assigned: "",
         online: "",
         pending: "",
@@ -553,7 +553,7 @@ export class LicensesComponent implements OnInit {
         this.filters = {
             admin_licenses: false,
             assigned: "",
-            isactivated: "",
+            isactivated: 1,
             online: "",
             pending: "",
             activated: "",
@@ -924,6 +924,7 @@ export class LicensesComponent implements OnInit {
 					{ value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--', link: null, editable: false, label: 'Install Date', hidden: false, id: l.licenseId },
 					{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 					{ value: l.piStatus, link: null , editable: false, hidden: true },
+                    { value: l.isActivated, link: null , editable: false, hidden: true },
 				);
 				return table;
 			}

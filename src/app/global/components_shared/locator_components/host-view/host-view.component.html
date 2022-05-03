@@ -157,7 +157,7 @@
 												<div *ngIf="host_licenses.length > 0">
 													<div *ngFor="let license of host_licenses">
 														<span class="fas fa-circle mr-1 xsm-text"
-															[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
+															[ngClass]="(license.isActivated === 1 ? (license.piStatus === 1? 'text-primary' : 'text-danger ') : 'text-gray')" title="{{(license.isActivated ===1 ? (license.piStatus === 1 ? 'Online' : 'Offline') : 'Disabled')}}"></span>
 														<a class="sm-text" [routerLink]="getLink('licenses', license.licenseId)" target="_blank">
 															{{ (license.alias && license.alias.length > 0) ? license.alias :
 															license.licenseKey

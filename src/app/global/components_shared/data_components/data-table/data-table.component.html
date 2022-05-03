@@ -56,7 +56,7 @@
 					<span *ngIf="!data[d].hidden" class="flex" [style.color]="data[d].color">
 
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
-							<i class="fas fa-circle mr-2" [ngClass]="(data.pi_status.value == 1) ? 'text-primary':'text-danger'" title="{{data.pi_status.value == 1 ? 'Online':'Offline'}}"></i>
+							<i class="fas fa-circle mr-2" [ngClass]="(data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'text-primary':'text-danger') : 'text-gray')" title="{{(data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'Online':'Offline') : 'Disabled')}}"></i>
 						</span>		
 
 						<ng-container *ngIf="!data[d].isImage; else isImage;">
@@ -236,7 +236,7 @@
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
 				</td>
-				
+
                 <td class="p-3 control-toggle" *ngIf="billing_action">
 					<i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
 					<!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->

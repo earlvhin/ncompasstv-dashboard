@@ -131,6 +131,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 					offline_status: { value: license.timeOut ? this._date.transform(license.timeOut): '--', link: null , editable: false, hidden: false },
 					install_date: { value: license.installDate ? this._date.transform(license.installDate, 'MMM dd, y') : '--', link: null, editable: true, label: 'Install Date', hidden: false, id: license.licenseId },
 					pi_status: { value: license.piStatus, link: null , editable: false, hidden: true },
+					is_activated: { value: license.isActivated, link: null , editable: false, hidden: true },
 				}
 
 			}

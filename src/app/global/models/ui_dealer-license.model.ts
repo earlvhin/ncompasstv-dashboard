@@ -95,6 +95,7 @@ export class UI_LICENSE {
 	date_installed: object;
     date_created: object;
 	pi_status: object;
+    is_activated?: object;
 
     constructor(
 		index:object, 
@@ -116,7 +117,8 @@ export class UI_LICENSE {
 		password: object, 
 		date_installed: object, 
 		date_created: object, 
-		pi_status: object
+		pi_status: object,
+        is_activated?: object,
 	) {
 		this.index = index;
         this.license_id = id;
@@ -138,6 +140,7 @@ export class UI_LICENSE {
 		this.date_installed = date_installed;
         this.date_created = date_created;
         this.pi_status = pi_status;
+        this.is_activated = is_activated;
     }
 }
 

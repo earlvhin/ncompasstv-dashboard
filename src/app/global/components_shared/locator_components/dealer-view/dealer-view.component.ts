@@ -206,23 +206,27 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 						return;
 					}
 
-					const licenses: API_LICENSE_PROPS[] = response;
+					// const licenses: API_LICENSE_PROPS[] = response;
 					this.host_licenses = response;
 
+                    this.host_licenses = this.host_licenses.filter(license => license.isActivated === 1);
+
+                    console.log("this.host_licenses", this.host_licenses)
 					if(this.filterStatus !== null){
 						this.host_licenses.filter(x => x.piStatus === this.filterStatus);
 					}
 
-					licenses.forEach(
+
+					this.host_licenses.forEach(
 						license => {
 							if (license.piStatus == 1) online += 1;
 						}
 					);
 					this.host_online_licenses = online;
-					this.host_offline_licenses = licenses.length - online;
-					statistics.basis = licenses.length;
+					this.host_offline_licenses = this.host_licenses.length - online;
+					statistics.basis = this.host_licenses.length;
 					statistics.good_value = online;
-					statistics.bad_value = licenses.length - online;
+					statistics.bad_value = this.host_licenses.length - online;
 					this.license_card = statistics;
 
 				},
@@ -490,7 +494,9 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 				dealer.licenses.map(
 					license => {
 						if (!license.hostId) return;
-						this.selected_licenses.push(license);
+                        if(license.isActivated === 1) {
+                            this.selected_licenses.push(license);
+                        }
 					}
 				);
 
@@ -515,13 +521,15 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
 
 		this.selected_dealer_hosts.forEach(x => {
-			x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
+        	x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
 			x.latitude ? x.latitude = parseFloat(x.latitude).toFixed(5) : "-";
 			x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
 			x.licenses = [];
 			this.selected_licenses.forEach((license: API_LICENSE_PROPS) => {
 				if(license.hostId === x.hostId){
-					x.licenses.push(license);
+                    if(license.isActivated === 1) {
+                        x.licenses.push(license);
+                    }
 				}
 			});
 		});

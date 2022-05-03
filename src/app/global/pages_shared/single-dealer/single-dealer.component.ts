@@ -1303,7 +1303,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	private get isZoneTabOnLoad(): boolean {
 		return this._location.path().includes('tab=3');
 	}
-	
+
     private get isBillingTabOnLoad(): boolean {
 		return this._location.path().includes('tab=4');
 	}
@@ -1371,7 +1371,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.current_tab = 'zone';
 			return;
 		}
-		
+
         if (this.isBillingTabOnLoad) {
 			this.current_tab = 'billing';
             this.reload_billing = true;
@@ -1483,7 +1483,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
             isactivated: "",
             assigned: "",
             online: "",
-            inactive: "",
+            pending: "",
             activated: "",
             zone:"",
             status:"",
