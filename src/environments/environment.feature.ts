@@ -4,7 +4,7 @@ export const environment = {
 	production: true,
 	base_uri: 'https://devapi.n-compass.online/api/',
 	base_uri_old: 'https://devapi.n-compass.online/api/',
-	socket_server: 'https://nctvsocket.n-compass.online',
+	socket_server: 'https://devsocket.n-compass.online',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
 	auth: API_ENDPOINTS.auth,
