@@ -817,9 +817,9 @@
 							<mat-card class="p-4">
 								<h4 class="mb-4">Additional Settings</h4>
 
-								<form *ngIf="license_data && license_settings_form" [formGroup]="license_settings_form" (ngSubmit)="saveLicenseSettings()">
+								<form *ngIf="license_data && additional_license_settings_form" [formGroup]="additional_license_settings_form" (ngSubmit)="saveAdditionalLicenseSettings()">
 									<div class="row align-items-center">
-										<div *ngFor="let control of license_settings_form_fields" class="col-lg-6">
+										<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
 											
 
 											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes;">
@@ -834,18 +834,18 @@
 
 											<ng-template #otherFieldTypes>
 
-												<!-- <ng-container *ngIf="control.type === 'time'">
+												<ng-container *ngIf="control.type === 'time'">
 
 													<div class="d-flex align-items-center justify-content-around">
 														<span>Reboot Time:</span>
-														<ngb-timepicker 
-															[formControlName]="control.form_control_name" 
+														<ngb-timepicker
+															[formControlName]="control.form_control_name"
 															[meridian]="true" 
 															[size]="'small'">
 														</ngb-timepicker>
 													</div>
 
-												</ng-container> -->
+												</ng-container>
 
 											</ng-template>
 

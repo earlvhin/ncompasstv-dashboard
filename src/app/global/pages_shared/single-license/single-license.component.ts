@@ -1,6 +1,6 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
-import { AbstractControl, FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatSlideToggleChange } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subscription, Observable, Subject, forkJoin } from 'rxjs';
@@ -14,11 +14,11 @@ import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 
-import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from '../../../global/services';
+import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
 
 import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_SINGLE_SCREEN, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, 
 	API_SCREEN_TEMPLATE_ZONE, TAG, UI_CONTENT, UI_CONTENT_PER_ZONE, UI_OPERATION_DAYS, UI_ROLE_DEFINITION, UI_SCREEN_ZONE_PLAYLIST, 
-	UI_ZONE_PLAYLIST, UI_SCREEN_LICENSE, UI_SINGLE_SCREEN  } from 'src/app/global/models';
+	UI_ZONE_PLAYLIST, UI_SINGLE_SCREEN  } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-license',
@@ -29,6 +29,9 @@ import { ACTIVITY_CODES, API_CONTENT, API_HOST, API_LICENSE_PROPS, API_TEMPLATE,
 
 export class SingleLicenseComponent implements OnInit, OnDestroy {
 	activities: any;
+	additional_license_settings_form: FormGroup;
+	additional_license_settings_form_fields = this._additionalLicenseSettingsFormFields;
+	additional_license_settings_value: any;
 	anydesk_id: string;
 	anydesk_restarting: boolean = false;
 	apps: any;
@@ -59,6 +62,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	filters: any;
 	has_background_zone = false;
 	has_playlist = false;
+	has_unsaved_additional_settings = false;
 	host: API_HOST;
 	host_notes = '';
 	host_route: string;
@@ -71,7 +75,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	license_data: API_LICENSE_PROPS;
 	license_id: string;
 	license_key: string;
-	license_settings_form: FormGroup;
+	license_reboot_time: string;
 	minimap_width = '400px';
 	no_screen_assigned = false;
 	number_of_contents: any;
@@ -107,18 +111,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	update_btn: string = 'Content Update';
 	zone_order: number = 0;
 	zone_playlists: UI_ZONE_PLAYLIST[];
-
 	destroy_daily_charts: boolean = false;
 	destroy_monthly_charts: boolean = false;
-
 	_socket: any;
 	is_admin: boolean = false;
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
-
-	license_settings_form_fields = this._licenseSettingsFormFields;
-
 	saving_license_settings: boolean = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -224,21 +223,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	disableScreenshot(e) {
+	disableScreenshot(e: { checked: boolean }) {
 		this._license.set_screenshot_status(
 			{
 				licenseId: this.license_id,
 				screenshotSettings: e.checked ? 1 : 0
 			}
 		).subscribe(
-			data => {
+			() => {
 				alert(`Screenshot ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
-				console.log(data);
 			}
-		)
+		);
 	}
 
-	disableSpeedtest(e) {
+	disableSpeedtest(e: { checked: boolean }) {
 		this._license.set_speedtest_status(
 			{
 				licenseId: this.license_id,
@@ -249,10 +247,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				alert(`Speedtest ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
 				console.log(data);
 			}
-		)
+		);
 	}
 
-	disableResource(e) {
+	disableResource(e: { checked: boolean }) {
 		this._license.set_resource_status(
 			{
 				licenseId: this.license_id,
@@ -263,10 +261,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				alert(`Resource Log Sending ${e.checked ? 'Enabled' : 'Disabled'} for this license`);
 				console.log(data);
 			}
-		)
+		);
 	}
 
-	turnOffDisplay(e) {
+	turnOffDisplay(e: { checked: boolean }) {
 		this._license.set_tvdisplay_status(
 			{
 				licenseId: this.license_id,
@@ -277,7 +275,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				alert(`TV Display ${e.checked ? 'ON' : 'OFF'} for this license`);
 				console.log(data);
 			}
-		)
+		);
 	}
 
 	dismissPopup(): void {
@@ -375,7 +373,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.setPageData(data);
 					this.getScreenById(data.screen.screenId, this.license_id);
 					this.getFormValue();
-					this.prepareLicenseSettingsForm();
+					this.prepareLicenseSettingsForm(data.license);
 				},
 				error => console.log('Error retrieving license by ID', error)
 			)
@@ -540,16 +538,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		dialog.componentInstance.page = 'single-license';
 		
 	}
-
-	openConfirmationModal(status: string, message: string, data: any): void {
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data }
-		});
-
-		dialogRef.afterClosed().subscribe(() => this.ngOnInit());
-	}
 	
 	onSelectBackgroundZone(event: any): void {
 		event.preventDefault();
@@ -584,18 +572,60 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._license.update_notification_settings(body).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this.openConfirmationModal('success', 'Success!', `${this._titleCasePipe.transform(type)} setting updated`);
+					this.showSuccessModal('Success!', `${this._titleCasePipe.transform(type)} setting updated`);
 				},
 				error => console.log('Error updating notification setting', error)
 			);
 
 	}
 
-	saveLicenseSettings(): void {
+	prepareLicenseSettingsForm(license: API_LICENSE_PROPS) {
+		let form_group_obj = {};
+
+		/** Loop through form fields object and prepare for group */
+		this._additionalLicenseSettingsFormFields.map(
+			field => {
+
+				let fieldValue: any = field.value;
+
+				if (field.form_control_name === 'rebootTime' && license.rebootTime) {
+
+					const rebootTime = license.rebootTime.split(':');
+					const hour = parseInt(rebootTime[0]);
+					const minute = parseInt(rebootTime[1]);
+					fieldValue = { hour, minute };
+
+				}
+
+				Object.assign(form_group_obj, {
+					[field.form_control_name]: [fieldValue, field.required ? Validators.required : null]
+				})
+			}
+		);
+
+		this.additional_license_settings_form = this._form.group(form_group_obj);
+		this.additional_license_settings_value = this.additional_license_settings_form.value;
+		this.subscribeToAdditionalSettingsFormChanges();
+
+	}
+
+	async saveAdditionalLicenseSettings(): Promise<void> {
+
+		const dialogData = { 
+			status: 'warning',
+			message: 'Update Player Settings',
+			data: 'Saving will RESTART the player. Proceed?',
+			return_msg: 'Settings saved! Restarting player.',
+		};
+
+		const userResponse: boolean = await this.showWarningModal(dialogData.message, dialogData.data, dialogData.return_msg);
+
+		if (!userResponse) return;
 
 		this.saving_license_settings = true;
 		let requests = [];
-		const controls = this.license_settings_form.controls;
+		let requestNames: string[] = [];
+		const controls = this.additional_license_settings_form.controls;
 
 		Object.keys(controls).forEach(
 			key => {
@@ -605,39 +635,48 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				if (control.invalid) return;
 
 				if (key === 'bootDelay') {
-					const bootDelayBody = { licenseId: this.license_id, bootDelay: this.license_settings_form.controls['bootDelay'].value };
+					const bootDelayBody = { licenseId: this.license_id, bootDelay: this.additional_license_settings_form.controls['bootDelay'].value };
 					requests.push(this._license.update_license_boot_delay(bootDelayBody).pipe(takeUntil(this._unsubscribe)))
 				};
 
 				if (key === 'rebootTime') {
 					const rebootTime = control.value as { hour: number, minute: number, second: 0 };
+
+					if (isNaN(rebootTime.hour) || isNaN(rebootTime.minute)) return;
+
 					const { hour, minute } = rebootTime;
-					const rebootTimeBody = { time: `${hour}:${minute}`, licenseId: this.license_id };
+					const rebootTimeBody = { rebootTime: `${hour}:${minute}`, licenseId: this.license_id };
 					requests.push(this._license.update_license_reboot_time(rebootTimeBody).pipe(takeUntil(this._unsubscribe)));
 				}
+
+				requestNames.push(key);
 
 			}
 		);
 
 		if (requests.length <= 0) {
 			this.saving_license_settings = false;
-			return; 
+			return;
 		}
 
 		forkJoin(requests).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				([ bootDelayResponse, rebootTimeResponse ]) => {
+				() => {
 
-					if (bootDelayResponse) alert('Boot delay has been saved for this license');
-
-					if (rebootTimeResponse) {
-						console.log('sucessfully updated license reboot time', rebootTimeResponse);
+					if (requestNames.includes('rebootTime')) {
+						this._socket.emit('D_player_restart', this.license_id);
+						this.pi_status = false;
+						this.pi_updating = true;
+						this.update_btn = 'Player Restarting';
+						this.saveActivityLog(ACTIVITY_CODES.reboot_player);
 					}
 
+					this.showSuccessModal('Success!', 'Settings updated');
 				},
 				error => console.log('Error updating additional license settings', error)
 			)
 			.add(() => this.saving_license_settings = false);
+
 	}
 
 	setPopupBackground(): string {
@@ -649,35 +688,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	saveActivityLog(activity_code: string) {
+
 		const data = {
 			licenseId: this.license_id,
 			activityCode: activity_code,
 			initiatedBy: this._auth.current_user_value.user_id
-		}
+		};
 
 		this._license.save_activity(data).subscribe(
-			data => {
+			() => {
 				this.getActivityOfLicense(this.license_id);
 			},
-			error => {
-				console.log(error)
-			}
+			error => console.log('Error saving activity log', error)
 		)
-	}
-
-	prepareLicenseSettingsForm() {
-		let form_group_obj = {};
-
-		/** Loop through form fields object and prepare for group */
-		this._licenseSettingsFormFields.map(
-			i => {
-				return Object.assign(form_group_obj, {
-					[i.form_control_name]: [this.license_data.bootDelay ? this.license_data.bootDelay : null, i.required ? Validators.required : null]
-				})
-			}
-		);
-
-		this.license_settings_form = this._form.group(form_group_obj);
 	}
 
 	splitKey(key) {
@@ -756,7 +779,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(
 			this._license.update_alias(filter).subscribe(
 				() => {
-					this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully');
+					this.showSuccessModal('Success!', 'License Alias changed succesfully');
 					this.activateEdit(false);
 				},
 				error => console.log('Error updating license alias', error)
@@ -950,12 +973,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	socket_piPlayerStatus(): void {
 		this._socket.emit('D_is_electron_running', this.license_id);
+
 		this._socket.on('SS_electron_is_running', (data) => {
+
 			if (this.license_id === data) {
 				this.pi_status = true;
 				this.player_status = true;
-				console.log('ONLINE!')
+				console.log('Pi Player is ONLINE')
 			}
+
 		});
 	}
 
@@ -1292,28 +1318,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private renameWebmThumb(source: string) {
-		return `${source.substr(0, source.lastIndexOf(".") + 1)}jpg`;
-	}
-
-	private mapScreenLicenseToUI(data): UI_SCREEN_LICENSE[] {
-		let counter = 1;
-		return data.map(
-			(l: API_LICENSE_PROPS) => {
-				return new UI_SCREEN_LICENSE(
-					l.licenseId,
-					counter++,
-					l.licenseKey,
-					l.alias,
-					l.internetType,
-					l.internetSpeed,
-					l.isActivated,
-					l.isRegistered
-				)
-			}
-		);
-	}
-
 	private mapScreenToUI(data: API_SINGLE_SCREEN): UI_SINGLE_SCREEN {
 		return new UI_SINGLE_SCREEN(
 			data.screen.screenId,
@@ -1380,6 +1384,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			data.description,
 			data.order
 		);
+	}
+
+	private renameWebmThumb(source: string) {
+		return `${source.substr(0, source.lastIndexOf(".") + 1)}jpg`;
 	}
 
 	private setBusinessHours(data: UI_OPERATION_DAYS[]): { day: string, periods: string[], selected: boolean }[] {
@@ -1538,6 +1546,64 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			panelClass: 'information-modal',
 			autoFocus: false		
 		});
+	}
+
+	private showSuccessModal(message: string, data: any, return_msg = '') {
+
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status: 'success', message, data, return_msg }
+		});
+
+		return dialogRef.afterClosed().subscribe(() => this.ngOnInit());
+
+	}
+
+	private async showWarningModal(message: string, data: any, return_msg = ''): Promise<boolean> {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status: 'warning', message, data, return_msg }
+		})
+
+		return await dialog.afterClosed().toPromise();
+
+	}
+
+	private subscribeToAdditionalSettingsFormChanges() {
+		this.additional_license_settings_form.valueChanges.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { bootDelay: number | string, rebootTime: { hour: number, minute: number, second?: number }}) => {
+
+					let { bootDelay, rebootTime } = response;
+					const current: { bootDelay: number | string, rebootTime: { hour: number, minute: number, second?: number } } = this.additional_license_settings_value;
+
+					if (!rebootTime) return;
+
+					if (typeof bootDelay === 'string') bootDelay = parseInt(bootDelay);
+
+					if (current.bootDelay !== bootDelay) {
+						this.has_unsaved_additional_settings = true;
+						return;
+					}
+
+					if ((current.rebootTime && (current.rebootTime.hour !== rebootTime.hour || current.rebootTime.minute !== rebootTime.minute || !rebootTime.hour || !rebootTime.minute))) {
+						this.has_unsaved_additional_settings = true;
+						return;
+					}
+
+					if (!current.rebootTime && (response.rebootTime || !response.rebootTime.hour || !response.rebootTime.minute)) {
+						this.has_unsaved_additional_settings = true;
+						return;
+					}
+
+					this.has_unsaved_additional_settings = false;
+
+				},
+				error => console.log('Error on additional license settings form subscription', error)
+			)
 	}
 
 	private subscribeToContentSearch(): void {
@@ -1717,7 +1783,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return this._auth.current_user_value;
 	}
 
-	protected get _licenseSettingsFormFields() {
+	protected get _additionalLicenseSettingsFormFields() {
 		return [
 			{ label: 'Player Boot Delay', form_control_name: 'bootDelay', type: 'number', colorValue: '', width: 'col-lg-6', required: true, value: 0, viewType: null },
 			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'time', width: 'col-lg-6', required: true, value: 0, viewType: null },
