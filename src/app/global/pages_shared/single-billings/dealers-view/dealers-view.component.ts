@@ -429,7 +429,7 @@ export class DealersViewComponent implements OnInit {
     }
     
     autoChargeChange(e) {
-        this.autoCharge = e.value;
+        this.autoCharge = parseInt(e.value);
     }
 
     protected get newBillingFormControls() { 
