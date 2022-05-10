@@ -5,6 +5,7 @@ import { Sortable } from 'sortablejs';
 
 import { FeedMediaComponent } from '../../../components_shared/feed_components/feed-media/feed-media.component';
 import { API_CONTENT, FeedItem, SLIDE_GLOBAL_SETTINGS } from 'src/app/global/models';
+import { FeedService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-slider-form',
@@ -55,6 +56,7 @@ export class SliderFormComponent implements OnInit {
 
 	constructor(
 		private _dialog: MatDialog,
+		private _feed: FeedService,
 		private _form: FormBuilder
 	) { }
 
@@ -198,7 +200,7 @@ export class SliderFormComponent implements OnInit {
 				const validators: any[] = [];
 
 				if (field.required) validators.push(Validators.required);
-				if (field.viewType === 'colorpicker') validators.push(Validators.pattern(/^#[0-9A-F]{6}$/i));
+				if (field.viewType === 'colorpicker') validators.push(this._feed.validateColorFieldValues.bind(this));
 
 				Object.assign(formConfig, {
 					[field.form_control_name]: [field.value ? field.value : null, validators]

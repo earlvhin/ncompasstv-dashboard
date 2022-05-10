@@ -131,7 +131,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 				const validators: any[] = [];
 
 				if (field.required) validators.push(Validators.required);
-				if (field.viewType === 'colorpicker') validators.push(Validators.pattern(/^#[0-9A-F]{6}$/i));
+				if (field.viewType === 'colorpicker') validators.push(this._feed.validateColorFieldValues.bind(this));
 				if (field.form_control_name === 'results') validators.push(Validators.max(10));
 
 				Object.assign(formConfig, {
