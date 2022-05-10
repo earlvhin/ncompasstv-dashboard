@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectorRef, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef, EventEmitter, Output, ChangeDetectionStrategy } from '@angular/core';
 import { AuthService } from 'src/app/global/services';
 
 import { UI_ROLE_DEFINITION } from 'src/app/global/models';
@@ -11,10 +11,9 @@ import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 export class SingleBillingsComponent implements OnInit {
     @Input() dealer: string;
-    @Input() reload: boolean;
+    @Input() reload: boolean = true;
     current_tab: string = 'Dealer';
     isdealer: boolean = false;
-    reload_billing: boolean = false;
 
     ngOnInit(): void {
         if(this._isDealer || this._isSubDealer) {
@@ -28,9 +27,9 @@ export class SingleBillingsComponent implements OnInit {
     ){}
 
     ngOnChanges() {
-        console.log("RELOAD SINGLE_BILLINg", this.reload)
+        console.log("RELOAD", this.reload)
         if(this.reload) {
-            this.reload_billing = true;
+            this.cdr.detectChanges();
         }
     }
 

@@ -258,6 +258,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
+        this.reload_billing = !this.reload_billing;
+        this.cd.detectChanges();
 		this.current_role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		this._socket = io(environment.socket_server, {
@@ -1303,7 +1305,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	private get isZoneTabOnLoad(): boolean {
 		return this._location.path().includes('tab=3');
 	}
-
+	
     private get isBillingTabOnLoad(): boolean {
 		return this._location.path().includes('tab=4');
 	}
@@ -1371,7 +1373,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.current_tab = 'zone';
 			return;
 		}
-
+		
         if (this.isBillingTabOnLoad) {
 			this.current_tab = 'billing';
             this.reload_billing = true;

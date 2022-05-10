@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -18,15 +18,17 @@ import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 export class DealersViewComponent implements OnInit {
     @Input() dealer: string;
-    @Input() reload: boolean;
+    @Input() reload_dealer: boolean = false;
 
     accepted_file: any;
+    all_info_data: any;
     billingDate: number;
     autoCharge: number;
     contracts: any = [];
     current_container: string;
     dealer_start_date: boolean = false;
     edit_mode: boolean;
+    is_active: boolean = true;
     loaded_form: boolean = false;
     values_data: any; 
     subscription: Subscription = new Subscription;
@@ -42,49 +44,55 @@ export class DealersViewComponent implements OnInit {
 		label: 'License to Start',
 		control: 'start',
 		placeholder: 'Ex: 10',
-		type: 'text',
-		width: 'col-lg-6'
+		type: 'number',
+		width: 'col-lg-6',
 	},{
 		label: '19 Months',
 		control: 'nineteen',
 		placeholder: 'Ex: 20',
-		type: 'text',
-		width: 'col-lg-6'
+		type: 'number',
+		width: 'col-lg-6',
 	},{
 		label: '25 Months',
 		control: 'twentyfive',
 		placeholder: 'Ex: 25',
-		type: 'text',
-		width: 'col-lg-6'
+		type: 'number',
+		width: 'col-lg-6',
 	},{
 		label: '31 Months',
 		control: 'thirtyone',
 		placeholder: 'Ex: 10',
-		type: 'text',
-		width: 'col-lg-6'
+		type: 'number',
+		width: 'col-lg-6',
 	},{
 		label: '37 Months',
 		control: 'thirtyseven',
 		placeholder: 'Ex: 20',
-		type: 'text',
-		width: 'col-lg-6'
+		type: 'number',
+		width: 'col-lg-6',
 	},{
 		label: 'Base Fee',
 		control: 'base',
 		placeholder: 'Ex: 50',
-		type: 'text',
+		type: 'number',
 		width: 'col-lg-6'
 	},{
 		label: 'Price per License',
 		control: 'price',
 		placeholder: 'Ex: 100',
-		type: 'text',
+		type: 'number',
 		width: 'col-lg-6'
     },{
 		label: 'New License Price',
 		control: 'new_price',
 		placeholder: 'Ex: 100',
-		type: 'text',
+		type: 'number',
+		width: 'col-lg-6'
+    },{
+		label: 'Billable Licenses',
+		control: 'billable',
+		placeholder: 'Ex: 20',
+		type: 'number',
 		width: 'col-lg-6'
     }];
 
@@ -96,6 +104,7 @@ export class DealersViewComponent implements OnInit {
         private _license: LicenseService,
         private _dialog: MatDialog,
         private _auth: AuthService,
+        private cdr: ChangeDetectorRef,
     ) { }
 
     ngOnInit() {
@@ -111,13 +120,16 @@ export class DealersViewComponent implements OnInit {
         this.getDealerValuesById(this.dealer);
         this.getDealerContractFiles(this.dealer);
         this.getDealerTerritoryFiles(this.dealer);
-        this.getTotalCount(this.dealer);
     }
 
     ngOnChanges() {
-        if(this.reload) {
+        if(this.reload_dealer) {
             this.ngOnInit();
         }
+    }
+
+    ngAfterContentChecked() : void {
+        this.cdr.detectChanges();
     }
 
     getDealerInfo(id) {
@@ -129,6 +141,12 @@ export class DealersViewComponent implements OnInit {
 
                 } else {
                     this.dealer_start_date = true;
+                }
+                console.log("REX", response)
+                if(response.status === 'A') {
+                    this.dealer_start_date = true;
+                } else {
+                    this.dealer_start_date = false;
                 }
             }
         )
@@ -150,6 +168,7 @@ export class DealersViewComponent implements OnInit {
 				base: [{value:'',disabled: true}, Validators.required],
 				price: [{value:'',disabled: true}, Validators.required],
 				new_price: [{value:'',disabled: true}, Validators.required],
+				billable: [{value:'',disabled: true}, Validators.required],
 			}
 		);
     }
@@ -278,6 +297,7 @@ export class DealersViewComponent implements OnInit {
 			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
 				response => {
 					if (!response.message) {
+						this.all_info_data = response;
 						this.values_data = response.dealerValue;
                         if(this.values_data.billingDate > 0) {
                             this.billingDate = this.values_data.billingDate;
@@ -287,6 +307,7 @@ export class DealersViewComponent implements OnInit {
                         }
                         this.readyUpdateForm();
 					} else {
+                        this.all_info_data = [];
                         this.initializeCreateBillingForm();
                         this.values_data = {
                             month1: 0,
@@ -297,6 +318,7 @@ export class DealersViewComponent implements OnInit {
                             baseFee: 0,
                             perLicense: 0,
                             billing: 0,
+                            billable: 0,
                             billableLicenses: 0,
                             licensePriceNew: 0
                         }
@@ -317,6 +339,7 @@ export class DealersViewComponent implements OnInit {
 			base: [{value: this.values_data.baseFee, disabled: true}, Validators.required],
 			price: [{value: this.values_data.perLicense, disabled: true}, Validators.required],
 			new_price: [{value: this.values_data.licensePriceNew, disabled: true}, Validators.required],
+			billable: [{value: this.values_data.billableLicenses, disabled: true}, Validators.required],
 		})
 
 		this.subscription.add(
@@ -343,6 +366,7 @@ export class DealersViewComponent implements OnInit {
 			this.update_billing.controls['base'].enable(); 
 			this.update_billing.controls['price'].enable(); 
 			this.update_billing.controls['new_price'].enable(); 
+			this.update_billing.controls['billable'].enable(); 
 		} else {
 			this.update_billing.controls['start'].disable();   
 			this.update_billing.controls['nineteen'].disable();   
@@ -352,6 +376,7 @@ export class DealersViewComponent implements OnInit {
 			this.update_billing.controls['base'].disable();
 			this.update_billing.controls['price'].disable();
 			this.update_billing.controls['new_price'].disable();
+			this.update_billing.controls['billable'].disable();
 			this.readyUpdateForm();   
 		}
 	}
@@ -381,14 +406,6 @@ export class DealersViewComponent implements OnInit {
 		)
 	}
 
-    getTotalCount(id: string): void {
-		this._license.get_licenses_total_by_dealer(id).pipe(takeUntil(this._unsubscribe)).subscribe(
-			(data: any) => {
-				this.current_count = data.total;
-            }
-        )
-    }
-
     mapUserInfoChanges() {
 		return {
 			dealerId: this.dealer,
@@ -400,7 +417,7 @@ export class DealersViewComponent implements OnInit {
             baseFee: this.newBillingFormControls.base.value,
             perLicense: this.newBillingFormControls.price.value,
             licensePriceNew: this.newBillingFormControls.new_price.value,
-            currentLicenses: this.current_count,
+            billableLicenses: this.newBillingFormControls.billable.value,
             billingDate: this.billingDate,
             autoCharge: this.autoCharge,
 		};

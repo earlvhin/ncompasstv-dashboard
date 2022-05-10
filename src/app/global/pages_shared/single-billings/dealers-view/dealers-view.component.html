@@ -5,7 +5,7 @@
                 <div class="col-lg-3 p-3 pb-5 pt-5 br-5 text-white bg-primary text-center bg-gray mr-3">
                     <div >
                         <span class="fas fa-barcode mr-2 f-25"></span>
-                        <span class="f-25">{{current_count}}</span>
+                        <span class="f-25">{{all_info_data.totalLicenses ? all_info_data.totalLicenses: 0}}</span>
                         <br>
                         <span class="md-text f-500">CURRENT LICENSES</span>
                     </div>
@@ -42,29 +42,93 @@
                     </span>
                 </div>
                 <div class="col-lg-12 flex p-0 pt-3">
-                    <div class="col-lg-2">
+                    <div class="col-lg-2 pr-0">
                         <span class="md-text f-500">
-                            1 Month: <span class="text-primary">{{values_data.month1}}</span>
+                            1 Month: 
+                            <span class="text-primary">{{values_data.month1}}
+                                <span *ngIf="all_info_data.currentMonth === 'Month1'">
+                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+                                        / +{{all_info_data.licensesDifference}} 
+                                    </span>
+                                    <ng-template #negative>
+                                        <span class="text-danger">
+                                            / {{all_info_data.licensesDifference}} 
+                                        </span>
+                                    </ng-template>
+                                </span>
+                            </span>
                         </span>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-2 pr-0">
                         <span class="md-text f-500">
-                            19 Months: <span class="text-primary">{{values_data.month19}}</span>
+                            19 Months: 
+                            <span class="text-primary">
+                                {{values_data.month19}}
+                                <span *ngIf="all_info_data.currentMonth === 'Month19'">
+                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+                                        / +{{all_info_data.licensesDifference}} 
+                                    </span>
+                                    <ng-template #negative>
+                                        <span class="text-danger">
+                                            / {{all_info_data.licensesDifference}} 
+                                        </span>
+                                    </ng-template>
+                                </span>
+                            </span>
                         </span>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-2 pr-0">
                         <span class="md-text f-500">
-                            25 Months: <span class="text-primary">{{values_data.month25}}</span>
+                            25 Months: 
+                            <span class="text-primary">
+                                {{values_data.month25}}
+                                <span *ngIf="all_info_data.currentMonth === 'Month25'">
+                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+                                        / +{{all_info_data.licensesDifference}} 
+                                    </span>
+                                    <ng-template #negative>
+                                        <span class="text-danger">
+                                            / {{all_info_data.licensesDifference}} 
+                                        </span>
+                                    </ng-template>
+                                </span>
+                            </span>
                         </span>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-2 pr-0">
                         <span class="md-text f-500">
-                            31 Months: <span class="text-primary">{{values_data.month31}}</span>
+                            31 Months: 
+                            <span class="text-primary">
+                                {{values_data.month31}}
+                                <span *ngIf="all_info_data.currentMonth === 'Month31'">
+                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+                                        / +{{all_info_data.licensesDifference}} 
+                                    </span>
+                                    <ng-template #negative>
+                                        <span class="text-danger">
+                                            / {{all_info_data.licensesDifference}} 
+                                        </span>
+                                    </ng-template>
+                                </span>
+                            </span>
                         </span>
                     </div>
-                    <div class="col-lg-2">
+                    <div class="col-lg-2 pl-0">
                         <span class="md-text f-500">
-                            37 Months: <span class="text-primary">{{values_data.month37}}</span>
+                            37 Months: 
+                            <span class="text-primary">
+                                {{values_data.month37}}
+                                <span *ngIf="all_info_data.currentMonth === 'Month37'">
+                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+                                        / +{{all_info_data.licensesDifference}} 
+                                    </span>
+                                    <ng-template #negative>
+                                        <span class="text-danger">
+                                            / {{all_info_data.licensesDifference}} 
+                                        </span>
+                                    </ng-template>
+                                </span>
+                            </span>
                         </span>
                     </div>
                 </div>
@@ -135,17 +199,17 @@
                         <div class="row">
                             <mat-form-field class="col-lg-6" *ngFor="let f of form_fields_view" >
                                 <mat-label>{{ f.label }}</mat-label>
-                                <input matInput formControlName="{{ f.control }}" [type]="f.type" [placeholder]="f.placeholder" >
+                                <input matInput formControlName="{{ f.control }}" [type]="f.type" [placeholder]="f.placeholder" min="0">
                             </mat-form-field>
                             <div class="col-lg-6">
-                                <label class="md-required col-lg-12 p-0 xsm-text mb-2" translate>Select Billing Date</label>
+                                <label class="md-required col-lg-12 p-0 xsm-text mb-2 text-dark-light" translate>Select Billing Date</label>
                                 <mat-radio-group aria-label="bill_date" md-autofocus name="bill_date" ng-model="billingDate" layout="row" required>
                                     <mat-radio-button value="1" class="mr-3" [disabled]="!edit_mode" (change)="billingDateChange($event)" [checked]="billingDate === 1">1st</mat-radio-button>
                                     <mat-radio-button value="15" [disabled]="!edit_mode" (change)="billingDateChange($event)" [checked]="billingDate === 15">15th</mat-radio-button>
                                 </mat-radio-group>
                             </div>
                             <div class="col-lg-6">
-                                <label class="md-required col-lg-12 p-0 xsm-text mb-2" translate>Auto Charge</label>
+                                <label class="md-required col-lg-12 p-0 xsm-text mb-2 text-dark-light" translate>Auto Charge</label>
                                 <mat-radio-group aria-label="auto_charge" md-autofocus name="auto_charge" ng-model="autoCharge" layout="row" required>
                                     <mat-radio-button value="1" class="mr-3" [disabled]="!edit_mode" (change)="autoChargeChange($event)" [checked]="autoCharge === 1">Yes</mat-radio-button>
                                     <mat-radio-button value="0" [disabled]="!edit_mode" (change)="autoChargeChange($event)" [checked]="autoCharge === 0">No</mat-radio-button>
