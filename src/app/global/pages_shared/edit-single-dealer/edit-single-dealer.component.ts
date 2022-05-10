@@ -371,7 +371,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			region: ['', Validators.required],
 			state: ['', Validators.required],
 			status: [ '', Validators.required ],
-            start_date: ['', Validators.required ],
+            start_date: [''],
 		});
 	}
 

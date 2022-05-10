@@ -309,6 +309,7 @@ export class DealersViewComponent implements OnInit {
 					} else {
                         this.all_info_data = [];
                         this.initializeCreateBillingForm();
+                        this.getTotalLicenses(id);
                         this.values_data = {
                             month1: 0,
                             month19: 0,
@@ -328,6 +329,14 @@ export class DealersViewComponent implements OnInit {
 			)
 		);
 	}
+
+    getTotalLicenses(id) {
+        this._license.get_licenses_total_by_dealer(id).pipe(takeUntil(this._unsubscribe)).subscribe(
+            response => {
+                this.all_info_data.totalLicenses = response.total
+            }
+       )
+    }
 
     readyUpdateForm() {
 		this.update_billing = this._form.group({
