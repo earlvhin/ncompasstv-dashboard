@@ -103,7 +103,7 @@ export class DealerSettingComponent implements OnInit {
 	loading_license: boolean = true;
 	no_content: boolean;
 	// subscription: Subscription = new Subscription();
-	user_data: DEALER_PROFILE; 
+	user_data: any; 
 	update_info_form_disabled: boolean = false;
 	update_info_form_disabled_typing: boolean = true;
 	update_user: FormGroup;
@@ -142,7 +142,8 @@ export class DealerSettingComponent implements OnInit {
 			.subscribe(
 				(data: any) => {
 					this.user_data = Object.assign({},data.user, data.dealer[0]);
-					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy')
+                    console.log("UD", this.user_data)
+					this.user_data.startDate = this._date.transform(this.user_data.startDate, 'MMM dd, yyyy')
 					this.readyUpdateForm();
 				}, 
 				error => console.log('Error retrieving user by ID', error)

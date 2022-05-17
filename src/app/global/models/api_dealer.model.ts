@@ -34,4 +34,5 @@ export class API_DEALER {
 	tags: { dateCreated: string, name: string, ownerId: string, tagId: number, tagTypeId: number }[];
     onlineLicenseCount?: number = 0;
     offlineLicenseCount?: number = 0;
+    startDate: string;
 }
