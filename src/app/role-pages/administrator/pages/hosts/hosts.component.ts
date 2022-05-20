@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
 import { AuthService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { Console } from 'console';
 
 @Component({
 	selector: 'app-hosts',
@@ -69,7 +70,8 @@ export class HostsComponent implements OnInit {
 		{ name: 'Timezone', sortable: true, column:'TimezoneName', key:'timezoneName' },
 		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses' },
         { name: 'Tags', hidden: true, no_show: true, key:'tagsToString' },
-        { name: 'Total Business Hours', sortable: false, key:'storeHours', hidden: true, no_show: true},
+        { name: 'Business Hours', sortable: false, key:'storeHoursParse', hidden: true, no_show: true},
+        { name: 'Total Business Hours', sortable: false, key:'storeHoursTotal', hidden: true, no_show: true},
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -291,6 +293,34 @@ export class HostsComponent implements OnInit {
 		return modified_label;
 	}
 
+    getStoreHourseParse(data) {
+        var days = [];
+        if(data.storeHours) {
+            var storehours = JSON.parse(data.storeHours)
+            storehours = storehours.sort((a, b) => {return a.id - b.id;});
+            storehours.map(
+                day => {
+                    if(day.status) {
+                        day.periods.map(
+                            period => {
+                                if(period.open == '' && period.close == '') {
+                                    days.push(day.day + ' : Open 24 hrs')
+                                } else {
+                                    days.push(day.day + ' : ' + period.open + ' - ' + period.close)
+                                }
+                            }
+                        )
+                    } else {
+                        days.push(day.day + ' : ' + 'Closed')
+                    }
+                }
+            )
+            console.log("DAYS", days)
+            data.storeHoursParse = days.toString();
+            data.storeHoursParse = data.storeHoursParse.split(",").join("\n");
+        }
+	}
+
     exportTable(tab) {
         this.workbook_generation = true;
 		const header = [];
@@ -329,7 +359,8 @@ export class HostsComponent implements OnInit {
 							} else {
                                 response.host.map(
                                     host => {
-                                        host.storeHours = this.getTotalHours(host)
+                                        host.storeHoursTotal = this.getTotalHours(host);
+                                        this.getStoreHourseParse(host)
                                         this.modifyDataForExport(host);
                                     }
                                 )
@@ -368,9 +399,9 @@ export class HostsComponent implements OnInit {
 
     getTotalHours(data) {
         if (data.storeHours) {
-            data.storeHours = JSON.parse(data.storeHours)
+            data.storeHoursForTotal = JSON.parse(data.storeHours)
             this.hour_diff_temp = [];
-            data.storeHours.map(
+            data.storeHoursForTotal.map(
                 hours => {
                     if(hours.status) {
                         hours.periods.map(
@@ -437,7 +468,8 @@ export class HostsComponent implements OnInit {
 	}
 
 	private modifyDataForExport(data) {
-		data.storeHours = data.storeHours;
+        data.storeHours = data.storeHours;
+		data.storeHoursTotal = data.storeHoursTotal;
         data.tagsToString = data.tags.join(','); 
 	}
 }

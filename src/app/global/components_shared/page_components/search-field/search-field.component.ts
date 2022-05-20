@@ -17,6 +17,7 @@ export class SearchFieldComponent implements OnInit {
 	@Input() primary_keyword: string;
 	@Input() secondary_keyword: string;
 	@Input() api_search: boolean;
+	@Input() allow_one: boolean;
 	@Output() searched = new EventEmitter();
 	@Output() reset_search = new EventEmitter();
 	search_result: Array<any>;
@@ -65,8 +66,7 @@ export class SearchFieldComponent implements OnInit {
 	}
 
 	searchByApi() {
-		this.search_control.setValidators([Validators.minLength(3)]);
-
+		this.search_control.setValidators(!this.allow_one ? [Validators.minLength(3)] : [Validators.minLength(1)]);
 		// clearTimeout(this.timeOut);
 		// this.timeOut = setTimeout(() => {
 		// 	if(this.search_keyword.length >= 3) {

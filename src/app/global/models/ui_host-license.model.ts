@@ -52,3 +52,20 @@ export class UI_HOST_VIEW {
         this.total_licenses = total_licenses;
     }
 }
+
+export class UI_HOST_DMA {
+    index: object;
+    rank: object;
+    number_of_hosts: object;
+    dma_code: object;
+    dma_name: object;
+    constructor(
+        index: object, rank: object, number_of_hosts: object, dma_code: object, dma_name: object
+    ) {
+        this.index = index;
+        this.rank = rank;
+        this.number_of_hosts = number_of_hosts;
+        this.dma_code = dma_code;
+        this.dma_name = dma_name;
+    }
+}
