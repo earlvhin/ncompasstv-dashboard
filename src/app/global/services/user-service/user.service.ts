@@ -115,6 +115,10 @@ export class UserService {
 		return this._http.get(`${this.base}${this.getters.api_get_notifications}${id}`, this.httpOptions);
 	}
 
+    set_cookie_for_other_site(id) {
+        return this._http.get(`${this.base}${this.getters.api_get_and_set_cookies}${id}`, this.httpOptions);
+    }
+
 	protected get base() {
 		return environment.base_uri;
 	}
