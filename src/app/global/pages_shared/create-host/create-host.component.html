@@ -41,17 +41,35 @@
 										<app-autocomplete-field *ngIf="field.control == 'category' && !no_category; else no_category_selected;"
 											(data_value)="setToCategory($event)"
 											[data_reference]="categories_data"
-											[primary_keyword]="'generalCategory'"
-											[key_of_value]="'generalCategory'"
+											[primary_keyword]="'categoryName'"
+											[key_of_value]="'categoryName'"
 											[required]="field.is_required"
 											[label]="field.label"
 											[initial_value]="category_selected">
+										</app-autocomplete-field>
+
+                                        <app-autocomplete-field *ngIf="field.control == 'category2' && !no_category2; else no_category_selected2;"
+											(data_value)="setToGeneralCategory($event)"
+											[data_reference]="gen_categories_data"
+											[primary_keyword]="'generalCategory'"
+											[key_of_value]="'generalCategory'"
+											[required]="false"
+											[label]="field.label"
+											[initial_value]="category_selected"
+                                            [disabled]="true">
 										</app-autocomplete-field>
 
 										<ng-template #no_category_selected>
 											<mat-form-field *ngIf="field.control === 'category'" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
 												<mat-label>Choose Category</mat-label>
 												<input matInput formControlName="category" placeholder="Category" [required]="field.is_required">
+											</mat-form-field>
+										</ng-template>
+										
+                                        <ng-template #no_category_selected2>
+											<mat-form-field *ngIf="field.control === 'category2'" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
+												<mat-label>Choose General Category</mat-label>
+												<input matInput formControlName="category2" placeholder="General Category" [required]="false" [disabled]="true">
 											</mat-form-field>
 										</ng-template>
 										

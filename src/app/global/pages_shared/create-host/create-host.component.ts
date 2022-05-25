@@ -26,6 +26,7 @@ import { AuthService, DealerService, CategoryService, HelperService, HostService
 export class CreateHostComponent implements OnInit {
 
 	categories_data: API_PARENTCATEGORY[];
+	gen_categories_data: any[];
 	category_selected: string;
     child_category: string;
 	current_host_image: string;
@@ -51,6 +52,7 @@ export class CreateHostComponent implements OnInit {
 	new_host_form: FormGroup;
 	new_host_form_fields = this._createFormFields;
 	no_category = false;
+	no_category2 = false;
 	no_result = false;
 	operation_days: UI_OPERATION_DAYS[];
 	paging: PAGING;
@@ -117,9 +119,15 @@ export class CreateHostComponent implements OnInit {
 		data.periods.splice(index, 1);
 	}
 
-	setToCategory(event: string) {
+	setToGeneralCategory(event: string) {
+		this.no_category2 = true;
+		this.newHostFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, " "));
+	}
+	
+    setToCategory(event: string) {
 		this.no_category = true;
 		this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, " "));
+        
 	}
 
 	onBulkAddHours(): void {
@@ -196,8 +204,8 @@ export class CreateHostComponent implements OnInit {
                     this.newHostFormControls.state.value,
                     this.newHostFormControls.zip.value,
                     JSON.stringify(this.operation_days), 
-                    // this.newHostFormControls.category.value,
-                    this.child_category,
+                    this.newHostFormControls.category.value,
+                    // this.child_category,
                     this.newHostFormControls.timezone.value,
                 );
         
@@ -234,7 +242,6 @@ export class CreateHostComponent implements OnInit {
 		this._map.get_google_location_info(this.googlePlaceFormControls.location.value).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: API_GOOGLE_MAP['google_search']) => {
-                    console.log("DAATA", data)
 					if (data.length <= 0) {
 						this.no_result = true;
 						return;
@@ -278,18 +285,22 @@ export class CreateHostComponent implements OnInit {
     getGeneralCategory(category) {
         this._categories.get_category_general(category).pipe(takeUntil(this._unsubscribe)).subscribe(
 			data => {
-                console.log("DD", data)
-                // return data.category.generalCategory;
-                this.setToCategory(data.category.generalCategory)
+                if(!data.message) {
+                    this.setToGeneralCategory(data.category.generalCategory)
+                } else {
+                    this.setToGeneralCategory('')
+                }
+                
             }
         )
+        this.setToCategory(category)
     }
 
 	plotToMap(data: GOOGLE_MAP_SEARCH_RESULT) {
 		let sliced_address = data.result.formatted_address.split(', ')
 		let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',')+1)
 		let category_one = data.result.types[0];
-        this.child_category = category_one;
+        // this.child_category = category_one;
         this.getGeneralCategory(category_one)
 		this.place_id = data.result.place_id;
 		this.current_host_image = this.default_host_image;
@@ -410,6 +421,7 @@ export class CreateHostComponent implements OnInit {
 				state: ['',  [ Validators.required, Validators.minLength(2), Validators.maxLength(2), Validators.pattern('[a-zA-Z]*') ] ],
 				zip: ['', Validators.required],
 				category: ['', Validators.required],
+				category2: [{value:'', disabled: true}],
 				long: ['', Validators.required],
 				lat: ['', Validators.required],
 				timezone: ['', Validators.required],
@@ -449,6 +461,7 @@ export class CreateHostComponent implements OnInit {
 	private loadInitialData() {
 
 		const requests: ObservableInput<any> = [
+			this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe)),
 			this._categories.get_categories().pipe(takeUntil(this._unsubscribe)),
 			this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
 			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
@@ -456,15 +469,22 @@ export class CreateHostComponent implements OnInit {
 
 		forkJoin(requests).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				([ getCategories, getDealers, getTimeZones ]) => {
-                    console.log("GET CATEGORIES", getCategories)
-					const categories = getCategories;
+				([ generalCategories, getCategories, getDealers, getTimeZones ]) => {
+					const categories = generalCategories;
+					const genCategories = getCategories;
 					const dealersData = getDealers as { dealers: API_DEALER[], paging: PAGING };
 					const timezones = getTimeZones as API_TIMEZONE[];
 
 					this.categories_data = categories.map(
 						category => {
-							category.categoryName = this._titlecase.transform(category.categoryName);
+                            category.categoryName = this._titlecase.transform(category.categoryName);
+							return category;
+						}
+					);
+					
+                    this.gen_categories_data = genCategories.map(
+						category => {
+                            category.generalCategory = this._titlecase.transform(category.generalCategory);
 							return category;
 						}
 					);
@@ -542,6 +562,12 @@ export class CreateHostComponent implements OnInit {
 				if (data === '') this.no_category = false;
 			}
 		);
+		
+        this.newHostFormControls.category2.valueChanges.subscribe(
+			data => {
+				if (data === '') this.no_category2 = false;
+			}
+		);
 
 	}
 
@@ -551,16 +577,24 @@ export class CreateHostComponent implements OnInit {
 				label: 'Host Business Name',
 				control: 'businessName',
 				placeholder: 'Ex. SM Center Pasig',
-				col: 'col-lg-6',
+				col: 'col-lg-12',
 				is_required: true,
 			},
 			{
 				label: 'Category',
 				control: 'category',
-				placeholder: 'Ex. School',
+				placeholder: 'Ex. Art School',
 				col: 'col-lg-6',
 				autocomplete: true,
 				is_required: true,
+			},
+            {
+				label: 'General Category',
+				control: 'category2',
+				placeholder: 'Ex. School',
+				col: 'col-lg-6',
+				autocomplete: true,
+				is_required: false,
 			},	
 			{
 				label: 'Latitude',
