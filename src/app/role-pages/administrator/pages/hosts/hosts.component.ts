@@ -61,6 +61,7 @@ export class HostsComponent implements OnInit {
         { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
         { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName' },
         { name: 'Category', hidden: true, no_show: true, key:'category' },
+        { name: 'General Category', hidden: true, no_show: true, key:'generalCategory' },
         { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName' },
 		{ name: 'Address', sortable: true, column:'Address', key: 'address' },
 		{ name: 'City', sortable: true, column:'City', key: 'city' },

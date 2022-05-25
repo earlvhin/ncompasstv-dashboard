@@ -27,6 +27,7 @@ export class CreateHostComponent implements OnInit {
 
 	categories_data: API_PARENTCATEGORY[];
 	category_selected: string;
+    child_category: string;
 	current_host_image: string;
 	dealers_data: API_DEALER[] = [];
 	dealer_name: string;
@@ -195,7 +196,8 @@ export class CreateHostComponent implements OnInit {
                     this.newHostFormControls.state.value,
                     this.newHostFormControls.zip.value,
                     JSON.stringify(this.operation_days), 
-                    this.newHostFormControls.category.value,
+                    // this.newHostFormControls.category.value,
+                    this.child_category,
                     this.newHostFormControls.timezone.value,
                 );
         
@@ -232,7 +234,7 @@ export class CreateHostComponent implements OnInit {
 		this._map.get_google_location_info(this.googlePlaceFormControls.location.value).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: API_GOOGLE_MAP['google_search']) => {
-
+                    console.log("DAATA", data)
 					if (data.length <= 0) {
 						this.no_result = true;
 						return;
@@ -273,10 +275,22 @@ export class CreateHostComponent implements OnInit {
 		dialogRef.afterClosed().subscribe(() => this.form_invalid = false);
 	}
 
+    getGeneralCategory(category) {
+        this._categories.get_category_general(category).pipe(takeUntil(this._unsubscribe)).subscribe(
+			data => {
+                console.log("DD", data)
+                // return data.category.generalCategory;
+                this.setToCategory(data.category.generalCategory)
+            }
+        )
+    }
+
 	plotToMap(data: GOOGLE_MAP_SEARCH_RESULT) {
 		let sliced_address = data.result.formatted_address.split(', ')
 		let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',')+1)
 		let category_one = data.result.types[0];
+        this.child_category = category_one;
+        this.getGeneralCategory(category_one)
 		this.place_id = data.result.place_id;
 		this.current_host_image = this.default_host_image;
 		this.location_selected = true;
@@ -285,7 +299,6 @@ export class CreateHostComponent implements OnInit {
 		this.newHostFormControls.businessName.setValue(data.result.name);
 		this.newHostFormControls.lat.setValue(data.result.geometry.location.lat);
 		this.newHostFormControls.long.setValue(data.result.geometry.location.lng);
-		this.setToCategory(category_one);
 
 		if (!state.includes('Canada')) {
 			let state_zip = sliced_address[2].split(' ');
@@ -436,7 +449,7 @@ export class CreateHostComponent implements OnInit {
 	private loadInitialData() {
 
 		const requests: ObservableInput<any> = [
-			this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe)),
+			this._categories.get_categories().pipe(takeUntil(this._unsubscribe)),
 			this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
 			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
 		];
@@ -444,8 +457,8 @@ export class CreateHostComponent implements OnInit {
 		forkJoin(requests).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				([ getCategories, getDealers, getTimeZones ]) => {
-
-					const categories = getCategories as API_PARENTCATEGORY[];
+                    console.log("GET CATEGORIES", getCategories)
+					const categories = getCategories;
 					const dealersData = getDealers as { dealers: API_DEALER[], paging: PAGING };
 					const timezones = getTimeZones as API_TIMEZONE[];
 

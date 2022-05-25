@@ -41,8 +41,8 @@
 										<app-autocomplete-field *ngIf="field.control == 'category' && !no_category; else no_category_selected;"
 											(data_value)="setToCategory($event)"
 											[data_reference]="categories_data"
-											[primary_keyword]="'categoryName'"
-											[key_of_value]="'slug'"
+											[primary_keyword]="'generalCategory'"
+											[key_of_value]="'generalCategory'"
 											[required]="field.is_required"
 											[label]="field.label"
 											[initial_value]="category_selected">
