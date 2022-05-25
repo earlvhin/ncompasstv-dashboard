@@ -1,6 +1,7 @@
 import { Component, Input, OnInit } from '@angular/core';
 import * as io from 'socket.io-client';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
+import { UserService } from '../../../../global/services/user-service/user.service';
 import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition.model';
 import { NotificationService } from '../../../../global/services/notification-service/notification.service';
 import { environment } from '../../../../../environments/environment';
@@ -28,6 +29,7 @@ export class NavbarComponent implements OnInit {
 
 	constructor(
 		private _auth: AuthService,
+		private _user: UserService,
 		private _notification: NotificationService
 	) { 
 		this._socket = io(environment.socket_server, {
@@ -41,6 +43,7 @@ export class NavbarComponent implements OnInit {
 			const { firstname, user_id, role_id } = this.currentUser
 			this.current_username = firstname;
 			this.current_userid = user_id;
+            this.setCookieForOtherSite(this.current_userid);
 
 			if(role_id === UI_ROLE_DEFINITION.administrator) {
 				this.is_admin = true
@@ -70,6 +73,14 @@ export class NavbarComponent implements OnInit {
 					this.notification_paginated.totalEntities = 0
 					this.has_alerts = false;
 				} 
+			}
+		)
+	}
+	
+    setCookieForOtherSite(id) {
+		this._user.set_cookie_for_other_site(id).subscribe(
+			data => {
+				console.log("DAYAA", data) 
 			}
 		)
 	}
