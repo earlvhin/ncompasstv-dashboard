@@ -141,12 +141,13 @@ export const API_ENDPOINTS = {
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
+		get_user_cookie: 'user/setcookie?userid=',
 		host_files: 'host/GetHostFilesByType',
 		host_place_images: 'googleapi/GetLogoByPlaceId',
 		license_by_tags: 'license/getByTags',

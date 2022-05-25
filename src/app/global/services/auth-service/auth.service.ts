@@ -107,6 +107,14 @@ export class AuthService {
 		clearTimeout(this.refreshTokenTimeout);
 	}
 
+	get_user_cookie(userId: string) {
+		let httpOptions = {
+			headers: new HttpHeaders({ Authorization: `Bearer ${this.current_user_value.jwt.token}` })
+		};
+
+		return this._http.get(`${environment.base_uri}${environment.getters.get_user_cookie}${userId}`, httpOptions);
+	}
+
 	session_check(status) {
 		return (this.session_status = status);
 	}

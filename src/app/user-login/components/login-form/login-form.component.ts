@@ -112,6 +112,8 @@ export class LoginFormComponent implements OnInit {
 							this.openUpcomingInstallModal();
 						}
 					}
+
+					this.getUserCookie(user_data.user_id);
 				},
 				(error) => {
 					this.show_overlay = false;
@@ -120,6 +122,17 @@ export class LoginFormComponent implements OnInit {
 					console.log('Error authenticating user', error);
 				}
 			);
+	}
+
+	getUserCookie(userId: string) {
+		this._auth.get_user_cookie(userId).subscribe(
+			(data) => {
+				console.log(data);
+			},
+			(error) => {
+				console.log(error);
+			}
+		);
 	}
 
 	compareTime(dateString: any, now: any) {

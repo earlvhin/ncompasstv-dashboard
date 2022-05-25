@@ -15,7 +15,8 @@ export class BaseService {
 			'Content-Type': 'application/json',
 			credentials: 'include',
 			Accept: 'application/json'
-		})
+		}),
+		withCredentials: true
 	};
 
 	constructor(private _auth: AuthService, private _http: HttpClient) {}
@@ -26,10 +27,9 @@ export class BaseService {
 
 	protected getRequest(endpoint: string, options: any = null): Observable<any> {
 		let headers = this.headers;
-		console.log('GETREQUEST ==>', endpoint, options, this.headers);
 		if (options) headers = { ...this.headers, ...options };
 		const url = `${this.baseUri}${endpoint}`;
-		return this._http.get(url, { withCredentials: true });
+		return this._http.get(url, headers);
 	}
 
 	protected postRequest(endpoint: string, body: object, options: any = null): Observable<any> {
