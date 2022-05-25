@@ -63,10 +63,6 @@ export class AuthService {
 			);
 	}
 
-	get_user_http_only_cookie(user_id: string) {
-		return this._http.get(`${environment.base_uri}${environment.getters.user_get_cookie}${user_id}`);
-	}
-
 	//Refresh Token
 	refresh_token() {
 		return this._http

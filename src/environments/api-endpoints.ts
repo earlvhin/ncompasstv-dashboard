@@ -171,7 +171,6 @@ export const API_ENDPOINTS = {
 		tags_get_all: 'tag/getall',
 		upcoming_installations: 'license/getUpComingInstall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
-		user_get_cookie: 'user/setcookie?userId=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
 		validate_rss_url: 'feed/news/validate?url='
 	},

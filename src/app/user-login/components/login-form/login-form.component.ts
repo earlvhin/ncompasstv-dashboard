@@ -112,8 +112,6 @@ export class LoginFormComponent implements OnInit {
 							this.openUpcomingInstallModal();
 						}
 					}
-
-					this.getUserToken(user_data.user_id);
 				},
 				(error) => {
 					this.show_overlay = false;
@@ -122,17 +120,6 @@ export class LoginFormComponent implements OnInit {
 					console.log('Error authenticating user', error);
 				}
 			);
-	}
-
-	getUserToken(id: string) {
-		this._auth.get_user_http_only_cookie(id).subscribe(
-			(data) => {
-				console.log(data);
-			},
-			(error) => {
-				console.log(error);
-			}
-		);
 	}
 
 	compareTime(dateString: any, now: any) {
