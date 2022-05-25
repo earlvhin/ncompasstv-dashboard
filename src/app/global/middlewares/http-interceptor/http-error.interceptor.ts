@@ -9,76 +9,76 @@ import { environment } from '../../../../environments/environment';
 
 @Injectable()
 export class HttpErrorInterceptor implements HttpInterceptor {
-    private refreshingInProgress: boolean;
-    private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+	private refreshingInProgress: boolean;
+	private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
 
-    constructor(private authService: AuthService, private _dialog: MatDialog) {}
-    intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let currentToken = JSON.parse(localStorage.getItem('current_token'));
-        let token = currentToken ? currentToken.token : null;
-        return next.handle(this.addAuthorizationHeader(request, token))
-          .pipe(retry(4),
-              catchError((error) => {
-                // in case of 401 http error
-                if(error instanceof HttpErrorResponse && error.status === 401){
-                    const currentToken = localStorage.getItem('current_token');
-                    
-                    // if there are tokens then send refresh token request
-                    if(currentToken){
-                        return this.refreshToken(request, next);
-                    }
-                    
-                    // otherwise logout and redirect to login page
-                    this.authService.logout();
-                }
+	constructor(private authService: AuthService, private _dialog: MatDialog) {}
+	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+		let currentToken = JSON.parse(localStorage.getItem('current_token'));
+		let token = currentToken ? currentToken.token : null;
+		return next.handle(this.addAuthorizationHeader(request, token)).pipe(
+			retry(4),
+			catchError((error) => {
+				// in case of 401 http error
+				if (error instanceof HttpErrorResponse && error.status === 401) {
+					const currentToken = localStorage.getItem('current_token');
 
-                 // in case of 403 http error (refresh token failed)
-                if(error instanceof HttpErrorResponse && error.status === 403){
-                    this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
-                }
+					// if there are tokens then send refresh token request
+					if (currentToken) {
+						return this.refreshToken(request, next);
+					}
 
-                console.log(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
-                return throwError(error);
-            })
-        );  
-    }
+					// otherwise logout and redirect to login page
+					this.authService.logout();
+				}
 
-    private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
-        // added url checker 
-        if (token && request.url.includes(environment.base_uri)) {
-          return request.clone({setHeaders: {Authorization: `Bearer ${token}`}});
-        }
+				// in case of 403 http error (refresh token failed)
+				if (error instanceof HttpErrorResponse && error.status === 403) {
+					this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
+				}
 
-        return request;
-    }
+				console.log(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
+				return throwError(error);
+			})
+		);
+	}
 
-    private refreshToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>>{
-        if (!this.refreshingInProgress) {
-      this.refreshingInProgress = true;
-      this.accessTokenSubject.next(null);
+	private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
+		// added url checker
+		if (token && request.url.includes(environment.base_uri)) {
+			return request.clone({ setHeaders: { 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' } });
+		}
 
-      return this.authService.refresh_token().pipe(
-        switchMap((res) => {
-          this.refreshingInProgress = false;
-          this.accessTokenSubject.next(res.token);
-          // repeat failed request with new token
-          return next.handle(this.addAuthorizationHeader(request, res.token));
-        })
-      );
-    } else {
-      // wait while getting new token
-      return this.accessTokenSubject.pipe(
-        filter(token => token !== null),
-        take(1),
-        switchMap(token => {
-          // repeat failed request with new token
-          return next.handle(this.addAuthorizationHeader(request, token));
-        }));
-    }
-    }
+		return request;
+	}
 
-    private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
+	private refreshToken(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+		if (!this.refreshingInProgress) {
+			this.refreshingInProgress = true;
+			this.accessTokenSubject.next(null);
 
+			return this.authService.refresh_token().pipe(
+				switchMap((res) => {
+					this.refreshingInProgress = false;
+					this.accessTokenSubject.next(res.token);
+					// repeat failed request with new token
+					return next.handle(this.addAuthorizationHeader(request, res.token));
+				})
+			);
+		} else {
+			// wait while getting new token
+			return this.accessTokenSubject.pipe(
+				filter((token) => token !== null),
+				take(1),
+				switchMap((token) => {
+					// repeat failed request with new token
+					return next.handle(this.addAuthorizationHeader(request, token));
+				})
+			);
+		}
+	}
+
+	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '300px',
@@ -91,12 +91,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 			}
 		});
 
-		dialogRef.afterClosed().subscribe(
-			result => {
-        if (result == 'OK') {
-          this.authService.logout();
-        }
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result == 'OK') {
+				this.authService.logout();
 			}
-		);
+		});
 	}
 }
