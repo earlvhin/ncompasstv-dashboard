@@ -46,7 +46,10 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 	private addAuthorizationHeader(request: HttpRequest<any>, token: string): HttpRequest<any> {
 		// added url checker
 		if (token && request.url.includes(environment.base_uri)) {
-			return request.clone({ setHeaders: { 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' } });
+			return request.clone({
+				setHeaders: { 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' },
+				withCredentials: true
+			});
 		}
 
 		return request;
