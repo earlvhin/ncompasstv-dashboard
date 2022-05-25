@@ -10,21 +10,14 @@ import { environment } from 'src/environments/environment';
 @Injectable({
 	providedIn: 'root'
 })
-
 export class FeedService {
-
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}`}
-		)
+		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 
-	constructor(
-		private _http: HttpClient,
-		private _auth: AuthService
-	) { }
+	constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	clone_feed(contentId: string, title: string, createdBy: string) {
 		const body = { contentId, createdBy, title };
@@ -32,11 +25,11 @@ export class FeedService {
 	}
 
 	create_feed(data) {
-		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed}`, data, this.httpOptions)
+		return this._http.post(`${environment.base_uri}${environment.create.api_new_feed}`, data, this.httpOptions);
 	}
 
 	edit_feed(data) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_update_feed}`, data, this.httpOptions)
+		return this._http.post(`${environment.base_uri}${environment.update.api_update_feed}`, data, this.httpOptions);
 	}
 
 	edit_generated_feed(data) {
@@ -48,39 +41,65 @@ export class FeedService {
 	}
 
 	get_feeds(page, key, column?, order?) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+		return this._http.get<any>(
+			`${environment.base_uri}${environment.getters.api_get_feeds}` +
+				'?page=' +
+				`${page}` +
+				'&search=' +
+				`${key}` +
+				'&sortColumn=' +
+				`${column}` +
+				'&sortOrder=' +
+				`${order}`,
+			this.httpOptions
+		);
 	}
 
 	get_feeds_by_dealer(id, page, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_by_dealer}`+'?dealerid='+`${id}`+'&page='+`${page}`+'&search='+`${key}`, this.httpOptions);
+		return this._http.get<any>(
+			`${environment.base_uri}${environment.getters.api_get_feeds_by_dealer}` +
+				'?dealerid=' +
+				`${id}` +
+				'&page=' +
+				`${page}` +
+				'&search=' +
+				`${key}`,
+			this.httpOptions
+		);
 	}
 
 	get_feed_types() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feed_types}`, this.httpOptions).map((data: any) => data.feedTypes);
+		return this._http
+			.get<any>(`${environment.base_uri}${environment.getters.api_get_feed_types}`, this.httpOptions)
+			.map((data: any) => data.feedTypes);
 	}
 
 	get_fillers() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_fillers}`, this.httpOptions).map((data: any) => data.fillers);
+		return this._http
+			.get<any>(`${environment.base_uri}${environment.getters.api_get_fillers}`, this.httpOptions)
+			.map((data: any) => data.fillers);
 	}
-	
+
 	// get_search_feeds(key: string) {
 	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?search='+`${key}`, this.httpOptions);
 	// }
 
 	get_generated_feed_by_id(id: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions).pipe(map(data => data.feed));
+		return this._http
+			.get<any>(`${environment.base_uri}${environment.getters.api_get_generated_feed_by_id}${id}`, this.httpOptions)
+			.pipe(map((data) => data.feed));
 	}
-	
+
 	get_feeds_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_total}`, this.httpOptions);
 	}
 
 	get_feeds_total_by_dealer(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_total}`+'?dealerid='+`${id}`, this.httpOptions);
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds_total}` + '?dealerid=' + `${id}`, this.httpOptions);
 	}
 
 	get_feed_by_id(feed_id) {
-		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions)
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_feed_by_id}${feed_id}`, this.httpOptions);
 	}
 
 	update_filler_feed(feed_data) {
@@ -98,18 +117,21 @@ export class FeedService {
 	update_weather_feed(feed_data) {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_weather_feed}`, feed_data, this.httpOptions);
 	}
-	
+
 	create_weather_feed_demo(weather_feed_style: WEATHER_FEED_STYLE_DATA) {
 		return this._http.get(
 			`${environment.base_uri}${environment.create.api_new_weather_feed_demo}?
 			backgroundContentId=${weather_feed_style.bannerContentId}&
 			bannerContentId=${weather_feed_style.bannerContentId}$
-			daysFontColor`, 
-			this.httpOptions);
+			daysFontColor`,
+			this.httpOptions
+		);
 	}
 
 	validate_weather_zip(zip: string) {
-		return this._http.post(`${environment.base_uri}${environment.getters.validate_weather_zip}${zip}`, null, this.httpOptions).pipe(map((data: any) => data.weatherResponse));
+		return this._http
+			.post(`${environment.base_uri}${environment.getters.validate_weather_zip}${zip}`, null, this.httpOptions)
+			.pipe(map((data: any) => data.weatherResponse));
 	}
 
 	validate_rss_url(url: string) {
@@ -121,14 +143,12 @@ export class FeedService {
 	}
 
 	validateColorFieldValues(control: FormControl): { [s: string]: boolean } {
-
 		if (!control || !control.value) return;
 
 		const controlValue = (control.value as string).toLowerCase();
 		const hexPattern = new RegExp(/^#[0-9A-F]{6}$/i);
 
 		if (controlValue.includes('rgba')) {
-
 			const lastCharIndex = controlValue.length - 1;
 
 			if (controlValue.substring(lastCharIndex) !== ')') return { invalidColor: true };
@@ -137,10 +157,8 @@ export class FeedService {
 			const colorValues = colorValuesEnclosed.split(',');
 
 			for (let i = 0; i < colorValues.length; i++) {
-	
-				if ((i !== colorValues.length - 1) && colorValues[i].length > 3) return { invalidColor: true };
+				if (i !== colorValues.length - 1 && colorValues[i].length > 3) return { invalidColor: true };
 				if (i === colorValues.length - 1 && parseFloat(colorValues[i]) > 1) return { invalidColor: true };
-				
 			}
 
 			return null;

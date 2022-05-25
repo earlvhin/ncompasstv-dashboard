@@ -10,17 +10,15 @@ import { environment } from 'src/environments/environment';
 	providedIn: 'root'
 })
 export class BaseService {
-
 	protected headers = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this.currentUser.jwt.token}`},
-		),
-	}
+		headers: new HttpHeaders({
+			'Content-Type': 'application/json',
+			credentials: 'include',
+			Accept: 'application/json'
+		})
+	};
 
-	constructor(
-		private _auth: AuthService,
-		private _http: HttpClient,
-	) { }
+	constructor(private _auth: AuthService, private _http: HttpClient) {}
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
@@ -28,9 +26,10 @@ export class BaseService {
 
 	protected getRequest(endpoint: string, options: any = null): Observable<any> {
 		let headers = this.headers;
+		console.log('GETREQUEST ==>', endpoint, options, this.headers);
 		if (options) headers = { ...this.headers, ...options };
 		const url = `${this.baseUri}${endpoint}`;
-		return this._http.get(url, headers);
+		return this._http.get(url, { withCredentials: true });
 	}
 
 	protected postRequest(endpoint: string, body: object, options: any = null): Observable<any> {
@@ -60,19 +59,23 @@ export class BaseService {
 		return environment.delete;
 	}
 
-    protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
-        let result = '';
-        Object.keys(filters).forEach(
-            key => {
-                if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
-                if (!result.includes('?')) result += `?${key}=`;
-                else result += `&${key}=`;
-                if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
-                if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
-                else result += filters[key];
-            }
-        );
-        return result
-    }
-
+	protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
+		let result = '';
+		Object.keys(filters).forEach((key) => {
+			if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
+			if (!result.includes('?')) result += `?${key}=`;
+			else result += `&${key}=`;
+			if (
+				enforceTagSearchKey &&
+				key === 'search' &&
+				filters['search'] &&
+				filters['search'].trim().length > 1 &&
+				!filters['search'].startsWith('#')
+			)
+				filters['search'] = `#${filters['search']}`;
+			if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]);
+			else result += filters[key];
+		});
+		return result;
+	}
 }

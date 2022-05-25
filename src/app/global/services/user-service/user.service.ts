@@ -4,7 +4,7 @@ import { AuthService } from '../auth-service/auth.service';
 import { USER } from '../../models/api_user.model';
 import { environment } from '../../../../environments/environment';
 import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
-import 'rxjs/add/operator/map'
+import 'rxjs/add/operator/map';
 import { API_FILTERS, API_USER_STATS } from '../../models';
 
 @Injectable({
@@ -16,15 +16,10 @@ export class UserService {
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}` }
-		)
+		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 
-	constructor(
-		private _http: HttpClient,
-		private _auth: AuthService
-	) { }
+	constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	deleteUser(userId: string) {
 		const endpoint = `${this.base}${this.delete.user}?userid=${userId}`;
@@ -48,7 +43,7 @@ export class UserService {
 	}
 	
 	get_users_search(key) {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_users}`+'?search='+`${key}`, this.httpOptions);
+		return this._http.get<any>(`${this.base}${this.getters.api_get_users}` + '?search=' + `${key}`, this.httpOptions);
 	}
 	
 	get_user_total() {
@@ -56,43 +51,46 @@ export class UserService {
 	}
 
 	get_user_by_id(data) {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}`, this.httpOptions).map(data => data.user);
+		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}`, this.httpOptions).map((data) => data.user);
 	}
 
 	get_user_alldata_by_id(data) {
 		let isAdmin = this._auth.current_role == 'administrator' ? true : false;
-		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}`+'&isAdmin='+`${isAdmin}`, this.httpOptions).map(data => data);
+		return this._http
+			.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}` + '&isAdmin=' + `${isAdmin}`, this.httpOptions)
+			.map((data) => data);
 	}
 
 	create_new_user(role: string, data: any) {
 		let url: string;
 
-		switch (role)  {
+		switch (role) {
 			case UI_ROLE_DEFINITION.administrator:
-				url = this.create.api_new_admin
+				url = this.create.api_new_admin;
 				break;
 			case UI_ROLE_DEFINITION.dealer:
-				url = this.create.api_new_dealer
+				url = this.create.api_new_dealer;
 				break;
 			case UI_ROLE_DEFINITION['sub-dealer']:
 				url = this.create.sub_dealer_account;
 				break;
 			case UI_ROLE_DEFINITION.host:
-				url = this.create.api_new_host
+				url = this.create.api_new_host;
 				break;
 			case UI_ROLE_DEFINITION.advertiser:
-				url = this.create.api_new_advertiser
+				url = this.create.api_new_advertiser;
 				break;
 			case UI_ROLE_DEFINITION.tech:
-				url = this.create.api_new_techrep
-				break
+				url = this.create.api_new_techrep;
+				break;
 		}
 
 		return this._http.post(`${this.base}${url}`, data, this.httpOptions);
 	}
 
 	validate_email(email: string) {
-		const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+		const re =
+			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 		return re.test(String(email).toLowerCase());
 	}
 
@@ -140,18 +138,22 @@ export class UserService {
 	}
 
 	protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
-        let result = '';
-        Object.keys(filters).forEach(
-            key => {
-                if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
-                if (!result.includes('?')) result += `?${key}=`;
-                else result += `&${key}=`;
-                if (enforceTagSearchKey && key === 'search' && filters['search'] && filters['search'].trim().length > 1 && !filters['search'].startsWith('#')) filters['search'] = `#${filters['search']}`;
-                if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]); 
-                else result += filters[key];
-            }
-        );
-        return result
-    }
-
+		let result = '';
+		Object.keys(filters).forEach((key) => {
+			if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
+			if (!result.includes('?')) result += `?${key}=`;
+			else result += `&${key}=`;
+			if (
+				enforceTagSearchKey &&
+				key === 'search' &&
+				filters['search'] &&
+				filters['search'].trim().length > 1 &&
+				!filters['search'].startsWith('#')
+			)
+				filters['search'] = `#${filters['search']}`;
+			if (typeof filters[key] === 'string' && filters[key].includes('#')) result += encodeURIComponent(filters[key]);
+			else result += filters[key];
+		});
+		return result;
+	}
 }
