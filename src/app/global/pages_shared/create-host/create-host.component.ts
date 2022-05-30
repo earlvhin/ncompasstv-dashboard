@@ -127,7 +127,7 @@ export class CreateHostComponent implements OnInit {
     setToCategory(event: string) {
 		this.no_category = true;
 		this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, " "));
-        
+        this.getGeneralCategory(event)
 	}
 
 	onBulkAddHours(): void {
@@ -293,7 +293,6 @@ export class CreateHostComponent implements OnInit {
                 
             }
         )
-        this.setToCategory(category)
     }
 
 	plotToMap(data: GOOGLE_MAP_SEARCH_RESULT) {
@@ -302,6 +301,7 @@ export class CreateHostComponent implements OnInit {
 		let category_one = data.result.types[0];
         // this.child_category = category_one;
         this.getGeneralCategory(category_one)
+        this.setToCategory(category_one)
 		this.place_id = data.result.place_id;
 		this.current_host_image = this.default_host_image;
 		this.location_selected = true;
