@@ -17,9 +17,7 @@ import * as moment from 'moment';
 	templateUrl: './login-form.component.html',
 	styleUrls: ['./login-form.component.scss']
 })
-
 export class LoginFormComponent implements OnInit {
-
 	login_form: FormGroup;
 	auth_error: boolean;
 	error_msg: string;
@@ -35,12 +33,7 @@ export class LoginFormComponent implements OnInit {
 
 	isUpcomingInstallChecked: boolean = false;
 
-	constructor(
-		private _auth: AuthService,
-		private _form: FormBuilder,
-		private _router: Router,
-		 private _dialog: MatDialog
-	) { }
+	constructor(private _auth: AuthService, private _form: FormBuilder, private _router: Router, private _dialog: MatDialog) {}
 
 	control: string = 'username';
 
@@ -61,19 +54,19 @@ export class LoginFormComponent implements OnInit {
 			error: 'Password is required',
 			type: 'password'
 		}
-	]
+	];
 
 	ngOnInit() {
-		this.login_form = this._form.group(
-			{
-				username: ['', Validators.required],
-				password: ['', Validators.required]
-			}
-		);
+		this.login_form = this._form.group({
+			username: ['', Validators.required],
+			password: ['', Validators.required]
+		});
 	}
 
 	// convenience getter for easy access to form fields
-	get form() { return this.login_form.controls; }
+	get form() {
+		return this.login_form.controls;
+	}
 
 	authUser(): void {
 		this.is_submitted = true;
@@ -81,101 +74,111 @@ export class LoginFormComponent implements OnInit {
 		if (this.login_form.invalid) {
 			return;
 		}
-		
+
 		this.show_overlay = true;
 
-		this._auth.authenticate_user(this.login_form.value).pipe(first()).subscribe(
-			(response: USER_LOGIN) => {
-				
-				const user_data = {
-					user_id: response.userId,
-					firstname: response.firstName,
-					lastname: response.lastName,
-					role_id: response.userRole.roleId,
-					roleInfo: response.roleInfo,
-					jwt: { token: response.token, refreshToken: response.refreshToken }
-				};
+		this._auth
+			.authenticate_user(this.login_form.value)
+			.pipe(first())
+			.subscribe(
+				(response: USER_LOGIN) => {
+					const user_data = {
+						user_id: response.userId,
+						firstname: response.firstName,
+						lastname: response.lastName,
+						role_id: response.userRole.roleId,
+						roleInfo: response.roleInfo,
+						jwt: { token: response.token, refreshToken: response.refreshToken }
+					};
 
-				if (response.userRole.roleName === 'Sub Dealer') user_data.roleInfo.permission = response.userRole.permission;
-				localStorage.setItem('current_user', JSON.stringify(user_data));
-				localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
-				this._auth.startRefreshTokenTimer();
-				this.redirectToPage(response.userRole.roleId);
-				if(response.userRole.roleId === UI_ROLE_DEFINITION.administrator ||
-					 response.userRole.roleId === UI_ROLE_DEFINITION.tech){
-					//Show Modal
-					let item = JSON.parse(localStorage.getItem('installation_ischecked'));
-					if(item){
-						let isNextDay = this.compareTime(item.timestamp, moment().toDate());
-						if(isNextDay){
+					if (response.userRole.roleName === 'Sub Dealer') user_data.roleInfo.permission = response.userRole.permission;
+					localStorage.setItem('current_user', JSON.stringify(user_data));
+					localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
+					this._auth.startRefreshTokenTimer();
+					this.redirectToPage(response.userRole.roleId);
+					if (response.userRole.roleId === UI_ROLE_DEFINITION.administrator || response.userRole.roleId === UI_ROLE_DEFINITION.tech) {
+						//Show Modal
+						let item = JSON.parse(localStorage.getItem('installation_ischecked'));
+						if (item) {
+							let isNextDay = this.compareTime(item.timestamp, moment().toDate());
+							if (isNextDay) {
+								this.openUpcomingInstallModal();
+							} else {
+								if (!item.value) {
+									this.openUpcomingInstallModal();
+								}
+							}
+						} else {
 							this.openUpcomingInstallModal();
 						}
-						else{
-							if(!item.value){
-								this.openUpcomingInstallModal();
-							}
-						}
 					}
-					else{
-						this.openUpcomingInstallModal();
-					}
+
+					this.getUserCookie(user_data.user_id);
+				},
+				(error) => {
+					this.show_overlay = false;
+					this.is_error = true;
+					this.error_msg = `${error.error.message}`;
+					console.log('Error authenticating user', error);
 				}
-			},
-			error => {
-				this.show_overlay = false;
-				this.is_error = true;
-				this.error_msg = `${error.error.message}`;
-				console.log('Error authenticating user', error);
-			}
-		)
+			);
 	}
 
-	 compareTime(dateString:any, now:any){
-        return moment(now).isAfter(dateString, 'day');
-    }
-	
-	openUpcomingInstallModal(){
-        let dialogRef = this._dialog.open(UpcomingInstallModalComponent, {
+	getUserCookie(userId: string) {
+		this._auth.get_user_cookie(userId).subscribe(
+			(data) => {
+				console.log(data);
+			},
+			(error) => {
+				console.log(error);
+			}
+		);
+	}
+
+	compareTime(dateString: any, now: any) {
+		return moment(now).isAfter(dateString, 'day');
+	}
+
+	openUpcomingInstallModal() {
+		let dialogRef = this._dialog.open(UpcomingInstallModalComponent, {
 			height: '525px',
 			width: '600px',
-            disableClose: true,
-            panelClass: 'custom-modalbox'
+			disableClose: true,
+			panelClass: 'custom-modalbox'
 		});
 
-		dialogRef.afterClosed().subscribe(result => {
-            this.isUpcomingInstallChecked = result;
+		dialogRef.afterClosed().subscribe((result) => {
+			this.isUpcomingInstallChecked = result;
 		});
-    }
+	}
 
 	async redirectToPage(role_definition: string): Promise<void> {
 		let role: string;
 
 		switch (role_definition) {
 			case UI_ROLE_DEFINITION.administrator:
-				role = UI_ROLE_DEFINITION_TEXT.administrator
+				role = UI_ROLE_DEFINITION_TEXT.administrator;
 				break;
 			case UI_ROLE_DEFINITION.dealer:
-				role = UI_ROLE_DEFINITION_TEXT.dealer
+				role = UI_ROLE_DEFINITION_TEXT.dealer;
 				break;
 			case UI_ROLE_DEFINITION['sub-dealer']:
 				role = UI_ROLE_DEFINITION_TEXT['sub-dealer'];
 				break;
 			case UI_ROLE_DEFINITION.host:
-				role = UI_ROLE_DEFINITION_TEXT.host
+				role = UI_ROLE_DEFINITION_TEXT.host;
 				break;
 			case UI_ROLE_DEFINITION.advertiser:
-				role = UI_ROLE_DEFINITION_TEXT.advertiser
+				role = UI_ROLE_DEFINITION_TEXT.advertiser;
 				break;
 			case UI_ROLE_DEFINITION.tech:
-				role = UI_ROLE_DEFINITION_TEXT.tech
+				role = UI_ROLE_DEFINITION_TEXT.tech;
 				break;
 			default:
 				role = 'login';
 		}
 
-
 		await this._router.navigate([role]);
-
 	}
 
 	togglePasswordFieldType(): void {
