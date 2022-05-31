@@ -140,6 +140,7 @@ export const API_ENDPOINTS = {
 		all_license_by_install_date: 'license/getlicensesbyinstalldate',
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
+		dealer_cards: 'billing/Get/CreditCards',
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
@@ -206,6 +207,7 @@ export const API_ENDPOINTS = {
 		content_schedule: 'playlistcontentsschedule/create',
 		host_s3_files: 'host/saveS3Files',
 		feed_clone: 'feed/clone',
+		dealer_credit_card_details: 'billing/Add/CreditCard',
 		dealer_contract_files: 'dealer/savecontractfiles',
 		dealer_territory_files: 'dealer/saveterritoryfiles',
 		sub_dealer_account: 'account/createsubaccount',
@@ -263,6 +265,7 @@ export const API_ENDPOINTS = {
 		content_protection: 'content/setProtection',
 		content_schedule: 'playlistcontentsschedule/update',
 		content_to_filler: 'content/setfiller',
+		dealer_credit_card_details: 'billing/update/CreditCard',
 		dealer_status: 'dealer/updatestatus',
 		host_file_alias: 'host/update/file/alias',
 		install_date: 'license/updateinstalldate',

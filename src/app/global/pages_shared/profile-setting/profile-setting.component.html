@@ -163,6 +163,19 @@
                         </div>
                     </div>
                 </mat-tab>
+				<mat-tab label="Payment">
+					<div class="col-lg-12 p-0">
+						<div class="theme-container">
+							<div class="row">
+								<div class="col-lg-12">
+									<ng-template matTabContent>
+										<app-payment-setting [dealerId]="dealer_id"></app-payment-setting>									
+									</ng-template>
+								</div>
+							</div>
+						</div>
+					</div>
+				</mat-tab>
             </mat-tab-group>
         </div>
     </div>

@@ -18,6 +18,7 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 export class ProfileSettingComponent implements OnInit {
     advertiser_details: any = {}; 
     content_details: any = {}; 
+	dealer_id: string;
     host_details: any = {}; 
     is_dealer: boolean = false;
     license_details: any = {}; 
@@ -39,6 +40,7 @@ export class ProfileSettingComponent implements OnInit {
     ngOnInit() {
         if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
             this.is_dealer = true;
+			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
             this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);

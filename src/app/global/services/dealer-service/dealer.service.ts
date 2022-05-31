@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
 
 import { API_DEALER, API_EXPORT_DEALER, API_FILTERS, PAGING } from 'src/app/global/models';
+import { API_CREDIT_CARD_DETAILS } from '../../models/api_credit-card-details.model';
+import { UI_CREDIT_CARD_DETAILS } from '../../models/ui_credit-card-details.model';
 import { BaseService } from '../base.service';
 
 @Injectable({
@@ -42,6 +44,11 @@ export class DealerService extends BaseService {
 
 	export_dealers(): Observable<API_EXPORT_DEALER[]> {
 		return this.getRequest(`${this.getters.export_dealers}`).map(response => response.dealers);
+	}
+
+	get_credit_cards(dealerId: string): Observable<{ cards: { data: API_CREDIT_CARD_DETAILS[] }, email: string }> {
+		const url = `${this.getters.dealer_cards}?dealerid=${dealerId}`;
+		return this.getRequest(url);
 	}
 
 	get_dealers() {
@@ -125,6 +132,20 @@ export class DealerService extends BaseService {
 		return this.postRequest(`${this.getters.api_get_dealer_report}`, data);
 	}
 
+	reassign_dealer(old_id: string, new_id: string) {
+		const data = { oldDealerId: old_id, newDealerId: new_id };
+		return this.postRequest(`${this.updaters.reassign_dealer}`, data);
+	}
+
+	save_credit_card_details(data: UI_CREDIT_CARD_DETAILS, type = 'create'): Observable<{ card: API_CREDIT_CARD_DETAILS }> {
+
+		let baseUrl: any = this.creators;
+		if (type === 'update') baseUrl = this.updaters;
+		const url = baseUrl['dealer_credit_card_details'];
+
+		return this.postRequest(url, data);
+	}
+
 	update_dealer(data) {
 		return this.postRequest(`${this.updaters.api_update_dealer}`, data);
 	}
@@ -138,11 +159,6 @@ export class DealerService extends BaseService {
 		const data = { dealerId: id, status };
 		const options = { responseType: 'text' as 'json' };
 		return this.postRequest(requestUrl, data, options);
-	}
-
-	reassign_dealer(old_id: string, new_id: string) {
-		const data = { oldDealerId: old_id, newDealerId: new_id };
-		return this.postRequest(`${this.updaters.reassign_dealer}`, data);
 	}
 
     upload_contract_files(data) {
