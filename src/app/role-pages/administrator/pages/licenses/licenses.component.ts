@@ -143,6 +143,7 @@ export class LicensesComponent implements OnInit {
         { name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
         { name: 'Host Name', sortable: true, column:'HostName', key: 'hostName' },
         { name: 'Category', key:'category', no_show: true, hidden: true },
+        { name: 'General Category', hidden: true, no_show: true, key:'generalCategory' },
         { name: 'Dealer Name', sortable: true, column:'BusinessName', key: 'businessName' },
 		{ name: 'Address', sortable: true, column:'Address', key: 'address' },
 		{ name: 'City', sortable: true, column:'City', key: 'city' },
@@ -152,6 +153,9 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Total Licenses', sortable: true, column:'TotalLicenses', key:'totalLicenses' },
 		{ name: 'Tags', key:'tagsToString', no_show: true, hidden: true },
         { name: 'Total Business Hours', sortable: false, key:'storeHours', hidden: true, no_show: true},
+        { name: 'DMA Rank', sortable: false, hidden: true, key:'dmaRank', no_show: true},		
+        { name: 'DMA Code', sortable: false, hidden: true, key:'dmaCode', no_show: true},		
+        { name: 'DMA Name', sortable: false, hidden: true, key:'dmaName', no_show: true},	
 	];
 
 	protected _unsubscribe = new Subject<void>();

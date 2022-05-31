@@ -90,7 +90,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Display', sortable: true, key:'displayStatus', column: 'DisplayStatus'},
 		{ name: 'Install Date', sortable: true, key:'installDate', column: 'InstallDate' },
 		{ name: 'Creation Date', sortable: true, key:'dateCreated', column: 'DateCreated' },
-        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},		
+        { name: 'Zone & Duration', sortable: false, hidden: true, key:'zone', no_show: true},			
 	];
 
     filters: any = {
