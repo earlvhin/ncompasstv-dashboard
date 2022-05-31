@@ -160,6 +160,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Dealer Name', sortable: false, key: 'businessName', hidden: true, no_show: true},
 		{ name: 'Host Name', sortable: true, column:'Name', key: 'name'},
         { name: 'Category', no_show:true, hidden: true, key: 'category'},
+        { name: 'General Category', no_show:true, hidden: true, key: 'generalCategory'},
 		{ name: 'Address', sortable: true, column:'Address', key: 'address'},
 		{ name: 'City', sortable: true, column:'City', key: 'city'},
 		{ name: 'State', sortable: true, column:'State', key: 'state'},
