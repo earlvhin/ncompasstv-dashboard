@@ -33,4 +33,7 @@ export class CategoryService {
 		return this._http.get<{ parentCategory: API_PARENTCATEGORY[] }>(`${environment.base_uri}${environment.getters.api_get_parent_categories}`, this.http_options).map(data => data.parentCategory);
 	}
 
+    get_category_general(category) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_category_general}${category}`, this.http_options);
+	}
 }
