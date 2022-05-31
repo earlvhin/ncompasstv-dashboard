@@ -54,6 +54,11 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
     
+    get_all_dma(page, search, pageSize = 15) {
+		const url = `${this.getters.api_get_dma}?page=${page}&search=${search}&pageSize=${pageSize}`;
+		return this.getRequest(url);
+	}
+    
     get_licenses_per_state_details(state: string) {
 		const url = `${this.getters.api_get_host_licenses_by_state_details}${state}`;
 		return this.getRequest(url).map(data => data.dealerState);
@@ -113,7 +118,7 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 	
-	get_host_by_page(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15): Observable<{ host?: API_HOST[], paging?: PAGING, message?: string }> {
+	get_host_by_page(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15): Observable<{ host?: any[], paging?: PAGING, message?: string }> {
         const base = `${this.getters.api_get_hosts}`;
 		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
