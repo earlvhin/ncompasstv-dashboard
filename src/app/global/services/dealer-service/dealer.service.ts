@@ -2,7 +2,7 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map'
 
-import { API_DEALER, API_EXPORT_DEALER, API_FILTERS, PAGING } from 'src/app/global/models';
+import { API_DEALER, API_EXPORT_DEALER, API_DEALER_VALUES, API_FILTERS, PAGING } from 'src/app/global/models';
 import { API_CREDIT_CARD_DETAILS } from '../../models/api_credit-card-details.model';
 import { UI_CREDIT_CARD_DETAILS } from '../../models/ui_credit-card-details.model';
 import { BaseService } from '../base.service';
@@ -104,7 +104,7 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_all_dealer_values}`+'?page='+`${page}`);
 	}
     
-    get_dealer_values_by_id(id: string) {
+    get_dealer_values_by_id(id: string): Observable<API_DEALER_VALUES | { message: string }> {
 		return this.getRequest(`${this.getters.api_get_dealer_values}${id}`);
 	}
 
