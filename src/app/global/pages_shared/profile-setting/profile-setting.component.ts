@@ -2,13 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { ContentService } from '../../services/content-service/content.service';
-import { HostService } from '../../services/host-service/host.service';
-import { LicenseService } from '../../services/license-service/license.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-
+import { AuthService, AdvertiserService, ContentService, HostService, LicenseService } from 'src/app/global/services';
+import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
 @Component({
     selector: 'app-profile-setting',
     templateUrl: './profile-setting.component.html',
@@ -17,7 +12,8 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 export class ProfileSettingComponent implements OnInit {
     advertiser_details: any = {}; 
-    content_details: any = {}; 
+    content_details: any = {};
+	current_user: UI_CURRENT_USER;
 	dealer_id: string;
     host_details: any = {}; 
     is_dealer: boolean = false;
@@ -41,6 +37,7 @@ export class ProfileSettingComponent implements OnInit {
         if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
             this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+			this.current_user = this._auth.current_user_value;
             this.getTotalLicenses(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);

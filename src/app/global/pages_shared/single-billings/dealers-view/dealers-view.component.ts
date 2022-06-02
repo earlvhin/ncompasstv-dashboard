@@ -300,9 +300,6 @@ export class DealersViewComponent implements OnInit {
 
 					if (Object.prototype.hasOwnProperty.call(response, 'message')) {
 
-						this.all_info_data = null;
-						this.initializeCreateBillingForm();
-						this.getTotalLicenses(id);
 						this.values_data = {
 							month1: 0,
 							month19: 0,
@@ -315,7 +312,20 @@ export class DealersViewComponent implements OnInit {
 							billable: 0,
 							billableLicenses: 0,
 							licensePriceNew: 0
-						}
+						};
+
+						this.all_info_data = {
+							currentMonth: 'Month1',
+							currentMonthLicenseCount: 0,
+							dealerValue: this.values_data,
+							licensesDifference: 0,
+							totalLicenses: 0
+						};
+
+						this.billingDateText = '0th';
+
+						this.initializeCreateBillingForm();
+						this.getTotalLicenses(id);
 
 						return;
 

@@ -1,12 +1,12 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
-import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { API_CREDIT_CARD_DETAILS } from 'src/app/global/models/api_credit-card-details.model';
-import { UI_CREDIT_CARD_DETAILS } from 'src/app/global/models/ui_credit-card-details.model';
+import { Subject } from 'rxjs';
 
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from 'src/app/global/models';
 import { DealerService } from 'src/app/global/services';
 
 
@@ -16,8 +16,12 @@ import { DealerService } from 'src/app/global/services';
 	styleUrls: ['./payment-setting.component.scss']
 })
 export class PaymentSettingComponent implements OnInit {
+	@Input() currentUser: UI_CURRENT_USER;
 	@Input() dealerId: string;
 
+	addressTypes = [ 'billing', 'dealer' ];
+	currentAddress: string;
+	dealerAddressForm: FormGroup;
 	isFormLoaded = false;
 	paymentSettingForm: FormGroup;
 	private actualCreditCardDetails: API_CREDIT_CARD_DETAILS;
@@ -34,8 +38,36 @@ export class PaymentSettingComponent implements OnInit {
 	) { }
 	
 	ngOnInit() {
+		console.log('current user', this.currentUser);
 		this.initializeForm();
 		this.getCreditCards();
+	}
+
+	onSetAsCurrentAddress(event: { checked: true },  type: string): void {
+
+		if (!event.checked && (this.currentAddress === type)) this.currentAddress = type === 'billing' ? 'dealer' : 'billing';
+		else this.currentAddress = type;
+
+		let dealerAddress = this.dealerAddressForm.value;
+
+		if (!this.hasCreditCardSaved && this.currentAddress === 'billing') dealerAddress = { AddressLine1: null, AddressCity: null, AddressState: null, AddressZip: null };
+
+		if (this.hasCreditCardSaved && this.currentAddress === 'billing') {
+
+			const { address_line1, address_line2, address_city, address_state, address_zip } = this.actualCreditCardDetails;
+
+			dealerAddress = { 
+				AddressLine1: address_line1,
+				AddressLine2: address_line2,
+				AddressCity: address_city,
+				AddressState: address_state,
+				AddressZip: address_zip 
+			};
+
+		}
+
+		this.paymentSettingForm.patchValue(dealerAddress);
+
 	}
 
 	onSubmit(): void {
@@ -75,6 +107,8 @@ export class PaymentSettingComponent implements OnInit {
 					};
 
 					this.paymentSettingForm.patchValue(details);
+					this.hasCreditCardSaved = true;
+					this.disableCreditCardFields();
 
 				},
 				error => console.log('Error saving credit card details', error)
@@ -92,8 +126,23 @@ export class PaymentSettingComponent implements OnInit {
 
 	}
 
-	private getCreditCards(): void {
+	private fillOutDealerAddressForm(): void {
 
+		const { address, city, state, zip } = this.currentUser.roleInfo;
+
+		this.dealerAddressForm.patchValue({
+			AddressLine1: address,
+			AddressCity: city,
+			AddressState: state,
+			AddressZip: zip
+		});
+
+		this.dealerAddressForm.disable();
+
+	}
+
+	private getCreditCards(): void {
+		
 		this._dealer.get_credit_cards(this.dealerId).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				response => {
@@ -126,14 +175,19 @@ export class PaymentSettingComponent implements OnInit {
 					this.paymentSettingForm.patchValue(creditCardDetails);
 					this.hasCreditCardSaved = true;
 					this.disableCreditCardFields();
+					this.currentAddress = 'billing';
 
+				},
+				(error: HttpErrorResponse) => {
+					if (error.status === 400) this.hasCreditCardSaved = false;
 				}
 			);
 	}
 
 	private initializeForm(): void {
 
-		let formGroup = {};
+		let paymentSettingFormGroup = {};
+		let dealerAddressFormGroup = {};
 
 		this._formFields.forEach(
 			field => {
@@ -142,13 +196,17 @@ export class PaymentSettingComponent implements OnInit {
 				let validators: any[] = [];
 
 				if (field.is_required) validators.push(Validators.required);
+				if (field.name === 'Cvc') validators.push(Validators.minLength(3));
+				if (this.addressFormFields.includes(field.name)) dealerAddressFormGroup[field.name] = [ null, validators ];
 
-				formGroup[field.name] = [ value, validators ];
+				paymentSettingFormGroup[field.name] = [ value, validators ];
 				
 			}
 		);
 
-		this.paymentSettingForm = this._formBuilder.group(formGroup);
+		this.paymentSettingForm = this._formBuilder.group(paymentSettingFormGroup);
+		this.dealerAddressForm = this._formBuilder.group(dealerAddressFormGroup);
+		this.fillOutDealerAddressForm();
 		this.isFormLoaded = true;
 
 	}
