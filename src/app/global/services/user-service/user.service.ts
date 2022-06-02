@@ -39,11 +39,11 @@ export class UserService {
 		const endpoint = `${this.base}${this.getters.users_by_owner}${ownerId}`;
 		return this._http.get(endpoint, this.httpOptions);
 	}
-
+	
 	get_users_search(key) {
 		return this._http.get<any>(`${this.base}${this.getters.api_get_users}` + '?search=' + `${key}`, this.httpOptions);
 	}
-
+	
 	get_user_total() {
 		return this._http.get<API_USER_STATS>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
 	}
@@ -110,6 +110,10 @@ export class UserService {
 	get_user_notifications(id) {
 		return this._http.get(`${this.base}${this.getters.api_get_notifications}${id}`, this.httpOptions);
 	}
+
+    set_cookie_for_other_site(id) {
+        return this._http.get(`${this.base}${this.getters.api_get_and_set_cookies}${id}`, this.httpOptions);
+    }
 
 	protected get base() {
 		return environment.base_uri;

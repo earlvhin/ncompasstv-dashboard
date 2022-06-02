@@ -99,5 +99,9 @@ export class ProfileSettingComponent implements OnInit {
             case 1:
                 tab = 'Content';
         }
-        }
+    }
+
+    goToUrl(): void {
+        window.open("https://shop.n-compass.online", "_blank");
+    }
 }
