@@ -38,7 +38,6 @@ export class PaymentSettingComponent implements OnInit {
 	) { }
 	
 	ngOnInit() {
-		console.log('current user', this.currentUser);
 		this.initializeForm();
 		this.getCreditCards();
 	}

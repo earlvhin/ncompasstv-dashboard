@@ -92,9 +92,10 @@
 				</mat-card>
 
 				<mat-card class="dealer-address p-5">
-					<div class="d-flex align-items-center">
+					<div class="d-flex align-items-center justify-content-between">
 						<h3>Dealer Address</h3>
-						<mat-slide-toggle (change)="onSetAsCurrentAddress($event, 'dealer')" [checked]="currentAddress === 'dealer'">
+						<mat-slide-toggle [labelPosition]="'before'" (change)="onSetAsCurrentAddress($event, 'dealer')" [checked]="currentAddress === 'dealer'">
+							Use this address
 						</mat-slide-toggle>
 					</div>
 
