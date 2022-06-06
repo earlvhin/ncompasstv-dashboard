@@ -1,0 +1,35 @@
+.credit-card-details {
+	flex-basis: 32%;
+	margin-right: 20px;
+}
+
+.billing-address {
+	flex-basis: 32%;
+	margin-right: 20px;
+
+	h3 {
+		padding-right: 20px;
+	}
+}
+
+.dealer-address {
+	flex-basis: 32%;
+
+	h3 {
+		padding-right: 20px;
+	}
+
+	mat-slide-toggle {
+		font-size: 10px;
+	}
+}
+
+.expiry-fields {
+	mat-form-field {
+		width: 120px;
+	}
+
+	.divider {
+		padding: 0 20px;
+	}
+}

@@ -124,6 +124,7 @@ import { NotificationsComponent } from './pages_shared/notifications/notificatio
 import { ObjectKeysPipe } from './pipes/object-keys.pipe';
 import { OptionsComponent } from './components_shared/playlist_components/options/options.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
+import { PaymentSettingComponent } from './pages_shared/profile-setting/payment-setting/payment-setting.component';
 import { PlayWhereComponent } from './components_shared/playlist_components/play-where/play-where.component';
 import { PlaylistContentComponent } from './components_shared/playlist_components/playlist-content/playlist-content.component';
 import { PlaylistContentPanelComponent } from './components_shared/playlist_components/playlist-content-panel/playlist-content-panel.component';
@@ -319,6 +320,7 @@ const ngComponents = [
 	NotificationsComponent,
 	ObjectKeysPipe,
 	OptionsComponent,
+	PaymentSettingComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,
 	PlaylistContentPanelComponent,
@@ -415,6 +417,7 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		PaymentSettingComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

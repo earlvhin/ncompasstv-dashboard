@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 
 import { LicenseService, AuthService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_DEALER_VALUES, API_DEALER_VALUE, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
     selector: 'app-dealers-view',
@@ -21,8 +21,9 @@ export class DealersViewComponent implements OnInit {
     @Input() reload_dealer: boolean = false;
 
     accepted_file: any;
-    all_info_data: any;
+    all_info_data: API_DEALER_VALUES;
     billingDate: number;
+	billingDateText: string;
     autoCharge: number;
     contracts: any = [];
     current_container: string;
@@ -296,34 +297,55 @@ export class DealersViewComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
 				response => {
-					if (!response.message) {
-						this.all_info_data = response;
-						this.values_data = response.dealerValue;
-                        if(this.values_data.billingDate > 0) {
-                            this.billingDate = this.values_data.billingDate;
-                        }
-                        if(this.values_data.autoCharge != null) {
-                            this.autoCharge = this.values_data.autoCharge;
-                        }
-                        this.readyUpdateForm();
-					} else {
-                        this.all_info_data = [];
-                        this.initializeCreateBillingForm();
-                        this.getTotalLicenses(id);
-                        this.values_data = {
-                            month1: 0,
-                            month19: 0,
-                            month25: 0,
-                            month31: 0,
-                            month37: 0,
-                            baseFee: 0,
-                            perLicense: 0,
-                            billing: 0,
-                            billable: 0,
-                            billableLicenses: 0,
-                            licensePriceNew: 0
-                        }
+
+					if (Object.prototype.hasOwnProperty.call(response, 'message')) {
+
+						this.values_data = {
+							month1: 0,
+							month19: 0,
+							month25: 0,
+							month31: 0,
+							month37: 0,
+							baseFee: 0,
+							perLicense: 0,
+							billing: 0,
+							billable: 0,
+							billableLicenses: 0,
+							licensePriceNew: 0
+						};
+
+						this.all_info_data = {
+							currentMonth: 'Month1',
+							currentMonthLicenseCount: 0,
+							dealerValue: this.values_data,
+							licensesDifference: 0,
+							totalLicenses: 0
+						};
+
+						this.billingDateText = '0th';
+
+						this.initializeCreateBillingForm();
+						this.getTotalLicenses(id);
+
+						return;
+
 					}
+
+					this.all_info_data = response as API_DEALER_VALUES;
+					this.values_data = this.all_info_data.dealerValue;
+
+					if (this.values_data.billingDate > 0) {
+						this.billingDate = this.values_data.billingDate;
+						this.billingDateText = `${this.billingDate}`;
+						this.billingDateText += this.billingDate === 15 ? 'th' : 'st'; 
+					}
+
+					if (this.values_data.autoCharge != null) {
+						this.autoCharge = this.values_data.autoCharge;
+					}
+
+					this.readyUpdateForm();
+
 				}, 
 				error => console.log('Error retrieving user data', error)
 			)
