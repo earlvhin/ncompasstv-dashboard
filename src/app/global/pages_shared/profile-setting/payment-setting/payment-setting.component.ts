@@ -97,13 +97,32 @@ export class PaymentSettingComponent implements OnInit {
 
 					const cardDetails = response.card;
 
-					const details = {
-						Address1: cardDetails.address_line1,
-						Address2: cardDetails.address_line2,
+					let details: any = {
+						AddressLine1: cardDetails.address_line1,
+						AddressLine2: cardDetails.address_line2,
 						AddressCity: cardDetails.address_city,
 						AddressState: cardDetails.address_state,
 						AddressZip: cardDetails.address_zip,
 					};
+
+					if (type === 'create') {
+
+						this.actualCreditCardDetails = cardDetails;
+						this.creditCardEmail = data.Email;
+
+						let creditCardNumber = `************${cardDetails.last4}`;
+						const expiryMonth = (cardDetails.exp_month < 10) ? `0${cardDetails.exp_month}` : cardDetails.exp_month;
+						const expiryYearString = `${cardDetails.exp_year}`;
+						const expiryYear = expiryYearString.substring(2, expiryYearString.length);
+
+						details.Number = creditCardNumber;
+						details.Name = cardDetails.name;
+						details.ExpirationYear = expiryYear;
+						details.ExpirationMonth = expiryMonth;
+						details.Cvc = 123;
+						details.Email = data.Email;
+
+					}
 
 					this.paymentSettingForm.patchValue(details);
 					this.hasCreditCardSaved = true;
