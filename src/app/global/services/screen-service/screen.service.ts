@@ -9,24 +9,17 @@ import { API_CHANGE_TEMPLATE, API_SINGLE_SCREEN, API_CHANGE_TEMPLATE_RESPONSE, C
 @Injectable({
 	providedIn: 'root'
 })
-
 export class ScreenService {
-	
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}` }
-		)
+		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
-	
-	constructor(
-		private _http: HttpClient,
-		private _auth: AuthService
-	) { }
+
+	constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	assign_license(data) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_assign_license_to_screen}`, data, this.httpOptions)
+		return this._http.post(`${environment.base_uri}${environment.update.api_assign_license_to_screen}`, data, this.httpOptions);
 	}
 
 	change_template(body: API_CHANGE_TEMPLATE): Observable<API_CHANGE_TEMPLATE_RESPONSE> {
@@ -43,13 +36,24 @@ export class ScreenService {
 	}
 
 	get_screens(page, key, column, order) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens}`+'?page='+`${page}`+'&search='+`${key}`+'&sortColumn='+`${column}`+'&sortOrder='+`${order}`, this.httpOptions);
+		return this._http.get<any>(
+			`${environment.base_uri}${environment.getters.api_get_screens}` +
+				'?page=' +
+				`${page}` +
+				'&search=' +
+				`${key}` +
+				'&sortColumn=' +
+				`${column}` +
+				'&sortOrder=' +
+				`${order}`,
+			this.httpOptions
+		);
 	}
 
 	get_screens_search(key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens}`+'?search='+`${key}`, this.httpOptions);
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens}` + '?search=' + `${key}`, this.httpOptions);
 	}
-	
+
 	get_screens_type() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_type}`, this.httpOptions);
 	}
@@ -63,9 +67,18 @@ export class ScreenService {
 	get_screen_by_dealer_id(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer}${id}`, this.httpOptions);
 	}
-	
+
 	api_get_screen_by_dealer_table(page, id, key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer_table}`+'?page='+`${page}`+'&dealerid='+`${id}`+'&search='+`${key}`, this.httpOptions);
+		return this._http.get<any>(
+			`${environment.base_uri}${environment.getters.api_get_screen_by_dealer_table}` +
+				'?page=' +
+				`${page}` +
+				'&dealerid=' +
+				`${id}` +
+				'&search=' +
+				`${key}`,
+			this.httpOptions
+		);
 	}
 
 	// get_screen_by_dealer_id_v2(id) {
@@ -75,17 +88,16 @@ export class ScreenService {
 	get_screen_total() {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_total}`, this.httpOptions);
 	}
-	
+
 	get_screen_total_by_dealer(id) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_total_by_dealer}${id}`, this.httpOptions);
 	}
-	
+
 	delete_screen(to_delete) {
 		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_screen}`, to_delete, this.httpOptions);
 	}
 
 	unassign_license(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_screen_license}`, data, this.httpOptions)
+		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_screen_license}`, data, this.httpOptions);
 	}
 }
-

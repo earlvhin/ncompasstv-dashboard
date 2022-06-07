@@ -15,22 +15,25 @@ export class CategoryService {
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	http_options = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}` }
-		)
+		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 	
-	constructor(
-		private _auth: AuthService,
-		private _http: HttpClient
-	) { }
+	constructor(private _auth: AuthService, private _http: HttpClient) {}
 
 	get_categories() {
 		return this._http.get<API_CATEGORY[]>(`${environment.base_uri}${environment.getters.api_get_categories}`, this.http_options);
 	}
 	
 	get_parent_categories() {
-		return this._http.get<{ parentCategory: API_PARENTCATEGORY[] }>(`${environment.base_uri}${environment.getters.api_get_parent_categories}`, this.http_options).map(data => data.parentCategory);
+		return this._http
+			.get<{ parentCategory: API_PARENTCATEGORY[] }>(
+				`${environment.base_uri}${environment.getters.api_get_parent_categories}`,
+				this.http_options
+			)
+			.map((data) => data.parentCategory);
 	}
-
+	
+    get_category_general(category) {
+		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_category_general}${category}`, this.http_options);
+	}
 }

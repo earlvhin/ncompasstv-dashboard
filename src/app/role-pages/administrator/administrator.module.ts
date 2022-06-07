@@ -41,6 +41,7 @@ import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.
 import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single-host.module';
 import { InstallationsModule } from './pages/installations/installations.module';
 import { BillingsViewComponent } from './pages/dealers/billings-view/billings-view.component';
+import { DmaViewComponent } from './pages/hosts/dma-view/dma-view.component';
 
 @NgModule({
 	declarations: [
@@ -62,6 +63,7 @@ import { BillingsViewComponent } from './pages/dealers/billings-view/billings-vi
 		UpdateComponent,
 		TagsTabComponent,
 		BillingsViewComponent,
+		DmaViewComponent,
 	],
 	imports: [
 		CommonModule,

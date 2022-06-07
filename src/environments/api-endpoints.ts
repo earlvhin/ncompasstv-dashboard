@@ -1,7 +1,7 @@
 export const API_ENDPOINTS = {
 	auth: {
 		api_login: 'account/login',
-		api_refresh: 'token/refresh',
+		api_refresh: 'token/refresh'
 	},
 	getters: {
 		api_get_activities: 'activity/getall',
@@ -12,21 +12,22 @@ export const API_ENDPOINTS = {
 		api_get_advertiser_report: 'advertiser/getaddedreport',
 		api_get_advertiser_total: 'advertiser/gettotal',
 		api_get_advertiser_total_by_dealer: 'advertiser/gettotal?dealerid=',
-        api_get_advertisers_unassigned: 'advertiser/getunassignedbydealerid?dealer_id=',
+		api_get_advertisers_unassigned: 'advertiser/getunassignedbydealerid?dealer_id=',
 		api_get_assets: 'content/getall',
 		api_get_blacklisted_by_id: 'blacklistedcontents/getblacklistedbyplaylistcontentid?playlistcontentid=',
-        api_get_checklist: 'installationchecklists/getallitems',
-        api_get_checklist_titles: 'installationchecklists/getall',
-        api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
+		api_get_checklist: 'installationchecklists/getallitems',
+		api_get_checklist_titles: 'installationchecklists/getall',
+		api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
 		api_get_content: 'content/findall',
 		api_get_content_summary: 'content/getalllimitedfields',
 		api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',
 		api_get_categories: 'category/getall',
+		api_get_category_general: 'category/getbycategory?category=',
 		api_get_all_dealer_values: 'dealer/getdealervalues',
-		api_get_dealer_total:'dealer/gettotal',
-		api_get_dealer_contract_files:'dealer/getcontractfiles?dealerid=',
-		api_get_dealer_territory_files:'dealer/getterritoryfiles?dealerid=',
-		api_get_dealer_values:'dealer/getdealervaluesbydealerid?dealerid=',
+		api_get_dealer_total: 'dealer/gettotal',
+		api_get_dealer_contract_files: 'dealer/getcontractfiles?dealerid=',
+		api_get_dealer_territory_files: 'dealer/getterritoryfiles?dealerid=',
+		api_get_dealer_values: 'dealer/getdealervaluesbydealerid?dealerid=',
 		api_get_global_settings: 'globalSettings/getall',
 		api_get_host_fields: 'fieldgroup/getall',
 		api_get_host_field_by_id: 'fieldgroupfield/getbyfieldgroupid?fieldgroupid=',
@@ -35,7 +36,7 @@ export const API_ENDPOINTS = {
 		api_get_content_by_id: 'content/getcontentsbyid?contentid=',
 		api_get_content_by_dealer_id: 'content/getbydealerid?dealerid=',
 		api_get_content_daily_count: 'contentplays/getdailytotalbycontent',
-        api_get_content_metrics_export: 'contentplaysdaily/exportscontentmetricsbycontent',
+		api_get_content_metrics_export: 'contentplaysdaily/exportscontentmetricsbycontent',
 		api_get_content_monthly_count: 'contentplays/getmonthlytotalbycontent',
 		api_get_content_yearly_count: 'contentplays/getyearlytotalbycontent',
 		api_get_content_count_by_license: 'contentplays/gettotalbylicense',
@@ -58,6 +59,7 @@ export const API_ENDPOINTS = {
 		api_get_dealers_with_license: 'dealer/getdealerswithlicense',
 		api_get_dealer_report: 'dealer/getaddedreport',
 		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone',
+		api_get_dma: 'dma/gethosttotalbyrank',
 		api_get_generated_feed_by_id: 'feed/getbyfeedid?feedid=',
 		api_get_feeds: 'feed/getall',
 		api_get_feeds_total: 'feed/gettotal',
@@ -89,9 +91,9 @@ export const API_ENDPOINTS = {
 		api_get_license_report: 'license/getaddedreport',
 		api_get_licenses_total: 'license/gettotal',
 		api_get_licenses_total_by_dealer: 'license/gettotal?dealerid=',
-        api_get_licenses_by_screen: 'license/getlicensesbyscreenid',
-        api_get_licenses_statistics: 'license/getmonthlytotal',
-        api_get_licenses_installation_statistics: 'license/getmonthlyinstallation',
+		api_get_licenses_by_screen: 'license/getlicensesbyscreenid',
+		api_get_licenses_statistics: 'license/getmonthlytotal',
+		api_get_licenses_installation_statistics: 'license/getmonthlyinstallation',
 		api_get_licenses_installation_statistics_detailed: 'license/getmonthlyinstallationdetailed',
 		api_get_ad_licenses_total: 'license/getaverageadlicensemainscreen',
 		api_get_ad_licenses_total_by_dealer: 'license/getaverageadlicensemainscreen?dealerId=',
@@ -110,7 +112,7 @@ export const API_ENDPOINTS = {
 		api_get_roles: 'role/getall',
 		api_get_and_set_cookies: 'user/setcookie?userid=',
 		api_get_resource_logs: 'resourcelogs/getresourcelogbylicenseid?licenseid=',
-	    api_get_resource_logs_by_date: 'resourcelogs/getresourcelogbylicenseidanddate?licenseid=',
+		api_get_resource_logs_by_date: 'resourcelogs/getresourcelogbylicenseidanddate?licenseid=',
 		api_get_screen_by_id: 'screen/getscreenbyid?screenId=',
 		api_get_screen_by_dealer: 'screen/getbydealerid?dealerId=',
 		api_get_screen_by_dealer_table: 'screen/getscreenbydealerid',
@@ -147,6 +149,7 @@ export const API_ENDPOINTS = {
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
 		export_hosts: 'host/exportbydealer?dealerid=',
+		get_user_cookie: 'user/setcookie?userid=',
 		host_files: 'host/GetHostFilesByType',
 		host_place_images: 'googleapi/GetLogoByPlaceId',
 		license_by_tags: 'license/getByTags',
@@ -192,7 +195,7 @@ export const API_ENDPOINTS = {
 		api_new_filler_feed_demo: 'feed/preview/demo/fillers',
 		api_new_host: 'host/create',
 		api_new_host_place: 'host/createhost',
-		api_new_license:'license/create?',
+		api_new_license: 'license/create?',
 		api_new_playlist: 'playlists/create',
 		api_clone_playlist: 'playlists/clone',
 		api_create_field_group: 'fieldgroup/create',
@@ -221,7 +224,8 @@ export const API_ENDPOINTS = {
 		filestack_api_key: 'ALjKIdQzT1uQvACcqMCnQz',
 		filestack_policy: 'eyJjYWxsIjpbIndyaXRlIiwicmVtb3ZlIl0sImV4cGlyeSI6MTYxMjAyMjQwMH0',
 		filestack_signature: '49306a4d1945bffbb381dd90b38be3a69230b2f473543d3d73440c77eeab730d',
-		filestack_screenshot: 'https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=mode:window,height:1080,width:1920/resize=width:600/'
+		filestack_screenshot:
+			'https://cdn.filestackcontent.com/ALjKIdQzT1uQvACcqMCnQz/urlscreenshot=mode:window,height:1080,width:1920/resize=width:600/'
 	},
 	update: {
 		account_permission: 'account/updatepermission',
@@ -280,7 +284,7 @@ export const API_ENDPOINTS = {
 		tag_type: 'tag/updatetype',
 		template: 'template/update',
 		toggle_credits: 'playlists/enableCredits',
-		user_email_settings: 'user/updateemailsettings',
+		user_email_settings: 'user/updateemailsettings'
 	},
 	delete: {
 		api_delete_contract_details: 'dealer/deletecontractfiles?filename=',
@@ -308,6 +312,6 @@ export const API_ENDPOINTS = {
 		tag: 'tag/delete',
 		tag_by_id_and_owner: 'tag/DeleteByOwnerIdAndTagId',
 		tag_by_owner_id: 'tag/DeleteByOwnerId?ownerid=',
-		user: 'user/delete',
+		user: 'user/delete'
 	}
 };

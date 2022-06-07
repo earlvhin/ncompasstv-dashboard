@@ -4,7 +4,7 @@
             <app-banner
 				[single_image]="img"
 				[single_name]="dealer.businessName"
-				[single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.dateCreated | date)"
+				[single_desc]="dealer.city + ', ' + dealer.state + ' ' + dealer.region + '  -  ' + 'Dealer since ' + (dealer.startDate | date)"
 				[editable]="true"
 				[refresh_banner]="true"
 				[dealer_data]="dealer_user_data"

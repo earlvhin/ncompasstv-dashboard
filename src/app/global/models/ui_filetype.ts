@@ -8,5 +8,6 @@ export enum IMAGE_FILETYPE {
     jpg = 2,
     jfif = 3,
     png = 4,
-    JPEG = 5
+    JPEG = 5,
+	JPG = 6
 }

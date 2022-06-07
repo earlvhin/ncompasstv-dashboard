@@ -6,18 +6,12 @@ import { environment } from 'src/environments/environment';
 @Injectable({
 	providedIn: 'root'
 })
-
 export class ToolsService {
-    httpOptions = {
-		headers: new HttpHeaders(
-			{ 'Authorization': `Bearer ${this._auth.current_user_value.jwt.token}` }
-		)
+	httpOptions = {
+		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 
-    constructor(
-        private _http: HttpClient,
-		private _auth: AuthService
-    ) {}
+	constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	deleteScreenshots() {
 		return this._http.post(`${environment.base_uri}${environment.delete.api_delete_screenshot}`, null, this.httpOptions);
