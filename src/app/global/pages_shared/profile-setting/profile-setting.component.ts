@@ -1,9 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
-
-import { AuthService, AdvertiserService, ContentService, HostService, LicenseService } from 'src/app/global/services';
+import { Subject, Subscription } from 'rxjs';
+import { AuthService, AdvertiserService, ContentService, HostService, LicenseService, DealerService } from 'src/app/global/services';
 import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
+
 @Component({
     selector: 'app-profile-setting',
     templateUrl: './profile-setting.component.html',
@@ -12,7 +12,7 @@ import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 export class ProfileSettingComponent implements OnInit {
     advertiser_details: any = {}; 
-    content_details: any = {};
+    content_details: any = {}; 
 	current_user: UI_CURRENT_USER;
 	dealer_id: string;
     host_details: any = {}; 
@@ -22,6 +22,8 @@ export class ProfileSettingComponent implements OnInit {
 	loading_content: boolean = true;
 	loading_host: boolean = true;
 	loading_license: boolean = true;
+	show_cart_button: boolean = false;
+    subscription: Subscription = new Subscription;
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -31,6 +33,7 @@ export class ProfileSettingComponent implements OnInit {
         private _content: ContentService,
         private _host: HostService,
         private _license: LicenseService, 
+        private _dealer: DealerService,
     ) { }
 
     ngOnInit() {
@@ -42,12 +45,27 @@ export class ProfileSettingComponent implements OnInit {
             this.getTotalAdvertisers(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
+            this.getDealerValuesById(this._auth.current_user_value.roleInfo.dealerId);
         } else {
             this.is_dealer = false;
         }
 
         
     }
+
+    getDealerValuesById(id: string): void {
+		this.subscription.add(
+			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
+				response => {
+                    if(response.message) {
+                        this.show_cart_button = false;
+                    } else {
+                        this.show_cart_button = true;
+                    }
+                }
+            )
+        )
+    };
 
     getTotalLicenses(id) {
         this._license.get_license_total_per_dealer(id).pipe(takeUntil(this._unsubscribe)).subscribe(
