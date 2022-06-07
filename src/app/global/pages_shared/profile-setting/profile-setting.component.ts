@@ -53,7 +53,7 @@ export class ProfileSettingComponent implements OnInit {
         
     }
 
-    getDealerValuesById(id: string): void {
+    getDealerValuesById(id) {
 		this.subscription.add(
 			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
 				response => {
