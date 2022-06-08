@@ -59,9 +59,9 @@ export class ProfileSettingComponent implements OnInit {
 				(response:any) => {
                     console.log(response)
                     if(!response.message) {
-                        this.show_cart_button = false;
-                    } else {
                         this.show_cart_button = true;
+                    } else {
+                        this.show_cart_button = false;
                     }
                 }
             )
