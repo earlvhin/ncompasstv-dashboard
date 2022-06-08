@@ -56,12 +56,12 @@ export class ProfileSettingComponent implements OnInit {
     getDealerValuesById(id) {
 		this.subscription.add(
 			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
-				response => {
-				    console.log(response)
-                    if(response) {
-                        this.show_cart_button = true;
-                    } else {
+				(response:any) => {
+                    console.log(response)
+                    if(!response.message) {
                         this.show_cart_button = false;
+                    } else {
+                        this.show_cart_button = true;
                     }
                 }
             )
