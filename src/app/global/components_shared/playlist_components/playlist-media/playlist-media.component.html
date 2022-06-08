@@ -1,8 +1,20 @@
 <div class="playlist-media bg-white">
 	<div class="d-flex align-items-center">
 		<div class="flex-even mr-5">
-			<h3 class="mb-0">Media Library</h3>
-			<p class="sm-text">Click a single or multiple content you wish to add to your playlist. New playlist content are added at the beginning.</p>
+			<h3 class="mb-0">
+				{{ type === 'add' ? 'Media Library' : 'Swap Content' }}
+			</h3>
+
+			<p class="sm-text">
+				<ng-container *ngIf="type === 'add'; else swap_content_sub_heading;">
+					Click a single or multiple content you wish to add to your playlist. New playlist content are added at the beginning.
+				</ng-container>
+
+				<ng-template #swap_content_sub_heading>
+					Select a content you want to swap
+				</ng-template>
+			</p>
+
 		</div>
 
 		<div>
