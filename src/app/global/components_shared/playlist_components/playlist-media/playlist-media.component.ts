@@ -61,35 +61,28 @@ export class PlaylistMediaComponent implements OnInit {
 
 		this.subscription.add(
 			this._content.get_content_by_dealer_id(dealer, false, this.page++, 60).subscribe(
-				(data: any) => {
-					if (data) {
-						this.media_files.push(data.contents);
-						this.media_files_backup.push(data.contents);
-						
-						this.media_files = [].concat.apply([], this.media_files)
-						this.media_files_backup = [].concat.apply([], this.media_files_backup)
-	
-						this.paging = data.paging
-	
-						data.contents.map(
-							i => {
-								if(i.dealerId !== null && i.dealerId !== "") {
-									this.media_files_no_floating.push(i)
-								}
+				data => {
+
+					if (data.message) return this.file_not_found = true;
+
+					this.media_files = this.media_files.concat(data.contents);
+					this.media_files_backup = this.media_files_backup.concat(data.contents);
+					this.paging = data.paging
+
+					data.contents.map(
+						i => {
+							if(i.dealerId !== null && i.dealerId !== "") {
+								this.media_files_no_floating.push(i)
 							}
-						)
-					} else {
-						this.file_not_found = true;
-					}
+						}
+					);
 	
-					if (this.page <= data.paging.pages) {
-						this.getDealerContent(dealer)
-					} else {
-						this.isGettingData = false;
-					}
+					if (this.page <= data.paging.pages) this.getDealerContent(dealer);
+					else this.isGettingData = false;
 				}
 			)
-		)
+		);
+
 	}
 
 	getFloatingContents() {

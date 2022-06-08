@@ -76,19 +76,21 @@
 				</div>
 		</ng-container>
 
-		<ng-template #no_content>
-			<div class="d-flex w-100 align-items-center loader-overlay h-100 text-center pt-5">
-				<div class="flex-even">
-					<h3>No Content</h3>
-					<p class="sm-text mb-0">There are no content available for this Dealer.</p>
-				</div>
-			</div>
-		</ng-template>
-
 		<ng-template #not_found>
-			<div class="loader-overlay h-100 text-center pt-5">
-				<h3>Sorry</h3>
-				<p>File not found, please try another keyword.</p>
+			<div class="d-flex w-100 align-items-center loader-overlay h-100 text-center pt-5">
+
+				<div class="flex-even">
+					<ng-container *ngIf="media_files.length > 0 && !isGettingData; else no_contents;">
+						<h3>Content Not Found</h3>
+						<p class="sm-text mb-0">Please try another keyword</p>
+					</ng-container>
+	
+					<ng-template #no_contents>
+						<h3>No Contents Available</h3>
+						<p class="sm-text mb-0">This dealer has yet to add contents</p>
+					</ng-template>
+				</div>
+
 			</div>
 		</ng-template>
 

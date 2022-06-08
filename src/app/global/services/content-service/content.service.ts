@@ -95,8 +95,8 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_advertiser_id}${data}`, this.httpOptions);
 	}
 	
-	get_content_by_dealer_id(data, floating?, page?, pageSize?) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&page=${page}&pageSize=${pageSize}`, this.httpOptions).map(data => data)
+	get_content_by_dealer_id(data, floating?, page?, pageSize?): Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string}> {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&page=${page}&pageSize=${pageSize}`, this.httpOptions).map(data => data)
 	}
 
 	get_content_metrics(data) {
