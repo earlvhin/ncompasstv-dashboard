@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material'
 import { Subscription } from 'rxjs';
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
@@ -16,9 +16,10 @@ import { PlayWhereComponent } from '../play-where/play-where.component';
 
 export class PlaylistMediaComponent implements OnInit {
 	
+	@Input() type = 'add';
 	media_files: API_CONTENT[] = [];
 	media_files_no_floating: API_CONTENT[] = [];
-	selected_contents: any = [];
+	selected_contents: API_CONTENT[] = [];
 	media_files_backup: API_CONTENT[] = [];
 	floating_contents: API_CONTENT[] = [];
 	file_not_found: boolean = false;
@@ -169,19 +170,33 @@ export class PlaylistMediaComponent implements OnInit {
 		return this.selected_contents.includes(content) ? true : false;
 	}
 
-	addToMarked(e) {
-		console.log(e);
-		if (this.selected_contents.includes(e)) {
-			this.selected_contents = this.selected_contents.filter(i => {
-				return i !== e;
-			})
-		} else {
-			this.selected_contents.push(e)
+	addToMarked(e: API_CONTENT) {
+
+		if (this.type === 'add') {
+
+			if (this.selected_contents.includes(e)) {
+				
+				this.selected_contents = this.selected_contents.filter(i => {
+					return i !== e;
+				});
+	
+			} else {
+				this.selected_contents.push(e)
+			}
+	
+			if (this.selected_contents.length == 0) {
+				localStorage.removeItem('to_blocklist');
+			}
+
+			return;
+
 		}
 
-		if(this.selected_contents.length == 0) {
-			localStorage.removeItem('to_blocklist');
-		}
+		// for swap content
+		if (this.selected_contents.length <= 0) return this.selected_contents.push(e);
+		if (e.playlistContentId === this.selected_contents[0].playlistContentId) return this.selected_contents = this.selected_contents.filter(content => content !== e);
+
+
 	}
 
 	removeFilenameHandle(file_name) {
