@@ -34,7 +34,7 @@ export class DmaViewComponent implements OnInit {
         { name: 'Number of Hosts', key: 'totalHosts' },
         { name: 'DMA Code', key:'dmaCode' },
         { name: 'DMA Name', key: 'dmaName' },
-        { name: 'County', key: 'county', no_show: true, hidden: true },
+        // { name: 'County', key: 'county', no_show: true, hidden: true },
 	];
 
     constructor(
