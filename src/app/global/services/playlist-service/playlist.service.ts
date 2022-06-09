@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 export class PlaylistService {
 
 	onBlacklistDataReady = new EventEmitter<API_BLOCKLIST_CONTENT[]>();
+	onPushPlaylistUpdateToAllLicenses = new EventEmitter<null>();
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {

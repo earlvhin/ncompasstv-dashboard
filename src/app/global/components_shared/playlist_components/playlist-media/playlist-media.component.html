@@ -40,7 +40,9 @@
 			<div class="d-flex align-items-center">
 				<div class="mr-2">
 					<mat-slide-toggle
-					(change)="displayFloating($event)">
+						[checked]="dealer_has_no_contents && floating_contents.length > 0"
+						(change)="displayFloating($event)"
+						[disabled]="dealer_has_no_contents && floating_contents.length > 0">
 					</mat-slide-toggle>
 				</div>
 				<div class="flex-even">
@@ -80,7 +82,7 @@
 			<div class="d-flex w-100 align-items-center loader-overlay h-100 text-center pt-5">
 
 				<div class="flex-even">
-					<ng-container *ngIf="media_files.length > 0 && !isGettingData; else no_contents;">
+					<ng-container *ngIf="media_files.length > 0 && floating_contents.length > 0 && !isGettingData; else no_contents;">
 						<h3>Content Not Found</h3>
 						<p class="sm-text mb-0">Please try another keyword</p>
 					</ng-container>

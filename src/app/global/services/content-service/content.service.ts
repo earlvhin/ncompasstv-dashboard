@@ -46,12 +46,9 @@ export class ContentService {
 		${environment.base_uri}${environment.getters.api_get_assets}`+`?pageSize=30`+`&page=`+`${page}`+`&fileCategory=` + `${type}`+`&sort=` + `${sort}`+`&dealerId=` + `${dealerId}` +`&search=` + `${key}`+`&floating=` + `${floating}`, this.httpOptions);
 	}
 
-	get_floating_contents() {
-		return this._http.get<any>(`
-		${environment.base_uri}${environment.getters.api_get_assets}
-		?pageSize=0
-		&floating=true`, 
-		this.httpOptions).map(i => i.iContents);
+	get_floating_contents(): Observable<{ iContents: API_CONTENT[], paging: PAGING }> {
+		const url = `${environment.base_uri}${environment.getters.api_get_assets}?pageSize=0&floating=true`;
+		return this._http.get<{ iContents: API_CONTENT[], paging: PAGING }>(url, this.httpOptions);
 	}
 
 	get_contents_with_page(page=1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, feedId?, pageSize=60) {
