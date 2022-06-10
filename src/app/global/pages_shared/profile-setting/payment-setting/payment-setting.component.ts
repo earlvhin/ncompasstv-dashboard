@@ -213,7 +213,10 @@ export class PaymentSettingComponent implements OnInit, OnDestroy, OnChanges {
 
 				},
 				(error: HttpErrorResponse) => {
-					if (error.status === 400) this.hasCreditCardSaved = false;
+					if (error.status === 400) {
+						this.hasCreditCardSaved = false;
+						this.paymentSettingForm.get('Email').patchValue(this.dealerEmail);
+					}
 				}
 			);
 	}
