@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -11,9 +11,11 @@ import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
 })
 
 export class ProfileSettingComponent implements OnInit {
+
     advertiser_details: any = {}; 
     content_details: any = {};
 	current_user: UI_CURRENT_USER;
+	dealer_email: string;
 	dealer_id: string;
     host_details: any = {}; 
     is_dealer: boolean = false;
@@ -92,11 +94,18 @@ export class ProfileSettingComponent implements OnInit {
         );
     }
 
+	setDealerEmail(data: { email: string }): void {
+		this.dealer_email = data.email;
+	}
+
     tabSelected(event: { index: number }): void {
+
         let tab = '';
+
         switch (event.index) {
             case 1:
                 tab = 'Content';
         }
-        }
+
+	}
 }

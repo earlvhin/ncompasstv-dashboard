@@ -1,21 +1,17 @@
 import { DatePipe } from '@angular/common';
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
-import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
 import { API_UPDATE_DEALER_PROFILE } from '../../../../global/models/api_update-user-info.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { ContentService } from 'src/app/global/services/content-service/content.service';
 import { DEALER_PROFILE } from '../../../../global/models/api_user.model';
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { HostService } from '../../../../global/services/host-service/host.service';
 import { UserService } from '../../../../global/services/user-service/user.service';
-import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'app-dealer-setting',
@@ -24,6 +20,8 @@ import { takeUntil } from 'rxjs/operators';
   providers: [DatePipe]
 })
 export class DealerSettingComponent implements OnInit {
+
+	@Output() on_load_dealer_data = new EventEmitter<{ email: string }>();
 
     advertiser_details: any = {}; 
 	content_data: any;
@@ -94,6 +92,7 @@ export class DealerSettingComponent implements OnInit {
     	type: 'text',
     	width: 'col-lg-4'
 	}];
+
 	host_details: any = {};
 	isDealer: boolean = false;
 	license_details: any = {}; 
@@ -102,7 +101,6 @@ export class DealerSettingComponent implements OnInit {
 	loading_host: boolean = true;
 	loading_license: boolean = true;
 	no_content: boolean;
-	// subscription: Subscription = new Subscription();
 	user_data: DEALER_PROFILE; 
 	update_info_form_disabled: boolean = false;
 	update_info_form_disabled_typing: boolean = true;
@@ -142,7 +140,8 @@ export class DealerSettingComponent implements OnInit {
 			.subscribe(
 				(data: any) => {
 					this.user_data = Object.assign({},data.user, data.dealer[0]);
-					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy')
+					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy');
+					this.on_load_dealer_data.emit({ email: this.user_data.email });
 					this.readyUpdateForm();
 				}, 
 				error => console.log('Error retrieving user by ID', error)
