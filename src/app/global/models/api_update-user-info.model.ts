@@ -1,5 +1,3 @@
-import { API_USER_ROLES } from './api_user-role.model';
-
 export class API_UPDATE_USER_INFO {
     userId: string;
     firstName: string;

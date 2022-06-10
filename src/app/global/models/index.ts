@@ -30,6 +30,7 @@ export * from './api_single-screen.model';
 export * from './api_template.model';
 export * from './api_timezone.model';
 export * from './api_update-playlist-content.model';
+export * from './api_update-user-info.model';
 export * from './api_user.model';
 export * from './api_user-data.model';
 export * from './api_user-stats.model';

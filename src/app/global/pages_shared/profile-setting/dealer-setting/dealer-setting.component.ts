@@ -3,15 +3,13 @@ import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/cor
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
-import { API_UPDATE_DEALER_PROFILE } from '../../../../global/models/api_update-user-info.model';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { DEALER_PROFILE } from '../../../../global/models/api_user.model';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { UserService } from '../../../../global/services/user-service/user.service';
+
+import { API_UPDATE_DEALER_PROFILE, DEALER_PROFILE } from 'src/app/global/models';
+import { AuthService, DealerService, UserService } from 'src/app/global/services';
 
 @Component({
   selector: 'app-dealer-setting',
@@ -19,7 +17,7 @@ import { UserService } from '../../../../global/services/user-service/user.servi
   styleUrls: ['./dealer-setting.component.scss'],
   providers: [DatePipe]
 })
-export class DealerSettingComponent implements OnInit {
+export class DealerSettingComponent implements OnInit, OnDestroy {
 
 	@Output() on_load_dealer_data = new EventEmitter<{ email: string }>();
 
