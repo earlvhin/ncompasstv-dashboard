@@ -15,6 +15,7 @@ export class DealerService extends BaseService {
 	
 	
 	onSuccessReassigningDealer = new EventEmitter<null>();
+	onDealerDataLoaded = new EventEmitter<{ email: string }>();
 	
     api_get_dealer_total() {
 		return this.getRequest(`${this.getters.api_get_dealer_total}`);

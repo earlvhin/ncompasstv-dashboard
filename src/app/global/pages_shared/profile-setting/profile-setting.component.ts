@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTab } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -94,18 +95,8 @@ export class ProfileSettingComponent implements OnInit {
         );
     }
 
-	setDealerEmail(data: { email: string }): void {
-		this.dealer_email = data.email;
-	}
+    tabSelected(event: { index: number, tab: MatTab }): void {
 
-    tabSelected(event: { index: number }): void {
-
-        let tab = '';
-
-        switch (event.index) {
-            case 1:
-                tab = 'Content';
-        }
 
 	}
 }

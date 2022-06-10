@@ -1,5 +1,5 @@
 import { DatePipe } from '@angular/common';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
-import { API_UPDATE_DEALER_PROFILE, DEALER_PROFILE } from 'src/app/global/models';
+import { API_UPDATE_DEALER_PROFILE, API_USER_DATA, DEALER_PROFILE } from 'src/app/global/models';
 import { AuthService, DealerService, UserService } from 'src/app/global/services';
 
 @Component({
@@ -18,8 +18,6 @@ import { AuthService, DealerService, UserService } from 'src/app/global/services
   providers: [DatePipe]
 })
 export class DealerSettingComponent implements OnInit, OnDestroy {
-
-	@Output() on_load_dealer_data = new EventEmitter<{ email: string }>();
 
     advertiser_details: any = {}; 
 	content_data: any;
@@ -131,15 +129,15 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	getUserById(id) {
+	getUserById(id: string) {
 
 		this._user.get_user_alldata_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data: any) => {
-					this.user_data = Object.assign({},data.user, data.dealer[0]);
+				(response: { user: API_USER_DATA, dealer: DEALER_PROFILE[] }) => {
+					this.user_data = Object.assign({},response.user, response.dealer[0]);
 					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy');
-					this.on_load_dealer_data.emit({ email: this.user_data.email });
+					this._dealer.onDealerDataLoaded.emit({ email: this.user_data.email });
 					this.readyUpdateForm();
 				}, 
 				error => console.log('Error retrieving user by ID', error)

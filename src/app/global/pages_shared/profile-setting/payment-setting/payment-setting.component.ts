@@ -40,6 +40,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy, OnChanges {
 	) { }
 	
 	ngOnInit() {
+		this.subscribeToDealerDataLoaded();
 		this.initializeForm();
 		this.getCreditCards();
 	}
@@ -242,6 +243,11 @@ export class PaymentSettingComponent implements OnInit, OnDestroy, OnChanges {
 		this.fillOutDealerAddressForm();
 		this.isFormLoaded = true;
 
+	}
+
+	private subscribeToDealerDataLoaded(): void {
+		this._dealer.onDealerDataLoaded.pipe(takeUntil(this._unsubscribe))
+			.subscribe(response => this.dealerEmail = response.email);
 	}
 
 	protected get _formFields(): { name: string, label: string, type: string, value: any, is_required: boolean, maxLength?: number }[] {
