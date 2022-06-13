@@ -86,6 +86,7 @@ export class DEALER_PROFILE {
     state: string;
     contactPerson: string;
     businessName: string;
+    startDate: string;
 }
 
 export class JWT_TOKEN {
