@@ -100,6 +100,9 @@
                                                     <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
                                                         <span class="fas fa-user text-gray mr-3"></span>Unassigned
                                                     </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('activated', '0')">
+                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                    </button>
                                                     <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
                                                         <span class="far fa-clock text-gray mr-3"></span>Recent Installs
                                                     </button>

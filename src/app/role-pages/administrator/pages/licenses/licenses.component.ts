@@ -324,7 +324,9 @@ export class LicensesComponent implements OnInit {
             case 'activated':
                 this.resetFilterStatus();
                 this.filters.status = "";
-                this.filters.activated = value;
+                // this.filters.activated = value;
+                this.filters.isactivated = 0;
+                this.filters.assigned = true;
                 this.filters.label_status = 'Inactive';
                 break;
             case 'recent':

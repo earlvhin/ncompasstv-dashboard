@@ -121,6 +121,9 @@
                                                     <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
                                                         <span class="fas fa-user text-gray mr-3"></span>Unassigned
                                                     </button>
+                                                    <button class="md-text" mat-menu-item (click)="filterTable('activated', '1')">
+                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                    </button>
                                                 </mat-menu>
                         
                                                 <mat-menu #assignedSubMenu="matMenu">
