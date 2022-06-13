@@ -73,6 +73,9 @@ export class HostsComponent implements OnInit {
         { name: 'Tags', hidden: true, no_show: true, key:'tagsToString' },
         { name: 'Business Hours', sortable: false, key:'storeHoursParse', hidden: true, no_show: true},
         { name: 'Total Business Hours', sortable: false, key:'storeHoursTotal', hidden: true, no_show: true},
+        { name: 'DMA Rank', sortable: false, hidden: true, key:'dmaRank', no_show: true},		
+        { name: 'DMA Code', sortable: false, hidden: true, key:'dmaCode', no_show: true},		
+        { name: 'DMA Name', sortable: false, hidden: true, key:'dmaName', no_show: true},	
 	];
 
 	protected _unsubscribe = new Subject<void>();
