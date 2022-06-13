@@ -1,12 +1,11 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Input, OnInit } from '@angular/core';
 import { MatDialog, MAT_DIALOG_DATA } from '@angular/material'
-import { Subscription } from 'rxjs';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { ContentService } from '../../../../global/services/content-service/content.service';
+import { Subject, Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { API_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService, ContentService } from 'src/app/global/services';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
-import { PlayWhereComponent } from '../play-where/play-where.component';
 
 @Component({
   selector: 'app-playlist-media',
@@ -16,9 +15,11 @@ import { PlayWhereComponent } from '../play-where/play-where.component';
 
 export class PlaylistMediaComponent implements OnInit {
 	
+	@Input() type = 'add';
+	dealer_has_no_contents = false;
 	media_files: API_CONTENT[] = [];
 	media_files_no_floating: API_CONTENT[] = [];
-	selected_contents: any = [];
+	selected_contents: API_CONTENT[] = [];
 	media_files_backup: API_CONTENT[] = [];
 	floating_contents: API_CONTENT[] = [];
 	file_not_found: boolean = false;
@@ -27,7 +28,9 @@ export class PlaylistMediaComponent implements OnInit {
 	paging: any;
 	isDealer: boolean = true;
 	isGettingData: boolean = true;
-	subscription: Subscription = new Subscription();
+	// subscription: Subscription = new Subscription();
+
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
@@ -46,7 +49,8 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	ngOnDestroy() {
-		this.subscription.unsubscribe();
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	getDealerContent(dealer) {
@@ -57,46 +61,52 @@ export class PlaylistMediaComponent implements OnInit {
 		 * page: number, 
 		 * pageSize: number
 		*/
+		this._content.get_content_by_dealer_id(dealer, false, this.page++, 60).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				data => {
 
-		this.subscription.add(
-			this._content.get_content_by_dealer_id(dealer, false, this.page++, 60).subscribe(
-				(data: any) => {
-					if (data) {
-						this.media_files.push(data.contents);
-						this.media_files_backup.push(data.contents);
-						
-						this.media_files = [].concat.apply([], this.media_files)
-						this.media_files_backup = [].concat.apply([], this.media_files_backup)
-	
-						this.paging = data.paging
-	
-						data.contents.map(
-							i => {
-								if(i.dealerId !== null && i.dealerId !== "") {
-									this.media_files_no_floating.push(i)
-								}
-							}
-						)
-					} else {
-						this.file_not_found = true;
-					}
-	
-					if (this.page <= data.paging.pages) {
-						this.getDealerContent(dealer)
-					} else {
+					if (data.message) {
+						this.dealer_has_no_contents = true;
 						this.isGettingData = false;
+						return; 
 					}
+
+					this.media_files = this.media_files.concat(data.contents);
+					this.media_files_backup = this.media_files_backup.concat(data.contents);
+					this.paging = data.paging
+
+					data.contents.map(
+						i => {
+							if(i.dealerId !== null && i.dealerId !== "") {
+								this.media_files_no_floating.push(i)
+							}
+						}
+					);
+
+					if (this.page <= data.paging.pages) this.getDealerContent(dealer);
+					else this.isGettingData = false;
+					this.dealer_has_no_contents = false;
 				}
-			)
-		)
+			);
+
 	}
 
 	getFloatingContents() {
-		this._content.get_floating_contents().subscribe(
-			data => {
-				this.floating_contents = data;
-			}
-		)
+		
+		this._content.get_floating_contents().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+					const contents = response.iContents;
+					this.floating_contents = [...contents];
+					this.paging = response.paging
+
+					if (this.dealer_has_no_contents) {
+						this.media_files = [...contents];
+						this.media_files_backup = [...contents];
+						this.show_floating = true;
+					}
+				}
+			);
 	}
 
 	displayFloating(e) {
@@ -169,19 +179,33 @@ export class PlaylistMediaComponent implements OnInit {
 		return this.selected_contents.includes(content) ? true : false;
 	}
 
-	addToMarked(e) {
-		console.log(e);
-		if (this.selected_contents.includes(e)) {
-			this.selected_contents = this.selected_contents.filter(i => {
-				return i !== e;
-			})
-		} else {
-			this.selected_contents.push(e)
+	addToMarked(e: API_CONTENT) {
+
+		if (this.type === 'add') {
+
+			if (this.selected_contents.includes(e)) {
+				
+				this.selected_contents = this.selected_contents.filter(i => {
+					return i !== e;
+				});
+	
+			} else {
+				this.selected_contents.push(e)
+			}
+	
+			if (this.selected_contents.length == 0) {
+				localStorage.removeItem('to_blocklist');
+			}
+
+			return;
+
 		}
 
-		if(this.selected_contents.length == 0) {
-			localStorage.removeItem('to_blocklist');
-		}
+		// for swap content
+		if (this.selected_contents.length <= 0) return this.selected_contents.push(e);
+		if (e.playlistContentId === this.selected_contents[0].playlistContentId) return this.selected_contents = this.selected_contents.filter(content => content !== e);
+
+
 	}
 
 	removeFilenameHandle(file_name) {

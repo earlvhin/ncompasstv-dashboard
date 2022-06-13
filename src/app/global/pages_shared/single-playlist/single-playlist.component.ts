@@ -69,16 +69,10 @@ export class SinglePlaylistComponent implements OnInit {
 		this.playlistRouteInit();
 
 		// If changes made
-		if (this.reload) {
-			this.reload.subscribe(
-				data => {
-					this.playlistRouteInit();
-				}
-			)
-		}
+		if (this.reload) this.reload.subscribe(() => this.playlistRouteInit());
 
-		this.host_url = `/${this._role.get_user_role()}/hosts/`
-		this.license_url = `/${this._role.get_user_role()}/licenses/`
+		this.host_url = `/${this._role.get_user_role()}/hosts/`;
+		this.license_url = `/${this._role.get_user_role()}/licenses/`;
 		
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -87,11 +81,13 @@ export class SinglePlaylistComponent implements OnInit {
 
 		this._socket.on('connect', () => {
 			console.log('#SinglePlaylistComponent - Connected to Socket Server');
-		})
+		});
 		
 		this._socket.on('disconnect', () => {
 			console.log('#SinglePlaylistComponent - Disconnnected to Socket Server');
-		})
+		});
+
+		this.subscribeToPushPlaylistUpdateToAllLicenses();
 	}
 	
 	ngOnDestroy() {
@@ -221,7 +217,7 @@ export class SinglePlaylistComponent implements OnInit {
 		}
 	}
 
-	warningModal(status, message, data, return_msg, action, licenses): void {
+	warningModal(status, message, data, return_msg, action, licenses: API_LICENSE_PROPS[]): void {
 		this._dialog.closeAll();
 		
 		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
@@ -288,6 +284,13 @@ export class SinglePlaylistComponent implements OnInit {
 		this.description = playlistDescription;
 		this.playlist_content_and_blacklist = playlistContents;
 		this.playlist_host_and_license = hostLicenses;
+	}
+
+	private subscribeToPushPlaylistUpdateToAllLicenses() {
+		
+		return this._playlist.onPushPlaylistUpdateToAllLicenses.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.playlist.licenses.forEach(license => this._socket.emit('D_update_player', license.licenseId)));
+
 	}
 
 	protected get currentUser() {

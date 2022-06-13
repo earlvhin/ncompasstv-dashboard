@@ -55,16 +55,9 @@ export class ContentService {
 		);
 	}
 
-	get_floating_contents() {
-		return this._http
-			.get<any>(
-				`
-		${environment.base_uri}${environment.getters.api_get_assets}
-		?pageSize=0
-		&floating=true`,
-				this.httpOptions
-			)
-			.map((i) => i.iContents);
+	get_floating_contents(): Observable<{ iContents: API_CONTENT[], paging: PAGING }> {
+		const url = `${environment.base_uri}${environment.getters.api_get_assets}?pageSize=0&floating=true`;
+		return this._http.get<{ iContents: API_CONTENT[], paging: PAGING }>(url, this.httpOptions);
 	}
 
 	get_contents_with_page(page = 1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, feedId?, pageSize = 60) {
@@ -115,14 +108,9 @@ export class ContentService {
 	get_content_by_advertiser_id(data) {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_advertiser_id}${data}`, this.httpOptions);
 	}
-
-	get_content_by_dealer_id(data, floating?, page?, pageSize?) {
-		return this._http
-			.get<any>(
-				`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&page=${page}&pageSize=${pageSize}`,
-				this.httpOptions
-			)
-			.map((data) => data);
+	
+	get_content_by_dealer_id(data, floating?, page?, pageSize?): Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string}> {
+		return this._http.get(`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&page=${page}&pageSize=${pageSize}`, this.httpOptions).map(data => data)
 	}
 
 	get_content_metrics(data) {

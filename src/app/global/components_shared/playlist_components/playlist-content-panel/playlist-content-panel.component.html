@@ -20,6 +20,12 @@
 				<span class="fas fa-photo-video ml-2 sm-text"></span>
 			</button>
 
+			<!-- SWAP CONTENT BUTTON -->
+			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="openPlaylistMedia('swap')" [disabled]="is_view_only || !is_marking || selected_contents.length !== 1">
+				Swap Content
+				<span class="fas fa-exchange-alt ml-2 sm-text"></span>
+			</button>
+
 			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" [disabled]="playlist_unchanged" (click)="saveOrderChanges()" [disabled]="is_view_only">
 				Save Changes
 				<span class="fas fa-save ml-2 sm-text"></span>
@@ -39,7 +45,7 @@
 				</div>
 				<div class="ml-2 flex-even">
 					<h5 class="mb-0">
-						Mark Contents for Bulk Action
+						Mark Contents
 					</h5>
 					<p class="xsm-text mb-0">Dragging will be disabled during bulk action marking.</p>
 				</div>

@@ -1,6 +1,6 @@
 import { Component, ElementRef, Input, OnInit, ViewChild, EventEmitter, Output, OnDestroy } from '@angular/core';
 import { FormControl } from '@angular/forms';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatDialogRef } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { fromEvent, Observable, Subject } from 'rxjs';
 import { Sortable } from 'sortablejs';
@@ -390,34 +390,43 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.savePlaylistChanges(dataToSubmit, frequencyUpdate, creditsData, creditsStatusUpdate);
 	}
 
-	openPlaylistMedia(): void {
+	openPlaylistMedia(type = 'add'): void {
 
-		const data = {
-			playlist_host_license: this.playlist_host_license,
-			dealer_id: this.dealer_id
-		};
+		const data = { playlist_host_license: this.playlist_host_license, dealer_id: this.dealer_id };
 
-		const playlist_content_dialog = this._dialog.open(PlaylistMediaComponent, {
+		const playlist_content_dialog: MatDialogRef<PlaylistMediaComponent> = this._dialog.open(PlaylistMediaComponent, {
 			data: data,
 			width: '1100px'
 		});
 
+		playlist_content_dialog.componentInstance.type = type;
+
 		playlist_content_dialog.afterClosed()
 			.subscribe(
-				data => {
-					if (data) {
-						if (localStorage.getItem('to_blocklist')) {
-							this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
-							this.structureAddedPlaylistContent(data);
-						} else {
-							this.structureAddedPlaylistContent(data);
-						}
-					} else {
-						localStorage.removeItem('to_blocklist');
+				response => {
+
+					// if add content
+
+					if (type === 'add') {
+						if (!response) return localStorage.removeItem('to_blocklist');
+						if (localStorage.getItem('to_blocklist')) this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
+						this.structureAddedPlaylistContent(response);
+						return;
 					}
-				},
-				error => console.log('Error closing playlist content dialog', error)
+
+
+					// if swap content
+					if (!response || typeof response === 'undefined') return;
+					const content: API_CONTENT = response[0];
+					const playlistContentIdToBeReplaced = this.selected_contents[0];
+					if (content.playlistContentId === playlistContentIdToBeReplaced) return this.showErrorDialog('Cannot select the same content to be swapped');
+					
+					this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced })
+						.add(() => this._playlist.onPushPlaylistUpdateToAllLicenses.emit());
+
+				}
 			);
+
 	}
 
 	rearrangePlaylistContents(incoming_order): void {
@@ -904,6 +913,16 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	}
 
+	private showErrorDialog(message = ''): void {
+
+		this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status: 'error', message }
+		});
+
+	}
+
 	private showSuccessDialog(message: string): void {
 
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
@@ -960,6 +979,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				}
 			);
 
+	}
+
+	private swapContent(data: {contentId: string, playlistContentId: string }) {
+		return this._playlist.swap_playlist_content(data).pipe(takeUntil(this._unsubscribe)).subscribe(() => this.getPlaylistById());
 	}
 
 	protected get currentUser() {

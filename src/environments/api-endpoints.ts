@@ -283,6 +283,7 @@ export const API_ENDPOINTS = {
 		revert_frequency: 'playlists/revertFrequency',
 		screen_template: 'screen/change/template',
 		set_content_frequency: 'playlists/setFrequency',
+		swap_playlist_content: 'playlists/swapcontent',
 		tag: 'tag/update',
 		tag_type: 'tag/updatetype',
 		template: 'template/update',

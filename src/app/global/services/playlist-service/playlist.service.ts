@@ -5,13 +5,15 @@ import 'rxjs/add/operator/map';
 
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { environment } from 'src/environments/environment';
-import { API_BLOCKLIST_CONTENT, API_SINGLE_PLAYLIST } from 'src/app/global/models';
+import { API_BLOCKLIST_CONTENT, API_SINGLE_PLAYLIST, API_SWAP_CONTENT_RESPONSE } from 'src/app/global/models';
+import { Observable } from 'rxjs';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class PlaylistService {
 	onBlacklistDataReady = new EventEmitter<API_BLOCKLIST_CONTENT[]>();
+	onPushPlaylistUpdateToAllLicenses = new EventEmitter<null>();
 	token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {
@@ -168,6 +170,12 @@ export class PlaylistService {
 
 	log_content_history(data) {
 		return this._http.post<any>(`${environment.base_uri}${environment.create.api_new_content_history_log}`, data, this.httpOptions);
+	}
+
+	swap_playlist_content(data: { playlistContentId: string, contentId: string }): Observable<API_SWAP_CONTENT_RESPONSE> {
+		const { playlistContentId, contentId } = data;
+		const url = `${environment.base_uri}${environment.update.swap_playlist_content}?playlistContentId=${playlistContentId}&contentId=${contentId}`;
+		return this._http.post<API_SWAP_CONTENT_RESPONSE>(url, {}); 
 	}
 
 	update_playlist_info(playlist_data) {

@@ -184,7 +184,7 @@ export class FeedMediaComponent implements OnInit {
 	private getFloatingContents() {
 		return this._content.get_floating_contents().pipe(takeUntil(this._unsubsribe))
 			.subscribe(
-				data => this.floating_content = data.filter(i => this._is_image.transform(i.fileType)),
+				data => this.floating_content = data.iContents.filter(i => this._is_image.transform(i.fileType)),
 				error => console.log('Error retrieving floating contents', error)
 			);
 	}
