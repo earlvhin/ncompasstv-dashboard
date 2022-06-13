@@ -77,8 +77,7 @@ export class NavbarComponent implements OnInit {
 
     setCookieForOtherSite(id) {
 		this._user.set_cookie_for_other_site(id).subscribe(
-			data => {
-				console.log("DAYAA", data) 
+			() => {
 			}
 		)
 	}

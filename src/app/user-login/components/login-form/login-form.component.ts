@@ -126,8 +126,7 @@ export class LoginFormComponent implements OnInit {
 
 	getUserCookie(userId: string) {
 		this._auth.get_user_cookie(userId).subscribe(
-			(data) => {
-				console.log(data);
+			() => {
 			},
 			(error) => {
 				console.log(error);
