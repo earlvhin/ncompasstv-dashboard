@@ -1,5 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit, SimpleChanges } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
@@ -15,8 +15,9 @@ import { DealerService } from 'src/app/global/services';
 	templateUrl: './payment-setting.component.html',
 	styleUrls: ['./payment-setting.component.scss']
 })
-export class PaymentSettingComponent implements OnInit {
+export class PaymentSettingComponent implements OnInit, OnDestroy, OnChanges {
 	@Input() currentUser: UI_CURRENT_USER;
+	@Input() dealerEmail: string;
 	@Input() dealerId: string;
 
 	addressTypes = [ 'billing', 'dealer' ];
@@ -24,6 +25,7 @@ export class PaymentSettingComponent implements OnInit {
 	dealerAddressForm: FormGroup;
 	isFormLoaded = false;
 	paymentSettingForm: FormGroup;
+
 	private actualCreditCardDetails: API_CREDIT_CARD_DETAILS;
 	private addressFormFields = [ 'AddressLine1', 'AddressLine2', 'AddressCity', 'AddressState', 'AddressZip' ];
 	private creditCardEmail: string;
@@ -38,8 +40,18 @@ export class PaymentSettingComponent implements OnInit {
 	) { }
 	
 	ngOnInit() {
+		this.subscribeToDealerDataLoaded();
 		this.initializeForm();
 		this.getCreditCards();
+	}
+
+	ngOnChanges(changes: SimpleChanges): void {
+		this.dealerEmail = changes.dealerEmail.currentValue;
+	}
+
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	onSetAsCurrentAddress(event: { checked: true },  type: string): void {
@@ -165,7 +177,11 @@ export class PaymentSettingComponent implements OnInit {
 			.subscribe(
 				response => {
 					
-					if (!response.cards) return this.hasCreditCardSaved = false;
+					if (!response.cards) {
+						this.paymentSettingForm.get('Email').patchValue(this.dealerEmail);
+						this.hasCreditCardSaved = false;
+						return; 
+					}
 
 					this.actualCreditCardDetails = response.cards.data[0];
 					this.creditCardEmail = response.email;
@@ -197,7 +213,10 @@ export class PaymentSettingComponent implements OnInit {
 
 				},
 				(error: HttpErrorResponse) => {
-					if (error.status === 400) this.hasCreditCardSaved = false;
+					if (error.status === 400) {
+						this.hasCreditCardSaved = false;
+						this.paymentSettingForm.get('Email').patchValue(this.dealerEmail);
+					}
 				}
 			);
 	}
@@ -227,6 +246,11 @@ export class PaymentSettingComponent implements OnInit {
 		this.fillOutDealerAddressForm();
 		this.isFormLoaded = true;
 
+	}
+
+	private subscribeToDealerDataLoaded(): void {
+		this._dealer.onDealerDataLoaded.pipe(takeUntil(this._unsubscribe))
+			.subscribe(response => this.dealerEmail = response.email);
 	}
 
 	protected get _formFields(): { name: string, label: string, type: string, value: any, is_required: boolean, maxLength?: number }[] {

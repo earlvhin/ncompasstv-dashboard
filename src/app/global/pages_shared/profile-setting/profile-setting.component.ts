@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { MatTab } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { AuthService, AdvertiserService, ContentService, HostService, LicenseService, DealerService } from 'src/app/global/services';
@@ -11,9 +12,11 @@ import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
 })
 
 export class ProfileSettingComponent implements OnInit {
+
     advertiser_details: any = {}; 
     content_details: any = {}; 
 	current_user: UI_CURRENT_USER;
+	dealer_email: string;
 	dealer_id: string;
     host_details: any = {}; 
     is_dealer: boolean = false;
@@ -37,7 +40,8 @@ export class ProfileSettingComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-        if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+
+        if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
             this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 			this.current_user = this._auth.current_user_value;
@@ -50,7 +54,6 @@ export class ProfileSettingComponent implements OnInit {
             this.is_dealer = false;
         }
 
-        
     }
 
     getDealerValuesById(id) {
