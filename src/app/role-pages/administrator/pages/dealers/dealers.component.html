@@ -8,7 +8,7 @@
                 <button mat-button mat-raised-button 
                     class="theme-btn pi-control _cool sm-text mr-2" 
                     [routerLink]="['/administrator/users/create-user/dealer']"
-                    title="Add Dealer">
+                    title="Add Dealer" *ngIf="current_tab === 'Dealer'">
                     <span class="fas fa-suitcase"></span> 
                     <span class="ml-2 button_text_animation">Add Dealer</span>
                 </button>
@@ -16,7 +16,7 @@
                 <button mat-button mat-raised-button 
                     class="theme-btn pi-control _teal sm-text mr-2" 
                     [routerLink]="['/administrator/hosts/create-host']"
-                    title="Add Host Place">
+                    title="Add Host Place" *ngIf="current_tab === 'Dealer'">
                     <span class="fas fa-map-marker"></span> 
                     <span class="ml-2 button_text_animation">Add Host Place</span>
                 </button>
@@ -24,7 +24,7 @@
                 <button mat-button mat-raised-button 
                     class="theme-btn pi-control _info sm-text mr-2" 
                     (click)="openGenerateLicenseModal()"
-                    title="Generate License">
+                    title="Generate License" *ngIf="current_tab === 'Dealer'">
                     <span class="fas fa-barcode"></span> 
                     <span class="ml-2 button_text_animation">Generate License</span>
                 </button>
@@ -33,7 +33,7 @@
                     class="theme-btn pi-control _primary sm-text mr-2" 
                     (click)="exportTable()"
                     [disabled]="workbook_generation"
-                    title="Export Table to CSV">
+                    title="Export Table to CSV" *ngIf="current_tab === 'Dealer'">
                     <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
                     <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
                 </button>
@@ -101,7 +101,7 @@
                     <div class="col-lg-12" *ngIf="current_tab === 'Bills'">
                         <div class="theme-container">
                             <div class="row">
-                                <div class="col-lg-12 bg-white mt-4">
+                                <div class="col-lg-12 mt-4">
                                     <app-billings-view class="full-width"
                                     ></app-billings-view>
                                 </div>

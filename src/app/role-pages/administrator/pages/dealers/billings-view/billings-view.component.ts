@@ -3,6 +3,8 @@ import { Subscription, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { AuthService, DealerService } from 'src/app/global/services';
 import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
     selector: 'app-billings-view',
@@ -14,12 +16,16 @@ import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model
     alldealervalues: any;
     alldealervalues_paging: any;
     billing_data: any;
+    billings_to_export: any = [];
     is_loading: boolean = false;
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 
     billings_table_column = [
 		{ name: '#', sortable: false, no_export: true },
-        { name: 'Dealer ID', sortable: false, key: 'dearlerId', hidden: true, no_show: true },
-        { name: 'Dealer Alias', sortable: false, key: 'dearlerIdAlias',},
+        { name: 'Dealer ID', sortable: false, key: 'dealerId', hidden: true, no_show: true },
+        { name: 'Dealer Alias', sortable: false, key: 'dealerIdAlias',},
         { name: 'Dealer Name', sortable: false, key: 'businessName',},
         { name: 'Current Licenses', sortable: false, key: 'totalLicenses',},
         { name: 'Billable Licenses', sortable: false, key: 'billableLicenses',},
@@ -28,6 +34,7 @@ import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model
         { name: 'Base Fee', sortable: false, key: 'baseFee',},
         { name: 'Total Bill', sortable: false, key: 'billing',},
         { name: 'Billing Date', sortable: false, key: 'billingDate',},
+        { name: 'Auto Charge', sortable: false, key: 'autoCharge', hidden: true, no_show: true},
 	];
 
     subscription: Subscription = new Subscription;
@@ -42,8 +49,6 @@ import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model
     ngOnInit() {
         this.getAllDealerBillings(1);
     }
-
-
 
     getAllDealerBillings(page: number) {
         this.is_loading = false;
@@ -94,5 +99,71 @@ import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model
 				return table;
 			}
 		);
+	}
+
+    exportTable() {
+        this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+        this.worksheet = this.workbook.addWorksheet('Billings View');
+        Object.keys(this.billings_table_column).forEach(key => {
+            if(this.billings_table_column[key].name && !this.billings_table_column[key].no_export) {
+                header.push({ header: this.billings_table_column[key].name, key: this.billings_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+            }
+        });
+        this.worksheet.columns = header;
+		this.getDataForExport();		
+	}
+
+    getDataForExport() {
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        this._dealer.get_all_dealer_values(1, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
+			response => {
+				if (response.message) {
+					this.billings_to_export = [];
+					return;
+				} else {
+					this.billings_to_export = [...response.paging.entities];
+                    this.billings_to_export.map(
+                        bill => {
+                            this.modifyDataForExport(bill)
+                        }
+                    )
+                }
+					
+                this.billings_to_export.forEach(
+					(item) => {
+						this.worksheet.addRow(item).font = { bold: false };
+					}
+				);
+
+				let rowIndex = 1;
+				for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+					this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+				}
+
+				this.workbook.xlsx.writeBuffer()
+					.then((file: any) => {
+						const blob = new Blob([file], { type: EXCEL_TYPE });
+						const filename = 'Billings' +'.xlsx';
+						saveAs(blob, filename);
+					}
+				);
+
+				this.workbook_generation = false;
+			}
+		);
+	}
+
+    private modifyDataForExport(data) {
+        data.perLicense = "$ " + data.perLicense;
+        data.licensePriceNew = "$ " + data.licensePriceNew;
+        data.baseFee = "$ " + data.baseFee;
+        data.billing = "$ " + data.billing;
+        data.billingDate = data.billingDate > 1 ? '1st' : '15th';
+        data.autoCharge = data.autoCharge > 0 ? 'Yes' : 'No'
 	}
 }
