@@ -30,6 +30,7 @@ export interface API_LICENSE_PROPS {
 	internetSpeed: string;
 	internetType: string;
 	isActivated?: any;
+	isCecEnabled?: number;
 	isRegistered: number;
 	licenseId: string;
 	licenseKey: string;
