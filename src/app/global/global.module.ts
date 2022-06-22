@@ -169,6 +169,7 @@ import { UnassignHostLicenseComponent } from './components_shared/license_compon
 import { UnassignLicenseComponent } from './components_shared/screen_components/unassign-license/unassign-license.component';
 import { UserSortModalComponent } from './components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { UserTypeComponent } from './components_shared/user_components/user-type/user-type.component';
+import { ViewDmaHostComponent } from './components_shared/data_components/data-table/dialogs/view-dma-host/view-dma-host.component';
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
 import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
@@ -418,6 +419,7 @@ const DIRECTIVES = [
 		ngComponents,
 		DIRECTIVES,
 		PaymentSettingComponent,
+		ViewDmaHostComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,
@@ -463,6 +465,7 @@ const DIRECTIVES = [
 		ViewSchedulesComponent,
 		WarningPopupComponent,
 		UpcomingInstallModalComponent,
+        ViewDmaHostComponent
 	],
 	imports: [
 		BrowserAnimationsModule,

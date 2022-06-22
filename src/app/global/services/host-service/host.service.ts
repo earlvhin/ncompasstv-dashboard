@@ -174,6 +174,11 @@ export class HostService extends BaseService {
 		const url = `${this.getters.host_place_images}?placeId=${placeId}`;
 		return this.getRequest(url);
 	}
+	
+    get_host_via_dma(rank, code, name) {
+		const url = `${this.getters.api_get_dma_hosts}?dmaRank=${rank}&dmaCode=${code}&dmaName=${name}&pageSize=0`;
+		return this.getRequest(url);
+	}
 
 	get_host_total() {
 		const url = `${this.getters.api_get_host_total}`;

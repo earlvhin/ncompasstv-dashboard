@@ -15,6 +15,7 @@ import { EditableFieldModalComponent } from '../../page_components/editable-fiel
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
+import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
 
 @Component({
   selector: 'app-data-table',
@@ -477,6 +478,17 @@ export class DataTableComponent implements OnInit {
 		})
 
 		dialog.afterClosed().subscribe(() => this.update_info.emit(true));
+	}
+
+    viewListModal(status, message, data): void {
+        console.log(status,message, data    )
+		const dialog = this._dialog.open(ViewDmaHostComponent, {
+			width:'500px',
+			height: '350px',
+			data:  { status, message, data }
+		})
+
+		// dialog.afterClosed().subscribe(() => this.update_info.emit(true));
 	}
 
 	onCheckboxSelect(id, event, data) {

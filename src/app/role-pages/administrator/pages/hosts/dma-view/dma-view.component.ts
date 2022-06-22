@@ -31,7 +31,7 @@ export class DmaViewComponent implements OnInit {
     dma_table_column = [
 		{ name: '#', sortable: false, no_export: true },
         { name: 'Rank', key: 'dmaRank'},
-        { name: 'Number of Hosts', key: 'totalHosts' },
+        { name: 'Number of Hosts', key: 'totalHosts'},
         { name: 'DMA Code', key:'dmaCode' },
         { name: 'DMA Name', key: 'dmaName' },
         // { name: 'County', key: 'county', no_show: true, hidden: true },
@@ -79,7 +79,7 @@ export class DmaViewComponent implements OnInit {
 				const table = new UI_HOST_DMA(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: h.dmaRank, link: null , editable: false, key: false},
-					{ value: h.totalHosts, link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.totalHosts, link: null, new_tab_link: 'true', editable: false, hidden: false, label: 'Hosts', popview: true , data_to_fetch: { rank: h.dmaRank, code: h.dmaCode, name: h.dmaName}},
 					{ value: h.dmaCode, link: null, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: h.dmaName, link: null, new_tab_link: 'true', editable: false, hidden: false},
 				);
