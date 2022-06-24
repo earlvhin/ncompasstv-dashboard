@@ -21,7 +21,6 @@ export class ViewDmaHostComponent implements OnInit {
     ) { }
 
   ngOnInit() {
-    console.log("DD", this._dialog_data)
     this._host.get_host_via_dma(this._dialog_data.status.data_to_fetch.rank, this._dialog_data.status.data_to_fetch.code, this._dialog_data.status.data_to_fetch.name).pipe(takeUntil(this._unsubscribe)).subscribe(
 		(data: any) => {
             console.log("D", data)
