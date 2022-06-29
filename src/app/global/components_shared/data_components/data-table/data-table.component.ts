@@ -55,6 +55,7 @@ export class DataTableComponent implements OnInit {
 	@Input() is_user_delete_enabled = false;
 	@Input() table_columns: any;
 	@Input() table_data: any;
+	@Input() transaction_action: any;
 	
 	// Feed Controls
 	@Input() feed_controls: boolean;
@@ -233,6 +234,11 @@ export class DataTableComponent implements OnInit {
 			}
 		)
 		
+	}
+
+    viewReceipt(link): void {
+        console.log(link)
+		// window.location.href = link;
 	}
 
     autoCharge(id) {

@@ -35,7 +35,7 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action" class="text-right" class="p-3">
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action || transaction_action" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
@@ -241,6 +241,12 @@
 					<i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
 					<!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->
 				</td>
+                
+                <td class="p-3 control-toggle" *ngIf="transaction_action">
+					<a href="{{data.link.value}}" target="_blank" *ngIf="data.link.value != null">
+                        <i class="fas fa-receipt normal-text text-gray clickable" title="View Transaction Receipt"></i>
+                    </a>
+                </td>
 
 				<td class="p-3 control-toggle" *ngIf="screen_delete">
 					<i class="fas fa-trash cursor-pointer text-danger" title="Delete Screen" *ngIf="!is_view_only" (click)="deleteScreen(data.screen_id.value)"></i>
