@@ -828,15 +828,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	pushUpdate(): void {
-		this.warningModal('warning', 'Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
+		this.warningModal('Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
 	}
 
 	refetchPi(): void {
-		this.warningModal('warning', 'Refetch Content', 'This will refetch all Player Data', 'Click OK to launch refetch', 'refetch');
+		this.warningModal('Refetch Content', 'This will refetch all Player Data', 'Click OK to launch refetch', 'refetch');
 	}
 
 	resetPi(): void {
-		this.warningModal('warning', 'Reset License', 'This will clear all player data including the license', 'Click OK to launch reset', 'reset');
+		this.warningModal('Reset License', 'This will clear all player data including the license', 'Click OK to launch reset', 'reset');
 	}
 
 	restartAnydesk() {
@@ -846,11 +846,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	restartPi(): void {
-		this.warningModal('warning', 'Restart Pi', 'Are you sure you want to restart the pi?', 'Click OK to restart this license', 'pi_restart');
+		this.warningModal('Restart Pi', 'Are you sure you want to restart the pi?', 'Click OK to restart this license', 'pi_restart');
 	}
 
 	restartPlayer(): void {
-		this.warningModal('warning', 'Restart Player', 'Restart the software not the device itself?', 'Click OK to restart player of this license', 'player_restart');
+		this.warningModal('Restart Player', 'Restart the software not the device itself?', 'Click OK to restart player of this license', 'player_restart');
 	}
 
 	screenShotPi(): void {
@@ -1004,11 +1004,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	updateAndRestart(): void {
-		this.warningModal('warning', 'Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to update this license', 'system_update');
+		this.warningModal('Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to update this license', 'system_update');
 	}
 
 	upgradeToV2(): void {
-		this.warningModal('warning', 'Update System to Version 2 and Restart', 'Are you sure you want to upgrade the software to version 2 and restart the pi?', 'Click OK to upgrade', 'system_upgrade');
+		this.warningModal('Update System to Version 2 and Restart', 'Are you sure you want to upgrade the software to version 2 and restart the pi?', 'Click OK to upgrade', 'system_upgrade');
 	}
 
 	// ==== END: Socket Dependent Events ====== //
@@ -1701,13 +1701,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		chart.update();
 	}
 
-	private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+	private warningModal(message: string, data: string, return_msg: string, action: string): void {
 		this._dialog.closeAll();
 
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
-			data: { status, message, data, return_msg, action }
+			data: { status: 'warning', message, data, return_msg, action }
 		});
 
 		let activity: string = null;
