@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 
 import { HostService } from 'src/app/global/services';
-import { UI_HOST_DMA } from 'src/app/global/models';
+import { API_DMA, UI_HOST_DMA } from 'src/app/global/models';
 
 @Component({
   selector: 'app-dma-view',
@@ -13,7 +13,7 @@ import { UI_HOST_DMA } from 'src/app/global/models';
   styleUrls: ['./dma-view.component.scss']
 })
 
-export class DmaViewComponent implements OnInit {
+export class DmaViewComponent implements OnInit, OnDestroy {
 
     dma_data: any[] = [];
     dma_to_export: any[] = [];
@@ -44,6 +44,11 @@ export class DmaViewComponent implements OnInit {
     ngOnInit() {
         this.getDMA(1);
     }
+
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
 
     filterData(e) {
         this.search_key = e;
@@ -108,9 +113,13 @@ export class DmaViewComponent implements OnInit {
 
     getDataForExport() {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this._host.get_all_dma(1, this.search_key, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
+        
+		this._host.get_all_dma(1, this.search_key, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
             response => {
-				if (response.paging.entities > 0) {
+
+				const dma = response.paging.entities as API_DMA[];
+
+				if (dma.length > 0) {
 					this.dma_to_export = [];
 					return;
 				} else {
