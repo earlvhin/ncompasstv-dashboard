@@ -1710,68 +1710,89 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			data: { status, message, data, return_msg, action }
 		});
 
+		let activity: string = null;
+		let socketCode: string = null;
+
 		dialogRef.afterClosed().subscribe(result => {
 
-			if (result === 'reset') {
+			switch (result) {
 
-				this._socket.emit('D_reset_pi', this.license_id);
-				this.pi_status = false;
-				this.player_status = false;
+				case 'reset':
 
-				this.saveActivityLog(ACTIVITY_CODES.reset_data);
+					socketCode = 'D_reset_pi';
+					activity = ACTIVITY_CODES.reset_data;
+					this.pi_status = false;
+					this.player_status = false;
 
-			} else if (result === 'update') {
+					break;
 
-				this._socket.emit('D_update_player', this.license_id);
-				this.pi_updating = true;
-				this.update_btn = 'Updating...';
+				case 'update':
 
-				this.saveActivityLog(ACTIVITY_CODES.content_update);
+					socketCode = 'D_update_player';
+					activity = ACTIVITY_CODES.content_update;
+					this.pi_updating = true;
+					this.update_btn = 'Updating...';
 
-			} else if (result === 'refetch') {
+					break;
 
-				this._socket.emit('D_refetch_pi', this.license_id);
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing Refetch';
+				case 'refetch':
 
-				this.saveActivityLog(ACTIVITY_CODES.refetch)
+					socketCode = 'D_refetch_pi';
+					activity = ACTIVITY_CODES.refetch;
+					this.pi_updating = true;
+					this.update_btn = 'Ongoing Refetch';
 
-			} else if (result === 'system_update') {
+					break;
 
-				this._socket.emit('D_system_update_by_license', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing System Update';
+				case 'system_update':
 
+					socketCode = 'D_system_update_by_license';
+					activity = ACTIVITY_CODES.update_system;
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Ongoing System Update';
 
-				this.saveActivityLog(ACTIVITY_CODES.update_system);
+					break;
 
-			} else if (result === 'pi_restart') {
+				case 'pi_restart':
 
-				this._socket.emit('D_pi_restart', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Pi Restarting';
+					socketCode = 'D_pi_restart';
+					activity = ACTIVITY_CODES.reboot_pi;
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Pi Restarting';
 
-				this.saveActivityLog(ACTIVITY_CODES.reboot_pi);
+					break
 
-			} else if (result === 'player_restart') {
+				case 'player_restart':
 
-				this._socket.emit('D_player_restart', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Player Restarting';
+					socketCode = 'D_player_restart';
+					activity = ACTIVITY_CODES.reboot_player;
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Player Restarting';
 
-				this.saveActivityLog(ACTIVITY_CODES.reboot_player);
+					break;
 
-			} else if (result === 'system_upgrade') {
+				case 'system_upgrade':
 
-				this._socket.emit('D_upgrade_to_v2_by_license', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing System Update';
+					socketCode = 'D_upgrade_to_v2_by_license';
+					activity = null // intended as system upgrade has no activity code
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Ongoing System Update';
 
+					break;
 			}
+
+			if (!socketCode) return; 
+			
+			this._socket.emit(socketCode, this.license_id);
+
+			if (!activity) return;
+
+			this.saveActivityLog(ACTIVITY_CODES[activity]);
+			
 		});
 	}
 
