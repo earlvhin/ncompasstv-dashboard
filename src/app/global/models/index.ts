@@ -9,6 +9,7 @@ export * from './api_create-screen-response.model';
 export * from './api_credit-card-details.model';
 export * from './api_dealer.model';
 export * from './api_dealer-values.model';
+export * from './api_dma.model';
 export * from './api_edit-screen.model';
 export * from './api_export-dealer.model';
 export * from './api_feed.model';

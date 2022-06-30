@@ -61,6 +61,7 @@ import { DeleteDealerDialogComponent } from './pages_shared/edit-single-dealer/d
 import { DeletePlaylistComponent } from './components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { DemoZoneComponent } from './components_shared/zone_components/demo-zone/demo-zone.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
+import { DmaTabComponent } from './components_shared/locator_components/dma-tab/dma-tab.component';
 import { EditFeedComponent } from './components_shared/feed_components/edit-feed/edit-feed.component';
 import { EditSingleAdvertiserComponent } from './pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from './pages_shared/edit-single-dealer/edit-single-dealer.component';
@@ -262,6 +263,7 @@ const ngComponents = [
 	DeleteDealerDialogComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
+	DmaTabComponent,
 	EditFeedComponent,
 	EditSingleAdvertiserComponent,
 	EditSingleDealerComponent,
