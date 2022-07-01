@@ -556,6 +556,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.showInformationModal('600px', '350px', 'Notes', this.host.notes, 'textarea', 500);
 	}
 
+	onResetAnydeskID(): void {
+		this.warningModal('Reset Anydesk ID', 'Are you sure you want to RESET the Anydesk ID?', 'Confirm if you wish to do so', 'reset_anydesk_id');
+	}
+
 	onUpdateNotificationSettings(event: MatSlideToggleChange, type: string) {
 
 		let body: { licenseId: string, notificationSettings?: number, emailSettings?: number } = { licenseId: this.license_id };
@@ -1774,10 +1778,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 					break;
 
+				case 'reset_anydesk_id':
+
+					socketCode = 'D_reset_anydesk_id';
+					activity = null; // intended since there is no activity code for resetting the anydesk ID
+					this.anydesk_restarting = true;
+
+					break;
+
 				case 'system_upgrade':
 
 					socketCode = 'D_upgrade_to_v2_by_license';
-					activity = null // intended as system upgrade has no activity code
+					activity = null; // intended as system upgrade has no activity code
 					this.pi_status = false;
 					this.pi_updating = true;
 					this.update_btn = 'Ongoing System Update';
