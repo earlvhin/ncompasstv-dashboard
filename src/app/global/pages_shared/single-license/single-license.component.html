@@ -184,19 +184,17 @@
 															</ng-template>
 														</div>
 
-														<ng-container *ngIf="is_admin">
-															<div class="flex-even">
-																<span class="sm-text">Display ON/OFF</span>
-																<br>
-																<mat-slide-toggle
-																	[matTooltip]="license_data.isCecEnabled === 0 ? 'CEC not available on TV' : 'Turn the TV on or off'"
-																	(change)="monitorToggle($event)"
-																	[checked]="display_status == 1 ? 'checked' : 'false'"
-																	[disabled]="license_data.isCecEnabled === 0">
-																</mat-slide-toggle>
-															</div>
-
-														</ng-container>
+														<div class="flex-even">
+															<span class="sm-text">Display ON/OFF</span>
+															<br>
+															<mat-slide-toggle
+																[matTooltip]="license_data.isCecEnabled === 0 ? 'CEC not available on TV' : 'Turn the TV on or off'"
+																(change)="monitorToggle($event)"
+																[checked]="display_status == 1 ? 'checked' : 'false'"
+																[disabled]="license_data.isCecEnabled === 0">
+															</mat-slide-toggle>
+														</div>
+														
 													</div>
 													
 													<hr class="my-3">
