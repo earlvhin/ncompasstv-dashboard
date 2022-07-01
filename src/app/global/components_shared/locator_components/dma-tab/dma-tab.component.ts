@@ -78,8 +78,8 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 		this.updateDMAHostLocations();
 	}
 
-	private getAllDMAByRank() {
-		return this._host.get_all_dma(this.currentPage, this.searchKeyword).pipe(takeUntil(this._unsubscribe));
+	private getAllDMAByRank(pageSize = 15) {
+		return this._host.get_all_dma(this.currentPage, this.searchKeyword, pageSize).pipe(takeUntil(this._unsubscribe));
 	}
 
 	private getHostsByDMA(rank: number, code: string, name: string) {
@@ -98,7 +98,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 
 	}
 
-	private subscribeToDMASearch(): void {
+	private onSearchDMA(): void {
 
 		const control = this.searchSelectForm.get('searchDMAKeyword');
 
@@ -114,7 +114,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 						this.searchKeyword = keyword;
 						this.currentPage = 1;
 
-						this.getAllDMAByRank()
+						this.getAllDMAByRank(0)
 							.subscribe(
 								(response: { paging: PAGING }) => {
 									const currentDMAList: API_DMA[] = this._dmaListControl.value;
@@ -155,8 +155,17 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 					(response: { paging: PAGING }[]) => {
 
 						response.forEach(
-							dmaPagingResponse => {
-								const dmaHosts: API_DMA_HOST[] = dmaPagingResponse.paging.entities;
+							(dmaPagingResponse) => {
+
+								let dmaHosts: API_DMA_HOST[] = dmaPagingResponse.paging.entities;
+								
+								dmaHosts = dmaHosts.map(
+									host => {
+										host.storeHours = JSON.parse(host.storeHours);
+										return host;
+									}
+								);
+
 								const merged = dmaHostLocations.concat(dmaHosts);
 								dmaHostLocations = [...merged];
 
@@ -188,8 +197,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 	}
 
 	protected initializeSubscriptions(): void {
-		this.subscribeToDMASearch();
-		// this.subscribeToDMASelect();
+		this.onSearchDMA();
 	}
 
 }

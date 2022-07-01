@@ -7,7 +7,9 @@ export interface API_DMA {
 }
 
 export interface API_DMA_HOST {
-	country: string;
+	address: string;
+	category: string;
+	county: string;
 	dmaCode: string;
 	dmaName: string;
 	dmaRank: number;
@@ -15,5 +17,7 @@ export interface API_DMA_HOST {
 	hostName: string;
 	latitude: string;
 	longitude: string;
+	storeHours: string;
 	zip: string;
 }
+

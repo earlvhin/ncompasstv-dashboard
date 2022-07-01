@@ -13,13 +13,13 @@
 				
 						<agm-info-window [isOpen]="currentHostIdSelected == host.hostId" #window>
 							<h4 class="font-weight-bold">{{ host.hostName }}</h4>
-							<!-- <div class="mt-2">
+							<div class="mt-2">
 								<tr>
 									<th>
 										<h5 class="font-weight-bold">Address:</h5>
 									</th>
 									<td class="mr-2">
-										<h5>{{host.address}}, {{host.city}}, {{ host.state }} {{ host.postalCode }}</h5>
+										<h5>{{ host.address }}</h5>
 									</td>
 								</tr>
 								<tr>
@@ -27,7 +27,7 @@
 										<h5 class="font-weight-bold">Category:</h5>
 									</th>
 									<td>
-										<h5>{{host.category}}</h5>
+										<h5>{{ host.category }}</h5>
 									</td>
 								</tr>
 								<tr>
@@ -35,27 +35,25 @@
 										<h5 class="font-weight-bold">Operation Hours: </h5>
 									</th>
 									<td>
-										<tr *ngFor="let ops of host.storeHours">
+										<tr *ngFor="let schedule of host.storeHours">
 											<th class="pr-4">
-												<h5>{{ ops.day }} </h5>
+												<h5>{{ schedule.day }} </h5>
 											</th>
-											<span *ngIf="ops.periods[0]; else close">
-												<td *ngFor="let hrs of ops.periods; let j = index">
+											<span *ngIf="schedule.periods[0]; else close">
+												<td *ngFor="let hrs of schedule.periods; let j = index">
 													<h5 *ngIf="j > 0"> & </h5>
-													<h5 *ngIf="hrs.open == '' && hrs.close =='' && ops.status"> - Open 24 hours</h5>
-													<h5 *ngIf="hrs.open == '' && hrs.close =='' && !ops.status"> - Closed</h5>
+													<h5 *ngIf="hrs.open == '' && hrs.close =='' && schedule.status"> - Open 24 hours</h5>
+													<h5 *ngIf="hrs.open == '' && hrs.close =='' && !schedule.status"> - Closed</h5>
 													<h5 *ngIf="hrs.open != '' && hrs.close !=''">
 														{{hrs.open}} - {{ hrs.close }}
 													</h5>
 												</td>
 											</span>
-											<ng-template #close>
-												- CLOSED
-											</ng-template>
+											<ng-template #close>- CLOSED</ng-template>
 										</tr>
 									</td>
 								</tr>
-							</div> -->
+							</div>
 							<h6 class="coordinates mt-3"><i class="fas fa-map-marker"></i> {{host.latitude}},{{host.longitude}}</h6>
 						</agm-info-window>
 				
@@ -76,7 +74,7 @@
 												[multiple]="true" (closed)="onCloseSearchSelectMenu()" disableOptionCentering>
 												<mat-option>
 													<ngx-mat-select-search noEntriesFoundLabel="No results" formControlName="searchDMAKeyword"
-														[placeholderLabel]="'Search DMA by Code or Rank'" [clearSearchInput]="false"
+														[placeholderLabel]="'Search DMA by name, code, or rank'" [clearSearchInput]="false"
 														[searching]="isSearchingDMA">
 														<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
 													</ngx-mat-select-search>
