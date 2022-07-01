@@ -225,9 +225,11 @@ export class HostsComponent implements OnInit {
 
     onTabChanged(e) {
         if(e.index == 1) {
+            this.search_data = "";
             this.pageRequested(1);
         } else {
-            this.search_data = "";
+            console.log("HERE")
+            this.search_data_host = "";
             this.ngOnInit();
         }
     }
