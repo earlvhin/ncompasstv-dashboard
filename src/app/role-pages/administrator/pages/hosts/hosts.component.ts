@@ -227,7 +227,9 @@ export class HostsComponent implements OnInit {
         if(e.index == 1) {
             this.pageRequested(1);
         } else {
-            this.getHosts(1)
+            this.search_data = "";
+            this.ngOnInit();
+            // this.getHosts(1)
         }
     }
 
