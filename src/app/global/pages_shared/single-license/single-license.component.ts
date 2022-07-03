@@ -113,13 +113,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	zone_playlists: UI_ZONE_PLAYLIST[];
 	destroy_daily_charts: boolean = false;
 	destroy_monthly_charts: boolean = false;
-	_socket: any;
 	is_admin: boolean = false;
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
 	saving_license_settings: boolean = false;
-
+	
+	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -151,6 +151,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
 		this.getLicenseInfo();
+		this.initializeSocketWatchers();
 		this.socket_checkDisplayStatus();
 		this.socket_piPlayerStatus();
 		this.socket_screenShotFailed();
@@ -891,7 +892,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.display_status = 2
 				}
 			}
-		})
+		});
 	}
 
 	socket_screenShotFailed(): void {
@@ -1016,6 +1017,18 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	// ==== END: Socket Dependent Events ====== //
+
+	private async showWarningModal(message: string, data: any, return_msg = ''): Promise<boolean> {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status: 'warning', message, data, return_msg }
+		})
+
+		return await dialog.afterClosed().toPromise();
+
+	}
 
 	private adjustMinimapWidth(): void {
 		
@@ -1564,18 +1577,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
-	private async showWarningModal(message: string, data: any, return_msg = ''): Promise<boolean> {
-
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status: 'warning', message, data, return_msg }
-		})
-
-		return await dialog.afterClosed().toPromise();
-
-	}
-
 	private subscribeToAdditionalSettingsFormChanges() {
 		this.additional_license_settings_form.valueChanges.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -1633,6 +1634,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				);
 			}
 		);
+	}
+
+	private subscribeToResetAnydeskID(): void {
+
+		this._socket.on('SS_reset_anydesk_id_response', (response: { hasReset: boolean, newAnydeskId: string, licenseId: string }) => {
+			
+			if (response.licenseId !== response.licenseId) return;
+
+			const { newAnydeskId } = response;
+			const updatedLicense = this.license_data;
+
+			updatedLicense.anydeskId = newAnydeskId;
+			this.license_data = {...updatedLicense};
+			this.anydesk_id = newAnydeskId;
+
+		});
+
 	}
 
 	private subscribeToZoneSelect(): void {
@@ -1797,8 +1815,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					break;
 			}
 
-			if (!socketCode) return; 
-			
+			if (!socketCode) return;
+
 			this._socket.emit(socketCode, this.license_id);
 
 			if (!activity) return;
@@ -1821,5 +1839,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			{ label: 'Player Boot Delay', form_control_name: 'bootDelay', type: 'number', colorValue: '', width: 'col-lg-6', required: true, value: 0, viewType: null },
 			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'time', width: 'col-lg-6', required: true, value: 0, viewType: null },
 		];
+	}
+
+	protected initializeSocketWatchers(): void {
+		this.subscribeToResetAnydeskID();
 	}
 }
