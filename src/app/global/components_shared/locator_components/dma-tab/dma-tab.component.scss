@@ -44,6 +44,8 @@
 
 				.selected-dma-info {
 					background-color: white;
+					overflow-y: auto;
+					max-height: 85vh;
 
 					.total-hosts {
 						margin-left: auto;
