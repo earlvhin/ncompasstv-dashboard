@@ -152,12 +152,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.pi_status = false;
 		this.getLicenseInfo();
 		this.socket_checkDisplayStatus();
+		this.socket_checkCECStatus();
 		this.socket_piPlayerStatus();
 		this.socket_screenShotFailed();
 		this.socket_screenShotSuccess();
 		this.socket_updateCompleted();
 		this.socket_licenseOffline();
 		this.socket_monitorStatusResponse();
+		this.socket_monitorCECStatusResponse();
 		this.socket_getAnydeskID();
 		this.socket_speedtestSuccess();
 		this.socket_deadUI();
@@ -862,6 +864,24 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	socket_checkDisplayStatus(): void {
 		this._socket.emit('D_is_monitor_on', this.license_id);
+	}
+
+	socket_checkCECStatus(): void {
+		this._socket.emit('D_check_cec_status', this.license_id);
+	}
+
+	socket_monitorCECStatusResponse(): void {
+
+		this._socket.on('SS_cec_status_check_response', (response: { licenseId: string, status: boolean }) => {
+
+			if (response.licenseId !== this.license_id) return;
+
+			const { licenseId, status } = response;
+			const parsedStatus = status ? 1 : 0;
+			this.updateCECStatus({ licenseId, status: parsedStatus });
+
+		});
+
 	}
 
 	socket_monitorStatusResponse(): void {
@@ -1648,15 +1668,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
-	private updateCharts(): void {
-		
-		setTimeout(() => {
-			this.updateAssetsChart();
-			this.updateDurationChart();
-		}, 1000);
-
-	}
-
 	private updateAssetsChart(): void {
 		const chart = this.charts.filter(chart => chart.canvas.id === 'assetsBreakdown')[0] as Chart;
 		const { advertisers, feeds, fillers, hosts, others } = this.assets_breakdown;
@@ -1677,6 +1688,30 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		chart.data.datasets[0].data = [hosts, advertisers, fillers, feeds, others];
 		chart.update();
+	}
+
+	private updateCharts(): void {
+
+		setTimeout(() => {
+			this.updateAssetsChart();
+			this.updateDurationChart();
+		}, 1000);
+
+	}
+
+	private updateCECStatus(data: { licenseId: string, status: number }) {
+
+		return this._license.update_cec_status(data).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					const newLicenseReference = {...this.license_data};
+					newLicenseReference.isCecEnabled = data.status;
+					this.license_data = newLicenseReference;
+					console.log('Success! Updated CEC status');
+				},
+				error => console.log('Error updating CEC status', error)
+			);
+
 	}
 
 	private updateDurationChart(): void {
