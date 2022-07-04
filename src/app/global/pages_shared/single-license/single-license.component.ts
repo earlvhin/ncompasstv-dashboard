@@ -558,7 +558,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	onResetAnydeskID(): void {
-		this.warningModal('Reset Anydesk ID', 'Are you sure you want to RESET the Anydesk ID?', 'Confirm if you wish to do so', 'reset_anydesk_id');
+		this.warningModal('Reset Anydesk ID', 'Proceed? This will disconnect current Anydesk sessions', 'Confirm if you wish to do so', 'reset_anydesk_id');
 	}
 
 	onUpdateNotificationSettings(event: MatSlideToggleChange, type: string) {
@@ -1640,7 +1640,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this._socket.on('SS_reset_anydesk_id_response', (response: { hasReset: boolean, newAnydeskId: string, licenseId: string }) => {
 			
-			if (response.licenseId !== response.licenseId) return;
+			if (response.licenseId !== response.licenseId) {
+				this.anydesk_restarting = false;
+				return;
+			}
 
 			const { newAnydeskId } = response;
 			const updatedLicense = this.license_data;
@@ -1648,6 +1651,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			updatedLicense.anydeskId = newAnydeskId;
 			this.license_data = {...updatedLicense};
 			this.anydesk_id = newAnydeskId;
+			this.anydesk_restarting = false;
 
 		});
 
