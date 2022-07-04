@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
-import { MAT_DIALOG_DATA } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
@@ -10,8 +10,8 @@ import { HostService } from 'src/app/global/services';
   templateUrl: './view-dma-host.component.html',
   styleUrls: ['./view-dma-host.component.scss']
 })
-export class ViewDmaHostComponent implements OnInit, OnDestroy {
 
+export class ViewDmaHostComponent implements OnInit, OnDestroy {
     protected _unsubscribe = new Subject<void>();
     hosts_of_dma: any= [];
 
@@ -36,5 +36,4 @@ export class ViewDmaHostComponent implements OnInit, OnDestroy {
     getLink(page: string, id: string) {
         return `/administrator/${page}/${id}`;
     }
-
 }

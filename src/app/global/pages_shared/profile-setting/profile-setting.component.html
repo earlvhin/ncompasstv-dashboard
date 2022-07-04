@@ -1,7 +1,7 @@
 <div class="row m-0 p-0 mb-4 tabs">
     <div class="col-12 col-lg pt-5" *ngIf="is_dealer">
         <div class="col-12 col-lg text-right">
-            <button class="offset-lg-10 col-lg-2 p-0 f-500 md-text bg-primary text-white d-flex hidden-button" (click)="goToUrl()" [disabled]="!show_cart_button">
+            <button class="offset-lg-10 col-lg-2 p-0 f-500 md-text bg-primary text-white d-flex hidden-button" (click)="goToUrl()" [disabled]="no_dealer_values || no_credit_card">
                 <div class="col-lg-10 p-2">SHOP LICENSES NOW!</div> 
                 <div class="col-lg-2 p-0 p-2 white-bg text-dark"><i class="fas fa-shopping-cart"></i></div>
             </button>
@@ -177,6 +177,17 @@
 							<div class="row">
 								<div class="col-lg-12">
 									<app-payment-setting [dealerId]="dealer_id" [dealerEmail]="dealer_email" [currentUser]="current_user"></app-payment-setting>									
+								</div>
+							</div>
+						</div>
+					</div>
+				</mat-tab>
+                <mat-tab label="Transactions" *ngIf="is_dealer">
+					<div class="col-lg-12 p-0">
+						<div class="theme-container">
+							<div class="row">
+								<div class="col-lg-12">
+									<app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>									
 								</div>
 							</div>
 						</div>

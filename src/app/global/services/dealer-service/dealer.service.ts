@@ -124,8 +124,8 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealer_by_id}${id}`).map((data) => data.dealer);
 	}
 
-	get_all_dealer_values(page, pageSize=15) {
-		return this.getRequest(`${this.getters.api_get_all_dealer_values}` + '?page=' + `${page}` + '&pageSize=' + `${pageSize}`);
+	get_all_dealer_values(page, searchKey, column, order, pageSize=15) {
+		return this.getRequest(`${this.getters.api_get_all_dealer_values}` + '?page=' + `${page}` + '&search=' + `${searchKey}` + '&sortColumn=' + `${column}` + '&sortOrder=' + `${order}` + '&pageSize=' + `${pageSize}`);
 	}
     
     get_dealer_values_by_id(id: string): Observable<API_DEALER_VALUES | { message: string }> {

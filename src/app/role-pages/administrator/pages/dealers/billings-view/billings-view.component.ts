@@ -17,7 +17,12 @@ import { saveAs } from 'file-saver';
     alldealervalues_paging: any;
     billing_data: any;
     billings_to_export: any = [];
+    filtered_data_billings: any[] = [];
+    initial_load_billings: boolean = true;
     is_loading: boolean = false;
+    search_key: string = '';
+    sort_column_billings: string = "";
+    sort_order_billings: string = "";
     workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
@@ -33,7 +38,7 @@ import { saveAs } from 'file-saver';
         { name: 'New License Price', sortable: false, key: 'licensePriceNew',},
         { name: 'Base Fee', sortable: false, key: 'baseFee',},
         { name: 'Total Bill', sortable: false, key: 'billing',},
-        { name: 'Billing Date', sortable: false, key: 'billingDate',},
+        { name: 'Billing Date', key: 'billingDate', sortable: true, column:'BillingDate',},
         { name: 'Auto Charge', sortable: false, key: 'autoCharge', hidden: true, no_show: true},
 	];
 
@@ -53,17 +58,26 @@ import { saveAs } from 'file-saver';
     getAllDealerBillings(page: number) {
         this.is_loading = false;
 		this.subscription.add(
-			this._dealer.get_all_dealer_values(page).pipe(takeUntil(this._unsubscribe)).subscribe(
+			this._dealer.get_all_dealer_values(page, this.search_key, this.sort_column_billings, this.sort_order_billings).pipe(takeUntil(this._unsubscribe)).subscribe(
 				response => {
                     this.alldealervalues_paging = response.paging;
+                    this.is_loading = true;
+                    this.initial_load_billings = false;		
                     if(response.paging.totalEntities > 0) {
                         this.alldealervalues = response.paging.entities;
+                        this.filtered_data_billings = this.alldealervalues;
                         this.billing_data = this.billing_mapToUIFormat(this.alldealervalues);
-                        this.is_loading = true;
+                    } else {
+                        this.filtered_data_billings = [];
                     }
                 }
             )
         )
+    }
+
+    filterData(e) {
+        this.search_key = e;
+        this.getAllDealerBillings(1);
     }
 
     private get currentRole() {
@@ -120,7 +134,7 @@ import { saveAs } from 'file-saver';
 
     getDataForExport() {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this._dealer.get_all_dealer_values(1, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
+        this._dealer.get_all_dealer_values(1, this.search_key, this.sort_column_billings, this.sort_order_billings, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
 			response => {
 				if (response.message) {
 					this.billings_to_export = [];
@@ -163,7 +177,13 @@ import { saveAs } from 'file-saver';
         data.licensePriceNew = "$ " + data.licensePriceNew;
         data.baseFee = "$ " + data.baseFee;
         data.billing = "$ " + data.billing;
-        data.billingDate = data.billingDate > 1 ? '1st' : '15th';
+        data.billingDate = data.billingDate > 0 ? (data.billingDate > 1 ? '15th' : '1st') : '';
         data.autoCharge = data.autoCharge > 0 ? 'Yes' : 'No'
+	}
+
+    getAdvertisersColumnsAndOrder(data) {
+		this.sort_column_billings = data.column;
+		this.sort_order_billings = data.order;
+		this.getAllDealerBillings(1);
 	}
 }

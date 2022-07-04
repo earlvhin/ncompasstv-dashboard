@@ -211,6 +211,7 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -422,6 +423,7 @@ const DIRECTIVES = [
 		DIRECTIVES,
 		PaymentSettingComponent,
 		ViewDmaHostComponent,
+		TransactionTabComponent,
 	],
 	entryComponents: [
 		AssignLicenseModalComponent,

@@ -174,7 +174,7 @@ export class HostService extends BaseService {
 		const url = `${this.getters.host_place_images}?placeId=${placeId}`;
 		return this.getRequest(url);
 	}
-	
+
     get_host_via_dma(rank: number, code: string, name: string): Observable<{ paging: PAGING }> {
 		const url = `${this.getters.api_get_dma_hosts}?dmaRank=${rank}&dmaCode=${code}&dmaName=${encodeURIComponent(name)}&pageSize=0`;
 		return this.getRequest(url);
