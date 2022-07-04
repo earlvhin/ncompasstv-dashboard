@@ -42,6 +42,7 @@ import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single
 import { InstallationsModule } from './pages/installations/installations.module';
 import { BillingsViewComponent } from './pages/dealers/billings-view/billings-view.component';
 import { DmaViewComponent } from './pages/hosts/dma-view/dma-view.component';
+import { InvoiceViewComponent } from './pages/dealers/invoice-view/invoice-view.component';
 
 @NgModule({
 	declarations: [
@@ -64,6 +65,7 @@ import { DmaViewComponent } from './pages/hosts/dma-view/dma-view.component';
 		TagsTabComponent,
 		BillingsViewComponent,
 		DmaViewComponent,
+		InvoiceViewComponent,
 	],
 	imports: [
 		CommonModule,
