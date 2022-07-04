@@ -1,11 +1,11 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 
 import { HostService } from 'src/app/global/services';
-import { UI_HOST_DMA } from 'src/app/global/models';
+import { API_DMA, UI_HOST_DMA } from 'src/app/global/models';
 
 @Component({
   selector: 'app-dma-view',
@@ -13,7 +13,7 @@ import { UI_HOST_DMA } from 'src/app/global/models';
   styleUrls: ['./dma-view.component.scss']
 })
 
-export class DmaViewComponent implements OnInit {
+export class DmaViewComponent implements OnInit, OnDestroy {
 
     dma_data: any[] = [];
     dma_to_export: any[] = [];
@@ -31,7 +31,7 @@ export class DmaViewComponent implements OnInit {
     dma_table_column = [
 		{ name: '#', sortable: false, no_export: true },
         { name: 'Rank', key: 'dmaRank'},
-        { name: 'Number of Hosts', key: 'totalHosts' },
+        { name: 'Number of Hosts', key: 'totalHosts'},
         { name: 'DMA Code', key:'dmaCode' },
         { name: 'DMA Name', key: 'dmaName' },
         // { name: 'County', key: 'county', no_show: true, hidden: true },
@@ -44,6 +44,11 @@ export class DmaViewComponent implements OnInit {
     ngOnInit() {
         this.getDMA(1);
     }
+
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
 
     filterData(e) {
         this.search_key = e;
@@ -79,7 +84,7 @@ export class DmaViewComponent implements OnInit {
 				const table = new UI_HOST_DMA(
                     { value: count++, link: null , editable: false, hidden: false},
 					{ value: h.dmaRank, link: null , editable: false, key: false},
-					{ value: h.totalHosts, link: null, new_tab_link: 'true', editable: false, hidden: false},
+					{ value: h.totalHosts, link: null, new_tab_link: 'true', editable: false, hidden: false, label: 'Hosts', popview: true , data_to_fetch: { rank: h.dmaRank, code: h.dmaCode, name: h.dmaName}},
 					{ value: h.dmaCode, link: null, new_tab_link: 'true', editable: false, hidden: false},
 					{ value: h.dmaName, link: null, new_tab_link: 'true', editable: false, hidden: false},
 				);
@@ -108,9 +113,13 @@ export class DmaViewComponent implements OnInit {
 
     getDataForExport() {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this._host.get_all_dma(1, this.search_key, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
+        
+		this._host.get_all_dma(1, this.search_key, 0).pipe(takeUntil(this._unsubscribe)).subscribe(
             response => {
-				if (response.paging.entities > 0) {
+
+				const dma = response.paging.entities as API_DMA[];
+
+				if (dma.length > 0) {
 					this.dma_to_export = [];
 					return;
 				} else {

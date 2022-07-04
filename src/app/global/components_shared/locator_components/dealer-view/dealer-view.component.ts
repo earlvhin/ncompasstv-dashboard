@@ -211,7 +211,6 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
                     this.host_licenses = this.host_licenses.filter(license => license.isActivated === 1);
 
-                    console.log("this.host_licenses", this.host_licenses)
 					if(this.filterStatus !== null){
 						this.host_licenses.filter(x => x.piStatus === this.filterStatus);
 					}
@@ -222,6 +221,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 							if (license.piStatus == 1) online += 1;
 						}
 					);
+
 					this.host_online_licenses = online;
 					this.host_offline_licenses = this.host_licenses.length - online;
 					statistics.basis = this.host_licenses.length;

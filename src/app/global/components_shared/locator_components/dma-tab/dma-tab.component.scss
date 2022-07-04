@@ -1,0 +1,68 @@
+#dma-tab-view {
+	.content {
+
+		.content-container	{
+			.map-overlay {
+				position: relative;
+			}
+
+			.search-container {
+				position: absolute;
+				top: 10px;
+				left: 10px;
+				z-index: 99;
+				width: 400px;
+				padding-bottom: 10px;
+
+				.search-box {
+					background-color: white;
+				}
+
+				.selected-dma {
+					background-color: white;
+
+					.dma {
+						margin-right: 5px;
+						margin-bottom: 5px;
+						padding: 1px 5px 1px 7px;
+						font-size: 12px;
+						border-radius: 5px;
+						color: white;
+						border: 1px solid gray;
+						background-color: #8ec641;
+
+						.remove-btn {
+							text-align: center;
+					
+							mat-icon {
+								font-size: 12px;
+								line-height: 25px;
+							}
+						}
+					}
+				}
+
+				.selected-dma-info {
+					background-color: white;
+					overflow-y: auto;
+					max-height: 85vh;
+
+					.total-hosts {
+						margin-left: auto;
+					}
+
+					.dma-host-list {
+						.name {
+							cursor: pointer;
+
+							&:hover {
+								color: #8ec641;
+							}
+						}
+					}
+				}
+			}
+
+		}
+	}
+}

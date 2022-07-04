@@ -68,7 +68,7 @@
                             <div *ngIf="!initial_load_hosts; else loader">
                                 <div *ngIf="!no_host; else no_data">
                                     <div class="row mt-3">
-                                        <div class="col-lg-8">
+                                        <div class="col-lg-7">
                                             <button mat-button mat-raised-button
                                                 class="theme-btn pi-control sm-text _primary mr-2" 
                                                 (click)="exportTable('hosts')"
@@ -78,10 +78,10 @@
                                                 <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
                                             </button>
                                         </div>
-                                        <div class="col-lg-4">
+                                        <div class="col-lg-5">
                                             <app-search-field
 												*ngIf="!initial_load_hosts"
-												[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+												[form_title]="'Search Host Name, Address, City, Postal Code, DMA Name or #Tag'"
 												[placeholder]="'Example: N-Compass Host'"
 												[data_reference]="hosts_data"
 												[primary_keyword]="'name'"
