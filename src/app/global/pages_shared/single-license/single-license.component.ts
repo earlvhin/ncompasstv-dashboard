@@ -113,13 +113,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	zone_playlists: UI_ZONE_PLAYLIST[];
 	destroy_daily_charts: boolean = false;
 	destroy_monthly_charts: boolean = false;
-	_socket: any;
 	is_admin: boolean = false;
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
 	saving_license_settings: boolean = false;
-
+	
+	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -151,6 +151,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.pi_status = false;
 		this.getLicenseInfo();
+		this.initializeSocketWatchers();
 		this.socket_checkDisplayStatus();
 		this.socket_checkCECStatus();
 		this.socket_piPlayerStatus();
@@ -558,6 +559,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.showInformationModal('600px', '350px', 'Notes', this.host.notes, 'textarea', 500);
 	}
 
+	onResetAnydeskID(): void {
+		this.warningModal('Reset Anydesk ID', 'Proceed? This will disconnect current Anydesk sessions', 'Confirm if you wish to do so', 'reset_anydesk_id');
+	}
+
 	onUpdateNotificationSettings(event: MatSlideToggleChange, type: string) {
 
 		let body: { licenseId: string, notificationSettings?: number, emailSettings?: number } = { licenseId: this.license_id };
@@ -830,15 +835,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	pushUpdate(): void {
-		this.warningModal('warning', 'Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
+		this.warningModal('Push Updates', 'Are you sure you want to push updates?', 'Click OK to push updates for this license', 'update');
 	}
 
 	refetchPi(): void {
-		this.warningModal('warning', 'Refetch Content', 'This will refetch all Player Data', 'Click OK to launch refetch', 'refetch');
+		this.warningModal('Refetch Content', 'This will refetch all Player Data', 'Click OK to launch refetch', 'refetch');
 	}
 
 	resetPi(): void {
-		this.warningModal('warning', 'Reset License', 'This will clear all player data including the license', 'Click OK to launch reset', 'reset');
+		this.warningModal('Reset License', 'This will clear all player data including the license', 'Click OK to launch reset', 'reset');
 	}
 
 	restartAnydesk() {
@@ -848,11 +853,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	restartPi(): void {
-		this.warningModal('warning', 'Restart Pi', 'Are you sure you want to restart the pi?', 'Click OK to restart this license', 'pi_restart');
+		this.warningModal('Restart Pi', 'Are you sure you want to restart the pi?', 'Click OK to restart this license', 'pi_restart');
 	}
 
 	restartPlayer(): void {
-		this.warningModal('warning', 'Restart Player', 'Restart the software not the device itself?', 'Click OK to restart player of this license', 'player_restart');
+		this.warningModal('Restart Player', 'Restart the software not the device itself?', 'Click OK to restart player of this license', 'player_restart');
 	}
 
 	screenShotPi(): void {
@@ -907,7 +912,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.display_status = 2
 				}
 			}
-		})
+		});
 	}
 
 	socket_screenShotFailed(): void {
@@ -1024,14 +1029,26 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	updateAndRestart(): void {
-		this.warningModal('warning', 'Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to update this license', 'system_update');
+		this.warningModal('Update System and Restart', 'Are you sure you want to update the player and restart the pi?', 'Click OK to update this license', 'system_update');
 	}
 
 	upgradeToV2(): void {
-		this.warningModal('warning', 'Update System to Version 2 and Restart', 'Are you sure you want to upgrade the software to version 2 and restart the pi?', 'Click OK to upgrade', 'system_upgrade');
+		this.warningModal('Update System to Version 2 and Restart', 'Are you sure you want to upgrade the software to version 2 and restart the pi?', 'Click OK to upgrade', 'system_upgrade');
 	}
 
 	// ==== END: Socket Dependent Events ====== //
+
+	private async showWarningModal(message: string, data: any, return_msg = ''): Promise<boolean> {
+
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status: 'warning', message, data, return_msg }
+		})
+
+		return await dialog.afterClosed().toPromise();
+
+	}
 
 	private adjustMinimapWidth(): void {
 		
@@ -1580,18 +1597,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	}
 
-	private async showWarningModal(message: string, data: any, return_msg = ''): Promise<boolean> {
-
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status: 'warning', message, data, return_msg }
-		})
-
-		return await dialog.afterClosed().toPromise();
-
-	}
-
 	private subscribeToAdditionalSettingsFormChanges() {
 		this.additional_license_settings_form.valueChanges.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -1649,6 +1654,27 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				);
 			}
 		);
+	}
+
+	private subscribeToResetAnydeskID(): void {
+
+		this._socket.on('SS_reset_anydesk_id_response', (response: { hasReset: boolean, newAnydeskId: string, licenseId: string }) => {
+			
+			if (response.licenseId !== response.licenseId) {
+				this.anydesk_restarting = false;
+				return;
+			}
+
+			const { newAnydeskId } = response;
+			const updatedLicense = this.license_data;
+
+			updatedLicense.anydeskId = newAnydeskId;
+			this.license_data = {...updatedLicense};
+			this.anydesk_id = newAnydeskId;
+			this.anydesk_restarting = false;
+
+		});
+
 	}
 
 	private subscribeToZoneSelect(): void {
@@ -1736,77 +1762,106 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		chart.update();
 	}
 
-	private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+	private warningModal(message: string, data: string, return_msg: string, action: string): void {
 		this._dialog.closeAll();
 
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
-			data: { status, message, data, return_msg, action }
+			data: { status: 'warning', message, data, return_msg, action }
 		});
+
+		let activity: string = null;
+		let socketCode: string = null;
 
 		dialogRef.afterClosed().subscribe(result => {
 
-			if (result === 'reset') {
+			switch (result) {
 
-				this._socket.emit('D_reset_pi', this.license_id);
-				this.pi_status = false;
-				this.player_status = false;
+				case 'reset':
 
-				this.saveActivityLog(ACTIVITY_CODES.reset_data);
+					socketCode = 'D_reset_pi';
+					activity = ACTIVITY_CODES.reset_data;
+					this.pi_status = false;
+					this.player_status = false;
 
-			} else if (result === 'update') {
+					break;
 
-				this._socket.emit('D_update_player', this.license_id);
-				this.pi_updating = true;
-				this.update_btn = 'Updating...';
+				case 'update':
 
-				this.saveActivityLog(ACTIVITY_CODES.content_update);
+					socketCode = 'D_update_player';
+					activity = ACTIVITY_CODES.content_update;
+					this.pi_updating = true;
+					this.update_btn = 'Updating...';
 
-			} else if (result === 'refetch') {
+					break;
 
-				this._socket.emit('D_refetch_pi', this.license_id);
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing Refetch';
+				case 'refetch':
 
-				this.saveActivityLog(ACTIVITY_CODES.refetch)
+					socketCode = 'D_refetch_pi';
+					activity = ACTIVITY_CODES.refetch;
+					this.pi_updating = true;
+					this.update_btn = 'Ongoing Refetch';
 
-			} else if (result === 'system_update') {
+					break;
 
-				this._socket.emit('D_system_update_by_license', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing System Update';
+				case 'system_update':
 
+					socketCode = 'D_system_update_by_license';
+					activity = ACTIVITY_CODES.update_system;
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Ongoing System Update';
 
-				this.saveActivityLog(ACTIVITY_CODES.update_system);
+					break;
 
-			} else if (result === 'pi_restart') {
+				case 'pi_restart':
 
-				this._socket.emit('D_pi_restart', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Pi Restarting';
+					socketCode = 'D_pi_restart';
+					activity = ACTIVITY_CODES.reboot_pi;
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Pi Restarting';
 
-				this.saveActivityLog(ACTIVITY_CODES.reboot_pi);
+					break
 
-			} else if (result === 'player_restart') {
+				case 'player_restart':
 
-				this._socket.emit('D_player_restart', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Player Restarting';
+					socketCode = 'D_player_restart';
+					activity = ACTIVITY_CODES.reboot_player;
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Player Restarting';
 
-				this.saveActivityLog(ACTIVITY_CODES.reboot_player);
+					break;
 
-			} else if (result === 'system_upgrade') {
+				case 'reset_anydesk_id':
 
-				this._socket.emit('D_upgrade_to_v2_by_license', this.license_id);
-				this.pi_status = false;
-				this.pi_updating = true;
-				this.update_btn = 'Ongoing System Update';
+					socketCode = 'D_reset_anydesk_id';
+					activity = null; // intended since there is no activity code for resetting the anydesk ID
+					this.anydesk_restarting = true;
 
+					break;
+
+				case 'system_upgrade':
+
+					socketCode = 'D_upgrade_to_v2_by_license';
+					activity = null; // intended as system upgrade has no activity code
+					this.pi_status = false;
+					this.pi_updating = true;
+					this.update_btn = 'Ongoing System Update';
+
+					break;
 			}
+
+			if (!socketCode) return;
+
+			this._socket.emit(socketCode, this.license_id);
+
+			if (!activity) return;
+
+			this.saveActivityLog(ACTIVITY_CODES[activity]);
+			
 		});
 	}
 
@@ -1823,5 +1878,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			{ label: 'Player Boot Delay', form_control_name: 'bootDelay', type: 'number', colorValue: '', width: 'col-lg-6', required: true, value: 0, viewType: null },
 			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'time', width: 'col-lg-6', required: true, value: 0, viewType: null },
 		];
+	}
+
+	protected initializeSocketWatchers(): void {
+		this.subscribeToResetAnydeskID();
 	}
 }

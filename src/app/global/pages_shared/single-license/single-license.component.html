@@ -225,18 +225,29 @@
 														<!-- Anydesk -->
 														<div class="flex-even">
 															<span class="sm-text">Anydesk</span>
-															<div>
+															<div class="d-flex align-items-center">
 																<h5 class="d-inline-block mr-3">{{ anydesk_id ? anydesk_id : 'N/A' }}</h5>
 
-																<ng-container *ngIf="!anydesk_restarting; else disable_anydesk_btn">
-																	<button class="card-button" *ngIf="anydesk_id" (click)="restartAnydesk()" title="Restart Anydesk Service">
-																		<span class="fas fa-sync md-text"></span>
+																<ng-container *ngIf="!anydesk_restarting && anydesk_id; else disabled_anydesk_buttons">
+																	<!-- RESTART ANYDESK SERVICE BUTTON -->
+																	<button class="card-button restart-anydesk" (click)="restartAnydesk()" title="Restart Anydesk Service">
+																		<span class="fas fa-power-off md-text"></span>
+																	</button>
+
+																	<!-- RESET ANYDESK ID BUTTON -->
+																	<button class="card-button reset-anydesk-id" (click)="onResetAnydeskID()" title="Reset Anydesk ID">
+																		<span class="fa fa-exchange md-text"></span>
 																	</button>
 																</ng-container>
 
-																<ng-template #disable_anydesk_btn>
-																	<button class="card-button disabled rotate mr-2" title="Restarting Anydesk Service">
-																		<span class="fas fa-sync md-text"></span>
+
+																<ng-template #disabled_anydesk_buttons>
+																	<button class="card-button restart-anydesk disabled rotate mr-2" title="Restarting Anydesk Service">
+																		<span class="fas fa-power-off md-text"></span>
+																	</button>
+
+																	<button class="card-button reset-anydesk-id disabled" title="Not available at the moment">
+																		<span class="fa fa-exchange md-text"></span>
 																	</button>
 
 																	<span class="sm-text text-gray">
