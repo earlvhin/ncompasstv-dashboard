@@ -242,16 +242,12 @@
 
 
 																<ng-template #disabled_anydesk_buttons>
-																	<button class="card-button restart-anydesk disabled rotate mr-2" title="Restarting Anydesk Service">
-																		<span class="fas fa-power-off md-text"></span>
-																	</button>
-
-																	<button class="card-button reset-anydesk-id disabled" title="Not available at the moment">
-																		<span class="fa fa-exchange md-text"></span>
+																	<button class="card-button restart-anydesk disabled rotate mr-2" title="Anydesk Status">
+																		<span class="fas fa-sync md-text"></span>
 																	</button>
 
 																	<span class="sm-text text-gray">
-																		Restarting Anydesk
+																		{{ anydesk_status_text }}
 																	</span>
 																</ng-template>
 															</div>

@@ -34,6 +34,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	additional_license_settings_value: any;
 	anydesk_id: string;
 	anydesk_restarting: boolean = false;
+	anydesk_status_text = 'Restarting Anydesk...';
 	apps: any;
 	assets_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0 };
 	background_zone_selected: boolean = false;
@@ -560,6 +561,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	onResetAnydeskID(): void {
+		this.anydesk_status_text = 'Resetting Anydesk ID...';
 		this.warningModal('Reset Anydesk ID', 'Proceed? This will disconnect current Anydesk sessions', 'Confirm if you wish to do so', 'reset_anydesk_id');
 	}
 
@@ -847,6 +849,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	restartAnydesk() {
+		this.anydesk_status_text = 'Restarting Anydesk...';
 		this._socket.emit('D_restart_anydesk', this.license_id);
 		this.anydesk_restarting = true;
 		this.saveActivityLog(ACTIVITY_CODES.restart_anydesk);
