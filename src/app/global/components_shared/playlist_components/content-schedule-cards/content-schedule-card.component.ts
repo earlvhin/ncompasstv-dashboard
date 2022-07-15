@@ -42,7 +42,7 @@ export class ContentScheduleCardComponent implements OnInit {
 			return `${result}`;
 		});
 
-		if (data === '1,2,3,4,5,6,7' || sum === '28') return 'Everyday';
+		if (data === '0,1,2,3,4,5,6' || sum === '21') return 'Everyday';
 
 		const result = [];
 
@@ -51,25 +51,25 @@ export class ContentScheduleCardComponent implements OnInit {
 		daysArr.forEach(numeric => {
 
 			switch (numeric) {
-				case '1':
+				case '0':
 					result.push('Sun');
 					break;
-				case '2':
+				case '1':
 					result.push('Mon');
 					break;
-				case '3':
+				case '2':
 					result.push('Tue');
 					break;
-				case '4':
+				case '3':
 					result.push('Wed');
 					break;
-				case '5':
+				case '4':
 					result.push('Thu');
 					break;
-				case '6':
+				case '5':
 					result.push('Fri');
 					break;
-				case '7':
+				case '6':
 					result.push('Sat');
 					break;
 				default:
