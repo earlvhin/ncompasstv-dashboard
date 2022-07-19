@@ -1,10 +1,14 @@
-import { Component, OnInit } from '@angular/core';
-import { Subscription } from 'rxjs';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Subject } from 'rxjs';
 import { DatePipe, TitleCasePipe } from '@angular/common';
-import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
-import { UI_TABLE_PLAYLIST } from 'src/app/global/models/ui_table-playlist.model';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
+import { environment } from 'src/environments/environment';
+import { takeUntil } from 'rxjs/operators';
+import * as io from 'socket.io-client';
+
+import { PlaylistService } from 'src/app/global/services';
+import { UI_TABLE_PLAYLIST } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlists',
@@ -12,30 +16,30 @@ import { saveAs } from 'file-saver';
 	styleUrls: ['./playlists.component.scss'],
 	providers: [DatePipe, TitleCasePipe]
 })
-export class PlaylistsComponent implements OnInit {
+export class PlaylistsComponent implements OnInit, OnDestroy {
 
 	filtered_data: UI_TABLE_PLAYLIST[] = [];
-	initial_load: boolean = true;
+	initial_load = true;
 	no_playlist: boolean;
 	paging_data: any;
 	playlist_data: UI_TABLE_PLAYLIST[] = [];
 	playlists_details: any;
-	playlist_table_column = [
-		{ name: '#', sortable: false, no_export: true},
-		{ name: 'Playlist Name', sortable: true, column:'Name'},
-		{ name: 'Publish Date', sortable: true, column:'DateCreated'},
-		{ name: 'Assigned To', sortable: true, column:'BusinessName'},
-	]
 	playlist_to_export: any = [];
-	search_data: string = "";
-	searching: boolean = false;
-	sort_column: string = "";
-	sort_order: string = "";
-	subscription: Subscription = new Subscription;
-	title: string = "Playlists";
+	search_data = "";
+	searching = false;
+	sort_column = "";
+	sort_order = "";
+	title = "Playlists";
 	workbook: any;
-	workbook_generation: boolean = false;
+	workbook_generation = false;
 	worksheet: any;
+
+	playlist_table_column = [
+		{ name: '#', sortable: false, no_export: true },
+		{ name: 'Playlist Name', sortable: true, column: 'Name' },
+		{ name: 'Publish Date', sortable: true, column: 'DateCreated' },
+		{ name: 'Assigned To', sortable: true, column: 'BusinessName' },
+	];
 
 	playlist_table_column_for_export = [
 		{ name: 'Host Name', key: 'hostName'},
@@ -45,8 +49,10 @@ export class PlaylistsComponent implements OnInit {
 		{ name: 'Zone', key: 'zoneName'},
 		{ name: 'Duration', key: 'duration'},
 		{ name: 'File Type', key: 'fileType'},
-	]
+	];
 
+	protected _socket: any;
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _playlist: PlaylistService,
@@ -55,8 +61,14 @@ export class PlaylistsComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+		this.initializeSocketConnection();
 		this.getTotalPlaylist();
 		this.pageRequested(1);
+	}
+
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	fromDelete() {
@@ -67,11 +79,13 @@ export class PlaylistsComponent implements OnInit {
 	pageRequested(page) {
 		this.searching = true;
 		this.playlist_data = [];
-		this.subscription.add(
-			this._playlist.get_all_playlists(page, this.search_data, this.sort_column, this.sort_order).subscribe(
+
+		this._playlist.get_all_playlists(page, this.search_data, this.sort_column, this.sort_order)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					this.initial_load = false;
-                    this.paging_data = data.paging;
+					this.paging_data = data.paging;
 					if (data.paging.entities.length > 0) {
 						this.playlist_data = this.playlist_mapToUI(data.paging.entities)
 						this.filtered_data = this.playlist_mapToUI(data.paging.entities)
@@ -85,8 +99,7 @@ export class PlaylistsComponent implements OnInit {
 					}
 					this.searching = false;
 				}
-			)
-		)
+			);
 	}
 
 	getColumnsAndOrder(data) {
@@ -96,8 +109,9 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	getTotalPlaylist() {
-		this.subscription.add(
-			this._playlist.get_playlists_total().subscribe(
+
+		this._playlist.get_playlists_total().pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				(data: any) => {
 					this.playlists_details = {
 						basis: data.total,
@@ -114,8 +128,8 @@ export class PlaylistsComponent implements OnInit {
 						new_last_week_value_description: 'New last week'
 					}
 				}
-			)
-		)
+			);
+
 	}
 
 	playlist_mapToUI(data) {
@@ -145,9 +159,10 @@ export class PlaylistsComponent implements OnInit {
 	}
 
 	getDataForExport(data): void {
-		var filter = data;
-		this.subscription.add(
-			this._playlist.export_playlist(filter.id).subscribe(
+		let filter = data;
+
+		this._playlist.export_playlist(filter.id).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
 				data => {
 					if(!data.message) {
 						const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -172,8 +187,7 @@ export class PlaylistsComponent implements OnInit {
 						this.workbook_generation = false;
 					}
 				}
-			)
-		);
+			);
 	}
 
 	modifyItem(item) {
@@ -196,5 +210,24 @@ export class PlaylistsComponent implements OnInit {
 		});
 		this.worksheet.columns = header;
 		this.getDataForExport(data);		
+	}
+
+	onPushAllLicenseUpdates(licenseIds: string[]): void {
+		licenseIds.forEach(id => this._socket.emit('D_update_player', id));
+	}
+
+	private initializeSocketConnection(): void {
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__PlaylistsPage',
+		});
+
+		this._socket.on('connect', () => {
+			console.log('#PlaylistsPage - Connected to Socket Server');
+		});
+
+		this._socket.on('disconnect', () => {
+			console.log('#PlaylistsPage - Disconnnected from Socket Server');
+		});
 	}
 }

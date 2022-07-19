@@ -1,11 +1,12 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common';
 import { Subject } from 'rxjs';
-
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { PlaylistService } from '../../../../global/services/playlist-service/playlist.service';
-import { UI_DEALER_PLAYLIST } from 'src/app/global/models/ui_dealer-playlist.model';
+import { environment } from 'src/environments/environment';
 import { takeUntil } from 'rxjs/operators';
+import * as io from 'socket.io-client';
+
+import { AuthService, PlaylistService } from 'src/app/global/services';
+import { UI_DEALER_PLAYLIST } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-playlists',
@@ -33,6 +34,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 		'Creation Date',
 	];
 
+	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -152,6 +154,25 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			}
 		);
 		
+	}
+
+	onPushAllLicenseUpdates(licenseIds: string[]): void {
+		licenseIds.forEach(id => this._socket.emit('D_update_player', id));
+	}
+
+	private initializeSocketConnection(): void {
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__PlaylistsPage',
+		});
+
+		this._socket.on('connect', () => {
+			console.log('#PlaylistsPage - Connected to Socket Server');
+		});
+
+		this._socket.on('disconnect', () => {
+			console.log('#PlaylistsPage - Disconnnected from Socket Server');
+		});
 	}
 }
 

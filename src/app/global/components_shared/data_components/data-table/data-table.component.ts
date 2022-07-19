@@ -2,7 +2,7 @@ import { Component, OnInit, Input, Output, EventEmitter  } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { map, takeUntil } from 'rxjs/operators';
 
 import { AdvertiserService, AuthService, ContentService, FeedService, HelperService, HostService, LicenseService, PlaylistService,
 	ScreenService, UserService, } from 'src/app/global/services';
@@ -76,14 +76,14 @@ export class DataTableComponent implements OnInit {
 	@Output() update_info = new EventEmitter;
 	@Output() delete_selected = new EventEmitter;
 	@Output() to_sort_column = new EventEmitter;
+	@Output() push_license_updates = new EventEmitter<string[]>();
 
 	active_table: string;
 	selected_array: any = [];
 	pagination: number;
 	selectAll: boolean = false;
 	subscription: Subscription = new Subscription();
-
-	protected _unsubscribe: Subject<void> = new Subject<void>();
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
@@ -334,6 +334,13 @@ export class DataTableComponent implements OnInit {
 					});
 
 					break;
+
+				case 'push_update_all_licenses':
+					
+					this.pushAllLicenseUpdates(id);
+
+					break;
+
 				default:
 			}
 		});
@@ -614,6 +621,10 @@ export class DataTableComponent implements OnInit {
 		this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`,'','user_delete', userId);
 	}
 
+	onPushUpdateToAllLicenses(playlistId: string): void {
+		this.warningModal('warning', 'Push Update to All Licenses', 'Are you sure you want to proceed?', '', 'push_update_all_licenses', playlistId);
+	}
+
 	onToggleEmailNotification(event: MouseEvent, tableDataIndex: number): void {
 		event.preventDefault();
 		const currentData: { allow_email: { value: string }, user_id: { value: string }, email: { value: string } } = this.table_data[tableDataIndex];
@@ -633,6 +644,44 @@ export class DataTableComponent implements OnInit {
 				() => this._helper.onRefreshUsersPage.emit(),
 				error => console.log('Error deleting user', error)
 			);
+
+	}
+
+	private pushAllLicenseUpdates(playlistId: string): void {
+
+		this._playlist.get_playlist_by_id(playlistId)
+			.pipe(
+				takeUntil(this._unsubscribe),
+				map(
+					response => {
+						
+						if (!response.licenses || response.licenses.length <= 0) return [];
+						return response.licenses.map(license => license.licenseId);
+
+					}
+				)
+			)
+			.subscribe(
+				(licenses: string[]) => {
+					if (licenses.length <= 0) return this.showConfirmationDialog('error', 'No licenses associated with this playlist');
+					this.showConfirmationDialog('success', 'Succes! Pushed updates to all licenses with this playlist')
+					this.push_license_updates.emit(licenses);
+				}
+			);
+
+	}
+
+	private showConfirmationDialog(type: 'error' | 'success', message: string): void {
+
+
+		const config = {
+			width: '500px',
+			height: '350px',
+			data: { status: type, message, data: '' }
+		};
+
+		this._dialog.open(ConfirmationModalComponent, config);
+
 
 	}
 

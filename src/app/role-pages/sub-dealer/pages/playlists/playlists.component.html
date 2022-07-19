@@ -80,6 +80,7 @@
                                 [playlist_delete]="true"
                                 (update_info)="fromDelete()"
                                 [is_dealer]="true"
+								(push_license_updates)="onPushAllLicenseUpdates($event)"
 								[is_view_only]="is_view_only">
                             </app-data-table>
                         </mat-card>

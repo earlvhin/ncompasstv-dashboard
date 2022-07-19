@@ -259,7 +259,8 @@
 
 				<td class="p-3 control-toggle" *ngIf="playlist_delete">
 					<i class="fas fa-trash cursor-pointer mx-3 text-danger" title="Delete Playlist" *ngIf="!is_view_only" (click)="deletePlaylist(data.playlist_id.value)"></i>
-					<i class="fas fa-file-excel" [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer': 'text-gray cursor-void'"  title="{{data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.'}}" (click)="exportPlaylist({id: data.playlist_id.value, name: data.name.value})"></i>
+					<i class="fas fa-file-excel cursor-pointer" [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer': 'text-gray cursor-void'"  title="{{data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.'}}" (click)="exportPlaylist({id: data.playlist_id.value, name: data.name.value})"></i>
+					<i class="fas fa-upload cursor-pointer mx-3" *ngIf="!is_view_only" title="Push Updates to All Licenses" (click)="onPushUpdateToAllLicenses(data.playlist_id.value)"></i>
 				</td>
 
 				<td class="p-3 control-toggle text-center" *ngIf="license_delete">
