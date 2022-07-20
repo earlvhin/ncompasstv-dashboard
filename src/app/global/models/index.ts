@@ -75,6 +75,7 @@ export * from './ui_role-definition.model';
 export * from './ui_role_info.model';
 export * from './ui_single-screen.model';
 export * from './ui_single-playlist.model';
+export * from './ui_store-hours.model';
 export * from './ui_table_advertisers_content.model';
 export * from './ui_table_dealers.model';
 export * from './ui_table-feed.model';

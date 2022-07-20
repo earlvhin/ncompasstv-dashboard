@@ -11,32 +11,32 @@ export class ExportService {
 	
 	constructor() { }
 
-	async generate(worksheets: { name: string, columns: { name: string, key: string }[], data: any[] }[]) {
+	async generate(pageSource: string, worksheets: { name: string, columns: { name: string, key: string }[], data: any[] }[]) {
+
+		const workbook = new Workbook();
+		workbook.creator = 'NCompass TV';
+		workbook.created = new Date();
 
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 
 		worksheets.forEach(
 			sheet => {
-				const worksheet = this.workbook.addWorksheet(sheet.name);
-				worksheet.columns = this.mapColumns(sheet.columns);
 				
-				sheet.data.forEach(
-					cellData => {
-						worksheet.addRow(cellData).font = { bold: false };
-					}
-				);
-
 				let rowIndex = 1;
+				const worksheet = workbook.addWorksheet(sheet.name);
+				worksheet.columns = this.mapColumns(sheet.columns);
+				sheet.data.forEach(cellData => worksheet.addRow(cellData).font = { bold: false });
+
 				for (rowIndex; rowIndex <= worksheet.rowCount; rowIndex++) {
 					worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 				}
 			}
 		);
 
-		const file: Buffer = await this.workbook.xlsx.writeBuffer();
+		const file: Buffer = await workbook.xlsx.writeBuffer();
 		const blob = new Blob([file], { type: EXCEL_TYPE });
 		const timestamp = moment().format('YYYY-DD-MM-hhssmm');
-		const fileName = `tags-export-${timestamp}.xlsx`;
+		const fileName = `${pageSource}-${timestamp}.xlsx`;
 		saveAs(blob, fileName);
 
 	}
@@ -57,10 +57,4 @@ export class ExportService {
 
 	}
 
-	protected get workbook() {
-		const workbook = new Workbook();
-		workbook.creator = 'NCompass TV';
-		workbook.created = new Date();
-		return workbook;
-	}
 }

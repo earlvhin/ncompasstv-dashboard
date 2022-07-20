@@ -8,7 +8,6 @@ import * as moment from 'moment';
 import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
 import { AuthService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { Console } from 'console';
 
 @Component({
 	selector: 'app-hosts',
@@ -285,9 +284,9 @@ export class HostsComponent implements OnInit {
     getLabel(data) {
 		this.now = moment().format('d');
 		this.now = this.now;
-        var storehours = JSON.parse(data.storeHours)
+        let storehours = JSON.parse(data.storeHours)
         storehours = storehours.sort((a, b) => {return a.id - b.id;});
-		var modified_label = {
+		let modified_label = {
 			date : moment().format('LL'),
 			address: data.address,
 			schedule: storehours[this.now] && storehours[this.now].status ? (
@@ -301,9 +300,9 @@ export class HostsComponent implements OnInit {
 	}
 
     getStoreHourseParse(data) {
-        var days = [];
+        let days = [];
         if(data.storeHours) {
-            var storehours = JSON.parse(data.storeHours)
+            let storehours = JSON.parse(data.storeHours)
             storehours = storehours.sort((a, b) => {return a.id - b.id;});
             storehours.map(
                 day => {
@@ -322,7 +321,6 @@ export class HostsComponent implements OnInit {
                     }
                 }
             )
-            console.log("DAYS", days)
             data.storeHoursParse = days.toString();
             data.storeHoursParse = data.storeHoursParse.split(",").join("\n");
         }
@@ -415,11 +413,11 @@ export class HostsComponent implements OnInit {
                             period => {
                                 this.diff_hours = 0;
                                 if(period.open && period.close) {
-                                    var close = moment(period.close,"H:mm A");
-                                    var open = moment(period.open,"H:mm A");
+                                    let close = moment(period.close,"H:mm A");
+                                    let open = moment(period.open,"H:mm A");
     
-                                    var time_start = new Date("01/01/2007 " + open.format("HH:mm:ss"));
-                                    var time_end = new Date("01/01/2007 " + close.format("HH:mm:ss"));
+                                    let time_start = new Date("01/01/2007 " + open.format("HH:mm:ss"));
+                                    let time_end = new Date("01/01/2007 " + close.format("HH:mm:ss"));
                                     
                                     if(time_start.getTime() > time_end.getTime()) {
                                         time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);

@@ -149,6 +149,7 @@ export const API_ENDPOINTS = {
 		dealer_cards: 'billing/Get/CreditCards',
 		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
+		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer?dealerid=',
 		export_dealers: 'dealer/exportdealer',
 		export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',

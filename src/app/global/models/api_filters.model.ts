@@ -7,7 +7,10 @@ export interface API_FILTERS {
 	dealer?: string;
 	dealer_id?: string;
 	dealerId?: string;
-	page: number;
+	dmaRank?: number;
+	dmaCode?: number;
+	dmaName?: string;
+	page?: number;
 	filter?: string
 	filterMin?: any;
 	filterMax?: any;
