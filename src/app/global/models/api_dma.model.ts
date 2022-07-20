@@ -1,3 +1,5 @@
+import { TAG, UI_STORE_HOUR } from '.';
+
 export interface API_DMA {
 	dmaCode: string;
 	dmaName: string;
@@ -17,7 +19,12 @@ export interface API_DMA_HOST {
 	hostName: string;
 	latitude: string;
 	longitude: string;
+	mappedStoreHours: string;
 	storeHours: string;
+	storeHoursParsed?: UI_STORE_HOUR[];
+	storeHoursTotal?: string;
+	tags?: TAG[];
+	tagsToString?: string;
 	zip: string;
 }
 

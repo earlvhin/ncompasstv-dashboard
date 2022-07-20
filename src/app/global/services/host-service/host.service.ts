@@ -58,6 +58,11 @@ export class HostService extends BaseService {
 		const url = `${this.getters.api_get_dma}?page=${page}&search=${keyword}&pageSize=${pageSize}`;
 		return this.getRequest(url);
 	}
+
+	get_dma_hosts_by_rank(rank: number, code: string, name: string): Observable<{ paging: PAGING }> {
+		const url = `${this.getters.dma_hosts_by_rank}?dmaRank=${rank}&dmaCode=${code}&dmaName=${encodeURIComponent(name)}&pageSize=0`;
+		return this.getRequest(url);
+	}
     
     get_licenses_per_state_details(state: string) {
 		const url = `${this.getters.api_get_host_licenses_by_state_details}${state}`;
