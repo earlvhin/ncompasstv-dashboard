@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth-service/auth.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
 @Component({
   selector: 'app-locator',
@@ -11,6 +10,7 @@ import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 export class LocatorComponent implements OnInit {
 	
 	title = 'Locator';
+	is_admin = false;
 	is_dealer = false;
 
 	constructor(
@@ -18,13 +18,27 @@ export class LocatorComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
-		const roleId = this._auth.current_user_value.role_id; 
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
+		this.setRole();
+	}
 
-		if (roleId === dealerRole || roleId === subDealerRole) {
-			this.is_dealer = true;
+	protected setRole(): void {
+
+		const currentRole = this._auth.current_role;
+
+		switch (currentRole) {
+
+			case 'administrator':
+				this.is_admin = true;
+				break;
+
+			case 'dealer':
+			case 'sub-dealer':
+				this.is_dealer = true;
+				break;
+
+
 		}
+
 	}
 
 	
