@@ -67,7 +67,7 @@
 				<div class="col-lg-12 mr-2">
 						<div id="wrapper">
 							<div id="google_map">
-								<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19" [usePanning]="true">
+								<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
 									<agm-marker id="{{ h.hostId }}" *ngFor="let h of map_marker" (markerClick)="onMarkerClick(h.hostId, h.dealerId, window)"
 										[latitude]="h.latitude" [longitude]="h.longitude" [agmFitBounds]="true" [iconUrl]="h.icon_url">
 								
