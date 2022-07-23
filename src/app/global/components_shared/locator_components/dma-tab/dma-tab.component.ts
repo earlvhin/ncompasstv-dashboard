@@ -100,7 +100,9 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 			{ name: 'Total Business Hours', key: 'storeHoursTotal' },
 			{ name: 'DMA Rank', key: 'dmaRank' },
 			{ name: 'DMA Code', key: 'dmaCode' },
-			{ name: 'DMA Name', key: 'dmaName' }
+			{ name: 'DMA Name', key: 'dmaName' },
+			{ name: 'Latitude', key: 'latitude' },
+			{ name: 'Longitude', key: 'longitude' },
 		];
 
 		const config = [
