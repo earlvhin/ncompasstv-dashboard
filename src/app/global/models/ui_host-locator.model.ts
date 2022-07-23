@@ -40,6 +40,7 @@ export class UI_HOST_LOCATOR_MARKER_DEALER_MODE {
 	icon_url: string;
 	address: string;
 	category: string;
+	generalCategory?: string
 	storeHours: string;
 	state: string;
 	postalCode: string;
@@ -72,6 +73,7 @@ export class UI_DEALER_LOCATOR_EXPORT {
 	address: string;
 	latitude: string;
 	longitude: string;
+	generalCategory?: string;
 	category: string;
 	storeHours: string;
 	constructor(businessName: string, host: string, address: string, category: string, storeHours: string, latitude: string, longitude: string){

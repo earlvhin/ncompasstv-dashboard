@@ -14,6 +14,7 @@ export class API_HOST {
 	dateUpdated: string;
 	dealerId: string;
 	demographics: string;
+	generalCategory?: string;
 	groupId: string;
 	host?: any[];
 	hostId: string;

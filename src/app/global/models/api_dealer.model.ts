@@ -35,4 +35,5 @@ export class API_DEALER {
     onlineLicenseCount?: number = 0;
     offlineLicenseCount?: number = 0;
     startDate: string;
+	generalCategory?: string;
 }

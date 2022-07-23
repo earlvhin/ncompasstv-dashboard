@@ -6,7 +6,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 import { saveAs } from 'file-saver';
 
-import { API_DEALER, API_HOST, API_LICENSE_PROPS, UI_DEALER_LOCATOR_EXPORT, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, UI_HOST_LOCATOR_MARKER_DEALER_MODE } from 'src/app/global/models';
 import { AuthService, DealerService } from 'src/app/global/services';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
 
@@ -53,7 +53,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	offline_licenses: number = 0;
 	host_online_licenses: any;
 	host_offline_licenses: any;
-	exported_map_marker: UI_DEALER_LOCATOR_EXPORT[];
+	exported_map_marker: any[];
 	markStoreHours: any;
 	form = this._form_builder.group({ selectedDealers: [ [], Validators.required ]});
 	selectedDealersControl = this.form.get('selectedDealers');
@@ -161,9 +161,33 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		else this.loading_search = true;
 
 		this._dealer.get_dealers_with_host(page, '')
-			.pipe(takeUntil(this._unsubscribe))
+			.pipe(
+				takeUntil(this._unsubscribe),
+				// mapped the response because generalCategory is only found in paging.entities
+				map((response: { dealers: API_DEALER[], paging: { entities: API_DEALER[] } }) => {
+
+					const { entities } = response.paging;
+
+					response.dealers = response.dealers.map(
+						dealer => {
+
+							dealer.hosts = dealer.hosts.map(
+								host => {
+									host.generalCategory = entities.filter(pagingDealer => pagingDealer.dealerId === dealer.dealerId)[0].generalCategory;
+									return host
+								}
+							);
+
+							return dealer;
+
+						}
+					);
+
+					return response;
+				})
+			)
 			.subscribe(
-				(response: { dealers: API_DEALER[], paging: { entities: any[] }}) => {
+				(response: { dealers: API_DEALER[], paging: { entities: API_DEALER[] }}) => {
 					const { dealers, paging } = response;
 					this.paging = paging;
 					const merged = this.selectedDealersControl.value.concat(dealers);
@@ -237,6 +261,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
 	private mapMarkersToUI(hosts: any[], licenses: any[]): any[] {
 		if (hosts) {
+
 			return hosts.map(
 				(h: API_HOST) => {
 					let icon_url;
@@ -260,7 +285,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 						icon_url = 'assets/media-files/markers/offline.png';
 					}
 	
-					return new UI_HOST_LOCATOR_MARKER_DEALER_MODE(
+					const mapped = new UI_HOST_LOCATOR_MARKER_DEALER_MODE(
 						h.hostId,
 						h.name,
 						h.latitude,
@@ -275,6 +300,10 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 						h.city,
 						h.dealerId
 					);
+
+					mapped.generalCategory = h.generalCategory;
+					return mapped;
+
 				}
 			)
 		}
@@ -360,6 +389,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		const replacer = (key, value) => value === null ? '' : value;
 		this.exported_map_marker = [];
 		let isStatus = true;
+
 		this.map_marker.forEach(
 			license => {
 				const data = [...license.storeHours];
@@ -411,10 +441,22 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 				
 					});
 				});
-				let locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
-				let businessName = this.selected_dealer.find(dealer => dealer.dealerId === license.dealerId).businessName;
-				let marker = new UI_DEALER_LOCATOR_EXPORT(businessName, license.name, locatorAddress, license.category, this.markStoreHours,
-															license.latitude, license.longitude);
+
+				const locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
+				const businessName = this.selected_dealer.find(dealer => dealer.dealerId === license.dealerId).businessName;
+
+				// used a new object instead of class UI_DEALER_LOCATOR_EXPORT because it will affect other pages if I modify said class
+				const marker = {
+					businessName,
+					host: license.name,
+					address: locatorAddress,
+					generalCategory: license.generalCategory,
+					category: license.category,
+					storeHours: this.markStoreHours,
+					latitude: license.latitude,
+					longitutde: license.longitude,
+				};
+
 				this.exported_map_marker.push(marker);
 			}
 		);
@@ -424,8 +466,8 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		csv.unshift(header.join(','));
 		let csvArray = csv.join('\r\n');
 
-		var blob = new Blob([csvArray], {type: 'text/csv' });
-		var dealers = "";
+		const blob = new Blob([csvArray], {type: 'text/csv' });
+		let dealers = "";
 		this.selected_dealer.forEach(dealer => dealers += dealer.businessName + "_");
 		let fileName = dealers + "MapLocator.csv";
 		saveAs(blob, fileName);
