@@ -124,6 +124,7 @@ import { NohandlePipe } from './pipes/nohandle.pipe';
 import { NotificationsComponent } from './pages_shared/notifications/notifications.component';
 import { ObjectKeysPipe } from './pipes/object-keys.pipe';
 import { OptionsComponent } from './components_shared/playlist_components/options/options.component';
+import { OrdersComponent } from './pages_shared/orders/orders.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
 import { PaymentSettingComponent } from './pages_shared/profile-setting/payment-setting/payment-setting.component';
 import { PlayWhereComponent } from './components_shared/playlist_components/play-where/play-where.component';
@@ -165,6 +166,7 @@ import { SuccessAnimationComponent } from './components_shared/page_components/s
 import { TemplateMinimapComponent } from './components_shared/template_components/template-minimap/template-minimap.component';
 import { TemplateZonesComponent } from './components_shared/template_components/template-zones/template-zones.component';
 import { ThumbnailCardComponent } from './components_shared/media_components/thumbnail-card/thumbnail-card.component';
+import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 import { ToolsComponent } from './pages_shared/tools/tools.component';
 import { UnassignHostLicenseComponent } from './components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { UnassignLicenseComponent } from './components_shared/screen_components/unassign-license/unassign-license.component';
@@ -211,7 +213,6 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 
 const ngComponents = [
 	AdvertiserViewComponent,
@@ -324,6 +325,7 @@ const ngComponents = [
 	NotificationsComponent,
 	ObjectKeysPipe,
 	OptionsComponent,
+    OrdersComponent,
 	PaymentSettingComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,
