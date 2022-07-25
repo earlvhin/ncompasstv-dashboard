@@ -182,6 +182,7 @@ export const API_ENDPOINTS = {
 		validate_rss_url: 'feed/news/validate?url='
 	},
 	create: {
+		add_credit_card: 'billing/add/creditcard',
 		amazon_s3_upload: 'host/AmazonS3Upload',
 		api_new_activity: 'activity/create',
 		api_create_global_settings: 'globalsettings/create',
@@ -243,10 +244,12 @@ export const API_ENDPOINTS = {
 		api_checklist_check_update: 'installationchecklists/licensechecklistadd',
 		api_checklist_title_update: 'installationchecklists/update',
 		api_checklist_item_update: 'installationchecklists/updateitems',
+		api_creditcard_update: 'billing/update/creditcard',
 		api_deactivate_license: 'license/deactivate?licenseKey=',
 		api_display_status: 'license/updatedisplaystatus',
 		api_update_advertiser: 'advertiser/updateadvertiser',
 		api_update_alias: 'license/updatealias',
+		api_update_card: 'billing/dealer/upsert/addressBook',
 		api_update_dealer: 'dealer/update',
 		api_update_dealer_values: 'dealer/updatedealervalues',
 		api_update_feed: 'feed/update',
@@ -296,6 +299,7 @@ export const API_ENDPOINTS = {
 	},
 	delete: {
 		api_delete_contract_details: 'dealer/deletecontractfiles?filename=',
+		api_delete_credit_card: 'billing/delete/creditcard',
 		api_delete_territory_details: 'dealer/deleteterritoryfiles?filename=',
 		api_delete_screenshot: 'pi/deletescreenshots',
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',

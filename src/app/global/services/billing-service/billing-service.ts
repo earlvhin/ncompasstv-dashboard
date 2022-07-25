@@ -18,4 +18,20 @@ export class BillingService extends BaseService {
             `${this.getters.api_get_billing_invoice_charges}` + '?page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&status=' + `${status}` + '&billingdate=' + `${date}`+ '&filterby=' + `${searchkey}`
         );
  	}
+
+    update_billing_details(data) { 
+		return this.postRequest(this.updaters.api_update_card, data);
+	}
+    
+    update_credit_card(data) { 
+		return this.postRequest(this.updaters.api_creditcard_update, data);
+	}
+    
+    delete_credit_card(data) { 
+		return this.postRequest(this.deleters.api_delete_credit_card, data);
+	}
+    
+    add_credit_card(data) { 
+		return this.postRequest(this.creators.add_credit_card, data);
+	}
 }

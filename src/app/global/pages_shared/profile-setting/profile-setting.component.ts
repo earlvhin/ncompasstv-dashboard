@@ -29,6 +29,7 @@ export class ProfileSettingComponent implements OnInit {
 	no_credit_card: boolean = false;
 	no_dealer_values: boolean = false;
     subscription: Subscription = new Subscription;
+    tab_selected: string = 'Dealer';
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -52,7 +53,7 @@ export class ProfileSettingComponent implements OnInit {
             this.getTotalHosts(this._auth.current_user_value.roleInfo.dealerId);
             this.getTotalContents(this._auth.current_user_value.roleInfo.dealerId);
             this.getDealerValuesById(this._auth.current_user_value.roleInfo.dealerId);
-            this.getCreditCardsId(this._auth.current_user_value.roleInfo.dealerId);
+            // this.getCreditCardsId(this._auth.current_user_value.roleInfo.dealerId);
             this.checkIfEnableShop();
         } else {
             this.is_dealer = false;
@@ -62,10 +63,8 @@ export class ProfileSettingComponent implements OnInit {
 
     checkIfEnableShop() {
         if(this.no_credit_card || this.no_dealer_values) {
-            console.log("FALSE")
             this.show_cart_button = false;
         } else {
-            console.log("TRUE")
             this.show_cart_button = true;
         }
     }
@@ -74,7 +73,6 @@ export class ProfileSettingComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
 				(response:any) => {
-                    console.log(response)
                     if(!response.message) {
                         this.no_dealer_values = false;
                     } else {
@@ -85,20 +83,20 @@ export class ProfileSettingComponent implements OnInit {
         )
     };
     
-    getCreditCardsId(id) {
-		this.subscription.add(
-            this._dealer.get_credit_cards(id).pipe(takeUntil(this._unsubscribe)).subscribe(
-				(response:any) => {
-                    console.log(response)
-                    if(!response.message) {
-                        this.no_credit_card = false;
-                    } else {
-                        this.no_credit_card = true;
-                    }
-                }
-            )
-        )
-    };
+    // getCreditCardsId(id) {
+	// 	this.subscription.add(
+    //         this._dealer.get_credit_cards(id).pipe(takeUntil(this._unsubscribe)).subscribe(
+	// 			(response:any) => {
+    //                 if(!response.message) {
+    //                     this.no_credit_card = false;
+    //                     this.dealer_email = response.email;
+    //                 } else {
+    //                     this.no_credit_card = true;
+    //                 }
+    //             }
+    //         )
+    //     )
+    // };
 
     getTotalLicenses(id) {
         this._license.get_license_total_per_dealer(id).pipe(takeUntil(this._unsubscribe)).subscribe(
@@ -144,14 +142,27 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     tabSelected(event: { index: number }): void {
-        let tab = '';
         switch (event.index) {
+            case 0:
+                this.tab_selected = 'Dealer';
+                break;
             case 1:
-                tab = 'Content';
+                this.tab_selected = 'Billing';
+                break;
+            case 2:
+                this.tab_selected = 'Security';
+                break;
+            case 3:
+                this.tab_selected = 'Payment';
+                break;
+            case 4:
+                this.tab_selected = 'Transactions';
+                break;
+            default:
         }
     }
 
     goToUrl(): void {
-        window.open("https://shop.n-compass.online", "_blank");
+        window.open("http://dev.shop.n-compass.online", "_blank");
     }
 }

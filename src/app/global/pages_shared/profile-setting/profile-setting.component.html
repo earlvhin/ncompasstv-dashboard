@@ -127,7 +127,7 @@
                     <div class="col-lg-12 p-0">
                         <div class="theme-container">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-lg-12" *ngIf="tab_selected === 'Dealer'">
                                     <app-dealer-setting>
                                     </app-dealer-setting>
                                 </div>
@@ -151,7 +151,7 @@
                     <div class="col-lg-12 p-0">
                         <div class="theme-container">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-lg-12" *ngIf="tab_selected === 'Billing'">
                                     <app-single-billings>
                                     </app-single-billings>
                                 </div>
@@ -163,7 +163,7 @@
                     <div class="col-lg-12 p-0">
                         <div class="theme-container">
                             <div class="row">
-                                <div class="col-lg-12">
+                                <div class="col-lg-12" *ngIf="tab_selected === 'Security'">
                                     <app-credential-setting>
                                     </app-credential-setting>
                                 </div>
@@ -175,7 +175,7 @@
 					<div class="col-lg-12 p-0">
 						<div class="theme-container">
 							<div class="row">
-								<div class="col-lg-12">
+								<div class="col-lg-12" *ngIf="tab_selected === 'Payment'">
 									<app-payment-setting [dealerId]="dealer_id" [dealerEmail]="dealer_email" [currentUser]="current_user"></app-payment-setting>									
 								</div>
 							</div>
@@ -186,7 +186,7 @@
 					<div class="col-lg-12 p-0">
 						<div class="theme-container">
 							<div class="row">
-								<div class="col-lg-12">
+								<div class="col-lg-12" *ngIf="tab_selected === 'Transactions'">
 									<app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>									
 								</div>
 							</div>

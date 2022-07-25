@@ -6,6 +6,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
@@ -165,6 +166,7 @@ import { SuccessAnimationComponent } from './components_shared/page_components/s
 import { TemplateMinimapComponent } from './components_shared/template_components/template-minimap/template-minimap.component';
 import { TemplateZonesComponent } from './components_shared/template_components/template-zones/template-zones.component';
 import { ThumbnailCardComponent } from './components_shared/media_components/thumbnail-card/thumbnail-card.component';
+import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 import { ToolsComponent } from './pages_shared/tools/tools.component';
 import { UnassignHostLicenseComponent } from './components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { UnassignLicenseComponent } from './components_shared/screen_components/unassign-license/unassign-license.component';
@@ -181,6 +183,7 @@ import { ZoneExpansionPanelComponent } from './pages_shared/single-template/comp
 import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
+import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
@@ -211,9 +214,9 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { TransactionTabComponent } from './pages_shared/profile-setting/transaction-tab/transaction-tab.component';
 
 const ngComponents = [
+    AddCardComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
@@ -367,6 +370,7 @@ const ngComponents = [
 	TemplateMinimapComponent,
 	TemplateZonesComponent,
 	ThumbnailCardComponent, 
+    TransactionTabComponent,
 	ToolsComponent,
 	UnassignHostLicenseComponent,
 	UnassignLicenseComponent,
@@ -374,6 +378,8 @@ const ngComponents = [
     UserSettingComponent,
 	UserSortModalComponent,
 	UserTypeComponent,
+	ViewCardsComponent,
+    ViewDmaHostComponent,
 	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
@@ -421,11 +427,9 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
-		PaymentSettingComponent,
-		ViewDmaHostComponent,
-		TransactionTabComponent,
 	],
 	entryComponents: [
+        AddCardComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
@@ -469,7 +473,8 @@ const DIRECTIVES = [
 		ViewSchedulesComponent,
 		WarningPopupComponent,
 		UpcomingInstallModalComponent,
-        ViewDmaHostComponent
+        ViewDmaHostComponent,
+		ViewCardsComponent,
 	],
 	imports: [
 		BrowserAnimationsModule,

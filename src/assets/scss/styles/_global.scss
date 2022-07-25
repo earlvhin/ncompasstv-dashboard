@@ -96,3 +96,20 @@ hr {
 	}
 
 }
+
+.credit-card {
+    background-color: rgb(11, 96, 136);
+    height: 180px;
+    border-radius: 10px;
+    .icon {
+        font-size: 40px;
+    }
+}
+
+.disable-card {
+    background-color: #bbb;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
