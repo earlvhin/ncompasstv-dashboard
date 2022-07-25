@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 
 import { AdvertiserService, AuthService, ContentService, FeedService, HelperService, HostService, LicenseService, PlaylistService,
 	ScreenService, UserService, } from 'src/app/global/services';
+import { BillingService } from 'src/app/global/services/billing-service/billing-service';
 
 import { UI_CURRENT_USER, UI_ROLE_DEFINITION} from 'src/app/global/models';
 
@@ -57,6 +58,8 @@ export class DataTableComponent implements OnInit {
 	@Input() table_columns: any;
 	@Input() table_data: any;
 	@Input() transaction_action: any;
+	@Input() order_action: any;
+	@Input() order_data: any;
 	
 	// Feed Controls
 	@Input() feed_controls: boolean;
@@ -76,6 +79,7 @@ export class DataTableComponent implements OnInit {
 	@Output() update_info = new EventEmitter;
 	@Output() delete_selected = new EventEmitter;
 	@Output() to_sort_column = new EventEmitter;
+	@Output() shipping = new EventEmitter;
 
 	active_table: string;
 	selected_array: any = [];
@@ -88,6 +92,7 @@ export class DataTableComponent implements OnInit {
 	constructor(
 		private _auth: AuthService,
 		private _advertiser: AdvertiserService,
+		private _billing: BillingService,
 		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
@@ -655,5 +660,12 @@ export class DataTableComponent implements OnInit {
 			);
 	}
 
-	
+	shipOrder(id, status) {
+        const filter = {
+			order_id: id,
+			order_status: status
+		};
+
+		this.shipping.emit(filter);
+    }
 }

@@ -12,7 +12,6 @@ import { BillingService } from 'src/app/global/services/billing-service/billing-
 import { AddCardComponent } from 'src/app/global/pages_shared/profile-setting/payment-setting/add-card/add-card.component';
 import { ViewCardsComponent } from 'src/app/global/pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 
-
 @Component({
 	selector: 'app-payment-setting',
 	templateUrl: './payment-setting.component.html',
@@ -41,7 +40,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 		private _billing: BillingService,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
-		private _formBuilder: FormBuilder
+		private _formBuilder: FormBuilder,
 	) { }
 	
 	ngOnInit() {
@@ -206,7 +205,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
                 id: this.dealerId
             },
 		});
-
+		
 		dialogRef.afterClosed()
 			.subscribe(
 				response => {
@@ -269,7 +268,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
                 AddressZip: ''
             });
         }
-        
+
     }
 
 	private initializeForm(): void {
@@ -315,7 +314,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 			{ name: 'AddressZip', label: 'ZIP Code', type: 'string', value: null, is_required: false }
 		];
 	}
-
+	
     viewAllCards() {
         const dialogRef = this._dialog.open(ViewCardsComponent, {
 			width: '700px',

@@ -4,6 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject, Subscription } from 'rxjs';
 import { AuthService, AdvertiserService, ContentService, HostService, LicenseService, DealerService } from 'src/app/global/services';
 import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { environment } from 'src/environments/environment';
 
 @Component({
     selector: 'app-profile-setting',
@@ -30,6 +31,7 @@ export class ProfileSettingComponent implements OnInit {
 	no_dealer_values: boolean = false;
     subscription: Subscription = new Subscription;
     tab_selected: string = 'Dealer';
+    is_prod: boolean = false;
 
     protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -43,7 +45,11 @@ export class ProfileSettingComponent implements OnInit {
     ) { }
 
     ngOnInit() {
-
+        if(!environment.production) {
+            this.is_prod = false
+        } else {
+            this.is_prod = true
+        }
         if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
             this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
@@ -63,8 +69,10 @@ export class ProfileSettingComponent implements OnInit {
 
     checkIfEnableShop() {
         if(this.no_credit_card || this.no_dealer_values) {
+            console.log("FALSE")
             this.show_cart_button = false;
         } else {
+            console.log("TRUE")
             this.show_cart_button = true;
         }
     }
@@ -73,6 +81,7 @@ export class ProfileSettingComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealer_values_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
 				(response:any) => {
+                    console.log(response)
                     if(!response.message) {
                         this.no_dealer_values = false;
                     } else {
@@ -142,6 +151,7 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     tabSelected(event: { index: number }): void {
+        let tab = '';
         switch (event.index) {
             case 0:
                 this.tab_selected = 'Dealer';
@@ -163,6 +173,10 @@ export class ProfileSettingComponent implements OnInit {
     }
 
     goToUrl(): void {
-        window.open("http://dev.shop.n-compass.online", "_blank");
+        if(this.is_prod) {
+            window.open("https://shop.n-compass.online", "_blank");
+        } else {
+            window.open("http://dev.shop.n-compass.online", "_blank");
+        }
     }
 }

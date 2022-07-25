@@ -125,6 +125,7 @@ import { NohandlePipe } from './pipes/nohandle.pipe';
 import { NotificationsComponent } from './pages_shared/notifications/notifications.component';
 import { ObjectKeysPipe } from './pipes/object-keys.pipe';
 import { OptionsComponent } from './components_shared/playlist_components/options/options.component';
+import { OrdersComponent } from './pages_shared/orders/orders.component';
 import { PaginationFieldComponent } from './components_shared/page_components/pagination-field/pagination-field.component';
 import { PaymentSettingComponent } from './pages_shared/profile-setting/payment-setting/payment-setting.component';
 import { PlayWhereComponent } from './components_shared/playlist_components/play-where/play-where.component';
@@ -327,6 +328,7 @@ const ngComponents = [
 	NotificationsComponent,
 	ObjectKeysPipe,
 	OptionsComponent,
+    OrdersComponent,
 	PaymentSettingComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,

@@ -34,4 +34,21 @@ export class BillingService extends BaseService {
     add_credit_card(data) { 
 		return this.postRequest(this.creators.add_credit_card, data);
 	}
+
+    get_billing_purchases(page, pageSize=1, searchkey, startDate, endDate, OrderStatus='') {
+		return this.getRequest(
+            `${this.getters.api_get_billing_purchases}` + '?page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&filterBy=' + `${searchkey}`+ '&from=' + `${endDate}` + '&to=' + `${startDate}`  + '&status=' + `${OrderStatus}`
+        );
+ 	}
+   
+    get_billing_purchases_per_dealer(id, page, pageSize=1, startDate, endDate, OrderStatus='') {
+		return this.getRequest(
+            `${this.getters.api_get_dealer_orders}` + '?dealerid=' + `${id}` + '&page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&from=' + `${endDate}` + '&to=' + `${startDate}`  + '&status=' + `${OrderStatus}`
+        );
+ 	}
+    
+    update_billing_order(data) {
+        const url = `${this.updaters.api_billing_order_update}`;
+		return this.postRequest(url, data);
+ 	}
 }
