@@ -153,7 +153,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.pi_status = false;
 		this.getLicenseInfo();
 		this.initializeSocketWatchers();
-		this.socket_checkDisplayStatus();
+		// this.socket_checkDisplayStatus();
 		this.socket_checkCECStatus();
 		this.socket_piPlayerStatus();
 		this.socket_screenShotFailed();
@@ -870,9 +870,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.saveActivityLog(ACTIVITY_CODES.screenshot)
 	}
 
-	socket_checkDisplayStatus(): void {
-		this._socket.emit('D_is_monitor_on', this.license_id);
-	}
+	// socket_checkDisplayStatus(): void {
+	// 	this._socket.emit('D_is_monitor_on', this.license_id);
+	// }
 
 	socket_checkCECStatus(): void {
 		this._socket.emit('D_check_cec_status', this.license_id);
@@ -883,6 +883,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._socket.on('SS_cec_status_check_response', (response: { licenseId: string, status: boolean }) => {
 
 			if (response.licenseId !== this.license_id) return;
+			this._socket.emit('D_is_monitor_on', this.license_id);
 
 			const { licenseId, status } = response;
 			const parsedStatus = status ? 1 : 0;
@@ -895,6 +896,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	socket_monitorStatusResponse(): void {
 		this._socket.on('SS_monitor_status_response', (data: { licenseId: string, monitorStatus: string }) => {
 			if (this.license_id === data.licenseId) {
+
 				if (data && data.monitorStatus.includes("power status: on")) {
 					this.updateDisplayStatus(
 						{
