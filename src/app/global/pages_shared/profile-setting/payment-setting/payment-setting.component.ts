@@ -9,7 +9,6 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 import { API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from 'src/app/global/models';
 import { DealerService } from 'src/app/global/services';
 
-
 @Component({
 	selector: 'app-payment-setting',
 	templateUrl: './payment-setting.component.html',
@@ -36,7 +35,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy, OnChanges {
 	constructor(
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
-		private _formBuilder: FormBuilder
+		private _formBuilder: FormBuilder,
 	) { }
 	
 	ngOnInit() {
