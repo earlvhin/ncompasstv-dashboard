@@ -225,7 +225,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
                             this.cardForm.get('Email').patchValue(this.dealerEmail);
                         //     return; 
                         // }
-                        if (response.addressBook.length > 0) {
+						if (response.addressBook && response.addressBook.length > 0) {
                             this.billingDetails = response.addressBook.filter(address => address.typeId === 1);
                             this.populateBillingAddress();
                         } else {
