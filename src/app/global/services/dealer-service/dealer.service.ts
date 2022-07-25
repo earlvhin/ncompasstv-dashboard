@@ -67,9 +67,10 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string) {
+	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize=15) {
+        console.log("PZ", pageSize)
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder });
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

@@ -4,8 +4,8 @@ import { DealerService } from '../../../../global/services/dealer-service/dealer
 import { Subscription } from 'rxjs';
 import { UI_DEALER_ADVERTISERS } from 'src/app/global/models/ui_table_dealer-advertisers.model';
 import { DEALER_UI_TABLE_ADVERTISERS } from 'src/app/global/models/ui_table_advertisers.model';
-import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { API_ADVERTISER } from 'src/app/global/models/api_advertiser.model';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver';
 
 @Component({
 	selector: 'app-advertisers',
@@ -17,6 +17,7 @@ export class AdvertisersComponent implements OnInit {
 
     advertiser_table_column: any = {};
 	advertiser_stats: any;
+    advertisers_to_export: any = [];
 	title: string = "Advertisers";
 	paging_data: any;
 	table_loading: boolean = true;
@@ -31,6 +32,9 @@ export class AdvertisersComponent implements OnInit {
 	search_field_placeholder = !this.call_to_other_page ? 'Search Dealer Alias, Business Name, or #Tag' : 'Search Advertiser Name or Business Name';
     sort_column: string = '';
 	sort_order: string = '';
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 
 	constructor(
 		private _advertiser: AdvertiserService,
@@ -71,34 +75,49 @@ export class AdvertisersComponent implements OnInit {
 		this.pageRequested(1);
 	}
 
-	pageRequested(e) {
-		this.searching = true;
-		this.dealers_with_advertiser = [];
-		
+	pageRequested(e, pageSize?) {
+        if(pageSize != 0) {
+            this.searching = true;
+		    this.dealers_with_advertiser = [];
+        }
+
         if(this.call_to_other_page) {
             this.advertiser_table_column = [
-                { name: '#', sortable: false},
-                { name: 'Name', sortable: true, column:'Name'},
-                { name: 'Region', sortable: true, column:'Region'},
-                { name: 'State', sortable: true, column:'City'},
-                { name: 'Status', sortable: true, column:'Status'},
-                { name: 'Dealer', sortable: true, column:'BusinessName'},
+                { name: '#', sortable: false, no_export: true},
+                { name: 'Name', sortable: true, column:'Name', key: 'name'},
+                { name: 'Region', sortable: true, column:'Region', key: 'region'},
+                { name: 'State', sortable: true, column:'City', key: 'city'},
+                { name: 'Status', sortable: true, column:'Status', key: 'status'},
+                { name: 'Dealer', sortable: true, column:'BusinessName', key: 'businessName'},
             ]
             this.subscription.add(
-                this._advertiser.get_advertisers(e, this.search_data, this.sort_column, this.sort_order).subscribe(
+                this._advertiser.get_advertisers(e, this.search_data, this.sort_column, this.sort_order, pageSize).subscribe(
                     data => {
                         this.paging_data = data.paging;
                         if(data.advertisers) {
-                            this.dealers_with_advertiser = this.advertiser_mapToUI(data.advertisers);
-                            this.filtered_data = this.advertiser_mapToUI(data.advertisers);
-                        } else {
-                            if(this.search_data == "") {
-                                this.no_advertiser = true;
+                            if(pageSize === 0) {
+                                this.advertisers_to_export = [...data.advertisers];
+                            } else {
+                                this.dealers_with_advertiser = this.advertiser_mapToUI(data.advertisers);
+                                this.filtered_data = this.advertiser_mapToUI(data.advertisers);
                             }
-                            this.filtered_data = [];
+                            
+                        } else {
+                            if(pageSize === 0) {
+                                this.advertisers_to_export = [];
+                            } else {
+                                if(this.search_data == "") {
+                                    this.no_advertiser = true;
+                                }
+                                this.filtered_data = [];
+                            }
                         }
-                        this.searching = false;
-                        this.initial_load = false;
+                        if(pageSize === 0) {
+                            this.exportProcess();
+                        } else {
+                            this.searching = false;
+                            this.initial_load = false;
+                        }  
                     },
                     error => {
                         console.log(error)
@@ -107,27 +126,39 @@ export class AdvertisersComponent implements OnInit {
             )
         } else {
             this.advertiser_table_column = [
-                { name: '#', sortable: false},
-                { name: 'Dealer Alias', sortable: true, column:'DealerIdAlias'},
-                { name: 'Business Name', sortable: true, column:'BusinessName'},
-                { name: 'Contact Person', sortable: true, column:'ContactPerson'},
-                { name: 'Advertiser Count', sortable: true, column:'totalAdvertisers'},
+                { name: '#', sortable: false, no_export: true},
+                { name: 'Dealer Alias', sortable: true, column:'DealerIdAlias', key: 'dealerIdAlias'},
+                { name: 'Business Name', sortable: true, column:'BusinessName', key: 'businessName'},
+                { name: 'Contact Person', sortable: true, column:'ContactPerson', key: 'contactPerson'},
+                { name: 'Advertiser Count', sortable: true, column:'totalAdvertisers', key: 'totalAdvertisers'},
             ]
             this.subscription.add(
-                this._dealer.get_dealers_with_advertiser(e, this.search_data, this.sort_column, this.sort_order).subscribe(
+                this._dealer.get_dealers_with_advertiser(e, this.search_data, this.sort_column, this.sort_order, pageSize).subscribe(
                     data => {
                         this.paging_data = data.paging;
                         if(data.dealers) {
-                            this.dealers_with_advertiser = this.dealer_mapToUI(data.dealers);
-                            this.filtered_data = this.dealer_mapToUI(data.dealers);
-                        } else {
-                            if(this.search_data == "") {
-                                this.no_advertiser = true;
+                            if(pageSize === 0) {
+                                this.advertisers_to_export = [...data.dealers];
+                            } else {
+                                this.dealers_with_advertiser = this.dealer_mapToUI(data.dealers);
+                                this.filtered_data = this.dealer_mapToUI(data.dealers);
                             }
-                            this.filtered_data = [];
+                        } else {
+                            if(pageSize === 0) {
+                                this.advertisers_to_export = [];
+                            } else {
+                                if(this.search_data == "") {
+                                    this.no_advertiser = true;
+                                }
+                                this.filtered_data = [];
+                            } 
                         }
-                        this.searching = false;
-                        this.initial_load = false;
+                        if(pageSize === 0) {
+                            this.exportProcess();
+                        } else {
+                            this.searching = false;
+                            this.initial_load = false;
+                        }                        
                     },
                     error => {
                         console.log(error)
@@ -135,8 +166,30 @@ export class AdvertisersComponent implements OnInit {
                 )
             )
         }
-		
 	}
+
+    exportProcess() {
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        this.advertisers_to_export.forEach(
+            (item) => {
+                this.worksheet.addRow(item).font = { bold: false };
+            }
+        );
+
+        let rowIndex = 1;
+
+        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        }
+
+        this.workbook.xlsx.writeBuffer().then((file: any) => {
+            const blob = new Blob([file], { type: EXCEL_TYPE });
+            const filename = 'Advertisers' +'.xlsx';
+            saveAs(blob, filename);
+        });
+
+        this.workbook_generation = false;
+    }
 
 	filterData(data) {
 		if (data) {
@@ -158,9 +211,6 @@ export class AdvertisersComponent implements OnInit {
 					{ value: i.dealerIdAlias ? i.dealerIdAlias : '--',  link: '/administrator/dealers/' + i.dealerId,  query: '2', editable: false, hidden: false},
 					{ value: i.businessName, link: '/administrator/dealers/' + i.dealerId , editable: false, hidden: false},
 					{ value: i.contactPerson, link: null , editable: false, hidden: false},
-					// { value: i.region, link: null , editable: false, hidden: false},
-					// { value: i.city, link: null , editable: false, hidden: false},
-					// { value: i.state, link: null , editable: false, hidden: false},
 					{ value: i.totalAdvertisers, link: null , editable: false, hidden: false},
 				)
 			}
@@ -191,4 +241,25 @@ export class AdvertisersComponent implements OnInit {
             return 'Search Dealer Alias, Business Name, or #Tag'
         }
     }
+
+    exportTable() {
+        this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+        this.worksheet = this.workbook.addWorksheet('Advertisers View');
+        Object.keys(this.advertiser_table_column).forEach(key => {
+            if(this.advertiser_table_column[key].name && !this.advertiser_table_column[key].no_export) {
+                header.push({ header: this.advertiser_table_column[key].name, key: this.advertiser_table_column[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+            }
+        });
+        this.worksheet.columns = header;
+		this.getDataForExport();		
+	}
+
+    getDataForExport() {
+        this.pageRequested(1, 0);
+	}
 }

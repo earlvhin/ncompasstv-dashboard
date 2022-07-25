@@ -9,10 +9,10 @@ import { API_ADVERTISER, PAGING, TAG } from 'src/app/global/models';
 })
 
 export class AdvertiserService extends BaseService {
-	get_advertisers(page: number, search: string, sortColumn?: string, sortOrder?: string) {
+	get_advertisers(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize=15) {
 		// return this.getRequest(`${this.getters.api_get_advertisers}`).map(data => data.advertisers);
         const base = `${this.getters.api_get_advertisers}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder });
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -25,9 +25,9 @@ export class AdvertiserService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_advertiser_total_by_dealer}${id}`, );
 	}
 
-	get_advertisers_by_dealer_id(dealer_id: string, page: number, search: string, sortColumn = '', sortOrder = ''): Observable<{ advertisers?: API_ADVERTISER[], paging?: PAGING, message?: string }> {
+	get_advertisers_by_dealer_id(dealer_id: string, page: number, search: string, sortColumn = '', sortOrder = '', pageSize=15): Observable<{ advertisers?: API_ADVERTISER[], paging?: PAGING, message?: string }> {
 		const base = `${this.getters.api_get_advertisers_by_dealer_id}`;
-		const params = this.setUrlParams({ page, dealer_id, search, sortColumn, sortOrder });
+		const params = this.setUrlParams({ page, dealer_id, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
