@@ -1,0 +1,43 @@
+<div class="col-lg-12 p-0">
+    <div class="white-bg col-lg-12 p-4">
+        <div class="col-lg-12 p-0 d-flex">
+            <div class="col-lg-10 p-0">
+                <h3 class="text-primary">VIEW OF ALL CARDS</h3>
+            </div>
+            <div class="col-lg-2 p-0 text-right">
+                <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+                    <span class="fas fa-times"></span>
+                </button>
+            </div>
+        </div>
+        <div class="col-lg-12 mt-3 p-0 d-flex flex-wrap payment-options">
+            <div class="col-lg-6 mb-3 pl-0" *ngFor="let card of cards; let i = index">
+                <div class="credit-card" [ngClass]="i === 0 ? 'bg-primary':''">
+                    <div class="col-lg-12 pt-3 d-flex">
+                        <div class="icon text-white col-lg-2">
+                            <i class="fab fa-cc-{{card.brand}}"></i>
+                        </div>
+                        <div class="lg-text text-white col-lg-10 text-right pt-3">
+                            **** **** **** {{card.last4}}
+                        </div>
+                    </div>
+                    <div class="col-lg-12 pt-3 text-white md-text">
+                        <div class="col-lg-12">
+                            {{card.name}}
+                        </div>
+                        <div class="col-lg-12 p-0 d-flex">
+                            <div class="col-lg-4 pt-4">
+                                <span class="bg-white text-primary f-500 sm-text pl-3 pr-3 pt-2 pb-2 br-5" *ngIf="i === 0">
+                                    PRIMARY
+                                </span>
+                            </div>
+                            <div class="col-lg-8 pt-4 text-right">
+                                {{card.exp_month}} / {{card.exp_year}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

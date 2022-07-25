@@ -35,7 +35,7 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action || transaction_action" class="text-right" class="p-3">
+				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action || transaction_action || order_action" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
 			</tr>
@@ -245,6 +245,11 @@
                 <td class="p-3 control-toggle" *ngIf="billing_action">
 					<i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
 					<!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->
+				</td>
+
+                <td class="p-3 control-toggle" *ngIf="order_action">
+					<i class="fas fa-shipping-fast xlg-text text-light-gray clickable" title="Mark as Shipped" (click)="shipOrder(data.order_no.value, 'Shipped')" *ngIf="data.status.value != 'Shipped'"></i>
+					<i class="fas fa-dolly-flatbed xlg-text text-light-gray clickable" title="Mark as New Order" (click)="shipOrder(data.order_no.value, 'New Order')" *ngIf="data.status.value === 'Shipped'"></i>
 				</td>
 
                 <td class="p-3 control-toggle" *ngIf="transaction_action">

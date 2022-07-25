@@ -28,6 +28,7 @@ export class DashboardComponent implements OnInit {
 	loading_host_report_chart: boolean = true;
 	loading_license_report_chart: boolean = true;
 	no_dealers: boolean;
+	no_ad_license: boolean = true;
 	
     subscription: Subscription = new Subscription;
 	title = 'Dashboard';
@@ -165,38 +166,68 @@ export class DashboardComponent implements OnInit {
 		this.subscription.add(
 			this._license.get_ad_licenses_total_by_dealer(this.dealerId).subscribe(
 				data => {
-					this.ad_licenses_details = {
-				    basis: data.mainAverageAsset,
-                    basis_label: 'Average Content Per Ad License',
-                    basis_sub_label: 'Total',
-					hosts_value: data.mainAverageHost,
-					hosts_label: 'Hosts',
-					advertisers_value: data.mainAverageAdvertiser,
-					advertisers_label: 'Advertisers',
-					fillers_value: data.mainAverageFiller,
-					fillers_label: 'Fillers',
-					feeds_value: data.mainAverageFeed,
-					feeds_label: 'Feeds',
-					others_value: data.mainAverageOther,
-					others_label: 'Others',
-					average_duration: this.calculateTime(data.mainAverageDuration)
-                	}
-
-                if (this.ad_licenses_details) {
-                    this.ad_license_label.push(this.ad_licenses_details.hosts_label + ": " + this.ad_licenses_details.hosts_value);
-                    this.ad_license_label.push(this.ad_licenses_details.advertisers_label+ ": " + this.ad_licenses_details.advertisers_value);
-                    this.ad_license_label.push(this.ad_licenses_details.fillers_label+ ": " + this.ad_licenses_details.fillers_value);
-					this.ad_license_label.push(this.ad_licenses_details.feeds_label+ ": " + this.ad_licenses_details.feeds_value);
-					this.ad_license_label.push(this.ad_licenses_details.others_label+ ": " + this.ad_licenses_details.others_value);
-                    this.ad_license_array.push(this.ad_licenses_details.hosts_value);
-                    this.ad_license_array.push(this.ad_licenses_details.advertisers_value);
-                    this.ad_license_array.push(this.ad_licenses_details.fillers_value);
-					this.ad_license_array.push(this.ad_licenses_details.feeds_value);
-					this.ad_license_array.push(this.ad_licenses_details.others_value);
-                }
-            
+                    this.no_ad_license = false;
+                        this.ad_licenses_details = {
+                            basis: data.mainAverageAsset,
+                            basis_label: 'Average Content Per Ad License',
+                            basis_sub_label: 'Total',
+                            hosts_value: data.mainAverageHost,
+                            hosts_label: 'Hosts',
+                            advertisers_value: data.mainAverageAdvertiser,
+                            advertisers_label: 'Advertisers',
+                            fillers_value: data.mainAverageFiller,
+                            fillers_label: 'Fillers',
+                            feeds_value: data.mainAverageFeed,
+                            feeds_label: 'Feeds',
+                            others_value: data.mainAverageOther,
+                            others_label: 'Others',
+                            average_duration: this.calculateTime(data.mainAverageDuration)
+                        }
+                        if (this.ad_licenses_details) {
+                            this.ad_license_label.push(this.ad_licenses_details.hosts_label + ": " + this.ad_licenses_details.hosts_value);
+                            this.ad_license_label.push(this.ad_licenses_details.advertisers_label+ ": " + this.ad_licenses_details.advertisers_value);
+                            this.ad_license_label.push(this.ad_licenses_details.fillers_label+ ": " + this.ad_licenses_details.fillers_value);
+                            this.ad_license_label.push(this.ad_licenses_details.feeds_label+ ": " + this.ad_licenses_details.feeds_value);
+                            this.ad_license_label.push(this.ad_licenses_details.others_label+ ": " + this.ad_licenses_details.others_value);
+                            this.ad_license_array.push(this.ad_licenses_details.hosts_value);
+                            this.ad_license_array.push(this.ad_licenses_details.advertisers_value);
+                            this.ad_license_array.push(this.ad_licenses_details.fillers_value);
+                            this.ad_license_array.push(this.ad_licenses_details.feeds_value);
+                            this.ad_license_array.push(this.ad_licenses_details.others_value);
+                        }
+                        
+                    if (this.ad_licenses_details) {
+                        this.ad_license_label.push(this.ad_licenses_details.hosts_label + ": " + this.ad_licenses_details.hosts_value);
+                        this.ad_license_label.push(this.ad_licenses_details.advertisers_label+ ": " + this.ad_licenses_details.advertisers_value);
+                        this.ad_license_label.push(this.ad_licenses_details.fillers_label+ ": " + this.ad_licenses_details.fillers_value);
+                        this.ad_license_label.push(this.ad_licenses_details.feeds_label+ ": " + this.ad_licenses_details.feeds_value);
+                        this.ad_license_label.push(this.ad_licenses_details.others_label+ ": " + this.ad_licenses_details.others_value);
+                        this.ad_license_array.push(this.ad_licenses_details.hosts_value);
+                        this.ad_license_array.push(this.ad_licenses_details.advertisers_value);
+                        this.ad_license_array.push(this.ad_licenses_details.fillers_value);
+                        this.ad_license_array.push(this.ad_licenses_details.feeds_value);
+                        this.ad_license_array.push(this.ad_licenses_details.others_value);
+                    }
+                    
 				}, 
 				error => {
+                    this.no_ad_license = false;
+                    this.ad_licenses_details = {
+                        basis: 0,
+                        basis_label: 'Average Content Per Ad License',
+                        basis_sub_label: 'Total',
+                        hosts_value: 0,
+                        hosts_label: 'Hosts',
+                        advertisers_value: 0,
+                        advertisers_label: 'Advertisers',
+                        fillers_value: 0,
+                        fillers_label: 'Fillers',
+                        feeds_value: 0,
+                        feeds_label: 'Feeds',
+                        others_value: 0,
+                        others_label: 'Others',
+                        average_duration: this.calculateTime(0)
+                    }
 					console.log(error);
 				}
 			)

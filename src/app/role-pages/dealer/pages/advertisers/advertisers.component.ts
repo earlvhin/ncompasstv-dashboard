@@ -1,6 +1,8 @@
 import { Component, OnDestroy, OnInit, Input } from '@angular/core';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Workbook } from 'exceljs';
+import { saveAs } from 'file-saver'; 
 
 import { AuthService, AdvertiserService } from 'src/app/global/services';
 import { API_ADVERTISER, PAGING, UI_ADVERTISER } from 'src/app/global/models';
@@ -12,6 +14,7 @@ import { API_ADVERTISER, PAGING, UI_ADVERTISER } from 'src/app/global/models';
 export class AdvertisersComponent implements OnInit, OnDestroy {
     @Input() no_header: boolean = false;
 	advertiser_stats: any;
+    advertisers_to_export: any = [];
 	base_url = `/${this.currentRole}/advertisers`;
 	initial_load_advertiser = true;
 	is_searching = false;
@@ -21,6 +24,9 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 	tab: any = { tab: 2 };
 	table = { columns: [], data: [] as UI_ADVERTISER[] };
 	title: string = 'Advertisers';
+    workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
 	
 	private keyword = '';
 	protected _unsubscribe = new Subject<void>();
@@ -31,7 +37,16 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 	) { }
 
 	ngOnInit() {
-		this.table.columns = [ '#', 'Business Name', 'Total Assets', 'Address', 'City', 'State', 'Status', 'Postal Code' ];
+		this.table.columns = [
+            { name: '#', no_export: true },
+            { name: 'Name', key: 'name', column: 'name' },
+            { name: 'Total Assets', key: 'category' },
+            { name: 'Address', key: 'address'},
+            { name: 'City', key: 'city' },
+            { name: 'State', key: 'state' },
+            { name: 'Status', key: 'status' },
+            { name: 'Postal Code', key: 'postalCode' },
+        ]
 		this.getAdvertiserByDealer(1);
 		this.getAdvertiserTotal(this.currentDealerId);
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
@@ -42,30 +57,86 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	getAdvertiserByDealer(page) {
-		this.is_searching = true;
+    exportTable(): void {
+		this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+		this.worksheet = this.workbook.addWorksheet('ADVERTISERS');
 
-		this._advertiser.get_advertisers_by_dealer_id(this.currentDealerId, page, this.keyword)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					
-					if (data.message) {
-						this.table.data = [];
+		Object.keys(this.table.columns).forEach(key => {
+			if(this.table.columns[key].name && !this.table.columns[key].no_export) {
+				header.push({ header: this.table.columns[key].name, key: this.table.columns[key].key, width: 30, style: { font: { name: 'Arial', bold: true}}});
+			}
+		});
 
-						if (this.keyword === '') this.no_advertisers = true;
-						return;
-					}
- 
-					this.paging_data = data.paging;
-					const advertisers = this.mapToDataTable(data.advertisers);
-					this.table.data = [...advertisers];
-				}
-			)
-			.add(() => {
-				this.initial_load_advertiser = false;
-				this.is_searching = false;
-			});
+        this.worksheet.columns = header;
+		this.getDataForExport();		
+	}
+
+    private getDataForExport(): void {
+        this.getAdvertiserByDealer(1,0)
+	}
+
+    exportProcess() {
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+        this.advertisers_to_export.forEach(
+            (item) => {
+                this.worksheet.addRow(item).font = { bold: false };
+            }
+        );
+
+        let rowIndex = 1;
+
+        for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+            this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+        }
+
+        this.workbook.xlsx.writeBuffer().then((file: any) => {
+            const blob = new Blob([file], { type: EXCEL_TYPE });
+            const filename = 'Advertisers' +'.xlsx';
+            saveAs(blob, filename);
+        });
+
+        this.workbook_generation = false;
+    }
+
+	getAdvertiserByDealer(page, pageSize=15) {
+		if(pageSize != 0) {
+            this.is_searching = true;
+        }
+
+		this._advertiser.get_advertisers_by_dealer_id(this.currentDealerId, page, this.keyword, '', '', pageSize).subscribe(
+			data => {
+				if (data.message) {
+                    if(pageSize === 0) {
+                        this.advertisers_to_export = [];
+                    } else {
+                        this.initial_load_advertiser = false;
+                        this.table.data = [];
+                        if (this.keyword === '') this.no_advertisers = true;
+                        return;
+                    }	
+				} else {
+                    if(pageSize === 0) {
+                        this.advertisers_to_export = [...data.advertisers];
+                    } else {
+                        this.paging_data = data.paging;
+                        const advertisers = this.mapToDataTable(data.advertisers);
+                        this.table.data = [...advertisers];
+                    }
+                }
+                if(pageSize === 0) {
+                    this.exportProcess();
+                } else {
+                    console.log("HERE")
+                    this.initial_load_advertiser = false;
+                    this.is_searching = false;
+                }
+			}
+        )
 	}
 
 	onSearchAdvertiser(keyword: string) {

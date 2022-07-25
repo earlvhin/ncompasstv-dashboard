@@ -201,6 +201,9 @@ export class DealersComponent implements OnInit, OnDestroy {
             case 2:
                 this.current_tab = 'Invoice';
                 break;
+            case 3:
+                this.current_tab = 'Orders';
+                break;
             default:
         }
     }

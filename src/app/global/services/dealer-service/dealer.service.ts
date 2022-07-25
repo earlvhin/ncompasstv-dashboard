@@ -44,7 +44,7 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.export_dealers}`).map((response) => response.dealers);
 	}
 
-	get_credit_cards(dealerId: string): Observable<{ cards: { data: API_CREDIT_CARD_DETAILS[] }, email: string }> {
+	get_credit_cards(dealerId: string) {
 		const url = `${this.getters.dealer_cards}?dealerid=${dealerId}`;
 		return this.getRequest(url);
 	}
@@ -67,9 +67,10 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string) {
+	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize=15) {
+        console.log("PZ", pageSize)
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder });
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

@@ -120,7 +120,7 @@
 			</mat-card>
 		</div>
 		<div class="col-lg-5 mb-4">
-			<mat-card class="h-100" *ngIf="ad_licenses_details; else spinner">
+			<mat-card class="h-100" *ngIf="!no_ad_license; else spinner">
 				<ng-container>
 					<app-data-card-graph [id]="'ad_average'" [average_basis]="ad_licenses_details.basis"
 						[average_basis_label]="ad_licenses_details.basis_label"
@@ -131,7 +131,7 @@
 			</mat-card>
 		</div>
 		<div class="col-lg-2 mb-4">
-			<mat-card class="h-100" *ngIf="ad_licenses_details; else spinner">
+			<mat-card class="h-100" *ngIf="!no_ad_license; else spinner">
 				<div class="col-lg-12 p-3 text-center">
 					<h4 class="mb-2 text-center">
 						<span class="text-dark font-weight-medium">
