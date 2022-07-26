@@ -14,7 +14,6 @@ import { AuthService, ContentService } from 'src/app/global/services';
 	templateUrl: './thumbnail-card.component.html',
 	styleUrls: ['./thumbnail-card.component.scss']
 })
-
 export class ThumbnailCardComponent implements OnInit {
 	@Input() image_uri: string;
 	@Input() classification: string;
@@ -35,52 +34,43 @@ export class ThumbnailCardComponent implements OnInit {
 	@Input() is_view_only = false;
 	@Output() converted: EventEmitter<boolean> = new EventEmitter();
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
-	@Output() content_to_delete = new EventEmitter;
-	
-	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`
+	@Output() content_to_delete = new EventEmitter();
+
+	fs_screenshot: string = `${environment.third_party.filestack_screenshot}`;
 	is_admin = this._isAdmin;
 	is_dealer = this._isDealer;
 	route: string;
-	
+
 	private return_mes: string;
 	private role: string;
-	
+
 	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(
-		private _auth: AuthService,
-		private _dialog: MatDialog,
-		private _content: ContentService
-	) { 
-	}
+	constructor(private _auth: AuthService, private _dialog: MatDialog, private _content: ContentService) {}
 
 	ngOnInit() {
-		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		this.role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 
 		if (!this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0) {
 			this._socket = io(environment.socket_server, {
 				transports: ['websocket'],
-				query: 'client=Dashboard__ThumbnailCardComponent',
+				query: 'client=Dashboard__ThumbnailCardComponent'
 			});
 
-			this._socket.on('connect', () => {
-				console.log('#ThumbnailCardComponent - Connected to Socket Server');
-			})
+			this._socket.on('connect', () => {});
 
-			this._socket.on('disconnect', () => {
-				console.log('#ThumbnailCardComponent - Disconnnected to Socket Server');
-			})
+			this._socket.on('disconnect', () => {});
 
-			this._socket.on('video_converted', data => {
+			this._socket.on('video_converted', (data) => {
 				if (data == this.uuid) {
 					this.is_converted = 1;
-					this.converted.emit(true)
+					this.converted.emit(true);
 				}
 
 				this.ngOnInit();
-			})
+			});
 		}
 	}
 
@@ -89,51 +79,49 @@ export class ThumbnailCardComponent implements OnInit {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
 	}
-	
+
 	deleteContentArray(event: { checked: boolean }, content_id: string): void {
 		if (event.checked) this.is_checked = true;
 		this.content_to_delete.emit({ toadd: event.checked, id: content_id });
 	}
 
 	deleteMedia(event): void {
-		this.warningModal('warning', 'Delete Content', 'Are you sure you want to delete this content?', this.return_mes, 'delete')
+		this.warningModal('warning', 'Delete Content', 'Are you sure you want to delete this content?', this.return_mes, 'delete');
 		event.stopPropagation();
 	}
-	
+
 	private deleteContentLogs() {
-		this.warningModal('warning', 'Delete Content Logs', 'Do you want to delete all the logs of this content','','delete-logs')
+		this.warningModal('warning', 'Delete Content Logs', 'Do you want to delete all the logs of this content', '', 'delete-logs');
 	}
 
 	private warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
 		this._dialog.closeAll();
-		
+
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: { status, message, data, return_msg, action }
 		});
-		
-		dialogRef.afterClosed()
-			.subscribe(
-				result => {
 
-					const filter = [{ 'contentid': this.content_id }];
+		dialogRef.afterClosed().subscribe((result) => {
+			const filter = [{ contentid: this.content_id }];
 
-					if (result == 'delete') {
-						
-						this._content.remove_content(filter).pipe(takeUntil(this._unsubscribe))
-							.subscribe(
-								data => {
-									this.return_mes = data.message
-									this.deleted.emit(true)
-								},
-								error => console.log('Error removing content', error)
-							);
-						
-					}
-				} 
-			);
-    }
+			if (result == 'delete') {
+				this._content
+					.remove_content(filter)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						(data) => {
+							this.return_mes = data.message;
+							this.deleted.emit(true);
+						},
+						(error) => {
+							throw new Error(error);
+						}
+					);
+			}
+		});
+	}
 
 	protected get _isAdmin() {
 		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;

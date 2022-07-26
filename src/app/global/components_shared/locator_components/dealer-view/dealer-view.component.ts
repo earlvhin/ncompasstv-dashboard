@@ -11,9 +11,9 @@ import { AuthService, DealerService } from 'src/app/global/services';
 import { LicenseService } from 'src/app/global/services/license-service/license.service';
 
 @Component({
-  selector: 'app-dealer-view',
-  templateUrl: './dealer-view.component.html',
-  styleUrls: ['./dealer-view.component.scss']
+	selector: 'app-dealer-view',
+	templateUrl: './dealer-view.component.html',
+	styleUrls: ['./dealer-view.component.scss']
 })
 export class DealerViewComponent implements OnInit, OnDestroy {
 	@ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
@@ -27,7 +27,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	host_licenses: API_LICENSE_PROPS[] = [];
 	is_search: boolean = false;
 	lat: number = 39.7395247;
-	license_card:any;
+	license_card: any;
 	lng: number = -105.1524133;
 	loading_data: boolean = true;
 	loading_hosts: boolean = true;
@@ -55,7 +55,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	host_offline_licenses: any;
 	exported_map_marker: any[];
 	markStoreHours: any;
-	form = this._form_builder.group({ selectedDealers: [ [], Validators.required ]});
+	form = this._form_builder.group({ selectedDealers: [[], Validators.required] });
 	selectedDealersControl = this.form.get('selectedDealers');
 	dealerFilterControl = new FormControl(null);
 
@@ -64,17 +64,12 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		fontFamily: '',
 		fontSize: '14px',
 		fontWeight: 'bold',
-		text: "some text"
+		text: 'some text'
 	};
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
-	constructor(
-		private _auth: AuthService,
-		private _dealer: DealerService,
-		private _license: LicenseService,
-		private _form_builder: FormBuilder,
-	) { }
+
+	constructor(private _auth: AuthService, private _dealer: DealerService, private _license: LicenseService, private _form_builder: FormBuilder) {}
 
 	ngOnInit() {
 		this.getDealers(1);
@@ -82,11 +77,11 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.offline_licenses = 0;
 		this.subscribeToDealerSearch();
 
-        this.form.valueChanges.subscribe(() => {
-            if (!this.form.invalid && !this.isFiltered) {
-                this.onSubmit()
-            }
-        })
+		this.form.valueChanges.subscribe(() => {
+			if (!this.form.invalid && !this.isFiltered) {
+				this.onSubmit();
+			}
+		});
 	}
 
 	ngOnDestroy() {
@@ -112,39 +107,42 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.previous_marker = window;
 	}
 
-	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
+	searchBoxTrigger(event: { is_search: boolean; page: number }): void {
 		this.is_search = event.is_search;
 		this.getDealers(event.page);
 	}
 
 	searchData(key: string): void {
 		this.loading_search = true;
-			
-		this._dealer.get_search_dealer_with_host(key)
+
+		this._dealer
+			.get_search_dealer_with_host(key)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { dealers: API_DEALER[], paging: { entities: any[] }}) => {
-
+				(response: { dealers: API_DEALER[]; paging: { entities: any[] } }) => {
 					const { dealers, paging } = response;
 					const { entities } = paging;
 
 					this.paging = paging;
 
 					if (entities.length <= 0) {
-						this.dealers_data = [];					
+						this.dealers_data = [];
 						return;
 					}
 
 					this.dealers_data = dealers;
 					const merged = this.selectedDealersControl.value.concat(dealers);
-					const unique = merged.filter((dealer, index, merged) => merged.findIndex(mergedDealer => (mergedDealer.dealerId === dealer.dealerId)) === index);
+					const unique = merged.filter(
+						(dealer, index, merged) => merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index
+					);
 					this.dealers = unique;
 					this.filteredDealers.next(unique);
 				},
-				error => console.log('Error searching dealer with host', error)
+				(error) => {
+					throw new Error(error);
+				}
 			)
-			.add(() => this.loading_search = false);
-
+			.add(() => (this.loading_search = false));
 	}
 
 	setLink(licenseId: string) {
@@ -156,48 +154,45 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	}
 
 	private getDealers(page: number): void {
-
 		if (page > 1) this.loading_data = true;
 		else this.loading_search = true;
 
-		this._dealer.get_dealers_with_host(page, '')
+		this._dealer
+			.get_dealers_with_host(page, '')
 			.pipe(
 				takeUntil(this._unsubscribe),
 				// mapped the response because generalCategory is only found in paging.entities
-				map((response: { dealers: API_DEALER[], paging: { entities: API_DEALER[] } }) => {
-
+				map((response: { dealers: API_DEALER[]; paging: { entities: API_DEALER[] } }) => {
 					const { entities } = response.paging;
 
-					response.dealers = response.dealers.map(
-						dealer => {
+					response.dealers = response.dealers.map((dealer) => {
+						dealer.hosts = dealer.hosts.map((host) => {
+							host.generalCategory = entities.filter((pagingDealer) => pagingDealer.dealerId === dealer.dealerId)[0].generalCategory;
+							return host;
+						});
 
-							dealer.hosts = dealer.hosts.map(
-								host => {
-									host.generalCategory = entities.filter(pagingDealer => pagingDealer.dealerId === dealer.dealerId)[0].generalCategory;
-									return host
-								}
-							);
-
-							return dealer;
-
-						}
-					);
+						return dealer;
+					});
 
 					return response;
 				})
 			)
 			.subscribe(
-				(response: { dealers: API_DEALER[], paging: { entities: API_DEALER[] }}) => {
+				(response: { dealers: API_DEALER[]; paging: { entities: API_DEALER[] } }) => {
 					const { dealers, paging } = response;
 					this.paging = paging;
 					const merged = this.selectedDealersControl.value.concat(dealers);
-					const unique = merged.filter((dealer, index, merged) => merged.findIndex(mergedDealer => (mergedDealer.dealerId === dealer.dealerId)) === index);
+					const unique = merged.filter(
+						(dealer, index, merged) => merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index
+					);
 					this.dealers = unique;
 					this.filteredDealers.next(unique);
 					this.dealers_data = dealers;
 					this.loading_data = false;
 				},
-				error => console.log('Error retrieving dealers with host', error)
+				(error) => {
+					throw new Error(error);
+				}
 			)
 			.add(() => {
 				this.loading_search = false;
@@ -209,11 +204,11 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	private getLicenseByHost(id: string): void {
 		this.loading_license_count = true;
 
-		this._license.get_licenses_by_host_id(id)
+		this._license
+			.get_licenses_by_host_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
-
 					let online = 0;
 					const statistics = {
 						basis: 0,
@@ -233,18 +228,15 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					// const licenses: API_LICENSE_PROPS[] = response;
 					this.host_licenses = response;
 
-                    this.host_licenses = this.host_licenses.filter(license => license.isActivated === 1);
+					this.host_licenses = this.host_licenses.filter((license) => license.isActivated === 1);
 
-					if(this.filterStatus !== null){
-						this.host_licenses.filter(x => x.piStatus === this.filterStatus);
+					if (this.filterStatus !== null) {
+						this.host_licenses.filter((x) => x.piStatus === this.filterStatus);
 					}
 
-
-					this.host_licenses.forEach(
-						license => {
-							if (license.piStatus == 1) online += 1;
-						}
-					);
+					this.host_licenses.forEach((license) => {
+						if (license.piStatus == 1) online += 1;
+					});
 
 					this.host_online_licenses = online;
 					this.host_offline_licenses = this.host_licenses.length - online;
@@ -252,266 +244,241 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					statistics.good_value = online;
 					statistics.bad_value = this.host_licenses.length - online;
 					this.license_card = statistics;
-
 				},
-				error => console.log('Error retrieving license by host ID', error)
+				(error) => {
+					throw new Error(error);
+				}
 			)
-			.add(() => setTimeout(() => this.loading_license_count = false, 1000));
+			.add(() => setTimeout(() => (this.loading_license_count = false), 1000));
 	}
 
 	private mapMarkersToUI(hosts: any[], licenses: any[]): any[] {
 		if (hosts) {
+			return hosts.map((h: API_HOST) => {
+				let icon_url;
+				let online: any = 0;
+				let license_online_percentage;
 
-			return hosts.map(
-				(h: API_HOST) => {
-					let icon_url;
-					let online: any = 0;
-					let license_online_percentage;
+				const host_license = licenses.filter((license: API_LICENSE_PROPS) => license.hostId === h.hostId);
 
-					const host_license = licenses.filter((license :API_LICENSE_PROPS) => license.hostId === h.hostId)
-	
-					if (host_license.length > 0) {
-						online = host_license.filter((i: API_LICENSE_PROPS) => i.piStatus == 1);
-						license_online_percentage = (online.length / host_license.length) * 100;
-					}
-		
-					if (license_online_percentage == 100) {
-						icon_url = 'assets/media-files/markers/online_all.png';
-					} else if(license_online_percentage >= 51 && license_online_percentage < 100) {
-						icon_url = 'assets/media-files/markers/online_many.png';
-					} else if (license_online_percentage < 51 && license_online_percentage > 0) {
-						icon_url = 'assets/media-files/markers/online_few.png';
-					} else {
-						icon_url = 'assets/media-files/markers/offline.png';
-					}
-	
-					const mapped = new UI_HOST_LOCATOR_MARKER_DEALER_MODE(
-						h.hostId,
-						h.name,
-						h.latitude,
-						h.longitude,
-						license_online_percentage,
-						icon_url,
-						h.address,
-						h.category,
-						h.parsedStoreHours,
-						h.state,
-						h.postalCode,
-						h.city,
-						h.dealerId
-					);
-
-					mapped.generalCategory = h.generalCategory;
-					return mapped;
-
+				if (host_license.length > 0) {
+					online = host_license.filter((i: API_LICENSE_PROPS) => i.piStatus == 1);
+					license_online_percentage = (online.length / host_license.length) * 100;
 				}
-			)
+
+				if (license_online_percentage == 100) {
+					icon_url = 'assets/media-files/markers/online_all.png';
+				} else if (license_online_percentage >= 51 && license_online_percentage < 100) {
+					icon_url = 'assets/media-files/markers/online_many.png';
+				} else if (license_online_percentage < 51 && license_online_percentage > 0) {
+					icon_url = 'assets/media-files/markers/online_few.png';
+				} else {
+					icon_url = 'assets/media-files/markers/offline.png';
+				}
+
+				const mapped = new UI_HOST_LOCATOR_MARKER_DEALER_MODE(
+					h.hostId,
+					h.name,
+					h.latitude,
+					h.longitude,
+					license_online_percentage,
+					icon_url,
+					h.address,
+					h.category,
+					h.parsedStoreHours,
+					h.state,
+					h.postalCode,
+					h.city,
+					h.dealerId
+				);
+
+				mapped.generalCategory = h.generalCategory;
+				return mapped;
+			});
 		}
 	}
 
-	public filterDealerHosts(value){
+	public filterDealerHosts(value) {
 		this.online_licenses = 0;
 		this.offline_licenses = 0;
 		this.isFiltered = true;
 		this.filterStatus = value;
-		this.filterLabelStatus = value == 1? 'Online': 'Offline';
+		this.filterLabelStatus = value == 1 ? 'Online' : 'Offline';
 		this.selected_dealer_hosts = this.unfiltered_dealer_hosts;
 		this.selected_licenses = this.unfiltered_licenses;
-		this.selected_dealer.forEach(dealer => {
-			dealer.hosts = this.selected_dealer_hosts.filter(x => x.dealerId === dealer.dealerId);
-			dealer.licenses = this.selected_licenses.filter(x => x.dealerId === dealer.dealerId);
-			dealer.onlineLicenseCount = dealer.licenses.filter(x => x.piStatus === 1).length;
+		this.selected_dealer.forEach((dealer) => {
+			dealer.hosts = this.selected_dealer_hosts.filter((x) => x.dealerId === dealer.dealerId);
+			dealer.licenses = this.selected_licenses.filter((x) => x.dealerId === dealer.dealerId);
+			dealer.onlineLicenseCount = dealer.licenses.filter((x) => x.piStatus === 1).length;
 			dealer.offlineLicenseCount = dealer.licenses.length - dealer.onlineLicenseCount;
 		});
-		this.selected_dealer_hosts.forEach(x => {
+		this.selected_dealer_hosts.forEach((x) => {
 			this.getLicenseByHost(x.hostId);
 		});
-		this.filtered_licenses = this.selected_licenses.filter(x => x.piStatus === value);
+		this.filtered_licenses = this.selected_licenses.filter((x) => x.piStatus === value);
 		this.selected_licenses = this.filtered_licenses;
-		if(value == 1){
+		if (value == 1) {
 			this.online_licenses = this.filtered_licenses.length;
-		}
-		else{
+		} else {
 			this.offline_licenses = this.filtered_licenses.length;
 		}
 
-		this.selected_hosts = this.filtered_licenses.map(t => t.hostId);
-		this.selected_dealer_hosts = this.selected_dealer_hosts.filter(x => this.selected_hosts.includes(x.hostId));
-		this.selected_dealer.forEach(dealer => {
-			dealer.hosts = dealer.hosts.filter(x => this.selected_hosts.includes(x.hostId));
-			dealer.licenses = dealer.licenses.filter(x => x.piStatus === value);
+		this.selected_hosts = this.filtered_licenses.map((t) => t.hostId);
+		this.selected_dealer_hosts = this.selected_dealer_hosts.filter((x) => this.selected_hosts.includes(x.hostId));
+		this.selected_dealer.forEach((dealer) => {
+			dealer.hosts = dealer.hosts.filter((x) => this.selected_hosts.includes(x.hostId));
+			dealer.licenses = dealer.licenses.filter((x) => x.piStatus === value);
 			dealer.onlineLicenseCount = value == 1 ? dealer.licenses.length : 0;
-			dealer.offlineLicenseCount =  value == 0 ? dealer.licenses.length : 0;
+			dealer.offlineLicenseCount = value == 0 ? dealer.licenses.length : 0;
 		});
 
-		this.selected_dealer_hosts.forEach(x => {
-		 	this.getLicenseByHost(x.hostId);
+		this.selected_dealer_hosts.forEach((x) => {
+			this.getLicenseByHost(x.hostId);
 		});
 		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.filtered_licenses);
 	}
 
-	public clearFilter(){
+	public clearFilter() {
 		this.isFiltered = false;
-		this.filterStatus = "";
-		this.filterLabelStatus = "";
+		this.filterStatus = '';
+		this.filterLabelStatus = '';
 		this.selected_dealer_hosts = this.unfiltered_dealer_hosts;
 		this.selected_licenses = this.unfiltered_licenses;
-		this.selected_dealer.forEach(dealer => {
-			dealer.hosts = this.selected_dealer_hosts.filter(x => x.dealerId === dealer.dealerId);
-			dealer.licenses = this.selected_licenses.filter(x => x.dealerId === dealer.dealerId);
-			dealer.onlineLicenseCount = dealer.licenses.filter(x => x.piStatus === 1).length;
+		this.selected_dealer.forEach((dealer) => {
+			dealer.hosts = this.selected_dealer_hosts.filter((x) => x.dealerId === dealer.dealerId);
+			dealer.licenses = this.selected_licenses.filter((x) => x.dealerId === dealer.dealerId);
+			dealer.onlineLicenseCount = dealer.licenses.filter((x) => x.piStatus === 1).length;
 			dealer.offlineLicenseCount = dealer.licenses.length - dealer.onlineLicenseCount;
 		});
 
-		this.selected_dealer_hosts.forEach(x => {
-		 	this.getLicenseByHost(x.hostId);
-		 });
+		this.selected_dealer_hosts.forEach((x) => {
+			this.getLicenseByHost(x.hostId);
+		});
 		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 		this.online_licenses = 0;
 		this.offline_licenses = 0;
-		this.selected_licenses.forEach(
-			license => {
-				// if (license.piStatus == 1) this.online_licenses += 1;
-				if (license.piStatus === 1) this.online_licenses += 1;
-				else {
-					if (!license.hostId) return;
-					console.log('offline license', license);
-					this.offline_licenses += 1;
-				}
+		this.selected_licenses.forEach((license) => {
+			if (license.piStatus === 1) this.online_licenses += 1;
+			else {
+				if (!license.hostId) return;
+				this.offline_licenses += 1;
 			}
-		);
-
-		// this.offline_licenses = this.selected_licenses.length - this.online_licenses;
+		});
 	}
 
-	exportToCSV()
-	{
-		const replacer = (key, value) => value === null ? '' : value;
+	exportToCSV() {
+		const replacer = (key, value) => (value === null ? '' : value);
 		this.exported_map_marker = [];
 		let isStatus = true;
 
-		this.map_marker.forEach(
-			license => {
-				const data = [...license.storeHours];
-				this.markStoreHours = "";
-				data.forEach(obj => {
-					Object.entries(obj).forEach(([key,value]) => {						
-						if(key === 'day'){
-							this.markStoreHours += value;
-						}
+		this.map_marker.forEach((license) => {
+			const data = [...license.storeHours];
+			this.markStoreHours = '';
+			data.forEach((obj) => {
+				Object.entries(obj).forEach(([key, value]) => {
+					if (key === 'day') {
+						this.markStoreHours += value;
+					}
 
-						if(key === 'status'){
-							if(value){
-								isStatus = true;
-							}
-							else {
-								isStatus = false;
-							}
+					if (key === 'status') {
+						if (value) {
+							isStatus = true;
+						} else {
+							isStatus = false;
 						}
+					}
 
-						if(key === 'periods')
-						{
-							const periods = [...value];
-							periods.forEach(x => {
-								Object.entries(x).forEach(([key,value]) => {
-									if(key === 'open'){
-										if(value !== ""){
-											this.markStoreHours += " (" + value + " - ";
-										}
-										else{
-											if(isStatus){
-												this.markStoreHours += " ( Open 24 hours ) ";
-											}
-											else{
-												this.markStoreHours += " ( Closed ) ";
-											}
+					if (key === 'periods') {
+						const periods = [...value];
+						periods.forEach((x) => {
+							Object.entries(x).forEach(([key, value]) => {
+								if (key === 'open') {
+									if (value !== '') {
+										this.markStoreHours += ' (' + value + ' - ';
+									} else {
+										if (isStatus) {
+											this.markStoreHours += ' ( Open 24 hours ) ';
+										} else {
+											this.markStoreHours += ' ( Closed ) ';
 										}
 									}
-									if(key === 'close'){
-										if(value !== ""){
-											this.markStoreHours += value + ") | "
-										}
-										else {
-											this.markStoreHours += value + " | "
-										}
+								}
+								if (key === 'close') {
+									if (value !== '') {
+										this.markStoreHours += value + ') | ';
+									} else {
+										this.markStoreHours += value + ' | ';
 									}
-								});
+								}
 							});
-						}
-				
-					});
+						});
+					}
 				});
+			});
 
-				const locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
-				const businessName = this.selected_dealer.find(dealer => dealer.dealerId === license.dealerId).businessName;
+			const locatorAddress = license.address + ', ' + license.city + ', ' + license.state + ' ' + license.postalCode;
+			const businessName = this.selected_dealer.find((dealer) => dealer.dealerId === license.dealerId).businessName;
 
-				// used a new object instead of class UI_DEALER_LOCATOR_EXPORT because it will affect other pages if I modify said class
-				const marker = {
-					businessName,
-					host: license.name,
-					address: locatorAddress,
-					generalCategory: license.generalCategory,
-					category: license.category,
-					storeHours: this.markStoreHours,
-					latitude: license.latitude,
-					longitutde: license.longitude,
-				};
+			// used a new object instead of class UI_DEALER_LOCATOR_EXPORT because it will affect other pages if I modify said class
+			const marker = {
+				businessName,
+				host: license.name,
+				address: locatorAddress,
+				generalCategory: license.generalCategory,
+				category: license.category,
+				storeHours: this.markStoreHours,
+				latitude: license.latitude,
+				longitutde: license.longitude
+			};
 
-				this.exported_map_marker.push(marker);
-			}
-		);
+			this.exported_map_marker.push(marker);
+		});
 
 		const header = Object.keys(this.exported_map_marker[0]);
-		let csv = this.exported_map_marker.map(row => header.map(fieldName => JSON.stringify(row[fieldName], replacer)).join(','));
+		let csv = this.exported_map_marker.map((row) => header.map((fieldName) => JSON.stringify(row[fieldName], replacer)).join(','));
 		csv.unshift(header.join(','));
 		let csvArray = csv.join('\r\n');
 
-		const blob = new Blob([csvArray], {type: 'text/csv' });
-		let dealers = "";
-		this.selected_dealer.forEach(dealer => dealers += dealer.businessName + "_");
-		let fileName = dealers + "MapLocator.csv";
+		const blob = new Blob([csvArray], { type: 'text/csv' });
+		let dealers = '';
+		this.selected_dealer.forEach((dealer) => (dealers += dealer.businessName + '_'));
+		let fileName = dealers + 'MapLocator.csv';
 		saveAs(blob, fileName);
 	}
 
-	onRemoveDealer(index: number)
-	{
-		this.selectedDealersControl.value.splice(index,1);
+	onRemoveDealer(index: number) {
+		this.selectedDealersControl.value.splice(index, 1);
 		this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
 		this.onSubmit();
 	}
 
 	private subscribeToDealerSearch(): void {
-
 		const control = this.dealerFilterControl;
 
 		control.valueChanges
 			.pipe(
-				takeUntil(this._unsubscribe), 
-				debounceTime(1000), 
-				map(
-					keyword => {
-						if (control.invalid) return;
+				takeUntil(this._unsubscribe),
+				debounceTime(1000),
+				map((keyword) => {
+					if (control.invalid) return;
 
-						if (keyword && keyword.trim().length > 0) this.searchData(keyword);
-						else {
-							this.getDealers(1);
-						};
+					if (keyword && keyword.trim().length > 0) this.searchData(keyword);
+					else {
+						this.getDealers(1);
 					}
-				)
+				})
 			)
-			.subscribe(() => this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId);
+			.subscribe(() => (this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
 	}
 
-	onSubmit(){
+	onSubmit() {
 		const dealers = this.selectedDealersControl.value as API_DEALER[];
-		const selectedDealers = dealers.map(
-			dealer => {
-				const {dealerId } = dealer;
-				return dealerId;
-			}
-		);
+		const selectedDealers = dealers.map((dealer) => {
+			const { dealerId } = dealer;
+			return dealerId;
+		});
 
-		this.onSelectDealer(selectedDealers)
+		this.onSelectDealer(selectedDealers);
 	}
 
 	onSelectDealer(selectedDealers): void {
@@ -519,59 +486,48 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.offline_licenses = 0;
 		this.selected_dealer_hosts = [];
 		this.selected_licenses = [];
-		this.selected_dealer = this.dealers.filter(dealer => selectedDealers.includes(dealer.dealerId));
-		this.unfiltered_selected_dealer = this.dealers.filter(dealer => selectedDealers.includes(dealer.dealerId));
+		this.selected_dealer = this.dealers.filter((dealer) => selectedDealers.includes(dealer.dealerId));
+		this.unfiltered_selected_dealer = this.dealers.filter((dealer) => selectedDealers.includes(dealer.dealerId));
 
-		this.selected_dealer.forEach(
-			dealer => {
-				dealer.onlineLicenseCount = 0;
-				dealer.offlineLicenseCount = 0;
+		this.selected_dealer.forEach((dealer) => {
+			dealer.onlineLicenseCount = 0;
+			dealer.offlineLicenseCount = 0;
 
-				dealer.hosts.map(
-					host => {
-						this.selected_dealer_hosts.push(host);
-					}
-				);
+			dealer.hosts.map((host) => {
+				this.selected_dealer_hosts.push(host);
+			});
 
-				dealer.licenses.map(
-					license => {
-						if (!license.hostId) return;
-                        if(license.isActivated === 1) {
-                            this.selected_licenses.push(license);
-                        }
-					}
-				);
+			dealer.licenses.map((license) => {
+				if (!license.hostId) return;
+				if (license.isActivated === 1) {
+					this.selected_licenses.push(license);
+				}
+			});
 
-				this.selected_licenses.forEach(
-					license => {
+			this.selected_licenses.forEach((license) => {
+				if (!license.hostId) return;
 
-						if (!license.hostId) return;
+				if (license.piStatus === 1) {
+					this.online_licenses += 1;
+					dealer.onlineLicenseCount += 1;
+					return;
+				}
 
-						if (license.piStatus === 1) {
-							this.online_licenses += 1;
-							dealer.onlineLicenseCount += 1;
-							return;
-						} 
-						
-						this.offline_licenses += 1;
-						dealer.offlineLicenseCount += 1;
-					
-					}
-				);
-			}
-		);
+				this.offline_licenses += 1;
+				dealer.offlineLicenseCount += 1;
+			});
+		});
 
-
-		this.selected_dealer_hosts.forEach(x => {
-        	x.storeHours ? x.parsedStoreHours = JSON.parse(x.storeHours) : x.parsedStoreHours = "-";
-			x.latitude ? x.latitude = parseFloat(x.latitude).toFixed(5) : "-";
-			x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
+		this.selected_dealer_hosts.forEach((x) => {
+			x.storeHours ? (x.parsedStoreHours = JSON.parse(x.storeHours)) : (x.parsedStoreHours = '-');
+			x.latitude ? (x.latitude = parseFloat(x.latitude).toFixed(5)) : '-';
+			x.longitude ? (x.longitude = parseFloat(x.longitude).toFixed(5)) : '-';
 			x.licenses = [];
 			this.selected_licenses.forEach((license: API_LICENSE_PROPS) => {
-				if(license.hostId === x.hostId){
-                    if(license.isActivated === 1) {
-                        x.licenses.push(license);
-                    }
+				if (license.hostId === x.hostId) {
+					if (license.isActivated === 1) {
+						x.licenses.push(license);
+					}
 				}
 			});
 		});
@@ -579,10 +535,11 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.unfiltered_dealer_hosts = this.selected_dealer_hosts;
 		this.unfiltered_licenses = this.selected_licenses;
 		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
-		this.selected_dealer_hosts.forEach(x => {x.icon_url = this.map_marker.filter(y => y.hostId === x.hostId)[0].icon_url});
+		this.selected_dealer_hosts.forEach((x) => {
+			x.icon_url = this.map_marker.filter((y) => y.hostId === x.hostId)[0].icon_url;
+		});
 		this.location_selected = true;
-		if(this.isFiltered)
-		{
+		if (this.isFiltered) {
 			this.filterDealerHosts(this.filterStatus);
 		}
 	}

@@ -14,7 +14,6 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 	styleUrls: ['./reassign-dealer.component.scss']
 })
 export class ReassignDealerComponent implements OnInit, OnDestroy {
-
 	assets_selected = {
 		hosts: true,
 		advertisers: true,
@@ -37,20 +36,19 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 	title = 'Reassign Dealer';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
+
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public current_dealer: { dealer_id: string },
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
-		private _dialog_ref: MatDialogRef<ReassignDealerComponent>) { }
-	
+		private _dialog_ref: MatDialogRef<ReassignDealerComponent>
+	) {}
+
 	ngOnInit() {
 		this.getDealers();
 	}
 
-	ngOnDestroy() {
-
-	}
+	ngOnDestroy() {}
 
 	get can_assign(): boolean {
 		// return this.has_selected_dealer && this.has_asset_toggled;
@@ -58,113 +56,108 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 	}
 
 	get has_asset_toggled(): boolean {
-
 		let result = false;
 
-		Object.values(this.assets_selected).forEach(
-			value => {
-
-				if (value) {
-					result = true;
-					return;
-				}
+		Object.values(this.assets_selected).forEach((value) => {
+			if (value) {
+				result = true;
+				return;
 			}
-		);
+		});
 
 		return result;
-
 	}
 
 	get has_selected_dealer(): boolean {
-
 		if (typeof this.dealer === 'undefined' || !this.dealer) return false;
 		return true;
-
 	}
 
 	getDealers(): void {
-		this._dealer.get_dealers_with_page(this.page, '').pipe(takeUntil(this._unsubscribe)).subscribe(
-			(response: { dealers: API_DEALER[], paging: PAGING }) => {
+		this._dealer
+			.get_dealers_with_page(this.page, '')
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { dealers: API_DEALER[]; paging: PAGING }) => {
+					// remove current dealer from results
+					const dealers = response.dealers;
+					const existingIndex = dealers.findIndex((dealer) => dealer.dealerId === this.current_dealer.dealer_id);
+					if (existingIndex >= 0) response.dealers.splice(existingIndex, 1);
 
-				// remove current dealer from results
-				const dealers = response.dealers;
-				const existingIndex = dealers.findIndex(dealer => dealer.dealerId === this.current_dealer.dealer_id);
-				if (existingIndex >= 0) response.dealers.splice(existingIndex, 1);
-
-				this.dealers = response.dealers;
-				this.page = response.paging.page;
-				this.loading_data = false;
-				this.loading_search = false;
-				this.is_data_ready = true;
-
-			}, 
-			error => console.log('Error retrieving dealers', error)
-		);
+					this.dealers = response.dealers;
+					this.page = response.paging.page;
+					this.loading_data = false;
+					this.loading_search = false;
+					this.is_data_ready = true;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
 	onSelectAsset(event: Event, name: string): void {
 		event.preventDefault();
 
-		Object.keys(this.assets_selected).forEach(
-			key => {
-				if (key === name) this.assets_selected[key] = !this.assets_selected[key];
-			} 
-		);
-
+		Object.keys(this.assets_selected).forEach((key) => {
+			if (key === name) this.assets_selected[key] = !this.assets_selected[key];
+		});
 	}
 
 	onSubmit(): void {
-
 		const oldId = this.current_dealer.dealer_id;
-		const newId = this.dealer.dealerId
+		const newId = this.dealer.dealerId;
 
 		const confirmationModal = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  {
+			data: {
 				status: 'warning',
 				message: 'Reassign Dealer Assets?',
 				return_msg: 'All right, bombs away'
 			}
 		});
 
-		confirmationModal.afterClosed().subscribe(
-			(response: boolean) => {
+		confirmationModal.afterClosed().subscribe((response: boolean) => {
+			if (!response) return;
 
-				if (!response) return;
+			this.is_reassigning = true;
+			this.is_data_ready = false;
 
-				this.is_reassigning = true;
-				this.is_data_ready = false;
-
-				this._dealer.reassign_dealer(oldId, newId).pipe(takeUntil(this._unsubscribe)).subscribe(
-					response => {
+			this._dealer
+				.reassign_dealer(oldId, newId)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(response) => {
 						this.is_reassigning = false;
 						this.is_data_ready = true;
 						this._dealer.onSuccessReassigningDealer.emit();
 						this._dialog_ref.close();
 					},
-					error => console.log('Error reassigning dealer', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
-
-			}
-		);
-
+		});
 	}
 
 	selectedDealer(id: string): void {
-
 		if (id === this.current_dealer.dealer_id) {
 			this.dealer = null;
 			return;
 		}
 
-		this._dealer.get_dealer_by_id(id).pipe(takeUntil(this._unsubscribe)).subscribe(
-			response => {
-				this.dealer = response;
-			},
-			error => console.log('Error retrieving selected dealer data', error)
-		);
-
+		this._dealer
+			.get_dealer_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					this.dealer = response;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
 	searchDealer(keyword: number | string): void {
@@ -172,36 +165,31 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 
 		if (typeof keyword === 'number') this.dealer = null;
 
-		this._dealer.get_search_dealer(keyword).pipe(takeUntil(this._unsubscribe)).subscribe(
-			(response: { paging: PAGING }) => {
-
+		this._dealer
+			.get_search_dealer(keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response: { paging: PAGING }) => {
 				if (response.paging.entities.length <= 0) {
 					this.dealers = [];
 				} else {
-
 					// remove current dealer from search results
-					const entities: { dealerId: string, businessName: string }[] = response.paging.entities;
-					const existingIndex = entities.findIndex(entity => entity.dealerId === this.current_dealer.dealer_id);
+					const entities: { dealerId: string; businessName: string }[] = response.paging.entities;
+					const existingIndex = entities.findIndex((entity) => entity.dealerId === this.current_dealer.dealer_id);
 					if (existingIndex >= 0) response.paging.entities.splice(existingIndex, 1);
 
 					this.dealers = response.paging.entities;
-
 				}
 
 				this.loading_search = false;
 				this.page = response.paging.page;
-			}
-		);
-
+			});
 	}
 
-	searchBoxTrigger(event: { page: number, no_keyword: boolean }): void {
-
+	searchBoxTrigger(event: { page: number; no_keyword: boolean }): void {
 		if (event.no_keyword) {
 			this.dealer = null;
 		}
 
-		this.searchDealer(event.page);	
+		this.searchDealer(event.page);
 	}
-
 }

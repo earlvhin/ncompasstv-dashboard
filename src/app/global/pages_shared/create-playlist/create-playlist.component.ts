@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { moveItemInArray, copyArrayItem } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
@@ -25,21 +25,21 @@ export class CreatePlaylistComponent implements OnInit {
 	creating_playlist: boolean = false;
 	dealer_no_content: boolean = false;
 	dealers: Array<any> = [];
-	dealerid: string = "";
+	dealerid: string = '';
 	dealer_name: string;
 	disable_user_filter: boolean = true;
 	floating_content: boolean = false;
 	is_dealer: boolean = false;
 	is_admin: boolean;
 	invalid_form: boolean = true;
-	media_library_api: any  = [];
-	media_library: any  = [];
+	media_library_api: any = [];
+	media_library: any = [];
 	playlist_info: FormGroup;
-	playlist_content: any  = [];
+	playlist_content: any = [];
 	playlist: API_CREATE_PLAYLIST;
 	playlist_assets: API_CREATE_PLAYLIST_CONTENT[];
 	role_id: string;
-	subscription: Subscription = new Subscription;
+	subscription: Subscription = new Subscription();
 	loading_data: boolean = true;
 	dealers_data: Array<any> = [];
 	loading_search: boolean = false;
@@ -51,8 +51,8 @@ export class CreatePlaylistComponent implements OnInit {
 	type_filter_data: any;
 	user_filtered_data: any;
 	paging: any;
-	search_data: string = "";
-	media_key: string = "";
+	search_data: string = '';
+	media_key: string = '';
 	current_page: string = '1';
 	sort_key: string = 'desc';
 
@@ -64,7 +64,7 @@ export class CreatePlaylistComponent implements OnInit {
 			host: undefined,
 			advertiser: undefined
 		}
-	}
+	};
 
 	searching: boolean = false;
 	no_search_result: boolean = false;
@@ -78,11 +78,10 @@ export class CreatePlaylistComponent implements OnInit {
 		private _dealer: DealerService,
 		private _form: FormBuilder,
 		private _router: Router,
-		private _auth: AuthService,
-	) { }
+		private _auth: AuthService
+	) {}
 
 	ngOnInit() {
-
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
@@ -99,24 +98,20 @@ export class CreatePlaylistComponent implements OnInit {
 		this.getDealers(1);
 		this.getAllContents();
 
-		this.playlist_info = this._form.group(
-			{
-				dealer: ['', Validators.required],
-				playlistName: ['', [Validators.required, Validators.maxLength(50)]],
-				playlistDescription: ['', [Validators.required, Validators.maxLength(100)]]
-			}
-		)
+		this.playlist_info = this._form.group({
+			dealer: ['', Validators.required],
+			playlistName: ['', [Validators.required, Validators.maxLength(50)]],
+			playlistDescription: ['', [Validators.required, Validators.maxLength(100)]]
+		});
 
 		this.subscription.add(
-			this.playlist_info.valueChanges.subscribe(
-				data => {
-					if (this.playlist_info.valid && this.playlist_content.length > 0) {
-						this.invalid_form = false;
-					} else {
-						this.invalid_form = true;
-					}
+			this.playlist_info.valueChanges.subscribe((data) => {
+				if (this.playlist_info.valid && this.playlist_content.length > 0) {
+					this.invalid_form = false;
+				} else {
+					this.invalid_form = true;
 				}
-			)
+			})
 		);
 
 		//Autofill for dealer
@@ -130,7 +125,9 @@ export class CreatePlaylistComponent implements OnInit {
 	}
 
 	// Convenience getter for easy access to form fields
-	get f() { return this.playlist_info.controls; }
+	get f() {
+		return this.playlist_info.controls;
+	}
 
 	// Is draggable
 	isDraggable(e, i) {
@@ -138,23 +135,21 @@ export class CreatePlaylistComponent implements OnInit {
 			this.media_library[i].content_data.is_converted = 1;
 		}
 	}
-	
+
 	// Optimize
 	createPlaylist() {
 		let sequence = 0;
 		this.creating_playlist = true;
 
-		this.playlist_assets = this.playlist_content.map(
-			(c: UI_PLAYLIST_CONTENT) => {
-				return new API_CREATE_PLAYLIST_CONTENT(
-					c.content_data.content_id,
-					c.content_data.handler_id,
-					sequence++,
-					c.content_data.is_fullscreen,
-					c.content_data.file_type === 'webm' ? c.content_data.duration : 20
-				)
-			}
-		)
+		this.playlist_assets = this.playlist_content.map((c: UI_PLAYLIST_CONTENT) => {
+			return new API_CREATE_PLAYLIST_CONTENT(
+				c.content_data.content_id,
+				c.content_data.handler_id,
+				sequence++,
+				c.content_data.is_fullscreen,
+				c.content_data.file_type === 'webm' ? c.content_data.duration : 20
+			);
+		});
 
 		this.playlist = new API_CREATE_PLAYLIST(
 			this.f.dealer.value,
@@ -162,26 +157,24 @@ export class CreatePlaylistComponent implements OnInit {
 			'unset',
 			this.f.playlistDescription.value,
 			this.playlist_assets
-		)
+		);
 
 		if (this.creating_playlist) {
 			this.subscription.add(
 				this._playlist.create_playlist(this.playlist).subscribe(
-					data => {
+					(data) => {
 						this.creating_playlist = false;
 						this.openConfirmationModal();
 					},
-					error => {
-						console.log(error);
-					}
+					(error) => {}
 				)
-			)
+			);
 		}
 	}
 
 	displayFloatingContent(e) {
 		this.floating_content = e.checked;
-		this.current_page = "1";
+		this.current_page = '1';
 		this.getAllContents();
 	}
 
@@ -220,12 +213,7 @@ export class CreatePlaylistComponent implements OnInit {
 		if (event.previousContainer === event.container) {
 			moveItemInArray(event.container.data, event.previousIndex, event.currentIndex);
 		} else {
-			copyArrayItem(
-				event.previousContainer.data,
-				event.container.data,
-				event.previousIndex,
-				event.currentIndex
-			);
+			copyArrayItem(event.previousContainer.data, event.container.data, event.previousIndex, event.currentIndex);
 		}
 	}
 
@@ -239,7 +227,7 @@ export class CreatePlaylistComponent implements OnInit {
 		this.searching = true;
 
 		//to display no dealer selected ui
-		if(this.dealerid == "" && !this.floating_content) {
+		if (this.dealerid == '' && !this.floating_content) {
 			this.no_dealer_not_floating = true;
 		} else {
 			this.no_dealer_not_floating = false;
@@ -249,11 +237,12 @@ export class CreatePlaylistComponent implements OnInit {
 		// if(this.floating_content) {
 		// 	var temp_dealer_if_floating = "";
 		// } else {
-			// var temp_dealer_if_floating = this.dealerid;
+		// var temp_dealer_if_floating = this.dealerid;
 		// }
-		
-		this._content.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content).subscribe(
-			data => {
+
+		this._content
+			.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
+			.subscribe((data) => {
 				this.searching = false;
 				this.media_library_api = data;
 				if (data.iContents && data.iContents.length > 0) {
@@ -261,121 +250,110 @@ export class CreatePlaylistComponent implements OnInit {
 					this.media_library = this.mediaFiles_mapToUI(data);
 					this.filtered_content_data = this.mediaFiles_mapToUI(data);
 				} else {
-					if(this.search_data == "") {
+					if (this.search_data == '') {
 						this.no_content = true;
 					} else {
 						this.no_search_result = true;
 					}
 				}
-			}
-		)
+			});
 	}
 
 	mediaFiles_mapToUI(data) {
 		this.dealer_no_content = false;
 		if (!data.message) {
-			let media_content = data.iContents.map(
-				(c: API_CONTENT) => {
-					let fileThumbnailUrl = '';
-				
-					if (c.fileType === 'webm' || c.fileType === 'mp4') {
-						fileThumbnailUrl = this.renameWebmThumb(c.fileName, c.url)
-					} else {
-						fileThumbnailUrl = c.previewThumbnail || c.thumbnail
-					}
+			let media_content = data.iContents.map((c: API_CONTENT) => {
+				let fileThumbnailUrl = '';
 
-					return new UI_PLAYLIST_CONTENT (
-						new UI_CONTENT(
-							c.playlistContentId,
-							c.createdBy,
-							c.contentId,
-							c.createdByName,
-							c.dealerId,
-							c.duration,
-							c.hostId,
-							c.advertiserId,
-							c.fileName,
-							c.url,
-							c.fileType,
-							c.handlerId,
-							c.dateCreated,
-							c.isFullScreen,
-							c.filesize,
-							fileThumbnailUrl,
-							c.isActive,
-							c.isConverted,
-							c.isProtected,
-							c.uuid,
-							c.title
-						),
-						[]
-					)
+				if (c.fileType === 'webm' || c.fileType === 'mp4') {
+					fileThumbnailUrl = this.renameWebmThumb(c.fileName, c.url);
+				} else {
+					fileThumbnailUrl = c.previewThumbnail || c.thumbnail;
 				}
-			)
+
+				return new UI_PLAYLIST_CONTENT(
+					new UI_CONTENT(
+						c.playlistContentId,
+						c.createdBy,
+						c.contentId,
+						c.createdByName,
+						c.dealerId,
+						c.duration,
+						c.hostId,
+						c.advertiserId,
+						c.fileName,
+						c.url,
+						c.fileType,
+						c.handlerId,
+						c.dateCreated,
+						c.isFullScreen,
+						c.filesize,
+						fileThumbnailUrl,
+						c.isActive,
+						c.isConverted,
+						c.isProtected,
+						c.uuid,
+						c.title
+					),
+					[]
+				);
+			});
 			return media_content;
 		}
 	}
 
 	private renameWebmThumb(filename: string, source: string) {
-		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`
+		return `${source}${filename.substr(0, filename.lastIndexOf('.') + 1)}jpg`;
 	}
 
 	searchData(e) {
 		this.loading_search = true;
 		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe(
-				data => {
-					if (data.paging.entities.length > 0) {
-						this.dealers = data.paging.entities;
-						this.dealers_data = data.paging.entities;
-						this.loading_search = false;
-					} else {
-						this.dealers_data = [];
-						this.loading_search = false;
-					}
-					this.paging = data.paging;
+			this._dealer.get_search_dealer(e).subscribe((data) => {
+				if (data.paging.entities.length > 0) {
+					this.dealers = data.paging.entities;
+					this.dealers_data = data.paging.entities;
+					this.loading_search = false;
+				} else {
+					this.dealers_data = [];
+					this.loading_search = false;
 				}
-			)
-		)
+				this.paging = data.paging;
+			})
+		);
 	}
 
 	getDealers(e) {
-		if(e > 1) {
+		if (e > 1) {
 			this.loading_data = true;
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
-					data => {
-						data.dealers.map(
-							i => {
-								this.dealers.push(i)
-							}
-						)
-						this.paging = data.paging;
-						this.loading_data = false;
-					}
-				)
-			)
+				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+					data.dealers.map((i) => {
+						this.dealers.push(i);
+					});
+					this.paging = data.paging;
+					this.loading_data = false;
+				})
+			);
 		} else {
-			if(this.is_search) {
+			if (this.is_search) {
 				this.loading_search = true;
 			}
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
-					data => {
-						this.dealers = data.dealers;
-						this.dealers_data = data.dealers;
-						this.paging = data.paging;
-						this.loading_data = false;
-						this.loading_search = false;
-					}
-				)
-			)
+				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+					this.dealers = data.dealers;
+					this.dealers_data = data.dealers;
+					this.paging = data.paging;
+					this.loading_data = false;
+					this.loading_search = false;
+				})
+			);
 		}
 	}
 
-	searchBoxTrigger (event) {
+	searchBoxTrigger(event) {
 		this.is_search = event.is_search;
-		this.getDealers(event.page);	
+		this.getDealers(event.page);
 	}
 
 	openConfirmationModal() {
@@ -384,12 +362,10 @@ export class CreatePlaylistComponent implements OnInit {
 			width: '600px'
 		});
 
-		dialog.afterClosed().subscribe(
-			data => {
-				const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-				this._router.navigate([`/${route}/playlists/`]);
-			}
-		)
+		dialog.afterClosed().subscribe((data) => {
+			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+			this._router.navigate([`/${route}/playlists/`]);
+		});
 	}
 
 	mediaViewer_open(a, content, i) {
@@ -398,19 +374,17 @@ export class CreatePlaylistComponent implements OnInit {
 			data: {
 				index: i,
 				content_array: content,
-				selected: a.content_data,
+				selected: a.content_data
 			}
-		})
+		});
 	}
 
 	setContentDuration(e) {
-		this.playlist_content.map(
-			i => {
-				if (i.content_data.playlist_content_id == e.playlist_content_id) {
-					i.content_data.duration = e.duration
-				}
+		this.playlist_content.map((i) => {
+			if (i.content_data.playlist_content_id == e.playlist_content_id) {
+				i.content_data.duration = e.duration;
 			}
-		)
+		});
 	}
 
 	removeContent(i) {
@@ -440,10 +414,10 @@ export class CreatePlaylistComponent implements OnInit {
 					host: undefined,
 					advertiser: undefined
 				}
-			}
+			};
 
-			this.sort_key = "";
-			this.media_key = "";
+			this.sort_key = '';
+			this.media_key = '';
 			this.getAllContents();
 		}
 	}

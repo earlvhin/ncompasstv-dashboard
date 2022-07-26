@@ -16,14 +16,14 @@ import { Router } from '@angular/router';
 import { API_ADVERTISER } from '../../models';
 
 @Component({
-  selector: 'app-edit-single-advertiser',
-  templateUrl: './edit-single-advertiser.component.html',
-  styleUrls: ['./edit-single-advertiser.component.scss'],
-  providers: [TitleCasePipe]
+	selector: 'app-edit-single-advertiser',
+	templateUrl: './edit-single-advertiser.component.html',
+	styleUrls: ['./edit-single-advertiser.component.scss'],
+	providers: [TitleCasePipe]
 })
 export class EditSingleAdvertiserComponent implements OnInit {
 	categories_data: API_PARENTCATEGORY[];
-	cat_data:  any = [];
+	cat_data: any = [];
 	subscription: Subscription = new Subscription();
 	dealer_name: string;
 	initial_dealer: string;
@@ -49,7 +49,7 @@ export class EditSingleAdvertiserComponent implements OnInit {
 			placeholder: 'Ex. School',
 			col: 'col-lg-6',
 			autocomplete: true
-		},	
+		},
 		{
 			label: 'Latitude',
 			control: 'lat',
@@ -92,7 +92,7 @@ export class EditSingleAdvertiserComponent implements OnInit {
 			placeholder: 'Ex. 54001',
 			col: 'col-lg-6'
 		}
-	]
+	];
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _advertiser_data: any,
@@ -103,11 +103,11 @@ export class EditSingleAdvertiserComponent implements OnInit {
 		private _categories: CategoryService,
 		private _auth: AuthService,
 		private _dialog: MatDialog,
-		private _router: Router,
-	) { }
+		private _router: Router
+	) {}
 
 	ngOnInit() {
-		if(this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.is_dealer = true;
 		}
 
@@ -121,63 +121,55 @@ export class EditSingleAdvertiserComponent implements OnInit {
 			region: ['', Validators.required],
 			category: ['', Validators.required],
 			long: ['', Validators.required],
-			lat: ['', Validators.required],
-		})
+			lat: ['', Validators.required]
+		});
 
 		this.getDealers(1);
 		this.getAdvertiserData(this._advertiser_data);
 
 		this.subscription.add(
-			this._categories.get_parent_categories().subscribe(
-				data => {
-					data.map(
-						category => {
-							category.categoryName = this._titlecase.transform(category.categoryName);
-						}
-					);
+			this._categories.get_parent_categories().subscribe((data) => {
+				data.map((category) => {
+					category.categoryName = this._titlecase.transform(category.categoryName);
+				});
 
-					this.categories_data = data;
-				}
-			)
-		)
+				this.categories_data = data;
+			})
+		);
 	}
 
-	get f() { return this.new_advertiser_form.controls; }
+	get f() {
+		return this.new_advertiser_form.controls;
+	}
 
 	getAdvertiserData(id) {
 		this.subscription.add(
 			this._advertiser.get_advertiser_by_id(id).subscribe(
-				response => this.fillForm(response.advertiser),
-				error => console.log('Error retrieving advertiser by ID', error)
+				(response) => this.fillForm(response.advertiser),
+				(error) => {
+					throw new Error(error);
+				}
 			)
-		)
-	  }
-	  
+		);
+	}
+
 	getDealers(e) {
-		console.log("E", e)
-		if(e > 1) {
+		if (e > 1) {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
-					data => {
-						data.dealers.map(
-							i => {
-								this.dealers_data.push(i)
-							}
-						)
-						this.paging = data.paging
-					}
-				)
-			)
+				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+					data.dealers.map((i) => {
+						this.dealers_data.push(i);
+					});
+					this.paging = data.paging;
+				})
+			);
 		} else {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, "").subscribe(
-					data => {
-						console.log("DATA", data)
-						this.dealers_data = data.dealers;
-						this.paging = data.paging
-					}
-				)
-			)
+				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+					this.dealers_data = data.dealers;
+					this.paging = data.paging;
+				})
+			);
 		}
 	}
 
@@ -191,7 +183,7 @@ export class EditSingleAdvertiserComponent implements OnInit {
 		this.f.zip.setValue(data.postalCode);
 		this.f.region.setValue(data.region);
 		this.setToCategory(data.category);
-		this.setDealer(data.dealerId)
+		this.setDealer(data.dealerId);
 
 		this.initial_dealer = data.dealerId;
 	}
@@ -208,18 +200,24 @@ export class EditSingleAdvertiserComponent implements OnInit {
 			this.f.zip.value,
 			this.f.region.value,
 			this.f.address.value,
-			this.f.category.value,
-		)
+			this.f.category.value
+		);
 
 		this.subscription.add(
 			this._advertiser.update_advertiser(newAdvertiserProfile).subscribe(
 				(data: any) => {
-					this.confirmationModal('success', 'Advertiser Details Updated!', 'Hurray! You successfully updated the Advertiser Details', data.id);
-				}, error => {
-					this.confirmationModal('error', 'Advertiser Details Update Failed', 'Sorry, There\'s an error with your submission', null);
+					this.confirmationModal(
+						'success',
+						'Advertiser Details Updated!',
+						'Hurray! You successfully updated the Advertiser Details',
+						data.id
+					);
+				},
+				(error) => {
+					this.confirmationModal('error', 'Advertiser Details Update Failed', "Sorry, There's an error with your submission", null);
 				}
 			)
-		)
+		);
 	}
 
 	confirmationModal(status, message, data, id): void {
@@ -231,68 +229,59 @@ export class EditSingleAdvertiserComponent implements OnInit {
 				message: message,
 				data: data
 			}
-		})
+		});
 
-		dialogRef.afterClosed().subscribe(result => {
+		dialogRef.afterClosed().subscribe((result) => {
 			this.ngOnInit();
 		});
 	}
 
 	setToCategory(e) {
-		if(e != null) {
-			e = e.replace(/_/g," ");
+		if (e != null) {
+			e = e.replace(/_/g, ' ');
 			this.category_selected = this._titlecase.transform(e);
 			this.f.category.setValue(e);
 		}
 	}
 
 	searchData(e) {
-		console.log("E")
 		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe(
-				data => {
-					console.log("DATA", data)
-					if (data.paging.entities.length > 0) {
-						this.dealers_data = data.paging.entities;
-					} else {
-						this.dealers_data = [];
-					}
-					console.log("DEALERS DATA SEARCHED", this.dealers_data)
-					this.paging = data.paging;
+			this._dealer.get_search_dealer(e).subscribe((data) => {
+				if (data.paging.entities.length > 0) {
+					this.dealers_data = data.paging.entities;
+				} else {
+					this.dealers_data = [];
 				}
-			)
-		)
+
+				this.paging = data.paging;
+			})
+		);
 	}
-  	  
+
 	editBusinessName(e) {
-		if(e == true) {
-			this.setDealer(this.initial_dealer)
+		if (e == true) {
+			this.setDealer(this.initial_dealer);
 			this.closed_without_edit = true;
 		} else {
 			this.closed_without_edit = false;
 		}
-		
+
 		this.disable_business_name = e;
 	}
 
 	setDealer(e) {
-		console.log("EE", e)
 		this.f.dealerId.setValue(e);
-		var filtered = this.dealers_data.filter(
-			i => {
-				return i.dealerId == e;
-			}
-		)
-		if(filtered.length == 0) {
+		var filtered = this.dealers_data.filter((i) => {
+			return i.dealerId == e;
+		});
+		if (filtered.length == 0) {
 			this.subscription.add(
-				this._dealer.get_dealer_by_id(e).subscribe(
-					data => {
-						this.current_dealer = data;
-						this.dealers_data.push(this.current_dealer);
-						this.dealer_name = this.current_dealer.businessName;
-					}
-				)
-			)
+				this._dealer.get_dealer_by_id(e).subscribe((data) => {
+					this.current_dealer = data;
+					this.dealers_data.push(this.current_dealer);
+					this.dealer_name = this.current_dealer.businessName;
+				})
+			);
 		} else {
 			this.dealer_name = filtered[0].businessName;
 		}

@@ -3,12 +3,11 @@ import { Subscription } from 'rxjs';
 import { TemplateService } from 'src/app/global/services/template-service/template.service';
 
 @Component({
-  selector: 'app-template-zones',
-  templateUrl: './template-zones.component.html',
-  styleUrls: ['./template-zones.component.scss']
+	selector: 'app-template-zones',
+	templateUrl: './template-zones.component.html',
+	styleUrls: ['./template-zones.component.scss']
 })
 export class TemplateZonesComponent implements OnInit, OnDestroy {
-	
 	// External
 	@Input() zone_name: string;
 	@Input() zone_background: string;
@@ -26,11 +25,10 @@ export class TemplateZonesComponent implements OnInit, OnDestroy {
 	zone_selected: string;
 	private subscriptions: Subscription = new Subscription();
 
-	constructor(private _template: TemplateService) { }
+	constructor(private _template: TemplateService) {}
 
 	ngOnInit() {
-		if (this.is_interactive)
-			this.subscribeToZoneSelect();
+		if (this.is_interactive) this.subscribeToZoneSelect();
 	}
 
 	ngOnDestroy() {
@@ -38,7 +36,6 @@ export class TemplateZonesComponent implements OnInit, OnDestroy {
 	}
 
 	zoneSelect(name: string): void {
-		
 		if (this.is_interactive) {
 			this._template.onSelectZone.emit(name);
 		}
@@ -47,10 +44,11 @@ export class TemplateZonesComponent implements OnInit, OnDestroy {
 	private subscribeToZoneSelect(): void {
 		this.subscriptions.add(
 			this._template.onSelectZone.subscribe(
-				(name: string) => this.zone_selected = name,
-				error => console.log('Error on zone select subscription', error)
+				(name: string) => (this.zone_selected = name),
+				(error) => {
+					throw new Error(error);
+				}
 			)
 		);
 	}
-
 }

@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { PAGING, TAG, TAG_TYPE } from 'src/app/global/models';
-import { TagService,  } from 'src/app/global/services';
+import { TagService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-tags-section',
@@ -12,13 +12,12 @@ import { TagService,  } from 'src/app/global/services';
 	styleUrls: ['./tags-section.component.scss']
 })
 export class TagsSectionComponent implements OnInit, OnDestroy {
-
-	@Input() columns: { name: string, class: string }[];
+	@Input() columns: { name: string; class: string }[];
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
 	@Input() tagTypes: TAG_TYPE[];
-	
+
 	currentFilter = 'All';
 	isLoading = true;
 	filteredOwners: ReplaySubject<any> = new ReplaySubject(1);
@@ -29,10 +28,8 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(
-		private _tag: TagService,
-	) { }
-	
+	constructor(private _tag: TagService) {}
+
 	ngOnInit() {
 		if (!this.tags || this.tags.length <= 0) this.searchTags();
 		this.subscribeToSearch();
@@ -49,15 +46,14 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 	}
 
 	private searchTags(keyword = null, page = 1) {
-
 		this.isLoading = true;
 		let request = this._tag.searchAllTags(keyword, page);
 		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags({ page });
 
-		return request.pipe(takeUntil(this._unsubscribe))
+		return request
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, paging, message }) => {
-
 					if (message) {
 						this.tags = [];
 						return;
@@ -65,32 +61,23 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 					this.tags = tags;
 					this.pagingData = paging;
-
 				},
-				error => console.log('Error searching for tags ', error)
+				(error) => {
+					throw new Error(error);
+				}
 			)
-			.add(() => this.isLoading = false);
-
+			.add(() => (this.isLoading = false));
 	}
 
 	private subscribeToSearch(): void {
-
-		this._tag.onSearch.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				keyword => {
-					if (this.searchFormControl.invalid) return;
-					this.isLoading = true;
-					this.searchTags(keyword).add(() => this.isLoading = false);
-				}
-			);
-
+		this._tag.onSearch.pipe(takeUntil(this._unsubscribe)).subscribe((keyword) => {
+			if (this.searchFormControl.invalid) return;
+			this.isLoading = true;
+			this.searchTags(keyword).add(() => (this.isLoading = false));
+		});
 	}
 
 	private subscribeToRefreshTableData(): void {
-
-		this._tag.onRefreshTagsTable.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.searchTags());
-
+		this._tag.onRefreshTagsTable.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.searchTags());
 	}
-	
 }

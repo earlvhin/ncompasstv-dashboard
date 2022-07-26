@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject, Output, EventEmitter, Input, OnDestroy } from '@angular/core';
-import { MatSlideToggleChange, MAT_DIALOG_DATA } from '@angular/material'
+import { MatSlideToggleChange, MAT_DIALOG_DATA } from '@angular/material';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -8,32 +8,30 @@ import { ConfirmationModalComponent } from '../../../components_shared/page_comp
 import { MediaModalComponent } from '../media-modal/media-modal.component';
 import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service'
+import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { environment as env } from 'src/environments/environment';
 @Component({
 	selector: 'app-media-viewer',
 	templateUrl: './media-viewer.component.html',
 	styleUrls: ['./media-viewer.component.scss']
 })
-
 export class MediaViewerComponent implements OnInit, OnDestroy {
-
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Input() is_view_only = false;
 	@Input() page = 'media-library';
 
-	file_data: { content_array: UI_CONTENT[], index: number, selected: UI_CONTENT, is_advertiser?: boolean, zoneContent?: boolean };
-    file_size_formatted: any;
+	file_data: { content_array: UI_CONTENT[]; index: number; selected: UI_CONTENT; is_advertiser?: boolean; zoneContent?: boolean };
+	file_size_formatted: any;
 	feed_demo_url = `${env.third_party.filestack_screenshot}/`;
 	has_updated_content = false;
 	is_admin = this._isAdmin;
 	is_advertiser = false;
-    is_edit = false;
+	is_edit = false;
 	is_dealer = this._isDealer || this._isSubDealer;
 	updated_content: UI_CONTENT;
 
 	protected _unsubscribe = new Subject<void>();
-	
+
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		private _auth: AuthService,
@@ -42,8 +40,8 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<MediaViewerComponent>,
-		private _host: HostService,
-	) { }
+		private _host: HostService
+	) {}
 
 	ngOnInit() {
 		this.file_data = this._dialog_data;
@@ -75,52 +73,59 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	onSetContentAsFiller(event: MatSlideToggleChange) {
 		const contentId = this.file_data.selected.content_id;
 
-		this._content.update_content_to_filler({ contentId, isFiller: event.checked })
+		this._content
+			.update_content_to_filler({ contentId, isFiller: event.checked })
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				async () => await this.updateContentsArray(contentId),
-				error => console.log('Error updating content to filler', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	reassignMedia() {
 		const temp = [];
-		temp.push({ 'is_edit': true });
-		temp.push({ 'id': this.file_data.selected.content_id });
+		temp.push({ is_edit: true });
+		temp.push({ id: this.file_data.selected.content_id });
 		this.is_edit = true;
 
 		const dialogRef = this._dialog.open(MediaModalComponent, {
 			width: '600px',
 			panelClass: 'app-media-modal',
 			disableClose: true,
-			data: temp,  
+			data: temp
 		});
 
-        dialogRef.afterClosed().subscribe(
-			response => {
-				console.log("VIEWER", response)
-			}
-		)
+		dialogRef.afterClosed().subscribe((response) => {});
 	}
 
 	async onDeleteMedia(event: { stopPropagation() }) {
 		event.stopPropagation();
-		const response: boolean | string = await this.openWarningModal('warning', 'Delete Content', 'Are you sure you want to delete this content','','delete').toPromise();
+		const response: boolean | string = await this.openWarningModal(
+			'warning',
+			'Delete Content',
+			'Are you sure you want to delete this content',
+			'',
+			'delete'
+		).toPromise();
 
 		if (!response || typeof response !== 'string' || response !== 'delete') return;
 
-		const filter = [{ 'contentid': this.file_data.selected.content_id }];
-	
-		this._content.remove_content(filter).pipe(takeUntil(this._unsubscribe))
+		const filter = [{ contentid: this.file_data.selected.content_id }];
+
+		this._content
+			.remove_content(filter)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this._dialog_ref.close(true),
-				error => console.log('Error removing content', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	async onToggleContentProtection(event: { stopPropagation() }) {
-
 		// event.stopPropagation();
 		const isLocked = this.file_data.selected.is_protected;
 		const message = isLocked === 1 ? 'Unlock Content' : 'Lock Content';
@@ -132,36 +137,34 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 
 		const { content_id, is_protected } = this.file_data.selected;
 
-		this._content.update_content_protection({ contentId: content_id, isProtected: is_protected ? 0 : 1 })
+		this._content
+			.update_content_protection({ contentId: content_id, isProtected: is_protected ? 0 : 1 })
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				async () => await this.updateContentsArray(content_id),
-				error => console.log('Error updating content protection', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private configureContents() {
 		this.configureSelectedContent(this.file_data.selected);
 
-		
 		// for cycling through content within the media viewer
-		this.file_data.content_array.map(
-			(data, index) => {
-
-				if (data.content_data) {
-					data.content_data.index = index
-					data = data.content_data
-				} else {
-					data.index = index; 
-				}
-				
+		this.file_data.content_array.map((data, index) => {
+			if (data.content_data) {
+				data.content_data.index = index;
+				data = data.content_data;
+			} else {
+				data.index = index;
 			}
-		);
+		});
 	}
-	
+
 	private configureSelectedContent(selected: UI_CONTENT) {
 		var datetime = new Date(selected.date_uploaded);
-		var  time = datetime.getHours() + ':' + datetime.getMinutes() + " " + (datetime.getHours() < 12 ? 'AM' : 'PM' );
+		var time = datetime.getHours() + ':' + datetime.getMinutes() + ' ' + (datetime.getHours() < 12 ? 'AM' : 'PM');
 		this.file_data.selected.time_uploaded = time;
 		this.file_size_formatted = this.getFileSize(selected.file_size);
 		this.file_data.selected.index = selected.index;
@@ -175,25 +178,33 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			}
 		} else if (selected.file_type in IMAGE_FILETYPE) {
 			this.file_data.selected.file_url = selected.thumbnail;
-		}	
+		}
 
 		// Get Owners
 		this.getOwner(selected);
 	}
 
 	private getAdvertiser(id: string) {
-		this._advertiser.get_advertiser_by_id(id).pipe(takeUntil(this._unsubscribe))
+		this._advertiser
+			.get_advertiser_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => this.file_data.selected.owner_name = data.advertiser.name,
-				error => console.log('Error retrieving advertiser by ID', error)
+				(data) => (this.file_data.selected.owner_name = data.advertiser.name),
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private getDealer(id: string): void {
-		this._dealer.get_dealer_by_id(id).pipe(takeUntil(this._unsubscribe))
+		this._dealer
+			.get_dealer_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => this.file_data.selected.owner_name = data.businessName,
-				error => console.log('Error retrieving dealer by id', error)
+				(data) => (this.file_data.selected.owner_name = data.businessName),
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
@@ -205,22 +216,24 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		const i = Math.floor(Math.log(bytes) / Math.log(k));
 		return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 	}
-	
+
 	private getHost(id: string) {
 		this._host.get_host_by_id(id).subscribe(
-			data => this.file_data.selected.owner_name = data.host.name,
-			error => console.log('Error retrieving host by ID', error)
+			(data) => (this.file_data.selected.owner_name = data.host.name),
+			(error) => {
+				throw new Error(error);
+			}
 		);
 	}
 
 	private getOwner(selected): void {
-		if(selected.advertiser_id != "" && selected.advertiser_id != null) {
+		if (selected.advertiser_id != '' && selected.advertiser_id != null) {
 			selected.owner_type = 'Advertiser';
 			this.getAdvertiser(selected.advertiser_id);
-		} else if (selected.host_id != "" && selected.host_id != null) {
+		} else if (selected.host_id != '' && selected.host_id != null) {
 			selected.owner_type = 'Host';
 			this.getHost(selected.host_id);
-		} else if (selected.dealer_id != "" && selected.dealer_id != null) {
+		} else if (selected.dealer_id != '' && selected.dealer_id != null) {
 			selected.owner_type = 'Dealer';
 			this.getDealer(selected.dealer_id);
 		} else {
@@ -230,46 +243,42 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	}
 
 	private mapContentsToUI(data: API_CONTENT[]): UI_CONTENT[] {
+		return data.map((m: API_CONTENT) => {
+			let fileThumbnailUrl = '';
 
-		return data.map(
-			(m: API_CONTENT) => {
-				let fileThumbnailUrl = '';
-				
-				if (m.fileType === 'webm' || m.fileType === 'mp4') {
-					fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url);
-				} else {
-					fileThumbnailUrl = m.previewThumbnail || m.thumbnail;
-				}
-
-				return new UI_CONTENT(
-					m.playlistContentId,
-					m.createdBy,
-					m.contentId,
-					m.createdByName,
-					m.dealerId,
-					m.duration,
-					m.hostId,
-					m.advertiserId,
-					m.fileName,
-					m.url,
-					m.fileType,
-					m.handlerId,
-					m.dateCreated,
-					m.isFullScreen,
-					m.filesize,
-					fileThumbnailUrl,
-					m.isActive,
-					m.isConverted,
-					m.isProtected,
-					m.uuid,
-					m.title,
-					'',
-					m.createdByName,
-					m.classification
-				);
+			if (m.fileType === 'webm' || m.fileType === 'mp4') {
+				fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url);
+			} else {
+				fileThumbnailUrl = m.previewThumbnail || m.thumbnail;
 			}
-		);
 
+			return new UI_CONTENT(
+				m.playlistContentId,
+				m.createdBy,
+				m.contentId,
+				m.createdByName,
+				m.dealerId,
+				m.duration,
+				m.hostId,
+				m.advertiserId,
+				m.fileName,
+				m.url,
+				m.fileType,
+				m.handlerId,
+				m.dateCreated,
+				m.isFullScreen,
+				m.filesize,
+				fileThumbnailUrl,
+				m.isActive,
+				m.isConverted,
+				m.isProtected,
+				m.uuid,
+				m.title,
+				'',
+				m.createdByName,
+				m.classification
+			);
+		});
 	}
 
 	private openWarningModal(status: string, message: string, data: string, return_msg: string = '', action: string = '') {
@@ -289,23 +298,21 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	}
 
 	private renameWebmThumb(filename: string, source: string) {
-		return `${source}${filename.substr(0, filename.lastIndexOf(".") + 1)}jpg`;
+		return `${source}${filename.substr(0, filename.lastIndexOf('.') + 1)}jpg`;
 	}
 
 	private async updateContentsArray(contentId: string): Promise<void> {
-
 		try {
 			this.has_updated_content = true;
 			this.updated_content = this.mapContentsToUI([await this._content.get_content_by_id(contentId).toPromise()])[0];
-			const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(content => content.content_id === this.updated_content.content_id);
+			const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(
+				(content) => content.content_id === this.updated_content.content_id
+			);
 			this._dialog_data.content_array[index] = this.updated_content;
 			this._dialog_data.selected = this.updated_content;
 			this.file_data = this._dialog_data;
 			this.configureContents();
-		} catch (e) {
-			console.log('Error updating contents array', e)
-		}
-
+		} catch (e) {}
 	}
 
 	protected get _isAdmin() {
@@ -319,5 +326,4 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	protected get _isSubDealer() {
 		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
 	}
-
 }

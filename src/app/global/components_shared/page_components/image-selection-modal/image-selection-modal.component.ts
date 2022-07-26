@@ -9,7 +9,6 @@ import { HostService } from 'src/app/global/services';
 	styleUrls: ['./image-selection-modal.component.scss']
 })
 export class ImageSelectionModalComponent implements OnInit, OnDestroy {
-
 	@Input() placeId: string;
 
 	hasNoData = false;
@@ -19,11 +18,9 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	selectedImageUrl: string;
 
 	protected _unsubscribe = new Subject<void>();
-	
-	constructor(
-		private _host: HostService,
-	) { }
-	
+
+	constructor(private _host: HostService) {}
+
 	ngOnInit() {
 		this.getHostPlaceImages();
 	}
@@ -34,14 +31,13 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	}
 
 	onSelectImage(index: number, url: string) {
-
 		if (index === this.selectedImageIndex) {
 			this.selectedImageIndex = null;
 			return;
 		}
 
 		this.selectedImageIndex = index;
-		this.selectedImageUrl = url; 
+		this.selectedImageUrl = url;
 	}
 
 	returnSelectedImageData() {
@@ -49,14 +45,14 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	}
 
 	private getHostPlaceImages(): void {
-		this._host.get_host_place_images(this.placeId)
+		this._host
+			.get_host_place_images(this.placeId)
 			.pipe(
 				takeUntil(this._unsubscribe),
-				map(response => response.images)
+				map((response) => response.images)
 			)
 			.subscribe(
-				response => {
-
+				(response) => {
 					if (!response) {
 						this.hasNoData = true;
 						return;
@@ -64,11 +60,9 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 
 					this.images = response;
 				},
-				error => {
-					console.log('No images found');
+				(error) => {
 					this.hasNoData = true;
 				}
 			);
 	}
-	
 }

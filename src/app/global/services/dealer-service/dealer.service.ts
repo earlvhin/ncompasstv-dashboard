@@ -13,8 +13,8 @@ import { BaseService } from '../base.service';
 export class DealerService extends BaseService {
 	onSuccessReassigningDealer = new EventEmitter<null>();
 	onDealerDataLoaded = new EventEmitter<{ email: string }>();
-	
-    api_get_dealer_total() {
+
+	api_get_dealer_total() {
 		return this.getRequest(`${this.getters.api_get_dealer_total}`);
 	}
 
@@ -67,8 +67,7 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize=15) {
-        console.log("PZ", pageSize)
+	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15) {
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
 		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
@@ -125,11 +124,23 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealer_by_id}${id}`).map((data) => data.dealer);
 	}
 
-	get_all_dealer_values(page, searchKey, column, order, pageSize=15) {
-		return this.getRequest(`${this.getters.api_get_all_dealer_values}` + '?page=' + `${page}` + '&search=' + `${searchKey}` + '&sortColumn=' + `${column}` + '&sortOrder=' + `${order}` + '&pageSize=' + `${pageSize}`);
+	get_all_dealer_values(page, searchKey, column, order, pageSize = 15) {
+		return this.getRequest(
+			`${this.getters.api_get_all_dealer_values}` +
+				'?page=' +
+				`${page}` +
+				'&search=' +
+				`${searchKey}` +
+				'&sortColumn=' +
+				`${column}` +
+				'&sortOrder=' +
+				`${order}` +
+				'&pageSize=' +
+				`${pageSize}`
+		);
 	}
-    
-    get_dealer_values_by_id(id: string): Observable<API_DEALER_VALUES | { message: string }> {
+
+	get_dealer_values_by_id(id: string): Observable<API_DEALER_VALUES | { message: string }> {
 		return this.getRequest(`${this.getters.api_get_dealer_values}${id}`);
 	}
 
@@ -163,7 +174,6 @@ export class DealerService extends BaseService {
 	}
 
 	save_credit_card_details(data: UI_CREDIT_CARD_DETAILS, type = 'create'): Observable<{ card: API_CREDIT_CARD_DETAILS }> {
-
 		let baseUrl: any = this.creators;
 		if (type === 'update') baseUrl = this.updaters;
 		const url = baseUrl['dealer_credit_card_details'];
@@ -186,7 +196,7 @@ export class DealerService extends BaseService {
 		return this.postRequest(requestUrl, data, options);
 	}
 
-    upload_contract_files(data) {
+	upload_contract_files(data) {
 		return this.postRequest(`${this.creators.dealer_contract_files}`, data);
 	}
 

@@ -9,16 +9,15 @@ import { GLOBAL_SETTINGS } from '../../models/api_global_settings.model';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 
 @Component({
-  selector: 'app-tools',
-  templateUrl: './tools.component.html',
-  styleUrls: ['./tools.component.scss']
+	selector: 'app-tools',
+	templateUrl: './tools.component.html',
+	styleUrls: ['./tools.component.scss']
 })
 export class ToolsComponent implements OnInit {
-
 	activity_code_form: FormGroup;
 	activities: any;
 	global_settings_form: FormGroup;
-	title: string = "Administrative Tools";
+	title: string = 'Administrative Tools';
 	remote_update_disabled: boolean;
 	remote_reboot_disabled: boolean;
 	timeout_duration: number;
@@ -28,41 +27,28 @@ export class ToolsComponent implements OnInit {
 
 	_socket: any;
 
-	constructor(
-		private _dialog: MatDialog,
-		private _form: FormBuilder,
-		private _tool: ToolsService
-	) { 
+	constructor(private _dialog: MatDialog, private _form: FormBuilder, private _tool: ToolsService) {
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
-			query: 'client=Dashboard__ToolsComponent',
+			query: 'client=Dashboard__ToolsComponent'
 		});
-
 	}
 
 	ngOnInit() {
-		this._socket.on('connect', () => {
-			console.log('#ToolsComponent - Connected to Socket Server');
-		})
-		
-		this._socket.on('disconnect', () => {
-			console.log('#ToolsComponent - Disconnnected to Socket Server');
-		})
+		this._socket.on('connect', () => {});
 
-		this.activity_code_form = this._form.group(
-			{
-				activityCode: ['', Validators.required],
-				activityDescription: ['', Validators.required]
-			}
-		)
+		this._socket.on('disconnect', () => {});
 
-		this.global_settings_form = this._form.group(
-			{
-				vistarNetworkId: ['', Validators.required],
-				vistarApiKey: ['', Validators.required]
-			}
-		)
-		
+		this.activity_code_form = this._form.group({
+			activityCode: ['', Validators.required],
+			activityDescription: ['', Validators.required]
+		});
+
+		this.global_settings_form = this._form.group({
+			vistarNetworkId: ['', Validators.required],
+			vistarApiKey: ['', Validators.required]
+		});
+
 		this.disableTimeoutChecker();
 
 		this.getActivityCode();
@@ -78,7 +64,6 @@ export class ToolsComponent implements OnInit {
 
 		if (admin_tools_disabled) {
 			this.timeout_duration = moment().diff(moment(admin_tools_disabled, 'MMMM Do YYYY, h:mm:ss a'), 'minutes');
-			console.log(admin_tools_disabled, this.timeout_duration)
 
 			if (this.timeout_duration >= 10) {
 				this.remote_update_disabled = false;
@@ -94,28 +79,28 @@ export class ToolsComponent implements OnInit {
 	}
 
 	removeAllScreenshots() {
-		this.warningModal('warning', 'Delete All Screenshots', 'Are you sure you want to delete all screenshots?','','delete_screenshots')
+		this.warningModal('warning', 'Delete All Screenshots', 'Are you sure you want to delete all screenshots?', '', 'delete_screenshots');
 	}
 
 	remoteUpdateAll() {
-		this.warningModal('warning', 'Update and Reboot', 'Update and reboot all online players?','','update_reboot')
+		this.warningModal('warning', 'Update and Reboot', 'Update and reboot all online players?', '', 'update_reboot');
 	}
 
 	remoteRebootAll() {
-		this.warningModal('warning', 'Reboot Players', 'Are you sure you want reboot all online players?','','reboot_only')
+		this.warningModal('warning', 'Reboot Players', 'Are you sure you want reboot all online players?', '', 'reboot_only');
 	}
 
 	remoteRunTerminal() {
-		this.warningModal('warning', 'Run Script', 'Are you sure you want to run this script to all players?', '', 'run_script')
+		this.warningModal('warning', 'Run Script', 'Are you sure you want to run this script to all players?', '', 'run_script');
 	}
 
 	renewSocket() {
-		this.warningModal('warning', 'Renew Socket', 'You are about to renew all socket connections?', '', 'renew_socket')
+		this.warningModal('warning', 'Renew Socket', 'You are about to renew all socket connections?', '', 'renew_socket');
 	}
 
 	warningModal(status, message, data, return_msg, action): void {
 		this._dialog.closeAll();
-		
+
 		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -126,34 +111,29 @@ export class ToolsComponent implements OnInit {
 				return_msg: return_msg,
 				action: action
 			}
-		})
+		});
 
-		dialogRef.afterClosed().subscribe(result => {
+		dialogRef.afterClosed().subscribe((result) => {
 			if (result) {
-				if(result == 'update_reboot') {
-					console.log('D_system_update');
+				if (result == 'update_reboot') {
 					this._socket.emit('D_system_update');
-				} else if(result == 'reboot_only') {
-					console.log('D_system_reboot');
+				} else if (result == 'reboot_only') {
 					this._socket.emit('D_system_reboot');
-				} else  if(result == 'run_script') {
-					console.log(this.terminal_value);
+				} else if (result == 'run_script') {
 					this.terminal_entered_scripts.push(this.terminal_value);
 					this._socket.emit('D_run_script_to_all', this.terminal_value);
-				} else if(result == 'renew_socket') {
-					this._tool.resetSocketConnection().subscribe(
-						data => console.log(data),
-						error => console.log(error)
-					)
-				} else if(result == 'delete_screenshots') {
-					this._tool.deleteScreenshots().subscribe(
-						data => console.log(data),
-						error => console.log(error)
-					)
+				} else if (result == 'renew_socket') {
+					this._tool.resetSocketConnection().subscribe((data) => (error) => {
+						throw new Error(error);
+					});
+				} else if (result == 'delete_screenshots') {
+					this._tool.deleteScreenshots().subscribe((data) => (error) => {
+						throw new Error(error);
+					});
 				}
-	
+
 				const now = moment().format('MMMM Do YYYY, h:mm:ss a');
-				localStorage.setItem('admin_tools_disabled', `${now}`)
+				localStorage.setItem('admin_tools_disabled', `${now}`);
 				this.timeout_duration = 0;
 				this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
 				this.remote_reboot_disabled = true;
@@ -163,31 +143,21 @@ export class ToolsComponent implements OnInit {
 	}
 
 	getGlobalSettings() {
-		this._tool.getGlobalSettings().subscribe(
-			data => {
-				console.log(data);
-			}
-		)
+		this._tool.getGlobalSettings().subscribe((data) => {});
 	}
 
 	getActivityCode() {
-		this._tool.getActivities().subscribe(
-			data => {
-				this.activities = data;
-			}
-		)
+		this._tool.getActivities().subscribe((data) => {
+			this.activities = data;
+		});
 	}
 
-	setGlobalSettings() {
-		console.log(this.global_settings_form.value);
-	}
+	setGlobalSettings() {}
 
 	saveActivity() {
-		this._tool.createActivity(this.activity_code_form.value).subscribe(
-			data => {
-				this.activity_code_form.reset();
-				this.getActivityCode();
-			}
-		)
+		this._tool.createActivity(this.activity_code_form.value).subscribe((data) => {
+			this.activity_code_form.reset();
+			this.getActivityCode();
+		});
 	}
 }

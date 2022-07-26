@@ -5,12 +5,12 @@ import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from 'src/app/global/models';
-import { DealerService } from 'src/app/global/services';
-import { BillingService } from 'src/app/global/services/billing-service/billing-service';
-import { AddCardComponent } from 'src/app/global/pages_shared/profile-setting/payment-setting/add-card/add-card.component';
-import { ViewCardsComponent } from 'src/app/global/pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
+import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from '../../../models';
+import { DealerService } from '../../../services';
+import { BillingService } from '../../../services/billing-service/billing-service';
+import { AddCardComponent } from '../../../pages_shared/profile-setting/payment-setting/add-card/add-card.component';
+import { ViewCardsComponent } from '../../../pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 
 @Component({
 	selector: 'app-payment-setting',
@@ -22,9 +22,9 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	@Input() dealerEmail: string;
 	@Input() dealerId: string;
 
-	addressTypes = [ 'billing', 'dealer' ];
+	addressTypes = ['billing', 'dealer'];
 	billingDetails: any;
-	cardNumber: any = "";
+	cardNumber: any = '';
 	cardSelected: any;
 	dealerAddressForm: FormGroup;
 	cardForm: FormGroup;
@@ -33,29 +33,24 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	paymentSettingForm: FormGroup;
 
 	actualCreditCardDetails: any = [];
-	addressFormFields = [ 'AddressLine1', 'AddressLine2', 'AddressCity', 'AddressState', 'AddressZip' ];
+	addressFormFields = ['AddressLine1', 'AddressLine2', 'AddressCity', 'AddressState', 'AddressZip'];
 	protected _unsubscribe = new Subject<void>();
-	
-	constructor(
-		private _billing: BillingService,
-		private _dealer: DealerService,
-		private _dialog: MatDialog,
-		private _formBuilder: FormBuilder,
-	) { }
-	
+
+	constructor(private _billing: BillingService, private _dealer: DealerService, private _dialog: MatDialog, private _formBuilder: FormBuilder) {}
+
 	ngOnInit() {
 		this.subscribeToDealerDataLoaded();
 		this.initializeForm();
 		this.getCreditCards();
-        this.cardForm.disable();
-        this.cardNumber = ''
+		this.cardForm.disable();
+		this.cardNumber = '';
 	}
 
 	// ngOnChanges(changes: SimpleChanges): void {
 	// 	this.dealerEmail = changes.dealerEmail.currentValue;
-    //     // if(this.cardForm) {
-    //         this.cardForm.get('Email').patchValue(this.dealerEmail);
-    //     // }
+	//     // if(this.cardForm) {
+	//         this.cardForm.get('Email').patchValue(this.dealerEmail);
+	//     // }
 	// }
 
 	ngOnDestroy(): void {
@@ -66,123 +61,127 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	onSetAsCurrentAddress(event): void {
 		if (event.checked) {
 			this.paymentSettingForm.patchValue({
-                AddressLine1: this.dealerAddressForm.get('AddressLine1').value,
-                AddressCity: this.dealerAddressForm.get('AddressCity').value,
-                AddressState: this.dealerAddressForm.get('AddressState').value,
-                AddressZip: this.dealerAddressForm.get('AddressZip').value,
-            });
+				AddressLine1: this.dealerAddressForm.get('AddressLine1').value,
+				AddressCity: this.dealerAddressForm.get('AddressCity').value,
+				AddressState: this.dealerAddressForm.get('AddressState').value,
+				AddressZip: this.dealerAddressForm.get('AddressZip').value
+			});
 		} else {
-            this.populateBillingAddress();
-        }
+			this.populateBillingAddress();
+		}
 	}
 
-    updateBillingDetails() {
-        var billing = {
-            DealerId: this.dealerId,
-            AddressLine1: this.paymentSettingForm.get('AddressLine1').value,
-            AddressLine2: this.paymentSettingForm.get('AddressLine2').value,
-            AddressCity: this.paymentSettingForm.get('AddressCity').value,
-            AddressState: this.paymentSettingForm.get('AddressState').value,
-            AddressZip: this.paymentSettingForm.get('AddressZip').value,
-        }
+	updateBillingDetails() {
+		var billing = {
+			DealerId: this.dealerId,
+			AddressLine1: this.paymentSettingForm.get('AddressLine1').value,
+			AddressLine2: this.paymentSettingForm.get('AddressLine2').value,
+			AddressCity: this.paymentSettingForm.get('AddressCity').value,
+			AddressState: this.paymentSettingForm.get('AddressState').value,
+			AddressZip: this.paymentSettingForm.get('AddressZip').value
+		};
 
-        this._billing.update_billing_details(billing).pipe(takeUntil(this._unsubscribe)).subscribe(
-            response => {
-                if(response) {
-                    this.openConfirmationModal('success', 'Success!', 'Billing Address successfully saved.');
-                }
-            }
-        )
-    }
+		this._billing
+			.update_billing_details(billing)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if (response) {
+					this.openConfirmationModal('success', 'Success!', 'Billing Address successfully saved.');
+				}
+			});
+	}
 
-    openConfirmationModal(status, message, data): void {
+	openConfirmationModal(status, message, data): void {
 		var dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  { status, message, data }
-		})
+			data: { status, message, data }
+		});
 
-		dialog.afterClosed().subscribe(() =>
-            this.ngOnInit(),
-        );
+		dialog.afterClosed().subscribe(() => this.ngOnInit());
 	}
 
-    deleteCard() {
-        this.warningModal('warning', 'Delete Card', 'Are you sure you want to delete this card?','','delete_card', this.cardSelected[0].id)
-    }
+	deleteCard() {
+		this.warningModal('warning', 'Delete Card', 'Are you sure you want to delete this card?', '', 'delete_card', this.cardSelected[0].id);
+	}
 
-    warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
-        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-            width: '500px',
-            height: '350px',
-            data: { status, message, data, return_msg, action }
-        });
+	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data, return_msg, action }
+		});
 
-        dialogRef.afterClosed().subscribe(result => {
-            switch(result) {
-                case 'delete_card': 
-                    var card_to_delete = {
-                        cardId: this.cardSelected[0].id,
-                        dealerId: this.dealerId,
-                    }
-                    this._billing.delete_credit_card(card_to_delete).pipe(takeUntil(this._unsubscribe)).subscribe(
-                        response => {
-                            this.openConfirmationModal('success', 'Success!', 'Credit card successfully deleted.');
-                        } ,(error: HttpErrorResponse) => {
-                            console.log(error)
-                            if (error.status === 400) {
-                                this.openConfirmationModal('error', 'Failed!', error.error.message);
-                            }
-                        }
-                    )
-                    this.ngOnInit();
-                    break;
-                default:
-            }
-        });
-    }
-    
-    updateCard() {
-        var card_to_update = {
-            cardId: this.cardSelected[0].id,
-            dealerId: this.dealerId,
-            email: this.dealerEmail,
-            Name:  this.cardForm.get('Name').value,
-            ExpirationYear:  this.cardForm.get('ExpirationYear').value,
-            ExpirationMonth:  this.cardForm.get('ExpirationMonth').value,
-        }
-        this._billing.update_credit_card(card_to_update).pipe(takeUntil(this._unsubscribe)).subscribe(
-            response => {
-                this.openConfirmationModal('success', 'Success!', 'Credit card details successfully updated.');
-            } ,(error: HttpErrorResponse) => {
-                if (error.status === 400) {
-                    this.openConfirmationModal('error', 'Failed!', error.error.message);
-                }
-            }
-        )
-    }
+		dialogRef.afterClosed().subscribe((result) => {
+			switch (result) {
+				case 'delete_card':
+					var card_to_delete = {
+						cardId: this.cardSelected[0].id,
+						dealerId: this.dealerId
+					};
+					this._billing
+						.delete_credit_card(card_to_delete)
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe(
+							(response) => {
+								this.openConfirmationModal('success', 'Success!', 'Credit card successfully deleted.');
+							},
+							(error: HttpErrorResponse) => {
+								if (error.status === 400) {
+									this.openConfirmationModal('error', 'Failed!', error.error.message);
+								}
+							}
+						);
+					this.ngOnInit();
+					break;
+				default:
+			}
+		});
+	}
 
-    cardSelection(data) {
-        if(data != "") {
-            this.cardSelected = this.actualCreditCardDetails.filter(
-                card => {
-                    return card.last4 === data.value
-                }
-            )
-    
-            this.cardNumber = this.cardSelected[0].last4;
-            this.cardForm.patchValue({
-                Name: this.cardSelected[0].name,
-                ExpirationMonth: this.cardSelected[0].exp_month,
-                ExpirationYear: this.cardSelected[0].exp_year,
-                Cvc: 123,
-            });
-    
-            this.cardForm.enable();
-        } else {
-            this.cardForm.disable();
-        }
-    }
+	updateCard() {
+		var card_to_update = {
+			cardId: this.cardSelected[0].id,
+			dealerId: this.dealerId,
+			email: this.dealerEmail,
+			Name: this.cardForm.get('Name').value,
+			ExpirationYear: this.cardForm.get('ExpirationYear').value,
+			ExpirationMonth: this.cardForm.get('ExpirationMonth').value
+		};
+		this._billing
+			.update_credit_card(card_to_update)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					this.openConfirmationModal('success', 'Success!', 'Credit card details successfully updated.');
+				},
+				(error: HttpErrorResponse) => {
+					if (error.status === 400) {
+						this.openConfirmationModal('error', 'Failed!', error.error.message);
+					}
+				}
+			);
+	}
+
+	cardSelection(data) {
+		if (data != '') {
+			this.cardSelected = this.actualCreditCardDetails.filter((card) => {
+				return card.last4 === data.value;
+			});
+
+			this.cardNumber = this.cardSelected[0].last4;
+			this.cardForm.patchValue({
+				Name: this.cardSelected[0].name,
+				ExpirationMonth: this.cardSelected[0].exp_month,
+				ExpirationYear: this.cardSelected[0].exp_year,
+				Cvc: 123
+			});
+
+			this.cardForm.enable();
+		} else {
+			this.cardForm.disable();
+		}
+	}
 
 	private fillOutDealerAddressForm(): void {
 		const { address, city, state, zip } = this.currentUser.roleInfo;
@@ -195,97 +194,91 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 		this.dealerAddressForm.disable();
 	}
 
-    addCard() {
-        const dialogRef = this._dialog.open(AddCardComponent, {
+	addCard() {
+		const dialogRef = this._dialog.open(AddCardComponent, {
 			width: '700px',
 			panelClass: 'app-add-card',
 			disableClose: true,
-            data: {
-                email: this.dealerEmail,
-                id: this.dealerId
-            },
+			data: {
+				email: this.dealerEmail,
+				id: this.dealerId
+			}
 		});
-		
-		dialogRef.afterClosed()
-			.subscribe(
-				response => {
-                    this.ngOnInit();
-                },
-		);
 
-    }
+		dialogRef.afterClosed().subscribe((response) => {
+			this.ngOnInit();
+		});
+	}
 
 	private getCreditCards(): void {
-		this._dealer.get_credit_cards(this.dealerId).pipe(takeUntil(this._unsubscribe))
+		this._dealer
+			.get_credit_cards(this.dealerId)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
-                    if(!response.message) {
-                        // if (!response.cards) {
-                            this.dealerEmail = response.email;
-                            this.cardForm.get('Email').patchValue(this.dealerEmail);
-                        //     return; 
-                        // }
+				(response) => {
+					if (!response.message) {
+						// if (!response.cards) {
+						this.dealerEmail = response.email;
+						this.cardForm.get('Email').patchValue(this.dealerEmail);
+						//     return;
+						// }
 						if (response.addressBook && response.addressBook.length > 0) {
-                            this.billingDetails = response.addressBook.filter(address => address.typeId === 1);
-                            this.populateBillingAddress();
-                        } else {
-                            this.billingDetails = [];
-                        }
-                        this.actualCreditCardDetails = response.cards.data;
-                        this.actualCreditCardDetails.map(
-                            card => {
-                                card.brand = card.brand.toLowerCase()
-                            }
-                        )
-                        this.loadingDetails = false;
-                    } else {
-                        this.actualCreditCardDetails = [];
-                        this.loadingDetails = false;
-                    }
-				},(error: HttpErrorResponse) => {
+							this.billingDetails = response.addressBook.filter((address) => address.typeId === 1);
+							this.populateBillingAddress();
+						} else {
+							this.billingDetails = [];
+						}
+						this.actualCreditCardDetails = response.cards.data;
+						this.actualCreditCardDetails.map((card) => {
+							card.brand = card.brand.toLowerCase();
+						});
+						this.loadingDetails = false;
+					} else {
+						this.actualCreditCardDetails = [];
+						this.loadingDetails = false;
+					}
+				},
+				(error: HttpErrorResponse) => {
 					if (error.status === 400) {
 						// this.hasCreditCardSaved = false;
-                        console.log("YES")
-                        this.loadingDetails = false;
+
+						this.loadingDetails = false;
 					}
 				}
 			);
 	}
 
-    populateBillingAddress() {
-        if(this.billingDetails.length > 0) {
-            this.paymentSettingForm.patchValue({
-                AddressLine1: this.billingDetails[0].address,
-                AddressCity: this.billingDetails[0].city,
-                AddressState: this.billingDetails[0].state,
-                AddressZip: this.billingDetails[0].zip
-            });
-        } else {
-            this.paymentSettingForm.patchValue({
-                AddressLine1: '',
-                AddressCity: '',
-                AddressState: '',
-                AddressZip: ''
-            });
-        }
-
-    }
+	populateBillingAddress() {
+		if (this.billingDetails.length > 0) {
+			this.paymentSettingForm.patchValue({
+				AddressLine1: this.billingDetails[0].address,
+				AddressCity: this.billingDetails[0].city,
+				AddressState: this.billingDetails[0].state,
+				AddressZip: this.billingDetails[0].zip
+			});
+		} else {
+			this.paymentSettingForm.patchValue({
+				AddressLine1: '',
+				AddressCity: '',
+				AddressState: '',
+				AddressZip: ''
+			});
+		}
+	}
 
 	private initializeForm(): void {
 		let paymentSettingFormGroup = {};
 		let dealerAddressFormGroup = {};
 		let cardFormGroup = {};
-		this._formFields.forEach(
-			field => {
-				let value = field.value;
-				let validators: any[] = [];
-				if (field.is_required) validators.push(Validators.required);
-				if (field.name === 'Cvc') validators.push(Validators.minLength(3));
-				if (this.addressFormFields.includes(field.name)) dealerAddressFormGroup[field.name] = [ null, validators ];
-				paymentSettingFormGroup[field.name] = [ value, validators ];
-				cardFormGroup[field.name] = [ value, validators ];
-			}
-		);
+		this._formFields.forEach((field) => {
+			let value = field.value;
+			let validators: any[] = [];
+			if (field.is_required) validators.push(Validators.required);
+			if (field.name === 'Cvc') validators.push(Validators.minLength(3));
+			if (this.addressFormFields.includes(field.name)) dealerAddressFormGroup[field.name] = [null, validators];
+			paymentSettingFormGroup[field.name] = [value, validators];
+			cardFormGroup[field.name] = [value, validators];
+		});
 		this.paymentSettingForm = this._formBuilder.group(paymentSettingFormGroup);
 		this.dealerAddressForm = this._formBuilder.group(dealerAddressFormGroup);
 		this.cardForm = this._formBuilder.group(cardFormGroup);
@@ -294,12 +287,10 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToDealerDataLoaded(): void {
-		this._dealer.onDealerDataLoaded.pipe(takeUntil(this._unsubscribe)).subscribe(
-            response => this.dealerEmail = response.email
-        );
+		this._dealer.onDealerDataLoaded.pipe(takeUntil(this._unsubscribe)).subscribe((response) => (this.dealerEmail = response.email));
 	}
 
-	protected get _formFields(): { name: string, label: string, type: string, value: any, is_required: boolean, maxLength?: number }[] {
+	protected get _formFields(): { name: string; label: string; type: string; value: any; is_required: boolean; maxLength?: number }[] {
 		return [
 			{ name: 'Number', label: 'Card Number', type: 'number', value: null, is_required: true, maxLength: 20 },
 			{ name: 'Name', label: 'Name on card', type: 'string', value: null, is_required: true },
@@ -314,20 +305,17 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 			{ name: 'AddressZip', label: 'ZIP Code', type: 'string', value: null, is_required: false }
 		];
 	}
-	
-    viewAllCards() {
-        const dialogRef = this._dialog.open(ViewCardsComponent, {
+
+	viewAllCards() {
+		const dialogRef = this._dialog.open(ViewCardsComponent, {
 			width: '700px',
 			panelClass: 'app-view-cards',
 			disableClose: true,
-            data: this.actualCreditCardDetails,
+			data: this.actualCreditCardDetails
 		});
 
-		dialogRef.afterClosed()
-			.subscribe(
-				response => {
-                    this.ngOnInit();
-                },
-		);
-    }
+		dialogRef.afterClosed().subscribe((response) => {
+			this.ngOnInit();
+		});
+	}
 }

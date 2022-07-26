@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { TAG, TAG_TYPE, TAG_OWNER, PAGING } from 'src/app/global/models';
-import { TagService,  } from 'src/app/global/services';
+import { TagService } from 'src/app/global/services';
 import { EditTagComponent } from '../../dialogs';
 
 @Component({
@@ -14,7 +14,6 @@ import { EditTagComponent } from '../../dialogs';
 	styleUrls: ['./tags-table.component.scss']
 })
 export class TagsTableComponent implements OnInit, OnDestroy {
-
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
@@ -28,15 +27,12 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	@Output() onClickPageNumber = new EventEmitter<number>();
 
 	ownerIcons: any;
-	page: number
+	page: number;
 	selectedArray: any = [];
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(
-		private _dialog: MatDialog,
-		private _tag: TagService
-	) { }
-	
+	constructor(private _dialog: MatDialog, private _tag: TagService) {}
+
 	ngOnInit() {
 		this.ownerIcons = this.ownerIconsList;
 	}
@@ -47,12 +43,12 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	}
 
 	async onDeleteTag(id: string): Promise<void> {
-		
 		const response = await this.openConfirmAPIRequestDialog('delete_tag').toPromise();
 
 		if (!response) return;
 
-		this._tag.deleteTag([id])
+		this._tag
+			.deleteTag([id])
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -60,18 +56,19 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsTable.emit();
 					this._tag.onRefreshTagsCount.emit();
 				},
-				error => console.log('Error deleting tag', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	async onDeleteAllTagsFromOwner(ownerId: string): Promise<void> {
-
 		const response = await this.openConfirmAPIRequestDialog('delete_all_tags_from_owner').toPromise();
 
 		if (!response) return;
 
-		this._tag.deleteAllTagsFromOwner(ownerId)
+		this._tag
+			.deleteAllTagsFromOwner(ownerId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -79,17 +76,19 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsTable.emit();
 					this._tag.onRefreshTagsCount.emit();
 				},
-				error => console.log('Error deleting all tags from owner', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	async onDeleteTagFromOwner(tagId: string, ownerId: string): Promise<void> {
-	
 		const response = await this.openConfirmAPIRequestDialog('delete_tag_from_owner').toPromise();
 
 		if (!response) return;
 
-		this._tag.deleteTagByIdAndOwner(tagId, ownerId)
+		this._tag
+			.deleteTagByIdAndOwner(tagId, ownerId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -97,9 +96,10 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsTable.emit();
 					this._tag.onRefreshTagsCount.emit();
 				},
-				error => console.log('Error deleting tag from owner', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	clickedPageNumber(page: number): void {
@@ -117,26 +117,19 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	}
 
 	openDialog(type: string, data: TAG | TAG_OWNER) {
-
 		let dialog: MatDialogRef<EditTagComponent>;
 
 		switch (type) {
-
 			case 'edit_tag':
 				dialog = this._dialog.open(EditTagComponent, { width: '500px' }) as MatDialogRef<EditTagComponent>;
 				dialog.componentInstance.tag = data as TAG;
 				dialog.componentInstance.currentUserId = this.currentUserId;
 				break;
-
 		}
 
-		dialog.afterClosed()
-			.subscribe(
-				(response: boolean) => {
-					if (!response) return;
-				}
-			);
-
+		dialog.afterClosed().subscribe((response: boolean) => {
+			if (!response) return;
+		});
 	}
 
 	setTagColor(value: string): string {
@@ -148,12 +141,11 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 			dealer: 'D',
 			license: 'L',
 			host: 'H',
-			advertiser: 'A' 
+			advertiser: 'A'
 		};
 	}
 
 	private openConfirmAPIRequestDialog(type: string, data = {}) {
-
 		let message: string;
 		let title: string;
 		let status = 'warning';
@@ -162,7 +154,6 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 		let height = '350px';
 
 		switch (type) {
-
 			case 'delete_tag':
 				title = 'Delete Tag';
 				message = `Associated owners will be removed from this tag`;
@@ -176,13 +167,13 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 
 			case 'delete_all_tags_from_owner':
 				title = 'Delete Assignee Tags';
-				message = `ALL tags from assignee will be removed`
-				return_msg = 'Confirmed deletion'
+				message = `ALL tags from assignee will be removed`;
+				return_msg = 'Confirmed deletion';
 				break;
 		}
 
-		return this._dialog.open(ConfirmationModalComponent, { width, height, data: { status, message: title, data: message, return_msg } }).afterClosed();
-
+		return this._dialog
+			.open(ConfirmationModalComponent, { width, height, data: { status, message: title, data: message, return_msg } })
+			.afterClosed();
 	}
-
 }

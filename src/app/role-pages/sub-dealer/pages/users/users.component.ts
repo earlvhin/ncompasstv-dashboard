@@ -13,33 +13,19 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 	styleUrls: ['./users.component.scss'],
 	providers: [DatePipe]
 })
-
 export class UsersComponent implements OnInit {
-
-	title: string = "Users";
+	title: string = 'Users';
 	filtered_data: any = [];
-	subscription: Subscription = new Subscription;
-	row_url: string = "/sub-dealer/users/";
-	row_slug: string = "user_id";
+	subscription: Subscription = new Subscription();
+	row_url: string = '/sub-dealer/users/';
+	row_slug: string = 'user_id';
 	users: UI_TABLE_USERS[] = [];
 	loading_data: boolean = true;
 	no_user: boolean = false;
 	user_details: any;
-	users_table_column = [
-		'#',
-		'Name',
-		'Email Address',
-		'Contact Number',
-		'Role',
-		'Creation Date',
-		'Created By'
-	]
+	users_table_column = ['#', 'Name', 'Email Address', 'Contact Number', 'Role', 'Creation Date', 'Created By'];
 
-	constructor(
-		private _user: UserService,
-		private _date: DatePipe,
-		private _auth: AuthService
-	) { }
+	constructor(private _user: UserService, private _date: DatePipe, private _auth: AuthService) {}
 
 	ngOnInit() {
 		this.getAllusers();
@@ -55,30 +41,25 @@ export class UsersComponent implements OnInit {
 		var count_advertiser = 0;
 		this.subscription.add(
 			this._user.get_users().subscribe(
-				data => {
-					if(data.users.length > 0) {
-						data = data.users.filter(
-							i => {
-								return i.createdBy == this._auth.current_user_value.user_id;
-							}
-						)
-						data.map(
-							user => {
-								user.userRoles.map(
-									roles => {
-										if(roles.roleId === UI_ROLE_DEFINITION.host) {
-											count_host = count_host + 1;
-										} else if(roles.roleId === UI_ROLE_DEFINITION.advertiser) {
-											count_advertiser = count_advertiser + 1;
-										} else {}
-									}
-								)
-							}
-						)
+				(data) => {
+					if (data.users.length > 0) {
+						data = data.users.filter((i) => {
+							return i.createdBy == this._auth.current_user_value.user_id;
+						});
+						data.map((user) => {
+							user.userRoles.map((roles) => {
+								if (roles.roleId === UI_ROLE_DEFINITION.host) {
+									count_host = count_host + 1;
+								} else if (roles.roleId === UI_ROLE_DEFINITION.advertiser) {
+									count_advertiser = count_advertiser + 1;
+								} else {
+								}
+							});
+						});
 
-						if(data.length > 0) {
-							this.users = this.mapToUIFormat(data)
-							this.filtered_data = this.mapToUIFormat(data)
+						if (data.length > 0) {
+							this.users = this.mapToUIFormat(data);
+							this.filtered_data = this.mapToUIFormat(data);
 						} else {
 							this.no_user = true;
 							this.filtered_data = [];
@@ -87,7 +68,6 @@ export class UsersComponent implements OnInit {
 						this.no_user = true;
 						this.filtered_data = [];
 					}
-					
 
 					this.user_details = {
 						basis: data.length,
@@ -96,34 +76,30 @@ export class UsersComponent implements OnInit {
 						hosts_label: 'Host(s)',
 						advertiser: count_advertiser,
 						advertiser_label: 'Advertiser(s)'
-					}
-					
+					};
+
 					this.loading_data = false;
-				}, 
-				error => {
-					console.log('#getAllUsers', error);
-				}
+				},
+				(error) => {}
 			)
-		)
+		);
 	}
 
 	mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {
 		let count = 1;
-		
-		return data.map(
-			(u: USER) => {
-				return new UI_TABLE_USERS(
-					{ value: u.userId, link: null , editable: false, hidden: true},
-					{ value: count++, link: null , editable: false, hidden: false},
-					{ value: u.firstName + " " + u.lastName, link: '/sub-dealer/users/' +  u.userId, editable: false, hidden: false},
-					{ value: u.email, link: null, editable: false, hidden: false},
-					{ value: u.contactNumber, link: null, editable: false, hidden: false},
-					{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false},
-					{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false},
-					{ value: u.creatorName, link: null, editable: false, hidden: false},
-					{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false },
-				);
-			}
-		);
+
+		return data.map((u: USER) => {
+			return new UI_TABLE_USERS(
+				{ value: u.userId, link: null, editable: false, hidden: true },
+				{ value: count++, link: null, editable: false, hidden: false },
+				{ value: u.firstName + ' ' + u.lastName, link: '/sub-dealer/users/' + u.userId, editable: false, hidden: false },
+				{ value: u.email, link: null, editable: false, hidden: false },
+				{ value: u.contactNumber, link: null, editable: false, hidden: false },
+				{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false },
+				{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false },
+				{ value: u.creatorName, link: null, editable: false, hidden: false },
+				{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false }
+			);
+		});
 	}
 }

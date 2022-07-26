@@ -17,11 +17,9 @@ import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_HOST, API_DEALER, TAG, AP
 	styleUrls: ['./single-host.component.scss'],
 	providers: [UpperCasePipe, DatePipe, TitleCasePipe]
 })
-
 export class SingleHostComponent implements OnInit {
-
 	_socket: any;
-	address: string ;
+	address: string;
 	currentImage = 'assets/media-files/admin-icon.png';
 	currentRole = this._auth.current_role;
 	currentUser = this._auth.current_user_value;
@@ -30,14 +28,14 @@ export class SingleHostComponent implements OnInit {
 	host: API_SINGLE_HOST;
 	hostLicenseStatistics: HOST_LICENSE_STATISTICS;
 	isViewOnly = false;
-	singleHostData: { dealer_id: string, host_id: string };
+	singleHostData: { dealer_id: string; host_id: string };
 	lat: number;
 	long: number;
-	
+
 	private isInitialLoad = true;
 	private marginMore = false;
 	private marginNotes = false;
-	
+
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -46,20 +44,17 @@ export class SingleHostComponent implements OnInit {
 		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
-		private _params: ActivatedRoute,
-	) { }
+		private _params: ActivatedRoute
+	) {}
 
 	ngOnInit() {
-
 		this.initializeSocket();
 		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.hostId = this._params.snapshot.params.data);
-			
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.hostId = this._params.snapshot.params.data));
+
 		this.getHostById();
 		this.subscribeToBusinessHoursUpdate();
-
 	}
 
 	ngOnDestroy() {
@@ -69,30 +64,23 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	didToggleNotesAndHours(): boolean {
-
 		if (this.marginNotes && this.marginMore) {
 			return true;
 		}
 
 		return false;
-
 	}
 
 	openAssignLicenseModal(): void {
-
 		const dialogRef = this._dialog.open(AssignLicenseModalComponent, {
 			width: '500px',
 			data: this.singleHostData
 		});
 
-		dialogRef.afterClosed()
-			.subscribe(
-				response => {
-					if (!response) return;
-					this._license.onRefreshLicensesTab.emit();
-				}
-			);
-
+		dialogRef.afterClosed().subscribe((response) => {
+			if (!response) return;
+			this._license.onRefreshLicensesTab.emit();
+		});
 	}
 
 	toggledHours(e) {
@@ -104,18 +92,27 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	private getLicenseTotalByHostIdDealerId() {
-
 		const dealerId = this.singleHostData.dealer_id;
 		const hostId = this.singleHostData.host_id;
 
-		this._license.api_get_licenses_total_by_host_dealer(dealerId, hostId)
+		this._license
+			.api_get_licenses_total_by_host_dealer(dealerId, hostId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
-
+				(response) => {
 					if (!response) return;
-				
-					const { total, totalActive, totalInActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed, totalUnassignedScreenCount } = response;
+
+					const {
+						total,
+						totalActive,
+						totalInActive,
+						totalOnline,
+						totalOffline,
+						totalAd,
+						totalMenu,
+						totalClosed,
+						totalUnassignedScreenCount
+					} = response;
 
 					this.hostLicenseStatistics = {
 						total_count: total,
@@ -135,49 +132,45 @@ export class SingleHostComponent implements OnInit {
 						total_closed: totalClosed,
 						total_closed_label: 'Closed',
 						unassigned_value: totalUnassignedScreenCount,
-						unassigned_value_label: 'Unassigned',	
-					}
-
+						unassigned_value_label: 'Unassigned'
+					};
 				},
-				error => console.log('Error retrieving total license count', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private getHostById() {
-
 		if (this.isInitialLoad && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setPageData(this._helper.singleHostData);
 			this.isInitialLoad = false;
 			return;
 		}
 
-		this._host.get_host_by_id(this.hostId)
+		this._host
+			.get_host_by_id(this.hostId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					if (response.message) return;
 					this.setPageData({ host: response.host, dealer: response.dealer, hostTags: response.hostTags });
 				},
-				error => console.log('Error retrieving host by ID', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private initializeSocket(): void {
-
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__SingleHostComponent'
 		});
 
-		this._socket.on('connect', () => {
-			console.log('#SingleHostComponent - Connected to Socket Server');
-		})
-		
-		this._socket.on('disconnect', () => {
-			console.log('#SingleHostComponent - Disconnnected to Socket Server');
-		});
+		this._socket.on('connect', () => {});
 
+		this._socket.on('disconnect', () => {});
 	}
 
 	private setPageData(response: API_SINGLE_HOST) {
@@ -194,32 +187,21 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	private subscribeToBusinessHoursUpdate(): void {
+		this._host.onUpdateBusinessHours.pipe(takeUntil(this._unsubscribe)).subscribe((response: boolean) => {
+			if (!response) return;
 
-		this._host.onUpdateBusinessHours.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: boolean) => {
+			this._license
+				.get_licenses_by_host_id(this.hostId)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((response) => {
+					if (!Array.isArray(response)) return;
 
-					if (!response) return;
+					const licenses = response as API_LICENSE_PROPS[];
 
-					this._license.get_licenses_by_host_id(this.hostId).pipe(takeUntil(this._unsubscribe))
-						.subscribe(
-							response => {
-
-								if (!Array.isArray(response)) return;
-
-								const licenses = response as API_LICENSE_PROPS[];
-
-								licenses.forEach(
-									license => {
-										console.log('System Update Emitted:', license.licenseId);
-										this._socket.emit('D_update_player', license.licenseId);
-									}
-								);
-
-							}
-						);
-				}
-			);
+					licenses.forEach((license) => {
+						this._socket.emit('D_update_player', license.licenseId);
+					});
+				});
+		});
 	}
-
 }

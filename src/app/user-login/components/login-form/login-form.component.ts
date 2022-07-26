@@ -119,18 +119,14 @@ export class LoginFormComponent implements OnInit {
 					this.show_overlay = false;
 					this.is_error = true;
 					this.error_msg = `${error.error.message}`;
-					console.log('Error authenticating user', error);
 				}
 			);
 	}
 
 	getUserCookie(userId: string) {
 		this._auth.get_user_cookie(userId).subscribe(
-			() => {
-			},
-			(error) => {
-				console.log(error);
-			}
+			() => {},
+			(error) => {}
 		);
 	}
 

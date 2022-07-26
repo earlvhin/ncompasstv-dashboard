@@ -17,19 +17,17 @@ import { UserService } from 'src/app/global/services/user-service/user.service';
 	templateUrl: './new-dealer.component.html',
 	styleUrls: ['./new-dealer.component.scss']
 })
-
 export class NewDealerComponent implements OnInit, OnDestroy {
-
 	@Output() dealer_created = new EventEmitter();
 	city_state: City[] = [];
-	form_description: string = "Fill the form below to create a new Dealer.";
+	form_description: string = 'Fill the form below to create a new Dealer.';
 	form_fields_view: any[];
 	form_invalid: boolean = true;
 	form_title: string = 'New Dealer';
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
 	is_submitted: boolean;
-	new_dealer_form: FormGroup;	
+	new_dealer_form: FormGroup;
 	password_is_match: boolean;
 	password_match_msg: string;
 	password_is_valid: boolean;
@@ -45,26 +43,17 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		private _form: FormBuilder,
 		private _location: LocationService,
 		private _router: Router,
-		private _user: UserService,
-	) { }
+		private _user: UserService
+	) {}
 
 	ngOnInit() {
-		this._location.get_cities().subscribe(
-			(response: any[]) => {
+		this._location.get_cities().subscribe((response: any[]) => {
+			this.city_state = response.map((city) => {
+				return new City(city.city, `${city.city}, ${city.state}`, city.state);
+			});
 
-				this.city_state = response.map(
-					city => {
-						return new City(
-							city.city,
-							`${city.city}, ${city.state}`,
-							city.state
-						);
-					}
-				);
-
-				this.createForm();
-			}
-		)
+			this.createForm();
+		});
 	}
 
 	ngOnDestroy() {
@@ -75,20 +64,21 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 	get f() {
 		return this.new_dealer_form.controls;
 	}
-	
-	createNewDealer(directive: FormGroupDirective): void {	
 
+	createNewDealer(directive: FormGroupDirective): void {
 		this.is_submitted = true;
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.'); 
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return;
 		}
 
-		this._user.create_new_user(this.f.roleid.value, this.new_dealer_form.getRawValue()).pipe(takeUntil(this._unsubscribe))
+		this._user
+			.create_new_user(this.f.roleid.value, this.new_dealer_form.getRawValue())
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
 					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer account has been added to database.');
@@ -98,46 +88,43 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 					this.new_dealer_form.reset();
 					this.ngOnInit();
 				},
-				error => {
-					console.log('Error creating dealer', error);
-					this.is_submitted = false; 
+				(error) => {
+					this.is_submitted = false;
 					this.form_invalid = false;
 					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
 				}
 			);
-
 	}
 
 	citySelected(value: string): void {
 		this.f.city.setValue(value.substr(0, value.indexOf(', ')));
 
-		this._location.get_states_regions(value.substr(value.indexOf(',') + 2)).pipe(takeUntil(this._unsubscribe))
+		this._location
+			.get_states_regions(value.substr(value.indexOf(',') + 2))
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				data => {
+				(data) => {
 					this.f.state.setValue(data[0].abbreviation);
 					this.f.region.setValue(data[0].region);
 				},
-				error => console.log('Error retrieving states/regions', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	openConfirmationModal(status: string, message: string, data: string): void {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  { status, message, data }
+			data: { status, message, data }
 		});
 
-		dialog.afterClosed()
-			.subscribe(
-				() => {
-					const roleId = this._auth.current_user_value.role_id;
-					const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === roleId);
-					this._router.navigate([`/${route}/dealers/`]);
-				}
-			);
-
+		dialog.afterClosed().subscribe(() => {
+			const roleId = this._auth.current_user_value.role_id;
+			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === roleId);
+			this._router.navigate([`/${route}/dealers/`]);
+		});
 	}
 
 	togglePasswordFieldType(): void {
@@ -213,14 +200,14 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 				control: 'state',
 				placeholder: 'Ex: California',
 				width: 'col-lg-3',
-				type: 'text',
+				type: 'text'
 			},
 			{
 				label: 'Region',
 				control: 'region',
 				placeholder: 'Ex: NW',
 				width: 'col-lg-3',
-				type: 'text',
+				type: 'text'
 			},
 			{
 				label: 'Email Address',
@@ -244,83 +231,67 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 				width: 'col-lg-6',
 				type: 'password',
 				re_password_field: true
-			},
+			}
 		];
 
-		this.new_dealer_form = this._form.group(
-			{
-				roleid: [UI_ROLE_DEFINITION.dealer],
-				firstname: ['', Validators.required],
-				lastname: ['', Validators.required],
-				email: ['', Validators.required],
-				password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-				re_password: [ { value: '', disabled: true }, Validators.required ],
-				contactNumber: ['', Validators.required],
-				generatedid: [ '', Validators.required ],
-				dealerIdAlias: [ '', Validators.required ],
-				businessName: ['', Validators.required],
-				contactPerson: ['', Validators.required],
-				city: ['', Validators.required],
-				state: [{value: '', disabled: true}, Validators.required],
-				region: [{value: '', disabled: true}, Validators.required],
-				createdby: [this._auth.current_user_value.user_id]
-			}
-		);
+		this.new_dealer_form = this._form.group({
+			roleid: [UI_ROLE_DEFINITION.dealer],
+			firstname: ['', Validators.required],
+			lastname: ['', Validators.required],
+			email: ['', Validators.required],
+			password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
+			re_password: [{ value: '', disabled: true }, Validators.required],
+			contactNumber: ['', Validators.required],
+			generatedid: ['', Validators.required],
+			dealerIdAlias: ['', Validators.required],
+			businessName: ['', Validators.required],
+			contactPerson: ['', Validators.required],
+			city: ['', Validators.required],
+			state: [{ value: '', disabled: true }, Validators.required],
+			region: [{ value: '', disabled: true }, Validators.required],
+			createdby: [this._auth.current_user_value.user_id]
+		});
 
 		this.subscribeToFormChanges();
 		this.subscribeToPasswordValidation();
 	}
 
 	private subscribeToFormChanges(): void {
-
-		this.new_dealer_form.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					if (this.new_dealer_form.valid && this.f.password.value === this.f.re_password.value) {
-						this.form_invalid = false;
-					} else {
-						this.form_invalid = true;
-					}
-				}
-			);
-
+		this.new_dealer_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.new_dealer_form.valid && this.f.password.value === this.f.re_password.value) {
+				this.form_invalid = false;
+			} else {
+				this.form_invalid = true;
+			}
+		});
 	}
 
 	private subscribeToPasswordValidation(): void {
+		this.f.password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.f.password.invalid) {
+				this.password_is_valid = false;
+				this.password_is_valid_msg = 'Must be atleast 8 characters';
+			} else {
+				this.password_is_valid = true;
+				this.password_is_valid_msg = 'Password is valid';
+			}
 
-		this.f.password.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					if (this.f.password.invalid) {
-						this.password_is_valid = false;
-						this.password_is_valid_msg = "Must be atleast 8 characters"
-					} else {
-						this.password_is_valid = true;
-						this.password_is_valid_msg = "Password is valid"
-					}
+			if (!this.f.password.value || this.f.password.value.length === 0) {
+				this.f.re_password.setValue(null);
+				this.f.re_password.disable();
+			} else {
+				this.f.re_password.enable();
+			}
+		});
 
-					if (!this.f.password.value || this.f.password.value.length === 0) {
-						this.f.re_password.setValue(null);
-						this.f.re_password.disable();
-					} else {
-						this.f.re_password.enable();
-					}
-				}
-			);
-
-		this.f.re_password.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
-						this.password_is_match = true;
-						this.password_match_msg = "Password matches"
-					} else {
-						this.password_is_match = false;
-						this.password_match_msg = "Password does not match"
-					}
-				}
-			);
-
+		this.f.re_password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
+				this.password_is_match = true;
+				this.password_match_msg = 'Password matches';
+			} else {
+				this.password_is_match = false;
+				this.password_match_msg = 'Password does not match';
+			}
+		});
 	}
-
 }

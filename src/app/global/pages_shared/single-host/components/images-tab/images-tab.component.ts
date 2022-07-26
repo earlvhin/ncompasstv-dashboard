@@ -15,7 +15,6 @@ import { HelperService, HostService } from 'src/app/global/services';
 	styleUrls: ['./images-tab.component.scss']
 })
 export class ImagesTabComponent implements OnInit, OnDestroy {
-
 	@Input() currentRole: string;
 	@Input() currentUser: UI_CURRENT_USER;
 	@Input() hostId: string;
@@ -28,14 +27,9 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 	tableData: UI_HOST_FILE[] = [];
 
 	protected _unsubscribe = new Subject<void>();
-	
-	constructor(
-		private _date: DatePipe,
-		private _dialog: MatDialog,
-		private _helper: HelperService,
-		private _host: HostService,
-	) { }
-	
+
+	constructor(private _date: DatePipe, private _dialog: MatDialog, private _helper: HelperService, private _host: HostService) {}
+
 	ngOnInit() {
 		this.tableColumns = this.columns;
 		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
@@ -49,13 +43,13 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 	}
 
 	getImages(page = 1) {
-
 		this.images = [];
 
-		this._host.get_files_by_type(this.hostId, 1, page)
+		this._host
+			.get_files_by_type(this.hostId, 1, page)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					this.pagingData = response;
 
 					if (!response.entities || response.entities.length <= 0) {
@@ -67,7 +61,9 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 					this.images = [...images];
 					this.tableData = this.mapToTable([...images]);
 				},
-				error => console.log('Error retrieving host images', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
@@ -77,32 +73,27 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 	}
 
 	private mapToTable(data: API_HOST_FILE[]): UI_HOST_FILE[] {
-
 		let count = this.pagingData.pageStart;
 
-		return data.map(
-			file => {
-				return {
-					id: { value: file.id, link: null , editable: false, hidden: true} ,
-					index: { value: count++, link: null , editable: false, hidden: false },
-					thumbnail: { value: file.url, link: null, isImage: true, editable: false, hidden: false },
-					fileName: { value: file.filename, link: null , editable: false, hidden: false },
-					alias: { value: file.alias, id: file.id, editable: true, label: 'Host Photo Alias', hidden: false },
-					date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
-					s3FileName: { value: file.s3Filename, hidden: true },
-				};
-			}
-		);
-
+		return data.map((file) => {
+			return {
+				id: { value: file.id, link: null, editable: false, hidden: true },
+				index: { value: count++, link: null, editable: false, hidden: false },
+				thumbnail: { value: file.url, link: null, isImage: true, editable: false, hidden: false },
+				fileName: { value: file.filename, link: null, editable: false, hidden: false },
+				alias: { value: file.alias, id: file.id, editable: true, label: 'Host Photo Alias', hidden: false },
+				date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
+				s3FileName: { value: file.s3Filename, hidden: true }
+			};
+		});
 	}
 
 	private subscribeToRefreshPage() {
-		this._helper.onRefreshSingleHostImagesTab.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.getImages())
+		this._helper.onRefreshSingleHostImagesTab.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.getImages());
 	}
 
 	protected get columns() {
-		return [ '#', 'Thumbnail', 'Filename', 'Alias', 'Upload Date', 'Actions' ];
+		return ['#', 'Thumbnail', 'Filename', 'Alias', 'Upload Date', 'Actions'];
 	}
 
 	protected get filestackOptions(): filestack.PickerOptions {
@@ -110,18 +101,13 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 			storeTo: {
 				location: 's3',
 				container: 'n-compass-files',
-				region: 'us-east-1',
+				region: 'us-east-1'
 			},
-			accept: [
-				'image/jpg',
-				'image/jpeg',
-				'image/png',
-			],
+			accept: ['image/jpg', 'image/jpeg', 'image/png'],
 			maxFiles: 10,
 			imageMax: [720, 640],
 			onUploadDone: (response) => {
-
-				const files = response.filesUploaded.map(uploaded => {
+				const files = response.filesUploaded.map((uploaded) => {
 					const { filename, key } = uploaded;
 					return { oldFile: filename, newFile: key };
 				});
@@ -133,14 +119,16 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 					files
 				};
 
-				this._host.upload_s3_files(toUpload).pipe(takeUntil(this._unsubscribe))
+				this._host
+					.upload_s3_files(toUpload)
+					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						() => this.ngOnInit(),
-						error => console.log('Error uploading host S3 images', error)
+						(error) => {
+							throw new Error(error);
+						}
 					);
-
-			},
+			}
 		};
 	}
-	
 }

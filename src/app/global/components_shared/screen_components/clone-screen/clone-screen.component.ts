@@ -5,8 +5,17 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_DEALER, API_HOST, API_NEW_SCREEN, API_SCREENTYPE, SCREEN_INFO, SCREEN_ZONE_PLAYLIST, UI_ROLE_DEFINITION, UI_SINGLE_SCREEN, 
-	UI_SCREEN_ZONE_PLAYLIST } from 'src/app/global/models';
+import {
+	API_DEALER,
+	API_HOST,
+	API_NEW_SCREEN,
+	API_SCREENTYPE,
+	SCREEN_INFO,
+	SCREEN_ZONE_PLAYLIST,
+	UI_ROLE_DEFINITION,
+	UI_SINGLE_SCREEN,
+	UI_SCREEN_ZONE_PLAYLIST
+} from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, ScreenService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
@@ -16,9 +25,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 	templateUrl: './clone-screen.component.html',
 	styleUrls: ['./clone-screen.component.scss']
 })
-
 export class CloneScreenComponent implements OnInit {
-
 	all_dealers: API_DEALER[];
 	clone_screen_form: FormGroup;
 	clone_success = false;
@@ -76,8 +83,8 @@ export class CloneScreenComponent implements OnInit {
 		private _helper: HelperService,
 		private _host: HostService,
 		private _router: Router,
-		private _screen: ScreenService,
-	) { }
+		private _screen: ScreenService
+	) {}
 
 	ngOnInit() {
 		this.getDealers(1);
@@ -92,8 +99,8 @@ export class CloneScreenComponent implements OnInit {
 		let screenTypeId = this.screen_type.screenTypeId;
 		if (!this.is_dealer) screenTypeId = this.f.type.value;
 
-		const screen = new API_NEW_SCREEN (
-			new SCREEN_INFO (
+		const screen = new API_NEW_SCREEN(
+			new SCREEN_INFO(
 				this.f.screen_title.value,
 				this.f.screen_description.value,
 				this.f.dealer_id.value,
@@ -115,11 +122,9 @@ export class CloneScreenComponent implements OnInit {
 			this._helper.singleScreenData = clonedScreenData;
 			this.form_submitted = false;
 			this.clone_success = true;
-		} catch (e) {
-			console.log('Error cloning screen', e);
-		}
+		} catch (e) {}
 	}
-	
+
 	dealerSelected(id: any): void {
 		this.f.dealer_id.setValue(id);
 		this.no_dealer_selected = false;
@@ -146,38 +151,43 @@ export class CloneScreenComponent implements OnInit {
 		this.loading_data = true;
 
 		if (page > 1) {
-
-			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
+			this._dealer
+				.get_dealers_with_page(page, '')
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
-						data.dealers.map(dealer => this.all_dealers.push(dealer));
+					(data) => {
+						data.dealers.map((dealer) => this.all_dealers.push(dealer));
 						this.paging = data.paging;
 						this.loading_data = false;
 					},
-					error => console.log('Error retrieving dealers', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
-
 		} else {
-
 			if (this.is_search) this.loading_search = true;
 
-			this._dealer.get_dealers_with_page(page, '').pipe(takeUntil(this._unsubscribe))
+			this._dealer
+				.get_dealers_with_page(page, '')
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
+					(data) => {
 						this.all_dealers = data.dealers;
 						this.dealers_data = data.dealers;
 						this.paging = data.paging;
 						this.loading_data = false;
 						this.loading_search = false;
 					},
-					error => console.log('Error searching for dealers ', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
 		}
 	}
 
-	hostSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
+	hostSearchBoxTrigger(event: { is_search: boolean; page: number }): void {
 		this.is_search = event.is_search;
-		if(this.is_search) this.searchHostKeyword = '';
+		if (this.is_search) this.searchHostKeyword = '';
 		this.getHostByDealer(event.page);
 	}
 
@@ -189,11 +199,11 @@ export class CloneScreenComponent implements OnInit {
 
 	redirectToClonedScreen(): void {
 		this._dialog_ref.close(true);
-		this.role = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		this.role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this._router.navigate([`/${this.role}/screens/`, this.cloned_screen_id]);
 	}
 
-	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
+	searchBoxTrigger(event: { is_search: boolean; page: number }): void {
 		this.is_search = event.is_search;
 		this.getDealers(event.page);
 	}
@@ -201,22 +211,21 @@ export class CloneScreenComponent implements OnInit {
 	searchData(event: string | number): void {
 		this.loading_search = true;
 
-		this._dealer.get_search_dealer(event).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-
-					if (data.paging.entities.length > 0) {
-						this.all_dealers = data.paging.entities;
-						this.dealers_data = data.paging.entities;
-						this.loading_search = false;
-					} else {
-						this.dealers_data = [];
-						this.loading_search = false;
-					}
-
-					this.paging = data.paging;
+		this._dealer
+			.get_search_dealer(event)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
+				if (data.paging.entities.length > 0) {
+					this.all_dealers = data.paging.entities;
+					this.dealers_data = data.paging.entities;
+					this.loading_search = false;
+				} else {
+					this.dealers_data = [];
+					this.loading_search = false;
 				}
-			);
+
+				this.paging = data.paging;
+			});
 	}
 
 	searchHostData(event: string): void {
@@ -224,17 +233,14 @@ export class CloneScreenComponent implements OnInit {
 		this.getHostByDealer(1);
 	}
 
-	
 	selectedDealer(id: string): API_DEALER[] | void {
-
 		if (!this.is_dealer) {
-			return this.all_dealers.filter(dealer => dealer.dealerId == id);
+			return this.all_dealers.filter((dealer) => dealer.dealerId == id);
 		}
-
 	}
 
 	selectedHost(id: string): API_HOST[] {
-		return this.hosts.filter(host => host.hostId == id);
+		return this.hosts.filter((host) => host.hostId == id);
 	}
 
 	setScreenType(event: any): void {
@@ -264,53 +270,49 @@ export class CloneScreenComponent implements OnInit {
 	}
 
 	private getHostByDealer(page: number): void {
-
 		const keyword = this.searchHostKeyword;
 
 		if (page > 1) {
-
-			this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId, page, this.searchHostKeyword)
+			this._host
+				.get_host_by_dealer_id(this.selected_dealer[0].dealerId, page, this.searchHostKeyword)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					response => {
+					(response) => {
 						const hosts = response.paging.entities as API_HOST[];
 						this.hosts.concat([...hosts]);
 						this.hosts_data.concat([...hosts]);
 						this.paging_host = response.paging;
 						this.loading_data_host = false;
 					},
-					error => console.log('Error retrieving hosts by dealer', error)
-				)
-				.add(() => this.loading_data_host = false);
-
-		} else {
-
-			this.hosts_data = [];
-			this.initial_load = false;
-			
-			if (this.is_search || this.searchHostKeyword != '') this.loading_search_host = true;
-
-			this._host.get_host_by_dealer_id(this.selected_dealer[0].dealerId || this.selected_dealer, page, this.searchHostKeyword)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					response => {
-
-						if (response.message) {
-							
-							this.selected_host = [];
-							
-							if (!keyword || keyword.trim().length <= 0) {
-								this.hosts_data = [];
-							}
-
-							return;
-						}
-
-						const hosts = response.paging.entities as API_HOST[];
-						this.hosts = [...hosts];
-						this.hosts_data = [...hosts];
+					(error) => {
+						throw new Error(error);
 					}
 				)
+				.add(() => (this.loading_data_host = false));
+		} else {
+			this.hosts_data = [];
+			this.initial_load = false;
+
+			if (this.is_search || this.searchHostKeyword != '') this.loading_search_host = true;
+
+			this._host
+				.get_host_by_dealer_id(this.selected_dealer[0].dealerId || this.selected_dealer, page, this.searchHostKeyword)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((response) => {
+					if (response.message) {
+						this.selected_host = [];
+
+						if (!keyword || keyword.trim().length <= 0) {
+							this.hosts_data = [];
+						}
+
+						return;
+					}
+
+					const hosts = response.paging.entities as API_HOST[];
+					this.hosts = [...hosts];
+					this.hosts_data = [...hosts];
+				})
 				.add(() => {
 					this.loading_search = false;
 					this.loading_data_host = false;
@@ -320,65 +322,50 @@ export class CloneScreenComponent implements OnInit {
 	}
 
 	private getScreenTypes(): void {
-
 		const screenTypeId = this.screen_data.type;
 
-		this._screen.get_screens_type().pipe(takeUntil(this._unsubscribe))
+		this._screen
+			.get_screens_type()
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: API_SCREENTYPE[]) => {
 					this.screen_types = data;
-					this.screen_type = data.filter(type => type.screenTypeId === screenTypeId)[0];
+					this.screen_type = data.filter((type) => type.screenTypeId === screenTypeId)[0];
 				},
-				error => console.log('Error retrieving screen types', error)
-			);
-
-	}
-
-	private initializeForm(): void {
-		this.clone_screen_form = this._form.group(
-			{
-				screen_title: ['', Validators.required],
-				screen_description: ['', Validators.required],
-				dealer_id: ['', Validators.required],
-				host_id: ['', Validators.required],
-			}
-		);
-	}
-
-	private reloadPage() {
-
-	}
-
-	private setToDealer(e: any): void {
-
-		if (e) {
-			this.dealerSelected(e);
-			this.f.dealer_id.setValue(e);
-		}
-
-	}
-
-	private subscribeToCloneScreenFormChanges(): void {
-
-		this.clone_screen_form.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					if (this.clone_screen_form.valid) this.form_valid = false; 
-					else this.form_valid = true;
+				(error) => {
+					throw new Error(error);
 				}
 			);
 	}
 
-	private zonePlaylist_mapToUI(): SCREEN_ZONE_PLAYLIST[] {
-		return this.screen_data.screen_zone_playlist.map(
-			(z: UI_SCREEN_ZONE_PLAYLIST) => {
-				return new SCREEN_ZONE_PLAYLIST(
-					z.screen_template.template_id,
-					z.screen_template.zone_id,
-					z.screen_template.playlist_id
-				);
-			}
-		);
+	private initializeForm(): void {
+		this.clone_screen_form = this._form.group({
+			screen_title: ['', Validators.required],
+			screen_description: ['', Validators.required],
+			dealer_id: ['', Validators.required],
+			host_id: ['', Validators.required]
+		});
 	}
 
+	private reloadPage() {}
+
+	private setToDealer(e: any): void {
+		if (e) {
+			this.dealerSelected(e);
+			this.f.dealer_id.setValue(e);
+		}
+	}
+
+	private subscribeToCloneScreenFormChanges(): void {
+		this.clone_screen_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.clone_screen_form.valid) this.form_valid = false;
+			else this.form_valid = true;
+		});
+	}
+
+	private zonePlaylist_mapToUI(): SCREEN_ZONE_PLAYLIST[] {
+		return this.screen_data.screen_zone_playlist.map((z: UI_SCREEN_ZONE_PLAYLIST) => {
+			return new SCREEN_ZONE_PLAYLIST(z.screen_template.template_id, z.screen_template.zone_id, z.screen_template.playlist_id);
+		});
+	}
 }

@@ -9,13 +9,11 @@ import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 
 @Component({
-  selector: 'app-advertiser-view',
-  templateUrl: './advertiser-view.component.html',
-  styleUrls: ['./advertiser-view.component.scss']
+	selector: 'app-advertiser-view',
+	templateUrl: './advertiser-view.component.html',
+	styleUrls: ['./advertiser-view.component.scss']
 })
-
 export class AdvertiserViewComponent implements OnInit, OnDestroy {
-	
 	advertiser: Array<any> = [];
 	advertiser_data: Array<any> = [];
 	entered_advertiser_data: any;
@@ -25,7 +23,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 	is_search_advertiser: boolean = false;
 	is_view_only = false;
 	lat: number = 39.7395247;
-	license_card:any;
+	license_card: any;
 	lng: number = -105.1524133;
 	loading_advertisers: boolean = true;
 	loading_data_advertiser: boolean = false;
@@ -35,20 +33,15 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 	map_markers: UI_ADVERTISER_LOCATOR_MARKER;
 	no_advertiser_found: boolean = true;
 	paging_advertiser: any;
-	search_advertiser_data: string = "";
+	search_advertiser_data: string = '';
 	storehours: any;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(
-		private _advertiser: AdvertiserService,
-		private _auth: AuthService,
-		private _router: Router,
-	) { }
+	constructor(private _advertiser: AdvertiserService, private _auth: AuthService, private _router: Router) {}
 
 	ngOnInit() {
-
-		const roleId = this._auth.current_user_value.role_id; 
+		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
@@ -58,7 +51,6 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 		}
 
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
-
 	}
 
 	ngOnDestroy() {
@@ -67,48 +59,43 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 	}
 
 	getDealerAdvertisers(page: number): void {
-
 		if (page > 1) {
 			this.loading_data_advertiser = true;
 
-			this._advertiser.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_advertiser_data)
+			this._advertiser
+				.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_advertiser_data)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					response => {
-
-						response.advertisers.map(
-							i => {
-								this.advertiser.push(i);
-								this.advertiser_data.push(i);
-							}
-						);
+					(response) => {
+						response.advertisers.map((i) => {
+							this.advertiser.push(i);
+							this.advertiser_data.push(i);
+						});
 
 						this.paging_advertiser = response.paging;
 						this.loading_data_advertiser = false;
 						this.loading_search_advertiser = false;
 					},
-					error => console.log('Error retrieving advertisers by dealer id', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
-
 		} else {
-
 			if (this.search_advertiser_data != '') {
 				this.loading_search_advertiser = true;
 				this.advertiser_data = [];
 			}
 
-			this._advertiser.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_advertiser_data)
+			this._advertiser
+				.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_advertiser_data)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					response => {
+					(response) => {
 						if (!response.message) {
-
-							response.advertisers.map(
-								i => {
-									this.advertiser.push(i);
-									this.advertiser_data.push(i);
-								}
-							);
+							response.advertisers.map((i) => {
+								this.advertiser.push(i);
+								this.advertiser_data.push(i);
+							});
 							this.paging_advertiser = response.paging;
 							this.no_advertiser_found = false;
 						}
@@ -117,7 +104,9 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 						this.loading_search_advertiser = false;
 						this.loading_advertisers = false;
 					},
-					error => console.log('Error retrieving advertiseres by dealer id', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
 		}
 	}
@@ -144,7 +133,9 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 	advertiserEntered(e): void {
 		this.storehours = [];
 
-		this._advertiser.get_advertiser_by_id(e).pipe(takeUntil(this._unsubscribe))
+		this._advertiser
+			.get_advertiser_by_id(e)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ advertiser }) => {
 					this.entered_advertiser_data = advertiser;
@@ -157,18 +148,20 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 					// 	x.longitude ? x.longitude = parseFloat(x.longitude).toFixed(5) : "-";
 					// });
 				},
-				error => console.log('Error retrieving advertiser by id', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	createAdvertiserProfile(): void {
-		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
+		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
 		this._router.navigate([`/${route}/create-advertiser/`]);
 	}
 
 	mapMarkersToUI() {
 		const icon_url = 'assets/media-files/markers/offline.png';
-		
+
 		return new UI_ADVERTISER_LOCATOR_MARKER(
 			this.entered_advertiser_data.name,
 			this.entered_advertiser_data.latitude,

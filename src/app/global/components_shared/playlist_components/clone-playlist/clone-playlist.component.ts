@@ -17,7 +17,6 @@ import { RoleService } from 'src/app/global/services/role-service/role.service';
 	styleUrls: ['./clone-playlist.component.scss']
 })
 export class ClonePlaylistComponent implements OnInit {
-
 	clone_playlist_form: FormGroup;
 	clone_success: boolean = false;
 	cloned_playlist: any;
@@ -25,7 +24,7 @@ export class ClonePlaylistComponent implements OnInit {
 	form_submitted: boolean = false;
 	form_valid: boolean = true;
 	playlist: UI_SINGLE_PLAYLIST;
-	subscription: Subscription = new Subscription;	
+	subscription: Subscription = new Subscription();
 	form_fields_view = [
 		{
 			label: 'Playlist New Title',
@@ -39,7 +38,7 @@ export class ClonePlaylistComponent implements OnInit {
 			placeholder: 'Ex: This playlist is for the Department Store',
 			type: 'text'
 		}
-	]
+	];
 
 	constructor(
 		private _form: FormBuilder,
@@ -47,27 +46,23 @@ export class ClonePlaylistComponent implements OnInit {
 		private _router: Router,
 		private _role: RoleService,
 		@Inject(MAT_DIALOG_DATA) public playlist_data: API_SINGLE_PLAYLIST
-	) { }
+	) {}
 
 	ngOnInit() {
-		this.clone_playlist_form = this._form.group(
-			{
-				playlist_title: ['', Validators.required],
-				playlist_description: ['', Validators.required],
-			}
-		)
+		this.clone_playlist_form = this._form.group({
+			playlist_title: ['', Validators.required],
+			playlist_description: ['', Validators.required]
+		});
 
 		this.subscription.add(
-			this.clone_playlist_form.valueChanges.subscribe(
-				data => {
-					if (this.clone_playlist_form.valid) {
-						this.form_valid = false;
-					} else {
-						this.form_valid = true;
-					}
+			this.clone_playlist_form.valueChanges.subscribe((data) => {
+				if (this.clone_playlist_form.valid) {
+					this.form_valid = false;
+				} else {
+					this.form_valid = true;
 				}
-			)
-		)
+			})
+		);
 	}
 
 	get f() {
@@ -77,7 +72,7 @@ export class ClonePlaylistComponent implements OnInit {
 	clonePlaylist() {
 		let counter = 0;
 		this.form_submitted = true;
-		
+
 		// this.cloned_playlist_content = this.playlist_data.playlistContents.map(
 		// 	(c: any) => {
 		// 		return new API_CREATE_PLAYLIST_CONTENT(
@@ -101,20 +96,18 @@ export class ClonePlaylistComponent implements OnInit {
 			playlistId: this.playlist_data.playlist.playlistId,
 			playlistName: this.f.playlist_title.value,
 			playlistDescription: this.f.playlist_description.value
-		}
+		};
 
 		this.subscription.add(
 			this._playlist.clone_playlist(this.cloned_playlist).subscribe(
-				data => {
+				(data) => {
 					this.form_submitted = false;
 					this.clone_success = true;
 					this.redirectToClonedPlaylist(data.playlistId);
-				}, 
-				error => {
-					console.log(error);
-				}
+				},
+				(error) => {}
 			)
-		)
+		);
 	}
 
 	redirectToClonedPlaylist(id) {

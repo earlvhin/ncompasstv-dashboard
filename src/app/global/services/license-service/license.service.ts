@@ -304,7 +304,6 @@ export class LicenseService {
 		online?,
 		isActivated?
 	) {
-		console.log('ONLINE', online);
 		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
 		const filters = {
 			dealerId: id,
@@ -450,7 +449,7 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_alias}`, data, this.httpOptions);
 	}
 
-	update_cec_status(body: { licenseId: string, status: number }) {
+	update_cec_status(body: { licenseId: string; status: number }) {
 		const url = `${environment.base_uri}${environment.update.license_cec_status}`;
 		return this._http.post(url, body);
 	}

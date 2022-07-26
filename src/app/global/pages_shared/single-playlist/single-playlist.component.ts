@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { takeUntil } from 'rxjs/operators';
-import { forkJoin, Observable, Subject, } from 'rxjs';
+import { forkJoin, Observable, Subject } from 'rxjs';
 import * as io from 'socket.io-client';
 
 import { ClonePlaylistComponent } from '../../components_shared/playlist_components/clone-playlist/clone-playlist.component';
@@ -18,9 +18,7 @@ import { environment } from 'src/environments/environment';
 	templateUrl: './single-playlist.component.html',
 	styleUrls: ['./single-playlist.component.scss']
 })
-
 export class SinglePlaylistComponent implements OnInit {
-
 	@Input() reload: Observable<void>;
 
 	description: string;
@@ -41,26 +39,18 @@ export class SinglePlaylistComponent implements OnInit {
 	title: string;
 
 	_socket: any;
-	
-	screen_table_column = [
-		'#',
-		'Screen Title',
-		'Dealer',
-		'Host',
-		'Type',
-		'Template',
-		'Created By'
-	];
+
+	screen_table_column = ['#', 'Screen Title', 'Dealer', 'Host', 'Type', 'Template', 'Created By'];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
+
 	constructor(
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _playlist: PlaylistService,
-		private _role: RoleService,
+		private _role: RoleService
 	) {}
 
 	ngOnInit() {
@@ -73,23 +63,19 @@ export class SinglePlaylistComponent implements OnInit {
 
 		this.host_url = `/${this._role.get_user_role()}/hosts/`;
 		this.license_url = `/${this._role.get_user_role()}/licenses/`;
-		
+
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__SinglePlaylistComponent'
 		});
 
-		this._socket.on('connect', () => {
-			console.log('#SinglePlaylistComponent - Connected to Socket Server');
-		});
-		
-		this._socket.on('disconnect', () => {
-			console.log('#SinglePlaylistComponent - Disconnnected to Socket Server');
-		});
+		this._socket.on('connect', () => {});
+
+		this._socket.on('disconnect', () => {});
 
 		this.subscribeToPushPlaylistUpdateToAllLicenses();
 	}
-	
+
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
@@ -98,11 +84,11 @@ export class SinglePlaylistComponent implements OnInit {
 
 	addToLicenseToPush(e, licenseId) {
 		if (e.checked == true && !this.license_to_update.includes(licenseId)) {
-			this.license_to_update.push({licenseId: licenseId});
+			this.license_to_update.push({ licenseId: licenseId });
 		} else {
-			this.license_to_update = this.license_to_update.filter(i => {
+			this.license_to_update = this.license_to_update.filter((i) => {
 				return i.licenseId !== licenseId;
-			})
+			});
 		}
 	}
 
@@ -110,70 +96,67 @@ export class SinglePlaylistComponent implements OnInit {
 		this._dialog.open(ClonePlaylistComponent, {
 			width: '600px',
 			data: this.playlist
-		})
+		});
 	}
 
 	getPlaylistData(id: string) {
-
 		this.playlist_updating = true;
 
 		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setpageData(this._helper.singlePlaylistData);
-			this.getPlaylistScreens(id).add(() => this.playlist_updating = false);
+			this.getPlaylistScreens(id).add(() => (this.playlist_updating = false));
 			this.is_initial_load = false;
 			return;
 		}
 
-		this.getPlaylistDataAndScreens(id).add(() => this.playlist_updating = false);
+		this.getPlaylistDataAndScreens(id).add(() => (this.playlist_updating = false));
 	}
 
 	openUpdatePlaylistInfoModal() {
 		let dialog = this._dialog.open(PlaylistEditModalComponent, {
 			width: '600px',
 			data: this.playlist
-		})
+		});
 
 		dialog.afterClosed().subscribe((data: any) => {
 			this.ngOnInit();
-		})
+		});
 	}
 
 	playlistRouteInit() {
-		this._params.paramMap.subscribe(
-			() => {
-				this.getPlaylistData(this._params.snapshot.params.data);
-			}
-		)
+		this._params.paramMap.subscribe(() => {
+			this.getPlaylistData(this._params.snapshot.params.data);
+		});
 	}
 
 	pushUpdateToAllLicenses() {
 		this.warningModal(
-			'warning', 
-			'Push Playlist Updates', 
-			`You are about to push playlist updates to ${this.playlist.licenses.length} licenses?`, 
-			`Playlist Update will be pushed on ${this.playlist.licenses.length} licenses. Click OK to Continue.`, 
+			'warning',
+			'Push Playlist Updates',
+			`You are about to push playlist updates to ${this.playlist.licenses.length} licenses?`,
+			`Playlist Update will be pushed on ${this.playlist.licenses.length} licenses. Click OK to Continue.`,
 			'update',
 			this.playlist.licenses
 		);
 	}
 
 	openPlaylistDemo(e) {
-		if(e) {
+		if (e) {
 			let dialogRef = this._dialog.open(PlaylistDemoComponent, {
 				data: this.playlist.playlist.playlistId,
 				width: '768px',
 				height: '432px',
 				panelClass: 'no-padding'
-			})
+			});
 		}
 	}
 
 	pushUpdateToSelectedLicenses() {
 		this.warningModal(
-			'warning', 
-			'Push Playlist Updates', 
-			`You are about to push playlist updates to ${this.license_to_update.length} licenses?`, 
-			`Playlist Update will be pushed on ${this.license_to_update.length} licenses. Click OK to Continue.`, 
+			'warning',
+			'Push Playlist Updates',
+			`You are about to push playlist updates to ${this.license_to_update.length} licenses?`,
+			`Playlist Update will be pushed on ${this.license_to_update.length} licenses. Click OK to Continue.`,
 			'update',
 			this.license_to_update
 		);
@@ -181,26 +164,24 @@ export class SinglePlaylistComponent implements OnInit {
 
 	screensMapToTable(screens) {
 		let counter = 1;
-		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		if (screens) {
-			this.playlist_screen_table = screens.map(
-				i => {
-					return new UI_PLAYLIST_SCREENS_NEW(
-						{ value: i.screenId, link: null , editable: false, hidden: true},
-						{ value: counter++, link: null , editable: false, hidden: false},
-						{ value: i.screenName, link: `/${route}/screens/` + i.screenId, editable: false, hidden: false},
-						{ value: i.businessName, link: null, editable: false, hidden: false},
-						{ value: i.hostName, link: null, editable: false, hidden: false},
-						{ value: i.screenTypeName || '--', link: null, editable: false, hidden: false},
-						{ value: i.templateName, link: null, editable: false, hidden: false},
-						{ value: i.createdBy, link: null, editable: false, hidden: false}
-					)
-				}
-			)
+			this.playlist_screen_table = screens.map((i) => {
+				return new UI_PLAYLIST_SCREENS_NEW(
+					{ value: i.screenId, link: null, editable: false, hidden: true },
+					{ value: counter++, link: null, editable: false, hidden: false },
+					{ value: i.screenName, link: `/${route}/screens/` + i.screenId, editable: false, hidden: false },
+					{ value: i.businessName, link: null, editable: false, hidden: false },
+					{ value: i.hostName, link: null, editable: false, hidden: false },
+					{ value: i.screenTypeName || '--', link: null, editable: false, hidden: false },
+					{ value: i.templateName, link: null, editable: false, hidden: false },
+					{ value: i.createdBy, link: null, editable: false, hidden: false }
+				);
+			});
 		} else {
 			this.playlist_screen_table = {
 				message: 'No Screens Available'
-			}
+			};
 		}
 	}
 
@@ -213,13 +194,13 @@ export class SinglePlaylistComponent implements OnInit {
 			this.playlist_updating = true;
 			setTimeout(() => {
 				this.playlist_updating = false;
-			}, 2000)
+			}, 2000);
 		}
 	}
 
 	warningModal(status, message, data, return_msg, action, licenses: API_LICENSE_PROPS[]): void {
 		this._dialog.closeAll();
-		
+
 		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -231,15 +212,13 @@ export class SinglePlaylistComponent implements OnInit {
 				return_msg: return_msg,
 				action: action
 			}
-		})
+		});
 
-		dialogRef.afterClosed().subscribe(result => {
-			if(result === 'update') {
-				licenses.forEach(
-					p => {
-						this._socket.emit('D_update_player', p.licenseId);
-					}
-				)
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result === 'update') {
+				licenses.forEach((p) => {
+					this._socket.emit('D_update_player', p.licenseId);
+				});
 
 				this.ngOnInit();
 			}
@@ -247,33 +226,35 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	private getPlaylistDataAndScreens(playlistId: string) {
+		const requests = [this._playlist.get_playlist_by_id(playlistId), this._playlist.get_screens_of_playlist(playlistId)];
 
-		const requests = [ this._playlist.get_playlist_by_id(playlistId), this._playlist.get_screens_of_playlist(playlistId) ];
-
-		return forkJoin(requests).pipe(takeUntil(this._unsubscribe))
+		return forkJoin(requests)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				([playlistResponse, screenResponse]) => {
 					this.setpageData(playlistResponse);
 					this.playlist_screens = screenResponse.screens;
 					this.screensMapToTable(this.playlist_screens);
 				},
-				error => console.log('Error retrieving playlist data', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private getPlaylistScreens(playlistId: string) {
-		
-		return this._playlist.get_screens_of_playlist(playlistId)
+		return this._playlist
+			.get_screens_of_playlist(playlistId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					this.playlist_screens = response.screens;
 					this.screensMapToTable(this.playlist_screens);
 				},
-				error => console.log('Error retrieving screens of playlist', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private setpageData(data: API_SINGLE_PLAYLIST) {
@@ -287,10 +268,9 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	private subscribeToPushPlaylistUpdateToAllLicenses() {
-		
-		return this._playlist.onPushPlaylistUpdateToAllLicenses.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.playlist.licenses.forEach(license => this._socket.emit('D_update_player', license.licenseId)));
-
+		return this._playlist.onPushPlaylistUpdateToAllLicenses
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.playlist.licenses.forEach((license) => this._socket.emit('D_update_player', license.licenseId)));
 	}
 
 	protected get currentUser() {

@@ -18,7 +18,6 @@ import { PAGING } from 'src/app/global/models';
 	styleUrls: ['./new-sub-dealer.component.scss']
 })
 export class NewSubDealerComponent implements OnInit, OnDestroy {
-	
 	back_btn: string;
 	dealers: API_DEALER[] = [];
 	form_fields_view: any;
@@ -37,7 +36,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 	password_is_valid: boolean;
 	password_is_valid_msg: string;
 	server_error: string;
-	subscription: Subscription = new Subscription;
+	subscription: Subscription = new Subscription();
 
 	constructor(
 		private _auth: AuthService,
@@ -45,11 +44,10 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _user: UserService,
-		private _router: Router,
-	) { }
+		private _router: Router
+	) {}
 
 	ngOnInit() {
-
 		const roleId = this._auth.current_user_value.role_id;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
@@ -57,42 +55,42 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.back_btn = '/dealer/users/create-user';
-		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator){
+		} else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator) {
 			this.back_btn = '/administrator/users/create-user';
 		} else if (roleId === subDealerRole) {
 			this.back_btn = '/sub-dealer/users/create-user';
 		}
-		
+
 		this.form = this._form.group({
 			roleId: [UI_ROLE_DEFINITION['sub-dealer']],
-            firstName: ['', Validators.required],
+			firstName: ['', Validators.required],
 			lastName: ['', Validators.required],
 			contactNo: ['', Validators.required],
 			parentId: this._auth.current_user_value.roleInfo.dealerId || ['', Validators.required],
-			dealer: [{value: '', disabled: true}, Validators.required],
+			dealer: [{ value: '', disabled: true }, Validators.required],
 			email: ['', Validators.required],
 			password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-			re_password: [ { value: '', disabled: true }, Validators.required],
-			createdBy: [ this._auth.current_user_value.user_id ]
+			re_password: [{ value: '', disabled: true }, Validators.required],
+			createdBy: [this._auth.current_user_value.user_id]
 		});
 
 		this.subscription.add(
 			this._dealer.get_dealers().subscribe(
-				data => this.dealers = data,
-				error => console.log('Error retrieving dealers', error)
+				(data) => (this.dealers = data),
+				(error) => {
+					throw new Error(error);
+				}
 			)
 		);
 
 		this.subscription.add(
-			this.form.valueChanges.subscribe(
-				() => {
-					if (this.form.valid && this.f.password.value === this.f.re_password.value) {
-						this.form_invalid = false;
-					} else {
-						this.form_invalid = true;
-					}
+			this.form.valueChanges.subscribe(() => {
+				if (this.form.valid && this.f.password.value === this.f.re_password.value) {
+					this.form_invalid = false;
+				} else {
+					this.form_invalid = true;
 				}
-			)
+			})
 		);
 
 		this.form_fields_view = [
@@ -148,42 +146,38 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 				placeholder: 'Note: Must match entered password',
 				width: 'col-lg-6',
 				re_password_field: true
-			},
+			}
 		];
 
 		this.subscription.add(
-			this.f.password.valueChanges.subscribe(
-				() => {
-					if (this.f.password.invalid) {
-						this.password_is_valid = false;
-						this.password_is_valid_msg = "Must be at least 8 characters"
-					} else {
-						this.password_is_valid = true;
-						this.password_is_valid_msg = "Password is valid";
-					}
-
-					if (!this.f.password.value || this.f.password.value.length === 0) {
-						this.f.re_password.setValue(null);
-						this.f.re_password.disable();
-					} else {
-						this.f.re_password.enable();
-					}
+			this.f.password.valueChanges.subscribe(() => {
+				if (this.f.password.invalid) {
+					this.password_is_valid = false;
+					this.password_is_valid_msg = 'Must be at least 8 characters';
+				} else {
+					this.password_is_valid = true;
+					this.password_is_valid_msg = 'Password is valid';
 				}
-			)
+
+				if (!this.f.password.value || this.f.password.value.length === 0) {
+					this.f.re_password.setValue(null);
+					this.f.re_password.disable();
+				} else {
+					this.f.re_password.enable();
+				}
+			})
 		);
 
 		this.subscription.add(
-			this.f.re_password.valueChanges.subscribe(
-				() => {
-					if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
-						this.password_is_match = true;
-						this.password_match_msg = "Passwords match";
-					} else {
-						this.password_is_match = false;
-						this.password_match_msg = "Passwords do not match";
-					}
+			this.f.re_password.valueChanges.subscribe(() => {
+				if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
+					this.password_is_match = true;
+					this.password_match_msg = 'Passwords match';
+				} else {
+					this.password_is_match = false;
+					this.password_match_msg = 'Passwords do not match';
 				}
-			)
+			})
 		);
 
 		this.getDealers(1);
@@ -200,32 +194,30 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 	dealerSelected(e): void {
 		this.f.parentId.setValue(e);
 	}
-	
-	openConfirmationModal(status: string, message: string, data: any): void {
 
+	openConfirmationModal(status: string, message: string, data: any): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  {
+			data: {
 				status: status,
 				message: message,
 				data: data
 			}
 		});
 
-		dialog.afterClosed().subscribe(r => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		dialog.afterClosed().subscribe((r) => {
+			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 			this._router.navigate([`/${route}/users/`]);
 		});
 	}
 
 	onSubmit(form: FormGroupDirective): boolean | void {
-
 		this.is_submitted = true;
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.'); 
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return false;
@@ -244,41 +236,37 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 					this.form.reset();
 					this.ngOnInit();
 				},
-				error => {
-					this.is_submitted = false; 
+				(error) => {
+					this.is_submitted = false;
 					this.form_invalid = false;
-					console.log('Error creating sub-dealer', error);
+
 					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
 				}
 			)
 		);
-
 	}
 
-	searchBoxTrigger(event: { page: number, is_search: boolean }): void {
+	searchBoxTrigger(event: { page: number; is_search: boolean }): void {
 		this.is_search = event.is_search;
-		this.getDealers(event.page);		
+		this.getDealers(event.page);
 	}
 
 	searchDealer(key: string): void {
 		this.is_searching_dealers = true;
 
 		this.subscription.add(
-			this._dealer.get_search_dealer(key).subscribe(
-				data => {
-
-					if (data.paging.entities.length > 0) {
-						this.dealers = data.paging.entities;
-						this.dealers = data.paging.entities;
-						this.is_searching_dealers = false;
-					} else {
-						this.dealers = [];
-						this.is_searching_dealers = false;
-					}
-
-					this.paging = data.paging;
+			this._dealer.get_search_dealer(key).subscribe((data) => {
+				if (data.paging.entities.length > 0) {
+					this.dealers = data.paging.entities;
+					this.dealers = data.paging.entities;
+					this.is_searching_dealers = false;
+				} else {
+					this.dealers = [];
+					this.is_searching_dealers = false;
 				}
-			)
+
+				this.paging = data.paging;
+			})
 		);
 	}
 
@@ -296,32 +284,28 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 		if (page > 1) {
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(page, '').subscribe(
-					data => {
-						data.dealers.map(dealer => this.dealers.push(dealer));
+					(data) => {
+						data.dealers.map((dealer) => this.dealers.push(dealer));
 						this.paging = data.paging;
 						this.is_loading_dealers = false;
 					},
-					error => {
-						console.log('Error getting dealers with page', error);
+					(error) => {
 						this.is_loading_dealers = false;
 					}
 				)
 			);
-
 		} else {
-
 			if (this.is_search) this.is_searching_dealers = true;
-			
+
 			this.subscription.add(
 				this._dealer.get_dealers_with_page(page, '').subscribe(
-					data => {
+					(data) => {
 						this.dealers = data.dealers;
 						this.paging = data.paging;
 						this.is_loading_dealers = false;
 						this.is_searching_dealers = false;
 					},
-					error => {
-						console.log('Error getting dealers with page', error);
+					(error) => {
 						this.is_loading_dealers = false;
 						this.is_searching_dealers = false;
 					}
@@ -329,5 +313,4 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 			);
 		}
 	}
-	
 }

@@ -25,9 +25,7 @@ import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation
 	styleUrls: ['./edit-single-host.component.scss'],
 	providers: [TitleCasePipe]
 })
-
 export class EditSingleHostComponent implements OnInit {
-
 	business_hours: UI_OPERATION_DAYS[];
 	categories_data: API_PARENTCATEGORY[];
 	category_selected: string;
@@ -37,20 +35,20 @@ export class EditSingleHostComponent implements OnInit {
 	dealer_name: string = '';
 	dealers_data: API_DEALER[] = [];
 	disable_business_name: boolean = true;
-    form_invalid: boolean = false;
+	form_invalid: boolean = false;
 	has_bulk_selected_business_hours = false;
 	has_content = false;
-	host_data:  any = [];
+	host_data: any = [];
 	initial_dealer: string;
 	is_dealer: boolean = false;
 	host_id: string;
-	host_timezone: { id: string; name: string; status: string; };
+	host_timezone: { id: string; name: string; status: string };
 	new_host_form: FormGroup;
 	operation_hours: UI_OPERATION_HOURS[];
 	paging: any;
 	subscription: Subscription = new Subscription();
 	timezones: any;
-	
+
 	host_form_view = [
 		{
 			label: 'Host Business Name',
@@ -64,7 +62,7 @@ export class EditSingleHostComponent implements OnInit {
 			placeholder: 'Ex. School',
 			col: 'col-lg-6',
 			autocomplete: true
-		},	
+		},
 		{
 			label: 'Latitude',
 			control: 'lat',
@@ -112,7 +110,7 @@ export class EditSingleHostComponent implements OnInit {
 			control: 'timezone',
 			placeholder: 'Ex. US/Central',
 			col: 'col-lg-4',
-			autocomplete: true,
+			autocomplete: true
 		},
 		{
 			label: 'Vistar Venue ID',
@@ -127,7 +125,7 @@ export class EditSingleHostComponent implements OnInit {
 			type: 'textarea',
 			col: 'col-lg-6'
 		},
-        {
+		{
 			label: 'Others',
 			control: 'others',
 			placeholder: 'Enter your others here...',
@@ -142,49 +140,49 @@ export class EditSingleHostComponent implements OnInit {
 			label: 'M',
 			day: 'Monday',
 			periods: [],
-			status: false,
+			status: false
 		},
 		{
 			id: 2,
 			label: 'T',
 			day: 'Tuesday',
 			periods: [],
-			status: false,
+			status: false
 		},
 		{
 			id: 3,
 			label: 'W',
 			day: 'Wednesday',
 			periods: [],
-			status: false,
+			status: false
 		},
 		{
 			id: 4,
 			label: 'Th',
 			day: 'Thursday',
 			periods: [],
-			status: false,
+			status: false
 		},
 		{
 			id: 5,
 			label: 'F',
 			day: 'Friday',
 			periods: [],
-			status: false,
+			status: false
 		},
 		{
 			id: 6,
 			label: 'St',
 			day: 'Saturday',
 			periods: [],
-			status: false,
+			status: false
 		},
 		{
 			id: 0,
 			label: 'Sn',
 			day: 'Sunday',
 			periods: [],
-			status: false,
+			status: false
 		}
 	];
 
@@ -200,8 +198,8 @@ export class EditSingleHostComponent implements OnInit {
 		private _form: FormBuilder,
 		private _host: HostService,
 		private _router: Router,
-		private _titlecase: TitleCasePipe,
-	) { }
+		private _titlecase: TitleCasePipe
+	) {}
 
 	ngOnInit() {
 		if (this.isCurrentUserDealer) this.is_dealer = true;
@@ -210,40 +208,29 @@ export class EditSingleHostComponent implements OnInit {
 		this.getHostData(this._host_data);
 
 		this.subscription.add(
-			this._host.get_content_by_host_id(this._host_data)
-				.subscribe(
-					(response: { contents: API_CONTENT[] }) => {	
-						if (response && response.contents && response.contents.length  > 0) return this.has_content = true;
-						this.has_content = false;
-					},
-					error => console.log('Error retrieving content by host', error)
-				)
-		);
-
-		this.subscription.add(
-			this._categories.get_parent_categories().subscribe(
-				data => {
-					data.map(
-						category => {
-							category.categoryName = this._titlecase.transform(category.categoryName);
-						}
-					)
-					this.categories_data = data;
+			this._host.get_content_by_host_id(this._host_data).subscribe(
+				(response: { contents: API_CONTENT[] }) => {
+					if (response && response.contents && response.contents.length > 0) return (this.has_content = true);
+					this.has_content = false;
+				},
+				(error) => {
+					throw new Error(error);
 				}
 			)
 		);
 
-		this.business_hours = this.google_business_hours.map(
-			h => {
-				return new UI_OPERATION_DAYS(
-					h.id,
-					h.label,
-					h.day,
-					[],
-					h.status
-				)
-			}
+		this.subscription.add(
+			this._categories.get_parent_categories().subscribe((data) => {
+				data.map((category) => {
+					category.categoryName = this._titlecase.transform(category.categoryName);
+				});
+				this.categories_data = data;
+			})
 		);
+
+		this.business_hours = this.google_business_hours.map((h) => {
+			return new UI_OPERATION_DAYS(h.id, h.label, h.day, [], h.status);
+		});
 
 		this.new_host_form = this._form.group({
 			dealerId: ['', Validators.required],
@@ -259,13 +246,15 @@ export class EditSingleHostComponent implements OnInit {
 			timezone: ['', Validators.required],
 			vistar_venue_id: ['', Validators.required],
 			notes: [''],
-			others: [''],
+			others: ['']
 		});
 
 		this.getTimezones();
 	}
 
-	get f() { return this.new_host_form.controls; }
+	get f() {
+		return this.new_host_form.controls;
+	}
 
 	get isCurrentUserAdmin() {
 		return this.currentUser.role_id === UI_ROLE_DEFINITION.administrator;
@@ -273,62 +262,51 @@ export class EditSingleHostComponent implements OnInit {
 
 	getHostData(id: string): void {
 		this.subscription.add(
-			this._host.get_host_by_id(id).subscribe(
-				(response) => {
-					if (response.message) return;
-					this.dealer_id = response.host.dealerId;
-					this.host_data = response.host;
-					this.host_timezone = response.timezone;
-					this.initial_business_hours = JSON.parse(this.host_data.storeHours);
-					this.business_hours = JSON.parse(this.host_data.storeHours);
-					this.fillForm(this.host_data, this.host_timezone);
-				}
-			)
+			this._host.get_host_by_id(id).subscribe((response) => {
+				if (response.message) return;
+				this.dealer_id = response.host.dealerId;
+				this.host_data = response.host;
+				this.host_timezone = response.timezone;
+				this.initial_business_hours = JSON.parse(this.host_data.storeHours);
+				this.business_hours = JSON.parse(this.host_data.storeHours);
+				this.fillForm(this.host_data, this.host_timezone);
+			})
 		);
 	}
 
 	searchData(e): void {
 		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe(
-				data => {
-					if (data.paging.entities.length > 0) {
-						this.dealers_data = data.paging.entities;
-					} else {
-						this.dealers_data = [];
-					}
-					this.paging = data.paging;
+			this._dealer.get_search_dealer(e).subscribe((data) => {
+				if (data.paging.entities.length > 0) {
+					this.dealers_data = data.paging.entities;
+				} else {
+					this.dealers_data = [];
 				}
-			)
+				this.paging = data.paging;
+			})
 		);
 	}
 
 	getDealers(page: number): void {
-
 		if (page > 1) {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '').subscribe(
-					data => {
-						data.dealers.map(
-							i => {
-								this.dealers_data.push(i)
-							}
-						)
-						this.paging = data.paging
-					}
-				)
+				this._dealer.get_dealers_with_page(page, '').subscribe((data) => {
+					data.dealers.map((i) => {
+						this.dealers_data.push(i);
+					});
+					this.paging = data.paging;
+				})
 			);
 		} else {
 			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '').subscribe(
-					data => {
-						this.dealers_data = data.dealers;
-						this.paging = data.paging
-					}
-				)
+				this._dealer.get_dealers_with_page(page, '').subscribe((data) => {
+					this.dealers_data = data.dealers;
+					this.paging = data.paging;
+				})
 			);
 		}
 	}
-	  
+
 	setTimezone(e): void {
 		this.f.timezone.setValue(e);
 	}
@@ -348,95 +326,97 @@ export class EditSingleHostComponent implements OnInit {
 		this.f.timezone.setValue(time.id);
 		this.f.notes.setValue(data.notes);
 		this.f.others.setValue(data.others);
-		this.f.vistar_venue_id.setValue(data.vistarVenueId)
+		this.f.vistar_venue_id.setValue(data.vistarVenueId);
 	}
 
 	getTimezones(): void {
 		this._host.get_time_zones().subscribe(
-			data => {
-				this.timezones = data
+			(data) => {
+				this.timezones = data;
 			},
-			error => {
-				console.log('Error retrieving time zones', error);
-			}
+			(error) => {}
 		);
 	}
 
-    warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+	warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: { status, message, data, return_msg, action }
 		});
 
-		dialogRef.afterClosed().subscribe(() => this.form_invalid = false);
+		dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
 	}
 
 	newHostPlace() {
-        this.business_hours.map(
-            data => {
-                if(data.status && data.periods.length > 0) {
-                    data.periods.map(
-                        period => {
-                            console.log({open: period.open, close: period.close})
-                            if(period.open !='' && period.close == '') {
-                                this.form_invalid = true;
-                            } else if (period.close !='' && period.open == '') {
-                                this.form_invalid = true;
-                            } else {
-                                this.form_invalid = false;
-                            }
-                        }
-                    )
-                }
-            }
-        )
-        if(this.form_invalid) {
-            this.warningModal('error', 'Failed to update host', 'Kindly verify that all business hours opening should have closing time.', null, null);
-        } else {
-            const newHostPlace = new API_UPDATE_HOST(
-                this._host_data,
-                this.f.dealerId.value,
-                this.f.businessName.value,
-                this.f.lat.value,
-                this.f.long.value,
-                this.f.city.value,
-                this.f.state.value,
-                this.f.zip.value,
-                this.f.region.value,
-                this.f.address.value,
-                this.f.category.value,
-                JSON.stringify(this.business_hours),
-                this.f.timezone.value,
-                this.f.vistar_venue_id.value
-            );
-    
-            if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
-                newHostPlace.notes = this.f.notes.value;
-            }
-    
-            if (this.f.others.value && this.f.others.value.trim().length > 0) {
-                newHostPlace.others = this.f.others.value;
-            }
-    
-            if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
-    
-            this.subscription.add(
-                this._host.update_single_host(newHostPlace).subscribe(
-                    (data: any) => {
-                        const dialogRef =  this.confirmationModal('success', 'Host Profile Details Updated!', 'Hurray! You successfully updated the Host Profile Details', data.host.hostId);
-                    }, error => {
-                        console.log(error);
-                        this.confirmationModal('error', 'Host Profile Details Update Failed', 'Sorry, There\'s an error with your submission', null);
-                    }
-                )
-            );
-        }
-            
+		this.business_hours.map((data) => {
+			if (data.status && data.periods.length > 0) {
+				data.periods.map((period) => {
+					if (period.open != '' && period.close == '') {
+						this.form_invalid = true;
+					} else if (period.close != '' && period.open == '') {
+						this.form_invalid = true;
+					} else {
+						this.form_invalid = false;
+					}
+				});
+			}
+		});
+		if (this.form_invalid) {
+			this.warningModal(
+				'error',
+				'Failed to update host',
+				'Kindly verify that all business hours opening should have closing time.',
+				null,
+				null
+			);
+		} else {
+			const newHostPlace = new API_UPDATE_HOST(
+				this._host_data,
+				this.f.dealerId.value,
+				this.f.businessName.value,
+				this.f.lat.value,
+				this.f.long.value,
+				this.f.city.value,
+				this.f.state.value,
+				this.f.zip.value,
+				this.f.region.value,
+				this.f.address.value,
+				this.f.category.value,
+				JSON.stringify(this.business_hours),
+				this.f.timezone.value,
+				this.f.vistar_venue_id.value
+			);
+
+			if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
+				newHostPlace.notes = this.f.notes.value;
+			}
+
+			if (this.f.others.value && this.f.others.value.trim().length > 0) {
+				newHostPlace.others = this.f.others.value;
+			}
+
+			if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
+
+			this.subscription.add(
+				this._host.update_single_host(newHostPlace).subscribe(
+					(data: any) => {
+						const dialogRef = this.confirmationModal(
+							'success',
+							'Host Profile Details Updated!',
+							'Hurray! You successfully updated the Host Profile Details',
+							data.host.hostId
+						);
+					},
+					(error) => {
+						this.confirmationModal('error', 'Host Profile Details Update Failed', "Sorry, There's an error with your submission", null);
+					}
+				)
+			);
+		}
 	}
 
 	confirmationModal(status: string, message: string, data: any, id: string) {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -448,20 +428,19 @@ export class EditSingleHostComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-            if(status) {
-                this.ngOnInit();
-                this._dialog.closeAll()
-            }
-        });
+			if (status) {
+				this.ngOnInit();
+				this._dialog.closeAll();
+			}
+		});
 	}
 
 	onDeleteHost(): void {
 		let isForceDelete = false;
 		const status = 'warning';
-		const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		const hostId = this._host_data;
 		let data: any = { status, message: 'Delete Host', data: 'Are you sure about this?' };
-
 
 		if (this.has_content) {
 			data = { status, message: 'Force Delete', data: 'This host has content. Delete those as well?', is_selection: true };
@@ -479,48 +458,47 @@ export class EditSingleHostComponent implements OnInit {
 				if (this.has_content && response !== 'no') isForceDelete = true;
 
 				this.subscription.add(
-					this._host.delete_host([ hostId ], isForceDelete)
-						.subscribe(
-							() => {
-								this._dialogRef.close('delete-host');
-                                if(!this.is_dealer) {
-                                    this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
-                                } else {
-                                    this._router.navigate([`/${route}/hosts`]);
-                                }
-								
-							},
-							error => console.log('Error deleting host', error)
-						)
+					this._host.delete_host([hostId], isForceDelete).subscribe(
+						() => {
+							this._dialogRef.close('delete-host');
+							if (!this.is_dealer) {
+								this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
+							} else {
+								this._router.navigate([`/${route}/hosts`]);
+							}
+						},
+						(error) => {
+							throw new Error(error);
+						}
+					)
 				);
-
 			},
-			error => console.log('Error closing confirmation modal', error)
+			(error) => {
+				throw new Error(error);
+			}
 		);
-
 	}
 
-	operationDays(data: { periods: any[], status: boolean, id: string }): void {
+	operationDays(data: { periods: any[]; status: boolean; id: string }): void {
 		data.periods.length = 0;
 
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
 			open: '',
-			close: '',
+			close: ''
 		};
-		
+
 		data.status = !data.status;
 		data.periods.push(hours);
 	}
 
-	addHours(data: { periods: any[], id: string }): void {
-
+	addHours(data: { periods: any[]; id: string }): void {
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
 			open: '',
-			close: '',
+			close: ''
 		};
 
 		data.periods.push(hours);
@@ -531,24 +509,21 @@ export class EditSingleHostComponent implements OnInit {
 	}
 
 	setToCategory(event: string): void {
-
 		if (event != null) {
-			event = event.replace(/_/g," ");
+			event = event.replace(/_/g, ' ');
 			this.category_selected = this._titlecase.transform(event);
 			this.f.category.setValue(event);
 		}
-
 	}
-  
-	editBusinessName(event: boolean): void {
 
+	editBusinessName(event: boolean): void {
 		if (event == true) {
 			this.setDealer(this.initial_dealer);
 			this.closed_without_edit = true;
 		} else {
 			this.closed_without_edit = false;
 		}
-		
+
 		this.disable_business_name = event;
 	}
 
@@ -557,32 +532,31 @@ export class EditSingleHostComponent implements OnInit {
 			width: '550px',
 			height: '450px',
 			panelClass: 'position-relative',
-			data: { },
+			data: {},
 			autoFocus: false
 		});
 
 		dialog.afterClosed().subscribe(
-			response => {
-				if (response) this.business_hours = response
+			(response) => {
+				if (response) this.business_hours = response;
 			},
-			error => console.log('Error on closing bulk edit hours', error)
+			(error) => {
+				throw new Error(error);
+			}
 		);
-		
 	}
 
 	setDealer(id) {
 		this.f.dealerId.setValue(id);
-		const filtered = this.dealers_data.filter(dealer => dealer.dealerId == id);
+		const filtered = this.dealers_data.filter((dealer) => dealer.dealerId == id);
 		if (filtered.length == 0) {
 			this.subscription.add(
-				this._dealer.get_dealer_by_id(id).subscribe(
-					data => {
-						this.current_dealer = data;
-						this.dealers_data.push(this.current_dealer);
-						this.dealer_name = this.current_dealer.businessName;
-					}
-				)
-			)
+				this._dealer.get_dealer_by_id(id).subscribe((data) => {
+					this.current_dealer = data;
+					this.dealers_data.push(this.current_dealer);
+					this.dealer_name = this.current_dealer.businessName;
+				})
+			);
 		} else {
 			this.dealer_name = filtered[0].businessName;
 		}
@@ -600,4 +574,3 @@ export class EditSingleHostComponent implements OnInit {
 		return this.currentUser.role_id === UI_ROLE_DEFINITION.dealer;
 	}
 }
-

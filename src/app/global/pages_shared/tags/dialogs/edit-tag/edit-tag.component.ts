@@ -13,7 +13,6 @@ import { takeUntil } from 'rxjs/operators';
 	styleUrls: ['./edit-tag.component.scss']
 })
 export class EditTagComponent implements OnInit, OnDestroy {
-
 	columns = [];
 	currentUserId: string;
 	form: FormGroup;
@@ -22,15 +21,11 @@ export class EditTagComponent implements OnInit, OnDestroy {
 	selectedTagColor: string;
 	tag: TAG;
 	title = 'Edit Tag';
-	
+
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
-	constructor(
-		public _dialog_ref: MatDialogRef<EditTagComponent>,
-		private _form_builder: FormBuilder,
-		private _tag: TagService
-	) { }
-	
+
+	constructor(public _dialog_ref: MatDialogRef<EditTagComponent>, private _form_builder: FormBuilder, private _tag: TagService) {}
+
 	ngOnInit() {
 		this.initializeForm();
 		this.isLoading = false;
@@ -46,11 +41,11 @@ export class EditTagComponent implements OnInit, OnDestroy {
 	}
 
 	onSubmit() {
-
 		const { tagId } = this.tag;
 		const { tagColor, name, description } = this.form.value;
-		
-		this._tag.updateTag(tagId, name, tagColor, this.currentUserId, description)
+
+		this._tag
+			.updateTag(tagId, name, tagColor, this.currentUserId, description)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -59,25 +54,22 @@ export class EditTagComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsCount.emit();
 					this._tag.onRefreshTagOwnersTable.emit();
 				},
-				error => console.log('Error updating tag', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private initializeForm() {
-
 		const data = this.tag;
 
 		this.form = this._form_builder.group({
-			tagId: [ data.tagId , Validators.required ],
-			name: [ data.name , Validators.required ],
-			tagColor: [ data.tagColor , Validators.required ],
-			description: [ data.description ]
+			tagId: [data.tagId, Validators.required],
+			name: [data.name, Validators.required],
+			tagColor: [data.tagColor, Validators.required],
+			description: [data.description]
 		});
 
 		this.selectedTagColor = this.form.get('tagColor').value;
-
 	}
-
-	
 }

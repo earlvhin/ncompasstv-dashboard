@@ -19,16 +19,15 @@ export class EditableFieldModalComponent implements OnInit {
 	screen_types: Array<any> = [];
 	screen_selected: string = null;
 	reset_screen: boolean = false;
-	subscription: Subscription = new Subscription;
-	
+	subscription: Subscription = new Subscription();
+
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		public dialogRef: MatDialogRef<EditableFieldModalComponent>,
 		private _screen: ScreenService
-	) { }
-		
+	) {}
+
 	ngOnInit() {
-        console.log("DD", this._dialog_data)
 		this.status = this._dialog_data.status;
 		this.message = this._dialog_data.message;
 		this.data = this._dialog_data.data;
@@ -44,7 +43,7 @@ export class EditableFieldModalComponent implements OnInit {
 			this.date = value;
 		}
 	}
-	
+
 	updateField(value: any): void {
 		if (this.status.label.includes('Date')) value = this.date.format('MM/DD/YYYY');
 		this.dialogRef.close(value);
@@ -54,15 +53,13 @@ export class EditableFieldModalComponent implements OnInit {
 		this.date = moment(new Date(value));
 	}
 
-  	getScreenType() {
+	getScreenType() {
 		this.subscription.add(
-			this._screen.get_screens_type().subscribe(
-				data => {
-					this.screen_types = data;
-          			this.screen_init = this.status.value;
-			    	this.setScreenType(this.status.id);
-				},
-			)
+			this._screen.get_screens_type().subscribe((data) => {
+				this.screen_types = data;
+				this.screen_init = this.status.value;
+				this.setScreenType(this.status.id);
+			})
 		);
 	}
 
@@ -71,7 +68,7 @@ export class EditableFieldModalComponent implements OnInit {
 		this.reset_screen = false;
 	}
 
-  	clearScreenType() {
+	clearScreenType() {
 		this.screen_selected = null;
 		this.reset_screen = true;
 	}
@@ -79,5 +76,4 @@ export class EditableFieldModalComponent implements OnInit {
 	updateDropdown() {
 		this.dialogRef.close(this.screen_selected);
 	}
-
 }

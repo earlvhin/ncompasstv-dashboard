@@ -12,11 +12,9 @@ import { ConfirmTemplateModalComponent } from '../../../../global/components_sha
 	templateUrl: './create-template.component.html',
 	styleUrls: ['./create-template.component.scss']
 })
-
 export class CreateTemplateComponent implements OnInit {
-
-	title: string = "Create Template";
-	subscription: Subscription = new Subscription;
+	title: string = 'Create Template';
+	subscription: Subscription = new Subscription();
 
 	color: string;
 	created_template: any;
@@ -32,47 +30,32 @@ export class CreateTemplateComponent implements OnInit {
 	zone_form = new FormArray([]);
 	zone_property_form: FormGroup;
 
-	constructor(
-		private _dialog: MatDialog,
-		private _form: FormBuilder,
-		private _router: Router
-	) { }
+	constructor(private _dialog: MatDialog, private _form: FormBuilder, private _router: Router) {}
 
 	ngOnInit() {
+		this.new_template_form = this._form.group({ template_name: ['', [Validators.required]] });
 
-		this.new_template_form = this._form.group(
-			{ template_name: ['', [Validators.required]] }
-		)
-
-		this.zone_property_form = this._form.group(
-			{ zones: this._form.array([]) }
-		)
+		this.zone_property_form = this._form.group({ zones: this._form.array([]) });
 
 		this.subscription.add(
-			this.new_template_form.valueChanges.subscribe(
-				data => {
-					if (this.new_template_form.valid && 
-						this.zone_property_form.get('zones').value != '' && 
-						this.zone_property_form.get('zones').valid) {
-						this.disable_submit = false;
-					} else {
-						this.disable_submit = true;
-					}
+			this.new_template_form.valueChanges.subscribe((data) => {
+				if (this.new_template_form.valid && this.zone_property_form.get('zones').value != '' && this.zone_property_form.get('zones').valid) {
+					this.disable_submit = false;
+				} else {
+					this.disable_submit = true;
 				}
-			)
-		)
+			})
+		);
 
 		this.subscription.add(
-			this.zone_property_form.get('zones').valueChanges.subscribe(
-				data => {
-					if (this.new_template_form.valid && this.zone_property_form.get('zones').valid) {
-						this.disable_submit = false;
-					} else {
-						this.disable_submit = true;
-					}
+			this.zone_property_form.get('zones').valueChanges.subscribe((data) => {
+				if (this.new_template_form.valid && this.zone_property_form.get('zones').valid) {
+					this.disable_submit = false;
+				} else {
+					this.disable_submit = true;
 				}
-			)
-		)
+			})
+		);
 	}
 
 	ngOnDestroy() {
@@ -86,11 +69,9 @@ export class CreateTemplateComponent implements OnInit {
 
 	colorPicker(e, i) {
 		this.zone_background = this.color;
-		console.log((<FormArray>this.zone_property_form.get('zones')).at(i).get('background').setValue(e))
 	}
 
 	confirmTemplateCreation() {
-
 		this.created_template = {
 			template: { name: this.new_template_form.get('template_name').value },
 			templatezones: this.zone_property_form.get('zones').value
@@ -99,42 +80,36 @@ export class CreateTemplateComponent implements OnInit {
 		const dialog = this._dialog.open(ConfirmTemplateModalComponent, {
 			disableClose: true,
 			width: '600px',
-			data: {zones: this.created_template}
+			data: { zones: this.created_template }
 		});
 
 		this.subscription.add(
-			dialog.afterClosed().subscribe(
-				(response: any) => {
-					if (response === 'cancel') return;
-					this._router.navigate(['/administrator/templates'])
-				}
-			)
+			dialog.afterClosed().subscribe((response: any) => {
+				if (response === 'cancel') return;
+				this._router.navigate(['/administrator/templates']);
+			})
 		);
 	}
 
 	openNewZoneModal(): void {
 		const dialog = this._dialog.open(NewZoneModalComponent, { width: '600px', disableClose: true });
 
-		this.subscription.add(
-			dialog.afterClosed().subscribe((data: API_ZONE) => this.addZoneProperty(data))
-		);
+		this.subscription.add(dialog.afterClosed().subscribe((data: API_ZONE) => this.addZoneProperty(data)));
 	}
 
 	zoneProperty(data: any, index: number) {
 		this.zone_data = JSON.parse(data);
 		this.zone_background = this.zone_data.background;
 
-		return new FormGroup(
-			{
-				'name': new FormControl(this.zone_data.name, [Validators.required]),
-				'description': new FormControl(this.zone_data.name, [Validators.required]),
-				'background': new FormControl(this.zone_background, [Validators.required]),
-				'width': new FormControl(this.zone_data.width, [Validators.required]),
-				'height': new FormControl(this.zone_data.height, [Validators.required]),
-				'xpos': new FormControl(this.zone_data.xPos, [Validators.required]),
-				'ypos': new FormControl(this.zone_data.yPos, [Validators.required]),
-				'order': new FormControl(index, [Validators.required])
-			}
-		);
+		return new FormGroup({
+			name: new FormControl(this.zone_data.name, [Validators.required]),
+			description: new FormControl(this.zone_data.name, [Validators.required]),
+			background: new FormControl(this.zone_background, [Validators.required]),
+			width: new FormControl(this.zone_data.width, [Validators.required]),
+			height: new FormControl(this.zone_data.height, [Validators.required]),
+			xpos: new FormControl(this.zone_data.xPos, [Validators.required]),
+			ypos: new FormControl(this.zone_data.yPos, [Validators.required]),
+			order: new FormControl(index, [Validators.required])
+		});
 	}
 }

@@ -12,12 +12,11 @@ import { ContentService } from '../../../../../global/services';
 	styleUrls: ['./analytics-tab.component.scss']
 })
 export class AnalyticsTabComponent implements OnInit, OnDestroy {
-
-	@Input() content_per_zone: UI_CONTENT_PER_ZONE[] = []
+	@Input() content_per_zone: UI_CONTENT_PER_ZONE[] = [];
 	@Input() license_id: string;
 	@Input() screen: UI_SINGLE_SCREEN;
 	@Input() realtime_data: EventEmitter<any>;
-	
+
 	analytics_reload: Subject<any> = new Subject();
 	current_date_display = moment().format('MMMM D, YYYY');
 	daily_chart_updating = false;
@@ -30,13 +29,13 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	selected_month = this.default_selected_month;
 	selected_zone: number = -1;
 	yearly_chart_updating = false;
-	
+
 	daily_content_count: API_CONTENT[];
 	monthly_content_count: API_CONTENT[];
 	yearly_content_count: API_CONTENT[];
-	
+
 	private current_year = new Date().getFullYear();
-	
+
 	display_mode = [
 		{ value: 'daily', viewValue: 'Daily' },
 		{ value: 'monthly', viewValue: 'Monthly' }
@@ -58,11 +57,9 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
-	constructor(
-		private _content: ContentService
-	) { }
-	
+
+	constructor(private _content: ContentService) {}
+
 	ngOnInit() {
 		this.onSelectDisplayMode('daily');
 	}
@@ -75,15 +72,14 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 	inZone(cc: API_CONTENT) {
 		if (this.selected_zone == -1) return true;
 
-		if (this.content_per_zone[this.selected_zone].contents.filter(i => i.content_id === cc.contentId).length > 0) {
+		if (this.content_per_zone[this.selected_zone].contents.filter((i) => i.content_id === cc.contentId).length > 0) {
 			return true;
 		} else {
 			return false;
-		};
+		}
 	}
 
 	onSelectDate(value: any): void {
-
 		const currentDate = moment(value);
 		this.current_date_display = currentDate.format('MMMM D, YYYY');
 
@@ -93,13 +89,12 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 			this.getDailyContentReport(currentDate.format('YYYY-MM-DD'));
 			return;
 		}
-	
+
 		this.yearly_chart_updating = true;
 		this.getYearlyContentReport();
 	}
 
 	onSelectDisplayMode(value: string): void {
-
 		let currentDateResult: string;
 		const currentDate = moment();
 
@@ -126,7 +121,6 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 		}
 
 		this.current_date_display = currentDateResult;
-
 	}
 
 	onSelectMonth(value: any): void {
@@ -141,28 +135,31 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 		const data = { licenseId: this.license_id, from: date };
 		this.daily_chart_updating = true;
 
-		this._content.get_content_daily_count_by_license(data)
+		this._content
+			.get_content_daily_count_by_license(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_CONTENT[]) => {
-					console.log(response)
 					this.daily_content_count = response;
 					this.daily_chart_updating = false;
 					this.destroy_daily_charts = false;
 
 					setTimeout(() => {
 						this.analytics_reload.next();
-					}, 1000)
+					}, 1000);
 				},
-				error => console.log('Error getting daily content count', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private getMonthlyContentReport(date: string): void {
 		const data = { licenseId: this.license_id, from: date };
 		this.monthly_chart_updating = true;
-		
-		this._content.get_content_monthly_count_by_license(data)
+
+		this._content
+			.get_content_monthly_count_by_license(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_CONTENT[]) => {
@@ -172,25 +169,28 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 
 					setTimeout(() => {
 						this.analytics_reload.next();
-					}, 1000)
+					}, 1000);
 				},
-				error => console.log('Error getting monthly content count', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private getYearlyContentReport(): void {
 		const data = { licenseId: this.license_id };
 
-		this._content.get_content_yearly_count_by_license(data)
+		this._content
+			.get_content_yearly_count_by_license(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_CONTENT[]) => {
 					this.yearly_content_count = response;
 					this.yearly_chart_updating = false;
 				},
-				error => console.log('Error getting yearly content count', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
-	
 }

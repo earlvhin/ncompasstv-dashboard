@@ -11,35 +11,29 @@ import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 	templateUrl: './sidebar.component.html',
 	styleUrls: ['./sidebar.component.scss']
 })
-
 export class SidebarComponent implements OnInit, OnDestroy {
-	@Input() routes: { path: string, label: string, icon: string }[];
+	@Input() routes: { path: string; label: string; icon: string }[];
 	@Output() toggleEvent = new EventEmitter<boolean>();
 	icons_only = false;
 	installations_count = 0;
 	isDealer = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
-	constructor(
-		private _auth: AuthService,
-		private _helper: HelperService,
-		private _license: LicenseService,
-        private _router: Router
-	) { }
-	
-	ngOnInit() {
 
-		this._router.events.pipe(filter(event => event instanceof NavigationEnd))
-			.subscribe(
-				(event: NavigationEnd) => {
-					if (event.url.match(/dealers.*/) || event.url.match(/licenses.*/)) {
-						this.icons_only = true;
-						this.toggleEvent.emit(this.icons_only);
-					}
-				},
-				error => console.log('Error on sidebar router events', error)
-			);
+	constructor(private _auth: AuthService, private _helper: HelperService, private _license: LicenseService, private _router: Router) {}
+
+	ngOnInit() {
+		this._router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(
+			(event: NavigationEnd) => {
+				if (event.url.match(/dealers.*/) || event.url.match(/licenses.*/)) {
+					this.icons_only = true;
+					this.toggleEvent.emit(this.icons_only);
+				}
+			},
+			(error) => {
+				throw new Error(error);
+			}
+		);
 
 		if (this.currentUser) {
 			const { role_id } = this.currentUser;
@@ -50,7 +44,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 				this.subscribeToUpdateInstallationDate();
 			}
 		}
-
 	}
 
 	ngOnDestroy() {
@@ -59,21 +52,22 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	}
 
 	toggleSideBar(): void {
-		this.icons_only = !this.icons_only;  
+		this.icons_only = !this.icons_only;
 		this.toggleEvent.emit(this.icons_only);
 	}
 
 	private getInstallationStats(): void {
-
-		this._license.get_installation_statistics()
+		this._license
+			.get_installation_statistics()
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					this.installations_count = response.licenseInstallationStats.total;
 				},
-				error => console.log('Error retrieving installation statistics', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private get currentUser() {
@@ -81,8 +75,6 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToUpdateInstallationDate() {
-		this._helper.onUpdateInstallationDate.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.getInstallationStats());
+		this._helper.onUpdateInstallationDate.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.getInstallationStats());
 	}
 }
-	

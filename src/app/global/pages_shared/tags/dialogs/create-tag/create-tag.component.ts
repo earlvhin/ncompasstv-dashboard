@@ -13,7 +13,6 @@ import { TagService } from 'src/app/global/services';
 	styleUrls: ['./create-tag.component.scss']
 })
 export class CreateTagComponent implements OnInit, OnDestroy {
-	
 	currentUserId: string;
 	description = 'Choose a color and type the name of the tag';
 	form: FormGroup;
@@ -21,14 +20,14 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	tagName: string;
 	title = 'Create Tag';
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	
+
 	constructor(
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<CreateTagComponent>,
 		private _form_builder: FormBuilder,
-		private _tag: TagService,
-	) { }
-	
+		private _tag: TagService
+	) {}
+
 	ngOnInit() {
 		this.initializeForm();
 	}
@@ -39,13 +38,12 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	onSubmit(): void {
-
-		let dataToSubmit: { name: string, tagColor: string, description?: string, createdBy: string } = { 
+		let dataToSubmit: { name: string; tagColor: string; description?: string; createdBy: string } = {
 			name: null,
 			tagColor: null,
 			createdBy: this.currentUserId
 		};
-		
+
 		let errorMessage = 'Error creating tag';
 
 		const form = this.form.value;
@@ -57,13 +55,15 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		dataToSubmit.tagColor = tagColor;
 		if (description) dataToSubmit.description = description;
 
-		this._tag.createTag([dataToSubmit])
+		this._tag
+			.createTag([dataToSubmit])
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
-				error => console.log(errorMessage, error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	onSelectTagColor(value: string): void {
@@ -71,17 +71,14 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	private initializeForm(): void {
-
 		this.form = this._form_builder.group({
-			tagName: [ null, Validators.required ],
-			tagColor: [ null, Validators.required ],
-			description: [ null ]
+			tagName: [null, Validators.required],
+			tagColor: [null, Validators.required],
+			description: [null]
 		});
-
 	}
 
 	private showSuccessModal(): void {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -89,7 +86,6 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe(() => this._dialog_ref.close(true));
-
 	}
 
 	protected get tagColorCtrl() {
@@ -103,5 +99,4 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	protected setCtrlValue(name: string, value: any) {
 		this.getCtrl(name).setValue(value);
 	}
-	
 }

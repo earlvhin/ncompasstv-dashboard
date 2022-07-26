@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit} from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -15,10 +15,9 @@ import { API_EXPORT_DEALER } from 'src/app/global/models';
 	templateUrl: './dealers.component.html',
 	styleUrls: ['./dealers.component.scss']
 })
-
 export class DealersComponent implements OnInit, OnDestroy {
-    current_tab: string = 'Dealer';
-	title: string = "Dealers";
+	current_tab: string = 'Dealer';
+	title: string = 'Dealers';
 	dealer_stats: any;
 	dealers_to_export: API_EXPORT_DEALER[] = [];
 	update_info: boolean = false;
@@ -27,30 +26,26 @@ export class DealersComponent implements OnInit, OnDestroy {
 	worksheet: any;
 
 	dealers_table_column_for_export = [
-		{ name: 'Dealer Alias', key: 'dealerIdAlias'},
-		{ name: 'Business Name', key: 'businessName'},
-		{ name: 'Contact Person', key: 'contactPerson'},
-		{ name: 'Age', key: 'monthAsDealer'},
+		{ name: 'Dealer Alias', key: 'dealerIdAlias' },
+		{ name: 'Business Name', key: 'businessName' },
+		{ name: 'Contact Person', key: 'contactPerson' },
+		{ name: 'Age', key: 'monthAsDealer' },
 		{ name: 'Tags', key: 'tagsToString' },
 		{ name: 'Player Count', key: 'playerCount', no_show: true },
-		{ name: 'Total', key: 'totalLicenses'},
-		{ name: 'Unassigned', key: 'totalLicensesUnassigned'},
-		{ name: 'Online', key: 'totalLicensesOnline'},
-		{ name: 'Offline', key: 'totalLicensesOffline'},
-		{ name: 'Scheduled', key: 'totalScheduled'},
-		{ name: 'Total', key: 'totalHosts'},
-		{ name: 'Active', key: 'totalHostsActive'},
-		{ name: 'Total', key: 'totalAdvertisers'},
-		{ name: 'Active', key: 'totalAdvertisersActive'},
+		{ name: 'Total', key: 'totalLicenses' },
+		{ name: 'Unassigned', key: 'totalLicensesUnassigned' },
+		{ name: 'Online', key: 'totalLicensesOnline' },
+		{ name: 'Offline', key: 'totalLicensesOffline' },
+		{ name: 'Scheduled', key: 'totalScheduled' },
+		{ name: 'Total', key: 'totalHosts' },
+		{ name: 'Active', key: 'totalHostsActive' },
+		{ name: 'Total', key: 'totalAdvertisers' },
+		{ name: 'Active', key: 'totalAdvertisersActive' }
 	];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(
-		private _dealer: DealerService,
-		private _dialog: MatDialog,
-		private _stats: StatisticsService,
-	) { }
+	constructor(private _dealer: DealerService, private _dialog: MatDialog, private _stats: StatisticsService) {}
 
 	ngOnInit() {
 		this.getAdminStatistics();
@@ -69,23 +64,35 @@ export class DealersComponent implements OnInit, OnDestroy {
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet('Dealers');
-		
-		Object.keys(this.dealers_table_column_for_export).forEach(key => {
 
+		Object.keys(this.dealers_table_column_for_export).forEach((key) => {
 			if (this.dealers_table_column_for_export[key].name && !this.dealers_table_column_for_export[key].no_export) {
-
-				header.push({ 
-					header: this.dealers_table_column_for_export[key].name, 
-					key: this.dealers_table_column_for_export[key].key, 
-					width: 30, 
+				header.push({
+					header: this.dealers_table_column_for_export[key].name,
+					key: this.dealers_table_column_for_export[key].key,
+					width: 30,
 					style: { font: { name: 'Arial', bold: true } }
 				});
-
 			}
-
 		});
 
-		const first_column = [ 'Dealer Alias','Business Name','Contact Person','Age', 'Tags', 'Player Count','Licenses','','','','Hosts','','', 'Advertisers','' ];
+		const first_column = [
+			'Dealer Alias',
+			'Business Name',
+			'Contact Person',
+			'Age',
+			'Tags',
+			'Player Count',
+			'Licenses',
+			'',
+			'',
+			'',
+			'Hosts',
+			'',
+			'',
+			'Advertisers',
+			''
+		];
 		this.worksheet.columns = header;
 		this.worksheet.duplicateRow(1, true);
 		this.worksheet.getRow(1).values = [];
@@ -103,29 +110,28 @@ export class DealersComponent implements OnInit, OnDestroy {
 		this.worksheet.mergeCells('K1:M1'); // Hosts
 		this.worksheet.mergeCells('N1:O1'); // Advertisers
 
-		this.worksheet.getRow(1).font =  {
+		this.worksheet.getRow(1).font = {
 			bold: true,
 			name: 'Arial',
-			size: 11,
+			size: 11
 		};
 
-		this.getDataForExport();		
+		this.getDataForExport();
 	}
 
 	openGenerateLicenseModal(): void {
-
 		const dialogRef = this._dialog.open(LicenseModalComponent, {
 			height: '400px',
 			width: '500px'
 		});
 
-		dialogRef.afterClosed().subscribe(() => this.update_info = true);
-
+		dialogRef.afterClosed().subscribe(() => (this.update_info = true));
 	}
 
 	private getAdminStatistics(): void {
-
-		this._stats.api_get_dealer_total().pipe(takeUntil(this._unsubscribe))
+		this._stats
+			.api_get_dealer_total()
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
 					this.dealer_stats = {
@@ -143,43 +149,43 @@ export class DealersComponent implements OnInit, OnDestroy {
 						last_week_value_description: 'New Last Week'
 					};
 				},
-				error => console.log('Error retrieving dealer total', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private getDataForExport(): void {
-
-		this._dealer.export_dealers().pipe(takeUntil(this._unsubscribe))
+		this._dealer
+			.export_dealers()
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
 					this.dealers_to_export = response;
 
-					this.dealers_to_export.forEach(
-						dealer => {
-							this.modifyExportData(dealer);
-							this.worksheet.addRow(dealer).font = { bold: false };
-						}
-					);
+					this.dealers_to_export.forEach((dealer) => {
+						this.modifyExportData(dealer);
+						this.worksheet.addRow(dealer).font = { bold: false };
+					});
 
 					let rowIndex = 1;
-					
+
 					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
 						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 					}
 
-					this.workbook.xlsx.writeBuffer()
-						.then((file: any) => {
-							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = 'Dealers.xlsx';
-							saveAs(blob, filename);
-						}
-					);
+					this.workbook.xlsx.writeBuffer().then((file: any) => {
+						const blob = new Blob([file], { type: EXCEL_TYPE });
+						const filename = 'Dealers.xlsx';
+						saveAs(blob, filename);
+					});
 
 					this.workbook_generation = false;
 				},
-				error => console.log('Error exporting dealers', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
@@ -189,23 +195,21 @@ export class DealersComponent implements OnInit, OnDestroy {
 		item.tagsToString = item.tags.join(',');
 	}
 
-    tabSelected(event: { index: number }): void {
-        console.log(event)
-        switch (event.index) {
-            case 0:
-                this.current_tab = 'Dealer';
-                break;
-            case 1:
-                this.current_tab = 'Bills';
-                break;
-            case 2:
-                this.current_tab = 'Invoice';
-                break;
-            case 3:
-                this.current_tab = 'Orders';
-                break;
-            default:
-        }
-    }
-
+	tabSelected(event: { index: number }): void {
+		switch (event.index) {
+			case 0:
+				this.current_tab = 'Dealer';
+				break;
+			case 1:
+				this.current_tab = 'Bills';
+				break;
+			case 2:
+				this.current_tab = 'Invoice';
+				break;
+			case 3:
+				this.current_tab = 'Orders';
+				break;
+			default:
+		}
+	}
 }

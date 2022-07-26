@@ -2,54 +2,35 @@ import { Component, OnInit } from '@angular/core';
 import { CustomFieldGroup, CustomFields, FieldGroup, Fields, FieldsAPI } from '../../models/host-custom-field-group';
 import { HostService } from '../../services/host-service/host.service';
 
-
 @Component({
 	selector: 'app-host-custom-fields',
 	templateUrl: './host-custom-fields.component.html',
 	styleUrls: ['./host-custom-fields.component.scss']
 })
-
 export class HostCustomFieldsComponent implements OnInit {
-	title: string = "Host Custom Fields";
+	title: string = 'Host Custom Fields';
 	custom_fields: CustomFields[] = [];
 	custom_host_fields: Fields[] = [];
 	edit_mode: boolean = false;
 	field_group_name: string;
 
-	constructor(
-		private _host: HostService
-	) { }
+	constructor(private _host: HostService) {}
 
 	ngOnInit() {
 		this.getFields();
 	}
 
 	addField() {
-		this.custom_host_fields.push(
-			new Fields(
-				`Field ${this.custom_host_fields.length + 1}`,
-				'text',
-				128
-			)
-		)
-
-		console.log(this.custom_host_fields);
+		this.custom_host_fields.push(new Fields(`Field ${this.custom_host_fields.length + 1}`, 'text', 128));
 	}
 
 	createCustomField() {
-		const fieldgroup = new CustomFieldGroup(
-			new FieldGroup(this.field_group_name),
-			this.custom_host_fields
-		)
+		const fieldgroup = new CustomFieldGroup(new FieldGroup(this.field_group_name), this.custom_host_fields);
 
 		this._host.create_field_group(fieldgroup).subscribe(
-			data => {
-				console.log(data);
-			}, 
-			error => {
-				console.log(error);
-			}
-		)
+			(data) => {},
+			(error) => {}
+		);
 	}
 
 	editFieldGroup(index: number, id: string) {
@@ -61,45 +42,27 @@ export class HostCustomFieldsComponent implements OnInit {
 		this._host.get_field_by_id(id).subscribe(
 			(data: FieldsAPI) => {
 				this.edit_mode = true;
-				console.log(data);
 
 				this.field_group_name = this.custom_fields[index].fieldGroupName;
-				
-				data.fields.map(
-					i => {
-						this.custom_host_fields.push(
-							new Fields(
-								i.fieldName,
-								i.fieldType,
-								i.fieldLength
-							)
-						)
-					}
-				)
 
+				data.fields.map((i) => {
+					this.custom_host_fields.push(new Fields(i.fieldName, i.fieldType, i.fieldLength));
+				});
 			},
-			error => {
-				console.log(error)
-			}
-		)
+			(error) => {}
+		);
 	}
 
 	getFields() {
 		this._host.get_fields().subscribe(
-			data => {
+			(data) => {
 				this.custom_fields = data.paging.entities;
-			}, 
-			error => {
-				console.log(error)
-			}
-		)
+			},
+			(error) => {}
+		);
 	}
 
-	setFieldName(i) {
-		console.log(this.custom_host_fields);
-	}
+	setFieldName(i) {}
 
-	saveCustomFieldChanges() {
-		console.log('Coming Soon')
-	}
+	saveCustomFieldChanges() {}
 }

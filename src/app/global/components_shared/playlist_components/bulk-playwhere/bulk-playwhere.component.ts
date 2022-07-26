@@ -5,40 +5,35 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 	templateUrl: './bulk-playwhere.component.html',
 	styleUrls: ['./bulk-playwhere.component.scss']
 })
-
 export class BulkPlaywhereComponent implements OnInit {
-
 	@Input() host_licenses: any[] = [];
-	@Output() disable_blocklisting = new EventEmitter;
-	@Output() blacklist = new EventEmitter;
-	@Output() whitelist = new EventEmitter;
+	@Output() disable_blocklisting = new EventEmitter();
+	@Output() blacklist = new EventEmitter();
+	@Output() whitelist = new EventEmitter();
 	disable_animation = true;
 	timeout: any;
 	blocklist_licenses = [];
 	whitelist_licenses = [];
 
-	constructor() { }
+	constructor() {}
 
 	ngOnInit() {
-		console.log(this.host_licenses);
-		this.host_licenses.forEach(
-			i => {
-				i.licenses.forEach(j => {
-					this.addToBlocklistLicense({checked: true}, j.licenseId)
-				});
-			}
-		)
+		this.host_licenses.forEach((i) => {
+			i.licenses.forEach((j) => {
+				this.addToBlocklistLicense({ checked: true }, j.licenseId);
+			});
+		});
 	}
 
 	ngAfterViewInit(): void {
-		this.timeout = setTimeout(() => this.disable_animation = false);
+		this.timeout = setTimeout(() => (this.disable_animation = false));
 	}
 
 	allHostLicenseInBlacklist() {
 		let host_license_count = 0;
 
-		this.host_licenses.forEach(h => {
-			host_license_count += h.licenses.length
+		this.host_licenses.forEach((h) => {
+			host_license_count += h.licenses.length;
 		});
 
 		if (this.blocklist_licenses.length == host_license_count) {
@@ -52,7 +47,7 @@ export class BulkPlaywhereComponent implements OnInit {
 		const license_count = h.licenses.length;
 		let counter = 0;
 
-		h.licenses.forEach(l => {
+		h.licenses.forEach((l) => {
 			if (this.blocklist_licenses.includes(l.licenseId)) {
 				counter++;
 			}
@@ -66,37 +61,32 @@ export class BulkPlaywhereComponent implements OnInit {
 	}
 
 	addToBlocklistLicense(e, id) {
-		console.log(e, id)
 		setTimeout(() => {
 			if (e.checked == false && this.inBlocklistArray(id).length == 0) {
-				this.whitelist_licenses = this.whitelist_licenses.filter(i => {
-					return i !== id
-				})
+				this.whitelist_licenses = this.whitelist_licenses.filter((i) => {
+					return i !== id;
+				});
 
-				this.blocklist_licenses.push(id)
-
-			} else if(e.checked == true && this.inBlocklistArray(id).length > 0) {
-				this.blocklist_licenses = this.blocklist_licenses.filter(i => {
-					return i !== id
-				})
+				this.blocklist_licenses.push(id);
+			} else if (e.checked == true && this.inBlocklistArray(id).length > 0) {
+				this.blocklist_licenses = this.blocklist_licenses.filter((i) => {
+					return i !== id;
+				});
 
 				this.whitelist_licenses.push(id);
-
-			}  else if(e.checked == true) {
+			} else if (e.checked == true) {
 				this.whitelist_licenses.push(id);
 			}
 
-			this.whitelist.emit(this.whitelist_licenses)
-			this.blacklist.emit(this.blocklist_licenses)
-		}, 0)
+			this.whitelist.emit(this.whitelist_licenses);
+			this.blacklist.emit(this.blocklist_licenses);
+		}, 0);
 	}
 
 	inWhitelistArray(id) {
-		return this.whitelist_licenses.filter(
-			i => {
-				return i == id;
-			}
-		)
+		return this.whitelist_licenses.filter((i) => {
+			return i == id;
+		});
 	}
 
 	cancelBlacklisting() {
@@ -107,32 +97,30 @@ export class BulkPlaywhereComponent implements OnInit {
 
 	cutString(e) {
 		if (e.length > 30) {
-			return (e.substring(0, 30) + '...');
+			return e.substring(0, 30) + '...';
 		} else {
 			return e;
 		}
 	}
 
 	hostToggle(e, h) {
-		h.licenses.forEach(l => {
-			this.addToBlocklistLicense(e, l.licenseId)
+		h.licenses.forEach((l) => {
+			this.addToBlocklistLicense(e, l.licenseId);
 		});
 	}
 
 	inBlocklistArray(id) {
-		return this.blocklist_licenses.filter(
-			i => {
-				return i === id;
-			}
-		)
+		return this.blocklist_licenses.filter((i) => {
+			return i === id;
+		});
 	}
 
 	toggleAll(e) {
 		if (this.host_licenses) {
-			this.host_licenses.forEach(h => {
-				h.licenses.forEach(l => {
-					this.addToBlocklistLicense(e, l.licenseId)
-				});		
+			this.host_licenses.forEach((h) => {
+				h.licenses.forEach((l) => {
+					this.addToBlocklistLicense(e, l.licenseId);
+				});
 			});
 		}
 	}

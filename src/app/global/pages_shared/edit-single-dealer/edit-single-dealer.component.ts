@@ -19,22 +19,20 @@ import { Router } from '@angular/router';
 	templateUrl: './edit-single-dealer.component.html',
 	styleUrls: ['./edit-single-dealer.component.scss']
 })
-
 export class EditSingleDealerComponent implements OnInit, OnDestroy {
-
-	@Output() updated = new EventEmitter;
+	@Output() updated = new EventEmitter();
 
 	dealer_form: FormGroup;
-	email_not_valid : boolean = false;
+	email_not_valid: boolean = false;
 	is_password_field_type = true;
-	enable_update_form : boolean = false;
-	has_duplicate_email : boolean = false;
+	enable_update_form: boolean = false;
+	has_duplicate_email: boolean = false;
 	is_set_to_active = false;
 	other_users: any;
 	is_admin = this.isAdmin;
-    start_date: any;
-    today: Date ;
-	
+	start_date: any;
+	today: Date;
+
 	dealer_form_view = [
 		{
 			label: 'Business Name',
@@ -45,8 +43,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		{
 			label: 'Dealer Id',
 			control: 'dealer_id',
-			col: 'col-lg-6 p-0',
-		},	
+			col: 'col-lg-6 p-0'
+		},
 		{
 			label: 'Dealer Alias',
 			control: 'dealer_alias',
@@ -100,21 +98,21 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			label: 'City',
 			control: 'city',
 			placeholder: 'Ex. St. Peter',
-			col: 'col-lg-3 p-0',
+			col: 'col-lg-3 p-0'
 		},
 		{
 			label: 'State',
 			control: 'state',
 			placeholder: 'Ex. MO',
-			col: 'col-lg-2',
+			col: 'col-lg-2'
 		},
 		{
 			label: 'Region',
 			control: 'region',
 			placeholder: 'Ex. MW',
-			col: 'col-lg-2',
+			col: 'col-lg-2'
 		},
-        {
+		{
 			label: 'Player Count',
 			control: 'c_count',
 			placeholder: 'Ex. 23',
@@ -141,8 +139,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		private _user: UserService,
 		private _dialog: MatDialog,
 		private _dealer: DealerService,
-		private _router: Router,
-	) { }
+		private _router: Router
+	) {}
 
 	ngOnInit() {
 		this.initializeForm();
@@ -153,13 +151,14 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
-        this._unsubscribe.complete();
+		this._unsubscribe.complete();
 	}
 
-	get f() { return this.dealer_form.controls; }
+	get f() {
+		return this.dealer_form.controls;
+	}
 
 	fillForm(data: any) {
-
 		this.f.business_name.setValue(data.businessName);
 		this.f.dealer_id.setValue(data.dealerId);
 		this.f.dealer_alias.setValue(data.dealerIdAlias);
@@ -175,24 +174,21 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		this.f.region.setValue(data.region);
 		this.f.state.setValue(data.state);
 		this.f.status.setValue(data.status);
-        if(data.startDate != null) {
-            this.onSelectStartDate(data.startDate, true);
-        }
-        
+		if (data.startDate != null) {
+			this.onSelectStartDate(data.startDate, true);
+		}
 
 		if (data.status !== 'A') this.is_set_to_active = false;
 		else this.is_set_to_active = true;
 
 		if (this.dealer_form.valid) this.enable_update_form = true;
-
 	}
 
 	onDeleteDealer(): void {
-		
 		const config: MatDialogConfig = {
 			width: '520px',
 			height: '380px',
-			disableClose: true,
+			disableClose: true
 		};
 
 		const dialog = this._dialog.open(DeleteDealerDialogComponent, config);
@@ -200,14 +196,11 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		dialog.componentInstance.dealerId = this.f.dealer_id.value;
 		dialog.componentInstance.userId = this.currentUser.user_id;
 
-		dialog.afterClosed().subscribe(
-			response => {
-				if (!response) return;
-				this._dialog_ref.close();
-				this._router.navigate([`${this.currentRole}/dealers`]);
-			}
-		);
-
+		dialog.afterClosed().subscribe((response) => {
+			if (!response) return;
+			this._dialog_ref.close();
+			this._router.navigate([`${this.currentRole}/dealers`]);
+		});
 	}
 
 	onReassignDealer(): void {
@@ -217,36 +210,36 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 		editDialog.close('reassign-dealer');
 
-		editDialog.afterClosed().subscribe(
-			() => this._dialog.open(ReassignDealerComponent, {
+		editDialog.afterClosed().subscribe(() =>
+			this._dialog.open(ReassignDealerComponent, {
 				width,
 				height,
 				panelClass: 'position-relative',
 				autoFocus: false,
 				data: { dealer_id: this.dealer_form.get('dealer_id').value }
-			}
-		));
+			})
+		);
 	}
 
 	onSubmit(): void {
-		
 		let body_msg = 'This will deactivate the dealer. Proceed?';
 		const currentStatus = this._dealer_data.status === 'A' ? 'active' : 'inactive';
 		const newStatus = this.is_set_to_active ? 'active' : 'inactive';
 		const return_msg = 'Success!';
 
 		if (currentStatus === newStatus) {
+			const observables = [this.updateDealerData(), this.updateUserData()];
 
-			const observables = [ this.updateDealerData(), this.updateUserData() ];
-			
-			forkJoin(observables).pipe(takeUntil(this._unsubscribe))
+			forkJoin(observables)
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully'), 
-					error => console.log('Error updating dealer info', error)
+					() => this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully'),
+					(error) => {
+						throw new Error(error);
+					}
 				);
 
 			return;
-
 		}
 
 		if (newStatus === 'active') {
@@ -254,9 +247,9 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		}
 
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  {
+			data: {
 				status: 'warning',
 				message: 'Update Dealer and Status',
 				data: body_msg,
@@ -265,34 +258,35 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe(
-			response => {
+			(response) => {
 				if (!response) return;
 				const dealerId = this._dealer_data.dealerId;
 				const status = newStatus === 'active' ? 'A' : 'C';
 
-				const observables = [ 
-					this.updateDealerData(),
-					this.updateUserData(), 
-				];
-				
-				forkJoin(observables).pipe(takeUntil(this._unsubscribe))
+				const observables = [this.updateDealerData(), this.updateUserData()];
+
+				forkJoin(observables)
+					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						() => {
-
-							this.updateDealerStatus(dealerId, status).pipe(takeUntil(this._unsubscribe))
+							this.updateDealerStatus(dealerId, status)
+								.pipe(takeUntil(this._unsubscribe))
 								.subscribe(
 									() => this._dialog_ref.close(false),
-									error => console.log('Error updating dealer status', error)
+									(error) => {
+										throw new Error(error);
+									}
 								);
-
 						},
-						error => console.log('Error updating dealer info', error)
+						(error) => {
+							throw new Error(error);
+						}
 					);
-
 			},
-			error => console.log('Error on closing confirmation modal', error)
+			(error) => {
+				throw new Error(error);
+			}
 		);
-
 	}
 
 	onToggleStatus(event: any): void {
@@ -307,62 +301,51 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	}
 
 	private getOtherUsers(page: number): void {
-
 		if (page == 1) {
-
-			this._user.get_users_by_filters({ page, search: '' }).pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					data => {
-						this.other_users = data.users;
-						if(data.paging.hasNextPage) {
-							this.getOtherUsers(data.paging.page + 1)
-						}
+			this._user
+				.get_users_by_filters({ page, search: '' })
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((data) => {
+					this.other_users = data.users;
+					if (data.paging.hasNextPage) {
+						this.getOtherUsers(data.paging.page + 1);
 					}
-				);
-
+				});
 		} else {
-
-			this._user.get_users_by_filters({ page, search: '' }).pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data:any) => {
-						data.users.map(
-							i => {
-								this.other_users.push(i)
-							}
-						)
-						if(data.paging.hasNextPage) {
-							this.getOtherUsers(data.paging.page + 1)
-						}
+			this._user
+				.get_users_by_filters({ page, search: '' })
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((data: any) => {
+					data.users.map((i) => {
+						this.other_users.push(i);
+					});
+					if (data.paging.hasNextPage) {
+						this.getOtherUsers(data.paging.page + 1);
 					}
-				);
-
+				});
 		}
 	}
 
 	private checkEmailDuplicate(current_value: string): void {
-
-		this.duplicate_email = this.other_users.filter(
-			user => {
-				if (user.email == current_value && current_value != this._dealer_data.email) {
-					return user;
-				}
+		this.duplicate_email = this.other_users.filter((user) => {
+			if (user.email == current_value && current_value != this._dealer_data.email) {
+				return user;
 			}
-		);
+		});
 
-		if (this.duplicate_email.length > 0) this.has_duplicate_email = true;			
+		if (this.duplicate_email.length > 0) this.has_duplicate_email = true;
 		else this.has_duplicate_email = false;
 	}
 
 	private initializeForm(): void {
-
 		this.dealer_form = this._form.group({
-			dealer_id: [{value: '', disabled: true}, Validators.required],
+			dealer_id: [{ value: '', disabled: true }, Validators.required],
 			business_name: ['', Validators.required],
 			dealer_alias: [''],
 			owner_f_name: ['', Validators.required],
 			owner_l_name: ['', Validators.required],
 			email: ['', Validators.required],
-			password: [{value: '', disabled: true}, Validators.required],
+			password: [{ value: '', disabled: true }, Validators.required],
 			c_number: ['', Validators.required],
 			c_person: ['', Validators.required],
 			c_count: [''],
@@ -370,23 +353,22 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			city: ['', Validators.required],
 			region: ['', Validators.required],
 			state: ['', Validators.required],
-			status: [ '', Validators.required ],
-            start_date: [''],
+			status: ['', Validators.required],
+			start_date: ['']
 		});
 	}
 
-    onSelectStartDate(e, hasValue?) {
-        if(hasValue) {
-            let value: any = moment(new Date(e));
+	onSelectStartDate(e, hasValue?) {
+		if (hasValue) {
+			let value: any = moment(new Date(e));
 			if (!e || e.trim().length <= 0 || e.includes('--')) value = moment();
-            this.start_date = value;
-            this.dealer_form.get('start_date').setValidators(null); 
-            this.dealer_form.get('start_date').updateValueAndValidity();
-        } else {
-            this.start_date = e.format('YYYY-MM-DD');
-        }
-        
-    }
+			this.start_date = value;
+			this.dealer_form.get('start_date').setValidators(null);
+			this.dealer_form.get('start_date').updateValueAndValidity();
+		} else {
+			this.start_date = e.format('YYYY-MM-DD');
+		}
+	}
 
 	private mapDealerInfoChanges(): API_UPDATE_DEALER_PROFILE_BY_ADMIN {
 		return new API_UPDATE_DEALER_PROFILE_BY_ADMIN(
@@ -402,13 +384,12 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			this.f.region.value,
 			this.f.city.value,
 			this.f.state.value,
-            this.start_date,
-			this._dealer_data.userId,
+			this.start_date,
+			this._dealer_data.userId
 		);
 	}
-  
-  	private mapUserInfoChanges() {
 
+	private mapUserInfoChanges() {
 		const { dealer_id, owner_f_name, owner_l_name, email } = this.dealer_form.value;
 		const updatedBy = this.currentUser.user_id;
 
@@ -420,48 +401,44 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			lastName: owner_l_name,
 			email
 		};
-
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string): void {
-
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  {
+			data: {
 				status: status,
 				message: message,
 				data: data
 			}
-		})
-
-		dialogRef.afterClosed().subscribe(r => {
-			this._dialog.closeAll();
 		});
 
+		dialogRef.afterClosed().subscribe((r) => {
+			this._dialog.closeAll();
+		});
 	}
 
 	private subscribeToFormChanges(): void {
+		this.dealer_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
+			(data) => {
+				if (this._user.validate_email(data.email)) {
+					this.checkEmailDuplicate(data.email);
+					this.email_not_valid = false;
+				} else {
+					this.email_not_valid = true;
+				}
 
-		this.dealer_form.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					if (this._user.validate_email(data.email)) {
-						this.checkEmailDuplicate(data.email);
-						this.email_not_valid = false;
-					} else {
-						this.email_not_valid = true;
-					}
-
-					if (this.dealer_form.valid && !this.has_duplicate_email && !this.email_not_valid) {
-						this.enable_update_form = true;
-					} else {
-						this.enable_update_form = false;
-					}
-				},
-				error => console.log('Error on dealer form update', error)
-			);
-
+				if (this.dealer_form.valid && !this.has_duplicate_email && !this.email_not_valid) {
+					this.enable_update_form = true;
+				} else {
+					this.enable_update_form = false;
+				}
+			},
+			(error) => {
+				throw new Error(error);
+			}
+		);
 	}
 
 	private updateUserData(): Observable<any> {
@@ -487,7 +464,4 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	protected get isAdmin() {
 		return this.currentRole === 'administrator';
 	}
-
-	
-
 }

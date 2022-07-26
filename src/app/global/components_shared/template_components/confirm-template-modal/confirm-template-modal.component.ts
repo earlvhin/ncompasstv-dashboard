@@ -10,9 +10,7 @@ import { TemplateService } from 'src/app/global/services';
 	templateUrl: './confirm-template-modal.component.html',
 	styleUrls: ['./confirm-template-modal.component.scss']
 })
-
 export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
-
 	@Input() zone_data: any;
 	data_saved: boolean = false;
 	screen_width: number = 1920;
@@ -20,10 +18,7 @@ export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
 	is_submitted: boolean = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
-	constructor(
-		@Inject(MAT_DIALOG_DATA) public z_data: any,
-		private _template: TemplateService
-	) { }
+	constructor(@Inject(MAT_DIALOG_DATA) public z_data: any, private _template: TemplateService) {}
 
 	ngOnInit() {
 		this.zone_data = this.z_data;
@@ -36,15 +31,18 @@ export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
 
 	saveTemplate() {
 		this.is_submitted = true;
-		
-		this._template.new_template(this.zone_data.zones)
+
+		this._template
+			.new_template(this.zone_data.zones)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				()  => {
+				() => {
 					this.data_saved = true;
 					this.is_submitted = false;
 				},
-				error => console.log('Error creating template, error', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 }

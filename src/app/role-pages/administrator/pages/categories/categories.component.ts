@@ -12,29 +12,18 @@ import { CategoryModalComponent } from '../../../../global/components_shared/cat
 	templateUrl: './categories.component.html',
 	styleUrls: ['./categories.component.scss']
 })
-
 export class CategoriesComponent implements OnInit {
-
-	title: string = "Categories";
+	title: string = 'Categories';
 	categories$: Observable<API_CATEGORY[]>;
 	category_data: Array<object> = [];
 
-	constructor(
-		private _http: HttpClient,
-		private _auth: AuthService,
-		private _category: CategoryService,
-		private _dialog: MatDialog
-	) { }
+	constructor(private _http: HttpClient, private _auth: AuthService, private _category: CategoryService, private _dialog: MatDialog) {}
 
-	category_table_column = [
-		'#',
-		'Name',
-		'Parent Category'
-	]
+	category_table_column = ['#', 'Name', 'Parent Category'];
 
 	ngOnInit() {
 		this.getCategories();
-		this.category_data
+		this.category_data;
 	}
 
 	getCategories() {
@@ -42,26 +31,24 @@ export class CategoriesComponent implements OnInit {
 		this.categories$.subscribe(
 			(data: API_CATEGORY[]) => {
 				let count = 1;
-				data.forEach(c => {
+				data.forEach((c) => {
 					const category_data = {
 						unique_key: c.slug,
 						i: count,
 						name: c.categoryName,
 						parent: c.parentCategory || '---'
-					}
+					};
 					this.category_data.push(category_data);
-					count++; 
-				})
+					count++;
+				});
 			},
-			error => {
-				console.log('getCategories', error);
-			}
-		)
+			(error) => {}
+		);
 	}
 
 	openCreateCategoryModal(): void {
 		this._dialog.open(CategoryModalComponent, {
-			width: '600px',
+			width: '600px'
 		});
 	}
 }

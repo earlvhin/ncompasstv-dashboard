@@ -16,9 +16,7 @@ import { HelperService } from '../../services';
 	templateUrl: './single-user.component.html',
 	styleUrls: ['./single-user.component.scss']
 })
-
 export class SingleUserComponent implements OnInit, OnDestroy {
-
 	info_form: FormGroup;
 	info_form_disabled = false;
 	is_initial_load = true;
@@ -32,7 +30,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	password_invalid: boolean;
 	password_match: boolean;
 	password_validation_message: string;
-	permissions = [ { label: 'View', value: 'V' }, { label: 'Edit', value: 'E' } ];
+	permissions = [
+		{ label: 'View', value: 'V' },
+		{ label: 'Edit', value: 'E' }
+	];
 	user: API_USER_DATA;
 
 	info_form_fields = [
@@ -81,7 +82,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			width: 'col-lg-6',
 			name: 'permissionList',
 			required: false
-		},
+		}
 	];
 
 	private current_permission: string;
@@ -95,15 +96,14 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _router: Router,
-		private _user: UserService,
-	) { }
+		private _user: UserService
+	) {}
 
 	ngOnInit() {
 		this.getUserData();
 	}
 
 	private getUserData() {
-
 		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setPageData(this._helper.singleUserData);
 			this.initializeForms();
@@ -112,19 +112,17 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.getUserById(this._params.snapshot.params.data)
-					.add(() => {
-						this.initializeForms();
-						this.is_loading = false;
-					})
-			);
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
+			this.getUserById(this._params.snapshot.params.data).add(() => {
+				this.initializeForms();
+				this.is_loading = false;
+			})
+		);
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
-        this._unsubscribe.complete();
+		this._unsubscribe.complete();
 	}
 
 	get infoFormControls() {
@@ -142,21 +140,21 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	changeUserPassword() {
 		this.password_form_disabled = true;
 
-		this._user.update_user(this.mapPasswordChanges()).pipe(takeUntil(this._unsubscribe))
+		this._user
+			.update_user(this.mapPasswordChanges())
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
 					this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
 					this.ngOnInit();
-				}, 
-				error => {
-					console.log('Error changing user password', error);
+				},
+				(error) => {
 					this.password_form_disabled = false;
 				}
 			);
 	}
 
 	onDelete(userId: string): void {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -167,20 +165,19 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		dialog.afterClosed().subscribe(
-			response => {
+		dialog.afterClosed().subscribe((response) => {
+			if (!response) return;
 
-				if (!response) return;
-
-				this._user.deleteUser(userId).pipe(takeUntil(this._unsubscribe))
-					.subscribe(
-						() => this._router.navigate([`/${this.currentRole}/users`]),
-						error => console.log('Error deleting user', error)
-					);
-
-			}
-		);
-
+			this._user
+				.deleteUser(userId)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					() => this._router.navigate([`/${this.currentRole}/users`]),
+					(error) => {
+						throw new Error(error);
+					}
+				);
+		});
 	}
 
 	togglePasswordFieldType(): void {
@@ -194,7 +191,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	updateUserInfo(): void {
 		this.info_form_disabled = true;
 
-		const observables = [ this._user.update_user(this.mapUserInfoChanges()) ];
+		const observables = [this._user.update_user(this.mapUserInfoChanges())];
 
 		if (this.infoFormControls.permission.value !== this.current_permission) {
 			const { userId } = this.user;
@@ -202,36 +199,35 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			observables.push(this._user.update_permission(userId, permission));
 		}
 
-		forkJoin(observables).pipe(takeUntil(this._unsubscribe))
+		forkJoin(observables)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
 					this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
 					this.ngOnInit();
 				},
-				error => {
-					console.log('Error updating user info', error);
+				(error) => {
 					this.password_form_disabled = false;
 				}
 			);
-
 	}
 
 	private get currentUser() {
 		return this._auth.current_user_value;
 	}
-	
-	private getUserById(id: string) {
 
-		return this._user.get_user_by_id(id)
+	private getUserById(id: string) {
+		return this._user
+			.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_USER_DATA) => {
-					console.log('get user by id', response);
 					this.setPageData(response);
-				}, 
-				error => console.log('Error retrieving user data', error)
+				},
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private initializeForms(): void {
@@ -242,14 +238,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private initializePasswordForm(): void {
-
-		this.password_form = this._form.group(
-			{
-				new_password: [ '', Validators.compose([ Validators.required, Validators.minLength(8) ]) ],
-				re_password: [ '', Validators.required ]
-			}
-		);
-
+		this.password_form = this._form.group({
+			new_password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
+			re_password: ['', Validators.required]
+		});
 	}
 
 	private initializeInfoForm(): void {
@@ -257,46 +249,40 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		const config: any = {};
 		const { userRoles } = this.user;
 		const { permission } = userRoles[0];
-		const controls = this.info_form_fields.map(field => field.control);
+		const controls = this.info_form_fields.map((field) => field.control);
 
-		controls.forEach(
-			control => {
+		controls.forEach((control) => {
+			let controlValue = [];
 
-				let controlValue = [];
+			switch (control) {
+				case 'allowEmail':
+					data = this.user[control] === 1 ? true : false;
+					break;
 
-				switch (control) {
-					case 'allowEmail':
-						data = this.user[control] === 1 ? true : false;
-						break;
+				case 'permission':
+					data = permission;
+					break;
 
-					case 'permission':
-						data = permission;
-						break;
-
-					default:
-						data = this.user[control];
-				}
-
-				controlValue.push(data);
-				config[control] = controlValue;
-
+				default:
+					data = this.user[control];
 			}
-		);
+
+			controlValue.push(data);
+			config[control] = controlValue;
+		});
 
 		// initialize update user form
 		this.info_form = this._form.group(config);
-
 	}
 
 	private mapPasswordChanges() {
-		const { userId, } = this.user;
+		const { userId } = this.user;
 		const password = this.passwordFormControls.new_password.value;
 		const updatedBy = this.currentUser.user_id;
 		return { userId, password, updatedBy };
 	}
 
 	private mapUserInfoChanges() {
-
 		const { firstName, middleName, lastName, email, permission } = this.info_form.value;
 		const isEmailAllowed = this.info_form.value.allowEmail;
 		const allowEmail = isEmailAllowed ? 1 : 0;
@@ -311,13 +297,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			email,
 			allowEmail,
 			permission,
-			updatedBy,
+			updatedBy
 		};
-		
 	}
 
 	private setPageData(data: API_USER_DATA) {
-
 		const { userRoles } = data;
 		const { permission, roleName } = userRoles[0];
 
@@ -325,67 +309,50 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		this.user.permission = permission;
 		this.current_permission = permission;
 		this.is_sub_dealer = roleName === 'Sub Dealer';
-
 	}
 
 	private subscribeToUpdateFormChanges(): void {
-
-		this.info_form.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					if (this.info_form.valid) this.info_form_disabled = false; 
-					else this.info_form_disabled = true;
-				}
-			);
-
+		this.info_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.info_form.valid) this.info_form_disabled = false;
+			else this.info_form_disabled = true;
+		});
 	}
 
 	private subscribeToPasswordFormChanges(): void {
+		this.password_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			const isValidForm = this.password_form.valid;
+			const newPassword = this.password_form.value.new_password;
+			const reTypePassword = this.password_form.value.re_password;
 
-		this.password_form.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
+			if (this.passwordFormControls.new_password.invalid) {
+				this.password_invalid = true;
+				this.password_validation_message = 'Must be atleast 8 characters';
+			} else {
+				this.password_invalid = false;
+				this.password_validation_message = 'Password Passed';
+			}
 
-					const isValidForm = this.password_form.valid;
-					const newPassword = this.password_form.value.new_password;
-					const reTypePassword = this.password_form.value.re_password;
-
-					if (this.passwordFormControls.new_password.invalid) {
-						this.password_invalid = true;
-						this.password_validation_message = 'Must be atleast 8 characters';
-					} else {
-						this.password_invalid = false;
-						this.password_validation_message = 'Password Passed';
-					}
-
-					if (isValidForm && newPassword === reTypePassword) {
-						this.password_match = true;
-						this.password_is_match = 'Password Match';
-						this.password_form_disabled = false;
-
-					} else {
-						this.password_match = false;
-						this.password_is_match = 'Password Does Not Match';
-						this.password_form_disabled = true;
-					}
-
-				}
-			);
-
+			if (isValidForm && newPassword === reTypePassword) {
+				this.password_match = true;
+				this.password_is_match = 'Password Match';
+				this.password_form_disabled = false;
+			} else {
+				this.password_match = false;
+				this.password_is_match = 'Password Does Not Match';
+				this.password_form_disabled = true;
+			}
+		});
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string): void {
-
 		this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  { status, message, data }
+			data: { status, message, data }
 		});
-
 	}
 
 	protected get currentRole() {
 		return this._auth.current_role;
 	}
-	
 }

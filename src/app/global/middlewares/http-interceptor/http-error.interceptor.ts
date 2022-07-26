@@ -37,7 +37,6 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 					this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
 				}
 
-				console.log(`Error: ${error.status} - ${error.statusText} at ${error.url.substring(error.url.lastIndexOf('/') + 1)}`);
 				return throwError(error);
 			})
 		);

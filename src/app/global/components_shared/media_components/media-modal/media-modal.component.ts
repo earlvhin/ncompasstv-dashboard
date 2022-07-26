@@ -13,9 +13,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 	templateUrl: './media-modal.component.html',
 	styleUrls: ['./media-modal.component.scss']
 })
-
 export class MediaModalComponent implements OnInit, OnDestroy {
-	
 	advertisers: API_ADVERTISER[] = [];
 	advertiser_data: any[] = [];
 	advertiser_name = '';
@@ -47,7 +45,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	paging_advertiser: PAGING;
 	paging_host: PAGING;
 	to_empty = false;
-	
+
 	private advertiserid: string;
 	private content_data: any;
 	private dealerid: string;
@@ -71,36 +69,34 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		private _content: ContentService,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
-		private _host: HostService,
-	) { }
-	
+		private _host: HostService
+	) {}
+
 	ngOnInit() {
 		this.getDealers(1);
 
-		if (this.data_before_modal) this.is_edit = this.data_before_modal[0].is_edit; 
+		if (this.data_before_modal) this.is_edit = this.data_before_modal[0].is_edit;
 		else this.is_edit = false;
 
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-		
-		if (roleId === dealerRole || roleId === subDealerRole) {
 
+		if (roleId === dealerRole || roleId === subDealerRole) {
 			this.is_dealer = true;
 			this.dealerid = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			this.dealerSelected(this.dealerid);
-
 		} else {
-
 			if (this.is_edit) {
-				
-				this._content.get_content_by_id(this.data_before_modal[1].id).pipe(takeUntil(this._unsubscribe))
+				this._content
+					.get_content_by_id(this.data_before_modal[1].id)
+					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
-						data => {
+						(data) => {
 							this.content_data = data;
 
-							if(this.content_data.fileType != 'feed') {
+							if (this.content_data.fileType != 'feed') {
 								if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
 									this.is_floating = true;
 								} else {
@@ -112,19 +108,18 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 									this.getDealerById(data.dealerId);
 								}
 							} else {
-
 								if (this.content_data.dealerId == '') {
 									this.is_floating = true;
 								} else {
 									this.dealerid = data.dealerId;
 									this.getDealerById(data.dealerId);
 								}
-
 							}
 						},
-						error => console.log('Error retrieving content by ID', error)
+						(error) => {
+							throw new Error(error);
+						}
 					);
-
 			}
 		}
 	}
@@ -134,10 +129,9 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	advertiserSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
-
+	advertiserSearchBoxTrigger(event: { is_search: boolean; page: number }): void {
 		this.is_search_advertiser = event.is_search;
-		
+
 		if (this.is_search_advertiser) {
 			this.search_advertiser_data = '';
 			this.advertiser_data = [];
@@ -145,7 +139,6 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.paging.hasNextPage || this.is_search_advertiser) this.getAdvertiserByDealerId(event.page);
-
 	}
 
 	advertiserSelected(id: string) {
@@ -153,17 +146,13 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	}
 
 	checkInitialLoad(): boolean {
-
 		if (this.is_edit) {
-
 			if (!this.is_floating) {
-
 				if (this.dealers && this.hosts && this.advertisers && this.dealer_name) {
 					return true;
 				}
 
 				if (this.content_data) {
-
 					if (this.dealers && this.content_data.fileType == 'feed') {
 						return true;
 					}
@@ -171,28 +160,24 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
 						return true;
 					}
-
 				}
 			} else {
 				return true;
 			}
-			
 		} else {
 			if (this.dealers.length > 0) return true;
 		}
 	}
 
 	dealerSelected(id: string): void {
-
 		this.loading_form = false;
 		this.no_dealer = false;
 		this.assign_data.dealer = id;
 		this.initial_load_host = false;
 
 		if (this.is_edit) {
-			
 			this.loading_data = false;
-			
+
 			if (this.content_data.fileType != 'feed') {
 				this.hosts = [];
 				this.hosts_data = [];
@@ -214,9 +199,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 				this.assign_data.advertiser = '';
 				this.advertiser_name = '';
 			}
-
 		} else {
-
 			this.hosts = [];
 			this.hosts_data = [];
 			this.advertiser_data = [];
@@ -229,12 +212,10 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 			this.loading_form = false;
 			this.getHostByDealerId(1);
 			this.getAdvertiserByDealerId(1);
-
 		}
 	}
 
-	hostSearchBoxTrigger(event: { is_search: boolean, page: number }): void {
-
+	hostSearchBoxTrigger(event: { is_search: boolean; page: number }): void {
 		this.is_search_host = event.is_search;
 
 		if (this.is_search_host) {
@@ -244,7 +225,6 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.paging_host.hasNextPage || this.is_search_host) this.getHostByDealerId(event.page);
-
 	}
 
 	hostSelected(id: string): void {
@@ -253,16 +233,15 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 
 	onToggleFloatingContent(event: { checked: boolean }): void {
 		this.is_floating = event.checked;
-		
-		if (this.is_floating) {
 
+		if (this.is_floating) {
 			this.temp = {
-				hostid : this.hostid,
-				host_name : this.host_name,
-				advertiserid : this.advertiserid,
-				advertiser_name : this.advertiser_name,
-				dealerid : this.dealerid,
-				dealer_name : this.dealer_name
+				hostid: this.hostid,
+				host_name: this.host_name,
+				advertiserid: this.advertiserid,
+				advertiser_name: this.advertiser_name,
+				dealerid: this.dealerid,
+				dealer_name: this.dealer_name
 			};
 
 			this.hostid = '';
@@ -273,9 +252,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 			this.dealer_name = '';
 			this.no_advertiser_found = true;
 			this.no_host_found = true;
-
 		} else {
-
 			if (this.content_data.dealerId != '' && this.content_data.advertiserid != '' && this.content_data.hostid != '') {
 				this.hostid = this.temp.hostid;
 				this.advertiserid = this.temp.advertiserid;
@@ -284,7 +261,6 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 				this.getAdvertiserById(this.advertiserid);
 				this.getDealerById(this.dealerid);
 			}
-
 		}
 	}
 
@@ -293,8 +269,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		this.getAdvertiserByDealerId(1);
 	}
 
-	searchBoxTrigger(event: { is_search: boolean, page: number }): void {
-
+	searchBoxTrigger(event: { is_search: boolean; page: number }): void {
 		this.is_search = event.is_search;
 
 		if (this.is_search) {
@@ -307,7 +282,6 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		}
 
 		if (this.paging.hasNextPage || this.is_search) this.getDealers(event.page);
-
 	}
 
 	searchData(keyword: string) {
@@ -319,22 +293,18 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		this.search_host_data = keyword;
 		this.getHostByDealerId(1);
 	}
-	
-	updateData(): void {
 
+	updateData(): void {
 		let filter = {};
 
 		if (!this.is_floating) {
-
 			filter = {
 				contentid: this.content_data.contentId,
 				dealerid: this.assign_data.dealer,
 				hostid: this.assign_data.host,
 				advertiserid: this.assign_data.advertiser
 			};
-
 		} else {
-
 			filter = {
 				contentid: this.content_data.contentId,
 				dealerid: this.dealerid,
@@ -342,78 +312,77 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 				advertiserid: this.advertiserid
 			};
 		}
-		
+
 		this.filter.push(filter);
 
-		this._content.unassign_content(this.filter).pipe(takeUntil(this._unsubscribe))
+		this._content
+			.unassign_content(this.filter)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
-
+				(response) => {
 					if (!response) return;
 					this.openConfirmationModal('success', 'Content assignment successfully edited.', 'Click OK to continue');
-					
 				},
-				error => console.log('Error unassigning content', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private getAdvertiserById(id: string) {
-		
-		this._advertiser.get_advertiser_by_id(id).pipe(takeUntil(this._unsubscribe))
+		this._advertiser
+			.get_advertiser_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
 					if (response.message) return;
 					this.advertiser_name = response.advertiser.name;
 					this.advertiserSelected(response.advertiser.id);
 				},
-				error => console.log('Error retrieving advertiser by ID', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private getAdvertiserByDealerId(page: number) {
-
 		if (page > 1) {
-
 			this.loading_advertiser_data = true;
-			
-			this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data).pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					data => {
 
-						data.advertisers.map(
-							i => {
-								this.advertisers.push(i);
-								this.advertiser_data.push(i);
-							}
-						);
+			this._advertiser
+				.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						data.advertisers.map((i) => {
+							this.advertisers.push(i);
+							this.advertiser_data.push(i);
+						});
 
 						this.paging_advertiser = data.paging;
 						this.loading_advertiser_data = false;
 						this.loading_search_advertiser = false;
 					},
-					error => console.log('Error retrieving advertisers by dealer ID', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
-
 		} else {
-
 			if (this.search_advertiser_data != '') {
 				this.loading_search_advertiser = true;
 				this.advertiser_data = [];
 			}
 
-			this._advertiser.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data).pipe(takeUntil(this._unsubscribe))
+			this._advertiser
+				.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data)
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
-
-						if(!data.message) {
-							
-							data.advertisers.map(
-								i => {
-									this.advertisers.push(i);
-									this.advertiser_data.push(i);
-								}
-							);
+					(data) => {
+						if (!data.message) {
+							data.advertisers.map((i) => {
+								this.advertisers.push(i);
+								this.advertiser_data.push(i);
+							});
 
 							this.paging_advertiser = data.paging;
 							this.no_advertiser_found = false;
@@ -424,51 +393,50 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_search_advertiser = false;
 						this.loading_form = false;
 					},
-					error => console.log('Error retrieving dealers by ID ', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
 		}
 	}
 
 	private getDealers(page: number) {
-
 		if (page > 1) {
 			this.loading_data = true;
-			
-			this._dealer.get_dealers_with_page(page, this.search_dealer_data).pipe(takeUntil(this._unsubscribe))
+
+			this._dealer
+				.get_dealers_with_page(page, this.search_dealer_data)
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
-						data.dealers.map(
-							i => {
-								this.dealers.push(i)
-								this.dealers_data.push(i)
-							}
-						)
+					(data) => {
+						data.dealers.map((i) => {
+							this.dealers.push(i);
+							this.dealers_data.push(i);
+						});
 						this.paging = data.paging;
 						this.loading_data = false;
 						this.loading_search = false;
 					},
-					error => console.log('Error retrieving dealers by page', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
-
 		} else {
-
-			if(this.search_dealer_data != '') {
+			if (this.search_dealer_data != '') {
 				this.loading_search = true;
 				this.dealers_data = [];
 			}
-			
-			this._dealer.get_dealers_with_page(page, this.search_dealer_data).pipe(takeUntil(this._unsubscribe))
+
+			this._dealer
+				.get_dealers_with_page(page, this.search_dealer_data)
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
-
+					(data) => {
 						if (data.dealers.length > 0) {
-
-							data.dealers.map(
-								i => {
-									this.dealers.push(i)
-									this.dealers_data.push(i)
-								}
-							);
+							data.dealers.map((i) => {
+								this.dealers.push(i);
+								this.dealers_data.push(i);
+							});
 
 							this.paging = data.paging;
 						}
@@ -476,106 +444,108 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_data = false;
 						this.loading_search = false;
 					},
-					error => console.log('Error retrieving dealers by page', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
 		}
 	}
 
 	private getDealerById(id: string) {
-		
-		this._dealer.get_dealer_by_id(id).pipe(takeUntil(this._unsubscribe))
+		this._dealer
+			.get_dealer_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					this.dealer_name = response.businessName;
 					this.temp_dname = response.dealerId;
 					this.dealerSelected(response.dealerId);
 				},
-				error => console.log('Error retrieving dealer by ID', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
 	}
 
 	private getHostByDealerId(page: number): void {
-
 		if (page > 1) {
 			this.loading_host_data = true;
-			
-			this._host.get_host_by_dealer_id(this.assign_data.dealer, page, this.search_host_data).pipe(takeUntil(this._unsubscribe))
+
+			this._host
+				.get_host_by_dealer_id(this.assign_data.dealer, page, this.search_host_data)
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
-						data.paging.entities.map(
-							i => {
-								this.hosts.push(i);
-								this.hosts_data.push(i);
-							}
-						)
+					(data) => {
+						data.paging.entities.map((i) => {
+							this.hosts.push(i);
+							this.hosts_data.push(i);
+						});
 						this.paging_host = data.paging;
 						this.loading_host_data = false;
 						this.loading_search_host = false;
 					},
-					error => console.log('Error retrieving host by dealer ID', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
-
 		} else {
-
 			if (this.search_host_data != '') {
 				this.loading_search_host = true;
 				this.hosts_data = [];
 			}
-			
-			this._host.get_host_by_dealer_id(this.assign_data.dealer, page, this.search_host_data).pipe(takeUntil(this._unsubscribe))
+
+			this._host
+				.get_host_by_dealer_id(this.assign_data.dealer, page, this.search_host_data)
+				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					data => {
-
+					(data) => {
 						if (!data.message) {
-
-							data.paging.entities.map(
-								i => {
-									this.hosts.push(i)
-									this.hosts_data.push(i)
-								}
-							);
+							data.paging.entities.map((i) => {
+								this.hosts.push(i);
+								this.hosts_data.push(i);
+							});
 
 							this.paging_host = data.paging;
 							this.no_host_found = false;
 						}
 
 						this.to_empty = false;
-						this.loading_host_data= false;
+						this.loading_host_data = false;
 						this.loading_search_host = false;
 						this.loading_form = false;
 					},
-					error => console.log('Error retrieving host by dealer ID', error)
+					(error) => {
+						throw new Error(error);
+					}
 				);
 		}
 	}
 
 	private getHostById(id: string) {
-		
-		this._host.get_host_by_id(id).pipe(takeUntil(this._unsubscribe))
+		this._host
+			.get_host_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
 					if (response.message) return;
 					this.host_name = response.host.name;
 					this.hostSelected(response.host.hostId);
 				},
-				error => console.log('Error retrieving host by ID', error)
+				(error) => {
+					throw new Error(error);
+				}
 			);
-
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string) {
-		
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
 			data: { status, message, data }
 		});
 
-		dialogRef.afterClosed().subscribe(
-			response => {
-				this._dialog.closeAll();
-			}
-		)
+		dialogRef.afterClosed().subscribe((response) => {
+			this._dialog.closeAll();
+		});
 	}
-
 }
