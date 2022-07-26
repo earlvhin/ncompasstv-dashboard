@@ -168,7 +168,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		}
 
 		this.days_list.forEach((day) => (day.checked = true));
-		this.days = '1,2,3,4,5,6,7';
+		this.days = '0,1,2,3,4,5,6';
 	}
 
 	onSelectAllDayLong(event: any): void {

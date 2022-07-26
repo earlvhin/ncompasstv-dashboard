@@ -8,11 +8,13 @@
 
 			.search-container {
 				position: absolute;
+				height: 600px;
 				top: 10px;
 				left: 10px;
 				z-index: 99;
 				width: 400px;
 				padding-bottom: 10px;
+				overflow-y: auto;
 
 				.search-box {
 					background-color: white;
@@ -44,9 +46,6 @@
 
 				.selected-dma-info {
 					background-color: white;
-					overflow-y: auto;
-					max-height: 85vh;
-					padding-bottom: 60px !important;
 
 					.total-hosts {
 						margin-left: auto;
