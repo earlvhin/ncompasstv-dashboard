@@ -388,9 +388,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			if (content.playlistContentId === playlistContentIdToBeReplaced)
 				return this.showErrorDialog('Cannot select the same content to be swapped');
 
-			this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced }).add(() =>
-				this._playlist.onPushPlaylistUpdateToAllLicenses.emit()
-			);
+			this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced });
 		});
 	}
 
@@ -910,7 +908,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		return this._playlist
 			.swap_playlist_content(data)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.getPlaylistById());
+			.subscribe(() => {});
 	}
 
 	protected get currentUser() {

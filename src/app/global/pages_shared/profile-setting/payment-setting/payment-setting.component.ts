@@ -29,7 +29,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	dealerAddressForm: FormGroup;
 	cardForm: FormGroup;
 	isFormLoaded = false;
-	loadingDetails: boolean = true;
+	loadingDetails = true;
 	paymentSettingForm: FormGroup;
 
 	actualCreditCardDetails: any = [];
@@ -39,6 +39,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	constructor(private _billing: BillingService, private _dealer: DealerService, private _dialog: MatDialog, private _formBuilder: FormBuilder) {}
 
 	ngOnInit() {
+		this.loadingDetails = true;
 		this.subscribeToDealerDataLoaded();
 		this.initializeForm();
 		this.getCreditCards();
