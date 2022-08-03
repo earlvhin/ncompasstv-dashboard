@@ -9,7 +9,7 @@ import { ClonePlaylistComponent } from '../../components_shared/playlist_compone
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
 import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
-import { API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, UI_ROLE_DEFINITION, UI_PLAYLIST_SCREENS_NEW } from 'src/app/global/models';
+import { API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, UI_ROLE_DEFINITION, UI_PLAYLIST_SCREENS_NEW, UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 import { AuthService, HelperService, PlaylistService, RoleService } from 'src/app/global/services';
 import { environment } from 'src/environments/environment';
 
@@ -185,8 +185,13 @@ export class SinglePlaylistComponent implements OnInit {
 		}
 	}
 
-	reloadPlaylist() {
+	reloadPlaylist(dataOnly: boolean = false) {
+
+		// if set to true, then it will only call the swapped content
+		if (dataOnly) return this.getPlaylistDataAndScreens(this._params.snapshot.params.data); 
+
 		this.ngOnInit();
+
 	}
 
 	reloadDemo(e) {
@@ -263,8 +268,8 @@ export class SinglePlaylistComponent implements OnInit {
 		this.playlist = data;
 		this.title = playlistName;
 		this.description = playlistDescription;
-		this.playlist_content_and_blacklist = playlistContents;
-		this.playlist_host_and_license = hostLicenses;
+		this.playlist_content_and_blacklist = [...playlistContents];
+		this.playlist_host_and_license = [...hostLicenses];
 	}
 
 	private subscribeToPushPlaylistUpdateToAllLicenses() {

@@ -11,7 +11,7 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 import { PlaylistContentSchedulingDialogComponent } from '../playlist-content-scheduling-dialog/playlist-content-scheduling-dialog.component';
 import { PlaylistMediaComponent } from '../playlist-media/playlist-media.component';
 import { ViewSchedulesComponent } from '../view-schedules/view-schedules.component';
-import { AuthService, ContentService, PlaylistService } from 'src/app/global/services';
+import { AuthService, ConfirmationDialogService, ContentService, PlaylistService } from 'src/app/global/services';
 
 import {
 	API_BLOCKLIST_CONTENT,
@@ -44,7 +44,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	@Input() playlist_id: string;
 	@Input() playlist_host_license: any[];
 	@Output() playlist_changes_saved = new EventEmitter();
-	@Output() reload_playlist = new EventEmitter();
+	@Output() reload_playlist = new EventEmitter<boolean>();
 	@Output() reload_demo = new EventEmitter();
 	@Output() playlist_demo = new EventEmitter();
 
@@ -89,7 +89,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _content: ContentService, private _dialog: MatDialog, private _playlist: PlaylistService, private _auth: AuthService) {}
+	constructor(
+		private _auth: AuthService,
+		private _confirmation_dialog: ConfirmationDialogService,
+		private _content: ContentService, 
+		private _dialog: MatDialog, 
+		private _playlist: PlaylistService, 
+	) {}
 
 	ngOnInit() {
 		this.subscribeToSearch();
@@ -905,10 +911,19 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	private swapContent(data: { contentId: string; playlistContentId: string }) {
+
 		return this._playlist
 			.swap_playlist_content(data)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => {});
+			.subscribe(
+				() => {
+					this._confirmation_dialog.success({ message: 'Success!', data: 'Content swapped' });
+					this.bulk_toggle = false;
+					this.isMarking({ checked: false });
+					this.reload_playlist.emit(true)
+				} 
+			);
+
 	}
 
 	protected get currentUser() {
