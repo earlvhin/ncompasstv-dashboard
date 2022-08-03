@@ -284,7 +284,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		const file_data = await this._filestack.process_uploaded_files(data, users || '');
 		if (file_data) {
 			this.postContentInfo('', file_data, true);
-			this.processFiles();
 		}
 	}
 
@@ -294,8 +293,6 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 		} else {
 			return data.slice(0, data.indexOf('.'));
 		}
-
-		this.removed_index = true;
 	}
 
 	postContentInfo(duplicateArray, data, upload): void {
