@@ -26,15 +26,22 @@
 	
 						<!-- TEXT FIELD -->
 						<div class="text-field-container" *ngIf="field.type === 'text'">
+
 							<mat-form-field class="full-width" >
 								<mat-label>{{ field.label }}</mat-label>
-
-								<input matInput 
-									formControlName="{{ field.control }}" 
-									[type]="field.type"
-									[placeholder]="field.placeholder">
-	
+								<input matInput formControlName="{{ field.control }}" [type]="field.type" [placeholder]="field.placeholder">
 							</mat-form-field>
+
+						</div>
+
+						<!-- EMAIL FIELD -->
+						<div class="text-field-container" *ngIf="field.type === 'email' && is_admin">
+
+							<mat-form-field class="full-width">
+								<mat-label>Email</mat-label>
+								<input matInput formControlName="{{ field.control }}" type="email" placeholder="e.g. iguana@bluemail.com">
+							</mat-form-field>
+
 						</div>
 
 						<!-- RADIO BUTTON -->

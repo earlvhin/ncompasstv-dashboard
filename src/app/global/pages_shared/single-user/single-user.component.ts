@@ -5,11 +5,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject } from 'rxjs';
 
-import { API_USER_DATA } from '../../models/api_user-data.model';
-import { AuthService } from '../../services/auth-service/auth.service';
+import { API_USER_DATA } from 'src/app/global/models';
+import { AuthService, HelperService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UserService } from '../../services/user-service/user.service';
-import { HelperService } from '../../services';
 
 @Component({
 	selector: 'app-single-user',
@@ -19,6 +17,8 @@ import { HelperService } from '../../services';
 export class SingleUserComponent implements OnInit, OnDestroy {
 	info_form: FormGroup;
 	info_form_disabled = false;
+	info_form_fields = this._formFields;
+	is_admin = this._auth.current_role === 'administrator';
 	is_initial_load = true;
 	is_loading = true;
 	is_password_field_type = true;
@@ -30,61 +30,13 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	password_invalid: boolean;
 	password_match: boolean;
 	password_validation_message: string;
+	user: API_USER_DATA;
+
 	permissions = [
 		{ label: 'View', value: 'V' },
 		{ label: 'Edit', value: 'E' }
 	];
-	user: API_USER_DATA;
-
-	info_form_fields = [
-		{
-			label: 'Firstname',
-			control: 'firstName',
-			placeholder: 'Ex: John',
-			type: 'text',
-			width: 'col-lg-6',
-			required: true
-		},
-		{
-			label: 'Middlename',
-			control: 'middleName',
-			placeholder: 'Ex: Cruz',
-			type: 'text',
-			width: 'col-lg-6',
-			required: false
-		},
-		{
-			label: 'Lastname',
-			control: 'lastName',
-			placeholder: 'Ex: Doe',
-			type: 'text',
-			width: 'col-lg-6',
-			required: true
-		},
-		{
-			label: 'Email Address',
-			control: 'email',
-			placeholder: 'Ex: admin@blueiguana.com',
-			type: 'email',
-			width: 'col-lg-6',
-			required: true
-		},
-		{
-			label: 'Email Notification',
-			control: 'allowEmail',
-			type: 'toggle',
-			required: true
-		},
-		{
-			label: 'Permission',
-			control: 'permission',
-			type: 'radio',
-			width: 'col-lg-6',
-			name: 'permissionList',
-			required: false
-		}
-	];
-
+	
 	private current_permission: string;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -284,8 +236,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	private mapUserInfoChanges() {
 		const { firstName, middleName, lastName, email, permission } = this.info_form.value;
-		const isEmailAllowed = this.info_form.value.allowEmail;
-		const allowEmail = isEmailAllowed ? 1 : 0;
+		const allowEmailNotifications = this.info_form.value.allowEmail ? 1 : 0;
 		const { userId } = this.user;
 		const updatedBy = this.currentUser.user_id;
 
@@ -295,7 +246,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			middleName,
 			lastName,
 			email,
-			allowEmail,
+			allowEmailNotifications,
 			permission,
 			updatedBy
 		};
@@ -354,5 +305,59 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get _formFields() {
+
+		const fields = [
+			{
+				label: 'Firstname',
+				control: 'firstName',
+				placeholder: 'Ex: John',
+				type: 'text',
+				width: 'col-lg-6',
+				required: true
+			},
+			{
+				label: 'Middlename',
+				control: 'middleName',
+				placeholder: 'Ex: Cruz',
+				type: 'text',
+				width: 'col-lg-6',
+				required: false
+			},
+			{
+				label: 'Lastname',
+				control: 'lastName',
+				placeholder: 'Ex: Doe',
+				type: 'text',
+				width: 'col-lg-6',
+				required: true
+			},
+			{
+				label: 'Email Address',
+				control: 'email',
+				placeholder: 'Ex: admin@blueiguana.com',
+				type: 'email',
+				width: 'col-lg-6',
+				required: true
+			},
+			{
+				label: 'Email Notification',
+				control: 'allowEmail',
+				type: 'toggle',
+				required: true
+			},
+			{
+				label: 'Permission',
+				control: 'permission',
+				type: 'radio',
+				width: 'col-lg-6',
+				name: 'permissionList',
+				required: false
+			}
+		];
+
+		return fields;
 	}
 }
