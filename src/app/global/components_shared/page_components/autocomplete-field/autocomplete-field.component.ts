@@ -1,22 +1,11 @@
-import {
-	Component,
-	OnInit,
-	Input,
-	Output,
-	EventEmitter,
-	HostListener,
-	OnDestroy,
-	AfterViewInit,
-	OnChanges,
-	SimpleChanges,
-	SimpleChange
-} from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy, AfterViewInit, OnChanges,
+	SimpleChanges, SimpleChange } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
+import { FormControl } from '@angular/forms';
+import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { HelperService } from 'src/app/global/services/helper-service/helper.service';
-import { takeUntil } from 'rxjs/operators';
-import { FormControl } from '@angular/forms';
+import { HelperService } from 'src/app/global/services';
 @HostListener('scroll', ['$event'])
 @Component({
 	selector: 'app-autocomplete-field',
@@ -52,13 +41,14 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	@Input() reset_value: boolean;
 	@Input() type?: string;
 	@Input() isLocator?: boolean;
+	@Input() disable_minimum_search_length = false;
 
 	input_field_control = new FormControl();
 	view_value: string;
 	paginated_input_field_control = new FormControl();
 	search_result: Array<any>;
 	search_via_api: boolean = false;
-	timeOut;
+	timeOut: NodeJS.Timer;
 	timeOutDuration = 1000;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -78,26 +68,29 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
-		if (this.reset_value) {
-			this.view_value = '';
-		}
 
+		if (this.reset_value) this.view_value = '';
 		this.data_reference = this.data_reference;
 
 		if (this.no_edit) {
 			this.view_value = this.initial_value;
 		} else {
+
 			if (this.paging && this.search_via_api && this.data_reference.length > 0) {
 				this.data_reference = this.data_reference;
 				this.search_result = this.data_reference;
 			}
+
 		}
 
 		if (changes.disabled as SimpleChange) {
+
 			if (changes.disabled.currentValue) {
+
 				this.input_field_control.disable();
 				this.paginated_input_field_control.disable();
 				return;
+
 			}
 
 			this.input_field_control.enable();
@@ -115,12 +108,11 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 		document.removeEventListener('click', this.customBlur);
 	}
 
-	customBlur = (e: any) => {
-		if (e) {
-			if (!e.target.className.includes('skip-blur')) {
-				this.emptySearch();
-			}
-		}
+	customBlur = (event) => {
+
+		if (!event || event.target.className.includes('skip-blur')) return;
+		this.emptySearch();
+
 	};
 
 	dataSelected(data) {
@@ -135,51 +127,80 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 		}, 300);
 	}
 
-	initializeSearch(s) {
-		if (s.target.value) {
+	initializeSearch(event: { target: {  value: any }}) {
+
+		if (event.target.value) {
+
 			this.search_result = this.data_reference.filter((res) => {
-				if (res[this.primary_keyword].toLowerCase().includes(s.target.value.toLowerCase())) {
+				if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
 					return res;
 				}
 			});
-		} else if (s.target.value === '') {
+
+		} else if (event.target.value === '') {
 			this.search_result = this.data_reference;
 		}
 	}
 
-	search(s) {
-		if (s.target.value) {
+	search(event: { target: { value: any }}) {
+
+		if (event.target.value) {
+
 			this.search_result = this.data_reference.filter((res) => {
-				if (res[this.primary_keyword].toLowerCase().includes(s.target.value.toLowerCase())) {
+				if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
 					return res;
 				}
 			});
-		} else if (s.target.value === '') {
+			
+		} else if (event.target.value === '') {
 			this.search_result = this.data_reference;
 		}
+
 	}
 
-	search_by_api(e) {
+	search_by_api() {
+
 		clearTimeout(this.timeOut);
 
-		// if (this.view_value){
 		this.timeOut = setTimeout(() => {
-			if (this.view_value.length >= 3) {
+
+			// hotfix only
+			// should be refactored
+			if (this.disable_minimum_search_length) {
+
 				this.search_via_api = true;
 				this.searched.emit(this.view_value);
+
+				if (this.view_value.length === 0) {
+					this.search_via_api = true;
+					this.paging = true;
+					this.call_next_page.emit({ page: 1, is_search: true, no_keyword: true });
+				}
+
+				return;
+
+			}
+
+			if (this.view_value.length >= 3) {
+
+				this.search_via_api = true;
+				this.searched.emit(this.view_value);
+
 			} else {
+
 				if (this.view_value.length == 0) {
 					this.search_via_api = true;
 					this.paging = true;
 					this.call_next_page.emit({ page: 1, is_search: true, no_keyword: true });
 				}
+
 			}
+
 		}, this.timeOutDuration);
-		// }
 	}
 
-	onChangeData(e) {
-		this.change_value.emit(e.target.getAttribute('data-value'));
+	onChangeData(event) {
+		this.change_value.emit(event.target.getAttribute('data-value'));
 	}
 
 	onScroll(event) {
@@ -197,14 +218,18 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	}
 
 	private subscribeToResetField(): void {
-		this._helper.onResetAutocompleteField.pipe(takeUntil(this._unsubscribe)).subscribe(
-			(response: string) => {
-				if (response === this.type) this.ngOnInit();
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
+
+		this._helper.onResetAutocompleteField.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: string) => {
+					if (response !== this.type) return;
+					this.ngOnInit();
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+
 	}
 
 	private subscribeToMarkAsTouched() {
