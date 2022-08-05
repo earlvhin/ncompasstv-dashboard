@@ -176,10 +176,13 @@
 									<label class="mb-2">Enter a State</label>
 									<div class="d-flex">
 										<div class="search-input">
-											<app-autocomplete-field [data_reference]="states_data" [primary_keyword]="'state'" [key_of_value]="'state'"
+											<app-autocomplete-field [data_reference]="states_data" 
 												(data_value)="onSelectState($event)" [required]="true" [label]="'State'" [paging]="state_paging"
 												(call_next_page)="searchBoxStateTrigger($event)" [loading_data]="loading_state_data" (searched)="searchState($event)"
-												[loading_search]="loading_state_search">
+												[primary_keyword]="'state'" 
+												[key_of_value]="'state'"
+												[loading_search]="loading_state_search"
+												[disable_minimum_search_length]="true">
 											</app-autocomplete-field>
 										</div>
 										<span class="fas fa-search search-button"></span>
