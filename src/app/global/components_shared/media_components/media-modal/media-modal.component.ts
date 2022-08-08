@@ -41,6 +41,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	no_dealer = true;
 	no_dealer_data: boolean;
 	no_host_found = true;
+	optimize_video_upload: boolean;
 	paging: PAGING;
 	paging_advertiser: PAGING;
 	paging_host: PAGING;
@@ -70,7 +71,9 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _host: HostService
-	) {}
+	) {
+		this.optimize_video_upload = localStorage.getItem('optimize_video') == 'false' ? false : true;
+	}
 
 	ngOnInit() {
 		this.getDealers(1);
@@ -262,6 +265,10 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 				this.getDealerById(this.dealerid);
 			}
 		}
+	}
+
+	setOptimizedVideoUploadValue(e) {
+		localStorage.setItem('optimize_video', e.checked.toString());
 	}
 
 	searchAdvertiserData(keyword: string): void {

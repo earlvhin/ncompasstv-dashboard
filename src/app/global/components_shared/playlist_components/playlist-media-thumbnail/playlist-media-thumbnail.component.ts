@@ -9,7 +9,7 @@ import { environment } from '../../../../../environments/environment';
 	styleUrls: ['./playlist-media-thumbnail.component.scss']
 })
 export class PlaylistMediaThumbnailComponent implements OnInit {
-	@Input() content: API_CONTENT;
+	@Input() content: any;
 	@Input() show_fullscreen_status: boolean;
 	@Output() converted = new EventEmitter();
 	is_converted: number = 0;
@@ -20,8 +20,13 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.content.fileType === 'webm' || this.content.fileType === 'mp4') {
-			// Thumbnail
-			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf('.') + 1)}jpg`;
+			if (this.content.fileType == 'webm') {
+				this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf('.') + 1)}jpg`;
+			}
+
+			if (this.content.fileType == 'mp4') {
+				this.getMp4Thumbnail(this.content.handlerId);
+			}
 
 			if (this.content.isConverted === 0) {
 				this._socket = io(environment.socket_server, {
@@ -35,11 +40,18 @@ export class PlaylistMediaThumbnailComponent implements OnInit {
 						this.converted.emit(data);
 					}
 				});
-
-				this._socket.on('connect', () => {});
-
-				this._socket.on('disconnect', () => {});
 			}
+		}
+	}
+
+	getMp4Thumbnail(handleId) {
+		try {
+			fetch(`https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${handleId}`).then(async (res) => {
+				const { data } = await res.json();
+				this.content.thumbnail = data.url;
+			});
+		} catch (err) {
+			throw new Error(err);
 		}
 	}
 
