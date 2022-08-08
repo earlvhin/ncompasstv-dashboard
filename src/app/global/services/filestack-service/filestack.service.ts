@@ -40,6 +40,8 @@ export class FilestackService {
 	}
 
 	process_uploaded_files(file_data, users) {
+		const convert_to_webm = localStorage.getItem('optimize_video') == 'false' ? false : true;
+
 		return new Promise((resolve, reject) => {
 			let file_array = [];
 
@@ -47,7 +49,7 @@ export class FilestackService {
 				let filename: string = file.key;
 
 				// Change mp4 filetype/filename to webm
-				if (file.mimetype === 'video/mp4') {
+				if (file.mimetype === 'video/mp4' && convert_to_webm) {
 					filename = `${file.key.substring(0, file.key.lastIndexOf('.'))}.webm`;
 					// filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
 
@@ -76,8 +78,14 @@ export class FilestackService {
 						advertiserid: users ? users.advertiser : '',
 						handle: file.handle,
 						filename: filename,
-						filesize: file.size
+						filesize: file.size,
+						isconverted: !convert_to_webm ? 1 : 0
 					};
+
+					// Generate MP4 Thumbnail
+					if (!convert_to_webm && file.mimetype === 'video/mp4') {
+						await fetch(`https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${file.handle}`);
+					}
 
 					// Uploaded File Data Model for backend saving
 					file_array.push(upload_data);
