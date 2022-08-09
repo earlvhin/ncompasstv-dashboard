@@ -185,7 +185,7 @@ export class DealersTableComponent implements OnInit {
 		const percentage_max = this.filters.percentage_max;
 
 		this._dealer
-			.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+			.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
