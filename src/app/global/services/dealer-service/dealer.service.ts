@@ -114,6 +114,38 @@ export class DealerService extends BaseService {
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
+	
+    get_dealers_fetch(
+		page: number,
+		search: string,
+		sortColumn: string,
+		sortOrder: string,
+		filter?: string,
+		filterMin?: any,
+		filterMax?: any,
+		status = '',
+		filterPerc?: string,
+		filterPercMin?: number,
+		filterPercMax?: number
+	) {
+		const filters: API_FILTERS = {
+			page,
+			search,
+			sortColumn,
+			sortOrder,
+			filter,
+			filterMin,
+			filterMax,
+			status,
+			filterPerc,
+			filterPercMin,
+			filterPercMax
+		};
+		const base = `${this.getters.api_get_dealers_fetch}`;
+		const params = this.setUrlParams(filters);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
+	}
 
 	get_dealer_license_zone(key: string, dealerId: string, page: number) {
 		const params = this.setUrlParams({ page, search: key, dealerId });

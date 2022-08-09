@@ -219,7 +219,7 @@ export class LicensesComponent implements OnInit {
 		this.hosts_data = [];
 
 		this._host
-			.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+			.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
@@ -230,7 +230,7 @@ export class LicensesComponent implements OnInit {
 					}
 
 					this.paging_data_host = response.paging;
-					const mappedData = this.mapToHostsTable([...response.host]);
+					const mappedData = this.mapToHostsTable([...response.paging.entities]);
 					this.hosts_data = [...mappedData];
 					this.filtered_data_host = [...mappedData];
 				},
@@ -249,7 +249,7 @@ export class LicensesComponent implements OnInit {
 		this.hosts_data = [];
 
 		this._license
-			.get_all_licenses(
+			.get_all_licenses_fetch(
 				page,
 				this.search_data_licenses,
 				this.sort_column,
@@ -273,8 +273,8 @@ export class LicensesComponent implements OnInit {
 				(data) => {
 					this.paging_data_licenses = data.paging;
 
-					if (data.licenses) {
-						const mapped = this.mapToLicensesTable(data.licenses);
+					if (data.paging.entities) {
+						const mapped = this.mapToLicensesTable(data.paging.entities);
 						this.licenses_data = [...mapped];
 						this.filtered_data_licenses = [...mapped];
 					} else {
