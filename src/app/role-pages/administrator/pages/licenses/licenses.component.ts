@@ -249,7 +249,7 @@ export class LicensesComponent implements OnInit {
 		this.hosts_data = [];
 
 		this._license
-			.get_all_licenses(
+			.get_all_licenses_fetch(
 				page,
 				this.search_data_licenses,
 				this.sort_column,
@@ -273,8 +273,8 @@ export class LicensesComponent implements OnInit {
 				(data) => {
 					this.paging_data_licenses = data.paging;
 
-					if (data.licenses) {
-						const mapped = this.mapToLicensesTable(data.licenses);
+					if (data.paging.entities) {
+						const mapped = this.mapToLicensesTable(data.paging.entities);
 						this.licenses_data = [...mapped];
 						this.filtered_data_licenses = [...mapped];
 					} else {

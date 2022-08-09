@@ -240,7 +240,7 @@ export class HostsComponent implements OnInit {
 		this.hosts_data = [];
 
 		this._host
-			.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+			.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
 				if (response.message) {
@@ -250,7 +250,7 @@ export class HostsComponent implements OnInit {
 				}
 
 				this.paging_data_host = response.paging;
-				const mappedData = this.hosts_mapToUIFormat(response.host);
+				const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
 				this.hosts_data = [...mappedData];
 				this.filtered_data_host = [...mappedData];
 			})
@@ -375,7 +375,7 @@ export class HostsComponent implements OnInit {
 		switch (tab) {
 			case 'hosts':
 				this._host
-					.get_host_by_page(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
+					.get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe((response) => {
 						if (response.message) {
