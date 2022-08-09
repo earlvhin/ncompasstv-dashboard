@@ -161,7 +161,6 @@ export class DealersTableComponent implements OnInit {
 			this.pageRequested(page);
 			return;
 		}
-
 		this.pageRequested(1);
 	}
 
@@ -184,7 +183,32 @@ export class DealersTableComponent implements OnInit {
 		const percentage_min = this.filters.percentage_min;
 		const percentage_max = this.filters.percentage_max;
 
-		this._dealer
+        if(sort || this.ongoing_filter) {
+            this._dealer
+			.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					this.ongoing_filter = false;
+					this.initial_load = false;
+					this.paging_data = response.paging;
+
+					if (!response.paging.entities) {
+						this.filtered_data = [];
+						this.no_dealer = true;
+						return;
+					}
+
+					this.dealers_data = this.mapToUIFormat(response.paging.entities);
+					this.filtered_data = this.dealers_data;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => (this.searching = false));
+        } else {
+            this._dealer
 			.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -207,6 +231,8 @@ export class DealersTableComponent implements OnInit {
 				}
 			)
 			.add(() => (this.searching = false));
+        }
+		
 	}
 
 	sortByColumnName(column: string, order: string): void {
