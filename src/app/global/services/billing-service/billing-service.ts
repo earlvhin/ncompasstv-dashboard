@@ -1,22 +1,25 @@
-import { Injectable } from '@angular/core';
+import { EventEmitter, Injectable } from '@angular/core';
+import { Observable } from 'rxjs';
+
 import { BaseService } from '../base.service';
+import { API_ORDER, PAGING } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
 })
 
 export class BillingService extends BaseService {
-	
-    get_transaction_charges(page, pageSize=15, id, dateTo, dateFrom, status?, type?) {
-		return this.getRequest(
-            `${this.getters.api_get_billing_charges}` + '?page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&dealerid=' + `${id}` + '&from=' + `${dateFrom}` + '&to=' + `${dateTo}` + '&status=' + `${status}` + '&type=' + `${type}`
-        );
+
+	on_click_order = new EventEmitter<void>();
+
+    get_transaction_charges(page: number, pageSize = 15, id: string, dateTo: string, dateFrom: string, status?: string, type?: string) {
+		const url = `${this.getters.api_get_billing_charges}?page=${page}&pageSize=${pageSize}&dealerid=${id}&from=${dateFrom}&to=${dateTo}&status=${status}&type=${type}`;
+		return this.getRequest(url);
  	}
 	
-    get_invoice_charges(page, pageSize=15, searchkey, status?, date?) {
-		return this.getRequest(
-            `${this.getters.api_get_billing_invoice_charges}` + '?page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&status=' + `${status}` + '&billingdate=' + `${date}`+ '&filterby=' + `${searchkey}`
-        );
+    get_invoice_charges(page: number, pageSize = 15, searchkey: string, status?: string, date?: string) {
+		const url = `${this.getters.api_get_billing_invoice_charges}?page=${page}&pageSize=${pageSize}&status=${status}&billingdate=${date}&filterby=${searchkey}`;
+		return this.getRequest(url);
  	}
 
     update_billing_details(data) { 
@@ -35,19 +38,22 @@ export class BillingService extends BaseService {
 		return this.postRequest(this.creators.add_credit_card, data);
 	}
 
-    get_billing_purchases(page, pageSize=1, searchkey, startDate, endDate, OrderStatus='') {
-		return this.getRequest(
-            `${this.getters.api_get_billing_purchases}` + '?page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&filterBy=' + `${searchkey}`+ '&from=' + `${endDate}` + '&to=' + `${startDate}`  + '&status=' + `${OrderStatus}`
-        );
+    get_billing_purchases(page, pageSize = 1, searchkey: string, startDate: string, endDate: string, orderStatus = ''): Observable<{ paging?: PAGING, purchases?: API_ORDER[], message?: string }> {
+		const url = `${this.getters.api_get_billing_purchases}?page=${page}&pageSize=${pageSize}&filterBy=${searchkey}&from=${endDate}&to=${startDate}&status=${orderStatus}`;
+		return this.getRequest(url);
  	}
    
-    get_billing_purchases_per_dealer(id, page, pageSize=1, startDate, endDate, OrderStatus='') {
-		return this.getRequest(
-            `${this.getters.api_get_dealer_orders}` + '?dealerid=' + `${id}` + '&page=' + `${page}` + '&pageSize=' + `${pageSize}` + '&from=' + `${endDate}` + '&to=' + `${startDate}`  + '&status=' + `${OrderStatus}`
-        );
+    get_billing_purchases_per_dealer(id: string, page: number, pageSize = 1, startDate: string, endDate: string, orderStatus='') {
+		const url = `${this.getters.api_get_dealer_orders}?dealerid=${id}&page=${page}&pageSize=${pageSize}&from=${endDate}&to=${startDate}&status=${orderStatus}`;
+		return this.getRequest(url);
  	}
+
+	set_order_as_viewed(data: { orderId: string, createdBy: string }) {
+		const url = this.updaters.set_order_as_viewed;
+		return this.postRequest(url, data);
+	}
     
-    update_billing_order(data) {
+    update_billing_order(data: any) {
         const url = `${this.updaters.api_billing_order_update}`;
 		return this.postRequest(url, data);
  	}
