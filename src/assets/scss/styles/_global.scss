@@ -56,6 +56,10 @@ hr {
 	color: $danger;
 }
 
+.text-success {
+	color: $primary;
+}
+
 .dialog-container-position-relative {
 	mat-dialog-container {
 		position: relative !important;

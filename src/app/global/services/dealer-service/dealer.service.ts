@@ -235,4 +235,5 @@ export class DealerService extends BaseService {
 	upload_territory_files(data) {
 		return this.postRequest(`${this.creators.dealer_territory_files}`, data);
 	}
+
 }

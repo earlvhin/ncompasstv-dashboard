@@ -1,5 +1,6 @@
 export * from './advertiser-service/advertiser.service';
 export * from './auth-service/auth.service';
+export * from './billing-service/billing-service';
 export * from './category-service/category.service';
 export * from './confirmation-dialog-service/confirmation-dialog.service';
 export * from './content-service/content.service';

@@ -508,6 +508,8 @@ export class HostsComponent implements OnInit {
 	private modifyDataForExport(data) {
 		data.storeHours = data.storeHours;
 		data.storeHoursTotal = data.storeHoursTotal;
-		data.tagsToString = data.tags.join(',');
+
+		if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
+
 	}
 }

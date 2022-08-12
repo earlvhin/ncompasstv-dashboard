@@ -43,7 +43,7 @@
 
 		<!-- NEW TABLE DATA ROWS -->
 		<tbody *ngIf="new_table">
-			<tr *ngFor="let data of table_data; let j = index" >
+			<tr *ngFor="let data of table_data; let j = index" [ngClass]="{ 'hoverable': page === 'dealers-orders' }" (click)="onSelectRow(data, j)">
 				<td class="p-3" 
 					*ngFor="let d of data | objectKeys; let i = index" 
 					[hidden]="data[d].hidden && !data[d].key" 
@@ -68,7 +68,7 @@
 										target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
 										[routerLink]="[data[d].link, data[d].value]" 
 										[queryParams]="query_params"
-										[ngClass]="data[d].past ? 'text-danger' : ''">
+										[ngClass]="{ 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
 
 										<ng-container>
 
@@ -96,7 +96,7 @@
 								</ng-container>
 
 								<ng-template #isFile>
-									<a 	class="cursor-pointer table-row-url" 
+									<a class="cursor-pointer table-row-url" 
 										target="_blank"
 										[href]="[data[d].link]" 
 										[ngClass]="data[d].past ? 'text-danger' : ''">
@@ -126,7 +126,7 @@
 							<!-- END: BUSINESS HOURS SECTION -->
 
 							<ng-template #no_link>
-								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field, 'text-danger': data[d].past}">
+								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field, 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
 
 									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultValue;">
 										{{ data[d].value | date: 'MMM dd, y' }}<br>
