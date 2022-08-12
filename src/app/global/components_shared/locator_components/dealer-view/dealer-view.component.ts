@@ -451,6 +451,12 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 		this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
 		this.onSubmit();
 	}
+	
+    onClearDealer() {
+        this.selectedDealersControl.value.length = 0;
+        this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+		this.onSubmit();
+	}
 
 	private subscribeToDealerSearch(): void {
 		const control = this.dealerFilterControl;

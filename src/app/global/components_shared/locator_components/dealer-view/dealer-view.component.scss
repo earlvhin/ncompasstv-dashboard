@@ -1,7 +1,5 @@
 .search-result {
-  background-color: #fafafa;
-//   max-height: 85vh;
-//   overflow-y: auto;
+  background-color: rgba(255,255,255,0.5);
   padding: 15px;
   margin-top: 8px;
 }
@@ -68,7 +66,7 @@
 }
 
 .search-bar {
-  background-color: white;
+  background-color: rgba(255,255,255,0.8);
   form {
       margin-bottom: 10px;
   }
@@ -127,4 +125,4 @@
 
 .pb-20 {
 	padding-bottom: 20px;
-}
+}   

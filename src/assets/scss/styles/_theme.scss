@@ -636,6 +636,9 @@ button {
 
 .not-clickable {
     pointer-events: none;
+    .mat-expansion-indicator {
+        display: none;
+    }
 }
 
 .drop-cursor {
@@ -864,4 +867,12 @@ agm-map {
 
 .mt-neg15 {
     margin-top: -15px !important;
+}
+
+.no-overflow {
+    overflow: hidden;
+}
+
+.justify-flex {
+    justify-content: flex-end
 }

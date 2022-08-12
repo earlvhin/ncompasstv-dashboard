@@ -23,15 +23,9 @@
 				.selected-dma {
 					background-color: white;
 
-					.dma {
-						margin-right: 5px;
-						margin-bottom: 5px;
-						padding: 1px 5px 1px 7px;
-						font-size: 12px;
+					.data-selected {
 						border-radius: 5px;
-						color: white;
 						border: 1px solid gray;
-						background-color: #8ec641;
 
 						.remove-btn {
 							text-align: center;
@@ -44,25 +38,22 @@
 					}
 				}
 
-				.selected-dma-info {
+				.selected-info {
 					background-color: rgba(255,255,255, 0.5);
 
 					.total-hosts {
 						margin-left: auto;
-					}
-
-					.dma-host-list {
-						.name {
-							cursor: pointer;
-
-							&:hover {
-								color: #8ec641;
-							}
-						}
 					}
 				}
 			}
 
 		}
 	}
+}
+
+img {
+    position: absolute;
+    left: -5px;
+    top: -8px;
+    width: 20px;
 }

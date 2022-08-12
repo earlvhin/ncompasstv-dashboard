@@ -1,13 +1,10 @@
 <div id="dma-tab-view">
-
-	<div class="action-buttons d-flex ml-3 mt-3 mb-3">
-	
+	<div class="action-buttons d-flex mt-3 mb-3">
 		<button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" (click)="onExport()"
-			[disabled]="isExporting" title="Export to CSV">
+			[disabled]="isExporting || currentDMAList.length === 0" title="Export to CSV">
 			<span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
 			<span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
 		</button>
-	
 	</div>
 
 	<div class="content">
@@ -78,25 +75,30 @@
 							<form [formGroup]="searchSelectForm">
 								<div class="d-flex">
 									<div class="search-input full-width">
-										<mat-form-field class="full-width">
+										<mat-form-field class="full-width md-text">
 											<mat-select #dma_multi_select formControlName="dmaList" [placeholder]="'Select DMA'"
 												[multiple]="true" disableOptionCentering>
-												<mat-option>
-													<ngx-mat-select-search noEntriesFoundLabel="No results"
-														formControlName="searchDMAKeyword"
-														[placeholderLabel]="'Search DMA by name, code, or rank'"
-														[clearSearchInput]="true" 
-														[searching]="isSearchingDMA">
-														<mat-icon class="clear">close</mat-icon>
-													</ngx-mat-select-search>
-				
-												</mat-option>
-				
-												<mat-option *ngFor="let dma of filteredDMA | async" [value]="dma">
-													<div class="dma">
-														#{{ dma.dmaRank }} - {{ dma.dmaName }}
-													</div>
-												</mat-option>
+                                                <div class="custom-panel">
+                                                    <mat-option>
+                                                        <ngx-mat-select-search noEntriesFoundLabel="No results"
+                                                            formControlName="searchDMAKeyword"
+                                                            [placeholderLabel]="'Search DMA by name, code, or rank'"
+                                                            [clearSearchInput]="true" 
+                                                            [searching]="isSearchingDMA"
+                                                            class="md-text">
+                                                            <mat-icon class="clear">close</mat-icon>
+                                                        </ngx-mat-select-search>
+                                                    </mat-option>
+                    
+                                                    <mat-option *ngFor="let dma of filteredDMA | async" [value]="dma">
+                                                        <div class="dma">
+                                                            #{{ dma.dmaRank }} - {{ dma.dmaName }}
+                                                        </div>
+                                                    </mat-option>
+                                                </div>
+                                                <footer class="selection">
+                                                    <button class="theme-btn _primary md-text mr-3" (click)="dma_multi_select.close()">APPLY SELECTION</button>
+                                                </footer>
 											</mat-select>
 				
 										</mat-form-field>
@@ -106,10 +108,17 @@
 						</ng-container>
 					</div>
 				
-					<div class="selected-dma pl-3 pt-2 pr-3 pb-3">
-						<div class="d-flex flex-column">
-							<h5>DMA Name(s):</h5>
-				
+					<div class="selected-dma p-3" *ngIf="currentDMAList.length > 0">
+						<div class="col-lg-12 d-flex p-0">
+							<div class="col-lg-7 p-0 pb-1">
+                                <h5>DMA Name(s):</h5>
+                            </div>
+                            <div class="col-lg-5 p-0 pb-1 text-right md-text f-500 text-danger clickable" (click)="onClearDMA()">
+                                <i class="far fa-times-circle mr-2"></i>
+                                <span>CLEAR SELECTION</span>
+                            </div>
+                        </div>
+                        <div class="col-lg-12 d-flex p-0">
 							<ng-container *ngIf="currentDMAList.length > 0">
 								<div class="list-container d-flex align-items-start flex-wrap">
 									<div *ngFor="let dma of currentDMAList; let i = index;" class="dma d-flex align-items-center">
@@ -125,23 +134,24 @@
 					</div>
 				
 					<ng-container *ngIf="currentDMAList.length > 0">
-						<div class="selected-dma-info pl-3 pt-2 pr-3 pb-3">
+						<div class="selected-dma-info p-3 mt-3">
 				
 							<mat-accordion>
-								<mat-expansion-panel *ngFor="let dma of currentDMAList" class="mb-3">
+								<mat-expansion-panel *ngFor="let dma of currentDMAList" class="mb-3" [ngClass]="dma.totalHosts > 0 ? '': 'not-clickable'">
 									<mat-expansion-panel-header class="mt-2">
 										<mat-panel-title class="md-text p-0">
-											<div class="name font-weight-bold">
+											<div class="name font-weight-bold md-text">
 												#{{ dma.dmaRank }} - {{ dma.dmaName }}
 											</div>
 										</mat-panel-title>
 										<mat-panel-description class="md-text p-0">
-											<div class="total-hosts">
+											<div class="total-hosts" [ngClass]="dma.totalHosts > 0 ? 'text-primary': 'text-danger'">
 												<b>{{ dma.totalHosts }}</b> Host(s)
 											</div>
 										</mat-panel-description>
 									</mat-expansion-panel-header>
-									<div class="expansion-panel-content">
+									<div class="expansion-panel-content full-width">
+                                        <hr>
 										<mat-list class="dma-host-list">
 											<mat-list-item *ngFor="let host of dma.hosts" class="name sm-text"
 												(click)="onClickHostName(host.hostId)">

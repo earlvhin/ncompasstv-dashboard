@@ -6,7 +6,7 @@ import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
 import { forkJoin, ReplaySubject, Subject } from 'rxjs';
 import * as moment from 'moment';
 
-import { API_DMA, API_DMA_HOST, PAGING, UI_STORE_HOUR } from 'src/app/global/models';
+import { API_DMA, PAGING, UI_STORE_HOUR } from 'src/app/global/models';
 import { ExportService, HostService } from 'src/app/global/services';
 
 @Component({
@@ -20,7 +20,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 	currentDMAList: API_DMA[] = [];
 	currentHostIdSelected: string;
 	currentPage = 1;
-	dmaHostLocations: API_DMA_HOST[] = [];
+	dmaHostLocations: any = [];
 	dmaOrderList: { dmaRank: number; dmaCode: string }[] = [];
 	filteredDMA = new ReplaySubject<API_DMA[]>(1);
 	hasSelectedDMA = false;
@@ -65,6 +65,12 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 	onDeselectDMA(index: number): void {
 		this._dmaListControl.value.splice(index, 1);
 		this.searchSelectDMADropdown.compareWith = (a, b) => a && b && a === b;
+		this.updateDMAHostLocations();
+	}
+
+    onClearDMA() {
+        this._dmaListControl.value.length = 0;
+        this.searchSelectDMADropdown.compareWith = (a, b) => a && b && a === b;
 		this.updateDMAHostLocations();
 	}
 
@@ -220,7 +226,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 
 	private updateDMAHostLocations() {
 		let requests: any[] = [];
-		let dmaHostLocations: API_DMA_HOST[] = [];
+		let dmaHostLocations: any = [];
 
 		const currentDMAList: API_DMA[] = this._dmaListControl.value;
 		this.currentDMAList = currentDMAList;
@@ -228,6 +234,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 		if (currentDMAList.length <= 0) {
 			// if no DMA is selected then do nothing
 			this.isSearchingDMA = false;
+            this.dmaHostLocations = [];
 			return;
 		}
 
@@ -242,7 +249,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 				takeUntil(this._unsubscribe),
 				map((response: { paging: PAGING }[]) => {
 					response.forEach((dmaPagingResponse) => {
-						let dmaHosts: API_DMA_HOST[] = dmaPagingResponse.paging.entities;
+						let dmaHosts: any = dmaPagingResponse.paging.entities;
 
 						dmaHosts = dmaHosts.map((host) => {
 							host.storeHoursParsed = JSON.parse(host.storeHours);

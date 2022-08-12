@@ -215,6 +215,7 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 
 const ngComponents = [
     AddCardComponent,
@@ -429,6 +430,7 @@ const DIRECTIVES = [
 	declarations: [
 		ngComponents,
 		DIRECTIVES,
+		LocatorComponentComponent,
 	],
 	entryComponents: [
         AddCardComponent,
