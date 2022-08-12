@@ -67,7 +67,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 
 	assignContent() {
 		let dialogRef = this._dialog.open(MediaModalComponent, {
-			width: '600px',
+			width: '768px',
 			panelClass: 'app-media-modal',
 			disableClose: true
 		});
@@ -163,6 +163,8 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 	}
 
 	uploadContent(): void {
+		const convert_to_webm = localStorage.getItem('optimize_video') == 'false' ? false : true;
+
 		const filestack_option = {
 			accept: ['image/jpg', 'image/jpeg', 'image/png', 'video/mp4', 'video/webm'],
 			maxFiles: 10,
@@ -184,13 +186,14 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					});
 
 					//Additional Checking for video conversion duplicate
-					if (e.originalFile.type.includes('video')) {
+					if (e.originalFile.type.includes('video') && !convert_to_webm) {
 						var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
 						temp = temp + '.webm';
 						e.originalFile.name = temp;
 					}
 
 					e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
+
 					if (!this.is_dealer) {
 						this.duplicate_files = this.summarized_media.filter((media) => {
 							return media.title.indexOf(e.originalFile.name) !== -1;

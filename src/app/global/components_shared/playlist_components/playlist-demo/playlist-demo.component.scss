@@ -16,30 +16,30 @@
 }
 
 video {
-  height: 100%;
-  left: 0;
-  object-fit: fill;
-  position: absolute;
-  top: 0;
-  width: 100%;
-  z-index: 5;
+	height: 100%;
+	left: 0;
+	object-fit: fill;
+	position: absolute;
+	top: 0;
+	width: 100%;
+	z-index: 5;
 
-  &.no-stretch {
-    object-fit: contain;
-  }
+	&.no-stretch {
+		object-fit: contain;
+	}
 }
 
 img {
-  background-color: #000;
-  height: 100%;
-  left: 0;
-  margin: auto;
-  position: absolute;
-  right: 0;
-  top: 0;
-  object-fit: contain; 
-  width: 100%;
-  z-index: 5;
+	background-color: #000;
+	height: 100%;
+	left: 0;
+	margin: auto;
+	position: absolute;
+	right: 0;
+	top: 0;
+	object-fit: contain;
+	width: 100%;
+	z-index: 5;
 }
 
 .frame-wrap {

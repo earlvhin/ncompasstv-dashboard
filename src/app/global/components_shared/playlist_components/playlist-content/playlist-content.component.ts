@@ -14,9 +14,7 @@ import { takeUntil } from 'rxjs/operators';
 	templateUrl: './playlist-content.component.html',
 	styleUrls: ['./playlist-content.component.scss']
 })
-
 export class PlaylistContentComponent implements OnInit, OnDestroy {
-
 	@Input() array_index: number;
 	@Input() content: API_CONTENT;
 	@Input() playlist_host_license: any;
@@ -45,20 +43,20 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject();
 
-	constructor(
-		private _dialog: MatDialog,
-		private _helper: HelperService,
-	) { }
+	constructor(private _dialog: MatDialog, private _helper: HelperService) {}
 
 	ngOnInit() {
+		if (this.content.fileType === 'webm') {
+			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf('.') + 1)}jpg`;
+		}
 
-		if (this.content.fileType === 'webm' || this.content.fileType === 'mp4') {
-			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf(".") + 1)}jpg`
+		if (this.content.fileType === 'mp4' && this.content.handlerId) {
+			this.getMp4Thumbnail(this.content.handlerId);
 		}
 
 		if (this.playlist_host_license) {
 			this.playlist_host_license = this.playlist_host_license.sort((a, b) => {
-				return a.host.name.localeCompare(b.host.name)
+				return a.host.name.localeCompare(b.host.name);
 			});
 		}
 
@@ -82,13 +80,24 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	getMp4Thumbnail(handleId) {
+		try {
+			fetch(`https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${handleId}`).then(async (res) => {
+				const { data } = await res.json();
+				this.content.thumbnail = data.url;
+			});
+		} catch (err) {
+			throw new Error(err);
+		}
+	}
+
 	optionsModal(): void {
 		const data = {
 			index: this.array_index,
 			content: this.content,
 			host_license: this.playlist_host_license,
 			total_contents: this.total_contents,
-            contents_list: this.playlist_contents
+			contents_list: this.playlist_contents
 		};
 
 		const dialog = this._dialog.open(OptionsComponent, {
@@ -97,36 +106,29 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 			height: '750px'
 		});
 
-		dialog.afterClosed()
-			.subscribe(
-				response => {
-					if (typeof response === 'undefined') return;
-					if (typeof response === 'object') return this.options_saved.emit(response);
-					return this.reset_playlist_content.emit(true); 
-				}
-			);
+		dialog.afterClosed().subscribe((response) => {
+			if (typeof response === 'undefined') return;
+			if (typeof response === 'object') return this.options_saved.emit(response);
+			return this.reset_playlist_content.emit(true);
+		});
 	}
 
 	removeContentToPlaylistModal(id, contentId): void {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  {
+			data: {
 				status: 'warning',
 				message: `Remove Playlist Content - #${this.array_index}`,
 				data: `Are you sure you want to remove content #${this.array_index} in this playlist?`
 			}
-		})
+		});
 
-		dialog.afterClosed()
-			.subscribe(
-				response => {
-					if (!response) return;
-					this.remove_playlist_content.emit(id); 
-					this.log_content_history.emit({id, contentId});
-				}
-			);
+		dialog.afterClosed().subscribe((response) => {
+			if (!response) return;
+			this.remove_playlist_content.emit(id);
+			this.log_content_history.emit({ id, contentId });
+		});
 	}
 
 	removeFilenameHandle(file_name) {
@@ -146,11 +148,9 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 	}
 
 	private setFrequency(value: number): number {
-
 		let result: number;
 
 		switch (value) {
-
 			case 2:
 			case 22:
 				result = 2;
@@ -163,25 +163,19 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
 			default:
 				result = 0;
-				
 		}
 
 		return result;
-
 	}
 
 	private subscribeToContentHover() {
-		this._helper.onHoverContent.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => {
-					let result = false;
-					if (!response) return;
-					const { playlistContentId } = response;
-					if (this.isBaseFrequency) result = this.content.playlistContentId === playlistContentId;
-					else result = this.content.parentId === playlistContentId;
-					this.canSetFrequencyBorder = result;
-				}
-			);
+		this._helper.onHoverContent.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			let result = false;
+			if (!response) return;
+			const { playlistContentId } = response;
+			if (this.isBaseFrequency) result = this.content.playlistContentId === playlistContentId;
+			else result = this.content.parentId === playlistContentId;
+			this.canSetFrequencyBorder = result;
+		});
 	}
-
 }

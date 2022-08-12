@@ -15,23 +15,24 @@ import { AuthService, ContentService } from 'src/app/global/services';
 	styleUrls: ['./thumbnail-card.component.scss']
 })
 export class ThumbnailCardComponent implements OnInit {
-	@Input() image_uri: string;
 	@Input() classification: string;
-	@Input() filename: string;
 	@Input() content_id: string;
-	@Input() is_converted: number;
-	@Input() is_protected: number;
-	@Input() filetype: string;
-	@Input() file_url: string;
-	@Input() is_checked: boolean;
-	@Input() uuid: string;
 	@Input() dealer: string;
-	@Input() zone_content: boolean;
-	@Input() is_fullscreen: number;
-	@Input() multiple_delete: boolean;
 	@Input() disconnect_to_socket: boolean;
-	@Input() sequence: number;
+	@Input() file_url: string;
+	@Input() filename: string;
+	@Input() filetype: string;
+	@Input() handle: string;
+	@Input() image_uri: string;
+	@Input() is_checked: boolean;
+	@Input() is_converted: number;
+	@Input() is_fullscreen: number;
+	@Input() is_protected: number;
 	@Input() is_view_only = false;
+	@Input() multiple_delete: boolean;
+	@Input() sequence: number;
+	@Input() uuid: string;
+	@Input() zone_content: boolean;
 	@Output() converted: EventEmitter<boolean> = new EventEmitter();
 	@Output() deleted: EventEmitter<boolean> = new EventEmitter();
 	@Output() content_to_delete = new EventEmitter();
@@ -40,6 +41,7 @@ export class ThumbnailCardComponent implements OnInit {
 	is_admin = this._isAdmin;
 	is_dealer = this._isDealer;
 	route: string;
+	mp4_thumb: string;
 
 	private return_mes: string;
 	private role: string;
@@ -72,6 +74,10 @@ export class ThumbnailCardComponent implements OnInit {
 				this.ngOnInit();
 			});
 		}
+
+		if (this.filetype === 'mp4') {
+			this.getMp4Thumbnail();
+		}
 	}
 
 	ngOnDestroy() {
@@ -88,6 +94,19 @@ export class ThumbnailCardComponent implements OnInit {
 	deleteMedia(event): void {
 		this.warningModal('warning', 'Delete Content', 'Are you sure you want to delete this content?', this.return_mes, 'delete');
 		event.stopPropagation();
+	}
+
+	getMp4Thumbnail() {
+		try {
+			fetch(`https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${this.handle}`).then(async (res) => {
+				const { data } = await res.json();
+				this.mp4_thumb = data.url;
+			});
+
+			return;
+		} catch (err) {
+			throw new Error(err);
+		}
 	}
 
 	private deleteContentLogs() {

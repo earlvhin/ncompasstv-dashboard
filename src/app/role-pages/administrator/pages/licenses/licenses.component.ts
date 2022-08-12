@@ -54,6 +54,7 @@ export class LicensesComponent implements OnInit {
 	sort_order: string = 'desc';
 	sort_column_hosts: string = '';
 	sort_order_hosts: string = '';
+    has_sort: boolean = false;
 
 	//for export
 	hosts_to_export: API_HOST[] = [];
@@ -192,11 +193,13 @@ export class LicensesComponent implements OnInit {
 	getColumnsAndOrder(data, tab) {
 		switch (tab) {
 			case 'licenses':
+                this.has_sort = true;
 				this.sort_column = data.column;
 				this.sort_order = data.order;
 				this.getLicenses(1);
 				break;
 			case 'hosts':
+                this.has_sort = true;
 				this.sort_column_hosts = data.column;
 				this.sort_order_hosts = data.order;
 				this.getHosts(1);
@@ -218,7 +221,8 @@ export class LicensesComponent implements OnInit {
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-		this._host
+        if(this.has_sort) {
+            this._host
 			.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
@@ -230,7 +234,7 @@ export class LicensesComponent implements OnInit {
 					}
 
 					this.paging_data_host = response.paging;
-					const mappedData = this.mapToHostsTable([...response.host]);
+					const mappedData = this.mapToHostsTable([...response.paging.entities]);
 					this.hosts_data = [...mappedData];
 					this.filtered_data_host = [...mappedData];
 				},
@@ -242,13 +246,40 @@ export class LicensesComponent implements OnInit {
 				this.initial_load_hosts = false;
 				this.searching_hosts = false;
 			});
+        } else {
+            this._host
+			.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
+					}
+
+					this.paging_data_host = response.paging;
+					const mappedData = this.mapToHostsTable([...response.paging.entities]);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			});
+        }
+		
 	}
 
 	getLicenses(page: number) {
 		this.searching_licenses = true;
 		this.hosts_data = [];
-
-		this._license
+        if(this.has_sort) {
+            this._license
 			.get_all_licenses(
 				page,
 				this.search_data_licenses,
@@ -273,8 +304,8 @@ export class LicensesComponent implements OnInit {
 				(data) => {
 					this.paging_data_licenses = data.paging;
 
-					if (data.licenses) {
-						const mapped = this.mapToLicensesTable(data.licenses);
+					if (data.paging.entities) {
+						const mapped = this.mapToLicensesTable(data.paging.entities);
 						this.licenses_data = [...mapped];
 						this.filtered_data_licenses = [...mapped];
 					} else {
@@ -289,6 +320,50 @@ export class LicensesComponent implements OnInit {
 					throw new Error(error);
 				}
 			);
+        } else {
+            this._license
+			.get_all_licenses_fetch(
+				page,
+				this.search_data_licenses,
+				this.sort_column,
+				this.sort_order,
+				15,
+				this.filters.admin_licenses,
+				this.filters.status,
+				this.filters.days_offline,
+				this.filters.activated,
+				this.filters.recent,
+				this.filters.zone,
+				this.filters.dealer,
+				this.filters.host,
+				this.filters.assigned,
+				this.filters.pending,
+				this.filters.online,
+				this.filters.isactivated
+			)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this.paging_data_licenses = data.paging;
+
+					if (data.paging.entities) {
+						const mapped = this.mapToLicensesTable(data.paging.entities);
+						this.licenses_data = [...mapped];
+						this.filtered_data_licenses = [...mapped];
+					} else {
+						if (this.search_data == '') this.no_licenses = true;
+						this.filtered_data_licenses = [];
+					}
+
+					this.initial_load_licenses = false;
+					this.searching_licenses = false;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+        }
+		
 	}
 
 	onTabChanged(e: { index: number }) {
@@ -408,18 +483,22 @@ export class LicensesComponent implements OnInit {
 		switch (tab) {
 			case 'licenses':
 				if (e) {
+                    this.has_sort = true;
 					this.search_data_licenses = e;
 					this.getLicenses(1);
 				} else {
+                    this.has_sort = false;
 					this.search_data_licenses = '';
 					this.getLicenses(1);
 				}
 				break;
 			case 'hosts':
 				if (e) {
+                    this.has_sort = true;
 					this.search_data_host = e;
 					this.getHosts(1);
 				} else {
+                    this.has_sort = false;
 					this.search_data_host = '';
 					this.getHosts(1);
 				}
