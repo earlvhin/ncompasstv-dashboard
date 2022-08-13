@@ -232,8 +232,8 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			'Internet Type',
 			'Internet Speed',
 			'Last Push Update',
-			'Last Online Status',
-			'Last Offline Status',
+			'Last Startup',
+			'Last Disconnect',
 			'Installation Date'
 		];
 	}

@@ -181,7 +181,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
 		{ name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
 		{ name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
-		{ name: 'Last Online', sortable: true, column: 'TimeIn', key: 'timeIn' },
+		{ name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
 		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType' },
 		{ name: 'Net Speed', sortable: false, key: 'internetSpeed' },
 		{ name: 'Display', sortable: false, key: 'displayStatus' },
@@ -794,7 +794,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
-				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
+				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
 				{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
 				{
 					value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
