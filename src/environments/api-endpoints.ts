@@ -4,6 +4,7 @@ export const API_ENDPOINTS = {
 		api_refresh: 'token/refresh'
 	},
 	getters: {
+		all_release_notes: 'ReleaseNote/getall',
 		api_get_activities: 'activity/getall',
 		api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
 		api_get_advertisers: 'advertiser/getall',
@@ -170,6 +171,7 @@ export const API_ENDPOINTS = {
 		next_month_installations: 'license/getNextMonthInstall',
 		next_week_installations: 'license/getNextWeekInstall',
 		recent_installations: 'license/getRecentInstall',
+		release_note_by_id: 'ReleaseNote/getbyid',
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
 		search_license_by_host: 'license/GetByHost/Search',
@@ -330,9 +332,13 @@ export const API_ENDPOINTS = {
 		delete_dealer: 'dealer/delete',
 		host: 'host/delete',
 		host_file_amazon_s3: 'host/AmazonS3Delete',
+		release_note: 'ReleaseNote/delete',
 		tag: 'tag/delete',
 		tag_by_id_and_owner: 'tag/DeleteByOwnerIdAndTagId',
 		tag_by_owner_id: 'tag/DeleteByOwnerId?ownerid=',
 		user: 'user/delete'
+	},
+	upsert: {
+		release_notes: 'ReleaseNote/upsert'
 	}
 };

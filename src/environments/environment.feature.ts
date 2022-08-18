@@ -13,5 +13,5 @@ export const environment = {
 	third_party: API_ENDPOINTS.third_party,
 	update: API_ENDPOINTS.update,
 	delete: API_ENDPOINTS.delete,
-	
+	upsert: API_ENDPOINTS.upsert
 };
