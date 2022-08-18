@@ -14,6 +14,7 @@ import {
 	HostService,
 	LicenseService,
 	PlaylistService,
+	ReleaseNotesService,
 	ScreenService,
 	UserService
 } from 'src/app/global/services';
@@ -108,6 +109,7 @@ export class DataTableComponent implements OnInit {
 		private _helper: HelperService,
 		private _license: LicenseService,
 		private _playlist: PlaylistService,
+		private _release: ReleaseNotesService,
 		private _router: Router,
 		private _screen: ScreenService,
 		private _user: UserService
@@ -380,7 +382,10 @@ export class DataTableComponent implements OnInit {
 
 				case 'push_update_all_licenses':
 					this.pushAllLicenseUpdates(id);
+					break;
 
+				case 'delete-release-note':
+					this._release.onDeleteNoteFromDataTable.emit({ releaseNoteId: id })
 					break;
 
 				default:
@@ -653,6 +658,12 @@ export class DataTableComponent implements OnInit {
 				data = 'Are you sure you want to delete this document?';
 				action = 'delete-host-file';
 				break;
+
+			case 'release-notes':
+				message = 'Delete Release Note';
+				data = 'Are you sure you want to delete this note?';
+				action = 'delete-release-note';
+				break;
 		}
 
 		this.warningModal(status, message, data, return_msg, action, dataId);
@@ -660,6 +671,16 @@ export class DataTableComponent implements OnInit {
 
 	onDeleteUser(userId: string, email: string): void {
 		this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`, '', 'user_delete', userId);
+	}
+
+	onEdit(dataId: string): void {
+
+		switch (this.page) {
+			case 'release-notes':
+				this._release.onEditNoteFromDataTable.emit({ releaseNoteId: dataId });
+				break;
+		}
+
 	}
 
 	onPushUpdateToAllLicenses(playlistId: string): void {

@@ -43,6 +43,7 @@ import { InstallationsModule } from './pages/installations/installations.module'
 import { BillingsViewComponent } from './pages/dealers/billings-view/billings-view.component';
 import { DmaViewComponent } from './pages/hosts/dma-view/dma-view.component';
 import { InvoiceViewComponent } from './pages/dealers/invoice-view/invoice-view.component';
+import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
 
 @NgModule({
 	declarations: [
@@ -88,6 +89,7 @@ import { InvoiceViewComponent } from './pages/dealers/invoice-view/invoice-view.
 		FeedsModule,
 		SingleHostModule,
 		InstallationsModule,
+		ReleaseNotesModule,
 		RouterModule.forChild(ADMINISTRATOR_ROUTES)
 	],
 	providers: [
