@@ -124,6 +124,7 @@ export class DataTableComponent implements OnInit {
 		});
 
 		this.subscribeToEmailNotificationToggleResult();
+		console.log('table data', this.table_data);
 
 	}
 
