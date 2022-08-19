@@ -690,7 +690,8 @@ export class SingleScreenComponent implements OnInit {
 				{ value: l.internetSpeed ? l.internetSpeed : '--', link: null, editable: false, hidden: false },
 				{ value: l.isActivated, link: null, editable: false, hidden: true },
 				{ value: l.isRegistered, link: null, editable: false, hidden: true },
-				{ value: l.piStatus, link: null, editable: false, hidden: true }
+				{ value: l.piStatus, link: null, editable: false, hidden: true },
+				{ value: l.playerStatus, link: null, editable: false, hidden: true },
 			);
 		});
 	}

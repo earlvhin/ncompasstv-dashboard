@@ -827,7 +827,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 				{ value: l.isActivated, link: null, editable: false, hidden: true },
 				{ value: l.hostId ? true : false, link: null, editable: false, hidden: true },
-				{ value: l.piStatus, link: null, editable: false, hidden: true }
+				{ value: l.piStatus, link: null, editable: false, hidden: true },
+				{ value: l.playerStatus, link: null, editable: false, hidden: true },
 			);
 			return table;
 		});
