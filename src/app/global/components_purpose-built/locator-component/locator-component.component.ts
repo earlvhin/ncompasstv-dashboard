@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ViewChild } from '@angular/core';
+import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, Validators, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AgmInfoWindow } from '@agm/core';
@@ -11,11 +11,13 @@ import { API_DMA, API_DMA_HOST, PAGING, UI_STORE_HOUR } from 'src/app/global/mod
 import { ExportService, HostService, LicenseService, AuthService } from 'src/app/global/services';
 import { hostReportError } from 'rxjs/internal-compatibility';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
+import { Console } from 'console';
 
 @Component({
   selector: 'app-locator-component',
   templateUrl: './locator-component.component.html',
-  styleUrls: ['./locator-component.component.scss']
+  styleUrls: ['./locator-component.component.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class LocatorComponentComponent implements OnInit {
 
@@ -30,7 +32,11 @@ export class LocatorComponentComponent implements OnInit {
     @Input() is_state;
     
     currentList: any = [];
+    compressed_data_array: any = [];
     filtered_data_array: any = [];
+    host_count = 0;
+    host_licenses_count = 0;
+    merge_filtered_data_array: any = [];
     new_data_reference: any = [];
     currentListLicenses: any = [];
     currentRole: string;
@@ -41,13 +47,16 @@ export class LocatorComponentComponent implements OnInit {
 	dmaOrderList: { dmaRank: number; dmaCode: string }[] = [];
 	filteredData = new ReplaySubject<any[]>(1);
 	hasSelectedData = false;
+	isDeselect = false;
 	isFormReady = false;
 	isSearching = false;
+	is_searching = false;
 	latitude = 39.7395247;
     licenses_count = 0;
 	longitude = -105.1524133;
     online = 0;
     offline = 0;
+    total_host = 0;
 	// searchKeyword = '';
 	searchSelectForm: FormGroup;
 
@@ -91,17 +100,28 @@ export class LocatorComponentComponent implements OnInit {
 		this.updateSelectionLocations();
 	}
 
-	onDeselectResult(index: number): void {
+	onDeselectResult(index: number, data): void {
 		this._listControl.value.splice(index, 1);
 		this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
+        if(this.is_state || this.is_category) {
+            if(this.is_category) {
+                const index2 = this.merge_filtered_data_array.findIndex(object => {
+                    return object[0].category === data.category;
+                });
+                 this.merge_filtered_data_array.splice(index2, 1)
+            }
+        }
+        this.is_searching = false;
+        this.isDeselect = true;
 		this.updateSelectionLocations();
 	}
 
     onClearResult() {
+        this.is_searching = false;
         this._listControl.value.length = 0;
         this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
 		this.updateSelectionLocations();
-        this.ngOnInit()
+        this.hasSelectedData = false;
 	}
 
 	// private getAllDMAByRank(pageSize = 15) {
@@ -139,19 +159,19 @@ export class LocatorComponentComponent implements OnInit {
                         if(this.is_host) {
                             this.data_reference = this.data_reference.filter(
                                 data => {
-                                    return data.hostName.toLowerCase().indexOf(keyword) > -1
+                                    return data.hostName.toLowerCase().indexOf(keyword.toLowerCase()) > -1
                                 }
                             )
                         } else if(this.is_category) {
                             this.data_reference = this.data_reference.filter(
                                 data => {
-                                    return data.category.toLowerCase().indexOf(keyword) > -1
+                                    return data.category.toLowerCase().indexOf(keyword.toLowerCase()) > -1
                                 }
                             )
                         } else if(this.is_state) {
                             this.data_reference = this.data_reference.filter(
                                 data => {
-                                    return data.state.toLowerCase().indexOf(keyword) > -1
+                                    return data.state.toLowerCase().indexOf(keyword.toLowerCase()) > -1
                                 }
                             )
                         }
@@ -159,21 +179,8 @@ export class LocatorComponentComponent implements OnInit {
                         this.isSearching = true;
                         this.data_reference = this.new_data_reference;
                     }
-                    // this.isSearching = false;
 					if (control.invalid) return;
                     this.isSearching = false;
-					// this.searchKeyword = keyword;
-					// this.currentPage = 1;
-
-					// this.getAllDMAByRank(0).subscribe((response: { paging: PAGING }) => {
-					// 	const currentList = this._listControl.value;
-					// 	const merged = currentList.concat(response.paging.entities as API_DMA[]);
-					// 	const unique = merged.filter(
-					// 		(dma, index, merged) =>
-					// 			merged.findIndex((mergedDMA) => mergedDMA.dmaRank === dma.dmaRank && mergedDMA.dmaCode === dma.dmaCode) === index
-					// 	);
-					// 	this.filteredData.next(unique);
-					// });
 				})
 			)
 			.subscribe(
@@ -185,13 +192,15 @@ export class LocatorComponentComponent implements OnInit {
 
 	private onSelectDMA(): void {
 		const control = this.searchSelectForm.get('list');
-
 		control.valueChanges
 			.pipe(
 				tap(),
 				takeUntil(this._unsubscribe)
 			)
-			.subscribe(() => this.updateSelectionLocations());
+			.subscribe(() => {
+                this.isDeselect = false;
+                this.updateSelectionLocations()
+            });
 	}
 
     getLink(page: string, id: string) {
@@ -201,13 +210,15 @@ export class LocatorComponentComponent implements OnInit {
 
 	private updateSelectionLocations() {
 		let requests: any[] = [];
-
+        this.is_searching = true;
 		const currentList = this._listControl.value;
 		this.currentList = currentList;
-
+        
 		if (currentList.length <= 0) {
             this.dataHostLocations = [];
             this.filtered_data_array = [];
+            this.merge_filtered_data_array = [];
+            this.hasSelectedData = false;
 			return;
 		}
         if(this.is_host) {
@@ -226,15 +237,32 @@ export class LocatorComponentComponent implements OnInit {
                             return host.category.toLowerCase().indexOf(category.category.toLowerCase()) > -1
                         }
                     )
+                    console.log("FILTER", this.filtered_data_array)
                 }
             );
-            this.filtered_data_array.map(
-                host => {
-                    host.storeHoursParsed = JSON.parse(host.storeHours);
-					host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
-                    requests.push(this.getHostLicenses(host.hostId));
+            if(!this.isDeselect) {
+                if(this.filtered_data_array.length > 0) {
+                    this.filtered_data_array.map(
+                        host => {
+                            host.storeHoursParsed = JSON.parse(host.storeHours);
+                            host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
+                            requests.push(this.getHostLicenses(host.hostId));
+                        }
+                    )   
                 }
-            )   
+            } else {
+                this.compressed_data_array = [];
+                var to_compress= this.merge_filtered_data_array.map(
+                    host => {
+                        host.map(
+                            inner => {
+                                this.compressed_data_array.push(inner)
+                            }
+                        )
+                    }
+                )
+                this.dataHostLocations = [...this.compressed_data_array];
+            }
         } else if(this.is_state) {
             currentList.forEach(
                 state => {
@@ -251,7 +279,7 @@ export class LocatorComponentComponent implements OnInit {
 					host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
                     requests.push(this.getHostLicenses(host.hostId));
                 }
-            )   
+            )
         }
 
         forkJoin(requests)
@@ -261,12 +289,13 @@ export class LocatorComponentComponent implements OnInit {
                     (response) => {
                         this.currentListLicenses = response;
                         if(this.is_host) {
-                            this.mergeList= this.currentList.map((item, i)=>({...item, licenses: this.currentListLicenses[i]}));
+                            this.mergeList= this.currentList.map((item, i)=>({...item, licenses: this.currentListLicenses[i]})); 
+                            this.dataHostLocations = [...this.mergeList];
                         } else if(this.is_category || this.is_state) {
                             this.mergeList= this.filtered_data_array.map((item, i)=>({...item, licenses: this.currentListLicenses[i]}));
+                            this.merge_filtered_data_array.push([...this.mergeList])
                         }
                         this.mapMergeList();
-						this.dataHostLocations = [...this.mergeList];
                     }
                 )
             )
@@ -276,20 +305,63 @@ export class LocatorComponentComponent implements OnInit {
                     this.online = 0;
                     this.offline = 0;
                     this.licenses_count = 0;
-                    this.mergeList.filter(
-                        data => {
-                            this.licenses_count = data.licenses.length + this.licenses_count;
-                            data.licenses.filter(
-                                license => {
-                                    if(license.piStatus === 0) {
-                                        this.offline = this.offline + 1;
-                                    } else {
-                                        this.online = this.online + 1;
+                    this.is_searching = false;
+                    if(this.is_host) {
+                        this.mergeList.filter(
+                            data => {
+                                this.licenses_count = data.licenses.length + this.licenses_count;
+                                data.licenses.filter(
+                                    license => {
+                                        if(license.piStatus === 0) {
+                                            this.offline = this.offline + 1;
+                                        } else {
+                                            this.online = this.online + 1;
+                                        }
                                     }
-                                }
-                            )
-                        }
-                    )
+                                )
+                            }
+                        )
+                    } else {
+                        this.host_count = 0;
+                        this.licenses_count = 0;
+                        this.compressed_data_array = [];
+                        this.merge_filtered_data_array.filter(
+                            data => {
+                                this.host_count = this.host_count + data.length;
+                                data.host_licenses_count = 0;
+                                // this.host_licenses_count = 0;
+                                data.map(
+                                    inner_data => {
+                                        
+                                        if(inner_data.licenses) {
+                                            this.licenses_count = inner_data.licenses.length + this.licenses_count;
+                                            data.host_licenses_count = data.host_licenses_count  + inner_data.licenses.length;
+                                            inner_data.licenses.filter(
+                                                license => {
+                                                    if(license.piStatus === 0) {
+                                                        this.offline = this.offline + 1;
+                                                    } else {
+                                                        this.online = this.online + 1;
+                                                    }
+                                                }
+                                            )
+                                        }
+                                    }
+                                )
+                            }
+                        )
+
+                        var to_compress= this.merge_filtered_data_array.map(
+                            host => {
+                                host.map(
+                                    inner => {
+                                        this.compressed_data_array.push(inner)
+                                    }
+                                )
+                            }
+                        )
+                        this.dataHostLocations = [...this.compressed_data_array];
+                    }
 				},
 				(error) => {
 					// throw new Error(error);

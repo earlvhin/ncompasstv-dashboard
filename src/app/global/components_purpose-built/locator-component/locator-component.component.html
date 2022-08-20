@@ -76,18 +76,20 @@
                                                             <mat-icon class="clear">close</mat-icon>
                                                         </ngx-mat-select-search>
                                                     </mat-option>
-                                                    <div *ngIf="isSearching"><mat-spinner></mat-spinner></div>
-                                                    <mat-option *ngFor="let data of data_reference" [value]="data">
-                                                        <div *ngIf="is_host">
-                                                            {{data.hostName ? data.hostName : data.name}}
-                                                        </div>
-                                                        <div *ngIf="is_category">
-                                                            {{data.category}}
-                                                        </div>
-                                                        <div *ngIf="is_state">
-                                                            {{data.state}}
-                                                        </div>
-                                                    </mat-option>
+                                                    <!-- <div *ngIf="is_searching"><mat-spinner></mat-spinner></div> -->
+                                                    <div>
+                                                        <mat-option *ngFor="let data of data_reference" [value]="data">
+                                                            <div *ngIf="is_host">
+                                                                {{data.hostName ? data.hostName : data.name}}
+                                                            </div>
+                                                            <div *ngIf="is_category">
+                                                                {{data.category}}
+                                                            </div>
+                                                            <div *ngIf="is_state">
+                                                                {{data.state}}
+                                                            </div>
+                                                        </mat-option>
+                                                    </div>
                                                 </div>
                                                 <footer class="selection">
                                                     <button class="theme-btn _primary md-text mr-3" (click)="multi_select.close()">APPLY SELECTION</button>
@@ -118,7 +120,7 @@
 										<div class="name" *ngIf="is_host">{{data.hostName ? data.hostName : data.name}}</div>
 										<div class="name" *ngIf="is_category">{{data.category}}</div>
 										<div class="name" *ngIf="is_state">{{data.state}}</div>
-										<div class="remove-btn cursor-pointer" (click)="onDeselectResult(i)">
+										<div class="remove-btn cursor-pointer" (click)="onDeselectResult(i, data)">
 											<mat-icon>close</mat-icon>
 										</div>
 									</div>
@@ -131,7 +133,8 @@
 					<ng-container *ngIf="currentList.length > 0">
 						<div class="selected-info p-3 mt-3">
                             <div class="col-lg-12 bg-white text-center sm-text p-3 mb-3">
-                                <span class="text-primary font-weight-bold">{{mergeList.length}} <span class="text-gray">HOST(S)</span></span>
+                                <span class="text-primary font-weight-bold" *ngIf="is_host">{{mergeList.length}} <span class="text-gray">HOST(S)</span></span>
+                                <span class="text-primary font-weight-bold" *ngIf="is_category || is_state">{{host_count}} <span class="text-gray">HOST(S)</span></span>
                                 <span> | </span>
                                 <span class="text-primary font-weight-bold">{{licenses_count}} <span class="text-gray">LICENSE(S)</span></span>
                                 <br>
@@ -141,7 +144,7 @@
                                 <span class="fas fa-circle xsm-text text-danger mr-2"></span>
                                 <span class="text-danger font-weight-bold">{{offline}} <span class="text-gray">OFFLINE</span></span>
                             </div>
-							<mat-accordion *ngIf="((is_host || is_category || is_state) && mergeList.length > 0)">
+							<mat-accordion *ngIf="((is_host) && mergeList.length > 0)">
 								<mat-expansion-panel *ngFor="let data of mergeList" class="mb-3">
 									<mat-expansion-panel-header class="mt-2">
 										<mat-panel-title class="md-text p-0" (click)="onClickHostName(data.hostId)">
@@ -190,6 +193,76 @@
 											</mat-list-item>
 										</mat-list>
 									</div>
+								</mat-expansion-panel>
+							</mat-accordion>
+							<mat-accordion *ngIf="(( is_category || is_state) && currentList.length > 0)">
+								<mat-expansion-panel *ngFor="let data of merge_filtered_data_array" class="mb-3" id="remove-mat-expansion-panel-padding">
+									<mat-expansion-panel-header class="mt-2">
+										<mat-panel-title class="md-text p-0" (click)="onClickHostName(data.hostId)">
+                                            <!-- <div class="col-lg-1 p-0 mt-2 mr-2 ml-2 text-left">
+                                                <img class="map-header-status" [src]="data.icon_url" alt="Status">
+                                            </div> -->
+											<div class="name font-weight-bold md-text" *ngIf="is_state">
+												{{data[0].state}}
+											</div>
+											<div class="name font-weight-bold md-text" *ngIf="is_category">
+												{{data[0].category}}
+											</div>
+										</mat-panel-title>
+										<mat-panel-description class="md-text p-0">
+											<div class="total-hosts">
+												<b>{{data.host_licenses_count}}</b> License(s)
+											</div>
+										</mat-panel-description>
+									</mat-expansion-panel-header>
+									<div class="row full-width">
+                                        <div class="col-lg-12" *ngFor="let h of data">
+                                            <mat-expansion-panel class="mb-3 p-2"  
+                                                hideToggle (click)="onClickHostName(h.hostId)"
+                                                 
+                                                #example id="outer-mat" 
+                                                [class.panelBorder]="example.expanded"
+                                                >
+                                                <!-- [expanded]='h.hostId == clicked_marker_id'		 -->
+                                                    <mat-expansion-panel-header class="pr-0 pl-0 mt-2">
+                                                        <mat-panel-title class="md-text p-0">
+                                                            <div class="col-lg-1 p-0 mt-2 mr-2 ml-2 text-left">
+                                                                <img class="map-header-status" [src]="h.icon_url" alt="Status">
+                                                            </div>
+                                                            <p class="col-lg-9 p-0 mt-1 mr-2 text-left">
+                                                                <span class="font-weight-bold md-text ">
+                                                                    {{ h.hostName }}
+                                                                </span>
+                                                                <br />
+                                                                <span class="sm-text">
+                                                                    {{ h.city}} {{ h.state }} {{ h.postalCode }}
+                                                                </span>
+                                                            </p>
+                                                            <div class="col-lg-2 p-0 pt-2 text-right">
+                                                                <div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+                                                                <div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+                                                            </div>
+                                                        </mat-panel-title>
+                                                    </mat-expansion-panel-header>	
+                                                    <div class="pt-2">
+                                                        <div class="host-licenses-list" *ngIf="h.licenses.length > 0; else no_licenses_text">
+                                                            <div class="col-xs-6 mr-3" *ngFor="let license of h.licenses">
+                                                                <div>
+                                                                    <span class="fas fa-circle mr-1 sm-text" [ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '">
+                                                                    </span>
+                                                                    <a [routerLink]="['/administrator/licenses/' + license.licenseId]" target="_blank" class="clickable">
+                                                                        {{ (license.alias && license.alias.length > 0) ? license.alias : license.licenseKey }}
+                                                                    </a>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <ng-template #no_licenses_text>
+                                                            <p>No licenses for this host</p>
+                                                        </ng-template>
+                                                    </div>
+                                            </mat-expansion-panel>
+                                        </div>
+                                    </div>
 								</mat-expansion-panel>
 							</mat-accordion>
 				

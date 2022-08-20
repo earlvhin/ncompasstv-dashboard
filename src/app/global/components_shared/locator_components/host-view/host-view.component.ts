@@ -119,6 +119,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		} else {
             this._host.get_host_by_page(page, this.search_key, '', '', 0).subscribe(
                 response => {
+                    console.log("RES", response)
                     if(this.search_key) {
                         this.search_hosts_data = response.host.filter( host => host.totalLicenses > 0)
                     } else {
@@ -186,7 +187,9 @@ export class HostViewComponent implements OnInit, OnDestroy {
 					this.categories_data = [];
 
 					categories.map((category) => {
-						this.categories_data.push(category);
+                        if(category.totalLicenses > 0) {
+                            this.categories_data.push(category);
+                        }
 					});
 
 					this.category_paging = paging;

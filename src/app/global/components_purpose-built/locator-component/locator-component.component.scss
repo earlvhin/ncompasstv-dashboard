@@ -57,3 +57,7 @@ img {
     top: -8px;
     width: 20px;
 }
+
+.mat-expansion-panel-content > .mat-expansion-panel-body {
+    padding-right: 0 !important;
+  }
