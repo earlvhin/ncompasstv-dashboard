@@ -4,11 +4,13 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
+import * as moment from 'moment';
 
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { StatisticsService } from 'src/app/global/services/statistics-service/statistics.service';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
-import { API_EXPORT_DEALER } from 'src/app/global/models';
+import { API_EXPORT_DEALER, API_ORDER } from 'src/app/global/models';
+import { BillingService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-dealers',
@@ -43,12 +45,21 @@ export class DealersComponent implements OnInit, OnDestroy {
 		{ name: 'Active', key: 'totalAdvertisersActive' }
 	];
 
+	orders = 0;
+
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _dealer: DealerService, private _dialog: MatDialog, private _stats: StatisticsService) {}
+	constructor(
+		private _billing: BillingService,
+		private _dealer: DealerService, 
+		private _dialog: MatDialog, 
+		private _stats: StatisticsService
+	) {}
 
 	ngOnInit() {
 		this.getAdminStatistics();
+		this.getOrders();
+		this.subscribeToOrderClick();
 	}
 
 	ngOnDestroy() {
@@ -128,6 +139,24 @@ export class DealersComponent implements OnInit, OnDestroy {
 		dialogRef.afterClosed().subscribe(() => (this.update_info = true));
 	}
 
+	tabSelected(event: { index: number }): void {
+		switch (event.index) {
+			case 0:
+				this.current_tab = 'Dealer';
+				break;
+			case 1:
+				this.current_tab = 'Bills';
+				break;
+			case 2:
+				this.current_tab = 'Invoice';
+				break;
+			case 3:
+				this.current_tab = 'Orders';
+				break;
+			default:
+		}
+	}
+
 	private getAdminStatistics(): void {
 		this._stats
 			.api_get_dealer_total()
@@ -189,27 +218,36 @@ export class DealersComponent implements OnInit, OnDestroy {
 			);
 	}
 
+	private getOrders() {
+
+		let start_date = moment(new Date(moment().format('YYYY'))).format('MM-DD-YYYY');
+		let end_date = moment().format('MM-DD-YYYY');
+		let request = this._billing.get_billing_purchases(1, 0, '', end_date, start_date, '');
+
+		request.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+
+					if (response.message) return this.orders = 0;
+					const orders = response.paging.entities as API_ORDER[];
+					this.orders = orders.reduce((previous, current) => current.hasViewed === 0 ? ++previous : previous, 0);
+
+				}
+			);
+
+	}
+
 	private modifyExportData(item: API_EXPORT_DEALER): void {
 		item.totalScheduled = 0;
 		item.monthAsDealer = `${item.monthAsDealer} month(s)`;
 		item.tagsToString = item.tags.join(',');
 	}
 
-	tabSelected(event: { index: number }): void {
-		switch (event.index) {
-			case 0:
-				this.current_tab = 'Dealer';
-				break;
-			case 1:
-				this.current_tab = 'Bills';
-				break;
-			case 2:
-				this.current_tab = 'Invoice';
-				break;
-			case 3:
-				this.current_tab = 'Orders';
-				break;
-			default:
-		}
+	private subscribeToOrderClick(): void {
+
+		this._billing.on_click_order.pipe(takeUntil(this._unsubscribe))
+			.subscribe(() => this.getOrders());
+
 	}
+
 }

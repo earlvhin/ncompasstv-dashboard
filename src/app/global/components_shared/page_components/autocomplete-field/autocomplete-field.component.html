@@ -13,7 +13,7 @@
 		*ngIf="paging"
 		[(ngModel)]="view_value"
 		[placeholder]="placeholder"
-		(keyup)="search_by_api($event)"
+		(keyup)="search_by_api()"
 		(click)="initializeSearch($event)"
 		[required]="required">
     

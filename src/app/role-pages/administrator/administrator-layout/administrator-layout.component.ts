@@ -37,6 +37,7 @@ export class AdministratorLayoutComponent implements OnInit {
 		{ path: 'templates', label: 'Templates', icon: 'fas fa-th-large'},
 		{ path: 'directory', label: 'Directory', icon: 'fas fa-sitemap'},
 		{ path: 'reports', label: 'Reports', icon: 'fas fa-chart-bar'},
+		// { path: 'release-notes', label: 'Release Notes', icon: 'fas fa-sticky-note'},
 	]
 
 	_socket: any;

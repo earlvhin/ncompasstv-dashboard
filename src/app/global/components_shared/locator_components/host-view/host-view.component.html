@@ -3,11 +3,11 @@
 		<div class="row mb-2">
 			<div class="col-lg-3">
 				<mat-form-field class="full-width content-filter-dropdown">
-					<mat-label>SEARCH OPTIONS</mat-label>
-					<mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" class="md-text"> 
-						<mat-option [value]="'host'" class="md-text">Host</mat-option>
-						<mat-option [value]="'state'" class="md-text">State</mat-option>
-						<mat-option [value]="'category'" class="md-text">Category</mat-option>
+					<mat-label>Search Options</mat-label>
+					<mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption"> 
+						<mat-option [value]="'host'">Search by Host</mat-option>
+						<mat-option [value]="'state'">Search by State</mat-option>
+						<mat-option [value]="'category'">Search by Category</mat-option>
 					</mat-select> 
 				</mat-form-field>
 			</div>

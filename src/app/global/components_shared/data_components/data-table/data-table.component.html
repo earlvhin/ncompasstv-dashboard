@@ -38,12 +38,16 @@
 				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action || transaction_action || order_action" class="text-right" class="p-3">
 					{{ 'Action' }}
 				</th>
+
+				<ng-container *ngIf="page === 'release-notes'">
+					<th class="p-3 text-center">{{ 'Actions' }}</th>
+				</ng-container>
 			</tr>
 		</thead>
 
 		<!-- NEW TABLE DATA ROWS -->
 		<tbody *ngIf="new_table">
-			<tr *ngFor="let data of table_data; let j = index" >
+			<tr *ngFor="let data of table_data; let j = index" [ngClass]="{ 'hoverable': page === 'dealers-orders' }" (click)="onSelectRow(data, j)">
 				<td class="p-3" 
 					*ngFor="let d of data | objectKeys; let i = index" 
 					[hidden]="data[d].hidden && !data[d].key" 
@@ -68,7 +72,7 @@
 										target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
 										[routerLink]="[data[d].link, data[d].value]" 
 										[queryParams]="query_params"
-										[ngClass]="data[d].past ? 'text-danger' : ''">
+										[ngClass]="{ 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
 
 										<ng-container>
 
@@ -96,7 +100,7 @@
 								</ng-container>
 
 								<ng-template #isFile>
-									<a 	class="cursor-pointer table-row-url" 
+									<a class="cursor-pointer table-row-url" 
 										target="_blank"
 										[href]="[data[d].link]" 
 										[ngClass]="data[d].past ? 'text-danger' : ''">
@@ -126,7 +130,7 @@
 							<!-- END: BUSINESS HOURS SECTION -->
 
 							<ng-template #no_link>
-								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field, 'text-danger': data[d].past}">
+								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field, 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
 
 									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultValue;">
 										{{ data[d].value | date: 'MMM dd, y' }}<br>
@@ -284,6 +288,13 @@
 					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value, count: data.play_count.value, duration: data.duration.value })"></i>
 					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
+
+				<ng-container *ngIf="page === 'release-notes'">
+					<td class="p-3 control-toggle text-center d-flex justify-content-evenly">
+						<i class="clickable text-gray fa fa-pencil" title="Edit Note" (click)="onEdit(data.releaseNoteId.value)"></i>
+						<i class="clickable color-danger fas fa-trash" title="Delete Note" (click)="onDelete(data.releaseNoteId.value)"></i>
+					</td>
+				</ng-container>
 
 				<!-- FEEDS PAGE ACTION -->
 				<!-- <ng-container *ngIf="page === 'feeds'">

@@ -7,18 +7,19 @@ import { map, takeUntil } from 'rxjs/operators';
 import {
 	AdvertiserService,
 	AuthService,
+	BillingService,
 	ContentService,
 	FeedService,
 	HelperService,
 	HostService,
 	LicenseService,
 	PlaylistService,
+	ReleaseNotesService,
 	ScreenService,
 	UserService
 } from 'src/app/global/services';
-import { BillingService } from 'src/app/global/services/billing-service/billing-service';
 
-import { UI_CURRENT_USER, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -90,6 +91,7 @@ export class DataTableComponent implements OnInit {
 	@Output() shipping = new EventEmitter();
 
 	active_table: string;
+	in_progress = false;
 	selected_array: any = [];
 	pagination: number;
 	selectAll: boolean = false;
@@ -107,12 +109,14 @@ export class DataTableComponent implements OnInit {
 		private _helper: HelperService,
 		private _license: LicenseService,
 		private _playlist: PlaylistService,
+		private _release: ReleaseNotesService,
 		private _router: Router,
 		private _screen: ScreenService,
 		private _user: UserService
 	) {}
 
 	ngOnInit() {
+
 		this.table_data.map((data) => {
 			Object.keys(data).forEach((key) => {
 				if (data[key].table) {
@@ -122,6 +126,7 @@ export class DataTableComponent implements OnInit {
 		});
 
 		this.subscribeToEmailNotificationToggleResult();
+
 	}
 
 	ngOnDestroy() {
@@ -155,6 +160,42 @@ export class DataTableComponent implements OnInit {
 		if (this.is_view_only) return;
 		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		this._router.navigate([`/${route}/feeds/edit-generated/${data.feed_id.value}`]);
+	}
+
+	onSelectRow(data: any, index: number): void {
+
+		if (this.page !== 'dealers-orders' || this.in_progress) return;
+
+		const order = data as UI_DEALER_ORDERS;
+
+		if (order.has_viewed.value === 1) return;
+
+		this.in_progress = true;
+
+		const currentUserId = this._auth.current_user_value.user_id;
+
+
+		this._billing.set_order_as_viewed({ orderId: order.order_no.value, createdBy: currentUserId })
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					const orders = [...this.table_data as UI_DEALER_ORDERS[]];
+					orders[index].index.is_new_order = false;
+					orders[index].date.is_new_order = false;
+					orders[index].order_no.is_new_order = false;
+					orders[index].dealer_alias.is_new_order = false;
+					orders[index].dealer_name.is_new_order = false;
+					orders[index].quantity.is_new_order = false;
+					orders[index].status.is_new_order = false;
+					orders[index].has_viewed.is_new_order = false;
+					orders[index].has_viewed.value = 1;
+					this.table_data = [...orders];
+					this._billing.on_click_order.emit();
+				},
+				error => this.in_progress = false
+			)
+			.add(() => this.in_progress = false);
+
 	}
 
 	onPageChange(page: number): void {
@@ -341,7 +382,10 @@ export class DataTableComponent implements OnInit {
 
 				case 'push_update_all_licenses':
 					this.pushAllLicenseUpdates(id);
+					break;
 
+				case 'delete-release-note':
+					this._release.onDeleteNoteFromDataTable.emit({ releaseNoteId: id })
 					break;
 
 				default:
@@ -614,6 +658,12 @@ export class DataTableComponent implements OnInit {
 				data = 'Are you sure you want to delete this document?';
 				action = 'delete-host-file';
 				break;
+
+			case 'release-notes':
+				message = 'Delete Release Note';
+				data = 'Are you sure you want to delete this note?';
+				action = 'delete-release-note';
+				break;
 		}
 
 		this.warningModal(status, message, data, return_msg, action, dataId);
@@ -621,6 +671,16 @@ export class DataTableComponent implements OnInit {
 
 	onDeleteUser(userId: string, email: string): void {
 		this.warningModal('warning', 'Delete User', `Are you sure you want to delete ${email}?`, '', 'user_delete', userId);
+	}
+
+	onEdit(dataId: string): void {
+
+		switch (this.page) {
+			case 'release-notes':
+				this._release.onEditNoteFromDataTable.emit({ releaseNoteId: dataId });
+				break;
+		}
+
 	}
 
 	onPushUpdateToAllLicenses(playlistId: string): void {

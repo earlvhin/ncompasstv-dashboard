@@ -1,5 +1,6 @@
 export * from './advertiser-service/advertiser.service';
 export * from './auth-service/auth.service';
+export * from './billing-service/billing-service';
 export * from './category-service/category.service';
 export * from './confirmation-dialog-service/confirmation-dialog.service';
 export * from './content-service/content.service';
@@ -13,6 +14,7 @@ export * from './host-service/host.service';
 export * from './license-service/license.service';
 export * from './map-service/map.service';
 export * from './playlist-service/playlist.service';
+export * from './release-notes/release-notes.service';
 export * from './role-service/role.service';
 export * from './screen-service/screen.service';
 export * from './tag.service';

@@ -119,7 +119,6 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		} else {
             this._host.get_host_by_page(page, this.search_key, '', '', 0).subscribe(
                 response => {
-                    console.log("RES", response)
                     if(this.search_key) {
                         this.search_hosts_data = response.host.filter( host => host.totalLicenses > 0)
                     } else {

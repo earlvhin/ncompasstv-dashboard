@@ -46,6 +46,7 @@ import { UpdateComponent } from './pages/update/update.component';
 // import { UserAccountSettingComponent } from '../../global/pages_shared/user-account-setting/user-account-setting.component';
 // import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
 import { UsersComponent } from './pages/users/users.component';
+import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -454,7 +455,14 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 data: {
                     breadcrumb: 'Version Control'
                 },
-            }
+            },
+            { 
+                path: 'release-notes', 
+                component: ReleaseNotesComponent,
+                data: {
+                    breadcrumb: 'Release Notes'
+                },
+            },
         ]
     }
 ]

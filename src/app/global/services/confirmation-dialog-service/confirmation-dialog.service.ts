@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
+import { MatDialog } from '@angular/material';
 
 import { UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { MatDialog } from '@angular/material';
 
 @Injectable({
 	providedIn: 'root'
@@ -14,7 +14,12 @@ export class ConfirmationDialogService {
 
 	}
 
-	error() {
+	error(width: string = '500px', height: string = '350px', disableClose: boolean = true) {
+		
+		const dialogData = { status: 'error', data: 'Error! Something went wrong.', message: 'Please contact your administrator' };
+		const config = { width, height, disableClose, dialogData };
+		const dialog = this.dialog.open(ConfirmationModalComponent, config);
+		return dialog.afterClosed();
 
 	}
 
@@ -31,7 +36,6 @@ export class ConfirmationDialogService {
 		const config = { width, height, disableClose, data };
 		const dialog = this.dialog.open(ConfirmationModalComponent, config);
 		return dialog.afterClosed();
-
 
 	}
 

@@ -55,6 +55,10 @@ export class BaseService {
 		return environment.update;
 	}
 
+	protected get upserts() {
+		return environment.upsert;
+	}
+
 	protected get deleters() {
 		return environment.delete;
 	}
