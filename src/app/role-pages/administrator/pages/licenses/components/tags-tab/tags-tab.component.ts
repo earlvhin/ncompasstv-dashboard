@@ -31,7 +31,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 		{ name: 'Alias', sortable: false, column: 'Alias', key: 'alias' },
 		{ name: 'Tags', sortable: false, column: 'Tags', key: 'name' }
 		// { name: 'Last Push', sortable: false, column:'ContentsUpdated', key:'contentsUpdated' },
-		// { name: 'Last Online', sortable: false, column:'TimeIn', key:'timeIn' },
+		// { name: 'Last Startup', sortable: false, column:'TimeIn', key:'timeIn' },
 		// { name: 'Net Type', sortable: false, column:'InternetType', key:'internetType' },
 		// { name: 'Net Speed', sortable: false, key:'internetSpeed', column:'InternetSpeed' },
 		// { name: 'Display', sortable: false, key: 'displayStatus', column:'DisplayStatus' },
