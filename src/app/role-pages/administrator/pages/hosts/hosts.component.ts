@@ -247,6 +247,7 @@ export class HostsComponent implements OnInit {
 			.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
+                console.log("REZ", response)
 				if (response.message) {
 					if (this.search_data_host == '') this.no_host = true;
 					this.filtered_data_host = [];

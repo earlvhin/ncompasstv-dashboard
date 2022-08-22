@@ -3,276 +3,73 @@
 		<div class="row mb-2">
 			<div class="col-lg-3">
 				<mat-form-field class="full-width content-filter-dropdown">
-					<mat-label>Search Options</mat-label>
-					<mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" [disabled]="loading_hosts"> 
-						<mat-option [value]="'host'">Search by Host</mat-option>
-						<mat-option [value]="'state'">Search by State</mat-option>
-						<mat-option [value]="'category'">Search by Category</mat-option>
+					<mat-label>SEARCH OPTIONS</mat-label>
+					<mat-select (selectionChange)="onSearchOption($event.value)" [(value)]="currentSearchOption" class="md-text"> 
+						<mat-option [value]="'host'" class="md-text">Host</mat-option>
+						<mat-option [value]="'state'" class="md-text">State</mat-option>
+						<mat-option [value]="'category'" class="md-text">Category</mat-option>
 					</mat-select> 
 				</mat-form-field>
 			</div>
 			<div class="col-lg-9 float-right">
-				<div class="float-container d-flex">
-					<div class="d-flex align-items-center mr-2">
-						<p class="sm-text">LEGEND:</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_all.png" alt="online-all">
-						<p class="sm-text ml-1">Online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all">
-						<p class="sm-text ml-1">Up to 75% online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/online_few.png" alt="online-all">
-						<p class="sm-text ml-1">50% or less online</p>
-					</div>
-					<div class="d-flex align-items-center mr-2">
-						<img class="map-status" src="assets/media-files/markers/offline.png" alt="online-all">
-						<p class="sm-text ml-1">Offline</p>
-					</div>
-				</div>
+				<div class="col-lg-12 justify-flex p-0 d-flex">
+                    <div class="d-flex align-items-center mr-2">
+                        <p class="sm-text">LEGEND:</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img class="map-status" src="assets/media-files/markers/online_all.png" alt="online-all">
+                        <p class="sm-text ml-1">Online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all">
+                        <p class="sm-text ml-1">Up to 75% online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img class="map-status" src="assets/media-files/markers/online_few.png" alt="online-all">
+                        <p class="sm-text ml-1">50% or less online</p>
+                    </div>
+                    <div class="d-flex align-items-center mr-2">
+                        <img class="map-status" src="assets/media-files/markers/offline.png" alt="online-all">
+                        <p class="sm-text ml-1">Offline</p>
+                    </div>
+                </div>
+                <div class="col-lg-12 text-right p-0">
+                    <p class="sm-text mt-2 p-0 text-danger">Note: If host is displayed but no marker is shown please check
+                        the coordinates of that host.</p>
+                </div>
 			</div>
 		</div>
-		<div class="row">
-			<div class="col-lg-12 mr-2">
-				<div id="wrapper">
-					<div id="google_map">
-							<agm-map class="vh-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
-								<agm-marker id="{{h.hostId}}" *ngFor="let h of map_markers" [latitude]="h.latitude" [longitude]="h.longitude" [agmFitBounds]="true"
-									[iconUrl]="h.icon_url" (markerClick)="onMarkerClick(h.hostId, window)">
-								<agm-info-window #window [isOpen]="currentSearchOption === 'host' ? isOpened: expansion_id == h.hostId">
-									<h4 class="font-weight-bold" >{{ h.name }}</h4>
-									<div class="mt-2">
-										<tr>
-											<th>
-												<h5 class="font-weight-bold">Address:</h5>
-											</th>
-											<td class="mr-2">
-												<h5>{{h.address}}, {{h.city}}, {{ h.state }} {{ h.postalCode }}</h5>
-											</td>
-										</tr>
-										<tr>
-											<th>
-												<h5 class="font-weight-bold">Category:</h5>
-											</th>
-											<td>
-												<h5>{{h.category}}</h5>
-											</td>
-										</tr>
-										<tr>
-											<th class="pr-2">
-												<h5 class="font-weight-bold">Operation Hours: </h5>
-											</th>
-											<td>
-										<tr *ngFor="let ops of h.storeHours">
-											<th class="pr-4">
-												<h5>{{ ops.day }} </h5>
-											</th>
-											<span *ngIf="ops.periods[0]; else close">
-												<td *ngFor="let hrs of ops.periods; let j = index">
-													<h5 *ngIf="j > 0"> & </h5>
-													<h5 *ngIf="hrs.open == '' && hrs.close =='' && ops.status"> - Open 24 hours</h5>
-													<h5 *ngIf="hrs.open == '' && hrs.close =='' && !ops.status"> - Closed</h5>
-													<h5 *ngIf="hrs.open != '' && hrs.close !=''">
-														{{hrs.open}} - {{ hrs.close }}
-													</h5>
-												</td>
-											</span>
-											<ng-template #close>
-												- CLOSED
-											</ng-template>
-										</tr>
-										
-										</td>
-										</tr>
-									</div>
-									<h6 class="coordinates mt-3"><i class="fas fa-map-marker"></i>
-										{{h.latitude}},{{h.longitude}}</h6>
-								</agm-info-window>
-							</agm-marker>
-						</agm-map>
-						<p class="sm-text mt-3 bg-info p-3 text-white">Note: If host is displayed but no marker is shown
-							please check
-							the coordinates of that host.</p>
-					</div>
-					<div id="over_map">
-						<ng-container *ngIf="!loading_hosts; else loader">
-							<ng-container *ngIf="currentSearchOption === 'host'">
-								<div class="search-bar pl-3 pt-2 pr-3">
-									<label class="mb-2">Enter a Host Name</label>
-									<div class="d-flex">
-										<div class="search-input full-width">
-											<app-autocomplete-field [data_reference]="hosts_data" [primary_keyword]="primaryKeyword" [key_of_value]="'hostId'"
-												(data_value)="onSelectHost($event)" [required]="true" [label]="'Host Name'" [paging]="paging"
-												(call_next_page)="searchBoxTrigger($event)" [loading_data]="loading_data" (searched)="searchData($event)"
-												[loading_search]="loading_search">
-											</app-autocomplete-field>
-										</div>
-									</div>
-								</div>
-								<ng-container *ngIf="hosts.length > 0; else no_host">
-									<mat-card class="p-4 search-host-result" *ngIf="selected_host as host;">
-							
-										<!-- HOST DETAILS -->
-										<div class="align-items-center d-flex mb-3">
-											<div class="mr-1">
-												<img class="map-header-status" [src]="host.icon_url" alt="Status">
-											</div>
-											<div class="flex-even">
-												<h3>{{ host.name }}</h3>
-												<p class="sm-text">{{ host.address }}, {{ host.city }}, {{ host.state }} {{
-													host.postalCode }}
-												</p>
-											</div>
-										</div>
-							
-										<hr>
-							
-										<!-- DEALER DETAILS -->
-										<div class="row">
-											<div class="col-lg">
-												<span class="sm-text w-100 font-weight-bold">Dealer</span>
-												<p>
-													<a class="sm-text" [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
-														{{ host_dealer.businessName }}
-													</a>
-												</p>
-											</div>
-											<div class="col-lg">
-												<span class="sm-text w-100 font-weight-bold">Dealer Alias</span>
-												<p>
-													<a class="sm-text" [routerLink]="getLink('dealers', host_dealer.dealerId)" target="_blank">
-														{{ host_dealer.dealerIdAlias }}
-													</a>
-												</p>
-											</div>
-										</div>
-							
-										<!-- LICENSES -->
-										<div class="row licenses">
-											<div class="col-lg" *ngIf="host_licenses">
-												<span class="sm-text w-100 font-weight-bold">Licenses</span>
-												<div *ngIf="host_licenses.length > 0">
-													<div *ngFor="let license of host_licenses">
-														<span class="fas fa-circle mr-1 xsm-text"
-															[ngClass]="(license.isActivated === 1 ? (license.piStatus === 1? 'text-primary' : 'text-danger ') : 'text-gray')" title="{{(license.isActivated ===1 ? (license.piStatus === 1 ? 'Online' : 'Offline') : 'Disabled')}}"></span>
-														<a class="sm-text" [routerLink]="getLink('licenses', license.licenseId)" target="_blank">
-															{{ (license.alias && license.alias.length > 0) ? license.alias :
-															license.licenseKey
-															}}
-														</a>
-													</div>
-												</div>
-											</div>
-										</div>
-									</mat-card>
-								</ng-container>
-							</ng-container>
-					
-							<ng-container *ngIf="currentSearchOption === 'state' || currentSearchOption === 'category'">
-							 <div class="search-bar pl-3 pt-2" *ngIf="currentSearchOption === 'state'">
-									<label class="mb-2">Enter a State</label>
-									<div class="d-flex">
-										<div class="search-input">
-											<app-autocomplete-field [data_reference]="states_data" [primary_keyword]="'state'" [key_of_value]="'state'"
-												(data_value)="onSelectState($event)" [required]="true" [label]="'State'" [paging]="state_paging"
-												(call_next_page)="searchBoxStateTrigger($event)" [loading_data]="loading_state_data" (searched)="searchState($event)"
-												[loading_search]="loading_state_search">
-											</app-autocomplete-field>
-										</div>
-										<span class="fas fa-search search-button"></span>
-										
-									</div>
-								</div> 
-								<div class="search-bar pl-3 pt-2" *ngIf="currentSearchOption === 'category'">
-									<label class="mb-2">Enter a Category</label>
-									<div class="d-flex">
-										<div class="search-input">
-											<app-autocomplete-field [data_reference]="categories_data" [primary_keyword]="'category'" [key_of_value]="'category'"
-												(data_value)="onSelectCategory($event)" [required]="true" [label]="'Category'" [paging]="category_paging"
-												(call_next_page)="searchBoxCategoryTrigger($event)" [loading_data]="loading_category_data"
-												(searched)="searchCategory($event)" [loading_search]="loading_category_search">
-											</app-autocomplete-field>
-										</div>
-										<span class="fas fa-search search-button"></span>
-									</div>
-								</div>
-								<div class="search-result"  *ngIf="isFilteredHosts">
-									<div class="mb-3 d-flex justify-content-center bg-gray">
-										<span class="sm-text font-weight-bold"><span class="text-danger">{{host_results.length}}</span> Host(s) | <span
-												class="text-danger">{{selected_licenses.length}}</span> License(s)
-											<br />
-											<span class="text-primary fas fa-circle mr-1"></span> <span class="text-primary">{{online_licenses}}</span>
-											Online |
-											<span class="text-danger fas fa-circle mr-1"></span> <span class="text-danger">{{offline_licenses}}</span>
-											Offline
-										</span>
-									
-									</div>
-									<mat-accordion *ngIf="host_results.length > 0;">
-										<div class="row">
-											<div class="col-lg-12" *ngFor="let h of host_results">
-												<mat-expansion-panel class="mb-3" hideToggle (click)="onExpandHost(h.hostId)"
-													[expanded]='h.hostId == clicked_marker_id' #example id="outer-mat"
-													[class.panelBorder]="example.expanded"
-													[class.online]="h.icon_url ==='assets/media-files/markers/online_all.png'"
-													[class.onlinemany]="h.icon_url ==='assets/media-files/markers/online_many.png'"
-													[class.onlinefew]="h.icon_url ==='assets/media-files/markers/online_few.png'"
-													[class.offline]="h.icon_url ==='assets/media-files/markers/offline.png'">
-									
-													<mat-expansion-panel-header class="pr-0 pl-0 mt-2">
-														<mat-panel-title class="md-text p-0">
-															<div class="col-lg-1 mt-1 text-left">
-																<img class="map-header-status" [src]="h.icon_url" alt="Status">
-															</div>
-															<p class="col-lg-10 ml-1 text-left">
-																<span class="font-weight-bold ">
-																	{{ h.hostName }}
-																</span>
-																<br />
-																<span class="sm-text">
-																	{{ h.city}} {{ h.state }} {{ h.postalCode }}
-																</span>
-															</p>
-															<div class="col-lg-1 p-0 pt-1 text-right">
-																<div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
-																<div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
-															</div>
-														</mat-panel-title>
-													</mat-expansion-panel-header>
-									
-													 <div class="pt-2" *ngIf="!loading_license_count; else loader_sm">
-														<div class="host-licenses-list" *ngIf="host_licenses.length > 0;">
-															<div class="col-xs-6 mr-3" *ngFor="let license of host_licenses">
-																<div>
-																	<span class="fas fa-circle mr-1 sm-text"
-																		[ngClass]="license.piStatus === 1? 'text-primary' : 'text-danger '"></span>
-																	 <a [routerLink]="setLink(license.licenseId)" target="_blank">
-																		{{ (license.alias && license.alias.length > 0) ? license.alias :
-																		license.licenseKey }}
-																	</a>
-																</div>
-															</div>
-														</div>
-									
-														<ng-template #no_licenses_text>
-															<p>No licenses for this host</p>
-														</ng-template>
-													</div>
-												</mat-expansion-panel>
-											</div>
-										</div>
-									</mat-accordion>
-								</div>
-							
-							</ng-container>
-						</ng-container>
-					</div>
-				</div>
-			</div>
-		</div>
+        <div class="row">
+            <div class="col-lg-12" *ngIf="currentSearchOption ==='host'">
+                <app-locator-component *ngIf="hosts_data.length > 0"
+                [search_placeholder]="'Search Host Name(s)'"
+                [select_placeholder]="'Select Host(s)'"
+                [result_placeholder]="'Host Name(s)'"
+                [data_reference]="hosts_data"
+                [is_host]="true">
+                </app-locator-component>
+            </div>
+            <div class="col-lg-12" *ngIf="currentSearchOption ==='category'">
+                <app-locator-component *ngIf="categories_data.length > 0"
+                [search_placeholder]="'Search Category'"
+                [select_placeholder]="'Select Category'"
+                [result_placeholder]="'Category Name(s)'"
+                [data_reference]="categories_data"
+                [original_reference]="hosts_data"
+                [is_category]="true">
+                </app-locator-component>
+            </div>
+            <div class="col-lg-12" *ngIf="currentSearchOption ==='state'">
+                <app-locator-component *ngIf="states_data.length > 0"
+                [search_placeholder]="'Search State'"
+                [select_placeholder]="'Select State'"
+                [result_placeholder]="'State Name(s)'"
+                [data_reference]="states_data"
+                [original_reference]="hosts_data"
+                [is_state]="true">
+                </app-locator-component>
+            </div>
+        </div>
 	</div>
 
 	<ng-template #loader>

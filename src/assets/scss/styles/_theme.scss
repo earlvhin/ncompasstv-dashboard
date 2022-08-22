@@ -305,7 +305,7 @@ button {
 	&._danger {
 		background-color: $danger !important;
 	}
-
+	
 	&._caution {
 		background-color: #ce5109;
 	}
@@ -317,7 +317,7 @@ button {
 	&._warning {
 		background-color: #771c8a;
 	}
-
+	
 	&._primary {
 		background-color: $primary;
 	}
@@ -339,7 +339,7 @@ button {
 		font-weight: 500;
 		margin-right: 10px;
 	}
-
+	
 	&._disabled {
 		background-color: #bbb;
 		color: #777;
@@ -431,7 +431,7 @@ button {
 		tr:last-child {
 			// box-shadow: 0 8px 6px -6px $shadow;
 			border-bottom: 1px solid #e4e4e4;
-
+            
 			td {
 				border-bottom: none;
 			}
@@ -633,7 +633,10 @@ button {
 }
 
 .not-clickable {
-	pointer-events: none;
+    pointer-events: none;
+    .mat-expansion-indicator {
+        display: none;
+    }
 }
 
 .drop-cursor {
@@ -862,4 +865,11 @@ agm-map {
 
 .mt-neg15 {
 	margin-top: -15px !important;
+}
+.no-overflow {
+    overflow: hidden;
+}
+
+.justify-flex {
+    justify-content: flex-end
 }

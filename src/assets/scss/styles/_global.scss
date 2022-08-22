@@ -113,3 +113,15 @@ hr {
 .flex-wrap {
     flex-wrap: wrap;
 }
+
+.selection {
+    border-top:2px solid $gray; 
+    height: 56px;
+    padding-top: 10px;
+    text-align:right;
+}
+
+.custom-panel {
+    max-height: 200px;
+    overflow: auto;
+}
