@@ -119,7 +119,7 @@ export class DmaViewComponent implements OnInit, OnDestroy {
 
 				const dma = response.paging.entities as API_DMA[];
 
-				if (dma.length > 0) {
+				if (dma.length <= 0) {
 					this.dma_to_export = [];
 					return;
 				} else {
