@@ -74,6 +74,7 @@ export * from './ui_host-license-statistics';
 export * from './ui_host-locator.model';
 export * from './ui_license_by_tags.model';
 export * from './ui_operation-hours.model';
+export * from './ui_reboot-time.model';
 export * from './ui_role-definition.model';
 export * from './ui_role_info.model';
 export * from './ui_single-screen.model';

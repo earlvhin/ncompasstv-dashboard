@@ -32,7 +32,8 @@ import {
 	UI_ROLE_DEFINITION,
 	UI_SCREEN_ZONE_PLAYLIST,
 	UI_ZONE_PLAYLIST,
-	UI_SINGLE_SCREEN
+	UI_SINGLE_SCREEN,
+	UI_REBOOT_TIME
 } from 'src/app/global/models';
 
 @Component({
@@ -81,6 +82,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host: API_HOST;
 	host_notes = '';
 	host_route: string;
+	initial_additional_settings_value: any;
 	initial_load_charts = true;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
 	is_dealer: boolean = false;
@@ -122,6 +124,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	tags: TAG[] = [];
 	timezone: any;
 	title: string[] = [];
+	unsaved_additional_settings = { bootDelayChanged: false, rebootTimeChanged: false };
 	update_alias: FormGroup;
 	update_btn: string = 'Content Update';
 	zone_order: number = 0;
@@ -577,25 +580,48 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	prepareLicenseSettingsForm(license: API_LICENSE_PROPS) {
 		let form_group_obj = {};
+		const rebootTimes = JSON.parse(license.rebootTime);
 
 		/** Loop through form fields object and prepare for group */
-		this._additionalLicenseSettingsFormFields.map((field) => {
-			let fieldValue: any = field.value;
+		this._additionalLicenseSettingsFormFields.map(
+			field => {
+				let fieldValue: any = license[field.form_control_name];
 
-			if (field.form_control_name === 'rebootTime' && license.rebootTime) {
-				const rebootTime = license.rebootTime.split(':');
-				const hour = parseInt(rebootTime[0]);
-				const minute = parseInt(rebootTime[1]);
-				fieldValue = { hour, minute };
+				if (field.form_control_name.includes('rebootTime') && license.rebootTime && license.rebootTime.length > 0) {
+					const fieldLength = field.form_control_name.length;
+					const index = parseInt(field.form_control_name.substring(fieldLength - 1, fieldLength));
+					const rebootTimeRaw = rebootTimes[index - 1];
+
+					if (!rebootTimeRaw) {
+
+						fieldValue = null;
+
+					} else {
+
+						const rebootTime = rebootTimes[index - 1].rebootTime.split(':');
+						const hour = parseInt(rebootTime[0]);
+						const minute = parseInt(rebootTime[1]);
+						fieldValue = { hour, minute };
+
+					}
+
+				}
+
+				Object.assign(form_group_obj, {
+					[field.form_control_name]: [fieldValue, field.required ? Validators.required : null]
+				});
 			}
-
-			Object.assign(form_group_obj, {
-				[field.form_control_name]: [fieldValue, field.required ? Validators.required : null]
-			});
-		});
+		);
 
 		this.additional_license_settings_form = this._form.group(form_group_obj);
 		this.additional_license_settings_value = this.additional_license_settings_form.value;
+
+		const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } = this.additional_license_settings_value;
+		
+		this.initial_additional_settings_value = {
+			bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4
+		};
+
 		this.subscribeToAdditionalSettingsFormChanges();
 	}
 
@@ -615,29 +641,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let requests = [];
 		let requestNames: string[] = [];
 		const controls = this.additional_license_settings_form.controls;
+		const rebootTimeBody: { rebootTime: { rebootTime: string }[], licenseId: string } = { rebootTime: [], licenseId: this.license_id };
 
 		Object.keys(controls).forEach((key) => {
 			const control = controls[key] as FormControl;
 
-			if (control.invalid) return;
+			if (control.invalid || (!this.unsaved_additional_settings.bootDelayChanged && !this.unsaved_additional_settings.rebootTimeChanged)) return;
 
-			if (key === 'bootDelay') {
+			if (key === 'bootDelay' && this.unsaved_additional_settings.bootDelayChanged) {
 				const bootDelayBody = { licenseId: this.license_id, bootDelay: this.additional_license_settings_form.controls['bootDelay'].value };
 				requests.push(this._license.update_license_boot_delay(bootDelayBody).pipe(takeUntil(this._unsubscribe)));
+				requestNames.push(key);
+				return;
 			}
 
-			if (key === 'rebootTime') {
-				const rebootTime = control.value as { hour: number; minute: number; second: 0 };
+			if (key.includes('rebootTime') && this.unsaved_additional_settings.rebootTimeChanged) {
 
-				if (isNaN(rebootTime.hour) || isNaN(rebootTime.minute)) return;
-
-				const { hour, minute } = rebootTime;
-				const rebootTimeBody = { rebootTime: `${hour}:${minute}`, licenseId: this.license_id };
-				requests.push(this._license.update_license_reboot_time(rebootTimeBody).pipe(takeUntil(this._unsubscribe)));
+				const rebootTimeValue = control.value as { hour: number, minute: number };
+				rebootTimeBody.rebootTime.push({ rebootTime: `${rebootTimeValue.hour}:${rebootTimeValue.minute}` })
+				requestNames.push(key);
+				return;
+				
 			}
 
-			requestNames.push(key);
 		});
+
+		if (this.unsaved_additional_settings.rebootTimeChanged) {
+			requests.push(this._license.update_license_reboot_time(rebootTimeBody).pipe(takeUntil(this._unsubscribe)));
+		}
 
 		if (requests.length <= 0) {
 			this.saving_license_settings = false;
@@ -1551,37 +1582,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private subscribeToAdditionalSettingsFormChanges() {
 		this.additional_license_settings_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(
-			(response: { bootDelay: number | string; rebootTime: { hour: number; minute: number; second?: number } }) => {
-				let { bootDelay, rebootTime } = response;
-				const current: { bootDelay: number | string; rebootTime: { hour: number; minute: number; second?: number } } =
-					this.additional_license_settings_value;
+			(response: { bootDelay: number | string; rebootTime1: UI_REBOOT_TIME, rebootTime2: UI_REBOOT_TIME, rebootTime3: UI_REBOOT_TIME, rebootTime4: UI_REBOOT_TIME }) => {
 
-				if (!rebootTime) return;
+				let bootDelayChanged = false;
+				let rebootTimeChanged = false;
+				const currentValue = response;
 
-				if (typeof bootDelay === 'string') bootDelay = parseInt(bootDelay);
+				Object.keys(this.initial_additional_settings_value)
+					.forEach(
+						key => {
+							
+							const initialValue = this.initial_additional_settings_value;
 
-				if (current.bootDelay !== bootDelay) {
-					this.has_unsaved_additional_settings = true;
-					return;
-				}
+							if (key === 'bootDelay') {
 
-				if (
-					current.rebootTime &&
-					(current.rebootTime.hour !== rebootTime.hour ||
-						current.rebootTime.minute !== rebootTime.minute ||
-						!rebootTime.hour ||
-						!rebootTime.minute)
-				) {
-					this.has_unsaved_additional_settings = true;
-					return;
-				}
+								if (parseInt(initialValue['bootDelay']) !== parseInt(currentValue['bootDelay'] as string)) bootDelayChanged = true;
 
-				if (!current.rebootTime && (response.rebootTime || !response.rebootTime.hour || !response.rebootTime.minute)) {
-					this.has_unsaved_additional_settings = true;
-					return;
-				}
+							} else {
+								
+								if (initialValue[key] !== currentValue[key]) rebootTimeChanged = true;
 
-				this.has_unsaved_additional_settings = false;
+							}
+
+						}
+					);
+
+				this.unsaved_additional_settings = { bootDelayChanged, rebootTimeChanged };
+				this.has_unsaved_additional_settings = bootDelayChanged || rebootTimeChanged;
+
 			},
 			(error) => {
 				throw new Error(error);
@@ -1812,7 +1840,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				value: 0,
 				viewType: null
 			},
-			{ label: 'Reboot Time', form_control_name: 'rebootTime', type: 'time', width: 'col-lg-6', required: true, value: 0, viewType: null }
+			{ label: 'Reboot Time 1 ', form_control_name: 'rebootTime1', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
+			{ label: 'Reboot Time 2', form_control_name: 'rebootTime2', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
+			{ label: 'Reboot Time 3', form_control_name: 'rebootTime3', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
+			{ label: 'Reboot Time 4', form_control_name: 'rebootTime4', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
 		];
 	}
 
