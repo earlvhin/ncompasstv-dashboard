@@ -151,6 +151,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 					id: license.licenseId
 				},
 				pi_status: { value: license.piStatus, link: null, editable: false, hidden: true },
+				player_status: { value: license.playerStatus, link: null, editable: false, hidden: true },
 				is_activated: { value: license.isActivated, link: null, editable: false, hidden: true }
 			};
 		});

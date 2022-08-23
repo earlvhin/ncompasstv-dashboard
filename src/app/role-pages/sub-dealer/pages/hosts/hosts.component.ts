@@ -524,7 +524,9 @@ export class HostsComponent implements OnInit {
                     { value: i.displayStatus == 1 ? 'ON' : "N/A", link: null, editable: false, hidden: false },
 					{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 					{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
-					{ value: i.piStatus, link: null, editable: false, hidden: true }
+					{ value: i.piStatus, link: null, editable: false, hidden: true },
+					{ value: i.playerStatus, link: null, editable: false, hidden: true },
+					{ value: i.isActivated, link: null, editable: false, hidden: true },
 				);
 			}
 		);

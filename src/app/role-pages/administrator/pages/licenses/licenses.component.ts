@@ -1139,6 +1139,7 @@ export class LicensesComponent implements OnInit {
 				},
 				{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 				{ value: l.piStatus, link: null, editable: false, hidden: true },
+				{ value: l.playerStatus, link: null, editable: false, hidden: true },
 				{ value: l.isActivated, link: null, editable: false, hidden: true }
 			);
 			return table;

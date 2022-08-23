@@ -22,6 +22,7 @@ export class UI_DEALER_LICENSE {
     is_activated: object;
     is_assigned: object;
 	pi_status: object;
+	player_status: object;
 
     constructor(
 		index:object, 
@@ -46,7 +47,8 @@ export class UI_DEALER_LICENSE {
 		date_created: object, 
 		is_activated: object, 
 		is_assigned: object,  
-		pi_status: object
+		pi_status: object,
+		player_status: object,
 	) {
 		this.index = index;
         this.license_id = id;
@@ -71,6 +73,7 @@ export class UI_DEALER_LICENSE {
         this.is_activated = is_activated;
         this.is_assigned = is_assigned;
         this.pi_status = pi_status;
+		this.player_status = player_status;
     }
 }
 
@@ -95,6 +98,7 @@ export class UI_LICENSE {
 	date_installed: object;
     date_created: object;
 	pi_status: object;
+	player_status: object;
     is_activated?: object;
 
     constructor(
@@ -118,6 +122,7 @@ export class UI_LICENSE {
 		date_installed: object, 
 		date_created: object, 
 		pi_status: object,
+		player_status: object,
         is_activated?: object,
 	) {
 		this.index = index;
@@ -140,6 +145,7 @@ export class UI_LICENSE {
 		this.date_installed = date_installed;
         this.date_created = date_created;
         this.pi_status = pi_status;
+		this.player_status = player_status
         this.is_activated = is_activated;
     }
 }

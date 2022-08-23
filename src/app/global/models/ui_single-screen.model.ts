@@ -115,8 +115,9 @@ export class UI_SCREEN_LICENSE_SCREENS {
     is_activated: object;
     is_registered: object;
     pi_status: object;
+	player_status: object;
     
-    constructor(id: object, i: object, key: object, alias: object, type: object, speed: object, is_activated: object, is_registered: object, pi_status: object) {
+    constructor(id: object, i: object, key: object, alias: object, type: object, speed: object, is_activated: object, is_registered: object, pi_status: object, player_status: object) {
         this.license_id = id;
         this.index = i;
         this.license_key = key;
@@ -126,6 +127,7 @@ export class UI_SCREEN_LICENSE_SCREENS {
         this.is_activated = is_activated;
         this.is_registered = is_registered;
         this.pi_status = pi_status;
+		this.player_status = player_status;
     }
 }
 
