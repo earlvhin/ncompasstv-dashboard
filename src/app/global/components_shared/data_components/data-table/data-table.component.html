@@ -3,27 +3,31 @@
 		<thead align="left" class="border-bottom">
 			<tr>
 				<!-- TABLE COLUMN HEADINGS -->
-				<th *ngFor="let tc of table_columns" class="p-3" 
-					[ngClass]="tc.column && active_tab == tc.column ? 'tab-active': ''"
+				<th
+					*ngFor="let tc of table_columns"
+					class="p-3"
+					[ngClass]="tc.column && active_tab == tc.column ? 'tab-active' : ''"
 					[class.text-center]="tc.type === 'toggle'"
-					[style.display]="tc.no_show ? 'none' : ''">
-
+					[style.display]="tc.no_show ? 'none' : ''"
+				>
 					<span *ngIf="!tc.hidden; else checkbox">
-                        {{ !tc.name ? tc : tc.name }}
-                    </span>
+						{{ !tc.name ? tc : tc.name }}
+					</span>
 
-					<i *ngIf="tc.sortable" class="sort cursor-pointer ml-2 fas fa-angle-{{sort_order == 'desc' ? 'down' : 'up'}}" 
-						(click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')" 
-						data-toggle="tooltip" 
-						title="Sorted by {{sort_order == 'desc' ? 'Descending' : 'Ascending'}} Order">
+					<i
+						*ngIf="tc.sortable"
+						class="sort cursor-pointer ml-2 fas fa-angle-{{ sort_order == 'desc' ? 'down' : 'up' }}"
+						(click)="sortByColumnName(tc.column, sort_order == 'desc' ? 'asc' : 'desc')"
+						data-toggle="tooltip"
+						title="Sorted by {{ sort_order == 'desc' ? 'Descending' : 'Ascending' }} Order"
+					>
 					</i>
-
 				</th>
-                <ng-template #checkbox>
-                    <span *ngIf="multiple_delete" class="text-right" class="p-3">
-                        <mat-checkbox class="example-margin" (change)="updateCheck()" [(ngModel)]="selectAll"></mat-checkbox>
-                    </span>
-                </ng-template>
+				<ng-template #checkbox>
+					<span *ngIf="multiple_delete" class="text-right" class="p-3">
+						<mat-checkbox class="example-margin" (change)="updateCheck()" [(ngModel)]="selectAll"></mat-checkbox>
+					</span>
+				</ng-template>
 
 				<!-- For activate toggle [[DEALER LICENSE TABLE]] -->
 				<th *ngIf="ctrl_column" class="text-right" class="p-3">
@@ -35,7 +39,20 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
-				<th *ngIf="license_delete || playlist_delete || advertiser_delete || is_user_delete_enabled || content_metrics || billing_action || transaction_action || order_action" class="text-right" class="p-3">
+				<th
+					*ngIf="
+						license_delete ||
+						playlist_delete ||
+						advertiser_delete ||
+						is_user_delete_enabled ||
+						content_metrics ||
+						billing_action ||
+						transaction_action ||
+						order_action
+					"
+					class="text-right"
+					class="p-3"
+				>
 					{{ 'Action' }}
 				</th>
 
@@ -47,35 +64,44 @@
 
 		<!-- NEW TABLE DATA ROWS -->
 		<tbody *ngIf="new_table">
-			<tr *ngFor="let data of table_data; let j = index" [ngClass]="{ 'hoverable': page === 'dealers-orders' }" (click)="onSelectRow(data, j)">
-				<td class="p-3" 
-					*ngFor="let d of data | objectKeys; let i = index" 
-					[hidden]="data[d].hidden && !data[d].key" 
-					[ngClass]="data[d].hidden && data[d].key ? 'text-center': ''">
-
+			<tr *ngFor="let data of table_data; let j = index" [ngClass]="{ hoverable: page === 'dealers-orders' }" (click)="onSelectRow(data, j)">
+				<td
+					class="p-3"
+					*ngFor="let d of data | objectKeys; let i = index"
+					[hidden]="data[d].hidden && !data[d].key"
+					[ngClass]="data[d].hidden && data[d].key ? 'text-center' : ''"
+				>
 					<span *ngIf="data[d].hidden && data[d].key">
-						<mat-checkbox class="example-margin" [checked]="(checkIfDisabled(data)) ? null : data.checked" (change)="onCheckboxSelect(data[d].value, $event.checked, data[d])" [disabled]="checkIfDisabled(data)"></mat-checkbox>
+						<mat-checkbox
+							class="example-margin"
+							[checked]="checkIfDisabled(data) ? null : data.checked"
+							(change)="onCheckboxSelect(data[d].value, $event.checked, data[d])"
+							[disabled]="checkIfDisabled(data)"
+						></mat-checkbox>
 					</span>
 
 					<span *ngIf="!data[d].hidden" class="flex" [style.color]="data[d].color">
-
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
-							<i class="fas fa-circle mr-2" [ngClass]="(data.is_activated.value === 1 ? (data.player_status.value === 1 ? 'text-primary':'text-danger') : 'text-gray')" title="{{(data.is_activated.value === 1 ? (data.player_status.value === 1 ? 'Online':'Offline') : 'Disabled')}}"></i>
-						</span>		
+							<i
+								class="fas fa-circle mr-2"
+								[ngClass]="
+									data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'text-primary' : 'text-danger') : 'text-gray'
+								"
+								title="{{ data.is_activated.value === 1 ? (data.player_status.value === 1 ? 'Online' : 'Offline') : 'Disabled' }}"
+							></i>
+						</span>
 
-						<ng-container *ngIf="!data[d].isImage; else isImage;">
-
-							<ng-container *ngIf="data[d].link; else no_link;">
-
+						<ng-container *ngIf="!data[d].isImage; else isImage">
+							<ng-container *ngIf="data[d].link; else no_link">
 								<ng-container *ngIf="!data[d].isFile; else isFile">
-									<a class="cursor-pointer table-row-url" 
-										target="{{data[d].new_tab_link ? '_blank' : '_self'}}"
-										[routerLink]="[data[d].link, data[d].value]" 
+									<a
+										class="cursor-pointer table-row-url"
+										target="{{ data[d].new_tab_link ? '_blank' : '_self' }}"
+										[routerLink]="[data[d].link, data[d].value]"
 										[queryParams]="query_params"
-										[ngClass]="{ 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
-
+										[ngClass]="{ 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }"
+									>
 										<ng-container>
-
 											<div *ngIf="!data[d].permission; else userWithPermission">
 												<span *ngIf="!data[d].compressed; else shortened_tooltip">
 													{{ data[d].value }}
@@ -83,7 +109,7 @@
 
 												<ng-template #shortened_tooltip>
 													<span [title]="data[d].value">
-														{{ data[d].value | substring:10 }}
+														{{ data[d].value | substring: 10 }}
 													</span>
 												</ng-template>
 											</div>
@@ -94,77 +120,105 @@
 													<div class="permission-container">{{ data[d].permission }}</div>
 												</div>
 											</ng-template>
-
 										</ng-container>
 									</a>
 								</ng-container>
 
 								<ng-template #isFile>
-									<a class="cursor-pointer table-row-url" 
+									<a
+										class="cursor-pointer table-row-url"
 										target="_blank"
-										[href]="[data[d].link]" 
-										[ngClass]="data[d].past ? 'text-danger' : ''">
+										[href]="[data[d].link]"
+										[ngClass]="data[d].past ? 'text-danger' : ''"
+									>
 										<span>{{ data[d].value }}</span>
-									</a>	
+									</a>
 								</ng-template>
-
 							</ng-container>
 
 							<!-- START: BUSINESS HOURS SECTION -->
 							<span *ngIf="data[d].business_hours" class="ml-2">
-								<span class="fas fa-clock cursor-pointer text-gray-with-hover" placement="right" [ngbTooltip]="businessHoursTooltip"></span>
+								<span
+									class="fas fa-clock cursor-pointer text-gray-with-hover"
+									placement="right"
+									[ngbTooltip]="businessHoursTooltip"
+								></span>
 							</span>
-							
+
 							<ng-template #businessHoursTooltip>
 								<div class="text-left">
-									<span class="sm-text"><b>Business Hours Today</b></span><br />
-									<span class="xsm-text">{{data[d].business_hours_label.date}}</span><br /><br />
+									<span class="sm-text"><b>Business Hours Today</b></span
+									><br />
+									<span class="xsm-text">{{ data[d].business_hours_label.date }}</span
+									><br /><br />
 									<span class="pt-2 xsm-text">
-										<i class="fas fa-map-marker-alt"></i> {{data[d].business_hours_label.address}}
-									</span><br />
-									<span class="pt-2 xsm-text">
-										<i class="fas fa-clock"></i> {{data[d].business_hours_label.schedule}}
-									</span>
+										<i class="fas fa-map-marker-alt"></i> {{ data[d].business_hours_label.address }} </span
+									><br />
+									<span class="pt-2 xsm-text"> <i class="fas fa-clock"></i> {{ data[d].business_hours_label.schedule }} </span>
 								</div>
 							</ng-template>
 							<!-- END: BUSINESS HOURS SECTION -->
 
 							<ng-template #no_link>
-								<span [ngClass]="{'text-danger font-weight-bold' : data[d].offline_field, 'text-primary font-weight-bold': data[d].online_field, 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
-
-									<div *ngIf="data[d].label && data[d].label.trim().length > 1 && data[d].label.includes('Last Push') && !data[d].value.includes('--') else defaultValue;">
-										{{ data[d].value | date: 'MMM dd, y' }}<br>
+								<span
+									[ngClass]="{
+										'text-danger font-weight-bold': data[d].offline_field,
+										'text-primary font-weight-bold': data[d].online_field,
+										'text-danger': data[d].past,
+										'new-order-color': data[d].is_new_order
+									}"
+								>
+									<div
+										*ngIf="
+											data[d].label &&
+												data[d].label.trim().length > 1 &&
+												data[d].label.includes('Last Push') &&
+												!data[d].value.includes('--');
+											else defaultValue
+										"
+									>
+										{{ data[d].value | date: 'MMM dd, y' }}<br />
 										{{ data[d].value | date: 'hh:mm a' }}
 									</div>
 
 									<ng-template #defaultValue>
 										<!-- DEFAULT DATA DISPLAY -->
-										<div *ngIf="!data[d].type">{{ data[d].value }}
-                                            <div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].show_host">
-
-                                                <button class="hidden-button no-background" id="dropdownMenu1" ngbDropdownToggle>
-                                                    <i class="pl-3 cursor-pointer text-right fas fa-map-marked text-primary" data-toggle="tooltip" title="Show Host List"></i>
-                                                </button>
+										<div *ngIf="!data[d].type">
+											{{ data[d].value }}
+											<div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].show_host">
+												<button class="hidden-button no-background" id="dropdownMenu1" ngbDropdownToggle>
+													<i
+														class="pl-3 cursor-pointer text-right fas fa-map-marked text-primary"
+														data-toggle="tooltip"
+														title="Show Host List"
+													></i>
+												</button>
 
 												<div class="dropdown-menu" aria-labelledby="dropdownMenu1" id="reportsDrop" ngbDropdownMenu>
 													<span class="md-text pl-2">Playing Where:</span>
-													<a class="dropdown-item md-text" *ngFor="let host of data[d].host_list" [routerLink]="['/administrator/hosts', host.hostId]" target="_blank">
-														{{host.hostName}}
+													<a
+														class="dropdown-item md-text"
+														*ngFor="let host of data[d].host_list"
+														[routerLink]="['/administrator/hosts', host.hostId]"
+														target="_blank"
+													>
+														{{ host.hostName }}
 													</a>
 												</div>
-												
-                                            </div>
-                                            <button class="fas fa-copy text-primary no-border" *ngIf="data[d].copy && data[d].value != '--'" (click)="copyToClipboard(data[d].value)" title="Copy {{data[d].label}}"></button>
-                                        </div>
+											</div>
+											<button
+												class="fas fa-copy text-primary no-border"
+												*ngIf="data[d].copy && data[d].value != '--'"
+												(click)="copyToClipboard(data[d].value)"
+												title="Copy {{ data[d].label }}"
+											></button>
+										</div>
 
 										<!-- TOGGLE FIELD -->
 										<div *ngIf="data[d].type === 'toggle'">
-
 											<!-- EMAIL NOTIFICATIONS TOGGLE -->
 											<div *ngIf="can_toggle_email_notifications" class="d-flex justify-content-center">
-												<mat-slide-toggle 
-													(click)="onToggleEmailNotification($event, j)"
-													[checked]="data[d].value">
+												<mat-slide-toggle (click)="onToggleEmailNotification($event, j)" [checked]="data[d].value">
 												</mat-slide-toggle>
 											</div>
 										</div>
@@ -172,26 +226,27 @@
 										<!-- TAGS -->
 										<ng-container *ngIf="data[d].type === 'tags'">
 											<div class="d-flex tags">
-												<div class="tag d-flex align-items-center" *ngFor="let tag of data[d].value"
-													[style.backgroundColor]="tag.tagColor">
+												<div
+													class="tag d-flex align-items-center"
+													*ngFor="let tag of data[d].value"
+													[style.backgroundColor]="tag.tagColor"
+												>
 													<!-- TAG NAME -->
 													<div class="name">{{ tag.name }}</div>
 												</div>
 											</div>
 										</ng-container>
 									</ng-template>
-
 								</span>
 							</ng-template>
-
 						</ng-container>
 
 						<ng-template #isImage>
 							<ng-container *ngIf="data[d].value; else noImage">
 								<a [href]="data[d].value" target="_blank">
-									<img [src]="data[d].value" class="mr-2" alt="screenshot" style="width: 50px; margin-bottom: 5px;">
+									<img [src]="data[d].value" class="mr-2" alt="screenshot" style="width: 50px; margin-bottom: 5px" />
 								</a>
-								<br>
+								<br />
 								<span *ngIf="has_timestamp_beside_image">{{ data[d].value | screenshot }}</span>
 							</ng-container>
 
@@ -202,90 +257,186 @@
 					</span>
 
 					<!-- EDIT BUTTON -->
-					<div class="float-right" *ngIf="data[d].editable && !is_view_only" mat-dialog-content (click)="editField(data[d], data[d].label, data[d].value)">
-						<i class="clickable fa fa-pencil text-gray" title="Edit {{data[d].label}}"></i>
+					<div
+						class="float-right"
+						*ngIf="data[d].editable && !is_view_only"
+						mat-dialog-content
+						(click)="editField(data[d], data[d].label, data[d].value)"
+					>
+						<i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
 					</div>
-					
-                    <!-- EDIT BUTTON -->
-					<div class="ml-3 clickable mt-neg15 position-absolute" *ngIf="data[d].popview && data[d].value > 0" mat-dialog-content (click)="viewListModal(data[d], data[d].label, data[d].value)">
-						<i class="clickable fa fa-search-plus text-gray" title="View all {{data[d].label}}"></i>
+
+					<!-- EDIT BUTTON -->
+					<div
+						class="ml-3 clickable mt-neg15 position-absolute"
+						*ngIf="data[d].popview && data[d].value > 0"
+						mat-dialog-content
+						(click)="viewListModal(data[d], data[d].label, data[d].value)"
+					>
+						<i class="clickable fa fa-search-plus text-gray" title="View all {{ data[d].label }}"></i>
 					</div>
 				</td>
 
 				<td class="p-3 control-toggle text-center" *ngIf="ctrl_column">
-					<mat-slide-toggle 
+					<mat-slide-toggle
 						*ngIf="ctrl_toggle"
-						(change)="data.is_activated ? controlToggle(data.license_key.value, $event) : autoChargeToggle($event) "
-						[checked]="data.is_activated ? (data.is_activated.value === 1 ? 'checked' : 'false') : (data.autocharge.value === 1 ? 'checked' : 'false')"
-						[disabled]="is_view_only">
+						(change)="data.is_activated ? controlToggle(data.license_key.value, $event) : autoChargeToggle($event)"
+						[checked]="
+							data.is_activated
+								? data.is_activated.value === 1
+									? 'checked'
+									: 'false'
+								: data.autocharge.value === 1
+								? 'checked'
+								: 'false'
+						"
+						[disabled]="is_view_only"
+					>
 					</mat-slide-toggle>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="preview_column">
-					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>	
+					<i class="fas fa-play cursor-pointer" (click)="mediaViewer_open(j)"></i>
 				</td>
 
 				<td class="p-3 control-toggle md-text" *ngIf="feed_controls">
-					<i class="fas fa-play cursor-pointer mx-2 text-primary" title="Preview" *ngIf="feed_preview" (click)="feedPreview_open(data.feed_url)"></i>
+					<i
+						class="fas fa-play cursor-pointer mx-2 text-primary"
+						title="Preview"
+						*ngIf="feed_preview"
+						(click)="feedPreview_open(data.feed_url)"
+					></i>
 
-					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" 
-						*ngIf="feed_edit && data.classification.value !== 'generated_feed' && !is_view_only; else edit_generated_feed" 
-						(click)="editFeed(data)">
+					<i
+						class="fas fa-edit cursor-pointer mx-3 text-dark"
+						title="Edit"
+						*ngIf="feed_edit && data.classification.value !== 'generated_feed' && !is_view_only; else edit_generated_feed"
+						(click)="editFeed(data)"
+					>
 					</i>
 
 					<ng-template #edit_generated_feed>
-						<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit Generated Feed" *ngIf="!is_view_only" (click)="editGeneratedFeed(data)"></i>
+						<i
+							class="fas fa-edit cursor-pointer mx-3 text-dark"
+							title="Edit Generated Feed"
+							*ngIf="!is_view_only"
+							(click)="editGeneratedFeed(data)"
+						></i>
 					</ng-template>
-					
-					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" *ngIf="feed_delete && !is_view_only" (click)="deleteFeed(data.id.value)"></i>
 
-					<i class="fas fa-copy cursor-pointer mx-2 text-primary" title="Clone Feed" *ngIf="!is_view_only" (click)="onCloneFeed(data.id.value)"></i>
+					<i
+						class="fas fa-trash cursor-pointer mx-2 text-danger"
+						title="Delete"
+						*ngIf="feed_delete && !is_view_only"
+						(click)="deleteFeed(data.id.value)"
+					></i>
+
+					<i
+						class="fas fa-copy cursor-pointer mx-2 text-primary"
+						title="Clone Feed"
+						*ngIf="!is_view_only"
+						(click)="onCloneFeed(data.id.value)"
+					></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
 				</td>
 
-                <td class="p-3 control-toggle" *ngIf="billing_action">
+				<td class="p-3 control-toggle" *ngIf="billing_action">
 					<i class="fas fa-money-bill-alt disabled xlg-text text-light-gray" title="Charge Account"></i>
 					<!-- <i class="fas fa-money-bill-alt cursor-pointer xlg-text text-danger" title="Charge Account" (click)="autoCharge(data.id.value)"></i> -->
 				</td>
 
-                <td class="p-3 control-toggle" *ngIf="order_action">
-					<i class="fas fa-shipping-fast xlg-text text-light-gray clickable" title="Mark as Shipped" (click)="shipOrder(data.order_no.value, 'Shipped')" *ngIf="data.status.value != 'Shipped'"></i>
-					<i class="fas fa-dolly-flatbed xlg-text text-light-gray clickable" title="Mark as New Order" (click)="shipOrder(data.order_no.value, 'New Order')" *ngIf="data.status.value === 'Shipped'"></i>
+				<td class="p-3 control-toggle" *ngIf="order_action">
+					<i
+						class="fas fa-shipping-fast xlg-text text-light-gray clickable"
+						title="Mark as Shipped"
+						(click)="shipOrder(data.order_no.value, 'Shipped')"
+						*ngIf="data.status.value != 'Shipped'"
+					></i>
+					<i
+						class="fas fa-dolly-flatbed xlg-text text-light-gray clickable"
+						title="Mark as New Order"
+						(click)="shipOrder(data.order_no.value, 'New Order')"
+						*ngIf="data.status.value === 'Shipped'"
+					></i>
 				</td>
 
-                <td class="p-3 control-toggle" *ngIf="transaction_action">
-					<a href="{{data.link.value}}" target="_blank" *ngIf="data.link.value != null">
-                        <i class="fas fa-receipt normal-text text-gray clickable" title="View Transaction Receipt"></i>
-                    </a>
-                </td>
+				<td class="p-3 control-toggle" *ngIf="transaction_action">
+					<a href="{{ data.link.value }}" target="_blank" *ngIf="data.link.value != null">
+						<i class="fas fa-receipt normal-text text-gray clickable" title="View Transaction Receipt"></i>
+					</a>
+				</td>
 
 				<td class="p-3 control-toggle" *ngIf="screen_delete">
-					<i class="fas fa-trash cursor-pointer text-danger" title="Delete Screen" *ngIf="!is_view_only" (click)="deleteScreen(data.screen_id.value)"></i>
+					<i
+						class="fas fa-trash cursor-pointer text-danger"
+						title="Delete Screen"
+						*ngIf="!is_view_only"
+						(click)="deleteScreen(data.screen_id.value)"
+					></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="playlist_delete">
-					<i class="fas fa-trash cursor-pointer mx-3 text-danger" title="Delete Playlist" *ngIf="!is_view_only" (click)="deletePlaylist(data.playlist_id.value)"></i>
-					<i class="fas fa-file-excel cursor-pointer" [ngClass]="data.allow_export.value ? 'text-primary cursor-pointer': 'text-gray cursor-void'"  title="{{data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.'}}" (click)="exportPlaylist({id: data.playlist_id.value, name: data.name.value})"></i>
-					<i class="fas fa-upload cursor-pointer mx-3" *ngIf="!is_view_only" title="Push Updates to All Licenses" (click)="onPushUpdateToAllLicenses(data.playlist_id.value)"></i>
+					<i
+						class="fas fa-trash cursor-pointer mx-3 text-danger"
+						title="Delete Playlist"
+						*ngIf="!is_view_only"
+						(click)="deletePlaylist(data.playlist_id.value)"
+					></i>
+					<i
+						class="fas fa-file-excel cursor-pointer"
+						[ngClass]="data.allow_export.value ? 'text-primary cursor-pointer' : 'text-gray cursor-void'"
+						title="{{ data.allow_export.value ? 'Export contents to CSV' : 'Export not available, Playlist has no content.' }}"
+						(click)="exportPlaylist({ id: data.playlist_id.value, name: data.name.value })"
+					></i>
+					<i
+						class="fas fa-upload cursor-pointer mx-3"
+						*ngIf="!is_view_only"
+						title="Push Updates to All Licenses"
+						(click)="onPushUpdateToAllLicenses(data.playlist_id.value)"
+					></i>
 				</td>
 
 				<td class="p-3 control-toggle text-center" *ngIf="license_delete">
-					<i class="fas fa-trash {{data.pi_status.value != 1  && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'}}" data-toggle="tooltip" title="{{data.pi_status.value != 1  && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'}}" (click)="deleteLicense(data.license_id.value)"></i>
+					<i
+						class="fas fa-trash {{
+							data.pi_status.value != 1 && !data.is_assigned.value ? 'text-danger cursor-pointer' : 'text-gray cursor-void'
+						}}"
+						data-toggle="tooltip"
+						title="{{
+							data.pi_status.value != 1 && !data.is_assigned.value ? 'Delete License' : 'Delete disabled, License is online / assigned'
+						}}"
+						(click)="deleteLicense(data.license_id.value)"
+					></i>
 				</td>
 
 				<td class="p-3 control-toggle text-center" *ngIf="is_user_delete_enabled">
-					<i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i>
+					<i
+						class="fas fa-trash cursor-pointer color-danger"
+						*ngIf="canDelete(data.role.value)"
+						(click)="onDeleteUser(data.user_id.value, data.email.value)"
+					></i>
 				</td>
 
 				<td class="p-3 control-toggle text-center" *ngIf="is_delete_enabled">
 					<i class="fas fa-trash cursor-pointer color-danger" (click)="onDelete(data.s3FileName.value)"></i>
 				</td>
 
-                <td class="p-3 control-toggle text-center" *ngIf="content_metrics">
-					<i class="fas fa-file-excel text-primary cursor-pointer"  title="Export content details to CSV" (click)="exportContentDetails({id: data.id.value, name: data.file_name.value, count: data.play_count.value, duration: data.duration.value })"></i>
+				<td class="p-3 control-toggle text-center" *ngIf="content_metrics">
+					<i
+						class="fas fa-file-excel text-primary cursor-pointer"
+						title="Export content details to CSV"
+						(click)="
+							exportContentDetails({
+								id: data.id.value,
+								name: data.file_name.value,
+								count: data.play_count.value,
+								duration: data.duration.value
+							})
+						"
+					></i>
 					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
 
@@ -300,11 +451,10 @@
 				<!-- <ng-container *ngIf="page === 'feeds'">
 					<app-feeds-page-action-buttons></app-feeds-page-action-buttons>
 				</ng-container> -->
-				
 			</tr>
 		</tbody>
 	</table>
-	
+
 	<ng-template #loading>
 		<div class="loading-wrapper">
 			<app-spinner></app-spinner>
@@ -313,17 +463,11 @@
 
 	<div class="row" *ngIf="table_data.length > 0 && !paging_details">
 		<div class="col-lg-12 text-center mt-4">
-			<pagination-controls 
-			(pageChange)="onPageChange($event)" 
-			class="sm-text">
-			</pagination-controls>
+			<pagination-controls (pageChange)="onPageChange($event)" class="sm-text"> </pagination-controls>
 		</div>
 	</div>
 
-	<app-pagination-field
-		[paging_data]="paging_details"
-		(get_page)="getPage($event)">
-	</app-pagination-field>
+	<app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)"> </app-pagination-field>
 </div>
 
 <ng-template #no_records_found>
