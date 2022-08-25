@@ -78,6 +78,10 @@ export class LocatorComponentComponent implements OnInit {
         this.new_data_reference = ([...this.data_reference])
 	}
 
+    protected get currentUserIsDealer() {
+		return this.currentUser.role_id === UI_ROLE_DEFINITION.dealer;
+	}
+
     protected get currentUser() {
 		return this._auth.current_user_value;
 	}
@@ -159,7 +163,13 @@ export class LocatorComponentComponent implements OnInit {
                         if(this.is_host) {
                             this.data_reference = this.data_reference.filter(
                                 data => {
-                                    return data.hostName.toLowerCase().indexOf(keyword.toLowerCase()) > -1
+                                    console.log("DATA", data)
+                                    if(!this.currentUserIsDealer) {
+                                        return data.hostName.toLowerCase().indexOf(keyword.toLowerCase()) > -1
+                                    } else {
+                                        return data.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1
+                                    }
+                                    
                                 }
                             )
                         } else if(this.is_category) {
