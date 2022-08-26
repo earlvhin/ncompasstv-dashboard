@@ -78,7 +78,7 @@
 		"@angular/language-service": "~8.2.14",
 		"@types/jasmine": "~3.3.8",
 		"@types/jasminewd2": "^2.0.10",
-		"@types/node": "~8.9.4",
+		"@types/node": "^8.9.5",
 		"brotli-webpack-plugin": "^1.1.0",
 		"codelyzer": "^5.2.2",
 		"compression-webpack-plugin": "^4.0.1",
