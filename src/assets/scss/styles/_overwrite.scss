@@ -299,3 +299,13 @@ breadcrumb {
         margin-bottom: 3em;
     }
 }
+
+.uppercase {
+    text-transform: uppercase;
+}
+
+#login {
+    .mat-form-field-wrapper{
+        padding-bottom: 14px !important;
+    }
+}

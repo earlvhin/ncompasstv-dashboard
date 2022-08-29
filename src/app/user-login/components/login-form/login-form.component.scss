@@ -1,21 +1,3 @@
-.form-logo {
-    width: 205px;
-}
-
-.login-form {
-    padding: 50px 100px;
-    position: relative;
-
-	.password-container {
-		display: flex;
-		flex-direction: row;
-
-		.pw-visibility {
-			cursor: pointer;
-		}
-	}
-}
-
 .overlay {
     background-color: rgba(#fff, 0.7);
     position: absolute;
