@@ -59,7 +59,7 @@
 				</mat-slide-toggle>
 			</div>
 
-			<div>
+			<div *ngIf="!is_livestream">
 				<mat-form-field class="w-100">
 					<mat-label>Set Content Duration</mat-label>
 					<input matInput type="number" placeholder="Ex: 100" 
@@ -71,9 +71,9 @@
 				</mat-form-field>
 			</div>
 
-			<hr>
+			<hr *ngIf="!is_livestream">
 			<!-- FREQUENCY SETTINGS -->
-			<div class="frequency-settings d-flex flex-column">
+			<div class="frequency-settings d-flex flex-column" *ngIf="!is_livestream">
 
 				<div class="d-flex">
 					<mat-label class="md-text">Frequency: </mat-label>

@@ -24,6 +24,7 @@ export interface PlaylistContentSchedule {
 	playlistContentsScheduleId?: string;
 	status?: string;
 	to: string;
-	type: number
+	type: number;
+    livestream?: number;
 
 }
