@@ -120,7 +120,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
 		{ name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
 		{ name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
-		{ name: 'Last Startup', sortable: true, column: 'TimeIn', key: 'timeIn' },
+		{ name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
 		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType' },
 		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
