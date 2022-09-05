@@ -176,27 +176,27 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
 		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
-		{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType' },
+		{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true},
 		{ name: 'Dealer', sortable: true, key: 'dealer', hidden: true, no_show: true },
 		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
 		{ name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
 		{ name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
 		{ name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
-		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType' },
-		{ name: 'Net Speed', sortable: false, key: 'internetSpeed' },
+		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType', hidden: true, no_show: true },
+		{ name: 'Net Speed', sortable: false, key: 'internetSpeed', hidden: true, no_show: true },
 		{ name: 'Display', sortable: false, key: 'displayStatus' },
 		{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
 		{ name: 'Password', sortable: false, key: 'password' },
-		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion' },
-		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion' },
+		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
+		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
 		{ name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
 		{ name: 'Memory', sortable: false, key: 'memory', hidden: true, no_show: true },
 		{ name: 'Storage', sortable: false, key: 'totalStorage', hidden: true, no_show: true },
 		{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
-		{ name: 'Template', sortable: true, column: 'TemplateName', key: 'templateName' },
+		{ name: 'Template', sortable: true, column: 'TemplateName', key: 'templateName', hidden: true, no_show: true },
 		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
 		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
-		{ name: 'Creation Date', sortable: false, key: 'dateCreated' },
+		{ name: 'Creation Date', sortable: false, key: 'dateCreated', hidden: true, no_show: true },
 		{ name: 'Tags', key: 'tagsToString', hidden: true, no_show: true }
 	];
 
@@ -776,7 +776,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					status: true
 				},
-				{ value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
+				// { value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
 				{
 					value: l.hostId ? l.hostName : '--',
 					link: l.hostId ? '/administrator/hosts/' + l.hostId : null,
@@ -795,13 +795,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
-				{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
-				{
-					value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
-					link: null,
-					editable: false,
-					hidden: false
-				},
+				// { value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
+				// {
+				// 	value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
+				// 	link: null,
+				// 	editable: false,
+				// 	hidden: false
+				// },
 				{ value: l.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
 				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
 				{
@@ -812,10 +812,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					copy: true,
 					label: 'Anydesk Password'
 				},
-				{ value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
-				{ value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
+				// { value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
+				// { value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
 				{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}`, editable: false },
-				{ value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
+				// { value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
 				{
 					value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
 					link: null,
@@ -824,11 +824,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					id: l.licenseId
 				},
-				{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
+				// { value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 				{ value: l.isActivated, link: null, editable: false, hidden: true },
 				{ value: l.hostId ? true : false, link: null, editable: false, hidden: true },
 				{ value: l.piStatus, link: null, editable: false, hidden: true },
-				{ value: l.playerStatus, link: null, editable: false, hidden: true },
+				// { value: l.playerStatus, link: null, editable: false, hidden: true },
 			);
 			return table;
 		});
@@ -898,7 +898,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	sortList(order, page?): void {
 		var filter = {
-			column: 'PlayerStatus',
+			column: 'PiStatus',
 			order: order
 		};
 

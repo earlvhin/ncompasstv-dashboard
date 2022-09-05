@@ -22,11 +22,16 @@
 				}
 
                 &:hover {
-                    background-color: $primary;
+                    background-color: rgb(142 198 65 / 20%);
                     padding-left: 30px;
                 }
                 &.is-active {
-                    background-color: $primary;
+                    background-color: rgb(142 198 65 / 20%);
+                    border-left: 3px solid $primary;
+
+                    .fas {
+                        color: $primary;
+                    }
 
 					.count, .badge {
 						background-color: $dark;
