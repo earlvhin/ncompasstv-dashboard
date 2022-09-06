@@ -3,8 +3,7 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import FroalaEditor from 'froala-editor';
+import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import { API_RELEASE_NOTE, UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 import { AuthService, ConfirmationDialogService, ReleaseNotesService } from 'src/app/global/services';
@@ -17,8 +16,7 @@ import { AuthService, ConfirmationDialogService, ReleaseNotesService } from 'src
 })
 export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 
-	// ckEditor = ClassicEditor;
-    public Editor: any = ClassicEditor;
+	ckEditor = ClassicEditor;
 	dialogMode: 'create' | 'update' = 'create';
 	isFormLoaded = false;
 	isSaving = false;
@@ -39,23 +37,7 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 	
 	ngOnInit() {
 		this.initializeForm();
-        FroalaEditor.DefineIcon('alert', {NAME: 'info'});
-        FroalaEditor.RegisterCommand('alert', {
-        title: 'Hello',
-        focus: false,
-        undo: false,
-        refreshAfterCallback: false,
-
-        callback: () => {
-            alert('Hello!');
-        }
-        });
-    }
-
-    public options: Object = {
-        placeholderText: 'Edit Your Content Here!',
-        charCounterCount: false
-    }
+	}
 
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
