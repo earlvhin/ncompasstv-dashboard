@@ -48,17 +48,13 @@
 						content_metrics ||
 						billing_action ||
 						transaction_action ||
-						order_action
+						order_action || page === 'release-notes'
 					"
 					class="text-right"
 					class="p-3"
 				>
 					{{ 'Action' }}
-				</th>
-
-				<ng-container *ngIf="page === 'release-notes'">
-					<th class="p-3 text-center">{{ 'Actions' }}</th>
-				</ng-container>
+                </th>
 			</tr>
 		</thead>
 
@@ -437,20 +433,12 @@
 							})
 						"
 					></i>
-					<!-- <i class="fas fa-trash cursor-pointer color-danger" *ngIf="canDelete(data.role.value)" (click)="onDeleteUser(data.user_id.value, data.email.value)"></i> -->
 				</td>
 
-				<ng-container *ngIf="page === 'release-notes'">
-					<td class="p-3 control-toggle text-center d-flex justify-content-evenly">
-						<i class="clickable text-gray fa fa-pencil" title="Edit Note" (click)="onEdit(data.releaseNoteId.value)"></i>
-						<i class="clickable color-danger fas fa-trash" title="Delete Note" (click)="onDelete(data.releaseNoteId.value)"></i>
-					</td>
-				</ng-container>
-
-				<!-- FEEDS PAGE ACTION -->
-				<!-- <ng-container *ngIf="page === 'feeds'">
-					<app-feeds-page-action-buttons></app-feeds-page-action-buttons>
-				</ng-container> -->
+                <td class="p-3 control-toggle" *ngIf="page === 'release-notes'">
+                    <i class="clickable text-gray fa fa-pencil mr-3" title="Edit Note" (click)="onEdit(data.releaseNoteId.value)"></i>
+					<i class="clickable color-danger fas fa-trash" title="Delete Note" (click)="onDelete(data.releaseNoteId.value)"></i>
+				</td>
 			</tr>
 		</tbody>
 	</table>

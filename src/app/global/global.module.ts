@@ -9,6 +9,7 @@ import { environment } from '../../environments/environment';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
+import { AngularEditorModule } from '@kolkov/angular-editor';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
@@ -482,6 +483,7 @@ const DIRECTIVES = [
 		ViewCardsComponent,
 	],
 	imports: [
+        AngularEditorModule,
 		BrowserAnimationsModule,
 		ColorPickerModule,
 		CommonModule,
