@@ -140,6 +140,13 @@ export class GenerateFeedComponent implements OnInit {
 			.subscribe(
 				([dealers, feedTypes]) => {
 					this.feed_types = feedTypes;
+                    var filtered = this.feed_types.filter(
+                        type => {
+                            return type.name != 'Live Stream';
+                        }
+                    )
+                    this.feed_types = filtered;
+                    console.log("FEED TYPES", this.feed_types)
 
 					if (this.is_dealer) {
 						this.dealers = dealers.filter((d) => d.dealerId === this.selected_dealer);
