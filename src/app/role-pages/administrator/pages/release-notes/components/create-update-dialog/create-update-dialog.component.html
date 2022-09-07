@@ -33,8 +33,7 @@
 					</mat-form-field>
 	
 					<!-- DESCRIPTION -->
-                    <angular-editor formControlName="description" [config]="editorConfig"></angular-editor>
-					<!-- <ckeditor formControlName="description" [editor]="description" (ready)="onReady($event)"></ckeditor> -->
+                    <ckeditor formControlName="description" [editor]="description" (ready)="onReady($event)"></ckeditor>
 	
 				</form>
 			</ng-container>
