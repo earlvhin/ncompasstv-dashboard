@@ -1082,7 +1082,7 @@ export class LicensesComponent implements OnInit {
 					hidden: false,
 					status: true
 				},
-				{ value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
+				// { value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
 				{
 					value: l.dealerId ? l.businessName : '--',
 					link: '/administrator/dealers/' + l.dealerId,
@@ -1110,16 +1110,16 @@ export class LicensesComponent implements OnInit {
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
-				{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
-				{
-					value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
-					link: null,
-					editable: false,
-					hidden: false
-				},
+				// { value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
+				// {
+				// 	value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
+				// 	link: null,
+				// 	editable: false,
+				// 	hidden: false
+				// },
 				{ value: l.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
-				{ value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
-				{ value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
+				// { value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
+				// { value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
 				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
 				{
 					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
@@ -1137,7 +1137,7 @@ export class LicensesComponent implements OnInit {
 					hidden: false,
 					id: l.licenseId
 				},
-				{ value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
+				// { value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 				{ value: l.piStatus, link: null, editable: false, hidden: true },
 				{ value: l.playerStatus, link: null, editable: false, hidden: true },
 				{ value: l.isActivated, link: null, editable: false, hidden: true }
