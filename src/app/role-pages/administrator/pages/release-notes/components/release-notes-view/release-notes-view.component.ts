@@ -24,8 +24,6 @@ export class ReleaseNotesViewComponent implements OnInit {
             (data:any) => {
                 this.latest_release = data[data.length-1];
                 this.latest_release.dateCreated = moment(this.latest_release.dateCreated).format('MMM DD, YYYY');
-                document.getElementById('description').innerHTML= this.latest_release.description;
-                console.log("CURRENT RELEASE", this.latest_release)
             }
         )
     }
