@@ -47,6 +47,7 @@ import { UpdateComponent } from './pages/update/update.component';
 // import { UserProfileComponent } from '../../global/pages_shared/user-profile/user-profile.component';
 import { UsersComponent } from './pages/users/users.component';
 import { ReleaseNotesComponent } from './pages/release-notes/release-notes.component';
+import { ReleaseNotesViewComponent } from './pages/release-notes/components/release-notes-view/release-notes-view.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
     {
@@ -461,6 +462,13 @@ export const ADMINISTRATOR_ROUTES: Routes = [
                 component: ReleaseNotesComponent,
                 data: {
                     breadcrumb: 'Release Notes'
+                },
+            },
+            { 
+                path: 'release-notes-view', 
+                component: ReleaseNotesViewComponent,
+                data: {
+                    breadcrumb: 'Current Release Notes'
                 },
             },
         ]

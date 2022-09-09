@@ -5,10 +5,11 @@ import { RouterModule } from '@angular/router';
 
 import { ReleaseNotesComponent } from './release-notes.component';
 import { CreateUpdateDialogComponent } from './components/create-update-dialog/create-update-dialog.component';
+import { ReleaseNotesViewComponent } from './components/release-notes-view/release-notes-view.component';
 
 
 @NgModule({
-	declarations: [ ReleaseNotesComponent, CreateUpdateDialogComponent ],
+	declarations: [ ReleaseNotesComponent, CreateUpdateDialogComponent, ReleaseNotesViewComponent ],
 	entryComponents: [ CreateUpdateDialogComponent ],
 	imports: [
 		CommonModule, GlobalModule, RouterModule
