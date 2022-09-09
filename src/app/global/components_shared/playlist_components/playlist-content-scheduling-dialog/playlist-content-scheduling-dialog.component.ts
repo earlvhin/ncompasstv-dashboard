@@ -236,7 +236,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							type: this.getTypeValue(type.name),
-							playlistContentId: id
+							playlistContentId: id,
 						};
 					} else {
 						schedule = {
@@ -257,7 +257,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			if (this.dialog_data.schedules && this.dialog_data.schedules.length > 0) {
 				forUpdate = this.dialog_data.schedules.map((schedule) => {
 					let playlistSchedule = {} as PlaylistContentSchedule;
-
 					if (this.is_custom_play) {
 						playlistSchedule = {
 							playlistContentsScheduleId: schedule.id,
@@ -281,7 +280,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							playlistContentId: schedule.content_id
 						};
 					}
-
+                    if(schedule.classification === 'live_stream') {
+                        playlistSchedule.livestream = 1;
+                    }
+                    console.log("PLAYLIST_SCHEDULE", playlistSchedule)
 					return playlistSchedule;
 				});
 			}
@@ -295,7 +297,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 		let result = {} as PlaylistContentSchedule;
 		const { playlistContentId, playlistContentsSchedule } = this.dialog_data.content;
-
 		if (this.is_custom_play) {
 			result = {
 				days,
@@ -319,6 +320,9 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId
 			};
 		}
+        if(this.dialog_data.content.classification === 'live_stream') {
+            result.livestream = 1;
+        }
 
 		this.updateSchedule(result);
 		return;
