@@ -299,7 +299,6 @@ breadcrumb {
         margin-bottom: 3em;
     }
 }
-
 .uppercase {
     text-transform: uppercase;
 }
@@ -308,4 +307,8 @@ breadcrumb {
     .mat-form-field-wrapper{
         padding-bottom: 14px !important;
     }
+}
+
+.ck.ck-editor__main>.ck-editor__editable {
+    padding-left: 30px;
 }

@@ -802,7 +802,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				// 	editable: false,
 				// 	hidden: false
 				// },
-				{ value: l.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
+				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
 				{
 					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',

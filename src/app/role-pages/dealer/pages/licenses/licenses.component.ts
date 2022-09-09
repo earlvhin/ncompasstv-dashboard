@@ -576,7 +576,7 @@ export class LicensesComponent implements OnInit {
 					copy: true,
 					label: 'Anydesk Password'
 				},
-				{ value: i.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
+				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.piStatus, link: null, editable: false, hidden: true },

@@ -37,6 +37,7 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 	
 	ngOnInit() {
 		this.initializeForm();
+        console.log("INIT FORM")
 	}
 
 	ngOnDestroy(): void {

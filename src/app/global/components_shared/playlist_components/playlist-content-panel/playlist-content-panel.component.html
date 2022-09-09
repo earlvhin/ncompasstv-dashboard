@@ -180,7 +180,7 @@
 					[is_admin]="is_admin"
 					[is_dealer]="is_dealer"
 					(options_saved)="optionsSaved($event)"
-					(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency)"
+					(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency, content.classification)"
 					(reset_playlist_content)="reloadPlaylist()"
 					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
