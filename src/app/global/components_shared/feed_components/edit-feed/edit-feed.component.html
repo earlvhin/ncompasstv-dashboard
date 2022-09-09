@@ -57,9 +57,9 @@
 							<mat-label class="text-gray">{{ f.label }}</mat-label>
 						</div>
 							
-						<mat-radio-group name="opList"  fxLayout="column" formControlName="{{ f.control }}">
+						<mat-radio-group name="opList" fxLayout="column" formControlName="{{ f.control }}">
 							<mat-radio-button *ngFor="let op of list" class="mr-2 md-text text-gray" 
-								name="opList" [value]="op.id" (change)="changeType($event)">{{ op.name}}</mat-radio-button>
+								name="opList" [value]="op.id" checked>{{ op.name}}</mat-radio-button>
 						</mat-radio-group>
 					</ng-template>
 				</div>
