@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { ReleaseNotesService } from 'src/app/global/services';
 import * as moment from 'moment';
 
@@ -8,7 +8,7 @@ import * as moment from 'moment';
   styleUrls: ['./release-notes-view.component.scss']
 })
 export class ReleaseNotesViewComponent implements OnInit {
-
+    @ViewChild('dataContainer', { static: false }) dataContainer: ElementRef;
     latest_release: any;
 
     constructor(
@@ -24,6 +24,9 @@ export class ReleaseNotesViewComponent implements OnInit {
             (data:any) => {
                 this.latest_release = data[data.length-1];
                 this.latest_release.dateCreated = moment(this.latest_release.dateCreated).format('MMM DD, YYYY');
+                setTimeout(()=>{                           // <<<---using ()=> syntax
+                    this.dataContainer.nativeElement.innerHTML = this.latest_release.description;
+                }, 500);
             }
         )
     }

@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialogRef } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import { API_RELEASE_NOTE, UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 import { AuthService, ConfirmationDialogService, ReleaseNotesService } from 'src/app/global/services';
+// import { SafeHtmlPipe } from 'src/app/global/pipes/safe-html.pipe';
 
 
 @Component({
@@ -16,15 +16,15 @@ import { AuthService, ConfirmationDialogService, ReleaseNotesService } from 'src
 })
 export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 
-	ckEditor = ClassicEditor;
+    @ViewChild('dataContainer', { static: false }) dataContainer: ElementRef;
 	dialogMode: 'create' | 'update' = 'create';
 	isFormLoaded = false;
 	isSaving = false;
 	note: API_RELEASE_NOTE;
-	notesForm: FormGroup;
+	notesForm: any;
 	textEditorControl = new FormControl();
-	textPreview = '';
 	title = 'Create Release Notes';
+    description = '';
 	protected _unsubscribe = new Subject<void>();
 	
 	constructor(
@@ -44,18 +44,27 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();	
 	}
 
+    fetchingValue(e) {
+        console.log("DESC", e)
+        this.description = e;
+        setTimeout(()=>{                           // <<<---using ()=> syntax
+            this.dataContainer.nativeElement.innerHTML = this.description;
+        }, 500);
+        
+    }
+
 	onSubmit(): void {
 
 		if (this.isSaving) return;
 		
 		this.isSaving = true;
 		let data = this.notesForm.value as API_RELEASE_NOTE;
+        data.description = this.description;
 		data.createdBy = this._auth.current_user_value.user_id;
 
 		if (this.dialogMode === 'update') data.releaseNoteId = this.note.releaseNoteId;
 
 		this.createOrUpdateNote(data);
-
 	}
 
 	private createOrUpdateNote(data: API_RELEASE_NOTE): void {
@@ -86,35 +95,19 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 			control => {
 				const configValue = (this.dialogMode === 'create') ? [control.value] : [this.note[control.name]];
 				if (control.is_required) configValue.push(Validators.required);
-				config[control.name] = configValue;
+                config[control.name] = configValue;
+                this.description = this.note.description;
 			}
 		);
 
 		this.notesForm = this._form_builder.group(config);
-
-		if (this.dialogMode === 'update') this.textPreview = this.notesForm.get('description').value;
-
 		this.isFormLoaded = true;
-		this.subscribeToParagraphChanges();
-
-	}
-
-	private subscribeToParagraphChanges(): void {
-
-		this.notesForm.get('description').valueChanges
-			.pipe(
-				takeUntil(this._unsubscribe),
-				debounceTime(2000)
-			)
-			.subscribe((response: string) => this.textPreview = response);
-
 	}
 
 	protected get _fieldControls() {
 		return [
 			{ name: 'title', type: 'text', value: null, is_required: true },
 			{ name: 'version', type: 'text', value: null, is_required: true },
-			{ name: 'description', type: 'text', value: null, is_required: true },
 		];
 	}
 	

@@ -2,9 +2,11 @@
 	<editor
 		[(ngModel)]="tinymce_content"
 		apiKey="mxrn7rgdtuu15faqs9w9r8ivucmtbutrko3ftpt4tmk4m6hz"
+        (onKeyPress)="getValue($event)"   
 		[init]="{
 			selector: 'textarea',
 			height: 500,
+            indentation : '20px',
 			menubar: false,
 			plugins: [
 				'advlist autolink lists link image charmap print preview anchor',
@@ -12,11 +14,12 @@
 				'insertdatetime media table paste code wordcount'
 			],
 			toolbar:
-				'undo redo | formatselect | bold italic backcolor | \
+				'undo redo | formatselect | bold italic fontsizeselect forecolor | \
                 alignleft aligncenter alignright alignjustify | image \
-                bullist numlist outdent indent'
-		}"
+                bulllist numlist outdent indent',
+            fontsize_formats: '8pt 10pt 12pt 14pt 16pt 18pt 24pt 36pt 48pt'
+        }"
 	></editor>
 
-	<button (click)="saveEditorContent()">Save</button>
+	<!-- <button (click)="saveEditorContent()">Save</button> -->
 </div>

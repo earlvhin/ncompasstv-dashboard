@@ -1,10 +1,4 @@
 <div class="theme-container">
-	<!-- Sample WYSIWYG, Remove when done -->
-	<div class="pt-5">
-		<app-wysiwyg></app-wysiwyg>
-	</div>
-	<!-- Sample WYSIWYG, Remove when done -->
-
 	<div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">
 		{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span>
 	</div>

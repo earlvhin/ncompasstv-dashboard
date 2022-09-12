@@ -873,3 +873,12 @@ agm-map {
 .justify-flex {
     justify-content: flex-end
 }
+
+#display {
+    ul, ol {
+        padding-left: 40px !important;
+        ul, ol {
+            padding-left: 40px !important;
+        }
+    }
+}
