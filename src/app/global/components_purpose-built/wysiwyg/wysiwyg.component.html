@@ -1,0 +1,22 @@
+<div id="tinymce-text-editor">
+	<editor
+		[(ngModel)]="tinymce_content"
+		apiKey="mxrn7rgdtuu15faqs9w9r8ivucmtbutrko3ftpt4tmk4m6hz"
+		[init]="{
+			selector: 'textarea',
+			height: 500,
+			menubar: false,
+			plugins: [
+				'advlist autolink lists link image charmap print preview anchor',
+				'searchreplace visualblocks code fullscreen',
+				'insertdatetime media table paste code wordcount'
+			],
+			toolbar:
+				'undo redo | formatselect | bold italic backcolor | \
+                alignleft aligncenter alignright alignjustify | image \
+                bullist numlist outdent indent'
+		}"
+	></editor>
+
+	<button (click)="saveEditorContent()">Save</button>
+</div>
