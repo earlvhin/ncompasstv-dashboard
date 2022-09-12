@@ -244,7 +244,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 					{ value: license.businessName, link: `/${this._currentRole}/dealers/${license.dealerId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast},
 					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false,  past: isPast },
 					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this._currentRole}/screens/${license.screenId}` : null, new_tab_link: true, editable: false, hidden: false,  past: isPast },
-					{ value: this._dates.transform(license.installDate, 'MMM d, y, h:mm a'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  past: isPast },
+					{ value: this._dates.transform(license.installDate, 'MMM d, y'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  past: isPast },
 				);
 			}
 		);
@@ -252,7 +252,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 	private modifyItem(item: { screenTypeName: string, installDate: string }): void {
 		item.screenTypeName = this._titlecase.transform(item.screenTypeName);
-        item.installDate = this._dates.transform(item.installDate, 'MMM d, y, h:mm a')
+        item.installDate = this._dates.transform(item.installDate, 'MMM d, y')
 	}
 
 	private subscribeToUpdateInstallationDate() {
