@@ -58,6 +58,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	form = this._form_builder.group({ selectedDealers: [[], Validators.required] });
 	selectedDealersControl = this.form.get('selectedDealers');
 	dealerFilterControl = new FormControl(null);
+    status: boolean = false;
 
 	labelOptions = {
 		color: 'black',
@@ -486,6 +487,10 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
 		this.onSelectDealer(selectedDealers);
 	}
+
+    toggleOverMap() {
+        this.status = !this.status; 
+    }
 
 	onSelectDealer(selectedDealers): void {
 		this.online_licenses = 0;

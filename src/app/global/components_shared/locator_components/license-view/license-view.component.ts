@@ -40,6 +40,7 @@ export class LicenseViewComponent implements OnInit {
 	search_keyword = false;
 	selected_dealer_hosts: API_HOST[];
 	selected_licenses: API_LICENSE_PROPS[] = [];
+    status: boolean = false;
 
 	private businessName: string;
 	private current_host_id_selected = '';
@@ -477,4 +478,8 @@ export class LicenseViewComponent implements OnInit {
 	protected get currentUser() {
 		return this._auth.current_user_value;
 	}
+
+    toggleOverMap() {
+        this.status = !this.status; 
+    }
 }

@@ -31,6 +31,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 	longitude = -105.1524133;
 	searchKeyword = '';
 	searchSelectForm: FormGroup;
+    status: boolean = false;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -294,4 +295,8 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 		this.onSearchDMA();
 		this.onSelectDMA();
 	}
+
+    toggleOverMap() {
+        this.status = !this.status; 
+    }
 }

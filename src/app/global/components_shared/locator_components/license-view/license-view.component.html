@@ -18,6 +18,13 @@
 					<span class="fas fa-file-excel"></span> 
 					<span class="ml-2 button_text_animation">Export</span>
 				</button>
+                <button mat-button mat-raised-button
+                    class="theme-btn pi-control sm-text _cool mr-2" 
+                    (click)="toggleOverMap()" 
+                    title="{{status ? 'Show Search Result' : 'Hide Search Results'}}">
+                    <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
+                    <span class="ml-2 button_text_animation">{{status ? 'Show Search Result' : 'Hide Search Results'}}</span> 
+                </button>
             </div>
             <div class="col-lg-8">
                 <div class="float-container d-flex">
@@ -124,7 +131,7 @@
                             the coordinates of that host.
 						</p>
                     </div>
-                    <div id="over_map">
+                    <div id="over_map" [ngClass]="status ? 'minimize-overlay' : ''">
                         <ng-container *ngIf="!loading_licenses; else loader">
                             <div id="licenseSearch" class="search-bar pr-3 pl-3 pt-2">
                                 <label class="mb-2">Enter a License Alias or Key</label>

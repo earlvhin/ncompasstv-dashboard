@@ -30,6 +30,7 @@ export class LocatorComponentComponent implements OnInit {
     @Input() is_host;
     @Input() is_category;
     @Input() is_state;
+    @Input() status: boolean = false;
     
     currentList: any = [];
     compressed_data_array: any = [];
@@ -76,7 +77,12 @@ export class LocatorComponentComponent implements OnInit {
 		this.initializeForm();
         this.filteredData.next([...this.data_reference]);
         this.new_data_reference = ([...this.data_reference])
+        console.log("STATUS", this.status)
 	}
+
+    ngOnChanges() {
+        console.log("NEW STATUS", this.status);
+    }
 
     protected get currentUserIsDealer() {
 		return this.currentUser.role_id === UI_ROLE_DEFINITION.dealer;

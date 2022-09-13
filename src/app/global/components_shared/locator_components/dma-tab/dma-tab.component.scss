@@ -14,7 +14,8 @@
 				z-index: 99;
 				width: 400px;
 				padding-bottom: 10px;
-				overflow-y: auto;
+                overflow: visible;
+                transition: width .5s;
 
 				.search-box {
 					background-color: rgba(255,255,255, 0.8);
@@ -46,6 +47,8 @@
 
 				.selected-dma-info {
 					background-color: rgba(255,255,255, 0.5);
+                    max-height: 425px;
+                    overflow: auto;
 
 					.total-hosts {
 						margin-left: auto;
@@ -62,6 +65,12 @@
 					}
 				}
 			}
+
+            .minimize-overlay {
+                width: 0px !important;
+                transition: width .5s;
+                overflow: hidden !important;
+            }
 
 		}
 	}

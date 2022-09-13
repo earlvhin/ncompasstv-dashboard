@@ -46,6 +46,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 	state_paging: PAGING;
     states_data: any[] = [];
 	unfiltered_host_results: API_HOST[] = [];
+    status: boolean = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -70,6 +71,10 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		this.getHostStates(1);
 	}
 
+    toggleOverMap() {
+        this.status = !this.status; 
+    }
+
     private initializeForm(): void {
 		this.searchSelectForm = this._formBuilder.group({
 			hostList: [[], Validators.required],
@@ -91,11 +96,14 @@ export class HostViewComponent implements OnInit, OnDestroy {
     onSearchOption(key: string) {
 		if (key === 'host') {
 			this.currentSearchOption = 'host';
+            this.status = false;
 		} else if (key === 'state') {
 			this.currentSearchOption = 'state';
+            this.status = false;
 			this.getHostStates(1);
 		} else if (key === 'category') {
 			this.currentSearchOption = 'category';
+            this.status = false;
 			this.getHostCategories(1);
 		}
 	}
