@@ -22,7 +22,7 @@ export class ReleaseNotesViewComponent implements OnInit {
     getInstallationStats() {
         this._release.getAllNotes().subscribe(
             (data:any) => {
-                this.latest_release = data[data.length-1];
+                this.latest_release = data[0];
                 this.latest_release.dateCreated = moment(this.latest_release.dateCreated).format('MMM DD, YYYY');
                 setTimeout(()=>{                           // <<<---using ()=> syntax
                     this.dataContainer.nativeElement.innerHTML = this.latest_release.description;
