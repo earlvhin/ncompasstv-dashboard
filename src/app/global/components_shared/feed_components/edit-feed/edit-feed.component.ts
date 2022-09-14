@@ -83,7 +83,7 @@ export class EditFeedComponent implements OnInit {
 	// 		checked: false
 	// 	}
 	// ];
-    list: any;
+	list: any;
 	loading_data: boolean = true;
 	loading_search: boolean = false;
 	paging: any;
@@ -102,12 +102,13 @@ export class EditFeedComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-        console.log("PUBLIC", this._dialog_data)
-        this.list = [{
-            name: this._dialog_data.classification.value,
-            value: this._dialog_data.classification.value,
-            checked: true
-        }]
+		this.list = [
+			{
+				name: this._dialog_data.classification.value,
+				value: this._dialog_data.classification.value,
+				checked: true
+			}
+		];
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
 			this.is_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;

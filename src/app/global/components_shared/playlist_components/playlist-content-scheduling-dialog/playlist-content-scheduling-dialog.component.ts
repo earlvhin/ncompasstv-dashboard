@@ -168,9 +168,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		}
 
 		this.days_list.forEach((day) => (day.checked = true));
-		
-		this.days = '0,1,2,3,4,5,6';
 
+		this.days = '0,1,2,3,4,5,6';
 	}
 
 	onSelectAllDayLong(event: any): void {
@@ -236,7 +235,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							type: this.getTypeValue(type.name),
-							playlistContentId: id,
+							playlistContentId: id
 						};
 					} else {
 						schedule = {
@@ -280,10 +279,9 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							playlistContentId: schedule.content_id
 						};
 					}
-                    if(schedule.classification === 'live_stream') {
-                        playlistSchedule.livestream = 1;
-                    }
-                    console.log("PLAYLIST_SCHEDULE", playlistSchedule)
+					if (schedule.classification === 'live_stream') {
+						playlistSchedule.livestream = 1;
+					}
 					return playlistSchedule;
 				});
 			}
@@ -320,9 +318,9 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId
 			};
 		}
-        if(this.dialog_data.content.classification === 'live_stream') {
-            result.livestream = 1;
-        }
+		if (this.dialog_data.content.classification === 'live_stream') {
+			result.livestream = 1;
+		}
 
 		this.updateSchedule(result);
 		return;
