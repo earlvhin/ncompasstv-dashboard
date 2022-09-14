@@ -96,7 +96,9 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 				const configValue = (this.dialogMode === 'create') ? [control.value] : [this.note[control.name]];
 				if (control.is_required) configValue.push(Validators.required);
                 config[control.name] = configValue;
-                this.description = this.note.description;
+                if(this.dialogMode != 'create') {
+                    this.description = this.note.description;
+                }
 			}
 		);
 
