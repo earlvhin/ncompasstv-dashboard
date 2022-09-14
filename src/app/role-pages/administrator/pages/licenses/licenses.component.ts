@@ -763,7 +763,7 @@ export class LicensesComponent implements OnInit {
 								host.storeHours = this.getTotalHours(host);
 								this.mapHostsForExport(host);
 							});
-							this.hosts_to_export = [...response.host];
+							this.hosts_to_export = response.host;
 						}
 
 						this.hosts_to_export.forEach((item) => {
@@ -1146,8 +1146,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapHostsForExport(data) {
-        console.log("DATA", data)
-		data.storeHours = data.storeHours;
+        data.storeHours = data.storeHours;
         data.generalCategory = data.generalCategory ? data.generalCategory : 'Others'
 		data.tagsToString = data.tags.join(',');
 	}
