@@ -52,6 +52,7 @@ export * from './host-custom-field-group';
 export * from './host-s3-file.model';
 export * from './installation.model';
 export * from './paging.model';
+export * from './playlist-content-schedule.model';
 export * from './playlist-changes.model';
 export * from './tag.model';
 export * from './tag-owner.model';
