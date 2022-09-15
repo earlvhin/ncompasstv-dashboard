@@ -634,7 +634,7 @@
 					</div>
 				</mat-tab>
 
-				<!-- Content Tab -->
+				<!-- Content Tab --> 
 				<mat-tab label="Content">
 					<div class="content-tab-container" *ngIf="screen; else no_screen">
 						<div class="container-fluid">
@@ -720,18 +720,78 @@
 							</div>
 						</div>
 
-						<br />
+						<br>
 
-						<div class="row no-gutters">
-							<div class="col-lg-2">
-								<div class="content-search">
-									<mat-form-field class="full-width">
-										<mat-label>Content Search</mat-label>
-										<input matInput type="text" [formControl]="content_search_control" />
-									</mat-form-field>
+						<mat-card class="filters-section mb-4">
+							<div class="d-flex align-items-center no-gutters full-width">
+
+								<!-- PLAYLIST CONTENT SCHEDULE STATUS FILTERS -->
+								<div class="playlist-content-schedule-status-filters mr-2">
+									<button mat-button mat-raised-button [matMenuTriggerFor]="playlistContentScheduleStatusFilters" mat-raised-button class="theme-btn">
+										<span class="button-label">Content Schedule Status</span>
+										<span class="fas fa-angle-down ml-2"></span>
+									</button>
+									<mat-menu #playlistContentScheduleStatusFilters="matMenu">
+										<button *ngFor="let status of content_schedule_statuses" mat-menu-item 
+											(click)="onFilterContent('schedule_status', status.toLowerCase())" 
+											[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''">
+											{{ status | titlecase }}
+										</button>
+									</mat-menu>
+								</div>
+
+								<!-- CONTENT OWNER TYPE FILTERS -->
+								<div class="content-owner-type-filters mr-2">
+									<button mat-button mat-raised-button [matMenuTriggerFor]="ownerTypeFilters" mat-raised-button class="theme-btn">
+										<span class="button-label">Owner Type</span>
+										<span class="fas fa-angle-down ml-2"></span>
+									</button>
+									<mat-menu #ownerTypeFilters="matMenu">
+										<button *ngFor="let type of content_owner_types" mat-menu-item
+											(click)="onFilterContent('owner', type.toLowerCase())">
+											{{ type | titlecase }}
+										</button>
+									</mat-menu>
+								</div>
+
+								<!-- CONTENT TYPE FILTERS -->
+								<div class="content-type-filters mr-2">
+									<button mat-button mat-raised-button [matMenuTriggerFor]="contentTypeFilters" mat-raised-button class="theme-btn">
+										<span class="button-label">Content Type</span>
+										<span class="fas fa-angle-down ml-2"></span>
+									</button>
+									<mat-menu #contentTypeFilters="matMenu">
+										<button *ngFor="let type of content_types" mat-menu-item
+											(click)="onFilterContent('content_type', type.toLowerCase())">
+											{{ type | titlecase }}
+										</button>
+									</mat-menu>
+								</div>
+
+								<!-- SELECTED FILTERS -->
+								<ng-container *ngIf="content_filters.length > 0">
+									<div class="current-filters d-flex">
+										<div class="filter d-flex align-items-center mr-2" *ngFor="let filter of content_filters">
+											<div class="name">{{ filter.name | titlecase }}</div>
+											<div class="remove-btn cursor-pointer" (click)="onRemoveContentFilter(filter.name.toLowerCase())">
+												<mat-icon class="no-select">close</mat-icon>
+											</div>
+										</div>
+									</div>
+								</ng-container>
+	
+								<!-- CONTENT SEARCH FIELD -->
+								<div class="content-search mr-2">
+									<div class="flex-even form-field">
+										<mat-form-field class="full-width" appearance="fill">
+											<mat-label>Search a content</mat-label>
+											<input matInput type="text" placeholder="Search a File" [formControl]="content_search_control">
+										</mat-form-field>
+										<span class="fas fa-search"></span>
+									</div>
 								</div>
 							</div>
-						</div>
+						</mat-card>
 
 						<!-- Media Viewer -->
 						<div class="row no-gutters" *ngIf="has_playlist">

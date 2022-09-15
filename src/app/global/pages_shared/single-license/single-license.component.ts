@@ -13,7 +13,6 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
-
 import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
 
 import {
@@ -33,7 +32,8 @@ import {
 	UI_SCREEN_ZONE_PLAYLIST,
 	UI_ZONE_PLAYLIST,
 	UI_SINGLE_SCREEN,
-	UI_REBOOT_TIME
+	UI_REBOOT_TIME,
+	PlaylistContentSchedule
 } from 'src/app/global/models';
 
 @Component({
@@ -66,6 +66,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	contents: API_CONTENT[] = [];
 	contents_array: any = [];
 	contents_backup: UI_CONTENT_PER_ZONE[] = [];
+	content_schedule_statuses = this._contentScheduleStatuses;
+	content_filters: { type: string, name: string }[] = [];
+	content_owner_types = this._contentOwnerTypes;
+	content_types = this._contentTypes;
 	current_operation: { day: string; period: string };
 	current_tab = 'Details';
 	current_zone_name_selected: string;
@@ -300,6 +304,33 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		}, 5000);
 	}
 
+	onFilterContent(type: string, filter: string): void {
+
+		let currentContents: UI_CONTENT[] = [...this.content_per_zone[this.selected_zone_index].contents];
+		const currentZoneContentsBackup = this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents;
+
+		// first use of filter
+		if (this.content_filters.length <= 0) {
+			this.content_filters.push({ type, name: filter });
+			this.filterContent(currentContents);
+			return;
+		}
+
+		// return if filter is already selected
+		if (this.content_filters.some(a => a.name === filter)) return;
+
+		// check if filter type is used, then replace if it is
+		const existingFilterType = this.content_filters.findIndex(a => a.type === type);
+
+		// if filter type is used, then replace with selected filter
+		// else just add to filters array
+		if (existingFilterType > -1) this.content_filters[existingFilterType] = { type, name: filter };
+		else this.content_filters.push({ type, name: filter });
+
+		this.filterContent([...currentZoneContentsBackup]);
+		
+	}
+
 	getActivityOfLicense(id: string) {
 		this._license.get_activities(id).subscribe(
 			(data: any) => {
@@ -313,9 +344,24 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.subscriptions.add(
 			this._content.get_content_by_license_id(id).subscribe((data) => {
 				if (data) {
-					this.content_per_zone = this.mapZoneContentToUI(data);
-					this.contents_backup = this.mapZoneContentToUI(data);
 
+					const mappedContents = this.mapZoneContentToUI(data).map(
+						zone => {
+
+							zone.contents = zone.contents.map(
+								content => {
+									content.schedule_status = this.setContentScheduleStatus(content.playlist_content_schedule);
+									return content;
+								}
+							);
+
+							return zone;
+						}
+					);
+
+					this.content_per_zone = [...mappedContents];
+					this.deepCopyMappedContents([...mappedContents]);
+					
 					this.screen_zone = {
 						playlistName: data[0].screenTemplateZonePlaylist.playlistName,
 						playlistId: data[0].screenTemplateZonePlaylist.playlistId,
@@ -395,10 +441,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	getScreenById(id: string, licenseId?: string): void {
-		this.subscriptions.add(
-			this._screen.get_screen_by_id(id, licenseId).subscribe(
-				(response: { contents; createdBy; dealer; host; licenses; screen; screenZonePlaylistsContents; template; timezone; message }) => {
-					if (response.message) {
+
+		this._screen.get_screen_by_id(id, licenseId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+
+					if ('message' in response) {
 						this.no_screen_assigned = true;
 						return;
 					}
@@ -409,12 +458,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.setRoutes();
 					this.screen_loading = false;
 				},
-				(error) => {
+				error => {
 					this.screen_loading = false;
 					this.no_screen_assigned = true;
 				}
-			)
-		);
+			);
+
 	}
 
 	getScreenshots(id): void {
@@ -541,6 +590,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	onShowNotes(): void {
 		this.showInformationModal('600px', '350px', 'Notes', this.host.notes, 'textarea', 500);
+	}
+
+	onRemoveContentFilter(data: string): void {
+
+		const filterToRemove = data.toLowerCase();
+		this.content_filters = this.content_filters.filter(filter => filter.name !== filterToRemove);
+
+		if (this.content_filters.length <= 0) return this.resetContents();
+
+		const originalContents = this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents;
+		this.filterContent(originalContents);
 	}
 
 	onResetAnydeskID(): void {
@@ -1152,10 +1212,82 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return `${minutes}m ${seconds}s`;
 	}
 
+	private deepCopyMappedContents(data: UI_CONTENT_PER_ZONE[]) {
+
+		const result = data.map(
+			zone => {
+				let newZone = {} as UI_CONTENT_PER_ZONE;
+				zone.contents = [...zone.contents];
+				return Object.assign(newZone, zone);
+			}
+		);
+
+		this.contents_backup = [...result];
+
+	}
+
 	private destroyCharts(): void {
 		if (this.charts.length <= 0) return;
 		this.charts.forEach((chart) => chart.destroy());
 		this.charts = [];
+	}
+
+	private filterContent(currentContents: UI_CONTENT[]): void {
+
+		let filteredContents = [];
+		const classifications = ['filler', 'feed'];
+
+		this.content_filters.forEach(
+			currentFilter => {
+				switch (currentFilter.type) {
+
+					case 'owner':
+
+						switch (currentFilter.name) {
+
+							case 'host':
+								filteredContents = filteredContents.concat(currentContents.filter(content => !this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)));
+								break;
+
+							case 'advertiser':
+								filteredContents = filteredContents.concat(currentContents.filter(content => !this.isBlank(content.advertiser_id) && this.isBlank(content.host_id) && !classifications.includes(content.file_type)));
+								break;
+
+							default:
+								filteredContents = filteredContents.concat(currentContents.filter(content => this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)));
+								break;
+						}
+
+						break;
+
+					case 'content_type':
+
+						switch (currentFilter.name) {
+
+							case 'filler':
+								filteredContents = filteredContents.concat(currentContents.filter(content => content.classification === 'filler'));
+								break;
+
+							default:
+								filteredContents = filteredContents.concat(currentContents.filter(content => content.file_type === 'feed' && content.classification !== 'filler'));
+
+						}
+
+						break;
+
+					default: // schedule_status
+
+						filteredContents = filteredContents.concat(currentContents.filter(content => content.schedule_status === currentFilter.name));
+
+				}
+			}
+
+		);
+
+		// remove duplicates
+		filteredContents = [...new Set(filteredContents)];
+		this.content_per_zone[this.selected_zone_index].contents = [...filteredContents];
+
 	}
 
 	private getHostTimezoneDay(): string {
@@ -1296,6 +1428,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private mapPlaylistContentToUI(data: API_CONTENT[]): UI_CONTENT[] {
+		
 		const content = data.map((c: API_CONTENT) => {
 			let fileThumbnailUrl = '';
 
@@ -1307,7 +1440,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				fileThumbnailUrl = c.previewThumbnail || c.thumbnail;
 			}
 
-			return new UI_CONTENT(
+			const mappedContent = new UI_CONTENT(
 				c.playlistContentId,
 				c.createdBy,
 				c.contentId,
@@ -1334,6 +1467,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				c.classification,
 				c.seq
 			);
+
+			return mappedContent;
+
 		});
 
 		return content.filter((content) => {
@@ -1380,10 +1516,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				.map((i: any) => {
 					this.contents_array.push(i.contents.length);
 
+					const contents = this.mapPlaylistContentToUI(i.contents);
+
 					return new UI_CONTENT_PER_ZONE(
 						i.screenTemplateZonePlaylist.name,
 						i.screenTemplateZonePlaylist.order,
-						this.mapPlaylistContentToUI(i.contents),
+						contents,
 						i.screenTemplateZonePlaylist.playlistName,
 						i.screenTemplateZonePlaylist.playlistId
 					);
@@ -1430,6 +1568,41 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 
 		return result;
+	}
+
+	private resetContents(): void {
+		const originalContents = this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents;
+		this.content_per_zone[this.selected_zone_index].contents = [...originalContents];
+	}
+
+	private setContentScheduleStatus(data: PlaylistContentSchedule): string {
+
+		let status = 'inactive';
+		
+		switch (data.type) {
+			
+			case 2:
+				status = 'inactive';
+				break;
+
+			case 3:
+				const currentDate = moment(new Date(), 'MM/DD/YYYY hh:mm A');
+				const startDate = moment(`${data.from} ${data.playTimeStart}`, 'MM/DD/YYYY hh:mm A');
+				const endDate = moment(`${data.to} ${data.playTimeEnd}`, 'MM/DD/YYYY hh:mm A');
+
+				if (currentDate.isBefore(startDate)) status = 'future';
+
+				if (currentDate.isBetween(startDate, endDate, undefined)) status = 'active';
+
+				break;
+
+			default:
+				status = 'active';
+
+		}
+
+		return status;
+
 	}
 
 	private setHostDetails(data: API_HOST): void {
@@ -1493,7 +1666,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			const { screenId, description, height, name, order, playlistId, playlistName, templateId, width, xPos, yPos } =
 				contents.screenTemplateZonePlaylist;
 			const playlist = new UI_ZONE_PLAYLIST(
-				screenId,
+					screenId,
 				templateId,
 				'',
 				xPos,
@@ -1619,19 +1792,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private subscribeToContentSearch(): void {
 		this.content_search_control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(200)).subscribe((response: string) => {
-			const backupContents = this.contents_backup[this.selected_zone_index].contents;
+
+			const currentContents = [...this.content_per_zone[this.selected_zone_index].contents];
 
 			if (!response || response.length === 0) {
-				this.content_per_zone[this.selected_zone_index].contents = backupContents;
-				return;
+
+				if (this.content_filters.length === 0) {
+					this.content_per_zone[this.selected_zone_index].contents = [...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents];
+					return;
+
+				} 
+				else {
+					this.filterContent([...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents]);
+					return
+				} 
+			
 			}
 
-			this.content_per_zone[this.selected_zone_index].contents = backupContents.filter((content) => {
-				const fileName = content.file_name ? content.file_name : '';
-				const title = content.title ? content.title : '';
-				const haystack = `${fileName}${title}`;
-				return haystack.toLowerCase().includes(response.toLowerCase());
-			});
+			const searchResults = currentContents.filter(
+				content => {
+					const fileName = content.file_name ? content.file_name : '';
+					const title = content.title ? content.title : '';
+					const haystack = `${fileName}${title}`;
+					return haystack.toLowerCase().includes(response.toLowerCase());
+				}
+			);
+
+			this.content_per_zone[this.selected_zone_index].contents = [...searchResults];
+
 		});
 	}
 
@@ -1820,14 +2008,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
-
-	protected get currentUser() {
-		return this._auth.current_user_value;
-	}
-
 	protected get _additionalLicenseSettingsFormFields() {
 		return [
 			{
@@ -1845,6 +2025,26 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			{ label: 'Reboot Time 3', form_control_name: 'rebootTime3', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
 			{ label: 'Reboot Time 4', form_control_name: 'rebootTime4', type: 'time', width: 'col-lg-6', required: true, value: null, viewType: null },
 		];
+	}
+
+	protected get _contentOwnerTypes() {
+		return [ 'host', 'advertiser', 'other' ];
+	}
+
+	protected get _contentScheduleStatuses() {
+		return [ 'active', 'future', 'inactive' ];
+	}
+
+	protected get _contentTypes() {
+		return [ 'filler', 'feed' ];
+	}
+
+	protected get currentRole() {
+		return this._auth.current_role;
+	}
+
+	protected get currentUser() {
+		return this._auth.current_user_value;
 	}
 
 	protected initializeSocketWatchers(): void {
