@@ -45,7 +45,6 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 	}
 
     fetchingValue(e) {
-        console.log("DESC", e)
         this.description = e;
         setTimeout(()=>{                           // <<<---using ()=> syntax
             this.dataContainer.nativeElement.innerHTML = this.description;

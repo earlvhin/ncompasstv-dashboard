@@ -20,6 +20,6 @@ export class WysiwygComponent implements OnInit {
     }
 
     getValue($event) {
-        this.tynimce_value.emit(this.tinymce_content);
+        this.tynimce_value.emit($event.editor.getContent());
     }
 }

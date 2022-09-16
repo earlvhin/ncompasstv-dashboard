@@ -2,7 +2,7 @@
 	<editor
 		[(ngModel)]="tinymce_content"
 		apiKey="mxrn7rgdtuu15faqs9w9r8ivucmtbutrko3ftpt4tmk4m6hz"
-        (onKeyPress)="getValue($event)"   
+        (onKeyUp)="getValue($event)" (onChange)="getValue($event)" (onPastePostProcess)="getValue($event)"
 		[init]="{
 			selector: 'textarea',
 			height: 500,
