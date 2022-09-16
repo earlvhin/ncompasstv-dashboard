@@ -506,10 +506,10 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_license_boot_delay}`, data, this.httpOptions);
 	}
 
-	update_license_reboot_time(data: { reboot_time: { reboot_time: string }[], licenseId: string }) {
+	update_license_reboot_time(data: { rebootTime: { rebootTime: string }[], licenseId: string }) {
 
 		const body = {
-			rebootTime: JSON.stringify(data.reboot_time),
+			rebootTime: JSON.stringify(data.rebootTime),
 			licenseId: data.licenseId
 		};
 

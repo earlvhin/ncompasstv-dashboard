@@ -580,7 +580,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	prepareLicenseSettingsForm(license: API_LICENSE_PROPS) {
 		let form_group_obj = {};
-		const rebootTimes = JSON.parse(license.rebootTime) as { reboot_time: string }[];
+		const rebootTimes = JSON.parse(license.rebootTime) as { rebootTime: string }[];
 
 		/** Loop through form fields object and prepare for group */
 		this._additionalLicenseSettingsFormFields.map(
@@ -598,7 +598,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 					} else {
 
-						const rebootTime = rebootTimes[index - 1].reboot_time.split(':');
+						const rebootTime = rebootTimes[index - 1].rebootTime.split(':');
 						const hour = parseInt(rebootTime[0]);
 						const minute = parseInt(rebootTime[1]);
 						fieldValue = { hour, minute };
@@ -641,7 +641,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let requests = [];
 		let requestNames: string[] = [];
 		const controls = this.additional_license_settings_form.controls;
-		const rebootTimeBody: { reboot_time: { reboot_time: string }[], licenseId: string } = { reboot_time: [], licenseId: this.license_id };
+		const rebootTimeBody: { rebootTime: { rebootTime: string }[], licenseId: string } = { rebootTime: [], licenseId: this.license_id };
 
 		Object.keys(controls).forEach((key) => {
 			const control = controls[key] as FormControl;
@@ -658,7 +658,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			if (key.includes('rebootTime') && this.unsaved_additional_settings.rebootTimeChanged) {
 
 				const rebootTimeValue = control.value as { hour: number, minute: number };
-				rebootTimeBody.reboot_time.push({ reboot_time: `${rebootTimeValue.hour}:${rebootTimeValue.minute}` })
+				rebootTimeBody.rebootTime.push({ rebootTime: `${rebootTimeValue.hour}:${rebootTimeValue.minute}` })
 				requestNames.push(key);
 				return;
 				
