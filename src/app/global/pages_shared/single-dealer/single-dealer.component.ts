@@ -1291,6 +1291,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.tagsToString = item.tags.join(',');
 				break;
 			case 'Hosts':
+                item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
 				item.businessName = this.dealer_user_data.businessName;
 				break;
 		}
