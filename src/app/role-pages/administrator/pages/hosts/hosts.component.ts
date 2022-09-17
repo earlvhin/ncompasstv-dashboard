@@ -19,7 +19,7 @@ export class HostsComponent implements OnInit {
 	diff_hours: any;
 	filtered_data: any = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
-    has_sort: boolean = false;
+	has_sort: boolean = false;
 	hosts$: Observable<API_HOST[]>;
 	hosts_data: UI_HOST_VIEW[] = [];
 	hosts_to_export: API_HOST[] = [];
@@ -99,11 +99,11 @@ export class HostsComponent implements OnInit {
 				break;
 			case 'hosts':
 				if (e) {
-                    this.has_sort = true;
+					this.has_sort = true;
 					this.search_data_host = e;
 					this.getHosts(1);
 				} else {
-                    this.has_sort = false;
+					this.has_sort = false;
 					this.search_data_host = '';
 					this.getHosts(1);
 				}
@@ -242,49 +242,47 @@ export class HostsComponent implements OnInit {
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-        if(this.has_sort) {
-            this._host
-			.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-                console.log("REZ", response)
-				if (response.message) {
-					if (this.search_data_host == '') this.no_host = true;
-					this.filtered_data_host = [];
-					return;
-				}
+		if (this.has_sort) {
+			this._host
+				.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((response) => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
+					}
 
-				this.paging_data_host = response.paging;
-				const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
-				this.hosts_data = [...mappedData];
-				this.filtered_data_host = [...mappedData];
-			})
-			.add(() => {
-				this.initial_load_hosts = false;
-				this.searching_hosts = false;
-			});
-        } else {
-            this._host
-			.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				if (response.message) {
-					if (this.search_data_host == '') this.no_host = true;
-					this.filtered_data_host = [];
-					return;
-				}
+					this.paging_data_host = response.paging;
+					const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+				})
+				.add(() => {
+					this.initial_load_hosts = false;
+					this.searching_hosts = false;
+				});
+		} else {
+			this._host
+				.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((response) => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
+					}
 
-				this.paging_data_host = response.paging;
-				const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
-				this.hosts_data = [...mappedData];
-				this.filtered_data_host = [...mappedData];
-			})
-			.add(() => {
-				this.initial_load_hosts = false;
-				this.searching_hosts = false;
-			});
-        }
-		
+					this.paging_data_host = response.paging;
+					const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+				})
+				.add(() => {
+					this.initial_load_hosts = false;
+					this.searching_hosts = false;
+				});
+		}
 	}
 
 	hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
@@ -493,7 +491,7 @@ export class HostsComponent implements OnInit {
 	getColumnsAndOrder(data, tab) {
 		switch (tab) {
 			case 'hosts':
-                this.has_sort = true;
+				this.has_sort = true;
 				this.sort_column_hosts = data.column;
 				this.sort_order_hosts = data.order;
 				this.getHosts(1);
@@ -512,6 +510,5 @@ export class HostsComponent implements OnInit {
 		data.storeHoursTotal = data.storeHoursTotal;
 
 		if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
-
 	}
 }

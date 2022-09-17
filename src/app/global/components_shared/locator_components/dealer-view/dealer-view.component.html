@@ -28,6 +28,13 @@
                 <span class="fas fa-file-excel"></span> 
                 <span class="ml-2 button_text_animation">Export</span>
             </button>
+            <button mat-button mat-raised-button
+                class="theme-btn pi-control sm-text _cool mr-2" 
+                (click)="toggleOverMap()" 
+                title="{{status ? 'Show Search Result' : 'Hide Search Results'}}">
+                <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
+                <span class="ml-2 button_text_animation">{{status ? 'Show Search Result' : 'Hide Search Results'}}</span> 
+            </button>
 		</div>
 		<div class="col-lg-8 pr-0">
 			<div class="col-lg-12 justify-flex p-0 d-flex">
@@ -144,7 +151,7 @@
 						</agm-marker>
 					</agm-map>
 				</div>
-				<div id="over_map">							
+				<div id="over_map" [ngClass]="status ? 'minimize-overlay' : ''">			
 					<ng-container *ngIf="!loading_hosts; else loader">
 						<div class="search-bar pl-3 pt-2 pr-3">
 							<form [formGroup]="form" >

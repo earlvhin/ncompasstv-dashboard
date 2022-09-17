@@ -11,16 +11,25 @@
     <hr class="my-3">
 
     <div class="row">
-        <div class="col-lg-12 mb-3 mt-3 flex">
-            <div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
-                <span class="fas fa-user-shield text-white"></span>
+        <div class="col-lg-12 mb-3 mt-3 d-flex">
+            <div class="col-lg-8 pl-0">
+                <div class="col-lg-12 d-flex pl-0">
+                    <div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
+                        <span class="fas fa-user-shield text-white"></span>
+                    </div>
+                    <div class="ml-3">
+                        <span class="lg-text text-primary f-20">Welcome back, Admin {{user_name}}</span>
+                        <br>
+                        <span class="text-gray sm-text">
+                            This is your N-Compass Dashboard. Look around.
+                        </span>
+                    </div>
+                </div>
             </div>
-            <div class="ml-3">
-                <span class="lg-text text-primary f-20">Welcome back, Admin {{user_name}}</span>
-                <br>
-                <span class="text-gray sm-text">
-                    This is your N-Compass Dashboard. Look around.
-                </span>
+            <div class="col-lg-4 text-right pr-0">
+                <div class="clickable" [routerLink]="['/administrator/release-notes-view']">
+                    <i class="fas fa-bullhorn mr-3"></i><span class="sm-text text-info font-weight-bold">WHAT'S NEW</span>
+                </div>
             </div>
         </div>
         <div class="col-lg-12 mt-3 flex p-0">

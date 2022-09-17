@@ -66,7 +66,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	playlist_content_backup: API_CONTENT[];
 	playlist_saving: boolean = false;
 	selected_contents: string[];
-	selected_content_ids: API_CONTENT_DATA[];
+	selected_content_ids: any[];
 	selected_content_count: number;
 	playlist_new_content: API_CONTENT_DATA[];
 	structured_updated_playlist: API_UPDATE_PLAYLIST_CONTENT;
@@ -252,7 +252,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_contents.forEach((i) => {
 			if (i.frequency !== 2 && i.frequency != 3) {
 				this.selected_contents.push(i.playlistContentId);
-				this.selected_content_ids.push({ playlistContentId: i.playlistContentId, contentId: i.contentId });
+				this.selected_content_ids.push({ playlistContentId: i.playlistContentId, contentId: i.contentId, classification: i.classification });
 			}
 		});
 
@@ -535,7 +535,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	selectedContent(id: string, contentId: string, contentFrequency: number): void {
+	selectedContent(id: string, contentId: string, contentFrequency: number, classification?): void {
 		const selected = this.playlist_contents.find((content) => content.contentId === contentId) as API_CONTENT;
 
 		if (typeof selected !== 'undefined' && selected.isProtected === 1 && this.is_dealer) return;
@@ -546,7 +546,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		if (!this.selected_contents.includes(id)) {
 			this.selected_contents.push(id);
-			this.selected_content_ids.push({ playlistContentId: id, contentId: contentId });
+			this.selected_content_ids.push({ playlistContentId: id, contentId: contentId, classification: classification });
 		} else {
 			this.selected_contents = this.selected_contents.filter((i) => i !== id);
 			this.selected_content_ids = this.selected_content_ids.filter((i) => i.playlistContentId !== id);
@@ -803,9 +803,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		let content: any;
 		let message = 'Success!';
 		let mode = 'create';
-		let schedules: { id: string; content_id: string }[] = [];
+		let schedules: { id: string; content_id: string, classification: string }[] = [];
 		const content_ids: string[] = [];
-
 		if (this.selected_contents.length === 1) mode = 'update';
 
 		if (mode === 'update') {
@@ -823,7 +822,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					} else {
 						const schedule = {
 							id: content.playlistContentsSchedule.playlistContentsScheduleId,
-							content_id: content.playlistContentId
+							content_id: content.playlistContentId,
+                            classification: content.classification
 						};
 						schedules.push(schedule);
 					}

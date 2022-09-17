@@ -750,6 +750,7 @@
 										[is_fullscreen]="a.is_fullscreen"
 										[is_protected]="a.is_protected"
 										[sequence]="a.seq"
+										[is_view_only]="true"
 									>
 										[uuid]="a.uuid" [zone_content]="true">
 									</app-thumbnail-card>
@@ -939,12 +940,11 @@
 							<mat-card class="p-4">
 								<h4 class="mb-4">Additional Settings</h4>
 
-								<form
-									*ngIf="license_data && additional_license_settings_form"
+								<form *ngIf="license_data && additional_license_settings_form"
 									[formGroup]="additional_license_settings_form"
-									(ngSubmit)="saveAdditionalLicenseSettings()"
-								>
-									<div class="row align-items-center">
+									(ngSubmit)="saveAdditionalLicenseSettings()">
+
+									<div class="row flex-column">
 										<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
 											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
 												<mat-form-field class="full-width">
@@ -962,13 +962,12 @@
 
 											<ng-template #otherFieldTypes>
 												<ng-container *ngIf="control.type === 'time'">
-													<div class="d-flex align-items-center justify-content-around">
-														<span>Reboot Time:</span>
+													<div class="d-flex align-items-center reboot-time">
+														<span>{{ control.label }}:</span>
 														<ngb-timepicker
 															[formControlName]="control.form_control_name"
 															[meridian]="true"
-															[size]="'small'"
-														>
+															[size]="'small'">
 														</ngb-timepicker>
 													</div>
 												</ng-container>
@@ -977,7 +976,7 @@
 									</div>
 
 									<div class="d-flex">
-										<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="saving_license_settings">Save</button>
+										<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="saving_license_settings || !has_unsaved_additional_settings">Save</button>
 										<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
 									</div>
 								</form>

@@ -6,13 +6,14 @@ import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
+import { EditorModule } from '@tinymce/tinymce-angular';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
-import { BreadcrumbsModule } from "ng6-breadcrumbs";
+import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { BulkEditBusinessHoursComponent } from './components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import { BulkOptionsComponent } from './components_shared/playlist_components/bulk-options/bulk-options.component';
 import { BulkPlaywhereComponent } from './components_shared/playlist_components/bulk-playwhere/bulk-playwhere.component';
@@ -118,7 +119,7 @@ import { NewZoneComponent } from './components_shared/zone_components/new-zone/n
 import { NewZoneModalComponent } from './components_shared/zone_components/new-zone-modal/new-zone-modal.component';
 import { NewsDemoComponent } from './components_shared/feed_components/news-demo/news-demo.component';
 import { NewsFormComponent } from './components_shared/feed_components/news-form/news-form.component';
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
 import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
@@ -177,7 +178,7 @@ import { UserTypeComponent } from './components_shared/user_components/user-type
 import { ViewDmaHostComponent } from './components_shared/data_components/data-table/dialogs/view-dma-host/view-dma-host.component';
 import { ViewSchedulesComponent } from './components_shared/playlist_components/view-schedules/view-schedules.component';
 import { WarningAnimationComponent } from './components_shared/page_components/warning-animation/warning-animation.component';
-import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component'; 
+import { WarningPopupComponent } from './components_shared/page_components/warning-popup/warning-popup.component';
 import { WeatherDemoComponent } from './components_shared/feed_components/weather-demo/weather-demo.component';
 import { WeatherFormComponent } from './components_shared/feed_components/weather-form/weather-form.component';
 import { ZoneListComponent } from './components_shared/zone_components/zone-list/zone-list.component';
@@ -186,11 +187,13 @@ import { LicenseViewComponent } from './components_shared/locator_components/lic
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
+import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
+import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.component';
 
 // const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
 
 // Material Theme Module
-import { 
+import {
 	MatAutocompleteModule,
 	MatCardModule,
 	MatCheckboxModule,
@@ -216,10 +219,9 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 
 const ngComponents = [
-    AddCardComponent,
+	AddCardComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
@@ -235,7 +237,7 @@ const ngComponents = [
 	ConfirmTemplateModalComponent,
 	ConfirmationModalComponent,
 	ContentScheduleCardComponent,
-    ContentsTabComponent,
+	ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
 	CreateFeedComponent,
@@ -245,28 +247,28 @@ const ngComponents = [
 	CreateScreenComponent,
 	CreateUserComponent,
 	CreateUserTypeComponent,
-    CredentialSettingComponent,
+	CredentialSettingComponent,
 	DataCardCompareComponent,
 	DataCardComponent,
 	DataCardCountComponent,
-    DataCardGraphComponent,
+	DataCardGraphComponent,
+	DataGraphCompareComponent,
 	DataGraphComponent,
-    DataGraphCompareComponent,
-    DataQuickStatsComponent,
-    DataStatisticsCardComponent,
-    DataStatisticsCardWithPickerComponent,
-    DataTotalComponent,
+	DataQuickStatsComponent,
+	DataStatisticsCardComponent,
+	DataStatisticsCardWithPickerComponent,
 	DataTableComponent,
+	DataTotalComponent,
 	DealerContentTabComponent,
 	DealerDetailsTabComponent,
 	DealerHistoryTabComponent,
 	DealerHostTabComponent,
 	DealerInvoicesTabComponent,
 	DealerMapTabComponent,
-    DealerSettingComponent,
+	DealerSettingComponent,
+	DealerViewComponent,
 	DealersTableComponent,
-    DealerViewComponent,
-    DealersViewComponent,
+	DealersViewComponent,
 	DeleteDealerDialogComponent,
 	DeletePlaylistComponent,
 	DemoZoneComponent,
@@ -279,24 +281,23 @@ const ngComponents = [
 	ErrorMessageComponent,
 	ErrorMessageComponent,
 	ExpansionPanelComponent,
-    ExportsTabComponent,
+	ExportsTabComponent,
 	FailAnimationComponent,
-	FeedMediaComponent,
 	FeedDemoComponent,
 	FeedInfoComponent,
 	FeedMediaComponent,
+	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
-	FilterLabelsComponent,
-	FillerFormComponent,
 	FillerDemoComponent,
-	FooterComponent, 
+	FillerFormComponent,
+	FilterLabelsComponent,
+	FooterComponent,
 	GenerateFeedComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
-	LicenseViewComponent,
-    HostsTabComponent,
-    ImageSelectionModalComponent,
+	HostsTabComponent,
+	ImageSelectionModalComponent,
 	InformationModalComponent,
 	InstallationsTabComponent,
 	IsEmptyPipe,
@@ -304,10 +305,12 @@ const ngComponents = [
 	IsimagePipe,
 	IsvideoPipe,
 	LicenseModalComponent,
+	LicenseViewComponent,
 	LicensesTabReportsComponent,
 	ListItemComponent,
 	LittleSpinnerComponent,
 	LocatorComponent,
+	LocatorComponentComponent,
 	MediaComponent,
 	MediaLibraryComponent,
 	MediaLibraryOptionsComponent,
@@ -330,7 +333,8 @@ const ngComponents = [
 	NotificationsComponent,
 	ObjectKeysPipe,
 	OptionsComponent,
-    OrdersComponent,
+	OrdersComponent,
+	PaginationFieldComponent,
 	PaymentSettingComponent,
 	PlayWhereComponent,
 	PlaylistContentComponent,
@@ -345,7 +349,7 @@ const ngComponents = [
 	PlaylistInfoComponent,
 	PlaylistMediaComponent,
 	PlaylistMediaThumbnailComponent,
-    ProfileSettingComponent,
+	ProfileSettingComponent,
 	PushUpdateComponent,
 	RenameModalComponent,
 	SanitizePipe,
@@ -373,26 +377,26 @@ const ngComponents = [
 	SuccessAnimationComponent,
 	TemplateMinimapComponent,
 	TemplateZonesComponent,
-	ThumbnailCardComponent, 
-    TransactionTabComponent,
+	ThumbnailCardComponent,
 	ToolsComponent,
+	TransactionTabComponent,
 	UnassignHostLicenseComponent,
 	UnassignLicenseComponent,
 	UpcomingInstallModalComponent,
-    UserSettingComponent,
+	UserSettingComponent,
 	UserSortModalComponent,
 	UserTypeComponent,
 	ViewCardsComponent,
-    ViewDmaHostComponent,
+	ViewDmaHostComponent,
 	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
 	WarningPopupComponent,
 	WeatherDemoComponent,
 	WeatherFormComponent,
-	ZoneListComponent,
-  	PaginationFieldComponent,
+	WysiwygComponent,
 	ZoneExpansionPanelComponent,
+	ZoneListComponent
 ];
 
 const MaterialModules = [
@@ -419,22 +423,15 @@ const MaterialModules = [
 	MatNativeDateModule,
 	MatProgressBarModule,
 	MatTooltipModule,
-	MatButtonToggleModule,
+	MatButtonToggleModule
 ];
 
-const DIRECTIVES = [
-	DefaultDateFormatDirective,
-	MonthDayFormatDirective,
-];
+const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [
-		ngComponents,
-		DIRECTIVES,
-		LocatorComponentComponent,
-	],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
-        AddCardComponent,
+		AddCardComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
@@ -454,7 +451,7 @@ const DIRECTIVES = [
 		EditSingleHostComponent,
 		EditableFieldModalComponent,
 		FeedMediaComponent,
-        ImageSelectionModalComponent,
+		ImageSelectionModalComponent,
 		InformationModalComponent,
 		LicenseModalComponent,
 		MediaModalComponent,
@@ -478,29 +475,30 @@ const DIRECTIVES = [
 		ViewSchedulesComponent,
 		WarningPopupComponent,
 		UpcomingInstallModalComponent,
-        ViewDmaHostComponent,
-		ViewCardsComponent,
+		ViewDmaHostComponent,
+		ViewCardsComponent
 	],
 	imports: [
 		BrowserAnimationsModule,
 		ColorPickerModule,
 		CommonModule,
 		DragDropModule,
+		EditorModule,
 		FormsModule,
 		HttpClientModule,
 		MaterialModules,
 		MatInputModule,
-		MatDatepickerModule, 
-		MatNativeDateModule, 
+		MatDatepickerModule,
+		MatNativeDateModule,
 		MatMomentDateModule,
 		MomentDateModule,
 		NgbModule,
 		NgxMaterialTimepickerModule,
 		NgxPaginationModule,
-		ReactiveFormsModule.withConfig({warnOnNgModelWithFormControl: 'never'}),
+		ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
 		RouterModule,
 		NgxMatSelectSearchModule,
-        BreadcrumbsModule,
+		BreadcrumbsModule,
 		MatFileUploadModule,
 		AgmCoreModule.forRoot({
 			apiKey: environment.google_key
@@ -518,13 +516,8 @@ const DIRECTIVES = [
 		ColorPickerModule,
 		AgmCoreModule,
 		MatFileUploadModule,
-		CKEditorModule,
-
+		CKEditorModule
 	],
-	providers: [
-		MatDatepickerModule,
-		MatNativeDateModule
-	]
+	providers: [MatDatepickerModule, MatNativeDateModule]
 })
-
-export class GlobalModule { }
+export class GlobalModule {}

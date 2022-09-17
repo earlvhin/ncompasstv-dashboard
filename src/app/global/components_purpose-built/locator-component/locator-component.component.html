@@ -56,7 +56,7 @@
                 </agm-map>
 
 				<!-- SEARCH CONTAINER -->
-				<div class="search-container">
+				<div class="search-container" [ngClass]="status ? 'minimize-overlay' : ''">
 					<div class="search-box pl-3 pt-2 pr-3">
 						<ng-container *ngIf="isFormReady">
 							<form [formGroup]="searchSelectForm">

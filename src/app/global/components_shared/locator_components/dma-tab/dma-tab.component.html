@@ -5,6 +5,13 @@
 			<span class="{{ !isExporting ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
 			<span class="ml-2 button_text_animation">{{ !isExporting ? 'Export' : 'Generating CSV' }}</span>
 		</button>
+        <button mat-button mat-raised-button
+            class="theme-btn pi-control sm-text _cool mr-2" 
+            (click)="toggleOverMap()" 
+            title="{{status ? 'Show Search Result' : 'Hide Search Results'}}">
+            <span [ngClass]="status ? 'fas fa-eye' : 'fas fa-eye-slash'"></span>
+            <span class="ml-2 button_text_animation">{{status ? 'Show Search Result' : 'Hide Search Results'}}</span> 
+        </button>
 	</div>
 
 	<div class="content">
@@ -68,7 +75,7 @@
 				</agm-map>
 
 				<!-- SEARCH CONTAINER -->
-				<div class="search-container">
+				<div class="search-container" [ngClass]="status ? 'minimize-overlay' : ''">
 				
 					<div class="search-box pl-3 pt-2 pr-3">
 						<ng-container *ngIf="isFormReady">

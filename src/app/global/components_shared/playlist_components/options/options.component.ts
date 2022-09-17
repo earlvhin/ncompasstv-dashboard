@@ -36,6 +36,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 	is_base_frequency = false;
 	is_child_frequency = false;
 	is_paging = false;
+	is_livestream = false;
 	initial_credits_status: number | boolean;
 	licenses: API_LICENSE['license'][] = [];
 	license_ids_for_credits: string[] = [];
@@ -67,6 +68,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 		localStorage.setItem('playlist_data', JSON.stringify(content));
 		this.c_index = index;
 		this.content_data = content;
+        this.isLiveStream(this.content_data)
 		this.content_frequency = this.setFrequency(content.frequency);
 		this.credits = this.setCreditsAndBalance(content.playlistContentCredits);
 		this.total_contents = total_contents;
@@ -95,6 +97,14 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 	ngAfterContentChecked() {
 		this._change_detector.detectChanges();
 	}
+
+    isLiveStream(data) {
+        if(data.classification === 'live_stream') {
+            this.is_livestream = true;
+        } else {
+            this.is_livestream = false;
+        }
+    }
 
     next() {
 		this.is_paging = true;

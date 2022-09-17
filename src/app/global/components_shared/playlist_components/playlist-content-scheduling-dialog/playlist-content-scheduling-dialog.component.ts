@@ -168,9 +168,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		}
 
 		this.days_list.forEach((day) => (day.checked = true));
-		
-		this.days = '0,1,2,3,4,5,6';
 
+		this.days = '0,1,2,3,4,5,6';
 	}
 
 	onSelectAllDayLong(event: any): void {
@@ -257,7 +256,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			if (this.dialog_data.schedules && this.dialog_data.schedules.length > 0) {
 				forUpdate = this.dialog_data.schedules.map((schedule) => {
 					let playlistSchedule = {} as PlaylistContentSchedule;
-
 					if (this.is_custom_play) {
 						playlistSchedule = {
 							playlistContentsScheduleId: schedule.id,
@@ -281,7 +279,9 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							playlistContentId: schedule.content_id
 						};
 					}
-
+					if (schedule.classification === 'live_stream') {
+						playlistSchedule.livestream = 1;
+					}
 					return playlistSchedule;
 				});
 			}
@@ -295,7 +295,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 		let result = {} as PlaylistContentSchedule;
 		const { playlistContentId, playlistContentsSchedule } = this.dialog_data.content;
-
 		if (this.is_custom_play) {
 			result = {
 				days,
@@ -318,6 +317,9 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				type: this.getTypeValue(type.name),
 				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId
 			};
+		}
+		if (this.dialog_data.content.classification === 'live_stream') {
+			result.livestream = 1;
 		}
 
 		this.updateSchedule(result);

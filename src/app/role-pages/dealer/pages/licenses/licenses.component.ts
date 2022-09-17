@@ -61,7 +61,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Host', sortable: true, key: 'hostName', column: 'HostName' },
 		{ name: 'Alias', sortable: true, key: 'alias', column: 'Alias' },
 		{ name: 'Last Push', sortable: true, key: 'contentsUpdated', column: 'ContentsUpdated' },
-		{ name: 'Last Startup', sortable: true, key: 'timeIn', column: 'TimeIn' },
+		{ name: 'Last Disconnect', sortable: true, key: 'timeIn', column: 'TimeIn' },
 		{ name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
 		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
 		{ name: 'Anydesk', sortable: true, key: 'anydeskId', column: 'AnydeskId' },
@@ -576,7 +576,7 @@ export class LicensesComponent implements OnInit {
 					copy: true,
 					label: 'Anydesk Password'
 				},
-				{ value: i.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
+				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.piStatus, link: null, editable: false, hidden: true },

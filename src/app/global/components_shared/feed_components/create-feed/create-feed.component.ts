@@ -80,6 +80,11 @@ export class CreateFeedComponent implements OnInit {
 			name: 'Filler',
 			id: 'filler',
 			checked: false
+		},
+		{
+			name: 'Live Stream',
+			id: 'live_stream',
+			checked: false
 		}
 	];
 	loading_data: boolean = true;

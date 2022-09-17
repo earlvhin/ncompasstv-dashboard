@@ -39,7 +39,7 @@ export class LoginFormComponent implements OnInit {
 
 	login_form_view = [
 		{
-			label: 'Enter Email Address',
+			label: 'Email Address',
 			control: 'username',
 			placeholder: 'Ex: user@name.com',
 			icon: 'fas fa-user',
@@ -47,7 +47,7 @@ export class LoginFormComponent implements OnInit {
 			type: 'email'
 		},
 		{
-			label: 'Enter Password',
+			label: 'Password',
 			control: 'password',
 			placeholder: 'Password',
 			icon: 'fas fa-lock',
@@ -133,6 +133,10 @@ export class LoginFormComponent implements OnInit {
 	compareTime(dateString: any, now: any) {
 		return moment(now).isAfter(dateString, 'day');
 	}
+
+    routeToGuest() {
+        window.location.href = 'https://locations.n-compass.online'
+    }
 
 	openUpcomingInstallModal() {
 		let dialogRef = this._dialog.open(UpcomingInstallModalComponent, {

@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
-import { takeUntil} from 'rxjs/operators';
+import { takeUntil } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { API_HOST } from '../../../models/api_host.model';
 import { API_LICENSE_PROPS } from '../../../models/api_license.model';
@@ -20,45 +20,45 @@ import { AgmInfoWindow } from '@agm/core';
 	styleUrls: ['./host-view.component.scss']
 })
 export class HostViewComponent implements OnInit, OnDestroy {
-	
-    categories_data: any[] = [];
-    category_paging: PAGING;
-    currentRole: string;
-    currentSearchOption: string;
+	categories_data: any[] = [];
+	category_paging: PAGING;
+	currentRole: string;
+	currentSearchOption: string;
 	hosts_data: API_HOST[] = [];
-    host_results: API_HOST[] = [];
-    is_dealer = false;
-    isFormReady = false;
-    loading_category_data = false;
+	host_results: API_HOST[] = [];
+	is_dealer = false;
+	isFormReady = false;
+	loading_category_data = false;
 	loading_category_search = false;
-    loading_data = false;
+	loading_data = false;
 	loading_search = false;
 	loading_state_data = false;
 	loading_state_search = false;
 	paging: PAGING;
 	primaryKeyword: string = 'hostName';
 	searchDealerId: string = '';
-    searchSelectForm: FormGroup;
-    search_category_key = '';
+	searchSelectForm: FormGroup;
+	search_category_key = '';
 	search_hosts_data: API_HOST[] = [];
 	search_key = '';
 	search_state_key = '';
 	state_paging: PAGING;
-    states_data: any[] = [];
+	states_data: any[] = [];
 	unfiltered_host_results: API_HOST[] = [];
+	status: boolean = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-        private _auth: AuthService, 
-        private _host: HostService, 
-        private _license: LicenseService, 
-        private _router: Router,
-        private _formBuilder: FormBuilder
-    ) {}
+		private _auth: AuthService,
+		private _host: HostService,
+		private _license: LicenseService,
+		private _router: Router,
+		private _formBuilder: FormBuilder
+	) {}
 
 	ngOnInit() {
-        this.initializeForm();
+		this.initializeForm();
 		this.currentSearchOption = 'host';
 		if (this.currentUserIsDealer) this.is_dealer = true;
 		this.currentRole = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
@@ -70,7 +70,11 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		this.getHostStates(1);
 	}
 
-    private initializeForm(): void {
+	toggleOverMap() {
+		this.status = !this.status;
+	}
+
+	private initializeForm(): void {
 		this.searchSelectForm = this._formBuilder.group({
 			hostList: [[], Validators.required],
 			searchHostKeyword: null
@@ -88,14 +92,17 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		this._router.navigate([`/${this.currentRole}/hosts/create-host/`]);
 	}
 
-    onSearchOption(key: string) {
+	onSearchOption(key: string) {
 		if (key === 'host') {
 			this.currentSearchOption = 'host';
+			this.status = false;
 		} else if (key === 'state') {
 			this.currentSearchOption = 'state';
+			this.status = false;
 			this.getHostStates(1);
 		} else if (key === 'category') {
 			this.currentSearchOption = 'category';
+			this.status = false;
 			this.getHostCategories(1);
 		}
 	}
@@ -107,31 +114,26 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		this.unfiltered_host_results = [];
 		if (this.currentUserIsDealer) {
 			const currentDealerId = this.currentUser.roleInfo.dealerId;
-			this._host.get_host_by_dealer_id(currentDealerId, page, search).subscribe(
-                response => {
-                    if(!response.message) {
-                        this.hosts_data = response.paging.entities.filter( host => host.totalLicenses > 0)
-                    } else {
-                        this.hosts_data = [];
-                    }
-                }
-            );
+			this._host.get_host_by_dealer_id(currentDealerId, page, search).subscribe((response) => {
+				if (!response.message) {
+					this.hosts_data = response.paging.entities.filter((host) => host.totalLicenses > 0);
+				} else {
+					this.hosts_data = [];
+				}
+			});
 		} else {
-            this._host.get_host_by_page(page, this.search_key, '', '', 0).subscribe(
-                response => {
-                    console.log("RES", response)
-                    if(this.search_key) {
-                        this.search_hosts_data = response.host.filter( host => host.totalLicenses > 0)
-                    } else {
-                        this.hosts_data = response.host.filter( host => host.totalLicenses > 0)
-                    }
-                }
-            )
-        }
+			this._host.get_host_by_page(page, this.search_key, '', '', 0).subscribe((response) => {
+				if (this.search_key) {
+					this.search_hosts_data = response.host.filter((host) => host.totalLicenses > 0);
+				} else {
+					this.hosts_data = response.host.filter((host) => host.totalLicenses > 0);
+				}
+			});
+		}
 		if (this.search_key) {
 			this.loading_search = true;
 			this.hosts_data = [];
-		} else this.loading_data = true;    
+		} else this.loading_data = true;
 	}
 
 	getHostStates(page: number) {
@@ -187,9 +189,9 @@ export class HostViewComponent implements OnInit, OnDestroy {
 					this.categories_data = [];
 
 					categories.map((category) => {
-                        if(category.totalLicenses > 0) {
-                            this.categories_data.push(category);
-                        }
+						if (category.totalLicenses > 0) {
+							this.categories_data.push(category);
+						}
 					});
 
 					this.category_paging = paging;
