@@ -109,6 +109,7 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 		if (this.dialogMode === 'update') this.textPreview = this.notesForm.get('description').value;
 
 		this.isFormLoaded = true;
+    }
 
 	private subscribeToParagraphChanges(): void {
 		this.notesForm
