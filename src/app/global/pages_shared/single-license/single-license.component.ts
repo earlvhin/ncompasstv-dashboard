@@ -359,8 +359,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						}
 					);
 
-					this.content_per_zone = [...mappedContents];
+					// futile attempt to create a backup of the contents without using third-party libraries, e.g. lodash
 					this.deepCopyMappedContents([...mappedContents]);
+					this.content_per_zone = [...mappedContents];
 					
 					this.screen_zone = {
 						playlistName: data[0].screenTemplateZonePlaylist.playlistName,
@@ -378,7 +379,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.breakdownDuration();
 					this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
 					this.playlist_route = '/' + this.routes + '/playlists/' + this.screen_zone.playlistId;
+
+					// filter inactive contents without altering the original 
+					this.filterInactiveContents();
+
 				}
+
 			})
 		);
 	}
@@ -577,6 +583,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		dialog.componentInstance.page = 'single-license';
 	}
 
+	onResetFilters(): void {
+		this.content_filters = [];
+		this.content_search_control.disable({ emitEvent: false });
+		this.content_search_control.setValue(null, { emitEvent: false });
+		this.content_search_control.enable({ emitEvent: false });
+		this.content_per_zone[this.selected_zone_index].contents = [...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents];
+		this.filterInactiveContents();
+	}
+
 	onSelectBackgroundZone(event: any): void {
 		event.preventDefault();
 		this._template.onSelectZone.emit('Background');
@@ -601,6 +616,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		const originalContents = this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents;
 		this.filterContent(originalContents);
+
+		// filter inactive contents without altering the original 
+		this.filterInactiveContents();
+
 	}
 
 	onResetAnydeskID(): void {
@@ -1277,7 +1296,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 					default: // schedule_status
 
-						filteredContents = filteredContents.concat(currentContents.filter(content => content.schedule_status === currentFilter.name));
+						const backupContents = [...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents];
+						filteredContents = filteredContents.concat(backupContents.filter(content => content.schedule_status === currentFilter.name));
 
 				}
 			}
@@ -1288,6 +1308,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		filteredContents = [...new Set(filteredContents)];
 		this.content_per_zone[this.selected_zone_index].contents = [...filteredContents];
 
+	}
+
+	private filterInactiveContents(): void {
+		const copy = [...this.content_per_zone[this.selected_zone_index].contents];
+		const filtered = copy.filter(content => content.schedule_status === 'active');
+		this.content_per_zone[this.selected_zone_index].contents = [...filtered];
 	}
 
 	private getHostTimezoneDay(): string {
@@ -1429,7 +1455,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private mapPlaylistContentToUI(data: API_CONTENT[]): UI_CONTENT[] {
 		
-		const content = data.map((c: API_CONTENT) => {
+		return data.map((c: API_CONTENT) => {
 			let fileThumbnailUrl = '';
 
 			if (c.fileType === 'webm' || c.fileType === 'mp4') {
@@ -1472,15 +1498,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		});
 
-		return content.filter((content) => {
-			if (content.playlist_content_schedule) {
-				const schedule = content.playlist_content_schedule;
-				return (
-					(schedule && schedule.type === 1) ||
-					(schedule.type === 3 && !moment().isAfter(moment(`${schedule.to} ${schedule.playTimeEnd}`, 'MM/DD/YYYY hh:mm A')))
-				);
-			}
-		});
+		// return content.filter((content) => {
+		// 	if (content.playlist_content_schedule) {
+		// 		const schedule = content.playlist_content_schedule;
+		// 		return (
+		// 			(schedule && schedule.type === 1) ||
+		// 			(schedule.type === 3 && !moment().isAfter(moment(`${schedule.to} ${schedule.playTimeEnd}`, 'MM/DD/YYYY hh:mm A')))
+		// 		);
+		// 	}
+		// });
 	}
 
 	private mapScreenToUI(data: API_SINGLE_SCREEN): UI_SINGLE_SCREEN {
@@ -1573,6 +1599,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private resetContents(): void {
 		const originalContents = this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents;
 		this.content_per_zone[this.selected_zone_index].contents = [...originalContents];
+		this.filterInactiveContents();
 	}
 
 	private setContentScheduleStatus(data: PlaylistContentSchedule): string {

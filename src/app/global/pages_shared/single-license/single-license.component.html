@@ -779,6 +779,14 @@
 										</div>
 									</div>
 								</ng-container>
+
+								<!-- RESET FILTERS -->
+								<div class="reset-filters mr-2">
+									<button mat-button mat-raised-button mat-raised-button class="theme-btn btn-danger" (click)="onResetFilters()" [disabled]="content_filters.length === 0">
+										<span class="button-label">Reset Filters</span>
+										<span class="fas fa-times ml-2"></span>
+									</button>
+								</div>
 	
 								<!-- CONTENT SEARCH FIELD -->
 								<div class="content-search mr-2">
