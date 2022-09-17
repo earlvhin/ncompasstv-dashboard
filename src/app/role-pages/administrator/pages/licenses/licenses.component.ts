@@ -753,8 +753,7 @@ export class LicensesComponent implements OnInit {
 				break;
 			case 'hosts':
 				this._host
-					.get_host_by_page(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
-
+                    .get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
 					.subscribe((response) => {
 						if (response.message) {
 							this.hosts_to_export = [];
@@ -764,7 +763,7 @@ export class LicensesComponent implements OnInit {
 								host.storeHours = this.getTotalHours(host);
 								this.mapHostsForExport(host);
 							});
-							this.hosts_to_export = [...response.host];
+							this.hosts_to_export = response.host;
 						}
 
 						this.hosts_to_export.forEach((item) => {
@@ -1138,7 +1137,8 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapHostsForExport(data) {
-		data.storeHours = data.storeHours;
+        data.storeHours = data.storeHours;
+        data.generalCategory = data.generalCategory ? data.generalCategory : 'Others'
 		data.tagsToString = data.tags.join(',');
 	}
 

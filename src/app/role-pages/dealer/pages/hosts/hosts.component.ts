@@ -214,7 +214,7 @@ export class HostsComponent implements OnInit {
 						return;
 					}
 
-					const hosts = response.paging.entities as API_HOST[];
+					var hosts = response.paging.entities;
 					this.hosts_to_export = this.mapForExport([...hosts]);
 
 					this.hosts_to_export.forEach((item) => {
@@ -264,8 +264,16 @@ export class HostsComponent implements OnInit {
 
 	}
 
-	private mapForExport(hosts: API_HOST[]): API_HOST[] {
-		return hosts.map(host => { host.tagsToString = host.tags.join(','); return host });
+	private mapForExport(hosts: any) {
+		return hosts.map(
+            host => { 
+                host.generalCategory = host.generalCategory ? host.generalCategory : 'Others';
+                if(host.tags) {
+                    host.tagsToString = host.tags.join(','); 
+                }
+                return host
+            }
+        );
 	}
 
 	private mapToHostsTable(data: API_HOST[]): UI_DEALER_HOSTS[] {
