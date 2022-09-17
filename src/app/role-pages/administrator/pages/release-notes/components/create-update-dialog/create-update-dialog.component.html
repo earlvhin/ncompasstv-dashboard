@@ -20,8 +20,7 @@
 			<ng-container *ngIf="isFormLoaded">
 				<form [formGroup]="notesForm">
 	
-					<!-- TITLE -->
-					<mat-form-field class="full-width">
+                    <mat-form-field class="full-width">
 						<mat-label>Title</mat-label>
 						<input formControlName="title" matInput placeholder="e.g. Release Notes for 2022" type="text">
 					</mat-form-field>
@@ -32,17 +31,19 @@
 						<input formControlName="version" matInput placeholder="e.g. v1.2.3" type="text">
 					</mat-form-field>
 	
-					<!-- DESCRIPTION -->
-                    <ckeditor formControlName="description" [editor]="ckEditor"></ckeditor>
-	
+                    <div class="pt-5">
+                        <app-wysiwyg 
+                        (tynimce_value)="fetchingValue($event)"
+                        [description]="description"></app-wysiwyg>
+                    </div>
 				</form>
 			</ng-container>
 
 		</div>
 
-		<div class="preview-section d-flex flex-column">
+		<div class="preview-section d-flex flex-column" id="display">
 			<h4><u>Text Preview</u></h4>
-			<div class="text" [innerHTML]="textPreview"></div>
+            <div #dataContainer></div>
 		</div>
 		
 	</div>

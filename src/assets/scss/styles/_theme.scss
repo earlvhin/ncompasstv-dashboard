@@ -880,3 +880,12 @@ agm-map {
     top: 0;
     z-index: 100;
 }
+
+#display {
+    ul, ol {
+        padding-left: 40px !important;
+        ul, ol {
+            padding-left: 40px !important;
+        }
+    }
+}

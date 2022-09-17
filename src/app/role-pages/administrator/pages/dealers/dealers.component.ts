@@ -38,7 +38,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 		{ name: 'Unassigned', key: 'totalLicensesUnassigned' },
 		{ name: 'Online', key: 'totalLicensesOnline' },
 		{ name: 'Offline', key: 'totalLicensesOffline' },
-		{ name: 'Scheduled', key: 'totalScheduled' },
+		{ name: 'Scheduled', key: 'forInstallationHost' },
 		{ name: 'Total', key: 'totalHosts' },
 		{ name: 'Active', key: 'totalHostsActive' },
 		{ name: 'Total', key: 'totalAdvertisers' },
@@ -238,7 +238,6 @@ export class DealersComponent implements OnInit, OnDestroy {
 	}
 
 	private modifyExportData(item: API_EXPORT_DEALER): void {
-		item.totalScheduled = 0;
 		item.monthAsDealer = `${item.monthAsDealer} month(s)`;
 		item.tagsToString = item.tags.join(',');
 	}
