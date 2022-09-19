@@ -618,7 +618,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.filterContent(originalContents);
 
 		// filter inactive contents without altering the original 
-		this.filterInactiveContents();
+		if (this.content_filters.findIndex(filter => filter.name === 'inactive') === -1) this.filterInactiveContents();
 
 	}
 
