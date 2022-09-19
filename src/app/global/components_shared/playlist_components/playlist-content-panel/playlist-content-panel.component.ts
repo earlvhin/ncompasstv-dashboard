@@ -101,7 +101,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.subscribeToSearch();
 		this.playlist_content_backup = this.playlist_contents;
 		this.setScheduleStatus();
-		this.playlist_contents = this.filterExpiredContent(this.playlist_contents);
+		this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
 		this.getAssetCount();
 		this.currentContentFilter = this.contentFilterOptions[1].key;
 		this.playlist_saving = false;
@@ -315,7 +315,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this.playlist_contents = originalContents.filter((content) => content.scheduleStatus === key);
+		this.playlist_contents = [...originalContents.filter((content) => content.scheduleStatus === key)];
 	}
 
 	onSetSchedule(): void {
@@ -501,13 +501,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		};
 
 		const onStart = () => {
-			if (this.playlist_contents.length < this.playlist_content_backup.length) {
-				this.playlist_contents = this.playlist_content_backup;
-			}
 
-			if (localStorage.getItem('playlist_order')) {
-				this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
-			}
+			if (this.playlist_contents.length < this.playlist_content_backup.length) this.playlist_contents = [...this.playlist_content_backup];
+
+			if (localStorage.getItem('playlist_order')) this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
+
 		};
 
 		const onEnd = () => {
@@ -746,7 +744,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	private filterExpiredContent(data: any[]): any[] {
-		return data.filter((content) => content.scheduleStatus !== 'inactive');
+		const copy = [...data];
+		return copy.filter(content => (content.scheduleStatus !== 'inactive'));
 	}
 
 	private setScheduleStatus(): void {
@@ -797,6 +796,11 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			content.scheduleStatus = status;
 			return content;
 		});
+	}
+
+	private showOnlyActiveContents(data: any[]): any[] {
+		const copy = [...data];
+		return copy.filter(content => (content.scheduleStatus === 'active'));
 	}
 
 	private showContentScheduleDialog(): void {
