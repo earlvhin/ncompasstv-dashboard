@@ -58,10 +58,10 @@ export class ScreenService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_type}`, this.httpOptions);
 	}
 
-	get_screen_by_id(id: string, licenseId?: string): Observable<API_SINGLE_SCREEN> {
+	get_screen_by_id(id: string, licenseId?: string): Observable<{ message: string } | API_SINGLE_SCREEN> {
 		let url = `${environment.base_uri}${environment.getters.api_get_screen_by_id}${id}`;
 		if (licenseId) url += `&licenseId=${licenseId}`;
-		return this._http.get<API_SINGLE_SCREEN>(url, this.httpOptions);
+		return this._http.get<{ message: string } | API_SINGLE_SCREEN>(url, this.httpOptions);
 	}
 
 	get_screen_by_dealer_id(id) {

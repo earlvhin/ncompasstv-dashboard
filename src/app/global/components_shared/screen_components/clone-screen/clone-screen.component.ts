@@ -10,11 +10,12 @@ import {
 	API_HOST,
 	API_NEW_SCREEN,
 	API_SCREENTYPE,
+	API_SINGLE_SCREEN,
 	SCREEN_INFO,
 	SCREEN_ZONE_PLAYLIST,
 	UI_ROLE_DEFINITION,
 	UI_SINGLE_SCREEN,
-	UI_SCREEN_ZONE_PLAYLIST
+	UI_SCREEN_ZONE_PLAYLIST,
 } from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, ScreenService } from 'src/app/global/services';
@@ -119,7 +120,7 @@ export class CloneScreenComponent implements OnInit {
 			const cloneResponse = await this._screen.create_screen(screen).pipe(takeUntil(this._unsubscribe)).toPromise();
 			this.cloned_screen_id = cloneResponse.screenId;
 			const clonedScreenData = await this._screen.get_screen_by_id(this.cloned_screen_id).pipe(takeUntil(this._unsubscribe)).toPromise();
-			this._helper.singleScreenData = clonedScreenData;
+			this._helper.singleScreenData = clonedScreenData as API_SINGLE_SCREEN;
 			this.form_submitted = false;
 			this.clone_success = true;
 		} catch (e) {}

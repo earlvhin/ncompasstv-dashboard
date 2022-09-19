@@ -27,9 +27,10 @@ export class UI_CONTENT {
     is_fullscreen: number;
 	is_protected: number;
 	owner_name: string;
-	owner_type: string;
+	owner_type?: string;
     playlist_content_id?: string;
 	playlist_content_schedule?: PlaylistContentSchedule;
+	schedule_status?: string;
     seq?: number;
 	thumbnail: string
 	time_uploaded: string;

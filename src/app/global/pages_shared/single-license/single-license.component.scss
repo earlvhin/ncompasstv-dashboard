@@ -255,6 +255,41 @@
 				height: 250px;
 			}
 
+			.filters-section {
+
+				.current-filters {
+					.filter {
+						padding: 5px 10px 5px 10px;
+						font-size: 14px;
+						border-radius: 5px;
+						color: black;
+						border: 1px solid gray;
+				
+						&.clickable {
+							padding: 3px 7px 3px 7px;
+						}
+					}
+				
+					mat-icon {
+						font-size: 14px;
+					}
+				
+					.remove-btn {
+						text-align: center;
+				
+						mat-icon {
+							line-height: 25px;
+						}
+					}
+				}
+
+				.content-search {
+					margin-left: auto;
+					width: 400px;
+				}
+
+			}
+
 		}
 
 	}
@@ -331,6 +366,10 @@
 		background: #999;
 		cursor: not-allowed;
 	}
+}
+
+.selected-filter {
+	background-color: #8EC641 !important;
 }
 
 @media screen and (min-width: 1366px) {

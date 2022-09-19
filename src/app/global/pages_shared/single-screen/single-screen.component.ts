@@ -500,7 +500,7 @@ export class SingleScreenComponent implements OnInit {
 					.subscribe(
 						async (response) => {
 							await this._router.navigate([`/${this.currentRole}/screens/`, response.screenId]);
-							const screenData = await this._screen.get_screen_by_id(response.screenId).toPromise();
+							const screenData = await this._screen.get_screen_by_id(response.screenId).toPromise() as API_SINGLE_SCREEN;
 							this.screen_id = screenData.screen.screenId;
 							this.setPageData(screenData);
 							this.getScreenLicenses(1);
