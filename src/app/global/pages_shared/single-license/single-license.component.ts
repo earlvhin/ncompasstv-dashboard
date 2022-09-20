@@ -1654,6 +1654,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
 		this.timezone = data.timezone;
 		this.anydesk_id = data.license.anydeskId;
+		this.pi_status = data.license.piStatus === 1 ? true : false;
+		this.player_status = data.license.playerStatus === 1 ? true : false;
 
 		const updated = this.license_data.contentsUpdated;
 		const format = 'MMMM DD, YYYY, h:mm:ss A';
