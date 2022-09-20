@@ -1255,6 +1255,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		let filteredContents = [];
 		const classifications = ['filler', 'feed'];
+		const imageFileTypes = ['jpg', 'jpeg', 'png'];
+		const videoFileTypes = ['webm'];
 
 		this.content_filters.forEach(
 			currentFilter => {
@@ -1285,6 +1287,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 							case 'filler':
 								filteredContents = filteredContents.concat(currentContents.filter(content => content.classification === 'filler'));
+								break;
+
+							case 'image':
+								filteredContents = filteredContents.concat(currentContents.filter(content => content.classification !== 'filler' && imageFileTypes.includes(content.file_type)));
+								break;
+
+							case 'video':
+								filteredContents = filteredContents.concat(currentContents.filter(content => content.classification !== 'filler' && videoFileTypes.includes(content.file_type)));
+
 								break;
 
 							default:
@@ -2063,7 +2074,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	protected get _contentTypes() {
-		return [ 'filler', 'feed' ];
+		return [ 'image', 'video', 'filler', 'feed' ];
 	}
 
 	protected get currentRole() {
