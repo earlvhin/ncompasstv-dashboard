@@ -898,6 +898,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.zone_order = zone_order;
 		this.screen_zone = { playlistName: playlist_name, playlistId: playlist_id, zone: zone_name };
 		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
+		this.content_filters = [];
+		this.content_search_control.disable({ emitEvent: false });
+		this.content_search_control.setValue(null, { emitEvent: false });
+		this.content_search_control.enable({ emitEvent: false });
 		this.has_playlist = true;
 	}
 
