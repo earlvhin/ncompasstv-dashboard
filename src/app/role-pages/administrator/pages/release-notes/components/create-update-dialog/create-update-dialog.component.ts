@@ -3,7 +3,6 @@ import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms'
 import { MatDialogRef } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import * as ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 import { API_RELEASE_NOTE, UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 import { AuthService, ConfirmationDialogService, ReleaseNotesService } from 'src/app/global/services';
@@ -24,7 +23,6 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 	note: API_RELEASE_NOTE;
 	notesForm: any;
 	textEditorControl = new FormControl();
-	textPreview = '';
 	title = 'Create Release Notes';
     description = '';
 	protected _unsubscribe = new Subject<void>();
@@ -34,8 +32,8 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 		private _auth: AuthService,
 		private _dialog_reference: MatDialogRef<CreateUpdateDialogComponent>,
 		private _form_builder: FormBuilder,
-		private _release: ReleaseNotesService
-	) {}
+		private _release: ReleaseNotesService,
+	) { }
 	
 	ngOnInit() {
 		this.initializeForm();
@@ -69,11 +67,11 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 	}
 
 	private createOrUpdateNote(data: API_RELEASE_NOTE): void {
-		this._release
-			.createOrUpdateNote(data)
-			.pipe(takeUntil(this._unsubscribe))
+
+		this._release.createOrUpdateNote(data).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => {
+				response => {
+
 					const dialogData: UI_CONFIRMATION_MODAL = {
 						data: 'Success!',
 						message: 'Your note has been saved.'
@@ -82,11 +80,10 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 					this._alert.success(dialogData).subscribe(() => this._dialog_reference.close(response.releaseNotes));
 
 				},
-				(error) => {
-					throw new Error(error);
-				}
+				error => { throw new Error(error) }
 			)
-			.add(() => (this.isSaving = false));
+			.add(() => this.isSaving = false);
+
 	}
 
 	private initializeForm(): void {
@@ -105,17 +102,7 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 		);
 
 		this.notesForm = this._form_builder.group(config);
-
-		if (this.dialogMode === 'update') this.textPreview = this.notesForm.get('description').value;
-
 		this.isFormLoaded = true;
-    }
-
-	private subscribeToParagraphChanges(): void {
-		this.notesForm
-			.get('description')
-			.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(2000))
-			.subscribe((response: string) => (this.textPreview = response));
 	}
 
 	protected get _fieldControls() {
