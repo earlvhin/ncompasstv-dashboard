@@ -58,7 +58,7 @@ export class LicensesComponent implements OnInit {
 
 	//for export
 	hosts_to_export: API_HOST[] = [];
-	licenses_to_export: API_LICENSE_PROPS[] = [];
+	licenses_to_export: any[] = [];
 	pageSize: number;
 	workbook: any;
 	workbook_generation: boolean = false;
@@ -123,6 +123,8 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
 		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType', hidden: true, no_show: true },
 		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed', hidden: true, no_show: true },
+		{ name: 'Upload Speed', sortable: true, key: 'upload', hidden: true, no_show: true },
+		{ name: 'Download Speed', sortable: true, key: 'download', hidden: true, no_show: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
 		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
@@ -719,15 +721,23 @@ export class LicensesComponent implements OnInit {
 						this.filters.isactivated
 					)
 					.pipe(takeUntil(this._unsubscribe))
-					.subscribe((data) => {
+					.subscribe((data:any) => {
 						if (data.message) {
 							this.licenses_to_export = [];
 							return;
 						}
 
 						data.licenses.map((license) => {
-							if (license.appVersion) license.apps = JSON.parse(license.appVersion);
-							else license.apps = null;
+							if (license.appVersion) {
+                                license.apps = JSON.parse(license.appVersion);
+                            } else {
+                                license.apps = null;
+                            }
+                            if (license.internetInfo) {
+                                license.internetInfo = JSON.parse(license.internetInfo);
+                                license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + " mbps"
+                                license.download =  Math.round(license.internetInfo.downloadMbps * 100) / 100 + " mbps"
+                            }
 						});
 						this.licenses_to_export = data.licenses;
 
