@@ -1255,9 +1255,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		let filteredContents = [];
 		const classifications = ['filler', 'feed'];
+		const backupContents = [...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents];
 
 		this.content_filters.forEach(
-			currentFilter => {
+			(currentFilter, index) => {
+
+				let dataToBeFiltered = backupContents;
+
+				if (this.content_filters.length > 0 && index > 0) dataToBeFiltered = filteredContents;
+
 				switch (currentFilter.type) {
 
 					case 'owner':
@@ -1265,15 +1271,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						switch (currentFilter.name) {
 
 							case 'host':
-								filteredContents = filteredContents.concat(currentContents.filter(content => !this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)));
+								filteredContents = dataToBeFiltered.filter(content => !this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type));
 								break;
 
 							case 'advertiser':
-								filteredContents = filteredContents.concat(currentContents.filter(content => !this.isBlank(content.advertiser_id) && this.isBlank(content.host_id) && !classifications.includes(content.file_type)));
+								filteredContents = dataToBeFiltered.filter(content => !this.isBlank(content.advertiser_id) && this.isBlank(content.host_id) && !classifications.includes(content.file_type));
 								break;
 
 							default:
-								filteredContents = filteredContents.concat(currentContents.filter(content => this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type)));
+								filteredContents = dataToBeFiltered.filter(content => this.isBlank(content.host_id) && this.isBlank(content.advertiser_id) && !classifications.includes(content.file_type));
 								break;
 						}
 
@@ -1284,11 +1290,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						switch (currentFilter.name) {
 
 							case 'filler':
-								filteredContents = filteredContents.concat(currentContents.filter(content => content.classification === 'filler'));
+								filteredContents = dataToBeFiltered.filter(content => content.classification === 'filler');
 								break;
 
 							default:
-								filteredContents = filteredContents.concat(currentContents.filter(content => content.file_type === 'feed' && content.classification !== 'filler'));
+								filteredContents = dataToBeFiltered.filter(content => content.file_type === 'feed' && content.classification !== 'filler');
 
 						}
 
@@ -1296,8 +1302,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 					default: // schedule_status
 
-						const backupContents = [...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents];
-						filteredContents = filteredContents.concat(backupContents.filter(content => content.schedule_status === currentFilter.name));
+						filteredContents = dataToBeFiltered.filter(content => content.schedule_status === currentFilter.name);
 
 				}
 			}
