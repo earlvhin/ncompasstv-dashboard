@@ -898,6 +898,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.zone_order = zone_order;
 		this.screen_zone = { playlistName: playlist_name, playlistId: playlist_id, zone: zone_name };
 		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
+		this.content_filters = [];
+		this.content_search_control.disable({ emitEvent: false });
+		this.content_search_control.setValue(null, { emitEvent: false });
+		this.content_search_control.enable({ emitEvent: false });
 		this.has_playlist = true;
 	}
 
@@ -1256,6 +1260,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		let filteredContents = [];
 		const classifications = ['filler', 'feed'];
 		const backupContents = [...this.contents_backup.filter(zone => zone.zone_name === this.current_zone_name_selected)[0].contents];
+		const imageFileTypes = ['jpg', 'jpeg', 'png'];
+		const videoFileTypes = ['webm'];
 
 		this.content_filters.forEach(
 			(currentFilter, index) => {
@@ -1291,6 +1297,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 							case 'filler':
 								filteredContents = dataToBeFiltered.filter(content => content.classification === 'filler');
+								break;
+
+							case 'image':
+								filteredContents = dataToBeFiltered.filter(content => content.classification !== 'filler' && imageFileTypes.includes(content.file_type));
+								break;
+
+							case 'video':
+								filteredContents = dataToBeFiltered.filter(content => content.classification !== 'filler' && videoFileTypes.includes(content.file_type));
+
 								break;
 
 							default:
@@ -2070,7 +2085,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	protected get _contentTypes() {
-		return [ 'filler', 'feed' ];
+		return [ 'image', 'video', 'filler', 'feed' ];
 	}
 
 	protected get currentRole() {
