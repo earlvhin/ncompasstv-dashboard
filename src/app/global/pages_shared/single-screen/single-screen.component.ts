@@ -698,6 +698,7 @@ export class SingleScreenComponent implements OnInit {
 
 	// Final UI Data Model
 	private mapToScreenUI(data: API_SINGLE_SCREEN): UI_SINGLE_SCREEN {
+
 		const screen = new UI_SINGLE_SCREEN(
 			data.screen.screenId,
 			data.screen.screenName,
@@ -709,14 +710,16 @@ export class SingleScreenComponent implements OnInit {
 			data.template.templateId != null ? data.template.templateId : '',
 			data.template.name != null ? data.template.name : '',
 			`${data.createdBy.firstName} ${data.createdBy.lastName}`,
-			'',
 			this.mapToScreenZoneUI(data.screenZonePlaylistsContents),
 			this.mapToScreenLicenseUI(this.licenses_array)
 		);
 
 		if (data.screen.screenTypeId != null) screen.type = data.screen.screenTypeId;
+
 		if (data.host.notes && data.host.notes.trim().length > 0) screen.notes = data.host.notes;
+
 		return screen;
+		
 	}
 
 	// Screen Zone Map to UI

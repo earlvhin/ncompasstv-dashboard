@@ -1014,31 +1014,36 @@
 
 									<div class="row flex-column">
 										<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
+
 											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
+
 												<mat-form-field class="full-width">
+
 													<mat-label>{{ control.label }}</mat-label>
 
-													<input
-														matInput
-														appearance="fill"
-														placeholder="Enter number of seconds, ex: 20"
-														[formControlName]="control.form_control_name"
-														[type]="f.type"
-													/>
+													<input matInput appearance="fill" placeholder="Enter number of seconds, ex: 20" 
+														[formControlName]="control.form_control_name" 
+														[type]="control.type">
+
 												</mat-form-field>
+
 											</ng-container>
 
 											<ng-template #otherFieldTypes>
+
 												<ng-container *ngIf="control.type === 'time'">
 													<div class="d-flex align-items-center reboot-time">
 														<span>{{ control.label }}:</span>
+
 														<ngb-timepicker
 															[formControlName]="control.form_control_name"
 															[meridian]="true"
 															[size]="'small'">
 														</ngb-timepicker>
+
 													</div>
 												</ng-container>
+
 											</ng-template>
 										</div>
 									</div>

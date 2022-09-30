@@ -4,9 +4,8 @@ import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
 import { AuthService } from '../auth-service/auth.service';
-import { environment } from '../../../../environments/environment';
-import { PlaylistContentSchedule } from '../../models/playlist-content-schedule.model';
-import { API_CONTENT, CREDITS_TO_SUBMIT, PAGING, UI_CONTENT } from '../../models';
+import { environment } from 'src/environments/environment';
+import { API_CONTENT, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, CREDITS_TO_SUBMIT, PAGING, PlaylistContentSchedule, UI_CONTENT } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -165,10 +164,13 @@ export class ContentService {
 			.map((data) => data);
 	}
 
-	get_content_by_license_id(id) {
-		return this._http
-			.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`, this.httpOptions)
-			.map((data) => data.screenZonePlaylistsContents);
+	get_content_by_license_id(id: string) {
+
+		const url = `${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`;
+
+		return this._http.get<{ screenZonePlaylistsContents: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[] }>(url, this.httpOptions)
+			.map(response => response.screenZonePlaylistsContents);
+
 	}
 
 	generate_content_logs_report(data: { contentId: string; start: string; end: string }) {

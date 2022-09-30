@@ -1,3 +1,4 @@
+export * from './api_activity.model';
 export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
 export * from './api_category.model';

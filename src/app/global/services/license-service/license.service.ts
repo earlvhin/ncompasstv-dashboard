@@ -603,7 +603,8 @@ export class LicenseService {
 	 * @returns array of activities
 	 */
 	get_activities(id: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_activities_by_license_id}${id}`, this.httpOptions);
+		const url = `${environment.base_uri}${environment.getters.api_get_activities_by_license_id}${id}`;
+		return this._http.get<{ paging: PAGING }>(url, this.httpOptions);
 	}
 
 	/**
@@ -611,8 +612,9 @@ export class LicenseService {
 	 * @param activity
 	 * @returns: Observable of ANY
 	 */
-	save_activity(activity) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_save_activity}`, activity, this.httpOptions);
+	save_activity(data: { licenseId: string, activityCode: string, initiatedBy: string }) {
+		const url = `${environment.base_uri}${environment.create.api_save_activity}`;
+		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
 	/**
@@ -623,20 +625,24 @@ export class LicenseService {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_internet_info}`, data, this.httpOptions);
 	}
 
-	set_screenshot_status(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_screenshot_settings}`, data, this.httpOptions);
+	set_screenshot_status(data: { licenseId: string, screenshotSettings: number }) {
+		const url = `${environment.base_uri}${environment.update.api_update_screenshot_settings}`;
+		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
-	set_speedtest_status(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_speedtest_settings}`, data, this.httpOptions);
+	set_speedtest_status(data: { licenseId: string, speedtestSettings: number }) {
+		const url = `${environment.base_uri}${environment.update.api_update_speedtest_settings}`;
+		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
-	set_resource_status(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_resource_settings}`, data, this.httpOptions);
+	set_resource_status(data: { licenseId: string, resourceSettings: number }) {
+		const url = `${environment.base_uri}${environment.update.api_update_resource_settings}`;
+		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
-	set_tvdisplay_status(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`, data, this.httpOptions);
+	set_tvdisplay_status(data: { licenseId: string, tvdisplaySettings: number }) {
+		const url = `${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`;
+		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
 	create_installation_checklist_title(data: any) {
