@@ -86,6 +86,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 	pageRequested(page: number = 1): void {
 		this.current_filters.page = page;
+		this.current_filters.pageSize = 15;
 		this.searching = true;
 		this.users = [];
 
@@ -94,7 +95,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					if (!response.users) {
+                    console.log("RES", response)
+					if (!response.paging.entities) {
 						this.filtered_data = [];
 						if (this.current_filters.search === '') this.no_user = true;
 						return;
@@ -102,7 +104,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 					this.paging_data = response.paging;
 
-					const mappedData = this.mapToUIFormat(response.users);
+					const mappedData = this.mapToUIFormat(response.paging.entities);
 					this.users = mappedData;
 					this.filtered_data = mappedData;
 				},
@@ -165,6 +167,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 						basis_label: 'User(s)',
 						super_admin_count: response.totalSuperAdmin,
 						super_admin_label: 'Super Admin(s)',
+						dealer_admin_count: response.totalDealerAdmin,
+						dealer_admin_label: 'Dealer Admin(s)',
 						total_dealer: response.totalDealer,
 						total_dealer_label: 'Dealer(s)',
 						total_host: response.totalHost,

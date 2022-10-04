@@ -201,6 +201,7 @@ export const API_ENDPOINTS = {
 		api_new_advertiser: 'advertiser/create',
 		api_new_advertiser_profile: 'advertiser/createadvertiser',
 		api_new_dealer: 'dealer/create',
+		api_new_dealer_admin: 'dealeradmin/upsert',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
 		api_new_news_feed_demo: 'feed/preview/demo/news',
