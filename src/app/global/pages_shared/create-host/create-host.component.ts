@@ -497,7 +497,6 @@ export class CreateHostComponent implements OnInit {
 
 					this.gen_categories_data = genCategories.map((category) => {
 						category.generalCategory = this._titlecase.transform(category.generalCategory);
-                        console.log("CAT",category)
 						return category;
 					});
 

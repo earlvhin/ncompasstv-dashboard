@@ -233,15 +233,7 @@ export class CreatePlaylistComponent implements OnInit {
 			this.no_dealer_not_floating = false;
 		}
 
-		//to filter if floating and if dealer only
-		// if(this.floating_content) {
-		// 	var temp_dealer_if_floating = "";
-		// } else {
-		// var temp_dealer_if_floating = this.dealerid;
-		// }
-
-		this._content
-			.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
+		this._content.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
 			.subscribe((data) => {
 				this.searching = false;
 				this.media_library_api = data;

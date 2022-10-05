@@ -33,25 +33,12 @@ export class ContentService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`, this.httpOptions);
 	}
 
-	get_contents_temp(page, type, sort, dealerId, key, floating) {
-		return this._http.get<any>(
-			`
-		${environment.base_uri}${environment.getters.api_get_assets}` +
-				`?pageSize=30` +
-				`&page=` +
-				`${page}` +
-				`&fileCategory=` +
-				`${type}` +
-				`&sort=` +
-				`${sort}` +
-				`&dealerId=` +
-				`${dealerId}` +
-				`&search=` +
-				`${key}` +
-				`&floating=` +
-				`${floating}`,
-			this.httpOptions
-		);
+	get_contents_temp(page: string, type: string, sort: string, dealerId: string, key: string, floating: boolean) {
+
+		const baseUrl = `${environment.base_uri}${environment.getters.api_get_assets}`;
+		const url =  `${baseUrl}?pageSize=30&page=${page}&fileCategory=${type}&sort=${sort}&dealerId=${dealerId}&search=${key}&floating=${floating}`;
+		return this._http.get<any>(url, this.httpOptions);
+		
 	}
 
 	get_floating_contents(): Observable<{ iContents: API_CONTENT[], paging: PAGING }> {
