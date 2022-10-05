@@ -5,6 +5,7 @@ export * from './api_category.model';
 export * from './api_change-template.model';
 export * from './api_change-template-response.model';
 export * from './api_content.model';
+export * from './api_create-advertiser.model';
 export * from './api_create-host.model';
 export * from './api_create-screen-response.model';
 export * from './api_credit-card-details.model';

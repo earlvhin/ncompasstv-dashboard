@@ -14,7 +14,8 @@
             </a>
         </div>
     </div>
-    <form [formGroup]="new_advertiser_form"  #formDirective="ngForm"  (ngSubmit)="createNewAdvertiser(formDirective)" class="text-left" *ngIf="dealers.length > 0; else loader">
+
+    <form [formGroup]="new_advertiser_form" #formDirective="ngForm" (ngSubmit)="createNewAdvertiser(formDirective)" class="text-left" *ngIf="dealers.length > 0; else loader">
         <div class="row mb-4">
             <ng-container *ngFor="let f of form_fields_view">
                 <div class="{{ f.width }}">
@@ -53,6 +54,8 @@
                     <ng-template #autocomplete>
 						<app-autocomplete-field *ngIf="!f.advertiser_field; else advertiser_dropdown"
 							(data_value)="dealerSelected($event)"
+							(call_next_page)="searchBoxTrigger($event)"
+							(searched)="searchData($event)"
 							[key_of_value]="'dealerId'"
 							[placeholder]="f.placeholder"
 							[label]="f.label"
@@ -60,8 +63,6 @@
 							[search_keyword]="'businessName'"
 							[primary_keyword]="'businessName'"
 							[paging]="paging"
-							(call_next_page)="searchBoxTrigger($event)"
-							(searched)="searchData($event)"
 							[loading_data]="loading_data"
 							[loading_search]="loading_search"
 							[initial_value]="dealer_name"
@@ -95,6 +96,7 @@
             Create Advertiser
         </button>
     </form>
+
     <div class="submit-on-load d-flex align-items-center justify-content-center w-100" *ngIf="is_submitted">
         <app-spinner></app-spinner>
     </div>
@@ -103,10 +105,4 @@
             <app-spinner></app-spinner>
         </div>
     </ng-template>
-
-    <ng-template #loading>
-		<div class="py-5">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-template>
 </div>

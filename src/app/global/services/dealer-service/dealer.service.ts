@@ -67,11 +67,19 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15) {
+	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15): Observable<{ paging?: PAGING, dealers: API_DEALER[], message?: string }> {
+
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const paramsToSet: { page: number, search: string, pageSize: number, sortColumn?: string, sortOrder?: string } = { page, search, pageSize };
+
+		if (sortColumn) paramsToSet.sortColumn = sortColumn;
+
+		if (sortOrder) paramsToSet.sortOrder = sortOrder;
+
+		const params = this.setUrlParams(paramsToSet, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
+
 	}
 
 	get_dealers_with_license(page: number, key: string) {
