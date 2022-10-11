@@ -89,22 +89,22 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this.searching = true;
 		this.users = [];
 
-		this._user
-			.get_users_by_filters(this.current_filters)
-			.pipe(takeUntil(this._unsubscribe))
+		this._user.get_users_by_filters(this.current_filters).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => {
-					if (!response.users) {
+				response => {
+
+					if ('message' in response) {
 						this.filtered_data = [];
 						if (this.current_filters.search === '') this.no_user = true;
 						return;
 					}
 
 					this.paging_data = response.paging;
-
-					const mappedData = this.mapToUIFormat(response.users);
+					const users = [...response.paging.entities] as USER[];
+					const mappedData = this.mapToUIFormat(users);
 					this.users = mappedData;
 					this.filtered_data = mappedData;
+
 				},
 				(error) => {
 					throw new Error(error);
