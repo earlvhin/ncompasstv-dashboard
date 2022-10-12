@@ -68,15 +68,15 @@
                             </span>
                         </div>
                         <div class="p-0" *ngIf="fourth_value_label">
-                            <span class="fas fa-user mr-2 xsm-text info-text"></span>
-                            <span class="sm-text info-text">
+                            <span class="fas fa-user mr-2 xsm-text text-light-gray"></span>
+                            <span class="sm-text text-gray">
                                 <span class="text-gray font-weight-medium">{{ fourth_value }}</span> {{ fourth_value_label }}
                             </span>
                         </div>
                         <span class="text-danger fas fa-circle mr-2 xsm-text" *ngIf="!has_breakdown; else breakdown_icon_disable">
                         </span>
                         <ng-template #breakdown_icon_disable>
-                            <span class="fas fa-user mr-2 xsm-text text-gray"></span>
+                            <span class="fas fa-user-alt-slash mr-2 xsm-text text-gray"></span>
                         </ng-template>
                         <span class="sm-text text-dark">
                             <span class="text-gray font-weight-medium">{{ bad_value }}</span> {{ bad_value_label }}
@@ -104,7 +104,7 @@
                         <span class="text-gray font-weight-medium">{{ breakdown2_value }}</span> {{ breakdown2_label }}
                     </span>
                     <br>
-                    <span class="text-light-gray fas fa-circle mr-2 xsm-text"></span>
+                    <span class="text-orange fas fa-circle mr-2 xsm-text"></span>
                     <span class="sm-text text-dark">
                         <span class="text-gray font-weight-medium">{{ breakdown3_value }}</span> {{ breakdown3_label }}
                     </span>

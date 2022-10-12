@@ -173,7 +173,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: null, sortable: false, no_export: true, hidden: true },
-		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
+		{ name: 'Status', sortable: false, key: 'new_status', hidden: true, no_show: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
 		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
 		{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true},
@@ -776,7 +776,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					status: true
 				},
-				// { value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
 				{
 					value: l.hostId ? l.hostName : '--',
 					link: l.hostId ? '/administrator/hosts/' + l.hostId : null,
@@ -795,13 +794,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
-				// { value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
-				// {
-				// 	value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
-				// 	link: null,
-				// 	editable: false,
-				// 	hidden: false
-				// },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
 				{
@@ -812,10 +804,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					copy: true,
 					label: 'Anydesk Password'
 				},
-				// { value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
-				// { value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
 				{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}`, editable: false },
-				// { value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
 				{
 					value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
 					link: null,
@@ -824,15 +813,45 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					id: l.licenseId
 				},
-				// { value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 				{ value: l.isActivated, link: null, editable: false, hidden: true },
 				{ value: l.hostId ? true : false, link: null, editable: false, hidden: true },
-				{ value: l.piStatus, link: null, editable: false, hidden: true },
-				// { value: l.playerStatus, link: null, editable: false, hidden: true },
+				{ value: this.checkStatus(l), link: null, editable: false, hidden: true, no_show: true, label: this.checkStatusForExport(l), new_status: true },
 			);
 			return table;
 		});
 	}
+
+    checkStatus(license) {
+        let currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        if(license.isActivated === 1 && license.hostId && license.piStatus === 1) {
+            return 'text-primary'
+        } else if(license.isActivated === 1 && license.hostId && license.piStatus === 0) {
+            return 'text-danger'
+        } else if(license.piStatus === null && new Date(license.installDate) > currentDate && license.hostId) {
+            return 'text-orange'
+        } else if(license.isActivated === 0 && license.hostId) {
+            return 'text-light-gray'
+        } else {
+            return 'text-gray'
+        }
+    }
+
+    checkStatusForExport(license) {
+        let currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        if(license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+            return 'Online'
+        } else if(license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+            return 'Offline'
+        } else if(license.piStatus === null && new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+            return 'Pending'
+        } else if(license.isActivated === 0 && license.hostName) {
+            return 'Inactive'
+        } else {
+            return 'Disabled'
+        }
+    }
 
 	splitKey(key) {
 		this.splitted_text = key.split('-');
@@ -842,11 +861,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	getLabel(data) {
 		this.now = moment().format('d');
 		this.now = this.now;
-		var storehours = JSON.parse(data.storeHours);
+		let storehours = JSON.parse(data.storeHours);
 		storehours = storehours.sort((a, b) => {
 			return a.id - b.id;
 		});
-		var modified_label = {
+		let modified_label = {
 			date: moment().format('LL'),
 			address: data.hostAddress,
 			schedule:
@@ -897,7 +916,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	sortList(order, page?): void {
-		var filter = {
+		let filter = {
 			column: 'PiStatus',
 			order: order
 		};
@@ -1176,6 +1195,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._license.get_license_to_export(this.dealer_id).subscribe((data) => {
 				data.licenses.map((i) => {
+                    i.new_status = this.checkStatusForExport(i);
 					if (i.appVersion) {
 						i.apps = JSON.parse(i.appVersion);
 					} else {
@@ -1226,6 +1246,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							});
 							this.licenses_to_export = data.licenseTemplateZoneExports;
 							this.licenses_to_export.forEach((item, i) => {
+                                item.new_status = this.checkStatusForExport(item);
 								this.modifyItem(item, tab);
 								this.worksheet.addRow(item).font = {
 									bold: false
@@ -1285,7 +1306,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.internetType = this.getInternetType(item.internetType);
 				item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 				item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
-				var parse_version = JSON.parse(item.appVersion);
+				let parse_version = JSON.parse(item.appVersion);
 				item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
 				item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
 				item.tagsToString = item.tags.join(',');
@@ -1301,7 +1322,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		if (data.templateName == 'Fullscreen') {
 			return 'Main: ' + this.msToTime(data.templateMain);
 		} else {
-			var data_to_return: any = '';
+			let data_to_return: any = '';
 			if (data.templateBackground != 'NO DATA') {
 				data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
 			}
@@ -1502,7 +1523,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
 				if (value == 0) {
-					var filter = {
+					let filter = {
 						column: 'TimeIn',
 						order: 'desc'
 					};

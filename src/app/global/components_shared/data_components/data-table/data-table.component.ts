@@ -28,6 +28,7 @@ import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.com
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
+import { dateFormat } from 'highcharts';
 
 @Component({
 	selector: 'app-data-table',
