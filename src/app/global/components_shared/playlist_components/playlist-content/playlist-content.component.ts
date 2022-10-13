@@ -8,11 +8,13 @@ import { API_CONTENT } from 'src/app/global/models';
 import { HelperService } from 'src/app/global/services';
 import { environment } from 'src/environments/environment';
 import { takeUntil } from 'rxjs/operators';
+import { IsimagePipe } from 'src/app/global/pipes';
 
 @Component({
 	selector: 'app-playlist-content',
 	templateUrl: './playlist-content.component.html',
-	styleUrls: ['./playlist-content.component.scss']
+	styleUrls: ['./playlist-content.component.scss'],
+	providers: [IsimagePipe]
 })
 export class PlaylistContentComponent implements OnInit, OnDestroy {
 	@Input() array_index: number;
@@ -43,7 +45,7 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject();
 
-	constructor(private _dialog: MatDialog, private _helper: HelperService) {}
+	constructor(private _dialog: MatDialog, private _helper: HelperService, private _isImage: IsimagePipe) {}
 
 	ngOnInit() {
 		if (this.content.fileType === 'webm') {
@@ -52,6 +54,10 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
 		if (this.content.fileType === 'mp4' && this.content.handlerId) {
 			this.getMp4Thumbnail(this.content.handlerId);
+		}
+
+		if (this._isImage.transform(this.content.fileType)) {
+			this.content.thumbnail = `${this.content.url}${this.content.fileName}`;
 		}
 
 		if (this.playlist_host_license) {
@@ -82,10 +88,7 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 
 	getMp4Thumbnail(handleId) {
 		try {
-			fetch(`https://cdn.filestackcontent.com/video_convert=preset:thumbnail,thumbnail_offset:5/${handleId}`).then(async (res) => {
-				const { data } = await res.json();
-				this.content.thumbnail = data.url;
-			});
+			this.content.thumbnail = `${this.content.url}${this.content.fileName.substr(0, this.content.fileName.lastIndexOf('.') + 1)}jpg`;
 		} catch (err) {
 			throw new Error(err);
 		}

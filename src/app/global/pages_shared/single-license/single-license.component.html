@@ -634,7 +634,7 @@
 					</div>
 				</mat-tab>
 
-				<!-- Content Tab --> 
+				<!-- Content Tab -->
 				<mat-tab label="Content">
 					<div class="content-tab-container" *ngIf="screen; else no_screen">
 						<div class="container-fluid">
@@ -720,21 +720,29 @@
 							</div>
 						</div>
 
-						<br>
+						<br />
 
 						<mat-card class="filters-section mb-4">
 							<div class="d-flex align-items-center no-gutters full-width">
-
 								<!-- PLAYLIST CONTENT SCHEDULE STATUS FILTERS -->
 								<div class="playlist-content-schedule-status-filters mr-2">
-									<button mat-button mat-raised-button [matMenuTriggerFor]="playlistContentScheduleStatusFilters" mat-raised-button class="theme-btn">
+									<button
+										mat-button
+										mat-raised-button
+										[matMenuTriggerFor]="playlistContentScheduleStatusFilters"
+										mat-raised-button
+										class="theme-btn"
+									>
 										<span class="button-label">Content Schedule Status</span>
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
 									<mat-menu #playlistContentScheduleStatusFilters="matMenu">
-										<button *ngFor="let status of content_schedule_statuses" mat-menu-item 
-											(click)="onFilterContent('schedule_status', status.toLowerCase())" 
-											[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''">
+										<button
+											*ngFor="let status of content_schedule_statuses"
+											mat-menu-item
+											(click)="onFilterContent('schedule_status', status.toLowerCase())"
+											[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''"
+										>
 											{{ status | titlecase }}
 										</button>
 									</mat-menu>
@@ -747,8 +755,11 @@
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
 									<mat-menu #ownerTypeFilters="matMenu">
-										<button *ngFor="let type of content_owner_types" mat-menu-item
-											(click)="onFilterContent('owner', type.toLowerCase())">
+										<button
+											*ngFor="let type of content_owner_types"
+											mat-menu-item
+											(click)="onFilterContent('owner', type.toLowerCase())"
+										>
 											{{ type | titlecase }}
 										</button>
 									</mat-menu>
@@ -761,8 +772,11 @@
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
 									<mat-menu #contentTypeFilters="matMenu">
-										<button *ngFor="let type of content_types" mat-menu-item
-											(click)="onFilterContent('content_type', type.toLowerCase())">
+										<button
+											*ngFor="let type of content_types"
+											mat-menu-item
+											(click)="onFilterContent('content_type', type.toLowerCase())"
+										>
 											{{ type | titlecase }}
 										</button>
 									</mat-menu>
@@ -782,18 +796,25 @@
 
 								<!-- RESET FILTERS -->
 								<div class="reset-filters mr-2">
-									<button mat-button mat-raised-button mat-raised-button class="theme-btn btn-danger" (click)="onResetFilters()" [disabled]="content_filters.length === 0">
+									<button
+										mat-button
+										mat-raised-button
+										mat-raised-button
+										class="theme-btn btn-danger"
+										(click)="onResetFilters()"
+										[disabled]="content_filters.length === 0"
+									>
 										<span class="button-label">Reset Filters</span>
 										<span class="fas fa-times ml-2"></span>
 									</button>
 								</div>
-	
+
 								<!-- CONTENT SEARCH FIELD -->
 								<div class="content-search mr-2">
 									<div class="flex-even form-field">
 										<mat-form-field class="full-width" appearance="fill">
 											<mat-label>Search a content</mat-label>
-											<input matInput type="text" placeholder="Search a File" [formControl]="content_search_control">
+											<input matInput type="text" placeholder="Search a File" [formControl]="content_search_control" />
 										</mat-form-field>
 										<span class="fas fa-search"></span>
 									</div>
@@ -1008,10 +1029,11 @@
 							<mat-card class="p-4">
 								<h4 class="mb-4">Additional Settings</h4>
 
-								<form *ngIf="license_data && additional_license_settings_form"
+								<form
+									*ngIf="license_data && additional_license_settings_form"
 									[formGroup]="additional_license_settings_form"
-									(ngSubmit)="saveAdditionalLicenseSettings()">
-
+									(ngSubmit)="saveAdditionalLicenseSettings()"
+								>
 									<div class="row flex-column">
 										<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
 											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
@@ -1035,7 +1057,8 @@
 														<ngb-timepicker
 															[formControlName]="control.form_control_name"
 															[meridian]="true"
-															[size]="'small'">
+															[size]="'small'"
+														>
 														</ngb-timepicker>
 													</div>
 												</ng-container>
@@ -1044,7 +1067,14 @@
 									</div>
 
 									<div class="d-flex">
-										<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="saving_license_settings || !has_unsaved_additional_settings">Save</button>
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn mr-2"
+											[disabled]="saving_license_settings || !has_unsaved_additional_settings"
+										>
+											Save
+										</button>
 										<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
 									</div>
 								</form>
@@ -1060,7 +1090,7 @@
 					</ng-template>
 				</mat-tab>
 
-				<!-- Resource Tab -->
+				<!-- Installation Tab -->
 				<mat-tab label="Installation">
 					<ng-template matTabContent>
 						<app-installation-tab [license_id]="license_id"> </app-installation-tab>
