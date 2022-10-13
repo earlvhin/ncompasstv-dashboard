@@ -20,7 +20,9 @@ export class InstallationTabComponent implements OnInit {
     edit_tasks: boolean = false;
     form: FormGroup;
     is_dealer: boolean = false;
+    id_to_delete: any = [];
     license_checklist: any = [];
+    list_to_check: any = [];
     loaded: boolean = false;
     loaded_list: boolean = false;
     task_field_open: boolean = false;
@@ -28,6 +30,7 @@ export class InstallationTabComponent implements OnInit {
     task_items_container: any = [];
     checklist_items: any = [];
     titles: any = [];
+    tasks_to_edit: any = [];
     section_title: any;
     current_checklist_title: string = 'fcde9269-2f3c-4dd2-9594-7a15ac839b09';
     
@@ -82,13 +85,19 @@ export class InstallationTabComponent implements OnInit {
         )
     }
 
-    getCount() {
+    getCount(temporary?) {
         this.checklist_items.map(
             list => {
                 if(list.installationChecklistItems) {
-                    list.doneCount = this.license_checklist.length > 0 ? this.filterByValue(this.license_checklist,list.installationChecklist.installationChecklistId) : 0;
-                    list.totalList = list.installationChecklistItems.length;
-                    list.percentage = ((list.doneCount / list.totalList) * 100).toFixed(0);
+                    if(temporary) {
+                        list.doneCount = this.filterByCheck(list.installationChecklistItems,list.installationChecklist.installationChecklistId);
+                        list.totalList = list.installationChecklistItems.length;
+                        list.percentage = ((list.doneCount / list.totalList) * 100).toFixed(0);
+                    } else {
+                        list.doneCount = this.license_checklist.length > 0 ? this.filterByValue(this.license_checklist,list.installationChecklist.installationChecklistId) : 0;
+                        list.totalList = list.installationChecklistItems.length;
+                        list.percentage = ((list.doneCount / list.totalList) * 100).toFixed(0);
+                    }
                 } else {
                     list.doneCount = 0;
                     list.totalList = 0;
@@ -104,6 +113,16 @@ export class InstallationTabComponent implements OnInit {
         return array.filter(
             function(item) {
                 return item.installationChecklistId === string;
+            }
+        ).length
+    }
+    
+    filterByCheck(array, string) {
+        return array.filter(
+            function(item) {
+                if(item.installationChecklistId === string) {
+                    return item.isDone === 1;
+                }
             }
         ).length
     }
@@ -157,7 +176,7 @@ export class InstallationTabComponent implements OnInit {
 
     saveTitle() {
         this.section_title = this.form.controls.categoryName.value;
-        var modified_title = {
+        let modified_title = {
             title: this.section_title,
             desc: '',
             seq: this.titles.length > 0 ? (this.titles[this.titles.length - 1].seq + 1) : 1
@@ -172,7 +191,7 @@ export class InstallationTabComponent implements OnInit {
     }
 
     updateTitle(data) {
-        var status = {
+        let status = {
             editable: true,
             hidden: false,
             id: data.installationChecklistId,
@@ -186,7 +205,7 @@ export class InstallationTabComponent implements OnInit {
 		const close = dialog.afterClosed().subscribe(
             response => {
                 if(response){
-                    var modified_title = {
+                    let modified_title = {
                         title: response,
                         desc: '',
                         seq: data.seq,
@@ -204,7 +223,7 @@ export class InstallationTabComponent implements OnInit {
     }
 
     updateItem(data) {
-        var status = {
+        let status = {
             editable: true,
             hidden: false,
             id: data.installationChecklistItemId,
@@ -218,22 +237,69 @@ export class InstallationTabComponent implements OnInit {
 		const close = dialog.afterClosed().subscribe(
             response => {
                 if(response){
-                    var modified_title = [{
+                    let modified_title = {
                         title: response,
                         desc: '',
                         seq: data.seq,
                         installationChecklistItemId: data.installationChecklistItemId,
                         installationChecklistId: data.installationChecklistId
-                    }]
-                    this._license.update_installation_checklist_item(modified_title).subscribe(
-                        data => {
-                            this.confirmationModal('success', 'Checklist Item has been updated successfully', 'Click OK to continue')
-                            this.ngOnInit();
-                        }
-                    )
+                    }
+                    this.tasks_to_edit.push(modified_title)
+                    this.modifiedDataDisplayTemporary(modified_title, 'editing');
                 }
             }
         )
+    }
+
+    modifiedDataDisplayTemporary(modified_item, mode) {
+        let obj = this.checklist_items.find(o => o.installationChecklist === 'c6cc9507-5273-4a51-bec2-0d8fab768ae9');
+        this.checklist_items = this.checklist_items.map(
+            list => {
+                switch(mode) {
+                    case 'deleting':
+                        if(list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
+                            list.installationChecklistItems.splice(list.installationChecklistItems.findIndex(item => item.installationChecklistItemId === modified_item.installationChecklistItemId), 1) 
+                        }
+                        break;
+                    case 'editing':
+                        if(list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
+                            list.installationChecklistItems.map(
+                                innerList => {
+                                    if(innerList.installationChecklistItemId === modified_item.installationChecklistItemId) {
+                                        innerList.titleToChange = modified_item.title;
+                                    }
+                                }
+                            )
+                        }
+                        break;
+                    case 'checking':
+                        if(list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
+                            list.installationChecklistItems.map(
+                                innerList => {
+                                    if(innerList.installationChecklistItemId === modified_item.installationChecklistItemId) {
+                                        innerList.isDone = 1;
+                                    }
+                                }
+                            )
+                        }
+                        break;
+                    case 'unchecking':
+                        if(list.installationChecklist.installationChecklistId === modified_item.installationChecklistId) {
+                            list.installationChecklistItems.map(
+                                innerList => {
+                                    if(innerList.installationChecklistItemId === modified_item.installationChecklistItemId) {
+                                        innerList.isDone = 0;
+                                    }
+                                }
+                            )
+                        }
+                        break;
+                    default:
+                }
+                return list
+            }
+        )
+        this.getCount(true); 
     }
 
     addTaskItems() {
@@ -252,7 +318,10 @@ export class InstallationTabComponent implements OnInit {
     }
 
     editMode() {
-        this.edit_tasks = !this.edit_tasks
+        if(this.edit_tasks) {
+            this.selectionModal('warning', 'Do you want to save the changes made on this form?','')
+        }
+        this.edit_tasks = true;
     }
 
     getFormValues() {
@@ -293,18 +362,15 @@ export class InstallationTabComponent implements OnInit {
         
     }
 
-    checkItem(value, id) {
-        var filter = [{
-            InstallationChecklistItemId: id,
+    checkItem(value, item) {
+        let filter = [{
+            InstallationChecklistItemId: item.installationChecklistItemId,
             LicenseId: this.license_id,
             isDone: value ? 1 : 0
         }]
+        this.modifiedDataDisplayTemporary(item, value ? 'checking' : 'unchecking')
         this._license.update_list_checking(filter).subscribe(
-            data => {
-                var message = value ? 'Task has been successfully checked.' : 'Task has been successfully unchecked.'
-                this.confirmationModal('success', message , 'Click OK to continue')
-                this.getChecklistList();
-            }
+            data => {}
         )
     }
 
@@ -312,10 +378,9 @@ export class InstallationTabComponent implements OnInit {
         this.warningModal('warning', 'Delete Checklist Title', 'Are you sure you want to delete this title? By proceeding it will delete all the corresponding tasks under this title.','','title_delete', id)
     }
     
-    deleteItem(id) {
-        var id_to_delete = []
-        id_to_delete.push(id)
-        this.warningModal('warning', 'Delete Task', 'Are you sure you want to delete this task? By proceeding it will be removed from all dealers.','','item_delete', id_to_delete)
+    deleteItem(items) {
+        this.id_to_delete.push(items.installationChecklistItemId)
+        this.modifiedDataDisplayTemporary(items, 'deleting')
     }
 
     warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
@@ -334,20 +399,13 @@ export class InstallationTabComponent implements OnInit {
                         }
                     )
 					break;
-                case 'item_delete': 
-                    this._license.delete_checklist_items(id).subscribe(
-                        data => {
-                            this.getChecklistList();
-                        }
-                    )
-					break;
                 default:
             }
         })
     }
 
     confirmationModal(status, message, data) {
-		var dialogRef = this._dialog.open(ConfirmationModalComponent, {
+		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width:'500px',
 			height: '350px',
 			data:  {
@@ -356,5 +414,48 @@ export class InstallationTabComponent implements OnInit {
 				data: data
 			}
 		})
+	}
+    
+    selectionModal(status, message, data) {
+		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width:'500px',
+			height: '350px',
+			data:  {
+				status: status,
+				message: message,
+				data: data,
+                is_selection: true,
+                is_installation: true
+			},
+            
+		})
+
+        dialogRef.afterClosed().subscribe(
+			response => {
+                if(response === 'no') {
+                    this.edit_tasks = false;
+                    this.ngOnInit();
+                } else {
+                    if(this.tasks_to_edit.length > 0) {
+                        this._license.update_installation_checklist_item(this.tasks_to_edit).subscribe(
+                            data => {
+                                this.confirmationModal('success', 'Checklist Item(s) has been updated', 'Click OK to continue')
+                                this.getChecklistList();
+                            }
+                        )
+                    }
+
+                    if(this.id_to_delete.length > 0) {
+                        this._license.delete_checklist_items(this.id_to_delete).subscribe(
+                            data => {
+                                this.getChecklistList();
+                            }
+                        )
+                    }
+                    this.edit_tasks = false;
+                    this.ngOnInit();
+                }
+            }
+        )
 	}
 }

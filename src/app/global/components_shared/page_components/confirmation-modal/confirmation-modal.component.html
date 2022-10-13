@@ -31,7 +31,8 @@
             <p class="mb-4 sm-text font-weight-md text-warning">{{ data }}</p>
             <button mat-button mat-raised-button class="theme-btn mr-2 bg-danger" [mat-dialog-close]="false" *ngIf="!rename && !is_selection">Cancel</button>
             <button mat-button mat-raised-button class="theme-btn mr-2 bg-danger" [mat-dialog-close]="'no'" *ngIf="is_selection">No</button>
-            <button mat-button mat-raised-button class="theme-btn" (click)="displaySuccess()" *ngIf="!rename && action != 'playlist_delete' && is_selection">Yes</button>
+            <button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="'yes'" *ngIf="is_installation">Yes</button>
+            <button mat-button mat-raised-button class="theme-btn" (click)="displaySuccess()" *ngIf="!rename && action != 'playlist_delete' && is_selection && !is_installation">Yes</button>
             <button mat-button mat-raised-button class="theme-btn" (click)="displaySuccess()" *ngIf="!rename && action != 'playlist_delete' && !is_selection">Continue</button>
             <button mat-button mat-raised-button class="theme-btn" (click)="deletePlaylist()" *ngIf="!rename && action == 'playlist_delete' && !is_selection">Continue</button>
             <button mat-button mat-raised-button class="theme-btn mr-2" (click)="renameAllowed()" *ngIf="rename && !is_selection">Rename</button>
