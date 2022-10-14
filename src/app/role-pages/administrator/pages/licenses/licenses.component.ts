@@ -112,7 +112,7 @@ export class LicensesComponent implements OnInit {
 	// UI Table Column Header
 	license_table_column = [
 		{ name: '#', sortable: false, no_export: true },
-		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
+		{ name: 'Status', sortable: false, key: 'new_status', hidden: true, no_show: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
 		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
 		{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true },
@@ -928,6 +928,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapLicensesForExport(item) {
+        item.new_status = this.checkStatusForExport(item);
 		item.zone = this.getZoneHours(item);
 		item.piVersion = item.apps ? item.apps.rpi_model : '';
 		item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
@@ -1128,13 +1129,45 @@ export class LicensesComponent implements OnInit {
 					id: l.licenseId
 				},
 				// { value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
-				{ value: l.piStatus, link: null, editable: false, hidden: true },
+				{ value: this.checkStatus(l), link: null, editable: false, hidden: true, label: this.checkStatusForExport(l), new_status: true },
 				{ value: l.playerStatus, link: null, editable: false, hidden: true },
 				{ value: l.isActivated, link: null, editable: false, hidden: true }
 			);
 			return table;
 		});
 	}
+
+    checkStatus(license) {
+        let currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        if(license.isActivated === 1 && license.hostId && license.piStatus === 1) {
+            return 'text-primary'
+        } else if(license.isActivated === 1 && license.hostId && license.piStatus === 0) {
+            return 'text-danger'
+        } else if(license.piStatus === null && new Date(license.installDate) > currentDate && license.hostId) {
+            return 'text-orange'
+        } else if(license.isActivated === 0 && license.hostId) {
+            return 'text-light-gray'
+        } else {
+            return 'text-gray'
+        }
+    }
+
+    checkStatusForExport(license) {
+        let currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        if(license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+            return 'Online'
+        } else if(license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+            return 'Offline'
+        } else if(license.piStatus === null && new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+            return 'Pending'
+        } else if(license.isActivated === 0 && license.hostName) {
+            return 'Inactive'
+        } else {
+            return 'Disabled'
+        }
+    }
 
 	private mapHostsForExport(data) {
         data.storeHours = data.storeHours;
