@@ -1,7 +1,7 @@
 import { API_ENDPOINTS } from "./api-endpoints";
 
 export const environment = {
-	production: true,
+	production: false,
 	base_uri: 'https://devapi.n-compass.online/api/',
 	base_uri_old: 'https://devapi.n-compass.online/api/',
 	socket_server: 'https://devsocket.n-compass.online',

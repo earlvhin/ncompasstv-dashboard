@@ -837,7 +837,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		const dialog = this._dialog.open(PlaylistContentSchedulingDialogComponent, {
 			width: '950px',
-			height: '470px',
+			height: '530px',
 			panelClass: 'position-relative',
 			data: { mode, content_ids, content, schedules },
 			autoFocus: false

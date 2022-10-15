@@ -6,10 +6,9 @@ import { forkJoin, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
-import { ContentService } from 'src/app/global/services/content-service/content.service';
-import { PlaylistContentSchedule } from 'src/app/global/models/playlist-content-schedule.model';
-import { PlaylistContentScheduleDialog } from 'src/app/global/models/playlist-content-schedule-dialog.model';
-
+import { environment } from 'src/environments/environment';
+import { ContentService } from 'src/app/global/services';
+import { PlaylistContentSchedule, PlaylistContentScheduleDialog } from 'src/app/global/models';
 @Component({
 	selector: 'app-playlist-content-scheduling-dialog',
 	templateUrl: './playlist-content-scheduling-dialog.component.html',
@@ -22,41 +21,20 @@ import { PlaylistContentScheduleDialog } from 'src/app/global/models/playlist-co
 	]
 })
 export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnInit {
-	days_list = [
-		{ value: 0, name: 'Sun', checked: false },
-		{ value: 1, name: 'Mon', checked: false },
-		{ value: 2, name: 'Tue', checked: false },
-		{ value: 3, name: 'Wed', checked: false },
-		{ value: 4, name: 'Thu', checked: false },
-		{ value: 5, name: 'Fri', checked: false },
-		{ value: 6, name: 'Sat', checked: false }
-	];
-
-	form: FormGroup = this.form_builder.group({
-		type: ['', Validators.required],
-		from: ['', Validators.required],
-		to: ['', Validators.required],
-		days: ['', Validators.required],
-		playTimeStart: ['', Validators.required],
-		playTimeEnd: ['', Validators.required]
-	});
-
-	types = [
-		{ value: 1, name: 'Default Play' },
-		{ value: 2, name: 'Do Not Play' },
-		{ value: 3, name: 'Custom Play' }
-	];
-
+	days_list = this._dayList;
+	form: FormGroup = this._form;
+	has_alternate_week_set = false;
 	has_selected_all_days = false;
 	has_selected_all_day_long = true;
 	invalid_form = true;
 	is_ready = false;
 	selected_days: any[] = [];
 	title = 'Set Schedule';
-	today = new Date();
-	yesterday = new Date();
+	types = this._scheduleTypes;
 	warning_text = '';
+	yesterday = this._yesterday;
 
+	private _alternate_week: AbstractControl = this.form.get('alternateWeek');
 	private _days: AbstractControl = this.form.get('days');
 	private _type: AbstractControl = this.form.get('type');
 	private _start_date: AbstractControl = this.form.get('from');
@@ -73,7 +51,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	) {}
 
 	ngOnInit() {
-		this.yesterday.setDate(this.today.getDate() - 1);
 		this.setInitialFormValues();
 		this.setWarningText();
 		this.subscribeToFormChanges();
@@ -82,6 +59,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	get alternate_week(): number {
+		return this._alternate_week.value;
 	}
 
 	get days(): string {
@@ -118,6 +99,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 	get type(): { value: number; name: string } {
 		return this._type.value;
+	}
+
+	set alternate_week(data: number) {
+		this._alternate_week.setValue(data);
 	}
 
 	set days(data: string) {
@@ -158,7 +143,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	}
 
 	onSelectAllDays(): void {
-		// event.preventDefault();
 		this.has_selected_all_days = !this.has_selected_all_days;
 
 		if (!this.has_selected_all_days) {
@@ -216,7 +200,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	onSubmit(): void {
 		let forCreate: PlaylistContentSchedule[] = [];
 		let forUpdate: PlaylistContentSchedule[] = [];
-		const { days, from, to, type, playTimeStart, playTimeEnd } = this.form.value;
+		const { alternateWeek, days, from, to, type, playTimeStart, playTimeEnd } = this.form.value;
 		const startDate = moment(from).format('YYYY-MM-DD');
 		const endDate = moment(to).format('YYYY-MM-DD');
 
@@ -225,25 +209,24 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		if (this.dialog_data.mode === 'create') {
 			if (this.dialog_data.content_ids && this.dialog_data.content_ids.length > 0) {
 				forCreate = this.dialog_data.content_ids.map((id) => {
-					let schedule = {} as PlaylistContentSchedule;
+					let schedule: PlaylistContentSchedule = {
+						days: '0',
+						playTimeStart: null,
+						playTimeEnd: null,
+						from: null,
+						to: null,
+						type: this.getTypeValue(type.name),
+						playlistContentId: id
+					};
 
 					if (this.is_custom_play) {
 						schedule = {
+							alternateWeek,
 							days,
 							playTimeStart,
 							playTimeEnd,
 							from: moment(`${startDate} ${playTimeStart}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 							to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
-							type: this.getTypeValue(type.name),
-							playlistContentId: id
-						};
-					} else {
-						schedule = {
-							days: '0',
-							playTimeStart: null,
-							playTimeEnd: null,
-							from: null,
-							to: null,
 							type: this.getTypeValue(type.name),
 							playlistContentId: id
 						};
@@ -255,9 +238,21 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 			if (this.dialog_data.schedules && this.dialog_data.schedules.length > 0) {
 				forUpdate = this.dialog_data.schedules.map((schedule) => {
-					let playlistSchedule = {} as PlaylistContentSchedule;
+					let playlistSchedule: PlaylistContentSchedule = {
+						alternateWeek,
+						playlistContentsScheduleId: schedule.id,
+						days: '0',
+						playTimeStart: null,
+						playTimeEnd: null,
+						from: null,
+						to: null,
+						type: this.getTypeValue(type.name),
+						playlistContentId: schedule.content_id
+					};
+
 					if (this.is_custom_play) {
 						playlistSchedule = {
+							alternateWeek,
 							playlistContentsScheduleId: schedule.id,
 							days,
 							playTimeStart,
@@ -267,21 +262,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 							type: this.getTypeValue(type.name),
 							playlistContentId: schedule.content_id
 						};
-					} else {
-						playlistSchedule = {
-							playlistContentsScheduleId: schedule.id,
-							days: '0',
-							playTimeStart: null,
-							playTimeEnd: null,
-							from: null,
-							to: null,
-							type: this.getTypeValue(type.name),
-							playlistContentId: schedule.content_id
-						};
 					}
-					if (schedule.classification === 'live_stream') {
-						playlistSchedule.livestream = 1;
-					}
+
+					if (schedule.classification === 'live_stream') playlistSchedule.livestream = 1;
+
 					return playlistSchedule;
 				});
 			}
@@ -293,10 +277,23 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 		// for updating schedule
 
-		let result = {} as PlaylistContentSchedule;
 		const { playlistContentId, playlistContentsSchedule } = this.dialog_data.content;
+
+		let result: PlaylistContentSchedule = {
+			alternateWeek,
+			playlistContentId,
+			days: '0',
+			playTimeStart: null,
+			playTimeEnd: null,
+			from: null,
+			to: null,
+			type: this.getTypeValue(type.name),
+			playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId
+		};
+
 		if (this.is_custom_play) {
 			result = {
+				alternateWeek,
 				days,
 				playTimeStart,
 				playTimeEnd,
@@ -306,32 +303,28 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				to: moment(`${endDate} ${playTimeEnd}`, 'YYYY-MM-DD hh:mm A').format('YYYY-MM-DD HH:mm:ss'),
 				type: this.getTypeValue(type.name)
 			};
-		} else {
-			result = {
-				playlistContentId,
-				days: '0',
-				playTimeStart: null,
-				playTimeEnd: null,
-				from: null,
-				to: null,
-				type: this.getTypeValue(type.name),
-				playlistContentsScheduleId: playlistContentsSchedule.playlistContentsScheduleId
-			};
 		}
-		if (this.dialog_data.content.classification === 'live_stream') {
-			result.livestream = 1;
-		}
+
+		if (this.dialog_data.content.classification === 'live_stream') result.livestream = 1;
 
 		this.updateSchedule(result);
 		return;
+	}
+
+	onToggleAlternateWeekSetting(): void {
+		this.has_alternate_week_set = !this.has_alternate_week_set;
+		let alternateWeek = this.has_alternate_week_set ? 1 : 0;
+		this._alternate_week.setValue(alternateWeek, { emitEvent: false });
 	}
 
 	private getTypeValue(data: string): number {
 		switch (data) {
 			case 'Do Not Play':
 				return 2;
+
 			case 'Custom Play':
 				return 3;
+
 			default:
 				return 1;
 		}
@@ -392,12 +385,14 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		// for update
 
 		const { playlistContentsSchedule } = content;
-		const { days, from, to, playTimeStart, playTimeEnd, type } = playlistContentsSchedule;
+		const { alternateWeek, days, from, to, playTimeStart, playTimeEnd, type } = playlistContentsSchedule;
 		this.type = this.types.filter((t) => t.value == type)[0];
 
 		if (typeof content.playlistContentsSchedule !== 'undefined' && content.playlistContentsSchedule) {
 			this.start_date = from;
 			this.end_date = to;
+			this.alternate_week = alternateWeek;
+			this.has_alternate_week_set = this.alternate_week > 0 ? true : false;
 
 			if (schedules.length > 1) {
 				this.start_date = new Date();
@@ -415,6 +410,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 	private setWarningText(): void {
 		const schedules = this.dialog_data.schedules;
+
 		if (schedules && schedules.length > 0) this.warning_text = 'Note: Saving will override content with existing schedules*';
 	}
 
@@ -467,5 +463,43 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 					throw new Error(error);
 				}
 			);
+	}
+
+	private get _dayList() {
+		return [
+			{ value: 0, name: 'Sun', checked: false },
+			{ value: 1, name: 'Mon', checked: false },
+			{ value: 2, name: 'Tue', checked: false },
+			{ value: 3, name: 'Wed', checked: false },
+			{ value: 4, name: 'Thu', checked: false },
+			{ value: 5, name: 'Fri', checked: false },
+			{ value: 6, name: 'Sat', checked: false }
+		];
+	}
+
+	private get _form() {
+		return this.form_builder.group({
+			type: ['', Validators.required],
+			from: ['', Validators.required],
+			to: ['', Validators.required],
+			days: ['', Validators.required],
+			playTimeStart: ['', Validators.required],
+			playTimeEnd: ['', Validators.required],
+			alternateWeek: [0]
+		});
+	}
+
+	private get _scheduleTypes() {
+		return [
+			{ value: 1, name: 'Default Play' },
+			{ value: 2, name: 'Do Not Play' },
+			{ value: 3, name: 'Custom Play' }
+		];
+	}
+
+	private get _yesterday(): Date {
+		let currentDate = new Date();
+		currentDate.setDate(currentDate.getDate() - 1);
+		return environment.production ? currentDate : null;
 	}
 }
