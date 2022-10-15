@@ -18,6 +18,7 @@ export class EditTagComponent implements OnInit, OnDestroy {
 	form: FormGroup;
 	hasUpdated = false;
 	isLoading = true;
+	isTagExcluded = false;
 	selectedTagColor: string;
 	tag: TAG;
 	title = 'Edit Tag';
@@ -36,16 +37,20 @@ export class EditTagComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	onSelectTagColor(value: string) {
+	onExcludeTag(event: { checked: boolean }): void {
+		const isExcludedValue = event.checked ? 1 : 0;
+		this.form.get('exclude').setValue(isExcludedValue, { emitEvent: false });
+	}
+
+	onSelectTagColor(value: string): void {
 		this.form.get('tagColor').setValue(value);
 	}
 
-	onSubmit() {
+	onSubmit(): void {
 		const { tagId } = this.tag;
-		const { tagColor, name, description } = this.form.value;
+		const { tagColor, name, description, exclude } = this.form.value;
 
-		this._tag
-			.updateTag(tagId, name, tagColor, this.currentUserId, description)
+		this._tag.updateTag(tagId, name, tagColor, this.currentUserId, description, exclude)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -63,11 +68,14 @@ export class EditTagComponent implements OnInit, OnDestroy {
 	private initializeForm() {
 		const data = this.tag;
 
+		this.isTagExcluded = data.exclude === 1 ? true : false;
+
 		this.form = this._form_builder.group({
-			tagId: [data.tagId, Validators.required],
-			name: [data.name, Validators.required],
-			tagColor: [data.tagColor, Validators.required],
-			description: [data.description]
+			tagId: [ data.tagId, Validators.required ],
+			name: [ data.name, Validators.required ],
+			tagColor: [ data.tagColor, Validators.required ],
+			description: [ data.description ],
+			exclude: [ data.exclude ]
 		});
 
 		this.selectedTagColor = this.form.get('tagColor').value;

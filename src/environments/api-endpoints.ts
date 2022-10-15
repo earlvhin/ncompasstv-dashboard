@@ -182,6 +182,7 @@ export const API_ENDPOINTS = {
 		tag_types_get_all: 'tag/GetAllTypes',
 		tags_by_id: 'tag/gettagsbyid?tagid=',
 		tags_by_owner_id: 'tag/gettagsbyownerid?ownerid',
+		tags_by_role: 'tag/getbyrole',
 		tags_by_tag_name_and_type: 'tag/gettagsbytagnameandtypeid',
 		tags_count: 'tag/getalltagscount',
 		tags_get_all: 'tag/getall',
@@ -192,6 +193,7 @@ export const API_ENDPOINTS = {
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',
+		admin_tag: 'tag/admin/create',
 		amazon_s3_upload: 'host/AmazonS3Upload',
 		api_new_activity: 'activity/create',
 		api_create_global_settings: 'globalsettings/create',
@@ -222,6 +224,7 @@ export const API_ENDPOINTS = {
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
 		api_save_activity: 'activity/log',
 		content_schedule: 'playlistcontentsschedule/create',
+		dealer_tag: 'tag/dealer/create',
 		host_s3_files: 'host/saveS3Files',
 		feed_clone: 'feed/clone',
 		dealer_credit_card_details: 'billing/Add/CreditCard',
@@ -229,6 +232,7 @@ export const API_ENDPOINTS = {
 		dealer_territory_files: 'dealer/saveterritoryfiles',
 		sub_dealer_account: 'account/createsubaccount',
 		tag: 'tag/create',
+
 		tag_owners: 'tag/addOwners',
 		tag_type: 'tag/createtype'
 	},

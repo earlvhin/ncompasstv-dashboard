@@ -93,6 +93,7 @@
 						<!-- TAGS-LIST -->
 						<div class="selected-tags-container d-flex flex-row align-items-start flex-wrap" *ngIf="selectedTagsControl.value.length > 0">
 							<div *ngFor="let tag of selectedTagsControl.value; let i = index;" class="tag d-flex align-items-center"
+								[ngClass]="{ 'dealer' : tag.role === 2 }"
 								[style.backgroundColor]="tag.tagColor">
 								<div class="name">{{ tag.name }}</div>
 								<div class="remove-btn cursor-pointer" (click)="onRemoveTag(i)"><mat-icon>close</mat-icon></div>

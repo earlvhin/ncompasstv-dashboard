@@ -24,6 +24,7 @@ export interface API_FILTERS {
 	online?: any;
 	pageSize?: any;
 	piStatus?: string;
+	role?: number;
 	roleId?: string;
 	search?: string;
 	sortColumn?: string;

@@ -165,10 +165,13 @@
 			margin-right: 10px;
 			background-color: gray;
 			color: white;
-			border-radius: 5px;
 			padding: 1px 5px;
 			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
 			border: 1px solid gray;
+
+			&.dealer {
+				border-radius: 5px;
+			}
 		}
 	}
 

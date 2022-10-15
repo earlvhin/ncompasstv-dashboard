@@ -5,6 +5,7 @@ export type PAGING = {
 	page: number;
 	pageSize: number;
 	pages: number;
+	role?: number;
 	totalEntities: number;
 	pageStart: number;
 }

@@ -19,6 +19,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	@Input() currentUserRole: string;
 	@Input() isLoading = true;
 	@Input() paging: PAGING;
+	@Input() tab: string;
 	@Input() tableColumns: any[];
 	@Input() tableType: 'tags' | 'tag-owners' = 'tags';
 	@Input() tagOwners: TAG_OWNER[];
@@ -108,7 +109,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	}
 
 	clickedTagName(data: TAG): void {
-		this._tag.onClickTagName.emit({ tag: data });
+		this._tag.onClickTagName.emit({ tag: data, tab: this.tab });
 	}
 
 	onPageChange(page: number): void {

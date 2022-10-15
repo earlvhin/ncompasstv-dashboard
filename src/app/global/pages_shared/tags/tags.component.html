@@ -49,36 +49,81 @@
 		</div>
 	</div>
 
-	<div class="content-container d-flex">
-
-		<!-- TAGS MANAGEMENT -->
-		<div class="tags-management-container">
-			<ng-container *ngIf="isContentReady; else loading;">
-				<app-tags-section
-					[columns]="tagsTableSettings.columns"
-					[currentTagType]="currentTagType"
-					[currentUserId]="currentUserId"
-					[currentUserRole]="currentUserRole"
-					[tagTypes]="tagTypes"
-					(onClickTagName)="clickedTagName($event)">
-				</app-tags-section>
-			</ng-container>
-		</div>
-
-		<!-- TAG OWNERS -->
-		<div class="tag-owners-container">
-			<ng-container *ngIf="isContentReady; else loading;">
-				<app-tag-owners-section
-					[columns]="tagOwnersTableSettings.columns"
-					[currentUserId]="currentUserId"
-					[currentUserRole]="currentUserRole"
-					[tagTypes]="tagTypesMutated">
-				</app-tag-owners-section>
-			</ng-container>
-		</div>
-
-	</div>
+	<div class="tabs-section d-flex custom-mat-tab mt-3">
+		<mat-tab-group class="full-width" dynamicHeight>
+			<mat-tab label="Admin">
 	
+				<div class="content-container d-flex">
+				
+					<!-- TAGS MANAGEMENT -->
+					<div class="tags-management-container">
+						<ng-container *ngIf="isContentReady; else loading;">
+							<app-tags-section [columns]="tagsTableSettings.columns" 
+								[currentTagType]="currentTagType"
+								[currentUserId]="currentUserId" 
+								[currentUserRole]="currentUserRole" 
+								[tab]="'admin'"
+								[tagTypes]="tagTypes"
+								(onClickTagName)="clickedTagName($event)">
+							</app-tags-section>
+						</ng-container>
+					</div>
+				
+					<!-- TAG OWNERS -->
+					<div class="tag-owners-container">
+						<ng-container *ngIf="isContentReady; else loading;">
+							<app-tag-owners-section 
+								[columns]="tagOwnersTableSettings.columns" 
+								[currentUserId]="currentUserId"
+								[currentUserRole]="currentUserRole" 
+								[tab]="'admin'"
+								[tagTypes]="tagTypesMutated">
+							</app-tag-owners-section>
+						</ng-container>
+					</div>
+				
+				</div>
+	
+			</mat-tab>
+			
+			<!-- DEALER TAB -->
+			<mat-tab label="Dealer">
+
+				<div class="content-container d-flex">
+				
+					<div class="tags-management-container">
+						<ng-container *ngIf="isContentReady; else loading;">
+							<app-tags-section 
+								[columns]="tagsTableSettings.columns" 
+								[currentTagType]="currentTagType"
+								[currentUserId]="currentUserId" 
+								[currentUserRole]="currentUserRole"
+								[tab]="'dealer'"
+								[tagTypes]="tagTypes"
+								(onClickTagName)="clickedTagName($event)">
+							</app-tags-section>
+						</ng-container>
+					</div>
+				
+					<div class="tag-owners-container">
+						<ng-container *ngIf="isContentReady; else loading;">
+							<app-tag-owners-section 
+								[columns]="tagOwnersTableSettings.columns" 
+								[currentUserId]="currentUserId"
+								[currentUserRole]="currentUserRole" 
+								[tab]="'dealer'"
+								[tagTypes]="tagTypesMutated">
+							</app-tag-owners-section>
+						</ng-container>
+					</div>
+				
+				</div>
+
+			</mat-tab>
+
+		</mat-tab-group>
+	</div>
+
 </div>
 
 <ng-template #loading>

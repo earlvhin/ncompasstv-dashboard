@@ -12,7 +12,7 @@
 					<td class="p-3">{{ paging.pageStart + i }}</td>
 					<!-- TAG NAME -->
 					<td class="p-3 tags">
-						<a class="tag clickable" placement="right" [ngbTooltip]="tagToolTip" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data)">
+						<a class="tag clickable" placement="right" [ngClass]="{ 'dealer' : tab === 'dealer' }" [ngbTooltip]="tagToolTip" [style.backgroundColor]="data.tagColor" (click)="clickedTagName(data)">
 							{{ data.name }}
 						</a>
 
@@ -45,7 +45,7 @@
 					<!-- TAGS -->
 					<td class="p-3">
 						<div class="d-flex tags">
-							<div class="tag d-flex align-items-center" *ngFor="let tag of data.tags"
+							<div class="tag d-flex align-items-center" [ngClass]="{ 'dealer' : tab === 'dealer' }" *ngFor="let tag of data.tags"
 								[style.backgroundColor]="tag.tagColor">
 								<!-- TAG NAME -->
 								<div class="name">{{ tag.name }}</div>

@@ -4,7 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { PAGING, TAG, TAG_OWNER, TAG_TYPE, UI_CURRENT_USER } from 'src/app/global/models';
+import { PAGING, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
 import { TagService } from 'src/app/global/services';
 import { CreateTagComponent } from '../../dialogs';
 import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.component';
@@ -18,6 +18,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	@Input() columns: { name: string; class: string }[];
 	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
+	@Input() tab: string;
 	@Input() tagTypes: TAG_TYPE[];
 	@Output() onRefreshTagsCount = new EventEmitter<void>();
 
@@ -69,6 +70,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 		switch (name) {
 			case 'add_tag':
+				
 				dialogConfig = {
 					width: '500px',
 					height: '400px',
@@ -78,10 +80,12 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 				dialog = this._dialog.open(CreateTagComponent, dialogConfig);
 				(dialog as MatDialogRef<CreateTagComponent>).componentInstance.currentUserId = this.currentUserId;
+				(dialog as MatDialogRef<CreateTagComponent>).componentInstance.tab = this.tab;
 
 				break;
 
 			case 'assign_tags':
+
 				dialogConfig = {
 					width: '500px',
 					height: '700px',
@@ -89,6 +93,8 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 				};
 
 				dialog = this._dialog.open(AssignTagsComponent, dialogConfig);
+				(dialog as MatDialogRef<AssignTagsComponent>).componentInstance.tab = this.tab;
+
 				break;
 		}
 
@@ -105,14 +111,14 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 		this.selectedTag = null;
 	}
 
-	private searchOwnerTags(keyword: string = null, tagId: string = null, tagTypeId: number = null, page = 1): void {
+	private searchOwnerTags(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
 		if (!this.currentTagType) return;
 		this.isLoading = true;
 
 		if (this.searchFormControl.value) keyword = this.searchFormControl.value;
+		const role = this.tab === 'admin' ? 1 : 2;
 
-		this._tag
-			.searchOwnersByTagType(keyword, tagId, tagTypeId, page)
+		this._tag.searchOwnersByTagType({ keyword, tagId, typeId, page, role })
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map(({ tags, paging, message }) => {
@@ -152,10 +158,14 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToTagNameClick(): void {
-		this._tag.onClickTagName.pipe(takeUntil(this._unsubscribe)).subscribe(({ tag }) => {
+		this._tag.onClickTagName.pipe(takeUntil(this._unsubscribe)).subscribe(({ tag, tab }) => {
+
+			if (tab !== this.tab) return;
+
 			this.selectedTag = tag;
 			this.searchOwnerTags(null, tag.tagId);
 			this.hasTagSelected = true;
+
 		});
 	}
 
@@ -167,4 +177,5 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 			{ id: 4, name: 'advertiser' }
 		];
 	}
+	
 }

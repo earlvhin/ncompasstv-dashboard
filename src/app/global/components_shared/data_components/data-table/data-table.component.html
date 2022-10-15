@@ -222,11 +222,10 @@
 										<!-- TAGS -->
 										<ng-container *ngIf="data[d].type === 'tags'">
 											<div class="d-flex tags">
-												<div
-													class="tag d-flex align-items-center"
+												<div class="tag d-flex align-items-center"
 													*ngFor="let tag of data[d].value"
-													[style.backgroundColor]="tag.tagColor"
-												>
+													[ngClass]="{ 'dealer' : tag.role === 2 }"
+													[style.backgroundColor]="tag.tagColor">
 													<!-- TAG NAME -->
 													<div class="name">{{ tag.name }}</div>
 												</div>
