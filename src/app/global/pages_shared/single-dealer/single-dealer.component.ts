@@ -170,35 +170,35 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         { name: 'Status', sortable: true, column: 'Status', no_export: true, hidden: true },
     ];
 
-    license_table_columns = [
-        { name: '#', sortable: false, no_export: true },
-        { name: null, sortable: false, no_export: true, hidden: true },
-        { name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
-        { name: 'Screenshot', sortable: false, no_export: true },
-        { name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
-        { name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true },
-        { name: 'Dealer', sortable: true, key: 'dealer', hidden: true, no_show: true },
-        { name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
-        { name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
-        { name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
-        { name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeOut' },
-        { name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType', hidden: true, no_show: true },
-        { name: 'Net Speed', sortable: false, key: 'internetSpeed', hidden: true, no_show: true },
-        { name: 'Display', sortable: false, key: 'displayStatus' },
-        { name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
-        { name: 'Password', sortable: false, key: 'password' },
-        { name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
-        { name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
-        { name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
-        { name: 'Memory', sortable: false, key: 'memory', hidden: true, no_show: true },
-        { name: 'Storage', sortable: false, key: 'totalStorage', hidden: true, no_show: true },
-        { name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
-        { name: 'Template', sortable: true, column: 'TemplateName', key: 'templateName', hidden: true, no_show: true },
-        { name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
-        { name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
-        { name: 'Creation Date', sortable: false, key: 'dateCreated', hidden: true, no_show: true },
-        { name: 'Tags', key: 'tagsToString', hidden: true, no_show: true },
-    ];
+	license_table_columns = [
+		{ name: '#', sortable: false, no_export: true },
+		{ name: null, sortable: false, no_export: true, hidden: true },
+		{ name: 'Status', sortable: false, key: 'new_status', hidden: true, no_show: true },
+		{ name: 'Screenshot', sortable: false, no_export: true },
+		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
+		{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true},
+		{ name: 'Dealer', sortable: true, key: 'dealer', hidden: true, no_show: true },
+		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
+		{ name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
+		{ name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
+		{ name: 'Last Disconnect', sortable: true, column: 'TimeOut', key: 'timeIn' },
+		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType', hidden: true, no_show: true },
+		{ name: 'Net Speed', sortable: false, key: 'internetSpeed', hidden: true, no_show: true },
+		{ name: 'Display', sortable: false, key: 'displayStatus' },
+		{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
+		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
+		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
+		{ name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
+		{ name: 'Memory', sortable: false, key: 'memory', hidden: true, no_show: true },
+		{ name: 'Storage', sortable: false, key: 'totalStorage', hidden: true, no_show: true },
+		{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
+		{ name: 'Template', sortable: true, column: 'TemplateName', key: 'templateName', hidden: true, no_show: true },
+		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
+		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+		{ name: 'Creation Date', sortable: false, key: 'dateCreated', hidden: true, no_show: true },
+		{ name: 'Tags', key: 'tagsToString', hidden: true, no_show: true }
+	];
 
     license_zone_table_col = [
         { name: '#', sortable: false },
@@ -755,111 +755,130 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         }
     }
 
-    licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
-        let count = this.paging_data_license.pageStart;
-        return data.map((l: any) => {
-            const table = new UI_DEALER_LICENSE(
-                { value: count++, link: null, editable: false, hidden: false },
-                { value: l.licenseId, link: null, editable: false, hidden: true, key: true, table: 'license' },
-                {
-                    value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
-                    link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
-                    editable: false,
-                    hidden: false,
-                    isImage: true,
-                },
-                {
-                    value: l.licenseKey,
-                    link: '/administrator/licenses/' + l.licenseId,
-                    compressed: true,
-                    editable: false,
-                    hidden: false,
-                    status: true,
-                },
-                // { value: l.screenType ? this._titlecase.transform(l.screenType) : '--', editable: false, hidden: false },
-                {
-                    value: l.hostId ? l.hostName : '--',
-                    link: l.hostId ? '/administrator/hosts/' + l.hostId : null,
-                    editable: false,
-                    hidden: false,
-                    business_hours: l.hostId ? true : false,
-                    business_hours_label: l.hostId ? this.getLabel(l) : null,
-                },
-                {
-                    value: l.alias ? l.alias : '--',
-                    link: '/administrator/licenses/' + l.licenseId,
-                    editable: true,
-                    label: 'License Alias',
-                    id: l.licenseId,
-                    hidden: false,
-                },
-                { value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
-                { value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
-                // { value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
-                // {
-                // 	value: l.internetSpeed ? (l.internetSpeed == 'Fast' ? 'Good' : l.internetSpeed) : '--',
-                // 	link: null,
-                // 	editable: false,
-                // 	hidden: false
-                // },
-                { value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-                { value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-                {
-                    value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
-                    link: null,
-                    editable: false,
-                    hidden: false,
-                    copy: true,
-                    label: 'Anydesk Password',
-                },
-                // { value: l.serverVersion ? l.serverVersion : '1.0.0', link: null, editable: false, hidden: false },
-                // { value: l.uiVersion ? l.uiVersion : '1.0.0', link: null, editable: false, hidden: false },
-                { value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}`, editable: false },
-                // { value: l.templateName ? l.templateName : '--', compressed: true, link: null, editable: false, hidden: false },
-                {
-                    value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
-                    link: null,
-                    editable: true,
-                    label: 'Install Date',
-                    hidden: false,
-                    id: l.licenseId,
-                },
-                // { value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
-                { value: l.isActivated, link: null, editable: false, hidden: true },
-                { value: l.hostId ? true : false, link: null, editable: false, hidden: true },
-                { value: l.piStatus, link: null, editable: false, hidden: true }
-                // { value: l.playerStatus, link: null, editable: false, hidden: true },
-            );
-            return table;
-        });
-    }
+	licenseTable_mapToUI(data: any[]): UI_DEALER_LICENSE[] {
+		let count = this.paging_data_license.pageStart;
+		return data.map((l: any) => {
+			const table = new UI_DEALER_LICENSE(
+				{ value: count++, link: null, editable: false, hidden: false },
+				{ value: l.licenseId, link: null, editable: false, hidden: true, key: true, table: 'license' },
+				{
+					value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
+					link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
+					editable: false,
+					hidden: false,
+					isImage: true
+				},
+				{
+					value: l.licenseKey,
+					link: '/administrator/licenses/' + l.licenseId,
+					compressed: true,
+					editable: false,
+					hidden: false,
+					status: true
+				},
+				{
+					value: l.hostId ? l.hostName : '--',
+					link: l.hostId ? '/administrator/hosts/' + l.hostId : null,
+					editable: false,
+					hidden: false,
+					business_hours: l.hostId ? true : false,
+					business_hours_label: l.hostId ? this.getLabel(l) : null
+				},
+				{
+					value: l.alias ? l.alias : '--',
+					link: '/administrator/licenses/' + l.licenseId,
+					editable: true,
+					label: 'License Alias',
+					id: l.licenseId,
+					hidden: false
+				},
+				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
+				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
+				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
+				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
+				{
+					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+					link: null,
+					editable: false,
+					hidden: false,
+					copy: true,
+					label: 'Anydesk Password'
+				},
+				{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}`, editable: false },
+				{
+					value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
+					link: null,
+					editable: true,
+					label: 'Install Date',
+					hidden: false,
+					id: l.licenseId
+				},
+				{ value: l.isActivated, link: null, editable: false, hidden: true },
+				{ value: l.hostId ? true : false, link: null, editable: false, hidden: true },
+				{ value: this.checkStatus(l), link: null, editable: false, hidden: true, no_show: true, label: this.checkStatusForExport(l), new_status: true },
+			);
+			return table;
+		});
+	}
 
     splitKey(key) {
         this.splitted_text = key.split('-');
         return this.splitted_text[this.splitted_text.length - 1];
     }
 
-    getLabel(data) {
-        this.now = moment().format('d');
-        this.now = this.now;
-        var storehours = JSON.parse(data.storeHours);
-        storehours = storehours.sort((a, b) => {
-            return a.id - b.id;
-        });
-        var modified_label = {
-            date: moment().format('LL'),
-            address: data.hostAddress,
-            schedule:
-                storehours[this.now] && storehours[this.now].status
-                    ? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
-                        ? 'Open 24 Hours'
-                        : storehours[this.now].periods.map((i) => {
-                              return i.open + ' - ' + i.close;
-                          })
-                    : 'Closed',
-        };
-        return modified_label;
+    checkStatus(license) {
+        let currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+            return 'text-primary'
+        } else if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+            return 'text-danger'
+        } else if(new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+            return 'text-orange'
+        } else if(license.isActivated === 0 && license.hostName) {
+            return 'text-light-gray'
+        } else {
+            return 'text-gray'
+        }
     }
+
+    checkStatusForExport(license) {
+        let currentDate = new Date();
+        currentDate.setHours(0,0,0,0);
+        if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+            return 'Online'
+        } else if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+            return 'Offline'
+        } else if(new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+            return 'Pending'
+        } else if(license.isActivated === 0 && license.hostName) {
+            return 'Inactive'
+        } else {
+            return 'Unassigned'
+        }
+    }
+
+	getLabel(data) {
+		this.now = moment().format('d');
+		this.now = this.now;
+		let storehours = JSON.parse(data.storeHours);
+		storehours = storehours.sort((a, b) => {
+			return a.id - b.id;
+		});
+		let modified_label = {
+			date: moment().format('LL'),
+			address: data.hostAddress,
+			schedule:
+				storehours[this.now] && storehours[this.now].status
+					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+						? 'Open 24 Hours'
+						: storehours[this.now].periods.map((i) => {
+								return i.open + ' - ' + i.close;
+						  })
+					: 'Closed'
+		};
+		return modified_label;
+	}
 
     onSelectTab(event: { index: number }): void {
         switch (event.index) {
@@ -896,12 +915,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    sortList(order, page?): void {
-        var filter = {
-            column: 'PiStatus',
-            order: order,
-        };
-
+	sortList(order, page?): void {
+		let filter = {
+			column: 'PiStatus',
+			order: order
+		};
         this.getColumnsAndOrder(filter);
 
         if (this.saved_tab == 0) {
@@ -1172,21 +1190,22 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.getDealerAdvertiser(1);
     }
 
-    getDealerLicenses() {
-        this.subscription.add(
-            this._license.get_license_to_export(this.dealer_id).subscribe((data) => {
-                data.licenses.map((i) => {
-                    if (i.appVersion) {
-                        i.apps = JSON.parse(i.appVersion);
-                    } else {
-                        i.apps = null;
-                    }
-                });
-                this.licenses = data.licenses;
-                if (this.licenses) this.resyncSocketConnection();
-            })
-        );
-    }
+	getDealerLicenses() {
+		this.subscription.add(
+			this._license.get_license_to_export(this.dealer_id).subscribe((data) => {
+				data.licenses.map((i) => {
+                    i.new_status = this.checkStatusForExport(i);
+					if (i.appVersion) {
+						i.apps = JSON.parse(i.appVersion);
+					} else {
+						i.apps = null;
+					}
+				});
+				this.licenses = data.licenses;
+				if (this.licenses) this.resyncSocketConnection();
+			})
+		);
+	}
 
     resyncSocketConnection() {
         this.licenses.forEach((i) => {
@@ -1194,65 +1213,66 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         });
     }
 
-    getDataForExport(id, tab): void {
-        switch (tab) {
-            case 'Licenses':
-                this.subscription.add(
-                    this._license
-                        .get_license_to_export_duration(
-                            id,
-                            this.search_data_license,
-                            this.sort_column,
-                            this.sort_order,
-                            0,
-                            this.filters.status,
-                            '',
-                            this.filters.activated,
-                            '',
-                            this.filters.zone,
-                            this.filters.host,
-                            this.filters.assigned,
-                            this.filters.pending,
-                            this.filters.online,
-                            this.filters.isactivated
-                        )
-                        .subscribe((data) => {
-                            data.licenseTemplateZoneExports.map((i) => {
-                                if (i.appVersion) {
-                                    i.apps = JSON.parse(i.appVersion);
-                                } else {
-                                    i.apps = null;
-                                }
-                            });
-                            this.licenses_to_export = data.licenseTemplateZoneExports;
-                            this.licenses_to_export.forEach((item, i) => {
-                                this.modifyItem(item, tab);
-                                this.worksheet.addRow(item).font = {
-                                    bold: false,
-                                };
-                            });
-                            this.generateExcel(tab);
-                        })
-                );
-                break;
-            case 'Hosts':
-                this.subscription.add(
-                    this._host
-                        .get_host_by_dealer_id_with_sort(this.dealer_id, 1, this.search_data, this.sort_column_hosts, this.sort_order_hosts, 0)
-                        .subscribe((data) => {
-                            this.hosts_to_export = data.paging.entities;
-                            this.hosts_to_export.forEach((item, i) => {
-                                this.modifyItem(item, tab);
-                                this.worksheet.addRow(item).font = {
-                                    bold: false,
-                                };
-                            });
-                            this.generateExcel(tab);
-                        })
-                );
-                break;
-        }
-    }
+	getDataForExport(id, tab): void {
+		switch (tab) {
+			case 'Licenses':
+				this.subscription.add(
+					this._license
+						.get_license_to_export_duration(
+							id,
+							this.search_data_license,
+							this.sort_column,
+							this.sort_order,
+							0,
+							this.filters.status,
+							'',
+							this.filters.activated,
+							'',
+							this.filters.zone,
+							this.filters.host,
+							this.filters.assigned,
+							this.filters.pending,
+							this.filters.online,
+							this.filters.isactivated
+						)
+						.subscribe((data) => {
+							data.licenseTemplateZoneExports.map((i) => {
+								if (i.appVersion) {
+									i.apps = JSON.parse(i.appVersion);
+								} else {
+									i.apps = null;
+								}
+							});
+							this.licenses_to_export = data.licenseTemplateZoneExports;
+							this.licenses_to_export.forEach((item, i) => {
+                                item.new_status = this.checkStatusForExport(item);
+								this.modifyItem(item, tab);
+								this.worksheet.addRow(item).font = {
+									bold: false
+								};
+							});
+							this.generateExcel(tab);
+						})
+				);
+				break;
+			case 'Hosts':
+				this.subscription.add(
+					this._host
+						.get_host_by_dealer_id_with_sort(this.dealer_id, 1, this.search_data, this.sort_column_hosts, this.sort_order_hosts, 0)
+						.subscribe((data) => {
+							this.hosts_to_export = data.paging.entities;
+							this.hosts_to_export.forEach((item, i) => {
+								this.modifyItem(item, tab);
+								this.worksheet.addRow(item).font = {
+									bold: false
+								};
+							});
+							this.generateExcel(tab);
+						})
+				);
+				break;
+		}
+	}
 
     generateExcel(tab) {
         const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -1268,67 +1288,67 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.workbook_generation = false;
     }
 
-    modifyItem(item, tab) {
-        switch (tab) {
-            case 'Licenses':
-                item.dealer = this.dealer_user_data.businessName;
-                item.piVersion = item.apps ? item.apps.rpi_model : '';
-                item.zone = this.getZoneHours(item);
-                item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
-                item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
-                item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
-                item.screenType = this._titlecase.transform(item.screenType);
-                item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
-                item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
-                item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
-                item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
-                item.internetType = this.getInternetType(item.internetType);
-                item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
-                item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
-                var parse_version = JSON.parse(item.appVersion);
-                item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
-                item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
-                item.tagsToString = item.tags.join(',');
-                break;
-            case 'Hosts':
+	modifyItem(item, tab) {
+		switch (tab) {
+			case 'Licenses':
+				item.dealer = this.dealer_user_data.businessName;
+				item.piVersion = item.apps ? item.apps.rpi_model : '';
+				item.zone = this.getZoneHours(item);
+				item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
+				item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
+				item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
+				item.screenType = this._titlecase.transform(item.screenType);
+				item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
+				item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
+				item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
+				item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
+				item.internetType = this.getInternetType(item.internetType);
+				item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
+				item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
+				let parse_version = JSON.parse(item.appVersion);
+				item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
+				item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
+				item.tagsToString = item.tags.join(',');
+				break;
+			case 'Hosts':
                 item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
                 item.businessName = this.dealer_user_data.businessName;
                 break;
         }
     }
 
-    getZoneHours(data) {
-        if (data.templateName == 'Fullscreen') {
-            return 'Main: ' + this.msToTime(data.templateMain);
-        } else {
-            var data_to_return: any = '';
-            if (data.templateBackground != 'NO DATA') {
-                data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
-            }
-            if (data.templateBottom != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
-            }
-            if (data.templateHorizontal != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
-            }
-            if (data.templateHorizontalSmall != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
-            }
-            if (data.templateLowerLeft != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
-            }
-            if (data.templateMain != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
-            }
-            if (data.templateUpperLeft != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
-            }
-            if (data.templateVertical != 'NO DATA') {
-                data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
-            }
-            return data_to_return;
-        }
-    }
+	getZoneHours(data) {
+		if (data.templateName == 'Fullscreen') {
+			return 'Main: ' + this.msToTime(data.templateMain);
+		} else {
+			let data_to_return: any = '';
+			if (data.templateBackground != 'NO DATA') {
+				data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
+			}
+			if (data.templateBottom != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
+			}
+			if (data.templateHorizontal != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
+			}
+			if (data.templateHorizontalSmall != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
+			}
+			if (data.templateLowerLeft != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
+			}
+			if (data.templateMain != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
+			}
+			if (data.templateUpperLeft != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
+			}
+			if (data.templateVertical != 'NO DATA') {
+				data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
+			}
+			return data_to_return;
+		}
+	}
 
     msToTime(input) {
         let totalSeconds = input;
@@ -1487,59 +1507,59 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         this.filters.online = '';
     }
 
-    filterTable(type: string, value: any, days?: any) {
-        switch (type) {
-            case 'status':
-                this.resetFilterStatus();
-                // this.filters.status = value;
-                this.filters.activated = true;
-                this.filters.label_status = value == 1 ? 'Online' : 'Offline';
-                if (value == 1) {
-                    this.filters.online = true;
-                } else {
-                    this.filters.online = false;
-                }
-                this.filters.assigned = true;
-                this.filters.isactivated = 1;
-                if (value == 0) {
-                    var filter = {
-                        column: 'TimeIn',
-                        order: 'desc',
-                    };
-                    // this.getColumnsAndOrder(filter, 'licenses')
-                } else {
-                    this.sortList('desc');
-                }
-                break;
-            case 'zone':
-                this.filters.zone = value;
-                this.filters.label_zone = value;
-                break;
-            case 'activated':
-                this.resetFilterStatus();
-                this.filters.status = '';
-                // this.filters.activated = value;
-                this.filters.isactivated = 0;
-                this.filters.assigned = true;
-                this.filters.label_status = 'Inactive';
-                break;
-            case 'assigned':
-                this.resetFilterStatus();
-                this.filters.assigned = value;
-                value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
-                this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-                break;
-            case 'pending':
-                this.resetFilterStatus();
-                this.filters.isactivated = 1;
-                this.filters.assigned = true;
-                this.filters.pending = value;
-                this.filters.label_status = value == 'true' ? 'Pending' : '';
-                break;
-            default:
-        }
-        this.getLicensesofDealer(1);
-    }
+	filterTable(type: string, value: any, days?: any) {
+		switch (type) {
+			case 'status':
+				this.resetFilterStatus();
+				// this.filters.status = value;
+				this.filters.activated = true;
+				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+				if (value == 1) {
+					this.filters.online = true;
+				} else {
+					this.filters.online = false;
+				}
+				this.filters.assigned = true;
+				this.filters.isactivated = 1;
+				if (value == 0) {
+					let filter = {
+						column: 'TimeIn',
+						order: 'desc'
+					};
+					// this.getColumnsAndOrder(filter, 'licenses')
+				} else {
+					this.sortList('desc');
+				}
+				break;
+			case 'zone':
+				this.filters.zone = value;
+				this.filters.label_zone = value;
+				break;
+			case 'activated':
+				this.resetFilterStatus();
+				this.filters.status = '';
+				// this.filters.activated = value;
+				this.filters.isactivated = 0;
+				this.filters.assigned = true;
+				this.filters.label_status = 'Inactive';
+				break;
+			case 'assigned':
+				this.resetFilterStatus();
+				this.filters.assigned = value;
+				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
+				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
+				break;
+			case 'pending':
+				this.resetFilterStatus();
+				this.filters.isactivated = 1;
+				this.filters.assigned = true;
+				this.filters.pending = value;
+				this.filters.label_status = value == 'true' ? 'Pending' : '';
+				break;
+			default:
+		}
+		this.getLicensesofDealer(1);
+	}
 
     sortByUser() {
         let dialog = this._dialog.open(UserSortModalComponent, {

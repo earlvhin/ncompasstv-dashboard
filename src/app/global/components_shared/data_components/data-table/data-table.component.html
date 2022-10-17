@@ -78,13 +78,22 @@
 
 					<span *ngIf="!data[d].hidden" class="flex" [style.color]="data[d].color">
 						<span class="text-center" *ngIf="license_status_column && data[d].status">
-							<i
+							<i *ngIf="!data.pi_status.new_status; else new_template_status"
 								class="fas fa-circle mr-2"
 								[ngClass]="
 									data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'text-primary' : 'text-danger') : 'text-gray'
 								"
 								title="{{ data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'Online' : 'Offline') : 'Disabled' }}"
 							></i>
+                            <ng-template #new_template_status>
+                                <i
+                                    class="fas fa-circle mr-2"
+                                    [ngClass]="
+                                        data.pi_status.value
+                                    "
+                                    title="{{ data.pi_status.label }}"
+                                ></i>
+                            </ng-template>
 						</span>
 
 						<ng-container *ngIf="!data[d].isImage; else isImage">
