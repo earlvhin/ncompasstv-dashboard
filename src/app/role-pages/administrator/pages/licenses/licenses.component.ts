@@ -1166,7 +1166,7 @@ export class LicensesComponent implements OnInit {
         } else if(license.isActivated === 0 && license.hostName) {
             return 'Inactive'
         } else {
-            return 'Disabled'
+            return 'Unassigned'
         }
     }
 
