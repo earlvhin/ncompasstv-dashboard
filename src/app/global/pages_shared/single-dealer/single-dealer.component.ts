@@ -1534,6 +1534,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
+                this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -1542,12 +1543,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
+                this.sortList('desc');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
+                this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -1555,6 +1558,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.assigned = true;
 				this.filters.pending = value;
 				this.filters.label_status = value == 'true' ? 'Pending' : '';
+                this.sortList('desc');
 				break;
 			default:
 		}
