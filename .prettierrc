@@ -10,5 +10,6 @@
 	"bracketSpacing": true,
 	"jsxBracketSameLine": false,
 	"semi": true,
-	"no-console": true
+	"no-console": true,
+	"bracketSameLine": true
 }
