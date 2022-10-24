@@ -54,7 +54,7 @@ export class LicensesComponent implements OnInit {
 	sort_order: string = 'desc';
 	sort_column_hosts: string = '';
 	sort_order_hosts: string = '';
-    has_sort: boolean = false;
+	has_sort: boolean = false;
 
 	//for export
 	hosts_to_export: API_HOST[] = [];
@@ -195,13 +195,13 @@ export class LicensesComponent implements OnInit {
 	getColumnsAndOrder(data, tab) {
 		switch (tab) {
 			case 'licenses':
-                this.has_sort = true;
+				this.has_sort = true;
 				this.sort_column = data.column;
 				this.sort_order = data.order;
 				this.getLicenses(1);
 				break;
 			case 'hosts':
-                this.has_sort = true;
+				this.has_sort = true;
 				this.sort_column_hosts = data.column;
 				this.sort_order_hosts = data.order;
 				this.getHosts(1);
@@ -223,149 +223,147 @@ export class LicensesComponent implements OnInit {
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-        if(this.has_sort) {
-            this._host
-			.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					if (response.message) {
-						if (this.search_data_host == '') this.no_host = true;
-						this.filtered_data_host = [];
-						return;
-					}
+		if (this.has_sort) {
+			this._host
+				.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(response) => {
+						if (response.message) {
+							if (this.search_data_host == '') this.no_host = true;
+							this.filtered_data_host = [];
+							return;
+						}
 
-					this.paging_data_host = response.paging;
-					const mappedData = this.mapToHostsTable([...response.paging.entities]);
-					this.hosts_data = [...mappedData];
-					this.filtered_data_host = [...mappedData];
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => {
-				this.initial_load_hosts = false;
-				this.searching_hosts = false;
-			});
-        } else {
-            this._host
-			.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					if (response.message) {
-						if (this.search_data_host == '') this.no_host = true;
-						this.filtered_data_host = [];
-						return;
+						this.paging_data_host = response.paging;
+						const mappedData = this.mapToHostsTable([...response.paging.entities]);
+						this.hosts_data = [...mappedData];
+						this.filtered_data_host = [...mappedData];
+					},
+					(error) => {
+						throw new Error(error);
 					}
+				)
+				.add(() => {
+					this.initial_load_hosts = false;
+					this.searching_hosts = false;
+				});
+		} else {
+			this._host
+				.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(response) => {
+						if (response.message) {
+							if (this.search_data_host == '') this.no_host = true;
+							this.filtered_data_host = [];
+							return;
+						}
 
-					this.paging_data_host = response.paging;
-					const mappedData = this.mapToHostsTable([...response.paging.entities]);
-					this.hosts_data = [...mappedData];
-					this.filtered_data_host = [...mappedData];
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => {
-				this.initial_load_hosts = false;
-				this.searching_hosts = false;
-			});
-        }
-		
+						this.paging_data_host = response.paging;
+						const mappedData = this.mapToHostsTable([...response.paging.entities]);
+						this.hosts_data = [...mappedData];
+						this.filtered_data_host = [...mappedData];
+					},
+					(error) => {
+						throw new Error(error);
+					}
+				)
+				.add(() => {
+					this.initial_load_hosts = false;
+					this.searching_hosts = false;
+				});
+		}
 	}
 
 	getLicenses(page: number) {
 		this.searching_licenses = true;
 		this.hosts_data = [];
-        if(this.has_sort) {
-            this._license
-			.get_all_licenses(
-				page,
-				this.search_data_licenses,
-				this.sort_column,
-				this.sort_order,
-				15,
-				this.filters.admin_licenses,
-				this.filters.status,
-				this.filters.days_offline,
-				this.filters.activated,
-				this.filters.recent,
-				this.filters.zone,
-				this.filters.dealer,
-				this.filters.host,
-				this.filters.assigned,
-				this.filters.pending,
-				this.filters.online,
-				this.filters.isactivated
-			)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					this.paging_data_licenses = data.paging;
+		if (this.has_sort) {
+			this._license
+				.get_all_licenses(
+					page,
+					this.search_data_licenses,
+					this.sort_column,
+					this.sort_order,
+					15,
+					this.filters.admin_licenses,
+					this.filters.status,
+					this.filters.days_offline,
+					this.filters.activated,
+					this.filters.recent,
+					this.filters.zone,
+					this.filters.dealer,
+					this.filters.host,
+					this.filters.assigned,
+					this.filters.pending,
+					this.filters.online,
+					this.filters.isactivated
+				)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						this.paging_data_licenses = data.paging;
 
-					if (data.paging.entities) {
-						const mapped = this.mapToLicensesTable(data.paging.entities);
-						this.licenses_data = [...mapped];
-						this.filtered_data_licenses = [...mapped];
-					} else {
-						if (this.search_data == '') this.no_licenses = true;
-						this.filtered_data_licenses = [];
+						if (data.paging.entities) {
+							const mapped = this.mapToLicensesTable(data.paging.entities);
+							this.licenses_data = [...mapped];
+							this.filtered_data_licenses = [...mapped];
+						} else {
+							if (this.search_data == '') this.no_licenses = true;
+							this.filtered_data_licenses = [];
+						}
+
+						this.initial_load_licenses = false;
+						this.searching_licenses = false;
+					},
+					(error) => {
+						throw new Error(error);
 					}
+				);
+		} else {
+			this._license
+				.get_all_licenses_fetch(
+					page,
+					this.search_data_licenses,
+					this.sort_column,
+					this.sort_order,
+					15,
+					this.filters.admin_licenses,
+					this.filters.status,
+					this.filters.days_offline,
+					this.filters.activated,
+					this.filters.recent,
+					this.filters.zone,
+					this.filters.dealer,
+					this.filters.host,
+					this.filters.assigned,
+					this.filters.pending,
+					this.filters.online,
+					this.filters.isactivated
+				)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						this.paging_data_licenses = data.paging;
 
-					this.initial_load_licenses = false;
-					this.searching_licenses = false;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
-        } else {
-            this._license
-			.get_all_licenses_fetch(
-				page,
-				this.search_data_licenses,
-				this.sort_column,
-				this.sort_order,
-				15,
-				this.filters.admin_licenses,
-				this.filters.status,
-				this.filters.days_offline,
-				this.filters.activated,
-				this.filters.recent,
-				this.filters.zone,
-				this.filters.dealer,
-				this.filters.host,
-				this.filters.assigned,
-				this.filters.pending,
-				this.filters.online,
-				this.filters.isactivated
-			)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					this.paging_data_licenses = data.paging;
+						if (data.paging.entities) {
+							const mapped = this.mapToLicensesTable(data.paging.entities);
+							this.licenses_data = [...mapped];
+							this.filtered_data_licenses = [...mapped];
+						} else {
+							if (this.search_data == '') this.no_licenses = true;
+							this.filtered_data_licenses = [];
+						}
 
-					if (data.paging.entities) {
-						const mapped = this.mapToLicensesTable(data.paging.entities);
-						this.licenses_data = [...mapped];
-						this.filtered_data_licenses = [...mapped];
-					} else {
-						if (this.search_data == '') this.no_licenses = true;
-						this.filtered_data_licenses = [];
+						this.initial_load_licenses = false;
+						this.searching_licenses = false;
+					},
+					(error) => {
+						throw new Error(error);
 					}
-
-					this.initial_load_licenses = false;
-					this.searching_licenses = false;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
-        }
-		
+				);
+		}
 	}
 
 	onTabChanged(e: { index: number }) {
@@ -410,7 +408,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -419,14 +417,14 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
@@ -439,7 +437,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -447,7 +445,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 1;
 				this.filters.pending = value;
 				this.filters.label_status = value == 'true' ? 'Pending' : '';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			default:
 		}
@@ -490,22 +488,22 @@ export class LicensesComponent implements OnInit {
 		switch (tab) {
 			case 'licenses':
 				if (e) {
-                    this.has_sort = true;
+					this.has_sort = true;
 					this.search_data_licenses = e;
 					this.getLicenses(1);
 				} else {
-                    this.has_sort = false;
+					this.has_sort = false;
 					this.search_data_licenses = '';
 					this.getLicenses(1);
 				}
 				break;
 			case 'hosts':
 				if (e) {
-                    this.has_sort = true;
+					this.has_sort = true;
 					this.search_data_host = e;
 					this.getHosts(1);
 				} else {
-                    this.has_sort = false;
+					this.has_sort = false;
 					this.search_data_host = '';
 					this.getHosts(1);
 				}
@@ -726,23 +724,25 @@ export class LicensesComponent implements OnInit {
 						this.filters.isactivated
 					)
 					.pipe(takeUntil(this._unsubscribe))
-					.subscribe((data:any) => {
+					.subscribe((data: any) => {
 						if (data.message) {
 							this.licenses_to_export = [];
 							return;
 						}
 
+						console.log('api data', data);
+
 						data.licenses.map((license) => {
 							if (license.appVersion) {
-                                license.apps = JSON.parse(license.appVersion);
-                            } else {
-                                license.apps = null;
-                            }
-                            if (license.internetInfo) {
-                                license.internetInfo = JSON.parse(license.internetInfo);
-                                license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + " mbps"
-                                license.download =  Math.round(license.internetInfo.downloadMbps * 100) / 100 + " mbps"
-                            }
+								license.apps = JSON.parse(license.appVersion);
+							} else {
+								license.apps = null;
+							}
+							if (license.internetInfo) {
+								license.internetInfo = JSON.parse(license.internetInfo);
+								license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + ' mbps';
+								license.download = Math.round(license.internetInfo.downloadMbps * 100) / 100 + ' mbps';
+							}
 						});
 						this.licenses_to_export = data.licenses;
 
@@ -750,6 +750,8 @@ export class LicensesComponent implements OnInit {
 							this.mapLicensesForExport(item);
 							this.worksheet.addRow(item).font = { bold: false };
 						});
+
+						console.log('parsed data', this.licenses_to_export);
 
 						let rowIndex = 1;
 						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
@@ -767,38 +769,36 @@ export class LicensesComponent implements OnInit {
 
 				break;
 			case 'hosts':
-				this._host
-                    .get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
-					.subscribe((response) => {
-						if (response.message) {
-							this.hosts_to_export = [];
-							return;
-						} else {
-							response.host.map((host) => {
-								host.storeHours = this.getTotalHours(host);
-								this.mapHostsForExport(host);
-							});
-							this.hosts_to_export = response.host;
-						}
-
-						this.hosts_to_export.forEach((item) => {
-							this.worksheet.addRow(item).font = { bold: false };
+				this._host.get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe((response) => {
+					if (response.message) {
+						this.hosts_to_export = [];
+						return;
+					} else {
+						response.host.map((host) => {
+							host.storeHours = this.getTotalHours(host);
+							this.mapHostsForExport(host);
 						});
+						this.hosts_to_export = response.host;
+					}
 
-						let rowIndex = 1;
-
-						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-						}
-
-						this.workbook.xlsx.writeBuffer().then((file: any) => {
-							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = 'Hosts' + '.xlsx';
-							saveAs(blob, filename);
-						});
-
-						this.workbook_generation = false;
+					this.hosts_to_export.forEach((item) => {
+						this.worksheet.addRow(item).font = { bold: false };
 					});
+
+					let rowIndex = 1;
+
+					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+					}
+
+					this.workbook.xlsx.writeBuffer().then((file: any) => {
+						const blob = new Blob([file], { type: EXCEL_TYPE });
+						const filename = 'Hosts' + '.xlsx';
+						saveAs(blob, filename);
+					});
+
+					this.workbook_generation = false;
+				});
 
 				break;
 			default:
@@ -943,7 +943,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	private mapLicensesForExport(item) {
-        item.new_status = this.checkStatusForExport(item);
+		item.new_status = this.checkStatusForExport(item);
 		item.zone = this.getZoneHours(item);
 		item.piVersion = item.apps ? item.apps.rpi_model : '';
 		item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
@@ -952,7 +952,7 @@ export class LicensesComponent implements OnInit {
 		item.screenType = this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
-		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
+		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
 		item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
@@ -1152,41 +1152,41 @@ export class LicensesComponent implements OnInit {
 		});
 	}
 
-    checkStatus(license) {
-        let currentDate = new Date();
-        currentDate.setHours(0,0,0,0);
-        if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
-            return 'text-primary'
-        } else if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
-            return 'text-danger'
-        } else if(new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
-            return 'text-orange'
-        } else if(license.isActivated === 0 && license.hostName) {
-            return 'text-light-gray'
-        } else {
-            return 'text-gray'
-        }
-    }
+	checkStatus(license) {
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+			return 'text-primary';
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+			return 'text-danger';
+		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+			return 'text-orange';
+		} else if (license.isActivated === 0 && license.hostName) {
+			return 'text-light-gray';
+		} else {
+			return 'text-gray';
+		}
+	}
 
-    checkStatusForExport(license) {
-        let currentDate = new Date();
-        currentDate.setHours(0,0,0,0);
-        if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
-            return 'Online'
-        } else if(new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
-            return 'Offline'
-        } else if(new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
-            return 'Pending'
-        } else if(license.isActivated === 0 && license.hostName) {
-            return 'Inactive'
-        } else {
-            return 'Unassigned'
-        }
-    }
+	checkStatusForExport(license) {
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+			return 'Online';
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+			return 'Offline';
+		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+			return 'Pending';
+		} else if (license.isActivated === 0 && license.hostName) {
+			return 'Inactive';
+		} else {
+			return 'Unassigned';
+		}
+	}
 
 	private mapHostsForExport(data) {
-        data.storeHours = data.storeHours;
-        data.generalCategory = data.generalCategory ? data.generalCategory : 'Others'
+		data.storeHours = data.storeHours;
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
 		data.tagsToString = data.tags.join(',');
 	}
 

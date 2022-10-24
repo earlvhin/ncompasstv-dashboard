@@ -447,7 +447,7 @@ export class LicensesComponent implements OnInit {
 		item.screenType = this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
-		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy h:mm a');
+		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
 		item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
