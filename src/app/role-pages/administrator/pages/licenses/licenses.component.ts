@@ -408,7 +408,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-				this.sortList('desc');
+                this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -417,27 +417,28 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-				this.sortList('desc');
+                this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
-				this.sortList('desc');
+                this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline = value;
 				this.filters.label_status = 'Offline for ' + days;
+                this.sortList('desc');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-				this.sortList('desc');
+                this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
