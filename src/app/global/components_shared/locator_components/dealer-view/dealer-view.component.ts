@@ -35,10 +35,10 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 	loading_search: boolean = false;
 	location_selected: boolean = false;
 	map_marker: UI_HOST_LOCATOR_MARKER_DEALER_MODE[];
-	selected_dealer: API_DEALER[];
+	selected_dealer: any;
 	unfiltered_selected_dealer: API_DEALER[];
-	selected_dealer_hosts: API_HOST[];
-	unfiltered_dealer_hosts: API_HOST[];
+	selected_dealer_hosts: any;
+	unfiltered_dealer_hosts: any;
 	unfiltered_licenses: Array<any> = [];
 	storehours: any;
 	paging: any;
@@ -529,6 +529,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 			});
 		});
 
+
 		this.selected_dealer_hosts.forEach((x) => {
 			x.storeHours ? (x.parsedStoreHours = JSON.parse(x.storeHours)) : (x.parsedStoreHours = '-');
 			x.latitude ? (x.latitude = parseFloat(x.latitude).toFixed(5)) : '-';
@@ -543,8 +544,14 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 			});
 		});
 
+        //FILTER NO LICENSE HOSTS
+        this.selected_dealer.forEach((dealer) => {
+           dealer.hosts = this.removeNoLicensesHost(dealer.hosts);
+        })
+
 		this.unfiltered_dealer_hosts = this.selected_dealer_hosts;
 		this.unfiltered_licenses = this.selected_licenses;
+        this.selected_dealer_hosts = this.removeNoLicensesHost(this.selected_dealer_hosts);
 		this.map_marker = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 		this.selected_dealer_hosts.forEach((x) => {
 			x.icon_url = this.map_marker.filter((y) => y.hostId === x.hostId)[0].icon_url;
@@ -554,4 +561,9 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 			this.filterDealerHosts(this.filterStatus);
 		}
 	}
+
+    removeNoLicensesHost(hostsList) {
+        hostsList = hostsList.filter((host) => host.licenses.length > 0)
+        return hostsList
+    }
 }
