@@ -107,37 +107,39 @@ export class HostViewComponent implements OnInit, OnDestroy {
         }
     }
 
-    private getHosts(page: number) {
-        let search = this.search_key ? this.search_key : this.search_category_key;
-        search = search ? search : this.search_state_key;
-        this.host_results = [];
-        this.unfiltered_host_results = [];
-        if (this.currentUserIsDealer) {
-            const currentDealerId = this.currentUser.roleInfo.dealerId;
-            this._host.get_host_by_dealer_id(currentDealerId, page, search).subscribe((response) => {
-                if (!response.message) {
-                    this.hosts_data = response.paging.entities.filter((host) => host.totalLicenses > 0);
-                } else {
-                    this.hosts_data = [];
-                }
-            });
-        } else {
-            this._host.get_host_by_page(page, this.search_key, '', '', 0).subscribe((response) => {
-                response.host = response.host.filter((host) => {
-                    return host.totalLicenses - host.totalLicensesPending > 0;
-                });
-                if (this.search_key) {
-                    this.search_hosts_data = response.host.filter((host) => host.totalLicenses > 0);
-                } else {
-                    this.hosts_data = response.host.filter((host) => host.totalLicenses > 0);
-                }
-            });
-        }
-        if (this.search_key) {
-            this.loading_search = true;
-            this.hosts_data = [];
-        } else this.loading_data = true;
-    }
+	private getHosts(page: number) {
+		let search = this.search_key ? this.search_key : this.search_category_key;
+		search = search ? search : this.search_state_key;
+		this.host_results = [];
+		this.unfiltered_host_results = [];
+		if (this.currentUserIsDealer) {
+			const currentDealerId = this.currentUser.roleInfo.dealerId;
+			this._host.get_host_by_dealer_id(currentDealerId, page, search).subscribe((response) => {
+				if (!response.message) {
+					this.hosts_data = response.paging.entities.filter((host) => host.totalLicenses > 0);
+				} else {
+					this.hosts_data = [];
+				}
+			});
+		} else {
+			this._host.get_host_by_page(page, this.search_key, '', '', 0).subscribe((response) => {
+                response.host = response.host.filter(
+                    host => {
+                        return (host.totalLicenses - host.totalLicensesPending) > 0
+                    }
+                )
+				if (this.search_key) {
+					this.search_hosts_data = response.host.filter((host) => host.totalLicenses > 0);
+				} else {
+					this.hosts_data = response.host.filter((host) => host.totalLicenses > 0);
+				}
+			});
+		}
+		if (this.search_key) {
+			this.loading_search = true;
+			this.hosts_data = [];
+		} else this.loading_data = true;
+	}
 
     getHostStates(page: number) {
         this.searchDealerId = '';

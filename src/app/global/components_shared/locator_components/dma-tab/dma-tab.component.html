@@ -151,9 +151,10 @@
 												#{{ dma.dmaRank }} - {{ dma.dmaName }}
 											</div>
 										</mat-panel-title>
-										<mat-panel-description class="md-text p-0">
+										<mat-panel-description class="md-text p-0" *ngIf="dma.hosts">
 											<div class="total-hosts" [ngClass]="dma.totalHosts > 0 ? 'text-primary': 'text-danger'">
-												<b>{{ dma.totalHosts }}</b> Host(s)
+												<!-- <b>{{ dma.totalHosts }}</b> Host(s) -->
+												<b>{{ dma.hosts.length }}</b> Host(s)
 											</div>
 										</mat-panel-description>
 									</mat-expansion-panel-header>
