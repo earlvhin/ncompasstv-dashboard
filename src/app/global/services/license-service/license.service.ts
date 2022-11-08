@@ -303,9 +303,9 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 
-	get_license_by_dealer_id(dealerId: string, page: number, search?: string, arrangement?: any, pageSize = 15) {
+	get_license_by_dealer_id(dealerId: string, page: number, search?: string, arrangement?: any, pageSize = 15, pending?) {
 		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
-		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize });
+		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize, pending });
 		const url = `${base}${params}`;
 		return this._http.get<{ paging?: PAGING; message?: string }>(url, this.httpOptions);
 	}
@@ -690,7 +690,7 @@ export class LicenseService {
 		return this._http.post(url, body);
 	}
 
-	protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
+	protected setUrlParams(filters: any, enforceTagSearchKey = false, allowBlanks = true) {
 		let result = '';
 		Object.keys(filters).forEach((key) => {
 			if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;
