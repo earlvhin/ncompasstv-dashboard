@@ -144,13 +144,20 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15, pending?): Observable<{ paging?: PAGING, message?: string }> {
-        let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}`;
-        
-        if(pending === false) {
-            let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}&pending=${pending}`;
-        }
+	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15): Observable<{ paging?: PAGING, message?: string }> {
+        let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}`;	
 		
+		if (key && key.trim().length > 0) {
+			const search = encodeURIComponent(key);
+			url += `&search=${search}`
+		}
+
+		return this.getRequest(url);
+		
+	}
+	
+    get_host_by_dealer_id_locator(id: any, page: number, key: string, pageSize = 15, pending = false): Observable<{ paging?: PAGING, message?: string }> {
+        let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}&pending=${pending}`;
 		
 		if (key && key.trim().length > 0) {
 			const search = encodeURIComponent(key);

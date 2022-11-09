@@ -296,7 +296,7 @@ export class LicenseViewComponent implements OnInit {
 		this.selected_dealer_hosts = [];
 
 		this._host
-			.get_host_by_dealer_id(currentDealerId, page, '', 1000, false)
+			.get_host_by_dealer_id_locator(currentDealerId, page, '', 1000, false)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
