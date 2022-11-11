@@ -156,7 +156,9 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Total Business Hours', sortable: false, key: 'storeHours', hidden: true, no_show: true },
 		{ name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
-		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true }
+		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
+		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
 	];
 
 	protected _unsubscribe = new Subject<void>();
