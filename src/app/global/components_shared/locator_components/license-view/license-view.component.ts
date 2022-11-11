@@ -296,7 +296,7 @@ export class LicenseViewComponent implements OnInit {
 		this.selected_dealer_hosts = [];
 
 		this._host
-			.get_host_by_dealer_id(currentDealerId, page, '', 1000)
+			.get_host_by_dealer_id_locator(currentDealerId, page, '', 1000, false)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
@@ -333,7 +333,7 @@ export class LicenseViewComponent implements OnInit {
 		const currentDealerId = this.currentUser.roleInfo.dealerId;
 
 		this._license
-			.get_license_by_dealer_id(currentDealerId, page, '')
+			.get_license_by_dealer_id(currentDealerId, page, '', '', 0, false)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {

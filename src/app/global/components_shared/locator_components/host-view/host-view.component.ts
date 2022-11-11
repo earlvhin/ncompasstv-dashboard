@@ -114,7 +114,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 		this.unfiltered_host_results = [];
 		if (this.currentUserIsDealer) {
 			const currentDealerId = this.currentUser.roleInfo.dealerId;
-			this._host.get_host_by_dealer_id(currentDealerId, page, search).subscribe((response) => {
+			this._host.get_host_by_dealer_id_locator(currentDealerId, page, search, 0, false).subscribe((response) => {
 				if (!response.message) {
 					this.hosts_data = response.paging.entities.filter((host) => host.totalLicenses > 0);
 				} else {
