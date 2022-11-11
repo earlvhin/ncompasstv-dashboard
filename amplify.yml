@@ -9,6 +9,7 @@ frontend:
             commands:
                 - node -v
                 - npm install
+                - npm run build_feature
     artifacts:
         baseDirectory: dist/dashboard-material
         files:
