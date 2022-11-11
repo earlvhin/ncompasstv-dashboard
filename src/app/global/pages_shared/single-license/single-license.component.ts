@@ -1,7 +1,7 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatSlideToggleChange } from '@angular/material';
+import { MatDialog, MatDialogRef, MatSlideToggleChange } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -13,7 +13,17 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
-import { AuthService, ContentService, HelperService, LicenseService, ScreenService, TemplateService } from 'src/app/global/services';
+import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
+import {
+	AuthService,
+	ConfirmationDialogService,
+	ContentService,
+	HelperService,
+	LicenseService,
+	ScreenService,
+	TagService,
+	TemplateService
+} from 'src/app/global/services';
 
 import {
 	ACTIVITY_CODES,
@@ -34,7 +44,8 @@ import {
 	UI_REBOOT_TIME,
 	PlaylistContentSchedule,
 	API_LICENSE,
-	API_ACTIVITY
+	API_ACTIVITY,
+	TAG
 } from 'src/app/global/models';
 
 @Component({
@@ -136,6 +147,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _auth: AuthService,
+		private _confirmDialog: ConfirmationDialogService,
 		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
@@ -144,8 +156,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _params: ActivatedRoute,
 		private _router: Router,
 		private _screen: ScreenService,
-		private _titleCasePipe: TitleCasePipe,
-		private _template: TemplateService
+		private _tag: TagService,
+		private _template: TemplateService,
+		private _titleCasePipe: TitleCasePipe
 	) {}
 
 	@HostListener('window:resize', [])
@@ -497,6 +510,27 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.filterContent();
 	}
 
+	async onRemoveTag(index: number, data: TAG) {
+		const confirmAction = await this._confirmDialog
+			.warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' })
+			.toPromise();
+
+		if (!confirmAction) return;
+
+		this._tag
+			.deleteTagByIdAndOwner(data.tagId, this.license_data.licenseId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.tags.splice(index, 1);
+					this.getLicenseTags();
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
 	onResetAnydeskID(): void {
 		this.anydesk_status_text = 'Resetting Anydesk ID...';
 		this.warningModal(
@@ -554,6 +588,24 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					throw new Error(error);
 				}
 			);
+	}
+
+	openAddTagModal() {
+		const config = {
+			width: '700px',
+			height: '700px',
+			panelClass: 'dialog-container-position-relative',
+			disableClose: true
+		};
+
+		const modal: MatDialogRef<AddTagModalComponent> = this._dialog.open(AddTagModalComponent, config);
+		modal.componentInstance.ownerId = this.license_data.licenseId;
+		modal.componentInstance.currentTags = this.license_data.tags as { name: string; tagColor: string }[];
+
+		modal.afterClosed().subscribe((response) => {
+			if (!response) return;
+			this.tags = [...(response as TAG[])];
+		});
 	}
 
 	setPopupBackground(): string {
@@ -1210,6 +1262,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.getContentByLicenseId(this.license_id);
 			this.getActivityOfLicense(this.license_id);
 		});
+	}
+
+	private getLicenseTags(): void {
+		this._tag
+			.getTagByOwner(this.license_data.licenseId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				this.tags = [...response.tags];
+			});
 	}
 
 	private getHostTimezoneDay(): string {

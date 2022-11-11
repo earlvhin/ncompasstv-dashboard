@@ -43,6 +43,7 @@ export * from './api_user-stats.model';
 export * from './api_zone.model';
 export * from './owner.model';
 export * from './constant_activity_code';
+export * from './create_and_assign_tag.model';
 export * from './credits.model';
 export * from './credits-status.model';
 export * from './credits-to-submit.model';
