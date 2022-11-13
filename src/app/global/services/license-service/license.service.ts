@@ -10,6 +10,7 @@ import {
 	API_FILTERS,
 	API_INSTALLATION_STATS,
 	API_LICENSE,
+	API_LICENSE_MONTHLY_STAT,
 	API_LICENSE_PROPS,
 	LICENSE_TOTAL_STATISTICS,
 	PAGING
@@ -95,8 +96,8 @@ export class LicenseService {
 			{ ...this.httpOptions, params }
 		);
 	}
-	
-    get_all_licenses_fetch(
+
+	get_all_licenses_fetch(
 		page: number,
 		key: string,
 		column: string,
@@ -260,17 +261,10 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total}`, this.httpOptions);
 	}
 
-	get_licenses_statistics(dealer?, startDate?, endDate?) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_statistics}` +
-				'?dealerid=' +
-				`${dealer}` +
-				'&startdate=' +
-				`${startDate}` +
-				'&enddate=' +
-				`${endDate}`,
-			this.httpOptions
-		);
+	get_licenses_statistics(dealerId?: string, startDate?: string, endDate?: string) {
+		const base = `${this.baseUri}${this.getters.api_get_licenses_statistics}`;
+		const endpoint = `${base}?dealerid=${dealerId}&startdate=${startDate}&enddate=${endDate}`;
+		return this._http.get<{ licenses?: API_LICENSE_MONTHLY_STAT[]; message?: string }>(endpoint, this.httpOptions);
 	}
 
 	get_licenses_installation_statistics(dealer?, startDate?, endDate?) {
@@ -506,8 +500,7 @@ export class LicenseService {
 		return this._http.post(`${environment.base_uri}${environment.update.api_update_license_boot_delay}`, data, this.httpOptions);
 	}
 
-	update_license_reboot_time(data: { rebootTime: { rebootTime: string }[], licenseId: string }) {
-
+	update_license_reboot_time(data: { rebootTime: { rebootTime: string }[]; licenseId: string }) {
 		const body = {
 			rebootTime: JSON.stringify(data.rebootTime),
 			licenseId: data.licenseId
@@ -612,7 +605,7 @@ export class LicenseService {
 	 * @param activity
 	 * @returns: Observable of ANY
 	 */
-	save_activity(data: { licenseId: string, activityCode: string, initiatedBy: string }) {
+	save_activity(data: { licenseId: string; activityCode: string; initiatedBy: string }) {
 		const url = `${environment.base_uri}${environment.create.api_save_activity}`;
 		return this._http.post<any>(url, data, this.httpOptions);
 	}
@@ -625,22 +618,22 @@ export class LicenseService {
 		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_internet_info}`, data, this.httpOptions);
 	}
 
-	set_screenshot_status(data: { licenseId: string, screenshotSettings: number }) {
+	set_screenshot_status(data: { licenseId: string; screenshotSettings: number }) {
 		const url = `${environment.base_uri}${environment.update.api_update_screenshot_settings}`;
 		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
-	set_speedtest_status(data: { licenseId: string, speedtestSettings: number }) {
+	set_speedtest_status(data: { licenseId: string; speedtestSettings: number }) {
 		const url = `${environment.base_uri}${environment.update.api_update_speedtest_settings}`;
 		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
-	set_resource_status(data: { licenseId: string, resourceSettings: number }) {
+	set_resource_status(data: { licenseId: string; resourceSettings: number }) {
 		const url = `${environment.base_uri}${environment.update.api_update_resource_settings}`;
 		return this._http.post<any>(url, data, this.httpOptions);
 	}
 
-	set_tvdisplay_status(data: { licenseId: string, tvdisplaySettings: number }) {
+	set_tvdisplay_status(data: { licenseId: string; tvdisplaySettings: number }) {
 		const url = `${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`;
 		return this._http.post<any>(url, data, this.httpOptions);
 	}
