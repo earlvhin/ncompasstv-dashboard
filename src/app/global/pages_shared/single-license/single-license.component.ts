@@ -14,6 +14,8 @@ import { environment } from '../../../../environments/environment';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
+import { EditTagComponent } from '../tags/dialogs';
+
 import {
 	AuthService,
 	ConfirmationDialogService,
@@ -608,7 +610,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		modal.afterClosed().subscribe((response) => {
 			if (!response) return;
+			this.showSuccessModal('Success!', 'Tags saved', '', false);
 			this.tags = [...(response as TAG[])];
+		});
+	}
+
+	openEditTagModal(index: number, data: TAG) {
+		let dialog: MatDialogRef<EditTagComponent>;
+
+		dialog = this._dialog.open(EditTagComponent, { width: '500px' }) as MatDialogRef<EditTagComponent>;
+		dialog.componentInstance.page = 'single-license';
+		dialog.componentInstance.tag = data as TAG;
+		dialog.componentInstance.currentUserId = this.currentUser.user_id;
+
+		dialog.afterClosed().subscribe((response) => {
+			if (!response) return;
+			this.showSuccessModal('Success!', 'Tag updated', '', false);
+			this.tags[index] = response as TAG;
 		});
 	}
 
@@ -1767,14 +1785,17 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private showSuccessModal(message: string, data: any, return_msg = '') {
+	private showSuccessModal(message: string, data: any, return_msg = '', refreshPage = true) {
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: { status: 'success', message, data, return_msg }
 		});
 
-		return dialogRef.afterClosed().subscribe(() => this.ngOnInit());
+		return dialogRef.afterClosed().subscribe(() => {
+			if (!refreshPage) return;
+			this.ngOnInit();
+		});
 	}
 
 	private subscribeToAdditionalSettingsFormChanges() {

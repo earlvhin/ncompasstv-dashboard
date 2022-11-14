@@ -135,7 +135,14 @@ export class TagService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	updateTag(tagId: string, name: string, tagColor: string, updatedBy: string, description?: string, exclude = 0) {
+	updateTag(
+		tagId: string,
+		name: string,
+		tagColor: string,
+		updatedBy: string,
+		description?: string,
+		exclude = 0
+	): Observable<{ message: string; tag?: TAG[] }> {
 		const body: TAG = {
 			tagId,
 			name,

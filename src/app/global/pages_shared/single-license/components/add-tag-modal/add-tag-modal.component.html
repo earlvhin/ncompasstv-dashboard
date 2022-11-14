@@ -20,16 +20,6 @@
 						<div class="create d-flex flex-column">
 							<h4>Create new tag:</h4>
 							<div class="input-section d-flex flex-column">
-								<!-- TAG NAME -->
-								<mat-form-field class="tag-name full-width">
-									<input matInput type="text" formControlName="name" placeholder="Tag Name" />
-								</mat-form-field>
-
-								<!-- TAG DESCRIPTION -->
-								<mat-form-field class="tag-description full-width">
-									<input matInput type="text" formControlName="description" placeholder="Tag Description" />
-								</mat-form-field>
-
 								<!-- TAG COLOR PICKER -->
 								<mat-form-field class="tag-color">
 									<mat-label>Tag Color</mat-label>
@@ -44,6 +34,16 @@
 										[style.background]="selectedTagColor"
 										[value]="selectedTagColor || ''"
 										(colorPickerChange)="onSelectTagColor(selectedTagColor)" />
+								</mat-form-field>
+
+								<!-- TAG NAME -->
+								<mat-form-field class="tag-name full-width">
+									<input matInput type="text" formControlName="name" placeholder="Tag Name" />
+								</mat-form-field>
+
+								<!-- TAG DESCRIPTION -->
+								<mat-form-field class="tag-description full-width">
+									<input matInput type="text" formControlName="description" placeholder="Tag Description" />
 								</mat-form-field>
 
 								<!-- IS TAG EXCLUDED? -->
