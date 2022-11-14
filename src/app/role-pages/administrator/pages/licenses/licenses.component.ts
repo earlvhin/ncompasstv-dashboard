@@ -703,7 +703,7 @@ export class LicensesComponent implements OnInit {
 	getDataForExport(tab: string): void {
 		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
+        this.filters.isactivated = '';
 		switch (tab) {
 			case 'licenses':
 				this._license
@@ -979,13 +979,15 @@ export class LicensesComponent implements OnInit {
 						link: '/administrator/dealers/' + dealer.dealerId,
 						query: '2',
 						editable: false,
-						hidden: false
+						hidden: false,
+                        new_tab_link: true
 					},
 					{
 						value: this._title.transform(dealer.businessName),
 						link: '/administrator/dealers/' + dealer.dealerId,
 						editable: false,
-						hidden: false
+						hidden: false,
+                        new_tab_link: true
 					},
 					{ value: this._title.transform(dealer.contactPerson), link: null, editable: false, hidden: false },
 					{ value: dealer.region, link: null, editable: false, hidden: false },

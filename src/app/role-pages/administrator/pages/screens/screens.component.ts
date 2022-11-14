@@ -120,14 +120,14 @@ export class ScreensComponent implements OnInit {
 				return new UI_TABLE_SCREEN (
 					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.screenName), link: '/administrator/screens/' +  s.screenId, editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.businessName), link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false},
-					{ value: s.hostName != null ? this._titlecase.transform(s.hostName) : '--', link: s.hostName ? '/administrator/hosts/' + s.hostId : null, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.screenName), link: '/administrator/screens/' +  s.screenId, editable: false, hidden: false, new_tab_link: true},
+					{ value: this._titlecase.transform(s.businessName), link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false, new_tab_link: true},
+					{ value: s.hostName != null ? this._titlecase.transform(s.hostName) : '--', link: s.hostName ? '/administrator/hosts/' + s.hostId : null, editable: false, hidden: false, new_tab_link: true},
 					{ value: s.screenTypeName != '' ? this._titlecase.transform(s.screenTypeName) : '--', link: null, editable: true, dropdown_edit: true, label:'Screen Type', id: s.screenId, name: s.screenName, hidden: false},
 					{ value: s.templateName != '' ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},
 					{ value: this._date.transform(s.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false},
 					{ value: this._date.transform(s.dateUpdated, 'MMM d, y, h:mm a') || '--', link: null, editable: false, hidden: false},
-					{ value: s.createdBy ? this._titlecase.transform(s.createdBy) : '--', link: '/administrator/users/' + s.createdById, editable: false, hidden: false},	
+					{ value: s.createdBy ? this._titlecase.transform(s.createdBy) : '--', link: '/administrator/users/' + s.createdById, editable: false, hidden: false, new_tab_link: true},	
 				)
 			}
 		)

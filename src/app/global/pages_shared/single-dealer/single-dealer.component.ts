@@ -384,7 +384,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			return new DEALER_UI_TABLE_ADVERTISERS(
 				{ value: i.id, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: i.name, link: '/administrator/advertisers/' + i.id, editable: false, hidden: false },
+				{ value: i.name, link: '/administrator/advertisers/' + i.id, editable: false, hidden: false, new_tab_link: true },
 				{ value: i.region ? i.region : '--', link: null, editable: false, hidden: false },
 				{ value: i.state, link: null, editable: false, hidden: false },
 				{ value: i.status, link: null, editable: false, hidden: false },
@@ -733,7 +733,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			return new UI_DEALER_HOST(
 				{ value: h.hostId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: h.name, link: '/administrator/hosts/' + h.hostId, editable: false, hidden: false },
+				{ value: h.name, link: '/administrator/hosts/' + h.hostId, editable: false, hidden: false, new_tab_link: true },
 				{ value: h.address, link: null, editable: false, hidden: false },
 				{ value: h.city, link: null, editable: false, hidden: false },
 				{ value: h.state, link: null, editable: false, hidden: false },
@@ -766,7 +766,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
-					isImage: true
+					isImage: true,
+					new_tab_link: true
 				},
 				{
 					value: l.licenseKey,
@@ -774,7 +775,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					compressed: true,
 					editable: false,
 					hidden: false,
-					status: true
+					status: true,
+					new_tab_link: true
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
@@ -782,7 +784,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					editable: false,
 					hidden: false,
 					business_hours: l.hostId ? true : false,
-					business_hours_label: l.hostId ? this.getLabel(l) : null
+					business_hours_label: l.hostId ? this.getLabel(l) : null,
+					new_tab_link: true
 				},
 				{
 					value: l.alias ? l.alias : '--',
@@ -790,7 +793,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					editable: true,
 					label: 'License Alias',
 					id: l.licenseId,
-					hidden: false
+					hidden: false,
+					new_tab_link: true
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
@@ -804,7 +808,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					copy: true,
 					label: 'Anydesk Password'
 				},
-				{ value: l.screenName ? l.screenName : '--', compressed: true, link: `/administrator/screens/${l.screenId}`, editable: false },
+				{
+					value: l.screenName ? l.screenName : '--',
+					compressed: true,
+					link: `/administrator/screens/${l.screenId}`,
+					editable: false,
+					new_tab_link: true
+				},
 				{
 					value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
 					link: null,
@@ -1542,7 +1552,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -1551,14 +1561,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -1566,7 +1576,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.assigned = true;
 				this.filters.pending = value;
 				this.filters.label_status = value == 'true' ? 'Pending' : '';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			default:
 		}

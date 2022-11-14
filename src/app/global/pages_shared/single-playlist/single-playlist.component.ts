@@ -170,7 +170,7 @@ export class SinglePlaylistComponent implements OnInit {
 				return new UI_PLAYLIST_SCREENS_NEW(
 					{ value: i.screenId, link: null, editable: false, hidden: true },
 					{ value: counter++, link: null, editable: false, hidden: false },
-					{ value: i.screenName, link: `/${route}/screens/` + i.screenId, editable: false, hidden: false },
+					{ value: i.screenName, link: `/${route}/screens/` + i.screenId, editable: false, hidden: false, new_tab_link: true },
 					{ value: i.businessName, link: null, editable: false, hidden: false },
 					{ value: i.hostName, link: null, editable: false, hidden: false },
 					{ value: i.screenTypeName || '--', link: null, editable: false, hidden: false },
