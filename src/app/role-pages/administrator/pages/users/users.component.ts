@@ -197,12 +197,12 @@ export class UsersComponent implements OnInit, OnDestroy {
 			const result = new UI_TABLE_USERS(
 				{ value: user.userId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}` },
+				{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
 				{ value: user.email, link: null, editable: false, hidden: false },
 				{ value: user.contactNumber, link: null, editable: false, hidden: false },
 				{ value: role.roleName, link: null, editable: false, hidden: false },
 				{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
-				{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false },
+				{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
 				{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
 				{ value: allowEmail, type: 'toggle' }
 			);

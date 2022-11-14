@@ -677,14 +677,15 @@ export class SingleScreenComponent implements OnInit {
 			return new UI_SCREEN_LICENSE_SCREENS(
 				{ value: l.licenseId, link: null, editable: false, hidden: true },
 				{ value: counter++, link: null, editable: false, hidden: false },
-				{ value: l.licenseKey, link: `/${route}/licenses/` + l.licenseId, editable: false, hidden: false, status: true },
+				{ value: l.licenseKey, link: `/${route}/licenses/` + l.licenseId, editable: false, hidden: false, status: true, new_tab_link: true },
 				{
 					value: l.alias ? l.alias : '--',
 					link: `/${route}/licenses/` + l.licenseId,
 					editable: true,
 					label: 'License Alias',
 					id: l.licenseId,
-					hidden: false
+					hidden: false,
+                    new_tab_link: true
 				},
 				{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: l.internetSpeed ? l.internetSpeed : '--', link: null, editable: false, hidden: false },
@@ -695,6 +696,16 @@ export class SingleScreenComponent implements OnInit {
 			);
 		});
 	}
+
+    openPlaylistInNewTab(route, pid) {
+        // Converts the route into a string that can be used 
+        // with the window.open() function
+        const url = this._router.serializeUrl(
+          this._router.createUrlTree([`route${pid}`])
+        );
+      
+        window.open(url, '_blank');
+      }
 
 	// Final UI Data Model
 	private mapToScreenUI(data: API_SINGLE_SCREEN): UI_SINGLE_SCREEN {

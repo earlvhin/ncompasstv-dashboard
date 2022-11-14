@@ -59,7 +59,7 @@
 								Playlist:
 								<a
 									[ngClass]="{ 'text-danger': playlist_id === z.screen_template.playlist_id }"
-									[routerLink]="[playlist_route, z.screen_template.playlist_id]"
+									(click)="openPlaylistInNewTab(playlist_route, z.screen_template.playlist_id)" 
 									class="sm-text font-weight-bold ml-2 text-primary"
 									>{{ z.screen_template.playlist_name }}</a
 								>
