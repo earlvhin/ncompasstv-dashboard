@@ -41,7 +41,6 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.initializeForm();
 		this.subscribeToTagSearch();
-		this.subscribeToNewTagsChange();
 		this.getAllRecentTags();
 	}
 
@@ -258,12 +257,6 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 				}
 			)
 			.add(() => (this.isSearchingTags = false));
-	}
-
-	private subscribeToNewTagsChange(): void {
-		this._newTagsControl.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
-			console.log('new tags change', response);
-		});
 	}
 
 	private subscribeToTagSearch(): void {

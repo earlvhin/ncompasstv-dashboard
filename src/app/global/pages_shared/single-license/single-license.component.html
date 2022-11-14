@@ -42,12 +42,12 @@
 							{{ tag.name }}
 						</div>
 						<ng-container *ngIf="tag.exclude === 1">
-							<div class="excluded"><mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon></div>
+							<mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
 						</ng-container>
 						<ng-container *ngIf="is_admin">
-							<div class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license">
-								<mat-icon>close</mat-icon>
-							</div>
+							<mat-icon class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license"
+								>close</mat-icon
+							>
 						</ng-container>
 					</div>
 				</ng-container>
