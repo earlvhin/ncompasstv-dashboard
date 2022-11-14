@@ -17,6 +17,12 @@
 	span {
 		margin-right: 20px;
 	}
+
+	.remove-reboot-btn {
+		color: red;
+		margin-left: 20px;
+		cursor: pointer;
+	}
 }
 
 .horizontal-panel {
@@ -54,7 +60,7 @@
 }
 
 .count-data {
-	transition: all 0.2s cubic-bezier(.25, .8, .25, 1);
+	transition: all 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
 
 	&.updated {
 		background: rgb(179, 230, 62);
@@ -84,11 +90,11 @@
 }
 
 .good {
-	color: #8EC641;
+	color: #8ec641;
 }
 
 .bad {
-	color: #EE5454;
+	color: #ee5454;
 }
 
 .slow {
@@ -100,7 +106,7 @@
 }
 
 .hoverable:hover {
-	color: #8EC641;
+	color: #8ec641;
 	cursor: pointer;
 	outline: none;
 }
@@ -108,7 +114,7 @@
 .card-button {
 	background-color: transparent;
 	border: none;
-	color: #8EC641;
+	color: #8ec641;
 
 	&.restart-anydesk {
 		margin-right: 20px;
@@ -131,9 +137,7 @@
 }
 
 .theme-container {
-
 	.alias-container {
-
 		h1.page-title,
 		form,
 		mat-icon {
@@ -155,19 +159,54 @@
 			cursor: pointer;
 			color: grey;
 		}
+	}
 
+	.add-tag {
+		margin-left: 20px;
+		color: #8ec641;
+		cursor: pointer;
 	}
 
 	.tags-container {
 		margin-top: 10px;
+		white-space: nowrap;
+		flex-wrap: wrap;
 
 		.tag {
-			margin-right: 10px;
+			margin-right: 5px;
+			margin-bottom: 5px;
 			background-color: gray;
 			color: white;
-			padding: 1px 5px;
+			padding-left: 10px;
 			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
 			border: 1px solid gray;
+
+			mat-icon {
+				font-size: 10px;
+				line-height: 23px;
+			}
+
+			.name {
+				font-size: 9px;
+				text-align: center;
+				cursor: pointer;
+
+				&:hover {
+					color: #c5e29d;
+				}
+			}
+
+			.excluded {
+				text-align: center;
+			}
+
+			.remove-btn {
+				text-align: center;
+
+				&:hover {
+					color: #e69999;
+				}
+			}
 
 			&.dealer {
 				border-radius: 5px;
@@ -176,7 +215,6 @@
 	}
 
 	.tabs {
-
 		.screen-playlists {
 			ul {
 				list-style-type: none;
@@ -228,7 +266,6 @@
 					}
 				}
 			}
-
 		}
 
 		.content-tab-container {
@@ -259,7 +296,6 @@
 			}
 
 			.filters-section {
-
 				.current-filters {
 					.filter {
 						padding: 5px 10px 5px 10px;
@@ -267,19 +303,19 @@
 						border-radius: 5px;
 						color: black;
 						border: 1px solid gray;
-				
+
 						&.clickable {
 							padding: 3px 7px 3px 7px;
 						}
 					}
-				
+
 					mat-icon {
 						font-size: 14px;
 					}
-				
+
 					.remove-btn {
 						text-align: center;
-				
+
 						mat-icon {
 							line-height: 25px;
 						}
@@ -290,14 +326,10 @@
 					margin-left: auto;
 					width: 400px;
 				}
-
 			}
-
 		}
-
 	}
 }
-
 
 .entered-scripts {
 	background-color: #222;
@@ -311,7 +343,7 @@
 
 .terminal-text-entry {
 	background: #555;
-	color: #8EC641;
+	color: #8ec641;
 	border: none;
 	height: 50px;
 	font-size: 13px;
@@ -321,7 +353,7 @@
 }
 
 .terminal-submit-button {
-	background: #8EC641;
+	background: #8ec641;
 	border: none;
 	font-size: 13px;
 	font-weight: bold;
@@ -347,7 +379,7 @@
 
 .terminal-text-entry {
 	background: #555;
-	color: #8EC641;
+	color: #8ec641;
 	border: none;
 	height: 50px;
 	font-size: 13px;
@@ -357,7 +389,7 @@
 }
 
 .terminal-submit-button {
-	background: #8EC641;
+	background: #8ec641;
 	border: none;
 	font-size: 13px;
 	font-weight: bold;
@@ -372,20 +404,16 @@
 }
 
 .selected-filter {
-	background-color: #8EC641 !important;
+	background-color: #8ec641 !important;
 }
 
 @media screen and (min-width: 1366px) {
-
 	.theme-container {
 		.content-tab-container {
-
 			.assets-chart-container,
 			.duration-chart-container {
 				width: 300px !important;
 			}
 		}
-
 	}
-
 }

@@ -156,7 +156,9 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Total Business Hours', sortable: false, key: 'storeHours', hidden: true, no_show: true },
 		{ name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
-		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true }
+		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
+		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -701,7 +703,7 @@ export class LicensesComponent implements OnInit {
 	getDataForExport(tab: string): void {
 		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
+        this.filters.isactivated = '';
 		switch (tab) {
 			case 'licenses':
 				this._license
@@ -977,13 +979,15 @@ export class LicensesComponent implements OnInit {
 						link: '/administrator/dealers/' + dealer.dealerId,
 						query: '2',
 						editable: false,
-						hidden: false
+						hidden: false,
+                        new_tab_link: true
 					},
 					{
 						value: this._title.transform(dealer.businessName),
 						link: '/administrator/dealers/' + dealer.dealerId,
 						editable: false,
-						hidden: false
+						hidden: false,
+                        new_tab_link: true
 					},
 					{ value: this._title.transform(dealer.contactPerson), link: null, editable: false, hidden: false },
 					{ value: dealer.region, link: null, editable: false, hidden: false },

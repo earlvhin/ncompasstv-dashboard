@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
+import { MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 
 import { TAG } from 'src/app/global/models/tag.model';
@@ -13,6 +13,7 @@ import { takeUntil } from 'rxjs/operators';
 	styleUrls: ['./edit-tag.component.scss']
 })
 export class EditTagComponent implements OnInit, OnDestroy {
+	@Input() page = 'tags';
 	columns = [];
 	currentUserId: string;
 	form: FormGroup;
@@ -50,14 +51,22 @@ export class EditTagComponent implements OnInit, OnDestroy {
 		const { tagId } = this.tag;
 		const { tagColor, name, description, exclude } = this.form.value;
 
-		this._tag.updateTag(tagId, name, tagColor, this.currentUserId, description, exclude)
+		this._tag
+			.updateTag(tagId, name, tagColor, this.currentUserId, description, exclude)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => {
-					this._dialog_ref.close();
-					this._tag.onRefreshTagsTable.emit();
-					this._tag.onRefreshTagsCount.emit();
-					this._tag.onRefreshTagOwnersTable.emit();
+				(response) => {
+					let returnData = null;
+
+					if (this.page === 'tags') {
+						this._tag.onRefreshTagsTable.emit();
+						this._tag.onRefreshTagsCount.emit();
+						this._tag.onRefreshTagOwnersTable.emit();
+					}
+
+					if (this.page === 'single-license') returnData = response.tag[0];
+
+					this._dialog_ref.close(returnData);
 				},
 				(error) => {
 					throw new Error(error);
@@ -71,11 +80,11 @@ export class EditTagComponent implements OnInit, OnDestroy {
 		this.isTagExcluded = data.exclude === 1 ? true : false;
 
 		this.form = this._form_builder.group({
-			tagId: [ data.tagId, Validators.required ],
-			name: [ data.name, Validators.required ],
-			tagColor: [ data.tagColor, Validators.required ],
-			description: [ data.description ],
-			exclude: [ data.exclude ]
+			tagId: [data.tagId, Validators.required],
+			name: [data.name, Validators.required],
+			tagColor: [data.tagColor, Validators.required],
+			description: [data.description],
+			exclude: [data.exclude]
 		});
 
 		this.selectedTagColor = this.form.get('tagColor').value;

@@ -65,7 +65,9 @@ export class HostsComponent implements OnInit {
 		{ name: 'Total Business Hours', sortable: false, key: 'storeHoursTotal', hidden: true, no_show: true },
 		{ name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
-		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true }
+		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
+		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -185,21 +187,19 @@ export class HostsComponent implements OnInit {
 						{
 							value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--',
 							link: '/administrator/dealers/' + dealer.dealerId,
-							new_tab_link: false,
+							new_tab_link: true,
 							editable: false,
 							hidden: false
 						},
-						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false },
+						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false, new_tab_link: 'true', },
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false },
-						// { value: dealer.region, link: null, editable: false, hidden: false},
-						// { value: dealer.city, link: null, editable: false, hidden: false},
-						// { value: dealer.state, link: null, editable: false, hidden: false},
 						{ value: dealer.hosts.length, link: null, editable: false, hidden: false },
 						{ value: dealer.activeHost, link: null, editable: false, hidden: false },
 						{ value: dealer.forInstallationHost, link: null, editable: false, hidden: false },
 						{
 							value: dealer.hosts[0] ? dealer.hosts[0].name : '---',
 							link: dealer.hosts[0] ? '/administrator/hosts/' + dealer.hosts[0].hostId : null,
+                            new_tab_link: 'true',
 							editable: false,
 							hidden: false
 						}
@@ -211,14 +211,12 @@ export class HostsComponent implements OnInit {
 						{
 							value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--',
 							link: '/administrator/dealers/' + dealer.dealerId,
+                            new_tab_link: 'true',
 							editable: false,
 							hidden: false
 						},
-						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false },
+						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false, new_tab_link: 'true', },
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false },
-						// { value: dealer.region, link: null, editable: false, hidden: false},
-						// { value: dealer.city, link: null, editable: false, hidden: false},
-						// { value: dealer.state, link: null, editable: false, hidden: false},
 						{ value: 0, link: null, editable: false, hidden: false },
 						{ value: dealer.activeHost, link: null, editable: false, hidden: false },
 						{ value: dealer.forInstallationHost, link: null, editable: false, hidden: false },

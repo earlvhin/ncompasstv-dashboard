@@ -5,12 +5,14 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button class="theme-btn" [routerLink]="['create-screen']">
-                    <span class="button-label">
-                        New Screen
-                    </span>
-                    <span class="fas fa-plus ml-2 sm-text"></span>
-                </button>
+                <a [routerLink]="['create-screen']" target="_blank">
+                    <button mat-button mat-raised-button class="theme-btn">
+                        <span class="button-label">
+                            New Screen
+                        </span>
+                        <span class="fas fa-plus ml-2 sm-text"></span>
+                    </button>
+                </a>
             </div>
         </div>
         <hr class="my-4">

@@ -5,7 +5,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { TagService } from 'src/app/global/services';
-import { OWNER, TAG, TAG_OWNER } from 'src/app/global/models';
+import { CREATE_AND_ASSIGN_TAG, OWNER, TAG, TAG_OWNER } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -61,7 +61,8 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 			return tagId;
 		});
 
-		this._tag.assignTags(ownersToSubmit, tagsToSubmit)
+		this._tag
+			.assignTags(ownersToSubmit, tagsToSubmit)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
@@ -90,13 +91,17 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	}
 
 	private getAllRecentTags() {
-
 		this.isSearchingTags = true;
-		let params: { page: number, sortColumn: string, sortOrder: string, role?: number } = { page: 1, sortColumn: 'DateCreated', sortOrder: 'desc' };
+		let params: { page: number; sortColumn: string; sortOrder: string; role?: number } = {
+			page: 1,
+			sortColumn: 'DateCreated',
+			sortOrder: 'desc'
+		};
 
 		if (this.tab === 'dealer') params.role = 2;
 
-		this._tag.getAllTags(params)
+		this._tag
+			.getAllTags(params)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, message }) => {
@@ -118,7 +123,8 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	private searchOwners(key: string = null) {
 		this.isSearchingOwners = true;
 
-		this._tag.searchOwners(key)
+		this._tag
+			.searchOwners(key)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { owners: OWNER[] }) => {
@@ -137,14 +143,14 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	}
 
 	private searchTags(keyword: string = null): void {
-
 		this.isSearchingTags = true;
 
-		const params: { keyword: string, role?: number } = { keyword };
+		const params: { keyword: string; role?: number } = { keyword };
 
 		if (this.tab === 'dealer') params.role = 2;
 
-		this._tag.searchAllTags(params)
+		this._tag
+			.searchAllTags(params)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, message }) => {
@@ -158,7 +164,6 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 				}
 			)
 			.add(() => (this.isSearchingTags = false));
-
 	}
 	private showSuccessModal(): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {

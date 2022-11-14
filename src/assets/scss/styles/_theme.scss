@@ -305,7 +305,7 @@ button {
 	&._danger {
 		background-color: $danger !important;
 	}
-	
+
 	&._caution {
 		background-color: #ce5109;
 	}
@@ -317,7 +317,7 @@ button {
 	&._warning {
 		background-color: #771c8a;
 	}
-	
+
 	&._primary {
 		background-color: $primary;
 	}
@@ -339,7 +339,7 @@ button {
 		font-weight: 500;
 		margin-right: 10px;
 	}
-	
+
 	&._disabled {
 		background-color: #bbb;
 		color: #777;
@@ -431,7 +431,7 @@ button {
 		tr:last-child {
 			// box-shadow: 0 8px 6px -6px $shadow;
 			border-bottom: 1px solid #e4e4e4;
-            
+
 			td {
 				border-bottom: none;
 			}
@@ -581,7 +581,7 @@ button {
 }
 
 .text-orange {
-	color: rgb(250, 132, 21)
+	color: rgb(250, 132, 21);
 }
 
 .text-gray-with-hover {
@@ -637,10 +637,10 @@ button {
 }
 
 .not-clickable {
-    pointer-events: none;
-    .mat-expansion-indicator {
-        display: none;
-    }
+	pointer-events: none;
+	.mat-expansion-indicator {
+		display: none;
+	}
 }
 
 .drop-cursor {
@@ -871,25 +871,27 @@ agm-map {
 	margin-top: -15px !important;
 }
 .no-overflow {
-    overflow: hidden;
+	overflow: hidden;
 }
 
 .justify-flex {
-    justify-content: flex-end
+	justify-content: flex-end;
 }
 
 .minimizer {
-    font-size: 25px;
-    left: 395px;
-    top: 0;
-    z-index: 100;
+	font-size: 25px;
+	left: 395px;
+	top: 0;
+	z-index: 100;
 }
 
 #display {
-    ul, ol {
-        padding-left: 40px !important;
-        ul, ol {
-            padding-left: 40px !important;
-        }
-    }
+	ul,
+	ol {
+		padding-left: 40px !important;
+		ul,
+		ol {
+			padding-left: 40px !important;
+		}
+	}
 }

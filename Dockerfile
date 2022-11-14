@@ -1,5 +1,5 @@
 # stage 1
-FROM node:12.19 as node
+FROM node:12.22 as node
 WORKDIR /app
 COPY . .
 RUN npx npm-force-resolutions

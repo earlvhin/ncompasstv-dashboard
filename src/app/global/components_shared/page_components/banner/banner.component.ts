@@ -102,7 +102,12 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 	checkRoute(id1, id2) {
 		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } });
+		// this._router.navigate([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } });
+
+        const url = this._router.serializeUrl(
+            this._router.createUrlTree([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } })
+        );
+        window.open(url, '_blank');
 	}
 
 	checkContent() {
