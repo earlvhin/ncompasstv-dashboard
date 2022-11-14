@@ -510,6 +510,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.filterContent();
 	}
 
+	onRemoveRebootTime(controlName: string): void {
+		this.additional_license_settings_form.get(controlName).setValue(null);
+	}
+
 	async onRemoveTag(index: number, data: TAG) {
 		const confirmAction = await this._confirmDialog
 			.warning({ message: 'Remove Tag?', data: 'This will remove the tag from this license' })

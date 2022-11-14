@@ -5,21 +5,23 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <button mat-button mat-raised-button 
+                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank">
+                    <button mat-button mat-raised-button 
                     class="theme-btn pi-control _cool sm-text mr-2" 
-                    [routerLink]="['/administrator/users/create-user/dealer']"
                     title="Add Dealer" *ngIf="current_tab === 'Dealer'">
-                    <span class="fas fa-suitcase"></span> 
-                    <span class="ml-2 button_text_animation">Add Dealer</span>
-                </button>
+                        <span class="fas fa-suitcase"></span> 
+                        <span class="ml-2 button_text_animation">Add Dealer</span>
+                    </button>
+                </a>
 
-                <button mat-button mat-raised-button 
+                <a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
+                    <button mat-button mat-raised-button 
                     class="theme-btn pi-control _teal sm-text mr-2" 
-                    [routerLink]="['/administrator/hosts/create-host']"
                     title="Add Host Place" *ngIf="current_tab === 'Dealer'">
-                    <span class="fas fa-map-marker"></span> 
-                    <span class="ml-2 button_text_animation">Add Host Place</span>
-                </button>
+                        <span class="fas fa-map-marker"></span> 
+                        <span class="ml-2 button_text_animation">Add Host Place</span>
+                    </button>
+                </a>
 
                 <button mat-button mat-raised-button 
                     class="theme-btn pi-control _info sm-text mr-2" 

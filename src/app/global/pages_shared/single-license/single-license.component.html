@@ -140,7 +140,6 @@
 			</button>
 		</div>
 	</div>
-
 	<hr class="mb-0" />
 
 	<!-- TABS -->
@@ -187,9 +186,7 @@
 													</div>
 												</div>
 											</div>
-
 											<hr />
-
 											<div class="horizontal-panel">
 												<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
 													<div class="screenshots" *ngFor="let s of screenshots">
@@ -281,9 +278,7 @@
 															</mat-slide-toggle>
 														</div>
 													</div>
-
 													<hr class="my-3" />
-
 													<div class="d-flex">
 														<!-- Last Startup -->
 														<div class="flex-even last-online">
@@ -297,9 +292,7 @@
 															<h5>{{ license_data.timeOut ? license_data.timeOut : 'N/A' }}</h5>
 														</div>
 													</div>
-
 													<hr class="my-3" />
-
 													<div class="d-flex">
 														<!-- Last Update -->
 														<div class="flex-even last-update">
@@ -358,7 +351,6 @@
 											<div class="w-100 mb-3">
 												<mat-card class="p-4">
 													<h5 class="mb-0 font-weight-medium">Dealer and Host Info</h5>
-
 													<hr />
 
 													<!-- Host Name -->
@@ -366,9 +358,9 @@
 														<div class="flex-even hostname">
 															<span class="sm-text"> Dealer </span>
 															<h5 class="mb-0">
-																<a [routerLink]="dealer_route" *ngIf="is_admin; else is_self">{{
-																	screen.assigned_dealer
-																}}</a>
+																<a [routerLink]="dealer_route" target="_blank" *ngIf="is_admin; else is_self">
+																	{{ screen.assigned_dealer }}
+																</a>
 
 																<ng-template #is_self>
 																	<span>{{ screen.assigned_dealer }}</span>
@@ -379,7 +371,7 @@
 														<div class="flex-even hostname">
 															<span class="sm-text"> Hostname </span>
 															<h5 class="mb-0">
-																<a [routerLink]="host_route">{{ host.name }}</a>
+																<a [routerLink]="host_route" target="_blank">{{ host.name }}</a>
 															</h5>
 														</div>
 													</div>
@@ -578,7 +570,7 @@
 														<!-- Screen Name -->
 														<div class="flex-even">
 															<span class="sm-text">Screen Name</span>
-															<a [routerLink]="screen_route"
+															<a [routerLink]="screen_route" target="_blank"
 																><h5 class="hoverable">
 																	{{ screen.screen_title ? (screen.screen_title | titlecase) : 'N/A' }}
 																</h5></a
@@ -609,7 +601,7 @@
 																		style="font-size: 6px"></span>
 
 																	<ng-container *ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
-																		<a [routerLink]="zone.link">
+																		<a [routerLink]="zone.link" target="_blank">
 																			<h5 class="hoverable d-inline-block align-middle md-text m-0">
 																				{{ zone.name }} - {{ zone.playlist_name }}
 																			</h5>
@@ -1046,6 +1038,12 @@
 															[meridian]="true"
 															[size]="'small'">
 														</ngb-timepicker>
+														<<<<<<< HEAD =======
+														<ng-container *ngIf="control"></ng-container>
+														<mat-icon class="remove-reboot-btn" (click)="onRemoveRebootTime(control.form_control_name)"
+															>delete</mat-icon
+														>
+														>>>>>>> development
 													</div>
 												</ng-container>
 											</ng-template>
