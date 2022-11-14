@@ -95,7 +95,7 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 		let getStatsRequest = this._license.get_licenses_statistics('', '', '');
 
 		if (this.selected_dealer || (this.start_date && this.end_date)) {
-			getStatsRequest = this._license.get_licenses_statistics();
+			getStatsRequest = this._license.get_licenses_statistics(this.selected_dealer, this.start_date, this.end_date);
 			isNarrowedDownResult = true;
 		}
 
