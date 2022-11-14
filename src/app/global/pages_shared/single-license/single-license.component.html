@@ -6,109 +6,132 @@
 		<div class="flex-even">
 			<div class="alias-container">
 				<h1 class="page-title mb-1" *ngIf="!enable_edit_alias; else edit_alias">{{ title }}</h1>
-				<mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only" (click)="activateEdit(true)">edit</mat-icon>
+				<mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only" (click)="activateEdit(true)" matTooltip="Edit license alias"
+					>edit</mat-icon
+				>
 
 				<ng-template #edit_alias>
 					<form class="edit-alias-form" [formGroup]="update_alias">
 						<h1 class="page-title mb-1"><input matInput formControlName="alias" placeholder="License Alias" /></h1>
 					</form>
-					<mat-icon class="save-alias" *ngIf="enable_edit_alias && !is_view_only" (click)="updateLicenseAlias()">save</mat-icon>
+					<mat-icon
+						class="save-alias"
+						*ngIf="enable_edit_alias && !is_view_only"
+						(click)="updateLicenseAlias()"
+						matTooltip="Save license alias"
+						>save</mat-icon
+					>
 				</ng-template>
 			</div>
+
 			<p class="sm-text mb-0">{{ license_key }}</p>
+
 			<div class="d-flex tags-container" *ngIf="tags.length > 0">
-				<div class="d-inline sm-text tag" *ngFor="let tag of tags" [ngClass]="{ 'dealer' : tag.role === 2 }" [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
+				<div
+					class="d-inline sm-text tag"
+					*ngFor="let tag of tags"
+					[ngClass]="{ dealer: tag.role === 2 }"
+					[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
 					{{ tag.name }}
 				</div>
 			</div>
+			<!-- <p class="sm-text mb-0">Tags</p> -->
 		</div>
-
 		<div class="text-right">
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text mr-2"
 				[disabled]="status_check_disabled"
 				(click)="checkPiStatus()"
 				title="Check Status">
-				<span class="fas fa-lightbulb"></span>
-                <span class="ml-2 button_text_animation">Check Status</span>
+				<span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text mr-2 _info"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="pushUpdate()"
 				title="Content Update">
-				<span class="fas fa-upload"></span>
-                <span class="ml-2 button_text_animation">Content Update</span>
+				<span class="fas fa-upload"></span> <span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _cool mr-2"
 				[disabled]="!pi_status || pi_updating"
 				title="Refetch Player Data"
 				(click)="refetchPi()">
-				<span class="fas fa-sync"></span>
-                <span class="ml-2 button_text_animation">Refetch Content</span>
+				<span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _primary mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="updateAndRestart()"
 				title="Update System">
-				<span class="fas fa-terminal"></span>
-                <span class="ml-2 button_text_animation">Update System</span>
+				<span class="fas fa-terminal"></span> <span class="ml-2 button_text_animation">Update System</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _warning mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="restartPlayer()"
 				title="Reboot Player">
-				<span class="fas fa-power-off"></span> 
-                <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _caution mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="restartPi()"
 				title="Reboot Pi">
-				<span class="fas fa-power-off"></span> 
-                <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _teal mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="resetPi()"
 				title="Reset Player Data">
-				<span class="fas fa-eraser"></span> 
-                <span class="ml-2 button_text_animation">Reset Data</span>
+				<span class="fas fa-eraser"></span> <span class="ml-2 button_text_animation">Reset Data</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _dark mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="upgradeToV2()"
 				title="Reset Player Data"
 				*ngIf="!apps">
-				<span class="font-weight-bold">2.0</span>
-                <span class="ml-2 button_text_animation">Upgrade to version 2</span>
+				<span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
 			</button>
 
-			<button mat-button mat-raised-button
+			<button
+				mat-button
+				mat-raised-button
 				class="theme-btn pi-control sm-text _danger"
 				title="Delete License"
 				*ngIf="!pi_status"
 				(click)="onDeleteLicense()"
 				[disabled]="is_view_only">
-				<span class="fas fa-trash"></span>
-                <span class="ml-2 button_text_animation">Delete License</span>
+				<span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
 			</button>
 		</div>
 	</div>
-	<hr class="mb-0">
+	<hr class="mb-0" />
 
 	<!-- TABS -->
 	<div class="row mb-4 tabs">
@@ -132,14 +155,18 @@
 															<p class="sm-text">Click Screenshot Button to get live screenshots of this license.</p>
 														</div>
 														<div class="text-right">
-															<button mat-button mat-raised-button
+															<button
+																mat-button
+																mat-raised-button
 																class="theme-btn mr-2"
 																[disabled]="!pi_status || screenshot_timeout"
 																(click)="screenShotPi()">
 																<span class="fas fa-camera mr-2"></span>
 																Screenshot
 															</button>
-															<button mat-button mat-raised-button
+															<button
+																mat-button
+																mat-raised-button
 																class="theme-btn"
 																*ngIf="screenshots.length != 0 && !is_dealer"
 																[disabled]="screenshot_timeout || clear_screenshots"
@@ -150,7 +177,7 @@
 													</div>
 												</div>
 											</div>
-											<hr>
+											<hr />
 											<div class="horizontal-panel">
 												<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
 													<div class="screenshots" *ngFor="let s of screenshots">
@@ -191,7 +218,7 @@
 												<mat-card class="p-4">
 													<h5 class="mb-0 font-weight-medium">Pi and Player Status</h5>
 
-													<hr>
+													<hr />
 
 													<div class="flex">
 														<!-- Pi Status -->
@@ -215,7 +242,10 @@
 														<!-- Display Status -->
 														<div class="flex-even" *ngIf="is_admin">
 															<span class="sm-text"> Display Status </span>
-															<h5 *ngIf="display_status; else wait" [ngClass]="{ good: display_status == 1, bad: display_status == 2 }">
+
+															<h5
+																*ngIf="display_status; else wait"
+																[ngClass]="{ good: display_status == 1, bad: display_status == 2 }">
 																{{ display_status == 1 ? 'ON' : 'OFF/UNKNOWN' }}
 															</h5>
 
@@ -226,16 +256,20 @@
 
 														<div class="flex-even">
 															<span class="sm-text">Display ON/OFF</span>
-															<br>
+															<br />
 															<mat-slide-toggle
-																[matTooltip]="license_data.isCecEnabled === 0 ? 'CEC not available on TV' : 'Turn the TV on or off'"
+																[matTooltip]="
+																	license_data.isCecEnabled === 0
+																		? 'CEC not available on TV'
+																		: 'Turn the TV on or off'
+																"
 																(change)="monitorToggle($event)"
 																[checked]="display_status == 1 ? 'checked' : 'false'"
 																[disabled]="license_data.isCecEnabled === 0">
 															</mat-slide-toggle>
 														</div>
 													</div>
-													<hr class="my-3">
+													<hr class="my-3" />
 													<div class="d-flex">
 														<!-- Last Startup -->
 														<div class="flex-even last-online">
@@ -249,7 +283,7 @@
 															<h5>{{ license_data.timeOut ? license_data.timeOut : 'N/A' }}</h5>
 														</div>
 													</div>
-													<hr class="my-3">
+													<hr class="my-3" />
 													<div class="d-flex">
 														<!-- Last Update -->
 														<div class="flex-even last-update">
@@ -263,7 +297,8 @@
 															<div class="d-flex align-items-center">
 																<h5 class="d-inline-block mr-3">{{ anydesk_id ? anydesk_id : 'N/A' }}</h5>
 
-																<ng-container *ngIf="!anydesk_restarting && anydesk_id; else disabled_anydesk_buttons">
+																<ng-container
+																	*ngIf="!anydesk_restarting && anydesk_id; else disabled_anydesk_buttons">
 																	<!-- RESTART ANYDESK SERVICE BUTTON -->
 																	<button
 																		class="card-button restart-anydesk"
@@ -307,7 +342,7 @@
 											<div class="w-100 mb-3">
 												<mat-card class="p-4">
 													<h5 class="mb-0 font-weight-medium">Dealer and Host Info</h5>
-													<hr>
+													<hr />
 
 													<!-- Host Name -->
 													<div class="d-flex">
@@ -315,8 +350,8 @@
 															<span class="sm-text"> Dealer </span>
 															<h5 class="mb-0">
 																<a [routerLink]="dealer_route" target="_blank" *ngIf="is_admin; else is_self">
-                                                                    {{screen.assigned_dealer}}
-                                                                </a>
+																	{{ screen.assigned_dealer }}
+																</a>
 
 																<ng-template #is_self>
 																	<span>{{ screen.assigned_dealer }}</span>
@@ -382,8 +417,7 @@
 															<ng-container *ngIf="apps && apps.server; else netstatus_v1">
 																<h5
 																	*ngIf="internet_connection.status && pi_status; else offline_net"
-																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'"
-																>
+																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
 																	{{ internet_connection.status }}
 																</h5>
 
@@ -428,8 +462,7 @@
 																		*ngIf="license_data.speedtestSettings == 1"
 																		class="card-button"
 																		(click)="internetSpeedTest()"
-																		title="Test Internet Speed"
-																	>
+																		title="Test Internet Speed">
 																		<span class="fas fa-sync md-text"></span>
 																	</button>
 																</ng-container>
@@ -556,8 +589,7 @@
 																<li *ngFor="let zone of zone_playlists">
 																	<span
 																		class="fas fa-circle mr-2 align-middle d-inline-block"
-																		style="font-size: 6px"
-																	></span>
+																		style="font-size: 6px"></span>
 
 																	<ng-container *ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
 																		<a [routerLink]="zone.link" target="_blank">
@@ -643,8 +675,7 @@
 											[is_interactive]="true"
 											[template_data]="template_data"
 											[height]="'180px'"
-											[width]="minimap_width"
-										>
+											[width]="minimap_width">
 										</app-template-minimap>
 
 										<!-- Background Section Toggle -->
@@ -683,8 +714,7 @@
 										mat-raised-button
 										[matMenuTriggerFor]="playlistContentScheduleStatusFilters"
 										mat-raised-button
-										class="theme-btn"
-									>
+										class="theme-btn">
 										<span class="button-label">Content Schedule Status</span>
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
@@ -693,8 +723,7 @@
 											*ngFor="let status of content_schedule_statuses"
 											mat-menu-item
 											(click)="onFilterContent('schedule_status', status.toLowerCase())"
-											[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''"
-										>
+											[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''">
 											{{ status | titlecase }}
 										</button>
 									</mat-menu>
@@ -710,8 +739,7 @@
 										<button
 											*ngFor="let type of content_owner_types"
 											mat-menu-item
-											(click)="onFilterContent('owner', type.toLowerCase())"
-										>
+											(click)="onFilterContent('owner', type.toLowerCase())">
 											{{ type | titlecase }}
 										</button>
 									</mat-menu>
@@ -727,8 +755,7 @@
 										<button
 											*ngFor="let type of content_types"
 											mat-menu-item
-											(click)="onFilterContent('content_type', type.toLowerCase())"
-										>
+											(click)="onFilterContent('content_type', type.toLowerCase())">
 											{{ type | titlecase }}
 										</button>
 									</mat-menu>
@@ -754,8 +781,7 @@
 										mat-raised-button
 										class="theme-btn btn-danger"
 										(click)="onResetFilters()"
-										[disabled]="content_filters.length === 0"
-									>
+										[disabled]="content_filters.length === 0">
 										<span class="button-label">Reset Filters</span>
 										<span class="fas fa-times ml-2"></span>
 									</button>
@@ -791,8 +817,7 @@
 										[is_fullscreen]="a.is_fullscreen"
 										[is_protected]="a.is_protected"
 										[sequence]="a.seq"
-										[is_view_only]="true"
-									>
+										[is_view_only]="true">
 										[uuid]="a.uuid" [zone_content]="true">
 									</app-thumbnail-card>
 								</div>
@@ -833,8 +858,7 @@
 										<button
 											(click)="submitTerminalCommand()"
 											class="terminal-submit-button"
-											[disabled]="terminal_value === undefined || terminal_value === ''"
-										>
+											[disabled]="terminal_value === undefined || terminal_value === ''">
 											Run <span class="fas fa-play sm-text ml-2"></span>
 										</button>
 									</div>
@@ -876,8 +900,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="disableScreenshot($event)"
-											[checked]="license_data.screenshotSettings == 1 ? true : false"
-										>
+											[checked]="license_data.screenshotSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -895,8 +918,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="disableSpeedtest($event)"
-											[checked]="license_data.speedtestSettings == 1 ? true : false"
-										>
+											[checked]="license_data.speedtestSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -914,8 +936,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="onUpdateNotificationSettings($event, 'email')"
-											[checked]="license_data.emailSettings == 1 ? true : false"
-										>
+											[checked]="license_data.emailSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -933,8 +954,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="onUpdateNotificationSettings($event, 'notification')"
-											[checked]="license_data.notificationSettings == 1 ? true : false"
-										>
+											[checked]="license_data.notificationSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -952,8 +972,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="disableResource($event)"
-											[checked]="license_data.resourceSettings == 1 ? true : false"
-										>
+											[checked]="license_data.resourceSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -984,27 +1003,23 @@
 								<form
 									*ngIf="license_data && additional_license_settings_form"
 									[formGroup]="additional_license_settings_form"
-									(ngSubmit)="saveAdditionalLicenseSettings()"
-								>
+									(ngSubmit)="saveAdditionalLicenseSettings()">
 									<div class="row flex-column">
 										<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
-
 											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
-
 												<mat-form-field class="full-width">
-
 													<mat-label>{{ control.label }}</mat-label>
 
-													<input matInput appearance="fill" placeholder="Enter number of seconds, ex: 20" 
-														[formControlName]="control.form_control_name" 
-														[type]="control.type">
-
+													<input
+														matInput
+														appearance="fill"
+														placeholder="Enter number of seconds, ex: 20"
+														[formControlName]="control.form_control_name"
+														[type]="control.type" />
 												</mat-form-field>
-
 											</ng-container>
 
 											<ng-template #otherFieldTypes>
-
 												<ng-container *ngIf="control.type === 'time'">
 													<div class="d-flex align-items-center reboot-time">
 														<span>{{ control.label }}:</span>
@@ -1012,13 +1027,14 @@
 														<ngb-timepicker
 															[formControlName]="control.form_control_name"
 															[meridian]="true"
-															[size]="'small'"
-														>
+															[size]="'small'">
 														</ngb-timepicker>
-
+														<ng-container *ngIf="control"></ng-container>
+														<mat-icon class="remove-reboot-btn" (click)="onRemoveRebootTime(control.form_control_name)"
+															>delete</mat-icon
+														>
 													</div>
 												</ng-container>
-
 											</ng-template>
 										</div>
 									</div>
@@ -1028,8 +1044,7 @@
 											mat-button
 											mat-raised-button
 											class="theme-btn mr-2"
-											[disabled]="saving_license_settings || !has_unsaved_additional_settings"
-										>
+											[disabled]="saving_license_settings || !has_unsaved_additional_settings">
 											Save
 										</button>
 										<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>

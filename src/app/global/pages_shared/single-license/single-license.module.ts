@@ -8,19 +8,12 @@ import { SingleLicenseComponent } from './single-license.component';
 import { ResourceTabComponent } from './components/resource-tab/resource-tab.component';
 import { InstallationTabComponent } from './components/installation-tab/installation-tab.component';
 import { ContentTabComponent } from './components/content-tab/content-tab.component';
+import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
 
+const MODALS = [AddTagModalComponent];
 @NgModule({
-	declarations: [ 
-		SingleLicenseComponent, 
-		AnalyticsTabComponent, 
-		ResourceTabComponent, 
-		InstallationTabComponent, 
-		ContentTabComponent 
-	],
-	imports: [
-		CommonModule,
-		GlobalModule,
-		RouterModule
-	]
+	declarations: [SingleLicenseComponent, AnalyticsTabComponent, ResourceTabComponent, InstallationTabComponent, ContentTabComponent, MODALS],
+	imports: [CommonModule, GlobalModule, RouterModule],
+	entryComponents: [MODALS]
 })
-export class SingleLicenseModule { }
+export class SingleLicenseModule {}

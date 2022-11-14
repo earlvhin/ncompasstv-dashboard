@@ -2,31 +2,38 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from './base.service';
-import { API_FILTERS, OWNER, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
+import { CREATE_AND_ASSIGN_TAG, API_FILTERS, OWNER, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class TagService extends BaseService {
-
-	onClickTagName = new EventEmitter<{ tag: TAG, tab: string }>();
+	onClickTagName = new EventEmitter<{ tag: TAG; tab: string }>();
 	onRefreshTagsCount = new EventEmitter<void>();
 	onRefreshTagsTable = new EventEmitter<void>();
 	onRefreshTagOwnersTable = new EventEmitter<void>();
 	onSearch = new EventEmitter<string>();
 
-	assignTags(owners: { ownerId: string, tagTypeId: string }[], tagIds: string[]) {   
+	assignTags(owners: { ownerId: string; tagTypeId: string }[], tagIds: string[]) {
 		const body = { owners, tagIds };
 		return this.postRequest(this.creators.tag_owners, body);
 	}
-	
-	createTag(data: { role: number, name: string, tagColor: string, createdBy: string, description?: string, exclude?: number }) {
 
+	checkTagName(name: string) {
+		const endpoint = `${this.getters.tag_check_name}?name=${name}`;
+		return this.postRequest(endpoint, {});
+	}
+
+	createAndAssignTags(body: CREATE_AND_ASSIGN_TAG): Observable<{ message: string; tags: any }> {
+		const endpoint = this.creators.tag_add_and_assign;
+		return this.postRequest(endpoint, body);
+	}
+
+	createTag(data: { role: number; name: string; tagColor: string; createdBy: string; description?: string; exclude?: number }) {
 		const { exclude, createdBy, name, tagColor, description, role } = data;
 		const endpoint = role === 1 ? this.creators.admin_tag : this.creators.dealer_tag;
-		const body = { exclude, createdBy, names: [ { name, tagColor, description } ] };
+		const body = { exclude, createdBy, names: [{ name, tagColor, description }] };
 		return this.postRequest(endpoint, body);
-		
 	}
 
 	createTagType(name: string) {
@@ -40,7 +47,7 @@ export class TagService extends BaseService {
 	}
 
 	deleteTag(ids: string[]) {
-		const body = { owners: ids }; 
+		const body = { owners: ids };
 		return this.postRequest(this.deleters.tag, body);
 	}
 
@@ -49,8 +56,8 @@ export class TagService extends BaseService {
 		return this.postRequest(url, {});
 	}
 
-	getAllTags(filters: API_FILTERS): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
-		const params = this.setUrlParams(filters)
+	getAllTags(filters: API_FILTERS): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
+		const params = this.setUrlParams(filters);
 		const url = `${this.getters.tags_get_all}${params}`;
 		return this.getRequest(url);
 	}
@@ -67,11 +74,11 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.tags_by_id}${tagId}`);
 	}
 
-	getTagByOwner(ownerId: string) {
-		return this.getRequest(`${this.getters.tags_by_owner_id}${ownerId}`);
+	getTagByOwner(ownerId: string): Observable<{ tags: TAG[] }> {
+		return this.getRequest(`${this.getters.tags_by_owner_id}=${ownerId}`);
 	}
 
-	getTagsByRole(role = 0): Observable<{ paging?: PAGING, tags?: TAG[]}> {
+	getTagsByRole(role = 0): Observable<{ paging?: PAGING; tags?: TAG[] }> {
 		const url = `${this.getters.tags_by_role}?role=${role}`;
 		return this.getRequest(url);
 	}
@@ -88,14 +95,12 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
 	}
 
-	searchAllTags({ keyword = '', page = 1, role = 1, pageSize = 10000 }): Observable<{ tags?: TAG[], paging?: PAGING, message?: string }> {
-
+	searchAllTags({ keyword = '', page = 1, role = 1, pageSize = 10000 }): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
 		let url = `${this.getters.search_tags}?page=${page}&pageSize=${pageSize}&role=${role}`;
 
 		if (keyword.length > 0) url += `&key=${encodeURIComponent(keyword)}`;
 
 		return this.getRequest(url);
-
 	}
 
 	searchOwners(key: string = null): Observable<{ owners: OWNER[] }> {
@@ -104,37 +109,36 @@ export class TagService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	searchOwnersByTagType({ keyword = null, tagId = null, typeId = null, page =  1, role = 1}): Observable<{ tags?: TAG_OWNER[], paging?: PAGING, message?: string }> {
+	searchOwnersByTagType({
+		keyword = null,
+		tagId = null,
+		typeId = null,
+		page = 1,
+		role = 1
+	}): Observable<{ tags?: TAG_OWNER[]; paging?: PAGING; message?: string }> {
 		let url = `${this.getters.search_owner_tags}?page=${page}&role=${role}`;
 
 		const params = [
 			{ name: 'search', value: keyword },
 			{ name: 'typeId', value: typeId },
-			{ name: 'tagId', value: tagId },
+			{ name: 'tagId', value: tagId }
 		];
 
-		params.forEach(
-			param => {
-
-				if (param.value) {
-					if (url.includes('?')) url += '&';
-					else url += '?';
-					url += `${param.name}=${encodeURIComponent(param.value)}`;
-				}
-
+		params.forEach((param) => {
+			if (param.value) {
+				if (url.includes('?')) url += '&';
+				else url += '?';
+				url += `${param.name}=${encodeURIComponent(param.value)}`;
 			}
-		);
+		});
 
-		
-		
 		return this.getRequest(url);
 	}
 
 	updateTag(tagId: string, name: string, tagColor: string, updatedBy: string, description?: string, exclude = 0) {
-
-		const body: TAG = { 
-			tagId, 
-			name, 
+		const body: TAG = {
+			tagId,
+			name,
 			tagColor,
 			updatedBy,
 			exclude,
@@ -143,12 +147,10 @@ export class TagService extends BaseService {
 
 		if (description) body.description = description;
 		return this.postRequest(this.updaters.tag, [body]);
-		
 	}
 
 	updateTagType(tagTypeId: number, name: string) {
 		const body = { tagTypeId, name };
 		return this.postRequest(this.updaters.tag_type, body);
 	}
-
 }
