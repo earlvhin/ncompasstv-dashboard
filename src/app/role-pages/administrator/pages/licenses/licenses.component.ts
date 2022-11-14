@@ -703,7 +703,7 @@ export class LicensesComponent implements OnInit {
 	getDataForExport(tab: string): void {
 		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-
+        this.filters.isactivated = '';
 		switch (tab) {
 			case 'licenses':
 				this._license
