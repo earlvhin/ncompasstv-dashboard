@@ -175,12 +175,28 @@
 			text-shadow: black -1px 0px, black 0px 1px, black 1px 0px, black 0px -1px;
 			border: 1px solid gray;
 
+			mat-icon {
+				font-size: 12px;
+				line-height: 25px;
+			}
+
+			.name {
+				cursor: pointer;
+
+				&:hover {
+					color: #c5e29d;
+				}
+			}
+
+			.excluded {
+				text-align: center;
+			}
+
 			.remove-btn {
 				text-align: center;
 
-				mat-icon {
-					font-size: 15px;
-					line-height: 25px;
+				&:hover {
+					color: #e69999;
 				}
 			}
 

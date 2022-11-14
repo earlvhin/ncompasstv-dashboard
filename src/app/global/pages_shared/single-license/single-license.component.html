@@ -38,9 +38,12 @@
 						*ngFor="let tag of tags; let i = index"
 						[ngClass]="{ dealer: tag.role === 2 }"
 						[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
-						<div class="name">
+						<div class="name" matTooltip="{{ tag.description ? tag.description : 'Edit this tag' }}" (click)="openEditTagModal(i, tag)">
 							{{ tag.name }}
 						</div>
+						<ng-container *ngIf="tag.exclude === 1">
+							<div class="excluded"><mat-icon matTooltip="This tag is excluded">visibility_off</mat-icon></div>
+						</ng-container>
 						<ng-container *ngIf="is_admin">
 							<div class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license">
 								<mat-icon>close</mat-icon>
