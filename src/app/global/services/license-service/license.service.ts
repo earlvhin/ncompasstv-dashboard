@@ -96,7 +96,7 @@ export class LicenseService {
 			{ ...this.httpOptions, params }
 		);
 	}
-
+	
 	get_all_licenses_fetch(
 		page: number,
 		key: string,
