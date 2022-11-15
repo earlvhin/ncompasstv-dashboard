@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
@@ -134,12 +135,12 @@ export class FeedService {
 			.pipe(map((data: any) => data.weatherResponse));
 	}
 
-	validate_rss_url(url: string) {
+	validate_rss_url(url: string): Observable<boolean> {
 		const base = environment.base_uri;
 		const endpoint = environment.getters.validate_rss_url;
 		const params = encodeURIComponent(url);
 		const requestUrl = `${base}${endpoint}${params}`;
-		return this._http.post(requestUrl, null, this.httpOptions);
+		return this._http.post<any>(requestUrl, null, this.httpOptions);
 	}
 
 	validateColorFieldValues(control: FormControl): { [s: string]: boolean } {

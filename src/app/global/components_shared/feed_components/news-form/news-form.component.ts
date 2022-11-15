@@ -171,7 +171,7 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 			.validate_rss_url(rss_url)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data: { success: boolean }) => (this.rss_url_valid = data.success),
+				(data: boolean) => (this.rss_url_valid = data),
 				(error) => {
 					throw new Error(error);
 				}
