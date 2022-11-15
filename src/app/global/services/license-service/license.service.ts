@@ -96,7 +96,7 @@ export class LicenseService {
 			{ ...this.httpOptions, params }
 		);
 	}
-
+	
 	get_all_licenses_fetch(
 		page: number,
 		key: string,
@@ -297,7 +297,7 @@ export class LicenseService {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
 	}
 
-	get_license_by_dealer_id(dealerId: string, page: number, search?: string, arrangement?: any, pageSize = 15, pending?) {
+	get_license_by_dealer_id(dealerId: string, page: number, search?: string, arrangement?: any, pageSize = 15, pending?: any) {
 		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
 		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize, pending });
 		const url = `${base}${params}`;
