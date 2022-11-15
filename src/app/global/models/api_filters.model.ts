@@ -23,6 +23,7 @@ export interface API_FILTERS {
 	isActivated?: any;
 	online?: any;
 	pageSize?: any;
+	pending?: any;
 	piStatus?: string;
 	role?: number;
 	roleId?: string;
