@@ -38,6 +38,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 		{ name: 'Unassigned', key: 'totalLicensesUnassigned' },
 		{ name: 'Online', key: 'totalLicensesOnline' },
 		{ name: 'Offline', key: 'totalLicensesOffline' },
+        { name: 'Inactive', key: 'totalLicensesDisabled', no_show: true, hidden: true },
 		{ name: 'Scheduled', key: 'forInstallationHost' },
 		{ name: 'Total', key: 'totalHosts' },
 		{ name: 'Active', key: 'totalHostsActive' },
@@ -98,6 +99,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 			'',
 			'',
 			'',
+            '',
 			'Hosts',
 			'',
 			'',
@@ -117,9 +119,9 @@ export class DealersComponent implements OnInit, OnDestroy {
 		this.worksheet.mergeCells('D1:D2'); // Age
 		this.worksheet.mergeCells('E1:E2'); // Tags
 		this.worksheet.mergeCells('F1:F2'); // Player Count
-		this.worksheet.mergeCells('G1:J1'); // Licenses
-		this.worksheet.mergeCells('K1:M1'); // Hosts
-		this.worksheet.mergeCells('N1:O1'); // Advertisers
+		this.worksheet.mergeCells('G1:K1'); // Licenses
+		this.worksheet.mergeCells('L1:N1'); // Hosts
+		this.worksheet.mergeCells('O1:P1'); // Advertisers
 
 		this.worksheet.getRow(1).font = {
 			bold: true,

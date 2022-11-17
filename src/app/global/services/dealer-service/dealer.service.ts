@@ -67,11 +67,19 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15) {
+	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15): Observable<{ paging?: PAGING, dealers: API_DEALER[], message?: string }> {
+
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const paramsToSet: { page: number, search: string, pageSize: number, sortColumn?: string, sortOrder?: string } = { page, search, pageSize };
+
+		if (sortColumn) paramsToSet.sortColumn = sortColumn;
+
+		if (sortOrder) paramsToSet.sortOrder = sortOrder;
+
+		const params = this.setUrlParams(paramsToSet, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
+
 	}
 
 	get_dealers_with_license(page: number, key: string) {
@@ -82,7 +90,7 @@ export class DealerService extends BaseService {
 	get_dealers_with_page(page: number, key: string, pageSize = 15): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
 		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}`+ '&pageSize=' + `${pageSize}`);
 	}
-	
+
 	get_dealers_with_sort(
 		page: number,
 		search: string,

@@ -11,10 +11,12 @@ import { UI_CONTENT } from 'src/app/global/models/ui_content.model';
 import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
 import { SelectOwnerComponent } from '../../user_components/select-owner/select-owner.component';
 import { FeedService } from 'src/app/global/services';
+import { IsimagePipe } from 'src/app/global/pipes';
 @Component({
 	selector: 'app-media',
 	templateUrl: './media.component.html',
-	styleUrls: ['./media.component.scss']
+	styleUrls: ['./media.component.scss'],
+	providers: [IsimagePipe]
 })
 export class MediaComponent implements OnInit, OnDestroy {
 	@Output() empty = new EventEmitter();
@@ -60,7 +62,13 @@ export class MediaComponent implements OnInit, OnDestroy {
 	private subscription = new Subscription();
 	private temp: any = [];
 
-	constructor(private _auth: AuthService, private _content: ContentService, private _dialog: MatDialog, private _feed: FeedService) {}
+	constructor(
+		private _auth: AuthService,
+		private _content: ContentService,
+		private _dialog: MatDialog,
+		private _feed: FeedService,
+		private _isImage: IsimagePipe
+	) {}
 
 	ngOnInit() {
 		this.reload.subscribe(() => {
@@ -396,11 +404,9 @@ export class MediaComponent implements OnInit, OnDestroy {
 		const media_content = data.map((m: API_CONTENT) => {
 			let fileThumbnailUrl = '';
 
-			if (m.fileType === 'webm' || m.fileType === 'mp4') {
-				fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url);
-			} else {
-				fileThumbnailUrl = m.previewThumbnail || m.thumbnail;
-			}
+			if (m.fileType === 'webm' || m.fileType === 'mp4') fileThumbnailUrl = this.renameWebmThumb(m.fileName, m.url);
+			else if (this._isImage.transform(m.fileType)) fileThumbnailUrl = `${m.url}${m.fileName}`;
+			else fileThumbnailUrl = m.previewThumbnail || m.thumbnail;
 
 			return new UI_CONTENT(
 				m.playlistContentId,

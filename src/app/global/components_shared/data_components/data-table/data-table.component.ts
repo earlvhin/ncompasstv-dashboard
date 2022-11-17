@@ -28,6 +28,7 @@ import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.com
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
+import { dateFormat } from 'highcharts';
 
 @Component({
 	selector: 'app-data-table',
@@ -116,7 +117,6 @@ export class DataTableComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-
 		this.table_data.map((data) => {
 			Object.keys(data).forEach((key) => {
 				if (data[key].table) {
@@ -126,7 +126,6 @@ export class DataTableComponent implements OnInit {
 		});
 
 		this.subscribeToEmailNotificationToggleResult();
-
 	}
 
 	ngOnDestroy() {
@@ -163,7 +162,6 @@ export class DataTableComponent implements OnInit {
 	}
 
 	onSelectRow(data: any, index: number): void {
-
 		if (this.page !== 'dealers-orders' || this.in_progress) return;
 
 		const order = data as UI_DEALER_ORDERS;
@@ -174,12 +172,12 @@ export class DataTableComponent implements OnInit {
 
 		const currentUserId = this._auth.current_user_value.user_id;
 
-
-		this._billing.set_order_as_viewed({ orderId: order.order_no.value, createdBy: currentUserId })
+		this._billing
+			.set_order_as_viewed({ orderId: order.order_no.value, createdBy: currentUserId })
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					const orders = [...this.table_data as UI_DEALER_ORDERS[]];
+					const orders = [...(this.table_data as UI_DEALER_ORDERS[])];
 					orders[index].index.is_new_order = false;
 					orders[index].date.is_new_order = false;
 					orders[index].order_no.is_new_order = false;
@@ -192,10 +190,9 @@ export class DataTableComponent implements OnInit {
 					this.table_data = [...orders];
 					this._billing.on_click_order.emit();
 				},
-				error => this.in_progress = false
+				(error) => (this.in_progress = false)
 			)
-			.add(() => this.in_progress = false);
-
+			.add(() => (this.in_progress = false));
 	}
 
 	onPageChange(page: number): void {
@@ -213,6 +210,10 @@ export class DataTableComponent implements OnInit {
 	controlToggle(data, e) {
 		const license_status = { id: data, status: e.checked };
 		this.toggle_triggered.emit(license_status);
+	}
+
+	isActivatedOrAutoChargeEnabled(data: any) {
+		return data.is_activated ? (data.is_activated.value === 1 ? 'checked' : 'false') : data.autocharge.value === 1 ? 'checked' : 'false';
 	}
 
 	mediaViewer_open(i): void {
@@ -385,7 +386,7 @@ export class DataTableComponent implements OnInit {
 					break;
 
 				case 'delete-release-note':
-					this._release.onDeleteNoteFromDataTable.emit({ releaseNoteId: id })
+					this._release.onDeleteNoteFromDataTable.emit({ releaseNoteId: id });
 					break;
 
 				default:
@@ -674,13 +675,11 @@ export class DataTableComponent implements OnInit {
 	}
 
 	onEdit(dataId: string): void {
-
 		switch (this.page) {
 			case 'release-notes':
 				this._release.onEditNoteFromDataTable.emit({ releaseNoteId: dataId });
 				break;
 		}
-
 	}
 
 	onPushUpdateToAllLicenses(playlistId: string): void {

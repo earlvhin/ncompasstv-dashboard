@@ -251,6 +251,9 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 				map((response: { paging: PAGING }[]) => {
 					response.forEach((dmaPagingResponse) => {
 						let dmaHosts: any = dmaPagingResponse.paging.entities;
+                        dmaHosts = dmaHosts.filter(
+                            host => host.totalLicenses > 0
+                        )
 
 						dmaHosts = dmaHosts.map((host) => {
 							host.storeHoursParsed = JSON.parse(host.storeHours);

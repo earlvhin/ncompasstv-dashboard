@@ -35,7 +35,8 @@
 
                         <div class="d-flex tag-pills mt-1">
                             <div class="d-flex tags-container" *ngIf="tags.length > 0">
-                                <div *ngFor="let tag of tags" class="d-inline tag" 
+                                <div *ngFor="let tag of tags" class="d-inline tag"
+									[ngClass]="{ 'dealer' : tag.role === 2 }"
                                     [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
                                     <div class="name">{{ tag.name }}</div>
                                 </div>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
@@ -16,6 +16,7 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 	@Input() currentTagType: TAG_TYPE;
 	@Input() currentUserId: string;
 	@Input() currentUserRole: string;
+	@Input() tab: string;
 	@Input() tagTypes: TAG_TYPE[];
 
 	currentFilter = 'All';
@@ -45,15 +46,21 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 		this.searchTags(null, page);
 	}
 
-	private searchTags(keyword = null, page = 1) {
-		this.isLoading = true;
-		let request = this._tag.searchAllTags(keyword, page);
-		if (!keyword || keyword.trim().length === 0) request = this._tag.getAllTags({ page });
+	private searchTags(keyword = '', page = 1) {
 
-		return request
-			.pipe(takeUntil(this._unsubscribe))
+		let role = 0;
+		this.isLoading = true;
+
+		if (this.tab && this.tab.trim().length > 0) role = this.tab === 'admin' ? 1 : 2;
+
+		let searchParams: { page: number, role: number, keyword?: string } = { page, role };
+
+		if (keyword && keyword.length > 0) searchParams.keyword = keyword;
+
+		return this._tag.searchAllTags(searchParams).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, paging, message }) => {
+
 					if (message) {
 						this.tags = [];
 						return;
@@ -61,9 +68,10 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 					this.tags = tags;
 					this.pagingData = paging;
+
 				},
 				(error) => {
-					throw new Error(error);
+					throw new Error(error)
 				}
 			)
 			.add(() => (this.isLoading = false));

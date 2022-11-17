@@ -32,19 +32,21 @@ export class API_SCREEN_ZONE_PLAYLISTS_CONTENTS {
 }
 
 export class API_SCREEN_TEMPLATE_ZONE {
-    screenId: string;
-    templateId: string;
-    xPos: string;
-    yPos: string;
+	background?: string;
+    description?: string;
     height: string;
-    width: string;
+    name: string;
+	order: number;
+	playlistDescription?: string;
     playlistId: string;
     playlistName: string;
-    playlistType: string;
-    name: string;
-    description: string;
+    screenId: string;
+    templateId: string;
 	templateZoneId: string;
-	order: number;
+    width: string;
+    xPos: string;
+    yPos: string;
+    playlistType?: string;
 }
 
 class dealer {

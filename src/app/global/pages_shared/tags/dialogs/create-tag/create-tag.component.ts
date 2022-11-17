@@ -16,7 +16,9 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	currentUserId: string;
 	description = 'Choose a color and type the name of the tag';
 	form: FormGroup;
+	isTagExcluded = false;
 	selectedTagColor: string;
+	tab: string;
 	tagName: string;
 	title = 'Create Tag';
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -37,27 +39,39 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	onExcludeTag(event: { checked: boolean }): void {
+
+		const isExcludedValue = event.checked ? 1 : 0;
+
+		this.form.get('exclude').setValue(isExcludedValue, { emitValue: false });
+
+	}
+
 	onSubmit(): void {
-		let dataToSubmit: { name: string; tagColor: string; description?: string; createdBy: string } = {
+
+		let dataToSubmit: { name: string, role: number, tagColor: string, description?: string, createdBy: string, exclude: number } = {
 			name: null,
 			tagColor: null,
-			createdBy: this.currentUserId
+			createdBy: this.currentUserId,
+			role: null,
+			exclude: null
 		};
-
-		let errorMessage = 'Error creating tag';
 
 		const form = this.form.value;
 		const name = form.tagName as string;
 		const tagColor = form.tagColor as string;
 		const description = form.description as string;
+		const role = this.tab === 'admin' ? 1 : 2;
+		const exclude = form.exclude;
 
 		dataToSubmit.name = name;
+		dataToSubmit.role = role;
 		dataToSubmit.tagColor = tagColor;
+		dataToSubmit.exclude = exclude;
+
 		if (description) dataToSubmit.description = description;
 
-		this._tag
-			.createTag([dataToSubmit])
-			.pipe(takeUntil(this._unsubscribe))
+		this._tag.createTag(dataToSubmit).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
 				(error) => {
@@ -71,11 +85,19 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	private initializeForm(): void {
+
+		let role = this.tab === 'admin' ? 1 : 2;
+
 		this.form = this._form_builder.group({
-			tagName: [null, Validators.required],
-			tagColor: [null, Validators.required],
-			description: [null]
+			tagName: [ null, Validators.required ],
+			tagColor: [ null, Validators.required ],
+			role: [ role, Validators.required ],
+			description: [ null ],
+			exclude: [ 0, Validators.required ]
 		});
+
+		this.form.get('role').disable({ emitEvent: false });
+
 	}
 
 	private showSuccessModal(): void {

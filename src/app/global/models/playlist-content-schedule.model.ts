@@ -15,6 +15,7 @@
 }
  */
 export interface PlaylistContentSchedule {
+	alternateWeek?: number;
 	dateCreated?: string;
 	days: string;
 	from: string;
@@ -26,5 +27,4 @@ export interface PlaylistContentSchedule {
 	to: string;
 	type: number;
     livestream?: number;
-
 }

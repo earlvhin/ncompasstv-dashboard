@@ -14,7 +14,7 @@ import { MatTabChangeEvent } from '@angular/material';
 	selector: 'app-installations',
 	templateUrl: './installations.component.html',
 	styleUrls: ['./installations.component.scss'],
-	providers: [ TitleCasePipe, DatePipe ]
+	providers: [TitleCasePipe, DatePipe]
 })
 export class InstallationsComponent implements OnInit, OnDestroy {
 	currentFilters: API_FILTERS = { page: 1, installDate: moment().format('MM-DD-YYYY') };
@@ -28,7 +28,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 	pagingData: PAGING;
 	searching = false;
 	tabs = this._tabs;
-	
+
 	private licenses_to_export = [];
 	private currentMonth = '';
 	private nextMonth = '';
@@ -42,9 +42,9 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		private _dates: DatePipe,
 		private _helper: HelperService,
 		private _license: LicenseService,
-		private _titlecase: TitleCasePipe,
-	) { }
-	
+		private _titlecase: TitleCasePipe
+	) {}
+
 	ngOnInit() {
 		this.previousMonth = moment().subtract(1, 'month').format('MMMM');
 		this.currentMonth = moment().format('MMMM');
@@ -61,22 +61,20 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 	dateSelected(value: moment.Moment, type = 'default'): void {
 		this.currentFilters = { page: 1, installDate: value.format('MM-DD-YYYY') };
-		this.loadInstallationsData(type);		
+		this.loadInstallationsData(type);
 	}
 
 	dateViewSelected(type: number): void {
-		
 		if (type === 0) {
 			this.currentFilters = { page: 1, installDate: moment().format('MM-DD-YYYY') };
 			this.onResetDatePicker.next();
 		}
-        
-        this.currentFilters.type = type;
+
+		this.currentFilters.type = type;
 		this.loadInstallationsData();
 	}
 
 	exportTable(tab = 'default'): void {
-
 		const header = [];
 		this.isExporting = true;
 		this.workbook = new Workbook();
@@ -84,31 +82,26 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.workbook.useStyles = true;
 		this.workbook.created = new Date();
 		this.worksheet = this.workbook.addWorksheet('Installations');
-		
-		Object.keys(this._columnsForExport).forEach(key => {
 
+		Object.keys(this._columnsForExport).forEach((key) => {
 			if (this._columnsForExport[key].name && !this._columnsForExport[key].no_export) {
-
-				header.push(
-					{ 
-						header: this._columnsForExport[key].name, 
-						key: this._columnsForExport[key].key, 
-						width: 30, style: { font: { name: 'Arial', bold: true } }
-					}
-				);
-
+				header.push({
+					header: this._columnsForExport[key].name,
+					key: this._columnsForExport[key].key,
+					width: 30,
+					style: { font: { name: 'Arial', bold: true } }
+				});
 			}
-
 		});
 
-        this.worksheet.columns = header;
+		this.worksheet.columns = header;
 		this.isExporting = true;
-		this.getDataForExport(tab).add(() => this.isExporting = false);		
+		this.getDataForExport(tab).add(() => (this.isExporting = false));
 	}
 
 	loadInstallationsData(type = 'default'): void {
 		this.searching = true;
-		this.getInstallations(type).add(() => this.searching = false);
+		this.getInstallations(type).add(() => (this.searching = false));
 	}
 
 	pageSelected(data: number, type = 'default'): void {
@@ -118,7 +111,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 	resetCurrentFilters(event: MatTabChangeEvent): void {
 		this.currentFilters = { page: 1, installDate: moment().format('MM-DD-YYYY') };
-		const type = this.tabs.filter(tab => tab.index === event.index)[0].name;
+		const type = this.tabs.filter((tab) => tab.index === event.index)[0].name;
 		this.loadInstallationsData(type);
 	}
 
@@ -128,89 +121,78 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this.loadInstallationsData(type);
 	}
 
-	sortByColumnAndOrder(data: { column: string, order: string }, type = 'default'): void {
+	sortByColumnAndOrder(data: { column: string; order: string }, type = 'default'): void {
 		this.currentFilters.sortColumn = data.column;
 		this.currentFilters.sortOrder = data.order;
 		this.loadInstallationsData(type);
 	}
 
 	private getDataForExport(tab = 'default') {
-
 		this.currentFilters.pageSize = 10000;
-        
-		return this._license.get_installations(this.currentFilters, tab)
+
+		return this._license
+			.get_installations(this.currentFilters, tab)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: { paging: PAGING, message: string }) => {
+			.subscribe((response: { paging: PAGING; message: string }) => {
+				delete this.currentFilters.pageSize;
 
-					delete this.currentFilters.pageSize;
-
-					if (response.message) {
-						this.licenses_to_export = [];
-						return;
-					}
-
-					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-					
-					this.licenses_to_export = response.paging.entities;
-					
-					this.licenses_to_export.forEach((item, i) => {
-						this.modifyItem(item);
-						this.worksheet.addRow(item).font = { bold: false };
-					});
-
-					let rowIndex = 1;
-					
-					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-					}
-
-					this.workbook.xlsx.writeBuffer()
-						.then((file: any) => {
-							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = `${this._titlecase.transform(tab)} Installations for ${this.currentFilters.installDate}.xlsx`;
-							saveAs(blob, filename);
-						}
-					);
-
+				if (response.message) {
+					this.licenses_to_export = [];
+					return;
 				}
-			);
 
+				const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+
+				this.licenses_to_export = response.paging.entities;
+
+				this.licenses_to_export.forEach((item, i) => {
+					this.modifyItem(item);
+					this.worksheet.addRow(item).font = { bold: false };
+				});
+
+				let rowIndex = 1;
+
+				for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+					this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+				}
+
+				this.workbook.xlsx.writeBuffer().then((file: any) => {
+					const blob = new Blob([file], { type: EXCEL_TYPE });
+					const filename = `${this._titlecase.transform(tab)} Installations for ${this.currentFilters.installDate}.xlsx`;
+					saveAs(blob, filename);
+				});
+			});
 	}
 
 	private getInstallations(type = 'default') {
-        
-		return this._license.get_installations(this.currentFilters, type).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-					let installations = [];
-					let filtered_data = [];
+		return this._license
+			.get_installations(this.currentFilters, type)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
+				let installations = [];
+				let filtered_data = [];
 
-					if (!data.message) {
-						this.pagingData = data.paging;
-						installations = this.mapToTableFormat(this.pagingData.entities);
-						filtered_data = installations;
-					}
-
-					this.installations = installations;
-					this.filteredData = filtered_data;
-					this.initialLoad = false;
+				if (!data.message) {
+					this.pagingData = data.paging;
+					installations = this.mapToTableFormat(this.pagingData.entities);
+					filtered_data = installations;
 				}
-			);
 
+				this.installations = installations;
+				this.filteredData = filtered_data;
+				this.initialLoad = false;
+			});
 	}
 
 	private getInstallationStats(): void {
-		this._license.get_installation_statistics().subscribe(
-            response => {
-                let stats = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 };
-				if (response.licenseInstallationStats) stats = response.licenseInstallationStats;
-				this.getTotalCount(stats);
-            }
-		);
+		this._license.get_installation_statistics().subscribe((response) => {
+			let stats = { total: 0, previousMonth: 0, currentMonth: 0, nextMonth: 0 };
+			if (response.licenseInstallationStats) stats = response.licenseInstallationStats;
+			this.getTotalCount(stats);
+		});
 	}
-	
-	private getTotalCount(data: { currentMonth: number, nextMonth: number, previousMonth: number, total: number }): void {
+
+	private getTotalCount(data: { currentMonth: number; nextMonth: number; previousMonth: number; total: number }): void {
 		this.installation_count = {
 			scheduled: data.total,
 			scheduled_label: 'Installation(s)',
@@ -223,41 +205,86 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			current_description: 'This Month of ' + this.currentMonth,
 			next: data.nextMonth,
 			next_label: 'Installation(s)',
-			next_description: 'Next Month of ' + this.nextMonth,
+			next_description: 'Next Month of ' + this.nextMonth
 		};
 	}
 
 	private mapToTableFormat(data: any[]): INSTALLATION[] {
 		let count = this.pagingData.pageStart;
 
-		return data.map(
-			license => {
-				
-				const isPast = moment(license.installDate).isBefore(moment(), 'day');
+		return data.map((license) => {
+			const isPast = moment(license.installDate, 'MMM d, y').isBefore(moment(), 'day');
 
-				return new INSTALLATION(
-					{ value: license.licenseKey, link: null , editable: false, hidden: true },
-					{ value: count++, link: null , editable: false, hidden: false, past: isPast },
-					{ value: license.licenseKey, link: `/${this._currentRole}/licenses/${license.licenseId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast },
-					{ value: license.hostName != null ? license.hostName : '--', link: `/${this._currentRole}/hosts/${license.hostId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast },
-					{ value: license.dealerIdAlias != null ? license.dealerIdAlias : '--', link: `/${this._currentRole}/dealers/${license.dealerId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast },
-					{ value: license.businessName, link: `/${this._currentRole}/dealers/${license.dealerId}`, new_tab_link: true, editable: false, hidden: false,  past: isPast},
-					{ value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--', link: null , editable: false, hidden: false,  past: isPast },
-					{ value: license.screenName != null ? license.screenName : '--', link: license.screenName != null ? `/${this._currentRole}/screens/${license.screenId}` : null, new_tab_link: true, editable: false, hidden: false,  past: isPast },
-					{ value: this._dates.transform(license.installDate, 'MMM d, y'), id: license.licenseId, label: 'Install Date', link: null, editable: true, hidden: false,  past: isPast },
-				);
-			}
-		);
+			return new INSTALLATION(
+				{ value: license.licenseKey, link: null, editable: false, hidden: true },
+				{ value: count++, link: null, editable: false, hidden: false, past: isPast },
+				{
+					value: license.licenseKey,
+					link: `/${this._currentRole}/licenses/${license.licenseId}`,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					past: isPast
+				},
+				{
+					value: license.hostName != null ? license.hostName : '--',
+					link: `/${this._currentRole}/hosts/${license.hostId}`,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					past: isPast
+				},
+				{
+					value: license.dealerIdAlias != null ? license.dealerIdAlias : '--',
+					link: `/${this._currentRole}/dealers/${license.dealerId}`,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					past: isPast
+				},
+				{
+					value: license.businessName,
+					link: `/${this._currentRole}/dealers/${license.dealerId}`,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					past: isPast
+				},
+				{
+					value: license.screenTypeName != null ? this._titlecase.transform(license.screenTypeName) : '--',
+					link: null,
+					editable: false,
+					hidden: false,
+					past: isPast
+				},
+				{
+					value: license.screenName != null ? license.screenName : '--',
+					link: license.screenName != null ? `/${this._currentRole}/screens/${license.screenId}` : null,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					past: isPast
+				},
+				{
+					value: this._dates.transform(license.installDate, 'MMM d, y'),
+					id: license.licenseId,
+					label: 'Install Date',
+					link: null,
+					editable: true,
+					hidden: false,
+					past: isPast
+				}
+			);
+		});
 	}
 
-	private modifyItem(item: { screenTypeName: string, installDate: string }): void {
+	private modifyItem(item: { screenTypeName: string; installDate: string }): void {
 		item.screenTypeName = this._titlecase.transform(item.screenTypeName);
-        item.installDate = this._dates.transform(item.installDate, 'MMM d, y')
+		item.installDate = this._dates.transform(item.installDate, 'MMM d, y');
 	}
 
 	private subscribeToUpdateInstallationDate() {
-		this._helper.onUpdateInstallationDate.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => this.getInstallationStats());
+		this._helper.onUpdateInstallationDate.pipe(takeUntil(this._unsubscribe)).subscribe(() => this.getInstallationStats());
 	}
 
 	protected get _tableColumns() {
@@ -269,19 +296,19 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
 			{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
 			{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
-			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' }
 		];
 	}
 
 	protected get _columnsForExport() {
 		return [
 			{ name: 'License Key', key: 'licenseKey' },
-			{ name: 'Host', key: 'hostName'},
+			{ name: 'Host', key: 'hostName' },
 			{ name: 'Dealer Alias', key: 'dealerIdAlias' },
 			{ name: 'Business Name', key: 'businessName' },
 			{ name: 'License Type', key: 'screenTypeName' },
 			{ name: 'Screen', key: 'screenName' },
-			{ name: 'Installation Date', key: 'installDate' },
+			{ name: 'Installation Date', key: 'installDate' }
 		];
 	}
 
@@ -295,8 +322,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			{ index: 1, name: 'upcoming', label: 'Upcoming', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
 			{ index: 2, name: 'recent', label: 'Recent', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
 			{ index: 3, name: 'next-week', label: 'Next Week', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
-			{ index: 4, name: 'next-month', label: 'Next Month', isDatePickerEnabled: false, isDatePickerViewEnabled: false },
+			{ index: 4, name: 'next-month', label: 'Next Month', isDatePickerEnabled: false, isDatePickerViewEnabled: false }
 		];
 	}
-
 }

@@ -6,24 +6,52 @@
 		<div class="flex-even">
 			<div class="alias-container">
 				<h1 class="page-title mb-1" *ngIf="!enable_edit_alias; else edit_alias">{{ title }}</h1>
-				<mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only" (click)="activateEdit(true)">edit</mat-icon>
+				<mat-icon class="edit-alias" *ngIf="!enable_edit_alias && !is_view_only" (click)="activateEdit(true)" matTooltip="Edit license alias"
+					>edit</mat-icon
+				>
 
 				<ng-template #edit_alias>
 					<form class="edit-alias-form" [formGroup]="update_alias">
 						<h1 class="page-title mb-1"><input matInput formControlName="alias" placeholder="License Alias" /></h1>
 					</form>
-					<mat-icon class="save-alias" *ngIf="enable_edit_alias && !is_view_only" (click)="updateLicenseAlias()">save</mat-icon>
+					<mat-icon
+						class="save-alias"
+						*ngIf="enable_edit_alias && !is_view_only"
+						(click)="updateLicenseAlias()"
+						matTooltip="Save license alias"
+						>save</mat-icon
+					>
 				</ng-template>
 			</div>
 
-			<p class="sm-text mb-0">{{ license_key }}</p>
-
-			<div class="d-flex tags-container" *ngIf="tags.length > 0">
-				<div class="d-inline sm-text tag" *ngFor="let tag of tags" [style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
-					{{ tag.name }}
-				</div>
+			<div class="d-flex align-items-center">
+				<p class="sm-text mb-0">{{ license_key }}</p>
+				<ng-container *ngIf="is_admin">
+					<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license">new_label</mat-icon>
+				</ng-container>
 			</div>
-			<!-- <p class="sm-text mb-0">Tags</p> -->
+
+			<div class="d-flex tags-container">
+				<ng-container *ngIf="tags.length > 0">
+					<div
+						class="tag sm-text d-flex align-items-center"
+						*ngFor="let tag of tags; let i = index"
+						[ngClass]="{ dealer: tag.role === 2 }"
+						[style.backgroundColor]="tag.tagColor ? tag.tagColor : 'gray'">
+						<div class="name" matTooltip="{{ tag.description ? tag.description : 'Edit this tag' }}" (click)="openEditTagModal(i, tag)">
+							{{ tag.name }}
+						</div>
+						<ng-container *ngIf="tag.exclude === 1">
+							<mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
+						</ng-container>
+						<ng-container *ngIf="is_admin">
+							<mat-icon class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license"
+								>close</mat-icon
+							>
+						</ng-container>
+					</div>
+				</ng-container>
+			</div>
 		</div>
 		<div class="text-right">
 			<button
@@ -32,8 +60,7 @@
 				class="theme-btn pi-control sm-text mr-2"
 				[disabled]="status_check_disabled"
 				(click)="checkPiStatus()"
-				title="Check Status"
-			>
+				title="Check Status">
 				<span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
 			</button>
 
@@ -43,8 +70,7 @@
 				class="theme-btn pi-control sm-text mr-2 _info"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="pushUpdate()"
-				title="Content Update"
-			>
+				title="Content Update">
 				<span class="fas fa-upload"></span> <span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
@@ -54,8 +80,7 @@
 				class="theme-btn pi-control sm-text _cool mr-2"
 				[disabled]="!pi_status || pi_updating"
 				title="Refetch Player Data"
-				(click)="refetchPi()"
-			>
+				(click)="refetchPi()">
 				<span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
 			</button>
 
@@ -65,8 +90,7 @@
 				class="theme-btn pi-control sm-text _primary mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="updateAndRestart()"
-				title="Update System"
-			>
+				title="Update System">
 				<span class="fas fa-terminal"></span> <span class="ml-2 button_text_animation">Update System</span>
 			</button>
 
@@ -76,8 +100,7 @@
 				class="theme-btn pi-control sm-text _warning mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="restartPlayer()"
-				title="Reboot Player"
-			>
+				title="Reboot Player">
 				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
 			</button>
 
@@ -87,8 +110,7 @@
 				class="theme-btn pi-control sm-text _caution mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="restartPi()"
-				title="Reboot Pi"
-			>
+				title="Reboot Pi">
 				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
 			</button>
 
@@ -98,8 +120,7 @@
 				class="theme-btn pi-control sm-text _teal mr-2"
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="resetPi()"
-				title="Reset Player Data"
-			>
+				title="Reset Player Data">
 				<span class="fas fa-eraser"></span> <span class="ml-2 button_text_animation">Reset Data</span>
 			</button>
 
@@ -110,8 +131,7 @@
 				[disabled]="!pi_status || pi_updating || is_view_only"
 				(click)="upgradeToV2()"
 				title="Reset Player Data"
-				*ngIf="!apps"
-			>
+				*ngIf="!apps">
 				<span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
 			</button>
 
@@ -122,13 +142,11 @@
 				title="Delete License"
 				*ngIf="!pi_status"
 				(click)="onDeleteLicense()"
-				[disabled]="is_view_only"
-			>
+				[disabled]="is_view_only">
 				<span class="fas fa-trash"></span> <span class="ml-2 button_text_animation">Delete License</span>
 			</button>
 		</div>
 	</div>
-
 	<hr class="mb-0" />
 
 	<!-- TABS -->
@@ -158,8 +176,7 @@
 																mat-raised-button
 																class="theme-btn mr-2"
 																[disabled]="!pi_status || screenshot_timeout"
-																(click)="screenShotPi()"
-															>
+																(click)="screenShotPi()">
 																<span class="fas fa-camera mr-2"></span>
 																Screenshot
 															</button>
@@ -169,17 +186,14 @@
 																class="theme-btn"
 																*ngIf="screenshots.length != 0 && !is_dealer"
 																[disabled]="screenshot_timeout || clear_screenshots"
-																(click)="clearScreenshots()"
-															>
+																(click)="clearScreenshots()">
 																Clear
 															</button>
 														</div>
 													</div>
 												</div>
 											</div>
-
 											<hr />
-
 											<div class="horizontal-panel">
 												<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
 													<div class="screenshots" *ngFor="let s of screenshots">
@@ -247,8 +261,7 @@
 
 															<h5
 																*ngIf="display_status; else wait"
-																[ngClass]="{ good: display_status == 1, bad: display_status == 2 }"
-															>
+																[ngClass]="{ good: display_status == 1, bad: display_status == 2 }">
 																{{ display_status == 1 ? 'ON' : 'OFF/UNKNOWN' }}
 															</h5>
 
@@ -268,14 +281,11 @@
 																"
 																(change)="monitorToggle($event)"
 																[checked]="display_status == 1 ? 'checked' : 'false'"
-																[disabled]="license_data.isCecEnabled === 0"
-															>
+																[disabled]="license_data.isCecEnabled === 0">
 															</mat-slide-toggle>
 														</div>
 													</div>
-
 													<hr class="my-3" />
-
 													<div class="d-flex">
 														<!-- Last Startup -->
 														<div class="flex-even last-online">
@@ -289,9 +299,7 @@
 															<h5>{{ license_data.timeOut ? license_data.timeOut : 'N/A' }}</h5>
 														</div>
 													</div>
-
 													<hr class="my-3" />
-
 													<div class="d-flex">
 														<!-- Last Update -->
 														<div class="flex-even last-update">
@@ -306,14 +314,12 @@
 																<h5 class="d-inline-block mr-3">{{ anydesk_id ? anydesk_id : 'N/A' }}</h5>
 
 																<ng-container
-																	*ngIf="!anydesk_restarting && anydesk_id; else disabled_anydesk_buttons"
-																>
+																	*ngIf="!anydesk_restarting && anydesk_id; else disabled_anydesk_buttons">
 																	<!-- RESTART ANYDESK SERVICE BUTTON -->
 																	<button
 																		class="card-button restart-anydesk"
 																		(click)="restartAnydesk()"
-																		title="Restart Anydesk Service"
-																	>
+																		title="Restart Anydesk Service">
 																		<span class="fas fa-power-off md-text"></span>
 																	</button>
 
@@ -321,8 +327,7 @@
 																	<button
 																		class="card-button reset-anydesk-id"
 																		(click)="onResetAnydeskID()"
-																		title="Reset Anydesk ID"
-																	>
+																		title="Reset Anydesk ID">
 																		<span class="fa fa-exchange md-text"></span>
 																	</button>
 																</ng-container>
@@ -330,8 +335,7 @@
 																<ng-template #disabled_anydesk_buttons>
 																	<button
 																		class="card-button restart-anydesk disabled rotate mr-2"
-																		title="Anydesk Status"
-																	>
+																		title="Anydesk Status">
 																		<span class="fas fa-sync md-text"></span>
 																	</button>
 
@@ -354,7 +358,6 @@
 											<div class="w-100 mb-3">
 												<mat-card class="p-4">
 													<h5 class="mb-0 font-weight-medium">Dealer and Host Info</h5>
-
 													<hr />
 
 													<!-- Host Name -->
@@ -362,9 +365,9 @@
 														<div class="flex-even hostname">
 															<span class="sm-text"> Dealer </span>
 															<h5 class="mb-0">
-																<a [routerLink]="dealer_route" *ngIf="is_admin; else is_self">{{
-																	screen.assigned_dealer
-																}}</a>
+																<a [routerLink]="dealer_route" target="_blank" *ngIf="is_admin; else is_self">
+																	{{ screen.assigned_dealer }}
+																</a>
 
 																<ng-template #is_self>
 																	<span>{{ screen.assigned_dealer }}</span>
@@ -375,7 +378,7 @@
 														<div class="flex-even hostname">
 															<span class="sm-text"> Hostname </span>
 															<h5 class="mb-0">
-																<a [routerLink]="host_route">{{ host.name }}</a>
+																<a [routerLink]="host_route" target="_blank">{{ host.name }}</a>
 															</h5>
 														</div>
 													</div>
@@ -430,8 +433,7 @@
 															<ng-container *ngIf="apps && apps.server; else netstatus_v1">
 																<h5
 																	*ngIf="internet_connection.status && pi_status; else offline_net"
-																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'"
-																>
+																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
 																	{{ internet_connection.status }}
 																</h5>
 
@@ -476,8 +478,7 @@
 																		*ngIf="license_data.speedtestSettings == 1"
 																		class="card-button"
 																		(click)="internetSpeedTest()"
-																		title="Test Internet Speed"
-																	>
+																		title="Test Internet Speed">
 																		<span class="fas fa-sync md-text"></span>
 																	</button>
 																</ng-container>
@@ -576,7 +577,7 @@
 														<!-- Screen Name -->
 														<div class="flex-even">
 															<span class="sm-text">Screen Name</span>
-															<a [routerLink]="screen_route"
+															<a [routerLink]="screen_route" target="_blank"
 																><h5 class="hoverable">
 																	{{ screen.screen_title ? (screen.screen_title | titlecase) : 'N/A' }}
 																</h5></a
@@ -604,11 +605,10 @@
 																<li *ngFor="let zone of zone_playlists">
 																	<span
 																		class="fas fa-circle mr-2 align-middle d-inline-block"
-																		style="font-size: 6px"
-																	></span>
+																		style="font-size: 6px"></span>
 
 																	<ng-container *ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
-																		<a [routerLink]="zone.link">
+																		<a [routerLink]="zone.link" target="_blank">
 																			<h5 class="hoverable d-inline-block align-middle md-text m-0">
 																				{{ zone.name }} - {{ zone.playlist_name }}
 																			</h5>
@@ -634,7 +634,7 @@
 					</div>
 				</mat-tab>
 
-				<!-- Content Tab --> 
+				<!-- Content Tab -->
 				<mat-tab label="Content">
 					<div class="content-tab-container" *ngIf="screen; else no_screen">
 						<div class="container-fluid">
@@ -691,8 +691,7 @@
 											[is_interactive]="true"
 											[template_data]="template_data"
 											[height]="'180px'"
-											[width]="minimap_width"
-										>
+											[width]="minimap_width">
 										</app-template-minimap>
 
 										<!-- Background Section Toggle -->
@@ -720,20 +719,26 @@
 							</div>
 						</div>
 
-						<br>
+						<br />
 
 						<mat-card class="filters-section mb-4">
 							<div class="d-flex align-items-center no-gutters full-width">
-
 								<!-- PLAYLIST CONTENT SCHEDULE STATUS FILTERS -->
 								<div class="playlist-content-schedule-status-filters mr-2">
-									<button mat-button mat-raised-button [matMenuTriggerFor]="playlistContentScheduleStatusFilters" mat-raised-button class="theme-btn">
+									<button
+										mat-button
+										mat-raised-button
+										[matMenuTriggerFor]="playlistContentScheduleStatusFilters"
+										mat-raised-button
+										class="theme-btn">
 										<span class="button-label">Content Schedule Status</span>
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
 									<mat-menu #playlistContentScheduleStatusFilters="matMenu">
-										<button *ngFor="let status of content_schedule_statuses" mat-menu-item 
-											(click)="onFilterContent('schedule_status', status.toLowerCase())" 
+										<button
+											*ngFor="let status of content_schedule_statuses"
+											mat-menu-item
+											(click)="onFilterContent('schedule_status', status.toLowerCase())"
 											[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''">
 											{{ status | titlecase }}
 										</button>
@@ -747,7 +752,9 @@
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
 									<mat-menu #ownerTypeFilters="matMenu">
-										<button *ngFor="let type of content_owner_types" mat-menu-item
+										<button
+											*ngFor="let type of content_owner_types"
+											mat-menu-item
 											(click)="onFilterContent('owner', type.toLowerCase())">
 											{{ type | titlecase }}
 										</button>
@@ -761,7 +768,9 @@
 										<span class="fas fa-angle-down ml-2"></span>
 									</button>
 									<mat-menu #contentTypeFilters="matMenu">
-										<button *ngFor="let type of content_types" mat-menu-item
+										<button
+											*ngFor="let type of content_types"
+											mat-menu-item
 											(click)="onFilterContent('content_type', type.toLowerCase())">
 											{{ type | titlecase }}
 										</button>
@@ -782,18 +791,24 @@
 
 								<!-- RESET FILTERS -->
 								<div class="reset-filters mr-2">
-									<button mat-button mat-raised-button mat-raised-button class="theme-btn btn-danger" (click)="onResetFilters()" [disabled]="content_filters.length === 0">
+									<button
+										mat-button
+										mat-raised-button
+										mat-raised-button
+										class="theme-btn btn-danger"
+										(click)="onResetFilters()"
+										[disabled]="content_filters.length === 0">
 										<span class="button-label">Reset Filters</span>
 										<span class="fas fa-times ml-2"></span>
 									</button>
 								</div>
-	
+
 								<!-- CONTENT SEARCH FIELD -->
 								<div class="content-search mr-2">
 									<div class="flex-even form-field">
 										<mat-form-field class="full-width" appearance="fill">
 											<mat-label>Search a content</mat-label>
-											<input matInput type="text" placeholder="Search a File" [formControl]="content_search_control">
+											<input matInput type="text" placeholder="Search a File" [formControl]="content_search_control" />
 										</mat-form-field>
 										<span class="fas fa-search"></span>
 									</div>
@@ -818,8 +833,7 @@
 										[is_fullscreen]="a.is_fullscreen"
 										[is_protected]="a.is_protected"
 										[sequence]="a.seq"
-										[is_view_only]="true"
-									>
+										[is_view_only]="true">
 										[uuid]="a.uuid" [zone_content]="true">
 									</app-thumbnail-card>
 								</div>
@@ -860,8 +874,7 @@
 										<button
 											(click)="submitTerminalCommand()"
 											class="terminal-submit-button"
-											[disabled]="terminal_value === undefined || terminal_value === ''"
-										>
+											[disabled]="terminal_value === undefined || terminal_value === ''">
 											Run <span class="fas fa-play sm-text ml-2"></span>
 										</button>
 									</div>
@@ -903,8 +916,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="disableScreenshot($event)"
-											[checked]="license_data.screenshotSettings == 1 ? true : false"
-										>
+											[checked]="license_data.screenshotSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -922,8 +934,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="disableSpeedtest($event)"
-											[checked]="license_data.speedtestSettings == 1 ? true : false"
-										>
+											[checked]="license_data.speedtestSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -941,8 +952,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="onUpdateNotificationSettings($event, 'email')"
-											[checked]="license_data.emailSettings == 1 ? true : false"
-										>
+											[checked]="license_data.emailSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -960,8 +970,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="onUpdateNotificationSettings($event, 'notification')"
-											[checked]="license_data.notificationSettings == 1 ? true : false"
-										>
+											[checked]="license_data.notificationSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -979,8 +988,7 @@
 									<div class="ml-5 text-right">
 										<mat-slide-toggle
 											(change)="disableResource($event)"
-											[checked]="license_data.resourceSettings == 1 ? true : false"
-										>
+											[checked]="license_data.resourceSettings == 1 ? true : false">
 										</mat-slide-toggle>
 									</div>
 								</div>
@@ -1008,10 +1016,10 @@
 							<mat-card class="p-4">
 								<h4 class="mb-4">Additional Settings</h4>
 
-								<form *ngIf="license_data && additional_license_settings_form"
+								<form
+									*ngIf="license_data && additional_license_settings_form"
 									[formGroup]="additional_license_settings_form"
 									(ngSubmit)="saveAdditionalLicenseSettings()">
-
 									<div class="row flex-column">
 										<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
 											<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
@@ -1023,8 +1031,7 @@
 														appearance="fill"
 														placeholder="Enter number of seconds, ex: 20"
 														[formControlName]="control.form_control_name"
-														[type]="f.type"
-													/>
+														[type]="control.type" />
 												</mat-form-field>
 											</ng-container>
 
@@ -1032,11 +1039,16 @@
 												<ng-container *ngIf="control.type === 'time'">
 													<div class="d-flex align-items-center reboot-time">
 														<span>{{ control.label }}:</span>
+
 														<ngb-timepicker
 															[formControlName]="control.form_control_name"
 															[meridian]="true"
 															[size]="'small'">
 														</ngb-timepicker>
+														<ng-container *ngIf="control"></ng-container>
+														<mat-icon class="remove-reboot-btn" (click)="onRemoveRebootTime(control.form_control_name)"
+															>delete</mat-icon
+														>
 													</div>
 												</ng-container>
 											</ng-template>
@@ -1044,7 +1056,13 @@
 									</div>
 
 									<div class="d-flex">
-										<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="saving_license_settings || !has_unsaved_additional_settings">Save</button>
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn mr-2"
+											[disabled]="saving_license_settings || !has_unsaved_additional_settings">
+											Save
+										</button>
 										<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
 									</div>
 								</form>
@@ -1060,7 +1078,7 @@
 					</ng-template>
 				</mat-tab>
 
-				<!-- Resource Tab -->
+				<!-- Installation Tab -->
 				<mat-tab label="Installation">
 					<ng-template matTabContent>
 						<app-installation-tab [license_id]="license_id"> </app-installation-tab>

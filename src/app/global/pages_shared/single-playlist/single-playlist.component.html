@@ -78,7 +78,7 @@
 												<mat-expansion-panel-header>
 													<div class="d-flex w-100">
 														<div>
-															<a [routerLink]="[host_url, h.host.hostId]">
+															<a [routerLink]="[host_url, h.host.hostId]" target="_blank">
 																<h5 class="sm-text font-weight-bold mb-0">{{ h.host.name }}</h5>
 															</a>
 														</div>
@@ -92,7 +92,7 @@
 												<div class="px-3 py-3 border-top w-100">
 													<div *ngFor="let l of h.licenses" class="option-license-list w-100 mb-1">
 														<mat-checkbox class="sm-text" (change)="addToLicenseToPush($event, l.licenseId)">
-															<a [routerLink]="[license_url, l.licenseId]">
+															<a [routerLink]="[license_url, l.licenseId]" target="_blank">
 																<h5 class="sm-text font-weight-bold mb-0">{{ l.alias || l.licenseKey }}</h5>
 															</a>
 														</mat-checkbox>

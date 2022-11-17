@@ -1,17 +1,22 @@
 #tags-page {
+
+	.tabs-section {
+		flex-wrap: wrap;
+		width: 100%;
+
+		.content-container {
+			margin-top: 20px;
+			
+			.tags-management-container {
+				flex-basis: 25%;
+				margin-right: 20px;
+			}
 	
-	.content-container {
-		margin-top: 20px;
-		
-		.tags-management-container {
-			flex-basis: 25%;
-			margin-right: 20px;
+			.tag-owners-container {
+				flex-basis: 75%;
+			}
 		}
 
-		.tag-owners-container {
-			flex-basis: 75%;
-		}
 	}
-
-
+	
 }

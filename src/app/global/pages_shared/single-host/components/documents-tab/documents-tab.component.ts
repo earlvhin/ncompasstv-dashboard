@@ -78,7 +78,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 			return {
 				id: { value: file.id, link: null, editable: false, hidden: true },
 				index: { value: count++, link: null, editable: false, hidden: false },
-				fileName: { value: file.filename, link: file.url, isFile: true, editable: false, hidden: false },
+				fileName: { value: file.filename, link: file.url, new_tab_link: true, isFile: true, editable: false, hidden: false },
 				alias: { value: file.alias, id: file.id, editable: true, label: 'Host Document Alias', hidden: false },
 				date: { value: this._date.transform(file.dateCreated, 'MMM dd, y h:mm a'), editable: false, hidden: false },
 				s3FileName: { value: file.s3Filename, hidden: true }

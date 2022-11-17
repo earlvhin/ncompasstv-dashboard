@@ -1,10 +1,13 @@
 import { API_HOST } from "./api_host.model";
 
 export class API_LICENSE {
-	license: API_LICENSE_PROPS;
+	dealer_license?: API_DEALER_LICENSE;
 	host: API_HOST;
+	license: API_LICENSE_PROPS;
 	screen: screenInfo;
-	dealer_license: API_DEALER_LICENSE;
+	screenType: { dateCreated: string, dateUpdated: string, description: string, name: string, screenTypeId: string };
+	timezone?: { id: string, name: string, status: string };
+	totalContents?: number;
 }
 
 export interface API_LICENSE_PROPS {

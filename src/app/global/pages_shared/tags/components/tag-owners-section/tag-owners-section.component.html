@@ -3,19 +3,23 @@
 
 	<div class="action-buttons-container d-inline-flex">
 		<!-- ADD TAGS -->
-		<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
-			<span class="fas fa-tags"></span> <span class="ml-2 button_text_animation">Add Tags</span>
-		</button>
+		<ng-container *ngIf="currentUserRole.includes(tab)">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
+				<span class="fas fa-tags"></span> <span class="ml-2 button_text_animation">Add Tags</span>
+			</button>
+		</ng-container>
 
 		<!-- ASSIGN TAGS -->
-		<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _teal" title="Assign Tags" (click)="openDialog('assign_tags')">
-			<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation" >Assign Tags</span>
-		</button>
+		<ng-container *ngIf="currentUserRole.includes(tab)">
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _teal" title="Assign Tags" (click)="openDialog('assign_tags')">
+				<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation" >Assign Tags</span>
+			</button>
+		</ng-container>
 
 		<!-- SELECTED TAG INDICATOR -->
 		<ng-container *ngIf="hasTagSelected">
-			<div class="pill selected-tag">
-				<div class="d-flex align-items-center">
+			<div class="pill selected-tag ">
+				<div class="d-flex align-items-end">
 					<div>Tag: <strong>{{ selectedTag.name }}</strong></div>
 					<mat-icon (click)="onClearSelectedTag()">close</mat-icon>
 				</div>
@@ -56,6 +60,7 @@
 			[tableType]="'tag-owners'"
 			[isLoading]="isLoading"
 			[paging]="pagingData"
+			[tab]="tab"
 			[tableColumns]="columns"
 			[tableData]="owners"
 			[currentTagType]="currentTagType"

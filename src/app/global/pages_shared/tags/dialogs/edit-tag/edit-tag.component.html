@@ -41,6 +41,11 @@
 					<mat-label>Tag Description</mat-label>
 					<input matInput formControlName="description">
 				</mat-form-field>
+
+				<!-- IS TAG EXCLUDED? -->
+				<mat-slide-toggle formControlName="exclude" [checked]="isTagExcluded" [labelPosition]="'before'" (change)="onExcludeTag($event)">
+					Exclude tag?
+				</mat-slide-toggle>
 			</div>
 
 			<!-- SUBMIT BUTTON -->

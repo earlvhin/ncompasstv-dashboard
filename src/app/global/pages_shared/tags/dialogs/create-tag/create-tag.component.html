@@ -30,7 +30,6 @@
 							[style.background]="selectedTagColor"
 							[value]="selectedTagColor || ''"
 							(colorPickerChange)="onSelectTagColor(selectedTagColor)">
-
 					</mat-form-field>
 
 					<!-- TAG NAME -->
@@ -44,6 +43,11 @@
 						<mat-label>Tag Description</mat-label>
 						<input matInput type="text" autocomplete="off" formControlName="description">
 					</mat-form-field>
+
+					<!-- IS TAG EXCLUDED? -->
+					<mat-slide-toggle formControlName="exclude" [checked]="isTagExcluded" [labelPosition]="'before'" (change)="onExcludeTag($event)">
+						Exclude tag?
+					</mat-slide-toggle>
 
 				</div>
 				

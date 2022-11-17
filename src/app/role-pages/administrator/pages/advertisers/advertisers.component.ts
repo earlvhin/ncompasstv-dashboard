@@ -200,9 +200,10 @@ export class AdvertisersComponent implements OnInit {
 					link: '/administrator/dealers/' + i.dealerId,
 					query: '2',
 					editable: false,
-					hidden: false
+					hidden: false,
+                    new_tab_link: true
 				},
-				{ value: i.businessName, link: '/administrator/dealers/' + i.dealerId, editable: false, hidden: false },
+				{ value: i.businessName, link: '/administrator/dealers/' + i.dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: i.contactPerson, link: null, editable: false, hidden: false },
 				{ value: i.totalAdvertisers, link: null, editable: false, hidden: false }
 			);
@@ -215,11 +216,11 @@ export class AdvertisersComponent implements OnInit {
 			return new DEALER_UI_TABLE_ADVERTISERS(
 				{ value: i.id, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: i.name ? i.name : '--', link: '/administrator/advertisers/' + i.id, editable: false, hidden: false },
+				{ value: i.name ? i.name : '--', link: '/administrator/advertisers/' + i.id, editable: false, hidden: false,new_tab_link: true },
 				{ value: i.region, link: null, editable: false, hidden: false },
 				{ value: i.state, link: null, editable: false, hidden: false },
 				{ value: i.status, link: null, editable: false, hidden: false },
-				{ value: i.businessName ? i.businessName : '--', link: null, editable: false, hidden: false }
+				{ value: i.businessName ? i.businessName : '--', link: i.businessName ? '/administrator/dealers/' + i.dealerId : null,new_tab_link: true, editable: false, hidden: false }
 			);
 		});
 	}

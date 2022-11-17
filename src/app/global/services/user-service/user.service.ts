@@ -5,7 +5,7 @@ import { USER } from '../../models/api_user.model';
 import { environment } from '../../../../environments/environment';
 import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
 import 'rxjs/add/operator/map';
-import { API_FILTERS, API_USER_STATS } from '../../models';
+import { API_FILTERS, API_USER_STATS, PAGING } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -32,7 +32,7 @@ export class UserService {
 		const endpoint = `${this.base}${this.getters.api_get_users}`;
 		const params = this.setUrlParams(filters, false, true);
 		const url = `${endpoint}${params}`;
-		return this._http.get<any>(url, this.httpOptions);
+		return this._http.get<{ paging?: PAGING, message?: string }>(url, this.httpOptions);
 	}
 
 	get_users_by_owner(ownerId: string) {

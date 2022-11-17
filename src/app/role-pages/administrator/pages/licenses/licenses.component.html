@@ -98,10 +98,10 @@
                                                         <span class="fas fa-user text-primary mr-3"></span>Assigned
                                                     </button>
                                                     <button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
-                                                        <span class="fas fa-user text-gray mr-3"></span>Unassigned
+                                                        <span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
                                                     </button>
                                                     <button class="md-text" mat-menu-item (click)="filterTable('activated', '0')">
-                                                        <span class="fas fa-circle text-gray mr-3"></span>Inactive
+                                                        <span class="fas fa-user text-light-gray mr-3"></span>Inactive
                                                     </button>
                                                     <button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
                                                         <span class="far fa-clock text-gray mr-3"></span>Recent Installs
@@ -116,7 +116,7 @@
                                                         <span class="fas fa-circle text-danger mr-3"></span>Offline
                                                     </button>
                                                     <button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
-                                                        <span class="fas fa-circle text-gray mr-3"></span>Pending
+                                                        <span class="fas fa-circle text-orange mr-3"></span>Pending
                                                     </button>
                                                  </mat-menu>
                                                 
@@ -383,10 +383,12 @@
 				<p class="sm-text mb-3">
 					There are no available dealers and licenses at the moment.
 				</p>
-				<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-					Add Dealer
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
+                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank">
+                    <button mat-button mat-raised-button class="theme-btn mr-2">
+                        Add Dealer
+                        <span class="fas fa-plus ml-2 sm-text"></span>
+                    </button>
+                </a>
 			</mat-card>
         </ng-template>
         

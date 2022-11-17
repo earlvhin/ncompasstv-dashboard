@@ -13,7 +13,6 @@ export class UI_SINGLE_SCREEN {
     assigned_template_id: string;
     assigned_template: string;
     created_by: string;
-    date_created: string;
     notes?: string;
     screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[];
     screen_license: SCREEN_LICENSE_TABLE_FORMAT[];
@@ -21,7 +20,7 @@ export class UI_SINGLE_SCREEN {
     constructor(
         id: string, title: string, description: string, dealer_id: string, dealer_name: string,
         host_id: string, host_name: string, template_id: string, template_name: string,
-        created_by: string, date_created: string, screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[], licenses: SCREEN_LICENSE_TABLE_FORMAT[]
+        created_by: string, screen_zone_playlist: UI_SCREEN_ZONE_PLAYLIST[], licenses: SCREEN_LICENSE_TABLE_FORMAT[]
     ) {
         this.screen_id = id;
         this.screen_title = title;

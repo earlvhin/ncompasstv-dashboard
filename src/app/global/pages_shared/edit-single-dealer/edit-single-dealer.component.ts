@@ -1,18 +1,16 @@
 import { Component, OnInit, Inject, Output, EventEmitter, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatDialogConfig } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { forkJoin, Subject, Observable } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
-import { API_UPDATE_DEALER_PROFILE_BY_ADMIN } from '../../models/api_update-user-info.model';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { DealerService } from '../../services/dealer-service/dealer.service';
 import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
-import { UserService } from '../../services/user-service/user.service';
-import { takeUntil } from 'rxjs/operators';
-import { AuthService } from '../../services/auth-service/auth.service';
 import { DeleteDealerDialogComponent } from './delete-dealer-dialog/delete-dealer-dialog.component';
-import { Router } from '@angular/router';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { AuthService, DealerService, UserService } from 'src/app/global/services';
+import { API_UPDATE_DEALER_PROFILE_BY_ADMIN, USER } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-edit-single-dealer',
@@ -301,29 +299,21 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	}
 
 	private getOtherUsers(page: number): void {
-		if (page == 1) {
-			this._user
-				.get_users_by_filters({ page, search: '' })
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe((data) => {
-					this.other_users = data.users;
-					if (data.paging.hasNextPage) {
-						this.getOtherUsers(data.paging.page + 1);
-					}
-				});
-		} else {
-			this._user
-				.get_users_by_filters({ page, search: '' })
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe((data: any) => {
-					data.users.map((i) => {
-						this.other_users.push(i);
-					});
-					if (data.paging.hasNextPage) {
-						this.getOtherUsers(data.paging.page + 1);
-					}
-				});
-		}
+
+		this._user.get_users_by_filters({ page, search: '' }).pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				response => {
+
+					if ('message' in response) return;
+
+					const users = [...response.paging.entities] as USER[];
+					this.other_users = users;
+
+					if (response.paging.hasNextPage) this.getOtherUsers(response.paging.page + 1);
+
+				}
+			);
+			
 	}
 
 	private checkEmailDuplicate(current_value: string): void {
