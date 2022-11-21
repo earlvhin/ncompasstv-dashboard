@@ -44,9 +44,9 @@ export class API_HOST {
 	updatedBy: string;
 	userId: string;
 	venueType: string;
-	vistarVenuId: any;
+	vistarVenueId: any;
 	parsedStoreHours?: any;
-    icon_url?: any;
+	icon_url?: any;
 }
 
 export class API_SINGLE_HOST {
