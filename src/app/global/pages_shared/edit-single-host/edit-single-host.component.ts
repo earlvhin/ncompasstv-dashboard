@@ -1,23 +1,25 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { Subscription, Observable } from 'rxjs';
+import { map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 import * as uuid from 'uuid';
 
-import { API_CONTENT } from '../../models/api_content.model';
-import { API_DEALER } from '../../models/api_dealer.model';
-import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
-import { API_UPDATE_HOST } from '../../models/api_update-host.model';
-import { AuthService } from '../../services/auth-service/auth.service';
+import {
+	API_CONTENT,
+	API_DEALER,
+	API_PARENT_CATEGORY,
+	API_UPDATE_HOST,
+	UI_ROLE_DEFINITION,
+	UI_OPERATION_DAYS,
+	API_HOST
+} from 'src/app/global/models';
+
+import { AuthService, CategoryService, DealerService, HostService } from 'src/app/global/services';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
-import { CategoryService } from '../../services/category-service/category.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { DealerService } from '../../services/dealer-service/dealer.service';
-import { HostService } from '../../services/host-service/host.service';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation-hours.model';
 
 @Component({
 	selector: 'app-edit-single-host',
@@ -25,168 +27,29 @@ import { UI_OPERATION_HOURS, UI_OPERATION_DAYS } from '../../models/ui_operation
 	styleUrls: ['./edit-single-host.component.scss'],
 	providers: [TitleCasePipe]
 })
-export class EditSingleHostComponent implements OnInit {
+export class EditSingleHostComponent implements OnInit, OnDestroy {
 	business_hours: UI_OPERATION_DAYS[];
-	categories_data: API_PARENTCATEGORY[];
+	categories_data: API_PARENT_CATEGORY[];
 	category_selected: string;
-	closed_without_edit: boolean = false;
-	current_dealer: any;
-	dealer_id: string;
-	dealer_name: string = '';
+	closed_without_edit = false;
+	dealer_name = '';
 	dealers_data: API_DEALER[] = [];
-	disable_business_name: boolean = true;
-	form_invalid: boolean = false;
-	has_bulk_selected_business_hours = false;
-	has_content = false;
-	host_data: any = [];
-	initial_dealer: string;
-	is_dealer: boolean = false;
-	host_id: string;
+	disable_business_name = true;
+	edit_host_form: FormGroup;
+	edit_host_form_controls = this._editHostFormControls;
+	is_dealer = false;
 	host_timezone: { id: string; name: string; status: string };
-	new_host_form: FormGroup;
-	operation_hours: UI_OPERATION_HOURS[];
 	paging: any;
-	subscription: Subscription = new Subscription();
 	timezones: any;
 
-	host_form_view = [
-		{
-			label: 'Host Business Name',
-			control: 'businessName',
-			placeholder: 'Ex. SM Center Pasig',
-			col: 'col-lg-6'
-		},
-		{
-			label: 'Category',
-			control: 'category',
-			placeholder: 'Ex. School',
-			col: 'col-lg-6',
-			autocomplete: true
-		},
-		{
-			label: 'Latitude',
-			control: 'lat',
-			placeholder: 'Ex. 58.933',
-			col: 'col-lg-6'
-		},
-		{
-			label: 'Longitude',
-			control: 'long',
-			placeholder: 'Ex. 58.933',
-			col: 'col-lg-6'
-		},
-		{
-			label: 'Address',
-			control: 'address',
-			placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-			col: 'col-lg-6'
-		},
-		{
-			label: 'City',
-			control: 'city',
-			placeholder: 'Ex. Chicago',
-			col: 'col-lg-3'
-		},
-		{
-			label: 'State',
-			control: 'state',
-			placeholder: 'Ex. IL',
-			col: 'col-lg-3'
-		},
-		{
-			label: 'Region',
-			control: 'region',
-			placeholder: 'Ex. SW',
-			col: 'col-lg-4'
-		},
-		{
-			label: 'Zip Code',
-			control: 'zip',
-			placeholder: 'Ex. 54001',
-			col: 'col-lg-4'
-		},
-		{
-			label: 'Timezone',
-			control: 'timezone',
-			placeholder: 'Ex. US/Central',
-			col: 'col-lg-4',
-			autocomplete: true
-		},
-		{
-			label: 'Vistar Venue ID',
-			control: 'vistar_venue_id',
-			placeholder: 'Ex. Venue ID for Vistar',
-			col: 'col-lg-12'
-		},
-		{
-			label: 'Notes',
-			control: 'notes',
-			placeholder: 'Enter your notes here...',
-			type: 'textarea',
-			col: 'col-lg-6'
-		},
-		{
-			label: 'Others',
-			control: 'others',
-			placeholder: 'Enter your others here...',
-			type: 'textarea',
-			col: 'col-lg-6'
-		}
-	];
-
-	google_business_hours = [
-		{
-			id: 1,
-			label: 'M',
-			day: 'Monday',
-			periods: [],
-			status: false
-		},
-		{
-			id: 2,
-			label: 'T',
-			day: 'Tuesday',
-			periods: [],
-			status: false
-		},
-		{
-			id: 3,
-			label: 'W',
-			day: 'Wednesday',
-			periods: [],
-			status: false
-		},
-		{
-			id: 4,
-			label: 'Th',
-			day: 'Thursday',
-			periods: [],
-			status: false
-		},
-		{
-			id: 5,
-			label: 'F',
-			day: 'Friday',
-			periods: [],
-			status: false
-		},
-		{
-			id: 6,
-			label: 'St',
-			day: 'Saturday',
-			periods: [],
-			status: false
-		},
-		{
-			id: 0,
-			label: 'Sn',
-			day: 'Sunday',
-			periods: [],
-			status: false
-		}
-	];
-
+	private current_dealer: API_DEALER;
+	private dealer_id: string;
+	private form_invalid = false;
+	private has_content = false;
+	private host_data: API_HOST;
 	private initial_business_hours: any;
+	private initial_dealer: string;
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA) public _host_data: any,
@@ -203,236 +66,73 @@ export class EditSingleHostComponent implements OnInit {
 
 	ngOnInit() {
 		if (this.isCurrentUserDealer) this.is_dealer = true;
-
 		this.getDealers(1);
 		this.getHostData(this._host_data);
-
-		this.subscription.add(
-			this._host.get_content_by_host_id(this._host_data).subscribe(
-				(response: { contents: API_CONTENT[] }) => {
-					if (response && response.contents && response.contents.length > 0) return (this.has_content = true);
-					this.has_content = false;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-		);
-
-		this.subscription.add(
-			this._categories.get_parent_categories().subscribe((data) => {
-				data.map((category) => {
-					category.categoryName = this._titlecase.transform(category.categoryName);
-				});
-				this.categories_data = data;
-			})
-		);
-
-		this.business_hours = this.google_business_hours.map((h) => {
-			return new UI_OPERATION_DAYS(h.id, h.label, h.day, [], h.status);
-		});
-
-		this.new_host_form = this._form.group({
-			dealerId: ['', Validators.required],
-			businessName: ['', Validators.required],
-			address: ['', Validators.required],
-			city: ['', Validators.required],
-			state: ['', Validators.required],
-			zip: ['', Validators.required],
-			region: ['', Validators.required],
-			category: ['', Validators.required],
-			long: ['', Validators.required],
-			lat: ['', Validators.required],
-			timezone: ['', Validators.required],
-			vistar_venue_id: ['', Validators.required],
-			notes: [''],
-			others: ['']
-		});
-
+		this.getHostContents();
+		this.getCategories();
+		this.setBusinessHours();
+		this.initializeForm();
 		this.getTimezones();
 	}
 
-	get f() {
-		return this.new_host_form.controls;
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	get isCurrentUserAdmin() {
 		return this.currentUser.role_id === UI_ROLE_DEFINITION.administrator;
 	}
 
-	getHostData(id: string): void {
-		this.subscription.add(
-			this._host.get_host_by_id(id).subscribe((response) => {
-				if (response.message) return;
-				this.dealer_id = response.host.dealerId;
-				this.host_data = response.host;
-				this.host_timezone = response.timezone;
-				this.initial_business_hours = JSON.parse(this.host_data.storeHours);
-				this.business_hours = JSON.parse(this.host_data.storeHours);
-				this.fillForm(this.host_data, this.host_timezone);
-			})
-		);
+	addHours(data: { periods: any[]; id: string }): void {
+		const hours = {
+			id: uuid.v4(),
+			day_id: data.id,
+			open: '',
+			close: ''
+		};
+
+		data.periods.push(hours);
 	}
 
-	searchData(e): void {
-		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe((data) => {
-				if (data.paging.entities.length > 0) {
-					this.dealers_data = data.paging.entities;
-				} else {
-					this.dealers_data = [];
-				}
-				this.paging = data.paging;
-			})
-		);
+	editBusinessName(data: boolean): void {
+		this.closed_without_edit = data;
+
+		if (data) {
+			this.setDealer(this.initial_dealer);
+		}
+
+		this.disable_business_name = data;
 	}
 
 	getDealers(page: number): void {
-		if (page > 1) {
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '').subscribe((data) => {
-					data.dealers.map((i) => {
-						this.dealers_data.push(i);
-					});
-					this.paging = data.paging;
-				})
-			);
-		} else {
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(page, '').subscribe((data) => {
-					this.dealers_data = data.dealers;
-					this.paging = data.paging;
-				})
-			);
-		}
+		this._dealer
+			.get_dealers_with_page(page, '')
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if (page > 1) this.dealers_data.concat(response.dealers);
+				else this.dealers_data = response.dealers;
+				this.paging = response.paging;
+			});
 	}
 
-	setTimezone(e): void {
-		this.f.timezone.setValue(e);
-	}
+	onBulkEditHours(): void {
+		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
+			width: '550px',
+			height: '450px',
+			panelClass: 'position-relative',
+			data: {},
+			autoFocus: false
+		});
 
-	fillForm(data: any, time: any): void {
-		this.f.businessName.setValue(data.name);
-		this.f.lat.setValue(data.latitude);
-		this.f.long.setValue(data.longitude);
-		this.f.address.setValue(data.address);
-		this.f.city.setValue(data.city);
-		this.f.state.setValue(data.state);
-		this.f.zip.setValue(data.postalCode);
-		this.f.region.setValue(data.region);
-		this.setToCategory(data.category);
-		this.setDealer(data.dealerId);
-		this.initial_dealer = data.dealerId;
-		this.f.timezone.setValue(time.id);
-		this.f.notes.setValue(data.notes);
-		this.f.others.setValue(data.others);
-		this.f.vistar_venue_id.setValue(data.vistarVenueId);
-	}
-
-	getTimezones(): void {
-		this._host.get_time_zones().subscribe(
-			(data) => {
-				this.timezones = data;
+		dialog.afterClosed().subscribe(
+			(response) => {
+				if (response) this.business_hours = response;
 			},
-			(error) => {}
+			(error) => {
+				throw new Error(error);
+			}
 		);
-	}
-
-	warningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data, return_msg, action }
-		});
-
-		dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
-	}
-
-	newHostPlace() {
-		this.business_hours.map((data) => {
-			if (data.status && data.periods.length > 0) {
-				data.periods.map((period) => {
-					if (period.open != '' && period.close == '') {
-						this.form_invalid = true;
-					} else if (period.close != '' && period.open == '') {
-						this.form_invalid = true;
-					} else {
-						this.form_invalid = false;
-					}
-				});
-			}
-		});
-		if (this.form_invalid) {
-			this.warningModal(
-				'error',
-				'Failed to update host',
-				'Kindly verify that all business hours opening should have closing time.',
-				null,
-				null
-			);
-		} else {
-			const newHostPlace = new API_UPDATE_HOST(
-				this._host_data,
-				this.f.dealerId.value,
-				this.f.businessName.value,
-				this.f.lat.value,
-				this.f.long.value,
-				this.f.city.value,
-				this.f.state.value,
-				this.f.zip.value,
-				this.f.region.value,
-				this.f.address.value,
-				this.f.category.value,
-				JSON.stringify(this.business_hours),
-				this.f.timezone.value,
-				this.f.vistar_venue_id.value
-			);
-
-			if (this.f.notes.value && this.f.notes.value.trim().length > 0) {
-				newHostPlace.notes = this.f.notes.value;
-			}
-
-			if (this.f.others.value && this.f.others.value.trim().length > 0) {
-				newHostPlace.others = this.f.others.value;
-			}
-
-			if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
-
-			this.subscription.add(
-				this._host.update_single_host(newHostPlace).subscribe(
-					(data: any) => {
-						const dialogRef = this.confirmationModal(
-							'success',
-							'Host Profile Details Updated!',
-							'Hurray! You successfully updated the Host Profile Details',
-							data.host.hostId
-						);
-					},
-					(error) => {
-						this.confirmationModal('error', 'Host Profile Details Update Failed', "Sorry, There's an error with your submission", null);
-					}
-				)
-			);
-		}
-	}
-
-	confirmationModal(status: string, message: string, data: any, id: string) {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			if (status) {
-				this.ngOnInit();
-				this._dialog.closeAll();
-			}
-		});
 	}
 
 	onDeleteHost(): void {
@@ -457,8 +157,10 @@ export class EditSingleHostComponent implements OnInit {
 				if (typeof response === 'undefined' || !response) return;
 				if (this.has_content && response !== 'no') isForceDelete = true;
 
-				this.subscription.add(
-					this._host.delete_host([hostId], isForceDelete).subscribe(
+				this._host
+					.delete_host([hostId], isForceDelete)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe(
 						() => {
 							this._dialogRef.close('delete-host');
 							if (!this.is_dealer) {
@@ -470,8 +172,7 @@ export class EditSingleHostComponent implements OnInit {
 						(error) => {
 							throw new Error(error);
 						}
-					)
-				);
+					);
 			},
 			(error) => {
 				throw new Error(error);
@@ -479,7 +180,7 @@ export class EditSingleHostComponent implements OnInit {
 		);
 	}
 
-	operationDays(data: { periods: any[]; status: boolean; id: string }): void {
+	parseBusinessHours(data: { periods: any[]; status: boolean; id: string }): void {
 		data.periods.length = 0;
 
 		const hours = {
@@ -493,77 +194,411 @@ export class EditSingleHostComponent implements OnInit {
 		data.periods.push(hours);
 	}
 
-	addHours(data: { periods: any[]; id: string }): void {
-		const hours = {
-			id: uuid.v4(),
-			day_id: data.id,
-			open: '',
-			close: ''
-		};
-
-		data.periods.push(hours);
-	}
-
 	removeHours(data: { periods: any[] }, index: number): void {
 		data.periods.splice(index, 1);
+	}
+
+	saveHostData(): void {
+		this.checkBusinessHoursFields();
+
+		if (this.form_invalid) {
+			this.displayWarningModal(
+				'error',
+				'Failed to update host',
+				'Kindly verify that all business hours opening should have closing time.',
+				null,
+				null
+			);
+
+			return;
+		}
+
+		const newHostPlace = new API_UPDATE_HOST(
+			this._host_data,
+			this._formControls.dealerId.value,
+			this._formControls.businessName.value,
+			this._formControls.lat.value,
+			this._formControls.long.value,
+			this._formControls.city.value,
+			this._formControls.state.value,
+			this._formControls.zip.value,
+			this._formControls.region.value,
+			this._formControls.address.value,
+			this._formControls.category.value,
+			JSON.stringify(this.business_hours),
+			this._formControls.timezone.value,
+			this._formControls.vistar_venue_id.value
+		);
+
+		if (this._formControls.notes.value && this._formControls.notes.value.trim().length > 0) {
+			newHostPlace.notes = this._formControls.notes.value;
+		}
+
+		if (this._formControls.others.value && this._formControls.others.value.trim().length > 0) {
+			newHostPlace.others = this._formControls.others.value;
+		}
+
+		if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
+
+		this._host
+			.update_single_host(newHostPlace)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { host: { hostId: string } }) => {
+					this.showConfirmationModal(
+						'success',
+						'Host Profile Details Updated!',
+						'Hurray! You successfully updated the Host Profile Details',
+						response.host.hostId
+					);
+				},
+				(error) => {
+					this.showConfirmationModal('error', 'Host Profile Details Update Failed', "Sorry, There's an error with your submission", null);
+				}
+			);
+	}
+
+	searchData(keyword: string): void {
+		this._dealer
+			.get_search_dealer(keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				let searchDealerResults = [];
+
+				if (response.paging.entities.length > 0) {
+					searchDealerResults = response.paging.entities;
+					this.paging = response.paging;
+				}
+
+				this.dealers_data = searchDealerResults;
+			});
+	}
+
+	setDealer(id: string): void {
+		this._formControls.dealerId.setValue(id);
+		const filtered = this.dealers_data.filter((dealer) => dealer.dealerId == id);
+
+		if (filtered.length > 0) {
+			this.dealer_name = filtered[0].businessName;
+			return;
+		}
+
+		this._dealer
+			.get_dealer_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				this.current_dealer = response;
+				this.dealers_data.push(this.current_dealer);
+				this.dealer_name = this.current_dealer.businessName;
+			});
+	}
+
+	setTimezone(data: string): void {
+		this._formControls.timezone.setValue(data);
 	}
 
 	setToCategory(event: string): void {
 		if (event != null) {
 			event = event.replace(/_/g, ' ');
 			this.category_selected = this._titlecase.transform(event);
-			this.f.category.setValue(event);
-		}
-	}
-
-	editBusinessName(event: boolean): void {
-		if (event == true) {
-			this.setDealer(this.initial_dealer);
-			this.closed_without_edit = true;
-		} else {
-			this.closed_without_edit = false;
-		}
-
-		this.disable_business_name = event;
-	}
-
-	onBulkEditHours(): void {
-		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
-			width: '550px',
-			height: '450px',
-			panelClass: 'position-relative',
-			data: {},
-			autoFocus: false
-		});
-
-		dialog.afterClosed().subscribe(
-			(response) => {
-				if (response) this.business_hours = response;
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
-	}
-
-	setDealer(id) {
-		this.f.dealerId.setValue(id);
-		const filtered = this.dealers_data.filter((dealer) => dealer.dealerId == id);
-		if (filtered.length == 0) {
-			this.subscription.add(
-				this._dealer.get_dealer_by_id(id).subscribe((data) => {
-					this.current_dealer = data;
-					this.dealers_data.push(this.current_dealer);
-					this.dealer_name = this.current_dealer.businessName;
-				})
-			);
-		} else {
-			this.dealer_name = filtered[0].businessName;
+			this._formControls.category.setValue(event);
 		}
 	}
 
 	private get hasUpdatedBusinessHours(): boolean {
 		return JSON.stringify(this.business_hours) !== JSON.stringify(this.initial_business_hours);
+	}
+
+	private checkBusinessHoursFields(): void {
+		this.business_hours.map((data) => {
+			if (data.status && data.periods.length > 0) {
+				data.periods.map((period) => {
+					if (period.open != '' && period.close == '') {
+						this.form_invalid = true;
+					} else if (period.close != '' && period.open == '') {
+						this.form_invalid = true;
+					} else {
+						this.form_invalid = false;
+					}
+				});
+			}
+		});
+	}
+
+	private displayWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data, return_msg, action }
+		});
+
+		dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
+	}
+
+	private fillForm(data: API_HOST, time: { id: string }): void {
+		this._formControls.businessName.setValue(data.name);
+		this._formControls.lat.setValue(data.latitude);
+		this._formControls.long.setValue(data.longitude);
+		this._formControls.address.setValue(data.address);
+		this._formControls.city.setValue(data.city);
+		this._formControls.state.setValue(data.state);
+		this._formControls.zip.setValue(data.postalCode);
+		this._formControls.region.setValue(data.region);
+		this.setToCategory(data.category);
+		this.setDealer(data.dealerId);
+		this.initial_dealer = data.dealerId;
+		this._formControls.timezone.setValue(time.id);
+		this._formControls.notes.setValue(data.notes);
+		this._formControls.others.setValue(data.others);
+		this._formControls.vistar_venue_id.setValue(data.vistarVenueId);
+	}
+
+	private getCategories(): void {
+		this._categories
+			.get_parent_categories()
+			.pipe(
+				takeUntil(this._unsubscribe),
+				map((response) =>
+					response.map((data) => {
+						data.categoryName = this._titlecase.transform(data.categoryName);
+						return data;
+					})
+				)
+			)
+			.subscribe((response) => {
+				this.categories_data = response;
+			});
+	}
+
+	private getHostContents(): void {
+		this._host
+			.get_content_by_host_id(this._host_data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: { contents: API_CONTENT[] }) => {
+					if (response && response.contents && response.contents.length > 0) return (this.has_content = true);
+					this.has_content = false;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	private getHostData(id: string): void {
+		this._host
+			.get_host_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if (response.message) return;
+				this.dealer_id = response.host.dealerId;
+				this.host_data = response.host;
+				this.host_timezone = response.timezone;
+				this.initial_business_hours = JSON.parse(this.host_data.storeHours);
+				this.business_hours = JSON.parse(this.host_data.storeHours);
+				this.fillForm(this.host_data, this.host_timezone);
+			});
+	}
+
+	private getTimezones(): void {
+		this._host
+			.get_time_zones()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => (this.timezones = response),
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	private initializeForm(): void {
+		this.edit_host_form = this._form.group({
+			dealerId: ['', Validators.required],
+			businessName: ['', Validators.required],
+			address: ['', Validators.required],
+			city: ['', Validators.required],
+			state: ['', Validators.required],
+			zip: ['', Validators.required],
+			region: ['', Validators.required],
+			category: ['', Validators.required],
+			long: ['', Validators.required],
+			lat: ['', Validators.required],
+			timezone: ['', Validators.required],
+			vistar_venue_id: ['', Validators.required],
+			notes: [''],
+			others: ['']
+		});
+	}
+
+	private setBusinessHours(): void {
+		this.business_hours = this._businessHours.map((h) => {
+			return new UI_OPERATION_DAYS(h.id, h.label, h.day, [], h.status);
+		});
+	}
+
+	private showConfirmationModal(status: string, message: string, data: any, id: string) {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status: status,
+				message: message,
+				data: data
+			}
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			if (status) {
+				this.ngOnInit();
+				this._dialog.closeAll();
+			}
+		});
+	}
+
+	protected get _businessHours(): UI_OPERATION_DAYS[] {
+		return [
+			{
+				id: 1,
+				label: 'M',
+				day: 'Monday',
+				periods: [],
+				status: false
+			},
+			{
+				id: 2,
+				label: 'T',
+				day: 'Tuesday',
+				periods: [],
+				status: false
+			},
+			{
+				id: 3,
+				label: 'W',
+				day: 'Wednesday',
+				periods: [],
+				status: false
+			},
+			{
+				id: 4,
+				label: 'Th',
+				day: 'Thursday',
+				periods: [],
+				status: false
+			},
+			{
+				id: 5,
+				label: 'F',
+				day: 'Friday',
+				periods: [],
+				status: false
+			},
+			{
+				id: 6,
+				label: 'St',
+				day: 'Saturday',
+				periods: [],
+				status: false
+			},
+			{
+				id: 0,
+				label: 'Sn',
+				day: 'Sunday',
+				periods: [],
+				status: false
+			}
+		];
+	}
+
+	protected get _editHostFormControls() {
+		return [
+			{
+				label: 'Host Business Name',
+				control: 'businessName',
+				placeholder: 'Ex. SM Center Pasig',
+				col: 'col-lg-6'
+			},
+			{
+				label: 'Category',
+				control: 'category',
+				placeholder: 'Ex. School',
+				col: 'col-lg-6',
+				autocomplete: true
+			},
+			{
+				label: 'Latitude',
+				control: 'lat',
+				placeholder: 'Ex. 58.933',
+				col: 'col-lg-6'
+			},
+			{
+				label: 'Longitude',
+				control: 'long',
+				placeholder: 'Ex. 58.933',
+				col: 'col-lg-6'
+			},
+			{
+				label: 'Address',
+				control: 'address',
+				placeholder: 'Ex. 21st Drive Fifth Avenue Place',
+				col: 'col-lg-6'
+			},
+			{
+				label: 'City',
+				control: 'city',
+				placeholder: 'Ex. Chicago',
+				col: 'col-lg-3'
+			},
+			{
+				label: 'State',
+				control: 'state',
+				placeholder: 'Ex. IL',
+				col: 'col-lg-3'
+			},
+			{
+				label: 'Region',
+				control: 'region',
+				placeholder: 'Ex. SW',
+				col: 'col-lg-4'
+			},
+			{
+				label: 'Zip Code',
+				control: 'zip',
+				placeholder: 'Ex. 54001',
+				col: 'col-lg-4'
+			},
+			{
+				label: 'Timezone',
+				control: 'timezone',
+				placeholder: 'Ex. US/Central',
+				col: 'col-lg-4',
+				autocomplete: true
+			},
+			{
+				label: 'Vistar Venue ID',
+				control: 'vistar_venue_id',
+				placeholder: 'Ex. Venue ID for Vistar',
+				col: 'col-lg-12'
+			},
+			{
+				label: 'Notes',
+				control: 'notes',
+				placeholder: 'Enter your notes here...',
+				type: 'textarea',
+				col: 'col-lg-6'
+			},
+			{
+				label: 'Others',
+				control: 'others',
+				placeholder: 'Enter your others here...',
+				type: 'textarea',
+				col: 'col-lg-6'
+			}
+		];
+	}
+
+	protected get _formControls() {
+		return this.edit_host_form.controls;
 	}
 
 	protected get currentUser() {
