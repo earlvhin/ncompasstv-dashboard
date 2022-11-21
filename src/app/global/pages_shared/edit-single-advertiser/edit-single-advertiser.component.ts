@@ -7,7 +7,7 @@ import { AdvertiserService } from '../../services/advertiser-service/advertiser.
 import { DealerService } from '../../services/dealer-service/dealer.service';
 import { API_DEALER } from '../../models/api_dealer.model';
 import { API_UPDATE_ADVERTISER } from '../../models/api_update-advertiser.model';
-import { API_PARENTCATEGORY } from '../../models/api_parentcategory.model';
+import { API_PARENT_CATEGORY } from '../../models/api_parentcategory.model';
 import { CategoryService } from '../../services/category-service/category.service';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
@@ -22,7 +22,7 @@ import { API_ADVERTISER } from '../../models';
 	providers: [TitleCasePipe]
 })
 export class EditSingleAdvertiserComponent implements OnInit {
-	categories_data: API_PARENTCATEGORY[];
+	categories_data: API_PARENT_CATEGORY[];
 	cat_data: any = [];
 	subscription: Subscription = new Subscription();
 	dealer_name: string;

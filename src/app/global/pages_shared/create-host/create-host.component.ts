@@ -15,7 +15,7 @@ import {
 	API_CREATE_HOST,
 	API_DEALER,
 	API_GOOGLE_MAP,
-	API_PARENTCATEGORY,
+	API_PARENT_CATEGORY,
 	GOOGLE_MAP_SEARCH_RESULT,
 	PAGING,
 	UI_OPERATION_HOURS,
@@ -32,7 +32,7 @@ import { AuthService, DealerService, CategoryService, HelperService, HostService
 	providers: [TitleCasePipe]
 })
 export class CreateHostComponent implements OnInit {
-	categories_data: API_PARENTCATEGORY[];
+	categories_data: API_PARENT_CATEGORY[];
 	gen_categories_data: any[];
 	category_selected: string;
 	child_category: string;

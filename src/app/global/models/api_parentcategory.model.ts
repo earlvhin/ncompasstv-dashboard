@@ -1,4 +1,4 @@
-export class API_PARENTCATEGORY {
-    slug: string;
-    categoryName: string;
+export class API_PARENT_CATEGORY {
+	slug: string;
+	categoryName: string;
 }
