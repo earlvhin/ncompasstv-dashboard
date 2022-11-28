@@ -3,33 +3,29 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { Workbook } from 'exceljs';
+import { map, takeUntil } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
+import { Workbook } from 'exceljs';
 import * as moment from 'moment';
 import * as io from 'socket.io-client';
 
-import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
-import { API_DEALER } from '../../models/api_dealer.model';
-import { API_HOST } from '../../models/api_host.model';
-import { API_LICENSE } from '../../models/api_license.model';
-import { API_LICENSE_STASTICS } from '../../models/api_license_statistics.model';
+import { environment } from 'src/environments/environment';
+import { AuthService, AdvertiserService, DealerService, HostService, LicenseService, RoleService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { DealerService } from '../../services/dealer-service/dealer.service';
-import { DEALER_UI_TABLE_ADVERTISERS } from '../../models/ui_table_advertisers.model';
-import { environment } from '../../../../environments/environment';
-import { HostService } from '../../services/host-service/host.service';
-import { LicenseService } from '../../services/license-service/license.service';
-import { RoleService } from '../../services/role-service/role.service';
 import { SubstringPipe } from '../../pipes/substring.pipe';
-import { UI_DEALER_HOST } from '../../models/ui_dealer-host.model';
-import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
-import { UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
-import { UserService } from '../../services/user-service/user.service';
 import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
-import { UI_DEALER_LICENSE_ZONE } from '../../models/ui_table_dealer-license-zone.model';
-import { map, takeUntil } from 'rxjs/operators';
-import { API_USER_DATA } from '../../models';
-import { AuthService } from '../../services';
+
+import {
+	API_DEALER,
+	API_HOST,
+	API_LICENSE,
+	API_USER_DATA,
+	DEALER_UI_TABLE_ADVERTISERS,
+	UI_DEALER_HOST,
+	UI_DEALER_LICENSE,
+	UI_DEALER_LICENSE_ZONE,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -122,7 +118,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	sort_order_advertisers: string = '';
 	sort_order_hosts: string = '';
 	splitted_text: any;
-	statistics: API_LICENSE_STASTICS;
+	statistics: any;
 	subscription: Subscription = new Subscription();
 	temp_array: any = [];
 	temp_label: any = [];
@@ -1463,7 +1459,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	private getLicenseStatisticsByDealer(id: string, reload = false): void {
 		this.subscription.add(
 			this._license.get_statistics_by_dealer(id).subscribe(
-				(response: API_LICENSE_STASTICS) => {
+				(response) => {
 					let hasNull = false;
 
 					for (let [key, value] of Object.entries(response)) {
