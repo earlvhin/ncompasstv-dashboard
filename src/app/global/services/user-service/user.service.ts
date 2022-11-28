@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from '../auth-service/auth.service';
-import { USER } from '../../models/api_user.model';
-import { environment } from '../../../../environments/environment';
-import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
+import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
-import { API_FILTERS, API_USER_STATS, PAGING } from '../../models';
+
+import { environment } from 'src/environments/environment';
+import { API_DEALER, API_FILTERS, API_USER_DATA, API_USER_STATS, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -32,31 +32,32 @@ export class UserService {
 		const endpoint = `${this.base}${this.getters.api_get_users}`;
 		const params = this.setUrlParams(filters, false, true);
 		const url = `${endpoint}${params}`;
-		return this._http.get<{ paging?: PAGING, message?: string }>(url, this.httpOptions);
+		return this._http.get<{ paging?: PAGING; message?: string }>(url, this.httpOptions);
 	}
 
 	get_users_by_owner(ownerId: string) {
 		const endpoint = `${this.base}${this.getters.users_by_owner}${ownerId}`;
 		return this._http.get(endpoint, this.httpOptions);
 	}
-	
+
 	get_users_search(key) {
 		return this._http.get<any>(`${this.base}${this.getters.api_get_users}` + '?search=' + `${key}`, this.httpOptions);
 	}
-	
+
 	get_user_total() {
 		return this._http.get<API_USER_STATS>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
 	}
 
-	get_user_by_id(data) {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}`, this.httpOptions).map((data) => data.user);
+	get_user_by_id(id: string) {
+		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}?user_id=${id}`, this.httpOptions).map((data) => data.user);
 	}
 
-	get_user_alldata_by_id(data) {
+	get_all_user_data_by_id(id: string): Observable<{ user?: API_USER_DATA; dealer?: API_DEALER[]; message?: string }> {
 		let isAdmin = this._auth.current_role == 'administrator' ? true : false;
-		return this._http
-			.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}` + '&isAdmin=' + `${isAdmin}`, this.httpOptions)
-			.map((data) => data);
+
+		const url = `${this.base}${this.getters.api_get_user_by_id}?user_id=${id}&isAdmin=${isAdmin}`;
+		const response: Observable<{ user?: API_USER_DATA; dealer?: API_DEALER[]; message?: string }> = this._http.get(url, this.httpOptions);
+		return response;
 	}
 
 	create_new_user(role: string, data: any) {
@@ -87,9 +88,9 @@ export class UserService {
 	}
 
 	validate_email(email: string) {
-		const re =
+		const pattern =
 			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return re.test(String(email).toLowerCase());
+		return pattern.test(String(email).toLowerCase());
 	}
 
 	update_email_notifications(userId: string, data: boolean) {
@@ -107,13 +108,13 @@ export class UserService {
 		return this._http.post(`${this.base}${this.update.api_update_user}`, data, this.httpOptions);
 	}
 
-	get_user_notifications(id) {
-		return this._http.get(`${this.base}${this.getters.api_get_notifications}${id}`, this.httpOptions);
+	get_user_notifications(receiverId: string) {
+		return this._http.get(`${this.base}${this.getters.api_get_notifications}${receiverId}`, this.httpOptions);
 	}
 
-    set_cookie_for_other_site(id) {
-        return this._http.get(`${this.base}${this.getters.api_get_and_set_cookies}${id}`, this.httpOptions);
-    }
+	set_cookie_for_other_site(userId: string) {
+		return this._http.get(`${this.base}${this.getters.api_get_and_set_cookies}${userId}`, this.httpOptions);
+	}
 
 	protected get base() {
 		return environment.base_uri;
