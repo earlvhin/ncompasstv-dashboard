@@ -158,7 +158,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
 		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
 		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
-		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true }
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -410,7 +410,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -419,28 +419,28 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline = value;
 				this.filters.label_status = 'Offline for ' + days;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -703,7 +703,7 @@ export class LicensesComponent implements OnInit {
 	getDataForExport(tab: string): void {
 		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this.filters.isactivated = '';
+		this.filters.isactivated = '';
 		switch (tab) {
 			case 'licenses':
 				this._license
@@ -980,14 +980,14 @@ export class LicensesComponent implements OnInit {
 						query: '2',
 						editable: false,
 						hidden: false,
-                        new_tab_link: true
+						new_tab_link: true
 					},
 					{
 						value: this._title.transform(dealer.businessName),
 						link: '/administrator/dealers/' + dealer.dealerId,
 						editable: false,
 						hidden: false,
-                        new_tab_link: true
+						new_tab_link: true
 					},
 					{ value: this._title.transform(dealer.contactPerson), link: null, editable: false, hidden: false },
 					{ value: dealer.region, link: null, editable: false, hidden: false },
@@ -1087,8 +1087,8 @@ export class LicensesComponent implements OnInit {
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: l.licenseId, link: null, editable: false, hidden: true, key: false, table: 'license' },
 				{
-					value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
-					link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
+					value: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
+					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
 					isImage: true

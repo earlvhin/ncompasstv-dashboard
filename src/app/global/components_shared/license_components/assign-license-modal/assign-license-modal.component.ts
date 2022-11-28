@@ -79,7 +79,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 		this.loading_data = true;
 
 		this._license
-            .get_license_by_dealer_id(this._dialog_data.dealer_id, page, '', 'online', 15, '')
+			.get_license_by_dealer_id(this._dialog_data.dealer_id, page, '', 'online', 15, '')
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
