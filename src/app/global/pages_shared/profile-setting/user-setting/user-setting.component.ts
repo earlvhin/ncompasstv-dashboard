@@ -123,10 +123,12 @@ export class UserSettingComponent implements OnInit {
 	ngOnDestroy() {
 		this.subscription.unsubscribe();
 	}
-
+	gg;
 	getUserById(id: string): void {
+		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
+
 		this.subscription.add(
-			this._user.get_user_alldata_by_id(id).subscribe(
+			this._user.get_all_user_data_by_id(id, isCurrentUserAdmin).subscribe(
 				(response: any) => {
 					if (response.dealer.length > 0) {
 						this.user_data = Object.assign({}, response.dealer[0], response.user);

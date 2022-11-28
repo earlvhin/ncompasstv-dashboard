@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
@@ -17,7 +16,7 @@ export class UserService {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 
-	constructor(private _http: HttpClient, private _auth: AuthService) {}
+	constructor(private _http: HttpClient) {}
 
 	deleteUser(userId: string) {
 		const endpoint = `${this.base}${this.delete.user}?userid=${userId}`;
@@ -52,9 +51,7 @@ export class UserService {
 		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}?user_id=${id}`, this.httpOptions).map((data) => data.user);
 	}
 
-	get_all_user_data_by_id(id: string): Observable<{ user?: API_USER_DATA; dealer?: API_DEALER[]; message?: string }> {
-		let isAdmin = this._auth.current_role == 'administrator' ? true : false;
-
+	get_all_user_data_by_id(id: string, isAdmin: boolean): Observable<{ user?: API_USER_DATA; dealer?: API_DEALER[]; message?: string }> {
 		const url = `${this.base}${this.getters.api_get_user_by_id}?user_id=${id}&isAdmin=${isAdmin}`;
 		const response: Observable<{ user?: API_USER_DATA; dealer?: API_DEALER[]; message?: string }> = this._http.get(url, this.httpOptions);
 		return response;

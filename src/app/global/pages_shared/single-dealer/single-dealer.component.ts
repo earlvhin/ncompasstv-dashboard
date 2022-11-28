@@ -29,6 +29,7 @@ import { UserSortModalComponent } from '../../components_shared/media_components
 import { UI_DEALER_LICENSE_ZONE } from '../../models/ui_table_dealer-license-zone.model';
 import { map, takeUntil } from 'rxjs/operators';
 import { API_USER_DATA } from '../../models';
+import { AuthService } from '../../services';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -245,6 +246,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	constructor(
 		public _router: Router,
 		private _advertiser: AdvertiserService,
+		private _auth: AuthService,
 		private _date: DatePipe,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
@@ -566,8 +568,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	private getDealerUserData(id: string): void {
+		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
+
 		this._user
-			.get_all_user_data_by_id(id)
+			.get_all_user_data_by_id(id, isCurrentUserAdmin)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {

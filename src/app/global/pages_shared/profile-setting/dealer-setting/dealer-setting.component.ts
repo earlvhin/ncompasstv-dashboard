@@ -139,11 +139,13 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 	}
 
 	getUserById(id: string) {
+		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
+
 		this._user
-			.get_user_alldata_by_id(id)
+			.get_all_user_data_by_id(id, isCurrentUserAdmin)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { user: API_USER_DATA; dealer: DEALER_PROFILE[] }) => {
+				(response) => {
 					this.user_data = Object.assign({}, response.user, response.dealer[0]);
 					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy');
 					this._dealer.onDealerDataLoaded.emit({ email: this.user_data.email });
