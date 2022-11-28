@@ -9,7 +9,7 @@ import * as io from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_LICENSE_PROPS } from 'src/app/global/models';
+import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_LICENSE_PROPS, API_HOST } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-host',
@@ -26,8 +26,10 @@ export class SingleHostComponent implements OnInit {
 	hostName: string;
 	hostId: string;
 	host: API_SINGLE_HOST;
+	hostData: API_HOST;
 	hostLicenseStatistics: HOST_LICENSE_STATISTICS;
-	isViewOnly = false;
+	isBannerDataReady = false;
+	isViewOnly = this.currentUser.roleInfo.permission === 'V';
 	singleHostData: { dealer_id: string; host_id: string };
 	lat: number;
 	long: number;
@@ -49,7 +51,6 @@ export class SingleHostComponent implements OnInit {
 
 	ngOnInit() {
 		this.initializeSocket();
-		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
 
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.hostId = this._params.snapshot.params.data));
 
@@ -102,24 +103,13 @@ export class SingleHostComponent implements OnInit {
 				(response) => {
 					if (!response) return;
 
-					const {
-						total,
-						totalActive,
-						totalInActive,
-						totalOnline,
-						totalOffline,
-						totalAd,
-						totalMenu,
-						totalClosed,
-						totalUnassignedScreenCount
-					} = response;
+					const { total, totalActive, totalOnline, totalOffline, totalAd, totalMenu, totalClosed, totalUnassignedScreenCount } = response;
 
 					this.hostLicenseStatistics = {
 						total_count: total,
 						total_count_label: 'License(s)',
 						active_value: totalActive,
 						active_value_label: 'Active',
-						inactive_value: totalInActive,
 						inactive_value_label: 'Inactive',
 						online_value: totalOnline,
 						online_value_label: 'Online',
@@ -134,6 +124,8 @@ export class SingleHostComponent implements OnInit {
 						unassigned_value: totalUnassignedScreenCount,
 						unassigned_value_label: 'Unassigned'
 					};
+
+					this.isBannerDataReady = true;
 				},
 				(error) => {
 					throw new Error(error);
@@ -154,7 +146,7 @@ export class SingleHostComponent implements OnInit {
 			.subscribe(
 				(response) => {
 					if (response.message) return;
-					this.setPageData({ host: response.host, dealer: response.dealer, hostTags: response.hostTags });
+					this.setPageData({ host: response.host, dealer: response.dealer, hostTags: response.hostTags, timezone: response.timezone });
 				},
 				(error) => {
 					throw new Error(error);
@@ -174,8 +166,9 @@ export class SingleHostComponent implements OnInit {
 	}
 
 	private setPageData(response: API_SINGLE_HOST) {
-		const { host, dealer, hostTags } = response;
+		const { host, dealer, hostTags, timezone } = response;
 		host.tags = hostTags;
+		host.timeZoneData = timezone;
 		this.host = response;
 		if (response.host.logo) this.currentImage = response.host.logo;
 		this.singleHostData = { dealer_id: dealer.dealerId, host_id: this.hostId };

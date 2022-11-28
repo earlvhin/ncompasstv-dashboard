@@ -36,6 +36,7 @@ export * from './api_single-screen.model';
 export * from './api_swap-content-response.model';
 export * from './api_template.model';
 export * from './api_timezone.model';
+export * from './api_update-advertiser.model';
 export * from './api_update-host.model';
 export * from './api_update-playlist-content.model';
 export * from './api_update-user-info.model';

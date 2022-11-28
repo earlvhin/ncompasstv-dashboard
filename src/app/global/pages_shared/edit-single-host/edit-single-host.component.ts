@@ -1,6 +1,6 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
-import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSlideToggleChange } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { map, takeUntil } from 'rxjs/operators';
@@ -14,12 +14,13 @@ import {
 	API_UPDATE_HOST,
 	UI_ROLE_DEFINITION,
 	UI_OPERATION_DAYS,
-	API_HOST
+	API_HOST,
+	API_TIMEZONE,
+	PAGING
 } from 'src/app/global/models';
 
-import { AuthService, CategoryService, DealerService, HostService } from 'src/app/global/services';
+import { AuthService, CategoryService, ConfirmationDialogService, DealerService, HostService } from 'src/app/global/services';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-edit-single-host',
@@ -28,33 +29,38 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 	providers: [TitleCasePipe]
 })
 export class EditSingleHostComponent implements OnInit, OnDestroy {
-	business_hours: UI_OPERATION_DAYS[];
+	business_hours: UI_OPERATION_DAYS[] = JSON.parse(this.page_data.host.storeHours);
+	categories_loaded = false;
 	categories_data: API_PARENT_CATEGORY[];
 	category_selected: string;
 	closed_without_edit = false;
-	dealer_name = '';
+	dealer = this.page_data.dealer;
 	dealers_data: API_DEALER[] = [];
+	dealers_loaded = false;
 	disable_business_name = true;
 	edit_host_form: FormGroup;
 	edit_host_form_controls = this._editHostFormControls;
-	is_dealer = false;
-	host_timezone: { id: string; name: string; status: string };
-	paging: any;
-	timezones: any;
+	host = this.page_data.host;
+	host_timezone = this.page_data.host.timeZoneData;
+	is_active_host = this.host.status === 'A';
+	is_current_user_admin = this._auth.current_role === 'administrator';
+	is_current_user_dealer = this._auth.current_role === 'dealer';
+	is_host_data_ready = false;
+	paging: PAGING;
+	timezones: API_TIMEZONE[];
+	timezones_loaded = false;
 
-	private current_dealer: API_DEALER;
-	private dealer_id: string;
+	private dealer_id = this.host.dealerId;
 	private form_invalid = false;
 	private has_content = false;
-	private host_data: API_HOST;
-	private initial_business_hours: any;
-	private initial_dealer: string;
+	private initial_business_hours: UI_OPERATION_DAYS[] = JSON.parse(this.page_data.host.storeHours);
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public _host_data: any,
+		@Inject(MAT_DIALOG_DATA) public page_data: { host: API_HOST; dealer: API_DEALER },
 		private _auth: AuthService,
 		private _categories: CategoryService,
+		private _confirmationDialog: ConfirmationDialogService,
 		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _dialogRef: MatDialogRef<EditSingleHostComponent>,
@@ -65,23 +71,17 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		if (this.isCurrentUserDealer) this.is_dealer = true;
-		this.getDealers(1);
-		this.getHostData(this._host_data);
+		this.setDialogData();
+		this.fillForm();
+		this.getDealers();
 		this.getHostContents();
 		this.getCategories();
-		this.setBusinessHours();
-		this.initializeForm();
 		this.getTimezones();
 	}
 
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
-	}
-
-	get isCurrentUserAdmin() {
-		return this.currentUser.role_id === UI_ROLE_DEFINITION.administrator;
 	}
 
 	addHours(data: { periods: any[]; id: string }): void {
@@ -95,17 +95,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		data.periods.push(hours);
 	}
 
-	editBusinessName(data: boolean): void {
-		this.closed_without_edit = data;
+	getDealers(event?: { page: number; is_search: boolean; no_keyword: boolean }): void {
+		const page = event ? event.page : 1;
 
-		if (data) {
-			this.setDealer(this.initial_dealer);
-		}
-
-		this.disable_business_name = data;
-	}
-
-	getDealers(page: number): void {
 		this._dealer
 			.get_dealers_with_page(page, '')
 			.pipe(takeUntil(this._unsubscribe))
@@ -113,7 +105,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				if (page > 1) this.dealers_data.concat(response.dealers);
 				else this.dealers_data = response.dealers;
 				this.paging = response.paging;
-			});
+			})
+			.add(() => (this.dealers_loaded = true));
 	}
 
 	onBulkEditHours(): void {
@@ -137,22 +130,19 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 	onDeleteHost(): void {
 		let isForceDelete = false;
-		const status = 'warning';
 		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		const hostId = this._host_data;
-		let data: any = { status, message: 'Delete Host', data: 'Are you sure about this?' };
+		const hostId = this.host.hostId;
+		let data: any = { message: 'Delete Host', data: 'Are you sure about this?' };
 
 		if (this.has_content) {
-			data = { status, message: 'Force Delete', data: 'This host has content. Delete those as well?', is_selection: true };
+			data = {
+				message: 'Delete Host & Contents?',
+				data: 'Choosing either will proceed with deletion. To cancel press the x above.',
+				is_selection: true
+			};
 		}
 
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data
-		});
-
-		dialog.afterClosed().subscribe(
+		this._confirmationDialog.warning(data).subscribe(
 			(response: boolean | string) => {
 				if (typeof response === 'undefined' || !response) return;
 				if (this.has_content && response !== 'no') isForceDelete = true;
@@ -163,7 +153,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					.subscribe(
 						() => {
 							this._dialogRef.close('delete-host');
-							if (!this.is_dealer) {
+
+							if (!this.is_current_user_admin) {
 								this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
 							} else {
 								this._router.navigate([`/${route}/hosts`]);
@@ -178,6 +169,20 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				throw new Error(error);
 			}
 		);
+	}
+
+	onEditBusinessName(isEdit: boolean): void {
+		this.closed_without_edit = isEdit;
+		if (isEdit) this.addCurrentDealerToList();
+		this.disable_business_name = isEdit;
+	}
+
+	onSelectDealer(id: string) {
+		this.edit_host_form.get('dealerId').setValue(id);
+	}
+
+	onToggleStatus(event: MatSlideToggleChange) {
+		this.is_active_host = event.checked;
 	}
 
 	parseBusinessHours(data: { periods: any[]; status: boolean; id: string }): void {
@@ -198,23 +203,20 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		data.periods.splice(index, 1);
 	}
 
-	saveHostData(): void {
+	async saveHostData() {
 		this.checkBusinessHoursFields();
 
 		if (this.form_invalid) {
-			this.displayWarningModal(
-				'error',
-				'Failed to update host',
-				'Kindly verify that all business hours opening should have closing time.',
-				null,
-				null
-			);
-
+			await this._confirmationDialog.error('Invalid Form!', 'Please make sure that all fields are correct').toPromise();
 			return;
 		}
 
+		let message = 'Are you sure you want to proceed?';
+		const status = this.is_active_host ? 'A' : 'I';
+		const title = 'Update Host Details';
+
 		const newHostPlace = new API_UPDATE_HOST(
-			this._host_data,
+			this.host.hostId,
 			this._formControls.dealerId.value,
 			this._formControls.businessName.value,
 			this._formControls.lat.value,
@@ -227,69 +229,56 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			this._formControls.category.value,
 			JSON.stringify(this.business_hours),
 			this._formControls.timezone.value,
-			this._formControls.vistar_venue_id.value
+			this._formControls.vistar_venue_id.value,
+			status
 		);
 
-		if (this._formControls.notes.value && this._formControls.notes.value.trim().length > 0) {
-			newHostPlace.notes = this._formControls.notes.value;
-		}
+		const { notes, others } = this._formControls;
 
-		if (this._formControls.others.value && this._formControls.others.value.trim().length > 0) {
-			newHostPlace.others = this._formControls.others.value;
-		}
+		if (notes.value && notes.value.trim().length > 0) newHostPlace.notes = notes.value;
+
+		if (others.value && others.value.trim().length > 0) newHostPlace.others = others.value;
 
 		if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
+
+		if (this.host.status !== status) message += ` This will ${status === 'A' ? 'activate' : 'deactivate'} the host.`;
+
+		const confirmUpdate = await this._confirmationDialog.warning({ message: title, data: message }).toPromise();
+
+		if (!confirmUpdate) return;
 
 		this._host
 			.update_single_host(newHostPlace)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { host: { hostId: string } }) => {
-					this.showConfirmationModal(
-						'success',
-						'Host Profile Details Updated!',
-						'Hurray! You successfully updated the Host Profile Details',
-						response.host.hostId
-					);
+				async () => {
+					const dialogData = {
+						message: 'Host Details Updated!',
+						data: 'Your changes have been saved'
+					};
+
+					await this._confirmationDialog.success(dialogData).toPromise();
+					this._dialogRef.close(true);
 				},
 				(error) => {
-					this.showConfirmationModal('error', 'Host Profile Details Update Failed', "Sorry, There's an error with your submission", null);
+					this._confirmationDialog.error();
 				}
 			);
 	}
 
-	searchData(keyword: string): void {
+	searchDealer(keyword: string): void {
 		this._dealer
 			.get_search_dealer(keyword)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
-				let searchDealerResults = [];
+				let searchResults = [];
 
 				if (response.paging.entities.length > 0) {
-					searchDealerResults = response.paging.entities;
+					searchResults = response.paging.entities;
 					this.paging = response.paging;
 				}
 
-				this.dealers_data = searchDealerResults;
-			});
-	}
-
-	setDealer(id: string): void {
-		this._formControls.dealerId.setValue(id);
-		const filtered = this.dealers_data.filter((dealer) => dealer.dealerId == id);
-
-		if (filtered.length > 0) {
-			this.dealer_name = filtered[0].businessName;
-			return;
-		}
-
-		this._dealer
-			.get_dealer_by_id(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				this.current_dealer = response;
-				this.dealers_data.push(this.current_dealer);
-				this.dealer_name = this.current_dealer.businessName;
+				this.dealers_data = [...searchResults];
 			});
 	}
 
@@ -297,16 +286,28 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this._formControls.timezone.setValue(data);
 	}
 
-	setToCategory(event: string): void {
-		if (event != null) {
-			event = event.replace(/_/g, ' ');
-			this.category_selected = this._titlecase.transform(event);
-			this._formControls.category.setValue(event);
-		}
+	setCategory(event: string): void {
+		if (!event || event.length <= 0) return;
+		event = event.replace(/_/g, ' ');
+		this.category_selected = this._titlecase.transform(event);
+		this._formControls.category.setValue(event);
 	}
 
 	private get hasUpdatedBusinessHours(): boolean {
 		return JSON.stringify(this.business_hours) !== JSON.stringify(this.initial_business_hours);
+	}
+
+	private addCurrentDealerToList(): void {
+		const filtered = this.dealers_data.filter((dealer) => dealer.dealerId === this.dealer.dealerId);
+
+		if (filtered.length > 0) return;
+
+		this._dealer
+			.get_dealer_by_id(this.dealer.dealerId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				this.dealers_data.push(response);
+			});
 	}
 
 	private checkBusinessHoursFields(): void {
@@ -325,32 +326,20 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private displayWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data, return_msg, action }
-		});
-
-		dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
-	}
-
-	private fillForm(data: API_HOST, time: { id: string }): void {
-		this._formControls.businessName.setValue(data.name);
-		this._formControls.lat.setValue(data.latitude);
-		this._formControls.long.setValue(data.longitude);
-		this._formControls.address.setValue(data.address);
-		this._formControls.city.setValue(data.city);
-		this._formControls.state.setValue(data.state);
-		this._formControls.zip.setValue(data.postalCode);
-		this._formControls.region.setValue(data.region);
-		this.setToCategory(data.category);
-		this.setDealer(data.dealerId);
-		this.initial_dealer = data.dealerId;
-		this._formControls.timezone.setValue(time.id);
-		this._formControls.notes.setValue(data.notes);
-		this._formControls.others.setValue(data.others);
-		this._formControls.vistar_venue_id.setValue(data.vistarVenueId);
+	private fillForm(): void {
+		const host = this.host;
+		this._formControls.businessName.setValue(host.name);
+		this._formControls.lat.setValue(host.latitude);
+		this._formControls.long.setValue(host.longitude);
+		this._formControls.address.setValue(host.address);
+		this._formControls.city.setValue(host.city);
+		this._formControls.state.setValue(host.state);
+		this._formControls.zip.setValue(host.postalCode);
+		this._formControls.region.setValue(host.region);
+		this._formControls.timezone.setValue(this.host_timezone.id);
+		this._formControls.notes.setValue(host.notes);
+		this._formControls.others.setValue(host.others);
+		this._formControls.vistar_venue_id.setValue(host.vistarVenueId);
 	}
 
 	private getCategories(): void {
@@ -367,12 +356,13 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			)
 			.subscribe((response) => {
 				this.categories_data = response;
-			});
+			})
+			.add(() => (this.categories_loaded = true));
 	}
 
 	private getHostContents(): void {
 		this._host
-			.get_content_by_host_id(this._host_data)
+			.get_content_by_host_id(this.host.hostId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { contents: API_CONTENT[] }) => {
@@ -385,31 +375,19 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	private getHostData(id: string): void {
-		this._host
-			.get_host_by_id(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				if (response.message) return;
-				this.dealer_id = response.host.dealerId;
-				this.host_data = response.host;
-				this.host_timezone = response.timezone;
-				this.initial_business_hours = JSON.parse(this.host_data.storeHours);
-				this.business_hours = JSON.parse(this.host_data.storeHours);
-				this.fillForm(this.host_data, this.host_timezone);
-			});
-	}
-
 	private getTimezones(): void {
 		this._host
 			.get_time_zones()
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => (this.timezones = response),
+				(response) => {
+					this.timezones = response;
+				},
 				(error) => {
 					throw new Error(error);
 				}
-			);
+			)
+			.add(() => (this.timezones_loaded = true));
 	}
 
 	private initializeForm(): void {
@@ -431,29 +409,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private setBusinessHours(): void {
-		this.business_hours = this._businessHours.map((h) => {
-			return new UI_OPERATION_DAYS(h.id, h.label, h.day, [], h.status);
-		});
-	}
-
-	private showConfirmationModal(status: string, message: string, data: any, id: string) {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			if (status) {
-				this.ngOnInit();
-				this._dialog.closeAll();
-			}
-		});
+	private setDialogData(): void {
+		this.initializeForm();
+		this.setCategory(this.host.category);
 	}
 
 	protected get _businessHours(): UI_OPERATION_DAYS[] {

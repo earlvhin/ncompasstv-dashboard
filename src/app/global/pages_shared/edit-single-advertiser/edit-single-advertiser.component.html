@@ -1,72 +1,85 @@
-<ng-container>
-    <div class="p-4 position-relative">
-        <button class="modal-close-btn no-border top-0 right-0 no-background p-absolute" [mat-dialog-close]="false">
-            <span class="fas fa-times"></span>
-        </button>
-        <ng-container>
-            <div class="row">
-                <h3 class="p-0 col-lg-12">Advertiser Details: </h3>
-                <p class="p-0 sm-text mb-4">You can update advertiser details here:</p>
-            </div>
-            <div class="row" *ngIf="dealers_data.length > 0 && dealer_name && categories_data as categories; else loading">
-                <form [formGroup]="new_advertiser_form" (ngSubmit)="newAdvertiserProfile()" class="text-left">
-                    <div class="row mb-4">
-                        <div class="col-lg-11 mb-3" *ngIf="!is_dealer">
-                            <app-autocomplete-field
-                            [data_reference]="dealers_data"
-                            [primary_keyword]="'businessName'"
-                            [key_of_value]="'dealerId'"
-                            (data_value)="setDealer($event)"
-                            [required]="true"
-                            [label]="'Type in a Dealer Business Name'"
-                            [new_value]="dealer_name"
-                            [initial_value]="dealer_name"
-                            [disabled]="disable_business_name"
-                            [paging]="paging"
-                            (call_next_page)="getDealers($event)"
-                            (searched)="searchData($event)"
-                            [no_edit]="closed_without_edit">
-                            </app-autocomplete-field>
-                        </div>
-                        <div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && disable_business_name">
-                            <span class="fa fa-pencil cursor-pointer" (click)="editBusinessName(false)"></span>
-                        </div>
-                        <div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && !disable_business_name">
-                            <span class="fa fa-times text-danger cursor-pointer" (click)="editBusinessName(true)"></span>
-                        </div>
-                        <div *ngFor="let field of advertiser_form_view" class="col-lg-6 {{ field.col }} mb-3">
-                            <mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
-                                <mat-label>{{ field.label }}</mat-label>
-                                <input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}">
-                            </mat-form-field>
-                
-                            <ng-template #autocomplete_field>
-                                <app-autocomplete-field 
-                                    [data_reference]="categories"
-                                    [primary_keyword]="'categoryName'"
-                                    [key_of_value]="'categoryName'"
-                                    (data_value)="setToCategory($event)"
-                                    [required]="true"
-                                    [label]="'Choose Category'"
-                                    [new_value]="category_selected"
-                                    [initial_value]="category_selected">
-                                </app-autocomplete-field>
-                            </ng-template>
-                        </div>
-                    </div>
-                    <button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" [mat-dialog-close]="" [disabled]="">
-                        Update
-                    </button>
-                    <button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">
-                        Cancel
-                    </button>
-                </form>
-            </div>
-            <ng-template #loading>
-                <div class="py-5">
-                    <app-spinner></app-spinner>
-                </div>
-            </ng-template>
-        </ng-container>
-    </div>
-</ng-container>
+<div class="p-2">
+	<div class="dialog-heading d-flex align-items-start">
+		<!-- HEADING -->
+		<div class="advertiser-heading flex-even">
+			<div class="advertiser-name-and-status d-flex align-items-center">
+				<h3 class="p-0">Advertiser Details:</h3>
+				<span class="status sm-text ml-3" [ngClass]="advertiser.status === 'A' ? 'active' : 'inactive'">
+					<span class="fas fa-circle xsm-text mr-2"> </span>
+				</span>
+			</div>
+			<p class="p-0 sm-text mb-4">You can update advertiser details here:</p>
+		</div>
+		<!-- ADVERTISER STATUS TOGGLE -->
+		<mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_advertiser">
+			<span class="sm-text font-weight-bold">{{ is_active_advertiser ? 'Active' : 'Inactive' }}</span>
+		</mat-slide-toggle>
+		<!-- CLOSE BUTTON -->
+		<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+			<span class="fas fa-times"></span>
+		</button>
+	</div>
+	<ng-container *ngIf="is_form_ready; else loading">
+		<form [formGroup]="edit_advertiser_form" (ngSubmit)="saveAdvertiserData()" class="text-left">
+			<div class="row mb-4">
+				<div class="col-lg-11 mb-3" *ngIf="!is_dealer">
+					<ng-container *ngIf="dealers_loaded; else loaderSmall">
+						<app-autocomplete-field
+							[data_reference]="dealers_data"
+							[primary_keyword]="'businessName'"
+							[key_of_value]="'dealerId'"
+							(data_value)="setDealer($event)"
+							[required]="true"
+							[label]="'Type in a Dealer Business Name'"
+							[new_value]="dealer_name"
+							[initial_value]="dealer_name"
+							[disabled]="disable_business_name"
+							[paging]="paging"
+							(searched)="searchDealers($event)"
+							[no_edit]="closed_without_edit">
+						</app-autocomplete-field>
+					</ng-container>
+				</div>
+				<div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && disable_business_name">
+					<span class="fa fa-pencil cursor-pointer" (click)="editBusinessName(false)"></span>
+				</div>
+				<div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && !disable_business_name">
+					<span class="fa fa-times text-danger cursor-pointer" (click)="editBusinessName(true)"></span>
+				</div>
+				<div *ngFor="let field of edit_advertiser_form_fields" class="col-lg-6 {{ field.col }} mb-3">
+					<mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
+						<mat-label>{{ field.label }}</mat-label>
+						<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" />
+					</mat-form-field>
+
+					<ng-template #autocomplete_field>
+						<ng-container *ngIf="categories_loaded; else loaderSmall">
+							<app-autocomplete-field
+								[data_reference]="categories_data"
+								[primary_keyword]="'categoryName'"
+								[key_of_value]="'categoryName'"
+								(data_value)="onSelectCategory($event)"
+								[required]="true"
+								[label]="'Choose Category'"
+								[new_value]="category_selected"
+								[initial_value]="category_selected">
+							</app-autocomplete-field>
+						</ng-container>
+					</ng-template>
+				</div>
+			</div>
+			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" color="primary">Update</button>
+			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
+		</form>
+	</ng-container>
+</div>
+
+<ng-template #loading>
+	<div class="py-5">
+		<app-spinner></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #loaderSmall>
+	<app-spinner [diameter]="60"></app-spinner>
+</ng-template>

@@ -1,158 +1,166 @@
 <div class="p-2">
-	<div class="d-flex">
-		<div class="flex-even">
-			<h3 class="p-0 col-lg-12">Host Details:</h3>
+	<div class="d-flex align-items-start dialog-heading">
+		<!-- HEADING -->
+		<div class="host-heading flex-even">
+			<div class="host-name-and-status d-flex align-items-center">
+				<h3 class="p-0">Host Details:</h3>
+				<span class="status sm-text ml-3" [ngClass]="host.status === 'A' ? 'active' : 'inactive'">
+					<span class="fas fa-circle xsm-text mr-2"> </span>
+				</span>
+			</div>
 			<p class="p-0 sm-text mb-4">You can update host details here:</p>
 		</div>
-		<!-- <mat-slide-toggle (change)="onSetContentAsFiller($event)" labelPosition="before" [checked]="file_data.selected.classification === 'filler'"
-			><span class="sm-text font-weight-bold">Set To Filler:</span>
-		</mat-slide-toggle> -->
+		<!-- HOST STATUS TOGGLE -->
+		<mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_host">
+			<span class="sm-text font-weight-bold">{{ is_active_host ? 'Active' : 'Inactive' }}</span>
+		</mat-slide-toggle>
+		<!-- CLOSE BUTTON -->
 		<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
 			<span class="fas fa-times"></span>
 		</button>
 	</div>
 
-	<div *ngIf="dealers_data.length > 0 && dealer_name != '' && categories_data as categories; else loading">
-		<form [formGroup]="edit_host_form" (ngSubmit)="saveHostData()" class="text-left">
-			<div class="row mb-4">
-				<div class="col-lg-11 mb-3" *ngIf="!is_dealer">
-					<app-autocomplete-field
-						[data_reference]="dealers_data"
-						[primary_keyword]="'businessName'"
-						[key_of_value]="'dealerId'"
-						(data_value)="setDealer($event)"
-						[required]="true"
-						[label]="'Type in a Dealer Business Name'"
-						[new_value]="dealer_name"
-						[initial_value]="dealer_name"
-						[disabled]="disable_business_name"
-						[paging]="paging"
-						(call_next_page)="getDealers($event)"
-						(searched)="searchData($event)"
-						[no_edit]="closed_without_edit">
-					</app-autocomplete-field>
+	<form [formGroup]="edit_host_form" (ngSubmit)="saveHostData()" class="text-left">
+		<div class="row mb-4">
+			<div class="col-lg-11 mb-3">
+				<app-autocomplete-field
+					[data_reference]="dealers_data"
+					[primary_keyword]="'businessName'"
+					[key_of_value]="'dealerId'"
+					(data_value)="onSelectDealer($event)"
+					[required]="true"
+					[label]="'Type in a Dealer Business Name'"
+					[new_value]="dealer.businessName"
+					[initial_value]="dealer.businessName"
+					[disabled]="!is_current_user_admin || disable_business_name"
+					[paging]="paging"
+					(call_next_page)="getDealers($event)"
+					(searched)="searchDealer($event)"
+					[no_edit]="closed_without_edit">
+				</app-autocomplete-field>
+			</div>
+			<ng-container *ngIf="is_current_user_admin">
+				<div class="col-lg-1 mt-4 mb-3">
+					<ng-container *ngIf="disable_business_name; else editNameBtn">
+						<span class="fa fa-pencil cursor-pointer" (click)="onEditBusinessName(false)"></span>
+					</ng-container>
+					<ng-template #editNameBtn>
+						<span class="fa fa-times text-danger cursor-pointer" (click)="onEditBusinessName(true)"></span>
+					</ng-template>
 				</div>
-				<div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && disable_business_name">
-					<span class="fa fa-pencil cursor-pointer" (click)="editBusinessName(false)"></span>
-				</div>
-				<div class="col-lg-1 mt-4 mb-3" *ngIf="!is_dealer && !disable_business_name">
-					<span class="fa fa-times text-danger cursor-pointer" (click)="editBusinessName(true)"></span>
-				</div>
-				<div *ngFor="let field of edit_host_form_controls" class="{{ field.col }} mb-3">
-					<mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
-						<mat-label>{{ field.label }}</mat-label>
-						<input *ngIf="!field.type" formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" />
-						<textarea
-							maxLength="500"
-							*ngIf="field.type === 'textarea'"
-							formControlName="{{ field.control }}"
-							matInput
-							placeholder="{{ field.placeholder }}"></textarea>
-					</mat-form-field>
+			</ng-container>
+			<div *ngFor="let field of edit_host_form_controls" class="{{ field.col }} mb-3">
+				<mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
+					<mat-label>{{ field.label }}</mat-label>
+					<input *ngIf="!field.type" formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" />
+					<textarea
+						maxLength="500"
+						*ngIf="field.type === 'textarea'"
+						formControlName="{{ field.control }}"
+						matInput
+						placeholder="{{ field.placeholder }}"></textarea>
+				</mat-form-field>
 
-					<ng-template #autocomplete_field>
+				<ng-template #autocomplete_field>
+					<ng-container *ngIf="categories_loaded; else loaderSmall">
 						<app-autocomplete-field
-							*ngIf="field.control == 'category'"
-							[data_reference]="categories"
+							*ngIf="field.control === 'category'"
+							[data_reference]="categories_data"
 							[primary_keyword]="'categoryName'"
 							[key_of_value]="'categoryName'"
-							(data_value)="setToCategory($event)"
+							(data_value)="setCategory($event)"
 							[required]="true"
 							[label]="'Choose Category'"
 							[new_value]="category_selected"
 							[initial_value]="category_selected">
 						</app-autocomplete-field>
+					</ng-container>
 
+					<ng-container *ngIf="timezones_loaded; else loaderSmall">
 						<app-autocomplete-field
-							*ngIf="field.control == 'timezone'"
+							*ngIf="field.control === 'timezone'"
 							[data_reference]="timezones"
 							[primary_keyword]="'name'"
 							[key_of_value]="'id'"
 							(data_value)="setTimezone($event)"
 							[required]="true"
 							[label]="'Timezone'"
-							[initial_value]="host_timezone.name">
+							[initial_value]="host.timeZoneData.name">
 						</app-autocomplete-field>
-					</ng-template>
+					</ng-container>
+				</ng-template>
+			</div>
+
+			<!-- BUSINESS HOURS SECTION -->
+			<div class="business-hours-section">
+				<div class="d-flex mb-4 px-3 heading">
+					<h4>Business Hours</h4>
+
+					<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkEditHours()">Bulk Edit</button>
 				</div>
 
-				<!-- BUSINESS HOURS SECTION -->
-				<div class="business-hours-section">
-					<div class="d-flex mb-4 px-3 heading">
-						<h4>Business Hours</h4>
-
-						<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkEditHours()">Bulk Edit</button>
+				<div class="d-flex mb-4 px-3" *ngFor="let h of business_hours">
+					<div class="round-label mr-3" (click)="parseBusinessHours(h)" [ngClass]="h.status ? 'active' : ''">
+						<span class="font-weight-bold">{{ h.label }}</span>
 					</div>
-
-					<div class="d-flex mb-4 px-3" *ngFor="let h of business_hours">
-						<div class="round-label mr-3" (click)="parseBusinessHours(h)" [ngClass]="h.status ? 'active' : ''">
-							<span class="font-weight-bold">{{ h.label }}</span>
-						</div>
-						<div class="flex-even">
-							<ng-container *ngIf="h.status; else closed">
-								<div class="mb-3" *ngFor="let t of h.periods; let i = index">
-									<div class="d-flex align-items-center">
-										<div class="mr-3">
-											<div class="time-picker">
-												<mat-label class="sm-text">Opening Hours</mat-label>
-												<input
-													matInput
-													class="input-border-bottom"
-													placeholder="Opening Hours"
-													aria-label="12hr format"
-													[ngxTimepicker]="opening"
-													[(ngModel)]="t.open"
-													[ngModelOptions]="{ standalone: true }"
-													readonly />
-												<ngx-material-timepicker #opening></ngx-material-timepicker>
-											</div>
-											<div class="d-inline-block mx-3">
-												<span>--</span>
-											</div>
-											<div class="time-picker">
-												<mat-label class="sm-text">Closing Hours</mat-label>
-												<input
-													matInput
-													class="input-border-bottom"
-													placeholder="Closing Hours"
-													aria-label="12hr format"
-													[ngxTimepicker]="closing"
-													[(ngModel)]="t.close"
-													[ngModelOptions]="{ standalone: true }"
-													readonly />
-												<ngx-material-timepicker #closing></ngx-material-timepicker>
-											</div>
+					<div class="flex-even">
+						<ng-container *ngIf="h.status; else closed">
+							<div class="mb-3" *ngFor="let t of h.periods; let i = index">
+								<div class="d-flex align-items-center">
+									<div class="mr-3">
+										<div class="time-picker">
+											<mat-label class="sm-text">Opening Hours</mat-label>
+											<input
+												matInput
+												class="input-border-bottom"
+												placeholder="Opening Hours"
+												aria-label="12hr format"
+												[ngxTimepicker]="opening"
+												[(ngModel)]="t.open"
+												[ngModelOptions]="{ standalone: true }"
+												readonly />
+											<ngx-material-timepicker #opening></ngx-material-timepicker>
 										</div>
-										<div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
-											<span class="remove-hours-btn" (click)="removeHours(h, i)">
-												<span class="fas fa-times"></span>
-											</span>
+										<div class="d-inline-block mx-3">
+											<span>--</span>
 										</div>
-										<div>
-											<span class="add-hours-btn" (click)="addHours(h)">
-												<span class="fas fa-plus ml-2"></span>
-											</span>
+										<div class="time-picker">
+											<mat-label class="sm-text">Closing Hours</mat-label>
+											<input
+												matInput
+												class="input-border-bottom"
+												placeholder="Closing Hours"
+												aria-label="12hr format"
+												[ngxTimepicker]="closing"
+												[(ngModel)]="t.close"
+												[ngModelOptions]="{ standalone: true }"
+												readonly />
+											<ngx-material-timepicker #closing></ngx-material-timepicker>
 										</div>
 									</div>
+									<div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
+										<span class="remove-hours-btn" (click)="removeHours(h, i)">
+											<span class="fas fa-times"></span>
+										</span>
+									</div>
+									<div>
+										<span class="add-hours-btn" (click)="addHours(h)">
+											<span class="fas fa-plus ml-2"></span>
+										</span>
+									</div>
 								</div>
-							</ng-container>
-						</div>
+							</div>
+						</ng-container>
 					</div>
 				</div>
 			</div>
-			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" [disabled]="">Update</button>
-			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="true">Cancel</button>
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn mt-4 delete bg-danger"
-				type="button"
-				*ngIf="isCurrentUserAdmin"
-				(click)="onDeleteHost()">
-				Delete Host
-			</button>
-		</form>
-	</div>
+		</div>
+		<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" color="primary">Update</button>
+		<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
+		<ng-container *ngIf="is_current_user_admin">
+			<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteHost()">Delete Host</button>
+		</ng-container>
+	</form>
 
 	<ng-template #closed>
 		<h5 class="text-muted">Click Day on left to Set Operation Hours</h5>
@@ -162,5 +170,9 @@
 		<div class="py-5">
 			<app-spinner></app-spinner>
 		</div>
+	</ng-template>
+
+	<ng-template #loaderSmall>
+		<app-spinner [diameter]="60"></app-spinner>
 	</ng-template>
 </div>

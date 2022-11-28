@@ -39,8 +39,9 @@ export class API_HOST {
 	tagsToString?: string;
 	totalLicenses: number;
 	totalLicences: number;
-	timeZone: string;
-	timezoneName: string;
+	timeZone: string; // do not be fooled like me, this is actually the timezone id
+	timeZoneData?: API_TIMEZONE; // added this one bec this makes more sense than separating the timezone object
+	timezoneName?: string;
 	updatedBy: string;
 	userId: string;
 	venueType: string;

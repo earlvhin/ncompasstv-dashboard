@@ -1,43 +1,39 @@
-import { Component, OnInit, Input, Inject } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material'
+import { Component, OnInit, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-confirmation-modal',
 	templateUrl: './confirmation-modal.component.html',
 	styleUrls: ['./confirmation-modal.component.scss']
 })
-
 export class ConfirmationModalComponent implements OnInit {
-
 	action: string;
-	data: string;
 	message: string;
+	title: string;
 	rename: boolean;
 	return_msg: string;
 	status: string;
 	is_selection?: boolean;
 	is_installation?: boolean;
-	
-	constructor(
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
-		public dialogRef: MatDialogRef<ConfirmationModalComponent>
-	) { }
+
+	constructor(@Inject(MAT_DIALOG_DATA) public dialogData: UI_CONFIRMATION_MODAL, public dialogRef: MatDialogRef<ConfirmationModalComponent>) {}
 
 	ngOnInit() {
-		this.status = this._dialog_data.status;
-		this.message = this._dialog_data.message;
-		this.data = this._dialog_data.data;
-		this.return_msg = this._dialog_data.return_msg;
-		this.action = this._dialog_data.action;
-		this.rename = this._dialog_data.rename;
-		this.is_selection = typeof this._dialog_data.is_selection !== 'undefined' ? this._dialog_data.is_selection : false; 
-		this.is_installation = typeof this._dialog_data.is_installation !== 'undefined' ? this._dialog_data.is_installation : false; 
+		this.status = this.dialogData.status;
+		this.title = this.dialogData.message;
+		this.message = this.dialogData.data;
+		this.return_msg = this.dialogData.return_msg;
+		this.action = this.dialogData.action;
+		this.rename = this.dialogData.rename;
+		this.is_selection = typeof this.dialogData.is_selection !== 'undefined' ? this.dialogData.is_selection : false;
+		this.is_installation = typeof this.dialogData.is_installation !== 'undefined' ? this.dialogData.is_installation : false;
 	}
 
 	displaySuccess() {
 		this.status = 'success';
-		this.message = this._dialog_data.message || 'Success!';
-		this.data = this.return_msg;
+		this.title = this.dialogData.message || 'Success!';
+		this.message = this.return_msg;
 	}
 
 	deletePlaylist() {
@@ -47,7 +43,7 @@ export class ConfirmationModalComponent implements OnInit {
 	renameAllowed() {
 		this.dialogRef.close('rename');
 	}
-	
+
 	continueUpload() {
 		this.dialogRef.close('upload');
 	}
