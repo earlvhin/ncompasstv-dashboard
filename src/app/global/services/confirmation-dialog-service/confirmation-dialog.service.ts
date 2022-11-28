@@ -10,8 +10,11 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 export class ConfirmationDialogService {
 	constructor(private dialog: MatDialog) {}
 
-	error(width: string = '500px', height: string = '350px', disableClose: boolean = true) {
-		const dialogData = { status: 'error', data: 'Error! Something went wrong.', message: 'Please contact your administrator' };
+	error(title = 'Error! Something went wrong', message = 'Please contact your administrator') {
+		const width = '500px';
+		const height = '350px';
+		const disableClose = true;
+		const dialogData = { status: 'error', message: title, data: message };
 		const config = { width, height, disableClose, dialogData };
 		const dialog = this.dialog.open(ConfirmationModalComponent, config);
 		return dialog.afterClosed();
