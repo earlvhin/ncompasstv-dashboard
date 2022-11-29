@@ -21,7 +21,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 	license_handler: any;
 	license_page_count: number = 1;
 	licenses: any[] = [];
-	loading_data: boolean = true;
+	licenses_loaded = false;
 	no_available_licenses: boolean = false;
 	timeOutDuration = 1000;
 
@@ -95,6 +95,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 
 		if ('message' in firstPageResult) {
 			this.no_available_licenses = true;
+			this.licenses_loaded = true;
 			return;
 		}
 
@@ -103,7 +104,14 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 				(license) => !license.hostId || (license.hostId && license.hostId.length <= 0)
 			)
 		);
-		totalRequests = Math.round(firstPageResult.paging.totalEntities / 15);
+		totalRequests = firstPageResult.paging.pages;
+
+		if (totalRequests === 1) {
+			this.licenses = [...merged];
+			this.licenses_loaded = true;
+			if (merged.length <= 0) this.no_available_licenses = true;
+			return;
+		}
 
 		for (let i = 1; i < totalRequests; i++) {
 			const page = i + 1;
@@ -120,7 +128,8 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 					});
 
 					this.licenses = [...merged];
-					this.loading_data = false;
+					this.licenses_loaded = true;
+					if (merged.length <= 0) this.no_available_licenses = true;
 				},
 				(error) => {
 					throw new Error(error);
