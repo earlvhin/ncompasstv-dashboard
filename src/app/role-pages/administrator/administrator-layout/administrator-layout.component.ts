@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { AuthService } from '../../../global/services/auth-service/auth.service';
+import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-administrator-layout',
@@ -30,14 +31,10 @@ export class AdministratorLayoutComponent implements OnInit {
 		{ path: 'playlists', label: 'Playlists', icon: 'fas fa-play'},
 		{ path: 'screens', label: 'Screens', icon: 'fas fa-tv'},
 		{ path: 'installations', label: 'Installations', icon: 'fas fa-calendar'},
-		// { path: 'billings', label: 'Billings', icon: 'fas fa-file-invoice-dollar '},
-		// { path: 'reports', label: 'Reports', icon: 'fas fa-chart-area'},
 		{ path: 'users', label: 'Users', icon: 'fas fa-users'},
-		// { path: 'roles', label: 'Roles', icon: 'fas fa-pencil-ruler'},
 		{ path: 'templates', label: 'Templates', icon: 'fas fa-th-large'},
 		{ path: 'directory', label: 'Directory', icon: 'fas fa-sitemap'},
 		{ path: 'reports', label: 'Reports', icon: 'fas fa-chart-bar'},
-		// { path: 'release-notes', label: 'Release Notes', icon: 'fas fa-sticky-note'},
 	]
 
 	_socket: any;
@@ -52,7 +49,7 @@ export class AdministratorLayoutComponent implements OnInit {
 		this._activated_route.data.subscribe(
 			data => {
 				this.current_role = data.role[0];
-				if (this._auth.current_user_value.role_id === this.current_role) {
+				if (this._auth.current_user_value.role_id === this.current_role || this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin) {
 					return true;
 				} else {
 					this._auth.logout();

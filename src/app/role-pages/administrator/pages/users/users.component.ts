@@ -94,7 +94,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response) => {
 					if (!response.paging.entities) {
-				response => {
 						this.filtered_data = [];
 						if (this.current_filters.search === '') this.no_user = true;
 						return;
