@@ -694,7 +694,7 @@ export class LicenseService {
 	}
 
 	protected get baseUri() {
-		return this.baseUri;
+		return environment.base_uri;
 	}
 
 	protected get creators() {
