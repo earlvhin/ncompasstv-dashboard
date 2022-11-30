@@ -21,14 +21,16 @@
 							<div class="container pt-4 pl-0 pr-0 pb-4">
 								<mat-card>
 									<ng-container *ngIf="contents_loaded; else loading">
-										<app-data-table
-											[table_columns]="table_columns"
-											[table_data]="content_data"
-											[media_array]="array_to_preview"
-											[preview_column]="true"
-											[new_table]="true"
-											[is_view_only]="has_only_view_permission">
-										</app-data-table>
+										<ng-container *ngIf="content_data.length > 0; else noContents">
+											<app-data-table
+												[table_columns]="table_columns"
+												[table_data]="content_data"
+												[media_array]="array_to_preview"
+												[preview_column]="true"
+												[new_table]="true"
+												[is_view_only]="has_only_view_permission">
+											</app-data-table>
+										</ng-container>
 									</ng-container>
 								</mat-card>
 							</div>
@@ -43,5 +45,15 @@
 <ng-template #loading>
 	<div class="loading-wrapper">
 		<app-spinner></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #noContents>
+	<div class="no-contents d-flex flex-column align-items-center pl-0 pr-0">
+		<div class="mb-4">
+			<i class="text-gray fa-5x far fa-file-alt"></i>
+		</div>
+		<h3 class="text-gray col-lg-12">No Contents Found</h3>
+		<span class="text-gray col-lg-12">Try adding or assigning contents to this advertiser first</span>
 	</div>
 </ng-template>

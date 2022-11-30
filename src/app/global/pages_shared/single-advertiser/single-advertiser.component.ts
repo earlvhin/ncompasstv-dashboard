@@ -110,7 +110,9 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response: API_CONTENT[] | { message: string }) => {
 					this.content_data = response;
+
 					if (!Array.isArray(response)) return;
+
 					const data = response as API_CONTENT[];
 					this.array_to_preview = response;
 					this.content_data = [...this.mapContentsToTableUI(data)];
@@ -119,7 +121,8 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 				(error) => {
 					throw new Error(error);
 				}
-			);
+			)
+			.add(() => (this.contents_loaded = true));
 	}
 
 	private mapContentsToTableUI(contents: API_CONTENT[]): UI_TABLE_ADVERTISERS_CONTENT[] {
