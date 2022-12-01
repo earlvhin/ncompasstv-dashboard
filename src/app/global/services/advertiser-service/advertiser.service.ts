@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_ADVERTISER, PAGING, TAG } from 'src/app/global/models';
+import { API_ADVERTISER, API_FILTERS, PAGING, TAG } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -28,15 +28,12 @@ export class AdvertiserService extends BaseService {
 	}
 
 	get_advertisers_by_dealer_id(
-		dealer_id: string,
-		page: number,
-		search: string,
-		sortColumn = '',
-		sortOrder = '',
-		pageSize = 15
+		filters: API_FILTERS,
+		enforceTagKeySearch = false,
+		allowBlankFilters = true
 	): Observable<{ advertisers?: API_ADVERTISER[]; paging?: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_advertisers_by_dealer_id}`;
-		const params = this.setUrlParams({ page, dealer_id, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

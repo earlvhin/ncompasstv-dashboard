@@ -353,11 +353,20 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	}
 
 	private getAdvertiserByDealerId(page: number) {
+		const filters = {
+			dealer_id: this.assign_data.dealer,
+			page,
+			search: this.search_advertiser_data,
+			sortColumn: '',
+			sortOrder: '',
+			pageSize: 15
+		};
+
 		if (page > 1) {
 			this.loading_advertiser_data = true;
 
 			this._advertiser
-				.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data)
+				.get_advertisers_by_dealer_id(filters)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
@@ -381,7 +390,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 			}
 
 			this._advertiser
-				.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data)
+				.get_advertisers_by_dealer_id(filters)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {

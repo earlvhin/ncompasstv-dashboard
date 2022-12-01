@@ -225,57 +225,38 @@ export class LicensesComponent implements OnInit {
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-		if (this.has_sort) {
-			this._host
-				.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response) => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
+		const filters = {
+			page,
+			search: this.search_data_host,
+			sortColumn: this.sort_column_hosts,
+			sortOrder: this.sort_order_hosts
+		};
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.mapToHostsTable([...response.paging.entities]);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		} else {
-			this._host
-				.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response) => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
+		let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.mapToHostsTable([...response.paging.entities]);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-					},
-					(error) => {
-						throw new Error(error);
+		request
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
 					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		}
+
+					this.paging_data_host = response.paging;
+					const mappedData = this.mapToHostsTable([...response.paging.entities]);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			});
 	}
 
 	getLicenses(page: number) {
@@ -754,8 +735,6 @@ export class LicensesComponent implements OnInit {
 							this.worksheet.addRow(item).font = { bold: false };
 						});
 
-						console.log('parsed data', this.licenses_to_export);
-
 						let rowIndex = 1;
 						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
 							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
@@ -1073,7 +1052,8 @@ export class LicensesComponent implements OnInit {
 				// { value: h.street ? h.street:'--', link: null, editable: false, hidden: false },
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
 				{ value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
-				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false }
+				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
+				{ value: h.status, editable: false, hidden: false }
 			);
 
 			return table;

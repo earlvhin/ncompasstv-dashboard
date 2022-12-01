@@ -460,41 +460,63 @@
 						<mat-tab label="Advertisers">
 							<div *ngIf="current_tab === 'advertisers'">
 								<div *ngIf="!initial_load_advertiser; else loader">
-									<div *ngIf="!no_advertisers; else no_data">
-										<div class="row pt-2">
-											<div class="col-lg-8"></div>
-											<div class="col-lg-4">
-												<app-search-field
-													*ngIf="!initial_load_advertiser"
-													[form_title]="'Search Advertiser Name or #Tag'"
-													[placeholder]="'Example: N-Compass'"
-													[data_reference]="advertiser_data"
-													[primary_keyword]="'name'"
-													[secondary_keyword]="'name'"
-													(searched)="advertiserFilterData($event)"
-													[api_search]="true"></app-search-field>
-											</div>
+									<div class="d-flex pt-2 table-controls">
+										<div class="status-filter-container">
+											<button
+												mat-button
+												mat-raised-button
+												class="theme-btn status-filter-btn sm-text mr-2 h-45"
+												[matMenuTriggerFor]="advertiserStatusList">
+												<span class="button-label">
+													Advertiser Status: {{ current_advertiser_status_filter | titlecase }}
+												</span>
+												<span
+													class="fas fa-circle"
+													[ngClass]="current_advertiser_status_filter === 'active' ? 'text-primary' : 'text-gray'">
+												</span>
+											</button>
+											<mat-menu #advertiserStatusList="matMenu">
+												<button mat-menu-item (click)="filterAdvertisersByStatus('active')">
+													<span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
+												</button>
+												<button mat-menu-item (click)="filterAdvertisersByStatus('inactive')">
+													<span class="fas fa-circle text-gray mr-2 xsm-text"></span>Inactive
+												</button>
+											</mat-menu>
 										</div>
-										<div class="row" *ngIf="!initial_load_advertiser">
-											<div class="col-lg-12">
-												<ng-container *ngIf="!searching_advertiser; else loader">
-													<mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
-														<app-data-table
-															[table_columns]="adv_table_col"
-															[table_data]="advertiser_filtered_data"
-															[new_table]="true"
-															[paging_details]="paging_data_advertiser"
-															(page_triggered)="getDealerAdvertiser($event)"
-															[advertiser_delete]="true"
-															(update_info)="reloadAdvertiser()"
-															(to_sort_column)="getAdvertisersColumnsAndOrder($event)"
-															[active_tab]="sort_column_advertisers"
-															[sort_column]="sort_column_advertisers"
-															[sort_order]="sort_order_advertisers">
-														</app-data-table>
-													</mat-card>
-												</ng-container>
-											</div>
+										<div class="search-field">
+											<app-search-field
+												*ngIf="!initial_load_advertiser"
+												[form_title]="'Search Advertiser Name or #Tag'"
+												[placeholder]="'Example: N-Compass'"
+												[data_reference]="advertiser_data"
+												[primary_keyword]="'name'"
+												[secondary_keyword]="'name'"
+												(searched)="advertiserFilterData($event)"
+												[api_search]="true">
+											</app-search-field>
+										</div>
+									</div>
+									<div class="row" *ngIf="!initial_load_advertiser">
+										<div class="col-lg-12">
+											<ng-container *ngIf="!searching_advertiser; else loader">
+												<mat-card *ngIf="advertiser_filtered_data.length > 0; else no_data">
+													<app-data-table
+														[table_columns]="adv_table_col"
+														[table_data]="advertiser_filtered_data"
+														[new_table]="true"
+														[paging_details]="paging_data_advertiser"
+														[advertiser_delete]="true"
+														[active_tab]="sort_column_advertisers"
+														[sort_column]="sort_column_advertisers"
+														[sort_order]="sort_order_advertisers"
+														[page]="'advertisers'"
+														(page_triggered)="getDealerAdvertiser($event)"
+														(update_info)="reloadAdvertiser()"
+														(to_sort_column)="getAdvertisersColumnsAndOrder($event)">
+													</app-data-table>
+												</mat-card>
+											</ng-container>
 										</div>
 									</div>
 								</div>

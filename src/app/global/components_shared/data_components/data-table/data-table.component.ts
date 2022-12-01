@@ -19,7 +19,7 @@ import {
 	UserService
 } from 'src/app/global/services';
 
-import { UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -327,6 +327,22 @@ export class DataTableComponent implements OnInit {
 
 	deleteLicense(id): void {
 		this.warningModal('warning', 'Delete License', 'Are you sure you want to delete this license', '', 'license_delete', id);
+	}
+
+	getStatusColor(data: any) {
+		let statusColor = '';
+
+		switch (this.page) {
+			case 'advertisers':
+				const advertiser = data as DEALER_UI_TABLE_ADVERTISERS;
+				statusColor = advertiser.status.value === 'A' ? 'text-primary' : 'text-gray';
+				break;
+
+			default:
+				break;
+		}
+
+		return statusColor;
 	}
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
@@ -697,6 +713,15 @@ export class DataTableComponent implements OnInit {
 		this._helper.onToggleEmailNotification.emit({ userId, value: !currentValue, tableDataIndex, currentEmail });
 	}
 
+	shipOrder(id, status) {
+		const filter = {
+			order_id: id,
+			order_status: status
+		};
+
+		this.shipping.emit(filter);
+	}
+
 	private deleteUser(userId: string): void {
 		this._user
 			.deleteUser(userId)
@@ -750,14 +775,5 @@ export class DataTableComponent implements OnInit {
 				throw new Error(error);
 			}
 		);
-	}
-
-	shipOrder(id, status) {
-		const filter = {
-			order_id: id,
-			order_status: status
-		};
-
-		this.shipping.emit(filter);
 	}
 }

@@ -44,6 +44,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	license_zone_filtered_data: any = [];
 	combined_data: API_HOST[];
 	current_tab = 'hosts';
+	current_advertiser_status_filter = 'active';
 	dealer: API_DEALER;
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
@@ -388,6 +389,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		});
 	}
 
+	filterAdvertisersByStatus(status: string): void {
+		this.current_advertiser_status_filter = status;
+		this.getDealerAdvertiser();
+	}
+
 	licenseZoneFilterData(e): void {
 		if (e) {
 			this.search_data_license_zone = e;
@@ -471,43 +477,48 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		);
 	}
 
-	getDealerAdvertiser(page): void {
+	getDealerAdvertiser(page = 1): void {
+		const status = this.current_advertiser_status_filter === 'active' ? 'A' : 'I';
 		this.searching_advertiser = true;
-		this.subscription.add(
-			this._advertiser
-				.get_advertisers_by_dealer_id(
-					this.dealer_id,
-					page,
-					this.search_data_advertiser,
-					this.sort_column_advertisers,
-					this.sort_order_advertisers
-				)
-				.subscribe(
-					(data) => {
-						this.initial_load_advertiser = false;
-						this.searching_advertiser = false;
-						this.paging_data_advertiser = data.paging;
-						if (!data.message) {
-							const advertisers = this.advertiser_mapToUI(data.paging.entities);
-							this.advertiser_data = [...advertisers];
-							this.advertiser_filtered_data = [...advertisers];
-							this.no_advertisers = false;
-						} else {
-							if (this.search_data_advertiser == '') {
-								this.no_advertisers = true;
-							}
-							this.advertiser_data = [];
-							this.advertiser_filtered_data = [];
+
+		const filters = {
+			dealer_id: this.dealer_id,
+			page,
+			status,
+			search: this.search_data_advertiser,
+			sortColumn: this.sort_column_advertisers,
+			sortOrder: this.sort_order_advertisers,
+			pageSize: 15
+		};
+
+		this._advertiser
+			.get_advertisers_by_dealer_id(filters)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this.initial_load_advertiser = false;
+					this.searching_advertiser = false;
+					this.paging_data_advertiser = data.paging;
+					if (!data.message) {
+						const advertisers = this.advertiser_mapToUI(data.paging.entities);
+						this.advertiser_data = [...advertisers];
+						this.advertiser_filtered_data = [...advertisers];
+						this.no_advertisers = false;
+					} else {
+						if (this.search_data_advertiser == '') {
+							this.no_advertisers = true;
 						}
-					},
-					(error) => {
-						throw new Error(error);
+						this.advertiser_data = [];
+						this.advertiser_filtered_data = [];
 					}
-				)
-		);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
-	getDealerHost(page): void {
+	getDealerHost(page: number): void {
 		this.searching = true;
 		this.host_data = [];
 		this.host_filtered_data = [];
@@ -541,45 +552,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					}
 				)
 		);
-	}
-
-	private getDealer(): void {
-		this._dealer
-			.get_dealer_by_id(this.dealer_id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: API_DEALER) => {
-					this.dealer = response;
-					this.banner_description = `${response.city}, ${response.state} ${response.region} - Dealer since ${this._date.transform(
-						response.startDate
-					)}`;
-					this.dealer_id = response.dealerId;
-					this.dealer_name = response.businessName;
-					this.getDealerUserData(response.userId);
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
-	}
-
-	private getDealerUserData(id: string): void {
-		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
-
-		this._user
-			.get_all_user_data_by_id(id, isCurrentUserAdmin)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					if ('message' in response) return;
-					this.user = response.user;
-					this.dealer_and_user_data = { dealer: this.dealer, user: this.user };
-					this.loaded = true;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
 	}
 
 	getHostTotalCount(dealerId: string): void {
@@ -1442,6 +1414,45 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	private get isBillingTabOnLoad(): boolean {
 		return this._location.path().includes('tab=4');
+	}
+
+	private getDealer(): void {
+		this._dealer
+			.get_dealer_by_id(this.dealer_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: API_DEALER) => {
+					this.dealer = response;
+					this.banner_description = `${response.city}, ${response.state} ${response.region} - Dealer since ${this._date.transform(
+						response.startDate
+					)}`;
+					this.dealer_id = response.dealerId;
+					this.dealer_name = response.businessName;
+					this.getDealerUserData(response.userId);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	private getDealerUserData(id: string): void {
+		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
+
+		this._user
+			.get_all_user_data_by_id(id, isCurrentUserAdmin)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if ('message' in response) return;
+					this.user = response.user;
+					this.dealer_and_user_data = { dealer: this.dealer, user: this.user };
+					this.loaded = true;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
 	private getInternetType(value: string): string {

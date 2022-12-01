@@ -6,8 +6,7 @@ import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
-import { AuthService, HostService } from 'src/app/global/services';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
+import { AuthService, DealerService, HostService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-hosts',
@@ -15,6 +14,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 	styleUrls: ['./hosts.component.scss']
 })
 export class HostsComponent implements OnInit {
+	current_status_filter = 'active';
 	dealers_data: UI_TABLE_HOSTS_BY_DEALER[] = [];
 	diff_hours: any;
 	filtered_data: any = [];
@@ -67,7 +67,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
 		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
 		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
-		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true }
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -75,7 +75,7 @@ export class HostsComponent implements OnInit {
 	constructor(private _auth: AuthService, private _host: HostService, private _dealer: DealerService, private cdr: ChangeDetectorRef) {}
 
 	ngOnInit() {
-		this.getHosts(1);
+		this.getHosts();
 		this.getHostTotal();
 	}
 
@@ -86,6 +86,12 @@ export class HostsComponent implements OnInit {
 
 	ngAfterContentChecked(): void {
 		this.cdr.detectChanges();
+	}
+
+	filterHostsByStatus(status: string) {
+		if (status === this.current_status_filter) return;
+		this.current_status_filter = status;
+		this.getHosts(1);
 	}
 
 	filterData(e, tab) {
@@ -103,11 +109,11 @@ export class HostsComponent implements OnInit {
 				if (e) {
 					this.has_sort = true;
 					this.search_data_host = e;
-					this.getHosts(1);
+					this.getHosts();
 				} else {
 					this.has_sort = false;
 					this.search_data_host = '';
-					this.getHosts(1);
+					this.getHosts();
 				}
 				break;
 			default:
@@ -191,7 +197,13 @@ export class HostsComponent implements OnInit {
 							editable: false,
 							hidden: false
 						},
-						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false, new_tab_link: 'true', },
+						{
+							value: dealer.businessName,
+							link: '/administrator/dealers/' + dealer.dealerId,
+							editable: false,
+							hidden: false,
+							new_tab_link: 'true'
+						},
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false },
 						{ value: dealer.hosts.length, link: null, editable: false, hidden: false },
 						{ value: dealer.activeHost, link: null, editable: false, hidden: false },
@@ -199,7 +211,7 @@ export class HostsComponent implements OnInit {
 						{
 							value: dealer.hosts[0] ? dealer.hosts[0].name : '---',
 							link: dealer.hosts[0] ? '/administrator/hosts/' + dealer.hosts[0].hostId : null,
-                            new_tab_link: 'true',
+							new_tab_link: 'true',
 							editable: false,
 							hidden: false
 						}
@@ -211,11 +223,17 @@ export class HostsComponent implements OnInit {
 						{
 							value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--',
 							link: '/administrator/dealers/' + dealer.dealerId,
-                            new_tab_link: 'true',
+							new_tab_link: 'true',
 							editable: false,
 							hidden: false
 						},
-						{ value: dealer.businessName, link: '/administrator/dealers/' + dealer.dealerId, editable: false, hidden: false, new_tab_link: 'true', },
+						{
+							value: dealer.businessName,
+							link: '/administrator/dealers/' + dealer.dealerId,
+							editable: false,
+							hidden: false,
+							new_tab_link: 'true'
+						},
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false },
 						{ value: 0, link: null, editable: false, hidden: false },
 						{ value: dealer.activeHost, link: null, editable: false, hidden: false },
@@ -236,51 +254,40 @@ export class HostsComponent implements OnInit {
 		}
 	}
 
-	getHosts(page: number): void {
+	getHosts(page = 1): void {
+		const status = this.current_status_filter === 'active' ? 'A' : 'I';
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-		if (this.has_sort) {
-			this._host
-				.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe((response) => {
-					if (response.message) {
-						if (this.search_data_host == '') this.no_host = true;
-						this.filtered_data_host = [];
-						return;
-					}
+		const filters = {
+			page,
+			status,
+			search: this.search_data_host,
+			sortColumn: this.sort_column_hosts,
+			sortOrder: this.sort_order_hosts,
+			pageSize: 15
+		};
 
-					this.paging_data_host = response.paging;
-					const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
-					this.hosts_data = [...mappedData];
-					this.filtered_data_host = [...mappedData];
-				})
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		} else {
-			this._host
-				.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe((response) => {
-					if (response.message) {
-						if (this.search_data_host == '') this.no_host = true;
-						this.filtered_data_host = [];
-						return;
-					}
+		let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
-					this.paging_data_host = response.paging;
-					const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
-					this.hosts_data = [...mappedData];
-					this.filtered_data_host = [...mappedData];
-				})
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		}
+		request
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if ('message' in response) {
+					if (this.search_data_host == '') this.no_host = true;
+					this.filtered_data_host = [];
+					return;
+				}
+
+				this.paging_data_host = response.paging;
+				const mappedData = this.hosts_mapToUIFormat(response.paging.entities);
+				this.hosts_data = [...mappedData];
+				this.filtered_data_host = [...mappedData];
+			})
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			});
 	}
 
 	hosts_mapToUIFormat(data: API_HOST[]): UI_HOST_VIEW[] {
@@ -312,7 +319,8 @@ export class HostsComponent implements OnInit {
 				{ value: h.state ? h.state : '--', hidden: false },
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
 				{ value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
-				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false }
+				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
+				{ value: h.status, editable: false, hidden: true }
 			);
 			return table;
 		});
@@ -492,7 +500,7 @@ export class HostsComponent implements OnInit {
 				this.has_sort = true;
 				this.sort_column_hosts = data.column;
 				this.sort_order_hosts = data.order;
-				this.getHosts(1);
+				this.getHosts();
 				break;
 			default:
 		}
@@ -503,7 +511,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	private modifyDataForExport(data) {
-        data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
 		data.storeHours = data.storeHours;
 		data.storeHoursTotal = data.storeHoursTotal;
 

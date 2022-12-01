@@ -104,11 +104,20 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 	}
 
 	getAdvertiserByDealer(page, pageSize = 15) {
+		const filters = {
+			dealer_id: this.currentDealerId,
+			page,
+			search: this.keyword,
+			sortColumn: '',
+			sortOrder: '',
+			pageSize
+		};
+
 		if (pageSize != 0) {
 			this.is_searching = true;
 		}
 
-		this._advertiser.get_advertisers_by_dealer_id(this.currentDealerId, page, this.keyword, '', '', pageSize).subscribe((data) => {
+		this._advertiser.get_advertisers_by_dealer_id(filters).subscribe((data) => {
 			if (data.message) {
 				if (pageSize === 0) {
 					this.advertisers_to_export = [];

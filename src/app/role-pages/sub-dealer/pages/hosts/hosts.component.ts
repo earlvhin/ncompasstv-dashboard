@@ -196,10 +196,19 @@ export class HostsComponent implements OnInit {
 	}
 
 	getAdvertiserByDealer(page: number) {
+		const filters = {
+			dealer_id: this.currentUser.roleInfo.dealerId,
+			page,
+			search: this.keyword,
+			sortColumn: '',
+			sortOrder: '',
+			pageSize: 15
+		};
+
 		this.is_searching = true;
 
 		this._advertiser
-			.get_advertisers_by_dealer_id(this.currentUser.roleInfo.dealerId, page, this.keyword)
+			.get_advertisers_by_dealer_id(filters)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
 				if (response.message) {

@@ -46,16 +46,17 @@ export class SingleHostComponent implements OnInit {
 		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
-		private _params: ActivatedRoute
+		private _activatedRoute: ActivatedRoute
 	) {}
 
 	ngOnInit() {
 		this.initializeSocket();
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.hostId = this._params.snapshot.params.data));
-
-		this.getHostById();
-		this.subscribeToBusinessHoursUpdate();
+		this._activatedRoute.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			this.hostId = this._activatedRoute.snapshot.params.data;
+			this.getHostById();
+			this.subscribeToBusinessHoursUpdate();
+		});
 	}
 
 	ngOnDestroy() {

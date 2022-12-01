@@ -1,11 +1,10 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { AdvertiserService } from '../../../../global/services/advertiser-service/advertiser.service';
-import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
-import { Subscription } from 'rxjs';
-import { UI_DEALER_ADVERTISERS } from 'src/app/global/models/ui_table_dealer-advertisers.model';
-import { DEALER_UI_TABLE_ADVERTISERS } from 'src/app/global/models/ui_table_advertisers.model';
 import { Workbook } from 'exceljs';
+import { Subscription } from 'rxjs';
 import { saveAs } from 'file-saver';
+
+import { DEALER_UI_TABLE_ADVERTISERS, UI_DEALER_ADVERTISERS } from 'src/app/global/models';
+import { AdvertiserService, DealerService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-advertisers',
@@ -201,7 +200,7 @@ export class AdvertisersComponent implements OnInit {
 					query: '2',
 					editable: false,
 					hidden: false,
-                    new_tab_link: true
+					new_tab_link: true
 				},
 				{ value: i.businessName, link: '/administrator/dealers/' + i.dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: i.contactPerson, link: null, editable: false, hidden: false },
@@ -216,11 +215,17 @@ export class AdvertisersComponent implements OnInit {
 			return new DEALER_UI_TABLE_ADVERTISERS(
 				{ value: i.id, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: i.name ? i.name : '--', link: '/administrator/advertisers/' + i.id, editable: false, hidden: false,new_tab_link: true },
+				{ value: i.name ? i.name : '--', link: '/administrator/advertisers/' + i.id, editable: false, hidden: false, new_tab_link: true },
 				{ value: i.region, link: null, editable: false, hidden: false },
 				{ value: i.state, link: null, editable: false, hidden: false },
 				{ value: i.status, link: null, editable: false, hidden: false },
-				{ value: i.businessName ? i.businessName : '--', link: i.businessName ? '/administrator/dealers/' + i.dealerId : null,new_tab_link: true, editable: false, hidden: false }
+				{
+					value: i.businessName ? i.businessName : '--',
+					link: i.businessName ? '/administrator/dealers/' + i.dealerId : null,
+					new_tab_link: true,
+					editable: false,
+					hidden: false
+				}
 			);
 		});
 	}
