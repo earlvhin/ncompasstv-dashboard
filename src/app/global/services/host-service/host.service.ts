@@ -139,15 +139,9 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_host_fetch_export(
-		page: number,
-		search: string,
-		sortColumn = '',
-		sortOrder = '',
-		pageSize = 15
-	): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
+	get_host_fetch_export(filters: API_FILTERS): Observable<{ host?: API_HOST[]; paging?: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_hosts_fetch_for_export}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

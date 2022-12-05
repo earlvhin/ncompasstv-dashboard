@@ -373,7 +373,7 @@ export class HostsComponent implements OnInit {
 		}
 	}
 
-	exportTable(tab) {
+	exportTable(tab: string) {
 		this.workbook_generation = true;
 		const header = [];
 		this.workbook = new Workbook();
@@ -405,8 +405,19 @@ export class HostsComponent implements OnInit {
 
 		switch (tab) {
 			case 'hosts':
+				const status = this.current_status_filter === 'active' ? 'A' : 'I';
+
+				const filters = {
+					page: 1,
+					search: this.search_data_host,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0,
+					status
+				};
+
 				this._host
-					.get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0)
+					.get_host_fetch_export(filters)
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe((response) => {
 						if (response.message) {

@@ -34,6 +34,7 @@ export class API_HOST {
 	state: string;
 	status: string;
 	storeHours: any;
+	storeHoursTotal?: any;
 	street: string;
 	tags?: TAG[];
 	tagsToString?: string;

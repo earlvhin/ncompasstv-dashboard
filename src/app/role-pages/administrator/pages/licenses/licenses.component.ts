@@ -751,7 +751,15 @@ export class LicensesComponent implements OnInit {
 
 				break;
 			case 'hosts':
-				this._host.get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe((response) => {
+				const filters = {
+					page: 1,
+					search: this.search_data_host,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0
+				};
+
+				this._host.get_host_fetch_export(filters).subscribe((response) => {
 					if (response.message) {
 						this.hosts_to_export = [];
 						return;
