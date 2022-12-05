@@ -190,7 +190,7 @@ export const API_ENDPOINTS = {
 		upcoming_installations: 'license/getUpComingInstall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
-		validate_rss_url: 'feed/news/validate?url='
+		validate_rss_url: 'feed/news/validate?url=',
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',
@@ -312,7 +312,10 @@ export const API_ENDPOINTS = {
 		tag_type: 'tag/updatetype',
 		template: 'template/update',
 		toggle_credits: 'playlists/enableCredits',
-		user_email_settings: 'user/updateemailsettings'
+		user_email_settings: 'user/updateemailsettings',
+
+        //DEALER ADMIN
+        dealeradmin_update_user: 'dealeradmin/user/update'
 	},
 	delete: {
 		api_delete_contract_details: 'dealer/deletecontractfiles?filename=',

@@ -108,6 +108,10 @@ export class UserService {
 	update_user(data) {
 		return this._http.post(`${this.base}${this.update.api_update_user}`, data, this.httpOptions);
 	}
+	
+    dealeradmin_update_user(data) {
+		return this._http.post(`${this.base}${this.update.dealeradmin_update_user}`, data, this.httpOptions);
+	}
 
 	get_user_notifications(id) {
 		return this._http.get(`${this.base}${this.getters.api_get_notifications}${id}`, this.httpOptions);

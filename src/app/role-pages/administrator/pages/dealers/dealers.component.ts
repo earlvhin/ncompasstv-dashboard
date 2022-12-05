@@ -6,11 +6,13 @@ import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { StatisticsService } from 'src/app/global/services/statistics-service/statistics.service';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 import { API_EXPORT_DEALER, API_ORDER } from 'src/app/global/models';
 import { BillingService } from 'src/app/global/services';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-dealers',
@@ -20,8 +22,9 @@ import { BillingService } from 'src/app/global/services';
 export class DealersComponent implements OnInit, OnDestroy {
 	current_tab: string = 'Dealer';
 	title: string = 'Dealers';
-	dealer_stats: any;
+	dealer_stats: any;''
 	dealers_to_export: API_EXPORT_DEALER[] = [];
+    is_dealer_admin: boolean = false;
 	update_info: boolean = false;
 	workbook: any;
 	workbook_generation: boolean = false;
@@ -51,6 +54,7 @@ export class DealersComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+        private _auth: AuthService,
 		private _billing: BillingService,
 		private _dealer: DealerService, 
 		private _dialog: MatDialog, 
@@ -58,9 +62,13 @@ export class DealersComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		this.getAdminStatistics();
-		this.getOrders();
-		this.subscribeToOrderClick();
+        this.getAdminStatistics();
+        if(this._auth.current_role === 'dealeradmin') {
+            this.is_dealer_admin = true;
+        } else {
+            this.getOrders();
+		    this.subscribeToOrderClick();
+        }
 	}
 
 	ngOnDestroy() {
@@ -160,65 +168,58 @@ export class DealersComponent implements OnInit, OnDestroy {
 	}
 
 	private getAdminStatistics(): void {
-		this._stats
-			.api_get_dealer_total()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: any) => {
-					this.dealer_stats = {
-						basis: response.total,
-						basis_label: 'Dealer(s)',
-						good_value: response.totalActive,
-						good_value_label: 'Active',
-						bad_value: response.totalInActive,
-						bad_value_label: 'Inactive',
-						this_week_value: response.newDealersThisWeek,
-						this_week_value_label: 'Dealer(s)',
-						this_week_value_description: 'New this week',
-						last_week_value: response.newDealersLastWeek,
-						last_week_value_label: 'Dealer(s)',
-						last_week_value_description: 'New Last Week'
-					};
-				},
-				(error) => {
-					throw new Error(error);
+            this._stats.api_get_dealer_total().pipe(takeUntil(this._unsubscribe)).subscribe(
+				response => {
+                    this.setStatistics(response)
 				}
 			);
 	}
+
+    setStatistics(response) {
+        this.dealer_stats = {
+            basis: response.total,
+            basis_label: 'Dealer(s)',
+            good_value: response.totalActive,
+            good_value_label: 'Active',
+            bad_value: response.totalInActive,
+            bad_value_label: 'Inactive',
+            this_week_value: response.newDealersThisWeek,
+            this_week_value_label: 'Dealer(s)',
+            this_week_value_description: 'New this week',
+            last_week_value: response.newDealersLastWeek,
+            last_week_value_label: 'Dealer(s)',
+            last_week_value_description: 'New Last Week'
+        };
+    }
 
 	private getDataForExport(): void {
-		this._dealer
-			.export_dealers()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-					this.dealers_to_export = response;
-
-					this.dealers_to_export.forEach((dealer) => {
-						this.modifyExportData(dealer);
-						this.worksheet.addRow(dealer).font = { bold: false };
-					});
-
-					let rowIndex = 1;
-
-					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-					}
-
-					this.workbook.xlsx.writeBuffer().then((file: any) => {
-						const blob = new Blob([file], { type: EXCEL_TYPE });
-						const filename = 'Dealers.xlsx';
-						saveAs(blob, filename);
-					});
-
-					this.workbook_generation = false;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
+            this._dealer.export_dealers().pipe(takeUntil(this._unsubscribe)).subscribe(
+                response => {
+                    this.setExportDealersData(response)
+                }
+            );
 	}
+
+    setExportDealersData(response) {
+        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+		this.dealers_to_export = response;
+
+		this.dealers_to_export.forEach((dealer) => {
+			this.modifyExportData(dealer);
+			this.worksheet.addRow(dealer).font = { bold: false };
+		});
+
+		let rowIndex = 1;
+		for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+			this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+		}
+		this.workbook.xlsx.writeBuffer().then((file: any) => {
+			const blob = new Blob([file], { type: EXCEL_TYPE });
+			const filename = 'Dealers.xlsx';
+			saveAs(blob, filename);
+		});
+	    this.workbook_generation = false;
+    }
 
 	private getOrders() {
 

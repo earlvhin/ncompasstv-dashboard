@@ -15,10 +15,6 @@ export class StatisticsService {
 
 	constructor(private _http: HttpClient, private _auth: AuthService) {}
 
-	// get_admin_statistics() {
-	// 	return this._http.post(`${environment.base_uri}${environment.getters.api_get_admin_statistics}`, this.httpOptions)
-	// }
-
 	api_get_dealer_total() {
 		return this._http.get(`${environment.base_uri}${environment.getters.api_get_dealer_total}`, this.httpOptions);
 	}

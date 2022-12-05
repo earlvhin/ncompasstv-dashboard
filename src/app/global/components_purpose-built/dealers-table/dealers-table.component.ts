@@ -6,6 +6,8 @@ import { DealerService } from '../../services/dealer-service/dealer.service';
 import { HelperService } from '../../services/helper-service/helper.service';
 import { UI_TABLE_DEALERS } from '../../models/ui_table_dealers.model';
 import { ActivatedRoute } from '@angular/router';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
 	selector: 'app-dealers-table',
@@ -57,7 +59,12 @@ export class DealersTableComponent implements OnInit {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _route: ActivatedRoute, private _dealer: DealerService, private _helper: HelperService) {}
+	constructor(
+        private _route: ActivatedRoute, 
+        private _dealer: DealerService, 
+        private _helper: HelperService,
+        private _auth: AuthService    
+    ) {}
 
 	ngOnInit() {
 		this.subscribeToDealerStatusFilter();
@@ -185,55 +192,44 @@ export class DealersTableComponent implements OnInit {
 
         if(sort || this.ongoing_filter) {
             this._dealer
-			.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.ongoing_filter = false;
-					this.initial_load = false;
-					this.paging_data = response.paging;
-
-					if (!response.paging.entities) {
-						this.filtered_data = [];
-						this.no_dealer = true;
-						return;
-					}
-
-					this.dealers_data = this.mapToUIFormat(response.paging.entities);
-					this.filtered_data = this.dealers_data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => (this.searching = false));
+            .get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+            // .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                response => {
+                    this.dealerSetMappingData(response)
+                }
+            )
+            .add(() => (this.searching = false));
         } else {
             this._dealer
-			.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.ongoing_filter = false;
-					this.initial_load = false;
-					this.paging_data = response.paging;
-
-					if (!response.paging.entities) {
-						this.filtered_data = [];
-						this.no_dealer = true;
-						return;
-					}
-
-					this.dealers_data = this.mapToUIFormat(response.paging.entities);
-					this.filtered_data = this.dealers_data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => (this.searching = false));
-        }
-		
+            .get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+            // .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                response => {
+                    this.dealerSetMappingData(response)
+                }
+            )
+            .add(() => (this.searching = false));
+        }		
 	}
+
+    dealerSetMappingData(response) {
+        this.ongoing_filter = false;
+        this.initial_load = false;
+        this.paging_data = response.paging;
+
+        if (!response.paging.entities) {
+            this.filtered_data = [];
+            this.no_dealer = true;
+            return;
+        }
+        if(this._auth.current_role === 'dealeradmin') {
+            this.dealers_data = this.mapToUIFormat(response.entities);
+        } else {
+            this.dealers_data = this.mapToUIFormat(response.paging.entities);
+        }
+        this.filtered_data = this.dealers_data;
+    }
 
 	sortByColumnName(column: string, order: string): void {
 		this.active_tab = column;

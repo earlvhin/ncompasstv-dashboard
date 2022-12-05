@@ -5,6 +5,7 @@ import { AuthService, DealerService } from 'src/app/global/services';
 import { UI_DEALER_BILLING } from 'src/app/global/models/ui_dealer-billing.model';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
     selector: 'app-billings-view',
@@ -19,6 +20,7 @@ import { saveAs } from 'file-saver';
     billings_to_export: any = [];
     filtered_data_billings: any[] = [];
     initial_load_billings: boolean = true;
+    is_dealer_admin: boolean = false;
     is_loading: boolean = false;
     search_key: string = '';
     sort_column_billings: string = "";
@@ -52,27 +54,34 @@ import { saveAs } from 'file-saver';
     ) { }
 
     ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true;
+        }
         this.getAllDealerBillings(1);
     }
 
     getAllDealerBillings(page: number) {
         this.is_loading = false;
-		this.subscription.add(
-			this._dealer.get_all_dealer_values(page, this.search_key, this.sort_column_billings, this.sort_order_billings).pipe(takeUntil(this._unsubscribe)).subscribe(
-				response => {
-                    this.alldealervalues_paging = response.paging;
-                    this.is_loading = true;
-                    this.initial_load_billings = false;		
-                    if(response.paging.totalEntities > 0) {
-                        this.alldealervalues = response.paging.entities;
-                        this.filtered_data_billings = this.alldealervalues;
-                        this.billing_data = this.billing_mapToUIFormat(this.alldealervalues);
-                    } else {
-                        this.filtered_data_billings = [];
-                    }
+        this.subscription.add(
+            this._dealer.get_all_dealer_values(page, this.search_key, this.sort_column_billings, this.sort_order_billings).pipe(takeUntil(this._unsubscribe)).subscribe(
+                response => {
+                    this.setDealerValuesData(response)
                 }
             )
         )
+    }
+
+    setDealerValuesData(response) {
+        this.alldealervalues_paging = response.paging;
+        this.is_loading = true;
+        this.initial_load_billings = false;		
+        if(response.paging.totalEntities > 0) {
+            this.alldealervalues = response.paging.entities;
+            this.filtered_data_billings = this.alldealervalues;
+            this.billing_data = this.billing_mapToUIFormat(this.alldealervalues);
+        } else {
+            this.filtered_data_billings = [];
+        }
     }
 
     filterData(e) {

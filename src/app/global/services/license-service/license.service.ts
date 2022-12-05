@@ -15,6 +15,7 @@ import {
 	LICENSE_TOTAL_STATISTICS,
 	PAGING
 } from 'src/app/global/models';
+import { BaseService } from '../base.service';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -34,8 +35,8 @@ export class CustomHttpParamEncoder implements HttpParameterCodec {
 @Injectable({
 	providedIn: 'root'
 })
-export class LicenseService {
-	token = JSON.parse(localStorage.getItem('tokens'));
+export class LicenseService extends BaseService {
+    token = JSON.parse(localStorage.getItem('tokens'));
 
 	httpOptions = {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
@@ -45,16 +46,15 @@ export class LicenseService {
 	onRefreshLicensesTab = new EventEmitter<void>();
 	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } });
 
-	constructor(private _http: HttpClient, private _auth: AuthService) {}
-
 	api_get_licenses_total_by_host_dealer(dealerId: string, hostId: string) {
-		const base = `${this.baseUri}${this.getters.api_get_licenses_total}`;
-		const endpoint = `${base}?dealerid=${dealerId}&hostid=${hostId}`;
-		return this._http.get<LICENSE_TOTAL_STATISTICS>(endpoint, this.httpOptions);
+		const base = `${this.getters.api_get_licenses_total}`;
+        const params = this.setUrlParams({ dealerId, hostId }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_all_licenses(
-		page: number,
+        page: number,
 		key: string,
 		column: string,
 		order: string,
@@ -71,30 +71,11 @@ export class LicenseService {
 		pending?: string,
 		online?: string,
 		isActivated?
-	): Observable<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }> {
-		const params = this.httpParams({
-			page,
-			search: key,
-			sortColumn: column,
-			sortOrder: order,
-			pageSize,
-			includeAdmin: adminLicenses,
-			piStatus: status,
-			daysOffline: daysOffline,
-			active: activated,
-			daysInstalled: recent,
-			timezone: zone,
-			dealerId: dealer,
-			hostId: host,
-			assigned,
-			pending,
-			online,
-			isActivated
-		});
-		return this._http.get<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }>(
-			`${environment.base_uri}${environment.getters.api_get_licenses}`,
-			{ ...this.httpOptions, params }
-		);
+	){
+        const base = `${this.getters.api_get_licenses}`;
+        const params = this.setUrlParams({ page, search: key , sortColumn: column, sortOrder: order, pageSize, includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active: activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId: host, assigned, pending, online, isActivated }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 	
 	get_all_licenses_fetch(
@@ -115,30 +96,11 @@ export class LicenseService {
 		pending?: string,
 		online?: string,
 		isActivated?
-	): Observable<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }> {
-		const params = this.httpParams({
-			page,
-			search: key,
-			sortColumn: column,
-			sortOrder: order,
-			pageSize,
-			includeAdmin: adminLicenses,
-			piStatus: status,
-			daysOffline: daysOffline,
-			active: activated,
-			daysInstalled: recent,
-			timezone: zone,
-			dealerId: dealer,
-			hostId: host,
-			assigned,
-			pending,
-			online,
-			isActivated
-		});
-		return this._http.get<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_fetch}`,
-			{ ...this.httpOptions, params }
-		);
+	){
+        const base = `${this.getters.api_get_licenses_fetch}`;
+        const params = this.setUrlParams({ page, search: key , sortColumn: column, sortOrder: order, pageSize, includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active: activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId: host, assigned, pending, online, isActivated }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_all_licenses_duration(
@@ -159,30 +121,11 @@ export class LicenseService {
 		pending?: string,
 		online?: string,
 		isActivated?
-	): Observable<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }> {
-		const params = this.httpParams({
-			page,
-			search: key,
-			sortColumn: column,
-			sortOrder: order,
-			pageSize,
-			includeAdmin: adminLicenses,
-			piStatus: status,
-			daysOffline: daysOffline,
-			active: activated,
-			daysInstalled: recent,
-			timezone: zone,
-			dealerId: dealer,
-			hostId: host,
-			assigned,
-			pending,
-			online,
-			isActivated
-		});
-		return this._http.get<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_all_duration}`,
-			{ ...this.httpOptions, params }
-		);
+	){
+        const base = `${this.getters.api_get_licenses_all_duration}`;
+        const params = this.setUrlParams({ page, search: key , sortColumn: column, sortOrder: order, pageSize, includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active: activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId: host, assigned, pending, online, isActivated }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_all_licenses_duration_clone(
@@ -199,129 +142,100 @@ export class LicenseService {
 		zone?: string,
 		dealer?: string,
 		host?: string
-	): Observable<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }> {
-		const params = this.httpParams({
-			page,
-			search: key,
-			sortColumn: column,
-			sortOrder: order,
-			pageSize,
-			includeAdmin: adminLicenses,
-			piStatus: status,
-			daysOffline: daysOffline,
-			active: activated,
-			daysInstalled: recent,
-			timezone: zone,
-			dealerId: dealer,
-			hostId: host
-		});
-		return this._http.get<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_all_duration_clone}`,
-			{ ...this.httpOptions, params }
-		);
+	) {
+        const base = `${this.getters.api_get_licenses_all_duration_clone}`;
+        const params = this.setUrlParams({ page, search: key , sortColumn: column, sortOrder: order, pageSize, includeAdmin: adminLicenses, piStatus: status, daysOffline: daysOffline, active: activated, daysInstalled: recent, timezone: zone, dealerId: dealer, hostId: host }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
-		let baseUrl = `${this.baseUri}${this.getters.license_by_tags}`;
-		let params = this.setUrlParams(filters, enforceTagSearchKey);
-		const url = `${baseUrl}${params}`;
-		return this._http.get<{ licenses: API_LICENSE['license'][]; paging: PAGING }>(url, this.httpOptions);
+        const base = `${this.getters.license_by_tags}`;
+        const params = this.setUrlParams({ filters, enforceTagSearchKey }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
-	get_installations(filters: API_FILTERS, type = 'default'): Observable<{ paging?: PAGING; message?: string }> {
-		let endpoint = this.baseUri;
-
+	get_installations(filters: API_FILTERS, type = 'default') {
+        let base = '';
 		switch (type) {
 			case 'next-week':
-				endpoint += this.getters.next_week_installations;
+				base = this.getters.next_week_installations;
 				break;
 
 			case 'next-month':
-				endpoint += this.getters.next_month_installations;
+				base = this.getters.next_month_installations;
 				break;
 
 			case 'recent':
-				endpoint += this.getters.recent_installations;
+				base = this.getters.recent_installations;
 				break;
 
 			case 'upcoming':
-				endpoint += this.getters.upcoming_installations;
+				base = this.getters.upcoming_installations;
 				break;
 
 			default:
-				endpoint += this.getters.all_license_by_install_date;
+				base = this.getters.all_license_by_install_date;
 		}
-
-		const params = this.setUrlParams(filters);
-		const url = `${endpoint}${params}`;
-		return this._http.get(url, this.httpOptions);
+        const params = this.setUrlParams({ filters }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_licenses_total() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total}`, this.httpOptions);
+        const base = `${this.getters.api_get_licenses_total}`;
+        const url = `${base}`;
+		return this.getRequest(url);
 	}
 
 	get_licenses_statistics(dealerId?: string, startDate?: string, endDate?: string) {
-		const base = `${this.baseUri}${this.getters.api_get_licenses_statistics}`;
-		const endpoint = `${base}?dealerid=${dealerId}&startdate=${startDate}&enddate=${endDate}`;
-		return this._http.get<{ licenses?: API_LICENSE_MONTHLY_STAT[]; message?: string }>(endpoint, this.httpOptions);
+        const base = `${this.getters.api_get_licenses_statistics}`;
+        const params = this.setUrlParams({ dealerId, startDate, endDate }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_licenses_installation_statistics(dealer?, startDate?, endDate?) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_installation_statistics}` +
-				'?dealerid=' +
-				`${dealer}` +
-				'&startdate=' +
-				`${startDate}` +
-				'&enddate=' +
-				`${endDate}`,
-			this.httpOptions
-		);
+        const base = `${this.getters.api_get_licenses_installation_statistics}`;
+        const params = this.setUrlParams({ dealerid: dealer, startDate, endDate }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_licenses_installation_statistics_detailed(dealer?, startDate?, endDate?) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_installation_statistics_detailed}` +
-				'?dealerid=' +
-				`${dealer}` +
-				'&startdate=' +
-				`${startDate}` +
-				'&enddate=' +
-				`${endDate}`,
-			this.httpOptions
-		);
+        const base = `${this.getters.api_get_licenses_installation_statistics_detailed}`;
+        const params = this.setUrlParams({ dealerid: dealer, startDate, endDate }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_licenses_total_by_dealer(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
+        const base = `${this.getters.api_get_licenses_total_by_dealer}`;
+        const params = this.setUrlParams({ id }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_license_by_dealer_id(dealerId: string, page: number, search?: string, arrangement?: any, pageSize = 15, pending?: any) {
-		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
-		const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize, pending });
-		const url = `${base}${params}`;
-		return this._http.get<{ paging?: PAGING; message?: string }>(url, this.httpOptions);
+        const base = `${this.getters.api_get_licenses_by_dealer}`;
+        const params = this.setUrlParams({ dealerId, page, search, arrangement, pageSize, pending }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_license_by_screen_id(id: string, page: number) {
-		const params = this.httpParams({ screenId: id, page });
-		return this._http.get<{ paging?: PAGING; message?: string }>(`${environment.base_uri}${environment.getters.api_get_licenses_by_screen}`, {
-			...this.httpOptions,
-			params
-		});
+        const base = `${this.getters.api_get_licenses_by_screen}`;
+        const params = this.setUrlParams({ screenId: id, page }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
-	/**
-	 * @description Search licenses of a specific host
-	 * @params hostId, search, page
-	 * @returns Observable<API_LICENSE['license'][] | { message: string }>
-	 */
 	search_license_by_host(hostId: string, search: string, page = 1) {
-		const base = `${this.baseUri}${this.getters.search_license_by_host}`;
-		const params = this.setUrlParams({ hostId, search, page });
-		const url = `${base}${params}`;
-		return this._http.get<{ licenses?: API_LICENSE['license'][]; paging?: PAGING; message?: string }>(url);
+        const base = `${this.getters.search_license_by_host}`;
+        const params = this.setUrlParams({ hostId, search, page }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	sort_license_by_dealer_id(
@@ -342,47 +256,30 @@ export class LicenseService {
 		online?,
 		isActivated?
 	) {
-		const base = `${environment.base_uri_old}${environment.getters.api_get_licenses_by_dealer}`;
-		const filters = {
-			dealerId: id,
-			page,
-			search: key,
-			sortColumn: column,
-			sortOrder: order,
-			pageSize,
-			piStatus: status,
-			daysOffline,
-			active: activated,
-			daysInstalled: recent,
-			timezone: zone,
-			hostId: host,
-			assigned,
-			pending,
-			online,
-			isActivated
-		};
-		const params = this.setUrlParams(filters, false, true);
+        const base = `${this.getters.api_get_licenses_by_dealer}`;
+        const params = this.setUrlParams({ dealerId: id, page, search: key , sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline, active: activated, daysInstalled: recent, timezone: zone,  hostId: host, assigned, pending, online, isActivated }, false, true);
 		const url = `${base}${params}`;
-		return this._http.get<any>(url);
+		return this.getRequest(url);
 	}
 
-	get_licenses_by_host_id(id: string): Observable<API_LICENSE_PROPS[] | { message: string }> {
-		return this._http.get<API_LICENSE_PROPS[] | { message: string }>(
-			`${environment.base_uri}${environment.getters.api_get_licenses_by_host}${id}`,
-			this.httpOptions
-		);
+	get_licenses_by_host_id(id: string) {
+        const base = `${this.getters.api_get_licenses_by_host}`;
+        const params = this.setUrlParams({ id }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_license_by_id(id) {
-		return this._http.get<API_LICENSE>(`${environment.base_uri}${environment.getters.api_get_licenses_by_id}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_licenses_by_id}${id}`);
 	}
 
 	get_license_report(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_license_report}`, data, this.httpOptions);
-	}
+        const body = { data };
+		return this.postRequest(this.getters.api_get_license_report, body);
+    }
 
 	get_license_to_export(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.export_dealer_licenses}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.export_dealer_licenses}${id}`);
 	}
 
 	get_license_to_export_duration(
@@ -402,102 +299,75 @@ export class LicenseService {
 		online?,
 		isActivated?
 	) {
-		const params = this.httpParams({
-			dealerId: id,
-			page: 1,
-			search: key,
-			sortColumn: column,
-			sortOrder: order,
-			pageSize,
-			piStatus: status,
-			daysOffline: daysOffline,
-			active: activated,
-			daysInstalled: recent,
-			timezone: zone,
-			hostId: host,
-			assigned,
-			pending,
-			online,
-			isActivated
-		});
-		return this._http.get<any>(`${environment.base_uri_old}${environment.getters.api_get_licenses_duration}`, { ...this.httpOptions, params });
-		// return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_duration}${id}`, this.httpOptions);
+        const base = `${this.getters.api_get_licenses_duration}`;
+        const params = this.setUrlParams({ dealerId: id, search: key , sortColumn: column, sortOrder: order, pageSize, piStatus: status, daysOffline, active: activated, daysInstalled: recent, timezone: zone,  hostId: host, assigned, pending, online, isActivated }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_license_total_per_dealer(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_licenses_total_by_dealer}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_licenses_total_by_dealer}${id}`);
 	}
 
 	get_ad_licenses_total() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_ad_licenses_total}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_ad_licenses_total}`);
 	}
 
 	get_ad_licenses_total_by_dealer(id: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_ad_licenses_total_by_dealer}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_ad_licenses_total_by_dealer}${id}`);
 	}
 
 	get_installation_statistics(date: string = null): Observable<{ licenseInstallationStats: API_INSTALLATION_STATS }> {
 		if (!date) date = moment().format('MM-DD-YYYY');
-		const base = `${this.baseUri}${this.getters.license_installation_statistics}`;
-		const url = `${base}?installDate=${date}`;
-		return this._http.get<{ licenseInstallationStats: API_INSTALLATION_STATS }>(url);
+		return this.getRequest(`${this.getters.license_installation_statistics}`+'?installdate='+`${date}`);
 	}
 
 	get_statistics_by_dealer(id: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.license_statistics}?dealerId=${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.license_statistics}${id}`+'?dealerId='+`${id}`);
 	}
 
 	get_statistics_by_installation(date: string) {
-		const url = `${environment.base_uri}${environment.getters.license_statistics_by_install_date}${date}`;
-		return this._http.get<any>(url, this.httpOptions);
+        return this.getRequest(`${this.getters.license_statistics_by_install_date}${date}`);
 	}
 
 	activate_license(id) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_activate_license}${id}`, null, this.httpOptions);
+        return this.postRequest(this.updaters.api_activate_license, id);
 	}
 
 	deactivate_license(id) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_deactivate_license}${id}`, null, this.httpOptions);
+        return this.postRequest(this.updaters.api_deactivate_license, id);
 	}
 
 	assign_licenses_to_host(data) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_assign_license_to_host}`, data, this.httpOptions);
+        return this.postRequest(this.updaters.api_assign_license_to_host, data);
 	}
 
 	generate_license(id, count) {
-		return this._http.post(
-			`${environment.base_uri}${environment.create.api_new_license}dealerId=${id}&licensecount=${count}`,
-			null,
-			this.httpOptions
-		);
+		return this.postRequest(`${environment.base_uri}${environment.create.api_new_license}dealerId=${id}&licensecount=${count}`,null);	
 	}
 
 	get_screenshots(id) {
-		return this._http
-			.get(`${environment.base_uri_old}${environment.getters.api_get_screenshots}${id}`, this.httpOptions)
-			.map((data: any) => data.files);
+        return this.getRequest(`${this.getters.api_get_screenshots}${id}`);
 	}
 
-	search_license(keyword = ''): Observable<{ licenses: API_DEALER_LICENSE[] }> {
-		const url = `${this.baseUri}${this.getters.search_license}${keyword}`;
-		return this._http.get<{ licenses: API_DEALER_LICENSE[] }>(url, this.httpOptions);
+	search_license(keyword = '') {
+        const base = `${this.getters.search_license}`;
+        const params = this.setUrlParams({ keyword }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	update_alias(data) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_update_alias}`, data, this.httpOptions);
+        return this.postRequest(this.updaters.api_update_alias, data);
 	}
 
-	update_cec_status(body: { licenseId: string; status: number }) {
-		const url = `${environment.base_uri}${environment.update.license_cec_status}`;
-		return this._http.post(url, body);
-	}
+	update_cec_status(data: {licenseId: string, status: number}) {
+		return this.postRequest(this.updaters.license_cec_status, data);	
+    }
 
-	/**
-	 *  Updates the license's boot delay
-	 * 	@param data: {licenseId: string, bootDelayDuration: number}
-	 */
-	update_license_boot_delay(data: { licenseId: string; bootDelay: number }) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_update_license_boot_delay}`, data, this.httpOptions);
+	//  Updates the license's boot delay
+	update_license_boot_delay(data: {licenseId: string; bootDelay: number}) {
+		return this.postRequest(this.updaters.api_update_license_boot_delay, data);
 	}
 
 	update_license_reboot_time(data: { rebootTime: { rebootTime: string }[]; licenseId: string }) {
@@ -505,182 +375,158 @@ export class LicenseService {
 			rebootTime: JSON.stringify(data.rebootTime),
 			licenseId: data.licenseId
 		};
-
-		const url = `${this.baseUri}${environment.update.license_reboot_time}`;
-		return this._http.post(url, body);
+        return this.postRequest(`${environment.base_uri}${environment.update.license_reboot_time}`, data);
 	}
 
-	/**
-	 *  Updates the license installation date
-	 *
-	 * 	@param licenseId: string
-	 * 	@param installDate: string = '03/05/2021'
-	 */
+	// Updates the license installation date
 	update_install_date(licenseId: string, installDate: string): Observable<any> {
 		const data = { licenseId, installDate };
-
 		const options = {
 			headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' }),
 			responseType: 'text' as 'json'
 		};
-
-		return this._http.post(`${environment.base_uri}${environment.update.install_date}`, data, options);
+        return this.postRequest(`${environment.base_uri}${environment.update.install_date}`, data, options);
 	}
 
-	/**
-	 *  Updates the installation date on multiple licenses
-	 *
-	 * 	@param data: { licenseId: string, installDate: string }[]
-	 */
+	
+	//  Updates the installation date on multiple licenses
 	update_install_date_list(data: { licenseId: string; installDate: string }[]): Observable<any> {
 		const options = {
 			headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' }),
 			responseType: 'text' as 'json'
 		};
-
-		return this._http.post(`${environment.base_uri}${environment.update.install_date_list}`, data, options);
+		return this.postRequest(`${environment.base_uri}${environment.update.install_date_list}`, data, options);
 	}
 
-	/**
-	 * @description: Update the Display Status of the License
-	 * @param data: {licenseId:string, displayStatus: number}
-	 * @returns: Observable of ANY
-	 */
-	update_display_status(data: { licenseId: string; displayStatus: number }): Observable<any> {
-		return this._http.post(`${environment.base_uri}${environment.update.api_display_status}`, data, this.httpOptions);
+	update_display_status(data: {licenseId: string, displayStatus: number}) {
+    	return this.postRequest(this.updaters.api_display_status, data);
 	}
 
-	update_notification_settings(body: { licenseId: string; notificationSettings?: number; emailSettings?: number }) {
-		const url = `${this.baseUri}${environment.update.license_notification_settings}`;
-		return this._http.post(url, body);
+	update_notification_settings(data: {licenseId: string, notificationSettings?: number, emailSettings?: number}) {
+        return this.postRequest(this.updaters.license_notification_settings, data);
 	}
 
 	delete_screenshots(id) {
-		return this._http.get(`${environment.base_uri_old}${environment.delete.api_remove_screenshots}${id}`, this.httpOptions);
+        const base = `${this.deleters.api_remove_screenshots}`;
+        const params = this.setUrlParams({ id }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	delete_license(to_delete) {
-		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_license}`, to_delete, this.httpOptions);
+        const base = `${this.deleters.api_remove_license}`;
+        const params = this.setUrlParams({ to_delete }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	unassign_host_license(licenses, force?) {
-		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_host_licenses}`, licenses, this.httpOptions);
+        const base = `${this.deleters.api_remove_host_licenses}`;
+        const params = this.setUrlParams({ licenses }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_license_by_dealear_old(dealer) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_license_by_dealer_temp}${dealer}`, this.httpOptions);
+        const base = `${this.getters.api_get_license_by_dealer_temp}`;
+        const params = this.setUrlParams({ dealer }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
-	/**
-	 * @description: Get Resource Usage By License
-	 * @param license: string
-	 */
+	//Get Resource Usage By License
 	get_license_resource(license: string) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_resource_logs}${license}`, this.httpOptions);
+        const base = `${this.getters.api_get_resource_logs}`;
+        const params = this.setUrlParams({ license }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
-	/**
-	 * @description: Get Resource Usage By License Id and Date
-	 * @param license: string
-	 */
+	//Get Resource Usage By License Id and Date
 	get_license_resource_logs(license: string, date: string) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`,
-			this.httpOptions
-		);
+        return this.getRequest(`${environment.base_uri}${environment.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`,null);	
 	}
 
-	/**
-	 * @description: Get All Activities
-	 * @param license
-	 * @returns array of activities
-	 */
 	get_activities(id: string) {
-		const url = `${environment.base_uri}${environment.getters.api_get_activities_by_license_id}${id}`;
-		return this._http.get<{ paging: PAGING }>(url, this.httpOptions);
+        const base = `${this.getters.api_get_activities_by_license_id}`;
+        const params = this.setUrlParams({ id }, false, true);
+        const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
-	/**
-	 * @description: Save User Dashboard Activities
-	 * @param activity
-	 * @returns: Observable of ANY
-	 */
-	save_activity(data: { licenseId: string; activityCode: string; initiatedBy: string }) {
-		const url = `${environment.base_uri}${environment.create.api_save_activity}`;
-		return this._http.post<any>(url, data, this.httpOptions);
+	save_activity(data: {licenseId: string; activityCode: string; initiatedBy: string}) {
+        // const body = { licenseId, activityCode, initiatedBy};
+		return this.postRequest(`${this.creators.api_save_activity}`, data);
 	}
 
-	/**
-	 * @description: Update Internet Information of License ID
-	 * @param data - LicenseID, InternetInfo Data
-	 */
 	update_internet_info(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_internet_info}`, data, this.httpOptions);
+        const body = { data };
+		return this.postRequest(this.updaters.api_update_internet_info, body);
 	}
 
-	set_screenshot_status(data: { licenseId: string; screenshotSettings: number }) {
-		const url = `${environment.base_uri}${environment.update.api_update_screenshot_settings}`;
-		return this._http.post<any>(url, data, this.httpOptions);
+	set_screenshot_status(data) {
+		return this.postRequest(this.updaters.api_update_screenshot_settings, data);
 	}
 
-	set_speedtest_status(data: { licenseId: string; speedtestSettings: number }) {
-		const url = `${environment.base_uri}${environment.update.api_update_speedtest_settings}`;
-		return this._http.post<any>(url, data, this.httpOptions);
+	set_speedtest_status(data: {licenseId: string, speedtestSettings: number}) {
+        return this.postRequest(this.updaters.api_update_speedtest_settings, data);
 	}
 
-	set_resource_status(data: { licenseId: string; resourceSettings: number }) {
-		const url = `${environment.base_uri}${environment.update.api_update_resource_settings}`;
-		return this._http.post<any>(url, data, this.httpOptions);
+	set_resource_status(data: {licenseId: string, resourceSettings: number}) {
+		return this.postRequest(this.updaters.api_update_resource_settings, data);
 	}
 
-	set_tvdisplay_status(data: { licenseId: string; tvdisplaySettings: number }) {
-		const url = `${environment.base_uri}${environment.update.api_update_tvdisplay_settings}`;
-		return this._http.post<any>(url, data, this.httpOptions);
+	set_tvdisplay_status(data: {licenseId: string, tvdisplaySettings: number}) {
+		return this.postRequest(this.updaters.api_update_tvdisplay_settings, data);
 	}
 
 	create_installation_checklist_title(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_installation_checklist_title_add}`, data, this.httpOptions);
+        const body = { data };
+		return this.postRequest(this.creators.api_installation_checklist_title_add, body);
 	}
 
 	update_installation_checklist_title(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_checklist_title_update}`, data, this.httpOptions);
+        const body = { data };
+		return this.postRequest(this.updaters.api_checklist_title_update, body);
 	}
 
 	update_installation_checklist_item(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_checklist_item_update}`, data, this.httpOptions);
+        const body = { data };
+		return this.postRequest(this.updaters.api_checklist_item_update, body);
 	}
 
 	add_installation_checklist_items(data: any) {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.api_installation_checklist_items_add}`, data, this.httpOptions);
+        const body = { data };
+		return this.postRequest(this.creators.api_installation_checklist_items_add, body);
 	}
 
 	get_checklist() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_checklist}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_checklist}`);
 	}
 
 	get_checklist_titles() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_checklist_titles}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_checklist_titles}`);
 	}
 
 	get_checklist_by_license_id(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_checklist_by_license_id}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_checklist_by_license_id}`);
 	}
 
 	update_list_checking(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_checklist_check_update}`, data, this.httpOptions);
+        return this.postRequest(this.updaters.api_checklist_check_update, data);
 	}
 
 	delete_checklist_id(id) {
-		return this._http.post(`${environment.base_uri}${environment.delete.api_remove_checklist_title}${id}`, this.httpOptions);
+        return this.postRequest(this.deleters.api_remove_checklist_title, id);
 	}
 
 	delete_checklist_items(data) {
-		return this._http.post(`${environment.base_uri}${environment.delete.api_remove_checklist_items}`, data, this.httpOptions);
+		return this.postRequest(this.deleters.api_remove_checklist_items, data);
 	}
 
-	update_reboot_time(body: { licenseId: string; rebootTime: string }) {
-		const url = `${environment.base_uri}${environment.update.license_reboot_time}`;
-		return this._http.post(url, body);
+	update_reboot_time(licenseId: string, rebootTime: string) {
+        const body = { licenseId, rebootTime };
+		return this.postRequest(this.updaters.license_reboot_time, body);
 	}
 
 	protected setUrlParams(filters: any, enforceTagSearchKey = false, allowBlanks = true) {

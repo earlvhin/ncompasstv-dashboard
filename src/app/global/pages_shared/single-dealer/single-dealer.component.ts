@@ -67,6 +67,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	initial_load_advertiser = true;
 	initial_load_license = true;
 	initial_load_zone = true;
+	is_admin: boolean = false;
+	is_dealer_admin: boolean = false;
 	is_search: boolean = false;
 	license$: Observable<API_LICENSE[]>;
 	licenses: any[];
@@ -257,6 +259,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true;
+        } else if (this._auth.current_role === UI_ROLE_DEFINITION.administrator) {
+            this.is_admin = true;
+        }
 		this.reload_billing = !this.reload_billing;
 		this.cd.detectChanges();
 		this.current_role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
@@ -281,7 +288,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		this._socket.on('disconnect', () => {});
 
-		if (this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator) this.show_admin_buttons = true;
+		if (this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator || this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.dealeradmin) this.show_admin_buttons = true; 
 
 		this.setCurrentTabOnLoad();
 
@@ -457,60 +464,66 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getAdvertiserTotalCount(id): void {
-		this.subscription.add(
-			this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
-				(data) => {
-					this.advertiser_card = {
-						basis: data.total,
-						basis_label: 'ADVERTISERS',
-						good_value: data.totalActive,
-						good_value_label: 'ACTIVE',
-						bad_value: data.totalInActive,
-						bad_value_label: 'INACTIVE'
-					};
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-		);
+        this.subscription.add(
+            this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
+                (data) => {
+                    this.setAdvertisersCount(data)
+                },
+                (error) => {
+                    throw new Error(error);
+                }
+            )
+        );
 	}
+
+    setAdvertisersCount(data) {
+        this.advertiser_card = {
+            basis: data.total,
+            basis_label: 'ADVERTISERS',
+            good_value: data.totalActive,
+            good_value_label: 'ACTIVE',
+            bad_value: data.totalInActive,
+            bad_value_label: 'INACTIVE'
+        };
+    }
 
 	getDealerAdvertiser(page): void {
 		this.searching_advertiser = true;
-		this.subscription.add(
-			this._advertiser
-				.get_advertisers_by_dealer_id(
-					this.dealer_id,
-					page,
-					this.search_data_advertiser,
-					this.sort_column_advertisers,
-					this.sort_order_advertisers
-				)
-				.subscribe(
-					(data) => {
-						this.initial_load_advertiser = false;
-						this.searching_advertiser = false;
-						this.paging_data_advertiser = data.paging;
-						if (!data.message) {
-							const advertisers = this.advertiser_mapToUI(data.paging.entities);
-							this.advertiser_data = [...advertisers];
-							this.advertiser_filtered_data = [...advertisers];
-							this.no_advertisers = false;
-						} else {
-							if (this.search_data_advertiser == '') {
-								this.no_advertisers = true;
-							}
-							this.advertiser_data = [];
-							this.advertiser_filtered_data = [];
-						}
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				)
-		);
+        this.subscription.add(
+            this._advertiser.get_advertisers_by_dealer_id(
+                this.dealer_id,
+                page,
+                this.search_data_advertiser,
+                this.sort_column_advertisers,
+                this.sort_order_advertisers
+            ).subscribe(
+                (data) => {
+                    this.setAdvertisersTableData(data)
+                },
+                (error) => {
+                    throw new Error(error);
+                }
+            )
+        )
 	}
+
+    setAdvertisersTableData(data) {
+        this.initial_load_advertiser = false;
+		this.searching_advertiser = false;
+		this.paging_data_advertiser = data.paging;
+		if (!data.message) {
+			const advertisers = this.advertiser_mapToUI(data.paging.entities);
+			this.advertiser_data = [...advertisers];
+			this.advertiser_filtered_data = [...advertisers];
+			this.no_advertisers = false;
+		} else {
+			if (this.search_data_advertiser == '') {
+				this.no_advertisers = true;
+			}
+			this.advertiser_data = [];
+			this.advertiser_filtered_data = [];
+		}
+    }
 
 	getDealerHost(page): void {
 		this.searching = true;
@@ -518,51 +531,57 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.host_filtered_data = [];
 		this.temp_array = [];
 
-		this.subscription.add(
-			this._host
-				.get_host_by_dealer_id_with_sort(this.dealer_id, page, this.search_data, this.sort_column_hosts, this.sort_order_hosts)
-				.subscribe(
-					(data) => {
-						this.initial_load = false;
-						this.searching = false;
-						this.paging_data = data.paging;
-
-						if (!data.message) {
-							this.temp_array = data.paging.entities;
-							this.host_data = this.hostTable_mapToUI(this.temp_array);
-							this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
-							this.no_hosts = false;
-						} else {
-							if (this.search_data == '') {
-								this.no_hosts = true;
-							}
-
-							this.host_data = [];
-							this.host_filtered_data = [];
-						}
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				)
-		);
+        this.subscription.add(
+            this._host.get_host_by_dealer_id_with_sort(this.dealer_id, page, this.search_data, this.sort_column_hosts, this.sort_order_hosts).subscribe(
+                (data) => {
+                    this.setDealerHostsData(data)
+                },
+                (error) => {
+                    throw new Error(error);
+                }
+            )
+        );
 	}
+
+    setDealerHostsData(data) {
+        this.initial_load = false;
+		this.searching = false;
+		this.paging_data = data.paging;
+
+		if (!data.message) {
+			this.temp_array = data.paging.entities;
+			this.host_data = this.hostTable_mapToUI(this.temp_array);
+			this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
+			this.no_hosts = false;
+		} else {
+			if (this.search_data == '') {
+				this.no_hosts = true;
+			}
+
+			this.host_data = [];
+			this.host_filtered_data = [];
+		}
+    }
 
 	getDealerInfo(id): void {
-		this.subscription.add(
-			this._dealer.get_dealer_by_id(id).subscribe(
-				(response: API_DEALER) => {
-					this.dealer = response;
-					this.dealer_id = response.dealerId;
-					this.dealer_name = response.businessName;
-					this.getDealerUserData(response.userId);
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-		);
+        this.subscription.add(
+            this._dealer.get_dealer_by_id(id).subscribe(
+                (response: API_DEALER) => {
+                    this.setDealerInfo(response)
+                },
+                (error) => {
+                    throw new Error(error);
+                }
+            )
+        );
 	}
+
+    setDealerInfo(response) {
+        this.dealer = response;
+		this.dealer_id = response.dealerId;
+		this.dealer_name = response.businessName;
+		this.getDealerUserData(response.userId);
+    }
 
 	getDealerUserData(id): void {
 		this.subscription.add(
@@ -580,142 +599,150 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getHostTotalCount(id): void {
-		this.subscription.add(
-			this._host.get_host_total_per_dealer(id).subscribe(
-				(data: any) => {
-					this.host_card = {
-						basis: data.total,
-						basis_label: 'HOSTS',
-						good_value: data.totalActive,
-						good_value_label: 'ACTIVE',
-						bad_value: data.totalInActive,
-						bad_value_label: 'INACTIVE'
-					};
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-		);
+        this.subscription.add(
+            this._host.get_host_total_per_dealer(id).subscribe(
+                (data: any) => {
+                    this.setHostCount(data);
+                },
+                (error) => {
+                    throw new Error(error);
+                }
+            )
+        );
 	}
+
+    setHostCount(data) {
+        this.host_card = {
+            basis: data.total,
+            basis_label: 'HOSTS',
+            good_value: data.totalActive,
+            good_value_label: 'ACTIVE',
+            bad_value: data.totalInActive,
+            bad_value_label: 'INACTIVE'
+        };
+    }
 
 	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
-		this.subscription.add(
-			this._license
-				.sort_license_by_dealer_id(
-					this.dealer_id,
-					page,
-					this.search_data_license,
-					this.sort_column,
-					this.sort_order,
-					15,
-					this.filters.status,
-					'',
-					this.filters.activated,
-					'',
-					this.filters.zone,
-					this.filters.host,
-					this.filters.assigned,
-					this.filters.pending,
-					this.filters.online,
-					this.filters.isactivated
-				)
-				.subscribe(
-					(response: { paging; statistics; message }) => {
-						if (response.message) {
-							if (this.search_data_license == '') {
-								this.no_licenses = true;
-							}
 
-							this.license_data = [];
-							this.license_filtered_data = [];
-						} else {
-							this.license_data_api = response.paging.entities;
-							this.no_licenses = false;
-
-							this.license_data_api.map((i) => {
-								if (i.appVersion) {
-									i.apps = JSON.parse(i.appVersion);
-								} else {
-									i.apps = null;
-								}
-							});
-							this.paging_data_license = response.paging;
-							const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
-							this.license_data = mappedLicenses;
-							this.license_filtered_data = mappedLicenses;
-						}
-
-						this.initial_load_license = false;
-						this.searching_license = false;
-					},
-					(error) => {
-						this.no_licenses = true;
-						this.license_data = [];
-						this.license_filtered_data = [];
-						this.initial_load_license = false;
-						this.searching_license = false;
-					}
-				)
-		);
+        this.subscription.add(
+            this._license.sort_license_by_dealer_id(
+                this.dealer_id,
+                page,
+                this.search_data_license,
+                this.sort_column,
+                this.sort_order,
+                15,
+                this.filters.status,
+                '',
+                this.filters.activated,
+                '',
+                this.filters.zone,
+                this.filters.host,
+                this.filters.assigned,
+                this.filters.pending,
+                this.filters.online,
+                this.filters.isactivated
+            ).subscribe(
+                (response: { paging; statistics; message }) => {
+                    this.setLicensesData(response);
+                },
+                (error) => {
+                    this.no_licenses = true;
+                    this.license_data = [];
+                    this.license_filtered_data = [];
+                    this.initial_load_license = false;
+                    this.searching_license = false;
+                }
+            )
+        )
 	}
+
+    setLicensesData(response) {
+        if (response.message) {
+            if (this.search_data_license == '') {
+                this.no_licenses = true;
+            }
+
+            this.license_data = [];
+            this.license_filtered_data = [];
+        } else {
+            this.license_data_api = response.paging.entities;
+            this.no_licenses = false;
+
+            this.license_data_api.map((i) => {
+                if (i.appVersion) {
+                    i.apps = JSON.parse(i.appVersion);
+                } else {
+                    i.apps = null;
+                }
+            });
+            this.paging_data_license = response.paging;
+            const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
+            this.license_data = mappedLicenses;
+            this.license_filtered_data = mappedLicenses;
+        }
+
+        this.initial_load_license = false;
+        this.searching_license = false;
+    }
 
 	getLicenseTotalCount(id): void {
-		this.subscription.add(
-			this._license.get_licenses_total_by_dealer(id).subscribe(
-				(data: any) => {
-					this.license_card = {
-						basis: data.total,
-						basis_label: 'Licenses',
-						basis_sub_label: 'Current Count',
-						good_value: data.totalAssigned,
-						good_value_label: 'Assigned',
-						bad_value: data.totalUnAssigned,
-						bad_value_label: 'Unassigned',
-						breakdown1_value: data.totalOnline,
-						breakdown1_label: 'Online',
-						breakdown2_value: data.totalOffline,
-						breakdown2_label: 'Offline',
-						breakdown3_value: data.totalPending,
-						breakdown3_label: 'Pending',
-						breakdown4_sub_label: 'Connection Status Breakdown :',
-						breakdown4_value: data.totalLan,
-						breakdown4_label: 'LAN',
-						breakdown5_value: data.totalWifi,
-						breakdown5_label: 'WIFI',
-						third_value: data.totalPending,
-						third_value_label: 'Pending',
-						fourth_value: data.totalDisabled,
-						fourth_value_label: 'Inactive',
-
-						ad_value: data.totalAd,
-						ad_value_label: 'Ad',
-						menu_value: data.totalMenu,
-						menu_value_label: 'Menu',
-						closed_value: data.totalClosed,
-						closed_value_label: 'Closed',
-						unassigned_value: data.totalUnassignedScreenCount,
-						unassigned_value_label: 'Unassigned'
-					};
-
-					if (this.license_card) {
-						this.temp_label.push(this.license_card.ad_value_label + ': ' + this.license_card.ad_value);
-						this.temp_label.push(this.license_card.menu_value_label + ': ' + this.license_card.menu_value);
-						this.temp_label.push(this.license_card.closed_value_label + ': ' + this.license_card.closed_value);
-						this.temp_label.push(this.license_card.unassigned_value_label + ': ' + this.license_card.unassigned_value);
-						this.temp_array_value.push(this.license_card.ad_value);
-						this.temp_array_value.push(this.license_card.menu_value);
-						this.temp_array_value.push(this.license_card.closed_value);
-						this.temp_array_value.push(this.license_card.unassigned_value);
-					}
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-		);
+        this.subscription.add(
+            this._license.get_licenses_total_by_dealer(id).subscribe(
+                (data: any) => {
+                    this.setLicensesCount(data)
+                }
+            )
+        );
 	}
+
+    setLicensesCount(data) {
+        this.license_card = {
+            basis: data.total,
+            basis_label: 'Licenses',
+            basis_sub_label: 'Current Count',
+            good_value: data.totalAssigned,
+            good_value_label: 'Assigned',
+            bad_value: data.totalUnAssigned,
+            bad_value_label: 'Unassigned',
+            breakdown1_value: data.totalOnline,
+            breakdown1_label: 'Online',
+            breakdown2_value: data.totalOffline,
+            breakdown2_label: 'Offline',
+            breakdown3_value: data.totalPending,
+            breakdown3_label: 'Pending',
+            breakdown4_sub_label: 'Connection Status Breakdown :',
+            breakdown4_value: data.totalLan,
+            breakdown4_label: 'LAN',
+            breakdown5_value: data.totalWifi,
+            breakdown5_label: 'WIFI',
+            third_value: data.totalPending,
+            third_value_label: 'Pending',
+            fourth_value: data.totalDisabled,
+            fourth_value_label: 'Inactive',
+
+            ad_value: data.totalAd,
+            ad_value_label: 'Ad',
+            menu_value: data.totalMenu,
+            menu_value_label: 'Menu',
+            closed_value: data.totalClosed,
+            closed_value_label: 'Closed',
+            unassigned_value: data.totalUnassignedScreenCount,
+            unassigned_value_label: 'Unassigned'
+        };
+
+        if (this.license_card) {
+            this.temp_label.push(this.license_card.ad_value_label + ': ' + this.license_card.ad_value);
+            this.temp_label.push(this.license_card.menu_value_label + ': ' + this.license_card.menu_value);
+            this.temp_label.push(this.license_card.closed_value_label + ': ' + this.license_card.closed_value);
+            this.temp_label.push(this.license_card.unassigned_value_label + ': ' + this.license_card.unassigned_value);
+            this.temp_array_value.push(this.license_card.ad_value);
+            this.temp_array_value.push(this.license_card.menu_value);
+            this.temp_array_value.push(this.license_card.closed_value);
+            this.temp_array_value.push(this.license_card.unassigned_value);
+        }
+    }
 
 	hostFilterData(e): void {
 		if (e) {
@@ -949,67 +976,84 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	getDealers(e) {
 		this.loading_data = true;
-		if (e > 1) {
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-					data.dealers.map((i) => {
-						this.dealers.push(i);
-					});
-					this.paging = data.paging;
-					this.loading_data = false;
-				})
-			);
-		} else {
-			if (this.is_search) {
-				this.loading_search = true;
-			}
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-					this.dealers = data.dealers;
-					this.dealers_data = data.dealers;
-					this.paging = data.paging;
-					this.loading_data = false;
-					this.loading_search = false;
-				})
-			);
-		}
+        if (e > 1) {
+            this.subscription.add(
+                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+                    this.setDealersDropdownDataWithPage(data);
+                })
+            );
+        } else {
+            if (this.is_search) {
+                this.loading_search = true;
+            }
+            this.subscription.add(
+                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+                    this.setDealersDropdownData(data);
+                })
+            );
+        }
 	}
+
+    setDealersDropdownDataWithPage(data) {
+        data.dealers.map((i) => {
+            this.dealers.push(i);
+        });
+        this.paging = data.paging;
+        this.loading_data = false;
+    }
+
+    setDealersDropdownData(data) {
+        this.dealers = data.dealers;
+        this.dealers_data = data.dealers;
+        this.paging = data.paging;
+        this.loading_data = false;
+        this.loading_search = false;
+    }
 
 	getDealerLicenseZone(page) {
 		this.searching_license_zone = true;
-		this.subscription.add(
-			this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
-				(data) => {
-					if (data) {
-						this.initial_load_zone = false;
-						this.searching_license_zone = false;
-						this.paging_data_zone = data;
-						if (data.entities.length > 0) {
-							const licenseContents = this.license_zone_mapToUI(data.entities);
-							this.license_zone_data = [...licenseContents];
-							this.license_zone_filtered_data = [...licenseContents];
-							this.no_license_zone = false;
-						} else {
-							if (this.search_data_license_zone == '') {
-								this.no_license_zone = true;
-							}
-							this.license_zone_data = [];
-							this.license_zone_filtered_data = [];
-						}
-					}
-				},
-				(error) => {
-					this.initial_load_zone = false;
-					this.searching_license_zone = false;
-					this.license_zone_data = [];
-					this.license_zone_filtered_data = [];
-				}
-			)
-		);
+        this.subscription.add(
+            this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
+                (data) => {
+                    this.setZoneData(data)
+                },
+                (error) => {
+                    this.initial_load_zone = false;
+                    this.searching_license_zone = false;
+                    this.license_zone_data = [];
+                    this.license_zone_filtered_data = [];
+                }
+            )
+        );
 	}
 
+    setZoneData(data) {
+        if (data) {
+            this.initial_load_zone = false;
+            this.searching_license_zone = false;
+            this.paging_data_zone = data;
+            if (data.entities.length > 0) {
+                const licenseContents = this.license_zone_mapToUI(data.entities);
+                this.license_zone_data = [...licenseContents];
+                this.license_zone_filtered_data = [...licenseContents];
+                this.no_license_zone = false;
+            } else {
+                if (this.search_data_license_zone == '') {
+                    this.no_license_zone = true;
+                }
+                this.license_zone_data = [];
+                this.license_zone_filtered_data = [];
+            }
+        }
+    }
+
 	async dealerSelected(id: string): Promise<void> {
-		await this._router.navigate([`/${this.current_role}/dealers/${id}`]);
+        if(this.current_role === 'dealeradmin') {
+            await this._router.navigate([`/administrator/dealers/${id}`]);
+        } else {
+            await this._router.navigate([`/${this.current_role}/dealers/${id}`]);
+        }
+		
 		this.getLicenseStatisticsByDealer(id, true);
 	}
 
@@ -1209,21 +1253,25 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getDealerLicenses() {
-		this.subscription.add(
-			this._license.get_license_to_export(this.dealer_id).subscribe((data) => {
-				data.licenses.map((i) => {
-					i.new_status = this.checkStatusForExport(i);
-					if (i.appVersion) {
-						i.apps = JSON.parse(i.appVersion);
-					} else {
-						i.apps = null;
-					}
-				});
-				this.licenses = data.licenses;
-				if (this.licenses) this.resyncSocketConnection();
-			})
-		);
+        this.subscription.add(
+            this._license.get_license_to_export(this.dealer_id).subscribe((data) => {
+                this.setDealerAllLicenses(data);
+            })
+        );
 	}
+
+    setDealerAllLicenses(data) {
+        data.licenses.map((i) => {
+            i.new_status = this.checkStatusForExport(i);
+            if (i.appVersion) {
+                i.apps = JSON.parse(i.appVersion);
+            } else {
+                i.apps = null;
+            }
+        });
+        this.licenses = data.licenses;
+        if (this.licenses) this.resyncSocketConnection();
+    }
 
 	resyncSocketConnection() {
 		this.licenses.forEach((i) => {
@@ -1544,7 +1592,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						column: 'TimeIn',
 						order: 'desc'
 					};
-					// this.getColumnsAndOrder(filter, 'licenses')
 				} else {
 					this.sortList('desc');
 				}
@@ -1557,7 +1604,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			case 'activated':
 				this.resetFilterStatus();
 				this.filters.status = '';
-				// this.filters.activated = value;
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';

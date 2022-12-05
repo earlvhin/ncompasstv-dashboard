@@ -28,8 +28,14 @@ export class BaseService {
 	protected getRequest(endpoint: string, options: any = null): Observable<any> {
 		let headers = this.headers;
 		if (options) headers = { ...this.headers, ...options };
-		const url = `${this.baseUri}${endpoint}`;
-		return this._http.get(url, headers);
+        if(this._auth.current_role === 'dealeradmin') {
+            const new_endpoint = 'dealeradmin/' + endpoint;
+            const url = `${this.baseUri}${new_endpoint}`;
+            return this._http.get(url, headers);
+        } else {
+            const url = `${this.baseUri}${endpoint}`;
+            return this._http.get(url, headers);
+        }
 	}
 
 	protected postRequest(endpoint: string, body: object, options: any = null): Observable<any> {

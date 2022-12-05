@@ -264,14 +264,14 @@
                                                         <span class="fas fa-trash-alt"></span> 
                                                         <span class="ml-2 button_text_animation">Multiple Delete <span class="xsm-text" *ngIf="array_to_delete.length > 0">( {{array_to_delete.length}} licenses )</span></span>
                                                     </button>
-    
+
                                                     <button mat-button mat-raised-button
-                                                    class="theme-btn pi-control sm-text _primary mr-2" 
-                                                    (click)="exportTable('Licenses')"
-                                                    [disabled]="workbook_generation"  
-                                                    title="Export to CSV">
-                                                        <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                                                        <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
+                                                        class="theme-btn pi-control sm-text _primary mr-2" 
+                                                        (click)="exportTable('Licenses')"
+                                                        [disabled]="workbook_generation"  
+                                                        title="Export to CSV">
+                                                            <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
+                                                            <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
                                                     </button>
                                                 </ng-container>
                                             </div>
@@ -495,7 +495,7 @@
                             
                         </mat-tab>
 
-                        <mat-tab label="Billing">
+                        <mat-tab label="Billing" *ngIf="!is_dealer_admin">
                             <div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
                                 <div class="theme-container">
                                     <div class="row">
