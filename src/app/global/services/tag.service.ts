@@ -1,8 +1,10 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
 import { CREATE_AND_ASSIGN_TAG, API_FILTERS, OWNER, PAGING, TAG, TAG_OWNER } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -13,6 +15,10 @@ export class TagService extends BaseService {
 	onRefreshTagsTable = new EventEmitter<void>();
 	onRefreshTagOwnersTable = new EventEmitter<void>();
 	onSearch = new EventEmitter<string>();
+
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	assignTags(owners: { ownerId: string; tagTypeId: string }[], tagIds: string[]) {
 		const body = { owners, tagIds };

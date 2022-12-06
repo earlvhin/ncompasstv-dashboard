@@ -1,16 +1,20 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
 import { API_DEALER, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
 	providedIn: 'root'
 })
-
 export class HostService extends BaseService {
-
 	onUpdateBusinessHours = new EventEmitter<boolean>();
+
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	add_host(data: any) {
 		const url = this.creators.api_new_host;
@@ -48,13 +52,13 @@ export class HostService extends BaseService {
 		const url = `${this.getters.export_hosts}${id}`;
 		return this.getRequest(url);
 	}
-	
-    get_licenses_per_state() {
+
+	get_licenses_per_state() {
 		const url = this.getters.api_get_host_licenses_by_state;
 		return this.getRequest(url);
 	}
-    
-    get_all_dma(page: number, keyword: string, pageSize = 15): Observable<{ paging: PAGING }> {
+
+	get_all_dma(page: number, keyword: string, pageSize = 15): Observable<{ paging: PAGING }> {
 		const url = `${this.getters.api_get_dma}?page=${page}&search=${keyword}&pageSize=${pageSize}`;
 		return this.getRequest(url);
 	}
@@ -63,15 +67,15 @@ export class HostService extends BaseService {
 		const url = `${this.getters.dma_hosts_by_rank}?dmaRank=${rank}&dmaCode=${code}&dmaName=${encodeURIComponent(name)}&pageSize=0`;
 		return this.getRequest(url);
 	}
-    
-    get_licenses_per_state_details(state: string) {
+
+	get_licenses_per_state_details(state: string) {
 		const url = `${this.getters.api_get_host_licenses_by_state_details}${state}`;
-		return this.getRequest(url).map(data => data.dealerState);
+		return this.getRequest(url).map((data) => data.dealerState);
 	}
 
 	/**
 	 * @description Get all the contents assigned to a host
-	 * @param hostId 
+	 * @param hostId
 	 * @returns Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string }>
 	 */
 	get_contents(hostId: string, page = 1) {
@@ -86,34 +90,34 @@ export class HostService extends BaseService {
 
 	/**
 	 * @description Get all files of a host by type. Type 1 is images and 2 is for documents.
-	 * @param hostId: string 
+	 * @param hostId: string
 	 * @param type: number = 1 (images) | 2 (documents)
 	 * @param page: number
 	 * @returns PAGING
 	 */
 	get_files_by_type(hostId: string, type = 1, page = 1): Observable<PAGING> {
 		const base = `${this.getters.host_files}`;
-		const params = this.setUrlParams({ hostId, type, page })
+		const params = this.setUrlParams({ hostId, type, page });
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
 	get_host(): Observable<API_HOST> {
 		const url = `${this.getters.api_get_hosts}`;
-		return this.getRequest(url).map(data => data.host);
+		return this.getRequest(url).map((data) => data.host);
 	}
 
-    get_host_statistics(dealerId?: string, startDate?: string, endDate?: string) {
+	get_host_statistics(dealerId?: string, startDate?: string, endDate?: string) {
 		const url = `${this.getters.api_get_hosts_statistics}?dealerid=${dealerId}&startdate=${startDate}&enddate=${endDate}`;
 		return this.getRequest(url);
 	}
-	
+
 	get_host_search(key: string) {
-		const url = `${this.getters.api_get_hosts}`+'?search='+`${key}`;
+		const url = `${this.getters.api_get_hosts}` + '?search=' + `${key}`;
 		return this.getRequest(url);
 	}
 
-	get_host_categories(page: number, key: string, dealerId: string, pageSize= 15) {
+	get_host_categories(page: number, key: string, dealerId: string, pageSize = 15) {
 		const url = `${this.getters.api_get_hosts_categories}?search=${key}&page=${page}&pageSize=${pageSize}&dealerId=${dealerId}`;
 		return this.getRequest(url);
 	}
@@ -122,65 +126,89 @@ export class HostService extends BaseService {
 		const url = `${this.getters.api_get_hosts_states}?search=${key}&page=${page}&pageSize=${pageSize}&dealerId=${dealerId}`;
 		return this.getRequest(url);
 	}
-	
+
 	get_host_by_page(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15) {
-        const base = `${this.getters.api_get_hosts}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
-	}
-	
-    get_host_fetch(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15): Observable<{ host?: any[], paging?: PAGING, message?: string }> {
-        const base = `${this.getters.api_get_hosts_fetch}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
-	}
-    
-    get_host_fetch_export(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15): Observable<{ host?: any[], paging?: PAGING, message?: string }> {
-        const base = `${this.getters.api_get_hosts_fetch_for_export}`;
+		const base = `${this.getters.api_get_hosts}`;
 		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
-	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15): Observable<{ paging?: PAGING, message?: string }> {
-        let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}`;	
-		
+	get_host_fetch(
+		page: number,
+		search: string,
+		sortColumn = '',
+		sortOrder = '',
+		pageSize = 15
+	): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_hosts_fetch}`;
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
+	}
+
+	get_host_fetch_export(
+		page: number,
+		search: string,
+		sortColumn = '',
+		sortOrder = '',
+		pageSize = 15
+	): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_hosts_fetch_for_export}`;
+		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
+	}
+
+	get_host_by_dealer_id(id: any, page: number, key: string, pageSize = 15): Observable<{ paging?: PAGING; message?: string }> {
+		let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}`;
+
 		if (key && key.trim().length > 0) {
 			const search = encodeURIComponent(key);
-			url += `&search=${search}`
+			url += `&search=${search}`;
 		}
 
 		return this.getRequest(url);
-		
 	}
-	
-    get_host_by_dealer_id_locator(id: any, page: number, key: string, pageSize = 15, pending = false): Observable<{ paging?: PAGING, message?: string }> {
-        let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}&pending=${pending}`;
-		
+
+	get_host_by_dealer_id_locator(
+		id: any,
+		page: number,
+		key: string,
+		pageSize = 15,
+		pending = false
+	): Observable<{ paging?: PAGING; message?: string }> {
+		let url = `${this.getters.api_get_host_by_dealer}${id}&page=${page}&pageSize=${pageSize}&pending=${pending}`;
+
 		if (key && key.trim().length > 0) {
 			const search = encodeURIComponent(key);
-			url += `&search=${search}`
+			url += `&search=${search}`;
 		}
 
 		return this.getRequest(url);
-		
 	}
 
-    get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
+	get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
 		const base = `${this.getters.api_get_host_by_id_optimized}`;
 		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
-	
+
 	get_host_for_dealer_id(id: string): Observable<API_HOST[]> {
 		const url = `${this.getters.api_get_host_for_dealer}${id}`;
 		return this.getRequest(url);
 	}
 
-	get_host_by_id(id: string): Observable<{ message?: string, host?: API_HOST, hostTags?: TAG[], dealer?: API_DEALER, dealerTags?: TAG[], timezone?: API_TIMEZONE, fieldGroups?: any[] }> {
+	get_host_by_id(id: string): Observable<{
+		message?: string;
+		host?: API_HOST;
+		hostTags?: TAG[];
+		dealer?: API_DEALER;
+		dealerTags?: TAG[];
+		timezone?: API_TIMEZONE;
+		fieldGroups?: any[];
+	}> {
 		const url = `${this.getters.api_get_host_by_id}${id}`;
 		return this.getRequest(url);
 	}
@@ -194,7 +222,7 @@ export class HostService extends BaseService {
 		const url = `${this.updaters.api_update_host}`;
 		return this.postRequest(url, data);
 	}
-	
+
 	get_time_zones(): Observable<API_TIMEZONE[]> {
 		const url = `${this.getters.api_get_timezone}`;
 		return this.getRequest(url);
@@ -205,7 +233,7 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-    get_host_via_dma(rank: number, code: string, name: string): Observable<{ paging: PAGING }> {
+	get_host_via_dma(rank: number, code: string, name: string): Observable<{ paging: PAGING }> {
 		const url = `${this.getters.api_get_dma_hosts}?dmaRank=${rank}&dmaCode=${code}&dmaName=${encodeURIComponent(name)}&pageSize=0`;
 		return this.getRequest(url);
 	}
@@ -240,5 +268,4 @@ export class HostService extends BaseService {
 		const url = this.creators.host_s3_files;
 		return this.postRequest(url, body);
 	}
-
 }

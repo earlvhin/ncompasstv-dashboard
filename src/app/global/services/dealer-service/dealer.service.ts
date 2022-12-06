@@ -1,10 +1,18 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { API_DEALER, API_EXPORT_DEALER, API_DEALER_VALUES, API_FILTERS, PAGING } from 'src/app/global/models';
-import { API_CREDIT_CARD_DETAILS } from '../../models/api_credit-card-details.model';
-import { UI_CREDIT_CARD_DETAILS } from '../../models/ui_credit-card-details.model';
+import {
+	API_CREDIT_CARD_DETAILS,
+	API_DEALER,
+	API_EXPORT_DEALER,
+	API_DEALER_VALUES,
+	API_FILTERS,
+	PAGING,
+	UI_CREDIT_CARD_DETAILS
+} from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
 @Injectable({
@@ -13,6 +21,10 @@ import { BaseService } from '../base.service';
 export class DealerService extends BaseService {
 	onSuccessReassigningDealer = new EventEmitter<null>();
 	onDealerDataLoaded = new EventEmitter<{ email: string }>();
+
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	api_get_dealer_total() {
 		return this.getRequest(`${this.getters.api_get_dealer_total}`);
@@ -67,10 +79,15 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15): Observable<{ paging?: PAGING, dealers: API_DEALER[], message?: string }> {
-
+	get_dealers_with_advertiser(
+		page: number,
+		search: string,
+		sortColumn?: string,
+		sortOrder?: string,
+		pageSize = 15
+	): Observable<{ paging?: PAGING; dealers: API_DEALER[]; message?: string }> {
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
-		const paramsToSet: { page: number, search: string, pageSize: number, sortColumn?: string, sortOrder?: string } = { page, search, pageSize };
+		const paramsToSet: { page: number; search: string; pageSize: number; sortColumn?: string; sortOrder?: string } = { page, search, pageSize };
 
 		if (sortColumn) paramsToSet.sortColumn = sortColumn;
 
@@ -79,7 +96,6 @@ export class DealerService extends BaseService {
 		const params = this.setUrlParams(paramsToSet, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
-
 	}
 
 	get_dealers_with_license(page: number, key: string) {
@@ -88,7 +104,7 @@ export class DealerService extends BaseService {
 	}
 
 	get_dealers_with_page(page: number, key: string, pageSize = 15): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
-		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}`+ '&pageSize=' + `${pageSize}`);
+		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}` + '&pageSize=' + `${pageSize}`);
 	}
 
 	get_dealers_with_sort(
@@ -122,8 +138,8 @@ export class DealerService extends BaseService {
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
-	
-    get_dealers_fetch(
+
+	get_dealers_fetch(
 		page: number,
 		search: string,
 		sortColumn: string,
@@ -243,5 +259,4 @@ export class DealerService extends BaseService {
 	upload_territory_files(data) {
 		return this.postRequest(`${this.creators.dealer_territory_files}`, data);
 	}
-
 }

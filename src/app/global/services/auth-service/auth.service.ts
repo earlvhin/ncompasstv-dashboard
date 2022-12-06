@@ -6,9 +6,8 @@ import { UI_CURRENT_USER } from '../../models/ui_current-user.model';
 import { tokenNotExpired } from 'angular2-jwt';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { JWT_TOKEN, USER_LOGIN } from '../../models/api_user.model';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
 
+import { JWT_TOKEN, UI_ROLE_DEFINITION, USER_LOGIN } from 'src/app/global/models';
 @Injectable({
 	providedIn: 'root'
 })

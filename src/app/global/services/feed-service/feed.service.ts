@@ -13,6 +13,9 @@ import { environment } from 'src/environments/environment';
 	providedIn: 'root'
 })
 export class FeedService extends BaseService {
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 	// token = JSON.parse(localStorage.getItem('tokens'));
 
 	// httpOptions = {
@@ -43,8 +46,8 @@ export class FeedService extends BaseService {
 	// }
 
 	get_feeds(page, key, column?, order?) {
-        const base = `${this.getters.api_get_feeds}`;
-        const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
+		const base = `${this.getters.api_get_feeds}`;
+		const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -74,7 +77,7 @@ export class FeedService extends BaseService {
 	// 		.map((data: any) => data.fillers);
 	// }
 
-    // Disabled Talaga
+	// Disabled Talaga
 	// get_search_feeds(key: string) {
 	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_feeds}`+'?search='+`${key}`, this.httpOptions);
 	// }
@@ -86,7 +89,7 @@ export class FeedService extends BaseService {
 	// }
 
 	get_feeds_total() {
-        return this.getRequest(`${this.getters.api_get_feeds_total}`);
+		return this.getRequest(`${this.getters.api_get_feeds_total}`);
 	}
 
 	// get_feeds_total_by_dealer(id) {
