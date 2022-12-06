@@ -59,18 +59,24 @@ export class DealerService extends BaseService {
 		);
 	}
 
-	get_dealers_with_host(page: number, search: string) {
+	get_dealers_with_host(page: number, search: string, pending = false) {
 		const filters: API_FILTERS = { page, search };
+		if (pending) filters.pending = 'true';
 		const base = `${this.getters.api_get_dealers_with_host}`;
 		const params = this.setUrlParams(filters);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_advertiser(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15): Observable<{ paging?: PAGING, dealers: API_DEALER[], message?: string }> {
-
+	get_dealers_with_advertiser(
+		page: number,
+		search: string,
+		sortColumn?: string,
+		sortOrder?: string,
+		pageSize = 15
+	): Observable<{ paging?: PAGING; dealers: API_DEALER[]; message?: string }> {
 		const base = `${this.getters.api_get_dealers_with_advertiser}`;
-		const paramsToSet: { page: number, search: string, pageSize: number, sortColumn?: string, sortOrder?: string } = { page, search, pageSize };
+		const paramsToSet: { page: number; search: string; pageSize: number; sortColumn?: string; sortOrder?: string } = { page, search, pageSize };
 
 		if (sortColumn) paramsToSet.sortColumn = sortColumn;
 
@@ -79,7 +85,6 @@ export class DealerService extends BaseService {
 		const params = this.setUrlParams(paramsToSet, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
-
 	}
 
 	get_dealers_with_license(page: number, key: string) {
@@ -122,8 +127,8 @@ export class DealerService extends BaseService {
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
-	
-    get_dealers_fetch(
+
+	get_dealers_fetch(
 		page: number,
 		search: string,
 		sortColumn: string,
@@ -201,7 +206,7 @@ export class DealerService extends BaseService {
 	}
 
 	get_search_dealer_with_host(key: string) {
-		return this.getRequest(`${this.getters.api_search_dealer_with_host}${key}`);
+		return this.getRequest(`${this.getters.api_search_dealer_with_host}${key}&pending=true`);
 	}
 
 	get_dealer_report(data) {
@@ -243,5 +248,4 @@ export class DealerService extends BaseService {
 	upload_territory_files(data) {
 		return this.postRequest(`${this.creators.dealer_territory_files}`, data);
 	}
-
 }

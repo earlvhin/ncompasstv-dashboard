@@ -46,7 +46,7 @@ export class API_HOST {
 	venueType: string;
 	vistarVenuId: any;
 	parsedStoreHours?: any;
-    icon_url?: any;
+	iconUrl?: string;
 }
 
 export class API_SINGLE_HOST {
