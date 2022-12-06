@@ -22,7 +22,6 @@ export class BaseService {
 	constructor(private _auth: AuthService, private _http: HttpClient) {}
 
 	protected get currentUser() {
-        console.log("AUTH", this._auth)
 		return this._auth.current_user_value;
 	}
 
@@ -70,7 +69,7 @@ export class BaseService {
 		return environment.delete;
 	}
 
-	protected setUrlParams(filters: API_FILTERS, enforceTagSearchKey = false, allowBlanks = false) {
+	protected setUrlParams(filters: any, enforceTagSearchKey = false, allowBlanks = false) {
 		let result = '';
 		Object.keys(filters).forEach((key) => {
 			if (!allowBlanks && (typeof filters[key] === 'undefined' || !filters[key])) return;

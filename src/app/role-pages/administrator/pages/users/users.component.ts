@@ -4,8 +4,8 @@ import { MatDialog } from '@angular/material';
 import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { HelperService, RoleService, UserService } from 'src/app/global/services';
-import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE } from 'src/app/global/models';
+import { HelperService, RoleService, UserService, AuthService } from 'src/app/global/services';
+import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -19,9 +19,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 	current_role_selected: string;
 	filtered_data = [];
 	initial_load = true;
+    is_dealer_admin: boolean = false;
 	no_user: boolean = false;
 	paging_data: any;
-	roles: USER_ROLE[] = [];
+	roles: any = [];
 	searching = false;
 	title: string = 'Users';
 	users: UI_TABLE_USERS[] = [];
@@ -46,10 +47,14 @@ export class UsersComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _helper: HelperService,
 		private _role: RoleService,
-		private _user: UserService
+		private _user: UserService,
+        private _auth: AuthService
 	) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true
+        }
 		this.getUserTotal();
 		this.getAllusers();
 		this.getAllUserRoles();
@@ -93,7 +98,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this._user.get_users_by_filters(this.current_filters).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					if (!response.paging.entities) {
+					if (response.message) {
 						this.filtered_data = [];
 						if (this.current_filters.search === '') this.no_user = true;
 						return;
@@ -147,7 +152,17 @@ export class UsersComponent implements OnInit, OnDestroy {
 				map((roles) => roles.filter((role) => role.roleName.toLowerCase() !== 'admin'))
 			)
 			.subscribe(
-				(response) => (this.roles = response),
+				(response) => {
+                    if(this.is_dealer_admin) {
+                        console.log(response)
+                        this.roles = response.filter(function( user ) {
+                            return (user.roleId !== UI_ROLE_DEFINITION.tech && user.roleId !== UI_ROLE_DEFINITION.dealeradmin && user.roleId !== UI_ROLE_DEFINITION.administrator && user.roleId !== UI_ROLE_DEFINITION.guest);
+                          })
+                    } else {
+                        this.roles = response
+                    }
+                    
+                },
 				(error) => {
 					throw new Error(error);
 				}

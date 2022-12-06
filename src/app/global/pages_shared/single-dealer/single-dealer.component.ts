@@ -584,8 +584,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
 	getDealerUserData(id): void {
+        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
 		this.subscription.add(
-			this._user.get_user_alldata_by_id(id).subscribe(
+			this._user.get_user_alldata_by_id(id, isAdmin).subscribe(
 				(data) => {
 					data.dealer[0].tags = this.dealer.tags;
 					this.dealer_user_data = Object.assign({}, data.user, data.dealer[0]);
