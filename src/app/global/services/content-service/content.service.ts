@@ -1,186 +1,153 @@
 import { EventEmitter, Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
 
-import { AuthService } from '../auth-service/auth.service';
-import { environment } from 'src/environments/environment';
 import { API_CONTENT, API_SCREEN_ZONE_PLAYLISTS_CONTENTS, CREDITS_TO_SUBMIT, PAGING, PlaylistContentSchedule, UI_CONTENT } from 'src/app/global/models';
+import { BaseService } from '../base.service';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class ContentService {
-	token = JSON.parse(localStorage.getItem('tokens'));
+export class ContentService extends BaseService {
+	// token = JSON.parse(localStorage.getItem('tokens'));
 
-	httpOptions = {
-		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
-	};
+	// httpOptions = {
+	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
+	// };
 
 	onScheduleChanges = new EventEmitter<string>();
 
-	constructor(private _http: HttpClient, private _auth: AuthService) {}
+	// constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	create_content_schedule(data: PlaylistContentSchedule[]): Observable<any> {
-		return this._http.post<any>(`${environment.base_uri}${environment.create.content_schedule}`, data, this.httpOptions);
+        const url = `${this.updaters.content_schedule}`;
+		return this.postRequest(url, data);
 	}
 
 	get_all_contents() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}` + `?pageSize=0`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_assets}` + '?pageSize=0');
 	}
 
 	get_contents() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_assets}` + '?pageSize=0');
 	}
 
 	get_contents_temp(page: string, type: string, sort: string, dealerId: string, key: string, floating: boolean) {
-
-		const baseUrl = `${environment.base_uri}${environment.getters.api_get_assets}`;
-		const url =  `${baseUrl}?pageSize=30&page=${page}&fileCategory=${type}&sort=${sort}&dealerId=${dealerId}&search=${key}&floating=${floating}`;
-		return this._http.get<any>(url, this.httpOptions);
-		
+        return this.getRequest(`${this.getters.api_get_assets}` + '?pageSize=30&page=' + `${page}` + '&fileCategory=' + `${type}` + '&sort=' + `${sort}` + '&dealerId=' + `${dealerId}` + '&search=' + `${key}` + '&floating=' + `${floating}`);		
 	}
 
 	get_floating_contents(): Observable<{ iContents: API_CONTENT[], paging: PAGING }> {
-		const url = `${environment.base_uri}${environment.getters.api_get_assets}?pageSize=0&floating=true`;
-		return this._http.get<{ iContents: API_CONTENT[], paging: PAGING }>(url, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_assets}` + '?pageSize=0&floating=true');		
 	}
 
 	get_contents_with_page(page = 1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, feedId?, pageSize = 60) {
-		return this._http.get<{ iContents: API_CONTENT[]; paging: PAGING }>(
-			`${environment.base_uri}${environment.getters.api_get_assets}
-			?pageSize=${pageSize}
-			&page=${page}
-			&fileCategory=${type || ''}
-			&sort=${sort || ''}
-			&dealerId=${dealerId || ''}
-			&hostId=${hostId || ''}
-			&advertiserId=${advertiserId || ''}
-			&feedId=${feedId || ''}
-			&search=${key || ''}`,
-			this.httpOptions
-		);
+        const base = `${this.getters.api_get_assets}`;
+        const params = this.setUrlParams({ page, fileCategory: type, sort, dealerId, hostId, advertiserId, search: key, feedId, pageSize }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_contents_playing_where(id) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_content_playing_where}` + `?contentid=` + `${id}`,
-			this.httpOptions
-		);
+        return this.getRequest(`${this.getters.api_get_content_playing_where}` + '?contentid=' + `${id}`);		
 	}
 
 	get_contents_history(id, page) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_history}${id}&page=${page}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_content_history}${id}` + '&page=' + `${page}`);
 	}
 
 	get_contents_total() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_content_total}`);
 	}
 
 	get_contents_summary() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_summary}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_content_summary}`);
 	}
 
 	get_contents_total_by_dealer(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_total_by_dealer}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_content_total_by_dealer}${id}`);
 	}
 
 	get_content_by_id(contentId: string) {
-		return this._http
-			.get<{ content: API_CONTENT }>(`${environment.base_uri}${environment.getters.api_get_content_by_id}${contentId}`, this.httpOptions)
-			.map((data) => data.content);
+        return this.getRequest(`${this.getters.api_get_content_by_id}${contentId}`);
 	}
 
 	get_content_by_advertiser_id(data) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_content_by_advertiser_id}${data}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_content_by_advertiser_id}${data}`);
 	}
 	
 	get_content_by_dealer_id(data, floating?, page?, pageSize?): Observable<{ contents?: API_CONTENT[], paging?: PAGING, message?: string}> {
-		return this._http.get(`${environment.base_uri}${environment.getters.api_get_content_by_dealer_id}${data}&page=${page}&pageSize=${pageSize}`, this.httpOptions).map(data => data)
+        return this.getRequest(`${this.getters.api_get_content_by_dealer_id}${data}` + '&page=' + `${page}` + '&pageSize=' + `${pageSize}`);
 	}
 
 	get_content_metrics(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.getters.api_get_content_metrics}`, data, this.httpOptions);
+        const url = `${this.getters.api_get_content_metrics}`;
+		return this.postRequest(url, data);
 	}
 
 	get_content_count_by_license(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_count_by_license}`, data, this.httpOptions)
-			.map((data) => data.iContents);
+        const url = `${this.getters.api_get_content_count_by_license}`;
+		return this.postRequest(url, data).map((data) => data.iContents);
 	}
 
 	get_content_daily_count_by_license(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_hourly_by_license}`, data, this.httpOptions)
-			.map((data) => data.iContents);
+        const url = `${this.getters.api_get_content_hourly_by_license}`;
+		return this.postRequest(url, data).map((data) => data.iContents);
 	}
 
 	get_content_monthly_count_by_license(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count_by_license}`, data, this.httpOptions)
-			.map((data) => data.iContents);
+        const url = `${this.getters.api_get_content_monthly_count_by_license}`;
+		return this.postRequest(url, data).map((data) => data.iContents);
 	}
 
 	get_content_yearly_count_by_license(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count_by_license}`, data, this.httpOptions)
-			.map((data) => data.contentList);
+        const url = `${this.getters.api_get_content_yearly_count_by_license}`;
+		return this.postRequest(url, data).map((data) => data.contentList);
 	}
 
 	get_content_monthly_count(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_monthly_count}`, data, this.httpOptions)
-			.map((data) => data.iContents[0]);
+        const url = `${this.getters.api_get_content_monthly_count}`;
+		return this.postRequest(url, data).map((data) => data.iContents[0]);
 	}
 
 	get_content_daily_count(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_daily_count}`, data, this.httpOptions)
-			.map((data) => data.iContents[0]);
+        const url = `${this.getters.api_get_content_daily_count}`;
+		return this.postRequest(url, data).map((data) => data.iContents[0]);
 	}
 
 	get_content_yearly_count(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_yearly_count}`, data, this.httpOptions)
-			.map((data) => data.iContents[0]);
+        const url = `${this.getters.api_get_content_yearly_count}`;
+		return this.postRequest(url, data).map((data) => data.iContents[0]);
 	}
 
 	get_content_metrics_export(data) {
-		return this._http
-			.post<any>(`${environment.base_uri}${environment.getters.api_get_content_metrics_export}`, data, this.httpOptions)
-			.map((data) => data);
+        const url = `${this.getters.api_get_content_metrics_export}`;
+		return this.postRequest(url, data).map((data) => data);
 	}
 
 	get_content_by_license_id(id: string) {
-
-		const url = `${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`;
-
-		return this._http.get<{ screenZonePlaylistsContents: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[] }>(url, this.httpOptions)
-			.map(response => response.screenZonePlaylistsContents);
+        return this.getRequest(`${this.getters.api_get_content_by_license_zone}${id}`).map(response => response.screenZonePlaylistsContents);
+		// const url = `${environment.base_uri}${environment.getters.api_get_content_by_license_zone}${id}`;
+		// return this._http.get<{ screenZonePlaylistsContents: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[] }>(url, this.httpOptions).map(response => response.screenZonePlaylistsContents);
 
 	}
 
 	generate_content_logs_report(data: { contentId: string; start: string; end: string }) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_generate_content_logs_report}
-		?contentId=${data.contentId}&startDate=${data.start}&endDate=${data.end}`,
-			this.httpOptions
-		);
+        return this.getRequest(`${this.getters.api_generate_content_logs_report}` + '?contentId=' + `${data.contentId}` + '&startDate=' + `${data.start}` + '&endDate=' + `${data.end}`);
 	}
 
 	update_content_protection(body: { contentId: string; isProtected: 0 | 1 }) {
-		const url = `${environment.base_uri}${environment.update.content_protection}`;
-		return this._http.post(url, body);
+        const url = `${this.updaters.content_protection}`;
+		return this.postRequest(url, body);
 	}
 
 	update_content_schedule(data: PlaylistContentSchedule): Observable<any> {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.content_schedule}`, data, this.httpOptions);
+        const url = `${this.updaters.content_schedule}`;
+		return this.postRequest(url, data);
 	}
 
 	update_content_to_filler(body: { contentId: string; isFiller: boolean }) {
-		const base = environment.base_uri;
-		const endpoint = `${base}${environment.update.content_to_filler}`;
-		return this._http.post<{ data: UI_CONTENT; message?: string }>(endpoint, body);
+        const url = `${this.updaters.content_to_filler}`;
+		return this.postRequest(url, body);
 	}
 
 	sort_ascending(files) {
@@ -234,7 +201,8 @@ export class ContentService {
 	}
 
 	reassignContent(data: { type: number; toId: string; contentIds: string[] }) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.reassign_content}`, data, this.httpOptions);
+        const url = `${this.updaters.reassign_content}`;
+		return this.postRequest(url, data);
 	}
 
 	removeFilenameHandle(file_name) {
@@ -242,37 +210,39 @@ export class ContentService {
 	}
 
 	remove_content(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_content}`, data, this.httpOptions);
+        const url = `${this.deleters.api_remove_content}`;
+		return this.postRequest(url, data);
 	}
 
 	revert_frequency(playlistContentId: string) {
-		const url = `${environment.base_uri}${environment.update.revert_frequency}`;
-		const body = { playlistContentId };
-		return this._http.post(url, body, this.httpOptions);
+        const url = `${this.updaters.revert_frequency}`;
+        const body = { playlistContentId };
+		return this.postRequest(url, body);
 	}
 
 	search_contents_via_api(key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_assets}` + `?search=` + `${key}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_assets}`+ '?search=' + `${key}`);
 	}
 
 	set_frequency(frequency: number, playlistContentId: string, playlistId: string) {
-		const url = `${environment.base_uri}${environment.update.set_content_frequency}`;
+		const url = `${this.updaters.set_content_frequency}`;
 		const body = { frequency, playlistContentId, playlistId };
-		return this._http.post(url, body, this.httpOptions);
+		return this.postRequest(url, body);
 	}
 
 	toggle_credits(playlistContentId: string, creditsEnabled = 1) {
-		const url = `${environment.base_uri}${environment.update.toggle_credits}`;
+        const url = `${this.updaters.toggle_credits}`;
 		const body = { playlistContentId, creditsEnabled };
-		return this._http.post(url, body, this.httpOptions);
+		return this.postRequest(url, body);
 	}
 
 	update_play_credits(data: CREDITS_TO_SUBMIT) {
-		const url = `${environment.base_uri}${environment.update.play_credits}`;
-		return this._http.post(url, data, this.httpOptions);
+        const url = `${this.updaters.play_credits}`;
+		return this.postRequest(url, data);
 	}
 
 	unassign_content(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.update.api_update_content}`, data, this.httpOptions);
+        const url = `${this.updaters.api_update_content}`;
+		return this.postRequest(url, data);
 	}
 }

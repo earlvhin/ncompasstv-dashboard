@@ -22,6 +22,7 @@ export class BaseService {
 	constructor(private _auth: AuthService, private _http: HttpClient) {}
 
 	protected get currentUser() {
+        console.log("AUTH", this._auth)
 		return this._auth.current_user_value;
 	}
 

@@ -291,7 +291,7 @@ export class HostsComponent implements OnInit {
 				{ value: h.hostId, link: null, editable: false, hidden: true, key: false },
 				{
 					value: h.hostName,
-					link: `/${this.currentRole}/hosts/${h.hostId}`,
+					link: `/administrator/hosts/${h.hostId}`,
 					new_tab_link: 'true',
 					compressed: true,
 					editable: false,
@@ -302,7 +302,7 @@ export class HostsComponent implements OnInit {
 				},
 				{
 					value: h.businessName ? h.businessName : '--',
-					link: `/${this.currentRole}/dealers/${h.dealerId}`,
+					link: `/administrator/dealers/${h.dealerId}`,
 					new_tab_link: 'true',
 					editable: false,
 					hidden: false

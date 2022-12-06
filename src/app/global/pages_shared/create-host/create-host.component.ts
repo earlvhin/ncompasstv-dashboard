@@ -20,7 +20,8 @@ import {
 	PAGING,
 	UI_OPERATION_HOURS,
 	UI_OPERATION_DAYS,
-	API_TIMEZONE
+	API_TIMEZONE,
+    UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 
 import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService } from 'src/app/global/services';
@@ -541,7 +542,11 @@ export class CreateHostComponent implements OnInit {
 		});
 
 		dialogRef.afterClosed().subscribe(() => {
-			if (hostId) this._router.navigate([`/${this.currentRole}/hosts/`, hostId]);
+            if(this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+                if (hostId) this._router.navigate([`/administrator/hosts/`, hostId]);
+            } else {
+                if (hostId) this._router.navigate([`/${this.currentRole}/hosts/`, hostId]);
+            }
 		});
 	}
 

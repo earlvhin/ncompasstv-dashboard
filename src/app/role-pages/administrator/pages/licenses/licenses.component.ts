@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
+import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 
@@ -33,6 +33,7 @@ export class LicensesComponent implements OnInit {
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
 	filtered_data_licenses: UI_LICENSE[] = [];
+    is_dealer_admin: boolean = false;
 	title: string = 'Licenses';
 	tab: any = { tab: 0 };
 	licenses_details: any;
@@ -176,6 +177,9 @@ export class LicensesComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true;
+        }
 		let status = this._activatedRoute.snapshot.paramMap.get('status');
 		if (status) {
 			this.filterTable('status', status === 'Online' ? '1' : '0');

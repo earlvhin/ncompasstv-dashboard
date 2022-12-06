@@ -174,7 +174,7 @@ export const API_ENDPOINTS = {
 		release_note_by_id: 'ReleaseNote/getbyid',
 		search_advertiser: 'advertiser/search?searchkey=',
 		search_license: 'license/search?searchkey=',
-		search_license_by_host: 'license/GetByHost/Search',
+		search_license_by_host: 'license/getbyhost',
 		search_owner_tags: 'tag/searchOwnerTag',
 		search_owners: 'tag/searchOwners',
 		search_tags: 'tag/search',

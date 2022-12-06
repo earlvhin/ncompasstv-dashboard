@@ -4,7 +4,7 @@
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
             </div>
-            <div class="flex-even text-right">
+            <div class="flex-even text-right" *ngIf="!is_dealer_admin">
                 <button mat-button mat-raised-button 
                     class="theme-btn pi-control _info sm-text mr-2" 
                     (click)="openGenerateLicenseModal()"
@@ -300,7 +300,7 @@
                     </mat-tab>
 
 					<!-- TAGS TAB -->
-					<mat-tab id="tags-view-tab" label="Tags View">
+					<mat-tab id="tags-view-tab" label="Tags View" *ngIf="!is_dealer_admin">
 						<ng-template matTabContent>
 							<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 2">
 								<app-tags-tab></app-tags-tab>
