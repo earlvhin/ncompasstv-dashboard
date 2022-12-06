@@ -31,7 +31,8 @@ export class DealerService extends BaseService {
 	}
 
 	add_dealer(data) {
-		return this.postRequest(`${this.creators.api_new_dealer}`, data);
+        const body = { data };
+		return this.postRequest(this.creators.api_new_dealer, body);
 	}
 
 	content_dealer_metrics(data) {

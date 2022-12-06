@@ -26,7 +26,7 @@
                 <button mat-button mat-raised-button 
                     class="theme-btn pi-control _info sm-text mr-2" 
                     (click)="openGenerateLicenseModal()"
-                    title="Generate License" *ngIf="current_tab === 'Dealer'">
+                    title="Generate License" *ngIf="current_tab === 'Dealer' && !is_dealer_admin">
                     <span class="fas fa-barcode"></span> 
                     <span class="ml-2 button_text_animation">Generate License</span>
                 </button>

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_ADVERTISER, API_DEALER, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_ADVERTISER, API_DEALER, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AdvertiserService, AuthService, DealerService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 
@@ -394,7 +394,11 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe(r => {
 			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/users/`]);
+            if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+                this._router.navigate([`/administrator/dealers/`]);
+            } else {
+                this._router.navigate([`/${route}/dealers/`]);
+            }   
 		});
 
 	}

@@ -8,7 +8,7 @@ import { AuthService } from '../../../services/auth-service/auth.service';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { UserService } from '../../../services/user-service/user.service';
 import { USER_PROFILE } from '../../../models/api_user.model';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-user-setting',
@@ -109,7 +109,7 @@ export class UserSettingComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-        if(this._auth.current_role === UI_ROLE_DEFINITION.dealeradmin) {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
             this.is_dealer_admin = true
         }
 		this.update_info_form_disabled = false;
@@ -130,8 +130,9 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	getUserById(id: string): void {
+        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
         this.subscription.add(
-            this._user.get_user_alldata_by_id(id).subscribe(
+            this._user.get_user_alldata_by_id(id, isAdmin).subscribe(
                 (response: any) => {
                     this.setUserById(response)
                 },
