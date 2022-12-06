@@ -623,6 +623,7 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	private get hasUnusedLicenseWithoutInstallDate() {
+        console.log("THISLI", this.licenses)
 		return typeof this.licenses.find((license) => this.assigned_licenses.includes(license.licenseId) && !license.installDate) !== 'undefined';
 	}
 

@@ -5,99 +5,87 @@ import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { environment } from 'src/environments/environment';
 import { API_CHANGE_TEMPLATE, API_SINGLE_SCREEN, API_CHANGE_TEMPLATE_RESPONSE, CREATE_SCREEN_RESPONSE } from 'src/app/global/models';
+import { BaseService } from '../base.service';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class ScreenService {
+export class ScreenService extends BaseService {
 	token = JSON.parse(localStorage.getItem('tokens'));
 
-	httpOptions = {
-		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
-	};
+	// httpOptions = {
+	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
+	// };
 
-	constructor(private _http: HttpClient, private _auth: AuthService) {}
+	// constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	assign_license(data) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_assign_license_to_screen}`, data, this.httpOptions);
+        const url = `${this.updaters.api_assign_license_to_screen}`;
+		return this.postRequest(url, data);
 	}
 
 	change_template(body: API_CHANGE_TEMPLATE): Observable<API_CHANGE_TEMPLATE_RESPONSE> {
-		const url = `${environment.base_uri}${environment.update.screen_template}`;
-		return this._http.post<API_CHANGE_TEMPLATE_RESPONSE>(url, body);
+        const url = `${this.updaters.screen_template}`;
+		return this.postRequest(url, body);
 	}
 
 	create_screen(data): Observable<CREATE_SCREEN_RESPONSE> {
-		return this._http.post<CREATE_SCREEN_RESPONSE>(`${environment.base_uri}${environment.create.api_new_screen}`, data, this.httpOptions);
+        const url = `${this.creators.api_new_screen}`;
+		return this.postRequest(url, data);
 	}
 
 	edit_screen(data) {
-		return this._http.post(`${environment.base_uri}${environment.update.api_update_screen}`, data, this.httpOptions);
+        const url = `${this.updaters.api_update_screen}`;
+		return this.postRequest(url, data);
 	}
 
 	get_screens(page, key, column, order) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_screens}` +
-				'?page=' +
-				`${page}` +
-				'&search=' +
-				`${key}` +
-				'&sortColumn=' +
-				`${column}` +
-				'&sortOrder=' +
-				`${order}`,
-			this.httpOptions
-		);
+        const base = `${this.getters.api_get_screens}`;
+        const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_screens_search(key) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens}` + '?search=' + `${key}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_screens}` + '?search=' + `${key}`);
 	}
 
 	get_screens_type() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_type}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_screens_type}`);
 	}
 
 	get_screen_by_id(id: string, licenseId?: string): Observable<{ message: string } | API_SINGLE_SCREEN> {
-		let url = `${environment.base_uri}${environment.getters.api_get_screen_by_id}${id}`;
-		if (licenseId) url += `&licenseId=${licenseId}`;
-		return this._http.get<{ message: string } | API_SINGLE_SCREEN>(url, this.httpOptions);
+        let base = `${this.getters.api_get_screen_by_id}${id}`;
+        if (licenseId) base += `&licenseId=${licenseId}`;
+		return this.getRequest(base);
 	}
 
 	get_screen_by_dealer_id(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_screen_by_dealer}${id}`);
 	}
 
 	api_get_screen_by_dealer_table(page, id, key) {
-		return this._http.get<any>(
-			`${environment.base_uri}${environment.getters.api_get_screen_by_dealer_table}` +
-				'?page=' +
-				`${page}` +
-				'&dealerid=' +
-				`${id}` +
-				'&search=' +
-				`${key}`,
-			this.httpOptions
-		);
+        const base = `${this.getters.api_get_screen_by_dealer_table}`;
+        const params = this.setUrlParams({ page, dealerid: id, search: key }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
-	// get_screen_by_dealer_id_v2(id) {
-	// 	return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screen_by_dealer_table}${id}`, this.httpOptions);
-	// }
-
 	get_screen_total() {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_total}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_screens_total}`);
 	}
 
 	get_screen_total_by_dealer(id) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_screens_total_by_dealer}${id}`, this.httpOptions);
+        return this.getRequest(`${this.getters.api_get_screens_total_by_dealer}${id}`);
 	}
 
 	delete_screen(to_delete) {
-		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_screen}`, to_delete, this.httpOptions);
+        const url = `${this.deleters.api_remove_screen}`;
+		return this.postRequest(url, to_delete);
 	}
 
 	unassign_license(data) {
-		return this._http.post<any>(`${environment.base_uri}${environment.delete.api_remove_screen_license}`, data, this.httpOptions);
+        const url = `${this.deleters.api_remove_screen_license}`;
+		return this.postRequest(url, data);
 	}
 }

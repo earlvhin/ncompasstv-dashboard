@@ -178,7 +178,7 @@ export class LicenseService extends BaseService {
 			default:
 				base = this.getters.all_license_by_install_date;
 		}
-        const params = this.setUrlParams({ filters }, false, true);
+        const params = this.setUrlParams( filters , false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -306,7 +306,7 @@ export class LicenseService extends BaseService {
 	}
 
 	get_license_total_per_dealer(id) {
-        return this.getRequest(`${this.getters.api_get_licenses_total_by_dealer}`+`${id}`);
+        return this.getRequest(`${this.getters.api_get_licenses_total_by_dealer}${id}`);
 	}
 
 	get_ad_licenses_total() {
