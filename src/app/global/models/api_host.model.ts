@@ -38,6 +38,7 @@ export class API_HOST {
 	tags?: TAG[];
 	tagsToString?: string;
 	totalLicenses: number;
+	totalLicensesPending?: number;
 	totalLicences: number;
 	timeZone: string;
 	timezoneName: string;
