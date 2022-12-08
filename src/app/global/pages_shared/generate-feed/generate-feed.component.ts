@@ -17,7 +17,7 @@ import {
 	GenerateFillerFeed
 } from '../../models/api_feed_generator.model';
 import { FeedItem } from '../../models/ui_feed_item.model';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { API_FEED_TYPES } from '../../models/api_feed.model';
 import { takeUntil } from 'rxjs/operators';
 
@@ -51,7 +51,7 @@ export class GenerateFeedComponent implements OnInit {
 	route: string;
 	dealers: { dealerId: string; businessName: string }[];
 	apply_to_all_btn_status: boolean = false;
-
+    
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -63,8 +63,11 @@ export class GenerateFeedComponent implements OnInit {
 	) {}
 
 	ngOnInit(): void {
-		this.route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-
+		// this.route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+        this.route = this._auth.current_role;
+        if(this.route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.route = UI_ROLE_DEFINITION_TEXT.administrator
+        }
 		this.getParamOfActivatedRoute();
 
 		const roleId = this._auth.current_user_value.role_id;
@@ -251,6 +254,7 @@ export class GenerateFeedComponent implements OnInit {
 	/** POST Request to API with Generated Slide Feed Payload*/
 	saveGeneratedSlideFeed(): void {
 		this.saving = true;
+
 
 		if (!this.editing) {
 			this._feed

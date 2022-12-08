@@ -66,7 +66,7 @@ export class ContentService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_assets}` + '?pageSize=0&floating=true');
 	}
 
-	get_contents_with_page(page = 1, type?, sort?, dealerId?, hostId?, advertiserId?, key?, feedId?, pageSize = 60) {
+	get_contents_with_page(page = 1, type?, sort?, dealerId = '', hostId = '', advertiserId ='', key='', feedId='', pageSize = 60) {
 		const base = `${this.getters.api_get_assets}`;
 		const params = this.setUrlParams(
 			{ page, fileCategory: type, sort, dealerId, hostId, advertiserId, search: key, feedId, pageSize },

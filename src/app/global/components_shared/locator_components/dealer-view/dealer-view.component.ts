@@ -133,7 +133,8 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 
 					this.dealers_data = dealers;
 					const merged = this.selectedDealersControl.value.concat(dealers);
-					const unique = merged.filter(
+					
+                    const unique = merged.filter(
 						(dealer, index, merged) => merged.findIndex((mergedDealer) => mergedDealer.dealerId === dealer.dealerId) === index
 					);
 					this.dealers = unique;

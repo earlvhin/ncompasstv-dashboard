@@ -46,7 +46,7 @@ export class FeedService extends BaseService {
 	}
 
 	generate_feed(data: any, type: string) {
-        const url = `${this.creators.api_new_feed_generate}}/${type}`;
+        const url = `${this.creators.api_new_feed_generate}`+'/'+`${type}`;
 		return this.postRequest(url, data);
 	}
 
