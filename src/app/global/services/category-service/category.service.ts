@@ -4,13 +4,14 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { API_CATEGORY, API_PARENTCATEGORY } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
+import { BaseService } from '../base.service';
 
 @Injectable({
 	providedIn: 'root'
 })
 
 
-export class CategoryService {
+export class CategoryService extends BaseService {
 	
 	token = JSON.parse(localStorage.getItem('tokens'));
 
@@ -18,22 +19,22 @@ export class CategoryService {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 	
-	constructor(private _auth: AuthService, private _http: HttpClient) {}
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	get_categories() {
-		return this._http.get<API_CATEGORY[]>(`${environment.base_uri}${environment.getters.api_get_categories}`, this.http_options);
+        const url = this.getters.api_get_categories;
+		return this.getRequest(url);
 	}
 	
 	get_parent_categories() {
-		return this._http
-			.get<{ parentCategory: API_PARENTCATEGORY[] }>(
-				`${environment.base_uri}${environment.getters.api_get_parent_categories}`,
-				this.http_options
-			)
-			.map((data) => data.parentCategory);
+        const url = this.getters.api_get_parent_categories;
+		return this.getRequest(url).map((data) => data.parentCategory);
 	}
 
     get_category_general(category) {
-		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_get_category_general}${category}`, this.http_options);
+        const url = `${this.getters.api_get_category_general}${category}`;
+		return this.getRequest(url);
 	}
 }

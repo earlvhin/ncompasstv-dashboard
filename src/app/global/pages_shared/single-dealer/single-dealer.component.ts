@@ -416,8 +416,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			return new UI_DEALER_LICENSE_ZONE(
 				{ value: i.licenseId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: i.licenseKey, link: '/administrator/licenses/' + i.licenseId, editable: false, hidden: false },
-				{ value: i.licenseAlias ? i.licenseAlias : '--', link: '/administrator/licenses/' + i.licenseId, editable: false, hidden: false },
+				{ value: i.licenseKey, link: '/administrator/licenses/' + i.licenseId, new_tab_link: true, editable: false, hidden: false },
+				{ value: i.licenseAlias ? i.licenseAlias : '--', link: '/administrator/licenses/' + i.licenseId, new_tab_link: true, editable: false, hidden: false },
 				{ value: this.calculateTime(i.mainDuration), link: null, editable: false, hidden: false },
 				{ value: this.calculateTime(i.verticalDuration), link: null, editable: false, hidden: false },
 				{ value: this.calculateTime(i.horizontalDuration), link: null, editable: false, hidden: false },

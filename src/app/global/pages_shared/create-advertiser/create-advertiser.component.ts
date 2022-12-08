@@ -7,7 +7,7 @@ import { Subscription } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { AdvertiserService, AuthService, CategoryService, DealerService, MapService, RoleService } from 'src/app/global/services';
-import { API_CREATE_ADVERTISER, API_GOOGLE_MAP, UI_ROLE_DEFINITION, UI_TABLE_DEALERS } from 'src/app/global/models';
+import { API_CREATE_ADVERTISER, API_GOOGLE_MAP, UI_ROLE_DEFINITION, UI_TABLE_DEALERS, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-create-advertiser',
@@ -345,9 +345,13 @@ export class CreateAdvertiserComponent implements OnInit {
 		});
 
 		dialogRef.afterClosed().subscribe((result) => {
+            let role = this._auth.current_role;
+            if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+                role = UI_ROLE_DEFINITION_TEXT.administrator;
+            }
 			if (id) {
-				const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-				this._router.navigate([`/${route}/advertisers/`, id]);
+				// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+				this._router.navigate([`/` +role+ `/advertisers/`, id]);
 			}
 		});
 	}

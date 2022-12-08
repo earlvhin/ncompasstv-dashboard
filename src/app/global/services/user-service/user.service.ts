@@ -18,7 +18,9 @@ export class UserService extends BaseService {
 	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	// };
 
-	// constructor(private _http: HttpClient, private _auth: AuthService) {}
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	deleteUser(userId: string) {
         const url = `${this.deleters.user}?userid=${userId}`;
@@ -88,8 +90,7 @@ export class UserService extends BaseService {
                 url = `${this.creators.api_new_techrep}`
 				break;
 		}
-        const body = { data };
-		return this.postRequest(url, body);
+		return this.postRequest(url, data);
 	}
 
 	validate_email(email: string) {

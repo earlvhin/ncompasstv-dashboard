@@ -18,7 +18,7 @@ export class NewHostUserComponent implements OnInit {
 
 	@Output() host_created = new EventEmitter();
 
-	create_host_link = `/${this.currentRole}/hosts/create-host`;
+	create_host_link = '';
 	form_title: string = "New Host User";
 	form_invalid: boolean = true;
 	is_submitted: boolean;
@@ -54,8 +54,13 @@ export class NewHostUserComponent implements OnInit {
 	) { }
 
 	ngOnInit() {
+        let role = ''
+        if(this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            role = UI_ROLE_DEFINITION_TEXT.administrator
+        }
+        this.create_host_link = `/`+role+`/hosts/create-host`;
 
-		this.back_btn = `/${this.currentRole}/users/create-user`;
+		this.back_btn = `/`+role+`/users/create-user`;
 
 		this.new_host_form = this._form.group(
 			{

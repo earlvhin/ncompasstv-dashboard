@@ -373,7 +373,7 @@ export class LicenseService extends BaseService {
 
 	get_licenses_by_host_id(id: string) {
 		const base = `${this.getters.api_get_licenses_by_host}`;
-		const params = this.setUrlParams({ id }, false, true);
+		const params = this.setUrlParams({ hostid: id }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -452,7 +452,7 @@ export class LicenseService extends BaseService {
 	}
 
 	get_statistics_by_dealer(id: string) {
-		return this.getRequest(`${this.getters.license_statistics}${id}` + '?dealerId=' + `${id}`);
+		return this.getRequest(`${this.getters.license_statistics}${id}`);
 	}
 
 	get_statistics_by_installation(date: string) {
@@ -460,11 +460,13 @@ export class LicenseService extends BaseService {
 	}
 
 	activate_license(id) {
-		return this.postRequest(this.updaters.api_activate_license, id);
+		const url = `${this.updaters.api_activate_license}?licenseKey=${id}`;
+		return this.postRequest(url, {});
 	}
 
 	deactivate_license(id) {
-		return this.postRequest(this.updaters.api_deactivate_license, id);
+        const url = `${this.updaters.api_deactivate_license}?licenseKey=${id}`;
+		return this.postRequest(url, {});
 	}
 
 	assign_licenses_to_host(data) {
@@ -472,7 +474,7 @@ export class LicenseService extends BaseService {
 	}
 
 	generate_license(id, count) {
-		return this.postRequest(`${environment.base_uri}${environment.create.api_new_license}dealerId=${id}&licensecount=${count}`, null);
+		return this.postRequest(`${this.creators.api_new_license}dealerId=${id}&licensecount=${count}`, null);
 	}
 
 	get_screenshots(id) {
@@ -504,7 +506,7 @@ export class LicenseService extends BaseService {
 			rebootTime: JSON.stringify(data.rebootTime),
 			licenseId: data.licenseId
 		};
-		return this.postRequest(`${environment.base_uri}${environment.update.license_reboot_time}`, data);
+		return this.postRequest(`${this.updaters.license_reboot_time}`, data);
 	}
 
 	// Updates the license installation date
@@ -514,7 +516,7 @@ export class LicenseService extends BaseService {
 			headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' }),
 			responseType: 'text' as 'json'
 		};
-		return this.postRequest(`${environment.base_uri}${environment.update.install_date}`, data, options);
+		return this.postRequest(`${this.updaters.install_date}`, data, options);
 	}
 
 	//  Updates the installation date on multiple licenses
@@ -523,7 +525,7 @@ export class LicenseService extends BaseService {
 			headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' }),
 			responseType: 'text' as 'json'
 		};
-		return this.postRequest(`${environment.base_uri}${environment.update.install_date_list}`, data, options);
+		return this.postRequest(`${this.updaters.install_date_list}`, data, options);
 	}
 
 	update_display_status(data: { licenseId: string; displayStatus: number }) {
@@ -573,7 +575,7 @@ export class LicenseService extends BaseService {
 	//Get Resource Usage By License Id and Date
 	get_license_resource_logs(license: string, date: string) {
 		return this.getRequest(
-			`${environment.base_uri}${environment.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`,
+			`${this.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`,
 			null
 		);
 	}
@@ -678,13 +680,5 @@ export class LicenseService extends BaseService {
 			else result += filters[key];
 		});
 		return result;
-	}
-
-	protected get baseUri() {
-		return `${environment.base_uri}`;
-	}
-
-	protected get getters() {
-		return environment.getters;
 	}
 }

@@ -10,6 +10,8 @@ import { UI_CONTENT, UI_PLAYLIST_CONTENT } from '../../../../global/models/ui_co
 import { API_SINGLE_PLAYLIST } from 'src/app/global/models/api_single-playlist.model';
 import { API_CONTENT } from 'src/app/global/models/api_content.model';
 import { RoleService } from 'src/app/global/services/role-service/role.service';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-clone-playlist',
@@ -45,6 +47,7 @@ export class ClonePlaylistComponent implements OnInit {
 		private _playlist: PlaylistService,
 		private _router: Router,
 		private _role: RoleService,
+        private _auth: AuthService,
 		@Inject(MAT_DIALOG_DATA) public playlist_data: API_SINGLE_PLAYLIST
 	) {}
 
@@ -111,8 +114,12 @@ export class ClonePlaylistComponent implements OnInit {
 	}
 
 	redirectToClonedPlaylist(id) {
+        let role = this._auth.current_role;
+        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            role = UI_ROLE_DEFINITION_TEXT.administrator;
+        }
 		if (id) {
-			this._router.navigate([`/${this._role.get_user_role()}/playlists/`, id]);
+			this._router.navigate([`/` +role+ `/playlists/`, id]);
 		}
 	}
 }

@@ -16,7 +16,9 @@ export class NotificationService extends BaseService {
 	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	// };
 
-	// constructor(private _auth: AuthService, private _http: HttpClient) {}
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	emitResolveAllEvent(change: any) {
 		this.resolve_all_event.next(change);
@@ -38,7 +40,7 @@ export class NotificationService extends BaseService {
 	}
 
 	updateAllNotificationStatus() {
-        const url = `${this.updaters.api_update_all_notification_status}${id}`;
+        const url = `${this.updaters.api_update_all_notification_status}`;
 		return this.postRequest(url, {});
 	}
 

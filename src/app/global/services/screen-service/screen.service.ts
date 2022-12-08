@@ -17,7 +17,9 @@ export class ScreenService extends BaseService {
 	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	// };
 
-	// constructor(private _http: HttpClient, private _auth: AuthService) {}
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	assign_license(data) {
         const url = `${this.updaters.api_assign_license_to_screen}`;

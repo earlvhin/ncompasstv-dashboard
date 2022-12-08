@@ -5,7 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_DEALER, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_ZONE, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_ZONE, PAGING, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, HostService, LicenseService, PlaylistService, ScreenService, TemplateService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -603,7 +603,10 @@ export class CreateScreenComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+			let route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+            if(route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+                route = UI_ROLE_DEFINITION_TEXT.administrator
+            }
 			this._router.navigate([`/${route}/screens`]);
 		});
 	}

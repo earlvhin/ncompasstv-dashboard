@@ -4,7 +4,7 @@ import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT } from 'src/app/global/models';
+import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AdvertiserService, ContentService, HelperService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
@@ -96,6 +96,10 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 
 	private mapContentsToTableUI(contents: API_CONTENT[]): UI_TABLE_ADVERTISERS_CONTENT[] {
 		let count = 1;
+        let role = this._auth.current_role;
+        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            role = UI_ROLE_DEFINITION_TEXT.administrator;
+        }
 
 		return contents.map((content) => {
 			return {
@@ -103,7 +107,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 				index: { value: count++, link: null, editable: false, hidden: false },
 				name: {
 					value: this.parseFileName(content.fileName),
-					link: `/${this.currentRole}/media-library/${content.contentId}`,
+					link: `/` + role +`/media-library/${content.contentId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false

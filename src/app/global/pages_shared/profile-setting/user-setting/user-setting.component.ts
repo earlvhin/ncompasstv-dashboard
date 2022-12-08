@@ -171,25 +171,14 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	updateUserInfo() {
-        if(this.is_dealer_admin) {
-            this._user.dealeradmin_update_user(this.mapUserInfoChanges()).subscribe(
-                () => {
-                    this.updateModalAndRefresh();
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            );
-        } else {
-            this._user.update_user(this.mapUserInfoChanges()).subscribe(
-                () => {
-                    this.updateModalAndRefresh();
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            );
-        }
+        this._user.update_user(this.mapUserInfoChanges()).subscribe(
+            () => {
+                this.updateModalAndRefresh();
+            },
+            (error) => {
+                throw new Error(error);
+            }
+        );
 	}
 
     updateModalAndRefresh() {
