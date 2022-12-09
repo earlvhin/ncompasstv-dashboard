@@ -40,7 +40,7 @@ export class LicenseViewComponent implements OnInit {
 	search_keyword = false;
 	selected_dealer_hosts: API_HOST[];
 	selected_licenses: API_LICENSE_PROPS[] = [];
-    status: boolean = false;
+	status: boolean = false;
 
 	private businessName: string;
 	private current_host_id_selected = '';
@@ -224,7 +224,7 @@ export class LicenseViewComponent implements OnInit {
 		this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 
 		this.selected_dealer_hosts.forEach((host) => {
-			host.icon_url = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].icon_url;
+			host.iconUrl = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].iconUrl;
 		});
 
 		if (this.isFiltered) this.filterDealerHosts(this.filterStatus);
@@ -314,7 +314,7 @@ export class LicenseViewComponent implements OnInit {
 						host.storeHours ? (host.parsedStoreHours = JSON.parse(host.storeHours)) : (host.parsedStoreHours = '-');
 						host.latitude ? (host.latitude = parseFloat(host.latitude).toFixed(5)) : '-';
 						host.longitude ? (host.longitude = parseFloat(host.longitude).toFixed(5)) : '-';
-						host.icon_url = host.icon_url = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].icon_url;
+						host.iconUrl = host.iconUrl = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].iconUrl;
 					});
 				},
 				(error) => {
@@ -385,7 +385,7 @@ export class LicenseViewComponent implements OnInit {
 						this.map_markers = this.mapMarkersToUI(this.selected_dealer_hosts, this.selected_licenses);
 
 						this.selected_dealer_hosts.forEach((host) => {
-							host.icon_url = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].icon_url;
+							host.iconUrl = this.map_markers.filter((marker) => marker.hostId === host.hostId)[0].iconUrl;
 						});
 					}
 
@@ -438,7 +438,7 @@ export class LicenseViewComponent implements OnInit {
 		if (!hosts || hosts.length <= 0) return;
 
 		return hosts.map((host) => {
-			let icon_url: string;
+			let iconUrl: string;
 			let online: any = 0;
 			let license_online_percentage: number;
 			const host_licenses: API_LICENSE_PROPS[] = licenses.filter((license) => license.hostId === host.hostId);
@@ -448,10 +448,10 @@ export class LicenseViewComponent implements OnInit {
 				license_online_percentage = (online.length / host_licenses.length) * 100;
 			}
 
-			if (license_online_percentage == 100) icon_url = 'assets/media-files/markers/online_all.png';
-			else if (license_online_percentage >= 51 && license_online_percentage < 100) icon_url = 'assets/media-files/markers/online_many.png';
-			else if (license_online_percentage < 51 && license_online_percentage > 0) icon_url = 'assets/media-files/markers/online_few.png';
-			else icon_url = 'assets/media-files/markers/offline.png';
+			if (license_online_percentage == 100) iconUrl = 'assets/media-files/markers/online_all.png';
+			else if (license_online_percentage >= 51 && license_online_percentage < 100) iconUrl = 'assets/media-files/markers/online_many.png';
+			else if (license_online_percentage < 51 && license_online_percentage > 0) iconUrl = 'assets/media-files/markers/online_few.png';
+			else iconUrl = 'assets/media-files/markers/offline.png';
 
 			return new UI_HOST_LOCATOR_MARKER_DEALER_MODE(
 				host.hostId,
@@ -459,7 +459,7 @@ export class LicenseViewComponent implements OnInit {
 				host.latitude,
 				host.longitude,
 				license_online_percentage,
-				icon_url,
+				iconUrl,
 				host.address,
 				host.category,
 				host.parsedStoreHours,
@@ -479,7 +479,7 @@ export class LicenseViewComponent implements OnInit {
 		return this._auth.current_user_value;
 	}
 
-    toggleOverMap() {
-        this.status = !this.status; 
-    }
+	toggleOverMap() {
+		this.status = !this.status;
+	}
 }
