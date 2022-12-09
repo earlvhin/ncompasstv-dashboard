@@ -383,6 +383,11 @@ export class LicensesComponent implements OnInit {
 			case 3:
 				this.getHosts(1);
 				break;
+            case 2:
+                if(this.is_dealer_admin) {
+                    this.getHosts(1)
+                }
+                break;
 			default:
 		}
 	}
@@ -575,6 +580,11 @@ export class LicensesComponent implements OnInit {
 						last_week_unassigned_value: data.lastWeekUnassignedCount
 					};
 
+                    if(this.is_dealer_admin) {
+                        delete this.licenses_details['third_value'];
+                        delete this.licenses_details['third_value_label'];
+                    }
+
 					if (this.licenses_details) {
 						this.temp_label.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value);
 						this.temp_label.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.menu_value);
@@ -736,9 +746,6 @@ export class LicensesComponent implements OnInit {
 							this.licenses_to_export = [];
 							return;
 						}
-
-						console.log('api data', data);
-
 						data.licenses.map((license) => {
 							if (license.appVersion) {
 								license.apps = JSON.parse(license.appVersion);
@@ -757,8 +764,6 @@ export class LicensesComponent implements OnInit {
 							this.mapLicensesForExport(item);
 							this.worksheet.addRow(item).font = { bold: false };
 						});
-
-						console.log('parsed data', this.licenses_to_export);
 
 						let rowIndex = 1;
 						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {

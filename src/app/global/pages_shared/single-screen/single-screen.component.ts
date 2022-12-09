@@ -204,7 +204,6 @@ export class SingleScreenComponent implements OnInit {
 
 	// Had to change this.screen type to ANY due to extra fields that are non existent in the UI_SINGLE_SCREEN type
 	activateLicense(id: string) {
-        console.log("ID", id)
 		this._license
 			.activate_license(id)
 			.pipe(takeUntil(this._unsubscribe))
@@ -688,7 +687,7 @@ export class SingleScreenComponent implements OnInit {
 	// Get Licenses where THIS screen is playing
 	private mapToScreenLicenseUI(data: any) {
 		let counter = 1;
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
         let role = this.currentRole;
         if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
             role = UI_ROLE_DEFINITION_TEXT.administrator;
@@ -779,7 +778,6 @@ export class SingleScreenComponent implements OnInit {
 	}
 
 	private setPageData(data: API_SINGLE_SCREEN) {
-        console.log("DD", data)
 		this.licenses = data.licenses;
 		this.screenZonePlaylists = data.screenZonePlaylistsContents;
 		this.host = data.host;
