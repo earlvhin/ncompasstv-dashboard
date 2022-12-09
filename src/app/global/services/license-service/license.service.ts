@@ -300,7 +300,7 @@ export class LicenseService extends BaseService {
 
 	get_licenses_total_by_dealer(id) {
 		const base = `${this.getters.api_get_licenses_total_by_dealer}`;
-		const params = this.setUrlParams({ id }, false, true);
+		const params = this.setUrlParams({ dealerid: id }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -452,7 +452,10 @@ export class LicenseService extends BaseService {
 	}
 
 	get_statistics_by_dealer(id: string) {
-		return this.getRequest(`${this.getters.license_statistics}${id}`);
+        const base = `${this.getters.license_statistics}`;
+		const params = this.setUrlParams({ dealerid: id }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_statistics_by_installation(date: string) {
