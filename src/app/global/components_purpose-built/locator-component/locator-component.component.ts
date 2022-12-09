@@ -1,17 +1,13 @@
-import { Component, OnInit, Input, EventEmitter, Output, OnDestroy, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormBuilder, Validators, FormControl, FormGroup } from '@angular/forms';
+import { Component, OnInit, Input, ViewChild, ViewEncapsulation } from '@angular/core';
+import { FormBuilder, Validators, FormGroup, AbstractControl } from '@angular/forms';
 import { Router } from '@angular/router';
-import { AgmInfoWindow } from '@agm/core';
 import { MatSelect } from '@angular/material';
 import { debounceTime, map, takeUntil, tap } from 'rxjs/operators';
 import { forkJoin, ReplaySubject, Subject } from 'rxjs';
 import * as moment from 'moment';
 
-import { API_DMA, API_DMA_HOST, PAGING, UI_STORE_HOUR } from 'src/app/global/models';
-import { ExportService, HostService, LicenseService, AuthService } from 'src/app/global/services';
-import { hostReportError } from 'rxjs/internal-compatibility';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
-import { Console } from 'console';
+import { API_CATEGORY, API_HOST, API_LICENSE, API_LICENSE_PROPS, API_STATE, UI_STORE_HOUR } from 'src/app/global/models';
+import { AuthService, LicenseService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-locator-component',
@@ -21,123 +17,105 @@ import { Console } from 'console';
 })
 export class LocatorComponentComponent implements OnInit {
 	@ViewChild('multi_select', { static: false }) searchSelectDropdown: MatSelect;
-	@Input() search_placeholder;
-	@Input() select_placeholder;
-	@Input() result_placeholder;
-	@Input() data_reference;
-	@Input() original_reference;
-	@Input() is_host;
-	@Input() is_category;
-	@Input() is_state;
-	@Input() status: boolean = false;
-
-	currentList: any = [];
-	compressed_data_array: any = [];
-	filtered_data_array: any = [];
-	host_count = 0;
-	host_licenses_count = 0;
-	merge_filtered_data_array: any = [];
-	new_data_reference: any = [];
-	currentListLicenses: any = [];
-	currentRole: string;
-	mergeList: any = [];
-	currentHostIdSelected: string;
+	@Input() search_placeholder: string;
+	@Input() select_placeholder: string;
+	@Input() result_placeholder: string;
+	@Input() data_reference: any[];
+	@Input() original_reference: API_HOST[];
+	@Input() type: string;
+	@Input() status = false;
+	// categoryOrStateData: API_HOST[][] = [];
+	categoryOrStateData: API_STATE[] | API_CATEGORY[] = [];
+	currentList: API_HOST[] = [];
 	currentPage = 1;
-	dataHostLocations: any = [];
-	dmaOrderList: { dmaRank: number; dmaCode: string }[] = [];
+	currentHostIdSelected: string;
+	hosts: API_HOST[] = [];
+	hostCount = 0;
+	hasFinishedMapping = false;
+	hasLoadedExpansionData = false;
 	filteredData = new ReplaySubject<any[]>(1);
 	hasSelectedData = false;
+	isCurrentUserDealer = this._auth.current_role === 'dealer';
 	isDeselect = false;
 	isFormReady = false;
 	isSearching = false;
-	is_searching = false;
 	latitude = 39.7395247;
-	licenses_count = 0;
+	licenseCount = 0;
+	listControl: AbstractControl;
 	longitude = -105.1524133;
-	online = 0;
-	offline = 0;
-	total_host = 0;
-	// searchKeyword = '';
+	mapMarkers: API_HOST[] = [];
+	onlineCount = 0;
+	offlineCount = 0;
+	pendingCount = 0;
 	searchSelectForm: FormGroup;
 
+	private currentRole = this._auth.current_role;
+	private newDataReference: API_HOST[] | API_CATEGORY[] | API_STATE[] = [];
+	private listBeforeChange = [];
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(
-		private _export: ExportService,
-		private _formBuilder: FormBuilder,
-		private _host: HostService,
-		private _license: LicenseService,
-		private _auth: AuthService,
-		private _router: Router
-	) {}
+	constructor(private _auth: AuthService, private _formBuilder: FormBuilder, private _license: LicenseService, private _router: Router) {}
 
 	ngOnInit() {
-		this.currentRole = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
 		this.initializeForm();
 		this.filteredData.next([...this.data_reference]);
-		this.new_data_reference = [...this.data_reference];
+		this.newDataReference = [...this.data_reference];
 	}
 
 	ngOnChanges() {}
-
-	protected get currentUserIsDealer() {
-		return this.currentUser.role_id === UI_ROLE_DEFINITION.dealer;
-	}
-
-	protected get currentUser() {
-		return this._auth.current_user_value;
-	}
 
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
 	}
 
-	onClickExpandHostSearchResult(): void {}
-
 	onClickHostName(hostId: string): void {
 		this.currentHostIdSelected = hostId;
 	}
 
-	onClickMarkedHostLocation(hostId: string, window: AgmInfoWindow): void {}
-
 	onCloseSearchSelectMenu(): void {
-		this.updateSelectionLocations();
+		this.getLocationLicenses();
 	}
 
-	onDeselectResult(index: number, data): void {
-		this._listControl.value.splice(index, 1);
-		this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
-		if (this.is_state || this.is_category) {
-			if (this.is_category) {
-				const index2 = this.merge_filtered_data_array.findIndex((object) => {
-					return object[0].category === data.category;
-				});
-				this.merge_filtered_data_array.splice(index2, 1);
-			}
+	onRemoveResult(removedData: API_HOST | API_CATEGORY | API_STATE): void {
+		if (this.type === 'host') {
+			const removedHost = removedData as API_HOST;
+			const hostIndexToRemove = this.hosts.findIndex((host) => host.hostId === removedHost.hostId);
+			const dataHostLocationIndex = this.mapMarkers.findIndex((host) => host.hostId === removedHost.hostId);
+			this.hosts.splice(hostIndexToRemove, 1);
+			this.mapMarkers.splice(dataHostLocationIndex, 1);
+			this.currentList = [...this.mapMarkers];
+			this.hostCount = this.mapMarkers.length;
+			this._listControl.setValue([...this.mapMarkers], { emitEvent: false });
+			this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
+			this.listBeforeChange = Array.from(this.mapMarkers);
+			return;
 		}
-		this.is_searching = false;
-		this.isDeselect = true;
-		this.updateSelectionLocations();
+
+		const indexToRemove = this.categoryOrStateData.findIndex((data) => data[this.type] === removedData[this.type]);
+		this.categoryOrStateData.splice(indexToRemove, 1);
+		this._listControl.setValue([...this.categoryOrStateData], { emitEvent: false });
+		this.listBeforeChange = Array.from([...this.categoryOrStateData]);
+		this.mapMarkers = [...this.mapMarkers].filter((host) => host[this.type] !== removedData[this.type]);
+		this.currentList = [...this.mapMarkers];
+		this.hostCount = this.mapMarkers.length;
+		this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
 	}
 
-	onClearResult() {
-		this.is_searching = false;
+	onClearResults() {
 		this._listControl.value.length = 0;
 		this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
-		this.updateSelectionLocations();
+		this.getLocationLicenses();
+		this.isSearching = false;
 		this.hasSelectedData = false;
 	}
 
-	// private getAllDMAByRank(pageSize = 15) {
-	// 	return this._host.get_all_dma(this.currentPage, this.searchKeyword, pageSize).pipe(takeUntil(this._unsubscribe));
-	// }
+	openPageNewTab(page: string, id: string) {
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.currentRole}/${page}/${id}`], {}));
+		window.open(url, '_blank');
+	}
 
-	// private getHostsByDMA(rank: number, code: string, name: string) {
-	// 	return this._host.get_dma_hosts_by_rank(rank, code, name).pipe(takeUntil(this._unsubscribe));
-	// }
-
-	private getHostLicenses(id) {
+	private getHostLicenses(id: string) {
 		return this._license.get_licenses_by_host_id(id).pipe(takeUntil(this._unsubscribe));
 	}
 
@@ -148,186 +126,182 @@ export class LocatorComponentComponent implements OnInit {
 		});
 
 		this.initializeSubscriptions();
+		this.listControl = this.searchSelectForm.get('list');
 		this.isFormReady = true;
 	}
 
 	private onSearchDMA(): void {
 		const control = this.searchSelectForm.get('searchKeyword');
 
-		control.valueChanges
-			.pipe(
-				takeUntil(this._unsubscribe),
-				debounceTime(1000),
-				map((keyword) => {
-					if (this.is_state ? keyword.length > 1 : keyword.length > 2) {
-						this.isSearching = true;
-						if (this.is_host) {
-							this.data_reference = this.data_reference.filter((data) => {
-								if (!this.currentUserIsDealer) {
-									return data.hostName.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
-								} else {
-									return data.name.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
-								}
-							});
-						} else if (this.is_category) {
-							this.data_reference = this.data_reference.filter((data) => {
-								return data.category.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
-							});
-						} else if (this.is_state) {
-							this.data_reference = this.data_reference.filter((data) => {
-								return data.state.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
-							});
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(
+			(keyword: string) => {
+				if (control.invalid) return;
+				this.isSearching = true;
+
+				if (this.type === 'state' ? keyword.length > 1 : keyword.length > 2) {
+					this.data_reference = this.data_reference.filter((data) => {
+						let searchKey: string;
+
+						switch (this.type) {
+							case 'host':
+								searchKey = this.isCurrentUserDealer ? data.name : data.hostName;
+								break;
+
+							case 'category':
+								searchKey = data.category;
+								break;
+
+							default: // state
+								searchKey = data.state;
 						}
-					} else {
-						this.isSearching = true;
-						this.data_reference = this.new_data_reference;
-					}
-					if (control.invalid) return;
+
+						return searchKey.toLowerCase().indexOf(keyword.toLowerCase()) > -1;
+					});
+
 					this.isSearching = false;
-				})
-			)
-			.subscribe(() => {
+					return;
+				}
+
+				this.data_reference = [...this.newDataReference];
 				this.searchSelectDropdown.compareWith = (a, b) => a && b && a === b;
-			});
+				this.isSearching = false;
+			},
+
+			(error) => {
+				this.isSearching = false;
+			}
+		);
 	}
 
 	private onSelectDMA(): void {
 		const control = this.searchSelectForm.get('list');
-		control.valueChanges.pipe(tap(), takeUntil(this._unsubscribe)).subscribe(() => {
-			this.isDeselect = false;
-			this.updateSelectionLocations();
+		control.valueChanges.pipe(debounceTime(1000), takeUntil(this._unsubscribe)).subscribe((change: any[]) => {
+			if (this.listBeforeChange.length > change.length) {
+				const removed = this.listBeforeChange.filter((item) => !change.includes(item))[0];
+				this.onRemoveResult(removed);
+				this.listBeforeChange = Array.from(change);
+				return;
+			}
+
+			this.getLocationLicenses();
 		});
 	}
 
-	getLink(page: string, id: string) {
-		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.currentRole}/${page}/${id}`], {}));
-		window.open(url, '_blank');
-	}
-
-	private updateSelectionLocations() {
+	private getLocationLicenses() {
+		this.hasLoadedExpansionData = false;
+		this.licenseCount = 0;
+		this.onlineCount = 0;
+		this.offlineCount = 0;
+		this.pendingCount = 0;
+		this.mapMarkers = [];
+		this.isSearching = true;
 		let requests: any[] = [];
-		this.is_searching = true;
-		const currentList = this._listControl.value;
+		const currentList: any[] = Array.from(this._listControl.value);
 		this.currentList = currentList;
+		this.listBeforeChange = Array.from(currentList);
 
 		if (currentList.length <= 0) {
-			this.dataHostLocations = [];
-			this.filtered_data_array = [];
-			this.merge_filtered_data_array = [];
+			this.mapMarkers = [];
 			this.hasSelectedData = false;
 			return;
 		}
-		if (this.is_host) {
-			currentList.forEach((host) => {
-				host.storeHoursParsed = JSON.parse(host.storeHours);
-				host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
-				requests.push(this.getHostLicenses(host.hostId));
-			});
-		} else if (this.is_category) {
-			currentList.forEach((category) => {
-				this.filtered_data_array = this.original_reference.filter((host) => {
-					return host.category.toLowerCase().indexOf(category.category.toLowerCase()) > -1;
-				});
-			});
-			if (!this.isDeselect) {
-				if (this.filtered_data_array.length > 0) {
-					this.filtered_data_array.map((host) => {
-						host.storeHoursParsed = JSON.parse(host.storeHours);
-						host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
-						requests.push(this.getHostLicenses(host.hostId));
-					});
-				}
-			} else {
-				this.compressed_data_array = [];
-				var to_compress = this.merge_filtered_data_array.map((host) => {
-					host.map((inner) => {
-						this.compressed_data_array.push(inner);
-					});
-				});
-				this.dataHostLocations = [...this.compressed_data_array];
+
+		currentList.forEach((data) => {
+			if (this.type === 'host') {
+				requests.push(this.getHostLicenses((data as API_HOST).hostId));
+				return;
 			}
-		} else if (this.is_state) {
-			currentList.forEach((state) => {
-				this.filtered_data_array = this.original_reference.filter((host) => {
-					return host.state.toLowerCase().indexOf(state.state.toLowerCase()) > -1;
+
+			this.original_reference
+				.filter((host) => {
+					return host[this.type] && host[this.type].toLowerCase().indexOf(data[this.type].toLowerCase()) > -1;
+				})
+				.forEach((data) => {
+					requests.push(this.getHostLicenses(data.hostId));
+					return data;
 				});
-			});
-			this.filtered_data_array.map((host) => {
-				host.storeHoursParsed = JSON.parse(host.storeHours);
-				host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
-				requests.push(this.getHostLicenses(host.hostId));
-			});
-		}
+		});
 
 		forkJoin(requests)
-			.pipe(
-				takeUntil(this._unsubscribe),
-				map((response) => {
-					this.currentListLicenses = response;
-					if (this.is_host) {
-						this.mergeList = this.currentList.map((item, i) => ({ ...item, licenses: this.currentListLicenses[i] }));
-						this.dataHostLocations = [...this.mergeList];
-					} else if (this.is_category || this.is_state) {
-						this.mergeList = this.filtered_data_array.map((item, i) => ({ ...item, licenses: this.currentListLicenses[i] }));
-						this.merge_filtered_data_array.push([...this.mergeList]);
-					}
-					this.mapMergeList();
-				})
-			)
-			.subscribe(
-				() => {
-					this.hasSelectedData = true;
-					this.online = 0;
-					this.offline = 0;
-					this.licenses_count = 0;
-					this.is_searching = false;
-					if (this.is_host) {
-						this.mergeList.filter((data) => {
-							this.licenses_count = data.licenses.length + this.licenses_count;
-							data.licenses.filter((license) => {
-								if (license.piStatus === 0) {
-									this.offline = this.offline + 1;
-								} else {
-									this.online = this.online + 1;
-								}
-							});
-						});
-					} else {
-						this.host_count = 0;
-						this.licenses_count = 0;
-						this.compressed_data_array = [];
-						this.merge_filtered_data_array.filter((data) => {
-							this.host_count = this.host_count + data.length;
-							data.host_licenses_count = 0;
-							// this.host_licenses_count = 0;
-							data.map((inner_data) => {
-								if (inner_data.licenses) {
-									this.licenses_count = inner_data.licenses.length + this.licenses_count;
-									data.host_licenses_count = data.host_licenses_count + inner_data.licenses.length;
-									inner_data.licenses.filter((license) => {
-										if (license.piStatus === 0) {
-											this.offline = this.offline + 1;
-										} else {
-											this.online = this.online + 1;
-										}
-									});
-								}
-							});
+			.pipe(takeUntil(this._unsubscribe))
+			.map((response: API_LICENSE_PROPS[][]) => {
+				let flattenedResponse: API_LICENSE_PROPS[] = [];
+
+				response
+					.filter((licenses) => Array.isArray(licenses))
+					.forEach((licenses) => {
+						licenses = licenses.map((license) => {
+							license.status = this.setLicenseStatus(license.installDate, license.piStatus);
+
+							switch (license.status) {
+								case 'online':
+									this.onlineCount += 1;
+									break;
+
+								case 'pending':
+									this.pendingCount += 1;
+									break;
+
+								default: // offline
+									this.offlineCount += 1;
+							}
+							this.licenseCount += 1;
+							return license;
 						});
 
-						var to_compress = this.merge_filtered_data_array.map((host) => {
-							host.map((inner) => {
-								this.compressed_data_array.push(inner);
-							});
-						});
-						this.dataHostLocations = [...this.compressed_data_array];
-					}
+						flattenedResponse = flattenedResponse.concat(licenses);
+					});
+
+				return flattenedResponse;
+			})
+			.subscribe(
+				(response: API_LICENSE_PROPS[]) => {
+					let results: API_HOST[] | API_CATEGORY[] | API_STATE[];
+
+					results = currentList.map((data: API_HOST | API_CATEGORY | API_STATE) => {
+						let mapped: API_HOST | API_CATEGORY | API_STATE;
+
+						switch (this.type) {
+							case 'host':
+								const host = data as API_HOST;
+								host.licenses = response.filter((license) => license.hostId === host.hostId);
+								host.iconUrl = this.setHostIconUrl(host.licenses);
+								mapped = host;
+								this.mapMarkers.push(host);
+								break;
+
+							default: // category or state
+								const stateOrCategory: API_STATE | API_CATEGORY = data;
+								stateOrCategory.totalLicenses = 0;
+								stateOrCategory.hosts = this.original_reference
+									.filter((host) => host[this.type] === stateOrCategory[this.type])
+									.map((host) => {
+										host.licenses = response.filter((license) => license.hostId === host.hostId);
+										host.storeHoursParsed = JSON.parse(host.storeHours);
+										host.mappedStoreHours = this.mapStoreHours(host.storeHoursParsed);
+										host.iconUrl = this.setHostIconUrl(host.licenses);
+										stateOrCategory.totalLicenses += host.licenses.length;
+										this.mapMarkers.push(host);
+										return host;
+									});
+								mapped = stateOrCategory;
+								break;
+						}
+
+						return mapped;
+					});
+
+					this.hostCount = this.mapMarkers.length;
+					if (this.type === 'host') this.hosts = results as API_HOST[];
+					else this.categoryOrStateData = results as API_CATEGORY[] | API_STATE[];
+					this.hasFinishedMapping = true;
+					this.hasSelectedData = true;
+					this.hasLoadedExpansionData = true;
 				},
 				(error) => {
-					// throw new Error(error);
+					throw new Error(error);
 				}
-			)
-			.add();
+			);
 	}
 
 	private mapStoreHours(storeHours: UI_STORE_HOUR[]) {
@@ -352,25 +326,30 @@ export class LocatorComponentComponent implements OnInit {
 		return days.toString().split(',').join('\n');
 	}
 
-	mapMergeList() {
-		this.mergeList.map((data) => {
-			let icon_url;
-			let online: any = 0;
-			let license_online_percentage;
+	private setHostIconUrl(licenses: API_LICENSE_PROPS[]) {
+		const ASSETS_DIRECTORY = 'assets/media-files/markers';
 
-			online = data.licenses.filter((i) => i.piStatus == 1);
-			license_online_percentage = (online.length / data.licenses.length) * 100;
+		const onlineCount = licenses.filter((license) => license.status === 'online').length;
+		const offlineCount = licenses.filter((license) => license.status === 'offline').length;
+		const pendingCount = licenses.filter((license) => license.status === 'pending').length;
 
-			if (license_online_percentage == 100) {
-				data.icon_url = 'assets/media-files/markers/online_all.png';
-			} else if (license_online_percentage >= 51 && license_online_percentage < 100) {
-				data.icon_url = 'assets/media-files/markers/online_many.png';
-			} else if (license_online_percentage < 51 && license_online_percentage > 0) {
-				data.icon_url = 'assets/media-files/markers/online_few.png';
-			} else {
-				data.icon_url = 'assets/media-files/markers/offline.png';
-			}
-		});
+		if (licenses.length === onlineCount) return `${ASSETS_DIRECTORY}/online_all.png`;
+		if (licenses.length === offlineCount) return `${ASSETS_DIRECTORY}/offline.png`;
+		if (licenses.length === pendingCount) return `${ASSETS_DIRECTORY}/pending.png`;
+
+		const onlinePercentage = (onlineCount / licenses.length) * 100;
+		if (onlinePercentage <= 50) return `${ASSETS_DIRECTORY}/online_few.png`;
+		else return `${ASSETS_DIRECTORY}/online_many.png`;
+	}
+
+	private setLicenseStatus(installationDate: string, piStatus: number) {
+		const isFutureInstallation = moment(installationDate).isAfter(new Date());
+
+		if (isFutureInstallation) return 'pending';
+
+		if (piStatus === 1) return 'online';
+
+		return 'offline';
 	}
 
 	protected get _listControl() {

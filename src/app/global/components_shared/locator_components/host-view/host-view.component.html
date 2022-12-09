@@ -30,6 +30,10 @@
 						<p class="sm-text ml-1">Online</p>
 					</div>
 					<div class="d-flex align-items-center mr-2">
+						<img class="map-status" src="assets/media-files/markers/pending.png" alt="pending-all" />
+						<p class="sm-text ml-1">Pending</p>
+					</div>
+					<div class="d-flex align-items-center mr-2">
 						<img class="map-status" src="assets/media-files/markers/online_many.png" alt="online-all" />
 						<p class="sm-text ml-1">Up to 75% online</p>
 					</div>
@@ -49,42 +53,50 @@
 				</div>
 			</div>
 		</div>
-		<div class="row" [ngSwitch]="currentSearchOption">
-			<div class="col-lg-12" *ngSwitchCase="'host'">
-				<app-locator-component
-					*ngIf="hostsData.length > 0"
-					[search_placeholder]="'Search Host Name(s)'"
-					[select_placeholder]="'Select Host(s)'"
-					[result_placeholder]="'Host Name(s)'"
-					[data_reference]="hostsData"
-					[is_host]="true"
-					[status]="status">
-				</app-locator-component>
-			</div>
-			<div class="col-lg-12" *ngSwitchCase="'category'">
-				<app-locator-component
-					*ngIf="categoriesData.length > 0"
-					[search_placeholder]="'Search Category'"
-					[select_placeholder]="'Select Category'"
-					[result_placeholder]="'Category Name(s)'"
-					[data_reference]="categoriesData"
-					[original_reference]="hostsData"
-					[is_category]="true"
-					[status]="status">
-				</app-locator-component>
-			</div>
-			<div class="col-lg-12" *ngSwitchCase="'state'">
-				<app-locator-component
-					*ngIf="statesData.length > 0"
-					[search_placeholder]="'Search State'"
-					[select_placeholder]="'Select State'"
-					[result_placeholder]="'State Name(s)'"
-					[data_reference]="statesData"
-					[original_reference]="hostsData"
-					[is_state]="true"
-					[status]="status">
-				</app-locator-component>
-			</div>
+		<div class="row">
+			<ng-container [ngSwitch]="currentSearchOption">
+				<ng-container *ngSwitchCase="'category'">
+					<div class="col-lg-12">
+						<app-locator-component
+							*ngIf="categoriesData.length > 0"
+							[search_placeholder]="'Search Category'"
+							[select_placeholder]="'Select Category'"
+							[result_placeholder]="'Category Name(s)'"
+							[data_reference]="categoriesData"
+							[original_reference]="hostsData"
+							[type]="currentSearchOption"
+							[status]="status">
+						</app-locator-component>
+					</div>
+				</ng-container>
+				<ng-container *ngSwitchCase="'state'">
+					<div class="col-lg-12">
+						<app-locator-component
+							*ngIf="statesData.length > 0"
+							[search_placeholder]="'Search State'"
+							[select_placeholder]="'Select State'"
+							[result_placeholder]="'State Name(s)'"
+							[data_reference]="statesData"
+							[original_reference]="hostsData"
+							[type]="currentSearchOption"
+							[status]="status">
+						</app-locator-component>
+					</div>
+				</ng-container>
+				<ng-container *ngSwitchDefault>
+					<div class="col-lg-12">
+						<app-locator-component
+							*ngIf="hostsData.length > 0"
+							[search_placeholder]="'Search Host Name(s)'"
+							[select_placeholder]="'Select Host(s)'"
+							[result_placeholder]="'Host Name(s)'"
+							[data_reference]="hostsData"
+							[type]="currentSearchOption"
+							[status]="status">
+						</app-locator-component>
+					</div>
+				</ng-container>
+			</ng-container>
 		</div>
 	</div>
 

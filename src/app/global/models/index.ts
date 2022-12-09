@@ -33,6 +33,7 @@ export * from './api_release-note.model';
 export * from './api_screentype.model';
 export * from './api_single-playlist.model';
 export * from './api_single-screen.model';
+export * from './api_state.model';
 export * from './api_swap-content-response.model';
 export * from './api_template.model';
 export * from './api_timezone.model';

@@ -1,4 +1,4 @@
-import { API_LICENSE_PROPS, API_TIMEZONE, TAG } from '.';
+import { API_LICENSE_PROPS, API_TIMEZONE, TAG, UI_STORE_HOUR } from '.';
 import { API_DEALER } from './api_dealer.model';
 
 export class API_HOST {
@@ -25,6 +25,7 @@ export class API_HOST {
 	licenses: API_LICENSE_PROPS[];
 	logo?: string;
 	longitude: string;
+	mappedStoreHours?: string;
 	monthlyTraffic: string;
 	name: string;
 	notes: string;
@@ -34,6 +35,7 @@ export class API_HOST {
 	state: string;
 	status: string;
 	storeHours: any;
+	storeHoursParsed?: UI_STORE_HOUR[];
 	street: string;
 	tags?: TAG[];
 	tagsToString?: string;

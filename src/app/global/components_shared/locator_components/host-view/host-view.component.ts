@@ -110,7 +110,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 						return;
 					}
 
-					this.hostsData = response.host.filter((host) => host.totalLicenses - host.totalLicensesPending > 0);
+					this.hostsData = response.host;
 				},
 				(error) => {
 					throw new Error(error);
