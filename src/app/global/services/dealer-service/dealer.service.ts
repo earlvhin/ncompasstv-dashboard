@@ -81,8 +81,9 @@ export class DealerService extends BaseService {
 		);
 	}
 
-	get_dealers_with_host(page: number, search: string) {
+	get_dealers_with_host(page: number, search: string, pending = false) {
 		const filters: API_FILTERS = { page, search };
+		if (pending) filters.pending = 'true';
 		const base = `${this.getters.api_get_dealers_with_host}`;
 		const params = this.setUrlParams(filters);
 		const url = `${base}${params}`;
@@ -148,7 +149,7 @@ export class DealerService extends BaseService {
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
-
+	
 	get_dealers_fetch(
 		page: number,
 		search: string,
@@ -227,7 +228,7 @@ export class DealerService extends BaseService {
 	}
 
 	get_search_dealer_with_host(key: string) {
-		return this.getRequest(`${this.getters.api_search_dealer_with_host}${key}`);
+		return this.getRequest(`${this.getters.api_search_dealer_with_host}${key}&pending=true`);
 	}
 
 	get_dealer_report(data) {

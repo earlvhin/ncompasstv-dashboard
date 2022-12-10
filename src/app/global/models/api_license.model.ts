@@ -1,12 +1,12 @@
-import { API_HOST } from "./api_host.model";
+import { API_HOST } from './api_host.model';
 
 export class API_LICENSE {
 	dealer_license?: API_DEALER_LICENSE;
 	host: API_HOST;
 	license: API_LICENSE_PROPS;
 	screen: screenInfo;
-	screenType: { dateCreated: string, dateUpdated: string, description: string, name: string, screenTypeId: string };
-	timezone?: { id: string, name: string, status: string };
+	screenType: { dateCreated: string; dateUpdated: string; description: string; name: string; screenTypeId: string };
+	timezone?: { id: string; name: string; status: string };
 	totalContents?: number;
 }
 
@@ -19,8 +19,8 @@ export interface API_LICENSE_PROPS {
 	category: string;
 	contentsUpdated: string;
 	d?: any;
-	dateCreated: string
-	dateUpdated: string
+	dateCreated: string;
+	dateUpdated: string;
 	dealerId: string;
 	displayStatus?: any;
 	emailSettings?: number;
@@ -56,8 +56,9 @@ export interface API_LICENSE_PROPS {
 	screenshotUrl: string;
 	serverVersion: string;
 	speedtestSettings: number;
+	status?: string;
 	storeHours: string;
-	tags?: { name: string, tagColor: string }[] | string[];
+	tags?: { name: string; tagColor: string }[] | string[];
 	tagsToString?: string;
 	templateBackground: string;
 	templateBottom: string;
@@ -79,14 +80,14 @@ export interface API_LICENSE_PROPS {
 }
 
 interface screenInfo {
-    screenId: string;
-    screenName: string;
-    description: string;
-    dealerId: string;
-    hostId: string;
-    templateId: string;
-    createdBy: string;
-    dateCreated: string;
+	screenId: string;
+	screenName: string;
+	description: string;
+	dealerId: string;
+	hostId: string;
+	templateId: string;
+	createdBy: string;
+	dateCreated: string;
 	dateUpdated: string;
 	templateName?: string;
 }
@@ -98,7 +99,7 @@ export class API_DEALER_LICENSE {
 	licenseId: string;
 	licenseKey: string;
 
-	constructor(dealerId,  hostId, licenseAlias, licenseId, licenseKey){
+	constructor(dealerId, hostId, licenseAlias, licenseId, licenseKey) {
 		this.dealerId = dealerId;
 		this.hostId = hostId;
 		this.licenseAlias = licenseAlias;

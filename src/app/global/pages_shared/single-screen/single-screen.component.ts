@@ -516,7 +516,7 @@ export class SingleScreenComponent implements OnInit {
                                 role = UI_ROLE_DEFINITION_TEXT.administrator;
                             }
 							await this._router.navigate([`/` +role+ `/screens/`, response.screenId]);
-							const screenData = await this._screen.get_screen_by_id(response.screenId).toPromise() as API_SINGLE_SCREEN;
+							const screenData = (await this._screen.get_screen_by_id(response.screenId).toPromise()) as API_SINGLE_SCREEN;
 							this.screen_id = screenData.screen.screenId;
 							this.setPageData(screenData);
 							this.getScreenLicenses(1);
@@ -704,27 +704,25 @@ export class SingleScreenComponent implements OnInit {
 					label: 'License Alias',
 					id: l.licenseId,
 					hidden: false,
-                    new_tab_link: true
+					new_tab_link: true
 				},
 				{ value: l.internetType ? this.getInternetType(l.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: l.internetSpeed ? l.internetSpeed : '--', link: null, editable: false, hidden: false },
 				{ value: l.isActivated, link: null, editable: false, hidden: true },
 				{ value: l.isRegistered, link: null, editable: false, hidden: true },
 				{ value: l.piStatus, link: null, editable: false, hidden: true },
-				{ value: l.playerStatus, link: null, editable: false, hidden: true },
+				{ value: l.playerStatus, link: null, editable: false, hidden: true }
 			);
 		});
 	}
 
-    openPlaylistInNewTab(route, pid) {
-        // Converts the route into a string that can be used 
-        // with the window.open() function
-        const url = this._router.serializeUrl(
-          this._router.createUrlTree([`route${pid}`])
-        );
+	openPlaylistInNewTab(route: string, pid: string) {
+		// Converts the route into a string that can be used
+		// with the window.open() function
+		const url = this._router.serializeUrl(this._router.createUrlTree([`${route}/${pid}`]));
       
-        window.open(url, '_blank');
-      }
+		window.open(url, '_blank');
+	}
 
 	// Final UI Data Model
 	private mapToScreenUI(data: API_SINGLE_SCREEN): UI_SINGLE_SCREEN {
