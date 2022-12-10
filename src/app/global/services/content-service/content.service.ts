@@ -21,7 +21,7 @@ export class ContentService extends BaseService {
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}
-	// token = JSON.parse(localStorage.getItem('tokens'));
+	token = JSON.parse(localStorage.getItem('tokens'));
 
 	// httpOptions = {
 	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })

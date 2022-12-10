@@ -58,6 +58,11 @@ export class UserService extends BaseService {
         const url = `${this.getters.api_get_user_by_id}${data}`;
 		return this.getRequest(url).map((data) => data.user);
 	}
+	
+    get_dealeradmin_dealers(id) {
+        const url = `${this.getters.api_get_dealer_admin_user}?userid=${id}`;
+		return this.getRequest(url);
+	}
 
 	get_user_alldata_by_id(data, isAdmin) {
 		const url = `${this.getters.api_get_user_by_id}${data}` + '&isAdmin=' + `${isAdmin}`;

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import * as moment from 'moment-timezone';
 
-import { API_DEALER, API_SINGLE_HOST, HOST_LICENSE_STATISTICS, TAG, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_DEALER, API_SINGLE_HOST, HOST_LICENSE_STATISTICS, TAG, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { EditSingleAdvertiserComponent } from 'src/app/global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from 'src/app/global/pages_shared/edit-single-dealer/edit-single-dealer.component';
@@ -101,11 +101,14 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	checkRoute(id1, id2) {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		let route = this._auth.current_role;
+        if(route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            route = UI_ROLE_DEFINITION_TEXT.administrator
+        }
 		// this._router.navigate([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } });
 
         const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } })
+            this._router.createUrlTree([`/`+route+`/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } })
         );
         window.open(url, '_blank');
 	}

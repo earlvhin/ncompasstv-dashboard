@@ -13,6 +13,7 @@ import { environment } from 'src/environments/environment';
 })
 export class TemplateService extends BaseService {
 	onSelectZone = new EventEmitter<string>();
+    token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

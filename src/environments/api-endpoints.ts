@@ -65,6 +65,7 @@ export const API_ENDPOINTS = {
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
 		api_get_dealers_with_license: 'dealer/getdealerswithlicense',
 		api_get_dealer_report: 'dealer/getaddedreport',
+        api_get_dealer_admin_user: 'dealeradmin/dealer/assigneddealers',
 		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone',
 		api_get_dma: 'dma/gethosttotalbyrank',
 		api_get_generated_feed_by_id: 'feed/getbyfeedid?feedid=',
@@ -205,6 +206,7 @@ export const API_ENDPOINTS = {
 		api_new_advertiser_profile: 'advertiser/createadvertiser',
 		api_new_dealer: 'dealer/create',
 		api_new_dealer_admin: 'dealeradmin/upsert',
+		api_new_dealer_admin_dealers: 'dealeradmin/assign/new/dealers',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
 		api_new_news_feed_demo: 'feed/preview/demo/news',
@@ -320,6 +322,7 @@ export const API_ENDPOINTS = {
 	delete: {
 		api_delete_contract_details: 'dealer/deletecontractfiles?filename=',
 		api_delete_credit_card: 'billing/delete/creditcard',
+        api_delete_dealer_admin: 'dealeradmin/delete/assigned/dealers',
 		api_delete_territory_details: 'dealer/deleteterritoryfiles?filename=',
 		api_delete_screenshot: 'pi/deletescreenshots',
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',

@@ -21,6 +21,7 @@ import { BaseService } from '../base.service';
 export class DealerService extends BaseService {
 	onSuccessReassigningDealer = new EventEmitter<null>();
 	onDealerDataLoaded = new EventEmitter<{ email: string }>();
+    token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
@@ -34,6 +35,10 @@ export class DealerService extends BaseService {
         const body = { data };
 		return this.postRequest(this.creators.api_new_dealer, body);
 	}
+	
+    add_dealers_of_dealer_admin(data) {
+		return this.postRequest(this.creators.api_new_dealer_admin_dealers, data);
+	}
 
 	content_dealer_metrics(data) {
 		return this.postRequest(`${this.getters.api_get_dealers_content_metrics}`, data);
@@ -41,6 +46,10 @@ export class DealerService extends BaseService {
 
 	delete_dealer(body: { dealerId: string; userId: string; retainContents: boolean }) {
 		return this.postRequest(`${this.deleters.delete_dealer}`, body);
+	}
+	
+    delete_dealer_admin_assignee(data) {
+		return this.postRequest(`${this.deleters.api_delete_dealer_admin}`, data);
 	}
 
 	delete_contract_details(filename) {

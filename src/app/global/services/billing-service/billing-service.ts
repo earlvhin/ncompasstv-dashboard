@@ -11,6 +11,7 @@ import { API_ORDER, PAGING } from 'src/app/global/models';
 })
 export class BillingService extends BaseService {
 	on_click_order = new EventEmitter<void>();
+    token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

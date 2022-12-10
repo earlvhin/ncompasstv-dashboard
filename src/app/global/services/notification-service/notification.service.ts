@@ -11,7 +11,7 @@ import { BaseService } from '../base.service';
 export class NotificationService extends BaseService {
 	private resolve_all_event = new Subject<any>();
 	resolve_all_event_emitted$ = this.resolve_all_event.asObservable();
-
+    token = JSON.parse(localStorage.getItem('tokens'));
 	// httpOptions = {
 	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	// };

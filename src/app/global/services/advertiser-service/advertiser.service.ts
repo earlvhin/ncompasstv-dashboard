@@ -9,6 +9,8 @@ import { API_ADVERTISER, PAGING, TAG } from 'src/app/global/models';
 })
 
 export class AdvertiserService extends BaseService {
+    token = JSON.parse(localStorage.getItem('tokens'));
+    
 	get_advertisers(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize=15) {
 		// return this.getRequest(`${this.getters.api_get_advertisers}`).map(data => data.advertisers);
         const base = `${this.getters.api_get_advertisers}`;

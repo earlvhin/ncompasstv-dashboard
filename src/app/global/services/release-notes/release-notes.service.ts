@@ -12,7 +12,8 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 export class ReleaseNotesService extends BaseService {
 	onEditNoteFromDataTable = new EventEmitter<{ releaseNoteId: string }>();
 	onDeleteNoteFromDataTable = new EventEmitter<{ releaseNoteId: string }>();
-
+    token = JSON.parse(localStorage.getItem('tokens'));
+    
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}

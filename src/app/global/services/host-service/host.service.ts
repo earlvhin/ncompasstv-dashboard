@@ -11,6 +11,7 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 })
 export class HostService extends BaseService {
 	onUpdateBusinessHours = new EventEmitter<boolean>();
+    token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

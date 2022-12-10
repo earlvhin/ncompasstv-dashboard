@@ -47,7 +47,8 @@ import {
 	PlaylistContentSchedule,
 	API_LICENSE,
 	API_ACTIVITY,
-	TAG
+	TAG,
+    UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 
 @Component({
@@ -176,6 +177,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+        if(this.routes === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.routes = UI_ROLE_DEFINITION_TEXT.administrator
+        }
 		this.pi_status = false;
 		this.getLicenseInfo();
 		this.initializeSocketWatchers();
