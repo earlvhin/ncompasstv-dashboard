@@ -233,13 +233,13 @@ export class CreatePlaylistComponent implements OnInit {
 			this.no_dealer_not_floating = false;
 		}
 
-		this._content.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
+		this._content
+			.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
 			.subscribe((data) => {
 				this.searching = false;
 				this.media_library_api = data;
-                this.media_library = [];
-                this.filtered_content_data = [];
-                console.log("DATA", data)
+				this.media_library = [];
+				this.filtered_content_data = [];
 				if (!data.message) {
 					this.no_search_result = false;
 					this.media_library = this.mediaFiles_mapToUI(data);
@@ -250,10 +250,10 @@ export class CreatePlaylistComponent implements OnInit {
 					} else {
 						this.no_search_result = true;
 					}
-                    if(this.media_key != '') {
-                        this.no_content = true;
-                        this.no_search_result = true;
-                    }
+					if (this.media_key != '') {
+						this.no_content = true;
+						this.no_search_result = true;
+					}
 				}
 			});
 	}
@@ -363,9 +363,9 @@ export class CreatePlaylistComponent implements OnInit {
 
 		dialog.afterClosed().subscribe((data) => {
 			let route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-            if(route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-                route = UI_ROLE_DEFINITION_TEXT.administrator
-            }
+			if (route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+				route = UI_ROLE_DEFINITION_TEXT.administrator;
+			}
 			this._router.navigate([`/${route}/playlists/`]);
 		});
 	}

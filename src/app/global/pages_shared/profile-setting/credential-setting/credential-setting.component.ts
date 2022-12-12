@@ -83,7 +83,6 @@ export class CredentialSettingComponent implements OnInit {
 			.subscribe(
 				(response) => {
 					this.user_data = response;
-                    console.log("this.", this.user_data)
 					this.readyChangePassword();
 				},
 				(error) => {
