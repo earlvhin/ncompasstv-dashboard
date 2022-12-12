@@ -103,19 +103,19 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 								if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
 									this.is_floating = true;
 								} else {
-									this.hostid = data.hostId;
+									this.hostid = data.content.hostId;
 									this.getHostById(this.hostid);
-									this.advertiserid = data.advertiserId;
+									this.advertiserid = data.content.advertiserId;
 									this.getAdvertiserById(this.advertiserid);
-									this.dealerid = data.dealerId;
-									this.getDealerById(data.dealerId);
+									this.dealerid = data.content.dealerId;
+									this.getDealerById(data.content.dealerId);
 								}
 							} else {
 								if (this.content_data.dealerId == '') {
 									this.is_floating = true;
 								} else {
-									this.dealerid = data.dealerId;
-									this.getDealerById(data.dealerId);
+									this.dealerid = data.content.dealerId;
+									this.getDealerById(data.content.dealerId);
 								}
 							}
 						},

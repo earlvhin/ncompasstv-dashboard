@@ -304,7 +304,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	private async updateContentsArray(contentId: string): Promise<void> {
 		try {
 			this.has_updated_content = true;
-			this.updated_content = this.mapContentsToUI([await this._content.get_content_by_id(contentId).toPromise()])[0];
+			this.updated_content = this.mapContentsToUI([(await this._content.get_content_by_id(contentId).toPromise()).content])[0];
 			const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(
 				(content) => content.content_id === this.updated_content.content_id
 			);

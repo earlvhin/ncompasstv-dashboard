@@ -28,7 +28,7 @@ interface CONTENT_LOGS_REPORT {
 	providers: [DatePipe]
 })
 export class SingleContentComponent implements OnInit, OnDestroy {
-	content$: Observable<API_CONTENT>;
+	content$: Observable<{ content: API_CONTENT }>;
 	content_monthly_count: API_CONTENT_PLAY_COUNT[] = [];
 	content_daily_count: API_CONTENT_PLAY_COUNT[] = [];
 	content_yearly_count: API_CONTENT_PLAY_COUNT[] = [];
@@ -307,7 +307,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	private getContentInfo(content_id: string): void {
 		this.content$ = this._content.get_content_by_id(content_id);
-		this.content$.subscribe((val) => (this.file_title = val.title));
+		this.content$.subscribe((val) => (this.file_title = val.content.title));
 	}
 
 	private getDailyStats(content_id: string, date: string): void {
