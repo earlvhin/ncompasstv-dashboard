@@ -97,6 +97,7 @@ export class DataTableComponent implements OnInit {
 	pagination: number;
 	selectAll: boolean = false;
 	subscription: Subscription = new Subscription();
+	pagesWithStatusIndicator = this._pagesWithStatusIndicator;
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -329,20 +330,8 @@ export class DataTableComponent implements OnInit {
 		this.warningModal('warning', 'Delete License', 'Are you sure you want to delete this license', '', 'license_delete', id);
 	}
 
-	getStatusColor(data: any) {
-		let statusColor = '';
-
-		switch (this.page) {
-			case 'advertisers':
-				const advertiser = data as DEALER_UI_TABLE_ADVERTISERS;
-				statusColor = advertiser.status.value === 'A' ? 'text-primary' : 'text-gray';
-				break;
-
-			default:
-				break;
-		}
-
-		return statusColor;
+	getStatusColor(status: string) {
+		return status === 'A' ? 'text-primary' : 'text-gray';
 	}
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
@@ -775,5 +764,9 @@ export class DataTableComponent implements OnInit {
 				throw new Error(error);
 			}
 		);
+	}
+
+	protected get _pagesWithStatusIndicator() {
+		return ['single-dealer-host-tab', 'advertisers'];
 	}
 }

@@ -103,9 +103,9 @@
 														<div class="value">
 															{{ data[d].value }}
 														</div>
-														<ng-container *ngIf="page === 'advertisers'">
+														<ng-container *ngIf="pagesWithStatusIndicator.includes(page)">
 															<span>
-																<i class="fas fa-circle" [ngClass]="getStatusColor(data)"></i>
+																<i class="fas fa-circle" [ngClass]="getStatusColor(data.status.value)"></i>
 															</span>
 														</ng-container>
 													</div>
@@ -113,7 +113,7 @@
 
 												<ng-template #shortened_tooltip>
 													<span [title]="data[d].value">
-														{{ data[d].value | substring: 10 }}
+														{{ data[d].value | substring : 10 }}
 													</span>
 												</ng-template>
 											</div>
@@ -179,8 +179,8 @@
 												!data[d].value.includes('--');
 											else defaultValue
 										">
-										{{ data[d].value | date: 'MMM dd, y' }}<br />
-										{{ data[d].value | date: 'hh:mm a' }}
+										{{ data[d].value | date : 'MMM dd, y' }}<br />
+										{{ data[d].value | date : 'hh:mm a' }}
 									</div>
 
 									<ng-template #defaultValue>

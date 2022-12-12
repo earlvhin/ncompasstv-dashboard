@@ -45,6 +45,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	combined_data: API_HOST[];
 	current_tab = 'hosts';
 	current_advertiser_status_filter = 'active';
+	current_host_status_filter = 'active';
 	dealer: API_DEALER;
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
@@ -394,6 +395,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.getDealerAdvertiser();
 	}
 
+	filterHostsByStatus(status: string) {
+		if (status === this.current_host_status_filter) return;
+		this.current_host_status_filter = status;
+		this.getDealerHost(1);
+	}
+
 	licenseZoneFilterData(e): void {
 		if (e) {
 			this.search_data_license_zone = e;
@@ -519,38 +526,49 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getDealerHost(page: number): void {
+		let status = this.current_host_status_filter === 'active' ? 'A' : 'I';
+		if (this.current_host_status_filter === 'all') status = '';
+
 		this.searching = true;
 		this.host_data = [];
 		this.host_filtered_data = [];
 		this.temp_array = [];
 
+		const filters = {
+			dealerId: this.dealer_id,
+			status,
+			page,
+			search: this.search_data,
+			sortColumn: this.sort_column_hosts,
+			sortOrder: this.sort_order_hosts,
+			pageSize: 15
+		};
+
 		this.subscription.add(
-			this._host
-				.get_host_by_dealer_id_with_sort(this.dealer_id, page, this.search_data, this.sort_column_hosts, this.sort_order_hosts)
-				.subscribe(
-					(data) => {
-						this.initial_load = false;
-						this.searching = false;
-						this.paging_data = data.paging;
+			this._host.get_host_by_dealer_id_with_sort(filters).subscribe(
+				(data) => {
+					this.initial_load = false;
+					this.searching = false;
+					this.paging_data = data.paging;
 
-						if (!data.message) {
-							this.temp_array = data.paging.entities;
-							this.host_data = this.hostTable_mapToUI(this.temp_array);
-							this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
-							this.no_hosts = false;
-						} else {
-							if (this.search_data == '') {
-								this.no_hosts = true;
-							}
-
-							this.host_data = [];
-							this.host_filtered_data = [];
+					if (!data.message) {
+						this.temp_array = data.paging.entities;
+						this.host_data = this.hostTable_mapToUI(this.temp_array);
+						this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
+						this.no_hosts = false;
+					} else {
+						if (this.search_data == '') {
+							this.no_hosts = true;
 						}
-					},
-					(error) => {
-						throw new Error(error);
+
+						this.host_data = [];
+						this.host_filtered_data = [];
 					}
-				)
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
 		);
 	}
 
@@ -1258,19 +1276,26 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				);
 				break;
 			case 'Hosts':
+				const filters = {
+					dealerId: this.dealer_id,
+					page: 1,
+					search: this.search_data,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0
+				};
+
 				this.subscription.add(
-					this._host
-						.get_host_by_dealer_id_with_sort(this.dealer_id, 1, this.search_data, this.sort_column_hosts, this.sort_order_hosts, 0)
-						.subscribe((data) => {
-							this.hosts_to_export = data.paging.entities;
-							this.hosts_to_export.forEach((item, i) => {
-								this.modifyItem(item, tab);
-								this.worksheet.addRow(item).font = {
-									bold: false
-								};
-							});
-							this.generateExcel(tab);
-						})
+					this._host.get_host_by_dealer_id_with_sort(filters).subscribe((data) => {
+						this.hosts_to_export = data.paging.entities;
+						this.hosts_to_export.forEach((item, i) => {
+							this.modifyItem(item, tab);
+							this.worksheet.addRow(item).font = {
+								bold: false
+							};
+						});
+						this.generateExcel(tab);
+					})
 				);
 				break;
 		}

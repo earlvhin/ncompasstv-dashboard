@@ -6,7 +6,7 @@ import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
-import { AuthService, DealerService, HostService } from 'src/app/global/services';
+import { AuthService, DealerService, HelperService, HostService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-hosts',
@@ -72,11 +72,18 @@ export class HostsComponent implements OnInit {
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _auth: AuthService, private _host: HostService, private _dealer: DealerService, private cdr: ChangeDetectorRef) {}
+	constructor(
+		private _auth: AuthService,
+		private _host: HostService,
+		private _dealer: DealerService,
+		private cdr: ChangeDetectorRef,
+		private _helper: HelperService
+	) {}
 
 	ngOnInit() {
 		this.getHosts();
 		this.getHostTotal();
+		this.subscribeToStatusFilterClick();
 	}
 
 	ngOnDestroy() {
@@ -255,7 +262,8 @@ export class HostsComponent implements OnInit {
 	}
 
 	getHosts(page = 1): void {
-		const status = this.current_status_filter === 'active' ? 'A' : 'I';
+		let status = this.current_status_filter === 'active' ? 'A' : 'I';
+		if (this.current_status_filter === 'all') status = '';
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
@@ -527,5 +535,13 @@ export class HostsComponent implements OnInit {
 		data.storeHoursTotal = data.storeHoursTotal;
 
 		if (data.tags && data.tags.length > 0) data.tagsToString = data.tags.join(',');
+	}
+
+	private subscribeToStatusFilterClick() {
+		this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			if (response.page !== 'hosts') return;
+			this.current_status_filter = response.value;
+			this.getHosts(1);
+		});
 	}
 }

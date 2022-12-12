@@ -183,56 +183,55 @@ export class DealersTableComponent implements OnInit {
 		const percentage_min = this.filters.percentage_min;
 		const percentage_max = this.filters.percentage_max;
 
-        if(sort || this.ongoing_filter) {
-            this._dealer
-			.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.ongoing_filter = false;
-					this.initial_load = false;
-					this.paging_data = response.paging;
+		if (sort || this.ongoing_filter) {
+			this._dealer
+				.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(response) => {
+						this.ongoing_filter = false;
+						this.initial_load = false;
+						this.paging_data = response.paging;
 
-					if (!response.paging.entities) {
-						this.filtered_data = [];
-						this.no_dealer = true;
-						return;
+						if (!response.paging.entities) {
+							this.filtered_data = [];
+							this.no_dealer = true;
+							return;
+						}
+
+						this.dealers_data = this.mapToUIFormat(response.paging.entities);
+						this.filtered_data = this.dealers_data;
+					},
+					(error) => {
+						throw new Error(error);
 					}
+				)
+				.add(() => (this.searching = false));
+		} else {
+			this._dealer
+				.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(response) => {
+						this.ongoing_filter = false;
+						this.initial_load = false;
+						this.paging_data = response.paging;
 
-					this.dealers_data = this.mapToUIFormat(response.paging.entities);
-					this.filtered_data = this.dealers_data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => (this.searching = false));
-        } else {
-            this._dealer
-			.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.ongoing_filter = false;
-					this.initial_load = false;
-					this.paging_data = response.paging;
+						if (!response.paging.entities) {
+							this.filtered_data = [];
+							this.no_dealer = true;
+							return;
+						}
 
-					if (!response.paging.entities) {
-						this.filtered_data = [];
-						this.no_dealer = true;
-						return;
+						this.dealers_data = this.mapToUIFormat(response.paging.entities);
+						this.filtered_data = this.dealers_data;
+					},
+					(error) => {
+						throw new Error(error);
 					}
-
-					this.dealers_data = this.mapToUIFormat(response.paging.entities);
-					this.filtered_data = this.dealers_data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => (this.searching = false));
-        }
-		
+				)
+				.add(() => (this.searching = false));
+		}
 	}
 
 	sortByColumnName(column: string, order: string): void {
@@ -275,21 +274,42 @@ export class DealersTableComponent implements OnInit {
 	}
 
 	private subscribeToDealerStatusFilter(): void {
-		this._helper.onClickActiveDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.searching) return;
-			this.selected_filter.status = 'A';
-			this.pageRequested(1);
-		});
+		// this._helper.onClickActiveDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+		// 	if (this.searching) return;
+		// 	this.selected_filter.status = 'A';
+		// 	this.pageRequested(1);
+		// });
 
-		this._helper.onClickInactiveDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.searching) return;
-			this.selected_filter.status = 'C';
-			this.pageRequested(1);
-		});
+		// this._helper.onClickInactiveDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+		// 	if (this.searching) return;
+		// 	this.selected_filter.status = 'C';
+		// 	this.pageRequested(1);
+		// });
 
-		this._helper.onClickAllDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.searching) return;
-			this.selected_filter.status = '';
+		// this._helper.onClickAllDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+		// 	if (this.searching) return;
+		// 	this.selected_filter.status = '';
+		// 	this.pageRequested(1);
+		// });
+
+		this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			if (this.searching || response.page !== 'dealers') return;
+
+			switch (response.value) {
+				case 'active':
+					this.selected_filter.status = 'A';
+					break;
+
+				case 'inactive':
+					this.selected_filter.status = 'C';
+					break;
+
+				default:
+					this.selected_filter.status = '';
+
+					break;
+			}
+
 			this.pageRequested(1);
 		});
 	}

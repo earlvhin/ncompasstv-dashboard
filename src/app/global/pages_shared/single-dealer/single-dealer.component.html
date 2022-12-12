@@ -404,52 +404,71 @@
 						<mat-tab label="Hosts">
 							<div *ngIf="current_tab === 'hosts'">
 								<div *ngIf="!initial_load; else loader">
-									<div *ngIf="!no_hosts; else no_data">
-										<div class="row pt-3">
-											<div class="col-lg-8">
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn pi-control sm-text _primary mr-2"
-													(click)="exportTable('Hosts')"
-													[disabled]="workbook_generation"
-													title="Export to CSV">
-													<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-													<span class="ml-2 button_text_animation">{{
-														!workbook_generation ? 'Export' : 'Generating CSV'
-													}}</span>
+									<div class="d-flex mt-3 table-controls">
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn pi-control sm-text _primary mr-2"
+											(click)="exportTable('Hosts')"
+											[disabled]="workbook_generation"
+											title="Export to CSV">
+											<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+											<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
+										</button>
+										<div class="status-filter-container">
+											<button
+												mat-button
+												mat-raised-button
+												class="theme-btn status-filter-btn sm-text mr-2 h-45"
+												[matMenuTriggerFor]="hostStatusList">
+												<span class="button-label">Host Status: {{ current_host_status_filter | titlecase }}</span>
+												<span
+													class="fas fa-circle"
+													[ngClass]="current_host_status_filter === 'active' ? 'text-primary' : 'text-gray'"></span>
+											</button>
+											<mat-menu #hostStatusList="matMenu">
+												<button mat-menu-item (click)="filterHostsByStatus('active')">
+													<span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
 												</button>
-											</div>
-											<div class="col-lg-4">
-												<app-search-field
-													*ngIf="!initial_load"
-													[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
-													[placeholder]="'Example: N-Compass'"
-													[data_reference]="host_data"
-													[primary_keyword]="'host_name'"
-													[secondary_keyword]="'host_name'"
-													(searched)="hostFilterData($event)"
-													[api_search]="true"></app-search-field>
-											</div>
+												<button mat-menu-item (click)="filterHostsByStatus('inactive')">
+													<span class="fas fa-circle text-gray mr-2 xsm-text"></span>Inactive
+												</button>
+												<button mat-menu-item (click)="filterHostsByStatus('all')">
+													<span class="text-gray mr-2 xsm-text"></span>All
+												</button>
+											</mat-menu>
 										</div>
-										<div class="row" *ngIf="!initial_load">
-											<div class="col-lg-12">
-												<ng-container *ngIf="!searching; else loader">
-													<mat-card *ngIf="host_filtered_data.length > 0; else no_data">
-														<app-data-table
-															[table_columns]="host_table_col"
-															[table_data]="host_filtered_data"
-															[new_table]="true"
-															[paging_details]="paging_data"
-															(page_triggered)="getDealerHost($event)"
-															(to_sort_column)="getHostsColumnsAndOrder($event)"
-															[active_tab]="sort_column_hosts"
-															[sort_column]="sort_column_hosts"
-															[sort_order]="sort_order_hosts">
-														</app-data-table>
-													</mat-card>
-												</ng-container>
-											</div>
+										<div class="search-field">
+											<app-search-field
+												*ngIf="!initial_load"
+												[form_title]="'Search Host Name, Address, City, Postal Code, or #Tag'"
+												[placeholder]="'Example: N-Compass'"
+												[data_reference]="host_data"
+												[primary_keyword]="'host_name'"
+												[secondary_keyword]="'host_name'"
+												(searched)="hostFilterData($event)"
+												[api_search]="true">
+											</app-search-field>
+										</div>
+									</div>
+									<div class="row" *ngIf="!initial_load">
+										<div class="col-lg-12">
+											<ng-container *ngIf="!searching; else loader">
+												<mat-card *ngIf="host_filtered_data.length > 0; else no_data">
+													<app-data-table
+														[table_columns]="host_table_col"
+														[table_data]="host_filtered_data"
+														[new_table]="true"
+														[paging_details]="paging_data"
+														[active_tab]="sort_column_hosts"
+														[sort_column]="sort_column_hosts"
+														[sort_order]="sort_order_hosts"
+														[page]="'single-dealer-host-tab'"
+														(page_triggered)="getDealerHost($event)"
+														(to_sort_column)="getHostsColumnsAndOrder($event)">
+													</app-data-table>
+												</mat-card>
+											</ng-container>
 										</div>
 									</div>
 								</div>
