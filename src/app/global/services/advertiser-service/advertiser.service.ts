@@ -8,10 +8,10 @@ import { API_ADVERTISER, API_FILTERS, PAGING, TAG } from 'src/app/global/models'
 	providedIn: 'root'
 })
 export class AdvertiserService extends BaseService {
-	get_advertisers(page: number, search: string, sortColumn?: string, sortOrder?: string, pageSize = 15) {
+	get_advertisers(filters: API_FILTERS) {
 		// return this.getRequest(`${this.getters.api_get_advertisers}`).map(data => data.advertisers);
 		const base = `${this.getters.api_get_advertisers}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

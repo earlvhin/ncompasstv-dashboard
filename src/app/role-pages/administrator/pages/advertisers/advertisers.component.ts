@@ -1,22 +1,24 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { Workbook } from 'exceljs';
-import { Subscription } from 'rxjs';
+import { Subject, Subscription } from 'rxjs';
 import { saveAs } from 'file-saver';
+import { takeUntil } from 'rxjs/operators';
 
 import { DEALER_UI_TABLE_ADVERTISERS, UI_DEALER_ADVERTISERS } from 'src/app/global/models';
-import { AdvertiserService, DealerService } from 'src/app/global/services';
+import { AdvertiserService, DealerService, HelperService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-advertisers',
 	templateUrl: './advertisers.component.html',
 	styleUrls: ['./advertisers.component.scss']
 })
-export class AdvertisersComponent implements OnInit {
+export class AdvertisersComponent implements OnInit, OnDestroy {
 	@Input() call_to_other_page: boolean = false;
 
 	advertiser_table_column: any = {};
 	advertiser_stats: any;
 	advertisers_to_export: any = [];
+	current_status_filter = 'active';
 	title: string = 'Advertisers';
 	paging_data: any;
 	table_loading: boolean = true;
@@ -35,11 +37,19 @@ export class AdvertisersComponent implements OnInit {
 	workbook_generation: boolean = false;
 	worksheet: any;
 
-	constructor(private _advertiser: AdvertiserService, private _dealer: DealerService) {}
+	protected _unsubscribe = new Subject<void>();
+
+	constructor(private _advertiser: AdvertiserService, private _dealer: DealerService, private _helper: HelperService) {}
 
 	ngOnInit() {
 		this.pageRequested(1);
 		this.getAdvertiserTotal();
+		this.subscribeToStatusFilterClick();
+	}
+
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	getAdvertiserTotal() {
@@ -69,11 +79,16 @@ export class AdvertisersComponent implements OnInit {
 		this.pageRequested(1);
 	}
 
-	pageRequested(e, pageSize?) {
+	pageRequested(page: number, pageSize?: number) {
 		if (pageSize != 0) {
 			this.searching = true;
 			this.dealers_with_advertiser = [];
 		}
+
+		let status = this.current_status_filter === 'active' ? 'A' : 'I';
+		if (this.current_status_filter === 'all') status = '';
+
+		const filters = { page, status, search: this.search_data, sortColumn: this.sort_column, sortOrder: this.sort_order, pageSize: 15 };
 
 		if (this.call_to_other_page) {
 			this.advertiser_table_column = [
@@ -85,7 +100,7 @@ export class AdvertisersComponent implements OnInit {
 				{ name: 'Dealer', sortable: true, column: 'BusinessName', key: 'businessName' }
 			];
 			this.subscription.add(
-				this._advertiser.get_advertisers(e, this.search_data, this.sort_column, this.sort_order, pageSize).subscribe(
+				this._advertiser.get_advertisers(filters).subscribe(
 					(data) => {
 						this.paging_data = data.paging;
 						if (data.advertisers) {
@@ -124,7 +139,7 @@ export class AdvertisersComponent implements OnInit {
 				{ name: 'Advertiser Count', sortable: true, column: 'totalAdvertisers', key: 'totalAdvertisers' }
 			];
 			this.subscription.add(
-				this._dealer.get_dealers_with_advertiser(e, this.search_data, this.sort_column, this.sort_order, pageSize).subscribe(
+				this._dealer.get_dealers_with_advertiser(page, this.search_data, this.sort_column, this.sort_order, pageSize).subscribe(
 					(data) => {
 						this.paging_data = data.paging;
 						if (data.dealers) {
@@ -262,5 +277,13 @@ export class AdvertisersComponent implements OnInit {
 
 	getDataForExport() {
 		this.pageRequested(1, 0);
+	}
+
+	private subscribeToStatusFilterClick() {
+		this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			if (response.page !== 'advertisers') return;
+			this.current_status_filter = response.value;
+			this.pageRequested(1);
+		});
 	}
 }
