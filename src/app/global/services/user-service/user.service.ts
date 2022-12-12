@@ -44,7 +44,7 @@ export class UserService {
 	}
 
 	get_user_total() {
-		return this._http.get<API_USER_STATS>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
+		return this._http.get<any>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
 	}
 
 	get_user_by_id(id: string) {
@@ -67,6 +67,9 @@ export class UserService {
 			case UI_ROLE_DEFINITION.dealer:
 				url = this.create.api_new_dealer;
 				break;
+			case UI_ROLE_DEFINITION.dealeradmin:
+				url = this.create.api_new_dealer_admin;
+				break;
 			case UI_ROLE_DEFINITION['sub-dealer']:
 				url = this.create.sub_dealer_account;
 				break;
@@ -80,7 +83,6 @@ export class UserService {
 				url = this.create.api_new_techrep;
 				break;
 		}
-
 		return this._http.post(`${this.base}${url}`, data, this.httpOptions);
 	}
 

@@ -86,35 +86,33 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 	pageRequested(page: number = 1): void {
 		this.current_filters.page = page;
+		this.current_filters.pageSize = 15;
 		this.searching = true;
 		this.users = [];
 
 		this._user.get_users_by_filters(this.current_filters).pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
+				(response) => {
+					if (!response.paging.entities) {
+                        response => {
+                            this.filtered_data = [];
+                            if (this.current_filters.search === '') this.no_user = true;
+                            return;
+                        }
 
-					if ('message' in response) {
-						this.filtered_data = [];
-						if (this.current_filters.search === '') this.no_user = true;
-						return;
-					}
-
-					this.paging_data = response.paging;
-					const users = [...response.paging.entities] as USER[];
-					const mappedData = this.mapToUIFormat(users);
-					this.users = mappedData;
-					this.filtered_data = mappedData;
-
-				},
+                        this.paging_data = response.paging;
+                        const mappedData = this.mapToUIFormat(response.paging.entities);
+                        this.users = mappedData;
+                        this.filtered_data = mappedData;
+                    }
 				(error) => {
 					throw new Error(error);
 				}
-			)
-			.add(() => {
+			}).add(() => {
 				this.initial_load = false;
 				this.searching = false;
 			});
-	}
+	    }
 
 	private confirmEmailNotificationToggle(userId: string, value: boolean, tableDataIndex: number, currentEmail: string): void {
 		let type = 'Enable';
@@ -165,6 +163,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 						basis_label: 'User(s)',
 						super_admin_count: response.totalSuperAdmin,
 						super_admin_label: 'Super Admin(s)',
+						dealer_admin_count: response.totalDealerAdmin,
+						dealer_admin_label: 'Dealer Admin(s)',
 						total_dealer: response.totalDealer,
 						total_dealer_label: 'Dealer(s)',
 						total_host: response.totalHost,

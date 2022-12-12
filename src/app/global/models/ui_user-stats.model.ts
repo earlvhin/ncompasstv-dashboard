@@ -9,6 +9,8 @@ export interface UI_USER_STATS {
 	sub_dealer_label?: string;
 	super_admin_count?: number;
 	super_admin_label?: string;
+	dealer_admin_count?: number;
+	dealer_admin_label?: string;
 	admin_count?: number;
 	admin_label?: string;
 	total_dealer?: number;
