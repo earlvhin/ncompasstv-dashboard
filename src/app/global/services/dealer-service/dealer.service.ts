@@ -87,8 +87,8 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealers_with_license}${params}`);
 	}
 
-	get_dealers_with_page(page: number, key: string): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
-		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}`);
+	get_dealers_with_page(page: number, key: string, pageSize = 15): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
+		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}`+ '&pageSize=' + `${pageSize}`);
 	}
 
 	get_dealers_with_sort(

@@ -29,6 +29,9 @@ export class CreateUserTypeComponent implements OnInit {
 						case UI_ROLE_DEFINITION.administrator:
 							this.current_role = UI_ROLE_DEFINITION_TEXT.administrator
 							break;
+						case UI_ROLE_DEFINITION.dealeradmin:
+							this.current_role = UI_ROLE_DEFINITION_TEXT.dealeradmin
+							break;
 						case UI_ROLE_DEFINITION.tech:
 							this.current_role = UI_ROLE_DEFINITION_TEXT.tech
 							break;

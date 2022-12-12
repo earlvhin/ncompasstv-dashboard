@@ -74,7 +74,7 @@ export class LicensesComponent implements OnInit {
 
 	filters: any = {
 		admin_licenses: false,
-		isactivated: 1,
+		isactivated: '',
 		assigned: '',
 		online: '',
 		pending: '',
@@ -664,7 +664,7 @@ export class LicensesComponent implements OnInit {
 		this.filters = {
 			admin_licenses: false,
 			assigned: '',
-			isactivated: 1,
+			isactivated: '',
 			online: '',
 			pending: '',
 			activated: '',

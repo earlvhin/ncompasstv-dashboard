@@ -22,7 +22,6 @@ export class CreateUserComponent implements OnInit {
 	user_type = []
 
 	ngOnInit() {
-
 		const roleId = this._auth.current_user_value.role_id;
 		const dealerRole = UI_ROLE_DEFINITION.dealer;
 		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
@@ -37,6 +36,13 @@ export class CreateUserComponent implements OnInit {
 				role_description: 'Access to all data and grant all privilege.',
 				role_icon: 'assets/media-files/admin-icon.png',
 				role: UI_ROLE_DEFINITION_TEXT.administrator,
+				is_dealer: this.is_dealer
+			},
+			{
+				role_name: 'Dealer Admin',
+				role_description: 'Access to all data and grant all privilege under certain dealers.',
+				role_icon: 'assets/media-files/admin-icon.png',
+				role: UI_ROLE_DEFINITION_TEXT.dealeradmin,
 				is_dealer: this.is_dealer
 			},
 			{
