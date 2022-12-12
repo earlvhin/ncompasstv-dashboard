@@ -1,7 +1,9 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { Observable, Subject, forkJoin } from 'rxjs';
+import { takeUntil, debounceTime } from 'rxjs/operators';
+
+import { API_LICENSE, API_LICENSE_PROPS, PAGING } from 'src/app/global/models';
 
 import { LicenseService } from 'src/app/global/services';
 @Component({
@@ -19,7 +21,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 	license_handler: any;
 	license_page_count: number = 1;
 	licenses: any[] = [];
-	loading_data: boolean = true;
+	licenses_loaded = false;
 	no_available_licenses: boolean = false;
 	timeOutDuration = 1000;
 
@@ -28,7 +30,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 	constructor(private _license: LicenseService, @Inject(MAT_DIALOG_DATA) public _dialog_data: any) {}
 
 	ngOnInit() {
-		this.getLicense(this.license_page_count++);
+		this.getAvailableLicenses();
 	}
 
 	ngOnDestroy() {
@@ -68,49 +70,66 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/**
-	 * Get License By Dealer Id
-	 * GET Method to AWS
-	 * @param page - Page Number for API Pagination
-	 */
-	private getLicense(page: number): void {
-		// Show spinner on UI incase user scrolled too
-		// fast and data is not ready
-		this.loading_data = true;
+	private async getAvailableLicenses() {
+		const dealerId = this._dialog_data.dealer_id;
+		let totalRequests: number;
+		let firstPageResult: { paging?: PAGING; message?: string };
+		let getLicenseRequests = [];
+		let merged = [];
 
-		this._license
-            .get_license_by_dealer_id(this._dialog_data.dealer_id, page, '', 'online', 15, '')
-			.pipe(takeUntil(this._unsubscribe))
+		try {
+			const firstPageRequest = this._license
+				.get_license_by_dealer_id(dealerId, 1, '', 'online', 15, '')
+				.map((response) => {
+					response.paging.entities = response.paging.entities.filter(
+						(license: API_LICENSE_PROPS) => !license.hostId || (license.hostId && license.hostId.length <= 0)
+					);
+					return response;
+				})
+				.toPromise();
+
+			firstPageResult = await firstPageRequest;
+		} catch (error) {
+			throw new Error(error);
+		}
+
+		if ('message' in firstPageResult) {
+			this.no_available_licenses = true;
+			this.licenses_loaded = true;
+			return;
+		}
+
+		merged = merged.concat(
+			(firstPageResult.paging.entities as API_LICENSE_PROPS[]).filter(
+				(license) => !license.hostId || (license.hostId && license.hostId.length <= 0)
+			)
+		);
+		totalRequests = firstPageResult.paging.pages;
+
+		if (totalRequests === 1) {
+			this.licenses = [...merged];
+			this.licenses_loaded = true;
+			if (merged.length <= 0) this.no_available_licenses = true;
+			return;
+		}
+
+		for (let i = 1; i < totalRequests; i++) {
+			const page = i + 1;
+			getLicenseRequests.push(this._license.get_license_by_dealer_id(dealerId, page, '', 'online', 15, ''));
+		}
+
+		forkJoin(getLicenseRequests)
+			.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
 			.subscribe(
-				(data) => {
-					// Save page count returned from API
-					if (!data.message) {
-						const page_count = data.paging.pages;
+				(response: { paging: PAGING }[]) => {
+					response.forEach((getLicenseResponse) => {
+						const licenses = getLicenseResponse.paging.entities as API_LICENSE_PROPS[];
+						merged = merged.concat(licenses.filter((license) => !license.hostId || (license.hostId && license.hostId.length <= 0)));
+					});
 
-						// available_licenses - are filtered licenses returned from API where hostId is null
-						const available_licenses = data.paging.entities.filter((i) => i.hostId === null);
-
-						// If "available_licenses" is more than 0, loop thru it then store
-						// each of its items to "licenses" array which is being used on the html side
-						if (available_licenses.length > 0) {
-							available_licenses.map((license) => this.licenses.push(license));
-						}
-
-						// Continue looking for licenses with host == null
-						// until number of page exhausted
-						if (this.license_page_count <= page_count) {
-							this.getLicense(this.license_page_count++);
-						} else {
-							// Hide Spinner on UI
-							this.loading_data = false;
-
-							// If number of page exhausted and "licenses" array's length is still 0
-							// meaning there's no available license with host == null
-							this.no_available_licenses = this.licenses.length > 0 ? false : true;
-						}
-					} else {
-						this.no_available_licenses = true;
-					}
+					this.licenses = [...merged];
+					this.licenses_loaded = true;
+					if (merged.length <= 0) this.no_available_licenses = true;
 				},
 				(error) => {
 					throw new Error(error);
