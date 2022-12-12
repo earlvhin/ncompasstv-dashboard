@@ -158,10 +158,11 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				businessName = data.businessName;
 			}
 
-            let role = this.currentRole;
-            if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-                role = UI_ROLE_DEFINITION_TEXT.administrator
-            }
+			let role = this.currentRole;
+
+			if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+				role = UI_ROLE_DEFINITION_TEXT.administrator;
+			}
 
 			return new UI_TABLE_FEED(
 				{ value: contentId, editable: false, hidden: true },

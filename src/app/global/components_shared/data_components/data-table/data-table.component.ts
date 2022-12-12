@@ -155,10 +155,11 @@ export class DataTableComponent implements OnInit {
 		return !restrictedRoles.includes(userRole);
 	}
 
-	editGeneratedFeed(data) {
+	editGeneratedFeed(data: any) {
 		if (this.is_view_only) return;
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/feeds/edit-generated/${data.feed_id.value}`]);
+		let role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		if (role === 'dealeradmin') role = 'administrator';
+		this._router.navigate([`/${role}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
 	onSelectRow(data: any, index: number): void {
@@ -241,15 +242,8 @@ export class DataTableComponent implements OnInit {
 		dialog.componentInstance.is_view_only = this.is_view_only;
 	}
 
-	feedPreview_open(i): void {
-		// let top = window.screen.height - 500;
-		// top = top > 0 ? top/2 : 0;
-		// let left = window.screen.width - 800;
-		// left = left > 0 ? left/2 : 0;
-		// let uploadWin = window.open(i.link, "_blank", "width=800, height=500" + ",top=" + top + ",left=30%" + left);
-		// uploadWin.moveTo(left, top);
-		// uploadWin.focus();
-		window.open(i.link, '_blank').focus();
+	feedPreview_open(data): void {
+		window.open(data.link, '_blank').focus();
 	}
 
 	editFeed(e): void {
