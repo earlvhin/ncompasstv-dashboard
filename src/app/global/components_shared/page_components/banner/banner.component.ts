@@ -32,6 +32,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	@Input() single_advertiser: any;
 	@Input() single_host_controls: boolean;
 	@Input() single_info: Array<any>;
+	@Input() page: string = null;
 	@Output() single_host_assign_license = new EventEmitter();
 	@Output() toggle_margin_top = new EventEmitter();
 	@Output() toggle_margin_top_notes = new EventEmitter();
@@ -41,6 +42,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	count = 0;
 	current_business_day = '';
 	current_operations: any;
+	isAdmin = this._isAdmin;
 	is_view_only = false;
 	now: any;
 	routes: string;
@@ -102,15 +104,15 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 	checkRoute(id1, id2) {
 		let route = this._auth.current_role;
-        if(route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            route = UI_ROLE_DEFINITION_TEXT.administrator
-        }
+		if (route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			route = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 		// this._router.navigate([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } });
 
-        const url = this._router.serializeUrl(
-            this._router.createUrlTree([`/`+route+`/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } })
-        );
-        window.open(url, '_blank');
+		const url = this._router.serializeUrl(
+			this._router.createUrlTree([`/` + route + `/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } })
+		);
+		window.open(url, '_blank');
 	}
 
 	checkContent() {
@@ -120,12 +122,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 			this.showHostContent();
 		} else {
 			this.showDealerContent();
-		}
-	}
-
-	isAdmin() {
-		if (this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator) {
-			return true;
 		}
 	}
 
@@ -267,5 +263,10 @@ export class BannerComponent implements OnInit, OnDestroy {
 		if (this.host_data) this.view = 'host';
 		if (this.advertiser_data) this.view = 'advertiser';
 		this.setTags();
+	}
+
+	protected get _isAdmin() {
+		const currentRole = this._auth.current_role;
+		return currentRole === 'administrator' || currentRole === 'dealeradmin';
 	}
 }
