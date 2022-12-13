@@ -194,67 +194,7 @@
 														<span class="fas fa-circle xsm-text text-danger mr-3"></span>Offline
 													</button>
 												</mat-menu>
-                                                    <ng-template #disabled_screenshot>
-                                                        <button mat-button mat-raised-button 
-                                                        class="theme-btn pi-control sm-text _teal mr-2"
-                                                        [disabled]="remote_reboot_disabled || !licenses"
-                                                        title="timeout_message">
-                                                            <span class="fas fa-camera"></span> 
-                                                            <span class="ml-2 button_text_animation">Screenshot</span>
-                                                        </button>
-                                                    </ng-template>
-    
-                                                    <ng-template #disabled_remote_reboot_pi>
-                                                        <button mat-button mat-raised-button 
-                                                        class="theme-btn pi-control sm-text _caution mr-2" 
-                                                        [disabled]="true" 
-                                                        [title]="timeout_message">
-                                                            <span class="fas fa-power-off"></span> 
-                                                            <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
-                                                        </button>
-                                                    </ng-template>
-    
-                                                    <button mat-button mat-raised-button 
-                                                    class="theme-btn pi-control sm-text mr-2" [ngClass]="array_to_delete.length > 0 ? '_danger':''" 
-                                                    [disabled]="array_to_delete.length == 0" 
-                                                    (click)="multipleDeleteLicense()"  
-                                                    title="Multiple Delete">
-                                                        <span class="fas fa-trash-alt"></span> 
-                                                        <span class="ml-2 button_text_animation">Multiple Delete <span class="xsm-text" *ngIf="array_to_delete.length > 0">( {{array_to_delete.length}} licenses )</span></span>
-                                                    </button>
-
-                                                    <button mat-button mat-raised-button
-                                                        class="theme-btn pi-control sm-text _primary mr-2" 
-                                                        (click)="exportTable('Licenses')"
-                                                        [disabled]="workbook_generation"  
-                                                        title="Export to CSV">
-                                                            <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
-                                                            <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
-                                                    </button>
-                                                </ng-container>
-                                            </div>
-                                            <div class="col-lg-4">
-                                                
-                                                <app-search-field
-                                                    *ngIf="!initial_load_license"
-                                                    [form_title]="'Search License Alias, Host Name, Anydesk or #Tag'"
-                                                    [placeholder]="'Example: License #100'"
-                                                    [data_reference]="license_data"
-                                                    [primary_keyword]="'alias'"
-                                                    [secondary_keyword]="'host_name'"
-                                                    (searched)="licenseFilterData($event)"
-                                                    [api_search]="true"
-                                                ></app-search-field>
-                                            </div>
-                                        </div>
-                                        <div class="row" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host">
-                                            <div class="col-lg-12">
-                                                <div class="d-flex align-items-center p-2 bg-gray-2" >
-                                                    <div class="filter-pills">
-                                                        <div class="filetype-pill pill" *ngIf="filters.label_status">
-                                                            License Status: <strong>{{filters.label_status}}</strong>
-                                                        </div>
-
+                                        
 												<ng-container *ngIf="show_admin_buttons">
 													<button
 														mat-button

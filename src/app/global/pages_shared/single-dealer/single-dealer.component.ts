@@ -24,7 +24,8 @@ import {
 	UI_DEALER_HOST,
 	UI_DEALER_LICENSE,
 	UI_DEALER_LICENSE_ZONE,
-	UI_ROLE_DEFINITION_TEXT
+	UI_ROLE_DEFINITION_TEXT,
+    UI_ROLE_DEFINITION
 } from 'src/app/global/models';
 
 @Component({
@@ -472,16 +473,23 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getAdvertiserTotalCount(id): void {
-        this.subscription.add(
-            this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
-                (data) => {
-                    this.setAdvertisersCount(data)
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            )
-        );
+		this.subscription.add(
+			this._advertiser.get_advertisers_total_by_dealer(id).subscribe(
+				(data) => {
+					this.advertiser_card = {
+						basis: data.total,
+						basis_label: 'ADVERTISERS',
+						good_value: data.totalActive,
+						good_value_label: 'ACTIVE',
+						bad_value: data.totalInActive,
+						bad_value_label: 'INACTIVE'
+					};
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+		);
 	}
 
 	getDealerAdvertiser(page = 1): void {
@@ -1033,10 +1041,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     }
 
 	async dealerSelected(id: string): Promise<void> {
-        if(this.current_role === 'dealeradmin') {
+        if(this._auth.current_role === 'dealeradmin') {
             await this._router.navigate([`/administrator/dealers/${id}`]);
         } else {
-            await this._router.navigate([`/${this.current_role}/dealers/${id}`]);
+            await this._router.navigate([`/${this._auth.current_role}/dealers/${id}`]);
         }
 		
 		this.getLicenseStatisticsByDealer(id, true);
@@ -1496,7 +1504,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
 
 		this._user
-			.get_all_user_data_by_id(id, isCurrentUserAdmin)
+			.get_user_alldata_by_id(id, isCurrentUserAdmin)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {

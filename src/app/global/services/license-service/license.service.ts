@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
-
+import { AuthService } from 'src/app/global/services/auth-service/auth.service'; 
 import {
 	API_DEALER_LICENSE,
 	API_FILTERS,
@@ -575,7 +575,7 @@ export class LicenseService extends BaseService {
 
 	//Get Resource Usage By License Id and Date
 	get_license_resource_logs(licenseId: string, date: string) {
-		return this.getRequest(`${this.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`, null);
+		return this.getRequest(`${this.getters.api_get_resource_logs_by_date}${licenseId}&selectedDate=${date}&page=1&pageSize=30`, null);
 	}
 
 	get_activities(id: string) {

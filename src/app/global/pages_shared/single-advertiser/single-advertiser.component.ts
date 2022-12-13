@@ -4,8 +4,8 @@ import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
-import { AdvertiserService, ContentService, HelperService } from 'src/app/global/services';
+import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT, UI_ROLE_DEFINITION_TEXT, API_ADVERTISER, API_DEALER } from 'src/app/global/models';
+import { AdvertiserService, ContentService, HelperService, DealerService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({

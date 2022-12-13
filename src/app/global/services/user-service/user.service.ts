@@ -6,6 +6,7 @@ import { BaseService } from '../base.service';
 
 import { environment } from 'src/environments/environment';
 import { API_DEALER, API_FILTERS, API_USER_DATA, API_USER_STATS, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service'; 
 
 @Injectable({
 	providedIn: 'root'

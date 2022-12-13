@@ -35,7 +35,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 		| { dealer: API_DEALER; user: API_USER_DATA }
 		| { host: API_HOST; dealer: API_DEALER }
 		| { advertiser: API_ADVERTISER; dealer: API_DEALER } = null;
-	@Input() page: string = null;
 	@Output() single_host_assign_license = new EventEmitter();
 	@Output() toggle_margin_top = new EventEmitter();
 	@Output() toggle_margin_top_notes = new EventEmitter();
