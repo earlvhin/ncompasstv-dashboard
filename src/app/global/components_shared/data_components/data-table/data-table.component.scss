@@ -2,7 +2,8 @@
 	cursor: pointer;
 }
 
-.fa-caret-up, .fa-caret-down {
+.fa-caret-up,
+.fa-caret-down {
 	font-size: 14px !important;
 }
 
@@ -18,26 +19,25 @@
 	cursor: pointer;
 
 	&:hover {
-		background-color: #ECECEC;
+		background-color: #ececec;
 	}
 }
 
 .color-danger {
-	color: #EE5454;
+	color: #ee5454;
 }
 
 .name-and-permission {
 	align-items: center;
 
 	.permission-container {
-		background-color: #8EC641;
+		background-color: #8ec641;
 		padding: 0.5px 5px;
 		border-radius: 25px;
 		color: white;
 		font-size: 9px;
 		margin-left: 5px;
 	}
-
 }
 
 .disabled {
@@ -46,11 +46,10 @@
 }
 
 a:hover {
-	color: #8EC641 !important;
+	color: #8ec641 !important;
 }
 
 .tags {
-
 	.tag {
 		margin-right: 5px;
 		margin-bottom: 5px;
@@ -72,4 +71,16 @@ a:hover {
 
 .text-center {
 	text-align: center;
+}
+
+.default-value-with-url {
+	gap: 10px;
+}
+
+.text-primary-important {
+	color: #8ec641 !important;
+}
+
+.text-gray-important {
+	color: #696969 !important;
 }

@@ -125,12 +125,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 				(error) => {
 					throw new Error(error);
 				}
-			)
-			.add(() => {
+			}).add(() => {
 				this.initial_load = false;
 				this.searching = false;
 			});
-	}
+	    }
 
 	private confirmEmailNotificationToggle(userId: string, value: boolean, tableDataIndex: number, currentEmail: string): void {
 		let type = 'Enable';

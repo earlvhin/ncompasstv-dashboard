@@ -39,6 +39,7 @@ export interface API_LICENSE_PROPS {
 	licenseKey: string;
 	macAddress: string;
 	memory: string;
+	new_status?: string;
 	notificationSettings?: number;
 	password?: string;
 	piSocketId: string;

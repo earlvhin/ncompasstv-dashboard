@@ -10,6 +10,7 @@ import {
 	API_DEALER_VALUES,
 	API_FILTERS,
 	PAGING,
+	API_LICENSE,
 	UI_CREDIT_CARD_DETAILS
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
@@ -114,9 +115,7 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealers_with_license}${params}`);
 	}
 
-	get_dealers_with_page(page: number, key: string, pageSize = 15): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
-		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}` + '&pageSize=' + `${pageSize}`);
-	}
+		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}`);	}
 
 	get_dealers_with_sort(
 		page: number,
@@ -188,7 +187,13 @@ export class DealerService extends BaseService {
 	}
 
 	get_dealer_by_id(id: string) {
-		return this.getRequest(`${this.getters.api_get_dealer_by_id}${id}`).map((data) => data.dealer);
+		const request = this.getRequest(`${this.getters.api_get_dealer_by_id}${id}`) as Observable<{
+			contract_details: any;
+			dealer: API_DEALER;
+			licenses: API_LICENSE[];
+		}>;
+
+		return request.map((response) => response.dealer);
 	}
 
 	get_all_dealer_values(page, searchKey, column, order, pageSize = 15) {
@@ -219,7 +224,7 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealer_territory_files}${id}`);
 	}
 
-	get_search_dealer(key: number | string) {
+	get_search_dealer(key: number | string): Observable<{ paging: PAGING; message?: string }> {
 		return this.getRequest(`${this.getters.api_search_dealer}${key}`);
 	}
 

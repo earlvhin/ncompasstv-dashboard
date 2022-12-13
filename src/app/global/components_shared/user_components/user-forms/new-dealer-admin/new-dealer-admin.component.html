@@ -15,7 +15,8 @@
 		</div>
 	</div>
 	<form [formGroup]="new_admin_form" (ngSubmit)="createNewAdmin(formDirective)" class="text-left" #formDirective="ngForm">
-		<div class="row mb-4">
+		<!-- Dynamic Form Row/Columns -->
+		<div class="row mb-3">
 			<div *ngFor="let f of form_fields_view" class="{{ f.width }}">
 				<mat-form-field class="full-width">
 					<mat-label>{{ f.label }}</mat-label>
@@ -28,7 +29,7 @@
 
 					<ng-template #passwordField>
 						<div class="password-container" *ngIf="f.control === 'password'">
-							<div class="field d-flex">
+							<div class="field">
 								<input
 									formControlName="{{ f.control }}"
 									matInput
@@ -41,7 +42,7 @@
 						</div>
 
 						<div class="password-container" *ngIf="f.control === 're_password'">
-							<div class="field d-flex">
+							<div class="field">
 								<input
 									formControlName="{{ f.control }}"
 									matInput
@@ -65,52 +66,56 @@
 					</span>
 				</div>
 			</div>
-			<div class="col-lg-12 text-gray">
-				<div>Assign Dealers:</div>
-			</div>
-			<div class="col-lg-12">
-				<mat-select #dealerMultiSelect formControlName="dealers" [placeholder]="'Select Dealer Name(s)'" [multiple]="true" class="full-width">
-					<div class="custom-panel">
-						<mat-option>
-							<ngx-mat-select-search
-								noEntriesFoundLabel="No results"
-								[formControl]="dealerFilterControl"
-								[placeholderLabel]="'Search Dealer Name'"
-								[clearSearchInput]="false">
-								<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
-							</ngx-mat-select-search>
-						</mat-option>
-						<mat-option *ngFor="let dealer of dealers_list" [value]="dealer">
-							<div class="dealer md-text">
-								{{ dealer.businessName }}
-							</div>
-						</mat-option>
-					</div>
-					<footer class="selection">
-						<button class="theme-btn _primary md-text mr-3" (click)="dealerMultiSelect.close()">APPLY SELECTION</button>
-					</footer>
-				</mat-select>
-				<div class="preview mt-3">
-					<div class="dealers-row p-0 pb-3">
-						<div class="col-lg-12 p-0 d-flex" *ngIf="selectedDealersControl.value.length > 0">
-							<div class="col-lg-7 p-0 pb-1 text-gray">
-								<h5>Selected Dealer Name(s):</h5>
-							</div>
-							<div class="col-lg-5 p-0 pb-1 text-right md-text f-500 text-danger clickable" (click)="onClearDealer()">
-								<i class="far fa-times-circle mr-2"></i>
-								<span>CLEAR SELECTION</span>
-							</div>
+		</div>
+		<!-- Dynamic Form Row/Columns -->
+
+		<!-- Dealer Select -->
+		<div class="assign-dealers-wrapper">
+			<h5 class="text-gray">Assign Dealers:</h5>
+			<mat-select #dealerMultiSelect formControlName="dealers" [placeholder]="'Select Dealer Name(s)'" [multiple]="true" class="full-width">
+				<div class="custom-panel">
+					<mat-option>
+						<ngx-mat-select-search
+							noEntriesFoundLabel="No results"
+							[formControl]="dealerFilterControl"
+							[placeholderLabel]="'Search Dealer Name'"
+							[clearSearchInput]="false">
+							<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
+						</ngx-mat-select-search>
+					</mat-option>
+					<mat-option *ngFor="let dealer of dealers_list" [value]="dealer">
+						<div class="dealer md-text">
+							{{ dealer.businessName }}
+						</div>
+					</mat-option>
+				</div>
+				<footer class="selection">
+					<button class="theme-btn _primary md-text mr-3" (click)="dealerMultiSelect.close()">APPLY SELECTION</button>
+				</footer>
+			</mat-select>
+			<div class="preview mt-3">
+				<div class="dealers-row pb-3">
+					<div class="d-flex" *ngIf="selectedDealersControl.value.length > 0">
+						<div class="flex-even">
+							<h5 class="text-gray pb-1">Selected Dealer Name(s):</h5>
 						</div>
 
-						<div
-							class="col-lg-12 p-0 selected-dealers-container d-flex flex-row align-items-start flex-wrap"
-							*ngIf="selectedDealersControl.value.length > 0">
-							<div
-								*ngFor="let dealer of selectedDealersControl.value; let i = index"
-								class="bg-primary text-white md-text pl-3 pr-3 br-5 mr-2 mb-2 dealer d-flex align-items-center">
-								<div class="name">{{ dealer.businessName }}</div>
-								<div class="remove-btn cursor-pointer" (click)="onRemoveDealer(i)">
-									<mat-icon class="md-text pt-2 pl-2 font-weight-bold">close</mat-icon>
+						<button class="naked-btn pb-1 md-text f-500 text-danger clickable" (click)="onClearDealer()">
+							<i class="far fa-times-circle mr-2"></i>
+							<span>CLEAR SELECTION</span>
+						</button>
+					</div>
+
+					<div class="row">
+						<div class="col-lg-12" *ngIf="selectedDealersControl.value.length > 0">
+							<div class="selected-dealers-container d-flex flex-row align-items-start flex-wrap">
+								<div
+									*ngFor="let dealer of selectedDealersControl.value; let i = index"
+									class="bg-primary text-white md-text px-2 py-1 br-5 mr-2 mb-2 dealer">
+									<span class="name mr-2">{{ dealer.businessName }}</span>
+									<button class="naked-btn remove-btn cursor-pointer" (click)="onRemoveDealer(i)">
+										<i class="fas fa-times text-danger"></i>
+									</button>
 								</div>
 							</div>
 						</div>
@@ -118,14 +123,14 @@
 				</div>
 			</div>
 		</div>
-		<div class="d-flex">
-			<div class="flex-even">
-				<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Dealer Administrator</button>
-			</div>
-		</div>
+		<!-- Dealer Select -->
+
+		<button mat-button mat-raised-button class="theme-btn" [disabled]="form_invalid">Create Dealer Administrator</button>
 	</form>
 
-	<div class="submit-on-load col-lg-12 position-absolute align-items-center col-lg-12 text-center" *ngIf="is_submitted">
-		<app-spinner></app-spinner>
+	<div class="d-flex h-100 align-items-center" *ngIf="is_submitted">
+		<div class="submit-on-load">
+			<app-spinner></app-spinner>
+		</div>
 	</div>
 </div>

@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
-import { API_DEALER, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
+import { API_DEALER, API_FILTERS, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
@@ -128,35 +128,27 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_host_by_page(page: number, search: string, sortColumn = '', sortOrder = '', pageSize = 15) {
+	get_host_by_page(filters: API_FILTERS, enforceTagKeySearch = false, allowBlankFilters = true) {
 		const base = `${this.getters.api_get_hosts}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
 	get_host_fetch(
-		page: number,
-		search: string,
-		sortColumn = '',
-		sortOrder = '',
-		pageSize = 15
+		filters: API_FILTERS,
+		enforceTagKeySearch = false,
+		allowBlankFilters = true
 	): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_hosts_fetch}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
-	get_host_fetch_export(
-		page: number,
-		search: string,
-		sortColumn = '',
-		sortOrder = '',
-		pageSize = 15
-	): Observable<{ host?: any[]; paging?: PAGING; message?: string }> {
+	get_host_fetch_export(filters: API_FILTERS): Observable<{ host?: API_HOST[]; paging?: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_hosts_fetch_for_export}`;
-		const params = this.setUrlParams({ page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -189,9 +181,9 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_host_by_dealer_id_with_sort(dealerId: string, page: number, search: string, sortColumn: string, sortOrder: string, pageSize = 15) {
+	get_host_by_dealer_id_with_sort(filters: API_FILTERS) {
 		const base = `${this.getters.api_get_host_by_id_optimized}`;
-		const params = this.setUrlParams({ dealerId, page, search, sortColumn, sortOrder, pageSize }, false, true);
+		const params = this.setUrlParams(filters, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

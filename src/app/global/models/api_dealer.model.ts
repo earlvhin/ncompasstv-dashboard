@@ -1,27 +1,26 @@
-import { API_ADVERTISER } from '.';
-import { API_HOST } from './api_host.model';
-import { API_LICENSE_PROPS } from './api_license.model';
-
+import { API_ADVERTISER, API_HOST, API_LICENSE_PROPS, TAG } from '.';
 export class API_DEALER {
 	activeHost: string;
+	address?: string;
 	advertisers: API_ADVERTISER[];
 	businessName: string;
 	city: string;
 	contactNumber: string;
 	contactPerson: string;
-	contractDetails: string;
-	createdBy: string;
+	contractDetails?: string;
+	createdBy?: string;
 	dateCreated: string;
-	dateUpdated: string;
+	dateUpdated?: string;
 	dealerId: string;
 	dealerIdAlias: string;
-	dealer: any;
+	dealer?: any;
 	dealerStats?: any;
 	email?: string;
 	forInstallationHost: number;
 	generalCategory?: string;
 	generatedId: string;
 	hosts: API_HOST[];
+	license?: any;
 	licenses: API_LICENSE_PROPS[];
 	monthAsDealer: string;
 	offlineLicenseCount?: number;
@@ -29,16 +28,17 @@ export class API_DEALER {
 	owner?: string;
 	ownerFirstName?: string;
 	ownerLastName?: string;
+	playerCount: number;
 	pendingLicenseCount?: number;
 	region: string;
 	startDate: string;
 	state: string;
 	status: string;
-	tags: { dateCreated: string; name: string; ownerId: string; tagId: number; tagTypeId: number }[];
+	tags: TAG[];
 	totalAdvertisers: number;
 	totalHost: string;
-	totalLicenseCount?: number;
 	totalOnlineLicense: number;
-	updatedBy: string;
+	updatedBy?: string;
+	totalLicenseCount?: number;
 	userId: string;
 }

@@ -3,31 +3,29 @@ import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, Subject, Subscription } from 'rxjs';
-import { Workbook } from 'exceljs';
+import { map, takeUntil } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
+import { Workbook } from 'exceljs';
 import * as moment from 'moment';
 import * as io from 'socket.io-client';
 
-import { AdvertiserService } from '../../services/advertiser-service/advertiser.service';
-import { API_DEALER } from '../../models/api_dealer.model';
-import { API_HOST } from '../../models/api_host.model';
-import { API_LICENSE } from '../../models/api_license.model';
-import { API_LICENSE_STASTICS } from '../../models/api_license_statistics.model';
+import { environment } from 'src/environments/environment';
+import { AuthService, AdvertiserService, DealerService, HostService, LicenseService, RoleService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { DealerService } from '../../services/dealer-service/dealer.service';
-import { DEALER_UI_TABLE_ADVERTISERS } from '../../models/ui_table_advertisers.model';
-import { environment } from '../../../../environments/environment';
-import { HostService } from '../../services/host-service/host.service';
-import { LicenseService } from '../../services/license-service/license.service';
-import { RoleService } from '../../services/role-service/role.service';
 import { SubstringPipe } from '../../pipes/substring.pipe';
-import { UI_DEALER_HOST } from '../../models/ui_dealer-host.model';
-import { UI_DEALER_LICENSE } from '../../models/ui_dealer-license.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
-import { UserService } from '../../services/user-service/user.service';
-import { AuthService } from '../../services/auth-service/auth.service';
 import { UserSortModalComponent } from '../../components_shared/media_components/user-sort-modal/user-sort-modal.component';
-import { UI_DEALER_LICENSE_ZONE } from '../../models/ui_table_dealer-license-zone.model';
+
+import {
+	API_DEALER,
+	API_HOST,
+	API_LICENSE,
+	API_USER_DATA,
+	DEALER_UI_TABLE_ADVERTISERS,
+	UI_DEALER_HOST,
+	UI_DEALER_LICENSE,
+	UI_DEALER_LICENSE_ZONE,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -39,20 +37,22 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	advertiser_card: any;
 	advertiser_data: any = [];
 	advertiser_filtered_data: any = [];
-	license_zone_data: any = [];
-	license_zone_filtered_data: any = [];
 	apps: any;
 	array_to_delete: any = [];
+	banner_description = '';
+	license_zone_data: any = [];
+	license_zone_filtered_data: any = [];
 	combined_data: API_HOST[];
-	current_role: string;
 	current_tab = 'hosts';
+	current_advertiser_status_filter = 'active';
+	current_host_status_filter = 'active';
 	dealer: API_DEALER;
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
 	dealer_id: string;
 	dealer_loading = true;
 	dealer_name: string;
-	dealer_user_data: any;
+	dealer_and_user_data: { dealer: API_DEALER; user: API_USER_DATA };
 	d_desc: string = 'Dealer since January 25, 2019';
 	d_name: string = 'Business Name';
 	from_change: boolean = false;
@@ -69,6 +69,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	initial_load_zone = true;
 	is_admin: boolean = false;
 	is_dealer_admin: boolean = false;
+	is_host_stats_loaded = false;
 	is_search: boolean = false;
 	license$: Observable<API_LICENSE[]>;
 	licenses: any[];
@@ -121,7 +122,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	sort_order_advertisers: string = '';
 	sort_order_hosts: string = '';
 	splitted_text: any;
-	statistics: API_LICENSE_STASTICS;
+	statistics: any;
 	subscription: Subscription = new Subscription();
 	temp_array: any = [];
 	temp_label: any = [];
@@ -129,6 +130,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	timeout_duration: number;
 	timeout_message: string;
 	title: string = 'The Dealer';
+	user: API_USER_DATA;
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
@@ -266,7 +268,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         }
 		this.reload_billing = !this.reload_billing;
 		this.cd.detectChanges();
-		this.current_role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -295,12 +296,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.subscription.add(
 			this._params.paramMap.subscribe(
 				() => {
-					if (!this.from_change) {
-						this.dealer_id = this._params.snapshot.params.data;
-					} else {
-						this.dealer_id = this.dealer_id;
-					}
-					this.getDealerInfo(this.dealer_id);
+					this.dealer_id = this.from_change ? this.dealer_id : this._params.snapshot.params.data;
+					this.getDealer();
 					this.getDealerAdvertiser(1);
 					this.getDealerHost(1);
 					this.sortList('desc', parseInt(this.saved_license_page));
@@ -400,6 +397,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		});
 	}
 
+	filterAdvertisersByStatus(status: string): void {
+		this.current_advertiser_status_filter = status;
+		this.getDealerAdvertiser();
+	}
+
+	filterHostsByStatus(status: string) {
+		if (status === this.current_host_status_filter) return;
+		this.current_host_status_filter = status;
+		this.getDealerHost(1);
+	}
+
 	licenseZoneFilterData(e): void {
 		if (e) {
 			this.search_data_license_zone = e;
@@ -476,121 +484,86 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         );
 	}
 
-    setAdvertisersCount(data) {
-        this.advertiser_card = {
-            basis: data.total,
-            basis_label: 'ADVERTISERS',
-            good_value: data.totalActive,
-            good_value_label: 'ACTIVE',
-            bad_value: data.totalInActive,
-            bad_value_label: 'INACTIVE'
-        };
-    }
-
-	getDealerAdvertiser(page): void {
+	getDealerAdvertiser(page = 1): void {
+		const status = this.current_advertiser_status_filter === 'active' ? 'A' : 'I';
 		this.searching_advertiser = true;
-        this.subscription.add(
-            this._advertiser.get_advertisers_by_dealer_id(
-                this.dealer_id,
-                page,
-                this.search_data_advertiser,
-                this.sort_column_advertisers,
-                this.sort_order_advertisers
-            ).subscribe(
-                (data) => {
-                    this.setAdvertisersTableData(data)
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            )
-        )
+
+		const filters = {
+			dealer_id: this.dealer_id,
+			page,
+			status,
+			search: this.search_data_advertiser,
+			sortColumn: this.sort_column_advertisers,
+			sortOrder: this.sort_order_advertisers,
+			pageSize: 15
+		};
+
+		this._advertiser
+			.get_advertisers_by_dealer_id(filters)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this.initial_load_advertiser = false;
+					this.searching_advertiser = false;
+					this.paging_data_advertiser = data.paging;
+					if (!data.message) {
+						const advertisers = this.advertiser_mapToUI(data.paging.entities);
+						this.advertiser_data = [...advertisers];
+						this.advertiser_filtered_data = [...advertisers];
+						this.no_advertisers = false;
+					} else {
+						if (this.search_data_advertiser == '') {
+							this.no_advertisers = true;
+						}
+						this.advertiser_data = [];
+						this.advertiser_filtered_data = [];
+					}
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
-    setAdvertisersTableData(data) {
-        this.initial_load_advertiser = false;
-		this.searching_advertiser = false;
-		this.paging_data_advertiser = data.paging;
-		if (!data.message) {
-			const advertisers = this.advertiser_mapToUI(data.paging.entities);
-			this.advertiser_data = [...advertisers];
-			this.advertiser_filtered_data = [...advertisers];
-			this.no_advertisers = false;
-		} else {
-			if (this.search_data_advertiser == '') {
-				this.no_advertisers = true;
-			}
-			this.advertiser_data = [];
-			this.advertiser_filtered_data = [];
-		}
-    }
+	getDealerHost(page: number): void {
+		let status = this.current_host_status_filter === 'active' ? 'A' : 'I';
+		if (this.current_host_status_filter === 'all') status = '';
 
-	getDealerHost(page): void {
 		this.searching = true;
 		this.host_data = [];
 		this.host_filtered_data = [];
 		this.temp_array = [];
 
-        this.subscription.add(
-            this._host.get_host_by_dealer_id_with_sort(this.dealer_id, page, this.search_data, this.sort_column_hosts, this.sort_order_hosts).subscribe(
-                (data) => {
-                    this.setDealerHostsData(data)
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            )
-        );
-	}
+		const filters = {
+			dealerId: this.dealer_id,
+			status,
+			page,
+			search: this.search_data,
+			sortColumn: this.sort_column_hosts,
+			sortOrder: this.sort_order_hosts,
+			pageSize: 15
+		};
 
-    setDealerHostsData(data) {
-        this.initial_load = false;
-		this.searching = false;
-		this.paging_data = data.paging;
-
-		if (!data.message) {
-			this.temp_array = data.paging.entities;
-			this.host_data = this.hostTable_mapToUI(this.temp_array);
-			this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
-			this.no_hosts = false;
-		} else {
-			if (this.search_data == '') {
-				this.no_hosts = true;
-			}
-
-			this.host_data = [];
-			this.host_filtered_data = [];
-		}
-    }
-
-	getDealerInfo(id): void {
-        this.subscription.add(
-            this._dealer.get_dealer_by_id(id).subscribe(
-                (response: API_DEALER) => {
-                    this.setDealerInfo(response)
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            )
-        );
-	}
-
-    setDealerInfo(response) {
-        this.dealer = response;
-		this.dealer_id = response.dealerId;
-		this.dealer_name = response.businessName;
-		this.getDealerUserData(response.userId);
-    }
-
-	getDealerUserData(id): void {
-        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
 		this.subscription.add(
-			this._user.get_user_alldata_by_id(id, isAdmin).subscribe(
+			this._host.get_host_by_dealer_id_with_sort(filters).subscribe(
 				(data) => {
-					data.dealer[0].tags = this.dealer.tags;
-					this.dealer_user_data = Object.assign({}, data.user, data.dealer[0]);
-					this.loaded = true;
+					this.initial_load = false;
+					this.searching = false;
+					this.paging_data = data.paging;
+
+					if (!data.message) {
+						this.temp_array = data.paging.entities;
+						this.host_data = this.hostTable_mapToUI(this.temp_array);
+						this.host_filtered_data = this.hostTable_mapToUI(this.temp_array);
+						this.no_hosts = false;
+					} else {
+						if (this.search_data == '') {
+							this.no_hosts = true;
+						}
+
+						this.host_data = [];
+						this.host_filtered_data = [];
+					}
 				},
 				(error) => {
 					throw new Error(error);
@@ -599,17 +572,28 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		);
 	}
 
-	getHostTotalCount(id): void {
-        this.subscription.add(
-            this._host.get_host_total_per_dealer(id).subscribe(
-                (data: any) => {
-                    this.setHostCount(data);
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            )
-        );
+	getHostTotalCount(dealerId: string): void {
+        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
+		this.subscription.add(
+			this._host
+				.get_host_total_per_dealer(dealerId)
+				.subscribe(
+					(data: any) => {
+						this.host_card = {
+							basis: data.total,
+							basis_label: 'HOSTS',
+							good_value: data.totalActive,
+							good_value_label: 'ACTIVE',
+							bad_value: data.totalInActive,
+							bad_value_label: 'INACTIVE'
+						};
+					},
+					(error) => {
+						throw new Error(error);
+					}
+				)
+				.add(() => (this.is_host_stats_loaded = true))
+		);
 	}
 
     setHostCount(data) {
@@ -790,8 +774,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: l.licenseId, link: null, editable: false, hidden: true, key: true, table: 'license' },
 				{
-					value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
-					link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
+					value: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
+					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
 					isImage: true,
@@ -1323,19 +1307,26 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				);
 				break;
 			case 'Hosts':
+				const filters = {
+					dealerId: this.dealer_id,
+					page: 1,
+					search: this.search_data,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0
+				};
+
 				this.subscription.add(
-					this._host
-						.get_host_by_dealer_id_with_sort(this.dealer_id, 1, this.search_data, this.sort_column_hosts, this.sort_order_hosts, 0)
-						.subscribe((data) => {
-							this.hosts_to_export = data.paging.entities;
-							this.hosts_to_export.forEach((item, i) => {
-								this.modifyItem(item, tab);
-								this.worksheet.addRow(item).font = {
-									bold: false
-								};
-							});
-							this.generateExcel(tab);
-						})
+					this._host.get_host_by_dealer_id_with_sort(filters).subscribe((data) => {
+						this.hosts_to_export = data.paging.entities;
+						this.hosts_to_export.forEach((item, i) => {
+							this.modifyItem(item, tab);
+							this.worksheet.addRow(item).font = {
+								bold: false
+							};
+						});
+						this.generateExcel(tab);
+					})
 				);
 				break;
 		}
@@ -1349,7 +1340,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		}
 		this.workbook.xlsx.writeBuffer().then((file: any) => {
 			const blob = new Blob([file], { type: EXCEL_TYPE });
-			const filename = this.dealer_user_data.businessName + '-' + tab + '.xlsx';
+			const filename = this.dealer.businessName + '-' + tab + '.xlsx';
 			saveAs(blob, filename);
 		});
 		this.workbook_generation = false;
@@ -1358,7 +1349,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	modifyItem(item, tab) {
 		switch (tab) {
 			case 'Licenses':
-				item.dealer = this.dealer_user_data.businessName;
+				item.dealer = this.dealer.businessName;
 				item.piVersion = item.apps ? item.apps.rpi_model : '';
 				item.zone = this.getZoneHours(item);
 				item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
@@ -1379,7 +1370,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 			case 'Hosts':
 				item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
-				item.businessName = this.dealer_user_data.businessName;
+				item.businessName = this.dealer.businessName;
 				break;
 		}
 	}
@@ -1481,6 +1472,45 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this._location.path().includes('tab=4');
 	}
 
+	private getDealer(): void {
+		this._dealer
+			.get_dealer_by_id(this.dealer_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response: API_DEALER) => {
+					this.dealer = response;
+					this.banner_description = `${response.city}, ${response.state} ${response.region} - Dealer since ${this._date.transform(
+						response.startDate
+					)}`;
+					this.dealer_id = response.dealerId;
+					this.dealer_name = response.businessName;
+					this.getDealerUserData(response.userId);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	private getDealerUserData(id: string): void {
+		const isCurrentUserAdmin = this._auth.current_role === 'administrator';
+
+		this._user
+			.get_all_user_data_by_id(id, isCurrentUserAdmin)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if ('message' in response) return;
+					this.user = response.user;
+					this.dealer_and_user_data = { dealer: this.dealer, user: this.user };
+					this.loaded = true;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
 	private getInternetType(value: string): string {
 		if (value) {
 			value = value.toLowerCase();
@@ -1496,7 +1526,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	private getLicenseStatisticsByDealer(id: string, reload = false): void {
 		this.subscription.add(
 			this._license.get_statistics_by_dealer(id).subscribe(
-				(response: API_LICENSE_STASTICS) => {
+				(response) => {
 					let hasNull = false;
 
 					for (let [key, value] of Object.entries(response)) {

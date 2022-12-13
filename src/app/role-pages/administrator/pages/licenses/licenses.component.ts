@@ -75,7 +75,7 @@ export class LicensesComponent implements OnInit {
 
 	filters: any = {
 		admin_licenses: false,
-		isactivated: 1,
+		isactivated: '',
 		assigned: '',
 		online: '',
 		pending: '',
@@ -159,7 +159,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
 		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
 		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
-		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true }
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -229,57 +229,38 @@ export class LicensesComponent implements OnInit {
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-		if (this.has_sort) {
-			this._host
-				.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response) => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
+		const filters = {
+			page,
+			search: this.search_data_host,
+			sortColumn: this.sort_column_hosts,
+			sortOrder: this.sort_order_hosts
+		};
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.mapToHostsTable([...response.paging.entities]);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		} else {
-			this._host
-				.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response) => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
+		let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.mapToHostsTable([...response.paging.entities]);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-					},
-					(error) => {
-						throw new Error(error);
+		request
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
 					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		}
+
+					this.paging_data_host = response.paging;
+					const mappedData = this.mapToHostsTable([...response.paging.entities]);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			});
 	}
 
 	getLicenses(page: number) {
@@ -419,7 +400,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -428,28 +409,28 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline = value;
 				this.filters.label_status = 'Offline for ' + days;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -678,7 +659,7 @@ export class LicensesComponent implements OnInit {
 		this.filters = {
 			admin_licenses: false,
 			assigned: '',
-			isactivated: 1,
+			isactivated: '',
 			online: '',
 			pending: '',
 			activated: '',
@@ -717,7 +698,7 @@ export class LicensesComponent implements OnInit {
 	getDataForExport(tab: string): void {
 		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this.filters.isactivated = '';
+		this.filters.isactivated = '';
 		switch (tab) {
 			case 'licenses':
 				this._license
@@ -781,7 +762,15 @@ export class LicensesComponent implements OnInit {
 
 				break;
 			case 'hosts':
-				this._host.get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe((response) => {
+				const filters = {
+					page: 1,
+					search: this.search_data_host,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0
+				};
+
+				this._host.get_host_fetch_export(filters).subscribe((response) => {
 					if (response.message) {
 						this.hosts_to_export = [];
 						return;
@@ -989,14 +978,14 @@ export class LicensesComponent implements OnInit {
 						query: '2',
 						editable: false,
 						hidden: false,
-                        new_tab_link: true
+						new_tab_link: true
 					},
 					{
 						value: this._title.transform(dealer.businessName),
 						link: '/administrator/dealers/' + dealer.dealerId,
 						editable: false,
 						hidden: false,
-                        new_tab_link: true
+						new_tab_link: true
 					},
 					{ value: this._title.transform(dealer.contactPerson), link: null, editable: false, hidden: false },
 					{ value: dealer.region, link: null, editable: false, hidden: false },
@@ -1086,7 +1075,8 @@ export class LicensesComponent implements OnInit {
 				// { value: h.street ? h.street:'--', link: null, editable: false, hidden: false },
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
 				{ value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
-				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false }
+				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
+				{ value: h.status, editable: false, hidden: false }
 			);
 
 			return table;
@@ -1100,8 +1090,8 @@ export class LicensesComponent implements OnInit {
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: l.licenseId, link: null, editable: false, hidden: true, key: false, table: 'license' },
 				{
-					value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
-					link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
+					value: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
+					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
 					isImage: true

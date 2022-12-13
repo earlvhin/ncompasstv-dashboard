@@ -1,20 +1,22 @@
-<app-banner
-	*ngIf="singleHostData"
-	[single_image]="currentImage"
-	[single_name]="hostName"
-	[single_desc]="address"
-	[single_host_data]="singleHostData"
-	[host_license_count]="hostLicenseStatistics"
-	[host_data]="host"
-	[single_host_controls]="true"
-	[editable]="!isViewOnly"
-	[refresh_banner]="true"
-	[page]="'single-host'"
-	(single_host_assign_license)="openAssignLicenseModal()"
-	(toggle_margin_top)="toggledHours($event)"
-	(toggle_margin_top_notes)="toggledNotes($event)"
-	(update_info)="ngOnInit()">
-</app-banner>
+<ng-container *ngIf="isBannerDataReady; else loaderSmall">
+	<app-banner
+		[current_user_data]="currentUser"
+		[image]="currentImage"
+		[title]="hostName"
+		[description]="address"
+		[single_host_data]="singleHostData"
+		[host_license_count]="hostLicenseStatistics"
+		[has_host_controls]="true"
+		(single_host_assign_license)="openAssignLicenseModal()"
+		(toggle_margin_top)="toggledHours($event)"
+		(toggle_margin_top_notes)="toggledNotes($event)"
+		[editable]="!isViewOnly"
+		(update_info)="ngOnInit()"
+		[page]="'single-host'"
+		[page_data]="host"
+		[refresh_banner]="true">
+	</app-banner>
+</ng-container>
 
 <div class="theme-container">
 	<div class="content-section">
@@ -81,7 +83,7 @@
 		</div>
 	</ng-template>
 
-	<ng-template #small_loader>
+	<ng-template #loaderSmall>
 		<div class="py-4 white-bg">
 			<app-spinner [diameter]="60"></app-spinner>
 		</div>

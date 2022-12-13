@@ -119,7 +119,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	status_check_disabled: boolean;
 	storage_capacity = '';
 	template_data: API_TEMPLATE;
-	tags: { name: string; tagColor: string }[] = [];
+	tags: TAG[] = [];
 	timezone: { name: string };
 	title = '';
 	update_alias: FormGroup;
@@ -1346,7 +1346,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response) => {
 					response.forEach((data) => {
-						if (count <= response.length) this.screenshots.push(`${environment.base_uri_old}${data.replace('/API/', '')}`);
+						if (count <= response.length) this.screenshots.push(`${environment.base_uri}${data.replace('/API/', '')}`);
 						count++;
 					});
 

@@ -1,3 +1,7 @@
+.dialog-heading {
+	gap: 30px;
+}
+
 button.delete {
 	float: right;
 }
@@ -5,7 +9,7 @@ button.delete {
 .business-hours-section {
 	.heading {
 		justify-content: space-between;
-		
+
 		h4 {
 			margin-right: 20px;
 		}
@@ -13,5 +17,15 @@ button.delete {
 
 	.bulk-edit {
 		float: right;
+	}
+}
+
+.status {
+	&.active {
+		color: #8ec641;
+	}
+
+	&.inactive {
+		color: white;
 	}
 }

@@ -182,6 +182,33 @@ export class NewDealerAdminComponent implements OnInit {
 		this.onSubmit();
 	}
 
+	private subscribeToDealerSearch(): void {
+		const control = this.dealerFilterControl;
+
+		control.valueChanges
+			.pipe(
+				takeUntil(this._unsubscribe),
+				debounceTime(1000),
+				map((keyword) => {
+					if (control.invalid) return;
+
+					if (keyword && keyword.trim().length > 0) {
+						// this.searchData(keyword);
+						let filtered = [];
+						this.dealers_list.map((dealer) => {
+							if (dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
+								filtered.push(dealer);
+							}
+						});
+						this.dealers_list = filtered;
+					} else {
+						this.dealers_list = this.original_dealers;
+					}
+				})
+			)
+			.subscribe(() => (this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
+	}
+
 	getDealers() {
 		this.subscription.add(
 			this._dealer.get_dealers_with_page(1, '', 0).subscribe((data) => {
@@ -227,7 +254,7 @@ export class NewDealerAdminComponent implements OnInit {
 	}
 
 	openConfirmationModal(status, message, data): void {
-		let dialog = this._dialog.open(ConfirmationModalComponent, {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: {
@@ -249,32 +276,5 @@ export class NewDealerAdminComponent implements OnInit {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
-	}
-
-	private subscribeToDealerSearch(): void {
-		const control = this.dealerFilterControl;
-
-		control.valueChanges
-			.pipe(
-				takeUntil(this._unsubscribe),
-				debounceTime(1000),
-				map((keyword) => {
-					if (control.invalid) return;
-
-					if (keyword && keyword.trim().length > 0) {
-						// this.searchData(keyword);
-						var filtered = [];
-						this.dealers_list.map((dealer) => {
-							if (dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
-								filtered.push(dealer);
-							}
-						});
-						this.dealers_list = filtered;
-					} else {
-						this.dealers_list = this.original_dealers;
-					}
-				})
-			)
-			.subscribe(() => (this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
 	}
 }

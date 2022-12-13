@@ -1,13 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 
-import { AuthService } from '../../../services/auth-service/auth.service';
+import { AuthService, UserService } from 'src/app/global/services';
+import { USER_PROFILE } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UserService } from '../../../services/user-service/user.service';
-import { USER_PROFILE } from '../../../models/api_user.model';
 import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
@@ -221,8 +220,8 @@ export class UserSettingComponent implements OnInit {
 		});
 	}
 
-	activateEdit(x) {
-		if (x) {
+	activateEdit(value: boolean) {
+		if (value) {
 			this.update_user.controls['contact'].enable();
 			this.update_user.controls['firstname'].enable();
 			this.update_user.controls['lastname'].enable();
@@ -232,7 +231,7 @@ export class UserSettingComponent implements OnInit {
 			this.update_user.controls['lastname'].disable();
 			this.readyUpdateForm();
 		}
-		this.update_info_form_disabled = x;
+		this.update_info_form_disabled = value;
 	}
 
 	isDisabled(): boolean {

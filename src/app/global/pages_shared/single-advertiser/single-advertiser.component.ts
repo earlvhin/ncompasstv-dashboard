@@ -15,34 +15,40 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 	providers: [DatePipe]
 })
 export class SingleAdvertiserComponent implements OnInit, OnDestroy {
-	array_to_preview: any = [];
-	advertiser: any;
+	array_to_preview: API_CONTENT[] = [];
+	advertiser: API_ADVERTISER;
+	advertiserAndDealer: { advertiser: API_ADVERTISER; dealer: API_DEALER } = null;
 	advertiser_id: string;
 	content_data: any = [];
+	current_user = this._auth.current_user_value;
+	current_role = this._auth.current_role;
+	contents_loaded = false;
+	dealer: API_DEALER;
+	description: string;
 	img: string = 'assets/media-files/admin-icon.png';
-	is_initial_load = true;
-	is_view_only = false;
+	is_banner_data_ready = false;
+	has_only_view_permission = this._auth.current_user_value.roleInfo.permission === 'V';
 	selected_index: number;
 	table_columns = ['#', 'Name', 'Type', 'Upload Date', 'Uploaded By'];
 
+	private is_loading = false;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
 		private _advertiser: AdvertiserService,
 		private _auth: AuthService,
 		private _date: DatePipe,
+		private _dealer: DealerService,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _content: ContentService
 	) {}
 
 	ngOnInit() {
-		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
-
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
 			this.advertiser_id = this._params.snapshot.params.data;
-			this.getAdvertiserInfo(this.advertiser_id);
-			this.getContents(this.advertiser_id);
+			this.getAdvertiser();
+			this.getContents();
 		});
 
 		this._params.queryParams.pipe(takeUntil(this._unsubscribe)).subscribe((data) => (this.selected_index = data.tab));
@@ -53,45 +59,70 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	getAdvertiserInfo(id: string): void {
-		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
+	private async getAdvertiser() {
+		let dealer: API_DEALER;
+
+		if (this.is_loading && (this.current_role === 'dealer' || this.current_role === 'sub-dealer')) {
 			this.advertiser = this._helper.singleAdvertiserData;
-			this.is_initial_load = false;
+			this.setDescription();
+
+			try {
+				dealer = await this._dealer.get_dealer_by_id(this.advertiser.dealerId).toPromise();
+			} catch (error) {
+				throw new Error(error);
+			}
+
+			this.is_loading = false;
+			this.is_banner_data_ready = true;
 			return;
 		}
 
 		this._advertiser
-			.get_advertiser_by_id(id)
+			.get_advertiser_by_id(this.advertiser_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => {
+				async (response) => {
 					const { advertiser, tags } = response;
 					advertiser.tags = tags;
 					this.advertiser = advertiser;
+					this.setDescription();
+
+					try {
+						dealer = await this._dealer.get_dealer_by_id(advertiser.dealerId).toPromise();
+					} catch (error) {
+						throw new Error(error);
+					}
+
+					this.advertiserAndDealer = { advertiser, dealer };
+					this.is_banner_data_ready = true;
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			)
-			.add(() => (this.is_initial_load = false));
+			.add(() => (this.is_loading = false));
 	}
 
-	getContents(id: string) {
+	private getContents(): void {
 		this._content
-			.get_content_by_advertiser_id(id)
+			.get_content_by_advertiser_id(this.advertiser_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_CONTENT[] | { message: string }) => {
 					this.content_data = response;
+
 					if (!Array.isArray(response)) return;
+
 					const data = response as API_CONTENT[];
 					this.array_to_preview = response;
-					this.content_data = this.mapContentsToTableUI(data);
+					this.content_data = [...this.mapContentsToTableUI(data)];
+					this.contents_loaded = true;
 				},
 				(error) => {
 					throw new Error(error);
 				}
-			);
+			)
+			.add(() => (this.contents_loaded = true));
 	}
 
 	private mapContentsToTableUI(contents: API_CONTENT[]): UI_TABLE_ADVERTISERS_CONTENT[] {
@@ -134,11 +165,10 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 		return segments.join('');
 	}
 
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
-
-	protected get currentUser() {
-		return this._auth.current_user_value;
+	private setDescription(): void {
+		const advertiser = this.advertiser;
+		const state = advertiser.state ? advertiser.state : '';
+		const region = advertiser.region ? advertiser.region : '';
+		this.description = `${state} ${region} - Advertiser since ${this._date.transform(advertiser.dateCreated)}`;
 	}
 }

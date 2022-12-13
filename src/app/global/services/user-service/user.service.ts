@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { USER } from '../../models/api_user.model';
-import { environment } from '../../../../environments/environment';
-import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
+import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
-import { API_FILTERS, API_USER_STATS, PAGING } from '../../models';
 import { BaseService } from '../base.service';
+
+import { environment } from 'src/environments/environment';
+import { API_DEALER, API_FILTERS, API_USER_DATA, API_USER_STATS, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
@@ -43,12 +42,12 @@ export class UserService extends BaseService {
         const url = `${this.getters.users_by_owner}${ownerId}`;
 		return this.getRequest(url);
 	}
-	
+
 	get_users_search(key) {
         const url = `${this.getters.api_get_users}` + '?search=' + `${key}`;
 		return this.getRequest(url);
 	}
-	
+
 	get_user_total() {
         const url = this.getters.api_get_users_total;
 		return this.getRequest(url);
@@ -63,6 +62,7 @@ export class UserService extends BaseService {
         const url = `${this.getters.api_get_dealer_admin_user}?userid=${id}`;
 		return this.getRequest(url);
 	}
+
 
 	get_user_alldata_by_id(data, isAdmin) {
 		const url = `${this.getters.api_get_user_by_id}${data}` + '&isAdmin=' + `${isAdmin}`;
@@ -99,9 +99,9 @@ export class UserService extends BaseService {
 	}
 
 	validate_email(email: string) {
-		const re =
+		const pattern =
 			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return re.test(String(email).toLowerCase());
+		return pattern.test(String(email).toLowerCase());
 	}
 
 	update_email_notifications(userId: string, data: boolean) {

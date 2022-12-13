@@ -244,8 +244,8 @@ export class LicensesComponent implements OnInit {
 				{ value: i.hostId ? i.hostId : '--', link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
 				{
-					value: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace('/API/', '')}` : null,
-					link: i.screenshotUrl ? `${environment.base_uri_old}${i.screenshotUrl.replace('/API/', '')}` : null,
+					value: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
+					link: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
 					isImage: true
