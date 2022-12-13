@@ -202,7 +202,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 		const { dealer, host } = this.page_data as { host: API_HOST; dealer: API_DEALER };
 		this.dealer_url = `/administrator/dealers/${dealer.dealerId}`;
 
-		this.category = this._titlecase.transform(host.category);
+		this.category = host.category ? this._titlecase.transform(host.category) : '--';
 
 		if (host.storeHours) {
 			this.business_hours = JSON.parse(host.storeHours);
