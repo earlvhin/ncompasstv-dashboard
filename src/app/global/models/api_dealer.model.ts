@@ -29,6 +29,7 @@ export class API_DEALER {
 	ownerFirstName?: string;
 	ownerLastName?: string;
 	playerCount: number;
+	pendingLicenseCount?: number;
 	region: string;
 	startDate: string;
 	state: string;
@@ -38,5 +39,6 @@ export class API_DEALER {
 	totalHost: string;
 	totalOnlineLicense: number;
 	updatedBy?: string;
+	totalLicenseCount?: number;
 	userId: string;
 }

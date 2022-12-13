@@ -1,4 +1,4 @@
-import { API_LICENSE_PROPS, API_TIMEZONE, TAG } from '.';
+import { API_LICENSE_PROPS, API_TIMEZONE, TAG, UI_STORE_HOUR } from '.';
 import { API_DEALER } from './api_dealer.model';
 
 export class API_HOST {
@@ -25,6 +25,7 @@ export class API_HOST {
 	licenses: API_LICENSE_PROPS[];
 	logo?: string;
 	longitude: string;
+	mappedStoreHours?: string;
 	monthlyTraffic: string;
 	name: string;
 	notes: string;
@@ -35,10 +36,12 @@ export class API_HOST {
 	status: string;
 	storeHours: any;
 	storeHoursTotal?: any;
+	storeHoursParsed?: UI_STORE_HOUR[];
 	street: string;
 	tags?: TAG[];
 	tagsToString?: string;
 	totalLicenses: number;
+	totalLicensesPending?: number;
 	totalLicences: number;
 	timeZone: string; // do not be fooled like me, this is actually the timezone id
 	timeZoneData?: API_TIMEZONE; // added this one bec this makes more sense than separating the timezone object
@@ -48,7 +51,7 @@ export class API_HOST {
 	venueType: string;
 	vistarVenueId: any;
 	parsedStoreHours?: any;
-	icon_url?: any;
+	iconUrl?: string;
 }
 
 export class API_SINGLE_HOST {

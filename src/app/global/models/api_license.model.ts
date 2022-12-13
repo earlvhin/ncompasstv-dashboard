@@ -57,6 +57,7 @@ export interface API_LICENSE_PROPS {
 	screenshotUrl: string;
 	serverVersion: string;
 	speedtestSettings: number;
+	status?: string;
 	storeHours: string;
 	tags?: { name: string; tagColor: string }[] | string[];
 	tagsToString?: string;
