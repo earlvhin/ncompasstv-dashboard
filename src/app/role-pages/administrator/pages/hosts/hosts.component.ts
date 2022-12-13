@@ -413,7 +413,8 @@ export class HostsComponent implements OnInit {
 
 		switch (tab) {
 			case 'hosts':
-				const status = this.current_status_filter === 'active' ? 'A' : 'I';
+				let status = this.current_status_filter === 'active' ? 'A' : 'I';
+				if (this.current_status_filter === 'all') status = '';
 
 				const filters = {
 					page: 1,
