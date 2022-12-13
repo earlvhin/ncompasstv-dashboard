@@ -12,7 +12,7 @@
 					</button>
 				</a>
 
-				<a [routerLink]="['/administrator/users/create-user/host']" target="_blank">
+				<a [routerLink]="['/administrator/users/create-user/host']" target="_blank" *ngIf="!is_dealer_admin">
 					<button mat-button mat-raised-button class="theme-btn pi-control _info sm-text mr-2" title="Add Host User">
 						<span class="fas fa-user"></span>
 						<span class="ml-2 button_text_animation">Add Host User</span>

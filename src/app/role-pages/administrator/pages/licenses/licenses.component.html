@@ -167,7 +167,7 @@
                                                 <button mat-button mat-raised-button
                                                     class="theme-btn pi-control sm-text _info mr-2" 
                                                     [matMenuTriggerFor]="adminOption"
-                                                    title="Admin Licenses">
+                                                    title="Admin Licenses" *ngIf="!is_dealer_admin">
                                                     <span class="fas fa-user-shield"></span> 
                                                     <span class="ml-2 button_text_animation">Show/Hide Admin Licenses</span>
                                                 </button>

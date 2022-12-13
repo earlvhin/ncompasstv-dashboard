@@ -5,7 +5,7 @@
                 <h1 class="page-title">{{ title }}</h1>
             </div>
             <div class="flex-even text-right">
-                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank">
+                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank" *ngIf="!is_dealer_admin">
                     <button mat-button mat-raised-button 
                     class="theme-btn pi-control _cool sm-text mr-2" 
                     title="Add Dealer" *ngIf="current_tab === 'Dealer'">

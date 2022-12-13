@@ -5,7 +5,7 @@ import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
-import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW } from 'src/app/global/models';
+import { API_DEALER, API_HOST, UI_TABLE_HOSTS_BY_DEALER, UI_HOST_VIEW, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
@@ -26,6 +26,7 @@ export class HostsComponent implements OnInit {
 	hour_diff: any;
 	hour_diff_temp: any;
 	initial_load_hosts: boolean = true;
+    is_dealer_admin: boolean = false;
 	no_dealer: boolean = false;
 	no_host: boolean;
 	now: any;
@@ -75,6 +76,9 @@ export class HostsComponent implements OnInit {
 	constructor(private _auth: AuthService, private _host: HostService, private _dealer: DealerService, private cdr: ChangeDetectorRef) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true;
+        }
 		this.getHosts(1);
 		this.getHostTotal();
 	}

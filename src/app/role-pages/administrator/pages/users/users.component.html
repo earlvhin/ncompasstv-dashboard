@@ -4,7 +4,7 @@
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
             </div>
-            <div class="flex-even text-right">
+            <div class="flex-even text-right" *ngIf="!is_dealer_admin">
                 <a [routerLink]="['create-user']" target="_blank">
                     <button mat-button mat-raised-button class="theme-btn">
                         <span class="button-label">
