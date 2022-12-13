@@ -452,7 +452,7 @@ export class LicenseService extends BaseService {
 	}
 
 	get_statistics_by_dealer(id: string) {
-        const base = `${this.getters.license_statistics}`;
+		const base = `${this.getters.license_statistics}`;
 		const params = this.setUrlParams({ dealerid: id }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
@@ -468,7 +468,7 @@ export class LicenseService extends BaseService {
 	}
 
 	deactivate_license(id) {
-        const url = `${this.updaters.api_deactivate_license}?licenseKey=${id}`;
+		const url = `${this.updaters.api_deactivate_license}?licenseKey=${id}`;
 		return this.postRequest(url, {});
 	}
 
@@ -554,10 +554,8 @@ export class LicenseService extends BaseService {
 	}
 
 	unassign_host_license(licenses, force?) {
-		const base = `${this.deleters.api_remove_host_licenses}`;
-		const params = this.setUrlParams({ licenses }, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
+		const url = `${this.deleters.api_remove_host_licenses}`;
+		return this.postRequest(url, licenses);
 	}
 
 	get_license_by_dealear_old(dealer) {
@@ -577,10 +575,7 @@ export class LicenseService extends BaseService {
 
 	//Get Resource Usage By License Id and Date
 	get_license_resource_logs(license: string, date: string) {
-		return this.getRequest(
-			`${this.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`,
-			null
-		);
+		return this.getRequest(`${this.getters.api_get_resource_logs_by_date}${license}&selectedDate=${date}&page=1&pageSize=30`, null);
 	}
 
 	get_activities(id: string) {
