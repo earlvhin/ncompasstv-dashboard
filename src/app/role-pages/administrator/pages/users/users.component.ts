@@ -39,6 +39,17 @@ export class UsersComponent implements OnInit, OnDestroy {
 		{ name: 'Creation Date' },
 		{ name: 'Created By' }
 	];
+	
+    dealeradmin_users_table_columns = [
+		{ name: '#' },
+		{ name: 'Name' },
+		{ name: 'Email Address' },
+		{ name: 'Contact Number' },
+		{ name: 'Role' },
+		{ name: 'Affiliation' },
+		{ name: 'Creation Date' },
+		{ name: 'Created By' }
+	];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -211,20 +222,34 @@ export class UsersComponent implements OnInit, OnDestroy {
 			const allowEmail = user.allowEmail === 1 ? true : false;
 			if (role.roleName === 'Sub Dealer') permission = role.permission;
 
-			const result = new UI_TABLE_USERS(
-				{ value: user.userId, link: null, editable: false, hidden: true },
-				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
-				{ value: user.email, link: null, editable: false, hidden: false },
-				{ value: user.contactNumber, link: null, editable: false, hidden: false },
-				{ value: role.roleName, link: null, editable: false, hidden: false },
-				{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
-				{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
-				{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
-				{ value: allowEmail, type: 'toggle' }
-			);
-
-			return result;
+            if(this.is_dealer_admin) {
+                const result = new UI_TABLE_USERS(
+                    { value: user.userId, link: null, editable: false, hidden: true },
+                    { value: count++, link: null, editable: false, hidden: false },
+                    { value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
+                    { value: user.email, link: null, editable: false, hidden: false },
+                    { value: user.contactNumber, link: null, editable: false, hidden: false },
+                    { value: role.roleName, link: null, editable: false, hidden: false },
+                    { value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
+                    { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
+                    { value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+                );
+                return result;
+            } else {
+                const result = new UI_TABLE_USERS(
+                    { value: user.userId, link: null, editable: false, hidden: true },
+                    { value: count++, link: null, editable: false, hidden: false },
+                    { value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
+                    { value: user.email, link: null, editable: false, hidden: false },
+                    { value: user.contactNumber, link: null, editable: false, hidden: false },
+                    { value: role.roleName, link: null, editable: false, hidden: false },
+                    { value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
+                    { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
+                    { value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+                    { value: allowEmail, type: 'toggle' }
+                );
+                return result;
+            }
 		});
 	}
 
