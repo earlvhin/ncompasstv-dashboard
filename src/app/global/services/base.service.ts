@@ -19,6 +19,10 @@ export class BaseService {
 		withCredentials: true
 	};
 
+	protected applicationOnlyHeaders = {
+		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+	};
+
 	constructor(private _auth: AuthService, private _http: HttpClient) {}
 
 	protected get currentUser() {
@@ -27,28 +31,20 @@ export class BaseService {
 
 	protected getRequest(endpoint: string, options: any = null): Observable<any> {
 		let headers = this.headers;
+		let baseUri = this.baseUri;
 		if (options) headers = { ...this.headers, ...options };
-		if (this._auth.current_role === 'dealeradmin') {
-			const new_endpoint = 'dealeradmin/' + endpoint;
-			const url = `${this.baseUri}${new_endpoint}`;
-			return this._http.get(url, headers);
-		} else {
-			const url = `${this.baseUri}${endpoint}`;
-			return this._http.get(url, headers);
-		}
+		if (this._auth.current_role === 'dealeradmin') baseUri += 'dealeradmin/';
+		const url = `${baseUri}${endpoint}`;
+		return this._http.get(url, headers);
 	}
 
-	protected postRequest(endpoint: string, body: object, options: any = null): Observable<any> {
-		let headers = this.headers;
+	protected postRequest(endpoint: string, body: object, options: any = null, isApplicationRequestOnly = false): Observable<any> {
+		let headers = !isApplicationRequestOnly ? this.headers : this.applicationOnlyHeaders;
+		let baseUri = this.baseUri;
 		if (options) headers = { ...this.headers, ...options };
-        if(this._auth.current_role === 'dealeradmin') {
-            const new_endpoint = 'dealeradmin/' + endpoint;
-            const url = `${this.baseUri}${new_endpoint}`;
-            return this._http.post(url, body, headers);
-        } else {
-            const url = `${this.baseUri}${endpoint}`;
-            return this._http.post(url, body, headers);
-        }
+		if (this._auth.current_role === 'dealeradmin') baseUri += 'dealeradmin/';
+		const url = `${baseUri}${endpoint}`;
+		return this._http.post(url, body, headers);
 	}
 
 	protected get baseUri() {
