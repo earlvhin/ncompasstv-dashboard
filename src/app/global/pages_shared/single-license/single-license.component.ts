@@ -1440,6 +1440,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				content.title,
 				content.playlistContentSchedule,
 				content.uploaded_by,
+                content.ownerRoleId,
 				content.classification,
 				content.seq
 			);

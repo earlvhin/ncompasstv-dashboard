@@ -1052,6 +1052,10 @@ export class LicensesComponent implements OnInit {
 
 	private mapToHostsTable(data: API_HOST[]): UI_HOST_VIEW[] {
 		let count = this.paging_data_host.pageStart;
+        let role = this._auth.current_role;
+        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            role = UI_ROLE_DEFINITION_TEXT.administrator
+        }
 
 		return data.map((h: API_HOST) => {
 			const table = new UI_HOST_VIEW(
@@ -1059,7 +1063,7 @@ export class LicensesComponent implements OnInit {
 				{ value: h.hostId, link: null, editable: false, hidden: true, key: false },
 				{
 					value: h.hostName,
-					link: `/${this.currentRole}/hosts/${h.hostId}`,
+					link: `/` +role+ `/hosts/${h.hostId}`,
 					new_tab_link: 'true',
 					compressed: true,
 					editable: false,
@@ -1070,7 +1074,7 @@ export class LicensesComponent implements OnInit {
 				},
 				{
 					value: h.businessName ? h.businessName : '--',
-					link: `/${this.currentRole}/dealers/${h.dealerId}`,
+					link: `/` +role+ `/dealers/${h.dealerId}`,
 					new_tab_link: 'true',
 					editable: false,
 					hidden: false
