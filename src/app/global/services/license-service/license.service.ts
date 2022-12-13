@@ -553,9 +553,9 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	unassign_host_license(licenses, force?) {
+	unassign_host_license(licenses) {
 		const base = `${this.deleters.api_remove_host_licenses}`;
-		const params = this.setUrlParams({ licenses }, false, true);
+		const params = this.setUrlParams({ force: 1, licenses}, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

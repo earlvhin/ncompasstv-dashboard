@@ -340,7 +340,7 @@ export const API_ENDPOINTS = {
 		api_remove_license: 'license/removebylicenseid',
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
-		api_remove_host_licenses: 'license/unassignhost?force=1',
+		api_remove_host_licenses: 'license/unassignhost',
 		delete_dealer: 'dealer/delete',
 		host: 'host/delete',
 		host_file_amazon_s3: 'host/AmazonS3Delete',

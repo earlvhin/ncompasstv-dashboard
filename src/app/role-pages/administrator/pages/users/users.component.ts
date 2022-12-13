@@ -5,7 +5,7 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { HelperService, RoleService, UserService, AuthService } from 'src/app/global/services';
-import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT, DEALERADMIN_UI_TABLE_USERS } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -213,7 +213,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	private mapToUIFormat(data: USER[]): UI_TABLE_USERS[] {
+	private mapToUIFormat(data) {
 		let count = this.paging_data.pageStart;
 
 		return data.map((user) => {
@@ -223,16 +223,16 @@ export class UsersComponent implements OnInit, OnDestroy {
 			if (role.roleName === 'Sub Dealer') permission = role.permission;
 
             if(this.is_dealer_admin) {
-                const result = new UI_TABLE_USERS(
+                const result = new DEALERADMIN_UI_TABLE_USERS(
                     { value: user.userId, link: null, editable: false, hidden: true },
                     { value: count++, link: null, editable: false, hidden: false },
                     { value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
                     { value: user.email, link: null, editable: false, hidden: false },
                     { value: user.contactNumber, link: null, editable: false, hidden: false },
                     { value: role.roleName, link: null, editable: false, hidden: false },
+                    { value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
                     { value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
                     { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
-                    { value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
                 );
                 return result;
             } else {
