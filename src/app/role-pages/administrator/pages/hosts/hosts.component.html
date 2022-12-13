@@ -95,14 +95,14 @@
 													[ngClass]="current_status_filter === 'active' ? 'text-primary' : 'text-gray'"></span>
 											</button>
 											<mat-menu #hostStatusList="matMenu">
+												<button mat-menu-item (click)="filterHostsByStatus('all')">
+													<span class="text-gray mr-2 xsm-text"></span>All
+												</button>
 												<button mat-menu-item (click)="filterHostsByStatus('active')">
 													<span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
 												</button>
 												<button mat-menu-item (click)="filterHostsByStatus('inactive')">
 													<span class="fas fa-circle text-gray mr-2 xsm-text"></span>Inactive
-												</button>
-												<button mat-menu-item (click)="filterHostsByStatus('none')">
-													<span class="text-gray mr-2 xsm-text"></span>All
 												</button>
 											</mat-menu>
 										</div>
