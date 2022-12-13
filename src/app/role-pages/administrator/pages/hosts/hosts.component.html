@@ -83,29 +83,6 @@
 											<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
 											<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
 										</button>
-										<div class="status-filter-container">
-											<button
-												mat-button
-												mat-raised-button
-												class="theme-btn status-filter-btn sm-text mr-2 h-45"
-												[matMenuTriggerFor]="hostStatusList">
-												<span class="button-label">Host Status: {{ current_status_filter | titlecase }}</span>
-												<span
-													class="fas fa-circle"
-													[ngClass]="current_status_filter === 'active' ? 'text-primary' : 'text-gray'"></span>
-											</button>
-											<mat-menu #hostStatusList="matMenu">
-												<button mat-menu-item (click)="filterHostsByStatus('all')">
-													<span class="text-gray mr-2 xsm-text"></span>All
-												</button>
-												<button mat-menu-item (click)="filterHostsByStatus('active')">
-													<span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
-												</button>
-												<button mat-menu-item (click)="filterHostsByStatus('inactive')">
-													<span class="fas fa-circle text-gray mr-2 xsm-text"></span>Inactive
-												</button>
-											</mat-menu>
-										</div>
 										<div class="search-field">
 											<app-search-field
 												*ngIf="!initial_load_hosts"
