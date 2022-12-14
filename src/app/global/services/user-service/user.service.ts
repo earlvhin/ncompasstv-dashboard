@@ -6,7 +6,7 @@ import { BaseService } from '../base.service';
 
 import { environment } from 'src/environments/environment';
 import { API_DEALER, API_FILTERS, API_USER_DATA, API_USER_STATS, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service'; 
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
 	providedIn: 'root'
@@ -14,21 +14,17 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 export class UserService extends BaseService {
 	token = JSON.parse(localStorage.getItem('tokens'));
 
-	// httpOptions = {
-	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
-	// };
-
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}
 
 	deleteUser(userId: string) {
-        const url = `${this.deleters.user}?userid=${userId}`;
+		const url = `${this.deleters.user}?userid=${userId}`;
 		return this.postRequest(url, {});
 	}
 
 	get_users() {
-        const url = this.getters.api_get_users;
+		const url = this.getters.api_get_users;
 		return this.getRequest(url);
 	}
 
@@ -40,33 +36,32 @@ export class UserService extends BaseService {
 	}
 
 	get_users_by_owner(ownerId: string) {
-        const url = `${this.getters.users_by_owner}${ownerId}`;
+		const url = `${this.getters.users_by_owner}${ownerId}`;
 		return this.getRequest(url);
 	}
 
 	get_users_search(key) {
-        const url = `${this.getters.api_get_users}` + '?search=' + `${key}`;
+		const url = `${this.getters.api_get_users}` + '?search=' + `${key}`;
 		return this.getRequest(url);
 	}
 
 	get_user_total() {
-        const url = this.getters.api_get_users_total;
+		const url = this.getters.api_get_users_total;
 		return this.getRequest(url);
 	}
 
 	get_user_by_id(data) {
-        const url = `${this.getters.api_get_user_by_id}${data}`;
+		const url = `${this.getters.api_get_user_by_id}?user_id=${data}`;
 		return this.getRequest(url).map((data) => data.user);
 	}
-	
-    get_dealeradmin_dealers(id) {
-        const url = `${this.getters.api_get_dealer_admin_user}?userid=${id}`;
+
+	get_dealeradmin_dealers(userId: string) {
+		const url = `${this.getters.api_get_dealer_admin_user}?userid=${userId}`;
 		return this.getRequest(url);
 	}
 
-
-	get_user_alldata_by_id(data, isAdmin) {
-		const url = `${this.getters.api_get_user_by_id}${data}` + '&isAdmin=' + `${isAdmin}`;
+	get_user_alldata_by_id(userId: string, isAdmin: boolean) {
+		const url = `${this.getters.api_get_user_by_id}?user_id=${userId}&isAdmin=${isAdmin}`;
 		return this.getRequest(url).map((data) => data);
 	}
 
@@ -75,25 +70,25 @@ export class UserService extends BaseService {
 
 		switch (role) {
 			case UI_ROLE_DEFINITION.administrator:
-                url = `${this.creators.api_new_admin}`
+				url = `${this.creators.api_new_admin}`;
 				break;
 			case UI_ROLE_DEFINITION.dealer:
-                url = `${this.creators.api_new_dealer}`
+				url = `${this.creators.api_new_dealer}`;
 				break;
 			case UI_ROLE_DEFINITION.dealeradmin:
-                url = `${this.creators.api_new_dealer_admin}`
+				url = `${this.creators.api_new_dealer_admin}`;
 				break;
 			case UI_ROLE_DEFINITION['sub-dealer']:
-                url = `${this.creators.sub_dealer_account}`
+				url = `${this.creators.sub_dealer_account}`;
 				break;
 			case UI_ROLE_DEFINITION.host:
-                url = `${this.creators.api_new_host}`
+				url = `${this.creators.api_new_host}`;
 				break;
 			case UI_ROLE_DEFINITION.advertiser:
-                url = `${this.creators.api_new_advertiser}`
+				url = `${this.creators.api_new_advertiser}`;
 				break;
 			case UI_ROLE_DEFINITION.tech:
-                url = `${this.creators.api_new_techrep}`
+				url = `${this.creators.api_new_techrep}`;
 				break;
 		}
 		return this.postRequest(url, data);
@@ -106,35 +101,35 @@ export class UserService extends BaseService {
 	}
 
 	update_email_notifications(userId: string, data: boolean) {
-        const url = `${this.updaters.user_email_settings}`;
-        const body = { allowEmail: data ? 1 : 0, userId };
+		const url = `${this.updaters.user_email_settings}`;
+		const body = { allowEmail: data ? 1 : 0, userId };
 		return this.postRequest(url, body);
 	}
 
 	update_permission(userId: string, type: string) {
-        const url = `${this.updaters.account_permission}?userid=${userId}&type=${type}`;
+		const url = `${this.updaters.account_permission}?userid=${userId}&type=${type}`;
 		return this.postRequest(url, {});
 	}
 
 	update_user(data) {
-        const url = `${this.updaters.api_update_user}`;
+		const url = `${this.updaters.api_update_user}`;
 		return this.postRequest(url, data);
 	}
-	
-    dealeradmin_update_user(data) {
-        const url = `${this.updaters.dealeradmin_update_user}`;
+
+	dealeradmin_update_user(data) {
+		const url = `${this.updaters.dealeradmin_update_user}`;
 		return this.postRequest(url, data);
 	}
 
 	get_user_notifications(id) {
-        const url = `${this.getters.api_get_notifications}${id}`;
+		const url = `${this.getters.api_get_notifications}${id}`;
 		return this.getRequest(url);
 	}
 
-    set_cookie_for_other_site(id) {
-        const url = `${this.getters.api_get_and_set_cookies}${id}`;
+	set_cookie_for_other_site(id) {
+		const url = `${this.getters.api_get_and_set_cookies}${id}`;
 		return this.getRequest(url);
-    }
+	}
 
 	protected get base() {
 		return environment.base_uri;

@@ -194,7 +194,7 @@
 														<span class="fas fa-circle xsm-text text-danger mr-3"></span>Offline
 													</button>
 												</mat-menu>
-                                        
+
 												<ng-container *ngIf="show_admin_buttons">
 													<button
 														mat-button
@@ -582,25 +582,22 @@
 							</div>
 						</mat-tab>
 
-                        <mat-tab label="Billing" *ngIf="!is_dealer_admin">
-                            <div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
-                                <div class="theme-container">
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <app-single-billings
-                                            [dealer]="dealer_id"
-                                            [reload]="reload_billing">
-                                            </app-single-billings>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </mat-tab>						
-                    </mat-tab-group>
-                </div>
-            </div>
-        </div>
-    </div>
+						<mat-tab label="Billing" *ngIf="!is_dealer_admin">
+							<div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
+								<div class="theme-container">
+									<div class="row">
+										<div class="col-lg-12">
+											<app-single-billings [dealer]="dealer_id" [reload]="reload_billing"> </app-single-billings>
+										</div>
+									</div>
+								</div>
+							</div>
+						</mat-tab>
+					</mat-tab-group>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<ng-template #no_data>
 		<div class="col-lg-12 pl-0 pr-0">

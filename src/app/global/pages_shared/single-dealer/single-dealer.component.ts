@@ -25,7 +25,7 @@ import {
 	UI_DEALER_LICENSE,
 	UI_DEALER_LICENSE_ZONE,
 	UI_ROLE_DEFINITION_TEXT,
-    UI_ROLE_DEFINITION
+	UI_ROLE_DEFINITION
 } from 'src/app/global/models';
 
 @Component({
@@ -68,8 +68,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	initial_load_advertiser = true;
 	initial_load_license = true;
 	initial_load_zone = true;
-	is_admin: boolean = false;
-	is_dealer_admin: boolean = false;
+	is_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator;
+	is_dealer_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin;
 	is_host_stats_loaded = false;
 	is_search: boolean = false;
 	license$: Observable<API_LICENSE[]>;
@@ -262,11 +262,6 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true;
-        } else if (this._auth.current_role === UI_ROLE_DEFINITION.administrator) {
-            this.is_admin = true;
-        }
 		this.reload_billing = !this.reload_billing;
 		this.cd.detectChanges();
 
@@ -290,7 +285,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		this._socket.on('disconnect', () => {});
 
-		if (this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator || this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.dealeradmin) this.show_admin_buttons = true; 
+		if (
+			this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.administrator ||
+			this._role.get_user_role() == UI_ROLE_DEFINITION_TEXT.dealeradmin
+		) {
+			this.show_admin_buttons = true;
+		}
 
 		this.setCurrentTabOnLoad();
 
@@ -426,7 +426,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: i.licenseId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: i.licenseKey, link: '/administrator/licenses/' + i.licenseId, new_tab_link: true, editable: false, hidden: false },
-				{ value: i.licenseAlias ? i.licenseAlias : '--', link: '/administrator/licenses/' + i.licenseId, new_tab_link: true, editable: false, hidden: false },
+				{
+					value: i.licenseAlias ? i.licenseAlias : '--',
+					link: '/administrator/licenses/' + i.licenseId,
+					new_tab_link: true,
+					editable: false,
+					hidden: false
+				},
 				{ value: this.calculateTime(i.mainDuration), link: null, editable: false, hidden: false },
 				{ value: this.calculateTime(i.verticalDuration), link: null, editable: false, hidden: false },
 				{ value: this.calculateTime(i.horizontalDuration), link: null, editable: false, hidden: false },
@@ -581,7 +587,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getHostTotalCount(dealerId: string): void {
-        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
+		let isAdmin =
+			this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator
+				? true
+				: false;
 		this.subscription.add(
 			this._host
 				.get_host_total_per_dealer(dealerId)
@@ -604,138 +613,138 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		);
 	}
 
-    setHostCount(data) {
-        this.host_card = {
-            basis: data.total,
-            basis_label: 'HOSTS',
-            good_value: data.totalActive,
-            good_value_label: 'ACTIVE',
-            bad_value: data.totalInActive,
-            bad_value_label: 'INACTIVE'
-        };
-    }
+	setHostCount(data) {
+		this.host_card = {
+			basis: data.total,
+			basis_label: 'HOSTS',
+			good_value: data.totalActive,
+			good_value_label: 'ACTIVE',
+			bad_value: data.totalInActive,
+			bad_value_label: 'INACTIVE'
+		};
+	}
 
 	getLicensesofDealer(page: number): void {
 		this.searching_license = true;
 
-        this.subscription.add(
-            this._license.sort_license_by_dealer_id(
-                this.dealer_id,
-                page,
-                this.search_data_license,
-                this.sort_column,
-                this.sort_order,
-                15,
-                this.filters.status,
-                '',
-                this.filters.activated,
-                '',
-                this.filters.zone,
-                this.filters.host,
-                this.filters.assigned,
-                this.filters.pending,
-                this.filters.online,
-                this.filters.isactivated
-            ).subscribe(
-                (response: { paging; statistics; message }) => {
-                    this.setLicensesData(response);
-                },
-                (error) => {
-                    this.no_licenses = true;
-                    this.license_data = [];
-                    this.license_filtered_data = [];
-                    this.initial_load_license = false;
-                    this.searching_license = false;
-                }
-            )
-        )
+		this.subscription.add(
+			this._license
+				.sort_license_by_dealer_id(
+					this.dealer_id,
+					page,
+					this.search_data_license,
+					this.sort_column,
+					this.sort_order,
+					15,
+					this.filters.status,
+					'',
+					this.filters.activated,
+					'',
+					this.filters.zone,
+					this.filters.host,
+					this.filters.assigned,
+					this.filters.pending,
+					this.filters.online,
+					this.filters.isactivated
+				)
+				.subscribe(
+					(response: { paging; statistics; message }) => {
+						this.setLicensesData(response);
+					},
+					(error) => {
+						this.no_licenses = true;
+						this.license_data = [];
+						this.license_filtered_data = [];
+						this.initial_load_license = false;
+						this.searching_license = false;
+					}
+				)
+		);
 	}
 
-    setLicensesData(response) {
-        if (response.message) {
-            if (this.search_data_license == '') {
-                this.no_licenses = true;
-            }
+	setLicensesData(response) {
+		if (response.message) {
+			if (this.search_data_license == '') {
+				this.no_licenses = true;
+			}
 
-            this.license_data = [];
-            this.license_filtered_data = [];
-        } else {
-            this.license_data_api = response.paging.entities;
-            this.no_licenses = false;
+			this.license_data = [];
+			this.license_filtered_data = [];
+		} else {
+			this.license_data_api = response.paging.entities;
+			this.no_licenses = false;
 
-            this.license_data_api.map((i) => {
-                if (i.appVersion) {
-                    i.apps = JSON.parse(i.appVersion);
-                } else {
-                    i.apps = null;
-                }
-            });
-            this.paging_data_license = response.paging;
-            const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
-            this.license_data = mappedLicenses;
-            this.license_filtered_data = mappedLicenses;
-        }
+			this.license_data_api.map((i) => {
+				if (i.appVersion) {
+					i.apps = JSON.parse(i.appVersion);
+				} else {
+					i.apps = null;
+				}
+			});
+			this.paging_data_license = response.paging;
+			const mappedLicenses = this.licenseTable_mapToUI(this.license_data_api);
+			this.license_data = mappedLicenses;
+			this.license_filtered_data = mappedLicenses;
+		}
 
-        this.initial_load_license = false;
-        this.searching_license = false;
-    }
+		this.initial_load_license = false;
+		this.searching_license = false;
+	}
 
 	getLicenseTotalCount(id): void {
-        this.subscription.add(
-            this._license.get_licenses_total_by_dealer(id).subscribe(
-                (data: any) => {
-                    this.setLicensesCount(data)
-                }
-            )
-        );
+		this.subscription.add(
+			this._license.get_licenses_total_by_dealer(id).subscribe((data: any) => {
+				this.setLicensesCount(data);
+			})
+		);
 	}
 
-    setLicensesCount(data) {
-        this.license_card = {
-            basis: data.total,
-            basis_label: 'Licenses',
-            basis_sub_label: 'Current Count',
-            good_value: data.totalAssigned,
-            good_value_label: 'Assigned',
-            bad_value: data.totalUnAssigned,
-            bad_value_label: 'Unassigned',
-            breakdown1_value: data.totalOnline,
-            breakdown1_label: 'Online',
-            breakdown2_value: data.totalOffline,
-            breakdown2_label: 'Offline',
-            breakdown3_value: data.totalPending,
-            breakdown3_label: 'Pending',
-            breakdown4_sub_label: 'Connection Status Breakdown :',
-            breakdown4_value: data.totalLan,
-            breakdown4_label: 'LAN',
-            breakdown5_value: data.totalWifi,
-            breakdown5_label: 'WIFI',
-            third_value: data.totalPending,
-            third_value_label: 'Pending',
-            fourth_value: data.totalDisabled,
-            fourth_value_label: 'Inactive',
+	setLicensesCount(data) {
+		this.license_card = {
+			basis: data.total,
+			basis_label: 'Licenses',
+			basis_sub_label: 'Current Count',
+			good_value: data.totalAssigned,
+			good_value_label: 'Assigned',
+			bad_value: data.totalUnAssigned,
+			bad_value_label: 'Unassigned',
+			breakdown1_value: data.totalOnline,
+			breakdown1_label: 'Online',
+			breakdown2_value: data.totalOffline,
+			breakdown2_label: 'Offline',
+			breakdown3_value: data.totalPending,
+			breakdown3_label: 'Pending',
+			breakdown4_sub_label: 'Connection Status Breakdown :',
+			breakdown4_value: data.totalLan,
+			breakdown4_label: 'LAN',
+			breakdown5_value: data.totalWifi,
+			breakdown5_label: 'WIFI',
+			third_value: data.totalPending,
+			third_value_label: 'Pending',
+			fourth_value: data.totalDisabled,
+			fourth_value_label: 'Inactive',
 
-            ad_value: data.totalAd,
-            ad_value_label: 'Ad',
-            menu_value: data.totalMenu,
-            menu_value_label: 'Menu',
-            closed_value: data.totalClosed,
-            closed_value_label: 'Closed',
-            unassigned_value: data.totalUnassignedScreenCount,
-            unassigned_value_label: 'Unassigned'
-        };
+			ad_value: data.totalAd,
+			ad_value_label: 'Ad',
+			menu_value: data.totalMenu,
+			menu_value_label: 'Menu',
+			closed_value: data.totalClosed,
+			closed_value_label: 'Closed',
+			unassigned_value: data.totalUnassignedScreenCount,
+			unassigned_value_label: 'Unassigned'
+		};
 
-        if (this.license_card) {
-            this.temp_label.push(this.license_card.ad_value_label + ': ' + this.license_card.ad_value);
-            this.temp_label.push(this.license_card.menu_value_label + ': ' + this.license_card.menu_value);
-            this.temp_label.push(this.license_card.closed_value_label + ': ' + this.license_card.closed_value);
-            this.temp_label.push(this.license_card.unassigned_value_label + ': ' + this.license_card.unassigned_value);
-            this.temp_array_value.push(this.license_card.ad_value);
-            this.temp_array_value.push(this.license_card.menu_value);
-            this.temp_array_value.push(this.license_card.closed_value);
-            this.temp_array_value.push(this.license_card.unassigned_value);
-        }
-    }
+		if (this.license_card) {
+			this.temp_label.push(this.license_card.ad_value_label + ': ' + this.license_card.ad_value);
+			this.temp_label.push(this.license_card.menu_value_label + ': ' + this.license_card.menu_value);
+			this.temp_label.push(this.license_card.closed_value_label + ': ' + this.license_card.closed_value);
+			this.temp_label.push(this.license_card.unassigned_value_label + ': ' + this.license_card.unassigned_value);
+			this.temp_array_value.push(this.license_card.ad_value);
+			this.temp_array_value.push(this.license_card.menu_value);
+			this.temp_array_value.push(this.license_card.closed_value);
+			this.temp_array_value.push(this.license_card.unassigned_value);
+		}
+	}
 
 	hostFilterData(e): void {
 		if (e) {
@@ -969,84 +978,84 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	getDealers(e) {
 		this.loading_data = true;
-        if (e > 1) {
-            this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    this.setDealersDropdownDataWithPage(data);
-                })
-            );
-        } else {
-            if (this.is_search) {
-                this.loading_search = true;
-            }
-            this.subscription.add(
-                this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-                    this.setDealersDropdownData(data);
-                })
-            );
-        }
+		if (e > 1) {
+			this.subscription.add(
+				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+					this.setDealersDropdownDataWithPage(data);
+				})
+			);
+		} else {
+			if (this.is_search) {
+				this.loading_search = true;
+			}
+			this.subscription.add(
+				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
+					this.setDealersDropdownData(data);
+				})
+			);
+		}
 	}
 
-    setDealersDropdownDataWithPage(data) {
-        data.dealers.map((i) => {
-            this.dealers.push(i);
-        });
-        this.paging = data.paging;
-        this.loading_data = false;
-    }
+	setDealersDropdownDataWithPage(data) {
+		data.dealers.map((i) => {
+			this.dealers.push(i);
+		});
+		this.paging = data.paging;
+		this.loading_data = false;
+	}
 
-    setDealersDropdownData(data) {
-        this.dealers = data.dealers;
-        this.dealers_data = data.dealers;
-        this.paging = data.paging;
-        this.loading_data = false;
-        this.loading_search = false;
-    }
+	setDealersDropdownData(data) {
+		this.dealers = data.dealers;
+		this.dealers_data = data.dealers;
+		this.paging = data.paging;
+		this.loading_data = false;
+		this.loading_search = false;
+	}
 
 	getDealerLicenseZone(page) {
 		this.searching_license_zone = true;
-        this.subscription.add(
-            this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
-                (data) => {
-                    this.setZoneData(data)
-                },
-                (error) => {
-                    this.initial_load_zone = false;
-                    this.searching_license_zone = false;
-                    this.license_zone_data = [];
-                    this.license_zone_filtered_data = [];
-                }
-            )
-        );
+		this.subscription.add(
+			this._dealer.get_dealer_license_zone(this.search_data_license_zone, this.dealer_id, page).subscribe(
+				(data) => {
+					this.setZoneData(data);
+				},
+				(error) => {
+					this.initial_load_zone = false;
+					this.searching_license_zone = false;
+					this.license_zone_data = [];
+					this.license_zone_filtered_data = [];
+				}
+			)
+		);
 	}
 
-    setZoneData(data) {
-        if (data) {
-            this.initial_load_zone = false;
-            this.searching_license_zone = false;
-            this.paging_data_zone = data;
-            if (data.entities.length > 0) {
-                const licenseContents = this.license_zone_mapToUI(data.entities);
-                this.license_zone_data = [...licenseContents];
-                this.license_zone_filtered_data = [...licenseContents];
-                this.no_license_zone = false;
-            } else {
-                if (this.search_data_license_zone == '') {
-                    this.no_license_zone = true;
-                }
-                this.license_zone_data = [];
-                this.license_zone_filtered_data = [];
-            }
-        }
-    }
+	setZoneData(data) {
+		if (data) {
+			this.initial_load_zone = false;
+			this.searching_license_zone = false;
+			this.paging_data_zone = data;
+			if (data.entities.length > 0) {
+				const licenseContents = this.license_zone_mapToUI(data.entities);
+				this.license_zone_data = [...licenseContents];
+				this.license_zone_filtered_data = [...licenseContents];
+				this.no_license_zone = false;
+			} else {
+				if (this.search_data_license_zone == '') {
+					this.no_license_zone = true;
+				}
+				this.license_zone_data = [];
+				this.license_zone_filtered_data = [];
+			}
+		}
+	}
 
 	async dealerSelected(id: string): Promise<void> {
-        if(this._auth.current_role === 'dealeradmin') {
-            await this._router.navigate([`/administrator/dealers/${id}`]);
-        } else {
-            await this._router.navigate([`/${this._auth.current_role}/dealers/${id}`]);
-        }
-		
+		if (this._auth.current_role === 'dealeradmin') {
+			await this._router.navigate([`/administrator/dealers/${id}`]);
+		} else {
+			await this._router.navigate([`/${this._auth.current_role}/dealers/${id}`]);
+		}
+
 		this.getLicenseStatisticsByDealer(id, true);
 	}
 
@@ -1246,25 +1255,27 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	getDealerLicenses() {
-        this.subscription.add(
-            this._license.get_license_to_export(this.dealer_id).subscribe((data) => {
-                this.setDealerAllLicenses(data);
-            })
-        );
+		this.subscription.add(
+			this._license.get_license_to_export(this.dealer_id).subscribe((response) => {
+				if ('message' in response) return;
+
+				this.setDealerAllLicenses(response);
+			})
+		);
 	}
 
-    setDealerAllLicenses(data) {
-        data.licenses.map((i) => {
-            i.new_status = this.checkStatusForExport(i);
-            if (i.appVersion) {
-                i.apps = JSON.parse(i.appVersion);
-            } else {
-                i.apps = null;
-            }
-        });
-        this.licenses = data.licenses;
-        if (this.licenses) this.resyncSocketConnection();
-    }
+	setDealerAllLicenses(data) {
+		data.licenses.map((i) => {
+			i.new_status = this.checkStatusForExport(i);
+			if (i.appVersion) {
+				i.apps = JSON.parse(i.appVersion);
+			} else {
+				i.apps = null;
+			}
+		});
+		this.licenses = data.licenses;
+		if (this.licenses) this.resyncSocketConnection();
+	}
 
 	resyncSocketConnection() {
 		this.licenses.forEach((i) => {
@@ -1508,7 +1519,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					if ('message' in response) return;
+					if ('message' in response) {
+						this.loaded = true;
+						return;
+					}
+
 					this.user = response.user;
 					this.dealer_and_user_data = { dealer: this.dealer, user: this.user };
 					this.loaded = true;

@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
-import { AuthService } from 'src/app/global/services/auth-service/auth.service'; 
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import {
 	API_DEALER_LICENSE,
 	API_FILTERS,
@@ -387,8 +387,8 @@ export class LicenseService extends BaseService {
 		return this.postRequest(this.getters.api_get_license_report, body);
 	}
 
-	get_license_to_export(id) {
-		return this.getRequest(`${this.getters.export_dealer_licenses}${id}`);
+	get_license_to_export(id): Observable<{ licenses?: API_LICENSE[]; message?: string }> {
+		return this.getRequest(`${this.getters.export_dealer_licenses}?dealerId=${id}`);
 	}
 
 	get_license_to_export_duration(
@@ -480,7 +480,7 @@ export class LicenseService extends BaseService {
 		return this.postRequest(`${this.creators.api_new_license}dealerId=${id}&licensecount=${count}`, null);
 	}
 
-	get_screenshots(id) {
+	get_screenshots(id): Observable<{ files: any[] }> {
 		return this.getRequest(`${this.getters.api_get_screenshots}${id}`);
 	}
 

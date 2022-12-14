@@ -6,7 +6,18 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import * as moment from 'moment-timezone';
 
-import { API_DEALER, API_ADVERTISER, API_SINGLE_HOST, API_HOST, API_USER_DATA,HOST_LICENSE_STATISTICS, TAG, UI_CURRENT_USER, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import {
+	API_DEALER,
+	API_ADVERTISER,
+	API_SINGLE_HOST,
+	API_HOST,
+	API_USER_DATA,
+	HOST_LICENSE_STATISTICS,
+	TAG,
+	UI_CURRENT_USER,
+	UI_ROLE_DEFINITION,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { EditSingleAdvertiserComponent } from 'src/app/global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from 'src/app/global/pages_shared/edit-single-dealer/edit-single-dealer.component';
@@ -94,18 +105,8 @@ export class BannerComponent implements OnInit, OnDestroy {
 		window.open(url, '_blank');
 	}
 
-	
-onAssignLicense(): void {
+	onAssignLicense(): void {
 		this.single_host_assign_license.emit(this.single_host_assign_license);
-
-
-
-
-
-
-
-
-
 	}
 	onClickModify(): void {
 		let dialog: ComponentType<EditSingleDealerComponent | EditSingleHostComponent | EditSingleAdvertiserComponent>;

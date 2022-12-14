@@ -5,7 +5,16 @@ import { map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { HelperService, RoleService, UserService, AuthService } from 'src/app/global/services';
-import { API_FILTERS, UI_TABLE_USERS, UI_USER_STATS, USER, USER_ROLE, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT, DEALERADMIN_UI_TABLE_USERS } from 'src/app/global/models';
+import {
+	API_FILTERS,
+	UI_TABLE_USERS,
+	UI_USER_STATS,
+	USER,
+	USER_ROLE,
+	UI_ROLE_DEFINITION,
+	UI_ROLE_DEFINITION_TEXT,
+	DEALERADMIN_UI_TABLE_USERS
+} from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -19,7 +28,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 	current_role_selected: string;
 	filtered_data = [];
 	initial_load = true;
-    is_dealer_admin: boolean = false;
+	is_dealer_admin: boolean = false;
 	no_user: boolean = false;
 	paging_data: any;
 	roles: any = [];
@@ -39,8 +48,8 @@ export class UsersComponent implements OnInit, OnDestroy {
 		{ name: 'Creation Date' },
 		{ name: 'Created By' }
 	];
-	
-    dealeradmin_users_table_columns = [
+
+	dealeradmin_users_table_columns = [
 		{ name: '#' },
 		{ name: 'Name' },
 		{ name: 'Email Address' },
@@ -59,13 +68,13 @@ export class UsersComponent implements OnInit, OnDestroy {
 		private _helper: HelperService,
 		private _role: RoleService,
 		private _user: UserService,
-        private _auth: AuthService
+		private _auth: AuthService
 	) {}
 
 	ngOnInit() {
-        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true
-        }
+		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.is_dealer_admin = true;
+		}
 		this.getUserTotal();
 		this.getAllusers();
 		this.getAllUserRoles();
@@ -106,7 +115,9 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this.searching = true;
 		this.users = [];
 
-		this._user.get_users_by_filters(this.current_filters).pipe(takeUntil(this._unsubscribe))
+		this._user
+			.get_users_by_filters(this.current_filters)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
 					if (response.message) {
@@ -120,16 +131,16 @@ export class UsersComponent implements OnInit, OnDestroy {
 					const mappedData = this.mapToUIFormat(response.paging.entities);
 					this.users = mappedData;
 					this.filtered_data = mappedData;
-
 				},
 				(error) => {
 					throw new Error(error);
 				}
-			).add(() => {
+			)
+			.add(() => {
 				this.initial_load = false;
 				this.searching = false;
 			});
-	    }
+	}
 
 	private confirmEmailNotificationToggle(userId: string, value: boolean, tableDataIndex: number, currentEmail: string): void {
 		let type = 'Enable';
@@ -163,16 +174,19 @@ export class UsersComponent implements OnInit, OnDestroy {
 			)
 			.subscribe(
 				(response) => {
-                    if(this.is_dealer_admin) {
-                        console.log(response)
-                        this.roles = response.filter(function( user ) {
-                            return (user.roleId !== UI_ROLE_DEFINITION.tech && user.roleId !== UI_ROLE_DEFINITION.dealeradmin && user.roleId !== UI_ROLE_DEFINITION.administrator && user.roleId !== UI_ROLE_DEFINITION.guest);
-                          })
-                    } else {
-                        this.roles = response
-                    }
-                    
-                },
+					if (this.is_dealer_admin) {
+						this.roles = response.filter(function (user) {
+							return (
+								user.roleId !== UI_ROLE_DEFINITION.tech &&
+								user.roleId !== UI_ROLE_DEFINITION.dealeradmin &&
+								user.roleId !== UI_ROLE_DEFINITION.administrator &&
+								user.roleId !== UI_ROLE_DEFINITION.guest
+							);
+						});
+					} else {
+						this.roles = response;
+					}
+				},
 				(error) => {
 					throw new Error(error);
 				}
@@ -221,34 +235,34 @@ export class UsersComponent implements OnInit, OnDestroy {
 			const allowEmail = user.allowEmail === 1 ? true : false;
 			if (role.roleName === 'Sub Dealer') permission = role.permission;
 
-            if(this.is_dealer_admin) {
-                const result = new DEALERADMIN_UI_TABLE_USERS(
-                    { value: user.userId, link: null, editable: false, hidden: true },
-                    { value: count++, link: null, editable: false, hidden: false },
-                    { value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
-                    { value: user.email, link: null, editable: false, hidden: false },
-                    { value: user.contactNumber, link: null, editable: false, hidden: false },
-                    { value: role.roleName, link: null, editable: false, hidden: false },
-                    { value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
-                    { value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
-                    { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
-                );
-                return result;
-            } else {
-                const result = new UI_TABLE_USERS(
-                    { value: user.userId, link: null, editable: false, hidden: true },
-                    { value: count++, link: null, editable: false, hidden: false },
-                    { value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
-                    { value: user.email, link: null, editable: false, hidden: false },
-                    { value: user.contactNumber, link: null, editable: false, hidden: false },
-                    { value: role.roleName, link: null, editable: false, hidden: false },
-                    { value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
-                    { value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
-                    { value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
-                    { value: allowEmail, type: 'toggle' }
-                );
-                return result;
-            }
+			if (this.is_dealer_admin) {
+				const result = new DEALERADMIN_UI_TABLE_USERS(
+					{ value: user.userId, link: null, editable: false, hidden: true },
+					{ value: count++, link: null, editable: false, hidden: false },
+					{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
+					{ value: user.email, link: null, editable: false, hidden: false },
+					{ value: user.contactNumber, link: null, editable: false, hidden: false },
+					{ value: role.roleName, link: null, editable: false, hidden: false },
+					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
+					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true }
+				);
+				return result;
+			} else {
+				const result = new UI_TABLE_USERS(
+					{ value: user.userId, link: null, editable: false, hidden: true },
+					{ value: count++, link: null, editable: false, hidden: false },
+					{ value: `${user.firstName} ${user.lastName}`, permission, link: `/administrator/users/${user.userId}`, new_tab_link: true },
+					{ value: user.email, link: null, editable: false, hidden: false },
+					{ value: user.contactNumber, link: null, editable: false, hidden: false },
+					{ value: role.roleName, link: null, editable: false, hidden: false },
+					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
+					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
+					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+					{ value: allowEmail, type: 'toggle' }
+				);
+				return result;
+			}
 		});
 	}
 
