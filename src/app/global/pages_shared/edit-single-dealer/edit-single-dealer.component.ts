@@ -98,7 +98,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		dialog.afterClosed().subscribe((response) => {
 			if (!response) return;
 			this._dialogReference.close();
-			this._router.navigate([`${this._auth.current_role}/dealers`]);
+			this._router.navigate([`${this.roleRoute}/dealers`]);
 		});
 	}
 
@@ -384,5 +384,9 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	protected get _editFormControls() {
 		return this.edit_dealer_form.controls;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

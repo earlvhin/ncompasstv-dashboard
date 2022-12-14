@@ -264,9 +264,8 @@ export class NewDealerAdminComponent implements OnInit {
 			}
 		});
 
-		dialog.afterClosed().subscribe((r) => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/users/`]);
+		dialog.afterClosed().subscribe(() => {
+			this._router.navigate([`/${this.roleRoute}}/users/`]);
 		});
 	}
 
@@ -276,5 +275,9 @@ export class NewDealerAdminComponent implements OnInit {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

@@ -96,7 +96,11 @@ export class LoginFormComponent implements OnInit {
 					localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
 					this._auth.startRefreshTokenTimer();
 					this.redirectToPage(response.userRole.roleId);
-					if (response.userRole.roleId === UI_ROLE_DEFINITION.administrator || response.userRole.roleId === UI_ROLE_DEFINITION.dealeradmin || response.userRole.roleId === UI_ROLE_DEFINITION.tech) {
+					if (
+						response.userRole.roleId === UI_ROLE_DEFINITION.administrator ||
+						response.userRole.roleId === UI_ROLE_DEFINITION.dealeradmin ||
+						response.userRole.roleId === UI_ROLE_DEFINITION.tech
+					) {
 						//Show Modal
 						let item = JSON.parse(localStorage.getItem('installation_ischecked'));
 						if (item) {
@@ -134,9 +138,9 @@ export class LoginFormComponent implements OnInit {
 		return moment(now).isAfter(dateString, 'day');
 	}
 
-    routeToGuest() {
-        window.location.href = 'https://locations.n-compass.online'
-    }
+	routeToGuest() {
+		window.location.href = 'https://locations.n-compass.online';
+	}
 
 	openUpcomingInstallModal() {
 		let dialogRef = this._dialog.open(UpcomingInstallModalComponent, {

@@ -158,9 +158,7 @@ export class DataTableComponent implements OnInit {
 
 	editGeneratedFeed(data: any) {
 		if (this.is_view_only) return;
-		let role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		if (role === 'dealeradmin') role = 'administrator';
-		this._router.navigate([`/${role}/feeds/edit-generated/${data.feed_id.value}`]);
+		this._router.navigate([`/${this.roleRoute}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
 	onSelectRow(data: any, index: number): void {
@@ -762,5 +760,9 @@ export class DataTableComponent implements OnInit {
 
 	protected get _pagesWithStatusIndicator() {
 		return ['single-dealer-host-tab', 'advertisers'];
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

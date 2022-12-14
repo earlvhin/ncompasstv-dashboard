@@ -133,13 +133,11 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	addPlaylistButton() {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/playlists/create-playlist`]);
+		this._router.navigate([`/${this.roleRoute}/playlists/create-playlist`]);
 	}
 
 	addHostButton() {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/create-host`]);
+		this._router.navigate([`/${this.roleRoute}/create-host`]);
 	}
 
 	checkIfStep1Complete() {
@@ -612,11 +610,7 @@ export class CreateScreenComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			let route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			if (route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-				route = UI_ROLE_DEFINITION_TEXT.administrator;
-			}
-			this._router.navigate([`/${route}/screens`]);
+			this._router.navigate([`/${this.roleRoute}/screens`]);
 		});
 	}
 
@@ -653,5 +647,9 @@ export class CreateScreenComponent implements OnInit {
 				placeholder: 'Ex: Describe this Screen'
 			}
 		];
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

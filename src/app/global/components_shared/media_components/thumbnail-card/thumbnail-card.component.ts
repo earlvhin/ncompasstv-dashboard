@@ -53,9 +53,7 @@ export class ThumbnailCardComponent implements OnInit {
 
 	ngOnInit() {
 		this.role = this._auth.current_role;
-        if(this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.role = UI_ROLE_DEFINITION_TEXT.administrator
-        }
+		if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 
 		if (!this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0) {

@@ -52,13 +52,10 @@ export class NewHostUserComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-        let role = ''
-        if(this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = UI_ROLE_DEFINITION_TEXT.administrator
-        }
-        this.create_host_link = `/`+role+`/hosts/create-host`;
-
-		this.back_btn = `/`+role+`/users/create-user`;
+		let role = this.currentRole;
+		if (this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) role = UI_ROLE_DEFINITION_TEXT.administrator;
+		this.create_host_link = `/${role}/hosts/create-host`;
+		this.back_btn = `/${role}/users/create-user`;
 
 		this.new_host_form = this._form.group({
 			roleid: [UI_ROLE_DEFINITION.host],
@@ -353,12 +350,7 @@ export class NewHostUserComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe((r) => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-            if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-                this._router.navigate([`/administrator/dealers/`]);
-            } else {
-                this._router.navigate([`/${route}/dealers/`]);
-            }   
+			this._router.navigate([`/${this.roleRoute}/dealers/`]);
 		});
 	}
 
@@ -374,5 +366,9 @@ export class NewHostUserComponent implements OnInit {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

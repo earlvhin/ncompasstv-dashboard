@@ -29,7 +29,6 @@ import { takeUntil } from 'rxjs/operators';
 export class GenerateFeedComponent implements OnInit {
 	@Input() background_image: string;
 	@Input() banner_image: string;
-	// subscription: Subscription = new Subscription();
 
 	editing: boolean = false;
 	feed_info: any;
@@ -51,7 +50,8 @@ export class GenerateFeedComponent implements OnInit {
 	route: string;
 	dealers: { dealerId: string; businessName: string }[];
 	apply_to_all_btn_status: boolean = false;
-    
+
+	private roleRoute = this._roleRoute;
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -64,10 +64,10 @@ export class GenerateFeedComponent implements OnInit {
 
 	ngOnInit(): void {
 		// this.route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-        this.route = this._auth.current_role;
-        if(this.route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.route = UI_ROLE_DEFINITION_TEXT.administrator
-        }
+		this.route = this._auth.current_role;
+		if (this.route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.route = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 		this.getParamOfActivatedRoute();
 
 		const roleId = this._auth.current_user_value.role_id;
@@ -255,13 +255,12 @@ export class GenerateFeedComponent implements OnInit {
 	saveGeneratedSlideFeed(): void {
 		this.saving = true;
 
-
 		if (!this.editing) {
 			this._feed
 				.generate_feed(this.generated_slide_feed, 'slides')
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -271,7 +270,7 @@ export class GenerateFeedComponent implements OnInit {
 				.update_slide_feed(this.generated_slide_feed)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -288,7 +287,7 @@ export class GenerateFeedComponent implements OnInit {
 				.generate_feed(this.generated_weather_feed, 'weather')
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -298,7 +297,7 @@ export class GenerateFeedComponent implements OnInit {
 				.update_weather_feed(this.generated_weather_feed)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -315,7 +314,7 @@ export class GenerateFeedComponent implements OnInit {
 				.generate_feed(this.generated_news_feed, 'news')
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -325,7 +324,7 @@ export class GenerateFeedComponent implements OnInit {
 				.update_news_feed(this.generated_news_feed)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -342,7 +341,7 @@ export class GenerateFeedComponent implements OnInit {
 				.generate_feed(this.generated_filler_feed, 'fillers')
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -352,7 +351,7 @@ export class GenerateFeedComponent implements OnInit {
 				.update_filler_feed(this.generated_filler_feed)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.route}/feeds`]).then((_) => window.location.reload()),
+					() => this._router.navigate([`/${this.roleRoute}/feeds`]).then((_) => window.location.reload()),
 					(error) => {
 						throw new Error(error);
 					}
@@ -366,5 +365,10 @@ export class GenerateFeedComponent implements OnInit {
 	 */
 	selectionChange(e): void {
 		this.selected_index = e.selectedIndex;
+	}
+
+	protected get _roleRoute() {
+		const role = this._auth.current_role;
+		return role === UI_ROLE_DEFINITION.dealeradmin ? UI_ROLE_DEFINITION.administrator : role;
 	}
 }

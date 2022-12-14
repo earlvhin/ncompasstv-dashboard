@@ -457,9 +457,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					() => {
-						const roleId = this._auth.current_user_value.role_id;
-						const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === roleId);
-						this._router.navigate([`/${route}/licenses`]);
+						this._router.navigate([`/${this.roleRoute}/licenses`]);
 					},
 					(error) => {
 						throw new Error(error);
@@ -2151,5 +2149,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	protected initializeSocketWatchers(): void {
 		this.subscribeToResetAnydeskID();
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

@@ -361,12 +361,8 @@ export class CreatePlaylistComponent implements OnInit {
 			width: '600px'
 		});
 
-		dialog.afterClosed().subscribe((data) => {
-			let route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			if (route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-				route = UI_ROLE_DEFINITION_TEXT.administrator;
-			}
-			this._router.navigate([`/${route}/playlists/`]);
+		dialog.afterClosed().subscribe(() => {
+			this._router.navigate([`/${this.roleRoute}/playlists/`]);
 		});
 	}
 
@@ -422,5 +418,9 @@ export class CreatePlaylistComponent implements OnInit {
 			this.media_key = '';
 			this.getAllContents();
 		}
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

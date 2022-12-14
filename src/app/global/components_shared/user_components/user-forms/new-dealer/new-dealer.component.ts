@@ -121,13 +121,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			const roleId = this._auth.current_user_value.role_id;
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === roleId);
-            if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-                this._router.navigate([`/administrator/dealers/`]);
-            } else {
-                this._router.navigate([`/${route}/dealers/`]);
-            }   
+			this._router.navigate([`/${this.roleRoute}/dealers/`]);
 		});
 	}
 
@@ -297,5 +291,9 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 				this.password_match_msg = 'Password does not match';
 			}
 		});
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

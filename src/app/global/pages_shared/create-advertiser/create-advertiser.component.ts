@@ -333,7 +333,7 @@ export class CreateAdvertiserComponent implements OnInit {
 		this.f.dealerId.setValue(e);
 	}
 
-	confirmationModal(status, message, data, id): void {
+	confirmationModal(status: string, message: string, data: any, id: string): void {
 		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -344,33 +344,15 @@ export class CreateAdvertiserComponent implements OnInit {
 			}
 		});
 
-		dialogRef.afterClosed().subscribe((result) => {
-            let role = this._auth.current_role;
-            if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-                role = UI_ROLE_DEFINITION_TEXT.administrator;
-            }
-			if (id) {
-				// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-				this._router.navigate([`/` +role+ `/advertisers/`, id]);
-			}
+		dialogRef.afterClosed().subscribe(() => {
+			if (!id) return;
+			this._router.navigate([`/${this.roleRoute}/advertisers/`, id]);
 		});
 	}
 
-	setToCategory(e) {
-		let category = this.categories_data.filter((i: any) => {
-			return e == i.slug;
-		})[0];
-
-		// If it does, then it will set the Display Field and the Value Field.
-		// if (category) {
-		//
-		// 	this.category_selected = this._titlecase.transform(category.categoryName);
-		// 	this.f.category.setValue(category.categoryName);
-		// } else {
-		// }
-
+	setToCategory(name: string) {
 		this.no_category = true;
-		this.f.category.setValue(this._titlecase.transform(e).replace(/_/g, ' '));
+		this.f.category.setValue(this._titlecase.transform(name).replace(/_/g, ' '));
 	}
 
 	watchCategoryField() {
@@ -379,5 +361,9 @@ export class CreateAdvertiserComponent implements OnInit {
 				this.no_category = false;
 			}
 		});
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

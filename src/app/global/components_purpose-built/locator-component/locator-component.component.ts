@@ -111,7 +111,9 @@ export class LocatorComponentComponent implements OnInit {
 	}
 
 	openPageNewTab(page: string, id: string) {
-		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.currentRole}/${page}/${id}`], {}));
+		let role = this.currentRole;
+		if (role === 'dealeradmin') role = 'administrator';
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${role}/${page}/${id}`], {}));
 		window.open(url, '_blank');
 	}
 

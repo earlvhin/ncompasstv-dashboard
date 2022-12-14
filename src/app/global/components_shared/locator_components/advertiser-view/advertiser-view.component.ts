@@ -164,8 +164,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 	}
 
 	createAdvertiserProfile(): void {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
-		this._router.navigate([`/${route}/create-advertiser/`]);
+		this._router.navigate([`/${this.roleRoute}/create-advertiser/`]);
 	}
 
 	mapMarkersToUI() {
@@ -187,5 +186,9 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 
 	private get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

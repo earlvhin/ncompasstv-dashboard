@@ -153,12 +153,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					.subscribe(
 						() => {
 							this._dialogRef.close('delete-host');
-
-							if (!this.is_current_user_admin) {
-								this._router.navigate([`/${route}/dealers/${this.dealer_id}`]);
-							} else {
-								this._router.navigate([`/${route}/hosts`]);
-							}
+							if (!this.is_current_user_admin) this._router.navigate([`/${this.roleRoute}/dealers/${this.dealer_id}`]);
+							else this._router.navigate([`/${this.roleRoute}/hosts`]);
 						},
 						(error) => {
 							throw new Error(error);
@@ -565,5 +561,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 	protected get isCurrentUserDealer() {
 		return this.currentUser.role_id === UI_ROLE_DEFINITION.dealer;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

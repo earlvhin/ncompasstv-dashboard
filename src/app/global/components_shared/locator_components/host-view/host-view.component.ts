@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit, Input } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -44,7 +44,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 	}
 
 	addHostPlace(): void {
-		this._router.navigate([`/${this._auth.current_role}/hosts/create-host/`]);
+		this._router.navigate([`/${this.roleRoute}/hosts/create-host/`]);
 	}
 
 	onSearchOption(key: string): void {
@@ -144,5 +144,9 @@ export class HostViewComponent implements OnInit, OnDestroy {
 				}
 			)
 			.add(() => (this.isSearchingHostsByState = false));
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

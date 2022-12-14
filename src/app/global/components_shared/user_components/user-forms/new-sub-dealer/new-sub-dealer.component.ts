@@ -206,9 +206,8 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		dialog.afterClosed().subscribe((r) => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/users/`]);
+		dialog.afterClosed().subscribe(() => {
+			this._router.navigate([`/${this.roleRoute}/users/`]);
 		});
 	}
 
@@ -312,5 +311,9 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 				)
 			);
 		}
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

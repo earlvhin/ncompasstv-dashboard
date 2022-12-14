@@ -1,17 +1,14 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { Router } from '@angular/router';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { MAT_DIALOG_DATA } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { PlaylistService } from '../../../services/playlist-service/playlist.service';
-import { UI_SINGLE_PLAYLIST } from '../../../../global/models/ui_single-playlist.model';
-import { API_CREATE_PLAYLIST, API_CREATE_PLAYLIST_CONTENT } from '../../../../global/models/api_create-playlist.model';
-import { UI_CONTENT, UI_PLAYLIST_CONTENT } from '../../../../global/models/ui_content.model';
+
+import { API_CREATE_PLAYLIST_CONTENT } from '../../../../global/models/api_create-playlist.model';
 import { API_SINGLE_PLAYLIST } from 'src/app/global/models/api_single-playlist.model';
-import { API_CONTENT } from 'src/app/global/models/api_content.model';
-import { RoleService } from 'src/app/global/services/role-service/role.service';
+import { UI_SINGLE_PLAYLIST } from '../../../../global/models/ui_single-playlist.model';
+import { PlaylistService } from '../../../services/playlist-service/playlist.service';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-clone-playlist',
@@ -46,8 +43,7 @@ export class ClonePlaylistComponent implements OnInit {
 		private _form: FormBuilder,
 		private _playlist: PlaylistService,
 		private _router: Router,
-		private _role: RoleService,
-        private _auth: AuthService,
+		private _auth: AuthService,
 		@Inject(MAT_DIALOG_DATA) public playlist_data: API_SINGLE_PLAYLIST
 	) {}
 
@@ -58,7 +54,7 @@ export class ClonePlaylistComponent implements OnInit {
 		});
 
 		this.subscription.add(
-			this.clone_playlist_form.valueChanges.subscribe((data) => {
+			this.clone_playlist_form.valueChanges.subscribe(() => {
 				if (this.clone_playlist_form.valid) {
 					this.form_valid = false;
 				} else {
@@ -73,27 +69,7 @@ export class ClonePlaylistComponent implements OnInit {
 	}
 
 	clonePlaylist() {
-		let counter = 0;
 		this.form_submitted = true;
-
-		// this.cloned_playlist_content = this.playlist_data.playlistContents.map(
-		// 	(c: any) => {
-		// 		return new API_CREATE_PLAYLIST_CONTENT(
-		// 			c.contentId,
-		// 			c.handlerId,
-		// 			counter++,
-		// 			c.isFullScreen
-		// 		)
-		// 	}
-		// )
-
-		// this.cloned_playlist = new API_CREATE_PLAYLIST(
-		// 	this.playlist_data.playlist.dealerId,
-		// 	this.f.playlist_title.value,
-		// 	this.playlist_data.playlist.playlistType,
-		// 	this.f.playlist_description.value,
-		// 	this.cloned_playlist_content
-		// )
 
 		this.cloned_playlist = {
 			playlistId: this.playlist_data.playlist.playlistId,
@@ -108,18 +84,19 @@ export class ClonePlaylistComponent implements OnInit {
 					this.clone_success = true;
 					this.redirectToClonedPlaylist(data.playlistId);
 				},
-				(error) => {}
+				(error) => {
+					throw new Error();
+				}
 			)
 		);
 	}
 
-	redirectToClonedPlaylist(id) {
-        let role = this._auth.current_role;
-        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = UI_ROLE_DEFINITION_TEXT.administrator;
-        }
-		if (id) {
-			this._router.navigate([`/` +role+ `/playlists/`, id]);
-		}
+	redirectToClonedPlaylist(id: string) {
+		const route = `/${this.roleRoute}/playlists/${id}`;
+		this._router.navigate([route]);
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

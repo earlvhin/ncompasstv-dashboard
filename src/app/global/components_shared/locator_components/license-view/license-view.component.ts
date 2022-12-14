@@ -287,7 +287,9 @@ export class LicenseViewComponent implements OnInit {
 	}
 
 	setLink(licenseId: string) {
-		return [`/${this.currentRole}/licenses/${licenseId}`];
+		let role = this.currentRole;
+		if (role === 'dealeradmin') role = 'administrator';
+		return [`/${role}/licenses/${licenseId}`];
 	}
 
 	private getDealerHosts(page: number): void {

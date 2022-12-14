@@ -92,16 +92,12 @@ export class BannerComponent implements OnInit, OnDestroy {
 		if (this.refresh_banner) this.ngOnInit();
 	}
 
-	checkRoute(id1, id2) {
-		let route = this._auth.current_role;
-		if (route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-			route = UI_ROLE_DEFINITION_TEXT.administrator;
-		}
-		// this._router.navigate([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } });
-
-		const url = this._router.serializeUrl(
-			this._router.createUrlTree([`/` + route + `/screens/create-screen/`], { queryParams: { dealer_id: id1, host_id: id2 } })
-		);
+	checkRoute(dealerId: string, hostId: string) {
+		let role = this._auth.current_role;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) role = UI_ROLE_DEFINITION_TEXT.administrator;
+		const route = `/${role}/screens/create-screen/`;
+		const routeData = { queryParams: { dealer_id: dealerId, host_id: hostId } };
+		const url = this._router.serializeUrl(this._router.createUrlTree([route], routeData));
 		window.open(url, '_blank');
 	}
 

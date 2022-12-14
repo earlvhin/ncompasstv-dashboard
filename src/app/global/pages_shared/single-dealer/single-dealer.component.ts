@@ -1050,12 +1050,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	async dealerSelected(id: string): Promise<void> {
-		if (this._auth.current_role === 'dealeradmin') {
-			await this._router.navigate([`/administrator/dealers/${id}`]);
-		} else {
-			await this._router.navigate([`/${this._auth.current_role}/dealers/${id}`]);
-		}
-
+		await this._router.navigate([`/${this.roleRoute}/dealers/${id}`]);
 		this.getLicenseStatisticsByDealer(id, true);
 	}
 
@@ -1724,5 +1719,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		};
 		this.sortList('desc');
 		this.getLicensesofDealer(1);
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }
