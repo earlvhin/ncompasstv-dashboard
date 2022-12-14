@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-import { API_FILTERS } from '../models';
 import { AuthService } from './auth-service/auth.service';
 import { environment } from 'src/environments/environment';
 
@@ -29,12 +28,12 @@ export class BaseService {
 		return this._auth.current_user_value;
 	}
 
-	protected getRequest(endpoint: string, options: any = null): Observable<any> {
-		let headers = this.headers;
+	protected getRequest(endpoint: string, options: any = null, isApplicationRequestOnly = false, overrideUrl = false): Observable<any> {
+		let headers = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
 		let baseUri = this.baseUri;
 		if (options) headers = { ...this.headers, ...options };
 		if (this._auth.current_role === 'dealeradmin') baseUri += 'dealeradmin/';
-		const url = `${baseUri}${endpoint}`;
+		const url = overrideUrl ? endpoint : `${baseUri}${endpoint}`;
 		return this._http.get(url, headers);
 	}
 

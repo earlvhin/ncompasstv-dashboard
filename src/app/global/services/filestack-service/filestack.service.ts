@@ -28,7 +28,7 @@ export class FilestackService extends BaseService {
 			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`;
 
 			this.subscription.add(
-				this.getRequest(url).subscribe(
+				this.getRequest(url, null, true, true).subscribe(
 					(data) => {
 						resolve(data);
 					},
