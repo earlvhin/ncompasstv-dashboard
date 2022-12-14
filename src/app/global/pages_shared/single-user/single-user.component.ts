@@ -512,7 +512,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	private subscribeToDealerSearch(): void {
 		const control = this.dealerFilterControl;
-		this.isSearchingDealer = true;
 
 		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(
 			(keyword: string) => {
@@ -521,8 +520,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 					return;
 				}
 
+				this.isSearchingDealer = true;
 				if (keyword && keyword.trim().length > 0) {
-					this.dealers_list = this.dealers_list.filter((dealer) => dealer.businessName.toLowerCase() === keyword.toLowerCase());
+					const originalDealersList = Array.from(this.original_dealers);
+
+					this.dealers_list = originalDealersList.filter((dealer) => dealer.businessName.toLowerCase().search(keyword.toLowerCase()) > -1);
 				} else {
 					this.dealers_list = this.original_dealers;
 				}
