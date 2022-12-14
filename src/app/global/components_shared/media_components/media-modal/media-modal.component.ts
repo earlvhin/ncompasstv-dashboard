@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { API_ADVERTISER, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_ADVERTISER, API_CONTENT, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
@@ -48,7 +48,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	to_empty = false;
 
 	private advertiserid: string;
-	private content_data: any;
+	private content_data: API_CONTENT;
 	private dealerid: string;
 	private filter: any = [];
 	private hostid: string;
@@ -97,17 +97,20 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						(data) => {
-							this.content_data = data;
+							this.content_data = data.content;
 
 							if (this.content_data.fileType != 'feed') {
 								if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
 									this.is_floating = true;
 								} else {
+									const advertiserId = data.content.advertiserId;
+									const hostId = data.content.hostId;
 									this.hostid = data.content.hostId;
-									this.getHostById(this.hostid);
 									this.advertiserid = data.content.advertiserId;
-									this.getAdvertiserById(this.advertiserid);
 									this.dealerid = data.content.dealerId;
+
+									if (hostId && hostId.length > 0) this.getHostById(this.hostid);
+									if (advertiserId && advertiserId.length > 0) this.getAdvertiserById(this.advertiserid);
 									this.getDealerById(data.content.dealerId);
 								}
 							} else {
@@ -256,7 +259,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 			this.no_advertiser_found = true;
 			this.no_host_found = true;
 		} else {
-			if (this.content_data.dealerId != '' && this.content_data.advertiserid != '' && this.content_data.hostid != '') {
+			if (this.content_data.dealerId != '' && this.content_data.advertiserId != '' && this.content_data.hostId != '') {
 				this.hostid = this.temp.hostid;
 				this.advertiserid = this.temp.advertiserid;
 				this.dealerid = this.temp.dealerid;

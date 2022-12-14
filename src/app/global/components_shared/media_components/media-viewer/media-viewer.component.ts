@@ -45,10 +45,10 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-        let role = this._auth.current_role;
-        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true
-        }
+		let role = this._auth.current_role;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.is_dealer_admin = true;
+		}
 		this.file_data = this._dialog_data;
 		this.configureContents();
 	}
@@ -242,9 +242,9 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			selected.owner_type = 'Dealer';
 			this.getDealer(selected.dealer_id);
 		} else if (selected.owner_role_id === 2) {
-            selected.owner_type = 'Dealer Admin';
+			selected.owner_type = 'Dealer Admin';
 			selected.owner_name = selected.created_by_name;
-        } else {
+		} else {
 			selected.owner_type = 'Administrator';
 			selected.owner_name = 'Administrator';
 		}
@@ -284,8 +284,8 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 				m.title,
 				'',
 				m.createdByName,
-                m.ownerRoleId,
-				m.classification,
+				m.ownerRoleId,
+				m.classification
 			);
 		});
 	}
