@@ -22,7 +22,7 @@ import { BaseService } from '../base.service';
 export class DealerService extends BaseService {
 	onSuccessReassigningDealer = new EventEmitter<null>();
 	onDealerDataLoaded = new EventEmitter<{ email: string }>();
-    token = JSON.parse(localStorage.getItem('tokens'));
+	token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
@@ -33,11 +33,11 @@ export class DealerService extends BaseService {
 	}
 
 	add_dealer(data) {
-        const body = { data };
+		const body = { data };
 		return this.postRequest(this.creators.api_new_dealer, body);
 	}
-	
-    add_dealers_of_dealer_admin(data) {
+
+	add_dealers_of_dealer_admin(data) {
 		return this.postRequest(this.creators.api_new_dealer_admin_dealers, data);
 	}
 
@@ -48,8 +48,8 @@ export class DealerService extends BaseService {
 	delete_dealer(body: { dealerId: string; userId: string; retainContents: boolean }) {
 		return this.postRequest(`${this.deleters.delete_dealer}`, body);
 	}
-	
-    delete_dealer_admin_assignee(data) {
+
+	delete_dealer_admin_assignee(data) {
 		return this.postRequest(`${this.deleters.api_delete_dealer_admin}`, data);
 	}
 
@@ -115,8 +115,9 @@ export class DealerService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_dealers_with_license}${params}`);
 	}
 
-    get_dealers_with_page(page: number, key: string, pageSize = 15): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
-		return this.getRequest(`${this.getters.api_get_dealers}` + '?page=' + `${page}` + '&search=' + `${key}`+ '&pageSize=' + `${pageSize}`);
+	get_dealers_with_page(page: number, key: string, pageSize = 15): Observable<{ dealers: API_DEALER[]; paging: PAGING }> {
+		const url = `${this.getters.api_get_dealers}?page=${page}&search=${key}&pageSize=${pageSize}`;
+		return this.getRequest(url);
 	}
 
 	get_dealers_with_sort(
@@ -150,7 +151,7 @@ export class DealerService extends BaseService {
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
-	
+
 	get_dealers_fetch(
 		page: number,
 		search: string,

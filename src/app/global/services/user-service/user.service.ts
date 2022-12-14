@@ -55,7 +55,7 @@ export class UserService extends BaseService {
 		return this.getRequest(url).map((data) => data.user);
 	}
 
-	get_dealeradmin_dealers(userId: string) {
+	get_dealeradmin_dealers(userId: string): Observable<{ dealers: { businessName: string; dealerId: string }[] }> {
 		const url = `${this.getters.api_get_dealer_admin_user}?userid=${userId}`;
 		return this.getRequest(url);
 	}
