@@ -150,10 +150,12 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	onCreateScreen(dealerId: string, hostId: string) {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		let role = this._auth.current_role;
+
+		if (role === 'dealeradmin') role = 'administrator';
 
 		const url = this._router.serializeUrl(
-			this._router.createUrlTree([`/${route}/screens/create-screen/`], { queryParams: { dealer_id: dealerId, host_id: hostId } })
+			this._router.createUrlTree([`/${role}/screens/create-screen/`], { queryParams: { dealer_id: dealerId, host_id: hostId } })
 		);
 		window.open(url, '_blank');
 	}
