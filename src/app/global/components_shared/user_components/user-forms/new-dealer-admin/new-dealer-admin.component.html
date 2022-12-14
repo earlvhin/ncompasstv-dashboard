@@ -29,28 +29,28 @@
 
 					<ng-template #passwordField>
 						<div class="password-container" *ngIf="f.control === 'password'">
-							<div class="field">
+							<div class="field d-flex">
 								<input
 									formControlName="{{ f.control }}"
 									matInput
 									placeholder="{{ f.placeholder }}"
 									[type]="is_password_field_type ? 'password' : 'text'" />
-								<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
-									is_password_field_type ? 'visibility_off' : 'visibility'
-								}}</mat-icon>
+								<mat-icon class="pw-visibility clickable" matSuffix (click)="togglePasswordFieldType()">
+									{{ is_password_field_type ? 'visibility_off' : 'visibility' }}
+								</mat-icon>
 							</div>
 						</div>
 
 						<div class="password-container" *ngIf="f.control === 're_password'">
-							<div class="field">
+							<div class="field d-flex">
 								<input
 									formControlName="{{ f.control }}"
 									matInput
 									placeholder="{{ f.placeholder }}"
 									[type]="is_retype_password_field_type ? 'password' : 'text'" />
-								<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{
-									is_retype_password_field_type ? 'visibility_off' : 'visibility'
-								}}</mat-icon>
+								<mat-icon class="pw-visibility clickable" matSuffix (click)="toggleRetypePasswordFieldType()">
+									{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}
+								</mat-icon>
 							</div>
 						</div>
 					</ng-template>
