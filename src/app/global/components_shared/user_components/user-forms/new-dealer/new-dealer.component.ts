@@ -9,7 +9,7 @@ import { AuthService } from '../../../../services/auth-service/auth.service';
 import { City, State } from '../../../../models/ui_city_state_region.model';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 import { LocationService } from '../../../../services/data-service/location.service';
-import { UI_ROLE_DEFINITION } from '../../../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../../models/ui_role-definition.model';
 import { UserService } from 'src/app/global/services/user-service/user.service';
 
 @Component({
@@ -123,7 +123,11 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		dialog.afterClosed().subscribe(() => {
 			const roleId = this._auth.current_user_value.role_id;
 			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === roleId);
-			this._router.navigate([`/${route}/dealers/`]);
+            if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+                this._router.navigate([`/administrator/dealers/`]);
+            } else {
+                this._router.navigate([`/${route}/dealers/`]);
+            }   
 		});
 	}
 

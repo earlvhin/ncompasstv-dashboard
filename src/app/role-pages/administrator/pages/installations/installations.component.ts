@@ -7,7 +7,7 @@ import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
 import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
-import { API_FILTERS, INSTALLATION, PAGING } from 'src/app/global/models';
+import { API_FILTERS, INSTALLATION, PAGING, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { MatTabChangeEvent } from '@angular/material';
 
 @Component({
@@ -211,6 +211,10 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 	private mapToTableFormat(data: any[]): INSTALLATION[] {
 		let count = this.pagingData.pageStart;
+        let role = this._currentRole;
+        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            role = 'administrator'
+        }
 
 		return data.map((license) => {
 			const isPast = moment(license.installDate, 'MMM d, y').isBefore(moment(), 'day');
@@ -220,7 +224,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				{ value: count++, link: null, editable: false, hidden: false, past: isPast },
 				{
 					value: license.licenseKey,
-					link: `/${this._currentRole}/licenses/${license.licenseId}`,
+					link: `/`+role+`/licenses/${license.licenseId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
@@ -228,7 +232,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				},
 				{
 					value: license.hostName != null ? license.hostName : '--',
-					link: `/${this._currentRole}/hosts/${license.hostId}`,
+					link: `/`+role+`/hosts/${license.hostId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
@@ -236,7 +240,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				},
 				{
 					value: license.dealerIdAlias != null ? license.dealerIdAlias : '--',
-					link: `/${this._currentRole}/dealers/${license.dealerId}`,
+					link: `/`+role+`/dealers/${license.dealerId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
@@ -244,7 +248,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				},
 				{
 					value: license.businessName,
-					link: `/${this._currentRole}/dealers/${license.dealerId}`,
+					link: `/`+role+`/dealers/${license.dealerId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,

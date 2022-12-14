@@ -306,9 +306,9 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 			i.createdBy = this._auth.current_user_value.user_id;
 
 			if (duplicateArray) {
-				var name_of_file = this.removeIndexes(i.filename);
-				var mime = i.mimetype.split('/');
-				var index_to_set = duplicateArray.length + 1;
+				const name_of_file = this.removeIndexes(i.filename);
+				const mime = i.mimetype.split('/');
+				const index_to_set = duplicateArray.length + 1;
 				i.filename = name_of_file + '(' + index_to_set + ')' + '.' + mime[mime.length - 1];
 				delete i.fileName;
 			}
@@ -321,7 +321,9 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 				.post_content_info(data)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this.emitReloadMedia(),
+					() => {
+						this.emitReloadMedia();
+					},
 					(error) => {
 						throw new Error(error);
 					}

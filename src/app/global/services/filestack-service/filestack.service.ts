@@ -2,14 +2,18 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { Subscription } from 'rxjs';
+import { BaseService } from '../base.service';
+import { AuthService } from '../auth-service/auth.service';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class FilestackService {
+export class FilestackService extends BaseService {
 	subscription: Subscription = new Subscription();
 
-	constructor(private _http: HttpClient) {}
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	http_options = {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
@@ -21,20 +25,17 @@ export class FilestackService {
 			let handle = data.handle;
 			let filename = data.key.substring(0, data.key.lastIndexOf('.'));
 			let originalName = data.filename;
+			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`;
 
 			this.subscription.add(
-				this._http
-					.get<any>(
-						`https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`
-					)
-					.subscribe(
-						(data) => {
-							resolve(data);
-						},
-						(error) => {
-							reject(error);
-						}
-					)
+				this.getRequest(url).subscribe(
+					(data) => {
+						resolve(data);
+					},
+					(error) => {
+						reject(error);
+					}
+				)
 			);
 		});
 	}
@@ -99,10 +100,12 @@ export class FilestackService {
 	}
 
 	post_content_info(file_data) {
-		return this._http.post(`${environment.base_uri}${environment.third_party.api_post_content_info}`, file_data, this.http_options);
+		const endpoint = `${environment.third_party.api_post_content_info}`;
+		return this.postRequest(endpoint, file_data, null, true);
 	}
 
 	process_files() {
-		return this._http.get(`${environment.base_uri}${environment.third_party.api_process_files}`);
+		const endpoint = `${environment.third_party.api_process_files}`;
+		return this.getRequest(endpoint);
 	}
 }

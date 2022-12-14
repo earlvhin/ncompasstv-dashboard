@@ -1,20 +1,20 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MatDialog } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Subscription, Observable } from 'rxjs';
 
-import { API_UPDATE_USER_PROFILE } from '../../../models/api_update-user-info.model';
-import { AuthService } from '../../../services/auth-service/auth.service';
+import { AuthService, UserService } from 'src/app/global/services';
+import { USER_PROFILE } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { UserService } from '../../../services/user-service/user.service';
-import { USER_PROFILE } from '../../../models/api_user.model';
+import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-user-setting',
 	templateUrl: './user-setting.component.html',
 	styleUrls: ['./user-setting.component.scss']
 })
+
 export class UserSettingComponent implements OnInit {
 	subscription: Subscription = new Subscription();
 	update_user: FormGroup;
@@ -23,6 +23,7 @@ export class UserSettingComponent implements OnInit {
 	update_info_form_disabled_typing: boolean = true;
 	user_type: string;
 	is_dealer = false;
+	is_dealer_admin = false;
 	is_view_only = false;
 	current_role: string;
 	disabled_fields: boolean = true;
@@ -107,6 +108,9 @@ export class UserSettingComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true
+        }
 		this.update_info_form_disabled = false;
 
 		this.update_user = this._form.group(
@@ -125,24 +129,29 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	getUserById(id: string): void {
-		this.subscription.add(
-			this._user.get_user_alldata_by_id(id).subscribe(
-				(response: any) => {
-					if (response.dealer.length > 0) {
-						this.user_data = Object.assign({}, response.dealer[0], response.user);
-						this.is_dealer = true;
-					} else {
-						this.user_data = response.user;
-					}
-
-					this.readyUpdateForm();
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-		);
+        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
+        this.subscription.add(
+            this._user.get_user_alldata_by_id(id, isAdmin).subscribe(
+                (response: any) => {
+                    this.setUserById(response)
+                },
+                (error) => {
+                    throw new Error(error);
+                }
+            )
+        );
 	}
+
+    setUserById(response) {
+        if (response.dealer.length > 0) {
+            this.user_data = Object.assign({}, response.dealer[0], response.user);
+            this.is_dealer = true;
+        } else {
+            this.user_data = response.user;
+        }
+
+        this.readyUpdateForm();
+    }
 
 	get f() {
 		return this.update_user.controls;
@@ -161,16 +170,20 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	updateUserInfo() {
-		this._user.update_user(this.mapUserInfoChanges()).subscribe(
-			() => {
-				this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
-				this.ngOnInit();
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
+        this._user.update_user(this.mapUserInfoChanges()).subscribe(
+            () => {
+                this.updateModalAndRefresh();
+            },
+            (error) => {
+                throw new Error(error);
+            }
+        );
 	}
+
+    updateModalAndRefresh() {
+        this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
+		this.ngOnInit();
+    }
 
 	readyUpdateForm() {
 		this.update_user = this._form.group({
@@ -207,8 +220,8 @@ export class UserSettingComponent implements OnInit {
 		});
 	}
 
-	activateEdit(x) {
-		if (x) {
+	activateEdit(value: boolean) {
+		if (value) {
 			this.update_user.controls['contact'].enable();
 			this.update_user.controls['firstname'].enable();
 			this.update_user.controls['lastname'].enable();
@@ -218,7 +231,7 @@ export class UserSettingComponent implements OnInit {
 			this.update_user.controls['lastname'].disable();
 			this.readyUpdateForm();
 		}
-		this.update_info_form_disabled = x;
+		this.update_info_form_disabled = value;
 	}
 
 	isDisabled(): boolean {

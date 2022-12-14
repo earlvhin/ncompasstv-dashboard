@@ -432,6 +432,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 				m.title,
 				'',
 				m.createdByName,
+                m.ownerRoleId,
 				m.classification
 			);
 		});

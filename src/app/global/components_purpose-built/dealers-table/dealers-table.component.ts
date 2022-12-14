@@ -1,12 +1,11 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { DealerService } from '../../services/dealer-service/dealer.service';
-import { HelperService } from '../../services/helper-service/helper.service';
-import { UI_TABLE_DEALERS } from '../../models/ui_table_dealers.model';
-import { ActivatedRoute } from '@angular/router';
-
+import { DealerService, HelperService } from 'src/app/global/services';
+import { UI_TABLE_DEALERS } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 @Component({
 	selector: 'app-dealers-table',
 	templateUrl: './dealers-table.component.html',
@@ -31,21 +30,18 @@ export class DealersTableComponent implements OnInit {
 	sortOrder: string = 'desc';
 	tooltip: string = '';
 	ongoing_filter: boolean = false;
-
 	filter = [
 		{ min_value: '0', max_value: '5', viewValue: '0-5' },
 		{ min_value: '6', max_value: '10', viewValue: '6-10' },
 		{ min_value: '11', max_value: '', viewValue: '11 and Above' },
 		{ min_value: '0', max_value: '', viewValue: 'Clear Filters for' }
 	];
-
 	selected_filter = {
 		min_value: '',
 		max_value: '',
 		filter_column: '',
 		status: 'A'
 	};
-
 	filters: any = {
 		label_age: '',
 		label_unassigned: '',
@@ -54,10 +50,9 @@ export class DealersTableComponent implements OnInit {
 		percentage_min: '',
 		percentage_max: ''
 	};
-
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _route: ActivatedRoute, private _dealer: DealerService, private _helper: HelperService) {}
+	constructor(private _route: ActivatedRoute, private _dealer: DealerService, private _helper: HelperService, private _auth: AuthService) {}
 
 	ngOnInit() {
 		this.subscribeToDealerStatusFilter();
@@ -79,31 +74,25 @@ export class DealersTableComponent implements OnInit {
 
 	filterByColumnName(column: string, min, max?, status?: string): void {
 		this.active_filter_tab = column;
-
 		this.selected_filter = {
 			filter_column: column,
 			min_value: min,
 			max_value: max,
 			status: status
 		};
-
 		if (column != '') {
 			if (max != '') this.tooltip = `Filtered by ${min} to ${max}`;
 			else this.tooltip = `Filtered by ${min} and above`;
 		}
-
 		if (min == 0 && max == '') this.active_filter_tab = '';
-
 		this.pageRequested(1);
 	}
 
 	filterData(key: string): void {
 		let keyword = '';
-
 		if (key) {
 			keyword = key;
 		}
-
 		this.search_data = keyword;
 		this.pageRequested(1);
 	}
@@ -131,7 +120,6 @@ export class DealersTableComponent implements OnInit {
 				break;
 			default:
 		}
-
 		this.getDealers(1);
 	}
 
@@ -182,57 +170,40 @@ export class DealersTableComponent implements OnInit {
 		const percentage_column = this.filters.percentage;
 		const percentage_min = this.filters.percentage_min;
 		const percentage_max = this.filters.percentage_max;
+		if (sort || this.ongoing_filter) {
+			this._dealer
+				.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+				// .pipe(takeUntil(this._unsubscribe))
+				.subscribe((response) => {
+					this.dealerSetMappingData(response);
+				})
+				.add(() => (this.searching = false));
+		} else {
+			this._dealer
+				.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
+				// .pipe(takeUntil(this._unsubscribe))
+				.subscribe((response) => {
+					this.dealerSetMappingData(response);
+				})
+				.add(() => (this.searching = false));
+		}
+	}
 
-        if(sort || this.ongoing_filter) {
-            this._dealer
-			.get_dealers_with_sort(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.ongoing_filter = false;
-					this.initial_load = false;
-					this.paging_data = response.paging;
-
-					if (!response.paging.entities) {
-						this.filtered_data = [];
-						this.no_dealer = true;
-						return;
-					}
-
-					this.dealers_data = this.mapToUIFormat(response.paging.entities);
-					this.filtered_data = this.dealers_data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => (this.searching = false));
-        } else {
-            this._dealer
-			.get_dealers_fetch(page, data, sort, order, filter_column, min, max, status, percentage_column, percentage_min, percentage_max)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.ongoing_filter = false;
-					this.initial_load = false;
-					this.paging_data = response.paging;
-
-					if (!response.paging.entities) {
-						this.filtered_data = [];
-						this.no_dealer = true;
-						return;
-					}
-
-					this.dealers_data = this.mapToUIFormat(response.paging.entities);
-					this.filtered_data = this.dealers_data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => (this.searching = false));
-        }
-		
+	dealerSetMappingData(response) {
+		this.ongoing_filter = false;
+		this.initial_load = false;
+		this.paging_data = response.paging;
+		if (!response.paging.entities) {
+			this.filtered_data = [];
+			this.no_dealer = true;
+			return;
+		}
+		if (this._auth.current_role === 'dealeradmin') {
+			this.dealers_data = this.mapToUIFormat(response.entities);
+		} else {
+			this.dealers_data = this.mapToUIFormat(response.paging.entities);
+		}
+		this.filtered_data = this.dealers_data;
 	}
 
 	sortByColumnName(column: string, order: string): void {
@@ -244,11 +215,7 @@ export class DealersTableComponent implements OnInit {
 
 	private mapToUIFormat(data: any[]): UI_TABLE_DEALERS[] {
 		let count = this.paging_data.pageStart;
-
 		return data.map((dealer) => {
-			// Formula for Offline Licenses
-			// let inactive_count = (dealer.licenses.length - dealer.licenses.filter(i => i.hostId == null).length) -  dealer.licenses.filter(i => i.piStatus == 1).length;
-
 			return new UI_TABLE_DEALERS(
 				count++,
 				dealer.dealerId,
@@ -275,21 +242,19 @@ export class DealersTableComponent implements OnInit {
 	}
 
 	private subscribeToDealerStatusFilter(): void {
-		this._helper.onClickActiveDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.searching) return;
-			this.selected_filter.status = 'A';
-			this.pageRequested(1);
-		});
-
-		this._helper.onClickInactiveDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.searching) return;
-			this.selected_filter.status = 'C';
-			this.pageRequested(1);
-		});
-
-		this._helper.onClickAllDealers.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.searching) return;
-			this.selected_filter.status = '';
+		this._helper.onClickCardByStatus.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			if (this.searching || response.page !== 'dealers') return;
+			switch (response.value) {
+				case 'active':
+					this.selected_filter.status = 'A';
+					break;
+				case 'inactive':
+					this.selected_filter.status = 'C';
+					break;
+				default:
+					this.selected_filter.status = '';
+					break;
+			}
 			this.pageRequested(1);
 		});
 	}

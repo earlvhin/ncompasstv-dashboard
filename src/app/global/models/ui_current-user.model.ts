@@ -1,9 +1,9 @@
 import { API_ROLE_INFO } from './ui_role_info.model';
 export class UI_CURRENT_USER {
-    user_id: string;
-    firstname: string;
-    lastname: string;
-    role_id: string;
-    roleInfo: API_ROLE_INFO;
-    jwt: { token: string, refreshToken: string; };
+	firstname: string;
+	jwt: { token: string; refreshToken: string };
+	lastname: string;
+	roleInfo: API_ROLE_INFO;
+	role_id: string;
+	user_id: string;
 }

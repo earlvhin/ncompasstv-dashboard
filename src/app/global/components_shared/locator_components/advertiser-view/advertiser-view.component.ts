@@ -59,11 +59,20 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 	}
 
 	getDealerAdvertisers(page: number): void {
+		const filters = {
+			dealer_id: this._auth.current_user_value.roleInfo.dealerId,
+			page,
+			search: this.search_advertiser_data,
+			sortColumn: '',
+			sortOrder: '',
+			pageSize: 15
+		};
+
 		if (page > 1) {
 			this.loading_data_advertiser = true;
 
 			this._advertiser
-				.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_advertiser_data)
+				.get_advertisers_by_dealer_id(filters)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(response) => {
@@ -87,7 +96,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 			}
 
 			this._advertiser
-				.get_advertisers_by_dealer_id(this._auth.current_user_value.roleInfo.dealerId, page, this.search_advertiser_data)
+				.get_advertisers_by_dealer_id(filters)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(response) => {

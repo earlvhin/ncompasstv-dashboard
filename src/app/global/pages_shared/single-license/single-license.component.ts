@@ -47,7 +47,8 @@ import {
 	PlaylistContentSchedule,
 	API_LICENSE,
 	API_ACTIVITY,
-	TAG
+	TAG,
+	UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 
 @Component({
@@ -118,7 +119,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	status_check_disabled: boolean;
 	storage_capacity = '';
 	template_data: API_TEMPLATE;
-	tags: { name: string; tagColor: string }[] = [];
+	tags: TAG[] = [];
 	timezone: { name: string };
 	title = '';
 	update_alias: FormGroup;
@@ -176,6 +177,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
 		this.routes = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		if (this.routes === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.routes = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 		this.pi_status = false;
 		this.getLicenseInfo();
 		this.initializeSocketWatchers();
@@ -1341,8 +1345,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					response.forEach((data) => {
-						if (count <= response.length) this.screenshots.push(`${environment.base_uri_old}${data.replace('/API/', '')}`);
+					if (!response || !response.files || response.files.length <= 0) return;
+
+					response.files.forEach((data) => {
+						if (count <= response.files.length) this.screenshots.push(`${environment.base_uri}${data.replace('/API/', '')}`);
 						count++;
 					});
 
@@ -1436,6 +1442,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				content.title,
 				content.playlistContentSchedule,
 				content.uploaded_by,
+				content.ownerRoleId,
 				content.classification,
 				content.seq
 			);

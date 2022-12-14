@@ -4,7 +4,7 @@
             <div class="flex-even">
                 <h1 class="page-title">{{ title }}</h1>
             </div>
-            <div class="flex-even text-right">
+            <div class="flex-even text-right" *ngIf="!is_dealer_admin">
                 <a [routerLink]="['create-user']" target="_blank">
                     <button mat-button mat-raised-button class="theme-btn">
                         <span class="button-label">
@@ -20,7 +20,7 @@
 
     <div class="content-section">
         <div class="row">
-            <div class="col-12 col-lg">
+            <div class="col-12 col-lg" *ngIf="!is_dealer_admin">
                 <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
                     [data_value]="user_details.basis"
@@ -28,12 +28,24 @@
                     </app-data-card-count>
                 </mat-card>
             </div>
-            <div class="col-12 col-lg">
+            <div class="col-12 col-lg" *ngIf="!is_dealer_admin">
 				<mat-card class="h-100 dealer-card">
-                    <app-data-card-count *ngIf="user_details; else small_loader"
+                    <!-- <app-data-card-count *ngIf="user_details; else small_loader"
 						[data_value]="user_details.super_admin_count"
 						[data_label]="user_details.super_admin_label">
-                    </app-data-card-count>
+                    </app-data-card-count> -->
+                    <h2 class="mb-2">
+						<div class="d-flex flex-column" *ngIf="user_details; else small_loader">
+							<div class="d-flex align-items-center">
+								<p class="text-primary font-weight-medium mr-2">{{ user_details.super_admin_count }}</p>
+								<p class="sm-text font-weight-medium">{{ user_details.super_admin_label }}</p>
+							</div>
+							<div class="d-flex align-items-center">
+								<p class="text-primary font-weight-medium mr-2">{{ user_details.dealer_admin_count }}</p>
+								<p class="sm-text font-weight-medium">{{ user_details.dealer_admin_label }}</p>
+							</div>
+						</div>
+					</h2>
                 </mat-card>
             </div>
             <div class="col-12 col-lg">
@@ -68,7 +80,7 @@
                 </app-data-card-count>
                 </mat-card>
             </div>
-            <div class="col-12 col-lg">
+            <div class="col-12 col-lg" *ngIf="!is_dealer_admin">
                 <mat-card class="h-100 dealer-card">
                     <app-data-card-count *ngIf="user_details; else small_loader"
                     [data_value]="user_details.total_tech"
@@ -129,13 +141,13 @@
                     <div class="col-lg-12">
 						<ng-container *ngIf="!searching; else loader">
 							<mat-card *ngIf="filtered_data.length > 0;else nodata">
-								<app-data-table 
+								<app-data-table
 									[table_data]="filtered_data" 
-									[table_columns]="users_table_columns"
+									[table_columns]="is_dealer_admin ? dealeradmin_users_table_columns : users_table_columns"
 									[new_table]="true"
-									[is_user_delete_enabled]="true"
+									[is_user_delete_enabled]="is_dealer_admin ? false : true"
 									[paging_details]="paging_data"
-									[can_toggle_email_notifications]="true"
+									[can_toggle_email_notifications]="is_dealer_admin ? false : true"
 									(page_triggered)="pageRequested($event)">
 								</app-data-table>
 							</mat-card>

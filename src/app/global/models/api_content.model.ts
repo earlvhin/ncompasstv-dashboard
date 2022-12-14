@@ -27,6 +27,7 @@ export class API_CONTENT {
     isFullScreen: number;
 	isProtected: number;
 	ownerType?: string;
+	ownerRoleId?: string;
 	parentId?: string;
 	playlistContentCredits?: CREDITS[];
     playlistContentId: string;

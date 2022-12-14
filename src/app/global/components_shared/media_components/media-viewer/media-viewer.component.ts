@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { MediaModalComponent } from '../media-modal/media-modal.component';
-import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE } from 'src/app/global/models';
+import { API_CONTENT, UI_CONTENT, UI_ROLE_DEFINITION, VIDEO_FILETYPE, IMAGE_FILETYPE, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { environment as env } from 'src/environments/environment';
@@ -26,6 +26,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	has_updated_content = false;
 	is_admin = this._isAdmin;
 	is_advertiser = false;
+	is_dealer_admin = false;
 	is_edit = false;
 	is_dealer = this._isDealer || this._isSubDealer;
 	updated_content: UI_CONTENT;
@@ -44,6 +45,10 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
+		let role = this._auth.current_role;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.is_dealer_admin = true;
+		}
 		this.file_data = this._dialog_data;
 		this.configureContents();
 	}
@@ -236,6 +241,9 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		} else if (selected.dealer_id != '' && selected.dealer_id != null) {
 			selected.owner_type = 'Dealer';
 			this.getDealer(selected.dealer_id);
+		} else if (selected.owner_role_id === 2) {
+			selected.owner_type = 'Dealer Admin';
+			selected.owner_name = selected.created_by_name;
 		} else {
 			selected.owner_type = 'Administrator';
 			selected.owner_name = 'Administrator';
@@ -276,6 +284,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 				m.title,
 				'',
 				m.createdByName,
+				m.ownerRoleId,
 				m.classification
 			);
 		});
@@ -304,7 +313,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 	private async updateContentsArray(contentId: string): Promise<void> {
 		try {
 			this.has_updated_content = true;
-			this.updated_content = this.mapContentsToUI([await this._content.get_content_by_id(contentId).toPromise()])[0];
+			this.updated_content = this.mapContentsToUI([(await this._content.get_content_by_id(contentId).toPromise()).content])[0];
 			const index = (this._dialog_data.content_array as UI_CONTENT[]).findIndex(
 				(content) => content.content_id === this.updated_content.content_id
 			);

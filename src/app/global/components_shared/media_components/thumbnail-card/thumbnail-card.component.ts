@@ -6,7 +6,7 @@ import * as io from 'socket.io-client';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { environment } from 'src/environments/environment';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, ContentService } from 'src/app/global/services';
 
 @Component({
@@ -52,7 +52,10 @@ export class ThumbnailCardComponent implements OnInit {
 	constructor(private _auth: AuthService, private _dialog: MatDialog, private _content: ContentService) {}
 
 	ngOnInit() {
-		this.role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		this.role = this._auth.current_role;
+        if(this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.role = UI_ROLE_DEFINITION_TEXT.administrator
+        }
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 
 		if (!this.disconnect_to_socket && (this.filetype == 'webm' || this.filetype === 'mp4') && this.is_converted == 0) {

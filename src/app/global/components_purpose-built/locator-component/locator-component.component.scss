@@ -1,7 +1,6 @@
 #dma-tab-view {
 	.content {
-
-		.content-container	{
+		.content-container {
 			.map-overlay {
 				position: relative;
 			}
@@ -14,11 +13,11 @@
 				z-index: 99;
 				width: 400px;
 				padding-bottom: 10px;
-                overflow: visible;
-                transition: width .5s;
-            
+				overflow: visible;
+				transition: width 0.5s;
+
 				.search-box {
-					background-color: rgba(255,255,255, 0.8);
+					background-color: rgba(255, 255, 255, 0.8);
 				}
 
 				.selected-dma {
@@ -30,7 +29,7 @@
 
 						.remove-btn {
 							text-align: center;
-					
+
 							mat-icon {
 								font-size: 12px;
 								line-height: 25px;
@@ -39,19 +38,19 @@
 					}
 				}
 
-                img {
-                    position: absolute;
-                    left: -5px;
-                    top: -8px;
-                    width: 20px;
-                    height: 20px;
-                }
+				img {
+					position: absolute;
+					left: -5px;
+					top: -8px;
+					width: 20px;
+					height: 20px;
+				}
 
 				.selected-info {
-					background-color: rgba(255,255,255, 0.5);
-                    
-                    max-height: 425px;
-                    overflow: auto;
+					background-color: rgba(255, 255, 255, 0.5);
+
+					max-height: 425px;
+					overflow: auto;
 
 					.total-hosts {
 						margin-left: auto;
@@ -59,16 +58,19 @@
 				}
 			}
 
-            .minimize-overlay {
-                width: 0px !important;
-                transition: width .5s;
-                overflow: hidden !important;
-            }
-
+			.minimize-overlay {
+				width: 0px !important;
+				transition: width 0.5s;
+				overflow: hidden !important;
+			}
 		}
 	}
 }
 
 .mat-expansion-panel-content > .mat-expansion-panel-body {
-    padding-right: 0 !important;
-  }
+	padding-right: 0 !important;
+}
+
+.text-pending {
+	color: #fa8415;
+}

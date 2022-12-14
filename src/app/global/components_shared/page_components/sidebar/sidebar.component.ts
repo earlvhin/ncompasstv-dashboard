@@ -4,7 +4,7 @@ import { filter, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { AuthService, HelperService, LicenseService } from 'src/app/global/services';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-sidebar',
@@ -15,6 +15,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	@Input() routes: { path: string; label: string; icon: string }[];
 	@Output() toggleEvent = new EventEmitter<boolean>();
 	icons_only = false;
+	is_dealer_admin = false;
 	installations_count = 0;
 	isDealer = false;
 
@@ -23,6 +24,9 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	constructor(private _auth: AuthService, private _helper: HelperService, private _license: LicenseService, private _router: Router) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true;
+        }
 		this._router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe(
 			(event: NavigationEnd) => {
 				if (event.url.match(/dealers.*/) || event.url.match(/licenses.*/)) {
@@ -57,17 +61,11 @@ export class SidebarComponent implements OnInit, OnDestroy {
 	}
 
 	private getInstallationStats(): void {
-		this._license
-			.get_installation_statistics()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					this.installations_count = response.licenseInstallationStats.total;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
+        this._license.get_installation_statistics().pipe(takeUntil(this._unsubscribe)).subscribe(
+			response => {
+				this.installations_count = response.licenseInstallationStats.total;
+			}
+		);
 	}
 
 	private get currentUser() {

@@ -150,16 +150,10 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 		}
 
 		/** No Debounce for UI Alert Display */
-		this.formControls.rssFeedUrl.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+		this.formControls.rssFeedUrl.valueChanges.pipe(debounceTime(1000), takeUntil(this._unsubscribe)).subscribe(() => {
 			this.rss_url_checking = true;
 			this.rss_url_valid = undefined;
-		});
-
-		/** Debounce for Field Validity and API Call */
-		this.formControls.rssFeedUrl.valueChanges.pipe(debounceTime(2000), distinctUntilChanged(), takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.formControls.rssFeedUrl.valid) {
-				this.validateRssUrl(this.formControls.rssFeedUrl.value);
-			}
+			this.validateRssUrl(this.formControls.rssFeedUrl.value);
 		});
 	}
 
@@ -171,7 +165,9 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 			.validate_rss_url(rss_url)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data: boolean) => (this.rss_url_valid = data),
+				(data: boolean) => {
+					this.rss_url_valid = data;
+				},
 				(error) => {
 					throw new Error(error);
 				}

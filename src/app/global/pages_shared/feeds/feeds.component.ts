@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
-import { API_FEED, FEED, PAGING, UI_TABLE_FEED } from 'src/app/global/models';
+import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feeds',
@@ -158,12 +158,18 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				businessName = data.businessName;
 			}
 
+			let role = this.currentRole;
+
+			if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+				role = UI_ROLE_DEFINITION_TEXT.administrator;
+			}
+
 			return new UI_TABLE_FEED(
 				{ value: contentId, editable: false, hidden: true },
 				{ value: feedId, editable: false, hidden: true },
 				{ value: count++, editable: false, hidden: false },
-				{ value: title, link: `/${this.currentRole}/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
-				{ value: businessName, link: `/${this.currentRole}/dealers/${dealerId}`, id: dealerId, editable: false, hidden: false, new_tab_link: true },
+				{ value: title, link: `/` + role + `/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
+				{ value: businessName, link: `/` + role + `/dealers/${dealerId}`, id: dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: data.classification ? classification : '--', editable: false, hidden: false },
 				{ value: createdByName, editable: false, hidden: false },
 				{ value: this._date.transform(dateCreated, 'MMMM d, y'), editable: false, hidden: false },
