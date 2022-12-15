@@ -7,7 +7,7 @@ import { tokenNotExpired } from 'angular2-jwt';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { JWT_TOKEN, UI_ROLE_DEFINITION, USER_LOGIN } from 'src/app/global/models';
+import { JWT_TOKEN, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT, USER_LOGIN } from 'src/app/global/models';
 @Injectable({
 	providedIn: 'root'
 })
@@ -42,7 +42,7 @@ export class AuthService {
 
 	get roleRoute(): string {
 		const currentRole = this.current_role;
-		return currentRole === UI_ROLE_DEFINITION.dealeradmin ? UI_ROLE_DEFINITION.administrator : currentRole;
+		return currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : currentRole;
 	}
 
 	//Login - Authenticate User
