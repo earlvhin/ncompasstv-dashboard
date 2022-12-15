@@ -538,6 +538,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	protected get roleRoute() {
-		return this.currentRole === UI_ROLE_DEFINITION.dealeradmin ? UI_ROLE_DEFINITION.administrator : this.currentRole;
+		return this._auth.roleRoute;
 	}
 }

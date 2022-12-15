@@ -368,7 +368,6 @@ export class GenerateFeedComponent implements OnInit {
 	}
 
 	protected get _roleRoute() {
-		const role = this._auth.current_role;
-		return role === UI_ROLE_DEFINITION.dealeradmin ? UI_ROLE_DEFINITION.administrator : role;
+		return this._auth.roleRoute;
 	}
 }
