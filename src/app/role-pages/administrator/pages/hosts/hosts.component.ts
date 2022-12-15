@@ -19,15 +19,15 @@ export class HostsComponent implements OnInit {
 	diff_hours: any;
 	filtered_data: any = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
-	has_sort: boolean = false;
+	has_sort = false;
 	hosts$: Observable<API_HOST[]>;
 	hosts_data: UI_HOST_VIEW[] = [];
 	hosts_to_export: API_HOST[] = [];
 	hour_diff: any;
 	hour_diff_temp: any;
-	initial_load_hosts: boolean = true;
-    is_dealer_admin: boolean = false;
-	no_dealer: boolean = false;
+	initial_load_hosts = true;
+	is_dealer_admin = false;
+	no_dealer = false;
 	no_host: boolean;
 	now: any;
 	tab: any = { tab: 1 };
@@ -35,15 +35,15 @@ export class HostsComponent implements OnInit {
 	host_details: any;
 	paging_data: any;
 	paging_data_host: any;
-	searching: boolean = false;
-	initial_load: boolean = true;
-	search_data: string = '';
-	search_data_host: string = '';
-	searching_hosts: boolean = false;
-	sort_column_hosts: string = '';
-	sort_order_hosts: string = '';
+	searching = false;
+	initial_load = true;
+	search_data = '';
+	search_data_host = '';
+	searching_hosts = false;
+	sort_column_hosts = '';
+	sort_order_hosts = '';
 	workbook: any;
-	workbook_generation: boolean = false;
+	workbook_generation = false;
 	worksheet: any;
 
 	dealers_table_columns = ['#', 'Dealer Alias', 'Business Name', 'Contact Person', 'Total', 'Active', 'To Install', 'Recently Added Host'];
@@ -82,9 +82,9 @@ export class HostsComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true;
-        }
+		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.is_dealer_admin = true;
+		}
 		this.getHosts(1);
 		this.getHostTotal();
 		this.subscribeToStatusFilterClick();
@@ -268,6 +268,7 @@ export class HostsComponent implements OnInit {
 	getHosts(page = 1): void {
 		let status = this.current_status_filter === 'active' ? 'A' : 'I';
 		if (this.current_status_filter === 'all') status = '';
+		this.no_host = false;
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
