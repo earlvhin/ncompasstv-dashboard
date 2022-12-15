@@ -1,12 +1,12 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog } from '@angular/material';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { takeUntil } from 'rxjs/operators';
-import { forkJoin, Subject } from 'rxjs';
+import { MatDialog, MatSelect } from '@angular/material';
+import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import { debounceTime, takeUntil } from 'rxjs/operators';
+import { forkJoin, Subject, Subscription } from 'rxjs';
 
-import { API_USER_DATA } from 'src/app/global/models';
-import { AuthService, HelperService, UserService } from 'src/app/global/services';
+import { API_USER_DATA, UI_ROLE_DEFINITION, API_DEALER } from 'src/app/global/models';
+import { AuthService, HelperService, UserService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -15,6 +15,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 	styleUrls: ['./single-user.component.scss']
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
+	@ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
 	info_form: FormGroup;
 	info_form_disabled = false;
 	info_form_fields = this._formFields;
@@ -24,6 +25,8 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
 	is_sub_dealer = false;
+	hasLoadedInitialDealers = false;
+	isSearchingDealer = false;
 	password_form: FormGroup;
 	password_form_disabled = false;
 	password_is_match: string;
@@ -32,11 +35,24 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	password_validation_message: string;
 	user: API_USER_DATA;
 
+	// DEALERADMIN ESSENTIALS
+	selectedDealersControl: any;
+	dealers_list: API_DEALER[] = [];
+	subscription: Subscription = new Subscription();
+	original_dealers: API_DEALER[] = [];
+	selected_dealer: any;
+	dealerFilterControl = new FormControl(null);
+	dealers_form: FormGroup;
+	is_dealer_admin: boolean = false;
+	selected_dealer_Admin: string;
+	dealers_to_delete: any = [];
+	dealers_to_add: any = [];
+
 	permissions = [
 		{ label: 'View', value: 'V' },
 		{ label: 'Edit', value: 'E' }
 	];
-	
+
 	private current_permission: string;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -48,11 +64,21 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _router: Router,
-		private _user: UserService
+		private _user: UserService,
+		private _dealer: DealerService
 	) {}
 
 	ngOnInit() {
+		this.dealers_to_add = [];
+		this.dealers_to_delete = [];
+		this.dealers_list = [];
 		this.getUserData();
+		this.getDealers();
+		this.dealers_form = this._form.group({
+			dealers: [[], Validators.required]
+		});
+		this.subscribeToDealerSearch();
+		this.selectedDealersControl = this.dealers_form.get('dealers');
 	}
 
 	private getUserData() {
@@ -106,6 +132,30 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			);
 	}
 
+	onClearDealer() {
+		this.selectedDealersControl.value.length = 0;
+		this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+		// this.onSubmit();
+	}
+
+	onSelectDealer(dealers): void {
+		this.selected_dealer = this.dealers_list.filter((dealer) => dealers.includes(dealer.dealerId));
+		this.selectedDealersControl.value.push(this.selected_dealer[0]);
+	}
+
+	onSelectNewDealer(dealers): void {
+		this.selected_dealer = this.dealers_list.filter((dealer) => dealers.includes(dealer.dealerId));
+		this.selectedDealersControl.value.push(this.selected_dealer[0]);
+		this.dealers_to_add.push(this.selected_dealer[0].dealerId);
+	}
+
+	onRemoveDealer(index: number): void {
+		let dealers_to_delete = this.selectedDealersControl.value[index].dealerId;
+		this.dealers_to_delete.push(dealers_to_delete);
+		this.selectedDealersControl.value.splice(index, 1);
+		this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+	}
+
 	onDelete(userId: string): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
@@ -124,7 +174,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				.deleteUser(userId)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
-					() => this._router.navigate([`/${this.currentRole}/users`]),
+					() => this._router.navigate([`/${this.roleRoute}/users`]),
 					(error) => {
 						throw new Error(error);
 					}
@@ -138,6 +188,16 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
+
+	updateDealerAdmin() {
+		this.showWarningModal(
+			'warning',
+			'Update Dealers',
+			'Are you sure you want to update dealer assignees',
+			'Dealer Assignees successfully updated',
+			'update'
+		);
 	}
 
 	updateUserInfo(): void {
@@ -168,12 +228,49 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		return this._auth.current_user_value;
 	}
 
+	private getDealerAdminData(id: string): void {
+		this._user
+			.get_dealeradmin_dealers(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					this.dealers_form.patchValue({ dealers: response.dealers });
+					this.selectedDealersControl.value = []; //for library issue do not delete
+
+					response.dealers.map((dealers) => {
+						this.onSelectDealer(dealers.dealerId);
+					});
+
+					this.hasLoadedInitialDealers = true;
+				},
+				(error) => {
+					this.hasLoadedInitialDealers = true;
+					throw new Error(error);
+				}
+			);
+	}
+
+	private getDealers(): void {
+		this._dealer
+			.get_dealers_with_page(1, '', 0)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
+				this.dealers_list = data.dealers;
+				this.original_dealers = Array.from(data.dealers);
+				this.getDealerAdminData(this.selected_dealer_Admin);
+			});
+	}
+
 	private getUserById(id: string) {
 		return this._user
 			.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: API_USER_DATA) => {
+				(response: any) => {
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin) {
+						this.is_dealer_admin = true;
+						this.selected_dealer_Admin = response.userId;
+					}
 					this.setPageData(response);
 				},
 				(error) => {
@@ -308,7 +405,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	protected get _formFields() {
-
 		const fields = [
 			{
 				label: 'Firstname',
@@ -355,9 +451,93 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				width: 'col-lg-6',
 				name: 'permissionList',
 				required: false
+			},
+			{
+				label: 'Dealers',
+				control: 'dealers',
+				type: 'radio',
+				width: 'col-lg-12',
+				required: true
 			}
 		];
 
 		return fields;
+	}
+
+	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status: status,
+				message: message,
+				data: data,
+				return_msg: return_msg,
+				action: action
+			}
+		});
+
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result == 'update') {
+				let filter = {
+					userid: this.selected_dealer_Admin,
+					dealers: this.dealers_to_delete
+				};
+
+				let filter_to_add = {
+					userid: this.selected_dealer_Admin,
+					createdBy: this._auth.current_user_value.user_id,
+					dealers: this.dealers_to_add
+				};
+
+				if (this.dealers_to_delete.length > 0) {
+					this.subscription.add(
+						this._dealer.delete_dealer_admin_assignee(filter).subscribe(() => {
+							this._dialog.closeAll();
+							this.ngOnInit();
+						})
+					);
+				}
+				if (this.dealers_to_add.length > 0) {
+					this.subscription.add(
+						this._dealer.add_dealers_of_dealer_admin(filter_to_add).subscribe(() => {
+							this._dialog.closeAll();
+							this.ngOnInit();
+						})
+					);
+				}
+			}
+		});
+	}
+
+	private subscribeToDealerSearch(): void {
+		const control = this.dealerFilterControl;
+
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(
+			(keyword: string) => {
+				if (control.invalid) {
+					this.isSearchingDealer = false;
+					return;
+				}
+
+				this.isSearchingDealer = true;
+				if (keyword && keyword.trim().length > 0) {
+					const originalDealersList = Array.from(this.original_dealers);
+
+					this.dealers_list = originalDealersList.filter((dealer) => dealer.businessName.toLowerCase().search(keyword.toLowerCase()) > -1);
+				} else {
+					this.dealers_list = this.original_dealers;
+				}
+
+				this.isSearchingDealer = false;
+			},
+			(error) => {
+				this.isSearchingDealer = false;
+			}
+		);
+	}
+
+	protected get roleRoute() {
+		return this.currentRole === UI_ROLE_DEFINITION.dealeradmin ? UI_ROLE_DEFINITION.administrator : this.currentRole;
 	}
 }

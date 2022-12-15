@@ -13,7 +13,7 @@ import { PlaylistCreatedModalComponent } from '../../../global/components_shared
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 import { API_CREATE_PLAYLIST_CONTENT, API_CREATE_PLAYLIST } from '../../models/api_create-playlist.model';
 import { UI_PLAYLIST_CONTENT, UI_CONTENT } from '../../models/ui_content.model';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-create-playlist',
@@ -233,11 +233,14 @@ export class CreatePlaylistComponent implements OnInit {
 			this.no_dealer_not_floating = false;
 		}
 
-		this._content.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
+		this._content
+			.get_contents_temp(this.current_page, this.media_key, this.sort_key, this.dealerid, this.search_data, this.floating_content)
 			.subscribe((data) => {
 				this.searching = false;
 				this.media_library_api = data;
-				if (data.iContents && data.iContents.length > 0) {
+				this.media_library = [];
+				this.filtered_content_data = [];
+				if (!data.message) {
 					this.no_search_result = false;
 					this.media_library = this.mediaFiles_mapToUI(data);
 					this.filtered_content_data = this.mediaFiles_mapToUI(data);
@@ -245,6 +248,10 @@ export class CreatePlaylistComponent implements OnInit {
 					if (this.search_data == '') {
 						this.no_content = true;
 					} else {
+						this.no_search_result = true;
+					}
+					if (this.media_key != '') {
+						this.no_content = true;
 						this.no_search_result = true;
 					}
 				}
@@ -354,9 +361,8 @@ export class CreatePlaylistComponent implements OnInit {
 			width: '600px'
 		});
 
-		dialog.afterClosed().subscribe((data) => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/playlists/`]);
+		dialog.afterClosed().subscribe(() => {
+			this._router.navigate([`/${this.roleRoute}/playlists/`]);
 		});
 	}
 
@@ -412,5 +418,9 @@ export class CreatePlaylistComponent implements OnInit {
 			this.media_key = '';
 			this.getAllContents();
 		}
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

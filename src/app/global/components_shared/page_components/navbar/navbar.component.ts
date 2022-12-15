@@ -45,7 +45,7 @@ export class NavbarComponent implements OnInit {
 			this.current_userid = user_id;
             this.setCookieForOtherSite(this.current_userid);
 
-			if (role_id === UI_ROLE_DEFINITION.administrator) {
+			if (role_id === UI_ROLE_DEFINITION.administrator || role_id === UI_ROLE_DEFINITION.dealeradmin) {
 				this.is_admin = true;
 				this.route = '/administrator';
 			}

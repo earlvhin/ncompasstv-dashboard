@@ -80,7 +80,8 @@
 								[ngClass]="
 									data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'text-primary' : 'text-danger') : 'text-gray'
 								"
-								title="{{ data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'Online' : 'Offline') : 'Disabled' }}"></i>
+								title="{{ data.is_activated.value === 1 ? (data.pi_status.value === 1 ? 'Online' : 'Offline') : 'Disabled' }}">
+							</i>
 							<ng-template #new_template_status>
 								<i class="fas fa-circle mr-2" [ngClass]="data.pi_status.value" title="{{ data.pi_status.label }}"></i>
 							</ng-template>
@@ -98,12 +99,21 @@
 										<ng-container>
 											<div *ngIf="!data[d].permission; else userWithPermission">
 												<span *ngIf="!data[d].compressed; else shortened_tooltip">
-													{{ data[d].value }}
+													<div class="default-value-with-url d-flex align-items-center">
+														<div class="value">
+															{{ data[d].value }}
+														</div>
+														<ng-container *ngIf="pagesWithStatusIndicator.includes(page)">
+															<span>
+																<i class="fas fa-circle" [ngClass]="getStatusColor(data.status.value)"></i>
+															</span>
+														</ng-container>
+													</div>
 												</span>
 
 												<ng-template #shortened_tooltip>
 													<span [title]="data[d].value">
-														{{ data[d].value | substring: 10 }}
+														{{ data[d].value | substring : 10 }}
 													</span>
 												</ng-template>
 											</div>
@@ -134,7 +144,9 @@
 								<span
 									class="fas fa-clock cursor-pointer text-gray-with-hover"
 									placement="right"
-									[ngbTooltip]="businessHoursTooltip"></span>
+									[ngClass]="data.status && data.status.value === 'A' ? 'text-primary' : 'text-gray'"
+									[ngbTooltip]="businessHoursTooltip">
+								</span>
 							</span>
 
 							<ng-template #businessHoursTooltip>
@@ -167,8 +179,8 @@
 												!data[d].value.includes('--');
 											else defaultValue
 										">
-										{{ data[d].value | date: 'MMM dd, y' }}<br />
-										{{ data[d].value | date: 'hh:mm a' }}
+										{{ data[d].value | date : 'MMM dd, y' }}<br />
+										{{ data[d].value | date : 'hh:mm a' }}
 									</div>
 
 									<ng-template #defaultValue>

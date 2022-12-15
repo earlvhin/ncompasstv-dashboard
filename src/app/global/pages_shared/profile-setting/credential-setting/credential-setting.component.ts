@@ -6,7 +6,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { AuthService } from '../../../services/auth-service/auth.service';
-import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../models/ui_role-definition.model';
 import { API_USER_DATA } from '../../../models/api_user-data.model';
 import { API_UPDATE_USER_INFO } from '../../../models/api_update-user-info.model';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -47,7 +47,7 @@ export class CredentialSettingComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
+		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealer) {
 			this.is_dealer = true;
 		}
 		this.change_password = this._form.group(

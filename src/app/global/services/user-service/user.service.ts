@@ -1,62 +1,68 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { USER } from '../../models/api_user.model';
-import { environment } from '../../../../environments/environment';
-import { UI_ROLE_DEFINITION } from '../../../global/models/ui_role-definition.model';
+import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
-import { API_FILTERS, API_USER_STATS, PAGING } from '../../models';
+import { BaseService } from '../base.service';
+
+import { environment } from 'src/environments/environment';
+import { API_DEALER, API_FILTERS, API_USER_DATA, API_USER_STATS, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
 	providedIn: 'root'
 })
-export class UserService {
+export class UserService extends BaseService {
 	token = JSON.parse(localStorage.getItem('tokens'));
 
-	httpOptions = {
-		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
-	};
-
-	constructor(private _http: HttpClient, private _auth: AuthService) {}
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	deleteUser(userId: string) {
-		const endpoint = `${this.base}${this.delete.user}?userid=${userId}`;
-		return this._http.post(endpoint, {}, this.httpOptions);
+		const url = `${this.deleters.user}?userid=${userId}`;
+		return this.postRequest(url, {});
 	}
 
 	get_users() {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_users}`, this.httpOptions);
+		const url = this.getters.api_get_users;
+		return this.getRequest(url);
 	}
 
 	get_users_by_filters(filters: API_FILTERS) {
-		const endpoint = `${this.base}${this.getters.api_get_users}`;
+		const endpoint = `${this.getters.api_get_users}`;
 		const params = this.setUrlParams(filters, false, true);
 		const url = `${endpoint}${params}`;
-		return this._http.get<{ paging?: PAGING, message?: string }>(url, this.httpOptions);
+		return this.getRequest(url);
 	}
 
 	get_users_by_owner(ownerId: string) {
-		const endpoint = `${this.base}${this.getters.users_by_owner}${ownerId}`;
-		return this._http.get(endpoint, this.httpOptions);
+		const url = `${this.getters.users_by_owner}${ownerId}`;
+		return this.getRequest(url);
 	}
-	
+
 	get_users_search(key) {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_users}` + '?search=' + `${key}`, this.httpOptions);
+		const url = `${this.getters.api_get_users}` + '?search=' + `${key}`;
+		return this.getRequest(url);
 	}
-	
+
 	get_user_total() {
-		return this._http.get<API_USER_STATS>(`${this.base}${this.getters.api_get_users_total}`, this.httpOptions);
+		const url = this.getters.api_get_users_total;
+		return this.getRequest(url);
 	}
 
 	get_user_by_id(data) {
-		return this._http.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}`, this.httpOptions).map((data) => data.user);
+		const url = `${this.getters.api_get_user_by_id}?user_id=${data}`;
+		return this.getRequest(url).map((data) => data.user);
 	}
 
-	get_user_alldata_by_id(data) {
-		let isAdmin = this._auth.current_role == 'administrator' ? true : false;
-		return this._http
-			.get<any>(`${this.base}${this.getters.api_get_user_by_id}${data}` + '&isAdmin=' + `${isAdmin}`, this.httpOptions)
-			.map((data) => data);
+	get_dealeradmin_dealers(userId: string): Observable<{ dealers: { businessName: string; dealerId: string }[] }> {
+		const url = `${this.getters.api_get_dealer_admin_user}?userid=${userId}`;
+		return this.getRequest(url);
+	}
+
+	get_user_alldata_by_id(userId: string, isAdmin: boolean) {
+		const url = `${this.getters.api_get_user_by_id}?user_id=${userId}&isAdmin=${isAdmin}`;
+		return this.getRequest(url).map((data) => data);
 	}
 
 	create_new_user(role: string, data: any) {
@@ -64,56 +70,66 @@ export class UserService {
 
 		switch (role) {
 			case UI_ROLE_DEFINITION.administrator:
-				url = this.create.api_new_admin;
+				url = `${this.creators.api_new_admin}`;
 				break;
 			case UI_ROLE_DEFINITION.dealer:
-				url = this.create.api_new_dealer;
+				url = `${this.creators.api_new_dealer}`;
+				break;
+			case UI_ROLE_DEFINITION.dealeradmin:
+				url = `${this.creators.api_new_dealer_admin}`;
 				break;
 			case UI_ROLE_DEFINITION['sub-dealer']:
-				url = this.create.sub_dealer_account;
+				url = `${this.creators.sub_dealer_account}`;
 				break;
 			case UI_ROLE_DEFINITION.host:
-				url = this.create.api_new_host;
+				url = `${this.creators.api_new_host}`;
 				break;
 			case UI_ROLE_DEFINITION.advertiser:
-				url = this.create.api_new_advertiser;
+				url = `${this.creators.api_new_advertiser}`;
 				break;
 			case UI_ROLE_DEFINITION.tech:
-				url = this.create.api_new_techrep;
+				url = `${this.creators.api_new_techrep}`;
 				break;
 		}
-
-		return this._http.post(`${this.base}${url}`, data, this.httpOptions);
+		return this.postRequest(url, data);
 	}
 
 	validate_email(email: string) {
-		const re =
+		const pattern =
 			/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-		return re.test(String(email).toLowerCase());
+		return pattern.test(String(email).toLowerCase());
 	}
 
 	update_email_notifications(userId: string, data: boolean) {
-		const endpoint = `${this.base}${this.update.user_email_settings}`;
+		const url = `${this.updaters.user_email_settings}`;
 		const body = { allowEmail: data ? 1 : 0, userId };
-		return this._http.post(endpoint, body, this.httpOptions);
+		return this.postRequest(url, body);
 	}
 
 	update_permission(userId: string, type: string) {
-		const endpoint = `${this.base}${this.update.account_permission}?userid=${userId}&type=${type}`;
-		return this._http.post(endpoint, {}, this.httpOptions);
+		const url = `${this.updaters.account_permission}?userid=${userId}&type=${type}`;
+		return this.postRequest(url, {});
 	}
 
 	update_user(data) {
-		return this._http.post(`${this.base}${this.update.api_update_user}`, data, this.httpOptions);
+		const url = `${this.updaters.api_update_user}`;
+		return this.postRequest(url, data);
+	}
+
+	dealeradmin_update_user(data) {
+		const url = `${this.updaters.dealeradmin_update_user}`;
+		return this.postRequest(url, data);
 	}
 
 	get_user_notifications(id) {
-		return this._http.get(`${this.base}${this.getters.api_get_notifications}${id}`, this.httpOptions);
+		const url = `${this.getters.api_get_notifications}${id}`;
+		return this.getRequest(url);
 	}
 
-    set_cookie_for_other_site(id) {
-        return this._http.get(`${this.base}${this.getters.api_get_and_set_cookies}${id}`, this.httpOptions);
-    }
+	set_cookie_for_other_site(id) {
+		const url = `${this.getters.api_get_and_set_cookies}${id}`;
+		return this.getRequest(url);
+	}
 
 	protected get base() {
 		return environment.base_uri;

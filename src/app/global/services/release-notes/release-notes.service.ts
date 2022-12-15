@@ -1,16 +1,22 @@
 import { EventEmitter, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
 import { API_RELEASE_NOTE } from 'src/app/global/models';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Injectable({
-  providedIn: 'root'
+	providedIn: 'root'
 })
 export class ReleaseNotesService extends BaseService {
-
 	onEditNoteFromDataTable = new EventEmitter<{ releaseNoteId: string }>();
 	onDeleteNoteFromDataTable = new EventEmitter<{ releaseNoteId: string }>();
+    token = JSON.parse(localStorage.getItem('tokens'));
+    
+	constructor(_auth: AuthService, _http: HttpClient) {
+		super(_auth, _http);
+	}
 
 	createOrUpdateNote(data: API_RELEASE_NOTE): Observable<{ releaseNotes: API_RELEASE_NOTE }> {
 		const url = this.upserts.release_notes;
@@ -31,5 +37,4 @@ export class ReleaseNotesService extends BaseService {
 		const url = `${this.getters.release_note_by_id}?id=${id}`;
 		return this.getRequest(url);
 	}
-
 }

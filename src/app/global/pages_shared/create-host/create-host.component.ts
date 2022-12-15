@@ -15,12 +15,14 @@ import {
 	API_CREATE_HOST,
 	API_DEALER,
 	API_GOOGLE_MAP,
-	API_PARENTCATEGORY,
+	API_PARENT_CATEGORY,
 	GOOGLE_MAP_SEARCH_RESULT,
 	PAGING,
 	UI_OPERATION_HOURS,
 	UI_OPERATION_DAYS,
-	API_TIMEZONE
+	API_TIMEZONE,
+	UI_ROLE_DEFINITION_TEXT,
+	UI_ROLE_DEFINITION
 } from 'src/app/global/models';
 
 import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService } from 'src/app/global/services';
@@ -32,7 +34,7 @@ import { AuthService, DealerService, CategoryService, HelperService, HostService
 	providers: [TitleCasePipe]
 })
 export class CreateHostComponent implements OnInit {
-	categories_data: API_PARENTCATEGORY[];
+	categories_data: API_PARENT_CATEGORY[];
 	gen_categories_data: any[];
 	category_selected: string;
 	child_category: string;
@@ -541,7 +543,8 @@ export class CreateHostComponent implements OnInit {
 		});
 
 		dialogRef.afterClosed().subscribe(() => {
-			if (hostId) this._router.navigate([`/${this.currentRole}/hosts/`, hostId]);
+			if (!hostId) return;
+			this._router.navigate([`/${this.roleRoute}/hosts`, hostId]);
 		});
 	}
 
@@ -719,5 +722,9 @@ export class CreateHostComponent implements OnInit {
 
 	protected get roleInfo() {
 		return this._auth.current_user_value.roleInfo;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

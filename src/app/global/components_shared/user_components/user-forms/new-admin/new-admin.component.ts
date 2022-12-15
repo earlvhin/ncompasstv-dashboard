@@ -9,16 +9,15 @@ import { ConfirmationModalComponent } from '../../../page_components/confirmatio
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-new-admin',
-  templateUrl: './new-admin.component.html',
-  styleUrls: ['./new-admin.component.scss']
+	selector: 'app-new-admin',
+	templateUrl: './new-admin.component.html',
+	styleUrls: ['./new-admin.component.scss']
 })
 export class NewAdminComponent implements OnInit {
-
 	form_invalid: boolean = true;
-	form_title: string = "New Administrator User"
+	form_title: string = 'New Administrator User';
 	new_admin_form: FormGroup;
-	subscription: Subscription = new Subscription;
+	subscription: Subscription = new Subscription();
 	password_is_match: boolean;
 	password_match_msg: string;
 	password_is_valid: boolean;
@@ -72,77 +71,69 @@ export class NewAdminComponent implements OnInit {
 			placeholder: 'Note: This should match the password above.',
 			width: 'col-lg-12',
 			re_password_field: true
-		},
-	]
+		}
+	];
 
 	constructor(
 		private _auth: AuthService,
 		private _form: FormBuilder,
 		private _user: UserService,
 		private _dialog: MatDialog,
-		private _router: Router,
-	) { }
+		private _router: Router
+	) {}
 
 	ngOnInit() {
-		this.new_admin_form = this._form.group(
-			{
-				roleid: [UI_ROLE_DEFINITION.administrator],
-				firstname: ['', Validators.required],
-				lastname: ['', Validators.required],
-				contactnumber: ['', Validators.required],
-				email: ['', Validators.required],
-				password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-				re_password: [ { value: '', disabled: true }, Validators.required],
-				createdby: [this._auth.current_user_value.user_id]
-			}
-		)
+		this.new_admin_form = this._form.group({
+			roleid: [UI_ROLE_DEFINITION.administrator],
+			firstname: ['', Validators.required],
+			lastname: ['', Validators.required],
+			contactnumber: ['', Validators.required],
+			email: ['', Validators.required],
+			password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
+			re_password: [{ value: '', disabled: true }, Validators.required],
+			createdby: [this._auth.current_user_value.user_id]
+		});
 
 		this.subscription.add(
-			this.new_admin_form.valueChanges.subscribe(
-				data => {
-					if (this.new_admin_form.valid && this.f.password.value === this.f.re_password.value) {
-						this.form_invalid = false;
-					} else {
-						this.form_invalid = true;
-					}
+			this.new_admin_form.valueChanges.subscribe((data) => {
+				if (this.new_admin_form.valid && this.f.password.value === this.f.re_password.value) {
+					this.form_invalid = false;
+				} else {
+					this.form_invalid = true;
 				}
-			)
-		)
+			})
+		);
 
 		this.subscription.add(
-			this.f.password.valueChanges.subscribe(
-				data => {
-					if (this.f.password.invalid) {
-						this.password_is_valid = false;
-						this.password_is_valid_msg = "Must be atleast 8 characters"
-					} else {
-						this.password_is_valid = true;
-						this.password_is_valid_msg = "Password is valid"
-					}
-
-					if (!this.f.password.value || this.f.password.value.length === 0) {
-						this.f.re_password.setValue(null);
-						this.f.re_password.disable();
-					} else {
-						this.f.re_password.enable();
-					}
+			this.f.password.valueChanges.subscribe((data) => {
+				if (this.f.password.invalid) {
+					this.password_is_valid = false;
+					this.password_is_valid_msg = 'Must be atleast 8 characters';
+				} else {
+					this.password_is_valid = true;
+					this.password_is_valid_msg = 'Password is valid';
 				}
-			)
-		)
+
+				if (!this.f.password.value || this.f.password.value.length === 0) {
+					this.f.re_password.setValue(null);
+					this.f.re_password.disable();
+				} else {
+					this.f.re_password.enable();
+				}
+			})
+		);
 
 		this.subscription.add(
-			this.f.re_password.valueChanges.subscribe(
-				data => {
-					if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
-						this.password_is_match = true;
-						this.password_match_msg = "Password matches"
-					} else {
-						this.password_is_match = false;
-						this.password_match_msg = "Password does not match"
-					}
+			this.f.re_password.valueChanges.subscribe((data) => {
+				if (this.f.password.value == this.f.re_password.value && this.f.password.value.length !== 0) {
+					this.password_is_match = true;
+					this.password_match_msg = 'Password matches';
+				} else {
+					this.password_is_match = false;
+					this.password_match_msg = 'Password does not match';
 				}
-			)
-		)
+			})
+		);
 	}
 
 	get f() {
@@ -154,45 +145,44 @@ export class NewAdminComponent implements OnInit {
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.'); 
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return false;
 		}
-		
+
 		this.subscription.add(
 			this._user.create_new_user(this.f.roleid.value, this.new_admin_form.value).subscribe(
-				data => {
+				() => {
 					this.is_submitted = false;
 					this.form_invalid = false;
 					this.openConfirmationModal('success', 'Account creation successful!', 'Administrator account has been added to database.');
 					formDirective.resetForm();
 					this.new_admin_form.reset();
-				}, 
-				error => {
-					this.is_submitted = false; 
+				},
+				(error) => {
+					this.is_submitted = false;
 					this.form_invalid = false;
 					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
 				}
 			)
-		)
+		);
 	}
 
 	openConfirmationModal(status, message, data): void {
 		var dialog = this._dialog.open(ConfirmationModalComponent, {
-			width:'500px',
+			width: '500px',
 			height: '350px',
-			data:  {
+			data: {
 				status: status,
 				message: message,
 				data: data
 			}
-		})
+		});
 
-		dialog.afterClosed().subscribe(r => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/users/`]);
-		})
+		dialog.afterClosed().subscribe(() => {
+			this._router.navigate([`/${this.roleRoute}/users/`]);
+		});
 	}
 
 	togglePasswordFieldType(): void {
@@ -201,5 +191,9 @@ export class NewAdminComponent implements OnInit {
 
 	toggleRetypePasswordFieldType(): void {
 		this.is_retype_password_field_type = !this.is_retype_password_field_type;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

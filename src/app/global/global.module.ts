@@ -219,6 +219,7 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -429,7 +430,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES],
+	declarations: [ngComponents, DIRECTIVES, NewDealerAdminComponent],
 	entryComponents: [
 		AddCardComponent,
 		AssignLicenseModalComponent,

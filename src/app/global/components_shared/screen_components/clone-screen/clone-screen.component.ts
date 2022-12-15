@@ -15,7 +15,7 @@ import {
 	SCREEN_ZONE_PLAYLIST,
 	UI_ROLE_DEFINITION,
 	UI_SINGLE_SCREEN,
-	UI_SCREEN_ZONE_PLAYLIST,
+	UI_SCREEN_ZONE_PLAYLIST
 } from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, ScreenService } from 'src/app/global/services';
@@ -200,8 +200,7 @@ export class CloneScreenComponent implements OnInit {
 
 	redirectToClonedScreen(): void {
 		this._dialog_ref.close(true);
-		this.role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${this.role}/screens/`, this.cloned_screen_id]);
+		this._router.navigate([`/${this.roleRoute}/screens/`, this.cloned_screen_id]);
 	}
 
 	searchBoxTrigger(event: { is_search: boolean; page: number }): void {
@@ -368,5 +367,9 @@ export class CloneScreenComponent implements OnInit {
 		return this.screen_data.screen_zone_playlist.map((z: UI_SCREEN_ZONE_PLAYLIST) => {
 			return new SCREEN_ZONE_PLAYLIST(z.screen_template.template_id, z.screen_template.zone_id, z.screen_template.playlist_id);
 		});
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

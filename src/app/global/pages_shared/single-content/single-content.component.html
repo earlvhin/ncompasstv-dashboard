@@ -1,9 +1,9 @@
 <ng-container>
-	<div class="theme-container single-content" *ngIf="content$ | async as c; else loading">
+	<div class="theme-container single-content" *ngIf="content$ | async as data; else loading">
 		<div class="title-section">
 			<div class="d-flex align-items-center">
 				<div class="flex-even">
-					<h1 class="page-title" [title]="c.title">{{ c.title | substring: 40 }}</h1>
+					<h1 class="page-title" [title]="data.content.title">{{ data.content.title | substring : 40 }}</h1>
 				</div>
 			</div>
 			<hr class="my-4" />
@@ -12,17 +12,17 @@
 		<div class="row mb-4" *ngIf="content$ | async as c">
 			<div class="col-lg-6">
 				<div class="d-flex align-items-center content-wrapper">
-					<ng-container *ngIf="c.fileType | isvideo">
-						<video autoplay muted [src]="c.url + c.fileName"></video>
+					<ng-container *ngIf="data.content.fileType | isvideo">
+						<video autoplay muted [src]="data.content.url + data.content.fileName"></video>
 					</ng-container>
-					<ng-container *ngIf="c.fileType | isimage">
-						<img [src]="c.url + c.fileName" />
+					<ng-container *ngIf="data.content.fileType | isimage">
+						<img [src]="data.content.url + data.content.fileName" />
 					</ng-container>
-					<ng-container *ngIf="c.fileType == 'feed' && c.classification !== 'live_stream'">
-						<img [src]="fs_screenshot + '/' + c.url | sanitize" />
+					<ng-container *ngIf="data.content.fileType == 'feed' && data.content.classification !== 'live_stream'">
+						<img [src]="fs_screenshot + '/' + data.content.url | sanitize" />
 					</ng-container>
-					<ng-container *ngIf="c.fileType == 'feed' && c.classification === 'live_stream'">
-						<iframe [src]="c.url | sanitize"></iframe>
+					<ng-container *ngIf="data.content.fileType == 'feed' && data.content.classification === 'live_stream'">
+						<iframe [src]="data.content.url | sanitize"></iframe>
 					</ng-container>
 				</div>
 			</div>
@@ -35,15 +35,15 @@
 					<div class="d-flex">
 						<div class="flex-even filename">
 							<span class="sm-text"> Filename </span>
-							<h5 class="mb-0" [title]="c.title">
-								{{ c.title | substring: 32 }}
+							<h5 class="mb-0" [title]="data.content.title">
+								{{ data.content.title | substring : 32 }}
 							</h5>
 						</div>
 
 						<div class="flex-even filetype">
 							<span class="sm-text"> Filetype </span>
 							<h5 class="mb-0">
-								{{ c.fileType }}
+								{{ data.content.fileType }}
 							</h5>
 						</div>
 					</div>
@@ -54,21 +54,21 @@
 						<div class="flex-even uploaded-by">
 							<span class="sm-text"> Uploaded by </span>
 							<h5>
-								{{ c.createdByName || 'N/A' }}
+								{{ data.content.createdByName || 'N/A' }}
 							</h5>
 						</div>
 
 						<div class="flex-even date-uploaded">
 							<span class="sm-text"> Date Uploaded </span>
 							<h5>
-								{{ c.dateCreated | date }}
+								{{ data.content.dateCreated | date }}
 							</h5>
 						</div>
 
-						<div class="flex-even duration" *ngIf="c.fileType == 'webm'">
+						<div class="flex-even duration" *ngIf="data.content.fileType == 'webm'">
 							<span class="sm-text"> Duration </span>
 							<h5>
-								{{ c.duration }}
+								{{ data.content.duration }}
 							</h5>
 						</div>
 					</div>
@@ -190,8 +190,7 @@
 												[(value)]="start_date"
 												matInput
 												[matDatepicker]="datePicker"
-												readonly
-											/>
+												readonly />
 											<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
 											<mat-datepicker #datePicker></mat-datepicker>
 										</mat-form-field>
@@ -206,8 +205,7 @@
 												matInput
 												[matDatepicker]="datePicker2"
 												[min]="start_date"
-												readonly
-											/>
+												readonly />
 											<mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
 											<mat-datepicker #datePicker2></mat-datepicker>
 										</mat-form-field>
@@ -221,8 +219,7 @@
 											[disabled]="!start_date || !end_date || generating_report"
 											style="height: 60px"
 											title="Generate Report"
-											(click)="generateReport()"
-										>
+											(click)="generateReport()">
 											<div class="d-flex align-items-center">
 												<div class="flex-even mr-2">
 													<span class="fas fa-chart-bar"></span>
@@ -259,8 +256,7 @@
 										class="float-right theme-btn pi-control sm-text _primary mr-2"
 										(click)="exportTable()"
 										[disabled]="workbook_generation"
-										title="Export to CSV"
-									>
+										title="Export to CSV">
 										<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
 										<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
 									</button>
@@ -272,8 +268,7 @@
 							<app-data-table
 								[table_data]="content_logs_report"
 								[table_columns]="content_logs_report_table_columns"
-								[new_table]="true"
-							></app-data-table>
+								[new_table]="true"></app-data-table>
 						</mat-card>
 					</mat-tab>
 					<mat-tab label="In Playlist">
@@ -281,8 +276,7 @@
 							<app-data-table
 								[table_data]="in_playlist"
 								[table_columns]="in_playlist_table_columns"
-								[new_table]="true"
-							></app-data-table>
+								[new_table]="true"></app-data-table>
 						</mat-card>
 					</mat-tab>
 					<mat-tab label="Playing Where">
@@ -297,8 +291,7 @@
 								[table_columns]="content_history_table_columns"
 								[paging_details]="paging_data_history"
 								(page_triggered)="onClickPageNumber($event)"
-								[new_table]="true"
-							>
+								[new_table]="true">
 							</app-data-table>
 						</mat-card>
 					</mat-tab>

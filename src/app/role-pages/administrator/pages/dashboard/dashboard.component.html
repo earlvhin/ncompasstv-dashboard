@@ -164,7 +164,7 @@
                         <hr class="mb-2">
                         <div class="col-lg-12 pt-3 flex">
                             <div class="col-lg-4">
-                                <div *ngIf="host_stats.total; else spinner">
+                                <div *ngIf="host_stats; else spinner">
                                     <span class="{{host_stats.icon}} text-primary mr-3"></span>
                                     <span class="xlg-text text-primary">
                                         {{getAverage(host_stats.total)}}
@@ -175,7 +175,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-4 p-0">
-                                <div *ngIf="advertiser_stats.total; else spinner">
+                                <div *ngIf="advertiser_stats; else spinner">
                                     <span class="{{advertiser_stats.icon}} text-primary mr-3"></span>
                                     <span class="xlg-text text-primary">
                                         {{getAverage(advertiser_stats.total)}}
@@ -186,7 +186,7 @@
                                 </div>
                             </div>
                             <div class="col-lg-4 p-0">
-                                <div *ngIf="license_stats.total; else spinner">
+                                <div *ngIf="license_stats; else spinner">
                                     <span class="{{license_stats.icon}} text-primary mr-3"></span>
                                     <span class="xlg-text text-primary">
                                         {{getAverage(license_stats.total)}}

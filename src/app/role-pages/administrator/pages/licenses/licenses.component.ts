@@ -11,7 +11,7 @@ import * as moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS } from 'src/app/global/models';
+import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 
@@ -33,6 +33,7 @@ export class LicensesComponent implements OnInit {
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
 	filtered_data_licenses: UI_LICENSE[] = [];
+    is_dealer_admin: boolean = false;
 	title: string = 'Licenses';
 	tab: any = { tab: 0 };
 	licenses_details: any;
@@ -74,7 +75,7 @@ export class LicensesComponent implements OnInit {
 
 	filters: any = {
 		admin_licenses: false,
-		isactivated: 1,
+		isactivated: '',
 		assigned: '',
 		online: '',
 		pending: '',
@@ -158,7 +159,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
 		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
 		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
-		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true }
 	];
 
 	protected _unsubscribe = new Subject<void>();
@@ -176,6 +177,9 @@ export class LicensesComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            this.is_dealer_admin = true;
+        }
 		let status = this._activatedRoute.snapshot.paramMap.get('status');
 		if (status) {
 			this.filterTable('status', status === 'Online' ? '1' : '0');
@@ -225,57 +229,38 @@ export class LicensesComponent implements OnInit {
 		this.searching_hosts = true;
 		this.hosts_data = [];
 
-		if (this.has_sort) {
-			this._host
-				.get_host_by_page(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response) => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
+		const filters = {
+			page,
+			search: this.search_data_host,
+			sortColumn: this.sort_column_hosts,
+			sortOrder: this.sort_order_hosts
+		};
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.mapToHostsTable([...response.paging.entities]);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		} else {
-			this._host
-				.get_host_fetch(page, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response) => {
-						if (response.message) {
-							if (this.search_data_host == '') this.no_host = true;
-							this.filtered_data_host = [];
-							return;
-						}
+		let request = this.has_sort ? this._host.get_host_by_page(filters) : this._host.get_host_fetch(filters);
 
-						this.paging_data_host = response.paging;
-						const mappedData = this.mapToHostsTable([...response.paging.entities]);
-						this.hosts_data = [...mappedData];
-						this.filtered_data_host = [...mappedData];
-					},
-					(error) => {
-						throw new Error(error);
+		request
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if (response.message) {
+						if (this.search_data_host == '') this.no_host = true;
+						this.filtered_data_host = [];
+						return;
 					}
-				)
-				.add(() => {
-					this.initial_load_hosts = false;
-					this.searching_hosts = false;
-				});
-		}
+
+					this.paging_data_host = response.paging;
+					const mappedData = this.mapToHostsTable([...response.paging.entities]);
+					this.hosts_data = [...mappedData];
+					this.filtered_data_host = [...mappedData];
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => {
+				this.initial_load_hosts = false;
+				this.searching_hosts = false;
+			});
 	}
 
 	getLicenses(page: number) {
@@ -379,6 +364,11 @@ export class LicensesComponent implements OnInit {
 			case 3:
 				this.getHosts(1);
 				break;
+            case 2:
+                if(this.is_dealer_admin) {
+                    this.getHosts(1)
+                }
+                break;
 			default:
 		}
 	}
@@ -410,7 +400,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -419,28 +409,28 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline = value;
 				this.filters.label_status = 'Offline for ' + days;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -571,6 +561,11 @@ export class LicensesComponent implements OnInit {
 						last_week_unassigned_value: data.lastWeekUnassignedCount
 					};
 
+                    if(this.is_dealer_admin) {
+                        delete this.licenses_details['third_value'];
+                        delete this.licenses_details['third_value_label'];
+                    }
+
 					if (this.licenses_details) {
 						this.temp_label.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value);
 						this.temp_label.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.menu_value);
@@ -664,7 +659,7 @@ export class LicensesComponent implements OnInit {
 		this.filters = {
 			admin_licenses: false,
 			assigned: '',
-			isactivated: 1,
+			isactivated: '',
 			online: '',
 			pending: '',
 			activated: '',
@@ -703,7 +698,7 @@ export class LicensesComponent implements OnInit {
 	getDataForExport(tab: string): void {
 		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this.filters.isactivated = '';
+		this.filters.isactivated = '';
 		switch (tab) {
 			case 'licenses':
 				this._license
@@ -732,9 +727,6 @@ export class LicensesComponent implements OnInit {
 							this.licenses_to_export = [];
 							return;
 						}
-
-						console.log('api data', data);
-
 						data.licenses.map((license) => {
 							if (license.appVersion) {
 								license.apps = JSON.parse(license.appVersion);
@@ -754,8 +746,6 @@ export class LicensesComponent implements OnInit {
 							this.worksheet.addRow(item).font = { bold: false };
 						});
 
-						console.log('parsed data', this.licenses_to_export);
-
 						let rowIndex = 1;
 						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
 							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
@@ -772,7 +762,15 @@ export class LicensesComponent implements OnInit {
 
 				break;
 			case 'hosts':
-				this._host.get_host_fetch_export(1, this.search_data_host, this.sort_column_hosts, this.sort_order_hosts, 0).subscribe((response) => {
+				const filters = {
+					page: 1,
+					search: this.search_data_host,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0
+				};
+
+				this._host.get_host_fetch_export(filters).subscribe((response) => {
 					if (response.message) {
 						this.hosts_to_export = [];
 						return;
@@ -980,14 +978,14 @@ export class LicensesComponent implements OnInit {
 						query: '2',
 						editable: false,
 						hidden: false,
-                        new_tab_link: true
+						new_tab_link: true
 					},
 					{
 						value: this._title.transform(dealer.businessName),
 						link: '/administrator/dealers/' + dealer.dealerId,
 						editable: false,
 						hidden: false,
-                        new_tab_link: true
+						new_tab_link: true
 					},
 					{ value: this._title.transform(dealer.contactPerson), link: null, editable: false, hidden: false },
 					{ value: dealer.region, link: null, editable: false, hidden: false },
@@ -1043,6 +1041,10 @@ export class LicensesComponent implements OnInit {
 
 	private mapToHostsTable(data: API_HOST[]): UI_HOST_VIEW[] {
 		let count = this.paging_data_host.pageStart;
+        let role = this._auth.current_role;
+        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+            role = UI_ROLE_DEFINITION_TEXT.administrator
+        }
 
 		return data.map((h: API_HOST) => {
 			const table = new UI_HOST_VIEW(
@@ -1050,7 +1052,7 @@ export class LicensesComponent implements OnInit {
 				{ value: h.hostId, link: null, editable: false, hidden: true, key: false },
 				{
 					value: h.hostName,
-					link: `/${this.currentRole}/hosts/${h.hostId}`,
+					link: `/` +role+ `/hosts/${h.hostId}`,
 					new_tab_link: 'true',
 					compressed: true,
 					editable: false,
@@ -1061,7 +1063,7 @@ export class LicensesComponent implements OnInit {
 				},
 				{
 					value: h.businessName ? h.businessName : '--',
-					link: `/${this.currentRole}/dealers/${h.dealerId}`,
+					link: `/` +role+ `/dealers/${h.dealerId}`,
 					new_tab_link: 'true',
 					editable: false,
 					hidden: false
@@ -1073,7 +1075,8 @@ export class LicensesComponent implements OnInit {
 				// { value: h.street ? h.street:'--', link: null, editable: false, hidden: false },
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
 				{ value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
-				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false }
+				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
+				{ value: h.status, editable: false, hidden: false }
 			);
 
 			return table;
@@ -1087,8 +1090,8 @@ export class LicensesComponent implements OnInit {
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: l.licenseId, link: null, editable: false, hidden: true, key: false, table: 'license' },
 				{
-					value: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
-					link: l.screenshotUrl ? `${environment.base_uri_old}${l.screenshotUrl.replace('/API/', '')}` : null,
+					value: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
+					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
 					isImage: true

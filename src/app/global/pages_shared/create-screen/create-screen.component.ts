@@ -5,7 +5,16 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_DEALER, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_ZONE, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import {
+	API_DEALER,
+	API_HOST,
+	API_LICENSE_PROPS,
+	API_TEMPLATE,
+	API_ZONE,
+	PAGING,
+	UI_ROLE_DEFINITION,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 import { AuthService, HostService, LicenseService, PlaylistService, ScreenService, TemplateService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -124,13 +133,11 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	addPlaylistButton() {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/playlists/create-playlist`]);
+		this._router.navigate([`/${this.roleRoute}/playlists/create-playlist`]);
 	}
 
 	addHostButton() {
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/create-host`]);
+		this._router.navigate([`/${this.roleRoute}/create-host`]);
 	}
 
 	checkIfStep1Complete() {
@@ -603,8 +610,7 @@ export class CreateScreenComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/screens`]);
+			this._router.navigate([`/${this.roleRoute}/screens`]);
 		});
 	}
 
@@ -641,5 +647,9 @@ export class CreateScreenComponent implements OnInit {
 				placeholder: 'Ex: Describe this Screen'
 			}
 		];
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

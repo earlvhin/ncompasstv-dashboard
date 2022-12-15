@@ -205,10 +205,10 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 						return;
 					}
 
-					const data = response as { licenses: API_LICENSE['license'][]; paging: PAGING };
-					this.pagingData = data.paging;
-					this.licenses = [...data.licenses];
-					this.tableData = this.mapToTable([...data.licenses]);
+					// const data = response as { licenses: API_LICENSE['license'][]; paging: PAGING };
+					// this.pagingData = data.paging;
+					this.licenses = [...response];
+					this.tableData = this.mapToTable([...response]);
 				},
 				(error) => {
 					throw new Error(error);

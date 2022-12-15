@@ -1,5 +1,6 @@
 export interface API_FILTERS {
 	active?: string;
+	advertiserId?: string;
 	arrangement?: any;
 	assigned?: any;
 	daysInstalled?: any;
@@ -11,12 +12,14 @@ export interface API_FILTERS {
 	dmaCode?: number;
 	dmaName?: string;
 	page?: number;
-	filter?: string
+	feedId?: string;
+	fileCategory?: any;
+	filter?: string;
 	filterMin?: any;
 	filterMax?: any;
-    filterPerc?: any;
-    filterPercMin?: any;
-    filterPercMax?: any;
+	filterPerc?: any;
+	filterPercMin?: any;
+	filterPercMax?: any;
 	hostId?: string;
 	inactive?: any;
 	installDate?: string;
@@ -28,6 +31,7 @@ export interface API_FILTERS {
 	role?: number;
 	roleId?: string;
 	search?: string;
+	sort?: any;
 	sortColumn?: string;
 	status?: string;
 	sortOrder?: string;

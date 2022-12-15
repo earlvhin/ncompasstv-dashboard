@@ -19,7 +19,7 @@ import {
 	UserService
 } from 'src/app/global/services';
 
-import { UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -97,6 +97,7 @@ export class DataTableComponent implements OnInit {
 	pagination: number;
 	selectAll: boolean = false;
 	subscription: Subscription = new Subscription();
+	pagesWithStatusIndicator = this._pagesWithStatusIndicator;
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
@@ -155,10 +156,9 @@ export class DataTableComponent implements OnInit {
 		return !restrictedRoles.includes(userRole);
 	}
 
-	editGeneratedFeed(data) {
+	editGeneratedFeed(data: any) {
 		if (this.is_view_only) return;
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		this._router.navigate([`/${route}/feeds/edit-generated/${data.feed_id.value}`]);
+		this._router.navigate([`/${this.roleRoute}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
 	onSelectRow(data: any, index: number): void {
@@ -241,15 +241,8 @@ export class DataTableComponent implements OnInit {
 		dialog.componentInstance.is_view_only = this.is_view_only;
 	}
 
-	feedPreview_open(i): void {
-		// let top = window.screen.height - 500;
-		// top = top > 0 ? top/2 : 0;
-		// let left = window.screen.width - 800;
-		// left = left > 0 ? left/2 : 0;
-		// let uploadWin = window.open(i.link, "_blank", "width=800, height=500" + ",top=" + top + ",left=30%" + left);
-		// uploadWin.moveTo(left, top);
-		// uploadWin.focus();
-		window.open(i.link, '_blank').focus();
+	feedPreview_open(data): void {
+		window.open(data.link, '_blank').focus();
 	}
 
 	editFeed(e): void {
@@ -327,6 +320,10 @@ export class DataTableComponent implements OnInit {
 
 	deleteLicense(id): void {
 		this.warningModal('warning', 'Delete License', 'Are you sure you want to delete this license', '', 'license_delete', id);
+	}
+
+	getStatusColor(status: string) {
+		return status === 'A' ? 'text-primary' : 'text-gray';
 	}
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
@@ -697,6 +694,15 @@ export class DataTableComponent implements OnInit {
 		this._helper.onToggleEmailNotification.emit({ userId, value: !currentValue, tableDataIndex, currentEmail });
 	}
 
+	shipOrder(id, status) {
+		const filter = {
+			order_id: id,
+			order_status: status
+		};
+
+		this.shipping.emit(filter);
+	}
+
 	private deleteUser(userId: string): void {
 		this._user
 			.deleteUser(userId)
@@ -752,12 +758,11 @@ export class DataTableComponent implements OnInit {
 		);
 	}
 
-	shipOrder(id, status) {
-		const filter = {
-			order_id: id,
-			order_status: status
-		};
+	protected get _pagesWithStatusIndicator() {
+		return ['single-dealer-host-tab', 'advertisers'];
+	}
 
-		this.shipping.emit(filter);
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

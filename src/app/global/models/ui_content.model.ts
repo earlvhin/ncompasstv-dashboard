@@ -27,6 +27,7 @@ export class UI_CONTENT {
     is_fullscreen: number;
 	is_protected: number;
 	owner_name: string;
+	owner_role_id?: string;
 	owner_type?: string;
     playlist_content_id?: string;
 	playlist_content_schedule?: PlaylistContentSchedule;
@@ -42,7 +43,7 @@ export class UI_CONTENT {
         playlist_content_id: string, created_by: string, content_id: string, created_by_name: string, dealer_id: string, 
 		duration: number, host_id: string, advertiser_id: string, filename: string, file_url: string, file_type: string, 
 		handler_id: string, date_uploaded: string, is_fullscreen: number, file_size: number, thumbnail: string, is_active: number, 
-		is_converted: number, is_protected: number, uuid: string, title?: string, playlist_content_schedule?: any, uploaded_by?: string, classification?: string,
+		is_converted: number, is_protected: number, uuid: string, title?: string, playlist_content_schedule?: any, uploaded_by?: string, owner_role_id?: string, classification?: string,
         seq?: number
     ) {
         this.playlist_content_id = playlist_content_id;
@@ -66,10 +67,12 @@ export class UI_CONTENT {
         this.uuid = uuid;
         this.title = title;
         this.uploaded_by = uploaded_by;
+        this.owner_role_id = owner_role_id;
 		this.classification = classification;
 		this.playlist_content_schedule = playlist_content_schedule;
         this.seq = seq;
 		this.is_protected = is_protected;
+
     }
 }
 

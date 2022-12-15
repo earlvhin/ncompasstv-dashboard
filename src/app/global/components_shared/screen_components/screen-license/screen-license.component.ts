@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { AuthService, LicenseService, PlaylistService, RoleService, ScreenService } from 'src/app/global/services';
-import { API_BLOCKLIST_CONTENT, API_LICENSE, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_BLOCKLIST_CONTENT, API_LICENSE, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
@@ -22,6 +22,7 @@ export class ScreenLicenseComponent implements OnInit {
 	zone_contents: any[] = [];
 	to_blacklist: any[] = [];
 	blacklisting: boolean = false;
+	role: any;
 
 	hasNoData = false;
 	private licenseId: string;
@@ -39,6 +40,11 @@ export class ScreenLicenseComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.role = UI_ROLE_DEFINITION_TEXT.administrator;
+		} else {
+			this.role = this._auth.current_role;
+		}
 		this.licenseId = this._dialog_data.license_id;
 		this.zone_contents = this._dialog_data.zone_contents;
 		this.getLicenses();
@@ -90,10 +96,8 @@ export class ScreenLicenseComponent implements OnInit {
 						} else {
 							this.assign_success = true;
 							this.assigning_license = false;
-							const route = Object.keys(UI_ROLE_DEFINITION).find(
-								(key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id
-							);
-							this._router.navigate([`/${route}/screens/`, this._dialog_data.screen_id]);
+							const url = `/${this.roleRoute}/screens/`;
+							this._router.navigate([url, this._dialog_data.screen_id]);
 						}
 					},
 					(error) => {
@@ -125,11 +129,11 @@ export class ScreenLicenseComponent implements OnInit {
 		this._playlist
 			.blocklist_content(this.to_blacklist)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data) => {
+			.subscribe(() => {
 				this.assign_success = true;
 				this.assigning_license = false;
-				const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-				this._router.navigate([`/${route}/screens/`, this._dialog_data.screen_id]);
+				const url = `/${this.roleRoute}/screens/`;
+				this._router.navigate([url, this._dialog_data.screen_id]);
 			});
 	}
 
@@ -142,7 +146,8 @@ export class ScreenLicenseComponent implements OnInit {
 			data: { status, message, data, return_msg, action }
 		});
 
-		dialogRef.afterClosed().subscribe(() => this._router.navigate([`/${this._role.get_user_role()}/screens/`, this._dialog_data.screen_id]));
+		const url = `/${this.roleRoute}/screens/`;
+		dialogRef.afterClosed().subscribe(() => this._router.navigate([url, this._dialog_data.screen_id]));
 	}
 
 	private getLicenses(): void {
@@ -164,5 +169,9 @@ export class ScreenLicenseComponent implements OnInit {
 					throw new Error(error);
 				}
 			);
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

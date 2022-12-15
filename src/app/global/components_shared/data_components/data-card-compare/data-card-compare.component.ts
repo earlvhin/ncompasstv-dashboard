@@ -7,13 +7,12 @@ import { HelperService } from 'src/app/global/services/helper-service/helper.ser
 	styleUrls: ['./data-card-compare.component.scss']
 })
 export class DataCardCompareComponent implements OnInit, OnDestroy {
-
 	@Input() compare_basis: number;
 	@Input() compare_basis_label: string;
 	@Input() good_value: number;
 	@Input() good_value_label: string;
 	@Input() bad_value: number;
-	@Input() bad_value_label: string; 
+	@Input() bad_value_label: string;
 	@Input() additional_value: number;
 	@Input() additional_value_label: string;
 	@Input() online_value: number;
@@ -33,45 +32,27 @@ export class DataCardCompareComponent implements OnInit, OnDestroy {
 	@Input() license_offline_value_label: string;
 
 	@Input() page?: string;
-	@Input() has_dealer_status_filter? = false;
+	@Input() has_status_filter? = false;
 
 	has_selected_active = false;
 	has_selected_inactive = false;
 
-	constructor(
-		private _helper: HelperService
-	) { }
+	constructor(private _helper: HelperService) {}
 
-	ngOnInit() {
+	ngOnInit() {}
 
+	ngOnDestroy() {}
 
-	}
-
-	ngOnDestroy() {
-
-	}
-
-	onFilterDealerStatus(status = 'active'): void {
-
-		if (status === 'active') {
-			this.has_selected_active = true;
-			this.has_selected_inactive = false;
-			this._helper.onClickActiveDealers.emit();
-			return;
-		}
-
-		this.has_selected_active = false;
-		this.has_selected_inactive = true;
-		this._helper.onClickInactiveDealers.emit();
-
+	onFilterByStatus(status = 'active'): void {
+		this.has_selected_active = status === 'active';
+		this.has_selected_inactive = status === 'inactive';
+		this._helper.onClickCardByStatus.emit({ page: this.page, value: status });
 	}
 
 	onResetDealerStatusFilters(): void {
-		if (!this.page && !this.has_dealer_status_filter) return;
+		if (!this.page && !this.has_status_filter) return;
 		this.has_selected_active = false;
 		this.has_selected_inactive = false;
-		this._helper.onClickAllDealers.emit();
+		this._helper.onClickCardByStatus.emit({ page: this.page, value: 'all' });
 	}
-
-
 }

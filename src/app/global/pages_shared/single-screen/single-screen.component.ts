@@ -34,7 +34,8 @@ import {
 	UI_ZONE_PLAYLIST,
 	UI_SCREEN_LICENSE_SCREENS,
 	API_LICENSE,
-	API_CHANGE_TEMPLATE
+	API_CHANGE_TEMPLATE,
+	UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 
 import {
@@ -187,8 +188,12 @@ export class SingleScreenComponent implements OnInit {
 		this.getScreenIdOnRoute();
 		this.getScreenLicenses(1);
 		this.getScreenType();
-		this.license_tbl_row_url = `/${this._role.get_user_role()}/licenses/`;
-		this.playlist_route = `/${this._role.get_user_role()}/playlists/`;
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
+		this.license_tbl_row_url = `/` + role + `/licenses/`;
+		this.playlist_route = `/` + role + `/playlists/`;
 	}
 
 	ngOnDestroy() {
@@ -221,10 +226,14 @@ export class SingleScreenComponent implements OnInit {
 			data: this.screen,
 			panelClass: 'no-overflow'
 		});
-
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 		dialog.afterClosed().subscribe(async (response: boolean) => {
 			if (!response) return;
-			await this._router.navigate([`/${this.currentRole}/screens/`, this._helper.singleScreenData.screen.screenId]);
+
+			await this._router.navigate([`/${this.roleRoute}/screens/`, this._helper.singleScreenData.screen.screenId]);
 			this.setPageData(this._helper.singleScreenData);
 			this.getScreenLicenses(1);
 			this.getScreenType();
@@ -263,10 +272,7 @@ export class SingleScreenComponent implements OnInit {
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						() => {
-							const route = Object.keys(UI_ROLE_DEFINITION).find(
-								(key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id
-							);
-							this._router.navigate([`/${route}/screens`]);
+							this._router.navigate([`/${this.roleRoute}/screens`]);
 						},
 						(error) => {
 							throw new Error(error);
@@ -499,7 +505,7 @@ export class SingleScreenComponent implements OnInit {
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						async (response) => {
-							await this._router.navigate([`/${this.currentRole}/screens/`, response.screenId]);
+							await this._router.navigate([`/${this.roleRoute}/screens/`, response.screenId]);
 							const screenData = (await this._screen.get_screen_by_id(response.screenId).toPromise()) as API_SINGLE_SCREEN;
 							this.screen_id = screenData.screen.screenId;
 							this.setPageData(screenData);
@@ -671,16 +677,26 @@ export class SingleScreenComponent implements OnInit {
 	// Get Licenses where THIS screen is playing
 	private mapToScreenLicenseUI(data: any) {
 		let counter = 1;
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-
+		// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 		return data.map((l: API_LICENSE_PROPS) => {
 			return new UI_SCREEN_LICENSE_SCREENS(
 				{ value: l.licenseId, link: null, editable: false, hidden: true },
 				{ value: counter++, link: null, editable: false, hidden: false },
-				{ value: l.licenseKey, link: `/${route}/licenses/` + l.licenseId, editable: false, hidden: false, status: true, new_tab_link: true },
+				{
+					value: l.licenseKey,
+					link: `/` + role + `/licenses/` + l.licenseId,
+					editable: false,
+					hidden: false,
+					status: true,
+					new_tab_link: true
+				},
 				{
 					value: l.alias ? l.alias : '--',
-					link: `/${route}/licenses/` + l.licenseId,
+					link: `/` + role + `/licenses/` + l.licenseId,
 					editable: true,
 					label: 'License Alias',
 					id: l.licenseId,
@@ -758,7 +774,11 @@ export class SingleScreenComponent implements OnInit {
 		this.licenses = data.licenses;
 		this.screenZonePlaylists = data.screenZonePlaylistsContents;
 		this.host = data.host;
-		this.hostUrl = `/${this.currentRole}/hosts/${this.host.hostId}`;
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
+		this.hostUrl = `/` + role + `/hosts/${this.host.hostId}`;
 		this.sortLicenses('desc');
 
 		//sort screen zone template by order
@@ -814,5 +834,9 @@ export class SingleScreenComponent implements OnInit {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	protected get roleRoute() {
+		return this.currentRole === UI_ROLE_DEFINITION.dealeradmin ? UI_ROLE_DEFINITION.administrator : this.currentRole;
 	}
 }

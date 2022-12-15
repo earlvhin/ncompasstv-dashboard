@@ -17,7 +17,7 @@ export interface TAG {
 	ownerName?: string;
 	owners?: API_DEALER[] | API_HOST[] | API_LICENSE[] | API_ADVERTISER[];
 	role?: number;
-	tagColor: string;
+	tagColor?: string;
 	tagId?: string;
 	tagType?: string;
 	tagTypeId?: number; // dealer: 1 | license: 2 | host: 3 | advertiser: 4

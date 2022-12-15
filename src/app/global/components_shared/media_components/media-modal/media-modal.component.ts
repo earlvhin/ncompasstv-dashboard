@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { API_ADVERTISER, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_ADVERTISER, API_CONTENT, API_HOST, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AdvertiserService, AuthService, ContentService, HostService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 
@@ -48,7 +48,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	to_empty = false;
 
 	private advertiserid: string;
-	private content_data: any;
+	private content_data: API_CONTENT;
 	private dealerid: string;
 	private filter: any = [];
 	private hostid: string;
@@ -97,25 +97,28 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					.pipe(takeUntil(this._unsubscribe))
 					.subscribe(
 						(data) => {
-							this.content_data = data;
+							this.content_data = data.content;
 
 							if (this.content_data.fileType != 'feed') {
 								if (this.content_data.dealerId == '' && this.content_data.advertiserId == '' && this.content_data.hostId == '') {
 									this.is_floating = true;
 								} else {
-									this.hostid = data.hostId;
-									this.getHostById(this.hostid);
-									this.advertiserid = data.advertiserId;
-									this.getAdvertiserById(this.advertiserid);
-									this.dealerid = data.dealerId;
-									this.getDealerById(data.dealerId);
+									const advertiserId = data.content.advertiserId;
+									const hostId = data.content.hostId;
+									this.hostid = data.content.hostId;
+									this.advertiserid = data.content.advertiserId;
+									this.dealerid = data.content.dealerId;
+
+									if (hostId && hostId.length > 0) this.getHostById(this.hostid);
+									if (advertiserId && advertiserId.length > 0) this.getAdvertiserById(this.advertiserid);
+									this.getDealerById(data.content.dealerId);
 								}
 							} else {
 								if (this.content_data.dealerId == '') {
 									this.is_floating = true;
 								} else {
-									this.dealerid = data.dealerId;
-									this.getDealerById(data.dealerId);
+									this.dealerid = data.content.dealerId;
+									this.getDealerById(data.content.dealerId);
 								}
 							}
 						},
@@ -256,7 +259,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 			this.no_advertiser_found = true;
 			this.no_host_found = true;
 		} else {
-			if (this.content_data.dealerId != '' && this.content_data.advertiserid != '' && this.content_data.hostid != '') {
+			if (this.content_data.dealerId != '' && this.content_data.advertiserId != '' && this.content_data.hostId != '') {
 				this.hostid = this.temp.hostid;
 				this.advertiserid = this.temp.advertiserid;
 				this.dealerid = this.temp.dealerid;
@@ -353,11 +356,20 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 	}
 
 	private getAdvertiserByDealerId(page: number) {
+		const filters = {
+			dealer_id: this.assign_data.dealer,
+			page,
+			search: this.search_advertiser_data,
+			sortColumn: '',
+			sortOrder: '',
+			pageSize: 15
+		};
+
 		if (page > 1) {
 			this.loading_advertiser_data = true;
 
 			this._advertiser
-				.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data)
+				.get_advertisers_by_dealer_id(filters)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
@@ -381,7 +393,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 			}
 
 			this._advertiser
-				.get_advertisers_by_dealer_id(this.assign_data.dealer, page, this.search_advertiser_data)
+				.get_advertisers_by_dealer_id(filters)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {

@@ -5,7 +5,7 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import { API_ADVERTISER, API_DEALER, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_ADVERTISER, API_DEALER, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AdvertiserService, AuthService, DealerService, UserService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 
@@ -14,43 +14,41 @@ import { ConfirmationModalComponent } from '../../../page_components/confirmatio
 	templateUrl: './new-advertiser.component.html',
 	styleUrls: ['./new-advertiser.component.scss']
 })
-
 export class NewAdvertiserComponent implements OnInit, OnDestroy {
-
-    advertisers: API_ADVERTISER[] = [];
-    advertisers_data: API_ADVERTISER[] = [];
-    advertiser_name: string;
+	advertisers: API_ADVERTISER[] = [];
+	advertisers_data: API_ADVERTISER[] = [];
+	advertiser_name: string;
 	back_btn: string;
 	dealers: API_DEALER[] = [];
 	dealers_data: any[] = [];
-    dealer_id: string;
-    dealer_name: string;
+	dealer_id: string;
+	dealer_name: string;
 	form_fields_view: any;
 	form_invalid = true;
-    initial_load_advertiser = false;
+	initial_load_advertiser = false;
 	is_dealer = false;
-    is_loading = true;
-    is_loading_adv = true;
+	is_loading = true;
+	is_loading_adv = true;
 	is_password_field_type = true;
 	is_retype_password_field_type = true;
-    is_search = false;
-    is_search_adv = false;
+	is_search = false;
+	is_search_adv = false;
 	is_submitted: boolean;
-    loading_data = true;
-    loading_data_adv = true;
+	loading_data = true;
+	loading_data_adv = true;
 	loading_search = false;
 	loading_search_adv = false;
 	new_advertiser_form: FormGroup;
-    no_advertiser = true;	
-    paging: any;
-    paging_adv: any;
+	no_advertiser = true;
+	paging: any;
+	paging_adv: any;
 	password_is_match;
 	password_match_msg: string;
 	password_is_valid;
 	password_is_valid_msg: string;
 	search_data = '';
 	search_data_adv = '';
-    selected_dealer: any;
+	selected_dealer: any;
 	server_error: string;
 
 	protected _unsubscribe = new Subject<void>();
@@ -62,14 +60,13 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _user: UserService,
-		private _router: Router,
-	) { }
+		private _router: Router
+	) {}
 
 	ngOnInit() {
-
 		if (this._auth.current_user_value.roleInfo.dealerId) {
 			this.is_dealer = true;
-            this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 		}
 
@@ -79,27 +76,27 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) this.back_btn = '/dealer/users/create-user';
 		else if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator) this.back_btn = '/administrator/users/create-user';
 		else if (roleId === subDealerRole) this.back_btn = '/sub-dealer/users/create-user';
-		
+
 		this.new_advertiser_form = this._form.group({
 			roleid: [UI_ROLE_DEFINITION.advertiser],
-            firstname: ['', Validators.required],
+			firstname: ['', Validators.required],
 			lastname: ['', Validators.required],
 			contactNumber: ['', Validators.required],
 			dealerId: this._auth.current_user_value.roleInfo.dealerId || ['', Validators.required],
-			dealer: [{value: '', disabled: true}, Validators.required],
-			advertiserId: [{value: '',},Validators.required],
+			dealer: [{ value: '', disabled: true }, Validators.required],
+			advertiserId: [{ value: '' }, Validators.required],
 			email: ['', Validators.required],
 			password: ['', Validators.compose([Validators.required, Validators.minLength(8)])],
-			re_password: [ { value: '', disabled: true }, Validators.required],
+			re_password: [{ value: '', disabled: true }, Validators.required],
 			createdby: [this._auth.current_user_value.user_id]
 		});
-        
-        if (this.is_dealer) this.dealerSelected(this.dealer_id);
 
-        this.getDealers(1);
+		if (this.is_dealer) this.dealerSelected(this.dealer_id);
+
+		this.getDealers(1);
 
 		this.initializeSubscriptions();
-		
+
 		this.form_fields_view = [
 			{
 				label: 'Firstname',
@@ -124,15 +121,15 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 				is_autocomplete: true,
 				is_dealer: this.is_dealer
 			},
-            {
+			{
 				label: 'Advertiser Profile',
 				control: 'advertiser_id',
 				type: 'text',
 				placeholder: 'Ex: Blue Iguana',
 				width: 'col-lg-6',
 				is_autocomplete: true,
-                advertiser_field: true,
-                disabled: this.no_advertiser
+				advertiser_field: true,
+				disabled: this.no_advertiser
 			},
 			{
 				label: 'Contact Number',
@@ -146,7 +143,7 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 				control: 'email',
 				type: 'email',
 				placeholder: 'Ex: admin@blueiguana.com',
-				width:'col-lg-6'
+				width: 'col-lg-6'
 			},
 			{
 				label: 'Password',
@@ -163,9 +160,8 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 				placeholder: 'Note: Must match entered password',
 				width: 'col-lg-6',
 				re_password_field: true
-			},
+			}
 		];
-
 	}
 
 	ngOnDestroy() {
@@ -177,34 +173,32 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 		return this.new_advertiser_form.controls;
 	}
 
-    advertiserSelected(advertiserId: string): void {
+	advertiserSelected(advertiserId: string): void {
 		this.form_controls.advertiserId.setValue(advertiserId);
 	}
 
 	dealerSelected(dealerId: string): void {
-
 		this.form_controls.dealerId.setValue(dealerId);
 		this.selected_dealer = dealerId;
 		this.no_advertiser = false;
 		this.initial_load_advertiser = true;
 		this.form_controls.advertiserId.setValue(null);
 		this.getAdvertisers(1);
-
 	}
 
 	createNewAdvertiser(data: FormGroupDirective): void {
-
 		this.is_submitted = true;
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.form_controls.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.'); 
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return;
 		}
 
-		this._user.create_new_user(this.form_controls.roleid.value, this.new_advertiser_form.value)
+		this._user
+			.create_new_user(this.form_controls.roleid.value, this.new_advertiser_form.value)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
@@ -215,47 +209,38 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 					this.new_advertiser_form.reset();
 					this.ngOnInit();
 				},
-				error => {
-					this.is_submitted = false; 
+				(error) => {
+					this.is_submitted = false;
 					this.form_invalid = false;
 					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
 				}
 			);
-
 	}
 
-	searchBoxTrigger(event: { no_keyword: boolean, is_search: boolean, page: number }): void {
-
+	searchBoxTrigger(event: { no_keyword: boolean; is_search: boolean; page: number }): void {
 		if (event.no_keyword) this.search_data = '';
 
 		this.is_search = event.is_search;
 		this.getDealers(event.page);
-
 	}
 
-	searchBoxTriggerAdv(event: { no_keyword: boolean, is_search: boolean, page: number }): void {
-
+	searchBoxTriggerAdv(event: { no_keyword: boolean; is_search: boolean; page: number }): void {
 		if (event.no_keyword) this.search_data_adv = '';
 
 		this.is_search_adv = event.is_search;
 		this.getAdvertisers(event.page);
-
 	}
 
 	searchData(keyword: string): void {
-
 		this.loading_search = true;
 		this.search_data = keyword;
 		this.getDealers(1);
-
 	}
 
 	searchDataAdv(keyword: string): void {
-
 		this.loading_search_adv = true;
 		this.search_data_adv = keyword;
 		this.getAdvertisers(1);
-
 	}
 
 	togglePasswordFieldType(): void {
@@ -269,134 +254,94 @@ export class NewAdvertiserComponent implements OnInit, OnDestroy {
 	private getAdvertisers(page: number): void {
 		this.loading_data_adv = true;
 
-		this._advertiser.get_advertisers_unassigned_to_user(this.selected_dealer, page, this.search_data_adv, '', '')
+		this._advertiser
+			.get_advertisers_unassigned_to_user(this.selected_dealer, page, this.search_data_adv, '', '')
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				data => {
-
-					this.advertisers = data.advertisers;
-					this.advertisers_data = data.advertisers;
-					this.paging_adv = data.paging
-					this.is_loading_adv = false;
-					this.loading_data_adv = false;
-					this.loading_search_adv = false;
-					this.initial_load_advertiser = false;
-
-				}
-			);
-
+			.subscribe((data) => {
+				this.advertisers = data.advertisers;
+				this.advertisers_data = data.advertisers;
+				this.paging_adv = data.paging;
+				this.is_loading_adv = false;
+				this.loading_data_adv = false;
+				this.loading_search_adv = false;
+				this.initial_load_advertiser = false;
+			});
 	}
 
 	private getDealers(page: number): void {
-
 		this.loading_data = true;
 
 		if (this.is_search) this.loading_search = true;
 
-		this._dealer.get_dealers_with_advertiser(page, this.search_data).pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				response => {
-
-					if ('message' in response) {
-						this.dealers = [];
-						this.dealers_data = [];
-						return;
-					}
-
-					this.dealers = response.dealers;
-					this.dealers_data = response.dealers;
-					this.paging = response.paging
-
+		this._dealer
+			.get_dealers_with_advertiser(page, this.search_data)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if ('message' in response) {
+					this.dealers = [];
+					this.dealers_data = [];
+					return;
 				}
-			)
-			.add(
-				() => {
 
-					this.is_loading = false;
-					this.loading_data = false;
-					this.loading_search = false;
-
-				}
-			);
-
+				this.dealers = response.dealers;
+				this.dealers_data = response.dealers;
+				this.paging = response.paging;
+			})
+			.add(() => {
+				this.is_loading = false;
+				this.loading_data = false;
+				this.loading_search = false;
+			});
 	}
 
 	private initializeSubscriptions(): void {
+		this.new_advertiser_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.new_advertiser_form.valid && this.form_controls.password.value === this.form_controls.re_password.value)
+				this.form_invalid = false;
+			else this.form_invalid = true;
+		});
 
-		this.new_advertiser_form.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
+		this.form_controls.password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.form_controls.password.invalid) {
+				this.password_is_valid = false;
+				this.password_is_valid_msg = 'Must be at least 8 characters';
+			} else {
+				this.password_is_valid = true;
+				this.password_is_valid_msg = 'Password is valid';
+			}
 
-					if (this.new_advertiser_form.valid && this.form_controls.password.value === this.form_controls.re_password.value) this.form_invalid = false;
+			if (!this.form_controls.password.value || this.form_controls.password.value.length === 0) {
+				this.form_controls.re_password.setValue(null);
+				this.form_controls.re_password.disable();
+			} else {
+				this.form_controls.re_password.enable();
+			}
+		});
 
-					else this.form_invalid = true;
-
-				}
-			);
-
-		this.form_controls.password.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-
-					if (this.form_controls.password.invalid) {
-
-						this.password_is_valid = false;
-						this.password_is_valid_msg = "Must be at least 8 characters"
-
-					} else {
-
-						this.password_is_valid = true;
-						this.password_is_valid_msg = "Password is valid";
-
-					}
-
-					if (!this.form_controls.password.value || this.form_controls.password.value.length === 0) {
-
-						this.form_controls.re_password.setValue(null);
-						this.form_controls.re_password.disable();
-
-					} else {
-
-						this.form_controls.re_password.enable();
-
-					}
-				}
-			);
-
-		this.form_controls.re_password.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-
-					if (this.form_controls.password.value == this.form_controls.re_password.value && this.form_controls.password.value.length !== 0) {
-
-						this.password_is_match = true;
-						this.password_match_msg = "Passwords match";
-
-					} else {
-
-						this.password_is_match = false;
-						this.password_match_msg = "Passwords do not match";
-
-					}
-
-				}
-			);
-
+		this.form_controls.re_password.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.form_controls.password.value == this.form_controls.re_password.value && this.form_controls.password.value.length !== 0) {
+				this.password_is_match = true;
+				this.password_match_msg = 'Passwords match';
+			} else {
+				this.password_is_match = false;
+				this.password_match_msg = 'Passwords do not match';
+			}
+		});
 	}
 
 	private openConfirmationModal(status: string, message: string, data: any): void {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
 			data: { status, message, data }
 		});
 
-		dialog.afterClosed().subscribe(r => {
-			const route = Object.keys(UI_ROLE_DEFINITION).find(key => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-			this._router.navigate([`/${route}/users/`]);
+		dialog.afterClosed().subscribe(() => {
+			this._router.navigate([`/${this.roleRoute}/dealers/`]);
 		});
-
 	}
 
+	protected get roleRoute() {
+		return this._auth.roleRoute;
+	}
 }

@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
-import { API_UPDATE_DEALER_PROFILE, API_USER_DATA, DEALER_PROFILE } from 'src/app/global/models';
+import { API_UPDATE_DEALER_PROFILE, API_USER_DATA, DEALER_PROFILE, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, DealerService, UserService } from 'src/app/global/services';
 
 @Component({
@@ -139,11 +139,12 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 	}
 
 	getUserById(id: string) {
+        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
 		this._user
-			.get_user_alldata_by_id(id)
+			.get_user_alldata_by_id(id, isAdmin)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { user: API_USER_DATA; dealer: DEALER_PROFILE[] }) => {
+				(response) => {
 					this.user_data = Object.assign({}, response.user, response.dealer[0]);
 					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy');
 					this._dealer.onDealerDataLoaded.emit({ email: this.user_data.email });
