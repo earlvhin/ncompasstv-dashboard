@@ -509,7 +509,7 @@ export class LicenseService extends BaseService {
 			rebootTime: JSON.stringify(data.rebootTime),
 			licenseId: data.licenseId
 		};
-		return this.postRequest(`${this.updaters.license_reboot_time}`, data);
+		return this.postRequest(`${this.updaters.license_reboot_time}`, body);
 	}
 
 	// Updates the license installation date
