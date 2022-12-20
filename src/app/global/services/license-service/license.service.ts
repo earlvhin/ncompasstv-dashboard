@@ -546,11 +546,9 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	delete_license(to_delete) {
-		const base = `${this.deleters.api_remove_license}`;
-		const params = this.setUrlParams({ to_delete }, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
+	delete_license(licenseId: string[]) {
+		const endpoint = this.deleters.api_remove_license;
+		return this.postRequest(endpoint, licenseId);
 	}
 
 	unassign_host_license(licenses, force?) {
