@@ -5,17 +5,8 @@ import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import {
-	API_DEALER_LICENSE,
-	API_FILTERS,
-	API_INSTALLATION_STATS,
-	API_LICENSE,
-	API_LICENSE_MONTHLY_STAT,
-	API_LICENSE_PROPS,
-	LICENSE_TOTAL_STATISTICS,
-	PAGING
-} from 'src/app/global/models';
 import { BaseService } from '../base.service';
+import { API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_SINGLE_LICENSE_PAGE } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -238,10 +229,9 @@ export class LicenseService extends BaseService {
 	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
-		let baseUrl = `${this.getters.license_by_tags}`;
-		let params = this.setUrlParams(filters, enforceTagSearchKey);
-		const url = `${baseUrl}${params}`;
-		return this.getRequest(url, this.httpOptions);
+		const params = this.setUrlParams(filters, enforceTagSearchKey);
+		const endpoint = `${this.getters.license_by_tags}${params}`;
+		return this.getRequest(endpoint);
 	}
 
 	get_installations(filters: API_FILTERS, type = 'default') {
@@ -378,7 +368,7 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_license_by_id(id) {
+	get_license_by_id(id: string): Observable<API_SINGLE_LICENSE_PAGE | { message: string }> {
 		return this.getRequest(`${this.getters.api_get_licenses_by_id}${id}`);
 	}
 
@@ -637,8 +627,8 @@ export class LicenseService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_checklist_titles}`);
 	}
 
-	get_checklist_by_license_id(id) {
-		return this.getRequest(`${this.getters.api_get_checklist_by_license_id}`);
+	get_checklist_by_license_id(id: string) {
+		return this.getRequest(`${this.getters.api_get_checklist_by_license_id}${id}`);
 	}
 
 	update_list_checking(data) {

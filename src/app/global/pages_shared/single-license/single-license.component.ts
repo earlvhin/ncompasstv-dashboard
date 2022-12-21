@@ -9,12 +9,12 @@ import Chart from 'chart.js/auto';
 import * as io from 'socket.io-client';
 import * as moment from 'moment-timezone';
 
+import { environment } from 'src/environments/environment';
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { environment } from '../../../../environments/environment';
+import { EditTagComponent } from '../tags/dialogs';
 import { InformationModalComponent } from '../../components_shared/page_components/information-modal/information-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
-import { EditTagComponent } from '../tags/dialogs';
 
 import {
 	AuthService,
@@ -28,6 +28,9 @@ import {
 } from 'src/app/global/services';
 
 import {
+	API_ACTIVITY,
+	API_SINGLE_LICENSE_PAGE,
+	API_DEALER,
 	ACTIVITY_CODES,
 	API_CONTENT,
 	API_HOST,
@@ -39,16 +42,12 @@ import {
 	UI_CONTENT,
 	UI_CONTENT_PER_ZONE,
 	UI_OPERATION_DAYS,
-	UI_ROLE_DEFINITION,
 	UI_SCREEN_ZONE_PLAYLIST,
 	UI_ZONE_PLAYLIST,
 	UI_SINGLE_SCREEN,
 	UI_REBOOT_TIME,
 	PlaylistContentSchedule,
-	API_LICENSE,
-	API_ACTIVITY,
-	TAG,
-	UI_ROLE_DEFINITION_TEXT
+	TAG
 } from 'src/app/global/models';
 
 @Component({
@@ -61,7 +60,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	activities: API_ACTIVITY[];
 	additional_license_settings_form: FormGroup;
 	additional_license_settings_form_fields = this._additionalLicenseSettingsFormFields;
-	additional_license_settings_value: any;
 	anydesk_id: string;
 	anydesk_restarting = false;
 	anydesk_status_text = 'Restarting Anydesk...';
@@ -80,26 +78,34 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	content_types = this._contentTypes;
 	current_operation: { day: string; period: string };
 	current_zone_name_selected: string;
+	dealerData: API_DEALER;
 	dealer_route: string;
 	duration_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0, total: 0 };
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
 	display_status: number;
 	enable_edit_alias = false;
 	has_background_zone = false;
+	has_host = false;
+	has_screen = false;
 	has_playlist = false;
 	has_unsaved_additional_settings = false;
 	host: API_HOST;
 	host_notes = '';
 	host_route: string;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
-	is_dealer = false;
-	is_view_only = false;
+	isCurrentUserAdmin = this._auth.current_role === 'administrator';
+	isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+	is_view_only = this.currentUser.roleInfo.permission === 'V';
+	hasLoadedLicenseData = false;
+	hasLoadedScreenData = false;
+	lastStartup = null;
+	lastDisconnect = null;
 	license_data: API_LICENSE_PROPS;
 	license_id: string;
 	license_key: string;
 	minimap_width = '400px';
 	no_screen_assigned = false;
-	pi_status: boolean;
+	pi_status = false;
 	pi_updating: boolean;
 	player_status: boolean;
 	playlist_route: string;
@@ -124,7 +130,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	title = '';
 	update_alias: FormGroup;
 	zone_playlists: UI_ZONE_PLAYLIST[];
-	is_admin: boolean = false;
 	thumb_no_socket: boolean = true;
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
@@ -135,18 +140,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private current_tab = 'Details';
 	private initial_additional_settings_value: any;
 	private initial_load_charts = true;
-	private is_initial_load = true;
 	private number_of_contents: any;
 	private popup_type = '';
 	private routes: string;
-	private splitted_text: any;
+	private splitted_text: string[];
 	private unsaved_additional_settings = { bootDelayChanged: false, rebootTimeChanged: false };
-	private update_btn: string = 'Content Update';
-	private zone_order = 0;
-	private destroy_daily_charts = false;
-	private destroy_monthly_charts = false;
 	protected _socket: any;
-	protected _unsubscribe: Subject<void> = new Subject<void>();
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
@@ -156,7 +156,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _form: FormBuilder,
 		private _helper: HelperService,
 		private _license: LicenseService,
-		private _params: ActivatedRoute,
+		private _route: ActivatedRoute,
 		private _router: Router,
 		private _screen: ScreenService,
 		private _tag: TagService,
@@ -170,36 +170,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
-		this._socket = io(environment.socket_server, {
-			transports: ['websocket'],
-			query: 'client=Dashboard__SingleLicenseComponent'
+		this.initializeSocketServer();
+		this._helper.singleLicensePageCurrentTab = this.current_tab;
+
+		this._route.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			this.license_id = this._route.snapshot.params.data;
+			this.initializeSocketEventWatchers();
+			this.emitInitialSocketEvents();
+			this.getLicenseData();
+			this.getScreenshots();
+			this.getContents();
+			this.getLicenseActivity();
 		});
 
-		this.is_view_only = this.currentUser.roleInfo.permission === 'V';
-		this.routes = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-		if (this.routes === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-			this.routes = UI_ROLE_DEFINITION_TEXT.administrator;
-		}
-		this.pi_status = false;
-		this.getLicenseInfo();
-		this.initializeSocketWatchers();
-		this.socket_checkCECStatus();
-		this.socket_piPlayerStatus();
-		this.socket_screenShotFailed();
-		this.socket_screenShotSuccess();
-		this.socket_updateCompleted();
-		this.socket_licenseOffline();
-		this.socket_monitorStatusResponse();
-		this.socket_monitorCECStatusResponse();
-		this.socket_getAnydeskID();
-		this.socket_speedtestSuccess();
-		this.socket_deadUI();
-		this.socket_licenseOnline();
-		this.onInitTasks();
-		this.setRole();
-		this._socket.on('connect', () => {});
-		this._socket.on('disconnect', () => {});
-		this._helper.singleLicensePageCurrentTab = this.current_tab;
 		this.subscribeToContentSearch();
 	}
 
@@ -271,7 +254,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						this._socket.emit('D_player_restart', this.license_id);
 						this.pi_status = false;
 						this.pi_updating = true;
-						this.update_btn = 'Player Restarting';
 						this.saveActivityLog(ACTIVITY_CODES.reboot_player);
 					}
 
@@ -295,6 +277,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.enable_edit_alias = false;
 	}
 
+	checkPiStatus(): void {
+		this.status_check_disabled = true;
+
+		setTimeout(() => {
+			this.status_check_disabled = false;
+		}, 2000);
+
+		this.socketEmitCheckElectronRunning();
+	}
+
 	clearScreenshots(): void {
 		this.clear_screenshots = true;
 
@@ -304,7 +296,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => {
 					this.clear_screenshots = false;
-					this.getScreenshots(this.license_id);
+					this.getScreenshots();
 				},
 				(error) => {
 					throw new Error(error);
@@ -375,45 +367,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		}, 5000);
 	}
 
-	getContentByLicenseId(id: string): void {
-		this._content
-			.get_content_by_license_id(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				if (!response || response.length <= 0) return;
-
-				const mappedContents = this.mapZoneContentToUI(response).map((zone) => {
-					zone.contents = zone.contents.map((content) => {
-						content.schedule_status = this.setContentScheduleStatus(content.playlist_content_schedule);
-						return content;
-					});
-
-					return zone;
-				});
-
-				// futile attempt to create a backup of the contents without using third-party libraries, e.g. lodash
-				this.deepCopyMappedContents([...mappedContents]);
-				this.content_per_zone = [...mappedContents];
-
-				this.screen_zone = {
-					playlistName: response[0].screenTemplateZonePlaylist.playlistName,
-					playlistId: response[0].screenTemplateZonePlaylist.playlistId
-				};
-
-				if (this.content_per_zone[0].zone_name && this.content_per_zone[0].zone_name === 'Background') {
-					this.background_zone_selected = true;
-				}
-
-				this.current_zone_name_selected = this.content_per_zone[0].zone_name;
-				this.has_playlist = true;
-				this.breakdownContents();
-				this.breakdownDuration();
-				this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
-				this.playlist_route = '/' + this.routes + '/playlists/' + this.screen_zone.playlistId;
-
-				// filter inactive contents without altering the original
-				this.filterInactiveContents();
-			});
+	getCECStatusTooltip(statusValue: number) {
+		return statusValue === 0 ? 'CEC not available on TV' : 'Turn the TV on or off';
 	}
 
 	getFormValue(): void {
@@ -675,8 +630,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					}
 				}
 
-				this.destroy_monthly_charts = true;
-				this.destroy_daily_charts = true;
 				break;
 
 			case 2:
@@ -685,8 +638,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 			default:
 				tab = 'Details';
-				this.destroy_monthly_charts = true;
-				this.destroy_daily_charts = true;
 		}
 
 		this.current_tab = tab;
@@ -724,16 +675,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					throw new Error(error);
 				}
 			);
-	}
-
-	// ==== START: Socket Dependent Events ====== //
-
-	checkPiStatus(): void {
-		this.status_check_disabled = true;
-		setTimeout(() => {
-			this.status_check_disabled = false;
-		}, 2000);
-		this.socket_piPlayerStatus();
 	}
 
 	internetSpeedTest(): void {
@@ -779,158 +720,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.screenshot_message = 'Taking Screenshot, Please wait. . .';
 		this._socket.emit('D_screenshot_pi', this.license_id);
 		this.saveActivityLog(ACTIVITY_CODES.screenshot);
-	}
-
-	socket_checkCECStatus(): void {
-		this._socket.emit('D_check_cec_status', this.license_id);
-	}
-
-	socket_monitorCECStatusResponse(): void {
-		this._socket.on('SS_cec_status_check_response', (response: { licenseId: string; status: boolean }) => {
-			if (response.licenseId !== this.license_id) return;
-			this._socket.emit('D_is_monitor_on', this.license_id);
-
-			const { licenseId, status } = response;
-			const parsedStatus = status ? 1 : 0;
-			this.updateCECStatus({ licenseId, status: parsedStatus });
-		});
-	}
-
-	socket_monitorStatusResponse(): void {
-		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: string }) => {
-			if (this.license_id === data.licenseId) {
-				if (data && data.monitorStatus.includes('power status: on')) {
-					this.updateDisplayStatus({
-						licenseId: this.license_id,
-						displayStatus: 1
-					});
-
-					this.display_status = 1;
-				} else {
-					this.updateDisplayStatus({
-						licenseId: this.license_id,
-						displayStatus: 0
-					});
-
-					this.display_status = 2;
-				}
-			}
-		});
-	}
-
-	socket_screenShotFailed(): void {
-		this._socket.on('SS_screenshot_failed', (data) => {
-			if (this.license_id === data) {
-				setTimeout(() => {
-					this.displayPopup("Screenshot error! There's a problem getting a screenshot with this license", 'error');
-					this.screenshot_timeout = false;
-				}, 2000);
-			}
-		});
-	}
-
-	socket_updateCompleted(): void {
-		this._socket.on('SS_update_finish', (data) => {
-			if (this.license_id === data) {
-				this.displayPopup('Player updated! This license/player has been updated succesfully');
-				this.update_btn = 'Content Update';
-				this.pi_updating = false;
-				this.pi_status = true;
-				this.player_status = true;
-			}
-		});
-	}
-
-	socket_screenShotSuccess(): void {
-		this._socket.on('SS_screenshot_success', (data) => {
-			if (this.license_id === data) {
-				setTimeout(() => {
-					this.displayPopup('Screenshot Success, Getting Screenshots...');
-					this.screenshot_message = 'Screenshot Success, Getting Screenshots . . .';
-					this.getScreenshots(data);
-				}, 2000);
-			}
-		});
-	}
-
-	socket_speedtestSuccess(): void {
-		this._socket.on('SS_speed_test_success', (data) => {
-			const { license_id, pingLatency, downloadMbps, uploadMbps, date } = data;
-
-			if (this.license_id === license_id) {
-				this.internet_connection.downloadMbps = `${downloadMbps.toFixed(2)} Mbps`;
-				this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
-				this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
-				this.internet_connection.date = date;
-				this.license_data.d = downloadMbps > 7 ? 'Good' : 'Slow';
-				this.speedtest_running = false;
-
-				const params = {
-					licenseId: this.license_id,
-					internetInfo: JSON.stringify({
-						downloadMbps: downloadMbps,
-						uploadMbps: uploadMbps,
-						ping: pingLatency,
-						date: date
-					})
-				};
-
-				this._license
-					.update_internet_info(params)
-					.pipe(takeUntil(this._unsubscribe))
-					.subscribe(
-						() => {},
-						(error) => {
-							throw new Error(error);
-						}
-					);
-			}
-		});
-	}
-
-	socket_licenseOffline(): void {
-		this._socket.on('SS_license_is_offline', (data) => {
-			if (this.license_id === data) {
-				this.pi_status = false;
-			}
-		});
-	}
-
-	socket_licenseOnline(): void {
-		this._socket.on('SS_online_pi', (data) => {
-			if (this.license_id === data) {
-				this.pi_status = true;
-			}
-		});
-	}
-
-	socket_piPlayerStatus(): void {
-		this._socket.emit('D_is_electron_running', this.license_id);
-
-		this._socket.on('SS_electron_is_running', (data) => {
-			if (this.license_id === data) {
-				this.pi_status = true;
-				this.player_status = true;
-			}
-		});
-	}
-
-	socket_getAnydeskID(): void {
-		this._socket.emit('D_anydesk_id', this.license_id);
-		this._socket.on('SS_anydesk_id_result', (data) => {
-			if (this.license_id === data.license_id) {
-				this.anydesk_id = data.anydesk;
-				this.anydesk_restarting = false;
-			}
-		});
-	}
-
-	socket_deadUI(): void {
-		this._socket.on('SS_ui_is_dead', (data) => {
-			if (this.license_id === data) {
-				this.player_status = false;
-			}
-		});
 	}
 
 	updateAndRestart(): void {
@@ -1069,6 +858,81 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this.charts.forEach((chart) => chart.destroy());
 		this.charts = [];
+	}
+
+	private async getLicenseData() {
+		let licenseData: API_SINGLE_LICENSE_PAGE | { message: string } = this._helper.singleLicenseData as API_SINGLE_LICENSE_PAGE;
+
+		if (this.isCurrentUserAdmin) {
+			try {
+				licenseData = (await this._license.get_license_by_id(this.license_id).toPromise()) as API_SINGLE_LICENSE_PAGE;
+			} catch (error) {
+				throw new Error();
+			}
+		}
+
+		if ('message' in licenseData) return;
+		this.title = licenseData.license.alias;
+
+		if (!licenseData.host) {
+			this.has_host = false;
+			this.screen_loading = false;
+			this.hasLoadedLicenseData = true;
+			return;
+		}
+
+		if (!licenseData.screen) {
+			this.has_screen = false;
+			this.screen_loading = false;
+			this.hasLoadedLicenseData = true;
+			return;
+		}
+
+		this.timezone = licenseData.timezone;
+		this.setLicenseDetails(licenseData.license);
+		this.setHostDetails(licenseData.host);
+		this.setDealerData(licenseData.dealer);
+		this.getScreenById(licenseData.screen.screenId, this.license_id);
+		this.getFormValue();
+		this.prepareLicenseSettingsForm(licenseData.license);
+		this.has_host = true;
+		this.has_screen = true;
+		this.hasLoadedLicenseData = true;
+	}
+
+	private initializeSocketServer() {
+		this._socket = io(environment.socket_server, {
+			transports: ['websocket'],
+			query: 'client=Dashboard__SingleLicenseComponent'
+		});
+	}
+
+	private initializeSocketEventWatchers(): void {
+		this.socketOnElctronRunning();
+		this.socketOnResetAnydeskId();
+		this.socketOnGetAnydeskId();
+		this.socketOnPiOnline();
+		this.socketOnPiOffline();
+		this.socketOnPlayerOffline();
+		this.socketOnLicenseOffline();
+		this.socketOnContentLog();
+		this.socketOnDeadUi();
+		this.socketOnSuccessfulSpeedTest();
+		this.socketOnMonitorCheck();
+		this.socketOnScreenshotFailed();
+		this.socketOnScreenshotSuccess();
+		this.socketOnContentUpdated();
+		this.socketOnCecCheck();
+	}
+
+	private emitInitialSocketEvents(): void {
+		this.socketEmitCheckElectronRunning();
+		this.socketEmitCheckCecStatus();
+		this.socketEmitGetAnydeskId();
+
+		setTimeout(() => {
+			if (!this.display_status) this.display_status = 2;
+		}, 60000);
 	}
 
 	private filterContent(): void {
@@ -1239,53 +1103,59 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.charts.push(chart);
 	}
 
-	private getActivityOfLicense(id: string) {
-		this._license.get_activities(id).subscribe(
-			(response) => {
-				this.activities = response.paging.entities as API_ACTIVITY[];
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
+	private getContents(): void {
+		this._content
+			.get_content_by_license_id(this.license_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if (!response || response.length <= 0) return;
+
+				const mappedContents = this.mapZoneContentToUI(response).map((zone) => {
+					zone.contents = zone.contents.map((content) => {
+						content.schedule_status = this.setContentScheduleStatus(content.playlist_content_schedule);
+						return content;
+					});
+
+					return zone;
+				});
+
+				// futile attempt to create a backup of the contents without using third-party libraries, e.g. lodash
+				this.deepCopyMappedContents([...mappedContents]);
+				this.content_per_zone = [...mappedContents];
+
+				this.screen_zone = {
+					playlistName: response[0].screenTemplateZonePlaylist.playlistName,
+					playlistId: response[0].screenTemplateZonePlaylist.playlistId
+				};
+
+				if (this.content_per_zone[0].zone_name && this.content_per_zone[0].zone_name === 'Background') {
+					this.background_zone_selected = true;
+				}
+
+				this.current_zone_name_selected = this.content_per_zone[0].zone_name;
+				this.has_playlist = true;
+				this.breakdownContents();
+				this.breakdownDuration();
+				this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
+				this.playlist_route = '/' + this.routes + '/playlists/' + this.screen_zone.playlistId;
+
+				// filter inactive contents without altering the original
+				this.filterInactiveContents();
+			});
 	}
 
-	private getLicenseById(id: string): void {
-		if (this.is_initial_load && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
-			const data = this._helper.singleLicenseData;
-			this.setHostDetails(data.host);
-			this.setPageData(data);
-			this.getScreenById(data.screen.screenId, this.license_id);
-			this.getFormValue();
-			this.is_initial_load = false;
-			return;
-		}
-
+	private getLicenseActivity() {
 		this._license
-			.get_license_by_id(id)
+			.get_activities(this.license_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data: any) => {
-					this.setHostDetails(data.host);
-					this.setPageData(data);
-					this.getScreenById(data.screen.screenId, this.license_id);
-					this.getFormValue();
-					this.prepareLicenseSettingsForm(data.license);
+				(response) => {
+					this.activities = response.paging.entities as API_ACTIVITY[];
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			);
-	}
-
-	private getLicenseInfo(): void {
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			this.license_id = this._params.snapshot.params.data;
-			this.getLicenseById(this.license_id);
-			this.getScreenshots(this.license_id);
-			this.getContentByLicenseId(this.license_id);
-			this.getActivityOfLicense(this.license_id);
-		});
 	}
 
 	private getLicenseTags(): void {
@@ -1317,29 +1187,32 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				(response) => {
 					if ('message' in response) {
 						this.no_screen_assigned = true;
+						this.hasLoadedScreenData = true;
 						return;
 					}
 
 					this.screen = this.mapScreenToUI(response);
+					this.screen_route = `/${this.roleRoute}/screens/${id}`;
 					this.getTemplateData(response.template.templateId);
 					this.setPlaylists(response.screenZonePlaylistsContents);
-					this.setRoutes();
 					this.screen_loading = false;
+					this.hasLoadedScreenData = true;
 				},
 				(error) => {
 					this.screen_loading = false;
 					this.no_screen_assigned = true;
+					this.hasLoadedScreenData = true;
 					throw new Error(error);
 				}
 			);
 	}
 
-	private getScreenshots(id: string): void {
+	private getScreenshots(): void {
 		let count = 1;
 		this.screenshots = [];
 
 		this._license
-			.get_screenshots(id)
+			.get_screenshots(this.license_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
@@ -1509,29 +1382,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		);
 	}
 
-	private onInitTasks(): void {
-		this._socket.once('SS_content_log', (data) => {
-			if (data[0].licenseId == this.license_id) {
-				this.realtime_data.emit(data);
-			}
-		});
-
-		this._socket.once('SS_offline_player', (data) => {
-			if (data == this.license_id) {
-				this.displayPopup('Oh snap! Your player with this license is currently offline', 'error');
-				this.player_status = false;
-			}
-		});
-
-		this._socket.once('SS_offline_pi', (data) => {
-			if (data == this.license_id) {
-				this.displayPopup('Oh snap! Your Pi with this license is currently offline', 'error');
-				this.pi_status = false;
-				this.player_status = false;
-			}
-		});
-	}
-
 	private prepareLicenseSettingsForm(license: API_LICENSE_PROPS): void {
 		let form_group_obj = {};
 		const rebootTimes = JSON.parse(license.rebootTime) as { rebootTime: string }[];
@@ -1561,9 +1411,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 
 		this.additional_license_settings_form = this._form.group(form_group_obj);
-		this.additional_license_settings_value = this.additional_license_settings_form.value;
-
-		const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } = this.additional_license_settings_value;
+		const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } = this._form.group(form_group_obj).value;
 
 		this.initial_additional_settings_value = {
 			bootDelay,
@@ -1617,7 +1465,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.save_activity(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this.getActivityOfLicense(this.license_id),
+				() => this.getLicenseActivity(),
 				(error) => {
 					throw new Error(error);
 				}
@@ -1651,9 +1499,48 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private setHostDetails(data: API_HOST): void {
+		const parsedStoreHours = JSON.parse(data.storeHours);
+		if (parsedStoreHours) this.business_hours = this.setBusinessHours(parsedStoreHours);
 		this.host = data;
-		this.business_hours = this.setBusinessHours(JSON.parse(data.storeHours));
 		this.host_notes = this.setNotes(data.notes);
+		this.host_route = `/${this.roleRoute}/hosts/${data.hostId}`;
+		this.has_host = true;
+	}
+
+	private setLicenseDetails(data: API_LICENSE_PROPS): void {
+		this.license_data = data;
+		this.license_key = data.licenseKey;
+		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn);
+		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut);
+		this.tags = data.tags as { name: string; tagColor: string }[];
+		this.pi_status = data.piStatus === 1;
+		this.player_status = data.playerStatus === 1;
+		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated);
+		this.screen_type = data.screenType ? data.screenType : null;
+		this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
+		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
+
+		if (data.anydeskId) this.anydesk_id = data.anydeskId;
+		else this.anydesk_status_text = '';
+
+		if (data.internetInfo) {
+			const download = JSON.parse(data.internetInfo).downloadMbps;
+			const upload = JSON.parse(data.internetInfo).uploadMbps;
+			const ping = JSON.parse(data.internetInfo).ping;
+			const date = JSON.parse(data.internetInfo).date;
+
+			this.internet_connection.downloadMbps = download ? `${download.toFixed(2)} Mbps` : 'N/A';
+			this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
+			this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
+			this.internet_connection.date = date ? `${date}` : 'N/A';
+			this.internet_connection.status = download > 7 ? 'Good' : 'Slow';
+		}
+
+		if (this.license_data.internetType) {
+			if (this.license_data.internetType.charAt(0) === 'e') this.license_data.internetType = 'Lan';
+			else if (this.license_data.internetType.charAt(0) === 'w') this.license_data.internetType = 'Wi-fi';
+			else this.license_data.internetType == this.license_data.internetType;
+		}
 	}
 
 	private setNotes(data: string): string {
@@ -1668,41 +1555,15 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return result;
 	}
 
-	private setPageData(data: API_LICENSE) {
-		this.license_data = data.license;
-		const format = 'MMMM DD, YYYY, h:mm:ss A';
-		const updated = this.license_data.contentsUpdated;
+	private setDefaultDateTimeFormat(dateTime: string) {
+		if (!dateTime || dateTime.length <= 0) return 'N/A';
+		const format = 'MMM DD, YYYY, h:mm:ss A';
+		return moment(dateTime, 'MMMM DD, YYYY, h:mm:ss A').format(format);
+	}
 
-		this.title = data.license.alias;
-		this.license_key = data.license.licenseKey;
-		this.tags = data.license.tags as { name: string; tagColor: string }[];
-		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
-		this.timezone = data.timezone;
-		this.anydesk_id = data.license.anydeskId;
-		this.pi_status = data.license.piStatus === 1 ? true : false;
-		this.player_status = data.license.playerStatus === 1 ? true : false;
-		this.content_time_update = updated != null ? moment.utc(new Date(updated)).format(format) : null;
-		this.screen_type = data.screenType ? data.screenType : null;
-		this.apps = data.license.appVersion ? JSON.parse(data.license.appVersion) : null;
-
-		if (data.license.internetInfo) {
-			const download = JSON.parse(data.license.internetInfo).downloadMbps;
-			const upload = JSON.parse(data.license.internetInfo).uploadMbps;
-			const ping = JSON.parse(data.license.internetInfo).ping;
-			const date = JSON.parse(data.license.internetInfo).date;
-
-			this.internet_connection.downloadMbps = download ? `${download.toFixed(2)} Mbps` : 'N/A';
-			this.internet_connection.uploadMbps = upload ? `${upload.toFixed(2)} Mbps` : 'N/A';
-			this.internet_connection.ping = ping ? `${ping.toFixed(2)} ms` : 'N/A';
-			this.internet_connection.date = date ? `${date}` : 'N/A';
-			this.internet_connection.status = download > 7 ? 'Good' : 'Slow';
-		}
-
-		if (this.license_data.internetType != null) {
-			if (this.license_data.internetType.charAt(0) === 'e') this.license_data.internetType = 'Lan';
-			else if (this.license_data.internetType.charAt(0) === 'w') this.license_data.internetType = 'Wi-fi';
-			else this.license_data.internetType == this.license_data.internetType;
-		}
+	private setDealerData(data: API_DEALER) {
+		this.dealerData = data;
+		this.dealer_route = `/${this.roleRoute}/dealers/${data.dealerId}/`;
 	}
 
 	private setPlaylists(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]): void {
@@ -1749,26 +1610,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		if (horizontal) this.zone_playlists.push(horizontal);
 	}
 
-	private setRole(): void {
-		const roleId = this._auth.current_user_value.role_id;
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
-
-		if (roleId === dealerRole || roleId === subDealerRole) this.is_dealer = true;
-
-		if (roleId === UI_ROLE_DEFINITION.administrator) this.is_admin = true;
-	}
-
-	private setRoutes(): void {
-		const baseEndpoint = `/${this.routes}`;
-		const { screen_id, assigned_dealer_id } = this.screen;
-		const { hostId } = this.host;
-
-		this.screen_route = `${baseEndpoint}/screens/${screen_id}`;
-		this.dealer_route = `${baseEndpoint}/dealers/${assigned_dealer_id}`;
-		this.host_route = `/${baseEndpoint}/hosts/${hostId}`;
-	}
-
 	private setStorageCapacity(freeStorage: string, totalStorage: string): void {
 		if (!freeStorage || !totalStorage) {
 			this.storage_capacity = '';
@@ -1778,6 +1619,193 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const total = parseInt(totalStorage.split(' ')[0]);
 		const free = (parseInt(freeStorage.split('%')[0]) * 0.01 * total).toFixed(2);
 		this.storage_capacity = `${free} GB free of ${total} GB`;
+	}
+
+	private socketEmitCheckElectronRunning(): void {
+		this._socket.emit('D_is_electron_running', this.license_id);
+	}
+
+	private socketEmitMonitorCheck(): void {
+		this._socket.emit('D_is_monitor_on', this.license_id);
+	}
+
+	private socketEmitGetAnydeskId() {
+		this._socket.emit('D_anydesk_id', this.license_id);
+	}
+
+	private socketEmitCheckCecStatus() {
+		this._socket.emit('D_check_cec_status', this.license_id);
+	}
+
+	private socketOnGetAnydeskId() {
+		this._socket.on('SS_anydesk_id_result', (license: { license_id: string; anydesk: string }) => {
+			if (this.license_id !== license.license_id) return;
+			this.anydesk_id = license.anydesk;
+			this.anydesk_restarting = false;
+		});
+	}
+
+	private socketOnPiOnline() {
+		this._socket.on('SS_online_pi', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			this.pi_status = true;
+		});
+	}
+
+	private socketOnPiOffline() {
+		this._socket.once('SS_offline_pi', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			this.displayPopup('Oh snap! Your Pi with this license is currently offline', 'error');
+			this.pi_status = false;
+			this.player_status = false;
+		});
+	}
+
+	private socketOnPlayerOffline() {
+		this._socket.once('SS_offline_player', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			this.displayPopup('Oh snap! Your player with this license is currently offline', 'error');
+			this.player_status = false;
+		});
+	}
+
+	private socketOnContentLog() {
+		this._socket.once('SS_content_log', (licenseId) => {
+			if (licenseId[0].licenseId !== this.license_id) return;
+			this.realtime_data.emit(licenseId);
+		});
+	}
+
+	private socketOnElctronRunning() {
+		this._socket.on('SS_electron_is_running', (id: string) => {
+			if (this.license_id !== id) return;
+			this.pi_status = true;
+			this.player_status = true;
+		});
+	}
+
+	private socketOnResetAnydeskId(): void {
+		this._socket.on('SS_reset_anydesk_id_response', (response: { hasReset: boolean; newAnydeskId: string; licenseId: string }) => {
+			if (response.licenseId !== response.licenseId) {
+				this.anydesk_restarting = false;
+				return;
+			}
+
+			const { newAnydeskId } = response;
+			const updatedLicense = this.license_data;
+
+			updatedLicense.anydeskId = newAnydeskId;
+			this.license_data = { ...updatedLicense };
+			this.anydesk_id = newAnydeskId;
+			this.anydesk_restarting = false;
+		});
+	}
+
+	private socketOnCecCheck(): void {
+		this._socket.on('SS_cec_status_check_response', (response: { licenseId: string; status: boolean }) => {
+			if (response.licenseId !== this.license_id) return;
+			this.socketEmitMonitorCheck();
+
+			const { licenseId, status } = response;
+			const parsedStatus = status ? 1 : 0;
+			this.updateCECStatus({ licenseId, status: parsedStatus });
+		});
+	}
+
+	private socketOnMonitorCheck(): void {
+		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: string }) => {
+			if (this.license_id !== data.licenseId) return;
+
+			const displayStatus = data && data.monitorStatus.includes('power status: on') ? 1 : 0;
+			this.display_status = displayStatus === 1 ? 1 : 2;
+
+			const displayStatusData = {
+				licenseId: this.license_id,
+				displayStatus
+			};
+
+			this.updateDisplayStatus(displayStatusData);
+		});
+	}
+
+	private socketOnScreenshotFailed(): void {
+		this._socket.on('SS_screenshot_failed', (licenseId) => {
+			if (this.license_id !== licenseId) return;
+
+			setTimeout(() => {
+				this.displayPopup("Screenshot error! There's a problem getting a screenshot with this license", 'error');
+				this.screenshot_timeout = false;
+			}, 2000);
+		});
+	}
+
+	private socketOnContentUpdated(): void {
+		this._socket.on('SS_update_finish', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			this.displayPopup('Player updated! This license/player has been updated succesfully');
+			this.pi_updating = false;
+			this.pi_status = true;
+			this.player_status = true;
+		});
+	}
+
+	private socketOnScreenshotSuccess(): void {
+		this._socket.on('SS_screenshot_success', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			setTimeout(() => {
+				this.displayPopup('Screenshot Success, Getting Screenshots...');
+				this.screenshot_message = 'Screenshot Success, Getting Screenshots . . .';
+				this.getScreenshots();
+			}, 2000);
+		});
+	}
+
+	private socketOnSuccessfulSpeedTest(): void {
+		this._socket.on('SS_speed_test_success', (data) => {
+			const { license_id, pingLatency, downloadMbps, uploadMbps, date } = data;
+			if (this.license_id !== license_id) return;
+
+			this.internet_connection.downloadMbps = `${downloadMbps.toFixed(2)} Mbps`;
+			this.internet_connection.uploadMbps = `${uploadMbps.toFixed(2)} Mbps`;
+			this.internet_connection.ping = `${pingLatency.toFixed(2)} ms`;
+			this.internet_connection.date = date;
+			this.license_data.d = downloadMbps > 7 ? 'Good' : 'Slow';
+			this.speedtest_running = false;
+
+			const params = {
+				licenseId: this.license_id,
+				internetInfo: JSON.stringify({
+					downloadMbps: downloadMbps,
+					uploadMbps: uploadMbps,
+					ping: pingLatency,
+					date: date
+				})
+			};
+
+			this._license
+				.update_internet_info(params)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					() => {},
+					(error) => {
+						throw new Error(error);
+					}
+				);
+		});
+	}
+
+	private socketOnLicenseOffline(): void {
+		this._socket.on('SS_license_is_offline', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			this.pi_status = false;
+		});
+	}
+
+	private socketOnDeadUi(): void {
+		this._socket.on('SS_ui_is_dead', (licenseId: string) => {
+			if (this.license_id !== licenseId) return;
+			this.player_status = false;
+		});
 	}
 
 	private showInformationModal(width: string, height: string, title: string, contents: any, type: string, character_limit?: number): void {
@@ -1859,23 +1887,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			});
 
 			this.content_per_zone[this.selected_zone_index].contents = [...searchResults];
-		});
-	}
-
-	private subscribeToResetAnydeskID(): void {
-		this._socket.on('SS_reset_anydesk_id_response', (response: { hasReset: boolean; newAnydeskId: string; licenseId: string }) => {
-			if (response.licenseId !== response.licenseId) {
-				this.anydesk_restarting = false;
-				return;
-			}
-
-			const { newAnydeskId } = response;
-			const updatedLicense = this.license_data;
-
-			updatedLicense.anydeskId = newAnydeskId;
-			this.license_data = { ...updatedLicense };
-			this.anydesk_id = newAnydeskId;
-			this.anydesk_restarting = false;
 		});
 	}
 
@@ -1992,7 +2003,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					socketCode = 'D_update_player';
 					activity = ACTIVITY_CODES.content_update;
 					this.pi_updating = true;
-					this.update_btn = 'Updating...';
 
 					break;
 
@@ -2000,7 +2010,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					socketCode = 'D_refetch_pi';
 					activity = ACTIVITY_CODES.refetch;
 					this.pi_updating = true;
-					this.update_btn = 'Ongoing Refetch';
 
 					break;
 
@@ -2009,8 +2018,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					activity = ACTIVITY_CODES.update_system;
 					this.pi_status = false;
 					this.pi_updating = true;
-					this.update_btn = 'Ongoing System Update';
-
 					break;
 
 				case 'pi_restart':
@@ -2018,8 +2025,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					activity = ACTIVITY_CODES.reboot_pi;
 					this.pi_status = false;
 					this.pi_updating = true;
-					this.update_btn = 'Pi Restarting';
-
 					break;
 
 				case 'player_restart':
@@ -2027,7 +2032,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					activity = ACTIVITY_CODES.reboot_player;
 					this.pi_status = false;
 					this.pi_updating = true;
-					this.update_btn = 'Player Restarting';
 
 					break;
 
@@ -2043,7 +2047,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					activity = null; // intended as system upgrade has no activity code
 					this.pi_status = false;
 					this.pi_updating = true;
-					this.update_btn = 'Ongoing System Update';
 
 					break;
 			}
@@ -2074,7 +2077,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const { zone_order, zone_name, playlist_name, playlist_id } = selectedZone;
 
 		this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
-		this.zone_order = zone_order;
 		this.screen_zone = { playlistName: playlist_name, playlistId: playlist_id, zone: zone_name };
 		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
 		this.content_filters = [];
@@ -2139,16 +2141,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return ['image', 'video', 'filler', 'feed'];
 	}
 
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
-
 	protected get currentUser() {
 		return this._auth.current_user_value;
 	}
 
 	protected initializeSocketWatchers(): void {
-		this.subscribeToResetAnydeskID();
+		this.socketOnResetAnydeskId();
 	}
 
 	protected get roleRoute() {
