@@ -1137,7 +1137,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.breakdownContents();
 				this.breakdownDuration();
 				this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
-				this.playlist_route = '/' + this.routes + '/playlists/' + this.screen_zone.playlistId;
+				this.playlist_route = `/${this.roleRoute}/playlists/${this.screen_zone.playlistId}`;
 
 				// filter inactive contents without altering the original
 				this.filterInactiveContents();
@@ -2078,7 +2078,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this.number_of_contents = this.content_per_zone[this.selected_zone_index].contents.length;
 		this.screen_zone = { playlistName: playlist_name, playlistId: playlist_id, zone: zone_name };
-		this.playlist_route = `/${this.routes}/playlists/${playlist_id}`;
+		this.playlist_route = `/${this.roleRoute}/playlists/${playlist_id}`;
 		this.content_filters = [];
 		this.content_search_control.disable({ emitEvent: false });
 		this.content_search_control.setValue(null, { emitEvent: false });
