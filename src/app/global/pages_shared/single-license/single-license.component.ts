@@ -66,6 +66,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	apps: { chromium: string; electron: string; puppeteer: string; rpi_model: string; server: string; ui: string };
 	assets_breakdown = { advertisers: 0, feeds: 0, fillers: 0, hosts: 0, others: 0 };
 	background_zone_selected = false;
+	businessName: string;
 	business_hours: { day: string; periods: string[]; selected: boolean }[] = [];
 	charts: any[] = [];
 	clear_screenshots = false;
@@ -891,7 +892,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.timezone = licenseData.timezone;
 		this.setLicenseDetails(licenseData.license);
 		this.setHostDetails(licenseData.host);
-		this.setDealerData(licenseData.dealer);
+		this.setDealerData(licenseData);
 		this.getScreenById(licenseData.screen.screenId, this.license_id);
 		this.getFormValue();
 		this.prepareLicenseSettingsForm(licenseData.license);
@@ -1561,9 +1562,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return moment(dateTime, 'MMMM DD, YYYY, h:mm:ss A').format(format);
 	}
 
-	private setDealerData(data: API_DEALER) {
-		this.dealerData = data;
-		this.dealer_route = `/${this.roleRoute}/dealers/${data.dealerId}/`;
+	private setDealerData(data: API_SINGLE_LICENSE_PAGE) {
+		const dealerId = data.dealer ? data.dealer.dealerId : data.host.dealerId;
+		this.businessName = data.dealer ? data.dealer.businessName : data.host.businessName;
+		this.dealer_route = `/${this.roleRoute}/dealers/${dealerId}/`;
 	}
 
 	private setPlaylists(data: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[]): void {
