@@ -143,7 +143,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private initial_load_charts = true;
 	private number_of_contents: any;
 	private popup_type = '';
-	private routes: string;
 	private splitted_text: string[];
 	private unsaved_additional_settings = { bootDelayChanged: false, rebootTimeChanged: false };
 	protected _socket: any;
@@ -1590,7 +1589,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				order
 			);
 
-			playlist.link = `/${this.routes}/playlists/${playlistId}`;
+			playlist.link = `/${this.roleRoute}/playlists/${playlistId}`;
 			return playlist;
 		});
 
