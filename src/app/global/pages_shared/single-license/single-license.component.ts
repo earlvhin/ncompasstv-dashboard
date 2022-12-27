@@ -94,7 +94,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host_notes = '';
 	host_route: string;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
-	isCurrentUserAdmin = this._auth.current_role === 'administrator';
+	isCurrentUserAdmin = this._auth.roleRoute === 'administrator';
 	isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
 	is_view_only = this.currentUser.roleInfo.permission === 'V';
 	hasLoadedLicenseData = false;
