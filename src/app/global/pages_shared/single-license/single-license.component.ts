@@ -871,16 +871,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			}
 		}
 
+		// if no license data
 		if ('message' in licenseData) {
-			this.hasLoadedLicenseData = true;
 			this.license_data = null;
 			this.has_host = false;
 			this.has_screen = false;
+			this.hasLoadedLicenseData = true;
 			return;
 		}
 
 		this.title = licenseData.license.alias;
+		this.license_data = licenseData.license;
 
+		// if no host data
 		if (!licenseData.host) {
 			this.has_host = false;
 			this.screen_loading = false;
@@ -888,7 +891,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		if (!licenseData.screen) {
+		// if no screen data
+		if (!licenseData.screen || !licenseData.screen.screenId) {
 			this.has_screen = false;
 			this.screen_loading = false;
 			this.hasLoadedLicenseData = true;
@@ -1515,7 +1519,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private setLicenseDetails(data: API_LICENSE_PROPS): void {
-		this.license_data = data;
 		this.license_key = data.licenseKey;
 		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn);
 		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut);

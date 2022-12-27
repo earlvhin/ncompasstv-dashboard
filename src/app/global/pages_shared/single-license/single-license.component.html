@@ -66,7 +66,7 @@
 				mat-button
 				mat-raised-button
 				class="theme-btn pi-control sm-text mr-2"
-				[disabled]="status_check_disabled || !license_data"
+				[disabled]="status_check_disabled || !has_host || !has_screen"
 				(click)="checkPiStatus()"
 				title="Check Status">
 				<span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
