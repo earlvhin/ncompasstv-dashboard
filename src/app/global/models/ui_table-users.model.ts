@@ -17,9 +17,9 @@ export class UI_TABLE_USERS {
 		email: object,
 		contact: object,
 		role: object,
+        affiliation: object,
 		date: object,
 		created_by: object,
-		affiliation: object,
 		allow_email?: object
 	) {
 		this.user_id = id;
@@ -28,9 +28,9 @@ export class UI_TABLE_USERS {
 		this.email = email;
 		this.contact_number = contact;
 		this.role = role;
+        this.affiliation = affiliation;
 		this.date_created = date;
 		this.created_by = created_by;
-		this.affiliation = affiliation;
 		this.allow_email = allow_email;
 	}
 }
