@@ -871,7 +871,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			}
 		}
 
-		if ('message' in licenseData) return;
+		if ('message' in licenseData) {
+			this.hasLoadedLicenseData = true;
+			return;
+		}
+
 		this.title = licenseData.license.alias;
 
 		if (!licenseData.host) {
