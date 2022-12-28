@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 import { HttpHeaders, HttpClient } from '@angular/common/http';
-import { API_CATEGORY, API_PARENT_CATEGORY } from 'src/app/global/models';
-import { environment } from 'src/environments/environment';
 import { BaseService } from '../base.service';
 
 @Injectable({
@@ -21,17 +19,17 @@ export class CategoryService extends BaseService {
 	}
 
 	get_categories() {
-        const url = this.getters.api_get_categories;
+		const url = this.getters.api_get_categories;
 		return this.getRequest(url);
 	}
 
 	get_parent_categories() {
-        const url = this.getters.api_get_parent_categories;
+		const url = this.getters.api_get_parent_categories;
 		return this.getRequest(url).map((data) => data.parentCategory);
 	}
 
 	get_category_general(category) {
-        const url = `${this.getters.api_get_category_general}${category}`;
+		const url = `${this.getters.api_get_category_general}${category}`;
 		return this.getRequest(url);
 	}
 }

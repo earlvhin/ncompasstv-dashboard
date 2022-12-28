@@ -3,14 +3,7 @@ import { Observable } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import 'rxjs/add/operator/map';
 
-import {
-	API_CONTENT,
-	API_SCREEN_ZONE_PLAYLISTS_CONTENTS,
-	CREDITS_TO_SUBMIT,
-	PAGING,
-	PlaylistContentSchedule,
-	UI_CONTENT
-} from 'src/app/global/models';
+import { API_CONTENT, CREDITS_TO_SUBMIT, PAGING, PlaylistContentSchedule } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
 
@@ -21,15 +14,8 @@ export class ContentService extends BaseService {
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}
-	token = JSON.parse(localStorage.getItem('tokens'));
-
-	// httpOptions = {
-	// 	headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
-	// };
 
 	onScheduleChanges = new EventEmitter<string>();
-
-	// constructor(private _http: HttpClient, private _auth: AuthService) {}
 
 	create_content_schedule(data: PlaylistContentSchedule[]): Observable<any> {
 		const url = `${this.updaters.content_schedule}`;

@@ -1,5 +1,5 @@
-import { Injectable, EventEmitter } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Injectable } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 
 import { BaseService } from './base.service';
@@ -10,11 +10,11 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 	providedIn: 'root'
 })
 export class TagService extends BaseService {
-	onClickTagName = new EventEmitter<{ tag: TAG; tab: string }>();
-	onRefreshTagsCount = new EventEmitter<void>();
-	onRefreshTagsTable = new EventEmitter<void>();
-	onRefreshTagOwnersTable = new EventEmitter<void>();
-	onSearch = new EventEmitter<string>();
+	onClickTagName = new Subject<{ tag: TAG; tab: string }>();
+	onRefreshTagsCount = new Subject<void>();
+	onRefreshTagsTable = new Subject<void>();
+	onRefreshTagOwnersTable = new Subject<void>();
+	onSearch = new Subject<string>();
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

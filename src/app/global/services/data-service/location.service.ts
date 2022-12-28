@@ -1,6 +1,5 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { filter } from 'rxjs/operators';
 
 @Injectable({
 	providedIn: 'root'

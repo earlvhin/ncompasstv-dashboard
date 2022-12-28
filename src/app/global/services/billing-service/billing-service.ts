@@ -1,6 +1,6 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { BaseService } from '../base.service';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
@@ -10,8 +10,8 @@ import { API_ORDER, PAGING } from 'src/app/global/models';
 	providedIn: 'root'
 })
 export class BillingService extends BaseService {
-	on_click_order = new EventEmitter<void>();
-    token = JSON.parse(localStorage.getItem('tokens'));
+	on_click_order = new Subject<void>();
+	token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

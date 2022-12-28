@@ -370,19 +370,19 @@ export class SelectOwnerComponent implements OnInit {
 				this.host_id = null;
 				this.filter_data.host.id = null;
 				this.filter_data.host.name = null;
-				this._helper.onResetAutocompleteField.emit('host');
+				this._helper.onResetAutocompleteField.next('host');
 				break;
 			case 'advertiser':
 				this.advertiser_id = null;
 				this.filter_data.advertiser.id = null;
 				this.filter_data.advertiser.name = null;
-				this._helper.onResetAutocompleteField.emit('advertiser');
+				this._helper.onResetAutocompleteField.next('advertiser');
 				break;
 			default:
 				this.dealer_id = null;
 				this.filter_data.dealer.id = null;
 				this.filter_data.dealer.id = null;
-				this._helper.onResetAutocompleteField.emit('dealer');
+				this._helper.onResetAutocompleteField.next('dealer');
 		}
 	}
 

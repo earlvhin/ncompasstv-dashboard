@@ -1,19 +1,15 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { AuthService } from '../auth-service/auth.service';
-import { API_USER_ROLES } from '../../models/api_user-role.model';
-import { environment } from '../../../../environments/environment';
 import 'rxjs/add/operator/map';
-import { UI_ROLE_DEFINITION } from '../../models/ui_role-definition.model';
-import { USER_ROLE } from '../../models';
-import { Observable } from 'rxjs';
+
+import { AuthService } from '../auth-service/auth.service';
+import { environment } from 'src/environments/environment';
+import { UI_ROLE_DEFINITION, USER_ROLE } from 'src/app/global/models';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class RoleService {
-	token = JSON.parse(localStorage.getItem('tokens'));
-
 	httpOptions = {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};

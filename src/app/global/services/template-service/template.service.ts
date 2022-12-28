@@ -4,7 +4,6 @@ import { Observable } from 'rxjs';
 
 import { API_TEMPLATE, API_ZONE } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-
 import { BaseService } from '../base.service';
 import { environment } from 'src/environments/environment';
 
@@ -13,7 +12,6 @@ import { environment } from 'src/environments/environment';
 })
 export class TemplateService extends BaseService {
 	onSelectZone = new EventEmitter<string>();
-    token = JSON.parse(localStorage.getItem('tokens'));
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
