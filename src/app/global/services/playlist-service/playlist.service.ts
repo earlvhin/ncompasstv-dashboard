@@ -116,6 +116,7 @@ export class PlaylistService extends BaseService {
 			/* other options here */
 			responseType: 'text'
 		};
+
 		return this.postRequest(this.deleters.api_remove_in_blacklist, data, requestOptions);
 	}
 
