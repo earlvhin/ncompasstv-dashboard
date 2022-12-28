@@ -533,7 +533,7 @@ export class LicensesComponent implements OnInit {
 						breakdown3_value: data.totalPending,
 						breakdown3_label: 'Pending',
 						third_value: data.totalAdminLicenses,
-						third_value_label: 'Admin',
+						third_value_label: 'Demo',
 						fourth_value: data.totalDisabled,
 						fourth_value_label: 'Inactive',
 
