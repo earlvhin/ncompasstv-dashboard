@@ -85,6 +85,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
 	display_status: number;
 	enable_edit_alias = false;
+	hasAdminPrivileges: boolean;
 	has_background_zone = false;
 	has_host = false;
 	has_screen = false;
@@ -94,7 +95,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host_notes = '';
 	host_route: string;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
-	isCurrentUserAdmin = this._auth.roleRoute === 'administrator';
+	isCurrentUserAdmin = this._auth.current_role === 'administrator';
+	isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
 	isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
 	is_view_only = this.currentUser.roleInfo.permission === 'V';
 	hasLoadedLicenseData = false;
@@ -170,6 +172,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		this.hasAdminPrivileges = this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin;
 		this.initializeSocketServer();
 		this._helper.singleLicensePageCurrentTab = this.current_tab;
 
@@ -863,7 +866,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private async getLicenseData() {
 		let licenseData: API_SINGLE_LICENSE_PAGE | { message: string } = this._helper.singleLicenseData as API_SINGLE_LICENSE_PAGE;
 
-		if (this.isCurrentUserAdmin) {
+		if (this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin) {
 			try {
 				licenseData = (await this._license.get_license_by_id(this.license_id).toPromise()) as API_SINGLE_LICENSE_PAGE;
 			} catch (error) {
@@ -1955,6 +1958,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private updateDisplayStatus(data: { licenseId: string; displayStatus: number }): void {
+		console.log('update display status', data);
 		this._license
 			.update_display_status(data)
 			.pipe(takeUntil(this._unsubscribe))

@@ -33,7 +33,7 @@
 			<ng-container *ngIf="license_data">
 				<div class="d-flex align-items-center">
 					<p class="sm-text mb-0">{{ license_key }}</p>
-					<ng-container *ngIf="isCurrentUserAdmin">
+					<ng-container *ngIf="hasAdminPrivileges">
 						<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license">new_label</mat-icon>
 					</ng-container>
 				</div>
@@ -52,7 +52,7 @@
 						<ng-container *ngIf="tag.exclude === 1">
 							<mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
 						</ng-container>
-						<ng-container *ngIf="isCurrentUserAdmin">
+						<ng-container *ngIf="hasAdminPrivileges">
 							<mat-icon class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license">
 								close
 							</mat-icon>
@@ -268,7 +268,7 @@
 																</div>
 
 																<!-- Display Status -->
-																<ng-container *ngIf="isCurrentUserAdmin">
+																<ng-container *ngIf="hasAdminPrivileges">
 																	<div class="flex-even">
 																		<span class="sm-text"> Display Status </span>
 
@@ -382,7 +382,7 @@
 																<div class="flex-even hostname">
 																	<span class="sm-text"> Dealer </span>
 																	<h5 class="mb-0 xsm-text">
-																		<ng-container *ngIf="isCurrentUserAdmin">
+																		<ng-container *ngIf="hasAdminPrivileges">
 																			<a [routerLink]="dealer_route" target="_blank">
 																				{{ businessName }}
 																			</a>
