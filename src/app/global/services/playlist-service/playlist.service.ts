@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
@@ -14,21 +14,6 @@ import { BaseService } from '../base.service';
 export class PlaylistService extends BaseService {
 	onBlacklistDataReady = new EventEmitter<API_BLOCKLIST_CONTENT[]>();
 	onPushPlaylistUpdateToAllLicenses = new EventEmitter<null>();
-
-	token = JSON.parse(localStorage.getItem('tokens'));
-
-	httpOptions = {
-		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
-	};
-
-	httpOptions_1 = {
-		headers: new HttpHeaders({
-			'Content-Type': 'application/json',
-			credentials: 'include',
-			Accept: 'application/json',
-			'Response-Type': 'text'
-		})
-	};
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
@@ -128,6 +113,7 @@ export class PlaylistService extends BaseService {
 
 	remove_in_blocklist(data) {
 		const requestOptions: Object = {
+			/* other options here */
 			responseType: 'text'
 		};
 		return this.postRequest(this.deleters.api_remove_in_blacklist, data, requestOptions);

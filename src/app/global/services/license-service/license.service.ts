@@ -94,7 +94,7 @@ export class LicenseService extends BaseService {
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
-
+	
 	get_all_licenses_fetch(
 		page: number,
 		key: string,
