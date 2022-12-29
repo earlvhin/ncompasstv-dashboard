@@ -92,9 +92,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	constructor(
 		private _auth: AuthService,
 		private _confirmation_dialog: ConfirmationDialogService,
-		private _content: ContentService, 
-		private _dialog: MatDialog, 
-		private _playlist: PlaylistService, 
+		private _content: ContentService,
+		private _dialog: MatDialog,
+		private _playlist: PlaylistService
 	) {}
 
 	ngOnInit() {
@@ -201,6 +201,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		dialog.afterClosed().subscribe(
 			(data) => {
 				if (data) {
+					console.log('selected contents', this.selected_contents);
+					console.log('selected content ids', this.selected_content_ids);
 					this.removePlaylistContents(this.selected_contents);
 					this.logContentHistory(this.selected_content_ids, false);
 				}
@@ -501,11 +503,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		};
 
 		const onStart = () => {
-
 			if (this.playlist_contents.length < this.playlist_content_backup.length) this.playlist_contents = [...this.playlist_content_backup];
 
 			if (localStorage.getItem('playlist_order')) this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
-
 		};
 
 		const onEnd = () => {
@@ -745,7 +745,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	private filterExpiredContent(data: any[]): any[] {
 		const copy = [...data];
-		return copy.filter(content => (content.scheduleStatus !== 'inactive'));
+		return copy.filter((content) => content.scheduleStatus !== 'inactive');
 	}
 
 	private setScheduleStatus(): void {
@@ -800,14 +800,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 	private showOnlyActiveContents(data: any[]): any[] {
 		const copy = [...data];
-		return copy.filter(content => (content.scheduleStatus === 'active'));
+		return copy.filter((content) => content.scheduleStatus === 'active');
 	}
 
 	private showContentScheduleDialog(): void {
 		let content: any;
 		let message = 'Success!';
 		let mode = 'create';
-		let schedules: { id: string; content_id: string, classification: string }[] = [];
+		let schedules: { id: string; content_id: string; classification: string }[] = [];
 		const content_ids: string[] = [];
 		if (this.selected_contents.length === 1) mode = 'update';
 
@@ -827,7 +827,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						const schedule = {
 							id: content.playlistContentsSchedule.playlistContentsScheduleId,
 							content_id: content.playlistContentId,
-                            classification: content.classification
+							classification: content.classification
 						};
 						schedules.push(schedule);
 					}
@@ -915,19 +915,15 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	private swapContent(data: { contentId: string; playlistContentId: string }) {
-
 		return this._playlist
 			.swap_playlist_content(data)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					this._confirmation_dialog.success({ message: 'Success!', data: 'Content swapped' });
-					this.bulk_toggle = false;
-					this.isMarking({ checked: false });
-					this.reload_playlist.emit(true)
-				} 
-			);
-
+			.subscribe(() => {
+				this._confirmation_dialog.success({ message: 'Success!', data: 'Content swapped' });
+				this.bulk_toggle = false;
+				this.isMarking({ checked: false });
+				this.reload_playlist.emit(true);
+			});
 	}
 
 	protected get currentUser() {

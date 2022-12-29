@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
+import { HttpClient } from '@angular/common/http';
 import { Subscription } from 'rxjs';
+
+import { environment } from 'src/environments/environment';
 import { BaseService } from '../base.service';
 import { AuthService } from '../auth-service/auth.service';
 
@@ -14,10 +15,6 @@ export class FilestackService extends BaseService {
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}
-
-	http_options = {
-		headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-	};
 
 	convert_videos(data): any {
 		return new Promise((resolve, reject) => {

@@ -143,11 +143,11 @@ export class PlaylistContentComponent implements OnInit, OnDestroy {
 		if (this.isBaseFrequency) id = content.playlistContentId;
 		else id = content.parentId;
 		if (!id) return;
-		this._helper.onHoverContent.emit({ playlistContentId: id });
+		this._helper.onHoverContent.next({ playlistContentId: id });
 	}
 
 	unsetHoveredBaseFrequency() {
-		this._helper.onHoverContent.emit({ playlistContentId: undefined });
+		this._helper.onHoverContent.next({ playlistContentId: undefined });
 	}
 
 	private setFrequency(value: number): number {

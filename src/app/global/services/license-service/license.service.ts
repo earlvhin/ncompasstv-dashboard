@@ -1,21 +1,12 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import {
-	API_DEALER_LICENSE,
-	API_FILTERS,
-	API_INSTALLATION_STATS,
-	API_LICENSE,
-	API_LICENSE_MONTHLY_STAT,
-	API_LICENSE_PROPS,
-	LICENSE_TOTAL_STATISTICS,
-	PAGING
-} from 'src/app/global/models';
 import { BaseService } from '../base.service';
+import { API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_SINGLE_LICENSE_PAGE } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -42,8 +33,7 @@ export class LicenseService extends BaseService {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 
-	onSortLicenseByColumn = new EventEmitter<{ column: string; order: string }>();
-	onRefreshLicensesTab = new EventEmitter<void>();
+	onRefreshLicensesTab = new Subject<void>();
 	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } });
 
 	constructor(_auth: AuthService, _http: HttpClient) {
@@ -238,10 +228,9 @@ export class LicenseService extends BaseService {
 	}
 
 	get_by_tags(filters: API_FILTERS, enforceTagSearchKey = false) {
-		let baseUrl = `${this.getters.license_by_tags}`;
-		let params = this.setUrlParams(filters, enforceTagSearchKey);
-		const url = `${baseUrl}${params}`;
-		return this.getRequest(url, this.httpOptions);
+		const params = this.setUrlParams(filters, enforceTagSearchKey);
+		const endpoint = `${this.getters.license_by_tags}${params}`;
+		return this.getRequest(endpoint);
 	}
 
 	get_installations(filters: API_FILTERS, type = 'default') {
@@ -378,7 +367,7 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_license_by_id(id) {
+	get_license_by_id(id: string): Observable<API_SINGLE_LICENSE_PAGE | { message: string }> {
 		return this.getRequest(`${this.getters.api_get_licenses_by_id}${id}`);
 	}
 
@@ -509,7 +498,7 @@ export class LicenseService extends BaseService {
 			rebootTime: JSON.stringify(data.rebootTime),
 			licenseId: data.licenseId
 		};
-		return this.postRequest(`${this.updaters.license_reboot_time}`, data);
+		return this.postRequest(`${this.updaters.license_reboot_time}`, body);
 	}
 
 	// Updates the license installation date
@@ -546,11 +535,9 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	delete_license(to_delete) {
-		const base = `${this.deleters.api_remove_license}`;
-		const params = this.setUrlParams({ to_delete }, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
+	delete_license(licenseId: string[]) {
+		const endpoint = this.deleters.api_remove_license;
+		return this.postRequest(endpoint, licenseId);
 	}
 
 	unassign_host_license(licenses, force?) {
@@ -639,8 +626,8 @@ export class LicenseService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_checklist_titles}`);
 	}
 
-	get_checklist_by_license_id(id) {
-		return this.getRequest(`${this.getters.api_get_checklist_by_license_id}`);
+	get_checklist_by_license_id(id: string) {
+		return this.getRequest(`${this.getters.api_get_checklist_by_license_id}${id}`);
 	}
 
 	update_list_checking(data) {

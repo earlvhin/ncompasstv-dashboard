@@ -59,9 +59,9 @@ export class EditTagComponent implements OnInit, OnDestroy {
 					let returnData = null;
 
 					if (this.page === 'tags') {
-						this._tag.onRefreshTagsTable.emit();
-						this._tag.onRefreshTagsCount.emit();
-						this._tag.onRefreshTagOwnersTable.emit();
+						this._tag.onRefreshTagsTable.next();
+						this._tag.onRefreshTagsCount.next();
+						this._tag.onRefreshTagOwnersTable.next();
 					}
 
 					if (this.page === 'single-license') returnData = response.tag[0];

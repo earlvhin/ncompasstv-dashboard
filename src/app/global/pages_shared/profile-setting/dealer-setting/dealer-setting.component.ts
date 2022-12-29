@@ -139,7 +139,10 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 	}
 
 	getUserById(id: string) {
-        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
+		let isAdmin =
+			this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator
+				? true
+				: false;
 		this._user
 			.get_user_alldata_by_id(id, isAdmin)
 			.pipe(takeUntil(this._unsubscribe))
@@ -147,7 +150,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 				(response) => {
 					this.user_data = Object.assign({}, response.user, response.dealer[0]);
 					this.user_data.dateCreated = this._date.transform(this.user_data.dateCreated, 'MMM dd, yyyy');
-					this._dealer.onDealerDataLoaded.emit({ email: this.user_data.email });
+					this._dealer.onDealerDataLoaded.next({ email: this.user_data.email });
 					this.readyUpdateForm();
 				},
 				(error) => {

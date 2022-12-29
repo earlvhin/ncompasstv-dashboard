@@ -81,7 +81,7 @@ export class SingleHostComponent implements OnInit {
 
 		dialogRef.afterClosed().subscribe((response) => {
 			if (!response) return;
-			this._license.onRefreshLicensesTab.emit();
+			this._license.onRefreshLicensesTab.next();
 		});
 	}
 

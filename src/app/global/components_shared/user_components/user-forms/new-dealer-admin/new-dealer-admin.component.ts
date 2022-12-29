@@ -227,7 +227,7 @@ export class NewDealerAdminComponent implements OnInit {
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.', false);
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return false;
@@ -242,18 +242,18 @@ export class NewDealerAdminComponent implements OnInit {
 				(data) => {
 					this.is_submitted = false;
 					this.form_invalid = false;
-					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer Admin account has been added to database.');
+					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer Admin account has been added to database.', true);
 				},
 				(error) => {
 					this.is_submitted = false;
 					this.form_invalid = false;
-					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message, false);
 				}
 			)
 		);
 	}
 
-	openConfirmationModal(status, message, data): void {
+	openConfirmationModal(status, message, data, redirect): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -265,7 +265,9 @@ export class NewDealerAdminComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			this._router.navigate([`/${this.roleRoute}/users/`]);
+            if(redirect) {
+                this._router.navigate([`/${this.roleRoute}/users/`]);
+            }
 		});
 	}
 

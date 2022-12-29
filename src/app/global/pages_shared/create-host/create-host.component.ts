@@ -356,7 +356,7 @@ export class CreateHostComponent implements OnInit {
 		}
 
 		this.new_host_form.markAllAsTouched();
-		this._helper.onTouchPaginatedAutoCompleteField.emit();
+		this._helper.onTouchPaginatedAutoCompleteField.next();
 	}
 
 	searchBoxTrigger(event: { is_search: boolean; page: number }) {

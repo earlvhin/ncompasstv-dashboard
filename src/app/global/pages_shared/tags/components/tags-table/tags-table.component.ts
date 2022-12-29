@@ -53,9 +53,9 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this._tag.onRefreshTagOwnersTable.emit();
-					this._tag.onRefreshTagsTable.emit();
-					this._tag.onRefreshTagsCount.emit();
+					this._tag.onRefreshTagOwnersTable.next();
+					this._tag.onRefreshTagsTable.next();
+					this._tag.onRefreshTagsCount.next();
 				},
 				(error) => {
 					throw new Error(error);
@@ -73,9 +73,9 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this._tag.onRefreshTagOwnersTable.emit();
-					this._tag.onRefreshTagsTable.emit();
-					this._tag.onRefreshTagsCount.emit();
+					this._tag.onRefreshTagOwnersTable.next();
+					this._tag.onRefreshTagsTable.next();
+					this._tag.onRefreshTagsCount.next();
 				},
 				(error) => {
 					throw new Error(error);
@@ -93,9 +93,9 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this._tag.onRefreshTagOwnersTable.emit();
-					this._tag.onRefreshTagsTable.emit();
-					this._tag.onRefreshTagsCount.emit();
+					this._tag.onRefreshTagOwnersTable.next();
+					this._tag.onRefreshTagsTable.next();
+					this._tag.onRefreshTagsCount.next();
 				},
 				(error) => {
 					throw new Error(error);
@@ -109,7 +109,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 	}
 
 	clickedTagName(data: TAG): void {
-		this._tag.onClickTagName.emit({ tag: data, tab: this.tab });
+		this._tag.onClickTagName.next({ tag: data, tab: this.tab });
 	}
 
 	onPageChange(page: number): void {
