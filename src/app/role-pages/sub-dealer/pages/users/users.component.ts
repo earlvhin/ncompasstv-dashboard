@@ -98,7 +98,8 @@ export class UsersComponent implements OnInit {
 				{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false },
 				{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false },
 				{ value: u.creatorName, link: null, editable: false, hidden: false },
-				{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false }
+				{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false },
+                { value: u.allowEmail, type: 'toggle' }
 			);
 		});
 	}
