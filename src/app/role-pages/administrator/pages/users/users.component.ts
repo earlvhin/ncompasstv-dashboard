@@ -249,6 +249,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 				);
 				return result;
 			} else {
+                
 				const result = new UI_TABLE_USERS(
 					{ value: user.userId, link: null, editable: false, hidden: true },
 					{ value: count++, link: null, editable: false, hidden: false },
