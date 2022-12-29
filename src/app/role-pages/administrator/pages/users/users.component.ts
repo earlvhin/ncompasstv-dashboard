@@ -293,8 +293,9 @@ export class UsersComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { user: API_USER_DATA }) => {
-					const updatedIndex = this.filtered_data.findIndex((user) => user.user_id.value === response.user.userId);
-					this.filtered_data[updatedIndex].allow_email.value = response.user.allowEmail === 1;
+
+					// const updatedIndex = this.filtered_data.findIndex((user) => user.user_id.value === response.user.userId);
+					// this.filtered_data[updatedIndex].allow_email.value = response.user.allowEmail === 1;
 				},
 				(error) => {
 					throw new Error(error);
