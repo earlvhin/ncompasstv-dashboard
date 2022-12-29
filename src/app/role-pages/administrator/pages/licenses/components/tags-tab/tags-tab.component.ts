@@ -118,7 +118,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 				key: {
 					value: data.licenseKey,
 					link: `/${this.currentRole}/licenses/${data.licenseId}`,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					compressed: true,
 					editable: false,
 					hidden: false,
@@ -128,7 +128,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 				hostId: {
 					value: data.hostId ? data.hostName : '--',
 					link: data.hostId ? `/${this.currentRole}/hosts/${data.hostId}` : null,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					editable: false,
 					hidden: false
 				},
@@ -136,7 +136,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 					value: data.alias ? data.alias : '--',
 					link: `/${this.currentRole}/licenses/${data.licenseId}`,
 					editable: false,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					label: 'License Alias',
 					id: data.licenseId,
 					hidden: false

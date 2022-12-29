@@ -213,7 +213,7 @@ export class HostsComponent implements OnInit {
 							link: '/administrator/dealers/' + dealer.dealerId,
 							editable: false,
 							hidden: false,
-							new_tab_link: 'true'
+							new_tab_link: true
 						},
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false },
 						{ value: dealer.hosts.length, link: null, editable: false, hidden: false },
@@ -222,7 +222,7 @@ export class HostsComponent implements OnInit {
 						{
 							value: dealer.hosts[0] ? dealer.hosts[0].name : '---',
 							link: dealer.hosts[0] ? '/administrator/hosts/' + dealer.hosts[0].hostId : null,
-							new_tab_link: 'true',
+							new_tab_link: true,
 							editable: false,
 							hidden: false
 						}
@@ -234,7 +234,7 @@ export class HostsComponent implements OnInit {
 						{
 							value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--',
 							link: '/administrator/dealers/' + dealer.dealerId,
-							new_tab_link: 'true',
+							new_tab_link: true,
 							editable: false,
 							hidden: false
 						},
@@ -243,7 +243,7 @@ export class HostsComponent implements OnInit {
 							link: '/administrator/dealers/' + dealer.dealerId,
 							editable: false,
 							hidden: false,
-							new_tab_link: 'true'
+							new_tab_link: true
 						},
 						{ value: dealer.contactPerson, link: null, editable: false, hidden: false },
 						{ value: 0, link: null, editable: false, hidden: false },
@@ -312,7 +312,7 @@ export class HostsComponent implements OnInit {
 				{
 					value: h.hostName,
 					link: `/administrator/hosts/${h.hostId}`,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					compressed: true,
 					editable: false,
 					hidden: false,
@@ -323,11 +323,11 @@ export class HostsComponent implements OnInit {
 				{
 					value: h.businessName ? h.businessName : '--',
 					link: `/administrator/dealers/${h.dealerId}`,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					editable: false,
 					hidden: false
 				},
-				{ value: h.address ? h.address : '--', link: null, new_tab_link: 'true', editable: false, hidden: false },
+				{ value: h.address ? h.address : '--', link: null, new_tab_link: true, editable: false, hidden: false },
 				{ value: h.city ? h.city : '--', link: null, editable: false, hidden: false },
 				{ value: h.state ? h.state : '--', hidden: false },
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
