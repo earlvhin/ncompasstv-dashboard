@@ -703,15 +703,6 @@ export class DataTableComponent implements OnInit {
 		this.shipping.emit(filter);
 	}
 
-	shipOrder(id, status) {
-		const filter = {
-			order_id: id,
-			order_status: status
-		};
-
-		this.shipping.emit(filter);
-	}
-
 	private deleteUser(userId: string): void {
 		this._user
 			.deleteUser(userId)
