@@ -1523,12 +1523,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private setLicenseDetails(data: API_LICENSE_PROPS): void {
 		this.license_key = data.licenseKey;
-		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn);
-		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut);
+		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
+		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
 		this.tags = data.tags as { name: string; tagColor: string }[];
 		this.pi_status = data.piStatus === 1;
 		this.player_status = data.playerStatus === 1;
-		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated);
+		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
 		this.screen_type = data.screenType ? data.screenType : null;
 		this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
 		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
@@ -1568,10 +1568,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return result;
 	}
 
-	private setDefaultDateTimeFormat(dateTime: string) {
+	private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
 		if (!dateTime || dateTime.length <= 0) return 'N/A';
 		const format = 'MMM DD, YYYY, h:mm:ss A';
-		return moment(dateTime, 'MMMM DD, YYYY, h:mm:ss A').format(format);
+		return moment(dateTime, toParseFormat).format(format);
 	}
 
 	private setDealerData(data: API_SINGLE_LICENSE_PAGE) {
