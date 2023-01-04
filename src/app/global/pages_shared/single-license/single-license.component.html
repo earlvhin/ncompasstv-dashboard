@@ -179,7 +179,7 @@
 																<div class="flex-even">
 																	<h5>Player Snapshots</h5>
 																	<p class="sm-text">
-																		Click Screenshot Button to get live screenshots of this license.
+																		Click the Screenshot button to see what's playing on this license.
 																	</p>
 																</div>
 																<div class="text-right">
@@ -210,7 +210,7 @@
 														<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
 															<div class="screenshots" *ngFor="let s of screenshots">
 																<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
-																<p class="xsm-text text-center mb-0">{{ s | screenshot }}</p>
+																<p class="sm-text text-center mb-0">{{ s | screenshot }}</p>
 															</div>
 														</ng-container>
 
@@ -253,7 +253,7 @@
 																<div class="flex-even">
 																	<span class="sm-text"> Pi Status </span>
 
-																	<h5 class="xsm-text" [ngClass]="{ good: pi_status, bad: !pi_status }">
+																	<h5 class="sm-text" [ngClass]="{ good: pi_status, bad: !pi_status }">
 																		{{ pi_status ? 'Online' : 'Offline' }}
 																	</h5>
 																</div>
@@ -262,7 +262,7 @@
 																<div class="flex-even">
 																	<span class="sm-text"> Player Status </span>
 
-																	<h5 class="xsm-text" [ngClass]="{ good: player_status, bad: !player_status }">
+																	<h5 class="sm-text" [ngClass]="{ good: player_status, bad: !player_status }">
 																		{{ player_status ? 'Online' : 'Offline' }}
 																	</h5>
 																</div>
@@ -273,14 +273,14 @@
 																		<span class="sm-text"> Display Status </span>
 
 																		<h5
-																			class="xsm-text"
+																			class="sm-text"
 																			*ngIf="display_status; else wait"
 																			[ngClass]="{ good: display_status === 1, bad: display_status === 2 }">
 																			{{ display_status === 1 ? 'ON' : 'OFF/UNKNOWN' }}
 																		</h5>
 
 																		<ng-template #wait>
-																			<h5 class="xsm-text text-gray">
+																			<h5 class="sm-text text-gray">
 																				{{ pi_status ? 'Checking ...' : 'N/A' }}
 																			</h5>
 																		</ng-template>
@@ -303,13 +303,13 @@
 																<!-- Last Startup -->
 																<div class="flex-even last-online">
 																	<span class="sm-text">Last Startup</span>
-																	<h5 class="xsm-text">{{ lastStartup }}</h5>
+																	<h5 class="sm-text">{{ lastStartup }}</h5>
 																</div>
 
 																<!-- Last Disconnect -->
 																<div class="flex-even last-offline">
 																	<span class="sm-text">Last Disconnect</span>
-																	<h5 class="xsm-text">{{ lastDisconnect }}</h5>
+																	<h5 class="sm-text">{{ lastDisconnect }}</h5>
 																</div>
 															</div>
 															<hr class="my-3" />
@@ -317,14 +317,14 @@
 																<!-- Last Update -->
 																<div class="flex-even last-update">
 																	<span class="sm-text">Last Update</span>
-																	<h5 class="xsm-text">{{ content_time_update || 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ content_time_update || 'N/A' }}</h5>
 																</div>
 
 																<!-- Anydesk -->
 																<div class="flex-even">
 																	<span class="sm-text">Anydesk</span>
 																	<div class="d-flex align-items-center">
-																		<h5 class="d-inline-block xsm-text mr-3">
+																		<h5 class="d-inline-block sm-text mr-3">
 																			{{ anydesk_id ? anydesk_id : 'N/A' }}
 																		</h5>
 
@@ -356,7 +356,7 @@
 																				</button>
 																			</ng-container>
 
-																			<span class="xsm-text text-gray">
+																			<span class="sm-text text-gray">
 																				{{ anydesk_status_text }}
 																			</span>
 																		</ng-template>
@@ -365,7 +365,7 @@
 
 																<div class="flex-even last-update">
 																	<span class="sm-text">Anydesk Password</span>
-																	<h5 class="xsm-text">{{ splitKey(license_id) }}</h5>
+																	<h5 class="sm-text">{{ splitKey(license_id) }}</h5>
 																</div>
 															</div>
 														</mat-card>
@@ -381,7 +381,7 @@
 															<div class="d-flex">
 																<div class="flex-even hostname">
 																	<span class="sm-text"> Dealer </span>
-																	<h5 class="mb-0 xsm-text">
+																	<h5 class="mb-0 sm-text">
 																		<ng-container *ngIf="hasAdminPrivileges">
 																			<a [routerLink]="dealer_route" target="_blank">
 																				{{ businessName }}
@@ -392,7 +392,7 @@
 
 																<div class="flex-even hostname">
 																	<span class="sm-text"> Hostname </span>
-																	<h5 class="mb-0 xsm-text">
+																	<h5 class="mb-0 sm-text">
 																		<a [routerLink]="host_route" target="_blank">{{ host.name }}</a>
 																	</h5>
 																</div>
@@ -404,7 +404,7 @@
 																<!-- Timezone -->
 																<div class="flex-even timezone">
 																	<span class="sm-text"> Timezone </span>
-																	<h5 class="xsm-text">
+																	<h5 class="sm-text">
 																		{{ timezone.name }}
 																	</h5>
 																</div>
@@ -412,7 +412,7 @@
 																<!-- Business Hours -->
 																<div class="flex-even business-hours">
 																	<span class="sm-text">Business Hours:</span>
-																	<h5 (click)="onShowHours()" class="hoverable xsm-text">
+																	<h5 (click)="onShowHours()" class="hoverable sm-text">
 																		{{ current_operation.day }}: {{ current_operation.period }}
 																	</h5>
 																</div>
@@ -423,7 +423,7 @@
 															<!-- Notes -->
 															<div class="notes">
 																<span class="sm-text">Host Notes: </span>
-																<p (click)="onShowNotes()" class="xsm-text hoverable">
+																<p (click)="onShowNotes()" class="sm-text hoverable">
 																	{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
 																</p>
 															</div>
@@ -447,20 +447,20 @@
 																	<span class="sm-text">Connection Status</span>
 																	<ng-container *ngIf="apps && apps.server; else netstatus_v1">
 																		<h5
-																			class="xsm-text"
+																			class="sm-text"
 																			*ngIf="internet_connection.status && pi_status; else offline_net"
 																			[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
 																			{{ internet_connection.status }}
 																		</h5>
 
 																		<ng-template #offline_net>
-																			<h5 *ngIf="license_data.internetSpeed" class="bad xsm-text">Offline</h5>
+																			<h5 *ngIf="license_data.internetSpeed" class="bad sm-text">Offline</h5>
 																		</ng-template>
 																	</ng-container>
 
 																	<ng-template #netstatus_v1>
 																		<h5
-																			class="xsm-text"
+																			class="sm-text"
 																			[ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
 																			{{ license_data.internetSpeed }}
 																		</h5>
@@ -470,7 +470,7 @@
 																<!-- Connection Type -->
 																<div class="flex-even connection-type">
 																	<span class="sm-text">Connection Type</span>
-																	<h5 class="xsm-text">
+																	<h5 class="sm-text">
 																		{{ license_data.internetType ? license_data.internetType : 'N/A' }}
 																	</h5>
 																</div>
@@ -478,7 +478,7 @@
 																<!-- Memory -->
 																<div class="flex-even memory">
 																	<span class="sm-text">RAM/Memory</span>
-																	<h5 class="xsm-text">{{ license_data.memory ? license_data.memory : 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ license_data.memory ? license_data.memory : 'N/A' }}</h5>
 																</div>
 															</div>
 															<!-- ID -->
@@ -489,7 +489,7 @@
 																<div class="last-speedtest-date mb-3">
 																	<span class="sm-text">Last Speedtest</span>
 																	<div>
-																		<h5 class="d-inline-block mr-4 xsm-text">
+																		<h5 class="d-inline-block mr-4 sm-text">
 																			{{ internet_connection.date ? internet_connection.date : 'N/A' }}
 																		</h5>
 
@@ -510,7 +510,7 @@
 																				<span class="fas fa-sync md-text"></span>
 																			</button>
 
-																			<span class="xsm-text text-gray"> Speed Test Running </span>
+																			<span class="sm-text text-gray"> Speed Test Running </span>
 																		</ng-template>
 																	</div>
 																</div>
@@ -519,19 +519,19 @@
 																	<!-- Download Speed -->
 																	<div class="flex-even storage">
 																		<span class="sm-text">Download Speed</span>
-																		<h5 class="xsm-text">{{ internet_connection.downloadMbps }}</h5>
+																		<h5 class="sm-text">{{ internet_connection.downloadMbps }}</h5>
 																	</div>
 
 																	<!-- Upload Speed -->
 																	<div class="flex-even storage">
 																		<span class="sm-text">Upload Speed</span>
-																		<h5 class="xsm-text">{{ internet_connection.uploadMbps }}</h5>
+																		<h5 class="sm-text">{{ internet_connection.uploadMbps }}</h5>
 																	</div>
 
 																	<!-- Average Latency -->
 																	<div class="flex-even ping">
 																		<span class="sm-text">Average Latency</span>
-																		<h5 class="xsm-text">{{ internet_connection.ping }}</h5>
+																		<h5 class="sm-text">{{ internet_connection.ping }}</h5>
 																	</div>
 																</div>
 															</div>
@@ -542,19 +542,19 @@
 																<!-- Storage -->
 																<div class="flex-even storage">
 																	<span class="sm-text">Storage</span>
-																	<h5 class="xsm-text">{{ storage_capacity ? storage_capacity : 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ storage_capacity ? storage_capacity : 'N/A' }}</h5>
 																</div>
 
 																<!-- Pi Version -->
 																<div class="flex-even storage">
 																	<span class="sm-text">Pi Version</span>
-																	<h5 class="xsm-text">{{ apps && apps.rpi_model ? apps.rpi_model : 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ apps && apps.rpi_model ? apps.rpi_model : 'N/A' }}</h5>
 																</div>
 
 																<!-- Player Version -->
 																<div class="flex-even player-version">
 																	<span class="sm-text">Player Version</span>
-																	<h5 class="xsm-text">{{ apps && apps.server ? 'Version 2' : 'Version 1' }}</h5>
+																	<h5 class="sm-text">{{ apps && apps.server ? 'Version 2' : 'Version 1' }}</h5>
 																</div>
 															</div>
 
@@ -564,19 +564,19 @@
 																<!-- Player Server -->
 																<div class="flex-even player-server-version">
 																	<span class="sm-text">Server Version</span>
-																	<h5 class="xsm-text">{{ apps && apps.server ? apps.server : 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ apps && apps.server ? apps.server : 'N/A' }}</h5>
 																</div>
 
 																<!-- Player UI -->
 																<div class="flex-even ui-version">
 																	<span class="sm-text">UI Version</span>
-																	<h5 class="xsm-text">{{ apps && apps.ui ? apps.ui : 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ apps && apps.ui ? apps.ui : 'N/A' }}</h5>
 																</div>
 
 																<!-- Player UI -->
 																<div class="flex-even chromium-version">
 																	<span class="sm-text">Chromium Version</span>
-																	<h5 class="xsm-text">{{ apps && apps.chromium ? apps.chromium : 'N/A' }}</h5>
+																	<h5 class="sm-text">{{ apps && apps.chromium ? apps.chromium : 'N/A' }}</h5>
 																</div>
 															</div>
 														</mat-card>
@@ -595,7 +595,7 @@
 																	<div class="flex-even">
 																		<span class="sm-text">Screen Name</span>
 																		<a [routerLink]="screen_route" target="_blank">
-																			<h5 class="hoverable xsm-text">
+																			<h5 class="hoverable sm-text">
 																				{{ screen.screen_title ? (screen.screen_title | titlecase) : 'N/A' }}
 																			</h5>
 																		</a>
@@ -603,14 +603,14 @@
 
 																	<div class="flex-even">
 																		<span class="sm-text">Screen Template</span>
-																		<h5 class="xsm-text">
+																		<h5 class="sm-text">
 																			{{ screen.assigned_template ? screen.assigned_template : 'N/A' }}
 																		</h5>
 																	</div>
 
 																	<div class="flex-even" *ngIf="screen_type">
 																		<span class="sm-text">Screen Type</span>
-																		<h5 class="xsm-text">
+																		<h5 class="sm-text">
 																			{{ screen_type.name ? (screen_type.name | titlecase) : 'N/A' }}
 																		</h5>
 																	</div>
@@ -634,15 +634,14 @@
 																						else no_url
 																					">
 																					<a [routerLink]="zone.link" target="_blank">
-																						<h5
-																							class="hoverable d-inline-block align-middle xsm-text m-0">
+																						<h5 class="hoverable d-inline-block align-middle sm-text m-0">
 																							{{ zone.name }} - {{ zone.playlist_name }}
 																						</h5>
 																					</a>
 																				</ng-container>
 
 																				<ng-template #no_url>
-																					<h5 class="d-inline-block align-middle xsm-text m-0">
+																					<h5 class="d-inline-block align-middle sm-text m-0">
 																						{{ zone.name }} - No Playlist
 																					</h5>
 																				</ng-template>
