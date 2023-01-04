@@ -1958,7 +1958,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private updateDisplayStatus(data: { licenseId: string; displayStatus: number }): void {
-		console.log('update display status', data);
 		this._license
 			.update_display_status(data)
 			.pipe(takeUntil(this._unsubscribe))
