@@ -104,6 +104,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	onAssignLicense(): void {
 		this.single_host_assign_license.emit(this.single_host_assign_license);
 	}
+
 	onClickModify(): void {
 		let dialog: ComponentType<EditSingleDealerComponent | EditSingleHostComponent | EditSingleAdvertiserComponent>;
 		let data:
