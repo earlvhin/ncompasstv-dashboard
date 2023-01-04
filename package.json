@@ -17,7 +17,9 @@
 		"lint": "ng lint",
 		"e2e": "ng e2e",
 		"ng-high-mem": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng",
+		"ng-low-mem": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng",
 		"build:prod": "npm run ng-high-mem -- build --prod --aot --source-map",
+		"build:prod:lite": "npm run ng-low-mem -- build --prod --aot --source-map --no-progress",
 		"explore": "source-map-explorer dist/**/*.js"
 	},
 	"private": true,
