@@ -249,7 +249,7 @@ export class DealersTableComponent implements OnInit {
 					this.selected_filter.status = 'A';
 					break;
 				case 'inactive':
-					this.selected_filter.status = 'C';
+					this.selected_filter.status = 'I';
 					break;
 				default:
 					this.selected_filter.status = '';
