@@ -570,6 +570,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		modal.afterClosed().subscribe((response) => {
 			if (!response) return;
+			this.showSuccessModal('Success!', 'Tags saved', '', false);
 			this.tags = [...(response as TAG[])];
 		});
 	}
