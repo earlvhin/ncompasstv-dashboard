@@ -1,0 +1,74 @@
+{
+    "pipeline": {
+        "roleArn": "arn:aws:iam::335883086205:role/AWSCodePipelineServiceRole-us-east-1-nc-nvir-dev-pldashboard-01",
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeCommit",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "roleArn": "arn:aws:iam::892444632159:role/codepipeline-cross-account-role", 
+                        "configuration": {
+                            "BranchName": "test-build",
+                            "PollForSourceChanges": "true",
+                            "RepositoryName": "ncompasstv-dashboard"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "inputArtifacts": []
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "name": "Build",
+                        "region": "us-east-1",
+                        "namespace": "BuildVariables",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "version": "1",
+                            "provider": "CodeBuild"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "configuration": {
+                            "ProjectName": "nc-dashboard-codebuild"
+                        },
+                        "runOrder": 1
+                    }
+                ]
+            }
+        ],
+        "artifactStore": {
+            "type": "S3",
+            "location": "codepipeline-nc-nvir-dev-pldashboard-01",
+            "encryptionKey": {
+                "id": "arn:aws:kms:us-east-1:335883086205:key/b180482c-9f98-41a6-a76b-6519299982b4",
+                "type": "KMS"
+            }
+        },
+        "name": "codepipeline-nc-nvir-dev-pldashboard-01",
+        "version": 1
+    }
+}
