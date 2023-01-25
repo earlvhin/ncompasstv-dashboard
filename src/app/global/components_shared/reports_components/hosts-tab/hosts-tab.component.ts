@@ -26,6 +26,7 @@ export class HostsTabComponent implements OnInit {
 	state_selected: string;
 	title: string = 'Reports';
 	subscription: Subscription = new Subscription();
+    current_year: any;
 
 	//graph
 	label_graph: any = [];
@@ -50,6 +51,7 @@ export class HostsTabComponent implements OnInit {
 	constructor(private _host: HostService, private _uppercase: UpperCasePipe, private _dialog: MatDialog) {}
 
 	ngOnInit() {
+        this.current_year = new Date().getFullYear();
 		this.getHostsStatistics();
 		this.getChartsData();
 		this.raw_details = {
