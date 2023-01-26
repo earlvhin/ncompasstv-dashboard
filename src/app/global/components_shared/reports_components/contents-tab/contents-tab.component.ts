@@ -9,7 +9,7 @@ import { AuthService } from '../../../../global/services/auth-service/auth.servi
 import { ContentService } from '../../../../global/services/content-service/content.service';
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { UI_TABLE_CONTENT_METRICS } from '../../../../global/models/ui_table_content_metrics';
-import { UI_ROLE_DEFINITION } from '../../../models/ui_role-definition.model';
+import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../models/ui_role-definition.model';
 
 @Component({
 	selector: 'app-contents-tab',
@@ -76,6 +76,7 @@ export class ContentsTabComponent implements OnInit {
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
+    route: any;
 
 	constructor(private _form_builder: FormBuilder, private _dealer: DealerService, private _content: ContentService, private _auth: AuthService) {}
 
@@ -87,6 +88,12 @@ export class ContentsTabComponent implements OnInit {
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			this.setDealerId(this.dealer_id);
 		}
+
+        this.route = this._auth.current_role;
+		if (this.route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.route = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
+
 	}
 
 	filterData(key) {
@@ -263,13 +270,12 @@ export class ContentsTabComponent implements OnInit {
 
 	metrics_mapToUIFormat(data) {
 		let count = this.paging_data.pageStart;
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		return data.map((i) => {
 			return new UI_TABLE_CONTENT_METRICS(
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: i.contentId, link: null, editable: false, hidden: true },
-				{ value: i.title, link: `/${route}/media-library/` + i.contentId, new_tab_link: true },
-				{ value: i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts, drop_link: `/${route}/hosts/` },
+				{ value: i.title, link: `/${this.route}/media-library/` + i.contentId, new_tab_link: true },
+				{ value: i.hostsTotal + ' host(s)', show_host: 'true', host_list: i.hosts, drop_link: `/${this.route}/hosts/` },
 				{ value: i.playsTotal },
 				{ value: this.msToTime(i.durationsTotal) }
 			);
