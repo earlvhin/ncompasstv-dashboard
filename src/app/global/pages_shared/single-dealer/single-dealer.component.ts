@@ -46,7 +46,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	combined_data: API_HOST[];
 	current_tab = 'hosts';
 	current_advertiser_status_filter = 'active';
-	current_host_status_filter = 'active';
+	current_host_status_filter = 'all';
 	dealer: API_DEALER;
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
