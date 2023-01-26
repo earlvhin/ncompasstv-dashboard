@@ -48,6 +48,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	@Output() reload_demo = new EventEmitter();
 	@Output() playlist_demo = new EventEmitter();
 
+	active_draggable_contents: API_CONTENT[] = [];
 	button_click_event: string;
 	can_set_schedule = false;
 	can_update_schedule = false;
@@ -57,14 +58,14 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	currentContentFilter: string;
 	has_selected_content_with_schedule = false;
 	is_loading = false;
-	is_marking: boolean = false;
-	list_view_mode: boolean = false;
+	is_bulk_selecting = false;
+	list_view_mode = false;
 	updated_playlist_content: API_UPDATED_PLAYLIST_CONTENT[];
 	playlist_order: string[] = [];
 	playlist_changes_data: any;
-	playlist_unchanged: boolean = true;
+	playlist_unchanged = true;
 	playlist_content_backup: API_CONTENT[];
-	playlist_saving: boolean = false;
+	playlist_saving = false;
 	selected_contents: string[];
 	selected_content_ids: any[];
 	selected_content_count: number;
@@ -109,7 +110,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.selected_content_ids = [];
 		this.playlist_new_content = [];
 		this.bulk_toggle = false;
-		this.is_marking = false;
+		this.is_bulk_selecting = false;
 
 		if (this.playlist_content_backup.length <= 0) return;
 
@@ -138,9 +139,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	isMarking(event: { checked: boolean }): void {
-		this.is_marking = event.checked;
+		this.is_bulk_selecting = event.checked;
 
-		if (this.is_marking == false) {
+		if (this.is_bulk_selecting == false) {
 			this.selected_contents = [];
 			this.selected_content_ids = [];
 			this.can_set_schedule = false;
@@ -503,8 +504,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		};
 
 		const onStart = () => {
-			if (this.playlist_contents.length < this.playlist_content_backup.length) this.playlist_contents = [...this.playlist_content_backup];
-
 			if (localStorage.getItem('playlist_order')) this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
 		};
 
@@ -581,7 +580,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		isAdded?: true
 	): void {
 		this.playlist_saving = true;
-		this.is_marking = false;
+		this.is_bulk_selecting = false;
 
 		if (data) {
 			this._playlist
