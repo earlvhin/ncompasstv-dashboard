@@ -827,6 +827,10 @@ agm-map {
 	}
 }
 
+.f-50 {
+	font-size: 50px;
+}
+
 .f-35 {
 	font-size: 35px;
 }
@@ -894,4 +898,9 @@ agm-map {
 			padding-left: 40px !important;
 		}
 	}
+}
+
+.center-vertically {
+    position: absolute;
+    top: 30%; 
 }

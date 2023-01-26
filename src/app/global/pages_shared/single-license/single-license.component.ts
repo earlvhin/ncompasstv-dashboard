@@ -1571,7 +1571,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
 		if (!dateTime || dateTime.length <= 0) return 'N/A';
 		const toExpectedFormat = 'MMM DD, YYYY h:mm A';
-		return moment(dateTime, toParseFormat).format(toExpectedFormat);
+		return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
 	}
 
 	private setDealerData(data: API_SINGLE_LICENSE_PAGE) {

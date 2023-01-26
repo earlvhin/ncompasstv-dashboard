@@ -24,8 +24,7 @@
 				mat-raised-button
 				class="theme-btn flex-even mx-1"
 				(click)="openPlaylistMedia('swap')"
-				[disabled]="is_view_only || !is_marking || selected_contents.length !== 1"
-			>
+				[disabled]="is_view_only || !is_bulk_selecting || selected_contents.length !== 1">
 				Swap Content
 				<span class="fas fa-exchange-alt ml-2 sm-text"></span>
 			</button>
@@ -36,8 +35,7 @@
 				class="theme-btn flex-even mx-1"
 				[disabled]="playlist_unchanged"
 				(click)="saveOrderChanges()"
-				[disabled]="is_view_only"
-			>
+				[disabled]="is_view_only">
 				Save Changes
 				<span class="fas fa-save ml-2 sm-text"></span>
 			</button>
@@ -60,7 +58,7 @@
 			<!-- FILTER DROPDOWN -->
 			<mat-form-field class="content-filter-dropdown">
 				<mat-label>Filter By Status</mat-label>
-				<mat-select (selectionChange)="onSelectContentFilter($event.value)" [(value)]="currentContentFilter" [disabled]="is_marking">
+				<mat-select (selectionChange)="onSelectContentFilter($event.value)" [(value)]="currentContentFilter" [disabled]="is_bulk_selecting">
 					<mat-option *ngFor="let filter of contentFilterOptions" [value]="filter.key">
 						{{ filter.label }}
 					</mat-option>
@@ -74,8 +72,7 @@
 				class="theme-btn flex-even mx-1"
 				(click)="onSetSchedule()"
 				[ngClass]="{ hidden: !can_set_schedule }"
-				[disabled]="is_view_only"
-			>
+				[disabled]="is_view_only">
 				Set Schedule
 				<span class="fas fa-calendar ml-2 sm-text"></span>
 			</button>
@@ -100,7 +97,7 @@
 				<span class="fas fa-calendar ml-2 sm-text"></span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="selectAllContents()" [disabled]="!is_marking">
+			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="selectAllContents()" [disabled]="!is_bulk_selecting">
 				Select All
 				<span class="fas fa-check ml-2 sm-text"></span>
 			</button>
@@ -110,8 +107,7 @@
 				mat-raised-button
 				class="theme-btn flex-even mx-1"
 				(click)="bulkModify()"
-				[disabled]="selected_contents.length == 0 || is_view_only"
-			>
+				[disabled]="selected_contents.length == 0 || is_view_only">
 				Modify
 				<span class="fas fa-cog ml-2 sm-text"></span>
 			</button>
@@ -121,8 +117,7 @@
 				mat-raised-button
 				class="theme-btn flex-even mx-1 _danger"
 				(click)="bulkContentRemove()"
-				[disabled]="selected_contents.length == 0 || is_view_only"
-			>
+				[disabled]="selected_contents.length == 0 || is_view_only">
 				Remove
 				<span class="fas fa-trash ml-2 sm-text"></span>
 			</button>
@@ -136,21 +131,24 @@
 		</mat-form-field>
 	</div>
 
-	<div class="playlist-content-panel" [ngClass]="is_marking ? 'd-none' : null">
+	<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? 'd-none' : null">
 		<div class="row no-gutters" #draggables id="draggables">
 			<div
 				id="{{ 'drg_' + content.playlistContentId }}"
 				*ngFor="let content of playlist_contents; let i = index"
 				[class.undraggable]="content.isProtected && is_dealer"
 				[attr.data-id]="content.playlistContentId"
-				[ngClass]="{ marked: selected_contents.includes(content.playlistContentId), 'col-lg-4': list_view_mode, 'col-lg-1': !list_view_mode }"
-			>
+				[ngClass]="{
+					marked: selected_contents.includes(content.playlistContentId),
+					'col-lg-4': list_view_mode,
+					'col-lg-1': !list_view_mode
+				}">
 				<app-playlist-content
 					[playlist_host_license]="playlist_host_license"
 					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
 					[dealer]="content.dealerId"
 					[content]="content"
-					[is_marking]="is_marking"
+					[is_marking]="is_bulk_selecting"
 					[schedule_status]="content.scheduleStatus"
 					[page]="page"
 					[total_contents]="playlist_contents.length"
@@ -162,14 +160,13 @@
 					(reset_playlist_content)="reloadPlaylist()"
 					(remove_playlist_content)="removePlaylistContent($event)"
 					(log_content_history)="logRemovedContent($event)"
-					[playlist_contents]="playlist_contents"
-				>
+					[playlist_contents]="playlist_contents">
 				</app-playlist-content>
 			</div>
 		</div>
 	</div>
 
-	<div class="playlist-content-panel" [ngClass]="is_marking ? null : 'd-none'" *ngIf="!is_loading; else loader">
+	<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? null : 'd-none'" *ngIf="!is_loading; else loader">
 		<div class="row no-gutters">
 			<div
 				id="{{ 'drg_' + content.playlistContentId }}"
@@ -178,14 +175,17 @@
 				[class.undraggable]="content.isProtected && is_dealer"
 				[class.future-schedule]="content.scheduleStatus === 'future'"
 				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-				[ngClass]="{ marked: selected_contents.includes(content.playlistContentId), 'col-lg-1': !list_view_mode, 'col-lg-4': list_view_mode }"
-			>
+				[ngClass]="{
+					marked: selected_contents.includes(content.playlistContentId),
+					'col-lg-1': !list_view_mode,
+					'col-lg-4': list_view_mode
+				}">
 				<app-playlist-content
 					[playlist_host_license]="playlist_host_license"
 					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
 					[content]="content"
 					[dealer]="content.dealerId"
-					[is_marking]="is_marking"
+					[is_marking]="is_bulk_selecting"
 					[schedule_status]="content.scheduleStatus"
 					[page]="page"
 					[total_contents]="playlist_contents.length"
@@ -196,8 +196,7 @@
 					(options_saved)="optionsSaved($event)"
 					(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency, content.classification)"
 					(reset_playlist_content)="reloadPlaylist()"
-					(remove_playlist_content)="removePlaylistContent($event)"
-				>
+					(remove_playlist_content)="removePlaylistContent($event)">
 				</app-playlist-content>
 			</div>
 		</div>
@@ -213,8 +212,7 @@
 	<div
 		class="content-selected-count p-3 text-center bg-primary"
 		*ngIf="selected_content_count > 0"
-		[ngClass]="selected_content_count > 0 ? 'show' : null"
-	>
+		[ngClass]="selected_content_count > 0 ? 'show' : null">
 		<h5 class="font-weight-bold mb-0 sm-text">{{ selected_content_count }} File<span *ngIf="selected_content_count > 1">s</span> Selected</h5>
 	</div>
 </mat-card>

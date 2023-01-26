@@ -34,12 +34,14 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 	licenses_graph_data: API_LICENSE_MONTHLY_STAT[] = [];
 	licenses_graph_data_detailed: API_LICENSE_MONTHLY_STAT[] = [];
 	generate = false;
+    current_year: any;
 
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(private _license: LicenseService, private _dialog: MatDialog) {}
 
 	ngOnInit() {
+        this.current_year = new Date().getFullYear();
 		this.getLicensesStatistics();
 	}
 

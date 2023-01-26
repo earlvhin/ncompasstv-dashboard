@@ -1,6 +1,6 @@
-<div class="statistics-graph col-lg-12 p-0 flex mb-3" *ngIf="value_graph.length > 0; else spinner">
+<div class="statistics-graph col-lg-12 p-0 flex mb-3">
     <div class="col-lg-4">
-        <mat-card class="card-graph">
+        <mat-card class="card-graph" *ngIf="whole_data.length > 0; else no_data_for_year">
             <app-data-statistics-card *ngIf="value_graph"
                 [id]="'total-view'"
                 [total]="total"
@@ -13,6 +13,19 @@
                 [loading_graph]="loading_graph">
             </app-data-statistics-card>
         </mat-card>
+        <ng-template #no_data_for_year>
+            <mat-card class="h-100 text-gray">
+                <div class="col-lg-12 mt-5 center-vertically">
+                    <div class="col-lg-12 text-center lg-text">
+                        <i class="fas fa-file-excel f-50"></i>
+                    </div>
+                    <div class="col-lg-12 mt-3 text-center ">
+                        <i class="fas fa-file-times lg-text"></i>
+                        There are no records for year <span class="text-danger">{{current_year}}</span>. <br> Kindly use the custom date selection on the right to generate a report. 
+                    </div>
+                </div>
+            </mat-card>
+        </ng-template>
     </div>
     <div class="col-lg-8">
         <mat-card class="card-graph">
