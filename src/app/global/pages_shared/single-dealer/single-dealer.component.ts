@@ -933,6 +933,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				if (this.current_tab === 'hosts') return;
 				this.current_tab = 'hosts';
 				this.current_host_status_filter = 'all';
+				this.getDealerHost(1);
 				break;
 
 			case 2:
