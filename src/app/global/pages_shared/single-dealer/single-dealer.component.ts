@@ -930,7 +930,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	onSelectTab(event: { index: number }): void {
 		switch (event.index) {
 			case 1:
+				if (this.current_tab === 'hosts') return;
 				this.current_tab = 'hosts';
+				this.current_host_status_filter = 'all';
 				break;
 
 			case 2:

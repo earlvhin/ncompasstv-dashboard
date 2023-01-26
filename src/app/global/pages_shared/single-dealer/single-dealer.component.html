@@ -422,9 +422,12 @@
 												class="theme-btn status-filter-btn sm-text mr-2 h-45"
 												[matMenuTriggerFor]="hostStatusList">
 												<span class="button-label">Host Status: {{ current_host_status_filter | titlecase }}</span>
-												<span
-													class="fas fa-circle"
-													[ngClass]="current_host_status_filter === 'active' ? 'text-primary' : 'text-gray'"></span>
+												<ng-container *ngIf="current_host_status_filter !== 'all'">
+													<span
+														class="fas fa-circle"
+														[ngClass]="current_host_status_filter === 'active' ? 'text-primary' : 'text-gray'">
+													</span>
+												</ng-container>
 											</button>
 											<mat-menu #hostStatusList="matMenu">
 												<button mat-menu-item (click)="filterHostsByStatus('active')">
