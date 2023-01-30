@@ -83,13 +83,13 @@
                     <mat-tab id="licenses-view-tab" label="Licenses View">
                         <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
                             <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-                                <div *ngIf="!initial_load_licenses; else loader">
-                                    <div *ngIf="!no_licenses; else no_data">
+                                <div>
+                                    <div>
                                         <div class="row">
-                                            <div class="col-lg-8">
+                                            <div class="col-lg-6">
                                                 <button id="filter-by-license-status-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
-                                                    [matMenuTriggerFor]="licenseStatus" >
+                                                    [matMenuTriggerFor]="licenseStatus" [disabled]="hide_all_license">
                                                     <span class="button-label">License Status</span>
                                                     <span class="fas fa-circle xsm-text"></span>
                                                 </button>
@@ -128,7 +128,7 @@
 
                                                 <button id="filter-by-timezone-btn" mat-button mat-raised-button 
                                                     class="theme-btn sm-text mr-2 h-45" 
-                                                    [matMenuTriggerFor]="timezone">
+                                                    [matMenuTriggerFor]="timezone" [disabled]="hide_all_license">
                                                     <span class="button-label">Timezone</span>
                                                     <span class="fas fa-sort xsm-text"></span>
                                                 </button>
@@ -148,7 +148,7 @@
                                                 <button mat-button mat-raised-button 
                                                     class="theme-btn pi-control _cool sm-text mr-2" 
                                                     [matMenuTriggerFor]="orderSort" 
-                                                    title="Order by License Status">
+                                                    title="Order by License Status" [disabled]="hide_all_license">
                                                     <span class="fas fa-sort"></span> 
                                                     <span class="ml-2 button_text_animation">Order by License Status</span>
                                                 </button>
@@ -160,25 +160,34 @@
                                                     class="theme-btn pi-control sm-text _primary mr-2" 
                                                     (click)="exportTable('licenses')"
                                                     [disabled]="workbook_generation"  
-                                                    title="Export to CSV">
+                                                    title="Export to CSV" [disabled]="hide_all_license">
                                                     <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}}"></span> 
                                                     <span class="ml-2 button_text_animation">{{!workbook_generation ? 'Export' : 'Generating CSV'}}</span>
                                                 </button>
                                                 <button mat-button mat-raised-button
                                                     class="theme-btn pi-control sm-text _info mr-2" 
                                                     [matMenuTriggerFor]="adminOption"
-                                                    title="Admin Licenses" *ngIf="!is_dealer_admin">
+                                                    title="Admin Licenses" *ngIf="!is_dealer_admin" [disabled]="hide_all_license">
                                                     <span class="fas fa-user-shield"></span> 
-                                                    <span class="ml-2 button_text_animation">Show/Hide Admin Licenses</span>
+                                                    <span class="ml-2 button_text_animation">Show/Hide Admin License</span>
                                                 </button>
                                                 <mat-menu #adminOption="matMenu">
                                                     <button class="md-text" mat-menu-item (click)="showAdminLicenses('true')">Show</button>
                                                     <button class="md-text" mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
                                                 </mat-menu>
                                             </div>
+                                            <div class="col-lg-2 text-right">
+                                                <button mat-button mat-raised-button 
+                                                    class="theme-btn sm-text h-45 mr-2" [ngClass]="active_view === 'list' ? 'active-button' : ''" title="List View" (click)="changeView('list')">
+                                                    <span class="button-label mr-0"><i class="fas fa-list"></i></span>
+                                                </button>
+                                                <button mat-button mat-raised-button 
+                                                    class="theme-btn sm-text h-45" [ngClass]="active_view === 'grid' ? 'active-button' : ''" title="Grid View" (click)="changeView('grid')">
+                                                    <span class="button-label mr-0"><i class="fas fa-th"></i></span>
+                                                </button>
+                                            </div>
                                             <div class="col-lg-4">
                                                 <app-search-field id="licenses-tab-search-field"
-													*ngIf="!initial_load_licenses"
 													[form_title]="'Search License ID, Host name, Anydesk, or #Tag'"
 													[placeholder]="'Example: License # 9'"
 													[data_reference]="licenses_data"
@@ -229,27 +238,158 @@
                                             </span>
                                             </div>
                                         </div>
-                                        <div class="row" *ngIf="!initial_load_licenses">
-                                            <div class="col-lg-12 mr-2">
-                                                <ng-container *ngIf="!searching_licenses; else loader">
-                                                    <mat-card *ngIf="filtered_data_licenses.length > 0;else nodata">
-                                                        <app-data-table 
-															[table_data]="filtered_data_licenses"
-															[table_columns]="license_table_column"
-															[new_table]="true"
-															[paging_details]="paging_data_licenses"
-															[query_params]="tab"
-															(page_triggered)="getLicenses($event)"
-															[license_status_column]="true"
-															(to_sort_column)="getColumnsAndOrder($event, 'licenses')"
-															[active_tab]="sort_column"
-															[sort_column]="sort_column"
-															[sort_order]="sort_order">
-                                                        </app-data-table>
-                                                    </mat-card>
-                                                </ng-container>
+                                        <div class="row" *ngIf="!hide_all_license; else showLicensesButton">
+                                            <div class="col-lg-12 p-0" *ngIf="!no_licenses; else no_data">
+                                                <div class="col-lg-12 mr-2" *ngIf="active_view === 'list'; else grid">
+                                                    <ng-container>
+                                                        <mat-card *ngIf="filtered_data_licenses.length > 0;else nodata">
+                                                            <app-data-table 
+                                                                [table_data]="filtered_data_licenses"
+                                                                [table_columns]="license_table_column"
+                                                                [new_table]="true"
+                                                                [paging_details]="paging_data_licenses"
+                                                                [query_params]="tab"
+                                                                (page_triggered)="getLicenses($event)"
+                                                                [license_status_column]="true"
+                                                                (to_sort_column)="getColumnsAndOrder($event, 'licenses')"
+                                                                [active_tab]="sort_column"
+                                                                [sort_column]="sort_column"
+                                                                [sort_order]="sort_order">
+                                                            </app-data-table>
+                                                        </mat-card>
+                                                    </ng-container>
+                                                </div>
+                                                <ng-template #grid>
+                                                    <div class="col-lg-12 mr-2 flex flow-wrap" *ngIf="license_data_for_grid_view.length > 0; else loader">
+                                                        <div class="col-lg-12 p-0 contents mt-3">
+                                                            <div class="col-lg-12 mb-5 p-0" *ngIf="!no_favorites">
+                                                                <span class="text-primary">FAVORITES:</span>
+                                                                <div class="col-lg-12 mt-2 mb-3 d-flex flex-wrap p-0" *ngIf="favorites_list.length > 0; else small_loader_no_bg">
+                                                                    <div class="col-lg-2 mb-3" *ngFor="let license of favorites_list">
+                                                                        <div class="col-lg-12 image-holder p-0">
+                                                                            <img [src]="formulateScreenshotURL(license.screenshotUrl)" *ngIf="license.screenshotUrl != ''; else defaultScreenshot" height="150px" width="100%">
+                                                                            <ng-template #defaultScreenshot>
+                                                                                <div class="col-lg-12 screenshot-holder fas fa-camera"></div>
+                                                                            </ng-template>
+                                                                            <div class="position-absolute top-0 right-0 pr-3 pt-2 h-150 z-index-5 clickable">
+                                                                                <span mat-button mat-raised-button
+                                                                                    [matMenuTriggerFor]="gridView"
+                                                                                    title="Show Options" class="hidden-button no-background text-white clickable">
+                                                                                    <span class="fas fa-cog for-shadowing"></span>
+                                                                                </span>
+                                                                                <mat-menu #gridView="matMenu">
+                                                                                    <button class="md-text" mat-menu-item (click)="copyToClipboard(license.licenseKey)">Copy License Key</button>
+                                                                                    <button class="md-text" mat-menu-item (click)="copyToClipboard(license.anydeskId)">Copy AnyDesk ID</button>
+                                                                                    <button class="md-text" mat-menu-item (click)="copyToClipboard(getAnydeskPassword(license.licenseId))">Copy Password</button>
+                                                                                </mat-menu>
+                                                                            </div>
+                                                                            <div class="grid-details position-absolute top-0 pt-2 pl-0 full-width h-150">
+                                                                                <div class="col-lg-12 p-0 pl-2 clickable favorites-container for-shadowing" (click)="removeToFavorites(license)">
+                                                                                    <i class="fas fa-star favorites for-sha" title="Remove from Favorites"></i>
+                                                                                </div>
+                                                                                <div class="col-lg-12 p-0 pl-2 for-shadowing">
+                                                                                    <i class="fas fa-circle" title="{{license.piStatus === 0 ? 'Offline' : 'Online'}}" [ngClass]="license.piStatus === 0 ? 'text-danger' : 'text-primary'"></i>
+                                                                                </div>
+                                                                                <div class="col-lg-12 p-0 pl-2 for-shadowing">
+                                                                                    <i class="fas fa-tv" title="{{license.displayStatus === 0 ? 'Display Off' : 'Display On'}}" [ngClass]="license.displayStatus === 0 ? 'text-danger' : 'text-primary'"></i>
+                                                                                </div>
+                                                                                <div class="col-lg-12 d-flex p-0 bottom-0 sm-text text-white black-opacity z-index-10 license-details">
+                                                                                    <div class="col-lg-12 p-0 text-center">
+                                                                                        <b><span class="sm-text">{{license.alias}}</span></b>
+                                                                                        <br>
+                                                                                        <span class="xsm-text">{{license.businessName}} / {{license.screenName}}</span>
+                                                                                        <span *ngIf="license.screenshotUrl != ''">
+                                                                                            <br>
+                                                                                            <span class="xsm-text">{{ license.screenshotUrl | screenshot }}</span>
+                                                                                        </span>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <!-- <ng-template #no_favo>
+                                                                <div class="col-lg-12 mb-5 p-0">
+                                                                    <span class="text-danger">There is no favorite license(s).</span>
+                                                                </div>
+                                                            </ng-template> -->
+                                                            <div class="col-lg-12 p-0 mb-3">
+                                                                <span class="text-primary">NON-FAVORITES:</span>
+                                                            </div>
+                                                            <div class="col-lg-2 mb-3" *ngFor="let license of license_data_for_grid_view">
+                                                                <div class="col-lg-12 image-holder p-0">
+                                                                    <img [src]="formulateScreenshotURL(license.screenshotUrl)" *ngIf="license.screenshotUrl != ''; else defaultScreenshot" height="150px" width="100%">
+                                                                    <ng-template #defaultScreenshot>
+                                                                        <div class="col-lg-12 screenshot-holder fas fa-camera"></div>
+                                                                    </ng-template>
+                                                                    <div class="position-absolute top-0 right-0 pr-3 pt-2 h-150 z-index-5 clickable">
+                                                                        <span mat-button mat-raised-button
+                                                                            [matMenuTriggerFor]="gridView"
+                                                                            title="Show Options" class="hidden-button no-background text-white clickable">
+                                                                            <span class="fas fa-cog for-shadowing"></span>
+                                                                        </span>
+                                                                        <mat-menu #gridView="matMenu">
+                                                                            <button class="md-text" mat-menu-item (click)="copyToClipboard(license.licenseKey)">Copy License Key</button>
+                                                                            <button class="md-text" mat-menu-item (click)="copyToClipboard(license.anydeskId)">Copy AnyDesk ID</button>
+                                                                            <button class="md-text" mat-menu-item (click)="copyToClipboard(getAnydeskPassword(license.licenseId))">Copy Password</button>
+                                                                        </mat-menu>
+                                                                    </div>
+                                                                    <div class="grid-details position-absolute top-0 pt-2 pl-0 full-width h-150">
+                                                                        <div class="col-lg-12 p-0 pl-2 clickable favorites-container for-shadowing" (click)="addToFavorites(license.licenseId)">
+                                                                            <i class="fas fa-star text-light-gray for-sha" title="Add to Favorites"></i>
+                                                                        </div>
+                                                                        <div class="col-lg-12 p-0 pl-2 for-shadowing">
+                                                                            <i class="fas fa-circle" title="{{license.piStatus === 0 ? 'Offline' : 'Online'}}" [ngClass]="license.piStatus === 0 ? 'text-danger' : 'text-primary'"></i>
+                                                                        </div>
+                                                                        <div class="col-lg-12 p-0 pl-2 for-shadowing">
+                                                                            <i class="fas fa-tv" title="{{license.displayStatus === 0 ? 'Display Off' : 'Display On'}}" [ngClass]="license.displayStatus === 0 ? 'text-danger' : 'text-primary'"></i>
+                                                                        </div>
+                                                                        <div class="col-lg-12 d-flex p-0 bottom-0 sm-text text-white black-opacity z-index-10 license-details">
+                                                                            <div class="col-lg-12 p-0 text-center">
+                                                                                <b><span class="sm-text">{{license.alias}}</span></b>
+                                                                                <br>
+                                                                                <span class="xsm-text">{{license.businessName}} / {{license.screenName}}</span>
+                                                                                <span *ngIf="license.screenshotUrl != ''">
+                                                                                    <br>
+                                                                                    <span class="xsm-text">{{ license.screenshotUrl | screenshot }}</span>
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-12 text-center p-0 mt-3" *ngIf="paging_data_licenses.hasNextPage">
+                                                            <button class="text-white p-3 bg-primary btn md-text pl-5 pr-5" (click)="getLicenses(paging_data_licenses.page + 1, 24)" [disabled]="searching_licenses">
+                                                                <span>SHOW MORE</span>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </ng-template>
                                             </div>
                                         </div>
+                                        <ng-template #showLicensesButton>
+                                            <div class="col-lg-12 p-0">
+                                                <div class="col-lg-12 mr-2 text-center">
+                                                    <ng-container>
+                                                        <mat-card class="p-5">
+                                                            <span class="sm-text">
+                                                                Licenses are hidden by default, If you wish to see the list, click the button below:
+                                                            </span>
+                                                            <br>
+                                                            <button mat-button mat-raised-button
+                                                                class="theme-btn sm-text _info mr-2 mt-3"
+                                                                title="Show All Licenses"
+                                                                (click)="showAllLicenses()">
+                                                                <span class="fas fa-eye"></span> 
+                                                                <span class="ml-2">Show All Licenses</span>
+                                                            </button>
+                                                        </mat-card>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </ng-template>
                                     </div>
                                 </div>
                             </div>
@@ -412,6 +552,12 @@
     
         <ng-template #small_loader>
             <div class="py-4 white-bg">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </ng-template>
+        
+        <ng-template #small_loader_no_bg>
+            <div class="py-4">
                 <app-spinner [diameter]="60"></app-spinner>
             </div>
         </ng-template>

@@ -14,6 +14,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-licenses',
@@ -22,6 +23,7 @@ import { LicenseModalComponent } from 'src/app/global/components_shared/license_
 	providers: [DatePipe, TitleCasePipe]
 })
 export class LicensesComponent implements OnInit {
+    active_view: string = 'list';
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	licenses_data: UI_LICENSE[] = [];
 	hosts_data: UI_HOST_VIEW[] = [];
@@ -30,6 +32,7 @@ export class LicensesComponent implements OnInit {
 	no_dealer: boolean;
 	no_host: boolean;
 	no_licenses: boolean;
+	no_favorites: boolean;
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
 	filtered_data_licenses: UI_LICENSE[] = [];
@@ -44,9 +47,12 @@ export class LicensesComponent implements OnInit {
 	searching: boolean = false;
 	searching_licenses: boolean = false;
 	searching_hosts: boolean = false;
+	hide_all_license: boolean = true;
 	initial_load: boolean = true;
 	initial_load_licenses: boolean = true;
 	initial_load_hosts: boolean = true;
+    is_favorite: boolean = false;
+    favorites_list: any = [];
 	search_data: string = '';
 	search_data_licenses: string = '';
 	search_data_host: string = '';
@@ -56,6 +62,7 @@ export class LicensesComponent implements OnInit {
 	sort_column_hosts: string = '';
 	sort_order_hosts: string = '';
 	has_sort: boolean = false;
+    license_data_for_grid_view: any = [];
 
 	//for export
 	hosts_to_export: API_HOST[] = [];
@@ -70,6 +77,7 @@ export class LicensesComponent implements OnInit {
 	temp_array_this_week: any = [];
 	temp_label_last_week: any = [];
 	temp_array_last_week: any = [];
+    url_link: any;
 
 	diff_hours: any;
 
@@ -187,6 +195,9 @@ export class LicensesComponent implements OnInit {
 		this.getLicensesTotal();
 
 		this.getLicenses(1);
+
+        let link= `${environment.base_uri}`;
+        this.url_link = link.replace('/api/', '');
 	}
 
 	ngAfterContentChecked(): void {
@@ -263,7 +274,44 @@ export class LicensesComponent implements OnInit {
 			});
 	}
 
-	getLicenses(page: number) {
+    getFavoriteLicenses() {
+        this.favorites_list = [];
+        this._license.get_all_licenses(
+			1,
+			this.search_data_licenses,
+			this.sort_column,
+			this.sort_order,
+			0,
+			this.filters.admin_licenses,
+			this.filters.status,
+			this.filters.days_offline,
+			this.filters.activated,
+			this.filters.recent,
+			this.filters.zone,
+			this.filters.dealer,
+			this.filters.host,
+			this.filters.assigned,
+			this.filters.pending,
+			this.filters.online,
+			this.filters.isactivated,
+            true,
+		).pipe(takeUntil(this._unsubscribe)).subscribe(
+			(data) => {
+                data.paging.entities.map(
+                    entities => {
+                        this.favorites_list.push(entities)
+                    }
+                )
+                if(data.paging.entities.length === 0) {
+                    this.no_favorites = true;
+                } else {
+                    this.no_favorites = false;
+                }
+            }
+        )
+    }
+
+	getLicenses(page: number, pageSize?) {
 		this.searching_licenses = true;
 		this.hosts_data = [];
 		if (this.has_sort) {
@@ -273,7 +321,7 @@ export class LicensesComponent implements OnInit {
 					this.search_data_licenses,
 					this.sort_column,
 					this.sort_order,
-					15,
+					pageSize ? pageSize : 15,
 					this.filters.admin_licenses,
 					this.filters.status,
 					this.filters.days_offline,
@@ -285,24 +333,35 @@ export class LicensesComponent implements OnInit {
 					this.filters.assigned,
 					this.filters.pending,
 					this.filters.online,
-					this.filters.isactivated
+					this.filters.isactivated,
+                    false,
 				)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
-						this.paging_data_licenses = data.paging;
+                        this.paging_data_licenses = data.paging;
+                        if (data.paging.entities) {
+                            const mapped = this.mapToLicensesTable(data.paging.entities);
+                            this.licenses_data = [...mapped];
+                            this.filtered_data_licenses = [...mapped];
+                        } else {
+                            if (this.search_data == '') this.no_licenses = true;
+                            this.filtered_data_licenses = [];
+                        }
 
-						if (data.paging.entities) {
-							const mapped = this.mapToLicensesTable(data.paging.entities);
-							this.licenses_data = [...mapped];
-							this.filtered_data_licenses = [...mapped];
-						} else {
-							if (this.search_data == '') this.no_licenses = true;
-							this.filtered_data_licenses = [];
-						}
-
-						this.initial_load_licenses = false;
-						this.searching_licenses = false;
+                        this.initial_load_licenses = false;
+                        this.searching_licenses = false;
+                            
+                        if(this.active_view === 'grid') {
+                            // if(page === 2) {
+                            //     this.license_data_for_grid_view = [];
+                            // }
+                            data.paging.entities.map(
+                                entities => {
+                                    this.license_data_for_grid_view.push(entities)
+                                }
+                            )
+                        }
 					},
 					(error) => {
 						throw new Error(error);
@@ -315,7 +374,7 @@ export class LicensesComponent implements OnInit {
 					this.search_data_licenses,
 					this.sort_column,
 					this.sort_order,
-					15,
+					pageSize ? pageSize : 15,
 					this.filters.admin_licenses,
 					this.filters.status,
 					this.filters.days_offline,
@@ -345,6 +404,13 @@ export class LicensesComponent implements OnInit {
 
 						this.initial_load_licenses = false;
 						this.searching_licenses = false;
+                        if(this.active_view === 'grid') {
+                            data.paging.entities.map(
+                                entities => {
+                                    this.license_data_for_grid_view.push(entities)
+                                }
+                            )
+                        }
 					},
 					(error) => {
 						throw new Error(error);
@@ -352,6 +418,7 @@ export class LicensesComponent implements OnInit {
 				);
 		}
 	}
+    
 
 	onTabChanged(e: { index: number }) {
 		switch (e.index) {
@@ -473,6 +540,7 @@ export class LicensesComponent implements OnInit {
 					this.filters.label_host = data.host.name;
 				}
 				this.getLicenses(1);
+                this.hide_all_license = false;
 			}
 		});
 	}
@@ -484,6 +552,7 @@ export class LicensesComponent implements OnInit {
 					this.has_sort = true;
 					this.search_data_licenses = e;
 					this.getLicenses(1);
+                    this.hide_all_license = false;
 				} else {
 					this.has_sort = false;
 					this.search_data_licenses = '';
@@ -676,6 +745,7 @@ export class LicensesComponent implements OnInit {
 			label_admin: ''
 		};
 		this.sortList('desc');
+        this.hide_all_license = true;
 		this.getLicenses(1);
 	}
 
@@ -1201,4 +1271,93 @@ export class LicensesComponent implements OnInit {
 	private get currentRole() {
 		return this._auth.current_role;
 	}
+
+    changeView(view) {
+        this.active_view = view;
+        if(view === 'grid') {
+            this.getFavoriteLicenses();
+            this.has_sort = true;
+            this.license_data_for_grid_view = [];
+            this.getLicenses(1, 24)
+        } else {
+            this.getLicenses(1)
+        }
+    }
+
+    formulateScreenshotURL(url) {
+        return `${environment.base_uri}${url.replace('/API/', '')}`;
+    }
+
+    showAllLicenses() {
+        this.hide_all_license = false;
+    }
+
+    copyToClipboard(val: string) {
+		//create artificial textbox for selector
+		const selBox = document.createElement('textarea');
+		selBox.style.position = 'fixed';
+		selBox.style.left = '0';
+		selBox.style.top = '0';
+		selBox.style.opacity = '0';
+		selBox.value = val;
+		document.body.appendChild(selBox);
+		selBox.focus();
+		selBox.select();
+		document.execCommand('copy');
+		document.body.removeChild(selBox);
+	}
+
+    getAnydeskPassword(id) {
+        return this.splitKey(id)
+    }
+
+    addToFavorites(id) {
+        this._license
+			.add_license_favorite(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+                response => {
+                    if(!response) {
+                        this.license_data_for_grid_view = this.license_data_for_grid_view.filter((license) => {
+					        return license.licenseId != id;
+				        })
+                        this.openConfirmationModal('success', 'Success!', 'License successfully added to Favorites');
+                    } else {
+                        this.openConfirmationModal('error', 'Error!', response.message);
+                    }
+                }
+            )
+    }
+    
+    removeToFavorites(license) {
+        var id = license.licenseId;
+        this._license
+			.remove_license_favorite(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+                response => {
+                    if(!response) {
+                        this.openConfirmationModal('success', 'Success!', 'License successfully removed to Favorites');
+                        this.license_data_for_grid_view.push(license)
+                    } else {
+                        this.openConfirmationModal('error', 'Error!', response.message);
+                    }
+                }
+            )
+    }
+
+    openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialog.afterClosed().subscribe(() => {
+            if(status === 'success') {
+                this.getFavoriteLicenses();
+            };
+        });
+	}
+    
 }

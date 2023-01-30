@@ -71,3 +71,29 @@
     color: white;
     z-index: 7;
 }
+
+.grid-details {
+    &:hover, &:focus {
+        .license-details {
+            max-height: 69px;
+            height: 69px;
+            // transition: max-height 0.25s ease-in;
+            transform: scaleY(1);
+        }
+    }
+    .license-details {
+        max-height: 0;
+        overflow: hidden;
+        transition: transform .5s;
+        transform: scaleY(0);
+        transform-origin: 0 100%;
+    }
+}
+
+.favorites-container {
+    &:hover {
+        i {
+            color: yellow;
+        }
+    }
+}

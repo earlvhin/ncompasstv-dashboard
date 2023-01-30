@@ -65,7 +65,8 @@ export class LicenseService extends BaseService {
 		assigned?: string,
 		pending?: string,
 		online?: string,
-		isActivated?
+		isActivated?: string,
+        isFavorite?: boolean,
 	) {
 		const base = `${this.getters.api_get_licenses}`;
 		const params = this.setUrlParams(
@@ -86,7 +87,8 @@ export class LicenseService extends BaseService {
 				assigned,
 				pending,
 				online,
-				isActivated
+				isActivated,
+                isFavorite
 			},
 			false,
 			true
@@ -112,7 +114,7 @@ export class LicenseService extends BaseService {
 		assigned?: string,
 		pending?: string,
 		online?: string,
-		isActivated?
+		isActivated?: string
 	) {
 		const base = `${this.getters.api_get_licenses_fetch}`;
 		const params = this.setUrlParams(
@@ -454,6 +456,16 @@ export class LicenseService extends BaseService {
 
 	activate_license(id) {
 		const url = `${this.updaters.api_activate_license}?licenseKey=${id}`;
+		return this.postRequest(url, {});
+	}
+	
+    add_license_favorite(id) {
+		const url = `${this.updaters.api_add_license_favorite}?licenseId=${id}`;
+		return this.postRequest(url, {});
+	}
+    
+    remove_license_favorite(id) {
+		const url = `${this.deleters.api_remove_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});
 	}
 

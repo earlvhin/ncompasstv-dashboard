@@ -251,6 +251,7 @@ export const API_ENDPOINTS = {
 	},
 	update: {
 		account_permission: 'account/updatepermission',
+		api_add_license_favorite: 'license/add/favorite',
 		api_assign_license_to_screen: 'screen/assignlicenses',
 		api_activate_license: 'license/activate',
 		api_assign_license_to_host: 'license/assignhost',
@@ -337,6 +338,7 @@ export const API_ENDPOINTS = {
 		api_remove_in_blacklist: 'blacklistedcontents/delete',
 		api_bulk_remove_in_blacklist: 'blacklistedcontents/bulkdelete',
 		api_remove_license: 'license/removebylicenseid',
+		api_remove_favorite: 'license/remove/favorite',
 		api_remove_screen: 'screen/removebyscreenid',
 		api_remove_screen_license: 'screen/unassignlicense',
 		api_remove_host_licenses: 'license/unassignhost',
