@@ -295,7 +295,7 @@
                                                                                 </div>
                                                                                 <div class="col-lg-12 d-flex p-0 bottom-0 sm-text text-white black-opacity z-index-10 license-details">
                                                                                     <div class="col-lg-12 p-0 text-center">
-                                                                                        <b><span class="sm-text">{{license.alias}}</span></b>
+                                                                                        <b><span class="sm-text clickable" (click)="navigateToAlias(license.licenseId)">{{license.alias}}</span></b>
                                                                                         <br>
                                                                                         <span class="xsm-text">{{license.businessName}} / {{license.screenName}}</span>
                                                                                         <span *ngIf="license.screenshotUrl != ''">
@@ -347,7 +347,7 @@
                                                                         </div>
                                                                         <div class="col-lg-12 d-flex p-0 bottom-0 sm-text text-white black-opacity z-index-10 license-details">
                                                                             <div class="col-lg-12 p-0 text-center">
-                                                                                <b><span class="sm-text">{{license.alias}}</span></b>
+                                                                                <b><span class="sm-text clickable" (click)="navigateToAlias(license.licenseId)">{{license.alias}}</span></b>
                                                                                 <br>
                                                                                 <span class="xsm-text">{{license.businessName}} / {{license.screenName}}</span>
                                                                                 <span *ngIf="license.screenshotUrl != ''">

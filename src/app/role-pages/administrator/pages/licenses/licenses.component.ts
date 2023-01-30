@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
+import { Router } from '@angular/router';
 
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
@@ -181,7 +182,8 @@ export class LicensesComponent implements OnInit {
 		private _license: LicenseService,
 		private _title: TitleCasePipe,
 		private cdr: ChangeDetectorRef,
-		private _activatedRoute: ActivatedRoute
+		private _activatedRoute: ActivatedRoute,
+        private router: Router
 	) {}
 
 	ngOnInit() {
@@ -551,12 +553,24 @@ export class LicensesComponent implements OnInit {
 				if (e) {
 					this.has_sort = true;
 					this.search_data_licenses = e;
-					this.getLicenses(1);
+                    if(this.active_view === 'grid') {
+                        this.license_data_for_grid_view = [];
+                        this.getFavoriteLicenses();
+                        this.getLicenses(1, 24)
+                    } else {
+                        this.getLicenses(1);
+                    }
                     this.hide_all_license = false;
 				} else {
 					this.has_sort = false;
 					this.search_data_licenses = '';
-					this.getLicenses(1);
+					if(this.active_view === 'grid') {
+                        this.license_data_for_grid_view = [];
+                        this.getFavoriteLicenses();
+                        this.getLicenses(1, 24)
+                    } else {
+                        this.getLicenses(1);
+                    }
 				}
 				break;
 			case 'hosts':
@@ -1359,5 +1373,14 @@ export class LicensesComponent implements OnInit {
             };
         });
 	}
+
+    protected get roleRoute() {
+		return this._auth.roleRoute;
+	}
+
+    navigateToAlias(id) {
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/licenses/${id}`], {}));
+		window.open(url, '_blank');
+    }
     
 }
