@@ -217,7 +217,13 @@ export class LicensesComponent implements OnInit {
 				this.has_sort = true;
 				this.sort_column = data.column;
 				this.sort_order = data.order;
-				this.getLicenses(1);
+				if(this.active_view === 'grid') {
+                    // this.license_data_for_grid_view = [];
+                    // this.getFavoriteLicenses();
+                    // this.getLicenses(1, 24)
+                } else {
+                    this.getLicenses(1);
+                }
 				break;
 			case 'hosts':
 				this.has_sort = true;
@@ -511,8 +517,13 @@ export class LicensesComponent implements OnInit {
 				break;
 			default:
 		}
-
-		this.getLicenses(1);
+		if(this.active_view === 'grid') {
+            this.license_data_for_grid_view = [];
+            this.getFavoriteLicenses();
+            this.getLicenses(1, 24)
+        } else {
+            this.getLicenses(1);
+        }
 	}
 
 	resetFilterStatus() {
@@ -759,8 +770,15 @@ export class LicensesComponent implements OnInit {
 			label_admin: ''
 		};
 		this.sortList('desc');
-        this.hide_all_license = true;
-		this.getLicenses(1);
+        // this.hide_all_license = true;
+        if(this.active_view === 'grid') {
+            this.getFavoriteLicenses();
+            this.has_sort = true;
+            this.license_data_for_grid_view = [];
+            this.getLicenses(1, 24)
+        } else {
+            this.getLicenses(1)
+        }
 	}
 
 	splitKey(key) {
