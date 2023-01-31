@@ -18,7 +18,7 @@
                         "configuration": {
                             "BranchName": "test-build",
                             "PollForSourceChanges": "true",
-                            "RepositoryName": "ncompasstv-socketserver"
+                            "RepositoryName": "ncompasstv-dashboard"
                         },
                         "outputArtifacts": [
                             {
@@ -90,7 +90,7 @@
         ],
         "artifactStore": {
             "type": "S3",
-            "location": "codepipeline-nc-nvir-stg-plsocket-01",
+            "location": "codepipeline-nc-nvir-stg-pldashboard-01",
             "encryptionKey": {
                 "id": "arn:aws:kms:us-east-1:289900069212:key/fe96faaa-5715-475b-8b88-623cb31392d6",
                 "type": "KMS"
