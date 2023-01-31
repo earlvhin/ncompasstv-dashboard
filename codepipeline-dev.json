@@ -16,7 +16,7 @@
                         "runOrder": 1,
                         "roleArn": "arn:aws:iam::892444632159:role/codepipeline-cross-account-role", 
                         "configuration": {
-                            "BranchName": "test-build",
+                            "BranchName": "development",
                             "PollForSourceChanges": "true",
                             "RepositoryName": "ncompasstv-dashboard"
                         },
@@ -56,6 +56,34 @@
                             "ProjectName": "nc-dashboard-codebuild"
                         },
                         "runOrder": 1
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "ncompasstv-dashboard-ecs-deployment",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "ECS",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ClusterName": "nc-nvir-dev-ecsdashboard-01",
+                            "DeploymentTimeout": "30",
+                            "FileName": "imagedefinitions.json",
+                            "ServiceName": "dashboard-service-dev"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "region": "us-east-1"
                     }
                 ]
             }
