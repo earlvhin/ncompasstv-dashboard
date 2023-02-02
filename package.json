@@ -10,6 +10,7 @@
 		"debug:prod": "ng serve -c debug-production",
 		"start:secure": "ng serve --ssl true --ssl-key ./cert.key --ssl-cert ./cert.crt",
 		"build": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --aot --output-hashing=all",
+		"build_env": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --c $ENV_NAME --aot --output-hashing=all",
 		"build_prod": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --prod --output-hashing=all",
 		"build_staging": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --c staging --aot --output-hashing=all",
 		"build_feature": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --c feature --aot --output-hashing=all",
