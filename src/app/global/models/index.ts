@@ -7,6 +7,7 @@ export * from './api_change-template-response.model';
 export * from './api_content.model';
 export * from './api_create-advertiser.model';
 export * from './api_create-host.model';
+export * from './api_create-playlist.model';
 export * from './api_create-screen-response.model';
 export * from './api_credit-card-details.model';
 export * from './api_dealer.model';
