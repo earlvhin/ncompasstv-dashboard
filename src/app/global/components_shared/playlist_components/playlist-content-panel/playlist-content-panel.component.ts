@@ -28,6 +28,8 @@ import {
 	API_CONTENT_DATA
 } from 'src/app/global/models';
 
+import { FEED_TYPES, IMAGE_TYPES, VIDEO_TYPES } from 'src/app/global/constants/file-types';
+
 @Component({
 	selector: 'app-playlist-content-panel',
 	templateUrl: './playlist-content-panel.component.html',
@@ -47,15 +49,21 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	@Output() reload_playlist = new EventEmitter<boolean>();
 	@Output() reload_demo = new EventEmitter();
 	@Output() playlist_demo = new EventEmitter();
+	_contentsBackup: API_CONTENT[];
 
 	active_draggable_contents: API_CONTENT[] = [];
 	button_click_event: string;
 	can_set_schedule = false;
 	can_update_schedule = false;
 	clickObservable: Observable<Event> = fromEvent(document, 'click');
+	contentFileTypes = this._contentFileTypes;
 	contents_with_schedules: API_CONTENT[] = [];
 	contents_without_schedules: API_CONTENT[] = [];
-	currentContentFilter: string;
+	currentFeedCount = 0;
+	currentImageCount = 0;
+	currentVideoCount = 0;
+	currentStatusFilter: { key: string; label: string };
+	currentFileTypeFilter = 'all';
 	has_selected_content_with_schedule = false;
 	is_loading = false;
 	is_bulk_selecting = false;
@@ -81,12 +89,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	search_control = new FormControl();
 	bulk_toggle: boolean;
 
-	contentFilterOptions = [
-		{ label: 'No Filter', key: 'default' },
-		{ label: 'Active', key: 'active' },
-		{ label: 'In Queue', key: 'future' },
-		{ label: 'Inactive', key: 'inactive' }
-	];
+	statusFilterOptions = this._statusFilterOptions;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -99,12 +102,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
+		this._contentsBackup = Array.from(this.playlist_contents);
 		this.subscribeToSearch();
 		this.playlist_content_backup = this.playlist_contents;
 		this.setScheduleStatus();
 		this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
 		this.getAssetCount();
-		this.currentContentFilter = this.contentFilterOptions[1].key;
+		this.currentStatusFilter = this.statusFilterOptions[1];
 		this.playlist_saving = false;
 		this.selected_contents = [];
 		this.selected_content_ids = [];
@@ -127,6 +131,8 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			if (!schedule) return;
 			if (schedule.type !== 3) return content;
 		});
+
+		this.getCurrentAssetCount();
 	}
 
 	ngOnDestroy() {
@@ -202,8 +208,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		dialog.afterClosed().subscribe(
 			(data) => {
 				if (data) {
-					console.log('selected contents', this.selected_contents);
-					console.log('selected content ids', this.selected_content_ids);
 					this.removePlaylistContents(this.selected_contents);
 					this.logContentHistory(this.selected_content_ids, false);
 				}
@@ -251,29 +255,69 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	selectAllContents(): void {
-		this.playlist_contents.forEach((i) => {
-			if (i.frequency !== 2 && i.frequency != 3) {
-				this.selected_contents.push(i.playlistContentId);
-				this.selected_content_ids.push({ playlistContentId: i.playlistContentId, contentId: i.contentId, classification: i.classification });
-			}
-		});
+	filterContentByFileType(type: string) {
+		this.currentFileTypeFilter = type;
+		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
+		const hasStatusFilter = typeof this.currentStatusFilter !== 'undefined';
+		const currentStatusFilter = this.currentStatusFilter;
+		const contents = Array.from(this._contentsBackup);
 
-		this.can_set_schedule = true;
+		if (type === 'all' && currentStatusFilter.key === 'default') {
+			this.playlist_contents = Array.from(contents);
+			this.getCurrentAssetCount();
+			return;
+		}
+
+		this.playlist_contents = [...contents.filter((content) => fileTypes(type).includes(content.fileType.toLowerCase()))];
+
+		if (hasStatusFilter && currentStatusFilter.key !== 'default') {
+			this.playlist_contents = [...this.playlist_contents.filter((content: API_CONTENT) => content.scheduleStatus === currentStatusFilter.key)];
+		}
+
+		this.getCurrentAssetCount();
+	}
+
+	filterContentByStatus(key: string): void {
+		const originalContents = this.playlist_content_backup;
+		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
+		this.currentStatusFilter = this.statusFilterOptions.filter((content) => content.key === key)[0];
+
+		if (key === 'default') {
+			this.playlist_content_backup = Array.from(this._contentsBackup);
+			this.playlist_contents = Array.from(this._contentsBackup);
+			this.setScheduleStatus();
+
+			const fileTypeFilter = this.currentFileTypeFilter;
+
+			if (typeof fileTypeFilter !== 'undefined' && fileTypeFilter !== 'all') {
+				const currentContents = Array.from(this.playlist_contents);
+				const type = this.currentFileTypeFilter;
+				this.playlist_contents = currentContents.filter((content: API_CONTENT) => fileTypes(type).includes(content.fileType.toLowerCase()));
+			}
+
+			this.getCurrentAssetCount();
+
+			return;
+		}
+
+		this.playlist_contents = [...originalContents.filter((content) => content.scheduleStatus === key)];
+		const fileTypeFilter = this.currentFileTypeFilter;
+
+		if (typeof fileTypeFilter !== 'undefined' && fileTypeFilter !== 'all') {
+			const currentContents = Array.from(this.playlist_contents);
+			this.playlist_contents = currentContents.filter((content: API_CONTENT) =>
+				fileTypes(fileTypeFilter).includes(content.fileType.toLowerCase())
+			);
+		}
+
+		this.getCurrentAssetCount();
 	}
 
 	getAssetCount(): void {
-		this.video_count = this.playlist_contents.filter((i) => {
-			return i.fileType === 'webm';
-		}).length;
-
-		this.image_count = this.playlist_contents.filter((i) => {
-			return i.fileType !== 'webm' && i.fileType != 'feed';
-		}).length;
-
-		this.feed_count = this.playlist_contents.filter((i) => {
-			return i.fileType === 'feed';
-		}).length;
+		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
+		this.video_count = this._contentsBackup.filter((i) => fileTypes('video').includes(i.fileType.toLowerCase())).length;
+		this.image_count = this._contentsBackup.filter((i) => fileTypes('image').includes(i.fileType.toLowerCase())).length;
+		this.feed_count = this._contentsBackup.filter((i) => fileTypes('feed').includes(i.fileType.toLowerCase())).length;
 	}
 
 	getPlaylistById(): void {
@@ -291,34 +335,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				blacklistedContents: []
 			};
 		});
-	}
-
-	onSelectContentFilter(key: string): void {
-		const originalContents = this.playlist_content_backup;
-
-		if (key === 'default') {
-			this.is_loading = true;
-
-			this._playlist
-				.get_playlist_by_id(this.playlist_id)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(response: { playlistContents: any[] }) => {
-						const { playlistContents } = response;
-						this.playlist_content_backup = playlistContents;
-						this.setScheduleStatus();
-						this.playlist_contents = playlistContents;
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				)
-				.add(() => (this.is_loading = false));
-
-			return;
-		}
-
-		this.playlist_contents = [...originalContents.filter((content) => content.scheduleStatus === key)];
 	}
 
 	onSetSchedule(): void {
@@ -477,6 +493,17 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					throw new Error(error);
 				}
 			);
+	}
+
+	selectAllContents(): void {
+		this.playlist_contents.forEach((i) => {
+			if (i.frequency !== 2 && i.frequency != 3) {
+				this.selected_contents.push(i.playlistContentId);
+				this.selected_content_ids.push({ playlistContentId: i.playlistContentId, contentId: i.contentId, classification: i.classification });
+			}
+		});
+
+		this.can_set_schedule = true;
 	}
 
 	sortableJSInit(): void {
@@ -742,9 +769,25 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		return new API_CONTENT_HISTORY_LIST(new_contents);
 	}
 
-	private filterExpiredContent(data: any[]): any[] {
-		const copy = [...data];
-		return copy.filter((content) => content.scheduleStatus !== 'inactive');
+	private getCurrentAssetCount() {
+		const currentContents = Array.from(this.playlist_contents);
+		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
+		this.currentVideoCount = currentContents.filter((x: API_CONTENT) => fileTypes('video').includes(x.fileType.toLowerCase())).length;
+		this.currentImageCount = currentContents.filter((x: API_CONTENT) => fileTypes('image').includes(x.fileType.toLowerCase())).length;
+		this.currentFeedCount = currentContents.filter((x: API_CONTENT) => fileTypes('feed').includes(x.fileType.toLowerCase())).length;
+	}
+
+	private getFileTypesByTypeName(data: string) {
+		switch (data) {
+			case 'image':
+				return IMAGE_TYPES;
+
+			case 'video':
+				return VIDEO_TYPES;
+
+			default:
+				return FEED_TYPES;
+		}
 	}
 
 	private setScheduleStatus(): void {
@@ -923,6 +966,19 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				this.isMarking({ checked: false });
 				this.reload_playlist.emit(true);
 			});
+	}
+
+	protected get _contentFileTypes() {
+		return ['all', 'image', 'video', 'feeds'];
+	}
+
+	protected get _statusFilterOptions() {
+		return [
+			{ label: 'All', key: 'default' },
+			{ label: 'Active', key: 'active' },
+			{ label: 'In Queue', key: 'future' },
+			{ label: 'Inactive', key: 'inactive' }
+		];
 	}
 
 	protected get currentUser() {

@@ -2,10 +2,23 @@
 	<div class="title-section d-flex align-items-center mb-3">
 		<div class="flex-even">
 			<h3>Playlist Content</h3>
-			<p class="xsm-text mb-0">
-				Total Playlist Content: <strong>{{ playlist_contents.length }}</strong> / Videos: <strong>{{ video_count || 0 }}</strong> / Images:
-				<strong>{{ image_count || 0 }}</strong> / Feed: <strong>{{ feed_count || 0 }}</strong>
-			</p>
+			<div class="content-stats d-flex xsm-text mb-0">
+				<div class="total-contents">
+					Total Playlist Content: <b>{{ _contentsBackup.length }}</b>
+				</div>
+				|
+				<div class="total-contents video-contents">
+					Videos: <b>{{ video_count || 0 }}</b>
+				</div>
+				|
+				<div class="total-contents image-contents">
+					Images: <b>{{ image_count || 0 }}</b>
+				</div>
+				|
+				<div class="total-contents feed-contents">
+					Feeds: <b>{{ feed_count || 0 }}</b>
+				</div>
+			</div>
 		</div>
 		<div>
 			<button mat-button mat-raised-button class="theme-btn flex-even mx-1" (click)="openPlaylistDemo()">
@@ -55,16 +68,6 @@
 			</div>
 		</div>
 		<div class="text-right">
-			<!-- FILTER DROPDOWN -->
-			<mat-form-field class="content-filter-dropdown">
-				<mat-label>Filter By Status</mat-label>
-				<mat-select (selectionChange)="onSelectContentFilter($event.value)" [(value)]="currentContentFilter" [disabled]="is_bulk_selecting">
-					<mat-option *ngFor="let filter of contentFilterOptions" [value]="filter.key">
-						{{ filter.label }}
-					</mat-option>
-				</mat-select>
-			</mat-form-field>
-
 			<!-- SET SCHEDULE BUTTON -->
 			<button
 				mat-button
@@ -124,11 +127,81 @@
 		</div>
 	</div>
 
-	<div class="search-playlist-content">
-		<mat-form-field class="w-100" appearance="fill">
+	<div class="search-playlist-content d-flex">
+		<div class="filters d-flex">
+			<div class="status-filters">
+				<button
+					id="filter-by-content-status-btn"
+					mat-button
+					mat-raised-button
+					class="theme-btn sm-text mr-2 h-45"
+					[matMenuTriggerFor]="statusFilters">
+					<span class="button-label">Content Status:</span>
+					<span class="button-label">
+						{{ currentStatusFilter.label }}
+					</span>
+					<ng-container *ngIf="currentStatusFilter.key !== 'default'">
+						<span class="fas fa-circle xsm-text" [ngClass]="currentStatusFilter.key"></span>
+					</ng-container>
+				</button>
+				<mat-menu #statusFilters="matMenu">
+					<ng-container *ngFor="let filter of statusFilterOptions">
+						<button class="md-text" mat-menu-item (click)="filterContentByStatus(filter.key)">
+							{{ filter.label }}
+							<ng-container *ngIf="filter.key !== 'default'">
+								<span class="fas fa-circle xsm-text" [ngClass]="filter.key"></span>
+							</ng-container>
+						</button>
+					</ng-container>
+				</mat-menu>
+			</div>
+			<div class="file-type-filters">
+				<button
+					id="filter-by-content-status-btn"
+					mat-button
+					mat-raised-button
+					class="theme-btn sm-text mr-2 h-45"
+					[matMenuTriggerFor]="fileTypeFilters">
+					<span class="button-label">File Type:</span>
+					<span class="button-label">
+						{{ currentFileTypeFilter | titlecase }}
+					</span>
+				</button>
+				<mat-menu #fileTypeFilters="matMenu">
+					<ng-container *ngFor="let filter of contentFileTypes">
+						<button class="md-text" mat-menu-item (click)="filterContentByFileType(filter)">
+							{{ filter | titlecase }}
+						</button>
+					</ng-container>
+				</mat-menu>
+			</div>
+		</div>
+		<mat-form-field class="w-50" appearance="fill">
 			<mat-label><span class="fas fa-search mr-2" font-weight-bold></span> Search Playlist Content</mat-label>
 			<input type="text" placeholder="Enter Content Name" aria-label="Number" matInput [formControl]="search_control" />
 		</mat-form-field>
+	</div>
+
+	<div class="filter-stats d-flex">
+		<div class="flex-float-left">
+			<div class="content-stats d-flex xsm-text mb-0 flex-float-left">
+				<div class="total-contents" (click)="filterContentByFileType('all')">
+					Total {{ currentStatusFilter.label === 'All' ? 'Contents' : currentStatusFilter.label }}: <b>{{ playlist_contents.length }}</b>
+				</div>
+				|
+				<div class="total-contents video-contents">
+					Videos: <b>{{ currentVideoCount || 0 }}</b>
+				</div>
+				|
+				<div class="total-contents image-contents">
+					Images: <b>{{ currentImageCount || 0 }}</b>
+				</div>
+				|
+				<div class="total-contents feed-contents">
+					Feeds: <b>{{ currentFeedCount || 0 }}</b>
+				</div>
+			</div>
+		</div>
 	</div>
 
 	<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? 'd-none' : null">
