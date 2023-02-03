@@ -22,6 +22,8 @@ phases:
   build:
     on-failure: ABORT
     commands:
+      # Get environment name
+      - echo $ENV_NAME
       # Build docker images and tag based on build ID.
       - echo Build started on `date`
       - echo Building the Docker image...
