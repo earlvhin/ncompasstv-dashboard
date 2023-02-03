@@ -33,6 +33,7 @@ export class LicensesComponent implements OnInit {
 	no_dealer: boolean;
 	no_host: boolean;
 	no_licenses: boolean;
+	no_licenses_result: boolean;
 	no_favorites: boolean;
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
@@ -64,6 +65,12 @@ export class LicensesComponent implements OnInit {
 	sort_order_hosts: string = '';
 	has_sort: boolean = false;
     license_data_for_grid_view: any = [];
+    favorite_view: boolean = true;
+    show_more_clicked: boolean = false;
+    favorites_list_cache: any = [];
+    grid_list_cache: any = [];
+    total_favorites: 0;
+    total_not_favorites: 0;
 
 	//for export
 	hosts_to_export: API_HOST[] = [];
@@ -218,9 +225,9 @@ export class LicensesComponent implements OnInit {
 				this.sort_column = data.column;
 				this.sort_order = data.order;
 				if(this.active_view === 'grid') {
-                    // this.license_data_for_grid_view = [];
-                    // this.getFavoriteLicenses();
-                    // this.getLicenses(1, 24)
+                    this.license_data_for_grid_view = [];
+                    this.getFavoriteLicenses();
+                    this.getLicenses(1, this.grid_list_cache.length, false)
                 } else {
                     this.getLicenses(1);
                 }
@@ -282,11 +289,19 @@ export class LicensesComponent implements OnInit {
 			});
 	}
 
-    getFavoriteLicenses() {
+    sortDisplay(arrangement) {
+        var filter = {
+            column: 'DisplayStatus',
+            order: arrangement
+        };
+        this.getColumnsAndOrder(filter, 'licenses');
+    }
+
+    getFavoriteLicenses(reset?) {
         this.favorites_list = [];
         this._license.get_all_licenses(
 			1,
-			this.search_data_licenses,
+			!reset ? this.search_data_licenses : '',
 			this.sort_column,
 			this.sort_order,
 			0,
@@ -310,18 +325,45 @@ export class LicensesComponent implements OnInit {
                         this.favorites_list.push(entities)
                     }
                 )
+                
                 if(data.paging.entities.length === 0) {
                     this.no_favorites = true;
                 } else {
+                    this.no_favorites = false;
+                }
+                if(reset) {
+                    this.favorites_list_cache = this.favorites_list;
                     this.no_favorites = false;
                 }
             }
         )
     }
 
-	getLicenses(page: number, pageSize?) {
-		this.searching_licenses = true;
+    toggleFavorites(value) {
+        if(value === 'false') {
+            this.favorite_view = false;
+        } else {
+            this.favorites_list = this.favorites_list_cache;
+            this.favorite_view = true;
+            this.no_favorites = false;
+        }
+    }
+
+	getLicenses(page: number, pageSize?, fromShowMore?) {
 		this.hosts_data = [];
+        var favorite: any;
+        this.no_licenses_result = false;
+        if(this.active_view != 'grid') {
+            favorite = '';
+            this.searching_licenses = true;
+        } else {
+            if(page > 1) {
+                this.searching_licenses = false;
+            } else {
+                this.searching_licenses = true;
+            }
+            favorite = false;
+        }
 		if (this.has_sort) {
 			this._license
 				.get_all_licenses(
@@ -342,34 +384,42 @@ export class LicensesComponent implements OnInit {
 					this.filters.pending,
 					this.filters.online,
 					this.filters.isactivated,
-                    false,
+                    favorite,
 				)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
                         this.paging_data_licenses = data.paging;
-                        if (data.paging.entities) {
-                            const mapped = this.mapToLicensesTable(data.paging.entities);
-                            this.licenses_data = [...mapped];
-                            this.filtered_data_licenses = [...mapped];
+                        
+                        if(this.active_view === 'grid') {
+                            if (data.paging.entities.length > 0) {
+                                data.paging.entities.map(
+                                    entities => {
+                                        this.license_data_for_grid_view.push(entities)
+                                    }
+                                )
+                                if(fromShowMore && page > 1) {
+                                    this.grid_list_cache = this.license_data_for_grid_view;
+                                }
+                                if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
+                                    this.license_data_for_grid_view = this.grid_list_cache;
+                                }
+                            } else {
+                                this.no_licenses_result = true;
+                            }
                         } else {
-                            if (this.search_data == '') this.no_licenses = true;
-                            this.filtered_data_licenses = [];
+                            if (data.paging.entities) {
+                                const mapped = this.mapToLicensesTable(data.paging.entities);
+                                this.licenses_data = [...mapped];
+                                this.filtered_data_licenses = [...mapped];
+                            } else {
+                                if (this.search_data == '') this.no_licenses = true;
+                                this.filtered_data_licenses = [];
+                            }
                         }
 
                         this.initial_load_licenses = false;
                         this.searching_licenses = false;
-                            
-                        if(this.active_view === 'grid') {
-                            // if(page === 2) {
-                            //     this.license_data_for_grid_view = [];
-                            // }
-                            data.paging.entities.map(
-                                entities => {
-                                    this.license_data_for_grid_view.push(entities)
-                                }
-                            )
-                        }
 					},
 					(error) => {
 						throw new Error(error);
@@ -462,16 +512,16 @@ export class LicensesComponent implements OnInit {
 				}
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
-				if (value == 0) {
-					var filter = {
-						column: 'TimeIn',
-						order: 'desc'
-					};
-					this.getColumnsAndOrder(filter, 'licenses');
-				} else {
-					this.sortList('desc');
-				}
-				break;
+                if (value === 0) {
+                    var filter = {
+                        column: 'TimeIn',
+                        order: 'desc'
+                    };
+                    this.getColumnsAndOrder(filter, 'licenses');
+                } else {
+                    this.sortList('desc');
+                }
+			    break;
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
@@ -517,13 +567,13 @@ export class LicensesComponent implements OnInit {
 				break;
 			default:
 		}
-		if(this.active_view === 'grid') {
-            this.license_data_for_grid_view = [];
-            this.getFavoriteLicenses();
-            this.getLicenses(1, 24)
-        } else {
-            this.getLicenses(1);
-        }
+		// if(this.active_view === 'grid') {
+        //     this.license_data_for_grid_view = [];
+        //     this.getFavoriteLicenses(true);
+        //     this.getLicenses(1, 24)
+        // } else {
+        //     this.getLicenses(1);
+        // }
 	}
 
 	resetFilterStatus() {
@@ -552,7 +602,13 @@ export class LicensesComponent implements OnInit {
 					this.filters.host = data.host.id;
 					this.filters.label_host = data.host.name;
 				}
-				this.getLicenses(1);
+                if(this.active_view === 'grid') {
+                    this.license_data_for_grid_view = [];
+                    this.getFavoriteLicenses(false);
+                    this.getLicenses(1, 24, false)
+                } else {
+                    this.getLicenses(1);
+                }
                 this.hide_all_license = false;
 			}
 		});
@@ -566,8 +622,8 @@ export class LicensesComponent implements OnInit {
 					this.search_data_licenses = e;
                     if(this.active_view === 'grid') {
                         this.license_data_for_grid_view = [];
-                        this.getFavoriteLicenses();
-                        this.getLicenses(1, 24)
+                        this.getFavoriteLicenses(false);
+                        this.getLicenses(1, 24, false)
                     } else {
                         this.getLicenses(1);
                     }
@@ -577,8 +633,8 @@ export class LicensesComponent implements OnInit {
 					this.search_data_licenses = '';
 					if(this.active_view === 'grid') {
                         this.license_data_for_grid_view = [];
-                        this.getFavoriteLicenses();
-                        this.getLicenses(1, 24)
+                        this.getFavoriteLicenses(false);
+                        this.getLicenses(1, 24, false)
                     } else {
                         this.getLicenses(1);
                     }
@@ -769,14 +825,14 @@ export class LicensesComponent implements OnInit {
 			label_host: '',
 			label_admin: ''
 		};
-		this.sortList('desc');
         // this.hide_all_license = true;
         if(this.active_view === 'grid') {
-            this.getFavoriteLicenses();
+            this.getFavoriteLicenses(false);
             this.has_sort = true;
             this.license_data_for_grid_view = [];
-            this.getLicenses(1, 24)
+            this.getLicenses(1, 24, true)
         } else {
+            this.sortList('desc');
             this.getLicenses(1)
         }
 	}
@@ -1307,10 +1363,10 @@ export class LicensesComponent implements OnInit {
     changeView(view) {
         this.active_view = view;
         if(view === 'grid') {
-            this.getFavoriteLicenses();
+            this.getFavoriteLicenses(true);
             this.has_sort = true;
             this.license_data_for_grid_view = [];
-            this.getLicenses(1, 24)
+            this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24)
         } else {
             this.getLicenses(1)
         }
@@ -1387,7 +1443,7 @@ export class LicensesComponent implements OnInit {
 
 		dialog.afterClosed().subscribe(() => {
             if(status === 'success') {
-                this.getFavoriteLicenses();
+                this.getFavoriteLicenses(false);
             };
         });
 	}
@@ -1399,6 +1455,21 @@ export class LicensesComponent implements OnInit {
     navigateToAlias(id) {
         const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/licenses/${id}`], {}));
 		window.open(url, '_blank');
+    }
+    
+    navigateToDealer(id) {
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/dealers/${id}`], {}));
+		window.open(url, '_blank');
+    }
+    
+    navigateToHost(id) {
+        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/hosts/${id}`], {}));
+		window.open(url, '_blank');
+    }
+
+    showMore(page, pageSize) {
+        this.show_more_clicked = true;
+        this.getLicenses(page, pageSize, true)
     }
     
 }
