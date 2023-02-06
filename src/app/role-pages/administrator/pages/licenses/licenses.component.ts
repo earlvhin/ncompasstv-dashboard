@@ -320,15 +320,15 @@ export class LicensesComponent implements OnInit {
             true,
 		).pipe(takeUntil(this._unsubscribe)).subscribe(
 			(data) => {
-                data.paging.entities.map(
-                    entities => {
-                        this.favorites_list.push(entities)
-                    }
-                )
-                
                 if(data.paging.entities.length === 0) {
                     this.no_favorites = true;
                 } else {
+                    data.paging.entities.map(
+                        entities => {
+                            this.favorites_list.push(entities)
+                        }
+                    )
+                    this.favorites_list_cache = this.favorites_list;
                     this.no_favorites = false;
                 }
                 if(reset) {
@@ -344,8 +344,8 @@ export class LicensesComponent implements OnInit {
             this.favorite_view = false;
         } else {
             this.favorites_list = this.favorites_list_cache;
-            this.favorite_view = true;
             this.no_favorites = false;
+            this.favorite_view = true;
         }
     }
 
