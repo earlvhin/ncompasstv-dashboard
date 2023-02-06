@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogConfig, MatDialogRef } from '@angular/material';
-import { Observable, Subject } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
 
@@ -16,28 +16,30 @@ import { ChangeTemplateComponent } from 'src/app/global/components_shared/screen
 
 import {
 	API_CONTENT,
+	API_CHANGE_TEMPLATE,
 	API_HOST,
+	API_LICENSE,
 	API_LICENSE_PROPS,
 	API_PLAYLIST,
 	API_SCREEN_TEMPLATE_ZONE,
+	API_SCREENTYPE,
 	API_SCREEN_ZONE_PLAYLISTS_CONTENTS,
-	API_SINGLE_PLAYLIST,
 	API_SINGLE_SCREEN,
 	API_TEMPLATE,
 	EDIT_SCREEN_ZONE_PLAYLIST,
 	EDIT_SCREEN_INFO,
 	PAGING,
+	SCREEN_LICENSE,
 	UI_CONTENT,
 	UI_ROLE_DEFINITION,
 	UI_SINGLE_SCREEN,
-	UI_SCREEN_ZONE_PLAYLIST,
-	UI_ZONE_PLAYLIST,
 	UI_SCREEN_LICENSE_SCREENS,
-	API_LICENSE,
-	API_CHANGE_TEMPLATE
+	UI_SCREEN_ZONE_PLAYLIST,
+	UI_ZONE_PLAYLIST
 } from 'src/app/global/models';
 
 import { AuthService, HelperService, HostService, LicenseService, PlaylistService, ScreenService, TemplateService } from 'src/app/global/services';
+import { API_ZONE } from '../../models/api_zone.model';
 
 @Component({
 	selector: 'app-single-screen',
@@ -45,51 +47,47 @@ import { AuthService, HelperService, HostService, LicenseService, PlaylistServic
 	styleUrls: ['./single-screen.component.scss']
 })
 export class SingleScreenComponent implements OnInit {
-	dealer_playlist$: Observable<API_SINGLE_PLAYLIST[]>;
-	dealer_playlist: any[] = [];
+	dealer_playlist: API_PLAYLIST[] = [];
 	dealer_hosts: API_HOST[] = [];
 	edit_screen_info: EDIT_SCREEN_INFO;
 	edit_screen_zone_playlist: EDIT_SCREEN_ZONE_PLAYLIST[];
 	host: API_SINGLE_SCREEN['host'];
 	hostUrl: string;
-	hosts_data: Array<any> = [];
-	initial_load: boolean = false;
-	is_dealer: boolean = false;
+	initial_load = false;
+	is_dealer = false;
 	is_initial_load_for_dealer = true;
-	is_search: boolean = false;
+	is_search = false;
 	is_view_only = false;
-	licenses_array: any[];
+	licenses_array: API_LICENSE_PROPS[];
 	licenses: API_LICENSE['license'][];
 	license_tbl_row_url: string;
 	license_tbl_row_slug: string = 'license_id';
-	loading_data_host: boolean = true;
-	loading_search: boolean = false;
-	loading_search_host: boolean = false;
-	no_case: boolean = true;
-	no_changes: boolean = true;
-	paging_data: any;
-	paging_host: any;
+	loading_data_host = true;
+	loading_search = false;
+	loading_search_host = false;
+	no_case = true;
+	no_changes = true;
+	paging_data: PAGING;
+	paging_host: PAGING;
 	playlist_id: string;
 	playlist_route: string;
 	playlist_contents: UI_CONTENT[];
 	screen: UI_SINGLE_SCREEN;
 	screen_init: string;
-	screen_licenses: Array<any> = [];
-	screen_types: Array<any> = [];
+	screen_licenses: SCREEN_LICENSE[] = [];
+	screen_types: API_SCREENTYPE[] = [];
 	search_host_data: string = '';
-	searching: boolean = false;
+	searching = false;
 	screen_id: string;
 	screen_info: FormGroup;
 	screen_zone_playlist_contents: UI_SCREEN_ZONE_PLAYLIST[];
 	screen_template: UI_ZONE_PLAYLIST;
-	screen_zone: any;
+	screen_zone: API_ZONE;
 	templates: API_TEMPLATE[];
 
 	private currentTemplate: API_TEMPLATE;
-	private screenZonePlaylists: API_SCREEN_ZONE_PLAYLISTS_CONTENTS[];
-
-	_socket: any;
-
+	private hosts_data: API_HOST[] = [];
+	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -491,6 +489,7 @@ export class SingleScreenComponent implements OnInit {
 							const screenData = (await this._screen.get_screen_by_id(response.screenId).toPromise()) as API_SINGLE_SCREEN;
 							this.screen_id = screenData.screen.screenId;
 							this.setPageData(screenData);
+							this.checkMissingZones(screenData.screen.templateId);
 							this.getScreenLicenses(1);
 							this.getScreenType();
 						},
@@ -531,12 +530,12 @@ export class SingleScreenComponent implements OnInit {
 
 	// Playlist is selected
 	playlistSelected(playlist_id: string, zone_id: string) {
-		this.edit_screen_zone_playlist.forEach((z) => {
-			if (z.templateZoneId === zone_id && z.playlistId !== playlist_id) {
-				this.no_changes = false;
-				z.playlistId = playlist_id;
-			}
-		});
+		const currentZonePlaylists = Array.from(this.edit_screen_zone_playlist);
+		const toChangeIndex = currentZonePlaylists.findIndex((zonePlaylist) => zonePlaylist.templateZoneId === zone_id);
+		if (playlist_id === currentZonePlaylists[toChangeIndex].playlistId) return;
+		currentZonePlaylists[toChangeIndex].playlistId = playlist_id;
+		this.edit_screen_zone_playlist = [...currentZonePlaylists];
+		this.no_changes = false;
 	}
 
 	searchHostData(keyword: string) {
@@ -584,21 +583,73 @@ export class SingleScreenComponent implements OnInit {
 		this.screen_info.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.no_changes = false));
 	}
 
+	private checkMissingZones(templateId: string) {
+		this._template
+			.get_template_by_id(templateId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response: API_TEMPLATE[]) => {
+				if (!response || response.length <= 0) return;
+
+				const template = response[0];
+				const zonesCount = template.templateZones.length;
+				const currentZoneCount = this.screen.screen_zone_playlist.length;
+
+				if (zonesCount === currentZoneCount) return;
+
+				const onlyCurrentZoneNames = this.screen.screen_zone_playlist.map((screenZonePlaylist) =>
+					screenZonePlaylist.screen_template.name.toLowerCase()
+				);
+
+				const missingZones = Array.from(template.templateZones)
+					.filter((zone) => !onlyCurrentZoneNames.includes(zone.name.toLowerCase()))
+					.map((zone) => {
+						const screen_template = new UI_ZONE_PLAYLIST(
+							this.screen.screen_id,
+							templateId,
+							zone.templateZoneId,
+							`${zone.xPos}`,
+							`${zone.yPos}`,
+							`${zone.height}`,
+							`${zone.width}`,
+							null,
+							null,
+							zone.name,
+							zone.description,
+							zone.order
+						);
+
+						return {
+							screen_template,
+							contents: []
+						};
+					});
+
+				const currentPlaylistZone = Array.from(this.screen.screen_zone_playlist);
+				const mutatedZonePlaylsit = currentPlaylistZone.concat(missingZones);
+				let mutatedScreenZonePlaylist = Array.from(this.edit_screen_zone_playlist);
+
+				mutatedScreenZonePlaylist = mutatedScreenZonePlaylist.concat(
+					missingZones.map((zone) => {
+						return { templateZoneId: zone.screen_template.zone_id, playlistId: null };
+					})
+				);
+
+				this.screen.screen_zone_playlist = [...mutatedZonePlaylsit];
+				this.edit_screen_zone_playlist = [...mutatedScreenZonePlaylist];
+			});
+	}
+
 	private getInternetType(value: string): string {
-		if (value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
-		}
+		if (!value || value.trim().length === 0) return 'N/A';
+		value = value.toLowerCase();
+		if (value.includes('w')) return 'WiFi';
+		if (value.includes('eth')) return 'LAN';
 	}
 
 	private getScreen(id: string) {
 		if (this.is_initial_load_for_dealer && (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer')) {
 			this.setPageData(this._helper.singleScreenData);
+			this.checkMissingZones(this._helper.singleScreenData.template.templateId);
 			this.is_initial_load_for_dealer = false;
 			return;
 		}
@@ -607,7 +658,10 @@ export class SingleScreenComponent implements OnInit {
 			.get_screen_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: API_SINGLE_SCREEN) => this.setPageData(response),
+				(response: API_SINGLE_SCREEN) => {
+					this.setPageData(response);
+					this.checkMissingZones(response.template.templateId);
+				},
 				(error) => {
 					throw new Error(error);
 				}
@@ -750,7 +804,6 @@ export class SingleScreenComponent implements OnInit {
 
 	private setPageData(data: API_SINGLE_SCREEN) {
 		this.licenses = data.licenses;
-		this.screenZonePlaylists = data.screenZonePlaylistsContents;
 		this.host = data.host;
 		this.hostUrl = `/${this.roleRoute}/hosts/${this.host.hostId}`;
 		this.sortLicenses('desc');

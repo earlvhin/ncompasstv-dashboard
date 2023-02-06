@@ -59,10 +59,10 @@
 								Playlist:
 								<a
 									[ngClass]="{ 'text-danger': playlist_id === z.screen_template.playlist_id }"
-									(click)="openPlaylistInNewTab(playlist_route, z.screen_template.playlist_id)" 
-									class="sm-text font-weight-bold ml-2 text-primary"
-									>{{ z.screen_template.playlist_name }}</a
-								>
+									(click)="openPlaylistInNewTab(playlist_route, z.screen_template.playlist_id)"
+									class="sm-text font-weight-bold ml-2 text-primary">
+									{{ z.screen_template.playlist_name }}
+								</a>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
 						<mat-form-field [ngClass]="playlist_id === z.screen_template.playlist_id ? 'col-lg-11' : 'full-width'">
@@ -74,7 +74,6 @@
 									[value]="p.playlistId"
 									(click)="playlistSelected(p.playlistId, z.screen_template.zone_id)">
 									{{ p.name }}
-									<!-- - <span class="text-danger">{{ p.contents.length }} Contents</span> -->
 								</mat-option>
 							</mat-select>
 						</mat-form-field>
@@ -83,7 +82,8 @@
 								class="pt-3 cursor-pointer fa fa-times text-danger"
 								data-toggle="tooltip"
 								title="Unassign Playlist"
-								(click)="unassignPlaylist(z.screen_template.zone_id)"></i>
+								(click)="unassignPlaylist(z.screen_template.zone_id)">
+							</i>
 						</div>
 					</mat-expansion-panel>
 				</mat-accordion>
