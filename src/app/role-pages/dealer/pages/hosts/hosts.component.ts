@@ -287,7 +287,7 @@ export class HostsComponent implements OnInit {
 			return new UI_DEALER_HOSTS(
 				{ value: hosts.hostId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: hosts.name, link: `/${this.currentRole}/hosts/` + hosts.hostId, new_tab_link: 'true', editable: false, hidden: false },
+				{ value: hosts.name, link: `/${this.currentRole}/hosts/` + hosts.hostId, new_tab_link: true, editable: false, hidden: false },
 				{ value: hosts.address, link: null, editable: false, hidden: false },
 				{ value: hosts.city, link: null, editable: false, hidden: false },
 				{ value: hosts.postalCode, link: null, editable: false, hidden: false },

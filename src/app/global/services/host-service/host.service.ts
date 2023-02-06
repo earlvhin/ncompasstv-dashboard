@@ -1,6 +1,6 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 
 import { BaseService } from '../base.service';
 import { API_DEALER, API_FILTERS, API_HOST, API_TIMEZONE, CustomFieldGroup, HOST_S3_FILE, PAGING, TAG } from 'src/app/global/models';
@@ -10,8 +10,7 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 	providedIn: 'root'
 })
 export class HostService extends BaseService {
-	onUpdateBusinessHours = new EventEmitter<boolean>();
-    token = JSON.parse(localStorage.getItem('tokens'));
+	onUpdateBusinessHours = new Subject<boolean>();
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

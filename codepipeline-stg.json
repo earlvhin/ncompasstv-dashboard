@@ -1,0 +1,102 @@
+{
+    "pipeline": {
+        "roleArn": "arn:aws:iam::289900069212:role/AWSCodePipelineServiceRole-us-east-1-nc-nvir-stg-pldashboard-01",
+        "stages": [
+            {
+                "name": "Source",
+                "actions": [
+                    {
+                        "name": "Source",
+                        "actionTypeId": {
+                            "category": "Source",
+                            "owner": "AWS",
+                            "provider": "CodeCommit",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "roleArn": "arn:aws:iam::892444632159:role/codepipeline-cross-account-role", 
+                        "configuration": {
+                            "BranchName": "staging",
+                            "PollForSourceChanges": "true",
+                            "RepositoryName": "ncompasstv-dashboard"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "inputArtifacts": []
+                    }
+                ]
+            },
+            {
+                "name": "Build",
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "SourceArtifact"
+                            }
+                        ],
+                        "name": "Build",
+                        "region": "us-east-1",
+                        "namespace": "BuildVariables",
+                        "actionTypeId": {
+                            "category": "Build",
+                            "owner": "AWS",
+                            "version": "1",
+                            "provider": "CodeBuild"
+                        },
+                        "outputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "configuration": {
+                            "ProjectName": "nc-dashboard-codebuild"
+                        },
+                        "runOrder": 1
+                    }
+                ]
+            },
+            {
+                "name": "Deploy",
+                "actions": [
+                    {
+                        "name": "ncompasstv-dashboard-ecs-deployment",
+                        "actionTypeId": {
+                            "category": "Deploy",
+                            "owner": "AWS",
+                            "provider": "ECS",
+                            "version": "1"
+                        },
+                        "runOrder": 1,
+                        "configuration": {
+                            "ClusterName": "nc-nvir-stg-ecsdashboard-01",
+                            "DeploymentTimeout": "30",
+                            "FileName": "imagedefinitions.json",
+                            "ServiceName": "dashboard-service-staging"
+                        },
+                        "outputArtifacts": [],
+                        "inputArtifacts": [
+                            {
+                                "name": "BuildArtifact"
+                            }
+                        ],
+                        "region": "us-east-1"
+                    }
+                ]
+            }
+        ],
+        "artifactStore": {
+            "type": "S3",
+            "location": "codepipeline-nc-nvir-stg-pldashboard-01",
+            "encryptionKey": {
+                "id": "arn:aws:kms:us-east-1:289900069212:key/fe96faaa-5715-475b-8b88-623cb31392d6",
+                "type": "KMS"
+            }
+        },
+        "name": "codepipeline-nc-nvir-stg-pldashboard-01",
+        "version": 1
+    }
+}

@@ -144,7 +144,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				async (response) => {
-					await this._confirmDialog.success({ message: 'Success!', data: 'Tags saved' }).toPromise();
+					// await this._confirmDialog.success({ message: 'Success!', data: 'Tags saved' }).toPromise();
 					const tags = response.tags[this.ownerId] as TAG[];
 					this._currentDialog.close(tags);
 				},

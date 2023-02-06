@@ -1,6 +1,6 @@
-import { Injectable, EventEmitter } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import * as moment from 'moment';
 
 import { environment } from 'src/environments/environment';
@@ -33,8 +33,7 @@ export class LicenseService extends BaseService {
 		headers: new HttpHeaders({ 'Content-Type': 'application/json', credentials: 'include', Accept: 'application/json' })
 	};
 
-	onSortLicenseByColumn = new EventEmitter<{ column: string; order: string }>();
-	onRefreshLicensesTab = new EventEmitter<void>();
+	onRefreshLicensesTab = new Subject<void>();
 	httpParams = (params: object) => new HttpParams({ encoder: new CustomHttpParamEncoder(), fromObject: { ...params } });
 
 	constructor(_auth: AuthService, _http: HttpClient) {

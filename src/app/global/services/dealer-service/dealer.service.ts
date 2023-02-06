@@ -1,6 +1,6 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import 'rxjs/add/operator/map';
 
 import {
@@ -20,9 +20,8 @@ import { BaseService } from '../base.service';
 	providedIn: 'root'
 })
 export class DealerService extends BaseService {
-	onSuccessReassigningDealer = new EventEmitter<null>();
-	onDealerDataLoaded = new EventEmitter<{ email: string }>();
-	token = JSON.parse(localStorage.getItem('tokens'));
+	onSuccessReassigningDealer = new Subject<null>();
+	onDealerDataLoaded = new Subject<{ email: string }>();
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);

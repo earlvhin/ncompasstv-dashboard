@@ -2,18 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import 'rxjs/add/operator/map';
-import { BaseService } from '../base.service';
 
-import { environment } from 'src/environments/environment';
-import { API_DEALER, API_FILTERS, API_USER_DATA, API_USER_STATS, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { BaseService } from '../base.service';
+import { API_FILTERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
 	providedIn: 'root'
 })
 export class UserService extends BaseService {
-	token = JSON.parse(localStorage.getItem('tokens'));
-
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}

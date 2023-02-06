@@ -33,6 +33,7 @@ export class InstallationsTabComponent implements OnInit {
     temp_start_date: any;
     temp_end_date: any;
     loading_graph: boolean = false;
+    current_year: any;
 
     constructor(
         private _license: LicenseService,
@@ -40,6 +41,7 @@ export class InstallationsTabComponent implements OnInit {
     ) { }
 
     ngOnInit() {
+        this.current_year = new Date().getFullYear();
         this.getLicensesInstallationStatistics();
     }
 

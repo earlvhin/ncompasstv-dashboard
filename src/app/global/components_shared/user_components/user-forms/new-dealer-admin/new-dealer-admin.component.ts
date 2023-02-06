@@ -265,9 +265,9 @@ export class NewDealerAdminComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			if (redirect) {
-				this._router.navigate([`/${this.roleRoute}/users/`]);
-			}
+            if(redirect) {
+                this._router.navigate([`/${this.roleRoute}/users/`]);
+            }
 		});
 	}
 

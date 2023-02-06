@@ -235,7 +235,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 		if (others.value && others.value.trim().length > 0) newHostPlace.others = others.value;
 
-		if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.emit(true);
+		if (this.hasUpdatedBusinessHours) this._host.onUpdateBusinessHours.next(true);
 
 		if (this.host.status !== status) message += ` This will ${status === 'A' ? 'activate' : 'deactivate'} the host.`;
 

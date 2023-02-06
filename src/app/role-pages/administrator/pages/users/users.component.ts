@@ -9,11 +9,11 @@ import {
 	API_FILTERS,
 	UI_TABLE_USERS,
 	UI_USER_STATS,
-	USER,
 	USER_ROLE,
 	UI_ROLE_DEFINITION,
 	UI_ROLE_DEFINITION_TEXT,
-	DEALERADMIN_UI_TABLE_USERS
+	DEALERADMIN_UI_TABLE_USERS,
+	API_USER_DATA
 } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -26,7 +26,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 export class UsersComponent implements OnInit, OnDestroy {
 	current_filters: API_FILTERS = { page: 1 };
 	current_role_selected: string;
-	filtered_data = [];
+	filtered_data: UI_TABLE_USERS[] = [];
 	initial_load = true;
 	is_dealer_admin: boolean = false;
 	no_user: boolean = false;
@@ -157,7 +157,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe((response: boolean) => {
 			if (!response) {
-				this._helper.onResultToggleEmailNotification.emit({ updated: false, tableDataIndex });
+				this._helper.onResultToggleEmailNotification.next({ updated: false, tableDataIndex });
 				return;
 			}
 
@@ -249,6 +249,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 				);
 				return result;
 			} else {
+                
 				const result = new UI_TABLE_USERS(
 					{ value: user.userId, link: null, editable: false, hidden: true },
 					{ value: count++, link: null, editable: false, hidden: false },
@@ -256,10 +257,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 					{ value: user.email, link: null, editable: false, hidden: false },
 					{ value: user.contactNumber, link: null, editable: false, hidden: false },
 					{ value: role.roleName, link: null, editable: false, hidden: false },
+					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
+                    { value: allowEmail, type: 'toggle' },
 					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
 					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
-					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
-					{ value: allowEmail, type: 'toggle' }
 				);
 				return result;
 			}
@@ -291,8 +292,15 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this._user
 			.update_email_notifications(userId, value)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(() => (error) => {
-				throw new Error(error);
-			});
+			.subscribe(
+				(response: { user: API_USER_DATA }) => {
+
+					// const updatedIndex = this.filtered_data.findIndex((user) => user.user_id.value === response.user.userId);
+					// this.filtered_data[updatedIndex].allow_email.value = response.user.allowEmail === 1;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 }

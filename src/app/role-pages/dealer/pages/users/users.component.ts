@@ -85,7 +85,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe((response: boolean) => {
 			if (!response) {
-				this._helper.onResultToggleEmailNotification.emit({ updated: false, tableDataIndex });
+				this._helper.onResultToggleEmailNotification.next({ updated: false, tableDataIndex });
 				return;
 			}
 

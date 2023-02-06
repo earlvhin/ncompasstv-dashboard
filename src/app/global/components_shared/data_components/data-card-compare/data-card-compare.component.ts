@@ -46,13 +46,13 @@ export class DataCardCompareComponent implements OnInit, OnDestroy {
 	onFilterByStatus(status = 'active'): void {
 		this.has_selected_active = status === 'active';
 		this.has_selected_inactive = status === 'inactive';
-		this._helper.onClickCardByStatus.emit({ page: this.page, value: status });
+		this._helper.onClickCardByStatus.next({ page: this.page, value: status });
 	}
 
 	onResetDealerStatusFilters(): void {
 		if (!this.page && !this.has_status_filter) return;
 		this.has_selected_active = false;
 		this.has_selected_inactive = false;
-		this._helper.onClickCardByStatus.emit({ page: this.page, value: 'all' });
+		this._helper.onClickCardByStatus.next({ page: this.page, value: 'all' });
 	}
 }

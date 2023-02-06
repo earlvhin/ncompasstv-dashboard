@@ -7,6 +7,8 @@ export interface TABLE_ROW_FORMAT {
 	isImage?: boolean;
 	newTabLink?: boolean;
 	compressed?: boolean;
-	status?: boolean;	
+	status?: boolean;
 	copy?: boolean;
+	new_tab_link?: boolean;
+	type?: string;
 }

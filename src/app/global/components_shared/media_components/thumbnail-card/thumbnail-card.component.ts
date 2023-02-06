@@ -28,6 +28,7 @@ export class ThumbnailCardComponent implements OnInit {
 	@Input() is_converted: number;
 	@Input() is_fullscreen: number;
 	@Input() is_protected: number;
+	@Input() is_scheduled_content = false;
 	@Input() is_view_only = false;
 	@Input() multiple_delete: boolean;
 	@Input() sequence: number;
@@ -44,7 +45,7 @@ export class ThumbnailCardComponent implements OnInit {
 	mp4_thumb: string;
 
 	private return_mes: string;
-	private role: string;
+	private role = this._auth.current_role;
 
 	protected _socket: any;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -52,7 +53,6 @@ export class ThumbnailCardComponent implements OnInit {
 	constructor(private _auth: AuthService, private _dialog: MatDialog, private _content: ContentService) {}
 
 	ngOnInit() {
-		this.role = this._auth.current_role;
 		if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
 		this.route = `/${this.role}/media-library/${this.content_id}`;
 

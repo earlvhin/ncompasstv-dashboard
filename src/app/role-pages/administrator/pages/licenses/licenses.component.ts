@@ -12,7 +12,15 @@ import { Router } from '@angular/router';
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { API_DEALER, UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, API_LICENSE_PROPS, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import {
+	API_DEALER,
+	UI_LICENSE,
+	UI_HOST_VIEW,
+	UI_TABLE_LICENSE_BY_DEALER,
+	API_HOST,
+	API_LICENSE_PROPS,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -38,7 +46,7 @@ export class LicensesComponent implements OnInit {
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
 	filtered_data_licenses: UI_LICENSE[] = [];
-    is_dealer_admin: boolean = false;
+	is_dealer_admin: boolean = false;
 	title: string = 'Licenses';
 	tab: any = { tab: 0 };
 	licenses_details: any;
@@ -194,9 +202,9 @@ export class LicensesComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true;
-        }
+		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.is_dealer_admin = true;
+		}
 		let status = this._activatedRoute.snapshot.paramMap.get('status');
 		if (status) {
 			this.filterTable('status', status === 'Online' ? '1' : '0');
@@ -489,11 +497,11 @@ export class LicensesComponent implements OnInit {
 			case 3:
 				this.getHosts(1);
 				break;
-            case 2:
-                if(this.is_dealer_admin) {
-                    this.getHosts(1)
-                }
-                break;
+			case 2:
+				if (this.is_dealer_admin) {
+					this.getHosts(1);
+				}
+				break;
 			default:
 		}
 	}
@@ -711,10 +719,10 @@ export class LicensesComponent implements OnInit {
 						last_week_unassigned_value: data.lastWeekUnassignedCount
 					};
 
-                    if(this.is_dealer_admin) {
-                        delete this.licenses_details['third_value'];
-                        delete this.licenses_details['third_value_label'];
-                    }
+					if (this.is_dealer_admin) {
+						delete this.licenses_details['third_value'];
+						delete this.licenses_details['third_value_label'];
+					}
 
 					if (this.licenses_details) {
 						this.temp_label.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value);
@@ -1199,10 +1207,10 @@ export class LicensesComponent implements OnInit {
 
 	private mapToHostsTable(data: API_HOST[]): UI_HOST_VIEW[] {
 		let count = this.paging_data_host.pageStart;
-        let role = this._auth.current_role;
-        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = UI_ROLE_DEFINITION_TEXT.administrator
-        }
+		let role = this._auth.current_role;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 
 		return data.map((h: API_HOST) => {
 			const table = new UI_HOST_VIEW(
@@ -1210,8 +1218,8 @@ export class LicensesComponent implements OnInit {
 				{ value: h.hostId, link: null, editable: false, hidden: true, key: false },
 				{
 					value: h.hostName,
-					link: `/` +role+ `/hosts/${h.hostId}`,
-					new_tab_link: 'true',
+					link: `/` + role + `/hosts/${h.hostId}`,
+					new_tab_link: true,
 					compressed: true,
 					editable: false,
 					hidden: false,
@@ -1221,12 +1229,12 @@ export class LicensesComponent implements OnInit {
 				},
 				{
 					value: h.businessName ? h.businessName : '--',
-					link: `/` +role+ `/dealers/${h.dealerId}`,
-					new_tab_link: 'true',
+					link: `/` + role + `/dealers/${h.dealerId}`,
+					new_tab_link: true,
 					editable: false,
 					hidden: false
 				},
-				{ value: h.address ? h.address : '--', link: null, new_tab_link: 'true', editable: false, hidden: false },
+				{ value: h.address ? h.address : '--', link: null, new_tab_link: true, editable: false, hidden: false },
 				{ value: h.city ? h.city : '--', link: null, editable: false, hidden: false },
 				// { value: h.region ? h.region:'--', hidden: false },
 				{ value: h.state ? h.state : '--', hidden: false },
@@ -1257,7 +1265,7 @@ export class LicensesComponent implements OnInit {
 				{
 					value: l.licenseKey,
 					link: '/administrator/licenses/' + l.licenseId,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					compressed: true,
 					editable: false,
 					hidden: false,
@@ -1267,14 +1275,14 @@ export class LicensesComponent implements OnInit {
 				{
 					value: l.dealerId ? l.businessName : '--',
 					link: '/administrator/dealers/' + l.dealerId,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					editable: false,
 					hidden: false
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
 					link: l.hostId ? '/administrator/hosts/' + l.hostId : null,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					editable: false,
 					hidden: false,
 					business_hours: l.hostId ? true : false,
@@ -1284,7 +1292,7 @@ export class LicensesComponent implements OnInit {
 					value: l.alias ? l.alias : '--',
 					link: '/administrator/licenses/' + l.licenseId,
 					editable: false,
-					new_tab_link: 'true',
+					new_tab_link: true,
 					label: 'License Alias',
 					id: l.licenseId,
 					hidden: false

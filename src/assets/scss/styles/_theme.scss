@@ -827,6 +827,10 @@ agm-map {
 	}
 }
 
+.f-50 {
+	font-size: 50px;
+}
+
 .f-35 {
 	font-size: 35px;
 }
@@ -896,6 +900,10 @@ agm-map {
 	}
 }
 
+.center-vertically {
+    position: absolute;
+    top: 30%; 
+}
 .active-button {
     background-color: $primary;
 }

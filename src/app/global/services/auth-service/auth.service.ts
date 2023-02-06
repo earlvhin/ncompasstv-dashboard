@@ -1,13 +1,12 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { environment } from '../../../../environments/environment';
-import { UI_CURRENT_USER } from '../../models/ui_current-user.model';
 import { tokenNotExpired } from 'angular2-jwt';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { JWT_TOKEN, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT, USER_LOGIN } from 'src/app/global/models';
+import { environment } from 'src/environments/environment';
+import { JWT_TOKEN, UI_CURRENT_USER, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT, USER_LOGIN } from 'src/app/global/models';
 @Injectable({
 	providedIn: 'root'
 })

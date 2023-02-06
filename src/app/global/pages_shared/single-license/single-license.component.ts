@@ -85,6 +85,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
 	display_status: number;
 	enable_edit_alias = false;
+	hasAdminPrivileges: boolean;
 	has_background_zone = false;
 	has_host = false;
 	has_screen = false;
@@ -94,7 +95,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	host_notes = '';
 	host_route: string;
 	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
-	isCurrentUserAdmin = this._auth.roleRoute === 'administrator';
+	isCurrentUserAdmin = this._auth.current_role === 'administrator';
+	isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
 	isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
 	is_view_only = this.currentUser.roleInfo.permission === 'V';
 	hasLoadedLicenseData = false;
@@ -170,6 +172,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	ngOnInit() {
+		this.hasAdminPrivileges = this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin;
 		this.initializeSocketServer();
 		this._helper.singleLicensePageCurrentTab = this.current_tab;
 
@@ -464,7 +467,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		const filterToRemove = data.toLowerCase();
 		this.content_filters = this.content_filters.filter((filter) => filter.name !== filterToRemove);
 
-		if (this.content_filters.length <= 0) return this.resetContents();
+		if (this.content_filters.length <= 0) {
+			this.resetContents();
+			this.filterActiveContentsPlayingToday();
+			return;
+		}
 
 		this.filterContent();
 	}
@@ -513,11 +520,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			...this.contents_backup.filter((zone) => zone.zone_name === this.current_zone_name_selected)[0].contents
 		];
 		this.filterInactiveContents();
+		this.filterActiveContentsPlayingToday();
 	}
 
 	onSelectBackgroundZone(event: any): void {
 		event.preventDefault();
 		this._template.onSelectZone.emit('Background');
+		this.filterActiveContentsPlayingToday();
 	}
 
 	onShowHours(): void {
@@ -863,7 +872,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	private async getLicenseData() {
 		let licenseData: API_SINGLE_LICENSE_PAGE | { message: string } = this._helper.singleLicenseData as API_SINGLE_LICENSE_PAGE;
 
-		if (this.isCurrentUserAdmin) {
+		if (this.isCurrentUserAdmin || this.isCurrentUserDealerAdmin) {
 			try {
 				licenseData = (await this._license.get_license_by_id(this.license_id).toPromise()) as API_SINGLE_LICENSE_PAGE;
 			} catch (error) {
@@ -999,13 +1008,13 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 						case 'image':
 							filteredContents = dataToBeFiltered.filter(
-								(content) => content.classification !== 'filler' && imageFileTypes.includes(content.file_type)
+								(content) => content.classification !== 'filler' && imageFileTypes.includes(content.file_type.toLowerCase())
 							);
 							break;
 
 						case 'video':
 							filteredContents = dataToBeFiltered.filter(
-								(content) => content.classification !== 'filler' && videoFileTypes.includes(content.file_type)
+								(content) => content.classification !== 'filler' && videoFileTypes.includes(content.file_type.toLowerCase())
 							);
 
 							break;
@@ -1026,6 +1035,40 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		// remove duplicates
 		filteredContents = [...new Set(filteredContents)];
 		this.content_per_zone[this.selected_zone_index].contents = [...filteredContents];
+		const activeFilterIndex = this.content_filters.findIndex((filter) => filter.name === 'active');
+		if (activeFilterIndex === -1) return;
+		this.filterActiveContentsPlayingToday();
+	}
+
+	private filterActiveContentsPlayingToday() {
+		const currentDate = moment();
+		const currentDay = new Date().getDay();
+		const contents = Array.from(this.content_per_zone[this.selected_zone_index].contents);
+		const dateFormat = 'MM/DD/YYYY H:mm A';
+
+		const canPlayToday = (schedule: PlaylistContentSchedule) => {
+			const isPlayDayToday = schedule.days.includes(`${currentDay}`);
+			const start = moment(schedule.from, dateFormat);
+			const end = moment(schedule.to, dateFormat);
+			return isPlayDayToday && currentDate.isBetween(start, end, 'day', '[]');
+		};
+
+		const canPlayThisHour = (schedule: PlaylistContentSchedule) => {
+			const today = moment().format('MM/DD/YYYY');
+			const start = moment(`${today} ${schedule.playTimeStart}`, dateFormat);
+			const end = moment(`${today} ${schedule.playTimeEnd}`, dateFormat);
+			return currentDate.isBetween(start, end, 'hour', '[]');
+		};
+
+		const filtered = contents.filter((content) => {
+			const schedule = content.playlist_content_schedule;
+			return schedule.type === 1 || (canPlayToday(schedule) && canPlayThisHour(schedule));
+		});
+
+		this.content_per_zone[this.selected_zone_index].contents = [...filtered];
+		this.breakdownContents();
+		this.breakdownDuration();
+		this.number_of_contents = filtered.length;
 	}
 
 	private filterInactiveContents(): void {
@@ -1152,6 +1195,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 				// filter inactive contents without altering the original
 				this.filterInactiveContents();
+				this.filterActiveContentsPlayingToday();
 			});
 	}
 
@@ -1263,7 +1307,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					if (backgroundZoneIndex > -1) {
 						selectedZoneName = 'Background';
 						selectedZone = this.content_per_zone.filter((content) => content.zone_name === 'Background')[0];
-						this.has_background_zone = true;
+						if (typeof selectedZone === 'undefined' || !selectedZone) selectedZone = this.content_per_zone[0];
+						else this.has_background_zone = true;
 					} else {
 						selectedZoneName = response[0].templateZones[0].name;
 						selectedZone = this.content_per_zone[0];
@@ -1520,12 +1565,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 	private setLicenseDetails(data: API_LICENSE_PROPS): void {
 		this.license_key = data.licenseKey;
-		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn);
-		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut);
+		this.lastStartup = this.setDefaultDateTimeFormat(data.timeIn, 'MMMM DD, YYYY, h:mm:ss A');
+		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
 		this.tags = data.tags as { name: string; tagColor: string }[];
 		this.pi_status = data.piStatus === 1;
 		this.player_status = data.playerStatus === 1;
-		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated);
+		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
 		this.screen_type = data.screenType ? data.screenType : null;
 		this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
 		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
@@ -1565,10 +1610,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return result;
 	}
 
-	private setDefaultDateTimeFormat(dateTime: string) {
+	private setDefaultDateTimeFormat(dateTime: string, toParseFormat: string) {
 		if (!dateTime || dateTime.length <= 0) return 'N/A';
-		const format = 'MMM DD, YYYY, h:mm:ss A';
-		return moment(dateTime, 'MMMM DD, YYYY, h:mm:ss A').format(format);
+		const toExpectedFormat = 'MMM DD, YYYY h:mm A';
+		return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
 	}
 
 	private setDealerData(data: API_SINGLE_LICENSE_PAGE) {
@@ -2095,6 +2140,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.content_search_control.setValue(null, { emitEvent: false });
 		this.content_search_control.enable({ emitEvent: false });
 		this.has_playlist = true;
+		this.filterActiveContentsPlayingToday();
 	}
 
 	protected get _additionalLicenseSettingsFormFields() {

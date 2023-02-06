@@ -131,7 +131,7 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 					(response) => {
 						this.is_reassigning = false;
 						this.is_data_ready = true;
-						this._dealer.onSuccessReassigningDealer.emit();
+						this._dealer.onSuccessReassigningDealer.next();
 						this._dialog_ref.close();
 					},
 					(error) => {

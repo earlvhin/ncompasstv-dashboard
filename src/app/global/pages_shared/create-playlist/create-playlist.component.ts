@@ -4,16 +4,20 @@ import { moveItemInArray, copyArrayItem } from '@angular/cdk/drag-drop';
 import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
-import { AuthService } from '../../services/auth-service/auth.service';
-import { API_CONTENT } from '../../models/api_content.model';
-import { ContentService } from '../../services/content-service/content.service';
-import { DealerService } from '../../services/dealer-service/dealer.service';
-import { PlaylistService } from '../../services/playlist-service/playlist.service';
+
 import { PlaylistCreatedModalComponent } from '../../../global/components_shared/playlist_components/playlist-created-modal/playlist-created-modal.component';
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
-import { API_CREATE_PLAYLIST_CONTENT, API_CREATE_PLAYLIST } from '../../models/api_create-playlist.model';
-import { UI_PLAYLIST_CONTENT, UI_CONTENT } from '../../models/ui_content.model';
-import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
+import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { ContentService, DealerService, PlaylistService } from 'src/app/global/services';
+import {
+	API_CONTENT,
+	API_CREATE_PLAYLIST,
+	API_CREATE_PLAYLIST_CONTENT,
+	API_DEALER,
+	UI_CONTENT,
+	UI_PLAYLIST_CONTENT,
+	UI_ROLE_DEFINITION
+} from 'src/app/global/models';
 
 @Component({
 	selector: 'app-create-playlist',
@@ -21,29 +25,29 @@ import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_rol
 	styleUrls: ['./create-playlist.component.scss']
 })
 export class CreatePlaylistComponent implements OnInit {
-	title: string = 'Create Playlist';
-	creating_playlist: boolean = false;
-	dealer_no_content: boolean = false;
-	dealers: Array<any> = [];
-	dealerid: string = '';
+	title = 'Create Playlist';
+	creating_playlist = false;
+	dealer_no_content = false;
+	dealers: API_DEALER[] = [];
+	dealerid = '';
 	dealer_name: string;
-	disable_user_filter: boolean = true;
-	floating_content: boolean = false;
-	is_dealer: boolean = false;
+	disable_user_filter = true;
+	floating_content = false;
+	is_dealer = false;
 	is_admin: boolean;
-	invalid_form: boolean = true;
+	invalid_form = true;
 	media_library_api: any = [];
 	media_library: any = [];
 	playlist_info: FormGroup;
-	playlist_content: any = [];
+	playlist_content: UI_PLAYLIST_CONTENT[] = [];
 	playlist: API_CREATE_PLAYLIST;
 	playlist_assets: API_CREATE_PLAYLIST_CONTENT[];
 	role_id: string;
-	subscription: Subscription = new Subscription();
-	loading_data: boolean = true;
-	dealers_data: Array<any> = [];
-	loading_search: boolean = false;
-	is_search: boolean = false;
+	subscription = new Subscription();
+	loading_data = true;
+	dealers_data: API_DEALER[] = [];
+	loading_search = false;
+	is_search = false;
 
 	filter_data: any;
 	filtered_content_data: any;
@@ -51,10 +55,10 @@ export class CreatePlaylistComponent implements OnInit {
 	type_filter_data: any;
 	user_filtered_data: any;
 	paging: any;
-	search_data: string = '';
-	media_key: string = '';
-	current_page: string = '1';
-	sort_key: string = 'desc';
+	search_data = '';
+	media_key = '';
+	current_page = '1';
+	sort_key = 'desc';
 
 	filters: any = {
 		filetype: undefined,
@@ -66,9 +70,9 @@ export class CreatePlaylistComponent implements OnInit {
 		}
 	};
 
-	searching: boolean = false;
-	no_search_result: boolean = false;
-	no_dealer_not_floating: boolean = true;
+	searching = false;
+	no_search_result = false;
+	no_dealer_not_floating = true;
 	no_content: boolean;
 
 	constructor(

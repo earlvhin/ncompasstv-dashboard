@@ -188,7 +188,7 @@ export class DataTableComponent implements OnInit {
 					orders[index].has_viewed.is_new_order = false;
 					orders[index].has_viewed.value = 1;
 					this.table_data = [...orders];
-					this._billing.on_click_order.emit();
+					this._billing.on_click_order.next();
 				},
 				(error) => (this.in_progress = false)
 			)
@@ -367,11 +367,11 @@ export class DataTableComponent implements OnInit {
 					this._host.delete_file(id).subscribe(() => {
 						switch (this.page) {
 							case 'single-host-images-tab':
-								this._helper.onRefreshSingleHostImagesTab.emit();
+								this._helper.onRefreshSingleHostImagesTab.next();
 								break;
 
 							case 'single-host-documents-tab':
-								this._helper.onRefreshSingleHostDocumentsTab.emit();
+								this._helper.onRefreshSingleHostDocumentsTab.next();
 								break;
 						}
 					});
@@ -383,7 +383,7 @@ export class DataTableComponent implements OnInit {
 					break;
 
 				case 'delete-release-note':
-					this._release.onDeleteNoteFromDataTable.emit({ releaseNoteId: id });
+					this._release.onDeleteNoteFromDataTable.next({ releaseNoteId: id });
 					break;
 
 				default:
@@ -484,7 +484,7 @@ export class DataTableComponent implements OnInit {
 							this._license.update_install_date(fields.id, response).subscribe(
 								() => {
 									this.openConfirmationModal('success', 'Success!', 'License Installation Date Updated!');
-									this._helper.onUpdateInstallationDate.emit();
+									this._helper.onUpdateInstallationDate.next();
 								},
 								(error) => {
 									throw new Error(error);
@@ -674,7 +674,7 @@ export class DataTableComponent implements OnInit {
 	onEdit(dataId: string): void {
 		switch (this.page) {
 			case 'release-notes':
-				this._release.onEditNoteFromDataTable.emit({ releaseNoteId: dataId });
+				this._release.onEditNoteFromDataTable.next({ releaseNoteId: dataId });
 				break;
 		}
 	}
@@ -691,7 +691,7 @@ export class DataTableComponent implements OnInit {
 		const userId = user_id.value;
 		const currentEmail = email.value;
 		this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
-		this._helper.onToggleEmailNotification.emit({ userId, value: !currentValue, tableDataIndex, currentEmail });
+		this._helper.onToggleEmailNotification.next({ userId, value: !currentValue, tableDataIndex, currentEmail });
 	}
 
 	shipOrder(id, status) {
@@ -708,7 +708,7 @@ export class DataTableComponent implements OnInit {
 			.deleteUser(userId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this._helper.onRefreshUsersPage.emit(),
+				() => this._helper.onRefreshUsersPage.next(),
 				(error) => {
 					throw new Error(error);
 				}

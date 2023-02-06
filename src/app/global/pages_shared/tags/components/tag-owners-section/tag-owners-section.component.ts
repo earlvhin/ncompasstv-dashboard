@@ -70,7 +70,6 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 		switch (name) {
 			case 'add_tag':
-				
 				dialogConfig = {
 					width: '500px',
 					height: '400px',
@@ -85,7 +84,6 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 				break;
 
 			case 'assign_tags':
-
 				dialogConfig = {
 					width: '500px',
 					height: '700px',
@@ -100,9 +98,9 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe((response: boolean) => {
 			if (!response) return;
-			this._tag.onRefreshTagsCount.emit();
-			this._tag.onRefreshTagOwnersTable.emit();
-			this._tag.onRefreshTagsTable.emit();
+			this._tag.onRefreshTagsCount.next();
+			this._tag.onRefreshTagOwnersTable.next();
+			this._tag.onRefreshTagsTable.next();
 		});
 	}
 
@@ -118,7 +116,8 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 		if (this.searchFormControl.value) keyword = this.searchFormControl.value;
 		const role = this.tab === 'admin' ? 1 : 2;
 
-		this._tag.searchOwnersByTagType({ keyword, tagId, typeId, page, role })
+		this._tag
+			.searchOwnersByTagType({ keyword, tagId, typeId, page, role })
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map(({ tags, paging, message }) => {
@@ -153,19 +152,17 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 			if (this.searchFormControl.invalid) return;
 			this.clearSelectedTag();
 			this.searchOwnerTags(keyword, null, 0);
-			this._tag.onSearch.emit(keyword);
+			this._tag.onSearch.next(keyword);
 		});
 	}
 
 	private subscribeToTagNameClick(): void {
 		this._tag.onClickTagName.pipe(takeUntil(this._unsubscribe)).subscribe(({ tag, tab }) => {
-
 			if (tab !== this.tab) return;
 
 			this.selectedTag = tag;
 			this.searchOwnerTags(null, tag.tagId);
 			this.hasTagSelected = true;
-
 		});
 	}
 
@@ -177,5 +174,4 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 			{ id: 4, name: 'advertiser' }
 		];
 	}
-	
 }

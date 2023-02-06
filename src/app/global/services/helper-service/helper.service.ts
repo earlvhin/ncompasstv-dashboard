@@ -1,4 +1,5 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
+import { Subject } from 'rxjs';
 
 import {
 	API_ADVERTISER,
@@ -16,21 +17,16 @@ export class HelperService {
 	singleLicensePageCurrentTab: string;
 	renderedChartIds = [];
 
-	analyticsOnSelectMonth = new EventEmitter<void>();
-	onClickAllDealers = new EventEmitter<void>();
-	onClickActiveDealers = new EventEmitter<void>();
-	onClickInactiveDealers = new EventEmitter<void>();
-	onClickCardByStatus = new EventEmitter<{ page: string; value: string }>();
-	onHoverContent = new EventEmitter<{ playlistContentId: string }>();
-	onRefreshUsersPage = new EventEmitter<void>();
-	onResetAutocompleteField = new EventEmitter<string>();
-	onResultToggleEmailNotification = new EventEmitter<{ tableDataIndex: number; updated: boolean }>();
-	onRefreshSingleHostImagesTab = new EventEmitter<void>();
-	onRefreshSingleHostDocumentsTab = new EventEmitter<void>();
-	onSelectAnalyticsTab = new EventEmitter<string>();
-	onToggleEmailNotification = new EventEmitter<{ userId: string; value: boolean; tableDataIndex: number; currentEmail: string }>();
-	onTouchPaginatedAutoCompleteField = new EventEmitter<void>();
-	onUpdateInstallationDate = new EventEmitter<void>();
+	onClickCardByStatus = new Subject<{ page: string; value: string }>();
+	onHoverContent = new Subject<{ playlistContentId: string }>();
+	onRefreshUsersPage = new Subject<void>();
+	onResetAutocompleteField = new Subject<string>();
+	onResultToggleEmailNotification = new Subject<{ tableDataIndex: number; updated: boolean }>();
+	onRefreshSingleHostImagesTab = new Subject<void>();
+	onRefreshSingleHostDocumentsTab = new Subject<void>();
+	onToggleEmailNotification = new Subject<{ userId: string; value: boolean; tableDataIndex: number; currentEmail: string }>();
+	onTouchPaginatedAutoCompleteField = new Subject<void>();
+	onUpdateInstallationDate = new Subject<void>();
 
 	singleAdvertiserData: API_ADVERTISER;
 	singleHostData: API_SINGLE_HOST;
