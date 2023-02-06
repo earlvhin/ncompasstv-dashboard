@@ -871,9 +871,11 @@
 											[is_converted]="a.is_converted"
 											[is_fullscreen]="a.is_fullscreen"
 											[is_protected]="a.is_protected"
+											[is_scheduled_content]="a.playlist_content_schedule.type === 3"
 											[sequence]="a.seq"
-											[is_view_only]="true">
-											[uuid]="a.uuid" [zone_content]="true">
+											[is_view_only]="true"
+											[uuid]="a.uuid"
+											[zone_content]="true">
 										</app-thumbnail-card>
 									</div>
 								</div>

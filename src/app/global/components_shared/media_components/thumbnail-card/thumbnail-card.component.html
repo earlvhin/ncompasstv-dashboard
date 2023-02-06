@@ -2,25 +2,27 @@
 	class="p-0 thumbnail-card rounded-0 position-relative overflow-hidden"
 	data-placement="top"
 	[attr.title]="filename"
-	[class.is-protected]="is_dealer && is_protected && multiple_delete"
->
+	[class.is-protected]="is_dealer && is_protected && multiple_delete">
 	<div class="icon-overlay">
-		<div class="type-icon sm-text">
-			<i class="far fa-image text-primary mr-1" *ngIf="filetype != 'webm' && filetype != 'feed'" title="Image"></i>
-			<i class="fas fa-video text-primary mr-1" *ngIf="filetype == 'webm' || filetype == 'mp4'" title="Video"></i>
-			<i class="fas fa-rss-square text-primary mr-1" *ngIf="filetype == 'feed'" title="Feed"></i>
-			<i
-				class="fas fa-user-circle mr-1"
-				[ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'"
-				[title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"
-			></i>
-			<i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
+		<div class="sm-text ml-1 mr-1 mt-1">
+			<div class="d-flex">
+				<i class="far fa-image text-primary mr-1" *ngIf="filetype != 'webm' && filetype != 'feed'" title="Image"></i>
+				<i class="fas fa-video text-primary mr-1" *ngIf="filetype == 'webm' || filetype == 'mp4'" title="Video"></i>
+				<i class="fas fa-rss-square text-primary mr-1" *ngIf="filetype == 'feed'" title="Feed"></i>
+				<i
+					class="fas fa-user-circle mr-1"
+					[ngClass]="dealer === '' || dealer === null ? 'text-gray' : 'text-primary'"
+					[title]="dealer === '' || dealer === null ? 'Unassigned' : 'Assigned'"></i>
+				<i class="fas fa-expand text-primary" *ngIf="is_fullscreen == 1" title="Fullscreen"></i>
+				<ng-container *ngIf="is_scheduled_content">
+					<i class="fas fa-clock text-primary mr-1 float-right" title="Is scheduled"></i>
+				</ng-container>
+			</div>
 		</div>
 
 		<div
 			class="type-icon trash-icon sm-text"
-			*ngIf="!zone_content && !multiple_delete && !is_view_only && ((is_protected === 0 && is_dealer) || is_admin)"
-		>
+			*ngIf="!zone_content && !multiple_delete && !is_view_only && ((is_protected === 0 && is_dealer) || is_admin)">
 			<i class="fas fa-times text-danger" (click)="deleteMedia($event)" title="Delete Content"></i>
 		</div>
 

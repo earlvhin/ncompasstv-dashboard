@@ -24,10 +24,13 @@ iframe {
 }
 
 .is-protected {
-
 	opacity: 0.5;
 
 	&:hover {
 		cursor: not-allowed;
 	}
+}
+
+.float-right {
+	margin-left: auto;
 }
