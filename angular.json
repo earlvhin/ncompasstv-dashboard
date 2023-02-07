@@ -81,6 +81,20 @@
 								}
 							]
 						},
+						"development-new": {
+							"buildOptimizer": false,
+							"optimization": false,
+							"vendorChunk": true,
+							"extractLicenses": false,
+							"sourceMap": true,
+							"namedChunks": true,
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.development-new.ts"
+								}
+							]
+						},
 						"debug-production": {
 							"fileReplacements": [
 								{
@@ -100,6 +114,14 @@
 								{
 									"replace": "src/environments/environment.ts",
 									"with": "src/environments/environment.staging.ts"
+								}
+							]
+						},
+						"staging-new": {
+							"fileReplacements": [
+								{
+									"replace": "src/environments/environment.ts",
+									"with": "src/environments/environment.staging-new.ts"
 								}
 							]
 						},
