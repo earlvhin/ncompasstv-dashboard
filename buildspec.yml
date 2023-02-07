@@ -27,7 +27,7 @@ phases:
       # Build docker images and tag based on build ID.
       - echo Build started on `date`
       - echo Building the Docker image...
-      - docker build --build-arg ENV_NAME=${ENV_NAME} -t $REPOSITORY_URI:latest .
+      - docker build --build-arg ENV_NAME=$ENV_NAME -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
