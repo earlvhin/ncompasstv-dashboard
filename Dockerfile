@@ -5,7 +5,7 @@ COPY . .
 RUN npx npm-force-resolutions
 RUN npm install
 RUN echo $ENV_NAME
-RUN npm run build_env --c $ENV_NAME
+RUN npm run build_env -- --c $ENV_NAME
 RUN ls /app/dist/dashboard-material
 
 # stage 2
