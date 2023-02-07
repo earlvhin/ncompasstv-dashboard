@@ -1,5 +1,6 @@
 # stage 1
 FROM public.ecr.aws/lambda/nodejs:12 as node
+ARG ENV_NAME
 WORKDIR /app
 COPY . .
 RUN npx npm-force-resolutions
