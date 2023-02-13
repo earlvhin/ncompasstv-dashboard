@@ -6,7 +6,7 @@ env:
 phases:
   install:
     runtime-versions:
-      docker: latest
+      nodejs: 14
   pre_build:
     commands:
       # Define pre-build variables.
