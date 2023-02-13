@@ -6,7 +6,7 @@ env:
 phases:
   install:
     runtime-versions:
-      nodejs: 12
+      docker: public.ecr.aws/lambda/nodejs:12
   pre_build:
     commands:
       # Define pre-build variables.
