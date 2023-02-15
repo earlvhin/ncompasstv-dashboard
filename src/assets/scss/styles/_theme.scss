@@ -912,6 +912,12 @@ agm-map {
     color: $primary;
 }
 
+.hover-primary {
+    &:hover {
+        color: $primary;
+    }
+}
+
 .screenshot-holder {
     width: 100%;
     background: #022457;

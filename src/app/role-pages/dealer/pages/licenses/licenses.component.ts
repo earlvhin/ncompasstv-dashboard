@@ -34,7 +34,7 @@ export class LicensesComponent implements OnInit {
 	license_row_slug: string = 'host_id';
 	license_row_url: string = `/${this.currentRole}/hosts`;
 	licenses_to_export: API_LICENSE['license'][] = [];
-	no_licenses: boolean = false;
+	no_licenses_result: boolean = false;
 	now: any;
 	paging_data_license: any;
 	splitted_text: any;
@@ -51,6 +51,19 @@ export class LicensesComponent implements OnInit {
 	workbook_generation: boolean = false;
 	worksheet: any;
 	is_view_only = false;
+
+    // FOR GRID VIEW
+    active_view: string = 'list';
+    license_data_for_grid_view: any = [];
+    favorites_list: any = [];
+    favorite_view: boolean = true;
+    show_more_clicked: boolean = false;
+    favorites_list_cache: any = [];
+    grid_list_cache: any = [];
+    no_favorites: boolean;
+    total_favorites: 0;
+    total_not_favorites: 0;
+    hide_all_license: boolean = true;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
@@ -271,8 +284,20 @@ export class LicensesComponent implements OnInit {
 			);
 	}
 
-	getLicenses(page: number) {
-		this.searching_license = true;
+	getLicenses(page: number, pageSize?, fromShowMore?) {
+        var favorite: any;
+        this.no_licenses_result = false;
+		if(this.active_view != 'grid') {
+            favorite = '';
+            this.searching_license = true;
+        } else {
+            if(page > 1) {
+                this.searching_license = false;
+            } else {
+                this.searching_license = true;
+            }
+            favorite = false;
+        }
 
 		this._license
 			.sort_license_by_dealer_id(
@@ -281,7 +306,7 @@ export class LicensesComponent implements OnInit {
 				this.search_data_license,
 				this.sort_column,
 				this.sort_order,
-				15,
+				pageSize ? pageSize : 15,
 				this.filters.status,
 				this.filters.days_offline,
 				this.filters.activated,
@@ -291,25 +316,50 @@ export class LicensesComponent implements OnInit {
 				this.filters.assigned,
 				this.filters.pending,
 				this.filters.online,
-				this.filters.isactivated
+				this.filters.isactivated,
+                favorite
 			)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					if (data.message) {
-						if (this.search_data_license == '') this.no_licenses = true;
-						this.license_data = [];
-						this.license_filtered_data = [];
-						return;
-					}
+                    this.paging_data_license = data.paging;
 
-					this.paging_data_license = data.paging;
-					this.license_data_api = data.paging.entities;
-					const licenses = data.paging.entities as API_LICENSE['license'][];
-					const mapped = this.mapToLicensesTable(licenses);
-					this.license_data = [...mapped];
-					this.filtered_data = [...mapped];
-					this.license_filtered_data = [...mapped];
+                    if(this.active_view === 'grid') {
+                        if (data.paging.entities.length > 0) {
+                            data.paging.entities.map(
+                                entities => {
+                                    this.license_data_for_grid_view.push(entities)
+                                }
+                            )
+                            if(fromShowMore && page > 1) {
+                                this.grid_list_cache = this.license_data_for_grid_view;
+                            }
+                            if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
+                                this.license_data_for_grid_view = this.grid_list_cache;
+                            }
+                        } else {
+                            this.no_licenses_result = true;
+                        }
+                    } else {
+                        if (data.paging.entities) {
+                            const mapped = this.mapToLicensesTable(data.paging.entities);
+                            this.license_data = [...mapped];
+                            this.license_filtered_data = [...mapped];
+                        } else {
+                            if (this.search_data_license == '') this.no_licenses_result = true;
+                            this.license_filtered_data = [];
+                        }
+                    }
+
+					// if (data.message) {
+					// 	if (this.search_data_license == '') this.no_licenses = true;
+					// 	this.license_data = [];
+					// 	this.license_filtered_data = [];
+					// 	return;
+					// }
+
+					this.initial_load_license = false;
+                    this.searching_license = false;
 				},
 				(error) => {
 					throw new Error(error);
@@ -320,6 +370,19 @@ export class LicensesComponent implements OnInit {
 				this.searching_license = false;
 			});
 	}
+
+    sortDisplay(arrangement) {
+        console.log("RR", arrangement)
+        var filter = {
+            column: 'DisplayStatus',
+            order: arrangement
+        };
+        this.getColumnsAndOrder(filter);
+    }
+
+    showAllLicenses() {
+        this.hide_all_license = false;
+    }
 
 	licenseFilterData(keyword = ''): void {
 		this.search_data_license = keyword;
@@ -334,7 +397,13 @@ export class LicensesComponent implements OnInit {
 	getColumnsAndOrder(data: { column: string; order: string }) {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
-		this.getLicenses(1);
+		if(this.active_view === 'grid') {
+            this.license_data_for_grid_view = [];
+            this.getFavoriteLicenses();
+            this.getLicenses(1, this.grid_list_cache.length, false)
+        } else {
+            this.getLicenses(1);
+        }
 	}
 
 	getLabel(data) {
@@ -393,10 +462,69 @@ export class LicensesComponent implements OnInit {
 					this.filters.host = data.host.id;
 					this.filters.label_host = data.host.name;
 				}
-				this.getLicenses(1);
+				if(this.active_view === 'grid') {
+                    this.license_data_for_grid_view = [];
+                    this.getFavoriteLicenses(false);
+                    this.getLicenses(1, 24, false)
+                } else {
+                    this.getLicenses(1);
+                }
+                this.hide_all_license = false;
 			}
 		});
 	}
+
+    changeView(view) {
+        this.active_view = view;
+        if(view === 'grid') {
+            this.getFavoriteLicenses(true);
+            this.license_data_for_grid_view = [];
+            this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24)
+        } else {
+            this.getLicenses(1)
+        }
+    }
+
+    getFavoriteLicenses(reset?) {
+        this.favorites_list = [];
+        this._license.sort_license_by_dealer_id(
+			this.currentUser.roleInfo.dealerId,
+            1,
+			!reset ? this.search_data_license : '',
+			this.sort_column,
+			this.sort_order,
+			24,
+			this.filters.status,
+			this.filters.days_offline,
+			this.filters.activated,
+			this.filters.recent,
+			this.filters.zone,
+			this.filters.host,
+			this.filters.assigned,
+			this.filters.pending,
+			this.filters.online,
+			this.filters.isactivated,
+            true
+		).pipe(takeUntil(this._unsubscribe)).subscribe(
+			(data) => {
+                if(data.paging.entities.length === 0) {
+                    this.no_favorites = true;
+                } else {
+                    data.paging.entities.map(
+                        entities => {
+                            this.favorites_list.push(entities)
+                        }
+                    )
+                    this.favorites_list_cache = this.favorites_list;
+                    this.no_favorites = false;
+                }
+                if(reset) {
+                    this.favorites_list_cache = this.favorites_list;
+                    this.no_favorites = false;
+                }
+            }
+        )
+    }
 
 	getDataForExport(id: string): void {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -593,4 +721,19 @@ export class LicensesComponent implements OnInit {
 	protected get currentRole() {
 		return this._auth.current_role;
 	}
+
+    showMore(event) {
+        this.show_more_clicked = true;
+        this.getLicenses(event.page, event.pageSize, true)
+    }
+
+    toggleFavorites(value) {
+        if(value === 'false') {
+            this.favorite_view = false;
+        } else {
+            this.favorites_list = this.favorites_list_cache;
+            this.no_favorites = false;
+            this.favorite_view = true;
+        }
+    }
 }
