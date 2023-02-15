@@ -227,33 +227,31 @@ export class CreateHostComponent implements OnInit {
 
 		this.is_creating_host = true;
 
-		console.log('to save', newHostPlace)
+		if ((this.is_creating_host = true)) {
 
-		// if ((this.is_creating_host = true)) {
-
-		// 	this._host
-		// 		.add_host_place(newHostPlace)
-		// 		.pipe(takeUntil(this._unsubscribe))
-		// 		.subscribe(
-		// 			(data: any) => {
-		// 				this.openConfirmationModal(
-		// 					'success',
-		// 					'Host Place Created!',
-		// 					'Hurray! You successfully created a Host Place',
-		// 					data.hostId
-		// 				);
-		// 			},
-		// 			(error) => {
-		// 				this.is_creating_host = false;
-		// 				this.openConfirmationModal(
-		// 					'error',
-		// 					'Host Place Creation Failed',
-		// 					"An error occured while saving your data",
-		// 					null
-		// 				);
-		// 			}
-		// 		);
-		// }
+			this._host
+				.add_host_place(newHostPlace)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data: any) => {
+						this.openConfirmationModal(
+							'success',
+							'Host Place Created!',
+							'Hurray! You successfully created a Host Place',
+							data.hostId
+						);
+					},
+					(error) => {
+						this.is_creating_host = false;
+						this.openConfirmationModal(
+							'error',
+							'Host Place Creation Failed',
+							"An error occured while saving your data",
+							null
+						);
+					}
+				);
+		}
 	}
 
 	onSearchBusiness() {
