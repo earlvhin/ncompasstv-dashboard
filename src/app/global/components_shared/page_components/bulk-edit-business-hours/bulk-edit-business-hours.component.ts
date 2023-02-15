@@ -3,8 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import * as moment from 'moment';
 import * as uuid from 'uuid';
 
-import { UI_OPERATION_DAYS } from 'src/app/global/models/ui_operation-hours.model';
 import { MatDialogRef } from '@angular/material';
+import { UI_STORE_HOUR } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-bulk-edit-business-hours',
@@ -83,28 +83,61 @@ export class BulkEditBusinessHoursComponent implements OnInit {
 	}
 
 	onSubmit(): void {
-		let toSubmit = [];
+		let toSubmit: UI_STORE_HOUR[] = [];
 
 		this.days.forEach(
 			day => {
-				let data = new UI_OPERATION_DAYS(day.id, day.label, day.day, [], false);
+
+				let data: UI_STORE_HOUR = {
+					id: day.id,
+					label: day.label,
+					day: day.day,
+					periods: [],
+					status: false
+				};
 
 				if (this.selectedDayIds.includes(day.id)) {
 
-					data = new UI_OPERATION_DAYS(
-						day.id,
-						day.label,
-						day.day,
-						[
-							{
-								id: uuid.v4(),
-								day_id: day.id,
-								open: moment(this.from).format('hh:mm A'),
-								close: moment(this.to).format('hh:mm A')
-							}
-						],
-						true
+					const setHourData = (hour: string) => {
+
+						const hourSplit = hour.split(':');
+
+						return {
+							hour: parseInt(hourSplit[0]),
+							minute: parseInt(hourSplit[1]),
+							second: 0
+						};
+
+					}
+
+					const opening = {
+						'12hr': moment(this.from).format('hh:mm A'),
+						'24hr': moment(this.from).format('HH:mm'),
+						destructured: null
+					};
+
+					opening.destructured = setHourData(opening['24hr']);
+
+					const closing = {
+						'12hr': moment(this.to).format('hh:mm A'),
+						'24hr': moment(this.to).format('HH:mm'), 
+						destructured: null,
+					};
+
+					closing.destructured = setHourData(closing['24hr']);
+
+					data.periods.push(
+						{
+							id: uuid.v4(),
+							day_id: day.id,
+							open: opening['12hr'],
+							close: closing['12hr'],
+							openingHourData: opening.destructured,
+							closingHourData: closing.destructured
+						}
 					);
+					
+					data.status = true;
 
 				}
 

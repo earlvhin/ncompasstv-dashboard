@@ -16,11 +16,13 @@ import {
 	UI_OPERATION_DAYS,
 	API_HOST,
 	API_TIMEZONE,
-	PAGING
+	PAGING,
+	UI_STORE_HOUR
 } from 'src/app/global/models';
 
 import { AuthService, CategoryService, ConfirmationDialogService, DealerService, HostService } from 'src/app/global/services';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-edit-single-host',
@@ -29,7 +31,7 @@ import { BulkEditBusinessHoursComponent } from '../../components_shared/page_com
 	providers: [TitleCasePipe]
 })
 export class EditSingleHostComponent implements OnInit, OnDestroy {
-	business_hours: UI_OPERATION_DAYS[] = JSON.parse(this.page_data.host.storeHours);
+	business_hours: UI_STORE_HOUR[];
 	categories_loaded = false;
 	categories_data: API_PARENT_CATEGORY[];
 	category_selected: string;
@@ -77,6 +79,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this.getHostContents();
 		this.getCategories();
 		this.getTimezones();
+
+		this.business_hours = this.parseBusinessHours(JSON.parse(this.page_data.host.storeHours))
 	}
 
 	ngOnDestroy(): void {
@@ -181,7 +185,11 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this.is_active_host = event.checked;
 	}
 
-	parseBusinessHours(data: { periods: any[]; status: boolean; id: string }): void {
+	removeHours(data: { periods: any[] }, index: number): void {
+		data.periods.splice(index, 1);
+	}
+
+	toggleDaySchedule(data: { periods: any[]; status: boolean; id: string }): void {
 		data.periods.length = 0;
 
 		const hours = {
@@ -195,10 +203,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		data.periods.push(hours);
 	}
 
-	removeHours(data: { periods: any[] }, index: number): void {
-		data.periods.splice(index, 1);
-	}
-
 	async saveHostData() {
 		this.checkBusinessHoursFields();
 
@@ -210,6 +214,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		let message = 'Are you sure you want to proceed?';
 		const status = this.is_active_host ? 'A' : 'I';
 		const title = 'Update Host Details';
+		const updatedBusinessHours = this.setBusinessHoursBeforeSubmitting(this.business_hours);
 
 		const newHostPlace = new API_UPDATE_HOST(
 			this.host.hostId,
@@ -223,7 +228,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			this._formControls.region.value,
 			this._formControls.address.value,
 			this._formControls.category.value,
-			JSON.stringify(this.business_hours),
+			JSON.stringify(updatedBusinessHours),
 			this._formControls.timezone.value,
 			this._formControls.vistar_venue_id.value,
 			status
@@ -405,9 +410,59 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	private parseBusinessHours(data: UI_STORE_HOUR[]) {
+		return data.map(
+			operation => {
+				operation.periods = operation.periods.map(
+					period => {
+
+						const openingHour = period.open.includes(':') ? period.open : '12:00 AM';
+						const closingHour = period.close.includes(':') ? period.close : '11:59 PM';
+						const openingHourSplit = moment(openingHour, 'hh:mm A').format('HH:mm').split(':');
+						const closingHourSplit = moment(closingHour, 'hh:mm A').format('HH:mm').split(':');
+
+						period.openingHourData = {
+							hour: parseInt(openingHourSplit[0]),
+							minute: parseInt(openingHourSplit[1]),
+							second: 0
+						};
+
+						period.closingHourData = {
+							hour: parseInt(closingHourSplit[0]),
+							minute: parseInt(closingHourSplit[1]),
+							second: 0
+						};
+
+						return period;
+					}
+				);
+				return operation;
+			}
+		);
+	}
+
 	private setDialogData(): void {
 		this.initializeForm();
 		this.setCategory(this.host.category);
+	}
+
+	private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
+		return data.map(
+			operation => {
+				operation.periods = operation.periods.map(
+					period => {
+
+						const opening = period.openingHourData;
+						const closing = period.closingHourData;
+						period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
+						period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
+
+						return period;
+					}
+				);
+				return operation;
+			}
+		);
 	}
 
 	protected get _businessHours(): UI_OPERATION_DAYS[] {
