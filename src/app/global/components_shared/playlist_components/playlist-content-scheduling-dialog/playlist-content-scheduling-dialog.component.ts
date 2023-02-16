@@ -392,7 +392,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 
 	private setHourData(hour: string) {
 
-		const hourSplit = hour.split(':');
+		const hourSplit = moment(hour, 'hh:mm A').format('HH:mm').split(':');
 
 		return {
 			hour: parseInt(hourSplit[0]),
@@ -496,7 +496,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		const playTimeStart = this.form.get('playTimeStartData');
 		const playTimeEnd = this.form.get('playTimeEndData');
 
-		playTimeStart.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+		playTimeStart.valueChanges.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: NgbTimeStruct | null) => {
 					if (!response) return;
@@ -508,7 +508,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				}
 			);
 
-		playTimeEnd.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000))
+		playTimeEnd.valueChanges.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: NgbTimeStruct | null) => {
 					if (!response) return;
