@@ -1,33 +1,33 @@
 import { Component, OnInit, Inject, OnDestroy } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material';
-import { Observable, Subject, forkJoin } from 'rxjs';
 import { takeUntil, debounceTime } from 'rxjs/operators';
+import { Subject, forkJoin } from 'rxjs';
 
-import { API_LICENSE, API_LICENSE_PROPS, PAGING } from 'src/app/global/models';
+import { API_LICENSE_PROPS, PAGING } from 'src/app/global/models';
+import { HelperService, LicenseService } from 'src/app/global/services';
 
-import { LicenseService } from 'src/app/global/services';
 @Component({
 	selector: 'app-assign-license-modal',
 	templateUrl: './assign-license-modal.component.html',
 	styleUrls: ['./assign-license-modal.component.scss']
 })
 export class AssignLicenseModalComponent implements OnInit, OnDestroy {
-	assign_status: boolean = false;
-	assign_success: boolean = false;
+	assign_status = false;
+	assign_success = false;
 	assigned_licenses = [];
 	available_licenses = [];
-	finish_fetching: boolean = false;
-	is_submitted: boolean = false;
+	finish_fetching = false;
+	is_submitted = false;
 	license_handler: any;
-	license_page_count: number = 1;
+	license_page_count = 1;
 	licenses: any[] = [];
 	licenses_loaded = false;
-	no_available_licenses: boolean = false;
+	no_available_licenses = false;
 	timeOutDuration = 1000;
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _license: LicenseService, @Inject(MAT_DIALOG_DATA) public _dialog_data: any) {}
+	constructor(@Inject(MAT_DIALOG_DATA) public _dialog_data: any, private _license: LicenseService, private _helper: HelperService) {}
 
 	ngOnInit() {
 		this.getAvailableLicenses();
@@ -53,7 +53,10 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 			.assign_licenses_to_host(license_host_data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => (this.assign_success = true),
+				() => {
+					this.assign_success = true
+					this._helper.onRefreshBannerData.next();
+				},
 				(error) => {
 					throw new Error(error);
 				}
