@@ -64,6 +64,7 @@ export class LicensesComponent implements OnInit {
     total_favorites: 0;
     total_not_favorites: 0;
     hide_all_license: boolean = true;
+    no_licenses: boolean;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
@@ -88,7 +89,7 @@ export class LicensesComponent implements OnInit {
 
 	filters: any = {
 		admin_licenses: false,
-		isactivated: 1,
+		isactivated: '',
 		assigned: '',
 		online: '',
 		pending: '',
@@ -148,6 +149,7 @@ export class LicensesComponent implements OnInit {
 					this.filters.online = false;
 				}
 				this.filters.assigned = true;
+                this.filters.isactivated = 1;
 				if (value == 0) {
 					var filter = {
 						column: 'TimeIn',
@@ -162,6 +164,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
+                this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -172,24 +175,28 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Disabled';
+                this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
+                this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline = value;
 				this.filters.label_status = 'Offline for ' + days;
+                this.sortList('desc', 'TimeIn');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
-				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
+				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -197,11 +204,10 @@ export class LicensesComponent implements OnInit {
 				this.filters.assigned = true;
 				this.filters.pending = value;
 				this.filters.label_status = value == 'true' ? 'Pending' : '';
-				break;
+				this.sortList('desc');
+                break;
 			default:
 		}
-
-		this.getLicenses(1);
 	}
 
 	resetFilterStatus() {
@@ -217,7 +223,7 @@ export class LicensesComponent implements OnInit {
 	clearFilter() {
 		this.filters = {
 			admin_licenses: false,
-			isactivated: 1,
+			isactivated: '',
 			assigned: '',
 			online: '',
 			pending: '',
@@ -233,8 +239,14 @@ export class LicensesComponent implements OnInit {
 			label_host: '',
 			label_admin: ''
 		};
-		this.sortList('desc');
-		this.getLicenses(1);
+		if(this.active_view === 'grid') {
+            this.getFavoriteLicenses(false);
+            this.license_data_for_grid_view = [];
+            this.getLicenses(1, 24, true)
+        } else {
+            this.sortList('desc');
+            this.getLicenses(1)
+        }
 	}
 
 	getTotalCount(id: string): void {
@@ -346,17 +358,10 @@ export class LicensesComponent implements OnInit {
                             this.license_data = [...mapped];
                             this.license_filtered_data = [...mapped];
                         } else {
-                            if (this.search_data_license == '') this.no_licenses_result = true;
+                            if (this.search_data_license == '') this.no_licenses = true;
                             this.license_filtered_data = [];
                         }
                     }
-
-					// if (data.message) {
-					// 	if (this.search_data_license == '') this.no_licenses = true;
-					// 	this.license_data = [];
-					// 	this.license_filtered_data = [];
-					// 	return;
-					// }
 
 					this.initial_load_license = false;
                     this.searching_license = false;
@@ -372,7 +377,6 @@ export class LicensesComponent implements OnInit {
 	}
 
     sortDisplay(arrangement) {
-        console.log("RR", arrangement)
         var filter = {
             column: 'DisplayStatus',
             order: arrangement
@@ -384,13 +388,32 @@ export class LicensesComponent implements OnInit {
         this.hide_all_license = false;
     }
 
-	licenseFilterData(keyword = ''): void {
-		this.search_data_license = keyword;
-		this.getLicenses(1);
+	licenseFilterData(e) {
+        if(e) {
+            this.search_data_license = e;
+            if(this.active_view === 'grid') {
+                this.license_data_for_grid_view = [];
+                this.getFavoriteLicenses(false);
+                this.getLicenses(1, 24, false)
+            } else {
+                this.getLicenses(1);
+            }
+            this.hide_all_license = false;
+        } else {
+            this.search_data_license = '';
+			if(this.active_view === 'grid') {
+                this.license_data_for_grid_view = [];
+                this.getFavoriteLicenses(false);
+                this.getLicenses(1, 24, false)
+            } else {
+                this.getLicenses(1);
+            }
+        }
+        
 	}
 
-	sortList(order: string): void {
-		const filter = { column: 'PiStatus', order: order };
+	sortList(order: string, column?): void {
+		const filter = { column: column ? column : 'PiStatus', order: order };
 		this.getColumnsAndOrder(filter);
 	}
 

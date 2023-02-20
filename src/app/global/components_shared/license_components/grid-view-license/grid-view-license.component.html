@@ -1,5 +1,5 @@
-<div class="col-lg-12 mr-2 flex flow-wrap" *ngIf="!searching_licenses; else loader">
-    <div class="col-lg-12 p-0 contents mt-3" *ngIf="!no_licenses_result; else nodata">
+<div class="col-lg-12 p-0 mr-2 flex flow-wrap" *ngIf="!searching_licenses; else loader">
+    <div class="col-lg-12 p-0 contents mt-3" *ngIf="!no_licenses_result || !no_favorites; else nodata">
         <div class="col-lg-12 p-0" *ngIf="!no_favorites && favorite_view">
             <span class="text-primary col-lg-12">FAVORITES:</span>
             <div class="col-lg-12 mt-2 mb-3 d-flex flex-wrap p-0" *ngIf="favorites_list.length > 0">

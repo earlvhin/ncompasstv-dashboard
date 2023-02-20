@@ -46,7 +46,9 @@ export class GridViewLicenseComponent implements OnInit {
         this.searching_licenses = this.searching_licenses;
         this.no_licenses_result = this.no_licenses_result;
         this.favorites_list = this.favorites_list;
+        this.no_favorites = this.no_favorites;
         this.license_data_for_grid_view = this.license_data_for_grid_view;
+        console.log("FAVO LIST", this.favorites_list)
     }
 
     removeToFavorites(license) {

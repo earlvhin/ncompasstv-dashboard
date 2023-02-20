@@ -327,10 +327,10 @@ export class LicensesComponent implements OnInit {
             true,
 		).pipe(takeUntil(this._unsubscribe)).subscribe(
 			(data) => {
-                if(data.paging.entities.length === 0) {
+                if(data.licenses.length === 0) {
                     this.no_favorites = true;
                 } else {
-                    data.paging.entities.map(
+                    data.licenses.map(
                         entities => {
                             this.favorites_list.push(entities)
                         }
@@ -371,7 +371,7 @@ export class LicensesComponent implements OnInit {
             }
             favorite = false;
         }
-		if (this.has_sort) {
+		// if (this.has_sort) {
 			this._license
 				.get_all_licenses(
 					page,
@@ -399,8 +399,8 @@ export class LicensesComponent implements OnInit {
                         this.paging_data_licenses = data.paging;
                         
                         if(this.active_view === 'grid') {
-                            if (data.paging.entities.length > 0) {
-                                data.paging.entities.map(
+                            if (data.licenses.length > 0) {
+                                data.licenses.map(
                                     entities => {
                                         this.license_data_for_grid_view.push(entities)
                                     }
@@ -415,7 +415,7 @@ export class LicensesComponent implements OnInit {
                                 this.no_licenses_result = true;
                             }
                         } else {
-                            if (data.paging.entities) {
+                            if (data.licenses.length > 0) {
                                 const mapped = this.mapToLicensesTable(data.paging.entities);
                                 this.licenses_data = [...mapped];
                                 this.filtered_data_licenses = [...mapped];
@@ -432,56 +432,56 @@ export class LicensesComponent implements OnInit {
 						throw new Error(error);
 					}
 				);
-		} else {
-			this._license
-				.get_all_licenses_fetch(
-					page,
-					this.search_data_licenses,
-					this.sort_column,
-					this.sort_order,
-					pageSize ? pageSize : 15,
-					this.filters.admin_licenses,
-					this.filters.status,
-					this.filters.days_offline,
-					this.filters.activated,
-					this.filters.recent,
-					this.filters.zone,
-					this.filters.dealer,
-					this.filters.host,
-					this.filters.assigned,
-					this.filters.pending,
-					this.filters.online,
-					this.filters.isactivated
-				)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.paging_data_licenses = data.paging;
+		// } else {
+		// 	this._license
+		// 		.get_all_licenses_fetch(
+		// 			page,
+		// 			this.search_data_licenses,
+		// 			this.sort_column,
+		// 			this.sort_order,
+		// 			pageSize ? pageSize : 15,
+		// 			this.filters.admin_licenses,
+		// 			this.filters.status,
+		// 			this.filters.days_offline,
+		// 			this.filters.activated,
+		// 			this.filters.recent,
+		// 			this.filters.zone,
+		// 			this.filters.dealer,
+		// 			this.filters.host,
+		// 			this.filters.assigned,
+		// 			this.filters.pending,
+		// 			this.filters.online,
+		// 			this.filters.isactivated
+		// 		)
+		// 		.pipe(takeUntil(this._unsubscribe))
+		// 		.subscribe(
+		// 			(data) => {
+		// 				this.paging_data_licenses = data.paging;
 
-						if (data.paging.entities) {
-							const mapped = this.mapToLicensesTable(data.paging.entities);
-							this.licenses_data = [...mapped];
-							this.filtered_data_licenses = [...mapped];
-						} else {
-							if (this.search_data == '') this.no_licenses = true;
-							this.filtered_data_licenses = [];
-						}
+		// 				if (data.paging.entities) {
+		// 					const mapped = this.mapToLicensesTable(data.paging.entities);
+		// 					this.licenses_data = [...mapped];
+		// 					this.filtered_data_licenses = [...mapped];
+		// 				} else {
+		// 					if (this.search_data == '') this.no_licenses = true;
+		// 					this.filtered_data_licenses = [];
+		// 				}
 
-						this.initial_load_licenses = false;
-						this.searching_licenses = false;
-                        if(this.active_view === 'grid') {
-                            data.paging.entities.map(
-                                entities => {
-                                    this.license_data_for_grid_view.push(entities)
-                                }
-                            )
-                        }
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				);
-		}
+		// 				this.initial_load_licenses = false;
+		// 				this.searching_licenses = false;
+        //                 if(this.active_view === 'grid') {
+        //                     data.licenses.map(
+        //                         entities => {
+        //                             this.license_data_for_grid_view.push(entities)
+        //                         }
+        //                     )
+        //                 }
+		// 			},
+		// 			(error) => {
+		// 				throw new Error(error);
+		// 			}
+		// 		);
+		// }
 	}
     
 
@@ -514,20 +514,17 @@ export class LicensesComponent implements OnInit {
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				if (value == 1) {
 					this.filters.online = true;
+                    this.sortList('desc');
 				} else {
 					this.filters.online = false;
-				}
-				this.filters.assigned = true;
-				this.filters.isactivated = 1;
-                if (value === 0) {
                     var filter = {
                         column: 'TimeIn',
                         order: 'desc'
                     };
                     this.getColumnsAndOrder(filter, 'licenses');
-                } else {
-                    this.sortList('desc');
-                }
+				}
+				this.filters.assigned = true;
+				this.filters.isactivated = 1;
 			    break;
 			case 'zone':
 				this.filters.zone = value;
