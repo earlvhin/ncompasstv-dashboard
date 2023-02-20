@@ -30,6 +30,7 @@ phases:
       - echo Build started on `date`
       - echo "Building angular project..."
       - npm run build -- --configuration $ENV_NAME
+      - pwd
       - ls -l /app/dist/dashboard-material
       - echo "DONE!!"
   post_build:
