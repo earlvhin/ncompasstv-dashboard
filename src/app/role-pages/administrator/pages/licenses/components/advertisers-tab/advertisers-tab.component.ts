@@ -15,7 +15,7 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 	currentTableData: DEALER_UI_TABLE_ADVERTISERS[] = [];
 	filters: API_FILTERS = { page: 1, pageSize: 15 };
 	hasNoData = false;
-	hasScrolled = false;
+	hasSearched = false;
 	isExporting = false;
 	isPageReady = false;
 	isPreloadDataReady = false;
@@ -108,8 +108,14 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private preloadAdvertisers() {
+	private preloadAdvertisers(type = 'default') {
 		this.filters.page++;
+
+		if (type === 'reset') {
+			this.filters.page = 0;
+			delete this.filters.search;
+		}
+
 		return this.getAdvertisers().subscribe((response) => {
 			if (response.paging.entities.length === 0) {
 				this.isPreloadDataReady = true;
@@ -154,12 +160,18 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 
 			if (!keyword || keyword.trim().length === 0) {
 				delete this.filters.search;
-				this.loadAdvertisers();
+				this.hasSearched = false;
+				this.currentTableData = [...this.queuedTableData];
+				this.resetFilters();
+				this.preloadAdvertisers();
+				this.isPageReady = true;
 				return;
 			}
 
 			this.filters.search = keyword;
+			this.hasSearched = true;
 			this.searchAdvertisers();
+			this.preloadAdvertisers('reset');
 		});
 	}
 
