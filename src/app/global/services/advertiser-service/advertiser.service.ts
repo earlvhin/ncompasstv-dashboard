@@ -8,10 +8,9 @@ import { API_ADVERTISER, API_FILTERS, PAGING, TAG } from 'src/app/global/models'
 	providedIn: 'root'
 })
 export class AdvertiserService extends BaseService {
-    token = JSON.parse(localStorage.getItem('tokens'));
-    
-	get_advertisers(filters: API_FILTERS) {
-		// return this.getRequest(`${this.getters.api_get_advertisers}`).map(data => data.advertisers);
+	token = JSON.parse(localStorage.getItem('tokens'));
+
+	get_advertisers(filters: API_FILTERS): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
 		const base = `${this.getters.api_get_advertisers}`;
 		const params = this.setUrlParams(filters, false, true);
 		const url = `${base}${params}`;
