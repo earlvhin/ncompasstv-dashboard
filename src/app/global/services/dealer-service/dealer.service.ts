@@ -109,7 +109,7 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_dealers_with_license(page: number, key: string) {
+	get_dealers_with_license(page: number, key: string): Observable<{ dealers?: API_DEALER[]; paging?: PAGING; message?: string }> {
 		const params = this.setUrlParams({ page, search: key });
 		return this.getRequest(`${this.getters.api_get_dealers_with_license}${params}`);
 	}
