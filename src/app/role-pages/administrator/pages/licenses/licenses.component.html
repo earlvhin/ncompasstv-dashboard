@@ -531,13 +531,10 @@
                     <!-- Advertisers Tab -->
                     <mat-tab id="advertisers-view-tab" label="Advertisers View">
 						<ng-template matTabContent>
-							<div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="is_dealer_admin ? tabGroup.selectedIndex === 3 : tabGroup.selectedIndex === 4">
-								<app-advertisers
-                                [call_to_other_page]="true"
-                                ></app-advertisers>
-							</div>	
+                            <app-advertisers-tab></app-advertisers-tab>
 						</ng-template>
-					</mat-tab>                    
+					</mat-tab>
+                    
                 </mat-tab-group>
             </div>
         </div>

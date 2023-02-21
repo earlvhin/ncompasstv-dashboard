@@ -428,13 +428,15 @@
 		</div>
 	</ng-template>
 
-	<div class="row" *ngIf="table_data.length > 0 && !paging_details">
-		<div class="col-lg-12 text-center mt-4">
-			<pagination-controls (pageChange)="onPageChange($event)" class="sm-text"> </pagination-controls>
+	<ng-container *ngIf="pagination_enabled">
+		<div class="row" *ngIf="table_data.length > 0 && !paging_details">
+			<div class="col-lg-12 text-center mt-4">
+				<pagination-controls (pageChange)="onPageChange($event)" class="sm-text"> </pagination-controls>
+			</div>
 		</div>
-	</div>
-
-	<app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)"> </app-pagination-field>
+	
+		<app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)"> </app-pagination-field>
+	</ng-container>
 </div>
 
 <ng-template #no_records_found>

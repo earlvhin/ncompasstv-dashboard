@@ -70,6 +70,7 @@ export class DataTableComponent implements OnInit {
 	@Input() transaction_action: any;
 	@Input() order_action: any;
 	@Input() order_data: any;
+	@Input() pagination_enabled = true;
 
 	// Feed Controls
 	@Input() feed_controls: boolean;
