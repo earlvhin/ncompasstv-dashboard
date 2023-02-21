@@ -10,15 +10,7 @@ phases:
   pre_build:
     commands:
       # Define pre-build variables.
-      # - REPO_NAME=ncompasstv-dashboard  # DEFINE THIS VARIABLE 
-      # - ECS_CONTAINER_NAME=dashboard    # DEFINE THIS VARIABLE 
       - AWS_ACCOUNT_ID=`aws sts get-caller-identity --query "Account" --output text`
-      # - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      # - IMAGE_TAG=${COMMIT_HASH:=latest}
-      # - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME
-      # # ECR Authentication.
-      # - echo Logging in to Amazon ECR...
-      # - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
       - npx npm-force-resolutions
       - npm install
   build:
