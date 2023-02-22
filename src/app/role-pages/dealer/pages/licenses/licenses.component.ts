@@ -65,6 +65,7 @@ export class LicensesComponent implements OnInit {
     total_not_favorites: 0;
     hide_all_license: boolean = true;
     no_licenses: boolean;
+    paging_data_favorites: any;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
@@ -533,6 +534,7 @@ export class LicensesComponent implements OnInit {
                 if(data.paging.entities.length === 0) {
                     this.no_favorites = true;
                 } else {
+                    this.paging_data_favorites = data.paging;
                     data.paging.entities.map(
                         entities => {
                             this.favorites_list.push(entities)
@@ -757,6 +759,26 @@ export class LicensesComponent implements OnInit {
             this.favorites_list = this.favorites_list_cache;
             this.no_favorites = false;
             this.favorite_view = true;
+        }
+    }
+
+    getTotalShownLicenses() {
+        if(this.active_view === 'grid') {
+            if(this.favorite_view) {
+                return this.favorites_list.length + this.paging_data_license.entities.length;
+            } else {
+                return this.paging_data_license.entities.length;
+            }
+        } else {
+            return this.paging_data_license.entities.length;
+        }
+    }
+    
+    getTotalLicenses() {
+        if(this.active_view === 'grid') {
+            return this.paging_data_favorites.totalEntities + this.paging_data_license.totalEntities;
+        } else {
+            return this.paging_data_license.totalEntities;
         }
     }
 }
