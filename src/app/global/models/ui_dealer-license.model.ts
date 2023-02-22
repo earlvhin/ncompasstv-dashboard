@@ -38,7 +38,7 @@ export class UI_DEALER_LICENSE {
 		// connection_speed: object, 
 		display: object,
 		anydesk: object, 
-		anydesk_password: object, 
+		// anydesk_password: object, 
             // server: object, 
             // ui: object, 
 		screen: object,
@@ -63,7 +63,7 @@ export class UI_DEALER_LICENSE {
 		// this.connection_speed = connection_speed;
 		this.display = display;
 		this.anydesk = anydesk;
-        this.anydesk_password = anydesk_password;
+        // this.anydesk_password = anydesk_password;
 		// this.server_version = server;
 		// this.ui_version = ui;
 		this.screen = screen;
@@ -89,7 +89,7 @@ export class UI_LICENSE {
 	last_online: object;
 	display: object;
 	anydesk: object;
-	password: object;
+	// password: object;
 	date_installed: object;
 	pi_status: object;
 	player_status: object;
@@ -107,7 +107,7 @@ export class UI_LICENSE {
 		last_online: object, 
 		display: object,
 		anydesk: object,
-		password: object, 
+		// password: object, 
 		date_installed: object, 
 		pi_status: object,
 		player_status: object,
@@ -124,7 +124,7 @@ export class UI_LICENSE {
 		this.last_online = last_online;
 		this.display = display;
 		this.anydesk = anydesk;
-		this.password = password;
+		// this.password = password;
 		this.date_installed = date_installed;
         this.pi_status = pi_status;
 		this.player_status = player_status

@@ -79,7 +79,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
 		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
 		{ name: 'Anydesk', sortable: true, key: 'anydeskId', column: 'AnydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'Install Date', sortable: true, key: 'installDate', column: 'InstallDate' },
 		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
@@ -353,8 +353,8 @@ export class LicensesComponent implements OnInit {
                             this.no_licenses_result = true;
                         }
                     } else {
-                        if (data.paging.entities) {
-                            const mapped = this.mapToLicensesTable(data.paging.entities);
+                        if (data.licenses.length > 0) {
+                            const mapped = this.mapToLicensesTable(data.licenses);
                             this.license_data = [...mapped];
                             this.license_filtered_data = [...mapped];
                         } else {
@@ -694,9 +694,19 @@ export class LicensesComponent implements OnInit {
 					link: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
-					isImage: true
+					isImage: true,
+                    new_tab_link: true
 				},
-				{ value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, editable: false, hidden: false, status: true },
+				{ 
+                    value: i.licenseKey, 
+                    link: `/${this.currentRole}/licenses/` + i.licenseId, 
+                    editable: false, 
+                    hidden: false, 
+                    status: true,
+                    new_tab_link: true,
+                    show_tags: i.tags != null ? true : false,
+                    tags: i.tags != null ? i.tags : []
+                },
 				{ value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable: false, hidden: false },
 				{
 					value: i.hostId ? i.hostName : '--',
@@ -704,7 +714,9 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					business_hours: i.hostId ? true : false,
-					business_hours_label: i.hostId ? this.getLabel(i) : null
+					business_hours_label: i.hostId ? this.getLabel(i) : null,
+                    new_tab_link: true,
+                    compressed: true,
 				},
 				{
 					value: i.alias ? i.alias : '--',
@@ -712,21 +724,23 @@ export class LicensesComponent implements OnInit {
 					editable: true,
 					label: 'License Alias',
 					id: i.licenseId,
-					hidden: false
+					hidden: false,
+                    compressed: true,
 				},
 				{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{ value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-				{
-					value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
-					link: null,
-					editable: false,
-					hidden: false,
-					copy: true,
-					label: 'Anydesk Password'
-				},
+				{ 
+                    value: i.anydeskId ? i.anydeskId : '--', 
+                    link: null, 
+                    editable: false, 
+                    hidden: false, 
+                    copy: true, 
+                    label: 'Anydesk Id', 
+                    anydesk: true,
+                    password: i.anydeskId ? this.splitKey(i.licenseId) : '--',
+                },
 				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },

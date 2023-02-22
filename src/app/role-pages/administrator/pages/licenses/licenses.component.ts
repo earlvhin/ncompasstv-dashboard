@@ -156,7 +156,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Memory', sortable: false, key: 'memory', hidden: true, no_show: true },
 		{ name: 'Storage', sortable: false, key: 'totalStorage', hidden: true, no_show: true },
 		{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
 		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated', hidden: true, no_show: true },
 		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
@@ -416,7 +416,7 @@ export class LicensesComponent implements OnInit {
                             }
                         } else {
                             if (data.licenses.length > 0) {
-                                const mapped = this.mapToLicensesTable(data.paging.entities);
+                                const mapped = this.mapToLicensesTable(data.licenses);
                                 this.licenses_data = [...mapped];
                                 this.filtered_data_licenses = [...mapped];
                             } else {
@@ -1256,16 +1256,18 @@ export class LicensesComponent implements OnInit {
 					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
-					isImage: true
+					isImage: true,
 				},
 				{
 					value: l.licenseKey,
 					link: '/administrator/licenses/' + l.licenseId,
 					new_tab_link: true,
-					compressed: true,
+					// compressed: true,
 					editable: false,
 					hidden: false,
-					status: true
+					status: true,
+                    show_tags: l.tags != null ? true : false,
+                    tags: l.tags != null ? l.tags : []
 				},
 				// { value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
 				{
@@ -1273,7 +1275,8 @@ export class LicensesComponent implements OnInit {
 					link: '/administrator/dealers/' + l.dealerId,
 					new_tab_link: true,
 					editable: false,
-					hidden: false
+					hidden: false,
+                    compressed: true,
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
@@ -1282,7 +1285,8 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					business_hours: l.hostId ? true : false,
-					business_hours_label: l.hostId ? this.getLabel(l) : null
+					business_hours_label: l.hostId ? this.getLabel(l) : null,
+                    compressed: true,
 				},
 				{
 					value: l.alias ? l.alias : '--',
@@ -1294,17 +1298,18 @@ export class LicensesComponent implements OnInit {
 					hidden: false
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
-				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
+				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-				{
-					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
-					link: null,
-					editable: false,
-					hidden: false,
-					copy: true,
-					label: 'Anydesk Password'
-				},
+				{ 
+                    value: l.anydeskId ? l.anydeskId : '--', 
+                    link: null, 
+                    editable: false, 
+                    hidden: false, 
+                    copy: true, 
+                    label: 'Anydesk Id',
+                    anydesk: true,
+                    password: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+                },
 				{
 					value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
 					link: null,

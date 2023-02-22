@@ -12,7 +12,7 @@ export class UI_TABLE_LICENSE_BY_HOST {
     connection_type: object;
     connection_speed: object;
     anydesk_id: object;
-    anydesk_password: object;
+    // anydesk_password: object;
     display: object;
     install_date: object;
     create_date: object;
@@ -23,7 +23,9 @@ export class UI_TABLE_LICENSE_BY_HOST {
     constructor(
         license_id: object, host_id: object, index: object, screenshot: object, license_key: object, screen_type: object,
         name: object, alias: object, contents_updated: object, time_in: object, connection_type: object, connection_speed: object,  
-        anydesk_id: object, anydesk_password: object, display: object, install_date: object, create_date: object, pi_status: object, player_status: object,
+        anydesk_id: object, 
+        // anydesk_password: object, 
+        display: object, install_date: object, create_date: object, pi_status: object, player_status: object,
 		is_activated?: object
     ) {
         this.license_id = license_id;
@@ -39,7 +41,7 @@ export class UI_TABLE_LICENSE_BY_HOST {
         this.connection_type = connection_type;
         this.connection_speed = connection_speed;
         this.anydesk_id = anydesk_id;
-        this.anydesk_password = anydesk_password;
+        // this.anydesk_password = anydesk_password;
         this.display = display;
         this.install_date = install_date;
         this.create_date = create_date;

@@ -191,7 +191,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Net Speed', sortable: false, key: 'internetSpeed', hidden: true, no_show: true },
 		{ name: 'Display', sortable: false, key: 'displayStatus' },
 		{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
 		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
 		{ name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
@@ -671,7 +671,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.license_data = [];
 			this.license_filtered_data = [];
 		} else {
-			this.license_data_api = response.paging.entities;
+			this.license_data_api = response.licenses;
 			this.no_licenses = false;
 
 			this.license_data_api.map((i) => {
@@ -801,11 +801,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{
 					value: l.licenseKey,
 					link: '/administrator/licenses/' + l.licenseId,
-					compressed: true,
+					// compressed: true,
 					editable: false,
 					hidden: false,
 					status: true,
-					new_tab_link: true
+					new_tab_link: true,
+                    show_tags: l.tags != null ? true : false,
+                    tags: l.tags != null ? l.tags : []
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
@@ -814,7 +816,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					business_hours: l.hostId ? true : false,
 					business_hours_label: l.hostId ? this.getLabel(l) : null,
-					new_tab_link: true
+					new_tab_link: true,
+                    compressed: true,
 				},
 				{
 					value: l.alias ? l.alias : '--',
@@ -826,17 +829,26 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					new_tab_link: true
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
-				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
+				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-				{
-					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
-					link: null,
-					editable: false,
-					hidden: false,
-					copy: true,
-					label: 'Anydesk Password'
-				},
+				{ 
+                    value: l.anydeskId ? l.anydeskId : '--', 
+                    link: null, 
+                    editable: false, 
+                    hidden: false, 
+                    copy: true, 
+                    label: 'Anydesk Id',
+                    anydesk: true,
+                    password: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+                },
+				// {
+				// 	value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+				// 	link: null,
+				// 	editable: false,
+				// 	hidden: false,
+				// 	copy: true,
+				// 	label: 'Anydesk Password'
+				// },
 				{
 					value: l.screenName ? l.screenName : '--',
 					compressed: true,
