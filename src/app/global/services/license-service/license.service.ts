@@ -611,23 +611,19 @@ export class LicenseService extends BaseService {
 	}
 
 	create_installation_checklist_title(data: any) {
-		const body = { data };
-		return this.postRequest(this.creators.api_installation_checklist_title_add, body);
+		return this.postRequest(this.creators.api_installation_checklist_title_add, data);
 	}
 
 	update_installation_checklist_title(data: any) {
-		const body = { data };
-		return this.postRequest(this.updaters.api_checklist_title_update, body);
+		return this.postRequest(this.updaters.api_checklist_title_update, data);
 	}
 
 	update_installation_checklist_item(data: any) {
-		const body = { data };
-		return this.postRequest(this.updaters.api_checklist_item_update, body);
+		return this.postRequest(this.updaters.api_checklist_item_update, data);
 	}
 
 	add_installation_checklist_items(data: any) {
-		const body = { data };
-		return this.postRequest(this.creators.api_installation_checklist_items_add, body);
+		return this.postRequest(this.creators.api_installation_checklist_items_add, data);
 	}
 
 	get_checklist() {
@@ -647,8 +643,9 @@ export class LicenseService extends BaseService {
 	}
 
 	delete_checklist_id(id) {
-		return this.postRequest(this.deleters.api_remove_checklist_title, id);
-	}
+        const url = `${this.deleters.api_remove_checklist_title}${id}`;
+		return this.postRequest(url, {});
+    }
 
 	delete_checklist_items(data) {
 		return this.postRequest(this.deleters.api_remove_checklist_items, data);

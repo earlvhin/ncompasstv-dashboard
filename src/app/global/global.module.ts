@@ -121,7 +121,6 @@ import { NewsDemoComponent } from './components_shared/feed_components/news-demo
 import { NewsFormComponent } from './components_shared/feed_components/news-form/news-form.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NohandlePipe } from './pipes/nohandle.pipe';
 import { NotificationsComponent } from './pages_shared/notifications/notifications.component';
@@ -494,7 +493,6 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		MatMomentDateModule,
 		MomentDateModule,
 		NgbModule,
-		NgxMaterialTimepickerModule,
 		NgxPaginationModule,
 		ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
 		RouterModule,

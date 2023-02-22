@@ -26,6 +26,7 @@ export class HelperService {
 	onRefreshSingleHostDocumentsTab = new Subject<void>();
 	onToggleEmailNotification = new Subject<{ userId: string; value: boolean; tableDataIndex: number; currentEmail: string }>();
 	onTouchPaginatedAutoCompleteField = new Subject<void>();
+	onRefreshBannerData = new Subject<void>();
 	onUpdateInstallationDate = new Subject<void>();
 
 	singleAdvertiserData: API_ADVERTISER;

@@ -4,12 +4,12 @@ import { ComponentType } from '@angular/cdk/portal';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 
 import {
 	API_DEALER,
 	API_ADVERTISER,
-	API_SINGLE_HOST,
 	API_HOST,
 	API_USER_DATA,
 	HOST_LICENSE_STATISTICS,
@@ -19,11 +19,11 @@ import {
 	UI_ROLE_DEFINITION_TEXT
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
+import { HelperService } from 'src/app/global/services';
 import { EditSingleAdvertiserComponent } from 'src/app/global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from 'src/app/global/pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from 'src/app/global/pages_shared/edit-single-host/edit-single-host.component';
 import { InformationModalComponent } from '../information-modal/information-modal.component';
-import { UserService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-banner',
@@ -72,15 +72,16 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _auth: AuthService,
+		private _helper: HelperService,
 		private _dialog: MatDialog,
 		private _router: Router,
-		private _titlecase: TitleCasePipe,
-		private _user: UserService
+		private _titlecase: TitleCasePipe
 	) {}
 
 	ngOnInit() {
 		if (!this.current_user_data) this.current_user_data = this._auth.current_user_value;
 		this.setUserTypeData();
+		this.subscribeToRefreshBannerData();
 	}
 
 	ngOnDestroy() {
@@ -176,8 +177,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 		if (!stringData || stringData.trim().length <= 0) return '';
 		return stringData.substring(0, 41);
 	}
-
-	private getUserData(): void {}
 
 	private openNotes(title: string, contents: any, type: string, character_limit?: number): void {
 		this._dialog.open(InformationModalComponent, {
@@ -289,6 +288,14 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 		this.tags = tags;
 		this.status = status === 'A' ? 'active' : 'inactive';
+	}
+
+	private subscribeToRefreshBannerData() {
+		this._helper.onRefreshBannerData.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => this.update_info.emit(),
+				error => console.log('Error refreshing banner data', error)
+			);
 	}
 
 	protected get _isAdmin() {

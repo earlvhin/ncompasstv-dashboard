@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { forkJoin, ObservableInput, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as uuid from 'uuid';
+import * as moment from 'moment';
 
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
@@ -18,11 +19,10 @@ import {
 	API_PARENT_CATEGORY,
 	GOOGLE_MAP_SEARCH_RESULT,
 	PAGING,
-	UI_OPERATION_HOURS,
 	UI_OPERATION_DAYS,
 	API_TIMEZONE,
-	UI_ROLE_DEFINITION_TEXT,
-	UI_ROLE_DEFINITION
+	UI_STORE_HOUR,
+	UI_STORE_HOUR_PERIOD,
 } from 'src/app/global/models';
 
 import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService } from 'src/app/global/services';
@@ -63,7 +63,7 @@ export class CreateHostComponent implements OnInit {
 	no_category = false;
 	no_category2 = false;
 	no_result = false;
-	operation_days: UI_OPERATION_DAYS[];
+	operation_days: UI_STORE_HOUR[];
 	paging: PAGING;
 	place_id: string;
 	selected_location: any;
@@ -73,7 +73,7 @@ export class CreateHostComponent implements OnInit {
 	private dealer_id: string;
 	private logo_data: { images: string[]; logo: string };
 	private is_search = false;
-	private operation_hours: UI_OPERATION_HOURS[];
+	private operation_hours: UI_STORE_HOUR_PERIOD[];
 	protected default_host_image = 'assets/media-files/admin-icon.png';
 	protected _unsubscribe = new Subject<void>();
 
@@ -146,14 +146,18 @@ export class CreateHostComponent implements OnInit {
 			autoFocus: false
 		});
 
-		dialog.afterClosed().subscribe(
-			(response) => {
-				if (response) this.operation_days = response;
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
+		dialog.afterClosed()
+			.subscribe(
+				(response: UI_STORE_HOUR[]) => {
+					console.log('bulked', response);
+					if (!response) return;
+					this.operation_days = response;
+
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
 	onChoosePhotos() {
@@ -196,56 +200,57 @@ export class CreateHostComponent implements OnInit {
 				null,
 				null
 			);
-		} else {
-			if (!this.form_invalid) {
-				const newHostPlace = new API_CREATE_HOST(
-					this.newHostFormControls.dealerId.value,
-					this.newHostFormControls.businessName.value,
-					this._auth.current_user_value.user_id,
-					this.newHostFormControls.lat.value,
-					this.newHostFormControls.long.value,
-					this.newHostFormControls.address.value,
-					this.newHostFormControls.city.value,
-					this.newHostFormControls.state.value,
-					this.newHostFormControls.zip.value,
-					JSON.stringify(this.operation_days),
-					this.newHostFormControls.category.value,
-					// this.child_category,
-					this.newHostFormControls.timezone.value
-				);
+			return; 
+		}
 
-				if (this.logo_data) {
-					newHostPlace.logo = this.logo_data.logo;
-					newHostPlace.images = this.logo_data.images;
-				}
+		const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
 
-				this.is_creating_host = true;
+		const newHostPlace = new API_CREATE_HOST(
+			this.newHostFormControls.dealerId.value,
+			this.newHostFormControls.businessName.value,
+			this._auth.current_user_value.user_id,
+			this.newHostFormControls.lat.value,
+			this.newHostFormControls.long.value,
+			this.newHostFormControls.address.value,
+			this.newHostFormControls.city.value,
+			this.newHostFormControls.state.value,
+			this.newHostFormControls.zip.value,
+			JSON.stringify(this.operation_days),
+			this.newHostFormControls.category.value,
+			this.newHostFormControls.timezone.value
+		);
 
-				if ((this.is_creating_host = true)) {
-					this._host
-						.add_host_place(newHostPlace)
-						.pipe(takeUntil(this._unsubscribe))
-						.subscribe(
-							(data: any) => {
-								this.openConfirmationModal(
-									'success',
-									'Host Place Created!',
-									'Hurray! You successfully created a Host Place',
-									data.hostId
-								);
-							},
-							(error) => {
-								this.is_creating_host = false;
-								this.openConfirmationModal(
-									'error',
-									'Host Place Creation Failed',
-									"Sorry, There's an error with your submission",
-									null
-								);
-							}
+		if (this.logo_data) {
+			newHostPlace.logo = this.logo_data.logo;
+			newHostPlace.images = this.logo_data.images;
+		}
+
+		this.is_creating_host = true;
+
+		if ((this.is_creating_host = true)) {
+
+			this._host
+				.add_host_place(newHostPlace)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data: any) => {
+						this.openConfirmationModal(
+							'success',
+							'Host Place Created!',
+							'Hurray! You successfully created a Host Place',
+							data.hostId
 						);
-				}
-			}
+					},
+					(error) => {
+						this.is_creating_host = false;
+						this.openConfirmationModal(
+							'error',
+							'Host Place Creation Failed',
+							"An error occured while saving your data",
+							null
+						);
+					}
+				);
 		}
 	}
 
@@ -273,14 +278,22 @@ export class CreateHostComponent implements OnInit {
 			);
 	}
 
-	onSelectDay(data: UI_OPERATION_DAYS) {
+	onSelectDay(data: UI_STORE_HOUR) {
 		data.periods.length = 0;
+
+		const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
+		const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
+		const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
+		const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
+		const closingHourData = { hour: parseInt(closingHour[0]), minute: parseInt(closingHour[1]), second: 0 };
 
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
-			open: '',
-			close: ''
+			open: defaultHours.opening,
+			close: defaultHours.closing,
+			openingHourData,
+			closingHourData
 		};
 
 		data.status = !data.status;
@@ -516,23 +529,46 @@ export class CreateHostComponent implements OnInit {
 
 	private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {
 		this.operation_hours = data.map((hours) => {
-			return new UI_OPERATION_HOURS(
-				uuid.v4(),
-				hours.open.day,
-				hours.open ? this.formatTime(hours.open.time) : '',
-				hours.close ? this.formatTime(hours.close.time) : ''
-			);
+
+			const hour =  {
+				id: uuid.v4(),
+				day_id: hours.open.day,
+				open: hours.open ? this.formatTime(hours.open.time) : '',
+				close: hours.close ? this.formatTime(hours.close.time) : '',
+				openingHourData: null,
+				closingHourData: null
+			};
+
+			const setHourData = (hour: string) => {
+
+				if (hour.length === 0 || !hour.includes(':')) {
+					return {
+						hour: 0, minute: 0, second: 0
+					};
+				}
+
+				const hourData = moment(hour, 'hh:mm A').format('HH:mm').split(':');
+				return { hour: parseInt(hourData[0]), minute: parseInt(hourData[1]), second: 0 }
+
+			};
+			
+			hour.openingHourData = setHourData(hour.open);
+			hour.closingHourData = setHourData(hour.close);
+			return hour;
 		});
 
 		this.operation_days = this.google_operation_days.map((h) => {
-			return new UI_OPERATION_DAYS(
-				h.id,
-				h.label,
-				h.day,
-				this.operation_hours.filter((t) => t.day_id == h.id),
-				this.operation_hours.filter((t) => t.day_id == h.id).length != 0 ? true : false
-			);
+
+			return {
+				id: h.id,
+				label: h.label,
+				day: h.day,
+				periods: this.operation_hours.filter((t) => t.day_id == h.id),
+				status: this.operation_hours.filter((t) => t.day_id == h.id).length !== 0
+			};
+
 		});
+
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string, hostId: string): void {
@@ -548,9 +584,36 @@ export class CreateHostComponent implements OnInit {
 		});
 	}
 
+	private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
+		return data.map(
+			operation => {
+				operation.periods = operation.periods.map(
+					period => {
+
+						const opening = period.openingHourData;
+						const closing = period.closingHourData;
+						period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
+						period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
+
+						return period;
+					}
+				);
+				return operation;
+			}
+		);
+	}
+
 	private setOperationDays(): void {
 		this.operation_days = this.google_operation_days.map((data) => {
-			return new UI_OPERATION_DAYS(data.id, data.label, data.day, [], data.status);
+
+			return {
+				id: data.id,
+				label: data.label,
+				day: data.day,
+				periods: [],
+				status: data.status
+			};
+
 		});
 	}
 
