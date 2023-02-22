@@ -7,9 +7,10 @@ import { AdvertisersTabComponent } from './components/advertisers-tab/advertiser
 import { DealersTabComponent } from './components/dealers-tab/dealers-tab.component';
 import { LicensesComponent } from './licenses.component';
 import { TagsTabComponent } from './components/tags-tab/tags-tab.component';
+import { OutdatedLicensesComponent } from './components/outdated-licenses/outdated-licenses.component';
 
 @NgModule({
-	declarations: [LicensesComponent, TagsTabComponent, AdvertisersTabComponent, DealersTabComponent],
+	declarations: [LicensesComponent, TagsTabComponent, AdvertisersTabComponent, DealersTabComponent, OutdatedLicensesComponent],
 	imports: [GlobalModule, CommonModule, RouterModule]
 })
 export class LicensesModule {}
