@@ -1,7 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable } from 'rxjs-compat/Observable';
 
 import { AuthService } from '../auth-service/auth.service';
+import { API_PLAYER_APP } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -36,7 +38,7 @@ export class UpdateService {
 	 * Get Apps from API
 	 * API GET Method to AWS
 	 */
-	get_apps() {
+	get_apps(): Observable<API_PLAYER_APP[]> {
 		return this._http.get<any>(`${environment.base_uri}${environment.getters.api_apps}`, this.httpOptions);
 	}
 
