@@ -72,7 +72,7 @@
 							[disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
 
-					<span *ngIf="!data[d].hidden" [ngClass]="!data[d].isImage && !data[d].show_tags ? 'flex' : ''" [style.color]="data[d].color">
+					<span *ngIf="!data[d].hidden" [ngClass]="!data[d].isImage && !data[d].show_tags ? 'flex' : 'white-space'" [style.color]="data[d].color">
 						<span class="text-center float-left" *ngIf="license_status_column && data[d].status">
 							<i
 								*ngIf="!data.pi_status.new_status; else new_template_status"
