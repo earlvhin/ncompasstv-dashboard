@@ -333,7 +333,8 @@ export class LicenseService extends BaseService {
 		assigned?,
 		pending?,
 		online?,
-		isActivated?
+		isActivated?,
+        isFavorite: any = ''
 	) {
 		const base = `${this.getters.api_get_licenses_by_dealer}`;
 		const params = this.setUrlParams(
@@ -353,7 +354,8 @@ export class LicenseService extends BaseService {
 				assigned,
 				pending,
 				online,
-				isActivated
+				isActivated,
+                isFavorite
 			},
 			false,
 			true
