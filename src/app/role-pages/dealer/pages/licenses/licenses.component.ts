@@ -34,7 +34,7 @@ export class LicensesComponent implements OnInit {
 	license_row_slug: string = 'host_id';
 	license_row_url: string = `/${this.currentRole}/hosts`;
 	licenses_to_export: API_LICENSE['license'][] = [];
-	no_licenses: boolean = false;
+	no_licenses_result: boolean = false;
 	now: any;
 	paging_data_license: any;
 	splitted_text: any;
@@ -52,6 +52,20 @@ export class LicensesComponent implements OnInit {
 	worksheet: any;
 	is_view_only = false;
 
+    // FOR GRID VIEW
+    active_view: string = 'list';
+    license_data_for_grid_view: any = [];
+    favorites_list: any = [];
+    favorite_view: boolean = true;
+    show_more_clicked: boolean = false;
+    favorites_list_cache: any = [];
+    grid_list_cache: any = [];
+    no_favorites: boolean;
+    total_favorites: 0;
+    total_not_favorites: 0;
+    hide_all_license: boolean = true;
+    no_licenses: boolean;
+
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
@@ -65,7 +79,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Net Type', sortable: true, key: 'internetType', column: 'InternetType' },
 		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed' },
 		{ name: 'Anydesk', sortable: true, key: 'anydeskId', column: 'AnydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'Install Date', sortable: true, key: 'installDate', column: 'InstallDate' },
 		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
@@ -75,7 +89,7 @@ export class LicensesComponent implements OnInit {
 
 	filters: any = {
 		admin_licenses: false,
-		isactivated: 1,
+		isactivated: '',
 		assigned: '',
 		online: '',
 		pending: '',
@@ -135,6 +149,7 @@ export class LicensesComponent implements OnInit {
 					this.filters.online = false;
 				}
 				this.filters.assigned = true;
+                this.filters.isactivated = 1;
 				if (value == 0) {
 					var filter = {
 						column: 'TimeIn',
@@ -149,6 +164,7 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
+                this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
@@ -159,24 +175,28 @@ export class LicensesComponent implements OnInit {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Disabled';
+                this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
+                this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline = value;
 				this.filters.label_status = 'Offline for ' + days;
+                this.sortList('desc', 'TimeIn');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
-				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
+				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
+				this.sortList('desc');
 				break;
 			case 'pending':
 				this.resetFilterStatus();
@@ -184,11 +204,10 @@ export class LicensesComponent implements OnInit {
 				this.filters.assigned = true;
 				this.filters.pending = value;
 				this.filters.label_status = value == 'true' ? 'Pending' : '';
-				break;
+				this.sortList('desc');
+                break;
 			default:
 		}
-
-		this.getLicenses(1);
 	}
 
 	resetFilterStatus() {
@@ -204,7 +223,7 @@ export class LicensesComponent implements OnInit {
 	clearFilter() {
 		this.filters = {
 			admin_licenses: false,
-			isactivated: 1,
+			isactivated: '',
 			assigned: '',
 			online: '',
 			pending: '',
@@ -220,8 +239,14 @@ export class LicensesComponent implements OnInit {
 			label_host: '',
 			label_admin: ''
 		};
-		this.sortList('desc');
-		this.getLicenses(1);
+		if(this.active_view === 'grid') {
+            this.getFavoriteLicenses(false);
+            this.license_data_for_grid_view = [];
+            this.getLicenses(1, 24, true)
+        } else {
+            this.sortList('desc');
+            this.getLicenses(1)
+        }
 	}
 
 	getTotalCount(id: string): void {
@@ -271,8 +296,20 @@ export class LicensesComponent implements OnInit {
 			);
 	}
 
-	getLicenses(page: number) {
-		this.searching_license = true;
+	getLicenses(page: number, pageSize?, fromShowMore?) {
+        var favorite: any;
+        this.no_licenses_result = false;
+		if(this.active_view != 'grid') {
+            favorite = '';
+            this.searching_license = true;
+        } else {
+            if(page > 1) {
+                this.searching_license = false;
+            } else {
+                this.searching_license = true;
+            }
+            favorite = false;
+        }
 
 		this._license
 			.sort_license_by_dealer_id(
@@ -281,7 +318,7 @@ export class LicensesComponent implements OnInit {
 				this.search_data_license,
 				this.sort_column,
 				this.sort_order,
-				15,
+				pageSize ? pageSize : 15,
 				this.filters.status,
 				this.filters.days_offline,
 				this.filters.activated,
@@ -291,25 +328,43 @@ export class LicensesComponent implements OnInit {
 				this.filters.assigned,
 				this.filters.pending,
 				this.filters.online,
-				this.filters.isactivated
+				this.filters.isactivated,
+                favorite
 			)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					if (data.message) {
-						if (this.search_data_license == '') this.no_licenses = true;
-						this.license_data = [];
-						this.license_filtered_data = [];
-						return;
-					}
+                    this.paging_data_license = data.paging;
 
-					this.paging_data_license = data.paging;
-					this.license_data_api = data.paging.entities;
-					const licenses = data.paging.entities as API_LICENSE['license'][];
-					const mapped = this.mapToLicensesTable(licenses);
-					this.license_data = [...mapped];
-					this.filtered_data = [...mapped];
-					this.license_filtered_data = [...mapped];
+                    if(this.active_view === 'grid') {
+                        if (data.paging.entities.length > 0) {
+                            data.paging.entities.map(
+                                entities => {
+                                    this.license_data_for_grid_view.push(entities)
+                                }
+                            )
+                            if(fromShowMore && page > 1) {
+                                this.grid_list_cache = this.license_data_for_grid_view;
+                            }
+                            if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
+                                this.license_data_for_grid_view = this.grid_list_cache;
+                            }
+                        } else {
+                            this.no_licenses_result = true;
+                        }
+                    } else {
+                        if (data.licenses.length > 0) {
+                            const mapped = this.mapToLicensesTable(data.licenses);
+                            this.license_data = [...mapped];
+                            this.license_filtered_data = [...mapped];
+                        } else {
+                            if (this.search_data_license == '') this.no_licenses = true;
+                            this.license_filtered_data = [];
+                        }
+                    }
+
+					this.initial_load_license = false;
+                    this.searching_license = false;
 				},
 				(error) => {
 					throw new Error(error);
@@ -321,20 +376,57 @@ export class LicensesComponent implements OnInit {
 			});
 	}
 
-	licenseFilterData(keyword = ''): void {
-		this.search_data_license = keyword;
-		this.getLicenses(1);
+    sortDisplay(arrangement) {
+        var filter = {
+            column: 'DisplayStatus',
+            order: arrangement
+        };
+        this.getColumnsAndOrder(filter);
+    }
+
+    showAllLicenses() {
+        this.hide_all_license = false;
+    }
+
+	licenseFilterData(e) {
+        if(e) {
+            this.search_data_license = e;
+            if(this.active_view === 'grid') {
+                this.license_data_for_grid_view = [];
+                this.getFavoriteLicenses(false);
+                this.getLicenses(1, 24, false)
+            } else {
+                this.getLicenses(1);
+            }
+            this.hide_all_license = false;
+        } else {
+            this.search_data_license = '';
+			if(this.active_view === 'grid') {
+                this.license_data_for_grid_view = [];
+                this.getFavoriteLicenses(false);
+                this.getLicenses(1, 24, false)
+            } else {
+                this.getLicenses(1);
+            }
+        }
+        
 	}
 
-	sortList(order: string): void {
-		const filter = { column: 'PiStatus', order: order };
+	sortList(order: string, column?): void {
+		const filter = { column: column ? column : 'PiStatus', order: order };
 		this.getColumnsAndOrder(filter);
 	}
 
 	getColumnsAndOrder(data: { column: string; order: string }) {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
-		this.getLicenses(1);
+		if(this.active_view === 'grid') {
+            this.license_data_for_grid_view = [];
+            this.getFavoriteLicenses();
+            this.getLicenses(1, this.grid_list_cache.length, false)
+        } else {
+            this.getLicenses(1);
+        }
 	}
 
 	getLabel(data) {
@@ -393,10 +485,69 @@ export class LicensesComponent implements OnInit {
 					this.filters.host = data.host.id;
 					this.filters.label_host = data.host.name;
 				}
-				this.getLicenses(1);
+				if(this.active_view === 'grid') {
+                    this.license_data_for_grid_view = [];
+                    this.getFavoriteLicenses(false);
+                    this.getLicenses(1, 24, false)
+                } else {
+                    this.getLicenses(1);
+                }
+                this.hide_all_license = false;
 			}
 		});
 	}
+
+    changeView(view) {
+        this.active_view = view;
+        if(view === 'grid') {
+            this.getFavoriteLicenses(true);
+            this.license_data_for_grid_view = [];
+            this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24)
+        } else {
+            this.getLicenses(1)
+        }
+    }
+
+    getFavoriteLicenses(reset?) {
+        this.favorites_list = [];
+        this._license.sort_license_by_dealer_id(
+			this.currentUser.roleInfo.dealerId,
+            1,
+			!reset ? this.search_data_license : '',
+			this.sort_column,
+			this.sort_order,
+			24,
+			this.filters.status,
+			this.filters.days_offline,
+			this.filters.activated,
+			this.filters.recent,
+			this.filters.zone,
+			this.filters.host,
+			this.filters.assigned,
+			this.filters.pending,
+			this.filters.online,
+			this.filters.isactivated,
+            true
+		).pipe(takeUntil(this._unsubscribe)).subscribe(
+			(data) => {
+                if(data.paging.entities.length === 0) {
+                    this.no_favorites = true;
+                } else {
+                    data.paging.entities.map(
+                        entities => {
+                            this.favorites_list.push(entities)
+                        }
+                    )
+                    this.favorites_list_cache = this.favorites_list;
+                    this.no_favorites = false;
+                }
+                if(reset) {
+                    this.favorites_list_cache = this.favorites_list;
+                    this.no_favorites = false;
+                }
+            }
+        )
+    }
 
 	getDataForExport(id: string): void {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -543,9 +694,19 @@ export class LicensesComponent implements OnInit {
 					link: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
 					editable: false,
 					hidden: false,
-					isImage: true
+					isImage: true,
+                    new_tab_link: true
 				},
-				{ value: i.licenseKey, link: `/${this.currentRole}/licenses/` + i.licenseId, editable: false, hidden: false, status: true },
+				{ 
+                    value: i.licenseKey, 
+                    link: `/${this.currentRole}/licenses/` + i.licenseId, 
+                    editable: false, 
+                    hidden: false, 
+                    status: true,
+                    new_tab_link: true,
+                    show_tags: i.tags != null ? true : false,
+                    tags: i.tags != null ? i.tags : []
+                },
 				{ value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable: false, hidden: false },
 				{
 					value: i.hostId ? i.hostName : '--',
@@ -553,7 +714,9 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					business_hours: i.hostId ? true : false,
-					business_hours_label: i.hostId ? this.getLabel(i) : null
+					business_hours_label: i.hostId ? this.getLabel(i) : null,
+                    new_tab_link: true,
+                    compressed: true,
 				},
 				{
 					value: i.alias ? i.alias : '--',
@@ -561,21 +724,23 @@ export class LicensesComponent implements OnInit {
 					editable: true,
 					label: 'License Alias',
 					id: i.licenseId,
-					hidden: false
+					hidden: false,
+                    compressed: true,
 				},
 				{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{ value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
-				{
-					value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
-					link: null,
-					editable: false,
-					hidden: false,
-					copy: true,
-					label: 'Anydesk Password'
-				},
+				{ 
+                    value: i.anydeskId ? i.anydeskId : '--', 
+                    link: null, 
+                    editable: false, 
+                    hidden: false, 
+                    copy: true, 
+                    label: 'Anydesk Id', 
+                    anydesk: true,
+                    password: i.anydeskId ? this.splitKey(i.licenseId) : '--',
+                },
 				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
 				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
@@ -593,4 +758,19 @@ export class LicensesComponent implements OnInit {
 	protected get currentRole() {
 		return this._auth.current_role;
 	}
+
+    showMore(event) {
+        this.show_more_clicked = true;
+        this.getLicenses(event.page, event.pageSize, true)
+    }
+
+    toggleFavorites(value) {
+        if(value === 'false') {
+            this.favorite_view = false;
+        } else {
+            this.favorites_list = this.favorites_list_cache;
+            this.no_favorites = false;
+            this.favorite_view = true;
+        }
+    }
 }
