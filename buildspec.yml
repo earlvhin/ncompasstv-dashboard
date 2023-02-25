@@ -6,19 +6,13 @@ env:
 phases:
   install:
     runtime-versions:
-      docker: latest
+      nodejs: 12
   pre_build:
     commands:
       # Define pre-build variables.
-      - REPO_NAME=ncompasstv-dashboard  # DEFINE THIS VARIABLE 
-      - ECS_CONTAINER_NAME=dashboard    # DEFINE THIS VARIABLE 
       - AWS_ACCOUNT_ID=`aws sts get-caller-identity --query "Account" --output text`
-      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
-      - IMAGE_TAG=${COMMIT_HASH:=latest}
-      - REPOSITORY_URI=$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$REPO_NAME
-      # ECR Authentication.
-      - echo Logging in to Amazon ECR...
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com
+      - npx npm-force-resolutions
+      - npm install
   build:
     on-failure: ABORT
     commands:
@@ -26,18 +20,14 @@ phases:
       - echo $ENV_NAME
       # Build docker images and tag based on build ID.
       - echo Build started on `date`
-      - echo Building the Docker image...
-      - docker build --build-arg ENV_NAME=$ENV_NAME -t $REPOSITORY_URI:latest .
-      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+      - echo "Building angular project..."
+      - npm run build_env -- --configuration $ENV_NAME
+      - ls -l ./dist/dashboard-material/
+      - echo "DONE!!"
   post_build:
     commands:
-      - echo Build completed on `date`
-      # Push docker images to ECR.
-      - echo Pushing the Docker image...
-      - docker push $REPOSITORY_URI:latest
-      - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - printf '[{"name":"%s","imageUri":"%s"}]' $ECS_CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
-      - cat imagedefinitions.json
-artifacts:
-  files:
-    - imagedefinitions.json
+      - echo "Updating S3 Content..."
+      - echo $ENV_NAME
+      - echo $DASHBOARD_S3_BUCKET
+      - aws s3 sync ./dist/dashboard-material/ s3://$DASHBOARD_S3_BUCKET.n-compass.online --delete
+      - echo "DONE!!!"

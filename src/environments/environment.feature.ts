@@ -1,4 +1,4 @@
-import { API_ENDPOINTS } from "./api-endpoints";
+import { API_ENDPOINTS } from './api-endpoints';
 
 export const environment = {
 	production: false,
