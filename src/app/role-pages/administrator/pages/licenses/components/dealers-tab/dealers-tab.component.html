@@ -1,34 +1,35 @@
 <div id="licenses-page-dealers-tab" class="content d-flex flex-column">
-    <div class="controls-and-search-container d-flex mt-3">
-        <div class="search-field-container">
-            <mat-form-field class="full-width">
-                <mat-label>
-                    <span class="fas fa-search sm-text mr-2"></span>
-                    Search dealer alias, business name, or #tag
-                </mat-label>
-                <input matInput [formControl]="searchControl">
-            </mat-form-field>
-        </div>
-    </div>
+	<div class="controls-and-search-container d-flex mt-3">
+		<div class="search-field-container">
+			<mat-form-field class="full-width">
+				<mat-label>
+					<span class="fas fa-search sm-text mr-2"></span>
+					Search dealer alias, business name, or #tag
+				</mat-label>
+				<input matInput [formControl]="searchControl" />
+			</mat-form-field>
+		</div>
+	</div>
 
-    <mat-card>
-		<ng-container *ngIf="isPageReady; else loader;">
+	<mat-card>
+		<ng-container *ngIf="isPageReady; else loader">
 			<app-data-table
 				[table_data]="currentTableData"
 				[table_columns]="tableColumns"
 				[new_table]="true"
-                [pagination_enabled]="false">
+				[spinner_enabled]="false"
+				[pagination_enabled]="false">
 			</app-data-table>
-            <div class="load-data-button-container d-flex justify-content-center mt-3">
-                <button mat-raised-button class="theme-btn _primary" (click)="addToList()" [disabled]="hasNoData || hasSearched || !isPreloadDataReady">
-                    <ng-container *ngIf="isPreloadDataReady; else preloadingData">
-                        Load more dealers...
-                    </ng-container>
-                    <ng-template #preloadingData>
-                        Loading dealers...
-                    </ng-template>
-                </button>
-            </div>
+			<div class="load-data-button-container d-flex justify-content-center mt-3">
+				<button
+					mat-raised-button
+					class="theme-btn _primary"
+					(click)="addToList()"
+					[disabled]="hasNoData || hasSearched || !isPreloadDataReady">
+					<ng-container *ngIf="isPreloadDataReady; else preloadingData"> Load more dealers... </ng-container>
+					<ng-template #preloadingData> Loading dealers... </ng-template>
+				</button>
+			</div>
 		</ng-container>
 	</mat-card>
 </div>
@@ -42,13 +43,16 @@
 </ng-template>
 
 <ng-template #noData>
-	<div class="col-lg-12 pl-0 pr-0">
-		<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-			<div class="mb-4">
-				<i class="text-gray fa-5x far fa-file-alt"></i>
-			</div>
-			<h3 class="text-gray col-lg-12">No Results Found.</h3>
-			<span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
-		</mat-card>
-	</div>
+	<mat-card class="pt-5 pb-5 text-center">
+		<div class="mb-4">
+			<i class="text-gray fa-5x far fa-file-alt"></i>
+		</div>
+		<h3 class="text-gray">No Results Found</h3>
+		<span class="text-gray">
+			<ng-container *ngIf="hasSearched; else noDataMessage">
+				Try adjusting your search or filter to find what you're looking for.
+			</ng-container>
+			<ng-template #noDataMessage> This page currently has no available data </ng-template>
+		</span>
+	</mat-card>
 </ng-template>

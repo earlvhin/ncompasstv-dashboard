@@ -52,7 +52,6 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 			(response) => {
 				if ('message' in response || response.dealers.length === 0) {
 					this.hasNoData = true;
-					this.isPageReady = true;
 					return;
 				}
 
@@ -178,7 +177,6 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 	private searchDealers() {
 		this.getDealers().subscribe((response) => {
 			if (response.dealers.length === 0) {
-				this.isPageReady = true;
 				this.hasNoData = true;
 				return;
 			}

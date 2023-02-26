@@ -16,6 +16,7 @@ export interface API_LICENSE_PROPS {
 	appVersion: string;
 	apps?: any;
 	bootDelay?: any;
+	businessName?: string;
 	category: string;
 	contentsUpdated: string;
 	d?: any;

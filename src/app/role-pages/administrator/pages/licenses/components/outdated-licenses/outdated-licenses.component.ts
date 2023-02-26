@@ -1,9 +1,13 @@
+import { DatePipe } from '@angular/common';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { forkJoin, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
-import { API_PLAYER_APP } from 'src/app/global/models';
+import { FormControl } from '@angular/forms';
+import { Subject } from 'rxjs';
+import { debounceTime, takeUntil } from 'rxjs/operators';
 
-import { UpdateService } from 'src/app/global/services';
+import { API_FILTERS, API_LICENSE_PROPS, PAGING } from 'src/app/global/models';
+import { UI_LICENSE } from 'src/app/global/models/ui-license.model';
+import { AuthService, LicenseService, UpdateService } from 'src/app/global/services';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-outdated-licenses',
@@ -11,12 +15,25 @@ import { UpdateService } from 'src/app/global/services';
 	styleUrls: ['./outdated-licenses.component.scss']
 })
 export class OutdatedLicensesComponent implements OnInit, OnDestroy {
+	currentTableData: UI_LICENSE[] = [];
+	currentPaging: PAGING;
+	filters: API_FILTERS = { page: 1, pageSize: 15 };
+	hasNoData = false;
+	hasSearched = false;
+	latestVersion = { server: null, ui: null };
+	isPageReady = false;
+	isPreloadDataReady = false;
+	queuedTableData: UI_LICENSE[] = [];
+	searchControl = new FormControl(null);
+	tableColumns = this._tableColumns;
+
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _update: UpdateService) {}
+	constructor(private _auth: AuthService, private _datePipe: DatePipe, private _license: LicenseService, private _update: UpdateService) {}
 
 	ngOnInit() {
-		this.getPlayerAppIds();
+		this.loadLicenses();
+		this.subscribeToLicenseSearch();
 	}
 
 	ngOnDestroy(): void {
@@ -24,44 +41,208 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	private getOutdatedLicenses() {}
+	addToList() {
+		this.isPreloadDataReady = false;
+		this.currentTableData = this.currentTableData.concat(this.queuedTableData);
+		console.log('added to list', this.currentTableData);
+		this.preloadLicenses();
+	}
 
-	private getPlayerAppIds() {
-		this._update
-			.get_apps()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response) => {
-					const playerServer: API_PLAYER_APP = response.filter((app) => app.appName.toLowerCase() === 'player server')[0];
-					const playerUi: API_PLAYER_APP = response.filter((app) => app.appName.toLowerCase() === 'player ui')[0];
-
-					const requests = [this._update.get_app_version(playerServer.appId), this._update.get_app_version(playerUi.appId)];
-
-					forkJoin(requests)
-						.pipe(takeUntil(this._unsubscribe))
-						.subscribe(
-							([response1, response2]) => {
-								console.log('response1', response1);
-								console.log('response2', response2);
-							},
-							(error) => {
-								throw new Error(error);
-							}
-						);
-
-					// this._update.get_app_version().pipe(takeUntil(this._unsubscribe))
-					//     .subscribe(
-					//         response => {
-
-					//         },
-					//         error => {
-					//             throw new Error(error)
-					//         }
-					//     );
-				},
-				(error) => {
-					throw new Error(error);
+	private loadLicenses() {
+		this.isPageReady = false;
+		this.getOutdatedLicenses().subscribe(
+			(response) => {
+				if ('message' in response) {
+					this.hasNoData = true;
+					return;
 				}
-			);
+
+				this.latestVersion = {
+					server: response.appServerVersion,
+					ui: response.appUiVersion
+				};
+
+				this.currentPaging = response.paging;
+				const mapped = this.mapToDataTable(response.paging.entities);
+				this.currentTableData = [...mapped];
+				this.preloadLicenses();
+				this.isPageReady = true;
+			},
+			(error) => {
+				this.hasNoData = true;
+				throw new Error(error);
+			}
+		);
+	}
+
+	private getOutdatedLicenses() {
+		return this._license.get_outdated_licenses(this.filters).pipe(takeUntil(this._unsubscribe));
+	}
+
+	private mapToDataTable(data: API_LICENSE_PROPS[]): UI_LICENSE[] {
+		let count = this.currentPaging.pageStart;
+
+		const isBlankOrEmptyString = (value: string) => {
+			return typeof value === 'undefined' || !value || value.trim().length === 0;
+		};
+
+		const parseDate = (date: string) => {
+			if (isBlankOrEmptyString(date)) return '--';
+			return this._datePipe.transform(date, 'MMM dd, y h:mm a');
+		};
+
+		const parseImageUrl = (image: string) => (image ? `${environment.base_uri}${image.replace('/API/', '')}` : null);
+
+		return data.map((license) => {
+			let mapped = {} as UI_LICENSE;
+
+			this._tableColumns.forEach(({ key }) => {
+				mapped[key] = { value: license[key] };
+
+				switch (key) {
+					case 'index':
+						mapped[key].value = count++;
+						break;
+					case 'dealerId':
+						mapped[key].value = license.businessName;
+						break;
+					case 'hostId':
+						mapped[key].value = license.hostName;
+						break;
+					case 'screenId':
+						mapped[key].value = license.screenName;
+						break;
+					case 'screenshotUrl':
+						const parsedImageUrl = parseImageUrl(license.screenshotUrl);
+						mapped[key].link = parsedImageUrl;
+						mapped[key].value = parsedImageUrl;
+						mapped[key].isImage = true;
+						break;
+					case 'displayStatus':
+						mapped[key].value = license.displayStatus === 1 ? 'ON' : 'OFF';
+						break;
+					case 'lastDisconnect':
+						mapped[key].value = parseDate(license.timeOut);
+						break;
+					case 'lastPush':
+						mapped[key].value = parseDate(license.contentsUpdated);
+						break;
+					case 'alias':
+					case 'licenseKey':
+						const isInvalidString = isBlankOrEmptyString(license[key]);
+						mapped[key].value = isInvalidString ? '--' : license[key];
+						if (isInvalidString) break;
+						mapped[key].link = `/${this._currentRole}/licenses/${license.licenseId}`;
+						mapped[key].new_tab_link = true;
+						break;
+					default: // intentionally blank to fulfil coding guidelines
+				}
+
+				if (key.includes('Id')) {
+					const isInvalidString = isBlankOrEmptyString(mapped[key].value);
+
+					if (isInvalidString) {
+						mapped[key].value = '--';
+						return;
+					}
+
+					let pageName = `${key.split('Id')[0]}s`;
+					mapped[key].link = `/${this._currentRole}/${pageName}/${license[key]}`;
+					mapped[key].new_tab_link = true;
+				}
+			});
+
+			return mapped;
+		});
+	}
+
+	private preloadLicenses(type = 'default') {
+		this.filters.page++;
+
+		if (type === 'reset') {
+			this.filters.page = 0;
+			delete this.filters.search;
+		}
+
+		return this.getOutdatedLicenses().subscribe((response) => {
+			if ('message' in response || response.paging.entities.length === 0) {
+				this.isPreloadDataReady = true;
+				return;
+			}
+
+			this.currentPaging = response.paging;
+			this.queuedTableData = this.mapToDataTable(response.paging.entities);
+			this.filters.page = response.paging.page;
+			this.isPreloadDataReady = true;
+		});
+	}
+
+	private resetFilters(): void {
+		this.filters = {
+			page: 1,
+			pageSize: 15
+		};
+	}
+
+	private searchOutdatedLicenses() {
+		this.getOutdatedLicenses().subscribe((response) => {
+			if (response.paging.entities.length === 0) {
+				this.hasNoData = true;
+				return;
+			}
+
+			this.currentPaging = response.paging;
+			this.currentTableData = this.mapToDataTable(response.paging.entities);
+			this.isPageReady = true;
+		});
+	}
+
+	private subscribeToLicenseSearch() {
+		const control = this.searchControl;
+
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+			this.isPageReady = false;
+			this.resetFilters();
+
+			if (!keyword || keyword.trim().length === 0) {
+				delete this.filters.search;
+				this.hasSearched = false;
+				this.currentTableData = [...this.queuedTableData];
+				this.resetFilters();
+				this.preloadLicenses();
+				this.isPageReady = true;
+				return;
+			}
+
+			this.filters.search = keyword;
+			this.hasSearched = true;
+			this.searchOutdatedLicenses();
+			this.preloadLicenses('reset');
+		});
+	}
+
+	protected get _tableColumns() {
+		return [
+			{ name: '#', key: 'index' },
+			{ name: 'Screenshot', key: 'screenshotUrl' },
+			{ name: 'Alias', key: 'alias' },
+			{ name: 'Key', key: 'licenseKey' },
+			{ name: 'Server', key: 'serverVersion' },
+			{ name: 'UI', key: 'uiVersion' },
+			{ name: 'Display', key: 'displayStatus' },
+			{ name: 'Dealer', key: 'dealerId' },
+			{ name: 'Host', key: 'hostId' },
+			{ name: 'Screen', key: 'screenId' },
+			{ name: 'Last Disconnect', key: 'lastDisconnect' },
+			{ name: 'Last Push', key: 'lastPush' }
+		];
+	}
+
+	protected get _columnNames() {
+		return this._tableColumns.map((column) => column.name);
+	}
+
+	protected get _currentRole() {
+		return this._auth.current_role;
 	}
 }

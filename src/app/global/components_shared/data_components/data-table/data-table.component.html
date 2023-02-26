@@ -90,6 +90,10 @@
 						<ng-container *ngIf="!data[d].isImage; else isImage">
 							<ng-container *ngIf="data[d].link; else no_link">
 								<ng-container *ngIf="!data[d].isFile; else isFile">
+									<ng-container *ngIf="!data[d].link">
+										<h3>HERE</h3>
+										{{ data[d] | json }}
+									</ng-container>
 									<a
 										class="cursor-pointer table-row-url"
 										target="{{ data[d].new_tab_link ? '_blank' : '_self' }}"
@@ -423,9 +427,11 @@
 	</table>
 
 	<ng-template #loading>
-		<div class="loading-wrapper">
-			<app-spinner></app-spinner>
-		</div>
+		<ng-container *ngIf="spinner_enabled">
+			<div class="loading-wrapper">
+				<app-spinner></app-spinner>
+			</div>
+		</ng-container>
 	</ng-template>
 
 	<ng-container *ngIf="pagination_enabled">
@@ -434,7 +440,7 @@
 				<pagination-controls (pageChange)="onPageChange($event)" class="sm-text"> </pagination-controls>
 			</div>
 		</div>
-	
+
 		<app-pagination-field [paging_data]="paging_details" (get_page)="getPage($event)"> </app-pagination-field>
 	</ng-container>
 </div>

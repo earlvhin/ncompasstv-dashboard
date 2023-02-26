@@ -65,7 +65,7 @@ export const API_ENDPOINTS = {
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
 		api_get_dealers_with_license: 'dealer/getdealerswithlicense',
 		api_get_dealer_report: 'dealer/getaddedreport',
-        api_get_dealer_admin_user: 'dealeradmin/dealer/assigneddealers',
+		api_get_dealer_admin_user: 'dealeradmin/dealer/assigneddealers',
 		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone',
 		api_get_dma: 'dma/gethosttotalbyrank',
 		api_get_generated_feed_by_id: 'feed/getbyfeedid?feedid=',
@@ -155,7 +155,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -171,6 +171,7 @@ export const API_ENDPOINTS = {
 		license_statistics_by_install_date: 'license/getlicensestatisticsbyinstalldate?installdate=',
 		next_month_installations: 'license/getNextMonthInstall',
 		next_week_installations: 'license/getNextWeekInstall',
+		outdated_licenses: 'license/GetOutDatedLicenses',
 		recent_installations: 'license/getRecentInstall',
 		release_note_by_id: 'ReleaseNote/getbyid',
 		search_advertiser: 'advertiser/search?searchkey=',
@@ -191,7 +192,7 @@ export const API_ENDPOINTS = {
 		upcoming_installations: 'license/getUpComingInstall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
-		validate_rss_url: 'feed/news/validate?url=',
+		validate_rss_url: 'feed/news/validate?url='
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',
@@ -204,7 +205,8 @@ export const API_ENDPOINTS = {
 		api_new_admin: 'admin/create',
 		api_new_advertiser: 'advertiser/create',
 		api_new_advertiser_profile: 'advertiser/createadvertiser',
-		api_new_dealer: 'dealer/create',		api_new_dealer_admin: 'dealeradmin/upsert',
+		api_new_dealer: 'dealer/create',
+		api_new_dealer_admin: 'dealeradmin/upsert',
 		api_new_dealer_admin_dealers: 'dealeradmin/assign/new/dealers',
 		api_new_feed: 'feed/create',
 		api_new_feed_generate: 'feed/generate',
@@ -316,13 +318,13 @@ export const API_ENDPOINTS = {
 		toggle_credits: 'playlists/enableCredits',
 		user_email_settings: 'user/updateemailsettings',
 
-        //DEALER ADMIN
-        dealeradmin_update_user: 'dealeradmin/user/update'
+		//DEALER ADMIN
+		dealeradmin_update_user: 'dealeradmin/user/update'
 	},
 	delete: {
 		api_delete_contract_details: 'dealer/deletecontractfiles?filename=',
 		api_delete_credit_card: 'billing/delete/creditcard',
-        api_delete_dealer_admin: 'dealeradmin/delete/assigned/dealers',
+		api_delete_dealer_admin: 'dealeradmin/delete/assigned/dealers',
 		api_delete_territory_details: 'dealer/deleteterritoryfiles?filename=',
 		api_delete_screenshot: 'pi/deletescreenshots',
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',
