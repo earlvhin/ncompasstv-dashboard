@@ -1166,7 +1166,7 @@ export class LicensesComponent implements OnInit {
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
 				{ value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
 				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
-				{ value: h.status, editable: false, hidden: false }
+				{ value: h.status, editable: false, hidden: true }
 			);
 
 			return table;
