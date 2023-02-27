@@ -16,23 +16,23 @@ import { environment } from 'src/environments/environment';
 })
 export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 	currentTableData: UI_LICENSE[] = [];
-	currentPaging: PAGING;
 	filters: API_FILTERS = { page: 1, pageSize: 15, sortColumn: 'UiVersion', sortOrder: 'asc' };
 	hasNoData = false;
-	hasSearched = false;
 	latestVersion = { server: null, ui: null };
 	isPageReady = false;
 	isPreloadDataReady = false;
-	queuedTableData: UI_LICENSE[] = [];
 	searchControl = new FormControl(null);
 	tableColumns = this._tableColumns;
 
+	private currentPaging: PAGING;
+	private queuedForReset: UI_LICENSE[] = [];
+	private queuedTableData: UI_LICENSE[] = [];
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(private _auth: AuthService, private _datePipe: DatePipe, private _license: LicenseService, private _update: UpdateService) {}
 
 	ngOnInit() {
-		this.loadLicenses();
+		this.loadLicenses().add(() => (this.queuedForReset = Array.from(this.currentTableData)));
 		this.subscribeToLicenseSearch();
 	}
 
@@ -41,7 +41,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	addToList() {
+	addToTable() {
 		this.isPreloadDataReady = false;
 		this.currentTableData = this.currentTableData.concat(this.queuedTableData);
 		this.preloadLicenses();
@@ -56,7 +56,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 
 	private loadLicenses() {
 		this.isPageReady = false;
-		this.getOutdatedLicenses().subscribe(
+		return this.getOutdatedLicenses().subscribe(
 			(response) => {
 				if ('message' in response) {
 					this.hasNoData = true;
@@ -162,17 +162,13 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private preloadLicenses(type = 'default') {
+	private preloadLicenses() {
 		this.filters.page++;
-
-		if (type === 'reset') {
-			this.filters.page = 0;
-			delete this.filters.search;
-		}
 
 		return this.getOutdatedLicenses().subscribe((response) => {
 			if ('message' in response || response.paging.entities.length === 0) {
 				this.isPreloadDataReady = true;
+				this.hasNoData = true;
 				return;
 			}
 
@@ -186,7 +182,9 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 	private resetFilters(): void {
 		this.filters = {
 			page: 1,
-			pageSize: 15
+			pageSize: 15,
+			sortColumn: 'UiVersion',
+			sortOrder: 'asc'
 		};
 	}
 
@@ -207,23 +205,22 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 		const control = this.searchControl;
 
 		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+			this.hasNoData = false;
 			this.isPageReady = false;
 			this.resetFilters();
 
 			if (!keyword || keyword.trim().length === 0) {
 				delete this.filters.search;
-				this.hasSearched = false;
-				this.currentTableData = [...this.queuedTableData];
+				this.currentTableData = [...this.queuedForReset];
 				this.resetFilters();
 				this.preloadLicenses();
-				this.isPageReady = true;
+				setTimeout(() => (this.isPageReady = true), 1000);
 				return;
 			}
 
 			this.filters.search = keyword;
-			this.hasSearched = true;
 			this.searchOutdatedLicenses();
-			this.preloadLicenses('reset');
+			this.preloadLicenses();
 		});
 	}
 

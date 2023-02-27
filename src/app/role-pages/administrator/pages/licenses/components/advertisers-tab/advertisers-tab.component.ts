@@ -15,20 +15,21 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 	currentTableData: DEALER_UI_TABLE_ADVERTISERS[] = [];
 	filters: API_FILTERS = { page: 1, pageSize: 15 };
 	hasNoData = false;
-	hasSearched = false;
 	isExporting = false;
 	isPageReady = false;
 	isPreloadDataReady = false;
 	searchControl = new FormControl(null);
 	tableColumns = this._tableColumns;
+
 	private currentPaging: PAGING = null;
+	private queuedForReset: DEALER_UI_TABLE_ADVERTISERS[] = [];
 	private queuedTableData: DEALER_UI_TABLE_ADVERTISERS[] = [];
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(private _advertiser: AdvertiserService, private _export: ExportService) {}
 
 	ngOnInit() {
-		this.loadAdvertisers();
+		this.loadAdvertisers().add(() => (this.queuedForReset = Array.from(this.currentTableData)));
 		this.subscribeToAdvertiserSearch();
 	}
 
@@ -37,7 +38,7 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	addToList() {
+	addToTable() {
 		this.isPreloadDataReady = false;
 		this.currentTableData = this.currentTableData.concat(this.queuedTableData);
 		this.preloadAdvertisers();
@@ -73,21 +74,23 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 	}
 
 	private loadAdvertisers() {
-		this.getAdvertisers().subscribe((response) => {
+		this.isPageReady = false;
+
+		return this.getAdvertisers().subscribe((response) => {
 			if (response.paging.entities.length === 0) {
 				this.hasNoData = true;
 				return;
 			}
 
 			this.currentPaging = response.paging;
-			this.currentTableData = this.mapToTableUI(response.paging.entities);
+			this.currentTableData = this.mapToDataTable(response.paging.entities);
 			this.filters.page = response.paging.page;
 			this.isPageReady = true;
 			this.preloadAdvertisers();
 		});
 	}
 
-	private mapToTableUI(data: API_ADVERTISER[]) {
+	private mapToDataTable(data: API_ADVERTISER[]) {
 		let count = this.currentPaging.pageStart;
 		return data.map((i) => {
 			return new DEALER_UI_TABLE_ADVERTISERS(
@@ -108,13 +111,8 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private preloadAdvertisers(type = 'default') {
+	private preloadAdvertisers() {
 		this.filters.page++;
-
-		if (type === 'reset') {
-			this.filters.page = 0;
-			delete this.filters.search;
-		}
 
 		return this.getAdvertisers().subscribe((response) => {
 			if (response.paging.entities.length === 0) {
@@ -124,7 +122,7 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 			}
 
 			this.currentPaging = response.paging;
-			this.queuedTableData = this.mapToTableUI(response.paging.entities);
+			this.queuedTableData = this.mapToDataTable(response.paging.entities);
 			this.filters.page = response.paging.page;
 			this.isPreloadDataReady = true;
 		});
@@ -146,7 +144,7 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 			}
 
 			this.currentPaging = response.paging;
-			this.currentTableData = this.mapToTableUI(response.paging.entities);
+			this.currentTableData = this.mapToDataTable(response.paging.entities);
 			this.isPageReady = true;
 		});
 	}
@@ -155,13 +153,13 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 		const control = this.searchControl;
 
 		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+			this.hasNoData = false;
 			this.isPageReady = false;
 			this.resetFilters();
 
 			if (!keyword || keyword.trim().length === 0) {
 				delete this.filters.search;
-				this.hasSearched = false;
-				this.currentTableData = [...this.queuedTableData];
+				this.currentTableData = [...this.queuedForReset];
 				this.resetFilters();
 				this.preloadAdvertisers();
 				this.isPageReady = true;
@@ -169,9 +167,8 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 			}
 
 			this.filters.search = keyword;
-			this.hasSearched = true;
 			this.searchAdvertisers();
-			this.preloadAdvertisers('reset');
+			this.preloadAdvertisers();
 		});
 	}
 

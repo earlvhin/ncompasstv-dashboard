@@ -32,12 +32,13 @@
 				[new_table]="true"
 				[pagination_enabled]="false"
 				[spinner_enabled]="false"
+				[active_tab]="filters.sortColumn"
 				[sort_column]="filters.sortColumn"
 				[sort_order]="filters.sortOrder"
 				(to_sort_column)="sortTable($event)">
 			</app-data-table>
 			<div class="load-data-button-container d-flex justify-content-center mt-3">
-				<button mat-raised-button class="theme-btn _primary" (click)="addToList()" [disabled]="hasNoData || !isPreloadDataReady">
+				<button mat-raised-button class="theme-btn _primary" (click)="addToTable()" [disabled]="hasNoData || !isPreloadDataReady">
 					<ng-container *ngIf="isPreloadDataReady; else preloadingData"> Load more advertisers... </ng-container>
 					<ng-template #preloadingData> Loading advertisers... </ng-template>
 				</button>
@@ -60,11 +61,6 @@
 			<i class="text-gray fa-5x far fa-file-alt"></i>
 		</div>
 		<h3 class="text-gray">No Results Found</h3>
-		<span class="text-gray">
-			<ng-container *ngIf="hasSearched; else noDataMessage">
-				Try adjusting your search or filter to find what you're looking for.
-			</ng-container>
-			<ng-template #noDataMessage> This page currently has no available data </ng-template>
-		</span>
+		<span class="text-gray">This page currently has no available data</span>
 	</mat-card>
 </ng-template>

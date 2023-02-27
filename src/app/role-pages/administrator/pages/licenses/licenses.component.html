@@ -696,9 +696,11 @@
 					</mat-tab>
 
 					<!-- OUTDATED TAB -->
-					<mat-tab id="outdated-view-tab" label="Outdated">
-						<app-outdated-licenses></app-outdated-licenses>
-					</mat-tab>
+					<ng-container *ngIf="is_administrator">
+						<mat-tab id="outdated-view-tab" label="Outdated">
+							<app-outdated-licenses></app-outdated-licenses>
+						</mat-tab>
+					</ng-container>
 				</mat-tab-group>
 			</div>
 		</div>

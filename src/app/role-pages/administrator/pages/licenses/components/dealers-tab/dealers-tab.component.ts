@@ -16,21 +16,22 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 	currentTableData: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filters: API_FILTERS = { page: 1, pageSize: 15 };
 	hasNoData = false;
-	hasSearched = false;
 	hasScrolled = false;
 	isExporting = false;
 	isPageReady = false;
 	isPreloadDataReady = false;
 	searchControl = new FormControl(null);
 	tableColumns = this._tableColumns;
+
 	private currentPaging: PAGING = null;
+	private queuedForReset: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	private queuedTableData: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(private _datePipe: DatePipe, private _dealer: DealerService, private _titlePipe: TitleCasePipe) {}
 
 	ngOnInit() {
-		this.loadDealers();
+		this.loadDealers().add(() => (this.queuedForReset = Array.from(this.currentTableData)));
 		this.subscribeToDealerSearch();
 	}
 
@@ -39,7 +40,7 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	addToList() {
+	addToTable() {
 		this.isPreloadDataReady = false;
 		this.currentTableData = this.currentTableData.concat(this.queuedTableData);
 		this.preloadDealers();
@@ -48,7 +49,7 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 	private loadDealers() {
 		this.isPageReady = false;
 
-		this.getDealers().subscribe(
+		return this.getDealers().subscribe(
 			(response) => {
 				if ('message' in response || response.dealers.length === 0) {
 					this.hasNoData = true;
@@ -56,9 +57,10 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 				}
 
 				this.currentPaging = response.paging;
-				this.currentTableData = this.mapToTableUI(response.dealers);
-				this.isPageReady = true;
+				const mapped = this.mapToTableData(response.dealers);
+				this.currentTableData = [...mapped];
 				this.preloadDealers();
+				this.isPageReady = true;
 			},
 			(error) => {
 				this.isPageReady = true;
@@ -71,7 +73,7 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 		return this._dealer.get_dealers_with_license(this.filters.page, this.filters.search).pipe(takeUntil(this._unsubscribe));
 	}
 
-	private mapToTableUI(data: API_DEALER[]) {
+	private mapToTableData(data: API_DEALER[]) {
 		let count = this.currentPaging.pageStart;
 		return data
 			.filter((i) => i.licenses.length > 0)
@@ -146,13 +148,8 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	private preloadDealers(type = 'default') {
+	private preloadDealers() {
 		this.filters.page++;
-
-		if (type === 'reset') {
-			this.filters.page = 0;
-			delete this.filters.search;
-		}
 
 		return this.getDealers().subscribe((response) => {
 			if ('message' in response || response.dealers.length === 0) {
@@ -161,7 +158,7 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 			}
 
 			this.currentPaging = response.paging;
-			this.queuedTableData = this.mapToTableUI(response.dealers);
+			this.queuedTableData = this.mapToTableData(response.dealers);
 			this.filters.page = response.paging.page;
 			this.isPreloadDataReady = true;
 		});
@@ -182,7 +179,7 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 			}
 
 			this.currentPaging = response.paging;
-			this.currentTableData = this.mapToTableUI(response.dealers);
+			this.currentTableData = this.mapToTableData(response.dealers);
 			this.isPageReady = true;
 		});
 	}
@@ -191,23 +188,22 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 		const control = this.searchControl;
 
 		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((keyword: string) => {
+			this.hasNoData = false;
 			this.isPageReady = false;
 			this.resetFilters();
 
 			if (!keyword || keyword.trim().length === 0) {
 				delete this.filters.search;
-				this.hasSearched = false;
-				this.currentTableData = [...this.queuedTableData];
+				this.currentTableData = [...this.queuedForReset];
 				this.resetFilters();
 				this.preloadDealers();
-				this.isPageReady = true;
+				setTimeout(() => (this.isPageReady = true), 1000);
 				return;
 			}
 
 			this.filters.search = keyword;
-			this.hasSearched = true;
 			this.searchDealers();
-			this.preloadDealers('reset');
+			this.preloadDealers();
 		});
 	}
 

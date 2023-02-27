@@ -23,6 +23,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 })
 export class LicensesComponent implements OnInit {
 	active_view: string = 'list';
+	current_user_role = this._currentUserRole;
 	diff_hours: any;
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	licenses_data: UI_LICENSE[] = [];
@@ -52,6 +53,7 @@ export class LicensesComponent implements OnInit {
 	initial_load = true;
 	initial_load_licenses = true;
 	initial_load_hosts = true;
+	is_administrator = this.current_user_role === 'administrator';
 	is_favorite = false;
 	favorites_list: any = [];
 	search_data = '';
@@ -1248,6 +1250,10 @@ export class LicensesComponent implements OnInit {
 			);
 			return table;
 		});
+	}
+
+	protected get _currentUserRole() {
+		return this._auth.current_role;
 	}
 
 	protected get _hostTableColumns() {
