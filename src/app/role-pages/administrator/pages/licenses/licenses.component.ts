@@ -376,118 +376,65 @@ export class LicensesComponent implements OnInit {
             }
             favorite = false;
         }
-		// if (this.has_sort) {
-			this._license
-				.get_all_licenses(
-					page,
-					this.search_data_licenses,
-					this.sort_column,
-					this.sort_order,
-					pageSize ? pageSize : 15,
-					this.filters.admin_licenses,
-					this.filters.status,
-					this.filters.days_offline_from,
-					this.filters.days_offline_to,
-					this.filters.activated,
-					this.filters.recent,
-					this.filters.zone,
-					this.filters.dealer,
-					this.filters.host,
-					this.filters.assigned,
-					this.filters.pending,
-					this.filters.online,
-					this.filters.isactivated,
-                    favorite,
-				)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-                        this.paging_data_licenses = data.paging;
+		this._license
+			.get_all_licenses(
+			    page,
+				this.search_data_licenses,
+				this.sort_column,
+				this.sort_order,
+				pageSize ? pageSize : 15,
+				this.filters.admin_licenses,
+				this.filters.status,
+				this.filters.days_offline_from,
+				this.filters.days_offline_to,
+				this.filters.activated,
+				this.filters.recent,
+				this.filters.zone,
+				this.filters.dealer,
+				this.filters.host,
+				this.filters.assigned,
+				this.filters.pending,
+				this.filters.online,
+				this.filters.isactivated,
+                favorite,
+			).pipe(takeUntil(this._unsubscribe)).subscribe(
+				(data) => {
+                    this.paging_data_licenses = data.paging;
                         
-                        if(this.active_view === 'grid') {
-                            if (data.licenses.length > 0) {
-                                data.licenses.map(
-                                    entities => {
-                                        this.license_data_for_grid_view.push(entities)
-                                    }
-                                )
-                                if(fromShowMore && page > 1) {
-                                    this.grid_list_cache = this.license_data_for_grid_view;
+                    if(this.active_view === 'grid') {
+                        if (data.licenses.length > 0) {
+                            data.licenses.map(
+                                entities => {
+                                    this.license_data_for_grid_view.push(entities)
                                 }
-                                if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
-                                    this.license_data_for_grid_view = this.grid_list_cache;
-                                }
-                            } else {
-                                this.no_licenses_result = true;
+                            )
+                            if(fromShowMore && page > 1) {
+                                this.grid_list_cache = this.license_data_for_grid_view;
+                            }
+                            if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
+                                this.license_data_for_grid_view = this.grid_list_cache;
                             }
                         } else {
-                            if (data.licenses.length > 0) {
-                                const mapped = this.mapToLicensesTable(data.licenses);
-                                this.licenses_data = [...mapped];
-                                this.filtered_data_licenses = [...mapped];
-                            } else {
-                                if (this.search_data == '') this.no_licenses = true;
-                                this.filtered_data_licenses = [];
-                            }
+                            this.no_licenses_result = true;
                         }
+                    } else {
+                        if (data.licenses.length > 0) {
+                            const mapped = this.mapToLicensesTable(data.licenses);
+                            this.licenses_data = [...mapped];
+                            this.filtered_data_licenses = [...mapped];
+                        } else {
+                            if (this.search_data == '') this.no_licenses = true;
+                            this.filtered_data_licenses = [];
+                        }
+                    }
 
-                        this.initial_load_licenses = false;
-                        this.searching_licenses = false;
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				);
-		} else {
-			this._license
-				.get_all_licenses_fetch(
-					page,
-					this.search_data_licenses,
-					this.sort_column,
-					this.sort_order,
-					pageSize ? pageSize : 15,
-					this.filters.admin_licenses,
-					this.filters.status,
-					this.filters.days_offline_from,
-					this.filters.days_offline_to,
-					this.filters.activated,
-					this.filters.recent,
-					this.filters.zone,
-					this.filters.dealer,
-					this.filters.host,
-					this.filters.assigned,
-					this.filters.pending,
-					this.filters.online,
-					this.filters.isactivated
-				)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.paging_data_licenses = data.paging;
-		// 				if (data.paging.entities) {
-		// 					const mapped = this.mapToLicensesTable(data.paging.entities);
-		// 					this.licenses_data = [...mapped];
-		// 					this.filtered_data_licenses = [...mapped];
-		// 				} else {
-		// 					if (this.search_data == '') this.no_licenses = true;
-		// 					this.filtered_data_licenses = [];
-		// 				}
-
-		// 				this.initial_load_licenses = false;
-		// 				this.searching_licenses = false;
-        //                 if(this.active_view === 'grid') {
-        //                     data.licenses.map(
-        //                         entities => {
-        //                             this.license_data_for_grid_view.push(entities)
-        //                         }
-        //                     )
-        //                 }
-		// 			},
-		// 			(error) => {
-		// 				throw new Error(error);
-		// 			}
-		// 		);
-		// }
+                    this.initial_load_licenses = false;
+                    this.searching_licenses = false;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
     
 
