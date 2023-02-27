@@ -239,7 +239,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		label_status: '',
 		label_zone: '',
 		label_dealer: '',
-		label_admin: ''
+		label_admin: '',
+        days_offline_from: '',
+		days_offline_to: '',
 	};
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -637,7 +639,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.sort_order,
 					15,
 					this.filters.status,
-					'',
+					this.filters.days_offline_from,
+					this.filters.days_offline_to,
 					this.filters.activated,
 					'',
 					this.filters.zone,
@@ -831,7 +834,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ 
+				{
                     value: l.anydeskId ? l.anydeskId : '--', 
                     link: null, 
                     editable: false, 
@@ -1305,7 +1308,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							this.sort_order,
 							0,
 							this.filters.status,
-							'',
+							this.filters.days_offline_from,
+							this.filters.days_offline_to,
 							this.filters.activated,
 							'',
 							this.filters.zone,
@@ -1637,7 +1641,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.filters.online = '';
 	}
 
-	filterTable(type: string, value: any, days?: any) {
+	filterTable(type: string, value: any, value2?: any, days?: any) {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
@@ -1671,6 +1675,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
+				this.sortList('desc');
+				break;
+            case 'days_offline':
+				this.resetFilterStatus();
+				this.filters.status = 0;
+				this.filters.days_offline_from = value;
+				this.filters.days_offline_to = value2;
+				this.filters.label_status = 'Offline for ' + days;
 				this.sortList('desc');
 				break;
 			case 'assigned':
@@ -1730,7 +1742,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			label_zone: '',
 			label_dealer: '',
 			label_host: '',
-			label_admin: ''
+			label_admin: '',
+            days_offline_from: '',
+		    days_offline_to: '',
 		};
 		this.sortList('desc');
 		this.getLicensesofDealer(1);

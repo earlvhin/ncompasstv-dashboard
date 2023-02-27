@@ -99,7 +99,8 @@ export class LicensesComponent implements OnInit {
 		status: '',
 		host: '',
 		recent: '',
-		days_offline: '',
+		days_offline_from: '',
+		days_offline_to: '',
 		label_status: '',
 		label_zone: '',
 		label_dealer: '',
@@ -136,7 +137,7 @@ export class LicensesComponent implements OnInit {
 		this.filtered_data = data;
 	}
 
-	filterTable(type: string, value: any, days?: any) {
+	filterTable(type: string, value: any, value2?: any, days?: any) {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
@@ -188,13 +189,15 @@ export class LicensesComponent implements OnInit {
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
-				this.filters.days_offline = value;
+				this.filters.days_offline_from = value;
+				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
                 this.sortList('desc', 'TimeIn');
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
+				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
 				this.sortList('desc');
@@ -209,6 +212,8 @@ export class LicensesComponent implements OnInit {
                 break;
 			default:
 		}
+
+		this.getLicenses(1);
 	}
 
 	resetFilterStatus() {
@@ -230,7 +235,8 @@ export class LicensesComponent implements OnInit {
 			pending: '',
 			activated: '',
 			recent: '',
-			days_offline: '',
+			days_offline_from: '',
+			days_offline_to: '',
 			zone: '',
 			status: '',
 			host: '',
@@ -321,7 +327,8 @@ export class LicensesComponent implements OnInit {
 				this.sort_order,
 				pageSize ? pageSize : 15,
 				this.filters.status,
-				this.filters.days_offline,
+				this.filters.days_offline_from,
+				this.filters.days_offline_to,
 				this.filters.activated,
 				this.filters.recent,
 				this.filters.zone,
@@ -561,7 +568,8 @@ export class LicensesComponent implements OnInit {
 				this.sort_order,
 				0,
 				this.filters.status,
-				this.filters.days_offline,
+				this.filters.days_offline_from,
+				this.filters.days_offline_to,
 				this.filters.activated,
 				this.filters.recent,
 				this.filters.zone,
@@ -733,7 +741,8 @@ export class LicensesComponent implements OnInit {
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{
+				{ value: i.anydeskId ? i.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
+				{ 
                     value: i.anydeskId ? i.anydeskId : '--', 
                     link: null, 
                     editable: false, 

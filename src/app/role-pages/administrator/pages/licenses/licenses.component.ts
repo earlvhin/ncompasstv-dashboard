@@ -23,6 +23,7 @@ import {
 } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-licenses',
@@ -109,7 +110,8 @@ export class LicensesComponent implements OnInit {
 		dealer: '',
 		host: '',
 		recent: '',
-		days_offline: '',
+		days_offline_from: '',
+		days_offline_to: '',
 		label_status: '',
 		label_zone: '',
 		label_dealer: '',
@@ -315,7 +317,8 @@ export class LicensesComponent implements OnInit {
 			0,
 			this.filters.admin_licenses,
 			this.filters.status,
-			this.filters.days_offline,
+			this.filters.days_offline_from,
+			this.filters.days_offline_to,
 			this.filters.activated,
 			this.filters.recent,
 			this.filters.zone,
@@ -383,7 +386,8 @@ export class LicensesComponent implements OnInit {
 					pageSize ? pageSize : 15,
 					this.filters.admin_licenses,
 					this.filters.status,
-					this.filters.days_offline,
+					this.filters.days_offline_from,
+					this.filters.days_offline_to,
 					this.filters.activated,
 					this.filters.recent,
 					this.filters.zone,
@@ -434,32 +438,32 @@ export class LicensesComponent implements OnInit {
 						throw new Error(error);
 					}
 				);
-		// } else {
-		// 	this._license
-		// 		.get_all_licenses_fetch(
-		// 			page,
-		// 			this.search_data_licenses,
-		// 			this.sort_column,
-		// 			this.sort_order,
-		// 			pageSize ? pageSize : 15,
-		// 			this.filters.admin_licenses,
-		// 			this.filters.status,
-		// 			this.filters.days_offline,
-		// 			this.filters.activated,
-		// 			this.filters.recent,
-		// 			this.filters.zone,
-		// 			this.filters.dealer,
-		// 			this.filters.host,
-		// 			this.filters.assigned,
-		// 			this.filters.pending,
-		// 			this.filters.online,
-		// 			this.filters.isactivated
-		// 		)
-		// 		.pipe(takeUntil(this._unsubscribe))
-		// 		.subscribe(
-		// 			(data) => {
-		// 				this.paging_data_licenses = data.paging;
-
+		} else {
+			this._license
+				.get_all_licenses_fetch(
+					page,
+					this.search_data_licenses,
+					this.sort_column,
+					this.sort_order,
+					pageSize ? pageSize : 15,
+					this.filters.admin_licenses,
+					this.filters.status,
+					this.filters.days_offline_from,
+					this.filters.days_offline_to,
+					this.filters.activated,
+					this.filters.recent,
+					this.filters.zone,
+					this.filters.dealer,
+					this.filters.host,
+					this.filters.assigned,
+					this.filters.pending,
+					this.filters.online,
+					this.filters.isactivated
+				)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						this.paging_data_licenses = data.paging;
 		// 				if (data.paging.entities) {
 		// 					const mapped = this.mapToLicensesTable(data.paging.entities);
 		// 					this.licenses_data = [...mapped];
@@ -507,7 +511,7 @@ export class LicensesComponent implements OnInit {
 		}
 	}
 
-	filterTable(type: string, value: any, days?: any) {
+	filterTable(type: string, value: any, value2?: any, days?: any) {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
@@ -519,6 +523,10 @@ export class LicensesComponent implements OnInit {
                     this.sortList('desc');
 				} else {
 					this.filters.online = false;
+				}
+				this.filters.assigned = true;
+				this.filters.isactivated = 1;
+                if (value === 0) {
                     var filter = {
                         column: 'TimeIn',
                         order: 'desc'
@@ -552,7 +560,8 @@ export class LicensesComponent implements OnInit {
 			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
-				this.filters.days_offline = value;
+				this.filters.days_offline_from = value;
+				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
 				this.sortList('desc');
 				break;
@@ -820,7 +829,8 @@ export class LicensesComponent implements OnInit {
 			pending: '',
 			activated: '',
 			recent: '',
-			days_offline: '',
+			days_offline_from: '',
+		    days_offline_to: '',
 			zone: '',
 			status: '',
 			dealer: '',
@@ -874,7 +884,8 @@ export class LicensesComponent implements OnInit {
 						0,
 						this.filters.admin_licenses,
 						this.filters.status,
-						this.filters.days_offline,
+						this.filters.days_offline_from,
+						this.filters.days_offline_to,
 						this.filters.activated,
 						this.filters.recent,
 						this.filters.zone,
@@ -1302,7 +1313,8 @@ export class LicensesComponent implements OnInit {
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{
+				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
+				{ 
                     value: l.anydeskId ? l.anydeskId : '--', 
                     link: null, 
                     editable: false, 
@@ -1383,9 +1395,81 @@ export class LicensesComponent implements OnInit {
         }
     }
 
+    formulateScreenshotURL(url) {
+        return `${environment.base_uri}${url.replace('/API/', '')}`;
+    }
+
     showAllLicenses() {
         this.hide_all_license = false;
     }
+
+    copyToClipboard(val: string) {
+		//create artificial textbox for selector
+		const selBox = document.createElement('textarea');
+		selBox.style.position = 'fixed';
+		selBox.style.left = '0';
+		selBox.style.top = '0';
+		selBox.style.opacity = '0';
+		selBox.value = val;
+		document.body.appendChild(selBox);
+		selBox.focus();
+		selBox.select();
+		document.execCommand('copy');
+		document.body.removeChild(selBox);
+	}
+
+    getAnydeskPassword(id) {
+        return this.splitKey(id)
+    }
+
+    addToFavorites(id) {
+        this._license
+			.add_license_favorite(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+                response => {
+                    if(!response) {
+                        this.license_data_for_grid_view = this.license_data_for_grid_view.filter((license) => {
+					        return license.licenseId != id;
+				        })
+                        this.openConfirmationModal('success', 'Success!', 'License successfully added to Favorites');
+                    } else {
+                        this.openConfirmationModal('error', 'Error!', response.message);
+                    }
+                }
+            )
+    }
+    
+    removeToFavorites(license) {
+        var id = license.licenseId;
+        this._license
+			.remove_license_favorite(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+                response => {
+                    if(!response) {
+                        this.openConfirmationModal('success', 'Success!', 'License successfully removed to Favorites');
+                        this.license_data_for_grid_view.push(license)
+                    } else {
+                        this.openConfirmationModal('error', 'Error!', response.message);
+                    }
+                }
+            )
+    }
+
+    openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialog.afterClosed().subscribe(() => {
+            if(status === 'success') {
+                this.getFavoriteLicenses(false);
+            };
+        });
+	}
 
     protected get roleRoute() {
 		return this._auth.roleRoute;
@@ -1395,7 +1479,7 @@ export class LicensesComponent implements OnInit {
         this.show_more_clicked = true;
         this.getLicenses(event.page, event.pageSize, true)
     }
-
+    
     getTotalShownLicenses() {
         if(this.active_view === 'grid') {
             if(this.favorite_view) {
