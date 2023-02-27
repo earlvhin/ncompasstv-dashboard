@@ -17,7 +17,7 @@ import { environment } from 'src/environments/environment';
 export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 	currentTableData: UI_LICENSE[] = [];
 	currentPaging: PAGING;
-	filters: API_FILTERS = { page: 1, pageSize: 15 };
+	filters: API_FILTERS = { page: 1, pageSize: 15, sortColumn: 'UiVersion', sortOrder: 'asc' };
 	hasNoData = false;
 	hasSearched = false;
 	latestVersion = { server: null, ui: null };
@@ -44,8 +44,14 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 	addToList() {
 		this.isPreloadDataReady = false;
 		this.currentTableData = this.currentTableData.concat(this.queuedTableData);
-		console.log('added to list', this.currentTableData);
 		this.preloadLicenses();
+	}
+
+	sortTable(data: { column: string; order: string }) {
+		this.resetFilters();
+		this.filters.sortColumn = data.column;
+		this.filters.sortOrder = data.order;
+		this.loadLicenses();
 	}
 
 	private loadLicenses() {
@@ -227,8 +233,8 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 			{ name: 'Screenshot', key: 'screenshotUrl' },
 			{ name: 'Alias', key: 'alias' },
 			{ name: 'Key', key: 'licenseKey' },
-			{ name: 'Server', key: 'serverVersion' },
-			{ name: 'UI', key: 'uiVersion' },
+			{ name: 'Server', key: 'serverVersion', column: 'ServerVersion', sortable: true },
+			{ name: 'UI', key: 'uiVersion', column: 'UiVersion', sortable: true },
 			{ name: 'Display', key: 'displayStatus' },
 			{ name: 'Dealer', key: 'dealerId' },
 			{ name: 'Host', key: 'hostId' },
