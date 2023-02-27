@@ -51,6 +51,7 @@ export class LicensesComponent implements OnInit {
 	licenses_details: any;
 	now: any;
 	paging_data: any;
+	paging_data_favorites: any;
 	paging_data_licenses: any;
 	paging_data_host: any;
 	searching: boolean = false;
@@ -337,6 +338,7 @@ export class LicensesComponent implements OnInit {
                     )
                     this.favorites_list_cache = this.favorites_list;
                     this.no_favorites = false;
+                    this.paging_data_favorites = data.paging;
                 }
                 if(reset) {
                     this.favorites_list_cache = this.favorites_list;
@@ -1300,7 +1302,7 @@ export class LicensesComponent implements OnInit {
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
 				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ 
+				{
                     value: l.anydeskId ? l.anydeskId : '--', 
                     link: null, 
                     editable: false, 
@@ -1392,6 +1394,26 @@ export class LicensesComponent implements OnInit {
     showMore(event) {
         this.show_more_clicked = true;
         this.getLicenses(event.page, event.pageSize, true)
+    }
+
+    getTotalShownLicenses() {
+        if(this.active_view === 'grid') {
+            if(this.favorite_view) {
+                return this.favorites_list.length + this.paging_data_licenses.entities.length;
+            } else {
+                return this.paging_data_licenses.entities.length;
+            }
+        } else {
+            return this.paging_data_licenses.entities.length;
+        }
+    }
+    
+    getTotalLicenses() {
+        if(this.active_view === 'grid') {
+            return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
+        } else {
+            return this.paging_data_licenses.totalEntities;
+        }
     }
     
 }

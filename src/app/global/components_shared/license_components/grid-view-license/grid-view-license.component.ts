@@ -48,7 +48,6 @@ export class GridViewLicenseComponent implements OnInit {
         this.favorites_list = this.favorites_list;
         this.no_favorites = this.no_favorites;
         this.license_data_for_grid_view = this.license_data_for_grid_view;
-        console.log("FAVO LIST", this.favorites_list)
     }
 
     removeToFavorites(license) {
@@ -60,7 +59,7 @@ export class GridViewLicenseComponent implements OnInit {
                 response => {
                     if(!response) {
                         this.openConfirmationModal('success', 'Success!', 'License successfully removed to Favorites');
-                        this.license_data_for_grid_view.push(license)
+                        this.license_data_for_grid_view.push(license);
                     } else {
                         this.openConfirmationModal('error', 'Error!', response.message);
                     }
@@ -95,7 +94,7 @@ export class GridViewLicenseComponent implements OnInit {
 
 		dialog.afterClosed().subscribe(() => {
             if(status === 'success') {
-                this.get_favorite.emit(false)
+                this.get_favorite.emit(true)
             };
         });
 	}
