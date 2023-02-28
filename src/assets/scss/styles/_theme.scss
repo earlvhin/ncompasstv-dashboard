@@ -912,6 +912,12 @@ agm-map {
     color: $primary;
 }
 
+.hover-primary {
+    &:hover {
+        color: $primary;
+    }
+}
+
 .screenshot-holder {
     width: 100%;
     background: #022457;
@@ -970,4 +976,12 @@ agm-map {
 
 .favorites {
     color: orange;
+}
+
+.white-space {
+    white-space: pre;
+}
+
+.text-shadow-black {
+    text-shadow: 1px 1px 1px black;
 }
