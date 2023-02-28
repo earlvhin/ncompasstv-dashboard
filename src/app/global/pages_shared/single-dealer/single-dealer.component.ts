@@ -172,7 +172,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Vistar Venue ID', no_show: true, key: 'vistarVenueId' },
 		{ name: 'Notes', no_show: true, hidden: true, key: 'notes' },
 		{ name: 'Others', no_show: true, hidden: true, key: 'others' },
-		{ name: 'Status', sortable: true, column: 'Status', no_export: true, hidden: true }
+		{ name: 'Status', sortable: true, column: 'Status', no_export: true, hidden: true },
+        { name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true },
 	];
 
 	license_table_columns = [
@@ -1402,9 +1403,35 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.tagsToString = item.tags.join(',');
 				break;
 			case 'Hosts':
-				item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
+                item.storeHoursParse = this.getStoreHourseParse(item)
+                item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
 				item.businessName = this.dealer.businessName;
 				break;
+		}
+	}
+
+    getStoreHourseParse(data) {
+		let days = [];
+		if (data.storeHours) {
+			let storehours = JSON.parse(data.storeHours);
+			storehours = storehours.sort((a, b) => {
+				return a.id - b.id;
+			});
+			storehours.map((day) => {
+				if (day.status) {
+					day.periods.map((period) => {
+						if (period.open == '' && period.close == '') {
+							days.push(day.day + ' : Open 24 hrs');
+						} else {
+							days.push(day.day + ' : ' + period.open + ' - ' + period.close);
+						}
+					});
+				} else {
+					days.push(day.day + ' : ' + 'Closed');
+				}
+			});
+			data.storeHoursParse = days.toString();
+			return data.storeHoursParse.split(',').join('\n');
 		}
 	}
 
