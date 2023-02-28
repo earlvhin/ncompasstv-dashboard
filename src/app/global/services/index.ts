@@ -20,3 +20,4 @@ export * from './screen-service/screen.service';
 export * from './tag.service';
 export * from './template-service/template.service';
 export * from './user-service/user.service';
+export * from './update-service/update.service';

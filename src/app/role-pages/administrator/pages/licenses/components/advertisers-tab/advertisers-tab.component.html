@@ -1,0 +1,66 @@
+<div id="licenses-page-advertisers-tab" class="content d-flex flex-column">
+	<div class="controls-and-search-container d-flex mt-3">
+		<div class="controls-container">
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn pi-control sm-text _primary mr-2"
+				(click)="exportTable()"
+				title="Export to CSV"
+				[disabled]="isExporting">
+				<span class="{{ isExporting ? 'fas fa-spinner' : 'fas fa-file-excel' }}"></span>
+				<span class="ml-2 button_text_animation">{{ isExporting ? 'Generating CSV' : 'Export' }}</span>
+			</button>
+		</div>
+
+		<div class="search-field-container">
+			<mat-form-field class="full-width">
+				<mat-label>
+					<span class="fas fa-search sm-text mr-2"></span>
+					Search Advertiser Name or Business Name
+				</mat-label>
+				<input matInput [formControl]="searchControl" />
+			</mat-form-field>
+		</div>
+	</div>
+
+	<mat-card>
+		<ng-container *ngIf="isPageReady; else loader">
+			<app-data-table
+				[table_data]="currentTableData"
+				[table_columns]="tableColumns"
+				[new_table]="true"
+				[pagination_enabled]="false"
+				[spinner_enabled]="false"
+				[active_tab]="filters.sortColumn"
+				[sort_column]="filters.sortColumn"
+				[sort_order]="filters.sortOrder"
+				(to_sort_column)="sortTable($event)">
+			</app-data-table>
+			<div class="load-data-button-container d-flex justify-content-center mt-3">
+				<button mat-raised-button class="theme-btn _primary" (click)="addToTable()" [disabled]="hasNoData || !isPreloadDataReady">
+					<ng-container *ngIf="isPreloadDataReady; else preloadingData"> Load more advertisers... </ng-container>
+					<ng-template #preloadingData> Loading advertisers... </ng-template>
+				</button>
+			</div>
+		</ng-container>
+	</mat-card>
+</div>
+
+<ng-template #loader>
+	<ng-container *ngIf="!hasNoData; else noData">
+		<div class="py-4 white-bg h-500">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-container>
+</ng-template>
+
+<ng-template #noData>
+	<mat-card class="pt-5 pb-5 text-center">
+		<div class="mb-4">
+			<i class="text-gray fa-5x far fa-file-alt"></i>
+		</div>
+		<h3 class="text-gray">No Results Found</h3>
+		<span class="text-gray">This page currently has no available data</span>
+	</mat-card>
+</ng-template>

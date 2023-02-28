@@ -1,5 +1,5 @@
 import { DatePipe, TitleCasePipe } from '@angular/common';
-import { AfterViewInit, Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 import { UnassignHostLicenseComponent } from 'src/app/global/components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { API_LICENSE, PAGING, UI_CURRENT_USER, UI_HOST_LICENSE } from 'src/app/global/models';
-import { LicenseService } from 'src/app/global/services';
+import { HelperService, LicenseService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-licenses-tab',
@@ -33,7 +33,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _date: DatePipe, private _dialog: MatDialog, private _license: LicenseService, private _titlecase: TitleCasePipe) {}
+	constructor(private _date: DatePipe, private _dialog: MatDialog, private _helper: HelperService, private _license: LicenseService, private _titlecase: TitleCasePipe) {}
 
 	ngOnInit() {
 		this.tableColumns = this.columns;
@@ -84,6 +84,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 
 		dialog.afterClosed().subscribe((response) => {
 			if (!response) return;
+			this._helper.onRefreshBannerData.next();
 			this.onReloadLicenses();
 		});
 	}

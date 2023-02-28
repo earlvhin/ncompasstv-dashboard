@@ -100,7 +100,7 @@
 				</div>
 
 				<div class="d-flex mb-4 px-3" *ngFor="let h of business_hours">
-					<div class="round-label mr-3" (click)="parseBusinessHours(h)" [ngClass]="h.status ? 'active' : ''">
+					<div class="round-label mr-3" (click)="toggleDaySchedule(h)" [ngClass]="h.status ? 'active' : ''">
 						<span class="font-weight-bold">{{ h.label }}</span>
 					</div>
 					<div class="flex-even">
@@ -110,32 +110,15 @@
 									<div class="mr-3">
 										<div class="time-picker">
 											<mat-label class="sm-text">Opening Hours</mat-label>
-											<input
-												matInput
-												class="input-border-bottom"
-												placeholder="Opening Hours"
-												aria-label="12hr format"
-												[ngxTimepicker]="opening"
-												[(ngModel)]="t.open"
-												[ngModelOptions]="{ standalone: true }"
-												readonly />
-											<ngx-material-timepicker #opening></ngx-material-timepicker>
+											<ngb-timepicker [(ngModel)]="t.openingHourData" [spinners]="false" [meridian]="true" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
 										</div>
 										<div class="d-inline-block mx-3">
-											<span>--</span>
+											<span> --</span>
 										</div>
 										<div class="time-picker">
 											<mat-label class="sm-text">Closing Hours</mat-label>
-											<input
-												matInput
-												class="input-border-bottom"
-												placeholder="Closing Hours"
-												aria-label="12hr format"
-												[ngxTimepicker]="closing"
-												[(ngModel)]="t.close"
-												[ngModelOptions]="{ standalone: true }"
-												readonly />
-											<ngx-material-timepicker #closing></ngx-material-timepicker>
+											<ngb-timepicker [(ngModel)]="t.closingHourData" [spinners]="false" [meridian]="true" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
+
 										</div>
 									</div>
 									<div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">

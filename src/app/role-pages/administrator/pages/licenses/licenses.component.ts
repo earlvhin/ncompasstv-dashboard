@@ -1,26 +1,16 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { DatePipe, TitleCasePipe } from '@angular/common';
 import { MatDialog } from '@angular/material';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
-import { Router } from '@angular/router';
 
 import { environment } from 'src/environments/environment';
 import { AuthService, HostService, LicenseService } from 'src/app/global/services';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import {
-	API_DEALER,
-	UI_LICENSE,
-	UI_HOST_VIEW,
-	UI_TABLE_LICENSE_BY_DEALER,
-	API_HOST,
-	API_LICENSE_PROPS,
-	UI_ROLE_DEFINITION_TEXT
-} from 'src/app/global/models';
+import { UI_LICENSE, UI_HOST_VIEW, UI_TABLE_LICENSE_BY_DEALER, API_HOST, UI_ROLE_DEFINITION_TEXT, API_LICENSE_PROPS } from 'src/app/global/models';
 import { UserSortModalComponent } from 'src/app/global/components_shared/media_components/user-sort-modal/user-sort-modal.component';
 import { LicenseModalComponent } from 'src/app/global/components_shared/license_components/license-modal/license-modal.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -32,7 +22,9 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 	providers: [DatePipe, TitleCasePipe]
 })
 export class LicensesComponent implements OnInit {
-    active_view: string = 'list';
+	active_view: string = 'list';
+	current_user_role = this._currentUserRole;
+	diff_hours: any;
 	dealers_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	licenses_data: UI_LICENSE[] = [];
 	hosts_data: UI_HOST_VIEW[] = [];
@@ -46,46 +38,48 @@ export class LicensesComponent implements OnInit {
 	filtered_data: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	filtered_data_host: UI_HOST_VIEW[] = [];
 	filtered_data_licenses: UI_LICENSE[] = [];
-	is_dealer_admin: boolean = false;
-	title: string = 'Licenses';
+	is_dealer_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin;
+	title = 'Licenses';
 	tab: any = { tab: 0 };
 	licenses_details: any;
 	now: any;
 	paging_data: any;
+	paging_data_favorites: any;
 	paging_data_licenses: any;
 	paging_data_host: any;
-	searching: boolean = false;
-	searching_licenses: boolean = false;
-	searching_hosts: boolean = false;
-	hide_all_license: boolean = true;
-	initial_load: boolean = true;
-	initial_load_licenses: boolean = true;
-	initial_load_hosts: boolean = true;
-    is_favorite: boolean = false;
-    favorites_list: any = [];
-	search_data: string = '';
-	search_data_licenses: string = '';
-	search_data_host: string = '';
+	searching = false;
+	searching_licenses = false;
+	searching_hosts = false;
+	hide_all_license = true;
+	initial_load = true;
+	initial_load_licenses = true;
+	initial_load_hosts = true;
+	is_administrator = this.current_user_role === 'administrator';
+	is_favorite = false;
+	favorites_list: any = [];
+	search_data = '';
+	search_data_licenses = '';
+	search_data_host = '';
 	splitted_text: any;
-	sort_column: string = 'PiStatus';
-	sort_order: string = 'desc';
-	sort_column_hosts: string = '';
-	sort_order_hosts: string = '';
-	has_sort: boolean = false;
-    license_data_for_grid_view: any = [];
-    favorite_view: boolean = true;
-    show_more_clicked: boolean = false;
-    favorites_list_cache: any = [];
-    grid_list_cache: any = [];
-    total_favorites: 0;
-    total_not_favorites: 0;
+	sort_column = 'PiStatus';
+	sort_order = 'desc';
+	sort_column_hosts = '';
+	sort_order_hosts = '';
+	has_sort = false;
+	license_data_for_grid_view: API_LICENSE_PROPS[] = [];
+	favorite_view = true;
+	show_more_clicked = false;
+	favorites_list_cache: any = [];
+	grid_list_cache: any = [];
+	total_favorites: 0;
+	total_not_favorites: 0;
 
 	//for export
 	hosts_to_export: API_HOST[] = [];
 	licenses_to_export: any[] = [];
 	pageSize: number;
 	workbook: any;
-	workbook_generation: boolean = false;
+	workbook_generation = false;
 	worksheet: any;
 	temp_label: any = [];
 	temp_array: any = [];
@@ -93,9 +87,11 @@ export class LicensesComponent implements OnInit {
 	temp_array_this_week: any = [];
 	temp_label_last_week: any = [];
 	temp_array_last_week: any = [];
-    url_link: any;
+	url_link: any;
 
-	diff_hours: any;
+	// UI Table Column Header
+	license_table_column = this._licenseTableColumns;
+	hosts_table_column = this._hostTableColumns;
 
 	filters: any = {
 		admin_licenses: false,
@@ -109,88 +105,18 @@ export class LicensesComponent implements OnInit {
 		dealer: '',
 		host: '',
 		recent: '',
-		days_offline: '',
+		days_offline_from: '',
+		days_offline_to: '',
 		label_status: '',
 		label_zone: '',
 		label_dealer: '',
 		label_admin: ''
 	};
 
-	// UI Table Column Header
-	dealers_table_column: string[] = [
-		'#',
-		'Dealer Alias',
-		'Business Name',
-		'Contact Person',
-		'Region',
-		'City',
-		'State',
-		'Total',
-		'Active',
-		'Inactive',
-		'Online',
-		'Offline',
-		'Recent Purchase Date',
-		'Quantity'
-	];
-
-	// UI Table Column Header
-	license_table_column = [
-		{ name: '#', sortable: false, no_export: true },
-		{ name: 'Status', sortable: false, key: 'new_status', hidden: true, no_show: true },
-		{ name: 'Screenshot', sortable: false, no_export: true },
-		{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
-		{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true },
-		{ name: 'Dealer', sortable: true, column: 'BusinessName', key: 'businessName' },
-		{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
-		{ name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
-		{ name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
-		{ name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
-		{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType', hidden: true, no_show: true },
-		{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed', hidden: true, no_show: true },
-		{ name: 'Upload Speed', sortable: true, key: 'upload', hidden: true, no_show: true },
-		{ name: 'Download Speed', sortable: true, key: 'download', hidden: true, no_show: true },
-		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
-		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
-		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
-		{ name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
-		{ name: 'Memory', sortable: false, key: 'memory', hidden: true, no_show: true },
-		{ name: 'Storage', sortable: false, key: 'totalStorage', hidden: true, no_show: true },
-		{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
-		{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
-		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated', hidden: true, no_show: true },
-		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
-		{ name: 'Tags', key: 'tagsToString', no_show: true }
-	];
-
-	hosts_table_column = [
-		{ name: '#', sortable: false, no_export: true },
-		{ name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
-		{ name: 'Host Name', sortable: true, column: 'HostName', key: 'hostName' },
-		{ name: 'Category', key: 'category', no_show: true, hidden: true },
-		{ name: 'General Category', hidden: true, no_show: true, key: 'generalCategory' },
-		{ name: 'Dealer Name', sortable: true, column: 'BusinessName', key: 'businessName' },
-		{ name: 'Address', sortable: true, column: 'Address', key: 'address' },
-		{ name: 'City', sortable: true, column: 'City', key: 'city' },
-		{ name: 'State', sortable: true, column: 'State', key: 'state' },
-		{ name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
-		{ name: 'Timezone', sortable: true, column: 'TimezoneName', key: 'timezoneName' },
-		{ name: 'Total Licenses', sortable: true, column: 'TotalLicenses', key: 'totalLicenses' },
-		{ name: 'Tags', key: 'tagsToString', no_show: true, hidden: true },
-		{ name: 'Total Business Hours', sortable: false, key: 'storeHours', hidden: true, no_show: true },
-		{ name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
-		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
-		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
-		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
-		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true }
-	];
-
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
 		private _auth: AuthService,
-		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _date: DatePipe,
 		private _host: HostService,
@@ -198,23 +124,15 @@ export class LicensesComponent implements OnInit {
 		private _title: TitleCasePipe,
 		private cdr: ChangeDetectorRef,
 		private _activatedRoute: ActivatedRoute,
-        private router: Router
+		private router: Router
 	) {}
 
 	ngOnInit() {
-		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-			this.is_dealer_admin = true;
-		}
-		let status = this._activatedRoute.snapshot.paramMap.get('status');
-		if (status) {
-			this.filterTable('status', status === 'Online' ? '1' : '0');
-		}
+		const status = this._activatedRoute.snapshot.paramMap.get('status');
+		if (status) this.filterTable('status', status === 'Online' ? '1' : '0');
 		this.getLicensesTotal();
-
 		this.getLicenses(1);
-
-        let link= `${environment.base_uri}`;
-        this.url_link = link.replace('/api/', '');
+		this.url_link = environment.base_uri.replace('/api/', '');
 	}
 
 	ngAfterContentChecked(): void {
@@ -226,19 +144,237 @@ export class LicensesComponent implements OnInit {
 		this._unsubscribe.complete();
 	}
 
-	getColumnsAndOrder(data, tab) {
+	addToFavorites(id: string) {
+		this._license
+			.add_license_favorite(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				if (response) {
+					this.openConfirmationModal('error', 'Error!', response.message);
+					return;
+				}
+
+				this.license_data_for_grid_view = this.license_data_for_grid_view.filter((x) => x.licenseId != id);
+			});
+	}
+
+	changeView(view: string) {
+		this.active_view = view;
+
+		if (view === 'grid') {
+			this.getFavoriteLicenses(true);
+			this.has_sort = true;
+			this.license_data_for_grid_view = [];
+			this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24);
+			return;
+		}
+
+		this.getLicenses(1);
+	}
+
+	checkStatus(license: API_LICENSE_PROPS) {
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+			return 'text-primary';
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+			return 'text-danger';
+		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+			return 'text-orange';
+		} else if (license.isActivated === 0 && license.hostName) {
+			return 'text-light-gray';
+		} else {
+			return 'text-gray';
+		}
+	}
+
+	checkStatusForExport(license: API_LICENSE_PROPS) {
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+			return 'Online';
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+			return 'Offline';
+		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+			return 'Pending';
+		} else if (license.isActivated === 0 && license.hostName) {
+			return 'Inactive';
+		} else {
+			return 'Unassigned';
+		}
+	}
+
+	clearFilter() {
+		this.filters = {
+			admin_licenses: false,
+			assigned: '',
+			isactivated: '',
+			online: '',
+			pending: '',
+			activated: '',
+			recent: '',
+			days_offline_from: '',
+			days_offline_to: '',
+			zone: '',
+			status: '',
+			dealer: '',
+			host: '',
+			label_status: '',
+			label_zone: '',
+			label_dealer: '',
+			label_host: '',
+			label_admin: ''
+		};
+
+		if (this.active_view === 'grid') {
+			this.getFavoriteLicenses(false);
+			this.has_sort = true;
+			this.license_data_for_grid_view = [];
+			this.getLicenses(1, 24, true);
+			return;
+		}
+
+		this.sortList('desc');
+		this.getLicenses(1);
+	}
+
+	exportTable(tab: string) {
+		this.workbook_generation = true;
+		const header = [];
+		this.workbook = new Workbook();
+		this.workbook.creator = 'NCompass TV';
+		this.workbook.useStyles = true;
+		this.workbook.created = new Date();
+		switch (tab) {
+			case 'licenses':
+				this.worksheet = this.workbook.addWorksheet('License View');
+				Object.keys(this.license_table_column).forEach((key) => {
+					if (this.license_table_column[key].name && !this.license_table_column[key].no_export) {
+						header.push({
+							header: this.license_table_column[key].name,
+							key: this.license_table_column[key].key,
+							width: 30,
+							style: { font: { name: 'Arial', bold: true } }
+						});
+					}
+				});
+				break;
+			case 'hosts':
+				this.worksheet = this.workbook.addWorksheet('Host View');
+				Object.keys(this.hosts_table_column).forEach((key) => {
+					if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
+						header.push({
+							header: this.hosts_table_column[key].name,
+							key: this.hosts_table_column[key].key,
+							width: 30,
+							style: { font: { name: 'Arial', bold: true } }
+						});
+					}
+				});
+				break;
+			default:
+		}
+		this.worksheet.columns = header;
+		this.getDataForExport(tab);
+	}
+
+	filterTable(type: string, value: any, value2?: any, days?: any) {
+		switch (type) {
+			case 'status':
+				this.resetFilterStatus();
+				this.filters.activated = true;
+				this.filters.label_status = value === 1 ? 'Online' : 'Offline';
+				this.filters.online = value === 1;
+				this.filters.assigned = true;
+				this.filters.isactivated = 1;
+
+				if (value === 0) {
+					const filter = { column: 'TimeIn', order: 'desc' };
+					this.getColumnsAndOrder(filter, 'licenses');
+					return;
+				}
+
+				this.sortList('desc');
+
+				break;
+
+			case 'zone':
+				this.filters.zone = value;
+				this.filters.label_zone = value;
+				this.sortList('desc');
+				break;
+
+			case 'activated':
+				this.resetFilterStatus();
+				this.filters.status = '';
+				this.filters.isactivated = 0;
+				this.filters.assigned = true;
+				this.filters.label_status = 'Inactive';
+				this.sortList('desc');
+				break;
+
+			case 'recent':
+				this.resetFilterStatus();
+				this.filters.status = '';
+				this.filters.recent = value;
+				this.filters.label_status = 'Recent Installs';
+				this.sortList('desc');
+				break;
+
+			case 'days_offline':
+				this.resetFilterStatus();
+				this.filters.status = 0;
+				this.filters.days_offline_from = value;
+				this.filters.days_offline_to = value2;
+				this.filters.label_status = 'Offline for ' + days;
+				this.sortList('desc');
+				break;
+
+			case 'assigned':
+				this.resetFilterStatus();
+				this.filters.assigned = value;
+				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
+				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
+				this.sortList('desc');
+				break;
+
+			case 'pending':
+				this.resetFilterStatus();
+				this.filters.assigned = true;
+				this.filters.isactivated = 1;
+				this.filters.pending = value;
+				this.filters.label_status = value == 'true' ? 'Pending' : '';
+				this.sortList('desc');
+				break;
+
+			default:
+		}
+	}
+
+	formulateScreenshotURL(url: string) {
+		return `${environment.base_uri}${url.replace('/API/', '')}`;
+	}
+
+	getAnydeskPassword(id: string) {
+		return this.splitKey(id);
+	}
+
+	getColumnsAndOrder(data: { column: string; order: string }, tab: string) {
 		switch (tab) {
 			case 'licenses':
 				this.has_sort = true;
 				this.sort_column = data.column;
 				this.sort_order = data.order;
-				if(this.active_view === 'grid') {
-                    this.license_data_for_grid_view = [];
-                    this.getFavoriteLicenses();
-                    this.getLicenses(1, this.grid_list_cache.length, false)
-                } else {
-                    this.getLicenses(1);
-                }
+
+				if (this.active_view === 'grid') {
+					this.license_data_for_grid_view = [];
+					this.getFavoriteLicenses();
+					this.getLicenses(1, this.grid_list_cache.length, false);
+					return;
+				}
+
+				this.getLicenses(1);
+
 				break;
 			case 'hosts':
 				this.has_sort = true;
@@ -250,13 +386,47 @@ export class LicensesComponent implements OnInit {
 		}
 	}
 
-	sortList(order, page?): void {
-		var filter = {
-			column: 'PiStatus',
-			order: order
-		};
-
-		this.getColumnsAndOrder(filter, 'licenses');
+	getFavoriteLicenses(reset?: boolean) {
+		this.favorites_list = [];
+		this._license
+			.get_all_licenses(
+				1,
+				!reset ? this.search_data_licenses : '',
+				this.sort_column,
+				this.sort_order,
+				0,
+				this.filters.admin_licenses,
+				this.filters.status,
+				this.filters.days_offline_from,
+				this.filters.days_offline_to,
+				this.filters.activated,
+				this.filters.recent,
+				this.filters.zone,
+				this.filters.dealer,
+				this.filters.host,
+				this.filters.assigned,
+				this.filters.pending,
+				this.filters.online,
+				this.filters.isactivated,
+				true
+			)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
+				if (data.licenses.length === 0) {
+					this.no_favorites = true;
+				} else {
+					data.licenses.map((entities) => {
+						this.favorites_list.push(entities);
+					});
+					this.favorites_list_cache = this.favorites_list;
+					this.no_favorites = false;
+					this.paging_data_favorites = data.paging;
+				}
+				if (reset) {
+					this.favorites_list_cache = this.favorites_list;
+					this.no_favorites = false;
+				}
+			});
 	}
 
 	getHosts(page: number) {
@@ -297,377 +467,373 @@ export class LicensesComponent implements OnInit {
 			});
 	}
 
-    sortDisplay(arrangement) {
-        var filter = {
-            column: 'DisplayStatus',
-            order: arrangement
-        };
-        this.getColumnsAndOrder(filter, 'licenses');
-    }
-
-    getFavoriteLicenses(reset?) {
-        this.favorites_list = [];
-        this._license.get_all_licenses(
-			1,
-			!reset ? this.search_data_licenses : '',
-			this.sort_column,
-			this.sort_order,
-			0,
-			this.filters.admin_licenses,
-			this.filters.status,
-			this.filters.days_offline,
-			this.filters.activated,
-			this.filters.recent,
-			this.filters.zone,
-			this.filters.dealer,
-			this.filters.host,
-			this.filters.assigned,
-			this.filters.pending,
-			this.filters.online,
-			this.filters.isactivated,
-            true,
-		).pipe(takeUntil(this._unsubscribe)).subscribe(
-			(data) => {
-                if(data.paging.entities.length === 0) {
-                    this.no_favorites = true;
-                } else {
-                    data.paging.entities.map(
-                        entities => {
-                            this.favorites_list.push(entities)
-                        }
-                    )
-                    this.favorites_list_cache = this.favorites_list;
-                    this.no_favorites = false;
-                }
-                if(reset) {
-                    this.favorites_list_cache = this.favorites_list;
-                    this.no_favorites = false;
-                }
-            }
-        )
-    }
-
-    toggleFavorites(value) {
-        if(value === 'false') {
-            this.favorite_view = false;
-        } else {
-            this.favorites_list = this.favorites_list_cache;
-            this.no_favorites = false;
-            this.favorite_view = true;
-        }
-    }
-
-	getLicenses(page: number, pageSize?, fromShowMore?) {
+	getLicenses(page: number, pageSize?: number, fromShowMore?: boolean) {
+		let favorite: any;
 		this.hosts_data = [];
-        var favorite: any;
-        this.no_licenses_result = false;
-        if(this.active_view != 'grid') {
-            favorite = '';
-            this.searching_licenses = true;
-        } else {
-            if(page > 1) {
-                this.searching_licenses = false;
-            } else {
-                this.searching_licenses = true;
-            }
-            favorite = false;
-        }
-		if (this.has_sort) {
-			this._license
-				.get_all_licenses(
-					page,
-					this.search_data_licenses,
-					this.sort_column,
-					this.sort_order,
-					pageSize ? pageSize : 15,
-					this.filters.admin_licenses,
-					this.filters.status,
-					this.filters.days_offline,
-					this.filters.activated,
-					this.filters.recent,
-					this.filters.zone,
-					this.filters.dealer,
-					this.filters.host,
-					this.filters.assigned,
-					this.filters.pending,
-					this.filters.online,
-					this.filters.isactivated,
-                    favorite,
-				)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-                        this.paging_data_licenses = data.paging;
-                        
-                        if(this.active_view === 'grid') {
-                            if (data.paging.entities.length > 0) {
-                                data.paging.entities.map(
-                                    entities => {
-                                        this.license_data_for_grid_view.push(entities)
-                                    }
-                                )
-                                if(fromShowMore && page > 1) {
-                                    this.grid_list_cache = this.license_data_for_grid_view;
-                                }
-                                if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
-                                    this.license_data_for_grid_view = this.grid_list_cache;
-                                }
-                            } else {
-                                this.no_licenses_result = true;
-                            }
-                        } else {
-                            if (data.paging.entities) {
-                                const mapped = this.mapToLicensesTable(data.paging.entities);
-                                this.licenses_data = [...mapped];
-                                this.filtered_data_licenses = [...mapped];
-                            } else {
-                                if (this.search_data == '') this.no_licenses = true;
-                                this.filtered_data_licenses = [];
-                            }
-                        }
-
-                        this.initial_load_licenses = false;
-                        this.searching_licenses = false;
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				);
+		this.no_licenses_result = false;
+		if (this.active_view != 'grid') {
+			favorite = '';
+			this.searching_licenses = true;
 		} else {
-			this._license
-				.get_all_licenses_fetch(
-					page,
-					this.search_data_licenses,
-					this.sort_column,
-					this.sort_order,
-					pageSize ? pageSize : 15,
-					this.filters.admin_licenses,
-					this.filters.status,
-					this.filters.days_offline,
-					this.filters.activated,
-					this.filters.recent,
-					this.filters.zone,
-					this.filters.dealer,
-					this.filters.host,
-					this.filters.assigned,
-					this.filters.pending,
-					this.filters.online,
-					this.filters.isactivated
-				)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.paging_data_licenses = data.paging;
+			if (page > 1) {
+				this.searching_licenses = false;
+			} else {
+				this.searching_licenses = true;
+			}
+			favorite = false;
+		}
+		this._license
+			.get_all_licenses(
+				page,
+				this.search_data_licenses,
+				this.sort_column,
+				this.sort_order,
+				pageSize ? pageSize : 15,
+				this.filters.admin_licenses,
+				this.filters.status,
+				this.filters.days_offline_from,
+				this.filters.days_offline_to,
+				this.filters.activated,
+				this.filters.recent,
+				this.filters.zone,
+				this.filters.dealer,
+				this.filters.host,
+				this.filters.assigned,
+				this.filters.pending,
+				this.filters.online,
+				this.filters.isactivated,
+				favorite
+			)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this.paging_data_licenses = data.paging;
 
-						if (data.paging.entities) {
-							const mapped = this.mapToLicensesTable(data.paging.entities);
-							this.licenses_data = [...mapped];
-							this.filtered_data_licenses = [...mapped];
-						} else {
-							if (this.search_data == '') this.no_licenses = true;
+					if (data.licenses.length <= 0) {
+						this.hideLicenseSpinner();
+
+						if (this.active_view === 'grid') this.no_licenses_result = true;
+						else {
+							this.no_licenses = true;
 							this.filtered_data_licenses = [];
 						}
 
-						this.initial_load_licenses = false;
-						this.searching_licenses = false;
-                        if(this.active_view === 'grid') {
-                            data.paging.entities.map(
-                                entities => {
-                                    this.license_data_for_grid_view.push(entities)
-                                }
-                            )
-                        }
-					},
-					(error) => {
-						throw new Error(error);
+						return;
 					}
-				);
-		}
-	}
-    
 
-	onTabChanged(e: { index: number }) {
-		switch (e.index) {
-			case 1:
-				this.pageRequested(1);
-				break;
+					if (this.active_view === 'grid') {
+						this.license_data_for_grid_view = [...data.licenses];
+
+						if (fromShowMore && page > 1) this.grid_list_cache = this.license_data_for_grid_view;
+
+						if (this.grid_list_cache.length > 0 && page === 1 && fromShowMore) {
+							this.license_data_for_grid_view = [...this.grid_list_cache];
+						}
+
+						this.hideLicenseSpinner();
+						return;
+					}
+
+					const mapped = this.mapToLicensesTable(data.licenses);
+					this.licenses_data = [...mapped];
+					this.filtered_data_licenses = [...mapped];
+					this.hideLicenseSpinner();
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	getTotalHours(data: { storeHours: any }) {
+		if (data.storeHours) {
+			data.storeHours = JSON.parse(data.storeHours);
+			this.hour_diff_temp = [];
+
+			data.storeHours.map((hours) => {
+				if (hours.status) {
+					hours.periods.map((period) => {
+						this.diff_hours = 86400;
+
+						if (period.open && period.close) {
+							const close = moment(period.close, 'H:mm A');
+							const open = moment(period.open, 'H:mm A');
+							const time_start = new Date('01/01/2007 ' + open.format('HH:mm:ss'));
+							let time_end = new Date('01/01/2007 ' + close.format('HH:mm:ss'));
+							if (time_start.getTime() > time_end.getTime()) time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
+							this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
+						}
+
+						this.hour_diff_temp.push(this.diff_hours);
+					});
+				} else {
+				}
+			});
+
+			this.hour_diff = 0;
+
+			this.hour_diff_temp.map((hour) => {
+				this.hour_diff += hour;
+			});
+		}
+
+		return this.msToTime(this.hour_diff);
+	}
+
+	getTotalLicenses() {
+		if (this.active_view === 'grid') return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
+		return this.paging_data_licenses.totalEntities;
+	}
+
+	getZoneHours(data: API_LICENSE_PROPS) {
+		if (data.templateName == 'Fullscreen') {
+			return `Main: ${this.msToTime(parseInt(data.templateMain))}`;
+		}
+
+		let data_to_return: any = '';
+
+		if (data.templateBackground != 'NO DATA') {
+			data_to_return = `${data_to_return} 'Background: ${this.msToTime(parseInt(data.templateBackground))}`;
+		}
+
+		if (data.templateBottom != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Bottom: ${this.msToTime(parseInt(data.templateBottom))}`;
+		}
+
+		if (data.templateHorizontal != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Horizontal: ${this.msToTime(parseInt(data.templateHorizontal))}`;
+		}
+
+		if (data.templateHorizontalSmall != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Horizontal Small: ${this.msToTime(parseInt(data.templateHorizontalSmall))}`;
+		}
+
+		if (data.templateLowerLeft != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Lower Left: ${this.msToTime(parseInt(data.templateLowerLeft))}`;
+		}
+
+		if (data.templateMain != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Main: ${this.msToTime(parseInt(data.templateMain))}`;
+		}
+
+		if (data.templateUpperLeft != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Upper Left: ${this.msToTime(parseInt(data.templateUpperLeft))}`;
+		}
+
+		if (data.templateVertical != 'NO DATA') {
+			data_to_return = `${data_to_return} \n Vertical: ${this.msToTime(parseInt(data.templateUpperLeft))}`;
+		}
+
+		return data_to_return;
+	}
+
+	onTabChanged(tab: { index: number }) {
+		switch (tab.index) {
 			case 0:
 				this.getLicenses(1);
+				break;
+			case 2:
+				if (!this.is_dealer_admin) return;
+				this.getHosts(1);
 				break;
 			case 3:
 				this.getHosts(1);
 				break;
-			case 2:
-				if (this.is_dealer_admin) {
-					this.getHosts(1);
-				}
-				break;
 			default:
 		}
-	}
-
-	filterTable(type: string, value: any, days?: any) {
-		switch (type) {
-			case 'status':
-				this.resetFilterStatus();
-				// this.filters.status = value;
-				this.filters.activated = true;
-				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
-				if (value == 1) {
-					this.filters.online = true;
-				} else {
-					this.filters.online = false;
-				}
-				this.filters.assigned = true;
-				this.filters.isactivated = 1;
-                if (value === 0) {
-                    var filter = {
-                        column: 'TimeIn',
-                        order: 'desc'
-                    };
-                    this.getColumnsAndOrder(filter, 'licenses');
-                } else {
-                    this.sortList('desc');
-                }
-			    break;
-			case 'zone':
-				this.filters.zone = value;
-				this.filters.label_zone = value;
-				this.sortList('desc');
-				break;
-			case 'activated':
-				this.resetFilterStatus();
-				this.filters.status = '';
-				// this.filters.activated = value;
-				this.filters.isactivated = 0;
-				this.filters.assigned = true;
-				this.filters.label_status = 'Inactive';
-				this.sortList('desc');
-				break;
-			case 'recent':
-				this.resetFilterStatus();
-				this.filters.status = '';
-				this.filters.recent = value;
-				this.filters.label_status = 'Recent Installs';
-				this.sortList('desc');
-				break;
-			case 'days_offline':
-				this.resetFilterStatus();
-				this.filters.status = 0;
-				this.filters.days_offline = value;
-				this.filters.label_status = 'Offline for ' + days;
-				this.sortList('desc');
-				break;
-			case 'assigned':
-				this.resetFilterStatus();
-				this.filters.assigned = value;
-				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
-				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
-				this.sortList('desc');
-				break;
-			case 'pending':
-				this.resetFilterStatus();
-				this.filters.assigned = true;
-				this.filters.isactivated = 1;
-				this.filters.pending = value;
-				this.filters.label_status = value == 'true' ? 'Pending' : '';
-				this.sortList('desc');
-				break;
-			default:
-		}
-		// if(this.active_view === 'grid') {
-        //     this.license_data_for_grid_view = [];
-        //     this.getFavoriteLicenses(true);
-        //     this.getLicenses(1, 24)
-        // } else {
-        //     this.getLicenses(1);
-        // }
-	}
-
-	resetFilterStatus() {
-		this.filters.recent = '';
-		this.filters.activated = '';
-		this.filters.days_offline = '';
-		this.filters.status = '';
-		this.filters.assigned = '';
-		this.filters.pending = '';
-		this.filters.online = '';
 	}
 
 	sortByUser() {
-		let dialog = this._dialog.open(UserSortModalComponent, {
+		const dialog = this._dialog.open(UserSortModalComponent, {
 			width: '500px',
 			data: 'license'
 		});
 
 		dialog.afterClosed().subscribe((data) => {
-			if (data) {
-				if (data.dealer.id) {
-					this.filters.dealer = data.dealer.id;
-					this.filters.label_dealer = data.dealer.name;
-				}
-				if (data.host.id) {
-					this.filters.host = data.host.id;
-					this.filters.label_host = data.host.name;
-				}
-                if(this.active_view === 'grid') {
-                    this.license_data_for_grid_view = [];
-                    this.getFavoriteLicenses(false);
-                    this.getLicenses(1, 24, false)
-                } else {
-                    this.getLicenses(1);
-                }
-                this.hide_all_license = false;
+			if (!data) return;
+
+			if (data.dealer.id) {
+				this.filters.dealer = data.dealer.id;
+				this.filters.label_dealer = data.dealer.name;
 			}
+
+			if (data.host.id) {
+				this.filters.host = data.host.id;
+				this.filters.label_host = data.host.name;
+			}
+
+			if (this.active_view === 'grid') {
+				this.license_data_for_grid_view = [];
+				this.getFavoriteLicenses(false);
+				this.getLicenses(1, 24, false);
+			} else {
+				this.getLicenses(1);
+			}
+
+			this.hide_all_license = false;
 		});
 	}
 
-	filterData(e, tab) {
+	filterData(keyword: string, tab: string) {
 		switch (tab) {
 			case 'licenses':
-				if (e) {
-					this.has_sort = true;
-					this.search_data_licenses = e;
-                    if(this.active_view === 'grid') {
-                        this.license_data_for_grid_view = [];
-                        this.getFavoriteLicenses(false);
-                        this.getLicenses(1, 24, false)
-                    } else {
-                        this.getLicenses(1);
-                    }
-                    this.hide_all_license = false;
+				this.has_sort = keyword ? true : false;
+				this.search_data_licenses = keyword ? keyword : '';
+
+				if (this.active_view === 'grid') {
+					this.license_data_for_grid_view = [];
+					this.getFavoriteLicenses(false);
+					this.getLicenses(1, 24, false);
 				} else {
-					this.has_sort = false;
-					this.search_data_licenses = '';
-					if(this.active_view === 'grid') {
-                        this.license_data_for_grid_view = [];
-                        this.getFavoriteLicenses(false);
-                        this.getLicenses(1, 24, false)
-                    } else {
-                        this.getLicenses(1);
-                    }
+					this.getLicenses(1);
 				}
+
+				if (keyword) this.hide_all_license = false;
+
 				break;
+
 			case 'hosts':
-				if (e) {
-					this.has_sort = true;
-					this.search_data_host = e;
-					this.getHosts(1);
-				} else {
-					this.has_sort = false;
-					this.search_data_host = '';
-					this.getHosts(1);
-				}
+				this.has_sort = keyword ? true : false;
+				this.search_data_host = keyword ? keyword : '';
+				this.getHosts(1);
 				break;
 			default:
-				if (e) {
-					this.search_data = e;
-					this.pageRequested(1);
-				} else {
-					this.search_data = '';
-					this.pageRequested(1);
-				}
 		}
+	}
+
+	getDataForExport(tab: string): void {
+		this.pageSize = 0;
+		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
+		this.filters.isactivated = '';
+
+		switch (tab) {
+			case 'licenses':
+				this._license
+					.get_all_licenses_duration(
+						0,
+						this.search_data_licenses,
+						this.sort_column,
+						this.sort_order,
+						0,
+						this.filters.admin_licenses,
+						this.filters.status,
+						this.filters.days_offline_from,
+						this.filters.days_offline_to,
+						this.filters.activated,
+						this.filters.recent,
+						this.filters.zone,
+						this.filters.dealer,
+						this.filters.host,
+						this.filters.assigned,
+						this.filters.pending,
+						this.filters.online,
+						this.filters.isactivated
+					)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe((data: any) => {
+						if (data.message) {
+							this.licenses_to_export = [];
+							return;
+						}
+
+						data.licenses.map((license) => {
+							license.apps = license.appVersion ? JSON.parse(license.appVersion) : null;
+
+							if (license.internetInfo) {
+								license.internetInfo = JSON.parse(license.internetInfo);
+								license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + ' mbps';
+								license.download = Math.round(license.internetInfo.downloadMbps * 100) / 100 + ' mbps';
+							}
+						});
+
+						this.licenses_to_export = data.licenses;
+
+						this.licenses_to_export.forEach((item) => {
+							this.mapLicensesForExport(item);
+							this.worksheet.addRow(item).font = { bold: false };
+						});
+
+						let rowIndex = 1;
+						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+						}
+
+						this.workbook.xlsx.writeBuffer().then((file: any) => {
+							const blob = new Blob([file], { type: EXCEL_TYPE });
+							const filename = 'Licenses' + '.xlsx';
+							saveAs(blob, filename);
+						});
+
+						this.workbook_generation = false;
+					});
+
+				break;
+
+			case 'hosts':
+				const filters = {
+					page: 1,
+					search: this.search_data_host,
+					sortColumn: this.sort_column_hosts,
+					sortOrder: this.sort_order_hosts,
+					pageSize: 0
+				};
+
+				this._host.get_host_fetch_export(filters).subscribe((response) => {
+					if (response.message) {
+						this.hosts_to_export = [];
+						return;
+					} else {
+						response.host.map((host) => {
+							host.storeHours = this.getTotalHours(host);
+							this.mapHostsForExport(host);
+						});
+						this.hosts_to_export = response.host;
+					}
+
+					this.hosts_to_export.forEach((item) => {
+						this.worksheet.addRow(item).font = { bold: false };
+					});
+
+					let rowIndex = 1;
+
+					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
+					}
+
+					this.workbook.xlsx.writeBuffer().then((file: any) => {
+						const blob = new Blob([file], { type: EXCEL_TYPE });
+						const filename = 'Hosts' + '.xlsx';
+						saveAs(blob, filename);
+					});
+
+					this.workbook_generation = false;
+				});
+
+				break;
+			default:
+		}
+	}
+
+	getLabel(data: API_HOST) {
+		this.now = moment().format('d');
+		this.now = this.now;
+		let storehours = JSON.parse(data.storeHours);
+		storehours = storehours.sort((a, b) => a.id - b.id);
+
+		const modified_label = {
+			date: moment().format('LL'),
+			address: data.hostAddress,
+			schedule:
+				storehours[this.now] && storehours[this.now].status
+					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+						? 'Open 24 Hours'
+						: storehours[this.now].periods.map((i) => {
+								return i.open + ' - ' + i.close;
+						  })
+					: 'Closed'
+		};
+
+		return modified_label;
 	}
 
 	getLicensesTotal() {
@@ -767,288 +933,19 @@ export class LicensesComponent implements OnInit {
 			);
 	}
 
-	pageRequested(page: number) {
-		this.searching = true;
-		this.dealers_data = [];
-
-		this._dealer
-			.get_dealers_with_license(page, this.search_data)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data) => {
-				this.paging_data = data.paging;
-
-				if (data.dealers) {
-					const mapped = this.mapToDealersTable(data.dealers);
-					this.dealers_data = [...mapped];
-					this.filtered_data = [...mapped];
-				} else {
-					if (this.search_data == '') this.no_dealer = true;
-					this.filtered_data = [];
-				}
-
-				this.initial_load = false;
-				this.searching = false;
-			});
-	}
-
-	getLabel(data) {
-		this.now = moment().format('d');
-		this.now = this.now;
-		var storehours = JSON.parse(data.storeHours);
-		storehours = storehours.sort((a, b) => {
-			return a.id - b.id;
-		});
-		var modified_label = {
-			date: moment().format('LL'),
-			address: data.hostAddress,
-			schedule:
-				storehours[this.now] && storehours[this.now].status
-					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
-						? 'Open 24 Hours'
-						: storehours[this.now].periods.map((i) => {
-								return i.open + ' - ' + i.close;
-						  })
-					: 'Closed'
-		};
-		return modified_label;
-	}
-
-	clearFilter() {
-		this.filters = {
-			admin_licenses: false,
-			assigned: '',
-			isactivated: '',
-			online: '',
-			pending: '',
-			activated: '',
-			recent: '',
-			days_offline: '',
-			zone: '',
-			status: '',
-			dealer: '',
-			host: '',
-			label_status: '',
-			label_zone: '',
-			label_dealer: '',
-			label_host: '',
-			label_admin: ''
-		};
-        // this.hide_all_license = true;
-        if(this.active_view === 'grid') {
-            this.getFavoriteLicenses(false);
-            this.has_sort = true;
-            this.license_data_for_grid_view = [];
-            this.getLicenses(1, 24, true)
-        } else {
-            this.sortList('desc');
-            this.getLicenses(1)
-        }
-	}
-
-	splitKey(key) {
-		this.splitted_text = key.split('-');
-		return this.splitted_text[this.splitted_text.length - 1];
-	}
-
-	openGenerateLicenseModal(): void {
-		let dialogRef = this._dialog.open(LicenseModalComponent, {
-			height: '400px',
-			width: '500px'
-		});
-
-		dialogRef.afterClosed().subscribe((result) => {
-			this.ngOnInit();
-		});
-	}
-
-	getDataForExport(tab: string): void {
-		this.pageSize = 0;
-		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-		this.filters.isactivated = '';
-		switch (tab) {
-			case 'licenses':
-				this._license
-					.get_all_licenses_duration(
-						0,
-						this.search_data_licenses,
-						this.sort_column,
-						this.sort_order,
-						0,
-						this.filters.admin_licenses,
-						this.filters.status,
-						this.filters.days_offline,
-						this.filters.activated,
-						this.filters.recent,
-						this.filters.zone,
-						this.filters.dealer,
-						this.filters.host,
-						this.filters.assigned,
-						this.filters.pending,
-						this.filters.online,
-						this.filters.isactivated
-					)
-					.pipe(takeUntil(this._unsubscribe))
-					.subscribe((data: any) => {
-						if (data.message) {
-							this.licenses_to_export = [];
-							return;
-						}
-						data.licenses.map((license) => {
-							if (license.appVersion) {
-								license.apps = JSON.parse(license.appVersion);
-							} else {
-								license.apps = null;
-							}
-							if (license.internetInfo) {
-								license.internetInfo = JSON.parse(license.internetInfo);
-								license.upload = Math.round(license.internetInfo.uploadMbps * 100) / 100 + ' mbps';
-								license.download = Math.round(license.internetInfo.downloadMbps * 100) / 100 + ' mbps';
-							}
-						});
-						this.licenses_to_export = data.licenses;
-
-						this.licenses_to_export.forEach((item) => {
-							this.mapLicensesForExport(item);
-							this.worksheet.addRow(item).font = { bold: false };
-						});
-
-						let rowIndex = 1;
-						for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-							this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-						}
-
-						this.workbook.xlsx.writeBuffer().then((file: any) => {
-							const blob = new Blob([file], { type: EXCEL_TYPE });
-							const filename = 'Licenses' + '.xlsx';
-							saveAs(blob, filename);
-						});
-
-						this.workbook_generation = false;
-					});
-
-				break;
-			case 'hosts':
-				const filters = {
-					page: 1,
-					search: this.search_data_host,
-					sortColumn: this.sort_column_hosts,
-					sortOrder: this.sort_order_hosts,
-					pageSize: 0
-				};
-
-				this._host.get_host_fetch_export(filters).subscribe((response) => {
-					if (response.message) {
-						this.hosts_to_export = [];
-						return;
-					} else {
-						response.host.map((host) => {
-							host.storeHours = this.getTotalHours(host);
-							this.mapHostsForExport(host);
-						});
-						this.hosts_to_export = response.host;
-					}
-
-					this.hosts_to_export.forEach((item) => {
-						this.worksheet.addRow(item).font = { bold: false };
-					});
-
-					let rowIndex = 1;
-
-					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
-					}
-
-					this.workbook.xlsx.writeBuffer().then((file: any) => {
-						const blob = new Blob([file], { type: EXCEL_TYPE });
-						const filename = 'Hosts' + '.xlsx';
-						saveAs(blob, filename);
-					});
-
-					this.workbook_generation = false;
-				});
-
-				break;
-			default:
-		}
-	}
-
-	showAdminLicenses(value) {
-		this.filters.admin_licenses = value;
-		this.getLicenses(1);
-	}
-
-	getTotalHours(data) {
-		if (data.storeHours) {
-			data.storeHours = JSON.parse(data.storeHours);
-			this.hour_diff_temp = [];
-			data.storeHours.map((hours) => {
-				if (hours.status) {
-					hours.periods.map((period) => {
-						this.diff_hours = 0;
-						if (period.open && period.close) {
-							var close = moment(period.close, 'H:mm A');
-							var open = moment(period.open, 'H:mm A');
-
-							var time_start = new Date('01/01/2007 ' + open.format('HH:mm:ss'));
-							var time_end = new Date('01/01/2007 ' + close.format('HH:mm:ss'));
-
-							if (time_start.getTime() > time_end.getTime()) {
-								time_end = new Date(time_end.getTime() + 60 * 60 * 24 * 1000);
-								this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
-							} else {
-								this.diff_hours = (time_end.getTime() - time_start.getTime()) / 1000;
-							}
-						} else {
-							this.diff_hours = 86400;
-						}
-						this.hour_diff_temp.push(this.diff_hours);
-					});
-				} else {
-				}
-			});
-			this.hour_diff = 0;
-			this.hour_diff_temp.map((hour) => {
-				this.hour_diff += hour;
-			});
+	getTotalShownLicenses() {
+		if (this.active_view === 'grid') {
+			if (this.favorite_view) {
+				return this.favorites_list.length + this.paging_data_licenses.entities.length;
+			} else {
+				return this.paging_data_licenses.entities.length;
+			}
 		} else {
-		}
-		return this.msToTime(this.hour_diff);
-	}
-
-	getZoneHours(data) {
-		if (data.templateName == 'Fullscreen') {
-			return 'Main: ' + this.msToTime(data.templateMain);
-		} else {
-			var data_to_return: any = '';
-			if (data.templateBackground != 'NO DATA') {
-				data_to_return = data_to_return + 'Background: ' + this.msToTime(data.templateBackground);
-			}
-			if (data.templateBottom != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Bottom: ' + this.msToTime(data.templateBottom);
-			}
-			if (data.templateHorizontal != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Horizontal: ' + this.msToTime(data.templateHorizontal);
-			}
-			if (data.templateHorizontalSmall != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Horizontal Small: ' + this.msToTime(data.templateHorizontalSmall);
-			}
-			if (data.templateLowerLeft != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Lower Left: ' + this.msToTime(data.templateLowerLeft);
-			}
-			if (data.templateMain != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Main: ' + this.msToTime(data.templateMain);
-			}
-			if (data.templateUpperLeft != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Upper Left: ' + this.msToTime(data.templateUpperLeft);
-			}
-			if (data.templateVertical != 'NO DATA') {
-				data_to_return = data_to_return + '\n' + 'Vertical: ' + this.msToTime(data.templateVertical);
-			}
-			return data_to_return;
+			return this.paging_data_licenses.entities.length;
 		}
 	}
 
-	msToTime(input) {
+	msToTime(input: number) {
 		let totalSeconds = input;
 		let hours = Math.floor(totalSeconds / 3600);
 		totalSeconds %= 3600;
@@ -1057,59 +954,121 @@ export class LicensesComponent implements OnInit {
 		return hours + 'h ' + minutes + 'm ' + seconds + 's ';
 	}
 
-	exportTable(tab) {
-		this.workbook_generation = true;
-		const header = [];
-		this.workbook = new Workbook();
-		this.workbook.creator = 'NCompass TV';
-		this.workbook.useStyles = true;
-		this.workbook.created = new Date();
-		switch (tab) {
-			case 'licenses':
-				this.worksheet = this.workbook.addWorksheet('License View');
-				Object.keys(this.license_table_column).forEach((key) => {
-					if (this.license_table_column[key].name && !this.license_table_column[key].no_export) {
-						header.push({
-							header: this.license_table_column[key].name,
-							key: this.license_table_column[key].key,
-							width: 30,
-							style: { font: { name: 'Arial', bold: true } }
-						});
-					}
-				});
-				break;
-			case 'hosts':
-				this.worksheet = this.workbook.addWorksheet('Host View');
-				Object.keys(this.hosts_table_column).forEach((key) => {
-					if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
-						header.push({
-							header: this.hosts_table_column[key].name,
-							key: this.hosts_table_column[key].key,
-							width: 30,
-							style: { font: { name: 'Arial', bold: true } }
-						});
-					}
-				});
-				break;
-			default:
+	navigateToAlias(id: string) {
+		const url = this.router.serializeUrl(this.router.createUrlTree([`/${this._roleRoute}/licenses/${id}`], {}));
+		window.open(url, '_blank');
+	}
+
+	navigateToDealer(id: string) {
+		const url = this.router.serializeUrl(this.router.createUrlTree([`/${this._roleRoute}/dealers/${id}`], {}));
+		window.open(url, '_blank');
+	}
+
+	navigateToHost(id: string) {
+		const url = this.router.serializeUrl(this.router.createUrlTree([`/${this._roleRoute}/hosts/${id}`], {}));
+		window.open(url, '_blank');
+	}
+
+	openConfirmationModal(status: string, message: string, data: any): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			if (status !== 'success') return;
+			this.getFavoriteLicenses(false);
+		});
+	}
+
+	openGenerateLicenseModal(): void {
+		let dialogRef = this._dialog.open(LicenseModalComponent, {
+			height: '400px',
+			width: '500px'
+		});
+
+		dialogRef.afterClosed().subscribe(() => {
+			this.ngOnInit();
+		});
+	}
+
+	resetFilterStatus() {
+		this.filters.recent = '';
+		this.filters.activated = '';
+		this.filters.days_offline = '';
+		this.filters.status = '';
+		this.filters.assigned = '';
+		this.filters.pending = '';
+		this.filters.online = '';
+	}
+
+	showAdminLicenses(value) {
+		this.filters.admin_licenses = value;
+		this.getLicenses(1);
+	}
+
+	showAllLicenses() {
+		this.hide_all_license = false;
+	}
+
+	showMore(event: { page: number; pageSize: number }): void {
+		this.show_more_clicked = true;
+		this.getLicenses(event.page, event.pageSize, true);
+	}
+
+	sortDisplay(order: string) {
+		const filter = { column: 'DisplayStatus', order };
+		this.getColumnsAndOrder(filter, 'licenses');
+	}
+
+	sortList(order: string): void {
+		const filter = { column: 'PiStatus', order };
+		this.getColumnsAndOrder(filter, 'licenses');
+	}
+
+	splitKey(key: string) {
+		this.splitted_text = key.split('-');
+		return this.splitted_text[this.splitted_text.length - 1];
+	}
+
+	toggleFavorites(value: string) {
+		if (value === 'false') {
+			this.favorite_view = false;
+			return;
 		}
-		this.worksheet.columns = header;
-		this.getDataForExport(tab);
+
+		this.favorites_list = this.favorites_list_cache;
+		this.no_favorites = false;
+		this.favorite_view = true;
 	}
 
 	private getInternetType(value: string): string {
-		if (value) {
-			value = value.toLowerCase();
-			if (value.includes('w')) {
-				return 'WiFi';
-			}
-			if (value.includes('eth')) {
-				return 'LAN';
-			}
+		if (!value) return;
+
+		value = value.toLowerCase();
+
+		if (value.includes('w')) {
+			return 'WiFi';
+		}
+
+		if (value.includes('eth')) {
+			return 'LAN';
 		}
 	}
 
-	private mapLicensesForExport(item) {
+	private hideLicenseSpinner() {
+		this.initial_load_licenses = false;
+		this.searching_licenses = false;
+	}
+
+	private mapHostsForExport(data: API_HOST) {
+		data.storeHours = data.storeHours;
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.tagsToString = data.tags.join(',');
+	}
+
+	private mapLicensesForExport(item: API_LICENSE_PROPS) {
 		item.new_status = this.checkStatusForExport(item);
 		item.zone = this.getZoneHours(item);
 		item.piVersion = item.apps ? item.apps.rpi_model : '';
@@ -1128,81 +1087,6 @@ export class LicensesComponent implements OnInit {
 		item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
 		item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
 		item.tagsToString = item.tags.join(',');
-	}
-
-	private mapToDealersTable(data): UI_TABLE_LICENSE_BY_DEALER[] {
-		let count = this.paging_data.pageStart;
-		return data
-			.filter((i) => i.licenses.length > 0)
-			.map((dealer: API_DEALER) => {
-				return new UI_TABLE_LICENSE_BY_DEALER(
-					{ value: dealer.dealerId, link: null, editable: false, hidden: true },
-					{ value: count++, link: null, editable: false, hidden: false },
-					{
-						value: dealer.dealerIdAlias ? dealer.dealerIdAlias : '--',
-						link: '/administrator/dealers/' + dealer.dealerId,
-						query: '2',
-						editable: false,
-						hidden: false,
-						new_tab_link: true
-					},
-					{
-						value: this._title.transform(dealer.businessName),
-						link: '/administrator/dealers/' + dealer.dealerId,
-						editable: false,
-						hidden: false,
-						new_tab_link: true
-					},
-					{ value: this._title.transform(dealer.contactPerson), link: null, editable: false, hidden: false },
-					{ value: dealer.region, link: null, editable: false, hidden: false },
-					{ value: dealer.city, link: null, editable: false, hidden: false },
-					{ value: dealer.state, link: null, editable: false, hidden: false },
-					{ value: dealer.licenses.length, link: null, editable: false, hidden: false },
-					{
-						value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.hostId != null).length : 0,
-						link: null,
-						editable: false,
-						hidden: false
-					},
-					{
-						value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.hostId == null).length : 0,
-						link: null,
-						editable: false,
-						hidden: false
-					},
-					{
-						value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.piStatus == 1).length : 0,
-						link: null,
-						editable: false,
-						hidden: false,
-						online_field: true
-					},
-					{
-						value: dealer.licenses.length > 0 ? dealer.licenses.filter((i) => i.piStatus != 1).length : 0,
-						link: null,
-						editable: false,
-						hidden: false,
-						offline_field: true
-					},
-					{
-						value: dealer.licenses.length > 0 ? this._date.transform(dealer.licenses[0].dateCreated) : '--',
-						link: null,
-						editable: false,
-						hidden: false
-					},
-					{
-						value:
-							dealer.licenses.length > 0
-								? dealer.licenses.filter(
-										(i) => this._date.transform(i.dateCreated) == this._date.transform(dealer.licenses[0].dateCreated)
-								  ).length
-								: 0,
-						link: null,
-						editable: false,
-						hidden: false
-					}
-				);
-			});
 	}
 
 	private mapToHostsTable(data: API_HOST[]): UI_HOST_VIEW[] {
@@ -1236,13 +1120,11 @@ export class LicensesComponent implements OnInit {
 				},
 				{ value: h.address ? h.address : '--', link: null, new_tab_link: true, editable: false, hidden: false },
 				{ value: h.city ? h.city : '--', link: null, editable: false, hidden: false },
-				// { value: h.region ? h.region:'--', hidden: false },
 				{ value: h.state ? h.state : '--', hidden: false },
-				// { value: h.street ? h.street:'--', link: null, editable: false, hidden: false },
 				{ value: h.postalCode ? h.postalCode : '--', link: null, editable: false, hidden: false },
 				{ value: h.timezoneName ? h.timezoneName : '--', link: null, editable: false, hidden: false },
 				{ value: h.totalLicenses ? h.totalLicenses : '0', link: null, editable: false, hidden: false },
-				{ value: h.status, editable: false, hidden: false }
+				{ value: h.status, editable: false, hidden: true }
 			);
 
 			return table;
@@ -1266,18 +1148,19 @@ export class LicensesComponent implements OnInit {
 					value: l.licenseKey,
 					link: '/administrator/licenses/' + l.licenseId,
 					new_tab_link: true,
-					compressed: true,
 					editable: false,
 					hidden: false,
-					status: true
+					status: true,
+					show_tags: l.tags != null ? true : false,
+					tags: l.tags != null ? l.tags : []
 				},
-				// { value: l.screenType ? this._title.transform(l.screenType) : '--', editable: false, hidden: false },
 				{
 					value: l.dealerId ? l.businessName : '--',
 					link: '/administrator/dealers/' + l.dealerId,
 					new_tab_link: true,
 					editable: false,
-					hidden: false
+					hidden: false,
+					compressed: true
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
@@ -1286,7 +1169,8 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					business_hours: l.hostId ? true : false,
-					business_hours_label: l.hostId ? this.getLabel(l) : null
+					business_hours_label: l.hostId ? this.getLabel(l) : null,
+					compressed: true
 				},
 				{
 					value: l.alias ? l.alias : '--',
@@ -1298,16 +1182,17 @@ export class LicensesComponent implements OnInit {
 					hidden: false
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
-				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd, y h:mm a') : '--', hidden: false },
+				{ value: l.timeIn ? this._date.transform(l.timeIn, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
 				{
-					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+					value: l.anydeskId ? l.anydeskId : '--',
 					link: null,
 					editable: false,
 					hidden: false,
 					copy: true,
-					label: 'Anydesk Password'
+					label: 'Anydesk Id',
+					anydesk: true,
+					password: l.anydeskId ? this.splitKey(l.licenseId) : '--'
 				},
 				{
 					value: l.installDate && !l.installDate.includes('Invalid') ? this._date.transform(l.installDate, 'MMM dd, y') : '--',
@@ -1317,7 +1202,6 @@ export class LicensesComponent implements OnInit {
 					hidden: false,
 					id: l.licenseId
 				},
-				// { value: l.dateCreated ? this._date.transform(l.dateCreated, 'MMM dd, y') : '--', link: null, editable: false, hidden: false },
 				{ value: this.checkStatus(l), link: null, editable: false, hidden: true, label: this.checkStatusForExport(l), new_status: true },
 				{ value: l.playerStatus, link: null, editable: false, hidden: true },
 				{ value: l.isActivated, link: null, editable: false, hidden: true }
@@ -1326,158 +1210,66 @@ export class LicensesComponent implements OnInit {
 		});
 	}
 
-	checkStatus(license) {
-		let currentDate = new Date();
-		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
-			return 'text-primary';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
-			return 'text-danger';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
-			return 'text-orange';
-		} else if (license.isActivated === 0 && license.hostName) {
-			return 'text-light-gray';
-		} else {
-			return 'text-gray';
-		}
-	}
-
-	checkStatusForExport(license) {
-		let currentDate = new Date();
-		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
-			return 'Online';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
-			return 'Offline';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
-			return 'Pending';
-		} else if (license.isActivated === 0 && license.hostName) {
-			return 'Inactive';
-		} else {
-			return 'Unassigned';
-		}
-	}
-
-	private mapHostsForExport(data) {
-		data.storeHours = data.storeHours;
-		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
-		data.tagsToString = data.tags.join(',');
-	}
-
-	private get currentRole() {
+	protected get _currentUserRole() {
 		return this._auth.current_role;
 	}
 
-    changeView(view) {
-        this.active_view = view;
-        if(view === 'grid') {
-            this.getFavoriteLicenses(true);
-            this.has_sort = true;
-            this.license_data_for_grid_view = [];
-            this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24)
-        } else {
-            this.getLicenses(1)
-        }
-    }
-
-    formulateScreenshotURL(url) {
-        return `${environment.base_uri}${url.replace('/API/', '')}`;
-    }
-
-    showAllLicenses() {
-        this.hide_all_license = false;
-    }
-
-    copyToClipboard(val: string) {
-		//create artificial textbox for selector
-		const selBox = document.createElement('textarea');
-		selBox.style.position = 'fixed';
-		selBox.style.left = '0';
-		selBox.style.top = '0';
-		selBox.style.opacity = '0';
-		selBox.value = val;
-		document.body.appendChild(selBox);
-		selBox.focus();
-		selBox.select();
-		document.execCommand('copy');
-		document.body.removeChild(selBox);
+	protected get _hostTableColumns() {
+		return [
+			{ name: '#', sortable: false, no_export: true },
+			{ name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
+			{ name: 'Host Name', sortable: true, column: 'HostName', key: 'hostName' },
+			{ name: 'Category', key: 'category', no_show: true, hidden: true },
+			{ name: 'General Category', hidden: true, no_show: true, key: 'generalCategory' },
+			{ name: 'Dealer Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+			{ name: 'Address', sortable: true, column: 'Address', key: 'address' },
+			{ name: 'City', sortable: true, column: 'City', key: 'city' },
+			{ name: 'State', sortable: true, column: 'State', key: 'state' },
+			{ name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
+			{ name: 'Timezone', sortable: true, column: 'TimezoneName', key: 'timezoneName' },
+			{ name: 'Total Licenses', sortable: true, column: 'TotalLicenses', key: 'totalLicenses' },
+			{ name: 'Tags', key: 'tagsToString', no_show: true, hidden: true },
+			{ name: 'Total Business Hours', sortable: false, key: 'storeHours', hidden: true, no_show: true },
+			{ name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
+			{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
+			{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
+			{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
+			{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true }
+		];
 	}
 
-    getAnydeskPassword(id) {
-        return this.splitKey(id)
-    }
-
-    addToFavorites(id) {
-        this._license
-			.add_license_favorite(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-                response => {
-                    if(!response) {
-                        this.license_data_for_grid_view = this.license_data_for_grid_view.filter((license) => {
-					        return license.licenseId != id;
-				        })
-                        this.openConfirmationModal('success', 'Success!', 'License successfully added to Favorites');
-                    } else {
-                        this.openConfirmationModal('error', 'Error!', response.message);
-                    }
-                }
-            )
-    }
-    
-    removeToFavorites(license) {
-        var id = license.licenseId;
-        this._license
-			.remove_license_favorite(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-                response => {
-                    if(!response) {
-                        this.openConfirmationModal('success', 'Success!', 'License successfully removed to Favorites');
-                        this.license_data_for_grid_view.push(license)
-                    } else {
-                        this.openConfirmationModal('error', 'Error!', response.message);
-                    }
-                }
-            )
-    }
-
-    openConfirmationModal(status, message, data): void {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data }
-		});
-
-		dialog.afterClosed().subscribe(() => {
-            if(status === 'success') {
-                this.getFavoriteLicenses(false);
-            };
-        });
+	protected get _licenseTableColumns() {
+		return [
+			{ name: '#', sortable: false, no_export: true },
+			{ name: 'Status', sortable: false, key: 'new_status', hidden: true, no_show: true },
+			{ name: 'Screenshot', sortable: false, no_export: true },
+			{ name: 'License Key', sortable: true, column: 'LicenseKey', key: 'licenseKey' },
+			{ name: 'Type', sortable: true, column: 'ScreenType', key: 'screenType', hidden: true, no_show: true },
+			{ name: 'Dealer', sortable: true, column: 'BusinessName', key: 'businessName' },
+			{ name: 'Host', sortable: true, column: 'HostName', key: 'hostName' },
+			{ name: 'Alias', sortable: true, column: 'Alias', key: 'alias' },
+			{ name: 'Last Push', sortable: true, column: 'ContentsUpdated', key: 'contentsUpdated' },
+			{ name: 'Last Disconnect', sortable: true, column: 'TimeIn', key: 'timeIn' },
+			{ name: 'Net Type', sortable: true, column: 'InternetType', key: 'internetType', hidden: true, no_show: true },
+			{ name: 'Net Speed', sortable: true, key: 'internetSpeed', column: 'InternetSpeed', hidden: true, no_show: true },
+			{ name: 'Upload Speed', sortable: true, key: 'upload', hidden: true, no_show: true },
+			{ name: 'Download Speed', sortable: true, key: 'download', hidden: true, no_show: true },
+			{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
+			{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
+			{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
+			{ name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
+			{ name: 'Memory', sortable: false, key: 'memory', hidden: true, no_show: true },
+			{ name: 'Storage', sortable: false, key: 'totalStorage', hidden: true, no_show: true },
+			{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
+			{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
+			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' },
+			{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated', hidden: true, no_show: true },
+			{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
+			{ name: 'Tags', key: 'tagsToString', no_show: true }
+		];
 	}
 
-    protected get roleRoute() {
+	protected get _roleRoute() {
 		return this._auth.roleRoute;
 	}
-
-    navigateToAlias(id) {
-        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/licenses/${id}`], {}));
-		window.open(url, '_blank');
-    }
-    
-    navigateToDealer(id) {
-        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/dealers/${id}`], {}));
-		window.open(url, '_blank');
-    }
-    
-    navigateToHost(id) {
-        const url = this.router.serializeUrl(this.router.createUrlTree([`/${this.roleRoute}/hosts/${id}`], {}));
-		window.open(url, '_blank');
-    }
-
-    showMore(page, pageSize) {
-        this.show_more_clicked = true;
-        this.getLicenses(page, pageSize, true)
-    }
-    
 }

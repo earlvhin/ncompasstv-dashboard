@@ -8,7 +8,7 @@ import { ADMINISTRATOR_ROUTES } from './administrator.routes';
 import { AdministratorLayoutComponent } from './administrator-layout/administrator-layout.component';
 import { AdvertisersComponent } from './pages/advertisers/advertisers.component';
 import { AuthGuard } from '../../global/guards/auth/auth.guard';
-import { BreadcrumbsModule } from "ng6-breadcrumbs";
+import { BreadcrumbsModule } from 'ng6-breadcrumbs';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CreateTemplateComponent } from './pages/create-template/create-template.component';
 import { ColorPickerModule } from 'ngx-color-picker';
@@ -19,7 +19,7 @@ import { DragDropModule } from '@angular/cdk/drag-drop';
 import { FeedsModule } from 'src/app/global/pages_shared/feeds/feeds.module';
 import { GlobalModule } from '../../global/global.module';
 import { HostsComponent } from './pages/hosts/hosts.component';
-import { LicensesComponent } from './pages/licenses/licenses.component';
+import { LicensesModule } from './pages/licenses/licenses.module';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatMenuModule } from '@angular/material/menu';
@@ -27,7 +27,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatExpansionModule } from '@angular/material/expansion';
-import { NgbModule } from "@ng-bootstrap/ng-bootstrap";
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { PlaylistsComponent } from './pages/playlists/playlists.component';
 import { ReportsComponent } from './pages/reports/reports.component';
 import { RolesComponent } from './pages/roles/roles.component';
@@ -37,7 +37,6 @@ import { TagsModule } from 'src/app/global/pages_shared/tags/tags.module';
 import { TemplatesComponent } from './pages/templates/templates.component';
 import { UsersComponent } from './pages/users/users.component';
 import { UpdateComponent } from './pages/update/update.component';
-import { TagsTabComponent } from './pages/licenses/components/tags-tab/tags-tab.component';
 import { SingleHostModule } from 'src/app/global/pages_shared/single-host/single-host.module';
 import { InstallationsModule } from './pages/installations/installations.module';
 import { BillingsViewComponent } from './pages/dealers/billings-view/billings-view.component';
@@ -47,15 +46,14 @@ import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
 
 @NgModule({
 	declarations: [
-		AdministratorLayoutComponent, 
-		AdvertisersComponent, 
+		AdministratorLayoutComponent,
+		AdvertisersComponent,
 		CategoriesComponent,
 		DashboardComponent,
 		DealersComponent,
 		DirectoryComponent,
 		CreateTemplateComponent,
 		HostsComponent,
-		LicensesComponent,
 		PlaylistsComponent,
 		ReportsComponent,
 		TemplatesComponent,
@@ -63,10 +61,9 @@ import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
 		RolesComponent,
 		UsersComponent,
 		UpdateComponent,
-		TagsTabComponent,
 		BillingsViewComponent,
 		DmaViewComponent,
-		InvoiceViewComponent,
+		InvoiceViewComponent
 	],
 	imports: [
 		CommonModule,
@@ -83,17 +80,16 @@ import { ReleaseNotesModule } from './pages/release-notes/release-notes.module';
 		MatExpansionModule,
 		DragDropModule,
 		NgbModule,
-        BreadcrumbsModule,
+		BreadcrumbsModule,
 		SingleLicenseModule,
 		TagsModule,
 		FeedsModule,
 		SingleHostModule,
 		InstallationsModule,
 		ReleaseNotesModule,
+		LicensesModule,
 		RouterModule.forChild(ADMINISTRATOR_ROUTES)
 	],
-	providers: [
-		AuthGuard
-	]
+	providers: [AuthGuard]
 })
-export class AdministratorModule { }
+export class AdministratorModule {}

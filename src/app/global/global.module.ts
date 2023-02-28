@@ -84,6 +84,7 @@ import { FillerFormComponent } from './components_shared/feed_components/filler-
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
+import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
 import { HostCustomFieldsComponent } from './pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostViewComponent } from './components_shared/locator_components/host-view/host-view.component';
 import { HostsTabComponent } from './components_shared/reports_components/hosts-tab/hosts-tab.component';
@@ -121,7 +122,6 @@ import { NewsDemoComponent } from './components_shared/feed_components/news-demo
 import { NewsFormComponent } from './components_shared/feed_components/news-form/news-form.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgxMatSelectSearchModule } from 'ngx-mat-select-search';
-import { NgxMaterialTimepickerModule } from 'ngx-material-timepicker';
 import { NgxPaginationModule } from 'ngx-pagination';
 import { NohandlePipe } from './pipes/nohandle.pipe';
 import { NotificationsComponent } from './pages_shared/notifications/notifications.component';
@@ -295,6 +295,7 @@ const ngComponents = [
 	FilterLabelsComponent,
 	FooterComponent,
 	GenerateFeedComponent,
+    GridViewLicenseComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
 	HostsTabComponent,
@@ -494,7 +495,6 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		MatMomentDateModule,
 		MomentDateModule,
 		NgbModule,
-		NgxMaterialTimepickerModule,
 		NgxPaginationModule,
 		ReactiveFormsModule.withConfig({ warnOnNgModelWithFormControl: 'never' }),
 		RouterModule,

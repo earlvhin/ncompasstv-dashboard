@@ -129,7 +129,7 @@ export class ContentsTabComponent implements OnInit {
 		};
 		this.subscription.add(
 			this._dealer.content_dealer_metrics(filter).subscribe((data) => {
-				this.dealers_content_to_export = data.contentMetricExports;
+				this.dealers_content_to_export = data.contentMetrics;
 				this.dealers_content_to_export.forEach((item, i) => {
 					this.modifyItem(item, tab);
 					this.worksheet.addRow(item).font = {

@@ -172,7 +172,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Vistar Venue ID', no_show: true, key: 'vistarVenueId' },
 		{ name: 'Notes', no_show: true, hidden: true, key: 'notes' },
 		{ name: 'Others', no_show: true, hidden: true, key: 'others' },
-		{ name: 'Status', sortable: true, column: 'Status', no_export: true, hidden: true }
+		{ name: 'Status', sortable: true, column: 'Status', no_export: true, hidden: true },
+        { name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true },
 	];
 
 	license_table_columns = [
@@ -191,7 +192,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Net Speed', sortable: false, key: 'internetSpeed', hidden: true, no_show: true },
 		{ name: 'Display', sortable: false, key: 'displayStatus' },
 		{ name: 'Anydesk', sortable: true, column: 'AnydeskId', key: 'anydeskId' },
-		{ name: 'Password', sortable: false, key: 'password' },
+		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'PS Version', sortable: true, key: 'server', column: 'ServerVersion', hidden: true, no_show: true },
 		{ name: 'UI Version', sortable: true, key: 'ui', column: 'UiVersion', hidden: true, no_show: true },
 		{ name: 'Pi Version', sortable: false, key: 'piVersion', hidden: true, no_show: true },
@@ -239,7 +240,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		label_status: '',
 		label_zone: '',
 		label_dealer: '',
-		label_admin: ''
+		label_admin: '',
+        days_offline_from: '',
+		days_offline_to: '',
 	};
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -637,7 +640,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.sort_order,
 					15,
 					this.filters.status,
-					'',
+					this.filters.days_offline_from,
+					this.filters.days_offline_to,
 					this.filters.activated,
 					'',
 					this.filters.zone,
@@ -671,7 +675,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.license_data = [];
 			this.license_filtered_data = [];
 		} else {
-			this.license_data_api = response.paging.entities;
+			this.license_data_api = response.licenses;
 			this.no_licenses = false;
 
 			this.license_data_api.map((i) => {
@@ -801,11 +805,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{
 					value: l.licenseKey,
 					link: '/administrator/licenses/' + l.licenseId,
-					compressed: true,
+					// compressed: true,
 					editable: false,
 					hidden: false,
 					status: true,
-					new_tab_link: true
+					new_tab_link: true,
+                    show_tags: l.tags != null ? true : false,
+                    tags: l.tags != null ? l.tags : []
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
@@ -814,7 +820,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					business_hours: l.hostId ? true : false,
 					business_hours_label: l.hostId ? this.getLabel(l) : null,
-					new_tab_link: true
+					new_tab_link: true,
+                    compressed: true,
 				},
 				{
 					value: l.alias ? l.alias : '--',
@@ -826,17 +833,26 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					new_tab_link: true
 				},
 				{ value: l.contentsUpdated ? l.contentsUpdated : '--', label: 'Last Push', hidden: false },
-				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd, y h:mm a') : '--', hidden: false },
+				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ value: l.anydeskId ? l.anydeskId : '--', link: null, editable: false, hidden: false, copy: true, label: 'Anydesk Id' },
 				{
-					value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
-					link: null,
-					editable: false,
-					hidden: false,
-					copy: true,
-					label: 'Anydesk Password'
-				},
+                    value: l.anydeskId ? l.anydeskId : '--', 
+                    link: null, 
+                    editable: false, 
+                    hidden: false, 
+                    copy: true, 
+                    label: 'Anydesk Id',
+                    anydesk: true,
+                    password: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+                },
+				// {
+				// 	value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
+				// 	link: null,
+				// 	editable: false,
+				// 	hidden: false,
+				// 	copy: true,
+				// 	label: 'Anydesk Password'
+				// },
 				{
 					value: l.screenName ? l.screenName : '--',
 					compressed: true,
@@ -1293,7 +1309,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							this.sort_order,
 							0,
 							this.filters.status,
-							'',
+							this.filters.days_offline_from,
+							this.filters.days_offline_to,
 							this.filters.activated,
 							'',
 							this.filters.zone,
@@ -1386,9 +1403,35 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.tagsToString = item.tags.join(',');
 				break;
 			case 'Hosts':
-				item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
+                item.storeHoursParse = this.getStoreHourseParse(item)
+                item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
 				item.businessName = this.dealer.businessName;
 				break;
+		}
+	}
+
+    getStoreHourseParse(data) {
+		let days = [];
+		if (data.storeHours) {
+			let storehours = JSON.parse(data.storeHours);
+			storehours = storehours.sort((a, b) => {
+				return a.id - b.id;
+			});
+			storehours.map((day) => {
+				if (day.status) {
+					day.periods.map((period) => {
+						if (period.open == '' && period.close == '') {
+							days.push(day.day + ' : Open 24 hrs');
+						} else {
+							days.push(day.day + ' : ' + period.open + ' - ' + period.close);
+						}
+					});
+				} else {
+					days.push(day.day + ' : ' + 'Closed');
+				}
+			});
+			data.storeHoursParse = days.toString();
+			return data.storeHoursParse.split(',').join('\n');
 		}
 	}
 
@@ -1625,7 +1668,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		this.filters.online = '';
 	}
 
-	filterTable(type: string, value: any, days?: any) {
+	filterTable(type: string, value: any, value2?: any, days?: any) {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
@@ -1659,6 +1702,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
+				this.sortList('desc');
+				break;
+            case 'days_offline':
+				this.resetFilterStatus();
+				this.filters.status = 0;
+				this.filters.days_offline_from = value;
+				this.filters.days_offline_to = value2;
+				this.filters.label_status = 'Offline for ' + days;
 				this.sortList('desc');
 				break;
 			case 'assigned':
@@ -1718,7 +1769,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			label_zone: '',
 			label_dealer: '',
 			label_host: '',
-			label_admin: ''
+			label_admin: '',
+            days_offline_from: '',
+		    days_offline_to: '',
 		};
 		this.sortList('desc');
 		this.getLicensesofDealer(1);
