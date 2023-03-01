@@ -1661,7 +1661,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	}
 
 	resetFilterStatus() {
+		this.filters.recent = '';
 		this.filters.activated = '';
+		this.filters.days_offline_from = '';
+		this.filters.days_offline_to = '';
 		this.filters.status = '';
 		this.filters.assigned = '';
 		this.filters.pending = '';
@@ -1675,14 +1678,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				// this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
-                this.filters.days_offline_from = '';
-                this.filters.days_offline_to = '';
-                
-				if (value == 1) {
-					this.filters.online = true;
-				} else {
-					this.filters.online = false;
-				}
+                this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
 				if (value == 0) {
@@ -1690,6 +1686,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						column: 'TimeIn',
 						order: 'desc'
 					};
+                    this.getColumnsAndOrder(filter);
 				} else {
 					this.sortList('desc');
 				}

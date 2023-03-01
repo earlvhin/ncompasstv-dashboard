@@ -282,22 +282,19 @@ export class LicensesComponent implements OnInit {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
+				// this.filters.status = value;
 				this.filters.activated = true;
-				this.filters.label_status = value === 1 ? 'Online' : 'Offline';
-				this.filters.online = value === 1;
+				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+				this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
-                this.filters.days_offline_from = '';
-                this.filters.days_offline_to = '';
-
 				if (value === 0) {
 					const filter = { column: 'TimeIn', order: 'desc' };
 					this.getColumnsAndOrder(filter, 'licenses');
 					return;
-				}
-
-				this.sortList('desc');
-
+				} else {
+                    this.sortList('desc');
+                }
 				break;
 
 			case 'zone':
@@ -998,7 +995,8 @@ export class LicensesComponent implements OnInit {
 	resetFilterStatus() {
 		this.filters.recent = '';
 		this.filters.activated = '';
-		this.filters.days_offline = '';
+		this.filters.days_offline_from = '';
+		this.filters.days_offline_to = '';
 		this.filters.status = '';
 		this.filters.assigned = '';
 		this.filters.pending = '';

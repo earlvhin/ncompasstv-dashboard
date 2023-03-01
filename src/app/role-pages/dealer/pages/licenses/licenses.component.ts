@@ -144,15 +144,8 @@ export class LicensesComponent implements OnInit {
 				// this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
-				this.filters.isactivated = 1;
-                this.filters.days_offline_from = '';
-                this.filters.days_offline_to = '';
-                
-				if (value == 1) {
-					this.filters.online = true;
-				} else {
-					this.filters.online = false;
-				}
+				this.filters.online = value == 1 ? true : false;
+                this.filters.isactivated = 1;
 				this.filters.assigned = true;
                 this.filters.isactivated = 1;
 				if (value == 0) {
@@ -222,7 +215,8 @@ export class LicensesComponent implements OnInit {
 	resetFilterStatus() {
 		this.filters.recent = '';
 		this.filters.activated = '';
-		this.filters.days_offline = '';
+		this.filters.days_offline_from = '';
+		this.filters.days_offline_to = '';
 		this.filters.status = '';
 		this.filters.assigned = '';
 		this.filters.pending = '';
@@ -369,7 +363,7 @@ export class LicensesComponent implements OnInit {
                             this.license_data = [...mapped];
                             this.license_filtered_data = [...mapped];
                         } else {
-                            if (this.search_data_license == '') this.no_licenses = true;
+                            if (this.search_data_license == '') this.no_licenses_result = true;
                             this.license_filtered_data = [];
                         }
                     }
