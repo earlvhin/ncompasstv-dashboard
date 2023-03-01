@@ -9,7 +9,6 @@ import { TagsTableComponent } from './components/tags-table/tags-table.component
 import { TagsSectionComponent } from './components/tags-section/tags-section.component';
 import { TagOwnersSectionComponent } from './components/tag-owners-section/tag-owners-section.component';
 import { AssignTagsComponent } from './dialogs/assign-tags/assign-tags.component';
-import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 const DIALOGS = [
 	CreateTagComponent,

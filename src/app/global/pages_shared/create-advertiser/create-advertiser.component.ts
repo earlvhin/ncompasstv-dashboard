@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { AdvertiserService, AuthService, CategoryService, DealerService, MapService, RoleService } from 'src/app/global/services';
-import { API_CREATE_ADVERTISER, API_GOOGLE_MAP, UI_ROLE_DEFINITION, UI_TABLE_DEALERS, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { AdvertiserService, AuthService, CategoryService, DealerService, MapService } from 'src/app/global/services';
+import { API_CREATE_ADVERTISER, API_GOOGLE_MAP, UI_ROLE_DEFINITION, UI_TABLE_DEALERS } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-create-advertiser',
@@ -107,7 +107,6 @@ export class CreateAdvertiserComponent implements OnInit {
 		private _dialog: MatDialog,
 		private _map: MapService,
 		private _router: Router,
-		private _role: RoleService,
 		private _titlecase: TitleCasePipe
 	) {}
 

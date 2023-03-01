@@ -6,7 +6,7 @@ import * as moment from 'moment';
 import { environment } from 'src/environments/environment';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
-import { API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_SINGLE_LICENSE_PAGE } from 'src/app/global/models';
+import { API_FILTERS, API_INSTALLATION_STATS, API_LICENSE, API_SINGLE_LICENSE_PAGE, PAGING } from 'src/app/global/models';
 
 export class CustomHttpParamEncoder implements HttpParameterCodec {
 	encodeKey(key: string): string {
@@ -55,7 +55,8 @@ export class LicenseService extends BaseService {
 		pageSize: number,
 		adminLicenses: boolean,
 		status?: string,
-		daysOffline?: string,
+		daysOfflineFrom?: string,
+		daysOfflineTo?: string,
 		activated?: boolean,
 		recent?: string,
 		zone?: string,
@@ -65,7 +66,7 @@ export class LicenseService extends BaseService {
 		pending?: string,
 		online?: string,
 		isActivated?: string,
-        isFavorite?: boolean,
+		isFavorite?: boolean
 	) {
 		const base = `${this.getters.api_get_licenses}`;
 		const params = this.setUrlParams(
@@ -77,7 +78,8 @@ export class LicenseService extends BaseService {
 				pageSize,
 				includeAdmin: adminLicenses,
 				piStatus: status,
-				daysOffline: daysOffline,
+				daysOfflineFrom: daysOfflineFrom,
+				daysOfflineTo: daysOfflineTo,
 				active: activated,
 				daysInstalled: recent,
 				timezone: zone,
@@ -87,7 +89,7 @@ export class LicenseService extends BaseService {
 				pending,
 				online,
 				isActivated,
-                isFavorite
+				isFavorite
 			},
 			false,
 			true
@@ -104,7 +106,8 @@ export class LicenseService extends BaseService {
 		pageSize: number,
 		adminLicenses: boolean,
 		status?: string,
-		daysOffline?: string,
+		daysOfflineFrom?: string,
+		daysOfflineTo?: string,
 		activated?: boolean,
 		recent?: string,
 		zone?: string,
@@ -125,7 +128,8 @@ export class LicenseService extends BaseService {
 				pageSize,
 				includeAdmin: adminLicenses,
 				piStatus: status,
-				daysOffline: daysOffline,
+				daysOfflineFrom: daysOfflineFrom,
+				daysOfflineTo: daysOfflineTo,
 				active: activated,
 				daysInstalled: recent,
 				timezone: zone,
@@ -151,7 +155,8 @@ export class LicenseService extends BaseService {
 		pageSize: number,
 		adminLicenses: boolean,
 		status?: string,
-		daysOffline?: string,
+		daysOfflineFrom?: string,
+		daysOfflineTo?: string,
 		activated?,
 		recent?: string,
 		zone?: string,
@@ -172,7 +177,8 @@ export class LicenseService extends BaseService {
 				pageSize,
 				includeAdmin: adminLicenses,
 				piStatus: status,
-				daysOffline: daysOffline,
+				daysOfflineFrom: daysOfflineFrom,
+				daysOfflineTo: daysOfflineTo,
 				active: activated,
 				daysInstalled: recent,
 				timezone: zone,
@@ -310,6 +316,13 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_outdated_licenses(filters: API_FILTERS): Observable<{ appUiVersion?: string; appServerVersion?: string; paging?: PAGING; message?: string }> {
+		const base = this.getters.outdated_licenses;
+		const params = this.setUrlParams(filters);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
+	}
+
 	search_license_by_host(hostId: string, search: string, page = 1, pageSize = 15) {
 		const base = `${this.getters.search_license_by_host}`;
 		const params = this.setUrlParams({ hostId, search, page, pageSize }, false, true);
@@ -325,7 +338,8 @@ export class LicenseService extends BaseService {
 		order,
 		pageSize = 15,
 		status?,
-		daysOffline?,
+		daysOfflineFrom?,
+		daysOfflineTo?,
 		activated?,
 		recent?,
 		zone?,
@@ -333,7 +347,8 @@ export class LicenseService extends BaseService {
 		assigned?,
 		pending?,
 		online?,
-		isActivated?
+		isActivated?,
+        isFavorite: any = ''
 	) {
 		const base = `${this.getters.api_get_licenses_by_dealer}`;
 		const params = this.setUrlParams(
@@ -345,7 +360,8 @@ export class LicenseService extends BaseService {
 				sortOrder: order,
 				pageSize,
 				piStatus: status,
-				daysOffline,
+				daysOfflineFrom,
+				daysOfflineTo,
 				active: activated,
 				daysInstalled: recent,
 				timezone: zone,
@@ -353,7 +369,8 @@ export class LicenseService extends BaseService {
 				assigned,
 				pending,
 				online,
-				isActivated
+				isActivated,
+                isFavorite
 			},
 			false,
 			true
@@ -389,7 +406,8 @@ export class LicenseService extends BaseService {
 		order: string,
 		pageSize?: number,
 		status?: string,
-		daysOffline?,
+		daysOfflineFrom?,
+		daysOfflineTo?,
 		activated?,
 		recent?,
 		zone?,
@@ -408,7 +426,8 @@ export class LicenseService extends BaseService {
 				sortOrder: order,
 				pageSize,
 				piStatus: status,
-				daysOffline,
+				daysOfflineFrom,
+				daysOfflineTo,
 				active: activated,
 				daysInstalled: recent,
 				timezone: zone,
@@ -457,13 +476,13 @@ export class LicenseService extends BaseService {
 		const url = `${this.updaters.api_activate_license}?licenseKey=${id}`;
 		return this.postRequest(url, {});
 	}
-	
-    add_license_favorite(id) {
+
+	add_license_favorite(id) {
 		const url = `${this.updaters.api_add_license_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});
 	}
-    
-    remove_license_favorite(id) {
+
+	remove_license_favorite(id) {
 		const url = `${this.deleters.api_remove_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});
 	}
@@ -611,23 +630,19 @@ export class LicenseService extends BaseService {
 	}
 
 	create_installation_checklist_title(data: any) {
-		const body = { data };
-		return this.postRequest(this.creators.api_installation_checklist_title_add, body);
+		return this.postRequest(this.creators.api_installation_checklist_title_add, data);
 	}
 
 	update_installation_checklist_title(data: any) {
-		const body = { data };
-		return this.postRequest(this.updaters.api_checklist_title_update, body);
+		return this.postRequest(this.updaters.api_checklist_title_update, data);
 	}
 
 	update_installation_checklist_item(data: any) {
-		const body = { data };
-		return this.postRequest(this.updaters.api_checklist_item_update, body);
+		return this.postRequest(this.updaters.api_checklist_item_update, data);
 	}
 
 	add_installation_checklist_items(data: any) {
-		const body = { data };
-		return this.postRequest(this.creators.api_installation_checklist_items_add, body);
+		return this.postRequest(this.creators.api_installation_checklist_items_add, data);
 	}
 
 	get_checklist() {
@@ -647,7 +662,8 @@ export class LicenseService extends BaseService {
 	}
 
 	delete_checklist_id(id) {
-		return this.postRequest(this.deleters.api_remove_checklist_title, id);
+		const url = `${this.deleters.api_remove_checklist_title}${id}`;
+		return this.postRequest(url, {});
 	}
 
 	delete_checklist_items(data) {

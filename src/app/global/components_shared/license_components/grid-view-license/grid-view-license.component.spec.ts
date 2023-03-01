@@ -1,20 +1,20 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { UpdateComponent } from './update.component';
+import { GridViewLicenseComponent } from './grid-view-license.component';
 
-describe('UpdateComponent', () => {
-  let component: UpdateComponent;
-  let fixture: ComponentFixture<UpdateComponent>;
+describe('GridViewLicenseComponent', () => {
+  let component: GridViewLicenseComponent;
+  let fixture: ComponentFixture<GridViewLicenseComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ UpdateComponent ]
+      declarations: [ GridViewLicenseComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(UpdateComponent);
+    fixture = TestBed.createComponent(GridViewLicenseComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

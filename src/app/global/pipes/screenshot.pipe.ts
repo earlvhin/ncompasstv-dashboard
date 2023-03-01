@@ -25,6 +25,6 @@ export class ScreenshotPipe extends DatePipe implements PipeTransform {
 
 		valid_time = valid_time.join(''); // return adjusted time or original string
 
-		return `${super.transform(s_date.split('_').join('/'), 'MMM d, y')} at ${valid_time}`;
+		return `${super.transform(s_date.split('_').join('/'), 'MMM d, y')} \n ${valid_time}`;
 	}
 }

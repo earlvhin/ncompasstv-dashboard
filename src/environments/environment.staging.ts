@@ -2,9 +2,9 @@ import { API_ENDPOINTS } from './api-endpoints';
 
 export const environment = {
 	production: false,
-	base_uri: 'https://stgapi.n-compass.online/api/',
-	base_uri_old: 'https://stgapi.n-compass.online/api/',
-	socket_server: 'https://stgsocket.n-compass.online/',
+	base_uri: 'https://stg-api.n-compass.online/api/',
+	base_uri_old: 'https://stg-api.n-compass.online/api/',
+	socket_server: 'https://stg-socket.n-compass.online/',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
 	auth: API_ENDPOINTS.auth,

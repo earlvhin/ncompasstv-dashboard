@@ -1,3 +1,4 @@
+import { NgbTimeStruct } from "@ng-bootstrap/ng-bootstrap";
 
 /**
  * SAMPLE DATA FROM API:
@@ -27,4 +28,6 @@ export interface PlaylistContentSchedule {
 	to: string;
 	type: number;
     livestream?: number;
+	playTimeStartData?: NgbTimeStruct;
+	playTimeEndData?: NgbTimeStruct;
 }

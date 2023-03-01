@@ -17,6 +17,7 @@ export class API_HOST {
 	generalCategory?: string;
 	groupId: string;
 	host?: any[];
+	hostAddress?: string;
 	hostId: string;
 	hostName: string;
 	installDate: string;

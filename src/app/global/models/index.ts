@@ -30,6 +30,7 @@ export * from './api_new-screen.model';
 export * from './api_order.model';
 export * from './api_parent-category.model';
 export * from './api_playlists.model';
+export * from './api_player-app.model';
 export * from './api_release-note.model';
 export * from './api_screen.model';
 export * from './api_screentype.model';

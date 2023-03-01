@@ -125,25 +125,15 @@
 								<div class="col-md-6">
 									<div class="start-time">
 										<h5>Start Time</h5>
-										<ngx-timepicker-field
-											(timeChanged)="onSelectTime($event, 'start')"
-											[buttonAlign]="'left'"
-											[defaultTime]="'12:00 AM'"
-											formControlName="playTimeStart"
-										>
-										</ngx-timepicker-field>
+										<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeStartData"></ngb-timepicker>
+
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="end-time">
 										<h5>End Time</h5>
-										<ngx-timepicker-field
-											(timeChanged)="onSelectTime($event, 'end')"
-											[buttonAlign]="'left'"
-											[defaultTime]="'11:59 PM'"
-											formControlName="playTimeEnd"
-										>
-										</ngx-timepicker-field>
+										<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeEndData"></ngb-timepicker>
+
 									</div>
 								</div>
 							</div>
