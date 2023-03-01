@@ -23,8 +23,8 @@
 		<div class="row">
 			<div class="col-12 col-lg-4">
 				<mat-card class="h-100">
-					<ng-container *ngIf="licenses_details; else small_loader">
-						<app-data-card-graph
+					<ng-container *ngIf="licenses_details; else small_loader"> 
+						<app-data-card-graph 
 							[id]="'license-statistics'"
 							[compare_basis]="licenses_details.basis"
 							[compare_basis_label]="licenses_details.basis_label"
@@ -32,7 +32,7 @@
 							[good_value]="licenses_details.good_value"
 							[good_value_label]="licenses_details.good_value_label"
 							[bad_value]="licenses_details.bad_value"
-							[bad_value_label]="licenses_details.bad_value_label"
+							[bad_value_label]="licenses_details.bad_value_label" 
 							[label_array]="temp_label"
 							[value_array]="temp_array"
 							[has_breakdown]="true"
@@ -77,7 +77,7 @@
 				</mat-card>
 			</div>
 		</div>
-
+       
 		<div class="row m-0 p-0 mt-5">
 			<div class="col-lg-12 custom-mat-tab p-0">
 				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
@@ -133,7 +133,7 @@
 														<span class="fas fa-circle text-orange mr-3"></span>Pending
 													</button>
 												</mat-menu>
-
+                                                
 												<mat-menu #offlineSubMenu="matMenu">
 													<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">
 														5 Days
@@ -296,7 +296,7 @@
 														<div class="host-pill pill" *ngIf="filters.label_host">
 															Host: <strong>{{ filters.label_host }}</strong>
 														</div>
-
+                                                        
 														<div class="host-pill pill" *ngIf="filters.admin_licenses">
 															Show Admin Licenses: <strong>{{ filters.admin_licenses }}</strong>
 														</div>
@@ -393,7 +393,7 @@
 						<ng-template matTabContent>
 							<app-tags-tab></app-tags-tab>
 						</ng-template>
-					</mat-tab>
+					</mat-tab>                    
 
 					<!-- HOSTS TAB -->
 					<mat-tab id="hosts-view-tab" label="Hosts View">
@@ -453,9 +453,9 @@
 										</div>
 									</div>
 								</div>
-							</div>
+							</div>	
 						</div>
-					</mat-tab>
+					</mat-tab>                    
 
 					<!--  ADVERTISERS TAB -->
 					<mat-tab id="advertisers-view-tab" label="Advertisers View">
@@ -483,7 +483,7 @@
 				</a>
 			</mat-card>
 		</ng-template>
-
+        
 		<ng-template #nodata>
 			<div class="col-lg-12 pl-0 pr-0">
 				<mat-card class="pt-5 pb-5 col-lg-12 text-center">
@@ -501,13 +501,13 @@
 				<app-spinner></app-spinner>
 			</div>
 		</ng-template>
-
+    
 		<ng-template #small_loader>
 			<div class="py-4 white-bg">
 				<app-spinner [diameter]="60"></app-spinner>
 			</div>
 		</ng-template>
-
+        
 		<ng-template #small_loader_no_bg>
 			<div class="py-4">
 				<app-spinner [diameter]="60"></app-spinner>

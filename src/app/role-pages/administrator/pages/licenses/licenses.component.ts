@@ -287,7 +287,6 @@ export class LicensesComponent implements OnInit {
 				this.filters.online = value === 1;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
-
 				if (value === 0) {
 					const filter = { column: 'TimeIn', order: 'desc' };
 					this.getColumnsAndOrder(filter, 'licenses');
@@ -514,7 +513,7 @@ export class LicensesComponent implements OnInit {
 
 						if (this.active_view === 'grid') this.no_licenses_result = true;
 						else {
-							this.no_licenses = true;
+							this.no_licenses_result = true;
 							this.filtered_data_licenses = [];
 						}
 
@@ -544,7 +543,7 @@ export class LicensesComponent implements OnInit {
 				}
 			);
 	}
-
+    
 	getTotalHours(data: { storeHours: any }) {
 		if (data.storeHours) {
 			data.storeHours = JSON.parse(data.storeHours);
