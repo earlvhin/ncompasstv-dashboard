@@ -675,7 +675,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.license_data = [];
 			this.license_filtered_data = [];
 		} else {
-			this.license_data_api = response.licenses;
+            if(this.is_dealer_admin) {
+                this.license_data_api = response.paging.entities;
+            } else {
+                this.license_data_api = response.licenses;
+            }
+			
 			this.no_licenses = false;
 
 			this.license_data_api.map((i) => {
