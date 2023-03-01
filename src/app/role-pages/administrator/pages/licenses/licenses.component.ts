@@ -283,12 +283,13 @@ export class LicensesComponent implements OnInit {
 			case 'status':
 				this.resetFilterStatus();
 				this.filters.activated = true;
-				this.filters.label_status = value === 1 ? 'Online' : 'Offline';
-				this.filters.online = value === 1;
+				this.filters.label_status = this._title.transform(value);
+				this.filters.online = value === 'online';
+				this.filters.status = value === 'online' ? 1 : 0;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
 
-				if (value === 0) {
+				if (value === 'offline') {
 					const filter = { column: 'TimeIn', order: 'desc' };
 					this.getColumnsAndOrder(filter, 'licenses');
 					return;
@@ -471,6 +472,7 @@ export class LicensesComponent implements OnInit {
 		let favorite: any;
 		this.hosts_data = [];
 		this.no_licenses_result = false;
+
 		if (this.active_view != 'grid') {
 			favorite = '';
 			this.searching_licenses = true;

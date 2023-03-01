@@ -119,13 +119,13 @@
 												</mat-menu>
 
 												<mat-menu #assignedSubMenu="matMenu">
-													<button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+													<button class="md-text" mat-menu-item (click)="filterTable('status', 'online')">
 														<span class="fas fa-circle text-primary mr-3"></span>Online
 													</button>
 													<button
 														class="md-text"
 														mat-menu-item
-														(click)="filterTable('status', '0')"
+														(click)="filterTable('status', 'offline')"
 														[matMenuTriggerFor]="offlineSubMenu">
 														<span class="fas fa-circle text-danger mr-3"></span>Offline
 													</button>
