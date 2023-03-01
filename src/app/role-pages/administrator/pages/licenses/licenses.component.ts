@@ -288,8 +288,10 @@ export class LicensesComponent implements OnInit {
 				this.filters.status = value === 'online' ? 1 : 0;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
-
-				if (value === 'offline') {
+                this.filters.days_offline_from = '';
+                this.filters.days_offline_to = '';
+				
+                if (value === 'offline') {
 					const filter = { column: 'TimeIn', order: 'desc' };
 					this.getColumnsAndOrder(filter, 'licenses');
 					return;
@@ -514,9 +516,10 @@ export class LicensesComponent implements OnInit {
 					if (data.licenses.length <= 0) {
 						this.hideLicenseSpinner();
 
+
 						if (this.active_view === 'grid') this.no_licenses_result = true;
 						else {
-							this.no_licenses = true;
+							this.no_licenses_result = true;
 							this.filtered_data_licenses = [];
 						}
 
