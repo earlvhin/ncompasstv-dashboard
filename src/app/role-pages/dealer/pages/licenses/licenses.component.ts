@@ -145,6 +145,9 @@ export class LicensesComponent implements OnInit {
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				this.filters.isactivated = 1;
+                this.filters.days_offline_from = '';
+                this.filters.days_offline_to = '';
+                
 				if (value == 1) {
 					this.filters.online = true;
 				} else {

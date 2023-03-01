@@ -1675,6 +1675,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				// this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
+                this.filters.days_offline_from = '';
+                this.filters.days_offline_to = '';
+                
 				if (value == 1) {
 					this.filters.online = true;
 				} else {
