@@ -288,7 +288,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
-				if (value === 0) {
+				if (value == 0) {
 					const filter = { column: 'TimeIn', order: 'desc' };
 					this.getColumnsAndOrder(filter, 'licenses');
 					return;
@@ -326,7 +326,8 @@ export class LicensesComponent implements OnInit {
 				this.filters.days_offline_from = value;
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
-				this.sortList('desc');
+				const filter = { column: 'TimeIn', order: 'desc' };
+			    this.getColumnsAndOrder(filter, 'licenses');
 				break;
 
 			case 'assigned':

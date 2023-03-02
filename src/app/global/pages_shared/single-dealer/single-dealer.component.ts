@@ -1715,7 +1715,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.days_offline_from = value;
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
-				this.sortList('desc');
+				const filter = { column: 'TimeIn', order: 'desc' };
+			    this.getColumnsAndOrder(filter);
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
