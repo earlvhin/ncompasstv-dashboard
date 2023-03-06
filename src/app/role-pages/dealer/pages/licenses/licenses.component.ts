@@ -604,7 +604,7 @@ export class LicensesComponent implements OnInit {
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 		item.isActivated = item.isActivated == 0 ? 'Inactive' : 'Active';
 		item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
-		item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
+		item.displayStatus = item.displayStatus == 1 ? 'ON' : 'OFF';
 		item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 		item.tagsToString = item.tags.join(',');
 	}
