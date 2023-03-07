@@ -17,7 +17,8 @@ import {
 	API_HOST,
 	API_TIMEZONE,
 	PAGING,
-	UI_STORE_HOUR
+	UI_STORE_HOUR,
+	UI_STORE_HOUR_PERIOD
 } from 'src/app/global/models';
 
 import { AuthService, CategoryService, ConfirmationDialogService, DealerService, HostService } from 'src/app/global/services';
@@ -42,8 +43,10 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	disable_business_name = true;
 	edit_host_form: FormGroup;
 	edit_host_form_controls = this._editHostFormControls;
+	has_invalid_schedule = false;
 	host = this.page_data.host;
 	host_timezone = this.page_data.host.timeZoneData;
+	invalid_schedules: UI_STORE_HOUR_PERIOD[] = [];
 	is_active_host = this.host.status === 'A';
 	is_current_user_admin = this._auth.current_role === 'administrator';
 	is_current_user_dealer = this._auth.current_role === 'dealer';
@@ -53,7 +56,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	timezones_loaded = false;
 
 	private dealer_id = this.host.dealerId;
-	private form_invalid = false;
 	private has_content = false;
 	private initial_business_hours: UI_OPERATION_DAYS[] = JSON.parse(this.page_data.host.storeHours);
 	protected _unsubscribe = new Subject<void>();
@@ -80,7 +82,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this.getCategories();
 		this.getTimezones();
 
-		this.business_hours = this.parseBusinessHours(JSON.parse(this.page_data.host.storeHours))
+		this.business_hours = this.parseBusinessHours(JSON.parse(this.page_data.host.storeHours));
 	}
 
 	ngOnDestroy(): void {
@@ -89,14 +91,49 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	}
 
 	addHours(data: { periods: any[]; id: string }): void {
+		const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
+		const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
+		const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
+		const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
+		const closingHourData = { hour: parseInt(closingHour[0]), minute: parseInt(closingHour[1]), second: 0 };
+
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
-			open: '',
-			close: ''
+			open: defaultHours.opening,
+			close: defaultHours.closing,
+			openingHourData,
+			closingHourData
 		};
 
 		data.periods.push(hours);
+
+		this.checkBusinessHoursFields();
+	}
+
+	checkBusinessHoursFields(): void {
+		this.invalid_schedules = [];
+		const daysOpen = this.business_hours.filter((schedule) => schedule.status);
+
+		daysOpen.forEach((schedule) => {
+			const invalid = schedule.periods.filter((schedule) => !schedule.openingHourData || !schedule.closingHourData)[0];
+			if (typeof invalid === 'undefined') return;
+			invalid.day = schedule.day;
+			this.invalid_schedules.push(invalid);
+		});
+
+		if (this.invalid_schedules.length > 0) {
+			this.has_invalid_schedule = true;
+			return;
+		}
+
+		this.has_invalid_schedule = false;
+	}
+
+	checkSchedule(day: string) {
+		const result = this.invalid_schedules.find((schedule) => schedule.day === day);
+		if (typeof result === 'undefined') return 'valid';
+		return 'invalid';
 	}
 
 	getDealers(event?: { page: number; is_search: boolean; no_keyword: boolean }): void {
@@ -111,6 +148,31 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				this.paging = response.paging;
 			})
 			.add(() => (this.dealers_loaded = true));
+	}
+
+	getFullDayName(abbreviatedDay: string): string {
+		switch (abbreviatedDay.toLowerCase()) {
+			case 'm':
+				return 'Monday';
+
+			case 't':
+				return 'Tuesday';
+
+			case 'w':
+				return 'Wednesday';
+
+			case 'th':
+				return 'Thursday';
+
+			case 'f':
+				return 'Friday';
+
+			case 'st':
+				return 'Saturday';
+
+			default: // sn
+				return 'Sunday';
+		}
 	}
 
 	onBulkEditHours(): void {
@@ -134,7 +196,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 	onDeleteHost(): void {
 		let isForceDelete = false;
-		const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
 		const hostId = this.host.hostId;
 		let data: any = { message: 'Delete Host', data: 'Are you sure about this?' };
 
@@ -187,16 +248,25 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 	removeHours(data: { periods: any[] }, index: number): void {
 		data.periods.splice(index, 1);
+		this.checkBusinessHoursFields();
 	}
 
-	toggleDaySchedule(data: { periods: any[]; status: boolean; id: string }): void {
+	selectDay(data: { periods: any[]; status: boolean; id: string }): void {
 		data.periods.length = 0;
+
+		const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
+		const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
+		const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
+		const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
+		const closingHourData = { hour: parseInt(closingHour[0]), minute: parseInt(closingHour[1]), second: 0 };
 
 		const hours = {
 			id: uuid.v4(),
 			day_id: data.id,
-			open: '',
-			close: ''
+			open: defaultHours.opening,
+			close: defaultHours.closing,
+			openingHourData,
+			closingHourData
 		};
 
 		data.status = !data.status;
@@ -205,11 +275,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 	async saveHostData() {
 		this.checkBusinessHoursFields();
-
-		if (this.form_invalid) {
-			await this._confirmationDialog.error('Invalid Form!', 'Please make sure that all fields are correct').toPromise();
-			return;
-		}
 
 		let message = 'Are you sure you want to proceed?';
 		const status = this.is_active_host ? 'A' : 'I';
@@ -311,24 +376,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	private checkBusinessHoursFields(): void {
-		this.business_hours.map((data) => {
-			if (data.status && data.periods.length > 0) {
-				data.periods.map((period) => {
-					if (period.open != '' && period.close == '') {
-						this.form_invalid = true;
-					} else if (period.close != '' && period.open == '') {
-						this.form_invalid = true;
-					} else {
-						this.form_invalid = false;
-					}
-				});
-			}
-		});
-	}
-
 	private fillForm(): void {
 		const host = this.host;
+		this._formControls.dealerId.setValue(host.dealerId);
 		this._formControls.businessName.setValue(host.name);
 		this._formControls.lat.setValue(host.latitude);
 		this._formControls.long.setValue(host.longitude);
@@ -404,41 +454,36 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			long: ['', Validators.required],
 			lat: ['', Validators.required],
 			timezone: ['', Validators.required],
-			vistar_venue_id: ['', Validators.required],
+			vistar_venue_id: [''],
 			notes: [''],
 			others: ['']
 		});
 	}
 
 	private parseBusinessHours(data: UI_STORE_HOUR[]) {
-		return data.map(
-			operation => {
-				operation.periods = operation.periods.map(
-					period => {
+		return data.map((operation) => {
+			operation.periods = operation.periods.map((period) => {
+				const openingHour = period.open.includes(':') ? period.open : '12:00 AM';
+				const closingHour = period.close.includes(':') ? period.close : '11:59 PM';
+				const openingHourSplit = moment(openingHour, 'hh:mm A').format('HH:mm').split(':');
+				const closingHourSplit = moment(closingHour, 'hh:mm A').format('HH:mm').split(':');
 
-						const openingHour = period.open.includes(':') ? period.open : '12:00 AM';
-						const closingHour = period.close.includes(':') ? period.close : '11:59 PM';
-						const openingHourSplit = moment(openingHour, 'hh:mm A').format('HH:mm').split(':');
-						const closingHourSplit = moment(closingHour, 'hh:mm A').format('HH:mm').split(':');
+				period.openingHourData = {
+					hour: parseInt(openingHourSplit[0]),
+					minute: parseInt(openingHourSplit[1]),
+					second: 0
+				};
 
-						period.openingHourData = {
-							hour: parseInt(openingHourSplit[0]),
-							minute: parseInt(openingHourSplit[1]),
-							second: 0
-						};
+				period.closingHourData = {
+					hour: parseInt(closingHourSplit[0]),
+					minute: parseInt(closingHourSplit[1]),
+					second: 0
+				};
 
-						period.closingHourData = {
-							hour: parseInt(closingHourSplit[0]),
-							minute: parseInt(closingHourSplit[1]),
-							second: 0
-						};
-
-						return period;
-					}
-				);
-				return operation;
-			}
-		);
+				return period;
+			});
+			return operation;
+		});
 	}
 
 	private setDialogData(): void {
@@ -447,22 +492,17 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	}
 
 	private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
-		return data.map(
-			operation => {
-				operation.periods = operation.periods.map(
-					period => {
+		return data.map((operation) => {
+			operation.periods = operation.periods.map((period) => {
+				const opening = period.openingHourData;
+				const closing = period.closingHourData;
+				period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
+				period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
 
-						const opening = period.openingHourData;
-						const closing = period.closingHourData;
-						period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
-						period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
-
-						return period;
-					}
-				);
-				return operation;
-			}
-		);
+				return period;
+			});
+			return operation;
+		});
 	}
 
 	protected get _businessHours(): UI_OPERATION_DAYS[] {

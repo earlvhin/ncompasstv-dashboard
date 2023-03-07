@@ -291,11 +291,10 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToRefreshBannerData() {
-		this._helper.onRefreshBannerData.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.update_info.emit(),
-				error => console.log('Error refreshing banner data', error)
-			);
+		this._helper.onRefreshBannerData.pipe(takeUntil(this._unsubscribe)).subscribe(
+			() => this.update_info.emit(),
+			(error) => console.log('Error refreshing banner data', error)
+		);
 	}
 
 	protected get _isAdmin() {

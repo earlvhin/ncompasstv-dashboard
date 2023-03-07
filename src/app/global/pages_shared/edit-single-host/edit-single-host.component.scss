@@ -29,3 +29,20 @@ button.delete {
 		color: white;
 	}
 }
+
+
+.indicator {
+	margin-left: 18px;
+	mat-icon {
+		font-size: 18px;
+		line-height: 30px;
+	}
+
+	.invalid {
+		color: red;
+	}
+
+	.valid {
+		color: green;
+	}
+}
