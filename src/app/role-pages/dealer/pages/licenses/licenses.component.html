@@ -60,7 +60,7 @@
                     <div class="col-lg-6">
                         <button mat-button mat-raised-button 
                             class="theme-btn sm-text mr-2 h-45" 
-                            [matMenuTriggerFor]="licenseStatus" [disabled]="hide_all_license">
+                            [matMenuTriggerFor]="licenseStatus">
                             <span class="button-label">License Status</span>
                             <span class="fas fa-circle xsm-text"></span>
                         </button>
@@ -151,7 +151,7 @@
                         <button mat-button mat-raised-button
                             class="theme-btn pi-control sm-text _caution mr-2" 
                             [matMenuTriggerFor]="favoriteOption"
-                            title="Favorite Licenses" *ngIf="!hide_all_license && active_view === 'grid'">
+                            title="Favorite Licenses" *ngIf="active_view === 'grid'">
                             <span class="fas fa-star"></span> 
                             <span class="ml-2 button_text_animation">Show/Hide Favorites</span>
                         </button>
@@ -215,7 +215,7 @@
                         <span class="col-lg-12 sm-text bg-gray">Showing <span class="text-danger">{{getTotalShownLicenses()}}</span> out of <span class="text-danger">{{getTotalLicenses()}}</span> licenses result. </span>
                     </div>
                 </div>
-                <div class="row" *ngIf="!hide_all_license; else showLicensesButton">
+                <div class="row" *ngIf="!initial_load_license; else loader">
                     <div class="col-lg-12" *ngIf="!no_licenses; else no_data">
                         <div class="col-lg-12 mr-2" *ngIf="active_view === 'list'; else grid">
                             <ng-container>

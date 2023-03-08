@@ -67,7 +67,7 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'Install Date', sortable: true, key: 'installDate', column: 'InstallDate' },
-		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
+		// { name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
 		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true }
 	];
 
@@ -292,7 +292,7 @@ export class LicensesComponent implements OnInit {
 				// },
 				{ value: i.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
-				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
+				// { value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.piStatus, link: null, editable: false, hidden: true },
 				{ value: i.playerStatus, link: null, editable: false, hidden: true },
 				{ value: i.isActivated, link: null, editable: false, hidden: true }
@@ -416,7 +416,7 @@ export class LicensesComponent implements OnInit {
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
 		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
-		item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
+		// item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 		item.isActivated = item.isActivated == 0 ? 'Inactive' : 'Active';

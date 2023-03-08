@@ -88,7 +88,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Password', sortable: false, key: 'password', no_show: true, hidden: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'Install Date', sortable: true, key: 'installDate', column: 'InstallDate' },
-		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
+		// { name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
 		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true }
 	];
 
@@ -558,7 +558,7 @@ export class HostsComponent implements OnInit {
 				// },
 				{ value: i.displayStatus == 1 ? 'ON' : 'N/A', link: null, editable: false, hidden: false },
 				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
-				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
+				// { value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.piStatus, link: null, editable: false, hidden: true },
 				{ value: i.playerStatus, link: null, editable: false, hidden: true },
 				{ value: i.isActivated, link: null, editable: false, hidden: true }
