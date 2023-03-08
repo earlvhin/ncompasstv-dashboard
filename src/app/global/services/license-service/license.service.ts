@@ -476,12 +476,12 @@ export class LicenseService extends BaseService {
 		const url = `${this.updaters.api_activate_license}?licenseKey=${id}`;
 		return this.postRequest(url, {});
 	}
-
+	
 	add_license_favorite(id) {
 		const url = `${this.updaters.api_add_license_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});
 	}
-
+    
 	remove_license_favorite(id) {
 		const url = `${this.deleters.api_remove_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});
@@ -627,6 +627,10 @@ export class LicenseService extends BaseService {
 
 	set_tvdisplay_status(data: { licenseId: string; tvdisplaySettings: number }) {
 		return this.postRequest(this.updaters.api_update_tvdisplay_settings, data);
+	}
+
+	set_fast_edge_tool_status(data: { licenseId: string; fastEdgeMonitoringTool: number }) {
+		return this.postRequest(this.updaters.api_update_fastedge_tool_settings, data);
 	}
 
 	create_installation_checklist_title(data: any) {

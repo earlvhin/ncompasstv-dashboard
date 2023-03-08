@@ -1,7 +1,7 @@
 import { TitleCasePipe } from '@angular/common';
 import { Component, OnInit, EventEmitter, OnDestroy, HostListener } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
-import { MatDialog, MatDialogRef, MatSlideToggleChange } from '@angular/material';
+import { MatDialog, MatDialogRef, MatSlideToggleChange, MatSnackBar } from '@angular/material';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, forkJoin } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
@@ -137,6 +137,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	terminal_value: string;
 	terminal_entered_scripts: string[] = [];
 	saving_license_settings: boolean = false;
+	fastEdgeSettings: FormGroup;
+	fastEdgeSettingsSaving = false;
 
 	private contents_array: any = [];
 	private contents_backup: UI_CONTENT_PER_ZONE[] = [];
@@ -163,7 +165,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _screen: ScreenService,
 		private _tag: TagService,
 		private _template: TemplateService,
-		private _titleCasePipe: TitleCasePipe
+		private _titleCasePipe: TitleCasePipe,
+		private _snackBar: MatSnackBar
 	) {}
 
 	@HostListener('window:resize', [])
@@ -731,6 +734,29 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.saveActivityLog(ACTIVITY_CODES.screenshot);
 	}
 
+	toggleFastEdgeTool(e: any) {
+		this.fastEdgeSettingsSaving = true;
+
+		const body = { licenseId: this.license_id, fastEdgeMonitoringTool: e.checked ? 1 : 0, ...this.fastEdgeSettings.value };
+
+		this._license
+			.set_fast_edge_tool_status(body)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				() => {
+					this.fastEdgeSettingsSaving = false;
+					this._snackBar.open(`DCP Tool ${e.checked ? 'Enabled' : 'Disabled'} for this license successfully!`, '', {
+						duration: 3000
+					});
+				},
+				(error) => {
+					this.fastEdgeSettingsSaving = false;
+					alert(`Failed saving DCP Tool changes, ${error.error}`);
+					throw new Error(error);
+				}
+			);
+	}
+
 	updateAndRestart(): void {
 		this.warningModal(
 			'Update System and Restart',
@@ -918,6 +944,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.has_host = true;
 		this.has_screen = true;
 		this.hasLoadedLicenseData = true;
+
+		// Setup Fastedge DCP Tool Form
+		this.fastEdgeSettings = new FormGroup({
+			password: new FormControl(null, [Validators.minLength(5), Validators.required])
+		});
 	}
 
 	private initializeSocketServer() {
