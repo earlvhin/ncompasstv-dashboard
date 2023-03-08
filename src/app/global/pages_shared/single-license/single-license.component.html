@@ -268,7 +268,7 @@
 																</div>
 
 																<!-- Display Status -->
-																<ng-container *ngIf="hasAdminPrivileges">
+																<ng-container>
 																	<div class="flex-even">
 																		<span class="sm-text"> Display Status </span>
 
@@ -339,7 +339,7 @@
 																			</button>
 
 																			<!-- RESET ANYDESK ID BUTTON -->
-																			<button
+																			<button *ngIf="hasAdminPrivileges"
 																				class="card-button reset-anydesk-id"
 																				(click)="onResetAnydeskID()"
 																				title="Reset Anydesk ID">
@@ -379,7 +379,7 @@
 
 															<!-- Host Name -->
 															<div class="d-flex">
-																<div class="flex-even hostname">
+																<div class="flex-even hostname" *ngIf="hasAdminPrivileges">
 																	<span class="sm-text"> Dealer </span>
 																	<h5 class="mb-0 sm-text">
 																		<ng-container *ngIf="hasAdminPrivileges">
