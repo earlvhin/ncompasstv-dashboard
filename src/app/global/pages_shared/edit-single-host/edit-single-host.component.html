@@ -155,6 +155,13 @@
 				</div>
 			</div>
 		</div>
+
+		<ng-container *ngIf="invalid_form_fields">
+			<div class="invalid-fields d-flex">
+				<p class="required-text">Fields required: {{ invalid_form_fields }}</p>
+			</div>
+		</ng-container>
+
 		<button
 			mat-button
 			mat-raised-button

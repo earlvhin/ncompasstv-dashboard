@@ -3,7 +3,7 @@ import { TitleCasePipe } from '@angular/common';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef, MatSlideToggleChange } from '@angular/material';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { map, takeUntil } from 'rxjs/operators';
+import { map, pairwise, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as uuid from 'uuid';
 
@@ -46,6 +46,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	has_invalid_schedule = false;
 	host = this.page_data.host;
 	host_timezone = this.page_data.host.timeZoneData;
+	invalid_form_fields: string = null;
 	invalid_schedules: UI_STORE_HOUR_PERIOD[] = [];
 	is_active_host = this.host.status === 'A';
 	is_current_user_admin = this._auth.current_role === 'administrator';
@@ -77,11 +78,12 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.setDialogData();
 		this.fillForm();
+		this.subscribeToFormValidation();
+		this.checkFormValidity();
 		this.getDealers();
 		this.getHostContents();
 		this.getCategories();
 		this.getTimezones();
-
 		this.business_hours = this.parseBusinessHours(JSON.parse(this.page_data.host.storeHours));
 	}
 
@@ -378,19 +380,19 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 	private fillForm(): void {
 		const host = this.host;
-		this._formControls.dealerId.setValue(host.dealerId);
-		this._formControls.businessName.setValue(host.name);
-		this._formControls.lat.setValue(host.latitude);
-		this._formControls.long.setValue(host.longitude);
-		this._formControls.address.setValue(host.address);
-		this._formControls.city.setValue(host.city);
-		this._formControls.state.setValue(host.state);
-		this._formControls.zip.setValue(host.postalCode);
-		this._formControls.region.setValue(host.region);
-		this._formControls.timezone.setValue(this.host_timezone.id);
-		this._formControls.notes.setValue(host.notes);
-		this._formControls.others.setValue(host.others);
-		this._formControls.vistar_venue_id.setValue(host.vistarVenueId);
+		this._formControls.dealerId.setValue(host.dealerId, { emitEvent: false });
+		this._formControls.businessName.setValue(host.name, { emitEvent: false });
+		this._formControls.lat.setValue(host.latitude, { emitEvent: false });
+		this._formControls.long.setValue(host.longitude, { emitEvent: false });
+		this._formControls.address.setValue(host.address, { emitEvent: false });
+		this._formControls.city.setValue(host.city, { emitEvent: false });
+		this._formControls.state.setValue(host.state, { emitEvent: false });
+		this._formControls.zip.setValue(host.postalCode, { emitEvent: false });
+		this._formControls.region.setValue(host.region, { emitEvent: false });
+		this._formControls.timezone.setValue(this.host_timezone.id, { emitEvent: false });
+		this._formControls.notes.setValue(host.notes, { emitEvent: false });
+		this._formControls.others.setValue(host.others, { emitEvent: false });
+		this._formControls.vistar_venue_id.setValue(host.vistarVenueId, { emitEvent: false });
 	}
 
 	private getCategories(): void {
@@ -503,6 +505,29 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			});
 			return operation;
 		});
+	}
+
+	private subscribeToFormValidation() {
+		const form = this.edit_host_form;
+
+		form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			this.checkFormValidity();
+		});
+	}
+
+	private checkFormValidity() {
+		this.invalid_form_fields = null;
+		const controls = this.edit_host_form.controls;
+		let invalidFields = [];
+
+		for (const name in controls) {
+			if (controls[name].invalid) {
+				invalidFields.push(`${this._titlecase.transform(name)}`);
+			}
+		}
+
+		invalidFields = [...new Set(invalidFields)];
+		this.invalid_form_fields = invalidFields.join(', ');
 	}
 
 	protected get _businessHours(): UI_OPERATION_DAYS[] {

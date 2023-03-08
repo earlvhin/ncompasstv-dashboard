@@ -46,3 +46,11 @@ button.delete {
 		color: green;
 	}
 }
+
+.invalid-fields {
+	color: red;
+
+	.required-text {
+		margin-right: 5px;
+	}
+}
