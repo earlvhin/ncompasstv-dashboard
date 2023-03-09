@@ -6,9 +6,14 @@ button.delete {
 	float: right;
 }
 
+.dealer-business-name {
+	.autocomplete-container {
+		width: 100%;
+	}
+}
+
 .business-hours-section {
 	.heading {
-		justify-content: space-between;
 
 		h4 {
 			margin-right: 20px;
@@ -53,4 +58,8 @@ button.delete {
 	.required-text {
 		margin-right: 5px;
 	}
+}
+
+.set-to-all-day {
+	margin-left: 5px;
 }

@@ -177,6 +177,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		}
 	}
 
+	isSetToPlayAllDay(data: UI_STORE_HOUR) {}
+
 	onBulkEditHours(): void {
 		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
 			width: '550px',
@@ -256,7 +258,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	selectDay(data: { periods: any[]; status: boolean; id: string }): void {
 		data.periods.length = 0;
 
-		const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
+		const defaultHours = { opening: '9:00 AM', closing: '5:00 PM' };
 		const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
 		const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
 		const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
@@ -350,15 +352,20 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			});
 	}
 
-	setTimezone(data: string): void {
-		this._formControls.timezone.setValue(data);
-	}
-
 	setCategory(event: string): void {
 		if (!event || event.length <= 0) return;
 		event = event.replace(/_/g, ' ');
 		this.category_selected = this._titlecase.transform(event);
 		this._formControls.category.setValue(event);
+	}
+
+	setTimezone(data: string): void {
+		this._formControls.timezone.setValue(data);
+	}
+
+	setToOpenAllDay(businessHourIndex: number, periodIndex: number) {
+		this.business_hours[businessHourIndex].periods[periodIndex].openingHourData = { hour: 0, minute: 0, second: 0 };
+		this.business_hours[businessHourIndex].periods[periodIndex].closingHourData = { hour: 23, minute: 59, second: 0 };
 	}
 
 	private get hasUpdatedBusinessHours(): boolean {
