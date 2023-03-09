@@ -221,7 +221,12 @@ export class BannerComponent implements OnInit, OnDestroy {
 			if (operation.day === this.current_business_day) {
 				if (!operation.periods || !operation.status) period = 'CLOSED';
 				else {
-					if (!operation.periods[0].open && !operation.periods[0].close) period = 'Open 24 hours';
+					const opening = operation.periods[0].open;
+					const closing = operation.periods[0].close;
+					const hasBlankOpeningTime = !opening || opening === '';
+					const hasBlankClosingTime = !closing || closing === '';
+					const isSetToOpenAllDay = opening === '12:00 AM' && closing === '11:59 PM';
+					if (hasBlankOpeningTime || hasBlankClosingTime || isSetToOpenAllDay) period = 'Open 24 hours';
 					else period = `${operation.periods[0].open} - ${operation.periods[0].close}`;
 				}
 				this.current_operations = { day: this.current_business_day, period };
