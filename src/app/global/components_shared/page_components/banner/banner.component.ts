@@ -16,7 +16,9 @@ import {
 	TAG,
 	UI_CURRENT_USER,
 	UI_ROLE_DEFINITION,
-	UI_ROLE_DEFINITION_TEXT
+	UI_ROLE_DEFINITION_TEXT,
+	UI_STORE_HOUR_PERIOD,
+	UI_STORE_HOUR
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { HelperService } from 'src/app/global/services';
@@ -100,6 +102,24 @@ export class BannerComponent implements OnInit, OnDestroy {
 		const routeData = { queryParams: { dealer_id: dealerId, host_id: hostId } };
 		const url = this._router.serializeUrl(this._router.createUrlTree([route], routeData));
 		window.open(url, '_blank');
+	}
+
+	hasOpeningAndClosing(periods: UI_STORE_HOUR_PERIOD) {
+		const originalCondition = periods.open == '' && periods.close == '';
+		const isOpenAllDay = periods.open === '12:00 AM' && periods.close === '11:59 PM';
+		if (originalCondition || isOpenAllDay) return false;
+		return true;
+	}
+
+	isOpenAllDay(hours: UI_STORE_HOUR, periodIndex: number) {
+		if (!hours.status) return false;
+		const originalCondition = hours.periods[periodIndex].open == '' && hours.periods[periodIndex].close == '';
+		const isOpenAllDay = hours.periods[periodIndex].open === '12:00 AM' && hours.periods[periodIndex].close === '11:59 PM';
+		return originalCondition || isOpenAllDay;
+	}
+
+	isOpenButNotAllDay(hours: UI_STORE_HOUR, periodIndex: number) {
+		return !this.isOpenAllDay(hours, periodIndex);
 	}
 
 	onAssignLicense(): void {

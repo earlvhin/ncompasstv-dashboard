@@ -177,7 +177,15 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	isSetToPlayAllDay(data: UI_STORE_HOUR) {}
+	isOpenAllDay(data: UI_STORE_HOUR_PERIOD) {
+		const originalCondition = data.open == '' && data.close == '';
+		const isOpenAllDay = data.open === '12:00 AM' && data.close === '11:59 PM';
+		return originalCondition || isOpenAllDay;
+	}
+
+	isOpenButNotAllDay(data: UI_STORE_HOUR_PERIOD) {
+		return !this.isOpenAllDay(data);
+	}
 
 	onBulkEditHours(): void {
 		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
@@ -253,6 +261,15 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	removeHours(data: { periods: any[] }, index: number): void {
 		data.periods.splice(index, 1);
 		this.checkBusinessHoursFields();
+	}
+
+	removeOpenAllDay(businessHourIndex: number, periodIndex: number) {
+		console.log('asdasd', this.business_hours[businessHourIndex].periods[periodIndex]);
+		this.business_hours[businessHourIndex].periods[periodIndex].openingHourData = { hour: 9, minute: 0, second: 0 };
+		this.business_hours[businessHourIndex].periods[periodIndex].closingHourData = { hour: 17, minute: 0, second: 0 };
+		this.business_hours[businessHourIndex].periods[periodIndex].open = '9:00 AM';
+		this.business_hours[businessHourIndex].periods[periodIndex].close = '5:00 PM';
+		this.has_invalid_schedule = false;
 	}
 
 	selectDay(data: { periods: any[]; status: boolean; id: string }): void {
@@ -366,6 +383,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	setToOpenAllDay(businessHourIndex: number, periodIndex: number) {
 		this.business_hours[businessHourIndex].periods[periodIndex].openingHourData = { hour: 0, minute: 0, second: 0 };
 		this.business_hours[businessHourIndex].periods[periodIndex].closingHourData = { hour: 23, minute: 59, second: 0 };
+		this.business_hours[businessHourIndex].periods[periodIndex].open = '12:00 AM';
+		this.business_hours[businessHourIndex].periods[periodIndex].close = '11:59 PM';
+		this.has_invalid_schedule = false;
 	}
 
 	private get hasUpdatedBusinessHours(): boolean {
