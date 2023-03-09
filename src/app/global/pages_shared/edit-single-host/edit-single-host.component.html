@@ -20,7 +20,7 @@
 		</button>
 	</div>
 
-	<form [formGroup]="edit_host_form" (ngSubmit)="saveHostData()" class="text-left">
+	<form [formGroup]="edit_host_form" (ngSubmit)="saveHostData()" class="text-left" *ngIf="categories_loaded && timezones_loaded && city_loaded; else loading">
 		<div class="row mb-4">
 			<div class="col-lg-11 mb-3">
 				<app-autocomplete-field
@@ -62,33 +62,42 @@
 				</mat-form-field>
 
 				<ng-template #autocomplete_field>
-					<ng-container *ngIf="categories_loaded; else loaderSmall">
-						<app-autocomplete-field
-							*ngIf="field.control === 'category'"
-							[data_reference]="categories_data"
-							[primary_keyword]="'categoryName'"
-							[key_of_value]="'categoryName'"
-							(data_value)="setCategory($event)"
-							[required]="true"
-							[label]="'Choose Category'"
-							[new_value]="category_selected"
-							[initial_value]="category_selected">
-						</app-autocomplete-field>
-					</ng-container>
+					<app-autocomplete-field
+						*ngIf="field.control === 'category'"
+						[data_reference]="categories_data"
+						[primary_keyword]="'categoryName'"
+						[key_of_value]="'categoryName'"
+						(data_value)="setCategory($event)"
+						[required]="true"
+						[label]="'Choose Category'"
+						[new_value]="category_selected"
+						[initial_value]="category_selected">
+					</app-autocomplete-field>
 
-					<ng-container *ngIf="timezones_loaded; else loaderSmall">
-						<app-autocomplete-field
-							*ngIf="field.control === 'timezone'"
-							[data_reference]="timezones"
-							[primary_keyword]="'name'"
-							[key_of_value]="'id'"
-							(data_value)="setTimezone($event)"
-							[required]="true"
-							[label]="'Timezone'"
-							[initial_value]="host.timeZoneData.name">
-						</app-autocomplete-field>
-					</ng-container>
-				</ng-template>
+					<app-autocomplete-field
+						*ngIf="field.control === 'timezone'"
+						[data_reference]="timezones"
+						[primary_keyword]="'name'"
+			    		[key_of_value]="'id'"
+						(data_value)="setTimezone($event)"
+						[required]="true"
+						[label]="'Timezone'"
+						[initial_value]="host.timeZoneData.name">
+					</app-autocomplete-field>
+					
+                    <app-autocomplete-field
+                        *ngIf="field.control === 'city'"
+                        (data_value)="setCity($event)"
+                        [key_of_value]="'city_state'"
+                        [placeholder]="field.placeholder"
+                        [label]="field.label"
+                        [data_reference]="city_state"
+                        [search_keyword]="'city_state'"
+                        [primary_keyword]="'city_state'"
+                        [new_value]="city_selected"
+						[initial_value]="city_selected">
+                    </app-autocomplete-field>
+                </ng-template>
 			</div>
 
 			<!-- BUSINESS HOURS SECTION -->
