@@ -264,7 +264,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	}
 
 	removeOpenAllDay(businessHourIndex: number, periodIndex: number) {
-		console.log('asdasd', this.business_hours[businessHourIndex].periods[periodIndex]);
 		this.business_hours[businessHourIndex].periods[periodIndex].openingHourData = { hour: 9, minute: 0, second: 0 };
 		this.business_hours[businessHourIndex].periods[periodIndex].closingHourData = { hour: 17, minute: 0, second: 0 };
 		this.business_hours[businessHourIndex].periods[periodIndex].open = '9:00 AM';
