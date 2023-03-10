@@ -87,6 +87,21 @@
 							[initial_value]="host.timeZoneData.name">
 						</app-autocomplete-field>
 					</ng-container>
+
+					<ng-container *ngIf="city_loaded; else loadingCities">
+						<app-autocomplete-field
+							*ngIf="field.control === 'city'"
+							(data_value)="setCity($event)"
+							[key_of_value]="'city_state'"
+							[placeholder]="field.placeholder"
+							[label]="field.label"
+							[data_reference]="city_state"
+							[search_keyword]="'city_state'"
+							[primary_keyword]="'city_state'"
+							[new_value]="city_selected"
+							[initial_value]="city_selected">
+						</app-autocomplete-field>
+					</ng-container>
 				</ng-template>
 			</div>
 
@@ -216,6 +231,13 @@
 	<ng-template #loadingTimezones>
 		<div class="d-flex">
 			<h4>Loading timezones...</h4>
+			<app-spinner [diameter]="30"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #loadingCities>
+		<div class="d-flex">
+			<h4>Loading cities...</h4>
 			<app-spinner [diameter]="30"></app-spinner>
 		</div>
 	</ng-template>

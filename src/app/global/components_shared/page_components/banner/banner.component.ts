@@ -147,7 +147,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 			case 'single-host':
 				dialog = EditSingleHostComponent;
-				config.width = '992px';
+				config.width = '2000px';
 				data = this.page_data as { host: API_HOST; dealer: API_DEALER };
 				break;
 

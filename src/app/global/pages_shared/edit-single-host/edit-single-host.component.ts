@@ -7,6 +7,9 @@ import { map, pairwise, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as uuid from 'uuid';
 
+import { LocationService } from 'src/app/global/services/data-service/location.service';
+import { City, State } from 'src/app/global/models/ui_city_state_region.model';
+
 import {
 	API_CONTENT,
 	API_DEALER,
@@ -33,6 +36,9 @@ import * as moment from 'moment';
 })
 export class EditSingleHostComponent implements OnInit, OnDestroy {
 	business_hours: UI_STORE_HOUR[];
+	city_state: City[] = [];
+	city_loaded = false;
+	city_selected: string;
 	categories_loaded = false;
 	categories_data: API_PARENT_CATEGORY[];
 	category_selected: string;
@@ -72,7 +78,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		private _form: FormBuilder,
 		private _host: HostService,
 		private _router: Router,
-		private _titlecase: TitleCasePipe
+		private _titlecase: TitleCasePipe,
+		private _location: LocationService
 	) {}
 
 	ngOnInit() {
@@ -81,6 +88,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this.subscribeToFormValidation();
 		this.checkFormValidity();
 		this.getDealers();
+		this.getCities();
 		this.getHostContents();
 		this.getCategories();
 		this.getTimezones();
@@ -90,6 +98,18 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	getCities() {
+		this._location
+			.get_cities()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response: any) => {
+				this.city_state = response.map((city) => {
+					return new City(city.city, `${city.city}, ${city.state}`, city.state);
+				});
+			})
+			.add(() => (this.city_loaded = true));
 	}
 
 	addHours(data: { periods: any[]; id: string }): void {
@@ -368,15 +388,32 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			});
 	}
 
+	setTimezone(data: string): void {
+		this._formControls.timezone.setValue(data);
+	}
+
+	setCity(data): void {
+		this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
+
+		this._location
+			.get_states_regions(data.substr(data.indexOf(',') + 2))
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this._formControls.state.setValue(data[0].abbreviation);
+					this._formControls.region.setValue(data[0].region);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
 	setCategory(event: string): void {
 		if (!event || event.length <= 0) return;
 		event = event.replace(/_/g, ' ');
 		this.category_selected = this._titlecase.transform(event);
 		this._formControls.category.setValue(event);
-	}
-
-	setTimezone(data: string): void {
-		this._formControls.timezone.setValue(data);
 	}
 
 	setToOpenAllDay(businessHourIndex: number, periodIndex: number) {
@@ -475,9 +512,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			businessName: ['', Validators.required],
 			address: ['', Validators.required],
 			city: ['', Validators.required],
-			state: ['', Validators.required],
+			state: [{ value: '', disabled: true }, Validators.required],
 			zip: ['', Validators.required],
-			region: ['', Validators.required],
+			region: [{ value: '', disabled: true }, Validators.required],
 			category: ['', Validators.required],
 			long: ['', Validators.required],
 			lat: ['', Validators.required],
@@ -517,6 +554,23 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	private setDialogData(): void {
 		this.initializeForm();
 		this.setCategory(this.host.category);
+		this.fillCityOfHost();
+	}
+
+	fillCityOfHost() {
+		this._location
+			.get_states_by_abbreviation(this.host.state)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					let city = this.host.city + ', ' + data[0].state;
+					this.city_selected = city;
+					this.setCity(city);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
 	private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
@@ -641,44 +695,46 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				label: 'Address',
 				control: 'address',
 				placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-				col: 'col-lg-6'
+				col: 'col-lg-5'
 			},
 			{
 				label: 'City',
 				control: 'city',
 				placeholder: 'Ex. Chicago',
-				col: 'col-lg-3'
+				col: 'col-lg-4',
+				autocomplete: true
 			},
 			{
 				label: 'State',
 				control: 'state',
 				placeholder: 'Ex. IL',
-				col: 'col-lg-3'
+				col: 'col-lg-1',
+				disabled: true
 			},
 			{
 				label: 'Region',
 				control: 'region',
 				placeholder: 'Ex. SW',
-				col: 'col-lg-4'
+				col: 'col-lg-2'
 			},
 			{
 				label: 'Zip Code',
 				control: 'zip',
 				placeholder: 'Ex. 54001',
-				col: 'col-lg-4'
+				col: 'col-lg-3'
 			},
 			{
 				label: 'Timezone',
 				control: 'timezone',
 				placeholder: 'Ex. US/Central',
-				col: 'col-lg-4',
+				col: 'col-lg-3',
 				autocomplete: true
 			},
 			{
 				label: 'Vistar Venue ID',
 				control: 'vistar_venue_id',
 				placeholder: 'Ex. Venue ID for Vistar',
-				col: 'col-lg-12'
+				col: 'col-lg-6'
 			},
 			{
 				label: 'Notes',
