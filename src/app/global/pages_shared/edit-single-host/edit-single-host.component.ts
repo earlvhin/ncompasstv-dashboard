@@ -37,7 +37,7 @@ import * as moment from 'moment';
 export class EditSingleHostComponent implements OnInit, OnDestroy {
 	business_hours: UI_STORE_HOUR[];
 	city_state: City[] = [];
-	city_loaded = false;
+	cities_loaded = false;
 	city_selected: string;
 	categories_loaded = false;
 	categories_data: API_PARENT_CATEGORY[];
@@ -49,6 +49,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	disable_business_name = true;
 	edit_host_form: FormGroup;
 	edit_host_form_controls = this._editHostFormControls;
+	half_width_fields = this._halfWidthFields;
 	has_invalid_schedule = false;
 	host = this.page_data.host;
 	host_timezone = this.page_data.host.timeZoneData;
@@ -109,7 +110,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					return new City(city.city, `${city.city}, ${city.state}`, city.state);
 				});
 			})
-			.add(() => (this.city_loaded = true));
+			.add(() => (this.cities_loaded = true));
 	}
 
 	addHours(data: { periods: any[]; id: string }): void {
@@ -664,12 +665,21 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		];
 	}
 
+	protected get _halfWidthFields() {
+		const controls = Array.from(this._editHostFormControls);
+
+		const FIELD_CONTROL_NAMES = ['lat', 'long', 'zip', 'region'];
+
+		return controls.filter((formControl) => FIELD_CONTROL_NAMES.includes(formControl.control)).map((formControl) => formControl.control);
+	}
+
 	protected get _editHostFormControls() {
 		return [
 			{
 				label: 'Host Business Name',
 				control: 'businessName',
 				placeholder: 'Ex. SM Center Pasig',
+				type: 'text',
 				col: 'col-lg-6'
 			},
 			{
@@ -677,24 +687,27 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				control: 'category',
 				placeholder: 'Ex. School',
 				col: 'col-lg-6',
-				autocomplete: true
+				type: 'autocomplete'
 			},
 			{
 				label: 'Latitude',
 				control: 'lat',
 				placeholder: 'Ex. 58.933',
+				type: 'number',
 				col: 'col-lg-6'
 			},
 			{
 				label: 'Longitude',
 				control: 'long',
 				placeholder: 'Ex. 58.933',
+				type: 'number',
 				col: 'col-lg-6'
 			},
 			{
 				label: 'Address',
 				control: 'address',
 				placeholder: 'Ex. 21st Drive Fifth Avenue Place',
+				type: 'text',
 				col: 'col-lg-5'
 			},
 			{
@@ -702,25 +715,28 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				control: 'city',
 				placeholder: 'Ex. Chicago',
 				col: 'col-lg-4',
-				autocomplete: true
+				type: 'autocomplete'
 			},
 			{
 				label: 'State',
 				control: 'state',
 				placeholder: 'Ex. IL',
 				col: 'col-lg-1',
+				type: 'text',
 				disabled: true
 			},
 			{
 				label: 'Region',
 				control: 'region',
 				placeholder: 'Ex. SW',
+				type: 'text',
 				col: 'col-lg-2'
 			},
 			{
 				label: 'Zip Code',
 				control: 'zip',
 				placeholder: 'Ex. 54001',
+				type: 'text',
 				col: 'col-lg-3'
 			},
 			{
@@ -728,12 +744,13 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				control: 'timezone',
 				placeholder: 'Ex. US/Central',
 				col: 'col-lg-3',
-				autocomplete: true
+				type: 'autocomplete'
 			},
 			{
 				label: 'Vistar Venue ID',
 				control: 'vistar_venue_id',
 				placeholder: 'Ex. Venue ID for Vistar',
+				type: 'text',
 				col: 'col-lg-6'
 			},
 			{
