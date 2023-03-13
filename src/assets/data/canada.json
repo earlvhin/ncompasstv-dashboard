@@ -1,0 +1,10430 @@
+[
+  {
+    "city": "Toronto",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Montreal",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Vancouver",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Calgary",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Edmonton",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Ottawa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mississauga",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Winnipeg",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Quebec City",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hamilton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Brampton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Surrey",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Kitchener",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Laval",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Halifax",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "London",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Victoria",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Markham",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "St. Catharines",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Niagara Falls",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Vaughan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Gatineau",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Windsor",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saskatoon",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Longueuil",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Burnaby",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Regina",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Richmond",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Richmond Hill",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Oakville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Burlington",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Barrie",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Oshawa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sherbrooke",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saguenay",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Levis",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kelowna",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Abbotsford",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Coquitlam",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Trois-Rivieres",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Guelph",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cambridge",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Whitby",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Ajax",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Langley",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saanich",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Terrebonne",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Milton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "St. John's",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Moncton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Thunder Bay",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Dieppe",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Waterloo",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Delta",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Chatham",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Red Deer",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Kamloops",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Brantford",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cape Breton",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Lethbridge",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Jean-sur-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Clarington",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pickering",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Nanaimo",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sudbury",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "North Vancouver",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Brossard",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Repentigny",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Newmarket",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Chilliwack",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "White Rock",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Maple Ridge",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Peterborough",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Kawartha Lakes",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Prince George",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sault Ste. Marie",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sarnia",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Wood Buffalo",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "New Westminster",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Chateauguay",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jerome",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Drummondville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint John",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Caledon",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "St. Albert",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Granby",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Medicine Hat",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Grande Prairie",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "St. Thomas",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Airdrie",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Halton Hills",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Hyacinthe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-Brome",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Port Coquitlam",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Fredericton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Blainville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Aurora",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Welland",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "North Bay",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Beloeil",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Belleville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mirabel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shawinigan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dollard-des-Ormeaux",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Brandon",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Rimouski",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cornwall",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Stouffville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Georgina",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Victoriaville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Vernon",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Duncan",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Eustache",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Quinte West",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Charlottetown",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Mascouche",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "West Vancouver",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Salaberry-de-Valleyfield",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rouyn-Noranda",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Timmins",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sorel-Tracy",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "New Tecumseth",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Woodstock",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Boucherville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mission",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Vaudreuil-Dorion",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Brant",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lakeshore",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Innisfil",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Prince Albert",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Langford Station",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Bradford West Gwillimbury",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Campbell River",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Spruce Grove",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Moose Jaw",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Penticton",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Port Moody",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Leamington",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "East Kelowna",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Cote-Saint-Luc",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Val-d'Or",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Owen Sound",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Stratford",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lloydminster",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Pointe-Claire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Orillia",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Alma",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Orangeville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Fort Erie",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "LaSalle",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Julie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Leduc",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "North Cowichan",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Chambly",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Okotoks",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sept-Iles",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Centre Wellington",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Constant",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grimsby",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Boisbriand",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Conception Bay South",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Bruno-de-Montarville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Therese",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cochrane",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Thetford Mines",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Courtenay",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Magog",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Whitehorse",
+    "state": "YT",
+    "state_whole": "Yukon Territory",
+    "region": "N"
+  },
+  {
+    "city": "Woolwich",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Clarence-Rockland",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Fort Saskatchewan",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "East Gwillimbury",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lincoln",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "La Prairie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Tecumseh",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mount Pearl Park",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Amherstburg",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Lambert",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Brockville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Collingwood",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Scugog",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Kingsville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Baie-Comeau",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Paradise",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Uxbridge",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Essa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Candiac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Oro-Medonte",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Varennes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Strathroy-Caradoc",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Wasaga Beach",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "New Glasgow",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Wilmot",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Essex",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Fort St. John",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Kirkland",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "L'Assomption",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Westmount",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Lazare",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Chestermere",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Huntsville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Corner Brook",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Riverview",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Lloydminster",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Joliette",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Yellowknife",
+    "state": "NT",
+    "state_whole": "Northwest Territories",
+    "region": "N"
+  },
+  {
+    "city": "Squamish",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Mont-Royal",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Riviere-du-Loup",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cobourg",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cranbrook",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Beaconsfield",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Springwater",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Dorval",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Thorold",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Camrose",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "South Frontenac",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pitt Meadows",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Port Colborne",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Quispamsis",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Mont-Saint-Hilaire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bathurst",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Augustin-de-Desmaures",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Oak Bay",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sainte-Marthe-sur-le-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Salmon Arm",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Port Alberni",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Esquimalt",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Deux-Montagnes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Miramichi",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Niagara-on-the-Lake",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Lin--Laurentides",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beaumont",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Middlesex Centre",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Inverness",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Stony Plain",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Petawawa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pelham",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Selwyn",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Loyalist",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Midland",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Colwood",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Central Saanich",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sainte-Catherine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Port Hope",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "L'Ancienne-Lorette",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Basile-le-Grand",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Swift Current",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Edmundston",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Russell",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "North Grenville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Yorkton",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Tracadie",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Bracebridge",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Greater Napanee",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Tillsonburg",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Steinbach",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Hanover",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Terrace",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Springfield",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Gaspe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kenora",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cold Lake",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Summerside",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Comox",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sylvan Lake",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Pincourt",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "West Lincoln",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Matane",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Brooks",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Anne-des-Plaines",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "West Nipissing / Nipissing Ouest",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Rosemere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mistassini",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grand Falls",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Clearview",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "St. Clair",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Canmore",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "North Battleford",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Pembroke",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mont-Laurier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Strathmore",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saugeen Shores",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Thompson",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lavaltrie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "High River",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Severn",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Sophie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Charles-Borromee",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Portage La Prairie",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Thames Centre",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mississippi Mills",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Powell River",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "South Glengarry",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "North Perth",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mercier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "South Stormont",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Colomban",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lacombe",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sooke",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Dawson Creek",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Lake Country",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Trent Hills",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Marie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Guelph/Eramosa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Truro",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Amos",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "The Nation / La Nation",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Ingersoll",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Winkler",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Wetaskiwin",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Central Elgin",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lachute",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "West Grey",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Parksville",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Cowansville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Becancour",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Gravenhurst",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Perth East",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Prince Rupert",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Prevost",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Adele",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kentville",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Beauharnois",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Les Iles-de-la-Madeleine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wellington North",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "St. Andrews",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Carleton Place",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Whistler",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Brighton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Tiny",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Gander",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Sidney",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Rothesay",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Brock",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Summerland",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Val-des-Monts",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Tache",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Montmagny",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Erin",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Kincardine",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "North Dundas",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Wellesley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Estevan",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "North Saanich",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Warman",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "La Tuque",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Norwich",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Meaford",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Adjala-Tosorontio",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hamilton Township",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "St. Clements",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Amable",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Weyburn",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "South Dundas",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "L'Ile-Perrot",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-de-l'Ile-Perrot",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Williams Lake",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Elliot Lake",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cantley",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nelson",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Lambton Shores",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mapleton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Georgian Bluffs",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Rawdon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Campbellton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "View Royal",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Coldstream",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Chester",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Queens",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Selkirk",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Felicien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hawkesbury",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Roberval",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Agathe-des-Monts",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "North Dumfries",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Rideau Lakes",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sechelt",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "North Glengarry",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "South Huron",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Marieville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Tay",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Temiskaming Shores",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hinton",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Sauveur",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Quesnel",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Elizabethtown-Kitley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Morinville",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Grey Highlands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Stratford",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Alfred and Plantagenet",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mont-Tremblant",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Martensville",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Raymond",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Amherst",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Ramara",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Bois-des-Filion",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Leeds and the Thousand Islands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Carignan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Brockton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Laurentian Valley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "East St. Paul",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lorraine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Julienne",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Blackfalds",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Malahide",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Oromocto",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Olds",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Huron East",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Stanley",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Penetanguishene",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Qualicum Beach",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Notre-Dame-des-Prairies",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "West Perth",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cavan Monaghan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Arnprior",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Smiths Falls",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pont-Rouge",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Champlain",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Coaticook",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Minto",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Morden",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Mono",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Corman Park No. 344",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Ladysmith",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Bridgewater",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Dauphin",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Otterburn Park",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Taber",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "South Bruce Peninsula",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Edson",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Farnham",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kapuskasing",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "La Malbaie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Renfrew",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Coaldale",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Portugal Cove-St. Philip's",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Zorra",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Kitimat",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Shelburne",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Happy Valley",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Hippolyte",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Castlegar",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Church Point",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Drumheller",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Kirkland Lake",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Argyle",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Torbay",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "La Peche",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Banff",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Innisfail",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Nicolet",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rockwood",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Drummond/North Elmsley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Dryden",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Iqaluit",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Fort Frances",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "La Sarre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Trail",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Chandler",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stone Mills",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hanover",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "South-West Oxford",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Acton Vale",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bromont",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beckwith",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Goderich",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Plympton-Wyoming",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Central Huron",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Rigaud",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Louiseville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Chibougamau",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Aylmer",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Delson",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kimberley",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Blandford-Blenheim",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Bayham",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Augusta",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Puslinch",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Beauport",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Remi",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. Marys",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Drayton Valley",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Ponoka",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Labrador City",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Donnacona",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Southgate",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "McNab/Braeside",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Macdonald",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Hampstead",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Baie-Saint-Paul",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Merritt",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Bluewater",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "East Zorra-Tavistock",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Brownsburg",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stoneham-et-Tewkesbury",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Asbestos",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Huron-Kinloss",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Coteau-du-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "The Blue Mountains",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Whitewater Region",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Edwardsburgh/Cardinal",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Anne-des-Monts",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Old Chelsea",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "North Stormont",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Alnwick/Haldimand",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Peace River",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Arran-Elderslie",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Zotique",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Val-Shefford",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Douro-Dummer",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Plessisville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ritchot",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Otonabee-South Monaghan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Shediac",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Slave Lake",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Port-Cartier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Lambert-de-Lauzon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Barrington",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Rocky Mountain House",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Chatsworth",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Stephenville",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Muskoka Falls",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Devon",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Yarmouth",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Boischatel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Parry Sound",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pointe-Calumet",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beaubassin East / Beaubassin-est",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wainfleet",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cramahe",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Beauceville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "North Middlesex",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Amqui",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Catherine-de-la-Jacques-Cartier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Clarenville",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Mont-Joli",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dysart et al",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Wainwright",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Contrecoeur",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beresford",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Joseph-du-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hope",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Gimli",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Douglas",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Apollinaire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hindon Hill",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Les Cedres",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "La Broquerie",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Kent",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Tweed",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Felix-de-Valois",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bay Roberts",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Melfort",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Bonnyville",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Stettler",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Calixte",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-Megantic",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Perth",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Oliver Paipoonge",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Humboldt",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Charlemagne",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pontiac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. Paul",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Petrolia",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Southwest Middlesex",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Front of Yonge",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Vegreville",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Brigitte-de-Laval",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Princeville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Vercheres",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "The Pas",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Cesaire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "La Ronge",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Tay Valley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "South Bruce",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "McMasterville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Redcliff",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Crowsnest Pass",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Philippe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-du-Mont-Carmel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "L'Ange-Gardien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Martine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Pie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Peachland",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Ashfield-Colborne-Wawanosh",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Trent Lakes",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Northern Rockies",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Cookshire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "West St. Paul",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Windsor",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "L'Epiphanie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Creston",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Smithers",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Cornwall",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Meadow Lake",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Lanark Highlands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sackville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Grand Falls",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Cochrane",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Marystown",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Sioux Lookout",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Didsbury",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Honore",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Fernie",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Deer Lake",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Woodstock",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Val-David",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Flin Flon",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Hudson",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Gananoque",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Brokenhead",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Paul",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Burton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Spallumcheen",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Westlock",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Temiscouata-sur-le-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shannon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Osoyoos",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Montreal-Ouest",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hearst",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Henri",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ste. Anne",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Antigonish",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Espanola",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "West Elgin",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Flin Flon (Part)",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Grand Bay-Westfield",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Anne-de-Bellevue",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "North Huron",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Oliver",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Roch-de-l'Achigan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stirling-Rawdon",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Chisasibi",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Carbonear",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint Marys",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Chertsey",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Armstrong",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Stonewall",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Shippagan",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Lanoraie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Memramcook",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Centre Hastings",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Warwick",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "East Ferris",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hanwell",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Joseph-de-Beauce",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Metchosin",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Lucan Biddulph",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Riviere-Rouge",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Greenstone",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Mathias-sur-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Neepawa",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Gibsons",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Kindersley",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Jasper",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Barrhead",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Les Coteaux",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Melville",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Germain-de-Grantham",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Iroquois Falls",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Havelock-Belmont-Methuen",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cornwallis",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Boniface",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Edenwold No. 158",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Coverdale",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Vanderhoof",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Southwold",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Goulds",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint Stephen",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Waterloo",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nipawin",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Neuville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Cyrille-de-Wendover",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Central Frontenac",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Mont-Orford",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jean-de-Matha",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Seguin",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Tyendinaga",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hampton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sussex",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Grand Forks",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "La Pocatiere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Caraquet",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Etienne-des-Gres",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Altona",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Stellarton",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Wolfville",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "New Maryland",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Port Hardy",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Donat",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Chateau-Richer",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Madawaska Valley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Deep River",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Asphodel-Norwood",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Red Lake",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Metabetchouan-Lac-a-la-Croix",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Berthierville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Vermilion",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Niverville",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Hastings Highlands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Carstairs",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Danville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Channel-Port aux Basques",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Battleford",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Lac-Etchemin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Antonin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jacques",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Swan River",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Sutton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Northern Bruce Peninsula",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "L'Islet-sur-Mer",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Carleton-sur-Mer",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Oka",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Prescott",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Amaranth",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Marmora and Lake",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Maniwaki",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Morin-Heights",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dundas",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Napierville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Crabtree",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bancroft",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Tite",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Howick",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Dutton/Dunwich",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Callander",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Simonds",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Baie-d'Urfe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "New Richmond",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Perth South",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Roxton Pond",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sparwood",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Claresholm",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Breslau",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Montague",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cumberland",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Beaupre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Andre-Avellin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Ambroise-de-Kildare",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "East Angus",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rossland",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Mackenzie",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Golden",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Raymond",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Adolphe-d'Howard",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Warwick",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Bowen Island",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Bonnechere Valley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Windsor",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Pincher Creek",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Alnwick",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Westville",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Fruitvale",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Pasadena",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Prosper",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ormstown",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cardston",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Westbank",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "De Salaberry",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Headingley",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Grande Cache",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Atholville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Agapit",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Prince Albert No. 461",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Casselman",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Ambroise",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hay River",
+    "state": "NT",
+    "state_whole": "Northwest Territories",
+    "region": "N"
+  },
+  {
+    "city": "Mistissini",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Studholm",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Lumby",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Faustin--Lac-Carre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Morris-Turnberry",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Placentia",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Pascal",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mulmur",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Blind River",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Dunham",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Havre-Saint-Pierre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Anselme",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Trois-Pistoles",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grande-Riviere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Powassan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Malartic",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bonavista",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Killarney - Turtle Mountain",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Woodlands",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lewisporte",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Denis-de-Brompton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Invermere",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Salisbury",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Bifrost-Riverton",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Buckland No. 491",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Cartier",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Anne-des-Lacs",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Highlands East",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Alexander",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Claire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Perce",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jean-Port-Joli",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "East Hawkesbury",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Bright",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Penhold",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Andre-d'Argenteuil",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Come--Liniere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Sulpice",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Marathon",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Forestville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Inuvik",
+    "state": "NT",
+    "state_whole": "Northwest Territories",
+    "region": "N"
+  },
+  {
+    "city": "Richmond",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lake Cowichan",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sables-Spanish Rivers",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hillsburg-Roblin-Shell River",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Port Hawkesbury",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Three Hills",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Lorette",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Paspebiac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Thomas",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jean-Baptiste",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Portneuf",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pictou",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Tisdale",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Lake of Bays",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "High Level",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Gibbons",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Bishops Falls",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "WestLake-Gladstone",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Normandin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Alphonse-Rodriguez",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beausejour",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Dalhousie",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Alphonse-de-Granby",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac du Bonnet",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Clermont",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Virden",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Compton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "White City",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Ellison",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Mont-Saint-Gregoire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wellington",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Merrickville",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Liboire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Degelis",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Morris",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Alexis-des-Monts",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cap-Saint-Ignace",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Anaclet-de-Lessard",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Carman",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Athens",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Melancthon",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Cap Sante",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Harbour Grace",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Houston",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Adelaide-Metcalfe",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Crossfield",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Springdale",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Fort Macleod",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Athabasca",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Enderby",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Ferreol-les-Neiges",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Laurentian Hills",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Grand Valley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Senneterre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Marie-Madeleine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Admaston/Bromley",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Gabriel-de-Valcartier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "North Algona Wilberforce",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Kingston",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wawa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Christophe-d'Arthabaska",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Melanie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ascot Corner",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Horton",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Michel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Botwood",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Paul-d'Abbotsford",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Marc-des-Carrieres",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stanstead",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Anne-de-Beaupre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Luce",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Gabriel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rankin Inlet",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Vanscoy No. 345",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Cedar",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Princeton",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "La Loche",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Kingsclear",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Ferme-Neuve",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Thurso",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Adstock",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shuniah",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Enniskillen",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Yamachiche",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Maurice",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bonaventure",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Val-Morin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pohenegamook",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wakefield",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Stoke",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Marguerite-du-Lac-Masson",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Prime",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kuujjuaq",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Atikokan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Grenville-sur-la-Rouge",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "North Cypress-Langford",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Anne-de-Sorel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Macamic",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sundre",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Rougemont",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Piedmont",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grimshaw",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Lac-des-Ecorces",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Northeastern Manitoulin and the Islands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pelican Narrows",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "McDougall",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Black Diamond",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Pamphile",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bedford",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Weedon-Centre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lacolle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Gabriel-de-Brandon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Errington",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Coalhurst",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "French River / Riviere des Francais",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Arviat",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Saint-David-de-Falardeau",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Markstay",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Spaniards Bay",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Cocagne",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Bruno",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Chetwynd",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Laurier-Station",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Anicet",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Mathieu-de-Beloeil",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cap-Chat",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sexsmith",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Notre-Dame-de-Lourdes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ville-Marie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Isidore",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shippegan",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "East Garafraxa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pemberton",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Unity",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Rimbey",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "High Prairie",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Turner Valley",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Hanna",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Fort Smith",
+    "state": "NT",
+    "state_whole": "Northwest Territories",
+    "region": "N"
+  },
+  {
+    "city": "Maria",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Chrysostome",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Greater Madawaska",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Berwick",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Damase",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lincoln",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Disraeli",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Victoire-de-Sorel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Meadow Lake No. 588",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Elkford",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Georgian Bay",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Alexandre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Herbertville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Moosomin",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "North Kawartha",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Thecle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Trenton",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Fermont",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Esterhazy",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Wickham",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "La Presentation",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beaverlodge",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Catherine-de-Hatley",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Basile",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Raphael",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Holyrood",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Gracefield",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Martin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Causapscal",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Brigham",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Perry",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Port-Daniel--Gascons",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rosetown",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Minnedosa",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Labelle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Huntingdon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hebertville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Black River-Matheson",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Michel-des-Saints",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dufferin",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Victor",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sicamous",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Cap Pele",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Kelsey",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Killaloe, Hagarty and Richards",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Alvinston",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Dundurn No. 314",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Ephrem-de-Beauce",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Assiniboia",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Temiscaming",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Magrath",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Genevieve-de-Berthier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Buctouche",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Grand Manan",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Madeleine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Boissevain",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Scott",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Croix",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Algonquin Highlands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Valcourt",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint George",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Paquetville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Dominique",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Clearwater",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Addington Highlands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lillooet",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Burin",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Grand Bank",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Lery",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Minto",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Rosthern No. 403",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Chase",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Mansfield-et-Pontefract",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Denis",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Outlook",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Mitchell",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Gedeon-de-Beauce",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Leonard-d'Aston",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lunenburg",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Northesk",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Albanel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. Anthony",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Pessamit",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Maskinonge",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Charles-de-Bellechasse",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Fogo Island",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "East Broughton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lantz",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Calmar",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Highlands",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Polycarpe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Logy Bay-Middle Cove-Outer Cove",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Deschambault",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Canora",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Upper Miramichi",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Anmore",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Hardwicke",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Come",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Waskaganish",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Twillingate",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Quentin",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Lebel-sur-Quevillon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pilot Butte",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Nanton",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Pierreville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "New-Wes-Valley",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Pennfield Ridge",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "West Interlake",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Biggar",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Britannia No. 502",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Kent",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wabana",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Gilles",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wendake",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Bernard",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Cecile-de-Milton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Roch-de-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Nazaire",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Elzear",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hinchinbrooke",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Francois-Xavier-de-Brompton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Papineauville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Prairie View",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Cowichan Bay",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Ignace-de-Loyola",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Central Manitoulin",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Maple Creek",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Glovertown",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Tofield",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Madoc",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Upton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Anne-de-Sabrevois",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Logan Lake",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sainte-Anne-de-la-Perade",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Damien-de-Buckland",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Baker Lake",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Saltair",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Pouch Cove",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Ferdinand",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Port McNeill",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Digby",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Manouane",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Gervais",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Neebing",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Redwater",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Alexandre-de-Kamouraska",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Marc-sur-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mandeville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Caplan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Point Edward",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Allardville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Waterville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Damien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-Nominingue",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Obedjiwan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rama",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "McCreary",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Deloraine-Winchester",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Oakland-Wawanesa",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Brenda-Waskada",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Russell-Binscarth",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Ellice-Archie",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Souris-Glenwood",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Riverdale",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Pembina",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Wallace-Woodworth",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lorne",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Ethelbert",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Yellowhead",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Swan Valley West",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Grey",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Gilbert Plains",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Norfolk-Treherne",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Hamiota",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Emerson-Franklin",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Sifton",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Rossburn",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Grand View",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Grassland",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Louise",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Ste. Rose",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Cartwright-Roblin",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Mossey River",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lakeshore",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Riding Mountain West",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Clanwilliam-Erickson",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Glenboro-South Cypress",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "North Norfolk",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Reinland",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Minitonas-Bowsman",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Kippens",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Blucher",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Hatley",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Gedeon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Kingsey Falls",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Provost",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Charles",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Mattawa",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Tumbler Ridge",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Terrasse-Vaudreuil",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "L'Ascension-de-Notre-Seigneur",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bow Island",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Barraute",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "One Hundred Mile House",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Kedgwick",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Gambo",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Liguori",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bonfield",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Pointe-Lebel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint Mary",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Patrice-de-Sherrington",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Fox Creek",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Dawn-Euphemia",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Chapleau",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Esprit",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Westfield Beach",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Montague",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Mashteuiatsh",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Francois-du-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Eel River Crossing",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Fulgence",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Millet",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Vallee-Jonction",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Georges-de-Cacouna",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lumsden No. 189",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Manitouwadge",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Wellington",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Swift Current No. 137",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Tofino",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Fort Qu'Appelle",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Vulcan",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Indian Head",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Petit Rocher",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wabush",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Fabien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Watrous",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "North Frontenac",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-Superieur",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Les Escoumins",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Richibucto",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Riviere-Beaudette",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Barthelemy",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nisga'a",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Austin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Mathieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Paul-de-l'Ile-aux-Noix",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Orkney No. 244",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Behchoko",
+    "state": "NT",
+    "state_whole": "Northwest Territories",
+    "region": "N"
+  },
+  {
+    "city": "Saint-Joseph-de-Coleraine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Cyprien-de-Napierville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sayabec",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Valleyview",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Deleage",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Potton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Beatrix",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Justine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Eastman",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Valerien-de-Milton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Cuthbert",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Blaise-sur-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Middleton",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Maugerville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Dalmeny",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Kamsack",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Lumsden",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Trinity Bay North",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Michel-de-Bellechasse",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Angele-de-Monnoir",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Picture Butte",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sacre-Coeur-Saguenay",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Louis",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Victoria",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Robert",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Armstrong",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Pierre-de-l'Ile-d'Orleans",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "La Guadeloupe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint Andrews",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Burns Lake",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Povungnituk",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Manners Sutton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Gore",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Deseronto",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lamont",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Chambord",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dudswell",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wynyard",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Cambridge Bay",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Saint-Narcisse",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Frontenac Islands",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Waswanipi",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Inukjuak",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Piney",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Komoka",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Zacharie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hemmingford",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shelburne",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Clet",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Carberry",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Brighton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Antoine",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Warfield",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Northampton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Ours",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stephenville Crossing",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Anne-de-la-Pocatiere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ucluelet",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Placide",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Barriere",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Fisher",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Nipissing",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Clotilde",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shaunavon",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Wicklow",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Southesk",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Nouvelle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rosthern",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Yamaska",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Neguac",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Flat Rock",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Igloolik",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Grunthal",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Naramata",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Elie-de-Caxton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Blumenort",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Balmoral",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Price",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Rosedale",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Jacques-le-Mineur",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Huron Shores",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Champlain",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Whitehead",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Antoine-sur-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Pacome",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Stanislas-de-Kostka",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Frontenac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stuartburn",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Yamaska-Est",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Emelie-de-l'Energie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Charles-sur-Richelieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Joseph-de-Sorel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nipigon",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Riviere-Blanche",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Helene-de-Bagot",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Franklin Centre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Harbour Breton",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Massey Drive",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Mille-Isles",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wilton No. 472",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Lyster",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Oakview",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Balgonie",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Harrison Park",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Kensington",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Witless Bay",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Pond Inlet",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Royston",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Sainte-Clotilde-de-Horton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Burford",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Fossambault-sur-le-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Benoit-Labre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Coombs",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Terrace Bay",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Chapais",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Honore-de-Shenley",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cleveland",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Macdonald, Meredith and Aberdeen Additional",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Messines",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jean-de-Dieu",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nakusp",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Florenceville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Antoine-de-Tilly",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lakeview",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Humbermouth",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Fort St. James",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Francois-de-la-Riviere-du-Sud",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jacques",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Uashat",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Perth",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Eeyou Istchee Baie-James",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Shellbrook No. 493",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Shawville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Lucien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lambton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Laurent-de-l'Ile-d'Orleans",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Flavien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grenville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Chute-aux-Outardes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Marcelline-de-Kildare",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Felix-de-Kingsey",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Upper Island Cove",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Glenelg",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Elisabeth",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ashcroft",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Clarkes Beach",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Bernard-de-Lacolle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Belledune",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Guillaume",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Venise-en-Quebec",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Maliotenam",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ripon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hilliers",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Joseph",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Paulin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bon Accord",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint David",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Albert",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Matagami",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Springfield",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Amherst",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-du-Laus",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. George",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wembley",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Victoria",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Springbrook",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Tite-des-Caps",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hudson Bay",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Pinawa",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Brudenell, Lyndoch and Raglan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Carlyle",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Keremeos",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Val-Joli",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Gold River",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Casimir",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bay Bulls",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Langham",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Frenchman Butte",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Gordon",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Kugluktuk",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Saint-Malachie",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Southampton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Salluit",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pangnirtung",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Saint-Louis-de-Gonzague",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Moosonee",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Englehart",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Urbain",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Tring-Jonction",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nauwigewauk",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Pointe-a-la-Croix",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Denmark",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Joachim",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Torch River No. 488",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Theodore-d'Acton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grindrod",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "L' Isle-Verte",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Harrison Hot Springs",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Palmarolle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Henryville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sussex Corner",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Odilon-de-Cranbourne",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pipestone",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Laurierville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "La Dore",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-au-Saumon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wotton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Prairie Lakes",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Elk Point",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Shellbrook",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Wemindji",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cape Dorset",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Strong",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Lappe",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Riviere-Heva",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Fort-Coulonge",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Irishtown-Summerside",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Godmanchester",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Macklin",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Armour",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Simon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. Francois Xavier",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Tingwick",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Aubert",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Mathieu-du-Parc",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wabasca",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Ragueneau",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-du-Bon-Conseil",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Wasagamack",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Ubalde",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Creighton",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Fortune",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Faraday",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Berthier-sur-Mer",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Frampton",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Magnetawan",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "New Carlisle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Laird No. 404",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Petitcodiac",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Popkum",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Norton",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Canwood No. 494",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Wentworth-Nord",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bas Caraquet",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Ursule",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dawson",
+    "state": "YT",
+    "state_whole": "Yukon Territory",
+    "region": "N"
+  },
+  {
+    "city": "Nantes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-aux-Sables",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Stewiacke",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Taylor",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Rosser",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Estevan No. 5",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Falmouth",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Vaudreuil-sur-le-Lac",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grahamdale",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Cardwell",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Two Hills",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Spiritwood No. 496",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Legal",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Amulet",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Herouxville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pointe-des-Cascades",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Weldford",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Reynolds",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "St. Laurent",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lions Bay",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "L'Isle-aux-Allumettes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Emo",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Brigide-d'Iberville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Les Eboulements",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dunsmuir",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Pointe-aux-Outardes",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Smooth Rock Falls",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Oxbow",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Telkwa",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Gjoa Haven",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Sainte-Barbe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mayerthorpe",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Louis-du-Ha! Ha!",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Powerview-Pine Falls",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Baie Verte",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Edouard",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Charlo",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Hillsborough",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Bruederheim",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Burgeo",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Wadena",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Richmond",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Swan Hills",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Wilkie",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Leonard",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Riviere-Bleue",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Noyan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ile-a-la-Crosse",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Landmark",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Hugues",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Chisholm",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Anne-du-Sault",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "La Conception",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Valere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sorrento",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Lameque",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Thessalon",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "L'Isle-aux-Coudres",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nobleford",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Larouche",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "South Qu'Appelle No. 157",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Elton",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Lorrainville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Conestogo",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Upham",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "St.-Charles",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Lucie-des-Laurentides",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Alexis",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Gillam",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Roxton Falls",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Montcalm",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Clarendon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mervin No. 499",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Ludger",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Coldwell",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Arsene",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Racine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Majorique-de-Grantham",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Zenon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Armand",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Edouard-de-Lotbiniere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Alonsa",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Listuguj",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bowden",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "St. Joseph",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Osler",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Hubert-de-Riviere-du-Loup",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Jude",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Dildo",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "La Minerve",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lanigan",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Lajord No. 128",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Moonbeam",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-des-Pins",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Alban",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Pierre-les-Becquets",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Arborg",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Vauxhall",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Bayfield",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Beaver River",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Irricana",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Labrecque",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "New Bandon",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wemotaci",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Henedine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "L'Anse-Saint-Jean",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bassano",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Parrsboro",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Kaleden",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "St. George's",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Fort Simpson",
+    "state": "NT",
+    "state_whole": "Northwest Territories",
+    "region": "N"
+  },
+  {
+    "city": "Akwesasne",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "L'Avenir",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ignace",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Claremont",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Teulon",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Peel",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Musquash",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Notre-Dame-du-Portage",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. Lawrence",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Oxford",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Minto-Odanah",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "St. Alban's",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint James",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Norbert-d'Arthabaska",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Manning",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Glenella-Lansdowne",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Hilarion",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Simeon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Barnabe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Felicite",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Two Borders",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Queensbury",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Bury",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-Bouchette",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Lazare-de-Bellechasse",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Michel-du-Squatec",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Joachim-de-Shefford",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St-Pierre-Jolys",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Grand-Remous",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Gabriel-de-Rimouski",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Armstrong",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Rogersville",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Langenburg",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Marie-Salome",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Moose Jaw No. 161",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Cyprien",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Maidstone",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Tres-Saint-Sacrement",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Battle River No. 438",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Miltonvale Park",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "McAdam",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saints-Anges",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Urbain-Premier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Centreville-Wareham-Trinity",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Alberton",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Winnipeg Beach",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Agathe-de-Lotbiniere",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Salmo",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Kipling",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Sagamok",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Trecesson",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Tara",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Grande-Vallee",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Bertrand",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Newcastle",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Mont-Carmel",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint Martins",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Eugene",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-des-Neiges",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Andre",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Centreville",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Roland",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Leon-de-Standon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Modeste",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Carnduff",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Carling",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Eckville",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Nain",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Hillsburgh",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Foam Lake",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Sabine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Maxime-du-Mont-Louis",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Blanc-Sablon",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Cobalt",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Gravelbourg",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "South River",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Hudson Bay No. 394",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "McKellar",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Frelighsburg",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Buffalo Narrows",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Ayer's Cliff",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Les Mechins",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Marguerite",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Claude",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Air Ronge",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Chipman",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Girardville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Bruno-de-Guigues",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Grenfell",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Dorchester",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "South Algonquin",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Windermere",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Narcisse-de-Beaurivage",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Rene-de-Matane",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Jeanne-d'Arc",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Plaisance",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Roxton-Sud",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "St. Louis No. 431",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Youbou",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Duchess",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Frederic",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Viking",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Sioux Narrows-Nestor Falls",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Whitecourt",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Repulse Bay",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Montreal-Est",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "King",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Regina Beach",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Patrice-de-Beaurivage",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Ootischenia",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Hensall",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Bentley",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Durham",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Marthe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Notre-Dame-du-Nord",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Pinehouse",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Aime-des-Lacs",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Lac-Drolet",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Preeceville",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Maple Creek No. 111",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Harbour Main-Chapel's Cove-Lakeview",
+    "state": "NL",
+    "state_whole": "Newfoundland and Labrador",
+    "region": "AR"
+  },
+  {
+    "city": "Saint-Wenceslas",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Weyburn No. 67",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Birch Hills",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Wedgeport",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Kerrobert",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Havelock",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Eston",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Sainte-Genevieve-de-Batiscan",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Justin",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Norbert",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Schreiber",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Trochu",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Botsford",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Riviere-Ouelle",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Greenwich",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Stukely-Sud",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Georges-de-Clarenceville",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Sainte-Therese-de-Gaspe",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Beachburg",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Desbiens",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Clyde River",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "La Macaza",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Souris",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Kindersley No. 290",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Laird",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Falher",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Vallier",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Coleraine",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Melita",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Noonan",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Sainte-Petronille",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Delisle",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Bristol",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Mahone Bay",
+    "state": "NS",
+    "state_whole": "Nova Scotia",
+    "region": "AR"
+  },
+  {
+    "city": "Waldheim",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Sylvestre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Taloyoak",
+    "state": "NU",
+    "state_whole": "Nunavut",
+    "region": "N"
+  },
+  {
+    "city": "Onoway",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Stanislas",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Malpeque",
+    "state": "PE",
+    "state_whole": "Prince Edward Island",
+    "region": "AR"
+  },
+  {
+    "city": "Plantagenet",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Longue-Rive",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Argyle",
+    "state": "MB",
+    "state_whole": "Manitoba",
+    "region": "PP"
+  },
+  {
+    "city": "Davidson",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Plaster Rock",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Wilmot",
+    "state": "NB",
+    "state_whole": "New Brunswick",
+    "region": "AR"
+  },
+  {
+    "city": "Valemount",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Saint-Leonard-de-Portneuf",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Alberta Beach",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  },
+  {
+    "city": "Saint-Narcisse-de-Rimouski",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Saint-Bonaventure",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Longlaketon No. 219",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Papineau-Cameron",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Assiginack",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Brebeuf",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Hudson Hope",
+    "state": "BC",
+    "state_whole": "British Columbia",
+    "region": "WC"
+  },
+  {
+    "city": "Prince",
+    "state": "ON",
+    "state_whole": "Ontario",
+    "region": "CC"
+  },
+  {
+    "city": "Baie-du-Febvre",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Durham-Sud",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Melbourne",
+    "state": "QC",
+    "state_whole": "Quebec",
+    "region": "CC"
+  },
+  {
+    "city": "Nipawin No. 487",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Duck Lake No. 463",
+    "state": "SK",
+    "state_whole": "Saskatchewan",
+    "region": "PP"
+  },
+  {
+    "city": "Oyen",
+    "state": "AB",
+    "state_whole": "Alberta",
+    "region": "PP"
+  }
+]

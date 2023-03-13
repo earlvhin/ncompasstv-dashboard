@@ -32,12 +32,18 @@
                                     </app-autocomplete-field>
                                 </div>
                                 <div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-3">
-                                    <mat-form-field *ngIf="!field.autocomplete; else autocomplete_field;" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
+                                    <mat-form-field *ngIf="!field.autocomplete && !field.checkbox; else custom_field;" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">
                                         <mat-label>{{ field.label }}</mat-label>
                                         <input matInput [formControlName]="field.control" [placeholder]="field.placeholder" [required]="field.is_required">
                                     </mat-form-field>
     
-                                    <ng-template #autocomplete_field>
+                                    <ng-template #custom_field>
+                                        <div class="col-lg-12 p-0" *ngIf="field.control == 'is_canada'">
+                                            <span class="sm-text">
+                                                <mat-checkbox class="example-margin mr-3" (change)="getCanadaAddress($event)"></mat-checkbox> Canada Address
+                                            </span>
+                                        </div>
+
 										<app-autocomplete-field *ngIf="field.control == 'category' && !no_category; else no_category_selected;"
 											(data_value)="setToCategory($event)"
 											[data_reference]="categories_data"
@@ -58,6 +64,19 @@
 											[initial_value]="category_selected"
                                             [disabled]="true">
 										</app-autocomplete-field>
+
+                                        <app-autocomplete-field
+                                            *ngIf="field.control === 'city'"
+                                            (data_value)="setCity($event)"
+                                            [key_of_value]="'city_state'"
+                                            [placeholder]="field.placeholder"
+                                            [label]="field.label"
+                                            [data_reference]="city_state"
+                                            [search_keyword]="'city_state'"
+                                            [primary_keyword]="'city_state'"
+                                            [new_value]="city_selected"
+                                            [initial_value]="city_selected">
+                                        </app-autocomplete-field>
 
 										<ng-template #no_category_selected>
 											<mat-form-field *ngIf="field.control === 'category'" [hideRequiredMarker]="false" [floatLabel]="'auto'" class="full-width">

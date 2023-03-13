@@ -2,11 +2,15 @@ export class City {
     city: string;
     city_state: string;
     state: any;
+    region?: any;
+    whole_state?: any;
 
-    constructor(city: string, city_state: string, state: any) {
+    constructor(city: string, city_state: string, state: any, region?: any, whole_state?: any) {
         this.city = city;
         this.city_state = city_state;
         this.state = state;
+        this.region = region;
+        this.whole_state = whole_state;
     }
 }
 

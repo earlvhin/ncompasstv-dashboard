@@ -68,6 +68,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
+        this.view_value = this.new_value;
 
 		if (this.reset_value) this.view_value = '';
 		this.data_reference = this.data_reference;
