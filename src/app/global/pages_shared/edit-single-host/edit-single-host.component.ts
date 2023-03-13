@@ -46,7 +46,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	dealer = this.page_data.dealer;
 	dealers_data: API_DEALER[] = [];
 	dealers_loaded = false;
-	disable_business_name = true;
+	is_dealer_change_disabled = true;
 	edit_host_form: FormGroup;
 	edit_host_form_controls = this._editHostFormControls;
 	half_width_fields = this._halfWidthFields;
@@ -114,7 +114,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	}
 
 	addHours(data: { periods: any[]; id: string }): void {
-		const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
+		const defaultHours = { opening: '9:00 AM', closing: '5:00 PM' };
 		const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
 		const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
 		const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
@@ -132,6 +132,12 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		data.periods.push(hours);
 
 		this.checkBusinessHoursFields();
+	}
+
+	changeHostDealer(isEdit: boolean): void {
+		if (isEdit) this.addCurrentDealerToList();
+		this.closed_without_edit = isEdit;
+		this.is_dealer_change_disabled = isEdit;
 	}
 
 	checkBusinessHoursFields(): void {
@@ -263,12 +269,6 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				throw new Error(error);
 			}
 		);
-	}
-
-	onEditBusinessName(isEdit: boolean): void {
-		this.closed_without_edit = isEdit;
-		if (isEdit) this.addCurrentDealerToList();
-		this.disable_business_name = isEdit;
 	}
 
 	onSelectDealer(id: string) {

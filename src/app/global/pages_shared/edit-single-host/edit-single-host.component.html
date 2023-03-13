@@ -20,9 +20,9 @@
 		<div class="form-container">
 			<mat-tab-group>
 				<mat-tab label="Details">
-					<div class="form-fields-container mb-4">
-						<div class="dealer-business-name d-flex">
-							<div class="autocomplete-container mb-3">
+					<div class="form-fields-container d-flex flex-column mb-4">
+						<div class="d-flex align-items-center">
+							<div class="dealers-selection full-width">
 								<app-autocomplete-field
 									[data_reference]="dealers_data"
 									[primary_keyword]="'businessName'"
@@ -32,99 +32,121 @@
 									[label]="'Type in a Dealer Business Name'"
 									[new_value]="dealer.businessName"
 									[initial_value]="dealer.businessName"
-									[disabled]="!is_current_user_admin || disable_business_name"
+									[disabled]="!is_current_user_admin || is_dealer_change_disabled"
 									[paging]="paging"
 									(call_next_page)="getDealers($event)"
 									(searched)="searchDealer($event)"
 									[no_edit]="closed_without_edit">
 								</app-autocomplete-field>
 							</div>
+
 							<ng-container *ngIf="is_current_user_admin">
-								<div class="mt-4 mb-3">
-									<ng-container *ngIf="disable_business_name; else editNameBtn">
-										<span class="fa fa-pencil cursor-pointer" (click)="onEditBusinessName(false)"></span>
-									</ng-container>
-									<ng-template #editNameBtn>
-										<span class="fa fa-times text-danger cursor-pointer" (click)="onEditBusinessName(true)"></span>
-									</ng-template>
+								<mat-icon
+									class="cursor-pointer"
+									[ngClass]="{ 'text-danger': !is_dealer_change_disabled }"
+									(click)="changeHostDealer(!is_dealer_change_disabled)">
+									{{ is_dealer_change_disabled ? 'mode_edit' : 'close' }}
+								</mat-icon>
+							</ng-container>
+						</div>
+						<div class="business-name-and-category d-flex">
+							<mat-form-field class="business-name">
+								<mat-label>Host Business Name</mat-label>
+								<input matInput type="text" formControlName="businessName" placeholder="Ex. Angel's Burger" />
+							</mat-form-field>
+
+							<ng-container *ngIf="categories_loaded; else loadingCategories">
+								<div class="categories-selection flex-even">
+									<app-autocomplete-field
+										[data_reference]="categories_data"
+										[primary_keyword]="'categoryName'"
+										[key_of_value]="'categoryName'"
+										(data_value)="setCategory($event)"
+										[required]="true"
+										[label]="'Choose Category'"
+										[new_value]="category_selected"
+										[initial_value]="category_selected">
+									</app-autocomplete-field>
 								</div>
 							</ng-container>
 						</div>
-						<div *ngFor="let field of edit_host_form_controls" class="mb-3">
-							<ng-container [ngSwitch]="field.type">
-								<ng-container *ngSwitchCase="'text'">
-									<mat-form-field class="full-width">
-										<mat-label>{{ field.label }}</mat-label>
-										<input matInput type="text" [formControlName]="field.control" [placeholder]="field.placeholder" />
-									</mat-form-field>
-								</ng-container>
 
-								<ng-container *ngSwitchCase="'number'">
-									<mat-form-field class="full-width">
-										<mat-label>{{ field.label }}</mat-label>
-										<input
-											matInput
-											type="number"
-											step="any"
-											[formControlName]="field.control"
-											[placeholder]="field.placeholder" />
-									</mat-form-field>
-								</ng-container>
+						<div class="latitude-and-longitude d-flex">
+							<mat-form-field class="flex-even">
+								<mat-label>Latitude</mat-label>
+								<input matInput type="number" step="any" formControlName="lat" placeholder="Ex. 58.933" />
+							</mat-form-field>
+							<mat-form-field class="flex-even">
+								<mat-label>Longitude</mat-label>
+								<input matInput type="number" step="any" formControlName="long" placeholder="Ex. 58.933" />
+							</mat-form-field>
+						</div>
 
-								<ng-container *ngSwitchCase="'textarea'">
-									<textarea matInput maxLength="500" [formControlName]="field.control" [placeholder]="field.placeholder">
-									</textarea>
-								</ng-container>
+						<div class="address-city-state d-flex">
+							<mat-form-field class="flex-even">
+								<mat-label>Address</mat-label>
+								<input matInput type="text" formControlName="address" placeholder="Ex. 21st Drive Fifth Avenue Place" />
+							</mat-form-field>
 
-								<ng-container *ngSwitchCase="'autocomplete'">
-									<ng-container [ngSwitch]="field.control">
-										<ng-container *ngSwitchCase="'category'">
-											<ng-container *ngIf="categories_loaded; else loadingCategories">
-												<app-autocomplete-field
-													[data_reference]="categories_data"
-													[primary_keyword]="'categoryName'"
-													[key_of_value]="'categoryName'"
-													(data_value)="setCategory($event)"
-													[required]="true"
-													[label]="'Choose Category'"
-													[new_value]="category_selected"
-													[initial_value]="category_selected">
-												</app-autocomplete-field>
-											</ng-container>
-										</ng-container>
-
-										<ng-container *ngSwitchCase="'timezone'">
-											<ng-container *ngIf="timezones_loaded; else loadingTimezones">
-												<app-autocomplete-field
-													[data_reference]="timezones"
-													[primary_keyword]="'name'"
-													[key_of_value]="'id'"
-													(data_value)="setTimezone($event)"
-													[required]="true"
-													[label]="'Timezone'"
-													[initial_value]="host.timeZoneData.name">
-												</app-autocomplete-field>
-											</ng-container>
-										</ng-container>
-
-										<ng-container *ngSwitchCase="'city'">
-											<ng-container *ngIf="cities_loaded; else loadingCities">
-												<app-autocomplete-field
-													(data_value)="setCity($event)"
-													[key_of_value]="'city_state'"
-													[placeholder]="field.placeholder"
-													[label]="field.label"
-													[data_reference]="city_state"
-													[search_keyword]="'city_state'"
-													[primary_keyword]="'city_state'"
-													[new_value]="city_selected"
-													[initial_value]="city_selected">
-												</app-autocomplete-field>
-											</ng-container>
-										</ng-container>
-									</ng-container>
-								</ng-container>
+							<ng-container *ngIf="cities_loaded; else loadingCities">
+								<div class="cities-selection flex-even">
+									<app-autocomplete-field
+										[label]="'City'"
+										[placeholder]="'Ex. Chicago'"
+										(data_value)="setCity($event)"
+										[key_of_value]="'city_state'"
+										[data_reference]="city_state"
+										[search_keyword]="'city_state'"
+										[primary_keyword]="'city_state'"
+										[new_value]="city_selected"
+										[initial_value]="city_selected">
+									</app-autocomplete-field>
+								</div>
 							</ng-container>
+
+							<mat-form-field class="flex-even">
+								<mat-label>State</mat-label>
+								<input matInput type="text" formControlName="state" placeholder="Ex. IL" />
+							</mat-form-field>
+						</div>
+
+						<div class="region-zip-timezone d-flex">
+							<mat-form-field class="flex-even">
+								<mat-label>Region</mat-label>
+								<input matInput type="text" formControlName="region" placeholder="Ex. SW" />
+							</mat-form-field>
+
+							<mat-form-field class="flex-even">
+								<mat-label>Zip Code</mat-label>
+								<input matInput type="text" formControlName="zip" placeholder="Ex. 54001" />
+							</mat-form-field>
+
+							<ng-container *ngIf="timezones_loaded; else loadingTimezones">
+								<div class="timezones-selection flex-even">
+									<app-autocomplete-field
+										[data_reference]="timezones"
+										[primary_keyword]="'name'"
+										[key_of_value]="'id'"
+										(data_value)="setTimezone($event)"
+										[required]="true"
+										[label]="'Timezone'"
+										[initial_value]="host.timeZoneData.name">
+									</app-autocomplete-field>
+								</div>
+							</ng-container>
+						</div>
+
+						<mat-form-field class="full-width">
+							<mat-label>Vistar Venue ID</mat-label>
+							<input matInput type="text" formControlName="vistar_venue_id" placeholder="Venue ID for Vistar" />
+						</mat-form-field>
+
+						<div class="d-flex">
+							<textarea matInput class="flex-even" maxLength="500" formControlName="notes" placeholder="Enter your notes here..">
+							</textarea>
+
+							<textarea matInput class="flex-even" maxLength="500" formControlName="others" placeholder="Other stuff here...">
+							</textarea>
 						</div>
 					</div>
 				</mat-tab>
@@ -190,9 +212,7 @@
 											</div>
 											<ng-container *ngIf="isOpenButNotAllDay(period)">
 												<div class="add-hours-container">
-													<i class="add-hours-btn" (click)="addHours(h)">
-														<span class="fas fa-plus ml-2"></span>
-													</i>
+													<i class="add-hours-btn fas fa-plus ml-2" (click)="addHours(h)"> </i>
 												</div>
 												<div class="indicator">
 													<mat-icon [ngClass]="checkSchedule(h.day)">

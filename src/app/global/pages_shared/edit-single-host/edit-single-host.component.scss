@@ -2,6 +2,12 @@
 	margin-top: 20px;
 }
 
+.form-fields-container {
+	.business-name {
+		width: 400px;
+	}
+}
+
 .dialog-heading {
 	gap: 30px;
 }
@@ -22,6 +28,10 @@ button.delete {
 		h4 {
 			margin-right: 20px;
 		}
+	}
+
+	.business-hours-fields {
+		margin-bottom: 20px;
 	}
 
 	.bulk-edit {
@@ -75,4 +85,5 @@ button.delete {
 
 .clickable {
 	cursor: pointer;
+	user-select: none;
 }
