@@ -56,17 +56,17 @@
 									*ngFor="let hours of business_hours; let i = index"
 									[ngClass]="current_business_day === hours.day ? 'text-primary' : 'text-white'">
 									{{ hours.day }}
-									<span *ngIf="hours.periods[0]; else close">
-										<span *ngFor="let periods of hours.periods; let j = index">
-											<span *ngIf="j > 0"> & </span>
-											<span *ngIf="periods.open == '' && periods.close == '' && hours.status">- Open 24 hours</span>
+									<ng-container *ngIf="hours.status; else close">
+										<ng-container *ngFor="let periods of hours.periods; let period_index = index">
+											<span *ngIf="period_index > 0"> & </span>
+											<span *ngIf="isOpenAllDay(hours, period_index)">- Open 24 hours</span>
 											<span *ngIf="periods.open == '' && periods.close == '' && !hours.status">- Closed</span>
-											<span *ngIf="periods.open != '' && periods.close != ''">
+											<span *ngIf="isOpenButNotAllDay(hours, period_index)">
 												- {{ periods.open }} <span *ngIf="periods.open != '' && periods.close != ''">-</span>
 												{{ periods.close }}
 											</span>
-										</span>
-									</span>
+										</ng-container>
+									</ng-container>
 									<ng-template #close> - CLOSED </ng-template>
 								</div>
 							</div>
