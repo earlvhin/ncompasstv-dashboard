@@ -1028,6 +1028,38 @@
 								</div>
 							</mat-card>
 
+							<mat-card class="px-4 pb-0 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even mb-3">
+										<h4>Enable FE-DCP Tool</h4>
+										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
+									</div>
+									<div *ngIf="fastEdgeSettingsSaving">
+										<mat-spinner [diameter]="20"></mat-spinner>
+									</div>
+								</div>
+
+								<div class="fast-edge-setting-form-wrapper">
+									<form [formGroup]="fastEdgeSettings">
+										<div class="d-flex">
+											<div class="flex-even">
+												<mat-form-field class="w-100" appearance="fill">
+													<mat-label>Enter Password*</mat-label>
+													<input matInput formControlName="password" type="password" />
+												</mat-form-field>
+											</div>
+											<div class="pt-3 ml-5 text-right">
+												<mat-slide-toggle
+													(change)="toggleFastEdgeTool($event)"
+													[disabled]="!fastEdgeSettings.valid"
+													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
+												</mat-slide-toggle>
+											</div>
+										</div>
+									</form>
+								</div>
+							</mat-card>
+
 							<!-- Automatic TV Display ON/OFF -->
 							<!-- <mat-card class="p-4 mb-3">
 								<div class="d-flex align-items-center">
@@ -1118,6 +1150,46 @@
 						<app-installation-tab [license_id]="license_id"> </app-installation-tab>
 					</ng-template>
 				</mat-tab>
+
+				<!-- Settings For Dealers -->
+				<mat-tab label="Settings" *ngIf="!isCurrentUserAdmin && license_data">
+					<div class="row mt-4">
+						<div class="col-lg-6">
+							<mat-card class="px-4 pb-0 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even mb-3">
+										<h4>Enable FE-DCP Tool</h4>
+										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
+									</div>
+									<div *ngIf="fastEdgeSettingsSaving">
+										<mat-spinner [diameter]="20"></mat-spinner>
+									</div>
+								</div>
+
+								<div class="fast-edge-setting-form-wrapper">
+									<form [formGroup]="fastEdgeSettings">
+										<div class="d-flex">
+											<div class="flex-even">
+												<mat-form-field class="w-100" appearance="fill">
+													<mat-label>Enter Password*</mat-label>
+													<input matInput formControlName="password" type="password" />
+												</mat-form-field>
+											</div>
+											<div class="pt-3 ml-5 text-right">
+												<mat-slide-toggle
+													(change)="toggleFastEdgeTool($event)"
+													[disabled]="!fastEdgeSettings.valid"
+													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
+												</mat-slide-toggle>
+											</div>
+										</div>
+									</form>
+								</div>
+							</mat-card>
+						</div>
+					</div>
+				</mat-tab>
+				<!-- Settings For Dealers -->
 			</mat-tab-group>
 		</div>
 	</div>
