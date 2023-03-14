@@ -216,7 +216,7 @@ export class CreateHostComponent implements OnInit {
 				null,
 				null
 			);
-			return;
+			return; 
 		}
 
 		const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
@@ -643,7 +643,7 @@ export class CreateHostComponent implements OnInit {
 				const hourData = moment(hour, 'hh:mm A').format('HH:mm').split(':');
 				return { hour: parseInt(hourData[0]), minute: parseInt(hourData[1]), second: 0 };
 			};
-
+			
 			hour.openingHourData = setHourData(hour.open);
 			hour.closingHourData = setHourData(hour.close);
 			return hour;

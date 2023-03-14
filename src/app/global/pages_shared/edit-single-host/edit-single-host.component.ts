@@ -393,11 +393,10 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	setTimezone(data: string): void {
 		this._formControls.timezone.setValue(data);
 	}
-
+	
 	setCity(data): void {
         if(!this.canada_selected) {
             this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
-
 		    this._location
 			.get_states_regions(data.substr(data.indexOf(',') + 2))
 			.pipe(takeUntil(this._unsubscribe))
@@ -433,7 +432,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this.category_selected = this._titlecase.transform(event);
 		this._formControls.category.setValue(event);
 	}
-
+	
 	setToOpenAllDay(businessHourIndex: number, periodIndex: number) {
 		this.business_hours[businessHourIndex].periods[periodIndex].openingHourData = { hour: 0, minute: 0, second: 0 };
 		this.business_hours[businessHourIndex].periods[periodIndex].closingHourData = { hour: 23, minute: 59, second: 0 };
