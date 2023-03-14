@@ -382,10 +382,6 @@ export class LicensesComponent implements OnInit {
         this.getColumnsAndOrder(filter);
     }
 
-    showAllLicenses() {
-        this.hide_all_license = false;
-    }
-
 	licenseFilterData(e) {
         if(e) {
             this.search_data_license = e;
