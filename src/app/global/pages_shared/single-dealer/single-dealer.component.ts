@@ -676,7 +676,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.license_filtered_data = [];
 		} else {
             if(this.is_dealer_admin) {
-                this.license_data_api = response.paging.entities;
+                this.license_data_api = response.licenses;
             } else {
                 this.license_data_api = response.licenses;
             }
@@ -815,6 +815,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					status: true,
 					new_tab_link: true,
+                    has_favorites: true,
+                    is_favorite: l.isFavorite,
                     show_tags: l.tags != null ? true : false,
                     tags: l.tags != null ? l.tags : []
 				},

@@ -1152,6 +1152,8 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					status: true,
+                    has_favorites: true,
+                    is_favorite: l.isFavorite,
 					show_tags: l.tags != null ? true : false,
 					tags: l.tags != null ? l.tags : []
 				},

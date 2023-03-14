@@ -677,7 +677,7 @@ export class LicensesComponent implements OnInit {
 		if (value.includes('eth')) return 'LAN';
 	}
 
-	private mapToLicensesTable(data: API_LICENSE['license'][]): UI_TABLE_LICENSE_BY_HOST[] {
+	private mapToLicensesTable(data: any): UI_TABLE_LICENSE_BY_HOST[] {
 		let count = this.paging_data_license.pageStart;
 
 		return data.map((i) => {
@@ -700,6 +700,8 @@ export class LicensesComponent implements OnInit {
                     hidden: false, 
                     status: true,
                     new_tab_link: true,
+                    has_favorites: true,
+                    is_favorite: i.isFavorite,
                     show_tags: i.tags != null ? true : false,
                     tags: i.tags != null ? i.tags : []
                 },
