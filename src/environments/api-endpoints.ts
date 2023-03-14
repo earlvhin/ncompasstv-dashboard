@@ -156,7 +156,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -289,6 +289,7 @@ export const API_ENDPOINTS = {
 		api_update_speedtest_settings: 'license/speedtestsettings',
 		api_update_resource_settings: 'license/resourcesettings',
 		api_update_tvdisplay_settings: 'license/tvdisplaysettings',
+		api_update_fastedge_tool_settings: 'license/update/fastedge/monitoringtool',
 		api_update_filler_feed: 'feed/update/fillers',
 		api_update_slide_feed: 'feed/update/slides',
 		api_update_content: 'content/unassigndealer',

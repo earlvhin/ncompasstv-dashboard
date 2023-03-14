@@ -117,34 +117,34 @@
 				</form>
 			</mat-card>
 
-			<mat-card class="mt-3 p-5" *ngIf="is_dealer_admin">
+			<mat-card class="manage-dealers-container d-flex mt-3 p-5" *ngIf="is_dealer_admin">
 				<form [formGroup]="dealers_form">
-					<div class="col-lg-12 pl-0 text-gray">
+					<div class="text-gray pl-0">
 						<h3>Manage Dealers</h3>
 						<p class="sm-text mb-4">Change dealeradmin's associate dealers.</p>
 					</div>
-					<ng-container *ngIf="hasLoadedInitialDealers; else ordinaryloader">
-						<div class="col-lg-12 p-0">
+					<div class="dealers-select-container p-0">
+						<ng-container *ngIf="has_loaded_dealers_list; else loadingDealersList">
 							<mat-select
 								#dealerMultiSelect
 								formControlName="dealers"
 								[placeholder]="'Select Dealer Name(s)'"
 								[multiple]="true"
+								[value]="selected_dealers_control.value">
 								class="full-width"
-								[value]="selectedDealersControl.value">
 								<div class="custom-panel">
 									<mat-option>
 										<ngx-mat-select-search
 											noEntriesFoundLabel="No results"
-											[formControl]="dealerFilterControl"
+											[formControl]="dealer_filter_control"
 											[placeholderLabel]="'Search Dealer Name'"
 											[clearSearchInput]="false"
-											[searching]="isSearchingDealer">
+											[searching]="is_searching_dealer">
 											<mat-icon class="clear" ngxMatSelectSearchClear>close</mat-icon>
 										</ngx-mat-select-search>
 									</mat-option>
 									<mat-option *ngFor="let dealer of dealers_list" [value]="dealer">
-										<div class="dealer md-text" (click)="onSelectNewDealer(dealer.dealerId)">
+										<div class="dealer md-text" (click)="selectDealer(dealer.dealerId)">
 											{{ dealer.businessName }}
 										</div>
 									</mat-option>
@@ -153,37 +153,45 @@
 									<button class="theme-btn _primary md-text mr-3" (click)="dealerMultiSelect.close()">APPLY SELECTION</button>
 								</footer>
 							</mat-select>
-							<div class="preview mt-3">
-								<div class="dealers-row p-0 pb-3">
-									<div class="col-lg-12 p-0 d-flex" *ngIf="selectedDealersControl.value.length > 0">
-										<div class="col-lg-7 p-0 pb-1 text-gray">
-											<h5>Selected Dealer Name(s):</h5>
-										</div>
-										<div class="col-lg-5 p-0 pb-1 text-right md-text f-500 text-danger clickable" (click)="onClearDealer()">
-											<i class="far fa-times-circle mr-2"></i>
-											<span>CLEAR SELECTION</span>
-										</div>
-									</div>
+						</ng-container>
 
-									<div
-										class="col-lg-12 p-0 selected-dealers-container d-flex flex-row align-items-start flex-wrap"
-										*ngIf="selectedDealersControl.value.length > 0">
-										<div
-											*ngFor="let dealer of selectedDealersControl.value; let i = index"
-											class="bg-primary text-white md-text pl-3 pr-3 br-5 mr-2 mb-2 dealer d-flex align-items-center">
-											<div class="name">{{ dealer.businessName }}</div>
-											<div class="remove-btn cursor-pointer" (click)="onRemoveDealer(i)">
-												<mat-icon class="md-text pt-2 pl-2 font-weight-bold">close</mat-icon>
-											</div>
-										</div>
-									</div>
+						<div class="selected-dealers mt-3 p-0 pb-3">
+							<div class="d-flex justify-content-between p-0" *ngIf="selected_dealers_control.value.length > 0">
+								<div class="text-gray p-0 pb-1">
+									<h5>Selected Dealer Name(s):</h5>
+								</div>
+								<div class="text-danger text-right md-text clickable p-0 pb-1 f-500" (click)="clearSelectedDealers()">
+									<i class="far fa-times-circle mr-2"></i>
+									<span>CLEAR SELECTION</span>
 								</div>
 							</div>
+
+							<div class="d-flex flex-row align-items-start flex-wrap p-0">
+								<ng-container *ngFor="let dealer of selected_dealers_control.value; let i = index">
+									<div
+										class="d-flex align-items-center bg-primary text-white md-text dealer pl-3 pr-3 br-5 mr-2 mb-2"
+										[ngClass]="{ 'selected-dealer-disabled': !has_loaded_dealers_list }">
+										<ng-container *ngIf="has_loaded_assigned_dealers; else loaderSmall">
+											<div class="name">{{ dealer.businessName }}</div>
+											<div class="remove-btn cursor-pointer" (click)="removeSelectedDealer(i)">
+												<mat-icon class="md-text font-weight-bold pt-2 pl-2">close</mat-icon>
+											</div>
+										</ng-container>
+									</div>
+								</ng-container>
+							</div>
 						</div>
-					</ng-container>
-					<div class="col-lg-12 p-0 pull-right">
-						<div class="p-0 offset-lg-8 col-lg-4 text-right">
-							<button mat-button mat-raised-button class="theme-btn mt-4" (click)="updateDealerAdmin()">Update Dealers</button>
+					</div>
+					<div class="pull-right p-0">
+						<div class="p-0 offset-lg-8 text-right">
+							<button
+								mat-button
+								mat-raised-button
+								class="theme-btn mt-4"
+								(click)="updateAssignedDealers()"
+								[disabled]="!has_loaded_dealers_list">
+								Update Dealers
+							</button>
 						</div>
 					</div>
 				</form>
@@ -201,5 +209,16 @@
 <ng-template #ordinaryloader>
 	<div class="d-flex align-items-center justify-content-center">
 		<app-spinner></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #loaderSmall>
+	<app-spinner [diameter]="40"></app-spinner>
+</ng-template>
+
+<ng-template #loadingDealersList>
+	<div class="d-flex align-items-center justify-content-between">
+		<h4>Loading dealers...</h4>
+		<app-spinner [diameter]="30"></app-spinner>
 	</div>
 </ng-template>

@@ -82,7 +82,8 @@ export class CredentialSettingComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					this.user_data = response;
+					if ('message' in response) return;
+					this.user_data = response as API_USER_DATA;
 					this.readyChangePassword();
 				},
 				(error) => {

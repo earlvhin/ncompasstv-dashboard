@@ -63,7 +63,7 @@ export class LicensesComponent implements OnInit {
     no_favorites: boolean;
     total_favorites: 0;
     total_not_favorites: 0;
-    hide_all_license: boolean = true;
+    hide_all_license: boolean = false;
     no_licenses: boolean;
     paging_data_favorites: any;
 
@@ -83,7 +83,6 @@ export class LicensesComponent implements OnInit {
 		{ name: 'Password', sortable: false, key: 'password', hidden: true, no_show: true },
 		{ name: 'Display', sortable: true, key: 'displayStatus', column: 'DisplayStatus' },
 		{ name: 'Install Date', sortable: true, key: 'installDate', column: 'InstallDate' },
-		{ name: 'Creation Date', sortable: true, key: 'dateCreated', column: 'DateCreated' },
 		{ name: 'Zone & Duration', sortable: false, hidden: true, key: 'zone', no_show: true },
 		{ name: 'Tags', key: 'tagsToString', no_show: true }
 	];
@@ -141,7 +140,6 @@ export class LicensesComponent implements OnInit {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
-				// this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				this.filters.online = value == 1 ? true : false;
@@ -154,7 +152,6 @@ export class LicensesComponent implements OnInit {
 						order: 'desc'
 					};
 					this.getColumnsAndOrder(filter);
-					// this.getColumnsAndOrder(filter, 'licenses')
 				} else {
 					this.sortList('desc');
 				}
@@ -167,10 +164,6 @@ export class LicensesComponent implements OnInit {
 			case 'activated':
 				this.resetFilterStatus();
 				this.filters.status = '';
-				// this.filters.activated = value;
-				// this.filters.label_status = 'Inactive';
-				// this.filters.activated = value;
-				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Disabled';
                 this.sortList('desc');
@@ -389,10 +382,6 @@ export class LicensesComponent implements OnInit {
         this.getColumnsAndOrder(filter);
     }
 
-    showAllLicenses() {
-        this.hide_all_license = false;
-    }
-
 	licenseFilterData(e) {
         if(e) {
             this.search_data_license = e;
@@ -607,12 +596,11 @@ export class LicensesComponent implements OnInit {
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
 		item.timeIn = item.timeIn ? this._date.transform(item.timeIn, 'MMM dd, yyyy h:mm a') : '';
 		item.installDate = this._date.transform(item.installDate, 'MMM dd, yyyy');
-		item.dateCreated = this._date.transform(item.dateCreated, 'MMM dd, yyyy');
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 		item.isActivated = item.isActivated == 0 ? 'Inactive' : 'Active';
 		item.piStatus = item.piStatus == 0 ? 'Offline' : 'Online';
-		item.displayStatus = item.displayStatus == 1 ? 'ON' : '';
+		item.displayStatus = item.displayStatus == 1 ? 'ON' : 'OFF';
 		item.password = item.anydeskId ? this.splitKey(item.licenseId) : '';
 		item.tagsToString = item.tags.join(',');
 	}
@@ -689,7 +677,7 @@ export class LicensesComponent implements OnInit {
 		if (value.includes('eth')) return 'LAN';
 	}
 
-	private mapToLicensesTable(data: API_LICENSE['license'][]): UI_TABLE_LICENSE_BY_HOST[] {
+	private mapToLicensesTable(data: any): UI_TABLE_LICENSE_BY_HOST[] {
 		let count = this.paging_data_license.pageStart;
 
 		return data.map((i) => {
@@ -712,6 +700,8 @@ export class LicensesComponent implements OnInit {
                     hidden: false, 
                     status: true,
                     new_tab_link: true,
+                    has_favorites: true,
+                    is_favorite: i.isFavorite,
                     show_tags: i.tags != null ? true : false,
                     tags: i.tags != null ? i.tags : []
                 },
@@ -733,7 +723,6 @@ export class LicensesComponent implements OnInit {
 					label: 'License Alias',
 					id: i.licenseId,
 					hidden: false,
-                    compressed: true,
 				},
 				{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
@@ -750,8 +739,14 @@ export class LicensesComponent implements OnInit {
                     password: i.anydeskId ? this.splitKey(i.licenseId) : '--',
                 },
 				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ value: i.installDate ? this._date.transform(i.installDate) : '--', link: null, editable: false, hidden: false },
-				{ value: i.dateCreated ? this._date.transform(i.dateCreated) : '--', link: null, editable: false, hidden: false },
+				{ 
+                    value: i.installDate ? this._date.transform(i.installDate) : '--', 
+                    link: null, 
+                    editable: true, 
+                    hidden: false,
+                    label: 'Install Date',
+                    id: i.licenseId 
+                },
 				{ value: i.piStatus, link: null, editable: false, hidden: true },
 				{ value: i.playerStatus, link: null, editable: false, hidden: true },
 				{ value: i.isActivated, link: null, editable: false, hidden: true }
