@@ -16,4 +16,10 @@ export class LocationService {
 			return states.filter((s) => s.state === state);
 		});
 	}
+	
+    get_states_by_abbreviation(state) {
+		return this._http.get('./assets/data/states-abbreviation-region.json').map((states: Array<any>) => {
+			return states.filter((s) => s.abbreviation === state);
+		});
+	}
 }

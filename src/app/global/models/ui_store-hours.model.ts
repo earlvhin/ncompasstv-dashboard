@@ -11,6 +11,7 @@ export interface UI_STORE_HOUR_PERIOD {
 	day_id: number;
 	id: string | number;
 	open: string;
-	openingHourData?: { hour: number, minute: number, second?: number };
-	closingHourData?: { hour: number, minute: number, second?: number };
+	openingHourData?: { hour: number; minute: number; second?: number };
+	closingHourData?: { hour: number; minute: number; second?: number };
+	day?: string; // used to pass the day name for checking
 }
