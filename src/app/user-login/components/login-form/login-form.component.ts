@@ -62,7 +62,7 @@ export class LoginFormComponent implements OnInit {
 			password: ['', Validators.required]
 		});
 
-		console.log('!! THIS IS A TEST!!');
+		console.log('v1.41.3');
 	}
 
 	// convenience getter for easy access to form fields
