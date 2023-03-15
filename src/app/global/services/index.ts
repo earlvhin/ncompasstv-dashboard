@@ -4,6 +4,7 @@ export * from './billing-service/billing-service';
 export * from './category-service/category.service';
 export * from './confirmation-dialog-service/confirmation-dialog.service';
 export * from './content-service/content.service';
+export * from './data-service/location.service';
 export * from './dealer-service/dealer.service';
 export * from './export-service/export.service';
 export * from './feed-service/feed.service';

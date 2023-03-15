@@ -16,7 +16,7 @@ export class API_CREATE_HOST {
 	images?: string[];
 
     constructor(dealerid: string, businessName: string, createdBy: string, latitude: string, longitude: string, address: string, 
-		city: string, state: string, postalCode: string, storeHours: any, category: string, timezone: string) {
+		city: string, state: string, postalCode: string, region: string, storeHours: any, category: string, timezone: string) {
         this.dealerId = dealerid;
         this.businessName = businessName;
         this.createdBy = createdBy;
@@ -26,7 +26,7 @@ export class API_CREATE_HOST {
         this.city = city;
         this.state = state;
         this.postalCode = postalCode;
-        // this.region = region;
+        this.region = region;
         this.storeHours = storeHours;
 		this.category = category;
 		this.timezone = timezone;

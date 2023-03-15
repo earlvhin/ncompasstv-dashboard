@@ -1,153 +1,277 @@
-<div class="p-2">
-	<div class="d-flex align-items-start dialog-heading">
-		<!-- HEADING -->
+<div class="edit-single-host-dialog p-2">
+	<div class="dialog-heading d-flex align-items-start">
 		<div class="host-heading flex-even">
 			<div class="host-name-and-status d-flex align-items-center">
-				<h3 class="p-0">Host Details:</h3>
+				<h3 class="p-0">Edit Host</h3>
 				<span class="status sm-text ml-3" [ngClass]="host.status === 'A' ? 'active' : 'inactive'">
 					<span class="fas fa-circle xsm-text mr-2"> </span>
 				</span>
 			</div>
-			<p class="p-0 sm-text mb-4">You can update host details here:</p>
 		</div>
-		<!-- HOST STATUS TOGGLE -->
 		<mat-slide-toggle (change)="onToggleStatus($event)" labelPosition="before" [(ngModel)]="is_active_host">
 			<span class="sm-text font-weight-bold">{{ is_active_host ? 'Active' : 'Inactive' }}</span>
 		</mat-slide-toggle>
-		<!-- CLOSE BUTTON -->
 		<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
 			<span class="fas fa-times"></span>
 		</button>
 	</div>
 
 	<form [formGroup]="edit_host_form" (ngSubmit)="saveHostData()" class="text-left">
-		<div class="row mb-4">
-			<div class="col-lg-11 mb-3">
-				<app-autocomplete-field
-					[data_reference]="dealers_data"
-					[primary_keyword]="'businessName'"
-					[key_of_value]="'dealerId'"
-					(data_value)="onSelectDealer($event)"
-					[required]="true"
-					[label]="'Type in a Dealer Business Name'"
-					[new_value]="dealer.businessName"
-					[initial_value]="dealer.businessName"
-					[disabled]="!is_current_user_admin || disable_business_name"
-					[paging]="paging"
-					(call_next_page)="getDealers($event)"
-					(searched)="searchDealer($event)"
-					[no_edit]="closed_without_edit">
-				</app-autocomplete-field>
-			</div>
-			<ng-container *ngIf="is_current_user_admin">
-				<div class="col-lg-1 mt-4 mb-3">
-					<ng-container *ngIf="disable_business_name; else editNameBtn">
-						<span class="fa fa-pencil cursor-pointer" (click)="onEditBusinessName(false)"></span>
-					</ng-container>
-					<ng-template #editNameBtn>
-						<span class="fa fa-times text-danger cursor-pointer" (click)="onEditBusinessName(true)"></span>
-					</ng-template>
-				</div>
-			</ng-container>
-			<div *ngFor="let field of edit_host_form_controls" class="{{ field.col }} mb-3">
-				<mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
-					<mat-label>{{ field.label }}</mat-label>
-					<input *ngIf="!field.type" formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" />
-					<textarea
-						maxLength="500"
-						*ngIf="field.type === 'textarea'"
-						formControlName="{{ field.control }}"
-						matInput
-						placeholder="{{ field.placeholder }}"></textarea>
-				</mat-form-field>
 
-				<ng-template #autocomplete_field>
-					<ng-container *ngIf="categories_loaded; else loaderSmall">
-						<app-autocomplete-field
-							*ngIf="field.control === 'category'"
-							[data_reference]="categories_data"
-							[primary_keyword]="'categoryName'"
-							[key_of_value]="'categoryName'"
-							(data_value)="setCategory($event)"
-							[required]="true"
-							[label]="'Choose Category'"
-							[new_value]="category_selected"
-							[initial_value]="category_selected">
-						</app-autocomplete-field>
-					</ng-container>
-
-					<ng-container *ngIf="timezones_loaded; else loaderSmall">
-						<app-autocomplete-field
-							*ngIf="field.control === 'timezone'"
-							[data_reference]="timezones"
-							[primary_keyword]="'name'"
-							[key_of_value]="'id'"
-							(data_value)="setTimezone($event)"
-							[required]="true"
-							[label]="'Timezone'"
-							[initial_value]="host.timeZoneData.name">
-						</app-autocomplete-field>
-					</ng-container>
-				</ng-template>
-			</div>
-
-			<!-- BUSINESS HOURS SECTION -->
-			<div class="business-hours-section">
-				<div class="d-flex mb-4 px-3 heading">
-					<h4>Business Hours</h4>
-
-					<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkEditHours()">Bulk Edit</button>
-				</div>
-
-				<div class="d-flex mb-4 px-3" *ngFor="let h of business_hours">
-					<div class="round-label mr-3" (click)="toggleDaySchedule(h)" [ngClass]="h.status ? 'active' : ''">
-						<span class="font-weight-bold">{{ h.label }}</span>
-					</div>
-					<div class="flex-even">
-						<ng-container *ngIf="h.status; else closed">
-							<div class="mb-3" *ngFor="let t of h.periods; let i = index">
-								<div class="d-flex align-items-center">
-									<div class="mr-3">
-										<div class="time-picker">
-											<mat-label class="sm-text">Opening Hours</mat-label>
-											<ngb-timepicker [(ngModel)]="t.openingHourData" [spinners]="false" [meridian]="true" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
-										</div>
-										<div class="d-inline-block mx-3">
-											<span> --</span>
-										</div>
-										<div class="time-picker">
-											<mat-label class="sm-text">Closing Hours</mat-label>
-											<ngb-timepicker [(ngModel)]="t.closingHourData" [spinners]="false" [meridian]="true" [ngModelOptions]="{standalone: true}"></ngb-timepicker>
-
-										</div>
-									</div>
-									<div class="flex-even add-remove-btn" *ngIf="h.periods.length > 1">
-										<span class="remove-hours-btn" (click)="removeHours(h, i)">
-											<span class="fas fa-times"></span>
-										</span>
-									</div>
-									<div>
-										<span class="add-hours-btn" (click)="addHours(h)">
-											<span class="fas fa-plus ml-2"></span>
-										</span>
-									</div>
-								</div>
+		<div class="form-container custom-mat-tab mt-3">
+			<mat-tab-group>
+				<mat-tab label="Details">
+					<div class="container flex-column mb-4 mt-4">
+						<div class="row p-0">
+							<div class="dealers-selection pl-0 col-lg-12">
+								<app-autocomplete-field
+									[data_reference]="dealers_data"
+									[primary_keyword]="'businessName'"
+									[key_of_value]="'dealerId'"
+									(data_value)="onSelectDealer($event)"
+									[required]="true"
+									[label]="'Type in a Dealer Business Name'"
+									[new_value]="dealer.businessName"
+									[initial_value]="dealer.businessName"
+									[disabled]="!is_current_user_admin || is_dealer_change_disabled"
+									[paging]="paging"
+									(call_next_page)="getDealers($event)"
+									(searched)="searchDealer($event)"
+									[no_edit]="closed_without_edit">
+								</app-autocomplete-field>
 							</div>
-						</ng-container>
+
+							<ng-container *ngIf="is_current_user_admin">
+								<mat-icon
+									class="cursor-pointer position-absolute mt-2 right-0"
+									[ngClass]="{ 'text-danger': !is_dealer_change_disabled }"
+									(click)="changeHostDealer(!is_dealer_change_disabled)">
+									{{ is_dealer_change_disabled ? 'mode_edit' : 'close' }}
+								</mat-icon>
+							</ng-container>
+						</div>
+						<div class="business-name-and-category row p-0">
+                            <div class="col-lg-6 pl-0">
+                                <mat-form-field class="business-name mr-3 full-width">
+                                    <mat-label>Host Business Name</mat-label>
+                                    <input matInput type="text" formControlName="businessName" placeholder="Ex. Angel's Burger" />
+                                </mat-form-field>
+                            </div>
+							<div class="col-lg-6 p-0">
+                                <ng-container *ngIf="categories_loaded; else loadingCategories">
+                                    <div class="categories-selection flex-even">
+                                        <app-autocomplete-field
+                                            [data_reference]="categories_data"
+                                            [primary_keyword]="'categoryName'"
+                                            [key_of_value]="'categoryName'"
+                                            (data_value)="setCategory($event)"
+                                            [required]="true"
+                                            [label]="'Choose Category'"
+                                            [new_value]="category_selected"
+                                            [initial_value]="category_selected">
+                                        </app-autocomplete-field>
+                                    </div>
+                                </ng-container>
+                            </div>
+						</div>
+
+						<div class="latitude-and-longitude row p-0">
+							<mat-form-field class="col-lg-6 pl-0">
+								<mat-label>Latitude</mat-label>
+								<input matInput type="number" step="any" formControlName="lat" placeholder="Ex. 58.933" />
+							</mat-form-field>
+							<mat-form-field class="col-lg-6 p-0">
+								<mat-label>Longitude</mat-label>
+								<input matInput type="number" step="any" formControlName="long" placeholder="Ex. 58.933" />
+							</mat-form-field>
+						</div>
+
+                        <div class="row p-0">
+                            <div class="col-lg-12 p-0 mb-3">
+                                <span class="sm-text">
+                                    <mat-checkbox class="example-margin mr-3" (change)="getCanadaAddress($event)"></mat-checkbox> Canada Address
+                                </span>
+                            </div>
+                        </div>
+
+						<div class="address-city-state row p-0">
+							<mat-form-field class="col-lg-4 pl-0">
+								<mat-label>Address</mat-label>
+								<input matInput type="text" formControlName="address" placeholder="Ex. 21st Drive Fifth Avenue Place" />
+							</mat-form-field>
+
+							<ng-container *ngIf="cities_loaded; else loadingCities">
+								<div class="cities-selection col-lg-4 p-0">
+									<app-autocomplete-field
+										[label]="'City'"
+										[placeholder]="'Ex. Chicago'"
+										(data_value)="setCity($event)"
+										[key_of_value]="'city_state'"
+										[data_reference]="city_state"
+										[search_keyword]="'city_state'"
+										[primary_keyword]="'city_state'"
+										[new_value]="city_selected"
+										[initial_value]="city_selected">
+									</app-autocomplete-field>
+								</div>
+							</ng-container>
+
+							<mat-form-field class="col-lg-4 pr-0">
+								<mat-label>State</mat-label>
+								<input matInput type="text" formControlName="state" placeholder="Ex. IL" />
+							</mat-form-field>
+						</div>
+
+						<div class="region-zip-timezone row">
+							<mat-form-field class="col-lg-4 pl-0">
+								<mat-label>Region</mat-label>
+								<input matInput type="text" formControlName="region" placeholder="Ex. SW" />
+							</mat-form-field>
+
+							<mat-form-field class="col-lg-4 p-0">
+								<mat-label>Zip Code</mat-label>
+								<input matInput type="text" formControlName="zip" placeholder="Ex. 54001" />
+							</mat-form-field>
+
+							<ng-container *ngIf="timezones_loaded; else loadingTimezones">
+								<div class="timezones-selection col-lg-4 pr-0">
+									<app-autocomplete-field
+										[data_reference]="timezones"
+										[primary_keyword]="'name'"
+										[key_of_value]="'id'"
+										(data_value)="setTimezone($event)"
+										[required]="true"
+										[label]="'Timezone'"
+										[initial_value]="host.timeZoneData.name">
+									</app-autocomplete-field>
+								</div>
+							</ng-container>
+						</div>
+
+                        <div class="row p-0">
+                            <mat-form-field class="full-width">
+                                <mat-label>Vistar Venue ID</mat-label>
+                                <input matInput type="text" formControlName="vistar_venue_id" placeholder="Venue ID for Vistar" />
+                            </mat-form-field>
+                        </div>
+						
+						<div class="row p-0">
+                            <div class="col-lg-6 pl-0">
+                                <textarea class="full-width" matInput maxLength="500" formControlName="notes" placeholder="Enter your notes here..">
+                                </textarea>
+                            </div>
+							
+                            <div class="col-lg-6 pl-0">
+                                <textarea matInput class="full-width" maxLength="500" formControlName="others" placeholder="Other stuff here...">
+                                </textarea>
+                            </div>
+						</div>
 					</div>
-				</div>
-			</div>
+				</mat-tab>
+
+				<mat-tab label="Hours">
+					<!-- BUSINESS HOURS SECTION -->
+					<div class="business-hours-section">
+						<div class="heading d-flex align-items-center mb-4">
+							<button mat-button mat-raised-button class="theme-btn bulk-edit" type="button" (click)="onBulkEditHours()">
+								Bulk Edit
+							</button>
+						</div>
+
+						<div class="d-flex align-items-center mb-4 px-3" *ngFor="let h of business_hours; let business_hour_index = index">
+							<div
+								class="round-label mr-3"
+								(click)="selectDay(h)"
+								[ngClass]="h.status ? 'active' : ''"
+								matTooltip="Click to set {{ h.day }} as {{ h.status ? 'closed' : 'open' }}">
+								<span class="font-weight-bold">{{ h.label }}</span>
+							</div>
+							<div class="flex-even">
+								<ng-container *ngIf="h.status; else closed">
+									<div *ngFor="let period of h.periods; let period_index = index">
+										<div class="d-flex align-items-center">
+											<div class="business-hours-fields mr-3" *ngIf="isOpenButNotAllDay(period); else openAllDay">
+												<div class="time-picker">
+													<mat-label class="sm-text">Opening Hours</mat-label>
+													<ngb-timepicker
+														class="override-test"
+														[(ngModel)]="period.openingHourData"
+														(change)="checkBusinessHoursFields()"
+														[spinners]="false"
+														[meridian]="true"
+														[ngModelOptions]="{ standalone: true }"></ngb-timepicker>
+												</div>
+												<div class="d-inline-block mx-3">
+													<span> --</span>
+												</div>
+												<div class="time-picker">
+													<mat-label class="sm-text">Closing Hours</mat-label>
+													<ngb-timepicker
+														[(ngModel)]="period.closingHourData"
+														(change)="checkBusinessHoursFields()"
+														[spinners]="false"
+														[meridian]="true"
+														[ngModelOptions]="{ standalone: true }"></ngb-timepicker>
+												</div>
+												<div class="set-to-all-day d-inline-block">
+													<button
+														class="btn btn-outline-primary"
+														type="button"
+														matTooltip="{{ 'Set to open for 24 hours on ' + h.day }}"
+														(click)="setToOpenAllDay(business_hour_index, period_index)">
+														24h
+													</button>
+												</div>
+											</div>
+											<div class="add-remove-btn" *ngIf="h.periods.length > 1">
+												<span class="remove-hours-btn" (click)="removeHours(h, period_index)">
+													<i class="fas fa-times"></i>
+												</span>
+											</div>
+											<ng-container *ngIf="isOpenButNotAllDay(period)">
+												<div class="add-hours-container">
+													<i class="add-hours-btn fas fa-plus ml-2" (click)="addHours(h)"> </i>
+												</div>
+												<div class="indicator">
+													<mat-icon [ngClass]="checkSchedule(h.day)">
+														{{ checkSchedule(h.day) === 'valid' ? 'check_circle' : 'cancel' }}
+													</mat-icon>
+												</div>
+											</ng-container>
+										</div>
+										<ng-template #openAllDay>
+											<h5
+												class="text-muted clickable"
+												matTooltip="Click to change"
+												(click)="removeOpenAllDay(business_hour_index, period_index)">
+												Open 24 hours
+											</h5>
+										</ng-template>
+									</div>
+								</ng-container>
+							</div>
+							<ng-template #closed>
+								<h5 class="text-muted">Closed on {{ getFullDayName(h.label) }}</h5>
+							</ng-template>
+						</div>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
 		</div>
-		<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" color="primary">Update</button>
+		<button
+			mat-button
+			mat-raised-button
+			type="submit"
+			class="theme-btn mt-4 mr-2"
+			color="primary"
+			[disabled]="has_invalid_schedule || edit_host_form.invalid">
+			Update
+		</button>
 		<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
 		<ng-container *ngIf="is_current_user_admin">
 			<button mat-button mat-raised-button class="theme-btn mt-4 delete bg-danger" type="button" (click)="onDeleteHost()">Delete Host</button>
 		</ng-container>
 	</form>
-
-	<ng-template #closed>
-		<h5 class="text-muted">Click Day on left to Set Operation Hours</h5>
-	</ng-template>
 
 	<ng-template #loading>
 		<div class="py-5">
@@ -155,7 +279,24 @@
 		</div>
 	</ng-template>
 
-	<ng-template #loaderSmall>
-		<app-spinner [diameter]="60"></app-spinner>
+	<ng-template #loadingCategories>
+		<div class="d-flex mt-3">
+			<span class="md-text"><i>Loading categories...</i></span>
+			<app-spinner [diameter]="30"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #loadingTimezones>
+		<div class="d-flex mt-3">
+			<span class="md-text"><i>Loading timezones...</i></span>
+			<app-spinner [diameter]="30"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #loadingCities>
+		<div class="d-flex">
+			<span class="md-text"><i>Loading cities...</i></span>
+			<app-spinner [diameter]="30"></app-spinner>
+		</div>
 	</ng-template>
 </div>

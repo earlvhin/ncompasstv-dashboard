@@ -16,7 +16,9 @@ import {
 	TAG,
 	UI_CURRENT_USER,
 	UI_ROLE_DEFINITION,
-	UI_ROLE_DEFINITION_TEXT
+	UI_ROLE_DEFINITION_TEXT,
+	UI_STORE_HOUR_PERIOD,
+	UI_STORE_HOUR
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { HelperService } from 'src/app/global/services';
@@ -102,6 +104,24 @@ export class BannerComponent implements OnInit, OnDestroy {
 		window.open(url, '_blank');
 	}
 
+	hasOpeningAndClosing(periods: UI_STORE_HOUR_PERIOD) {
+		const originalCondition = periods.open == '' && periods.close == '';
+		const isOpenAllDay = periods.open === '12:00 AM' && periods.close === '11:59 PM';
+		if (originalCondition || isOpenAllDay) return false;
+		return true;
+	}
+
+	isOpenAllDay(hours: UI_STORE_HOUR, periodIndex: number) {
+		if (!hours.status) return false;
+		const originalCondition = hours.periods[periodIndex].open == '' && hours.periods[periodIndex].close == '';
+		const isOpenAllDay = hours.periods[periodIndex].open === '12:00 AM' && hours.periods[periodIndex].close === '11:59 PM';
+		return originalCondition || isOpenAllDay;
+	}
+
+	isOpenButNotAllDay(hours: UI_STORE_HOUR, periodIndex: number) {
+		return !this.isOpenAllDay(hours, periodIndex);
+	}
+
 	onAssignLicense(): void {
 		this.single_host_assign_license.emit(this.single_host_assign_license);
 	}
@@ -127,7 +147,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 
 			case 'single-host':
 				dialog = EditSingleHostComponent;
-				config.width = '992px';
+				config.width = '900px';
 				data = this.page_data as { host: API_HOST; dealer: API_DEALER };
 				break;
 
@@ -201,7 +221,12 @@ export class BannerComponent implements OnInit, OnDestroy {
 			if (operation.day === this.current_business_day) {
 				if (!operation.periods || !operation.status) period = 'CLOSED';
 				else {
-					if (!operation.periods[0].open && !operation.periods[0].close) period = 'Open 24 hours';
+					const opening = operation.periods[0].open;
+					const closing = operation.periods[0].close;
+					const hasBlankOpeningTime = !opening || opening === '';
+					const hasBlankClosingTime = !closing || closing === '';
+					const isSetToOpenAllDay = opening === '12:00 AM' && closing === '11:59 PM';
+					if (hasBlankOpeningTime || hasBlankClosingTime || isSetToOpenAllDay) period = 'Open 24 hours';
 					else period = `${operation.periods[0].open} - ${operation.periods[0].close}`;
 				}
 				this.current_operations = { day: this.current_business_day, period };
@@ -291,11 +316,10 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToRefreshBannerData() {
-		this._helper.onRefreshBannerData.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => this.update_info.emit(),
-				error => console.log('Error refreshing banner data', error)
-			);
+		this._helper.onRefreshBannerData.pipe(takeUntil(this._unsubscribe)).subscribe(
+			() => this.update_info.emit(),
+			(error) => console.log('Error refreshing banner data', error)
+		);
 	}
 
 	protected get _isAdmin() {

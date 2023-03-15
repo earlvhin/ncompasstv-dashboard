@@ -112,6 +112,11 @@
 																<i class="fas fa-circle" [ngClass]="getStatusColor(data.status.value)"></i>
 															</span>
 														</ng-container>
+														<ng-container *ngIf="data[d].has_favorites && data[d].is_favorite">
+															<span>
+																<i class="fas fa-star favorites" title="Favorite"></i>
+															</span>
+														</ng-container>
 													</div>
 												</span>
 

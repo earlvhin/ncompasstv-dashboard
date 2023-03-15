@@ -1,3 +1,13 @@
+.form-fields-container, .business-hours-section {
+	margin-top: 20px;
+}
+
+.form-fields-container {
+	.business-name {
+		width: 400px;
+	}
+}
+
 .dialog-heading {
 	gap: 30px;
 }
@@ -6,13 +16,22 @@ button.delete {
 	float: right;
 }
 
+.dealer-business-name {
+	.autocomplete-container {
+		width: 100%;
+	}
+}
+
 .business-hours-section {
 	.heading {
-		justify-content: space-between;
 
 		h4 {
 			margin-right: 20px;
 		}
+	}
+
+	.business-hours-fields {
+		margin-bottom: 20px;
 	}
 
 	.bulk-edit {
@@ -28,4 +47,43 @@ button.delete {
 	&.inactive {
 		color: white;
 	}
+}
+
+
+.indicator {
+	margin-left: 18px;
+	mat-icon {
+		font-size: 18px;
+		line-height: 30px;
+	}
+
+	.invalid {
+		color: red;
+	}
+
+	.valid {
+		color: green;
+	}
+}
+
+.invalid-fields {
+	color: red;
+
+	.required-text {
+		margin-right: 5px;
+	}
+}
+
+.set-to-all-day {
+	margin-left: 5px;
+}
+
+.open-all-day {
+	color: white;
+	background-color: #007bff;
+}
+
+.clickable {
+	cursor: pointer;
+	user-select: none;
 }
