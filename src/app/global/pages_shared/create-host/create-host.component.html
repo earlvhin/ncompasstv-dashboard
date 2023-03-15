@@ -44,13 +44,11 @@
 											[placeholder]="field.placeholder"
 											[required]="field.is_required" />
 									</mat-form-field>
-    
+
 									<ng-template #custom_field>
-                                        <div class="row p-0" *ngIf="field.control == 'is_canada'">
-                                            <div class="col-lg-12 mb-3">
-                                                <mat-checkbox class="example-margin mr-3 sm-text" (change)="getCanadaAddress($event)"> Canada Address </mat-checkbox> 
-                                            </div>
-                                        </div>
+										<div *ngIf="field.control == 'is_canada'">
+											<mat-checkbox (change)="getCanadaAddress($event)">Canada Address</mat-checkbox>
+										</div>
 
 										<app-autocomplete-field
 											*ngIf="field.control == 'category' && !no_category; else no_category_selected"
@@ -75,18 +73,18 @@
 											[disabled]="true">
 										</app-autocomplete-field>
 
-                                        <app-autocomplete-field
-                                            *ngIf="field.control === 'city'"
-                                            (data_value)="setCity($event)"
-                                            [key_of_value]="'city_state'"
-                                            [placeholder]="field.placeholder"
-                                            [label]="field.label"
-                                            [data_reference]="city_state"
-                                            [search_keyword]="'city_state'"
-                                            [primary_keyword]="'city_state'"
-                                            [new_value]="city_selected"
-                                            [initial_value]="city_selected">
-                                        </app-autocomplete-field>
+										<app-autocomplete-field
+											*ngIf="field.control === 'city'"
+											(data_value)="setCity($event)"
+											[key_of_value]="'city_state'"
+											[placeholder]="field.placeholder"
+											[label]="field.label"
+											[data_reference]="city_state"
+											[search_keyword]="'city_state'"
+											[primary_keyword]="'city_state'"
+											[new_value]="city_selected"
+											[initial_value]="city_selected">
+										</app-autocomplete-field>
 
 										<ng-template #no_category_selected>
 											<mat-form-field
@@ -98,7 +96,7 @@
 												<input matInput formControlName="category" placeholder="Category" [required]="field.is_required" />
 											</mat-form-field>
 										</ng-template>
-										
+
 										<ng-template #no_category_selected2>
 											<mat-form-field
 												*ngIf="field.control === 'category2'"
@@ -114,7 +112,7 @@
 													[disabled]="true" />
 											</mat-form-field>
 										</ng-template>
-										
+
 										<app-autocomplete-field
 											*ngIf="field.control == 'timezone'"
 											(data_value)="setTimezone($event)"
@@ -141,7 +139,7 @@
 										<div class="round-label mr-3" (click)="onSelectDay(h)" [ngClass]="h.status ? 'active' : ''">
 											<span class="font-weight-bold">{{ h.label }}</span>
 										</div>
-                                        
+
 										<div class="flex-even">
 											<ng-container *ngIf="!is_always_open; else always_open">
 												<ng-container *ngIf="h.status; else closed">
@@ -188,7 +186,7 @@
 												</ng-template>
 											</ng-container>
 										</div>
-                                         
+
 										<ng-template #always_open>
 											<h5 class="text-muted">Open 24 Hours, 7 Days a Week</h5>
 										</ng-template>
@@ -273,12 +271,12 @@
 						</div>
 					</div>
 				</div>
-                
+
 				<div class="col-lg-12 p-0 map-wrapper mt-3">
 					<agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
 						<agm-marker
 							*ngIf="selected_location"
-							[latitude]="selected_location.geometry.location.lat" 
+							[latitude]="selected_location.geometry.location.lat"
 							[longitude]="selected_location.geometry.location.lng"
 							[agmFitBounds]="true">
 						</agm-marker>
