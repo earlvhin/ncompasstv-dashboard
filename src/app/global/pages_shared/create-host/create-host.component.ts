@@ -275,8 +275,6 @@ export class CreateHostComponent implements OnInit {
 		this.location_candidate_fetched = true;
 		this.location_selected = false;
 
-		console.log('here');
-
 		this._fastedge
 			.get_google_business_profile(this.googlePlaceFormControls.location.value)
 			.pipe(takeUntil(this._unsubscribe))
