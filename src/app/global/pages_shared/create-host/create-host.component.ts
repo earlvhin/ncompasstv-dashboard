@@ -26,7 +26,7 @@ import {
     City, State
 } from 'src/app/global/models';
 
-import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
+import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService, LocationService, FastEdgeService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-create-host',
@@ -93,7 +93,8 @@ export class CreateHostComponent implements OnInit {
 		private _map: MapService,
 		private _router: Router,
 		private _titlecase: TitleCasePipe,
-        private _location: LocationService
+        private _location: LocationService,
+        private _fastedge: FastEdgeService,
 	) {}
 
 	ngOnInit() {
@@ -266,22 +267,33 @@ export class CreateHostComponent implements OnInit {
 		this.location_candidate_fetched = true;
 		this.location_selected = false;
 
-		this._map
-			.get_google_location_info(this.googlePlaceFormControls.location.value)
+		this._fastedge
+			.get_google_business_profile(this.googlePlaceFormControls.location.value)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data: API_GOOGLE_MAP['google_search']) => {
-					if (data.length <= 0) {
-						this.no_result = true;
-						return;
-					}
-
-					this.google_result = data;
+				data => {
+					// console.log(data)
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			);
+		// this._map
+		// 	.get_google_location_info(this.googlePlaceFormControls.location.value)
+		// 	.pipe(takeUntil(this._unsubscribe))
+		// 	.subscribe(
+		// 		(data: API_GOOGLE_MAP['google_search']) => {
+		// 			if (data.length <= 0) {
+		// 				this.no_result = true;
+		// 				return;
+		// 			}
+
+		// 			this.google_result = data;
+		// 		},
+		// 		(error) => {
+		// 			throw new Error(error);
+		// 		}
+		// 	);
 	}
 
 	onSelectDay(data: UI_STORE_HOUR) {

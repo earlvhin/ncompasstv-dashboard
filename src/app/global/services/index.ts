@@ -7,6 +7,7 @@ export * from './content-service/content.service';
 export * from './data-service/location.service';
 export * from './dealer-service/dealer.service';
 export * from './export-service/export.service';
+export * from './fastedge-service/fastedge.service';
 export * from './feed-service/feed.service';
 export * from './filestack-service/filestack.service';
 export * from './form-service/form.service';
