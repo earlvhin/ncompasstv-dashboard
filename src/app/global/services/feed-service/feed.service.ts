@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, ɵ_sanitizeUrl } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
+import { CREATE_WIDGET_FEED } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -25,6 +26,14 @@ export class FeedService extends BaseService {
 	create_feed(data) {
 		const url = `${this.creators.api_new_feed}`;
 		return this.postRequest(url, data);
+	}
+
+	create_widget_feed(body: CREATE_WIDGET_FEED) {
+		const url = this.creators.api_new_feed;
+
+		body.embeddedscript = encodeURIComponent(body.embeddedscript).replace(/'/g, '%27').replace(/"/g, '%22');
+
+		return this.postRequest(url, [body]);
 	}
 
 	edit_feed(data) {

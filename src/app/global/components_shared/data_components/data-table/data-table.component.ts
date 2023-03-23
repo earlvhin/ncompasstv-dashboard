@@ -19,7 +19,7 @@ import {
 	UserService
 } from 'src/app/global/services';
 
-import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
 
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -127,7 +127,6 @@ export class DataTableComponent implements OnInit {
 				}
 			});
 		});
-
 		this.subscribeToEmailNotificationToggleResult();
 	}
 
@@ -247,10 +246,10 @@ export class DataTableComponent implements OnInit {
 		window.open(data.link, '_blank').focus();
 	}
 
-	editFeed(e): void {
+	editFeed(data: UI_TABLE_FEED): void {
 		if (this.is_view_only) return;
 
-		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data: e });
+		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data });
 
 		dialogRef.afterClosed().subscribe(
 			(response) => {
