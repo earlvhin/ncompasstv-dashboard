@@ -3,13 +3,15 @@ import { Buffer, Column, Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 
+import { WORKSHEET } from 'src/app/global/models';
+
 @Injectable({
 	providedIn: 'root'
 })
 export class ExportService {
 	constructor() {}
 
-	async generate(pageSource: string, worksheets: { name: string; columns: { name: string; key: string }[]; data: any[] }[]) {
+	async generate(pageSource: string, worksheets: WORKSHEET[]) {
 		const workbook = new Workbook();
 		workbook.creator = 'NCompass TV';
 		workbook.created = new Date();

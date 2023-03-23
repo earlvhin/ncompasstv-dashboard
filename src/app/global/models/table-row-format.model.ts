@@ -1,14 +1,17 @@
 export interface TABLE_ROW_FORMAT {
-	value: any;
-	label?: string;
-	link?: string;
+	anydesk?: boolean;
+	compressed?: boolean;
+	copy?: boolean;
 	editable?: boolean;
+	value: any;
 	hidden?: boolean;
 	isImage?: boolean;
-	newTabLink?: boolean;
-	compressed?: boolean;
-	status?: boolean;
-	copy?: boolean;
+	link?: string;
+	label?: string;
 	new_tab_link?: boolean;
+	newTabLink?: boolean;
+	new_status?: boolean;
+	password?: string;
+	status?: boolean;
 	type?: string;
 }

@@ -36,6 +36,8 @@ export interface API_LICENSE_PROPS {
 	isActivated?: any;
 	isCecEnabled?: number;
 	isRegistered: number;
+	lastDisconnect?: string; // for export
+	lastPush?: string; // for export
 	licenseId: string;
 	licenseKey: string;
 	macAddress: string;

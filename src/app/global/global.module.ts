@@ -112,6 +112,7 @@ import { MonthDayFormatDirective } from './directives/month-day-format/month-day
 import { NavbarComponent } from './components_shared/page_components/navbar/navbar.component';
 import { NewAdminComponent } from './components_shared/user_components/user-forms/new-admin/new-admin.component';
 import { NewAdvertiserComponent } from './components_shared/user_components/user-forms/new-advertiser/new-advertiser.component';
+import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 import { NewDealerComponent } from './components_shared/user_components/user-forms/new-dealer/new-dealer.component';
 import { NewHostUserComponent } from './components_shared/user_components/user-forms/new-host-user/new-host-user.component';
 import { NewSubDealerComponent } from './components_shared/user_components/user-forms/new-sub-dealer/new-sub-dealer.component';
@@ -197,6 +198,7 @@ import {
 	MatAutocompleteModule,
 	MatCardModule,
 	MatCheckboxModule,
+	MatChipsModule,
 	MatButtonModule,
 	MatMenuModule,
 	MatExpansionModule,
@@ -219,7 +221,6 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { NewDealerAdminComponent } from './components_shared/user_components/user-forms/new-dealer-admin/new-dealer-admin.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -295,7 +296,7 @@ const ngComponents = [
 	FilterLabelsComponent,
 	FooterComponent,
 	GenerateFeedComponent,
-    GridViewLicenseComponent,
+	GridViewLicenseComponent,
 	HostCustomFieldsComponent,
 	HostViewComponent,
 	HostsTabComponent,
@@ -406,6 +407,7 @@ const MaterialModules = [
 	MatButtonModule,
 	MatCardModule,
 	MatCheckboxModule,
+	MatChipsModule,
 	MatDialogModule,
 	MatDividerModule,
 	MatExpansionModule,

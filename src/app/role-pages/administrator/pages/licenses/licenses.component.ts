@@ -293,8 +293,8 @@ export class LicensesComponent implements OnInit {
 					this.getColumnsAndOrder(filter, 'licenses');
 					return;
 				} else {
-                    this.sortList('desc');
-                }
+					this.sortList('desc');
+				}
 				break;
 
 			case 'zone':
@@ -327,7 +327,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
 				const filter = { column: 'TimeIn', order: 'desc' };
-			    this.getColumnsAndOrder(filter, 'licenses');
+				this.getColumnsAndOrder(filter, 'licenses');
 				break;
 
 			case 'assigned':
@@ -544,7 +544,7 @@ export class LicensesComponent implements OnInit {
 				}
 			);
 	}
-    
+
 	getTotalHours(data: { storeHours: any }) {
 		if (data.storeHours) {
 			data.storeHours = JSON.parse(data.storeHours);
@@ -1152,8 +1152,8 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					status: true,
-                    has_favorites: true,
-                    is_favorite: l.isFavorite,
+					has_favorites: true,
+					is_favorite: l.isFavorite,
 					show_tags: l.tags != null ? true : false,
 					tags: l.tags != null ? l.tags : []
 				},
