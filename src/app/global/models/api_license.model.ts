@@ -80,6 +80,7 @@ export interface API_LICENSE_PROPS {
 	timeOut: string;
 	timezoneName: string;
 	totalStorage: string;
+	tvBrand?: string;
 	ui?: string;
 	uiVersion: string;
 	zone?: string;

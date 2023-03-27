@@ -10,8 +10,9 @@ import { ResourceTabComponent } from './components/resource-tab/resource-tab.com
 import { InstallationTabComponent } from './components/installation-tab/installation-tab.component';
 import { ContentTabComponent } from './components/content-tab/content-tab.component';
 import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
+import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
-const MODALS = [AddTagModalComponent];
+const MODALS = [AddTagModalComponent, UpdateTvBrandDialogComponent];
 @NgModule({
 	declarations: [SingleLicenseComponent, AnalyticsTabComponent, ResourceTabComponent, InstallationTabComponent, ContentTabComponent, MODALS],
 	imports: [CommonModule, GlobalModule, MatSnackBarModule, RouterModule],
