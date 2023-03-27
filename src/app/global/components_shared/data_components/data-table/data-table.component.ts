@@ -19,8 +19,7 @@ import {
 	UserService
 } from 'src/app/global/services';
 
-import { UI_CURRENT_USER, UI_DEALER_ORDERS } from 'src/app/global/models';
-
+import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
@@ -28,6 +27,7 @@ import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.com
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
+import { dateFormat } from 'highcharts';
 
 @Component({
 	selector: 'app-data-table',
@@ -246,10 +246,10 @@ export class DataTableComponent implements OnInit {
 		window.open(data.link, '_blank').focus();
 	}
 
-	editFeed(e): void {
+	editFeed(data: UI_TABLE_FEED): void {
 		if (this.is_view_only) return;
 
-		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data: e });
+		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data });
 
 		dialogRef.afterClosed().subscribe(
 			(response) => {

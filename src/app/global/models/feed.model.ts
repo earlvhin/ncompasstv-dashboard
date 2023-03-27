@@ -13,5 +13,5 @@ export interface FEED {
 	refDealerId: string;
 	title: string;
 	url: string;
+	embeddedScript?: string;
 }
-
