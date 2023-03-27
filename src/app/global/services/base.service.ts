@@ -28,11 +28,20 @@ export class BaseService {
 		return this._auth.current_user_value;
 	}
 
-	protected getRequest(endpoint: string, options: any = null, isApplicationRequestOnly = false, overrideUrl = false): Observable<any> {
-		let headers = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
+	protected getRequest(
+		endpoint: string,
+		options: any = null,
+		isApplicationRequestOnly = false,
+		overrideUrl = false,
+		overrideOptions = false
+	): Observable<any> {
+		let headers: any = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
 		let baseUri = this.baseUri;
+
 		if (options) headers = { ...this.headers, ...options };
+		if (overrideOptions) headers = { headers: new HttpHeaders(options) };
 		if (this._auth.current_role === 'dealeradmin') baseUri += 'dealeradmin/';
+
 		const url = overrideUrl ? endpoint : `${baseUri}${endpoint}`;
 		return this._http.get(url, headers);
 	}

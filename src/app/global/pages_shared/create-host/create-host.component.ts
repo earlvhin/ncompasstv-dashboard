@@ -59,7 +59,7 @@ export class CreateHostComponent implements OnInit {
 	form_invalid = true;
 	google_operation_days = this._googleOperationDays;
 	google_place_form: FormGroup;
-	google_result: GOOGLE_MAP_SEARCH_RESULT[] = [];
+	google_result: any = [];
 	is_always_open = false;
 	is_admin = this.isAdmin;
 	is_creating_host = false;
@@ -275,36 +275,21 @@ export class CreateHostComponent implements OnInit {
 		this.location_candidate_fetched = true;
 		this.location_selected = false;
 
-		console.log('here');
-
 		this._fastedge
 			.get_google_business_profile(this.googlePlaceFormControls.location.value)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					console.log(data);
+					if (data.google_search.length <= 0) {
+                        this.no_result = true;
+        				return;
+                    }
+                    this.google_result = data.google_search;
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			);
-
-		// this._map
-		// 	.get_google_location_info(this.googlePlaceFormControls.location.value)
-		// 	.pipe(takeUntil(this._unsubscribe))
-		// 	.subscribe(
-		// 		(data: API_GOOGLE_MAP['google_search']) => {
-		// 			if (data.length <= 0) {
-		// 				this.no_result = true;
-		// 				return;
-		// 			}
-
-		// 			this.google_result = data;
-		// 		},
-		// 		(error) => {
-		// 			throw new Error(error);
-		// 		}
-		// 	);
 	}
 
 	onSelectDay(data: UI_STORE_HOUR) {
@@ -354,45 +339,62 @@ export class CreateHostComponent implements OnInit {
 			});
 	}
 
-	plotToMap(data: GOOGLE_MAP_SEARCH_RESULT) {
-		let sliced_address = data.result.formatted_address.split(', ');
-		let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',') + 1);
-		let category_one = data.result.types[0];
+    getMoreDetailsofBusinessPlace(location) {
+        let location_selected = location;
+        this._map
+			.get_google_store_info(location_selected.placeId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
+				location_selected.opening_hours = data.data.result.opening_hours;
+			}).add(() => (this.plotToMap(location_selected)));;
+        
+    }
+
+	plotToMap(data: any) {
+		let sliced_address = data.address.split(', ');
+		// let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',') + 1);
+		// let category_one = data.type;
 		// this.child_category = category_one;
-		this.getGeneralCategory(category_one);
-		this.setToCategory(category_one);
-		this.place_id = data.result.place_id;
-		this.current_host_image = this.default_host_image;
+		this.getGeneralCategory(data.type);
+		this.setToCategory(data.type);
+		this.place_id = data.placeId;
+		this.current_host_image = data.thumbnail;
 		this.location_selected = true;
 		this.location_candidate_fetched = false;
-		this.selected_location = data.result;
-		this.newHostFormControls.businessName.setValue(data.result.name);
-		this.newHostFormControls.lat.setValue(data.result.geometry.location.lat);
-		this.newHostFormControls.long.setValue(data.result.geometry.location.lng);
+		this.selected_location = data;
+		this.newHostFormControls.businessName.setValue(data.title);
+		this.newHostFormControls.lat.setValue(data.latitude);
+		this.newHostFormControls.long.setValue(data.longitude);
+        
+        // ADDRESS MAPPING
+        let state_zip = sliced_address[2].split(' ');
+		this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
+		this.fillCityOfHost(state_zip[0],sliced_address[1])
+		this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
 
-		if (!state.includes('Canada')) {
-			let state_zip = sliced_address[2].split(' ');
-			this.newHostFormControls.address.setValue(sliced_address[0]);
-			let state_abb_sliced = sliced_address[2].split(' ');
-			this.fillCityOfHost(state_abb_sliced[0], sliced_address[1]);
-			this.newHostFormControls.zip.setValue(state_zip[1]);
-		} else {
-			if (sliced_address.length == 4) {
-				let state_zip = sliced_address[2].split(' ');
-				this.newHostFormControls.address.setValue(sliced_address[0]);
-				this.setCity(sliced_address[1]);
-				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-			}
-			if (sliced_address.length == 5) {
-				let state_zip = sliced_address[3].split(' ');
-				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-				this.setCity(sliced_address[1]);
-				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-			}
-		}
+		// if (!state.includes('Canada')) {
+		// 	let state_zip = sliced_address[2].split(' ');
+		// 	this.newHostFormControls.address.setValue(sliced_address[0]);
+		// 	let state_abb_sliced = sliced_address[2].split(' ');
+		// 	this.fillCityOfHost(state_abb_sliced[0], sliced_address[1]);
+		// 	this.newHostFormControls.zip.setValue(state_zip[1]);
+		// } else {
+		// 	if (sliced_address.length == 4) {
+		// 		let state_zip = sliced_address[2].split(' ');
+		// 		this.newHostFormControls.address.setValue(sliced_address[0]);
+		// 		this.setCity(sliced_address[1]);
+		// 		this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
+		// 	}
+		// 	if (sliced_address.length == 5) {
+		// 		let state_zip = sliced_address[3].split(' ');
+		// 		this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
+		// 		this.setCity(sliced_address[1]);
+		// 		this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
+		// 	}
+		// }
 
-		if (data.result.opening_hours) {
-			this.mapOperationHours(data.result.opening_hours.periods);
+		if (data.opening_hours) {
+			this.mapOperationHours(data.opening_hours.periods);
 		}
 
 		this.new_host_form.markAllAsTouched();

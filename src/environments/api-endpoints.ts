@@ -144,6 +144,7 @@ export const API_ENDPOINTS = {
 		api_get_users_total: 'user/gettotal',
 		api_generate_content_logs_report: 'contentplaysdaily/ExportPlayLogsPerHostsByContent',
 		api_google_map: 'googleapi/searchplaces?place=',
+		api_google_store_hours: 'googleapi/getstorehours?placeid=',
 		api_renewsocket: 'license/renewsocket',
 		api_search_dealer: 'dealer/searchdealer?search=',
 		api_search_dealer_with_host: 'dealer/getdealerswithhost?search=',

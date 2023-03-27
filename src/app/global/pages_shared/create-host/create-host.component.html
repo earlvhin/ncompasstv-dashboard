@@ -247,14 +247,14 @@
 							</form>
 							<div class="location-candidates material-shadow" *ngIf="location_candidate_fetched">
 								<ul *ngIf="google_result.length != 0; else loading">
-									<li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
+									<li *ngFor="let loc of google_result" (click)="getMoreDetailsofBusinessPlace(loc)">
 										<div class="d-flex align-items-center">
 											<div class="mr-3">
 												<span class="fas fa-map-marker-alt text-danger"></span>
 											</div>
 											<div class="flex-even">
-												<h5>{{ loc.result.name }}</h5>
-												<p class="sm-text mb-0">{{ loc.result.formatted_address | titlecase }}</p>
+												<h5>{{ loc.title }}</h5>
+												<p class="sm-text mb-0">{{ loc.address  | titlecase }}</p>
 											</div>
 										</div>
 									</li>
@@ -276,8 +276,8 @@
 					<agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
 						<agm-marker
 							*ngIf="selected_location"
-							[latitude]="selected_location.geometry.location.lat"
-							[longitude]="selected_location.geometry.location.lng"
+							[latitude]="selected_location.latitude"
+							[longitude]="selected_location.longitude"
 							[agmFitBounds]="true">
 						</agm-marker>
 					</agm-map>

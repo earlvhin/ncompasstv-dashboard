@@ -8,9 +8,12 @@ import { HttpHeaders } from '@angular/common/http';
 })
 export class FastEdgeService extends BaseService {
 	get_google_business_profile(data) {
-        let httpOptions = {
-            headers: new HttpHeaders({ 'x-api-key': 'kIwFkm6nVF5qYvAQfYKjB6h516yA918w5m1COWZA' })
-        };
-		return this.getRequest(`${environment.fastedge}${data}`, httpOptions, true, true);
+        let key = '';
+        if(environment.production) {
+            key = 'PMloUuvyVtnusW0FHRhC8QwuFTAt5SI1JdIhAjm2'
+        } else {
+            key =  'kIwFkm6nVF5qYvAQfYKjB6h516yA918w5m1COWZA'
+        }
+	    return this.getRequest(`${environment.fastedge}${data}`, { 'x-api-key': key }, false, true, true);
 	}
 }
