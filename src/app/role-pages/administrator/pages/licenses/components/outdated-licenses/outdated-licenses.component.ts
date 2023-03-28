@@ -163,7 +163,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 
 		return licenses.map((license) => {
 			license.status = license.piStatus === 1 ? 'Online' : 'Offline';
-			license.password = this.getAnydeskPassword(license.licenseKey);
+			license.password = this.getAnydeskPassword(license.licenseId);
 			license.lastDisconnect = this.parseDate(license.timeOut);
 			license.lastPush = this.parseDate(license.contentsUpdated);
 			license.displayStatus = license.displayStatus === 1 ? 'ON' : 'OFF';
@@ -243,7 +243,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 							break;
 						}
 
-						mapped[key].password = this.getAnydeskPassword(license.licenseKey);
+						mapped[key].password = this.getAnydeskPassword(license.licenseId);
 						mapped[key].label = 'Anydesk ID';
 						mapped[key].copy = true;
 						mapped[key].anydesk = true;
