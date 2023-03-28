@@ -367,10 +367,7 @@ export class CreateHostComponent implements OnInit {
 		this.newHostFormControls.long.setValue(data.longitude);
         
         // ADDRESS MAPPING
-        let state_zip = sliced_address[2].split(' ');
-		this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
-		this.fillCityOfHost(state_zip[0],sliced_address[1])
-		this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+        
 
 		// if (!state.includes('Canada')) {
 		// 	let state_zip = sliced_address[2].split(' ');
@@ -379,18 +376,18 @@ export class CreateHostComponent implements OnInit {
 		// 	this.fillCityOfHost(state_abb_sliced[0], sliced_address[1]);
 		// 	this.newHostFormControls.zip.setValue(state_zip[1]);
 		// } else {
-		// 	if (sliced_address.length == 4) {
-		// 		let state_zip = sliced_address[2].split(' ');
-		// 		this.newHostFormControls.address.setValue(sliced_address[0]);
-		// 		this.setCity(sliced_address[1]);
-		// 		this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-		// 	}
-		// 	if (sliced_address.length == 5) {
-		// 		let state_zip = sliced_address[3].split(' ');
-		// 		this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-		// 		this.setCity(sliced_address[1]);
-		// 		this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-		// 	}
+			if (sliced_address.length == 3) {
+				let state_zip = sliced_address[2].split(' ');
+                this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
+                this.fillCityOfHost(state_zip[0],sliced_address[1])
+                this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+			}
+			if (sliced_address.length == 4) {
+				let state_zip = sliced_address[3].split(' ');
+				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
+				this.fillCityOfHost(state_zip[0], sliced_address[2]);
+				this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+			}
 		// }
 
 		if (data.opening_hours) {
