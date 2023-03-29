@@ -5,6 +5,7 @@ export const environment = {
 	socket_server: 'http://3.212.225.229:30083',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
+    fastedge: 'https://fastedgeapidev.n-compass.online/nc/googleapi/searchplaces?place=',
 	auth: {
 		api_login: 'account/login',
 		api_refresh: 'token/refresh',
