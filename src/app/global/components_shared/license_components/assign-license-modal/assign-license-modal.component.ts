@@ -54,7 +54,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this.assign_success = true
+					this.assign_success = true;
 					this._helper.onRefreshBannerData.next();
 				},
 				(error) => {
@@ -96,7 +96,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 			throw new Error(error);
 		}
 
-		if ('message' in firstPageResult) {
+		if ('message' in firstPageResult || firstPageResult.paging.entities.length === 0) {
 			this.no_available_licenses = true;
 			this.licenses_loaded = true;
 			return;
