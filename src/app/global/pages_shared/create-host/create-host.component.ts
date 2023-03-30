@@ -49,7 +49,7 @@ export class CreateHostComponent implements OnInit {
 	form_invalid = true;
 	google_operation_days = this._googleOperationDays;
 	google_place_form: FormGroup;
-	google_result: GOOGLE_MAP_SEARCH_RESULT[] = [];
+	google_result: any;
 	is_always_open = false;
 	is_admin = this.isAdmin;
 	is_creating_host = false;
@@ -277,7 +277,6 @@ export class CreateHostComponent implements OnInit {
 					}
 
 					this.google_result = data;
-                    console.log("GOOGLE_RESULT", this.google_result)
 				},
 				(error) => {
 					throw new Error(error);
