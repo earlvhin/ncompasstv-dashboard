@@ -9,47 +9,37 @@ import { API_CONTENT } from 'src/app/global/models/api_content.model';
 	styleUrls: ['./content-schedule-card.component.scss']
 })
 export class ContentScheduleCardComponent implements OnInit {
-
-	@Input() content: API_CONTENT; 
+	@Input() content: API_CONTENT;
 	@Input() index: number;
 
 	has_schedule = false;
 	schedule = { date: '', days: '', time: '' };
 
-	constructor() { }
-	
+	constructor() {}
+
 	ngOnInit() {
 		this.setSchedule();
 	}
 
 	private setCustomSchedule(): void {
-
 		const content = this.content;
 		if (!content.playlistContentsSchedule) return;
 
 		let { from, to, days, playTimeStart, playTimeEnd } = content.playlistContentsSchedule;
 		this.schedule.date = `${moment(from).format('MMM DD, YYYY')} - ${moment(to).format('MMM DD, YYYY')}`;
 		this.schedule.days = this.setDays(days);
-		this.schedule.time = (playTimeStart == '12:00 AM' && playTimeEnd == '11:59 PM') ? 'All Day' : `${playTimeStart} - ${playTimeEnd}`;
+		this.schedule.time = playTimeStart == '12:00 AM' && playTimeEnd == '11:59 PM' ? 'All Day' : `${playTimeStart} - ${playTimeEnd}`;
 		this.has_schedule = true;
-
 	}
 
 	private setDays(data: string): string {
-
-		const sum = data.split(',').reduce((a, b) => {
-			const result = parseInt(a) + parseInt(b);
-			return `${result}`;
-		});
-
-		if (data === '0,1,2,3,4,5,6' || sum === '21') return 'Everyday';
+		if (data === '0,1,2,3,4,5,6') return 'Everyday';
 
 		const result = [];
 
 		const daysArr = data.split(',');
 
-		daysArr.forEach(numeric => {
-
+		daysArr.forEach((numeric) => {
 			switch (numeric) {
 				case '0':
 					result.push('Sun');
@@ -74,11 +64,9 @@ export class ContentScheduleCardComponent implements OnInit {
 					break;
 				default:
 			}
-
 		});
 
 		return result.join(', ');
-
 	}
 
 	private setDefaultSchedule(): void {
@@ -86,7 +74,6 @@ export class ContentScheduleCardComponent implements OnInit {
 	}
 
 	private setSchedule(): void {
-
 		if (!this.content.playlistContentsSchedule) return;
 
 		const { type } = this.content.playlistContentsSchedule;
@@ -106,5 +93,4 @@ export class ContentScheduleCardComponent implements OnInit {
 	private setToNotPlaySchedule(): void {
 		this.schedule = { date: 'Do not play', days: 'Do not play', time: 'Do not play' };
 	}
-
 }

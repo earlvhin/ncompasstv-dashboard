@@ -282,19 +282,20 @@ export class LicensesComponent implements OnInit {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
-				// this.filters.status = value;
+				this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
+				this.filters.pending = false;
 				this.filters.isactivated = 1;
 				if (value == 0) {
 					const filter = { column: 'TimeIn', order: 'desc' };
 					this.getColumnsAndOrder(filter, 'licenses');
 					return;
 				} else {
-                    this.sortList('desc');
-                }
+					this.sortList('desc');
+				}
 				break;
 
 			case 'zone':
@@ -327,7 +328,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
 				const filter = { column: 'TimeIn', order: 'desc' };
-			    this.getColumnsAndOrder(filter, 'licenses');
+				this.getColumnsAndOrder(filter, 'licenses');
 				break;
 
 			case 'assigned':
@@ -544,7 +545,7 @@ export class LicensesComponent implements OnInit {
 				}
 			);
 	}
-    
+
 	getTotalHours(data: { storeHours: any }) {
 		if (data.storeHours) {
 			data.storeHours = JSON.parse(data.storeHours);
@@ -702,9 +703,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	getDataForExport(tab: string): void {
-		this.pageSize = 0;
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-		this.filters.isactivated = '';
 
 		switch (tab) {
 			case 'licenses':
@@ -1152,8 +1151,8 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					status: true,
-                    has_favorites: true,
-                    is_favorite: l.isFavorite,
+					has_favorites: true,
+					is_favorite: l.isFavorite,
 					show_tags: l.tags != null ? true : false,
 					tags: l.tags != null ? l.tags : []
 				},

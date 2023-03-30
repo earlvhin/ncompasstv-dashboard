@@ -29,7 +29,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	has_selected_all_day_long = true;
 	invalid_form = true;
 	is_ready = false;
-	playTime: { start: NgbTimeStruct, end: NgbTimeStruct } = { start: { hour: 0, minute: 0, second: 0 }, end: { hour: 0, minute: 0, second: 0 } };
+	playTime: { start: NgbTimeStruct; end: NgbTimeStruct } = { start: { hour: 0, minute: 0, second: 0 }, end: { hour: 0, minute: 0, second: 0 } };
 	selected_days: any[] = [];
 	title = 'Set Schedule';
 	types = this._scheduleTypes;
@@ -391,7 +391,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 	}
 
 	private setHourData(hour: string) {
-
 		const hourSplit = moment(hour, 'hh:mm A').format('HH:mm').split(':');
 
 		return {
@@ -399,7 +398,6 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			minute: parseInt(hourSplit[1]),
 			second: 0
 		};
-
 	}
 
 	private setInitialFormValues(): void {
@@ -496,30 +494,23 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		const playTimeStart = this.form.get('playTimeStartData');
 		const playTimeEnd = this.form.get('playTimeEndData');
 
-		playTimeStart.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: NgbTimeStruct | null) => {
-					if (!response) return;
-					const { hour, minute } = response;
-					const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
-					this.start_time = time;
-					if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
-					else this.has_selected_all_day_long = false;
-				}
-			);
+		playTimeStart.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response: NgbTimeStruct | null) => {
+			if (!response) return;
+			const { hour, minute } = response;
+			const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
+			this.start_time = time;
+			if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
+			else this.has_selected_all_day_long = false;
+		});
 
-		playTimeEnd.valueChanges.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: NgbTimeStruct | null) => {
-					if (!response) return;
-					const { hour, minute } = response;
-					const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
-					this.end_time = time;
-					if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
-					else this.has_selected_all_day_long = false;
-
-				}
-			);
+		playTimeEnd.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((response: NgbTimeStruct | null) => {
+			if (!response) return;
+			const { hour, minute } = response;
+			const time = moment(`${hour}:${minute}`, 'HH:mm').format('hh:mm A');
+			this.end_time = time;
+			if (this.start_time === '12:00 AM' && this.end_time === '11:59 PM') this.has_selected_all_day_long = true;
+			else this.has_selected_all_day_long = false;
+		});
 	}
 
 	private updateSchedule(data: PlaylistContentSchedule): void {
@@ -555,8 +546,8 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			playTimeStart: ['', Validators.required],
 			playTimeEnd: ['', Validators.required],
 			alternateWeek: [0],
-			playTimeStartData: [ { hour: 0, minute: 0, second: 0 } ],
-			playTimeEndData: [ { hour: 23, minute: 59, second: 0 } ],
+			playTimeStartData: [{ hour: 0, minute: 0, second: 0 }],
+			playTimeEndData: [{ hour: 23, minute: 59, second: 0 }]
 		});
 	}
 

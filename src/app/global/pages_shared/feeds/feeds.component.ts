@@ -110,7 +110,9 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	onCreateUrlFeed(): void {
 		const dialog = this._dialog.open(CreateFeedComponent, {
 			width: '600px',
-			panelClass: 'app-media-modal'
+			panelClass: 'app-media-modal',
+			autoFocus: false,
+			disableClose: true
 		});
 
 		dialog.afterClosed().subscribe((data) => {
@@ -148,7 +150,18 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		let count = 1;
 
 		return feeds.map((data: FEED) => {
-			const { contentId, dealerId, feedId, url, title, classification, createdByName, dateCreated, description } = data;
+			const {
+				contentId,
+				dealerId,
+				feedId,
+				url,
+				title,
+				classification,
+				createdByName,
+				dateCreated,
+				description,
+				embeddedScript: embeddedscript
+			} = data;
 
 			let dealerUrl = null;
 			let businessName = '--';
@@ -174,7 +187,8 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				{ value: createdByName, editable: false, hidden: false },
 				{ value: this._date.transform(dateCreated, 'MMMM d, y'), editable: false, hidden: false },
 				{ value: title, link: url, editable: false, hidden: true },
-				{ value: description, editable: false, hidden: true }
+				{ value: description, editable: false, hidden: true },
+				{ value: embeddedscript, editable: false, hidden: true }
 			);
 		});
 	}

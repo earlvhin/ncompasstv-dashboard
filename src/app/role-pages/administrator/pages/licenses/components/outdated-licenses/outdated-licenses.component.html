@@ -1,5 +1,35 @@
 <div id="licenses-page-outdated-tab" class="content d-flex flex-column">
-	<div class="controls-and-search-container d-flex mt-3">
+	<div class="controls-and-search-container d-flex align-items-center mt-3">
+		<div class="controls-container ml-2">
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn pi-control sm-text _primary mr-2"
+				(click)="getDataForExport()"
+				title="Export to CSV"
+				[disabled]="isExporting">
+				<span class="{{ isExporting ? 'fas fa-spinner' : 'fas fa-file-excel' }}"></span>
+				<span class="ml-2 button_text_animation">{{ isExporting ? 'Generating CSV' : 'Export' }}</span>
+			</button>
+		</div>
+
+		<ng-container *ngIf="hasLoadedStats; else loaderSmall">
+			<div class="stats-container d-flex align-items-center">
+				<div class="stat total-outdated-licenses d-flex flex-column">
+					<h5>{{ totalCount }}</h5>
+					<h6>Total Outdated:</h6>
+				</div>
+				<div class="stat latest-server-version d-flex flex-column">
+					<h5>{{ latestVersion.server }}</h5>
+					<h6>Player Server Version:</h6>
+				</div>
+				<div class="stat latest-ui-version d-flex flex-column">
+					<h5>{{ latestVersion.ui }}</h5>
+					<h6>Player UI Version:</h6>
+				</div>
+			</div>
+		</ng-container>
+
 		<div class="search-field-container">
 			<mat-form-field class="full-width">
 				<mat-label>
@@ -20,6 +50,7 @@
 				[pagination_enabled]="false"
 				[spinner_enabled]="false"
 				[active_tab]="filters.sortColumn"
+				[license_status_column]="true"
 				[sort_column]="filters.sortColumn"
 				[sort_order]="filters.sortOrder"
 				(to_sort_column)="sortTable($event)">
@@ -40,6 +71,10 @@
 			<app-spinner></app-spinner>
 		</div>
 	</ng-container>
+</ng-template>
+
+<ng-template #loaderSmall>
+	<app-spinner [diameter]="35"></app-spinner>
 </ng-template>
 
 <ng-template #noData>

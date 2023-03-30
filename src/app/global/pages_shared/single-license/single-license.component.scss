@@ -407,6 +407,22 @@
 	background-color: #8ec641 !important;
 }
 
+.clickable {
+	cursor: pointer;
+
+}
+
+.tv-brand {
+	h5, mat-form-field {
+		width: 100px;
+	}
+
+	mat-icon {
+		margin-left: 10px;
+		line-height: 20px;
+	}
+}
+
 @media screen and (min-width: 1366px) {
 	.theme-container {
 		.content-tab-container {

@@ -336,12 +336,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 	}
 
 	private setDays(data: string): string {
-		const sum = data.split(',').reduce((a, b) => {
-			const result = parseInt(a) + parseInt(b);
-			return `${result}`;
-		});
-
-		if (data === '0,1,2,3,4,5,6' || sum === '21') return 'Everyday';
+		if (data === '0,1,2,3,4,5,6') return 'Everyday';
 
 		const result = [];
 

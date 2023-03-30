@@ -61,6 +61,8 @@ export class LoginFormComponent implements OnInit {
 			username: ['', Validators.required],
 			password: ['', Validators.required]
 		});
+
+		console.log('v1.41.3');
 	}
 
 	// convenience getter for easy access to form fields

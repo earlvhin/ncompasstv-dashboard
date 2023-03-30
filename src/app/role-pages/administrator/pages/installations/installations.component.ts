@@ -217,7 +217,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
         }
 
 		return data.map((license) => {
-			const isPast = moment(license.installDate, 'MMM d, y').isBefore(moment(), 'day');
+            // subtract 1 day from date today, because todays date is considered as past
+			const isPast = moment(license.installDate).isBefore(moment().subtract(1,'d'));
 
 			return new INSTALLATION(
 				{ value: license.licenseKey, link: null, editable: false, hidden: true },

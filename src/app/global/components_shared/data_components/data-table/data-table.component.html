@@ -72,8 +72,15 @@
 							[disabled]="checkIfDisabled(data)"></mat-checkbox>
 					</span>
 
-					<span *ngIf="!data[d].hidden" [ngClass]="!data[d].isImage && !data[d].show_tags ? 'flex' : 'white-space'" [style.color]="data[d].color">
+					<span
+						*ngIf="!data[d].hidden"
+						[ngClass]="!data[d].isImage && !data[d].show_tags ? 'flex' : 'white-space'"
+						[style.color]="data[d].color">
 						<span class="text-center float-left" *ngIf="license_status_column && data[d].status">
+							<ng-container *ngIf="d === 'piStatus'">
+								<h1>HERE</h1>
+							</ng-container>
+
 							<i
 								*ngIf="!data.pi_status.new_status; else new_template_status"
 								class="fas fa-circle mr-2"
@@ -171,25 +178,28 @@
 								</div>
 							</ng-template>
 							<!-- END: BUSINESS HOURS SECTION -->
-							
-                            <!-- START: TAGS SECTION -->
-							<div class="col-lg-12 flex" *ngIf="data[d].show_tags">
-								<div class="pl-2 pt-1 pb-1 pr-2 x-sm-text text-white mr-2 mt-1 br-5 text-shadow-black" *ngFor="let tag of data[d].tags.slice(0, 3)"  [ngStyle]="{'background-color': tag.tagColor}">
-                                    {{tag.name}}
-                                </div>
-                                <div *ngIf="data[d].tags.length > 3" class="mt-2">
-                                    <i class="fas fa-tags sm-text clickable" title="Show More Tags" [ngbTooltip]="tagsTooltip" placement="bottom"></i>
-                                </div>
-                                <ng-template #tagsTooltip>
-                                    <div class="text-left">
-                                        <span class="sm-text"><b>More Tags:</b></span><br />
-                                        <div *ngFor="let tag of data[d].tags.slice(3)">
-                                            <span class="xsm-text">{{ tag.name }}</span>
-                                        </div>
-                                    </div>
-                                </ng-template>
-							</div>
 
+							<!-- START: TAGS SECTION -->
+							<div class="col-lg-12 flex" *ngIf="data[d].show_tags">
+								<div
+									class="pl-2 pt-1 pb-1 pr-2 x-sm-text text-white mr-2 mt-1 br-5 text-shadow-black"
+									*ngFor="let tag of data[d].tags.slice(0, 3)"
+									[ngStyle]="{ 'background-color': tag.tagColor }">
+									{{ tag.name }}
+								</div>
+								<div *ngIf="data[d].tags.length > 3" class="mt-2">
+									<i class="fas fa-tags sm-text clickable" title="Show More Tags" [ngbTooltip]="tagsTooltip" placement="bottom"></i>
+								</div>
+								<ng-template #tagsTooltip>
+									<div class="text-left">
+										<span class="sm-text"><b>More Tags:</b></span
+										><br />
+										<div *ngFor="let tag of data[d].tags.slice(3)">
+											<span class="xsm-text">{{ tag.name }}</span>
+										</div>
+									</div>
+								</ng-template>
+							</div>
 
 							<!-- END: BUSINESS HOURS SECTION -->
 
@@ -200,7 +210,8 @@
 										'text-primary font-weight-bold': data[d].online_field,
 										'text-danger': data[d].past,
 										'new-order-color': data[d].is_new_order
-									}" class="white-space">
+									}"
+									class="white-space">
 									<div
 										*ngIf="
 											data[d].label &&
@@ -217,34 +228,31 @@
 										<!-- DEFAULT DATA DISPLAY -->
 										<div *ngIf="!data[d].type">
 											<div *ngIf="!data[d].anydesk; else anydesk">
-                                                {{ data[d].value }}
-                                                <button
-                                                    class="fas fa-copy text-primary no-border"
-                                                    *ngIf="data[d].copy && data[d].value != '--'"
-                                                    (click)="copyToClipboard(data[d].value)"
-                                                    title="Copy {{ data[d].label }}">
-                                                </button>
-                                            </div>
-                                            <ng-template #anydesk> 
-                                                <div>
-                                                    ID - {{data[d].value != '' ? data[d].value : ''}}
-                                                    <button
-                                                        class="fas fa-copy text-primary no-border"
-                                                        *ngIf="data[d].copy && data[d].value != '--'"
-                                                        (click)="copyToClipboard(data[d].value)"
-                                                        title="Copy ID">
-                                                    </button>
-                                                </div>
-                                                <div>
-                                                    PW - {{data[d].password}}
-                                                    <button
-                                                        class="fas fa-copy text-primary no-border"
-                                                        *ngIf="data[d].copy && data[d].password != '--'"
-                                                        (click)="copyToClipboard(data[d].password)"
-                                                        title="Copy Password">
-                                                    </button>
-                                                </div>
-                                            </ng-template>
+												{{ data[d].value }}
+												<button
+													class="fas fa-copy text-primary no-border"
+													*ngIf="data[d].copy && data[d].value != '--'"
+													(click)="copyToClipboard(data[d].value)"
+													title="Copy {{ data[d].label }}"></button>
+											</div>
+											<ng-template #anydesk>
+												<div>
+													ID - {{ data[d].value != '' ? data[d].value : '' }}
+													<button
+														class="fas fa-copy text-primary no-border"
+														*ngIf="data[d].copy && data[d].value != '--'"
+														(click)="copyToClipboard(data[d].value)"
+														title="Copy ID"></button>
+												</div>
+												<div>
+													PW - {{ data[d].password }}
+													<button
+														class="fas fa-copy text-primary no-border"
+														*ngIf="data[d].copy && data[d].password != '--'"
+														(click)="copyToClipboard(data[d].password)"
+														title="Copy Password"></button>
+												</div>
+											</ng-template>
 											<div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].show_host">
 												<button class="hidden-button no-background" id="dropdownMenu1" ngbDropdownToggle>
 													<i
@@ -296,13 +304,13 @@
 						<ng-template #isImage>
 							<ng-container *ngIf="data[d].value; else noImage">
 								<div class="col-lg-12">
-                                    <a [href]="data[d].value" target="_blank">
-                                        <img [src]="data[d].value" class="mr-2" alt="screenshot" style="width: 50px; margin-bottom: 5px" />
-                                    </a>
-                                </div>
-                                <div class="col-lg-12">
-                                    <span *ngIf="has_timestamp_beside_image">{{ data[d].value | screenshot }}</span>
-                                </div>
+									<a [href]="data[d].value" target="_blank">
+										<img [src]="data[d].value" class="mr-2" alt="screenshot" style="width: 50px; margin-bottom: 5px" />
+									</a>
+								</div>
+								<div class="col-lg-12">
+									<span *ngIf="has_timestamp_beside_image">{{ data[d].value | screenshot }}</span>
+								</div>
 							</ng-container>
 
 							<ng-template #noImage>
@@ -310,23 +318,23 @@
 							</ng-template>
 						</ng-template>
 
-                        <!-- EDIT BUTTON -->
-                        <div
-                            class="float-right ml-2"
-                            *ngIf="data[d].editable && !is_view_only"
-                            mat-dialog-content
-                            (click)="editField(data[d], data[d].label, data[d].value)">
-                            <i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
-                        </div>
+						<!-- EDIT BUTTON -->
+						<div
+							class="float-right ml-2"
+							*ngIf="data[d].editable && !is_view_only"
+							mat-dialog-content
+							(click)="editField(data[d], data[d].label, data[d].value)">
+							<i class="clickable fa fa-pencil text-gray" title="Edit {{ data[d].label }}"></i>
+						</div>
 
-                        <!-- EDIT BUTTON -->
-                        <div
-                            class="ml-3 clickable mt-neg15 position-absolute ml-2"
-                            *ngIf="data[d].popview && data[d].value > 0"
-                            mat-dialog-content
-                            (click)="viewListModal(data[d], data[d].label, data[d].value)">
-                            <i class="clickable fa fa-search-plus text-gray" title="View all {{ data[d].label }}"></i>
-                        </div>
+						<!-- EDIT BUTTON -->
+						<div
+							class="ml-3 clickable mt-neg15 position-absolute ml-2"
+							*ngIf="data[d].popview && data[d].value > 0"
+							mat-dialog-content
+							(click)="viewListModal(data[d], data[d].label, data[d].value)">
+							<i class="clickable fa fa-search-plus text-gray" title="View all {{ data[d].label }}"></i>
+						</div>
 					</span>
 				</td>
 

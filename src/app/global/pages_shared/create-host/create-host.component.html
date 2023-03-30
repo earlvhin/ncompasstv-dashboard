@@ -86,6 +86,19 @@
 											[initial_value]="city_selected">
 										</app-autocomplete-field>
 
+										<app-autocomplete-field
+											*ngIf="field.control === 'city'"
+											(data_value)="setCity($event)"
+											[key_of_value]="'city_state'"
+											[placeholder]="field.placeholder"
+											[label]="field.label"
+											[data_reference]="city_state"
+											[search_keyword]="'city_state'"
+											[primary_keyword]="'city_state'"
+											[new_value]="city_selected"
+											[initial_value]="city_selected">
+										</app-autocomplete-field>
+
 										<ng-template #no_category_selected>
 											<mat-form-field
 												*ngIf="field.control === 'category'"
@@ -96,7 +109,6 @@
 												<input matInput formControlName="category" placeholder="Category" [required]="field.is_required" />
 											</mat-form-field>
 										</ng-template>
-
 										<ng-template #no_category_selected2>
 											<mat-form-field
 												*ngIf="field.control === 'category2'"
@@ -112,7 +124,6 @@
 													[disabled]="true" />
 											</mat-form-field>
 										</ng-template>
-
 										<app-autocomplete-field
 											*ngIf="field.control == 'timezone'"
 											(data_value)="setTimezone($event)"
@@ -186,7 +197,6 @@
 												</ng-template>
 											</ng-container>
 										</div>
-
 										<ng-template #always_open>
 											<h5 class="text-muted">Open 24 Hours, 7 Days a Week</h5>
 										</ng-template>
@@ -271,7 +281,6 @@
 						</div>
 					</div>
 				</div>
-
 				<div class="col-lg-12 p-0 map-wrapper mt-3">
 					<agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
 						<agm-marker

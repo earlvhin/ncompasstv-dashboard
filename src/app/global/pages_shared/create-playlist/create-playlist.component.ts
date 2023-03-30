@@ -168,7 +168,7 @@ export class CreatePlaylistComponent implements OnInit {
 				this._playlist.create_playlist(this.playlist).subscribe(
 					(data) => {
 						this.creating_playlist = false;
-						this.openConfirmationModal();
+						this.openConfirmationModal(data.playlist.playlistId);
 					},
 					(error) => {}
 				)
@@ -359,14 +359,14 @@ export class CreatePlaylistComponent implements OnInit {
 		this.getDealers(event.page);
 	}
 
-	openConfirmationModal() {
+	openConfirmationModal(id?) {
 		let dialog = this._dialog.open(PlaylistCreatedModalComponent, {
 			disableClose: true,
 			width: '600px'
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			this._router.navigate([`/${this.roleRoute}/playlists/`]);
+			this._router.navigate([`/${this.roleRoute}/playlists/${id}`]);
 		});
 	}
 

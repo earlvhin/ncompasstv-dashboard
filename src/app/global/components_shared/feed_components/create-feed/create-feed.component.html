@@ -1,83 +1,83 @@
-<div class="p-4 user-form position-relative ">
-	<ng-container *ngIf="!is_loading; else loading">
-		<h3>New Feed</h3>
-		<p class="sm-text mb-4">Fill the forms below to create a feed.</p>
-	
-		<form class="text-left" [formGroup]="new_feed_form" (ngSubmit)="saveFeed()" class="text-left" #formDirective="ngForm">
-			<div class="row mb-4">
-				<div *ngFor="let f of create_feed_fields" class="{{ f.width }}">
-					<ng-container *ngIf="f.is_autocomplete != true; else autocomplete">
-						<mat-form-field class="full-width" *ngIf="f.type != 'option'; else radios">
-							<mat-label>{{ f.label }}</mat-label>
-							<input matInput formControlName="{{ f.control }}" matInput type="{{ f.type }}" placeholder="{{ f.placeholder }}">
-						</mat-form-field>
-					</ng-container>
-	
-					<ng-template #autocomplete>
-						<!-- <mat-form-field class="full-width position-relative">
-							<input
-							matInput
-							type="{{ f.type }}" 
-							placeholder="{{ f.placeholder }}"
-							formControlName="{{ f.control }}"
-							[matAutocomplete]="auto"
-							(blur)="checkSelectedDealer($event)"> -->
-		
-							<!-- <mat-autocomplete autoActiveFirstOption #auto="matAutocomplete">
-								<mat-option *ngFor="let dealer of filtered_options | async" [value]="dealer.businessName" (onSelectionChange)="setDealerId(dealer.dealerId)">
-									{{ dealer.businessName }}
-								</mat-option>
-							</mat-autocomplete> -->
+<div class="p-4 user-form position-relative">
+	<h3 class="mb-4">Create a Feed</h3>
 
-							<app-autocomplete-field
-								(data_value)="setDealerId($event)"
-								[data_reference]="dealers_data"
-								[key_of_value]="'dealerId'"
-								[label]="'Choose A Dealer'"
-								[placeholder]="'Choose A Dealer'"
-								[primary_keyword]="'businessName'"
-								[search_keyword]="'dealer'"
-								[paging]="paging"
-								(call_next_page)="searchBoxTrigger($event)"
-								(searched)="searchData($event)"
-								[loading_data]="loading_data"
-								[initial_value]="dealer_name"
-								[new_value]="dealer_name"
-								[disabled]="is_dealer"
-								[loading_search]="loading_search"
-								[disabled]="true">							
-							</app-autocomplete-field>
-							
-							<!-- <div class="form-error position-absolute" *ngIf="dealer_not_found">
-								<span class="sm-text text-danger">This Dealer Does Not Exist</span>
-							</div>
-						</mat-form-field> -->
-					</ng-template>
-					<ng-template #radios>
-						<div class="col-lg-12 p-0 mb-1">
-							<mat-label class="text-gray">{{ f.label }}</mat-label>
-						</div>
-							
-						<mat-radio-group name="opList"  fxLayout="column" formControlName="{{ f.control }}">
-							<mat-radio-button *ngFor="let op of list" class="mr-2 md-text text-gray" 
-								name="opList" [value]="op.id" (change)="changeType($event)">{{ op.name}}</mat-radio-button>
-						</mat-radio-group>
-					</ng-template>
-				</div>
-			</div>
-			<div class="d-flex">
-				<div class="flex-even">
-					<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="disable_btn">
-						Save
-					</button>
+	<form class="text-left" [formGroup]="new_feed_form" (ngSubmit)="saveFeed()" class="text-left" #formDirective="ngForm">
+		<div class="d-flex flex-column mb-4">
+			<mat-form-field class="full-width">
+				<mat-label>Feed Type</mat-label>
+				<mat-select formControlName="feedType">
+					<mat-option *ngFor="let feed of feed_types" [value]="feed.id">
+						{{ feed.name }}
+					</mat-option>
+				</mat-select>
+			</mat-form-field>
 
-					<button mat-button mat-raised-button class="theme-btn" mat-dialog-close>
-						Cancel
-					</button>
+			<mat-form-field class="full-width">
+				<mat-label>Feed Title</mat-label>
+				<input matInput formControlName="feedTitle" matInput type="text" placeholder="Ex: ESPN News" />
+			</mat-form-field>
+
+			<mat-form-field class="full-width">
+				<mat-label>Feed Description</mat-label>
+				<input matInput formControlName="feedDescription" matInput type="text" placeholder="Ex: ESPN Latest News Today" />
+			</mat-form-field>
+
+			<ng-container *ngIf="has_loaded_dealers; else loadingDealers">
+				<div class="autocomplete-container full-width">
+					<app-autocomplete-field
+						(data_value)="dealerSelected($event)"
+						[data_reference]="dealers_data"
+						[key_of_value]="'dealerId'"
+						[label]="'Choose A Dealer'"
+						[placeholder]="'Choose A Dealer'"
+						[primary_keyword]="'businessName'"
+						[search_keyword]="'dealer'"
+						[paging]="paging"
+						(call_next_page)="searchBoxTrigger($event)"
+						(searched)="searchData($event)"
+						[loading_data]="loading_data"
+						[initial_value]="dealer_name"
+						[new_value]="dealer_name"
+						[disabled]="is_current_user_dealer"
+						[loading_search]="loading_search"
+						[disable_minimum_search_length]="true"
+						[disabled]="true">
+					</app-autocomplete-field>
 				</div>
-			</div>
-		</form>
-	</ng-container>
+			</ng-container>
+
+			<ng-container *ngIf="!has_selected_widget_feed_type; else textAreaScript">
+				<mat-form-field class="full-width">
+					<mat-label>Feed URL</mat-label>
+					<input matInput formControlName="feedUrl" matInput type="text" placeholder="URL needs to be working" />
+				</mat-form-field>
+			</ng-container>
+
+			<ng-template #textAreaScript>
+				<mat-form-field class="full-width">
+					<textarea
+						matInput
+						placeholder="Paste your widget here"
+						formControlName="embeddedscript"
+						cdkTextareaAutosize
+						cdkAutosizeMinRows="10"
+						cdkAutosizeMaxRows="15">
+					</textarea>
+				</mat-form-field>
+			</ng-template>
+		</div>
+		<div class="d-flex flex-even">
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn mr-2"
+				[disabled]="new_feed_form.invalid || is_creating_feed || (is_current_user_dealer_admin && !has_selected_dealer_id)">
+				{{ is_creating_feed ? 'Creating feed...' : 'Submit' }}
+			</button>
+
+			<button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
+		</div>
+	</form>
 
 	<ng-template #loading>
 		<div class="py-5">
@@ -85,3 +85,10 @@
 		</div>
 	</ng-template>
 </div>
+
+<ng-template #loadingDealers>
+	<div class="spinner-container d-flex align-items-center justify-content-between">
+		<h4>Loading dealers...</h4>
+		<app-spinner [diameter]="35"></app-spinner>
+	</div>
+</ng-template>
