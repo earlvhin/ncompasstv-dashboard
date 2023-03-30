@@ -152,7 +152,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 
 		this.is_form_ready = true;
 
-		if (feedType.value === 'widget') {
+		if (feedType.value.toLowerCase() === 'widget') {
 			this.is_widget_feed = true;
 			const embeddedScriptData = this._dialog_data.embeddedScript as { value: string };
 			const decodedScript = decodeURIComponent(embeddedScriptData.value.replace(/\+/g, ' '));

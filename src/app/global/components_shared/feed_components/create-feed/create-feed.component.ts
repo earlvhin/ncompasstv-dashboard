@@ -96,7 +96,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
 		const feedType = this.new_feed_form.get('feedType').value;
 
-		if (feedType === 'widget') return this.createWidgetFeed();
+		if (feedType.toLowerCase() === 'widget') return this.createWidgetFeed();
 
 		const new_feed = new API_CREATE_FEED(
 			this.form_controls.feedTitle.value,
