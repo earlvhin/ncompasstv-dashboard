@@ -52,7 +52,6 @@ export class AuthService {
 			})
 			.pipe(
 				map((current_user) => {
-					console.log('current user', current_user);
 					let currentUser = new UI_CURRENT_USER();
 					currentUser.user_id = current_user.userId;
 					currentUser.firstname = current_user.firstName;
