@@ -23,20 +23,10 @@ import {
 	API_TIMEZONE,
 	UI_STORE_HOUR,
 	UI_STORE_HOUR_PERIOD,
-	City,
-	State
+    City, State
 } from 'src/app/global/models';
 
-import {
-	AuthService,
-	DealerService,
-	CategoryService,
-	HelperService,
-	HostService,
-	MapService,
-	LocationService,
-	FastEdgeService
-} from 'src/app/global/services';
+import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-create-host',
@@ -46,10 +36,10 @@ import {
 })
 export class CreateHostComponent implements OnInit {
 	categories_data: API_PARENT_CATEGORY[];
-	city_loaded = false;
-	city_state: City[] = [];
-	canada_selected: boolean = false;
-	city_selected: string;
+    city_loaded = false;
+    city_state: City[] = [];
+    canada_selected: boolean = false;
+    city_selected: string;
 	gen_categories_data: any[];
 	category_selected: string;
 	child_category: string;
@@ -59,7 +49,7 @@ export class CreateHostComponent implements OnInit {
 	form_invalid = true;
 	google_operation_days = this._googleOperationDays;
 	google_place_form: FormGroup;
-	google_result: any = [];
+	google_result: GOOGLE_MAP_SEARCH_RESULT[] = [];
 	is_always_open = false;
 	is_admin = this.isAdmin;
 	is_creating_host = false;
@@ -103,8 +93,7 @@ export class CreateHostComponent implements OnInit {
 		private _map: MapService,
 		private _router: Router,
 		private _titlecase: TitleCasePipe,
-		private _location: LocationService,
-		private _fastedge: FastEdgeService
+        private _location: LocationService
 	) {}
 
 	ngOnInit() {
@@ -112,7 +101,7 @@ export class CreateHostComponent implements OnInit {
 		this.initializeCreateHostForm();
 		this.initializeGooglePlaceForm();
 		this.loadInitialData();
-		this.getCities();
+        this.getCities();
 		this.setOperationDays();
 
 		if (this.isDealer || this.isSubDealer) {
@@ -174,15 +163,17 @@ export class CreateHostComponent implements OnInit {
 			autoFocus: false
 		});
 
-		dialog.afterClosed().subscribe(
-			(response: UI_STORE_HOUR[]) => {
-				if (!response) return;
-				this.operation_days = response;
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
+		dialog.afterClosed()
+			.subscribe(
+				(response: UI_STORE_HOUR[]) => {
+					if (!response) return;
+					this.operation_days = response;
+
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
 	}
 
 	onChoosePhotos() {
@@ -275,16 +266,18 @@ export class CreateHostComponent implements OnInit {
 		this.location_candidate_fetched = true;
 		this.location_selected = false;
 
-		this._fastedge
-			.get_google_business_profile(this.googlePlaceFormControls.location.value)
+		this._map
+			.get_google_location_info(this.googlePlaceFormControls.location.value)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(data) => {
-					if (data.google_search.length <= 0) {
-                        this.no_result = true;
-        				return;
-                    }
-                    this.google_result = data.google_search;
+				(data: API_GOOGLE_MAP['google_search']) => {
+					if (data.length <= 0) {
+						this.no_result = true;
+						return;
+					}
+
+					this.google_result = data;
+                    console.log("GOOGLE_RESULT", this.google_result)
 				},
 				(error) => {
 					throw new Error(error);
@@ -339,59 +332,47 @@ export class CreateHostComponent implements OnInit {
 			});
 	}
 
-    getMoreDetailsofBusinessPlace(location) {
-        let location_selected = location;
-        this._map
-			.get_google_store_info(location_selected.placeId)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data) => {
-				location_selected.opening_hours = data.data.result.opening_hours;
-			}).add(() => (this.plotToMap(location_selected)));;
-        
-    }
-
-	plotToMap(data: any) {
-		let sliced_address = data.address.split(', ');
-		// let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',') + 1);
-		// let category_one = data.type;
+	plotToMap(data: GOOGLE_MAP_SEARCH_RESULT) {
+		let sliced_address = data.result.formatted_address.split(', ');
+		let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',') + 1);
+		let category_one = data.result.types[0];
 		// this.child_category = category_one;
-		this.getGeneralCategory(data.type);
-		this.setToCategory(data.type);
-		this.place_id = data.placeId;
-		this.current_host_image = data.thumbnail;
+		this.getGeneralCategory(category_one);
+		this.setToCategory(category_one);
+		this.place_id = data.result.place_id;
+		this.current_host_image = this.default_host_image;
 		this.location_selected = true;
 		this.location_candidate_fetched = false;
-		this.selected_location = data;
-		this.newHostFormControls.businessName.setValue(data.title);
-		this.newHostFormControls.lat.setValue(data.latitude);
-		this.newHostFormControls.long.setValue(data.longitude);
-        
-        // ADDRESS MAPPING
-        
+		this.selected_location = data.result;
+		this.newHostFormControls.businessName.setValue(data.result.name);
+		this.newHostFormControls.lat.setValue(data.result.geometry.location.lat);
+		this.newHostFormControls.long.setValue(data.result.geometry.location.lng);
 
-		// if (!state.includes('Canada')) {
-		// 	let state_zip = sliced_address[2].split(' ');
-		// 	this.newHostFormControls.address.setValue(sliced_address[0]);
-		// 	let state_abb_sliced = sliced_address[2].split(' ');
-		// 	this.fillCityOfHost(state_abb_sliced[0], sliced_address[1]);
-		// 	this.newHostFormControls.zip.setValue(state_zip[1]);
-		// } else {
-			if (sliced_address.length == 3) {
-				let state_zip = sliced_address[2].split(' ');
-                this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
-                this.fillCityOfHost(state_zip[0],sliced_address[1])
-                this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
-			}
+		if (!state.includes('Canada')) {
+			let state_zip = sliced_address[2].split(' ');
+			this.newHostFormControls.address.setValue(sliced_address[0]);
+			let state_abb_sliced = sliced_address[2].split(' ')
+            this.fillCityOfHost(state_abb_sliced[0], sliced_address[1])
+			this.newHostFormControls.zip.setValue(state_zip[1]);
+		} else {
 			if (sliced_address.length == 4) {
+				let state_zip = sliced_address[2].split(' ');
+				this.newHostFormControls.address.setValue(sliced_address[0]);
+                this.setCity(sliced_address[1])
+				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
+			}
+			if (sliced_address.length == 5) {
 				let state_zip = sliced_address[3].split(' ');
 				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-				this.fillCityOfHost(state_zip[0], sliced_address[2]);
-				this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+				this.setCity(sliced_address[1])
+                this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
 			}
-		// }
+		}
 
-		if (data.opening_hours) {
-			this.mapOperationHours(data.opening_hours.periods);
+        
+
+		if (data.result.opening_hours) {
+			this.mapOperationHours(data.result.opening_hours.periods);
 		}
 
 		this.new_host_form.markAllAsTouched();
@@ -536,7 +517,7 @@ export class CreateHostComponent implements OnInit {
 			this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe)),
 			this._categories.get_categories().pipe(takeUntil(this._unsubscribe)),
 			this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
-			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe))
+			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
 		];
 
 		forkJoin(requests)
@@ -558,7 +539,7 @@ export class CreateHostComponent implements OnInit {
 						return category;
 					});
 
-					this.city_loaded = true;
+                    this.city_loaded = true;
 					this.timezone = timezones;
 					this.dealers_data = dealersData.dealers;
 					this.paging = dealersData.paging;
@@ -571,69 +552,74 @@ export class CreateHostComponent implements OnInit {
 			);
 	}
 
-	getCities() {
-		this._location
-			.get_cities()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response: any) => {
+    getCities() {
+        this._location.get_cities()
+			.pipe(
+				takeUntil(this._unsubscribe),
+			)
+			.subscribe((response:any) => {
 				this.city_state = response.map((city) => {
-					return new City(city.city, `${city.city}, ${city.state}`, city.state);
-				});
-			});
-	}
+                    return new City(city.city, `${city.city}, ${city.state}`, city.state);
+                });
+			})
+    }
 
-	getCanadaCities() {
-		this._location
-			.get_canada_cities()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response: any) => {
+    getCanadaCities() {
+        this._location.get_canada_cities()
+			.pipe(
+				takeUntil(this._unsubscribe),
+			)
+			.subscribe((response:any) => {
 				this.city_state = response.map((city) => {
-					return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
-				});
-			});
-	}
+                    return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
+                });
+			})
+    }
 
-	setCity(data): void {
-		if (!this.canada_selected) {
-			this.newHostFormControls.city.setValue(data);
-			this._location
-				.get_states_regions(data.substr(data.indexOf(',') + 2))
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.newHostFormControls.state.setValue(data[0].abbreviation);
-						this.newHostFormControls.region.setValue(data[0].region);
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				);
-		} else {
-			let sliced_address = data.split(', ');
-			let filtered_data = this.city_state.filter((city) => {
-				return city.city === sliced_address[0];
-			});
-
-			this.newHostFormControls.city.setValue(data + ', ' + filtered_data[0].whole_state);
-			this.newHostFormControls.state.setValue(filtered_data[0].state);
-			this.newHostFormControls.region.setValue(filtered_data[0].region);
-		}
-	}
-
-	fillCityOfHost(state, city_add) {
-		this._location
-			.get_states_by_abbreviation(state)
+    setCity(data): void {
+        if(!this.canada_selected) {
+            this.newHostFormControls.city.setValue(data);
+            this._location
+			.get_states_regions(data.substr(data.indexOf(',') + 2))
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					let city = city_add + ', ' + data[0].state;
-					this.setCity(city);
+					this.newHostFormControls.state.setValue(data[0].abbreviation);
+					this.newHostFormControls.region.setValue(data[0].region);
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			);
+        } else {
+            let sliced_address = data.split(', ');
+            let filtered_data = this.city_state.filter(
+                city => {
+                    return city.city === sliced_address[0];
+                }
+            )
+            
+            this.newHostFormControls.city.setValue(data+', '+filtered_data[0].whole_state);
+            this.newHostFormControls.state.setValue(filtered_data[0].state)
+            this.newHostFormControls.region.setValue(filtered_data[0].region)
+        }
+        
 	}
+
+    fillCityOfHost(state, city_add) {
+        this._location
+			.get_states_by_abbreviation(state)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					let city = city_add+ ', '+data[0].state
+                    this.setCity(city)
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+    }
 
 	private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {
 		this.operation_hours = data.map((hours) => {
@@ -714,24 +700,24 @@ export class CreateHostComponent implements OnInit {
 		});
 	}
 
-	getCanadaAddress(value) {
-		this.canada_selected = value.checked;
-		this.clearAddressValue();
-		if (value.checked) {
-			this.getCanadaCities();
-		} else {
-			this.getCities();
-		}
-	}
+    getCanadaAddress(value) {
+        this.canada_selected = value.checked;
+        this.clearAddressValue();
+        if(value.checked) {
+            this.getCanadaCities();
+        } else {
+            this.getCities();
+        }
+    }
 
-	clearAddressValue() {
-		this.newHostFormControls.address.setValue('');
-		this.city_selected = '';
-		this.newHostFormControls.city.setValue('');
-		this.newHostFormControls.state.setValue('');
-		this.newHostFormControls.region.setValue('');
-		this.newHostFormControls.zip.setValue('');
-	}
+    clearAddressValue() {
+        this.newHostFormControls.address.setValue('');
+        this.city_selected = '';
+        this.newHostFormControls.city.setValue('');
+        this.newHostFormControls.state.setValue('');
+        this.newHostFormControls.region.setValue('');
+        this.newHostFormControls.zip.setValue('');
+    }
 
 	private watchCategoryField() {
 		this.newHostFormControls.category.valueChanges.subscribe((data) => {
@@ -741,8 +727,8 @@ export class CreateHostComponent implements OnInit {
 		this.newHostFormControls.category2.valueChanges.subscribe((data) => {
 			if (data === '') this.no_category2 = false;
 		});
-
-		this.newHostFormControls.city.valueChanges.subscribe((data) => {
+		
+        this.newHostFormControls.city.valueChanges.subscribe((data) => {
 			this.city_selected = data;
 		});
 	}
@@ -792,7 +778,7 @@ export class CreateHostComponent implements OnInit {
 				placeholder: 'Input for Canada Address',
 				col: 'col-lg-12',
 				is_required: false,
-				checkbox: true
+                checkbox: true
 			},
 			{
 				label: 'Address',
@@ -807,7 +793,7 @@ export class CreateHostComponent implements OnInit {
 				placeholder: 'Ex. Chicago',
 				col: 'col-lg-6',
 				is_required: true,
-				autocomplete: true
+                autocomplete: true
 			},
 			{
 				label: 'State',
