@@ -5,7 +5,7 @@ import { startWith, map, takeUntil, distinctUntilChanged } from 'rxjs/operators'
 
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { DealerService, FeedService } from 'src/app/global/services';
-import { API_CREATE_FEED, API_DEALER, CREATE_WIDGET_FEED, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_CREATE_FEED, API_DEALER, CREATE_WIDGET_FEED, PAGING } from 'src/app/global/models';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
@@ -22,8 +22,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
 	filtered_options: Observable<any[]>;
+	has_selected_dealer_id = false;
 	has_selected_widget_feed_type = false;
-	is_dealer = false;
+	is_current_user_dealer = this._isDealer;
+	is_current_user_admin = this._isAdmin;
+	is_current_user_dealer_admin = this._isDealerAdmin;
 	is_creating_feed = false;
 	is_search = false;
 	feed_types = this._feedTypes;
@@ -47,14 +50,12 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.initializeForm();
-		const roleId = this._auth.current_user_value.role_id;
-		const dealerRole = UI_ROLE_DEFINITION.dealer;
-		const subDealerRole = UI_ROLE_DEFINITION['sub-dealer'];
 
-		if (roleId === dealerRole || roleId === subDealerRole) {
-			this.is_dealer = true;
+		if (this.is_current_user_dealer) {
+			this.is_current_user_dealer = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+			return;
 		}
 
 		this.getDealers(1);
@@ -67,10 +68,12 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
 	dealerSelected(data: string) {
 		this.selected_dealer_id = data;
+		this.has_selected_dealer_id = true;
 	}
 
 	searchData(keyword: string) {
 		this.loading_search = true;
+		if (!keyword || keyword.trim().length === 0) this.has_selected_dealer_id = false;
 
 		this._dealer
 			.get_search_dealer(keyword)
@@ -314,5 +317,18 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 				type: 'option'
 			}
 		];
+	}
+
+	protected get _isAdmin() {
+		return this._auth.current_role === 'administrator';
+	}
+
+	protected get _isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	protected get _isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 }

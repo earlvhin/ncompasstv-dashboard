@@ -18,11 +18,15 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 	providers: [TitleCasePipe]
 })
 export class EditFeedComponent implements OnInit, OnDestroy {
+	current_user_role = this._currentUserRole;
 	dealer_name: string;
 	dealers: API_DEALER[];
 	dealers_data: API_DEALER[] = [];
 	edit_feed_form: FormGroup;
 	filtered_options: Observable<any[]>;
+	has_selected_dealer_id = false;
+	is_current_user_dealer = this.current_user_role === 'dealer';
+	is_current_user_dealer_admin = this.current_user_role === 'dealeradmin';
 	is_form_ready = false;
 	is_dealer = false;
 	is_search = false;
@@ -31,8 +35,6 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 	loading_search = false;
 	paging: PAGING;
 
-	private current_user_role = this._currentUserRole;
-	private is_current_user_dealer = this.current_user_role === 'dealer';
 	private is_current_user_admin = this.current_user_role === 'administrator';
 	protected _unsubscribe = new Subject<void>();
 
@@ -50,12 +52,13 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 	ngOnInit() {
 		this.initializeForm();
 		if (this.is_current_user_dealer) this.setDealerData();
-		if (this.is_current_user_admin) this.setAdminData();
+		if (this.is_current_user_admin || this.is_current_user_dealer_admin) this.setAdminData();
 	}
 
 	dealerSelected(data: string) {
 		const control = this.edit_feed_form.get('dealerId');
 		control.setValue(data, { emitEvent: false });
+		this.has_selected_dealer_id = true;
 	}
 
 	ngOnDestroy(): void {
@@ -80,7 +83,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 
 	searchData(keyword: string) {
 		this.loading_search = true;
-
+		if (!keyword || keyword.trim().length === 0) this.has_selected_dealer_id = false;
 		this.edit_feed_form.get('dealerId').setValue(null, { emitEvent: false });
 		this.dealer_name = keyword;
 
@@ -172,6 +175,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 	private setAdminData() {
 		const businessNameData = this._dialog_data.business_name as { id: string; value: string };
 		this.dealer_name = businessNameData.value;
+		this.has_selected_dealer_id = true;
 		this.getDealers(1);
 	}
 

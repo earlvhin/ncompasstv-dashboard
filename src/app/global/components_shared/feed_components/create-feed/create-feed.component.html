@@ -38,8 +38,9 @@
 						[loading_data]="loading_data"
 						[initial_value]="dealer_name"
 						[new_value]="dealer_name"
-						[disabled]="is_dealer"
+						[disabled]="is_current_user_dealer"
 						[loading_search]="loading_search"
+						[disable_minimum_search_length]="true"
 						[disabled]="true">
 					</app-autocomplete-field>
 				</div>
@@ -66,7 +67,11 @@
 			</ng-template>
 		</div>
 		<div class="d-flex flex-even">
-			<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_feed_form.invalid || is_creating_feed">
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn mr-2"
+				[disabled]="new_feed_form.invalid || is_creating_feed || (is_current_user_dealer_admin && !has_selected_dealer_id)">
 				{{ is_creating_feed ? 'Creating feed...' : 'Submit' }}
 			</button>
 
