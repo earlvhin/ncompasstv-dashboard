@@ -348,7 +348,7 @@ export class LicenseService extends BaseService {
 		pending?,
 		online?,
 		isActivated?,
-        isFavorite: any = ''
+		isFavorite: any = ''
 	) {
 		const base = `${this.getters.api_get_licenses_by_dealer}`;
 		const params = this.setUrlParams(
@@ -370,7 +370,7 @@ export class LicenseService extends BaseService {
 				pending,
 				online,
 				isActivated,
-                isFavorite
+				isFavorite
 			},
 			false,
 			true
@@ -677,6 +677,11 @@ export class LicenseService extends BaseService {
 	update_reboot_time(licenseId: string, rebootTime: string) {
 		const body = { licenseId, rebootTime };
 		return this.postRequest(this.updaters.license_reboot_time, body);
+	}
+
+	update_tv_brand(licenseId: string, tvbrand: string) {
+		const body = { licenseId, tvbrand };
+		return this.postRequest(this.updaters.tv_brand, body);
 	}
 
 	protected setUrlParams(filters: any, enforceTagSearchKey = false, allowBlanks = true) {

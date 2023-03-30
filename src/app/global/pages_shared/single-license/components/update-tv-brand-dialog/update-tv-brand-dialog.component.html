@@ -1,0 +1,27 @@
+<div class="h-100 d-flex flex-column">
+	<ng-container *ngIf="!hasSubmitted">
+		<h3 class="mb-1 mt-2">Edit TV Brand</h3>
+	</ng-container>
+	<div class="mt-3 mb-3">
+		<ng-container *ngIf="hasSubmitted; else displayEditField">
+			<div class="text-center">
+				<app-success-animation></app-success-animation>
+				<h3 class="mb-1">Update Succes!</h3>
+			</div>
+		</ng-container>
+
+		<ng-template #displayEditField>
+			<mat-form-field appearance="fill" class="full-width">
+				<input matInput [(ngModel)]="tvBrand" />
+			</mat-form-field>
+		</ng-template>
+	</div>
+	<ng-container *ngIf="!hasSubmitted">
+		<div class="d-flex text-left">
+			<button mat-button mat-raised-button class="theme-btn _primary mr-2" (click)="updateTvBrand()" [disabled]="isSaving">
+				{{ isSaving ? 'Updating...' : 'Update' }}
+			</button>
+			<button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="false">Cancel</button>
+		</div>
+	</ng-container>
+</div>

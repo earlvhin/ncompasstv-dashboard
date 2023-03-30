@@ -21,10 +21,10 @@
 
 	<div class="content-section">
 		<div class="row">
-			<div class="col-12 col-lg-4">
+			<div class="col-lg-4">
 				<mat-card class="h-100">
-					<ng-container *ngIf="licenses_details; else small_loader"> 
-						<app-data-card-graph 
+					<ng-container *ngIf="licenses_details; else small_loader">
+						<app-data-card-graph
 							[id]="'license-statistics'"
 							[compare_basis]="licenses_details.basis"
 							[compare_basis_label]="licenses_details.basis_label"
@@ -32,7 +32,7 @@
 							[good_value]="licenses_details.good_value"
 							[good_value_label]="licenses_details.good_value_label"
 							[bad_value]="licenses_details.bad_value"
-							[bad_value_label]="licenses_details.bad_value_label" 
+							[bad_value_label]="licenses_details.bad_value_label"
 							[label_array]="temp_label"
 							[value_array]="temp_array"
 							[has_breakdown]="true"
@@ -50,7 +50,7 @@
 					</ng-container>
 				</mat-card>
 			</div>
-			<div class="col-12 col-lg-4">
+			<div class="col-lg-4">
 				<mat-card class="h-100 dealer-card">
 					<ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
@@ -63,7 +63,7 @@
 					</ng-container>
 				</mat-card>
 			</div>
-			<div class="col-12 col-lg-4">
+			<div class="col-lg-4">
 				<mat-card class="h-100 dealer-card">
 					<ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
@@ -77,330 +77,319 @@
 				</mat-card>
 			</div>
 		</div>
-       
-		<div class="row m-0 p-0 mt-5">
-			<div class="col-lg-12 custom-mat-tab p-0">
-				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
-					<!-- LICENSES TAB -->
-					<mat-tab id="licenses-view-tab" label="Licenses View">
-						<div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
-							<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-								<div>
-									<div>
-										<div class="row">
-											<div class="col-lg-6">
-												<button
-													id="filter-by-license-status-btn"
-													mat-button
-													mat-raised-button
-													class="theme-btn sm-text mr-2 h-45"
-													[matMenuTriggerFor]="licenseStatus"
-													[disabled]="hide_all_license">
-													<span class="button-label">License Status</span>
-													<span class="fas fa-circle xsm-text"></span>
-												</button>
-												<mat-menu #licenseStatus="matMenu">
-													<button
-														class="md-text"
-														mat-menu-item
-														(click)="filterTable('assigned', 'true')"
-														[matMenuTriggerFor]="assignedSubMenu">
-														<span class="fas fa-user text-primary mr-3"></span>Assigned
-													</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
-														<span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
-													</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('activated', '0')">
-														<span class="fas fa-user text-light-gray mr-3"></span>Inactive
-													</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
-														<span class="far fa-clock text-gray mr-3"></span>Recent Installs
-													</button>
-												</mat-menu>
 
-												<mat-menu #assignedSubMenu="matMenu">
-													<button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
-														<span class="fas fa-circle text-primary mr-3"></span>Online
-													</button>
-													<button
-														class="md-text"
-														mat-menu-item
-														(click)="filterTable('status', '0')"
-														[matMenuTriggerFor]="offlineSubMenu">
-														<span class="fas fa-circle text-danger mr-3"></span>Offline
-													</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
-														<span class="fas fa-circle text-orange mr-3"></span>Pending
-													</button>
-												</mat-menu>
-                                                
-												<mat-menu #offlineSubMenu="matMenu">
-													<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">
-														5 Days
-													</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">
-														6 - 30 Days
-													</button>
-													<button
-														class="md-text"
-														mat-menu-item
-														(click)="filterTable('days_offline', '31', '365', 'Long Time')">
-														> 30 Days
-													</button>
-												</mat-menu>
+		<div class="row">
+			<div class="col-lg-12">
+				<div class="custom-mat-tab mt-30">
+					<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
+						<!-- LICENSES TAB -->
+						<mat-tab id="licenses-view-tab" label="Licenses View">
+							<div class="licenses-view-tab-container mt-30" *ngIf="tabGroup.selectedIndex === 0">
+								<div class="row">
+									<div class="col-lg-6">
+										<button
+											id="filter-by-license-status-btn"
+											mat-button
+											mat-raised-button
+											class="theme-btn sm-text mr-2 h-45"
+											[matMenuTriggerFor]="licenseStatus"
+											[disabled]="hide_all_license">
+											<span class="button-label">License Status</span>
+											<span class="fas fa-circle xsm-text"></span>
+										</button>
+										<mat-menu #licenseStatus="matMenu">
+											<button
+												class="md-text"
+												mat-menu-item
+												(click)="filterTable('assigned', 'true')"
+												[matMenuTriggerFor]="assignedSubMenu">
+												<span class="fas fa-user text-primary mr-3"></span>Assigned
+											</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('assigned', 'false')">
+												<span class="fas fa-user-slash text-gray mr-3"></span>Unassigned
+											</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('activated', '0')">
+												<span class="fas fa-user text-light-gray mr-3"></span>Inactive
+											</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('recent', '7')">
+												<span class="far fa-clock text-gray mr-3"></span>Recent Installs
+											</button>
+										</mat-menu>
 
-												<button
-													id="filter-by-timezone-btn"
-													mat-button
-													mat-raised-button
-													class="theme-btn sm-text mr-2 h-45"
-													[matMenuTriggerFor]="timezone"
-													[disabled]="hide_all_license">
-													<span class="button-label">Timezone</span>
-													<span class="fas fa-sort xsm-text"></span>
-												</button>
-												<mat-menu #timezone="matMenu">
-													<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Central')">Central</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Eastern')">Eastern</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Mountain')">Mountain</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
-												</mat-menu>
+										<mat-menu #assignedSubMenu="matMenu">
+											<button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
+												<span class="fas fa-circle text-primary mr-3"></span>Online
+											</button>
+											<button
+												class="md-text"
+												mat-menu-item
+												(click)="filterTable('status', '0')"
+												[matMenuTriggerFor]="offlineSubMenu">
+												<span class="fas fa-circle text-danger mr-3"></span>Offline
+											</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
+												<span class="fas fa-circle text-orange mr-3"></span>Pending
+											</button>
+										</mat-menu>
 
-												<button
-													id="filter-by-user-btn"
-													mat-button
-													mat-raised-button
-													class="theme-btn sm-text mr-2 h-45"
-													(click)="sortByUser()">
-													<span class="button-label">User</span>
-													<span class="fas fa-user xsm-text"></span>
-												</button>
+										<mat-menu #offlineSubMenu="matMenu">
+											<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">
+												5 Days
+											</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">
+												6 - 30 Days
+											</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', '365', 'Long Time')">
+												> 30 Days
+											</button>
+										</mat-menu>
 
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn pi-control _cool sm-text mr-2"
-													[matMenuTriggerFor]="orderSort"
-													title="Order by License Status"
-													[disabled]="hide_all_license">
-													<span class="fas fa-sort"></span>
-													<span class="ml-2 button_text_animation">Order by License Status</span>
-												</button>
-												<mat-menu #orderSort="matMenu">
-													<button class="md-text" mat-menu-item (click)="sortList('desc')">Online</button>
-													<button class="md-text" mat-menu-item (click)="sortList('asc')">Offline</button>
-													<button class="md-text" mat-menu-item (click)="sortDisplay('desc')">Display On</button>
-													<button class="md-text" mat-menu-item (click)="sortDisplay('asc')">Display Off</button>
-												</mat-menu>
-												<button
-													id="export-licenses-btn-licenses-tab"
-													mat-button
-													mat-raised-button
-													class="theme-btn pi-control sm-text _primary mr-2"
-													(click)="exportTable('licenses')"
-													[disabled]="workbook_generation"
-													title="Export to CSV"
-													[disabled]="hide_all_license">
-													<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-													<span class="ml-2 button_text_animation">{{
-														!workbook_generation ? 'Export' : 'Generating CSV'
-													}}</span>
-												</button>
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn pi-control sm-text _info mr-2"
-													[matMenuTriggerFor]="adminOption"
-													title="Admin Licenses"
-													*ngIf="!is_dealer_admin"
-													[disabled]="hide_all_license">
-													<span class="fas fa-user-shield"></span>
-													<span class="ml-2 button_text_animation">Show/Hide Admin License</span>
-												</button>
-												<mat-menu #adminOption="matMenu">
-													<button class="md-text" mat-menu-item (click)="showAdminLicenses('true')">Show</button>
-													<button class="md-text" mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
-												</mat-menu>
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn pi-control sm-text _caution mr-2"
-													[matMenuTriggerFor]="favoriteOption"
-													title="Favorite Licenses"
-													*ngIf="!hide_all_license && active_view === 'grid'">
-													<span class="fas fa-star"></span>
-													<span class="ml-2 button_text_animation">Show/Hide Favorites</span>
-												</button>
-												<mat-menu #favoriteOption="matMenu">
-													<button class="md-text" mat-menu-item (click)="toggleFavorites('true')">Show</button>
-													<button class="md-text" mat-menu-item (click)="toggleFavorites('false')">Hide</button>
-												</mat-menu>
-											</div>
-											<div class="text-right col-lg-2">
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn sm-text h-45 mr-2"
-													[ngClass]="active_view === 'list' ? 'active-button' : ''"
-													title="List View"
-													(click)="changeView('list')">
-													<span class="button-label mr-0"><i class="fas fa-list"></i></span>
-												</button>
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn sm-text h-45"
-													[ngClass]="active_view === 'grid' ? 'active-button' : ''"
-													title="Grid View"
-													(click)="changeView('grid')">
-													<span class="button-label mr-0"><i class="fas fa-th"></i></span>
-												</button>
-											</div>
-											<div class="col-lg-4">
-												<app-search-field
-													id="licenses-tab-search-field"
-													[form_title]="'Search License ID, Host name, Anydesk, or #Tag'"
-													[placeholder]="'Example: License # 9'"
-													[data_reference]="licenses_data"
-													[primary_keyword]="'license_id'"
-													[secondary_keyword]="'alias'"
-													(searched)="filterData($event, 'licenses')"
-													[api_search]="true">
-												</app-search-field>
-											</div>
-										</div>
-										<div
-											class="row"
-											*ngIf="
-												filters.label_status ||
-												filters.label_zone ||
-												filters.label_dealer ||
-												filters.label_host ||
-												filters.admin_licenses
-											">
-											<div class="col-lg-12">
-												<div class="d-flex align-items-center p-2 bg-gray-2">
-													<div class="filter-pills">
-														<div class="filetype-pill pill" *ngIf="filters.label_status">
-															License Status: <strong>{{ filters.label_status }}</strong>
-														</div>
+										<button
+											id="filter-by-timezone-btn"
+											mat-button
+											mat-raised-button
+											class="theme-btn sm-text mr-2 h-45"
+											[matMenuTriggerFor]="timezone"
+											[disabled]="hide_all_license">
+											<span class="button-label">Timezone</span>
+											<span class="fas fa-sort xsm-text"></span>
+										</button>
+										<mat-menu #timezone="matMenu">
+											<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Central')">Central</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Eastern')">Eastern</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Mountain')">Mountain</button>
+											<button class="md-text" mat-menu-item (click)="filterTable('zone', 'Pacific')">Pacific</button>
+										</mat-menu>
 
-														<div class="order-pill pill" *ngIf="filters.label_zone">
-															Timezone: <strong>{{ filters.label_zone }}</strong>
-														</div>
+										<button
+											id="filter-by-user-btn"
+											mat-button
+											mat-raised-button
+											class="theme-btn sm-text mr-2 h-45"
+											(click)="sortByUser()">
+											<span class="button-label">User</span>
+											<span class="fas fa-user xsm-text"></span>
+										</button>
 
-														<div class="dealer-pill pill" *ngIf="filters.label_dealer">
-															Dealer: <strong>{{ filters.label_dealer }}</strong>
-														</div>
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn pi-control _cool sm-text mr-2"
+											[matMenuTriggerFor]="orderSort"
+											title="Order by License Status"
+											[disabled]="hide_all_license">
+											<span class="fas fa-sort"></span>
+											<span class="ml-2 button_text_animation">Order by License Status</span>
+										</button>
+										<mat-menu #orderSort="matMenu">
+											<button class="md-text" mat-menu-item (click)="sortList('desc')">Online</button>
+											<button class="md-text" mat-menu-item (click)="sortList('asc')">Offline</button>
+											<button class="md-text" mat-menu-item (click)="sortDisplay('desc')">Display On</button>
+											<button class="md-text" mat-menu-item (click)="sortDisplay('asc')">Display Off</button>
+										</mat-menu>
+										<button
+											id="export-licenses-btn-licenses-tab"
+											mat-button
+											mat-raised-button
+											class="theme-btn pi-control sm-text _primary mr-2"
+											(click)="exportTable('licenses')"
+											[disabled]="workbook_generation"
+											title="Export to CSV"
+											[disabled]="hide_all_license">
+											<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+											<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
+										</button>
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn pi-control sm-text _info mr-2"
+											[matMenuTriggerFor]="adminOption"
+											title="Admin Licenses"
+											*ngIf="!is_dealer_admin"
+											[disabled]="hide_all_license">
+											<span class="fas fa-user-shield"></span>
+											<span class="ml-2 button_text_animation">Show/Hide Admin License</span>
+										</button>
+										<mat-menu #adminOption="matMenu">
+											<button class="md-text" mat-menu-item (click)="showAdminLicenses('true')">Show</button>
+											<button class="md-text" mat-menu-item (click)="showAdminLicenses('false')">Hide</button>
+										</mat-menu>
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn pi-control sm-text _caution mr-2"
+											[matMenuTriggerFor]="favoriteOption"
+											title="Favorite Licenses"
+											*ngIf="!hide_all_license && active_view === 'grid'">
+											<span class="fas fa-star"></span>
+											<span class="ml-2 button_text_animation">Show/Hide Favorites</span>
+										</button>
+										<mat-menu #favoriteOption="matMenu">
+											<button class="md-text" mat-menu-item (click)="toggleFavorites('true')">Show</button>
+											<button class="md-text" mat-menu-item (click)="toggleFavorites('false')">Hide</button>
+										</mat-menu>
+									</div>
+									<div class="col-lg-2 text-right">
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn sm-text h-45 mr-2"
+											[ngClass]="active_view === 'list' ? 'active-button' : ''"
+											title="List View"
+											(click)="changeView('list')">
+											<span class="button-label mr-0"><i class="fas fa-list"></i></span>
+										</button>
+										<button
+											mat-button
+											mat-raised-button
+											class="theme-btn sm-text h-45"
+											[ngClass]="active_view === 'grid' ? 'active-button' : ''"
+											title="Grid View"
+											(click)="changeView('grid')">
+											<span class="button-label mr-0"><i class="fas fa-th"></i></span>
+										</button>
+									</div>
+									<div class="col-lg-4">
+										<app-search-field
+											id="licenses-tab-search-field"
+											[form_title]="'Search License ID, Host name, Anydesk, or #Tag'"
+											[placeholder]="'Example: License # 9'"
+											[data_reference]="licenses_data"
+											[primary_keyword]="'license_id'"
+											[secondary_keyword]="'alias'"
+											(searched)="filterData($event, 'licenses')"
+											[api_search]="true">
+										</app-search-field>
+									</div>
+								</div>
+								<div
+									class="row"
+									*ngIf="
+										filters.label_status ||
+										filters.label_zone ||
+										filters.label_dealer ||
+										filters.label_host ||
+										filters.admin_licenses
+									">
+									<div class="col-lg-12">
+										<div class="d-flex align-items-center p-2 bg-gray-2">
+											<div class="filter-pills">
+												<div class="filetype-pill pill" *ngIf="filters.label_status">
+													License Status: <strong>{{ filters.label_status }}</strong>
+												</div>
 
-														<div class="host-pill pill" *ngIf="filters.label_host">
-															Host: <strong>{{ filters.label_host }}</strong>
-														</div>
-                                                        
-														<div class="host-pill pill" *ngIf="filters.admin_licenses">
-															Show Admin Licenses: <strong>{{ filters.admin_licenses }}</strong>
-														</div>
-													</div>
-													<div class="control flex-even text-right">
-														<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-															<span class="button-label"> Clear Filter </span>
-															<span class="fas fa-times ml-2 sm-text"></span>
-														</button>
-													</div>
+												<div class="order-pill pill" *ngIf="filters.label_zone">
+													Timezone: <strong>{{ filters.label_zone }}</strong>
+												</div>
+
+												<div class="dealer-pill pill" *ngIf="filters.label_dealer">
+													Dealer: <strong>{{ filters.label_dealer }}</strong>
+												</div>
+
+												<div class="host-pill pill" *ngIf="filters.label_host">
+													Host: <strong>{{ filters.label_host }}</strong>
+												</div>
+
+												<div class="host-pill pill" *ngIf="filters.admin_licenses">
+													Show Admin Licenses: <strong>{{ filters.admin_licenses }}</strong>
 												</div>
 											</div>
-											<div class="col-lg-12" *ngIf="!searching_licenses">
-												<span class="col-lg-12 sm-text bg-gray"
-													>Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
-													<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
-													<span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
-												</span>
+											<div class="control flex-even text-right">
+												<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+													<span class="button-label"> Clear Filter </span>
+													<span class="fas fa-times ml-2 sm-text"></span>
+												</button>
 											</div>
 										</div>
-										<div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
-											<div class="row flex p-0" *ngIf="!no_licenses; else no_data">
-												<div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
-													<ng-container>
-														<mat-card *ngIf="filtered_data_licenses.length > 0; else nodata">
-															<app-data-table
-																[table_data]="filtered_data_licenses"
-																[table_columns]="license_table_column"
-																[new_table]="true"
-																[paging_details]="paging_data_licenses"
-																[query_params]="tab"
-																(page_triggered)="getLicenses($event)"
-																[license_status_column]="true"
-																(to_sort_column)="getColumnsAndOrder($event, 'licenses')"
-																[active_tab]="sort_column"
-																[sort_column]="sort_column"
-																[sort_order]="sort_order">
-															</app-data-table>
-														</mat-card>
-													</ng-container>
-												</div>
-												<ng-template #grid>
-													<app-grid-view-license
-														[license_data_for_grid_view]="license_data_for_grid_view"
-														(get_favorite)="getFavoriteLicenses($event)"
-														[favorites_list]="favorites_list"
-														[searching_licenses]="searching_licenses"
-														[no_licenses_result]="no_licenses_result"
-														[paging_data_licenses]="paging_data_licenses"
-														(show_more)="showMore($event)"
-														[no_favorites]="no_favorites"
-														[favorite_view]="favorite_view"
-														class="col-lg-12 mr-2 p-0">
-													</app-grid-view-license>
-												</ng-template>
-											</div>
+									</div>
+									<div class="col-lg-12" *ngIf="!searching_licenses">
+										<span class="col-lg-12 sm-text bg-gray"
+											>Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
+											<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
+											<span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
+										</span>
+									</div>
+								</div>
+								<div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
+									<div class="row flex p-0" *ngIf="!no_licenses; else no_data">
+										<div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
+											<ng-container>
+												<mat-card *ngIf="filtered_data_licenses.length > 0; else nodata">
+													<app-data-table
+														[table_data]="filtered_data_licenses"
+														[table_columns]="license_table_column"
+														[new_table]="true"
+														[paging_details]="paging_data_licenses"
+														[query_params]="tab"
+														(page_triggered)="getLicenses($event)"
+														[license_status_column]="true"
+														(to_sort_column)="getColumnsAndOrder($event, 'licenses')"
+														[active_tab]="sort_column"
+														[sort_column]="sort_column"
+														[sort_order]="sort_order">
+													</app-data-table>
+												</mat-card>
+											</ng-container>
 										</div>
-										<ng-template #showLicensesButton>
-											<div class="col-lg-12 p-0">
-												<div class="col-lg-12 mr-2 p-0 text-center">
-													<ng-container>
-														<mat-card class="p-5">
-															<span class="sm-text">
-																Licenses are hidden by default, If you wish to see the list, click the button below:
-															</span>
-															<br />
-															<button
-																mat-button
-																mat-raised-button
-																class="theme-btn sm-text _info mr-2 mt-3"
-																title="Show All Licenses"
-																(click)="showAllLicenses()">
-																<span class="fas fa-eye"></span>
-																<span class="ml-2">Show All Licenses</span>
-															</button>
-														</mat-card>
-													</ng-container>
-												</div>
-											</div>
+										<ng-template #grid>
+											<app-grid-view-license
+												[license_data_for_grid_view]="license_data_for_grid_view"
+												(get_favorite)="getFavoriteLicenses($event)"
+												[favorites_list]="favorites_list"
+												[searching_licenses]="searching_licenses"
+												[no_licenses_result]="no_licenses_result"
+												[paging_data_licenses]="paging_data_licenses"
+												(show_more)="showMore($event)"
+												[no_favorites]="no_favorites"
+												[favorite_view]="favorite_view"
+												class="col-lg-12 mr-2 p-0">
+											</app-grid-view-license>
 										</ng-template>
 									</div>
 								</div>
+								<ng-template #showLicensesButton>
+									<div class="col-lg-12 p-0">
+										<div class="col-lg-12 mr-2 p-0 text-center">
+											<ng-container>
+												<mat-card class="p-5">
+													<span class="sm-text">
+														Licenses are hidden by default, If you wish to see the list, click the button below:
+													</span>
+													<br />
+													<button
+														mat-button
+														mat-raised-button
+														class="theme-btn sm-text _info mr-2 mt-3"
+														title="Show All Licenses"
+														(click)="showAllLicenses()">
+														<span class="fas fa-eye"></span>
+														<span class="ml-2">Show All Licenses</span>
+													</button>
+												</mat-card>
+											</ng-container>
+										</div>
+									</div>
+								</ng-template>
 							</div>
-						</div>
-					</mat-tab>
+						</mat-tab>
 
-					<!-- DEALERS TAB -->
-					<mat-tab id="dealers-view-tab" label="Dealers View">
-						<app-dealers-tab></app-dealers-tab>
-					</mat-tab>
+						<!-- DEALERS TAB -->
+						<mat-tab id="dealers-view-tab" label="Dealers View">
+							<app-dealers-tab></app-dealers-tab>
+						</mat-tab>
 
-					<!-- TAGS TAB -->
-					<mat-tab id="tags-view-tab" label="Tags View" *ngIf="!is_dealer_admin">
-						<ng-template matTabContent>
-							<app-tags-tab></app-tags-tab>
-						</ng-template>
-					</mat-tab>                    
+						<!-- TAGS TAB -->
+						<mat-tab id="tags-view-tab" label="Tags View" *ngIf="!is_dealer_admin">
+							<ng-template matTabContent>
+								<app-tags-tab></app-tags-tab>
+							</ng-template>
+						</mat-tab>
 
-					<!-- HOSTS TAB -->
-					<mat-tab id="hosts-view-tab" label="Hosts View">
-						<div
-							class="col-lg-12 pt-4 pl-0 pr-0 pb-4"
-							*ngIf="is_dealer_admin ? tabGroup.selectedIndex === 2 : tabGroup.selectedIndex === 3">
-							<div>
+						<!-- HOSTS TAB -->
+						<mat-tab id="hosts-view-tab" label="Hosts View">
+							<div
+								class="hosts-view-tab-container mt-30"
+								*ngIf="is_dealer_admin ? tabGroup.selectedIndex === 2 : tabGroup.selectedIndex === 3">
 								<div *ngIf="!initial_load_hosts; else loader">
 									<div *ngIf="!no_host; else no_data">
 										<div class="row">
@@ -453,24 +442,25 @@
 										</div>
 									</div>
 								</div>
-							</div>	
-						</div>
-					</mat-tab>                    
-
-					<!--  ADVERTISERS TAB -->
-					<mat-tab id="advertisers-view-tab" label="Advertisers View">
-						<app-advertisers-tab></app-advertisers-tab>
-					</mat-tab>
-
-					<!-- OUTDATED TAB -->
-					<ng-container *ngIf="is_administrator">
-						<mat-tab id="outdated-view-tab" label="Outdated">
-							<app-outdated-licenses></app-outdated-licenses>
+							</div>
 						</mat-tab>
-					</ng-container>
-				</mat-tab-group>
+
+						<!--  ADVERTISERS TAB -->
+						<mat-tab id="advertisers-view-tab" label="Advertisers View">
+							<app-advertisers-tab></app-advertisers-tab>
+						</mat-tab>
+
+						<!-- OUTDATED TAB -->
+						<ng-container *ngIf="is_administrator">
+							<mat-tab id="outdated-view-tab" label="Outdated">
+								<app-outdated-licenses></app-outdated-licenses>
+							</mat-tab>
+						</ng-container>
+					</mat-tab-group>
+				</div>
 			</div>
 		</div>
+
 		<ng-template #no_data>
 			<mat-card class="p-5">
 				<h3>Oh Boy.</h3>
@@ -483,7 +473,7 @@
 				</a>
 			</mat-card>
 		</ng-template>
-        
+
 		<ng-template #nodata>
 			<div class="col-lg-12 pl-0 pr-0">
 				<mat-card class="pt-5 pb-5 col-lg-12 text-center">
@@ -501,13 +491,13 @@
 				<app-spinner></app-spinner>
 			</div>
 		</ng-template>
-    
+
 		<ng-template #small_loader>
 			<div class="py-4 white-bg">
 				<app-spinner [diameter]="60"></app-spinner>
 			</div>
 		</ng-template>
-        
+
 		<ng-template #small_loader_no_bg>
 			<div class="py-4">
 				<app-spinner [diameter]="60"></app-spinner>

@@ -318,6 +318,7 @@ export const API_ENDPOINTS = {
 		tag_type: 'tag/updatetype',
 		template: 'template/update',
 		toggle_credits: 'playlists/enableCredits',
+		tv_brand: 'license/Update/TvBrand',
 		user_email_settings: 'user/updateemailsettings',
 
 		//DEALER ADMIN

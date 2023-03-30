@@ -254,6 +254,8 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	private setLicenseStats(): void {
+        this.license_stats_array = [];
+        this.license_stats_label = [];
 		const {
 			total_ads_label,
 			total_menu_label,

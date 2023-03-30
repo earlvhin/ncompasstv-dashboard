@@ -1,160 +1,96 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable, Subscription } from 'rxjs';
+import { Component, Inject, OnInit, OnDestroy } from '@angular/core';
+import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material';
-import { API_DEALER } from 'src/app/global/models/api_dealer.model';
-import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
-import { FeedService } from 'src/app/global/services/feed-service/feed.service';
+import { TitleCasePipe } from '@angular/common';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/internal/operators/takeUntil';
+
+import { API_DEALER, PAGING, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
+import { DealerService, FeedService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { CreateFeedComponent } from '../create-feed/create-feed.component';
-import { UI_ROLE_DEFINITION } from 'src/app/global/models/ui_role-definition.model';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
-import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-edit-feed',
 	templateUrl: './edit-feed.component.html',
-	styleUrls: ['./edit-feed.component.scss']
+	styleUrls: ['./edit-feed.component.scss'],
+	providers: [TitleCasePipe]
 })
-export class EditFeedComponent implements OnInit {
-	create_feed_fields = [
-		{
-			label: 'Feed Title *',
-			control: 'feedTitle',
-			placeholder: 'Ex: ESPN News',
-			type: 'text',
-			width: 'col-lg-12'
-		},
-		{
-			label: 'Feed Description (Optional)',
-			control: 'feedDescription',
-			placeholder: 'Ex: ESPN Latest News Today',
-			type: 'text',
-			width: 'col-lg-12'
-		},
-		{
-			label: 'Assign To (Optional)',
-			control: 'assignTo',
-			placeholder: 'Type in a Dealer Business Name',
-			type: 'text',
-			width: 'col-lg-12',
-			is_autocomplete: true
-		},
-		{
-			label: 'Feed URL *',
-			control: 'feedUrl',
-			placeholder: 'Feed URL',
-			type: 'text',
-			width: 'col-lg-12'
-		},
-		{
-			label: 'Feed Type *',
-			control: 'classification',
-			placeholder: 'Feed Type',
-			type: 'option',
-			width: 'col-lg-12'
-		}
-	];
-	dealer_id: string;
+export class EditFeedComponent implements OnInit, OnDestroy {
+	current_user_role = this._currentUserRole;
 	dealer_name: string;
-	dealer_not_found: boolean;
 	dealers: API_DEALER[];
-	dealers_data: Array<any> = [];
-	disable_btn: boolean = true;
+	dealers_data: API_DEALER[] = [];
 	edit_feed_form: FormGroup;
 	filtered_options: Observable<any[]>;
-	is_dealer: boolean = false;
-	is_loading: boolean = true;
-	is_search: boolean = false;
-	// list = [
-	// 	{
-	// 		name: 'News',
-	// 		id: 'news',
-	// 		checked: true
-	// 	},
-	// 	{
-	// 		name: 'Weather',
-	// 		id: 'weather',
-	// 		checked: false
-	// 	},
-	// 	{
-	// 		name: 'Filler',
-	// 		id: 'filler',
-	// 		checked: false
-	// 	}
-	// ];
-	list: any;
-	loading_data: boolean = true;
-	loading_search: boolean = false;
-	paging: any;
-	selected_dealer: string;
-	subscription: Subscription = new Subscription();
+	has_selected_dealer_id = false;
+	is_current_user_dealer = this.current_user_role === 'dealer';
+	is_current_user_dealer_admin = this.current_user_role === 'dealeradmin';
+	is_form_ready = false;
+	is_dealer = false;
+	is_search = false;
+	is_widget_feed = false;
+	is_loading_dealers = true;
+	loading_search = false;
+	paging: PAGING;
+
+	private is_current_user_admin = this.current_user_role === 'administrator';
+	protected _unsubscribe = new Subject<void>();
 
 	constructor(
-		private _dealer: DealerService,
-		private _form: FormBuilder,
-		private _feed: FeedService,
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: UI_TABLE_FEED,
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<CreateFeedComponent>,
-		private _router: Router,
-		@Inject(MAT_DIALOG_DATA) public _dialog_data: any
+		private _dealer: DealerService,
+		private _form: FormBuilder,
+		private _feed: FeedService,
+		private _titlePipe: TitleCasePipe
 	) {}
 
 	ngOnInit() {
-		this.list = [
-			{
-				name: this._dialog_data.classification.value,
-				value: this._dialog_data.classification.value,
-				checked: true
-			}
-		];
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer) {
-			this.is_dealer = true;
-			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
-			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
-			this.createFeedForm(true);
-		} else {
-			this.dealer_id = this._dialog_data.business_name.id;
-			this.dealer_name = this._dialog_data.business_name.value;
-			this.getDealers(1);
-		}
+		this.initializeForm();
+		if (this.is_current_user_dealer) this.setDealerData();
+		if (this.is_current_user_admin || this.is_current_user_dealer_admin) this.setAdminData();
 	}
 
-	getDealers(e) {
-		this.loading_data = true;
-		if (e > 1) {
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-					data.dealers.map((i) => {
-						this.dealers.push(i);
-					});
-					this.paging = data.paging;
-					this.loading_data = false;
-				})
-			);
-		} else {
-			if (this.is_search) {
-				this.loading_search = true;
-			}
-			this.subscription.add(
-				this._dealer.get_dealers_with_page(e, '').subscribe((data) => {
-					this.dealers = data.dealers;
-					this.dealers_data = data.dealers;
-					this.paging = data.paging;
-					this.is_loading = false;
-					this.loading_data = false;
-					this.loading_search = false;
-					this.createFeedForm();
-				})
-			);
-		}
+	dealerSelected(data: string) {
+		const control = this.edit_feed_form.get('dealerId');
+		control.setValue(data, { emitEvent: false });
+		this.has_selected_dealer_id = true;
 	}
 
-	searchData(e) {
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
+	}
+
+	saveFeed() {
+		this._feed
+			.edit_feed(this.edit_feed_form.value)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this._dialog_ref.close(data);
+					this.showConfirmationDialog('success', 'Feed Saved Successfully', 'Click OK to continue');
+				},
+				(error) => {
+					this.showConfirmationDialog('error', 'Error while saving feed', error.error.message);
+				}
+			);
+	}
+
+	searchData(keyword: string) {
 		this.loading_search = true;
-		this.subscription.add(
-			this._dealer.get_search_dealer(e).subscribe((data) => {
+		if (!keyword || keyword.trim().length === 0) this.has_selected_dealer_id = false;
+		this.edit_feed_form.get('dealerId').setValue(null, { emitEvent: false });
+		this.dealer_name = keyword;
+
+		this._dealer
+			.get_search_dealer(keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
 				if (data.paging.entities.length > 0) {
 					this.dealers = data.paging.entities;
 					this.dealers_data = data.paging.entities;
@@ -163,103 +99,93 @@ export class EditFeedComponent implements OnInit {
 					this.dealers_data = [];
 					this.loading_search = false;
 				}
+
 				this.paging = data.paging;
-			})
-		);
+			});
 	}
 
-	searchBoxTrigger(event) {
-		if (this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator) {
-			this.is_search = event.is_search;
-			this.getDealers(event.page);
-		}
+	private getDealers(page: number) {
+		this.is_loading_dealers = true;
+
+		this._dealer
+			.get_dealers_with_page(page, '')
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				this.paging = response.paging;
+
+				if (page > 1) {
+					this.dealers = this.dealers.concat(response.dealers);
+					this.is_loading_dealers = false;
+					return;
+				}
+
+				if (this.is_search) this.loading_search = true;
+				this.dealers = response.dealers;
+				this.dealers_data = response.dealers;
+				this.is_loading_dealers = false;
+				this.loading_search = false;
+			});
 	}
 
-	changeType(e) {
-		this.f.classification.setValue(e.value);
-	}
+	private initializeForm() {
+		const setDealerId = () => {
+			const roleId = this._auth.current_user_value.role_id;
+			const currentUserBusinessName = this._auth.current_user_value.roleInfo.businessName;
+			const businessNameData = this._dialog_data.business_name as { id: string };
+			const dealerId = roleId === UI_ROLE_DEFINITION.dealer ? currentUserBusinessName : businessNameData.id;
+			return dealerId === '--' ? null : dealerId;
+		};
 
-	createFeedForm(dealer?) {
-		const reg =
-			/^(https?|ftp):\/\/([a-zA-Z0-9.-]+(:[a-zA-Z0-9.&%$-]+)*@)*((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9][0-9]?)(\.(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[1-9]?[0-9])){3}|([a-zA-Z0-9-]+\.)*[a-zA-Z0-9-]+\.(com|edu|gov|int|mil|net|org|biz|arpa|info|name|pro|aero|coop|museum|[a-zA-Z]{2}))(:[0-9]+)*(\/($|[a-zA-Z0-9.,?'\\+&%$#=~_-]+))*$/;
+		const feedIdData = this._dialog_data.id as { value: string };
+		const feedTitleData = this._dialog_data.title as { value: string };
+		const feedDescriptionData = this._dialog_data.description as { value: string };
+		const feedType = this._dialog_data.classification as { value: string };
+		const dealerId = setDealerId;
+
 		this.edit_feed_form = this._form.group({
-			contentId: [this._dialog_data.id ? this._dialog_data.id.value : null, Validators.required],
-			feedTitle: [this._dialog_data.title ? this._dialog_data.title.value : null, Validators.required],
-			feedDescription: [this._dialog_data.description ? this._dialog_data.description.value : null],
-			feedUrl: [this._dialog_data.feed_url ? this._dialog_data.feed_url.link : null, Validators.required],
-			dealerId: [
-				this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer
-					? this._auth.current_user_value.roleInfo.businessName
-					: this._dialog_data.business_name.id,
-				{ disabled: true }
-			],
-			classification: [this._dialog_data.classification ? this._dialog_data.classification.value.toLowerCase() : null]
+			contentId: [feedIdData.value, Validators.required],
+			feedTitle: [feedTitleData.value, Validators.required],
+			feedDescription: [feedDescriptionData.value],
+			dealerId: [dealerId, { disabled: true }],
+			classification: [this._titlePipe.transform(feedType.value)]
 		});
 
-		if (dealer) {
-			this.setDealerId(this.dealer_id);
-			this.is_loading = false;
+		this.is_form_ready = true;
+
+		if (feedType.value.toLowerCase() === 'widget') {
+			this.is_widget_feed = true;
+			const embeddedScriptData = this._dialog_data.embeddedScript as { value: string };
+			const decodedScript = decodeURIComponent(embeddedScriptData.value.replace(/\+/g, ' '));
+			const embeddedScriptControl = new FormControl(decodedScript, Validators.required);
+			this.edit_feed_form.addControl('embeddedScript', embeddedScriptControl);
+			return;
 		}
 
-		this.subscription.add(
-			this.edit_feed_form.valueChanges.subscribe((data: any) => {
-				if (this.edit_feed_form.valid) {
-					this.disable_btn = false;
-				} else {
-					this.disable_btn = true;
-				}
-			})
-		);
+		const feedUrlData = this._dialog_data.feed_url as { link: string };
+		const feedUrlControl = new FormControl(feedUrlData.link, Validators.required);
+		this.edit_feed_form.addControl('feedUrl', feedUrlControl);
 	}
 
-	get f() {
-		return this.edit_feed_form.controls;
+	private setDealerData() {
+		this.is_dealer = true;
+		this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
+		this.is_loading_dealers = false;
 	}
 
-	// Set field to value of selected option from autocomplete field
-	setDealerId(e) {
-		if (e) {
-			this.selected_dealer = e;
-			this.f.dealerId.setValue(e);
-			this.dealer_not_found = false;
-		} else {
-			this.dealer_not_found = true;
-		}
+	private setAdminData() {
+		const businessNameData = this._dialog_data.business_name as { id: string; value: string };
+		this.dealer_name = businessNameData.value;
+		this.has_selected_dealer_id = true;
+		this.getDealers(1);
 	}
 
-	// User typed but did not select any option from the autocomplete field
-	checkSelectedDealer(e) {
-		if (e.target.value && this.selected_dealer == undefined) {
-			this.dealer_not_found = true;
-		} else {
-			this.dealer_not_found = false;
-		}
+	private showConfirmationDialog(status: string, message: string, data: string) {
+		const dialogData = { status, message, data };
+		const dialogConfig = { width: '500px', height: '350px', data: dialogData };
+		this._dialog.open(ConfirmationModalComponent, dialogConfig);
 	}
 
-	saveFeed() {
-		this.is_loading = true;
-		this.subscription.add(
-			this._feed.edit_feed(this.edit_feed_form.value).subscribe(
-				(data) => {
-					this._dialog_ref.close(data);
-					this.confirmationModal('success', 'Feed Saved Successfully', 'Click OK to continue');
-				},
-				(error) => {
-					this.confirmationModal('error', 'Error while saving feed', error.error.message);
-				}
-			)
-		);
-	}
-
-	confirmationModal(status, message, data) {
-		let dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
-		});
+	protected get _currentUserRole() {
+		return this._auth.current_role;
 	}
 }
