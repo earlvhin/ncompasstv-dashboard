@@ -45,8 +45,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 		private _dialog_ref: MatDialogRef<CreateFeedComponent>,
 		private _dealer: DealerService,
 		private _form: FormBuilder,
-		private _feed: FeedService,
-		private _titlePipe: TitleCasePipe
+		private _feed: FeedService
 	) {}
 
 	ngOnInit() {
@@ -147,7 +146,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 			feedTitle: [feedTitleData.value, Validators.required],
 			feedDescription: [feedDescriptionData.value],
 			dealerId: [dealerId, { disabled: true }],
-			classification: [this._titlePipe.transform(feedType.value)]
+			classification: [feedType.value.toLowerCase()]
 		});
 
 		this.is_form_ready = true;
