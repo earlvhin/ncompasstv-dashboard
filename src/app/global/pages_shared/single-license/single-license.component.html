@@ -33,7 +33,7 @@
 			<ng-container *ngIf="license_data">
 				<div class="d-flex align-items-center">
 					<p class="sm-text mb-0">{{ license_key }}</p>
-					<ng-container *ngIf="hasAdminPrivileges">
+					<ng-container *ngIf="isCurrentUserAdmin">
 						<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license">new_label</mat-icon>
 					</ng-container>
 				</div>
@@ -361,8 +361,11 @@
 																			</button>
 
 																			<!-- RESET ANYDESK ID BUTTON -->
-																			<button *ngIf="hasAdminPrivileges" class="card-button reset-anydesk-id"
-																				(click)="onResetAnydeskID()" title="Reset Anydesk ID">
+																			<button
+																				*ngIf="hasAdminPrivileges"
+																				class="card-button reset-anydesk-id"
+																				(click)="onResetAnydeskID()"
+																				title="Reset Anydesk ID">
 																				<span class="fa fa-exchange md-text"></span>
 																			</button>
 																		</ng-container>
