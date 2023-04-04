@@ -1,13 +1,12 @@
-import { Injectable, ɵ_sanitizeUrl } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { WEATHER_FEED_STYLE_DATA } from 'src/app/global/models/api_feed_generator.model';
+import { API_DEALER, API_FEED, API_USER_DATA, CREATE_WIDGET_FEED, PAGING, WEATHER_FEED_STYLE_DATA } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
-import { CREATE_WIDGET_FEED } from '../../models';
 
 @Injectable({
 	providedIn: 'root'
@@ -51,14 +50,23 @@ export class FeedService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
-	get_feeds(page, key, column?, order?) {
+	get_feeds(
+		page: number,
+		key: string,
+		column?: string,
+		order?: string
+	): Observable<{ cFeeds: { dealer: API_DEALER; feed: API_FEED; owner: API_USER_DATA }; paging: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_feeds}`;
 		const params = this.setUrlParams({ page, search: key, sortColumn: column, sortOrder: order }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
-	get_feeds_by_dealer(id, page, key) {
+	get_feeds_by_dealer(
+		id: string,
+		page: number,
+		key: string
+	): Observable<{ cFeeds: { dealer: API_DEALER; feed: API_FEED; owner: API_USER_DATA }; paging: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_feeds_by_dealer}`;
 		const params = this.setUrlParams({ dealerid: id, page, search: key }, false, true);
 		const url = `${base}${params}`;
