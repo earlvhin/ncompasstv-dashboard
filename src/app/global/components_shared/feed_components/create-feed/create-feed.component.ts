@@ -53,7 +53,9 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
 		if (this.is_current_user_dealer) {
 			this.is_current_user_dealer = true;
+			this.has_loaded_dealers = true;
 			this.dealer_id = this._auth.current_user_value.roleInfo.dealerId;
+			this.selected_dealer_id = this.dealer_id;
 			this.dealer_name = this._auth.current_user_value.roleInfo.businessName;
 			return;
 		}
