@@ -84,7 +84,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		request
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { cFeeds: API_FEED[]; paging: PAGING; message?: string }) => {
+				(response) => {
 					if (response.message || response.paging.entities.length === 0) {
 						if (this.search_data == '') this.no_feeds = true;
 						this.feed_data = [];
@@ -163,26 +163,18 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				embeddedScript: embeddedscript
 			} = data;
 
-			let dealerUrl = null;
-			let businessName = '--';
+			let businessName = dealerId ? data.businessName : '--';
 
-			if (dealerId) {
-				dealerUrl = `${this.currentRole}/dealers/${data.dealerId}`;
-				businessName = data.businessName;
-			}
+			if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) businessName = this.current_user.roleInfo.businessName;
 
-			let role = this.currentRole;
-
-			if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-				role = UI_ROLE_DEFINITION_TEXT.administrator;
-			}
+			const role = this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
 
 			return new UI_TABLE_FEED(
 				{ value: contentId, editable: false, hidden: true },
 				{ value: feedId, editable: false, hidden: true },
 				{ value: count++, editable: false, hidden: false },
-				{ value: title, link: `/` + role + `/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
-				{ value: businessName, link: `/` + role + `/dealers/${dealerId}`, id: dealerId, editable: false, hidden: false, new_tab_link: true },
+				{ value: title, link: `/{$role}/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
+				{ value: businessName, link: `/${role}/dealers/${dealerId}`, id: dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: data.classification ? classification : '--', editable: false, hidden: false },
 				{ value: createdByName, editable: false, hidden: false },
 				{ value: this._date.transform(dateCreated, 'MMMM d, y'), editable: false, hidden: false },
