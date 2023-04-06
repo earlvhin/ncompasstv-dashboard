@@ -83,7 +83,7 @@ export class CreateHostComponent implements OnInit {
 	place_id: string;
 	selected_location: any;
 	timezone: API_TIMEZONE[];
-	title = 'Create Host';
+	title = 'Create Host Place';
 
 	private dealer_id: string;
 	private logo_data: { images: string[]; logo: string };
@@ -276,9 +276,13 @@ export class CreateHostComponent implements OnInit {
 		this.google_result = [];
 		this.location_candidate_fetched = true;
 		this.location_selected = false;
+		let country = 'United States';
+		if (this.canada_selected) {
+			country = 'Canada';
+		}
 
 		this._fastedge
-			.get_google_business_profile(this.googlePlaceFormControls.location.value)
+			.get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
@@ -354,9 +358,7 @@ export class CreateHostComponent implements OnInit {
 
 	plotToMap(data: any) {
 		let sliced_address = data.address.split(', ');
-		// let state = data.result.formatted_address.substring(data.result.formatted_address.lastIndexOf(',') + 1);
-		// let category_one = data.type;
-		// this.child_category = category_one;
+		let state = data.address.substring(data.address.lastIndexOf(','));
 		this.getGeneralCategory(data.type);
 		this.setToCategory(data.type);
 		this.place_id = data.placeId;
@@ -370,26 +372,25 @@ export class CreateHostComponent implements OnInit {
 
 		// ADDRESS MAPPING
 
-		// if (!state.includes('Canada')) {
-		// 	let state_zip = sliced_address[2].split(' ');
-		// 	this.newHostFormControls.address.setValue(sliced_address[0]);
-		// 	let state_abb_sliced = sliced_address[2].split(' ');
-		// 	this.fillCityOfHost(state_abb_sliced[0], sliced_address[1]);
-		// 	this.newHostFormControls.zip.setValue(state_zip[1]);
-		// } else {
-		if (sliced_address.length == 3) {
+		if (state.includes('Canada')) {
 			let state_zip = sliced_address[2].split(' ');
-			this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
+			this.newHostFormControls.address.setValue(sliced_address[0]);
 			this.fillCityOfHost(state_zip[0], sliced_address[1]);
-			this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+			this.newHostFormControls.zip.setValue(`${state_zip[1]}` + ' ' + `${state_zip[2]}`);
+		} else {
+			if (sliced_address.length == 3) {
+				let state_zip = sliced_address[2].split(' ');
+				this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
+				this.fillCityOfHost(state_zip[0], sliced_address[1]);
+				this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+			}
+			if (sliced_address.length == 4) {
+				let state_zip = sliced_address[3].split(' ');
+				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
+				this.fillCityOfHost(state_zip[0], sliced_address[2]);
+				this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+			}
 		}
-		if (sliced_address.length == 4) {
-			let state_zip = sliced_address[3].split(' ');
-			this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-			this.fillCityOfHost(state_zip[0], sliced_address[2]);
-			this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
-		}
-		// }
 
 		if (data.opening_hours) {
 			this.mapOperationHours(data.opening_hours.periods);
@@ -496,7 +497,6 @@ export class CreateHostComponent implements OnInit {
 		this.new_host_form = this._form.group({
 			dealerId: ['', Validators.required],
 			businessName: ['', Validators.required],
-			is_canada: [''],
 			address: ['', Validators.required],
 			city: ['', Validators.required],
 			state: [{ value: '', disabled: true }, Validators.required],
@@ -615,25 +615,30 @@ export class CreateHostComponent implements OnInit {
 				return city.city === sliced_address[0];
 			});
 
-			this.newHostFormControls.city.setValue(data + ', ' + filtered_data[0].whole_state);
+			this.newHostFormControls.city.setValue(data);
 			this.newHostFormControls.state.setValue(filtered_data[0].state);
 			this.newHostFormControls.region.setValue(filtered_data[0].region);
 		}
 	}
 
 	fillCityOfHost(state, city_add) {
-		this._location
-			.get_states_by_abbreviation(state)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					let city = city_add + ', ' + data[0].state;
-					this.setCity(city);
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
+		if (!this.canada_selected) {
+			this._location
+				.get_states_by_abbreviation(state)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						let city = city_add + ', ' + data[0].state;
+						this.setCity(city);
+					},
+					(error) => {
+						throw new Error(error);
+					}
+				);
+		} else {
+			let city = this.city_state.filter((canada_city) => canada_city.city === city_add);
+			this.setCity(city[0].city_state);
+		}
 	}
 
 	private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {
@@ -786,14 +791,6 @@ export class CreateHostComponent implements OnInit {
 				placeholder: 'Ex. 58.933',
 				col: 'col-lg-6',
 				is_required: true
-			},
-			{
-				label: 'Canada',
-				control: 'is_canada',
-				placeholder: 'Input for Canada Address',
-				col: 'col-lg-12',
-				is_required: false,
-				checkbox: true
 			},
 			{
 				label: 'Address',
