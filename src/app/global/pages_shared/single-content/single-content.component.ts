@@ -184,8 +184,8 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 								{ value: i.playlistName, link: null, hidden: false },
 								{ value: i.totalPlay, link: null, hidden: false },
 								{ value: i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0', link: null, hidden: false },
-								{ value: i.startDate ? moment(new Date(i.startDate)).format('MM/DD/YYYY') : '--', link: null, hidden: false },
-								{ value: i.endDate ? moment(new Date(i.endDate)).format('MM/DD/YYYY') : '--', link: null, hidden: false }
+								{ value: i.startDate ? moment(new Date(i.startDate)).format('ll') : '--', link: null, hidden: false },
+								{ value: i.endDate ? moment(new Date(i.endDate)).format('ll') : '--', link: null, hidden: false }
 							];
 						});
 					} else {
@@ -505,7 +505,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					},
 					{ value: i.logAction, link: null, editable: false, hidden: false },
 					{ value: `${i.firstName} ${i.lastName}`, link: null, editable: false, hidden: false },
-					{ value: this._date.transform(i.logDate, 'MMM dd, y h:mm a'), link: null, editable: false, hidden: false }
+					{ value: this._date.transform(i.logDate, 'MMMM, dd, y h:mm a'), link: null, editable: false, hidden: false }
 				);
 			});
 		}
