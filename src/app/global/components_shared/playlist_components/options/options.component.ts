@@ -116,6 +116,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 			content: this.content_data,
 			host_license: this.host_license
 		};
+		this.setSchedule(this.selected_data.content);
 		this.content_frequency = this.setFrequency(this.content_data.frequency);
 		this.credits = this.setCreditsAndBalance(this.content_data.playlistContentCredits);
 		this.unchanged_playlist = true;
@@ -133,6 +134,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 			content: this.content_data,
 			host_license: this.host_license
 		};
+		this.setSchedule(this.selected_data.content);
 		this.content_frequency = this.setFrequency(this.content_data.frequency);
 		this.credits = this.setCreditsAndBalance(this.content_data.playlistContentCredits);
 		this.unchanged_playlist = true;
