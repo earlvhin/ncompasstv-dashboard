@@ -107,6 +107,7 @@ export const API_ENDPOINTS = {
 		api_get_licenses_statistics: 'license/getmonthlytotal',
 		api_get_licenses_installation_statistics: 'license/getmonthlyinstallation',
 		api_get_licenses_installation_statistics_detailed: 'license/getmonthlyinstallationdetailed',
+		api_get_logs_based_reports: 'contentPlaysDaily/exportLogsPerHostsByContent',
 		api_get_ad_licenses_total: 'license/getaverageadlicensemainscreen',
 		api_get_ad_licenses_total_by_dealer: 'license/getaverageadlicensemainscreen?dealerId=',
 		api_get_notifications: 'notification/getbyreceiverid?receiver_id=',
@@ -157,7 +158,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',

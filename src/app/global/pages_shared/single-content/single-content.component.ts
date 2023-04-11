@@ -8,7 +8,14 @@ import { saveAs } from 'file-saver';
 import * as moment from 'moment';
 import { environment as env } from '../../../../environments/environment';
 import { AuthService, ContentService, PlaylistService } from '../../../global/services';
-import { API_CONTENT, API_CONTENT_PLAY_COUNT, UI_CONTENT_HISTORY, UI_PLAYINGWHERE_CONTENT, UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models';
+import {
+	API_CONTENT,
+	API_CONTENT_PLAY_COUNT,
+	UI_CONTENT_HISTORY,
+	UI_PLAYINGWHERE_CONTENT,
+	UI_ROLE_DEFINITION,
+	UI_ROLE_DEFINITION_TEXT
+} from '../../../global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { MatDialog } from '@angular/material';
 
@@ -45,7 +52,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	update_chart: EventEmitter<any> = new EventEmitter();
 	yearly_chart_updating = true;
 	paging_data_history: any;
-    role: any;
+	role: any;
 
 	host_count: number = 0;
 	license_count: number = 0;
@@ -109,12 +116,12 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		private _playlist: PlaylistService,
 		private _date: DatePipe,
 		private _params: ActivatedRoute,
-        private _dialog: MatDialog,
+		private _dialog: MatDialog
 	) {}
 
 	ngOnInit() {
 		this.role = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this.currentUser.role_id);
-        if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
+		if (this.role === UI_ROLE_DEFINITION_TEXT.dealeradmin) this.role = UI_ROLE_DEFINITION_TEXT.administrator;
 		this.getPageParam();
 	}
 
@@ -167,7 +174,13 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 						this.content_logs_report = data.contentLogsByHosts.map((i) => {
 							return [
 								{ value: count++, link: null, editable: false, hidden: false },
-								{ value: i.hostName, link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null, new_tab_link: true, editable: false, hidden: false },
+								{
+									value: i.hostName,
+									link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null,
+									new_tab_link: true,
+									editable: false,
+									hidden: false
+								},
 								{ value: i.playlistName, link: null, hidden: false },
 								{ value: i.totalPlay, link: null, hidden: false },
 								{ value: i.totalDuration != 0 ? this.msToTime(i.totalDuration) : '0', link: null, hidden: false },
@@ -176,15 +189,15 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 							];
 						});
 					} else {
-                        this.content_logs_report = [];
-                        this.showConfirmationDialog('error', 'Error Generating Report, Try changing the dates selected');
-                    }
+						this.content_logs_report = [];
+						this.showConfirmationDialog('error', 'Error Generating Report, Try changing the dates selected');
+					}
 					this.getTotalDurationAndPlayCount(data.contentLogsByHosts);
 				});
 		}
 	}
 
-    private showConfirmationDialog(type: 'error' | 'success', message: string): void {
+	private showConfirmationDialog(type: 'error' | 'success', message: string): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -192,10 +205,10 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-            this.report_generated = false;
-		    this.generating_report = false;
-            this.start_date = '';
-            this.end_date = '';
+			this.report_generated = false;
+			this.generating_report = false;
+			this.start_date = '';
+			this.end_date = '';
 		});
 	}
 
@@ -239,7 +252,12 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					return [
 						{ value: i.playlistId, link: null, editable: false, hidden: true },
 						{ value: count++, link: null, editable: false, hidden: false },
-						{ value: i.playlistName, link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null, new_tab_link: true, hidden: false },
+						{
+							value: i.playlistName,
+							link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null,
+							new_tab_link: true,
+							hidden: false
+						},
 						{ value: i.businessName, link: i.dealerId ? `/${this.role}/dealers/${i.dealerId}` : null, new_tab_link: true, hidden: false }
 					];
 				});
@@ -454,11 +472,11 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					{
 						value: i.licenseAlias ? i.licenseAlias : i.licenseId,
 						link: i.licenseId ? `/${this.role}/licenses/${i.licenseId}` : null,
-                        new_tab_link: true,
+						new_tab_link: true,
 						hidden: false
 					},
 					{ value: i.hostName, link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null, new_tab_link: true, hidden: false },
-					{ value: i.screenName, link: i.screenId ? `/${this.role}/screens/${i.screenId}` : null, new_tab_link: true,  hidden: false }
+					{ value: i.screenName, link: i.screenId ? `/${this.role}/screens/${i.screenId}` : null, new_tab_link: true, hidden: false }
 				);
 			});
 		}
@@ -472,9 +490,19 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			return data.map((i) => {
 				return new UI_CONTENT_HISTORY(
 					{ value: count++, link: null, editable: false, hidden: false },
-					{ value: i.playlistContentId, link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null, new_tab_link: true, hidden: true },
+					{
+						value: i.playlistContentId,
+						link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null,
+						new_tab_link: true,
+						hidden: true
+					},
 					{ value: i.playlistId, link: i.playlistId ? `/${this.role}/playlists/${i.playlistId}` : null, new_tab_link: true, hidden: true },
-					{ value: i.playlistName, link: i.playlistName ? `/${this.role}/playlists/${i.playlistId}` : null, new_tab_link: true, hidden: false },
+					{
+						value: i.playlistName,
+						link: i.playlistName ? `/${this.role}/playlists/${i.playlistId}` : null,
+						new_tab_link: true,
+						hidden: false
+					},
 					{ value: i.logAction, link: null, editable: false, hidden: false },
 					{ value: `${i.firstName} ${i.lastName}`, link: null, editable: false, hidden: false },
 					{ value: this._date.transform(i.logDate, 'MMM dd, y h:mm a'), link: null, editable: false, hidden: false }

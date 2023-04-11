@@ -148,7 +148,7 @@ export class ContentService extends BaseService {
 
 	generate_content_logs_report(data: { contentId: string; start: string; end: string }) {
 		return this.getRequest(
-			`${this.getters.api_generate_content_logs_report}` +
+			`${this.getters.api_get_logs_based_reports}` +
 				'?contentId=' +
 				`${data.contentId}` +
 				'&startDate=' +
