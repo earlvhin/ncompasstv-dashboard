@@ -140,11 +140,12 @@ export class LicensesComponent implements OnInit {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
+                this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				this.filters.online = value == 1 ? true : false;
-                this.filters.isactivated = 1;
 				this.filters.assigned = true;
+                this.filters.pending = false;
                 this.filters.isactivated = 1;
 				if (value == 0) {
 					var filter = {
@@ -164,8 +165,9 @@ export class LicensesComponent implements OnInit {
 			case 'activated':
 				this.resetFilterStatus();
 				this.filters.status = '';
+                this.filters.isactivated = 0;
 				this.filters.assigned = true;
-				this.filters.label_status = 'Disabled';
+				this.filters.label_status = 'Inactive';
                 this.sortList('desc');
 				break;
 			case 'recent':
@@ -181,12 +183,12 @@ export class LicensesComponent implements OnInit {
 				this.filters.days_offline_from = value;
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
-                this.sortList('desc', 'TimeIn');
+                let filter_active = { column: 'TimeIn', order: 'desc' };
+				this.getColumnsAndOrder(filter_active);
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
 				this.filters.assigned = value;
-				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
 				value == 'true' ? (this.filters.isactivated = 1) : (this.filters.isactivated = '');
 				this.filters.label_status = value == 'true' ? 'Assigned' : 'Unassigned';
 				this.sortList('desc');
@@ -201,8 +203,6 @@ export class LicensesComponent implements OnInit {
                 break;
 			default:
 		}
-
-		this.getLicenses(1);
 	}
 
 	resetFilterStatus() {
@@ -267,9 +267,7 @@ export class LicensesComponent implements OnInit {
 						breakdown3_value: data.totalPending,
 						breakdown3_label: 'Pending',
 						third_value: data.totalDisabled,
-						third_value_label: 'Disabled',
-						fourth_value: data.totalDisabled,
-						fourth_value_label: 'Inactive',
+						third_value_label: 'Inactive',
 
 						new_this_week_value: data.newLicensesThisWeek,
 						new_this_week_label: 'License(s)',
@@ -747,11 +745,43 @@ export class LicensesComponent implements OnInit {
                     label: 'Install Date',
                     id: i.licenseId 
                 },
-				{ value: i.piStatus, link: null, editable: false, hidden: true },
+				{ value: this.checkStatus(i), link: null, editable: false, hidden: true, label: this.checkStatusForExport(i), new_status: true },
 				{ value: i.playerStatus, link: null, editable: false, hidden: true },
 				{ value: i.isActivated, link: null, editable: false, hidden: true }
 			);
 		});
+	}
+
+    checkStatus(license) {
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+			return 'text-primary';
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+			return 'text-danger';
+		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+			return 'text-orange';
+		} else if (license.isActivated === 0 && license.hostName) {
+			return 'text-light-gray';
+		} else {
+			return 'text-gray';
+		}
+	}
+
+    checkStatusForExport(license) {
+		let currentDate = new Date();
+		currentDate.setHours(0, 0, 0, 0);
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+			return 'Online';
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+			return 'Offline';
+		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+			return 'Pending';
+		} else if (license.isActivated === 0 && license.hostName) {
+			return 'Inactive';
+		} else {
+			return 'Unassigned';
+		}
 	}
 
 	protected get currentUser() {
