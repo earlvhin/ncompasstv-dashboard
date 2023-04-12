@@ -26,7 +26,7 @@ import {
     City, State
 } from 'src/app/global/models';
 
-import { AuthService, DealerService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
+import { AuthService, DealerService, FastEdgeService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-create-host',
@@ -85,6 +85,7 @@ export class CreateHostComponent implements OnInit {
 	constructor(
 		private _auth: AuthService,
 		private _categories: CategoryService,
+		private _fastedge: FastEdgeService,
 		private _form: FormBuilder,
 		private _helper: HelperService,
 		private _host: HostService,
