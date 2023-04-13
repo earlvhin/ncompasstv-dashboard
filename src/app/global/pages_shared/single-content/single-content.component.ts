@@ -1,6 +1,8 @@
 import { Component, OnInit, EventEmitter, OnDestroy } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
+import { MatDialog } from '@angular/material';
+import { FormControl } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { Workbook } from 'exceljs';
@@ -17,7 +19,6 @@ import {
 	UI_ROLE_DEFINITION_TEXT
 } from '../../../global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { MatDialog } from '@angular/material';
 
 interface CONTENT_LOGS_REPORT {
 	durationTime: string;
@@ -53,16 +54,28 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	yearly_chart_updating = true;
 	paging_data_history: any;
 	role: any;
-
 	host_count: number = 0;
 	license_count: number = 0;
 	screen_count: number = 0;
-
 	generating_report: boolean = false;
 	report_generated: boolean = false;
 	start_date: any;
 	end_date: any;
 	content_logs_report: any[] = [];
+	content_logs_report_filtered: any[] = [];
+	fs_screenshot: string = `${env.third_party.filestack_screenshot}`;
+	total_duration: any;
+	total_playcount: any;
+	workbook: any;
+	workbook_generation: boolean = false;
+	worksheet: any;
+	content_to_export: any = [];
+	content_logs: any[] = [];
+	file_title: any;
+	table_columns = ['#', 'License Alias', 'Host', 'Screen Name'];
+	in_playlist_table_columns = ['#', 'Playlist Name', 'Business Name'];
+	search_field = new FormControl(null);
+
 	content_logs_report_table_columns = [
 		{ name: '#', no_export: true },
 		{ name: 'Host Name', key: 'hostName' },
@@ -73,13 +86,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		{ name: 'End Date', key: 'endDate' }
 	];
 
-	fs_screenshot: string = `${env.third_party.filestack_screenshot}`;
-
-	table_columns = ['#', 'License Alias', 'Host', 'Screen Name'];
-
-	total_duration: any;
-	total_playcount: any;
-
 	content_history_table_columns = [
 		{ name: '#', no_export: true },
 		{ name: 'Playlist Name', key: 'playlistName' },
@@ -87,14 +93,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		{ name: 'Log User', key: 'logUser' },
 		{ name: 'Log Date', key: 'logDate' }
 	];
-
-	in_playlist_table_columns = ['#', 'Playlist Name', 'Business Name'];
-
-	workbook: any;
-	workbook_generation: boolean = false;
-	worksheet: any;
-	content_to_export: any = [];
-	file_title: any;
 
 	content_metrics_table_column = [
 		{ name: 'Host', key: 'hostName' },
@@ -107,7 +105,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	private content_id: string;
 	private current_date: string = this._date.transform(new Date(), 'y-MMM-dd');
-
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
@@ -146,7 +143,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 		this.monthly_chart_updating = true;
 		this.date_selected = value.format('MMMM DD, YYYY');
 		this.getMonthlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
-		this.getDailyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
+		// this.getDailyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
 		// this.getYearlyStats(this.content_id, this._date.transform(value, 'y-MMM-dd'));
 	}
 
@@ -167,7 +164,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 				.subscribe((data: { total: number; contentLogsByHosts: CONTENT_LOGS_REPORT[] }) => {
 					this.generating_report = false;
 					this.report_generated = true;
-					this.content_to_export = data.contentLogsByHosts;
+					this.content_to_export = [...data.contentLogsByHosts];
 					if (data.total > 0) {
 						let count = 1;
 
@@ -188,6 +185,10 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 								{ value: i.endDate ? moment(new Date(i.endDate)).format('ll') : '--', link: null, hidden: false }
 							];
 						});
+
+						this.content_logs_report_filtered = [...this.content_logs_report];
+
+						this.searchHostReport();
 					} else {
 						this.content_logs_report = [];
 						this.showConfirmationDialog('error', 'Error Generating Report, Try changing the dates selected');
@@ -195,6 +196,45 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					this.getTotalDurationAndPlayCount(data.contentLogsByHosts);
 				});
 		}
+	}
+
+	searchHostReport() {
+		this.search_field.valueChanges.subscribe({
+			next: (e) => {
+				let count = 1;
+				let filtered;
+
+				if (e === '') filtered = [...this.content_to_export];
+				else filtered = [...this.content_to_export.filter((i) => i.hostName.toLowerCase().includes(e.toLowerCase()))];
+
+				this.content_logs_report_filtered = filtered.map((i) => {
+					return [
+						{ value: count++, link: null, editable: false, hidden: false },
+						{
+							value: i.hostName,
+							link: i.hostId ? `/${this.role}/hosts/${i.hostId}` : null,
+							new_tab_link: true,
+							editable: false,
+							hidden: false
+						},
+						{ value: i.playlistName, link: null, hidden: false },
+						{ value: i.totalPlay, link: null, hidden: false },
+						{
+							value:
+								i.totalDuration != 0 && typeof i.totalDuration === 'number'
+									? this.msToTime(i.totalDuration)
+									: i.totalDuration.length
+									? i.totalDuration
+									: '0',
+							link: null,
+							hidden: false
+						},
+						{ value: i.startDate ? moment(new Date(i.startDate)).format('ll') : '--', link: null, hidden: false },
+						{ value: i.endDate ? moment(new Date(i.endDate)).format('ll') : '--', link: null, hidden: false }
+					];
+				});
+			}
+		});
 	}
 
 	private showConfirmationDialog(type: 'error' | 'success', message: string): void {
@@ -311,7 +351,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 	}
 
 	getDataForExport() {
-		var tab = this.start_date + '-' + this.end_date;
 		this.content_to_export.forEach((item, i) => {
 			this.modifyItem(item);
 			this.worksheet.addRow(item).font = {
@@ -371,7 +410,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			this.content_id = this._params.snapshot.params.data;
 			this.getPlaylistsOfContent(this.content_id);
 			this.getMonthlyStats(this.content_id, this.current_date);
-			this.getDailyStats(this.content_id, this.current_date);
+			// this.getDailyStats(this.content_id, this.current_date);
 			// this.getYearlyStats(this.content_id, this.current_date);
 			this.getContentInfo(this.content_id);
 			this.getPlayWhere(this.content_id);
@@ -430,10 +469,11 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: API_CONTENT) => {
-					this.content_monthly_count = response.contentPlaysListCount;
+					this.content_monthly_count = response && response.contentPlaysListCount;
 					this.monthly_chart_updating = false;
 				},
 				(error) => {
+					console.log(error);
 					throw new Error(error);
 				}
 			);

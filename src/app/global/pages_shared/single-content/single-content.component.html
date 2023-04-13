@@ -175,7 +175,7 @@
                         </div>
                     </mat-tab> -->
 					<mat-tab label="Reports">
-						<div class="row align-items-center mt-4 mb-4">
+						<div class="row align-items-center mt-4">
 							<div class="col-lg-6">
 								<h2 class="m-0">Playlist Reports</h2>
 								<p class="sm-text">Select Start and End Date then click the Generate button to get started.</p>
@@ -215,9 +215,8 @@
 										<button
 											mat-button
 											mat-raised-button
-											class="theme-btn px-4"
+											class="theme-btn px-4 height-60"
 											[disabled]="!start_date || !end_date || generating_report"
-											style="height: 60px"
 											title="Generate Report"
 											(click)="generateReport()">
 											<div class="d-flex align-items-center">
@@ -235,44 +234,65 @@
 							</div>
 						</div>
 
-						<div class="row" *ngIf="report_generated">
-							<div class="col-lg-12 flex">
-								<div class="col-lg-4 bg-dark px-3 py-2 d-inline-block rounded mr-2">
-									<h5 class="mb-0 text-white pt-1">
+						<hr *ngIf="report_generated" />
+
+						<div class="row no-gutters mt-3" *ngIf="report_generated">
+							<!-- From -->
+							<div class="col-lg-3">
+								<div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
+									<h5 class="mb-0 text-white pt-1 align-vertical">
 										Showing records from <span class="text-primary">{{ start_date | date }}</span> to
 										<span class="text-primary">{{ end_date | date }}</span>
 									</h5>
 								</div>
-								<div class="col-lg-4 bg-dark px-3 py-2 d-inline-block rounded mr-2">
+							</div>
+							<!-- To -->
+							<div class="col-lg-4">
+								<div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
 									<h5 class="mb-0 text-white pt-1">
 										Summary : Total Play Count: <span class="text-primary">{{ total_playcount }}</span> Total Play Duration:
 										<span class="text-primary">{{ total_duration }}</span>
 									</h5>
 								</div>
-								<div class="col-lg-4">
-									<button
-										mat-button
-										mat-raised-button
-										class="float-right theme-btn pi-control sm-text _primary mr-2"
-										(click)="exportTable()"
-										[disabled]="workbook_generation"
-										title="Export to CSV">
-										<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-										<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
-									</button>
+							</div>
+							<!-- Export Button -->
+							<div class="col-lg-1">
+								<button
+									mat-button
+									mat-raised-button
+									class="theme-btn sm-text _primary height-60 width-80"
+									(click)="exportTable()"
+									[disabled]="workbook_generation"
+									title="Export to CSV">
+									<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+								</button>
+							</div>
+							<!-- Search Field -->
+							<div class="col-lg-4">
+								<div class="d-flex">
+									<mat-form-field class="w-100" appearance="fill">
+										<mat-label class="md-text">Search Host</mat-label>
+										<input
+											matInput
+											type="text"
+											name="search_field"
+											[formControl]="search_field"
+											[placeholder]="'Ex: McDonald\'s'"
+											(change)="searchHostReport($event)" />
+									</mat-form-field>
 								</div>
 							</div>
 						</div>
 
-						<mat-card *ngIf="content_logs_report.length > 0; else nodata" class="mt-4">
+						<mat-card *ngIf="content_logs_report_filtered.length > 0; else nodata">
 							<app-data-table
-								[table_data]="content_logs_report"
+								[table_data]="content_logs_report_filtered"
 								[table_columns]="content_logs_report_table_columns"
 								[new_table]="true"></app-data-table>
 						</mat-card>
 					</mat-tab>
 					<mat-tab label="In Playlist">
-						<mat-card *ngIf="in_playlist.length > 0; else nodata" class="mt-4">
+						<mat-card *ngIf="in_playlist.length > 0; else nodata">
 							<app-data-table
 								[table_data]="in_playlist"
 								[table_columns]="in_playlist_table_columns"
@@ -280,12 +300,15 @@
 						</mat-card>
 					</mat-tab>
 					<mat-tab label="Playing Where">
-						<mat-card *ngIf="playing_where.length > 0; else nodata" class="mt-4">
-							<app-data-table [table_data]="playing_where" [table_columns]="table_columns" [new_table]="true"></app-data-table>
-						</mat-card>
+						<mat-card *ngIf="playing_where.length > 0; else nodata">
+							<app-data-table
+								[table_data]="playing_where"
+								[table_columns]="table_columns"
+								[new_table]="true"></app-data-table> </mat-card
+						>nodata" class="mt-4" nodata" class="mt-4" nodata" class="mt-4" nodata" class="mt-4"
 					</mat-tab>
 					<mat-tab label="History">
-						<mat-card *ngIf="content_history.length > 0; else nodata" class="mt-4">
+						<mat-card *ngIf="content_history.length > 0; else nodata">
 							<app-data-table
 								[table_data]="content_history"
 								[table_columns]="content_history_table_columns"
