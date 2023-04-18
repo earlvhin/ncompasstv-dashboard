@@ -76,18 +76,18 @@
 											[disabled]="true">
 										</app-autocomplete-field>
 
-                                        <app-autocomplete-field
-                                            *ngIf="field.control === 'city'"
-                                            (data_value)="setCity($event)"
-                                            [key_of_value]="'city_state'"
-                                            [placeholder]="field.placeholder"
-                                            [label]="field.label"
-                                            [data_reference]="city_state"
-                                            [search_keyword]="'city_state'"
-                                            [primary_keyword]="'city_state'"
-                                            [new_value]="city_selected"
-                                            [initial_value]="city_selected">
-                                        </app-autocomplete-field>
+										<app-autocomplete-field
+											*ngIf="field.control === 'city'"
+											(data_value)="setCity($event)"
+											[key_of_value]="'city_state'"
+											[placeholder]="field.placeholder"
+											[label]="field.label"
+											[data_reference]="city_state"
+											[search_keyword]="'city_state'"
+											[primary_keyword]="'city_state'"
+											[new_value]="city_selected"
+											[initial_value]="city_selected">
+										</app-autocomplete-field>
 
 										<ng-template #no_category_selected>
 											<mat-form-field
@@ -250,7 +250,7 @@
 							</form>
 							<div class="location-candidates material-shadow" *ngIf="location_candidate_fetched">
 								<ul *ngIf="google_result.length != 0; else loading">
-									<li *ngFor="let loc of google_result.google_search" (click)="plotToMap(loc)">
+									<li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
 										<div class="d-flex align-items-center">
 											<div class="mr-3">
 												<span class="fas fa-map-marker-alt text-danger"></span>
@@ -279,8 +279,8 @@
 					<agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
 						<agm-marker
 							*ngIf="selected_location"
-							[latitude]="selected_location.geometry.location.lat"
-							[longitude]="selected_location.geometry.location.lng"
+							[latitude]="selected_location.latitude"
+							[longitude]="selected_location.longitude"
 							[agmFitBounds]="true">
 						</agm-marker>
 					</agm-map>

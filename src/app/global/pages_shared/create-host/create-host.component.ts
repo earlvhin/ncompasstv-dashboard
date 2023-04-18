@@ -30,8 +30,8 @@ import {
 import {
 	AuthService,
 	DealerService,
-	CategoryService,
 	FastEdgeService,
+	CategoryService,
 	HelperService,
 	HostService,
 	MapService,
@@ -348,12 +348,12 @@ export class CreateHostComponent implements OnInit {
 	getMoreDetailsofBusinessPlace(location) {
 		let location_selected = location;
 		this._map
-			.get_google_store_info(location_selected.placeId)
+			.get_google_store_info(location.placeId)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data) => {
 				location_selected.opening_hours = data.data.result.opening_hours;
-			})
-			.add(() => this.plotToMap(location_selected));
+				this.mapOperationHours(location_selected.opening_hours.periods);
+			});
 	}
 
 	plotToMap(data: any) {
@@ -365,11 +365,11 @@ export class CreateHostComponent implements OnInit {
 		this.current_host_image = data.thumbnail;
 		this.location_selected = true;
 		this.location_candidate_fetched = false;
-		this.selected_location = data.result;
-		this.newHostFormControls.businessName.setValue(data.result.name);
-		this.newHostFormControls.lat.setValue(data.result.geometry.location.lat);
-		this.newHostFormControls.long.setValue(data.result.geometry.location.lng);
-        
+		this.selected_location = data;
+		this.newHostFormControls.businessName.setValue(data.title);
+		this.newHostFormControls.lat.setValue(data.latitude);
+		this.newHostFormControls.long.setValue(data.longitude);
+
 		// ADDRESS MAPPING
 
 		if (state.includes('Canada')) {
@@ -398,12 +398,7 @@ export class CreateHostComponent implements OnInit {
 			}
 		}
 
-        
-
-		if (data.result.opening_hours) {
-			this.mapOperationHours(data.result.opening_hours.periods);
-		}
-
+		this.getMoreDetailsofBusinessPlace(this.selected_location);
 		this.new_host_form.markAllAsTouched();
 		this._helper.onTouchPaginatedAutoCompleteField.next();
 	}
@@ -602,7 +597,7 @@ export class CreateHostComponent implements OnInit {
 				});
 			});
 	}
-    
+
 	setCity(data): void {
 		if (!this.canada_selected) {
 			this.newHostFormControls.city.setValue(data);
