@@ -269,18 +269,16 @@
 							</div>
 							<!-- Search Field -->
 							<div class="col-lg-4">
-								<div class="d-flex">
-									<mat-form-field class="w-100" appearance="fill">
-										<mat-label class="md-text">Search Host</mat-label>
-										<input
-											matInput
-											type="text"
-											name="search_field"
-											[formControl]="search_field"
-											[placeholder]="'Ex: McDonald\'s'"
-											(change)="searchHostReport()" />
-									</mat-form-field>
-								</div>
+								<mat-form-field class="w-100" appearance="fill">
+									<mat-label class="md-text">Search Host</mat-label>
+									<input
+										matInput
+										type="text"
+										name="search_field"
+										[formControl]="search_field"
+										[placeholder]="'Ex: McDonald\'s'"
+										(change)="searchHostReport()" />
+								</mat-form-field>
 							</div>
 						</div>
 
