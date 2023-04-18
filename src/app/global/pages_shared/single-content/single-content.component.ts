@@ -473,7 +473,6 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					this.monthly_chart_updating = false;
 				},
 				(error) => {
-					console.log(error);
 					throw new Error(error);
 				}
 			);
