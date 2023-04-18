@@ -544,8 +544,13 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 						hidden: false
 					},
 					{ value: i.logAction, link: null, editable: false, hidden: false },
-					{ value: `${i.firstName} ${i.lastName}`, link: null, editable: false, hidden: false },
-					{ value: this._date.transform(i.logDate, 'MMMM, dd, y h:mm a'), link: null, editable: false, hidden: false }
+					{
+						value: i.userId != '0' && i.userId != null ? `${i.firstName} ${i.lastName}` : 'System',
+						link: null,
+						editable: false,
+						hidden: false
+					},
+					{ value: this._date.transform(i.logDate, 'MMM dd, y h:mm a'), link: null, editable: false, hidden: false }
 				);
 			});
 		}

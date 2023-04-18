@@ -10,10 +10,17 @@
 				<mat-card class="p-5">
 					<ng-container *ngIf="is_page_ready; else loading">
 						<h3 class="mb-1">Host Information</h3>
-						<p class="sm-text mb-4">You can fill on the forms manually or search all these information via Google Scrape.</p>
+						<p class="sm-text mb-2">You can fill on the forms manually or search all these information via Google Scrape.</p>
+						<p class="sm-text mb-2 text-danger">
+							<b>NOTE: </b>Default address selection is within United States only, If you wish to search within Canada click the tick
+							box below.
+						</p>
+						<div class="col-lg-12 mb-3 sm-text p-0">
+							<mat-checkbox (change)="getCanadaAddress($event)">Search within Canada</mat-checkbox>
+						</div>
 						<form [formGroup]="new_host_form" (ngSubmit)="onCreateHostPlace()" class="text-left">
-							<div class="row mb-4">
-								<div class="col-lg-12 mb-3">
+							<div class="row mb-2">
+								<div class="col-lg-12">
 									<app-autocomplete-field
 										(data_value)="setToDealer($event)"
 										(call_next_page)="searchBoxTrigger($event)"
@@ -31,7 +38,7 @@
 										[loading_search]="loading_search">
 									</app-autocomplete-field>
 								</div>
-								<div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-3">
+								<div *ngFor="let field of new_host_form_fields" class="{{ field.col }} mb-2">
 									<mat-form-field
 										*ngIf="!field.autocomplete && !field.checkbox; else custom_field"
 										[hideRequiredMarker]="false"
@@ -46,13 +53,6 @@
 									</mat-form-field>
 
 									<ng-template #custom_field>
-
-                                        <div class="col-lg-12 p-0" *ngIf="field.control == 'is_canada'">
-                                            <span class="sm-text">
-                                                <mat-checkbox class="example-margin mr-3" (change)="getCanadaAddress($event)"></mat-checkbox> Canada Address
-                                            </span>
-                                        </div>
-
 										<app-autocomplete-field
 											*ngIf="field.control == 'category' && !no_category; else no_category_selected"
 											(data_value)="setToCategory($event)"
@@ -211,7 +211,7 @@
 			</div>
 			<div class="col-lg-6">
 				<div class="d-flex justify-content-between p-0">
-					<div class="flex-basis-auto p-0" *ngIf="is_admin">
+					<div class="flex-basis-auto p-0">
 						<ng-container>
 							<div class="d-flex flex-column align-items-center p-0 pt-4">
 								<div class="image-container text-center">
@@ -223,13 +223,13 @@
 									color="primary"
 									(click)="onChoosePhotos()"
 									[disabled]="!place_id">
-									Choose image
+									Upload Image
 								</button>
 							</div>
 						</ng-container>
 					</div>
 					<div class="p-0" [ngClass]="is_admin ? 'flex-basis-80' : 'flex-basis-100'" [class.pt-5]="is_admin">
-						<label for="ng-scrape-form" class="pt-4 mb-3">Enter a Business Name</label>
+						<label for="ng-scrape-form" class="pt-4 mb-3">Enter a Host Name</label>
 						<div class="ng-form pt-1">
 							<form [formGroup]="google_place_form" (ngSubmit)="onSearchBusiness()">
 								<div class="d-flex">
@@ -239,7 +239,7 @@
 										type="text"
 										name="ng-scrape-form"
 										class="ng-input-form no-border full-width no-outline"
-										placeholder="Business Name" />
+										placeholder="Search Host Name" />
 									<button
 										class="google-search-field-btn no-border right-0"
 										[ngClass]="location_field ? 'disabled' : ''"
@@ -256,8 +256,8 @@
 												<span class="fas fa-map-marker-alt text-danger"></span>
 											</div>
 											<div class="flex-even">
-												<h5>{{ loc.result.name }}</h5>
-												<p class="sm-text mb-0">{{ loc.result.formatted_address | titlecase }}</p>
+												<h5>{{ loc.title }}</h5>
+												<p class="sm-text mb-0">{{ loc.address | titlecase }}</p>
 											</div>
 										</div>
 									</li>
