@@ -17,7 +17,7 @@
 						<h5 class="text-white sm-text mb-1"><span class="font-italic">Dealer Alias: </span>{{ page_data.dealer.dealerIdAlias }}</h5>
 					</div>
 				</ng-container>
-				<ng-container *ngIf="page === 'single-host' && is_admin">
+				<ng-container *ngIf="page === 'single-host' && (is_admin || is_dealer_admin)">
 					<h4 class="d-inline-block sm-text mb-0 text-white">
 						<a class="text-white" [routerLink]="[dealer_url]">{{ business_name }}</a>
 						<span class="mx-2">|</span>

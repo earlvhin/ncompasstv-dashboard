@@ -63,6 +63,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	host: API_HOST = null;
 
 	is_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
+	is_dealer_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin;
 	license_stats_label: any = [];
 	license_stats_array: any = [];
 	notes: string = '';
