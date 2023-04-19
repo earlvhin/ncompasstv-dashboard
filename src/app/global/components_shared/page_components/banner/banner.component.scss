@@ -1,6 +1,7 @@
 .theme-banner {
 	background: #eaeaea;
-	padding: 60px 20px 170px 20px;
+	//padding: 60px 20px 170px 20px;
+	padding: 120px 20px;
 	border-bottom: 1px solid #d0d0d0;
 	// padding: 105px 20px 100px 220px;
 	// position: absolute;
@@ -53,6 +54,16 @@
 			&.dealer {
 				border-radius: 5px;
 			}
+		}
+	}
+
+
+	.host-btn-container {
+		width: 150px;
+		margin: auto;
+
+		.host-btn{
+			width: 100%;
 		}
 	}
 
