@@ -263,14 +263,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 					past: isPast
 				},
 				{
-					value: license.screenName != null ? license.screenName : '--',
-					link: license.screenName != null ? `/${this._currentRole}/screens/${license.screenId}` : null,
-					new_tab_link: true,
-					editable: false,
-					hidden: false,
-					past: isPast
-				},
-				{
 					value: this._dates.transform(license.installDate, 'MMM d, y'),
 					id: license.licenseId,
 					label: 'Install Date',
@@ -300,7 +292,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			{ name: 'Dealer Alias', sortable: true, column: 'DealerIdAlias', key: 'dealerIdAlias' },
 			{ name: 'Business Name', sortable: true, column: 'BusinessName', key: 'businessName' },
 			{ name: 'License Type', sortable: true, column: 'ScreenTypeName', key: 'screenTypeName' },
-			{ name: 'Screen', sortable: true, column: 'ScreenName', key: 'screenName' },
 			{ name: 'Installation Date', sortable: true, column: 'InstallDate', key: 'installDate' }
 		];
 	}
@@ -312,7 +303,6 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 			{ name: 'Dealer Alias', key: 'dealerIdAlias' },
 			{ name: 'Business Name', key: 'businessName' },
 			{ name: 'License Type', key: 'screenTypeName' },
-			{ name: 'Screen', key: 'screenName' },
 			{ name: 'Installation Date', key: 'installDate' }
 		];
 	}

@@ -6,12 +6,10 @@ export class INSTALLATION {
 	dealer_alias: object;
 	dealer_name: object;
 	license_type: object;
-	screen: object;
 	installation_date: object;
 
 	constructor(
-		id: object, index: object, key: object, host: object, dealer_alias: object, dealer_name: object, license_type: object, 
-		screen: object, installation_date: object,
+		id: object, index: object, key: object, host: object, dealer_alias: object, dealer_name: object, license_type: object, installation_date: object,
 	) {
 		this.license_id = id;
 		this.index = index;
@@ -20,7 +18,6 @@ export class INSTALLATION {
 		this.dealer_alias = dealer_alias;
 		this.dealer_name = dealer_name;
 		this.license_type = license_type;
-		this.screen = screen;
 		this.installation_date = installation_date;
 	}
 	
