@@ -159,7 +159,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 		}
 
 		config.data = data;
-
 		const dialogReference = this._dialog.open(dialog, config);
 
 		dialogReference.afterClosed().subscribe((response) => {
