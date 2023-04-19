@@ -121,7 +121,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 			return new UI_DEALER_PLAYLIST(
 				{ value: playlist.playlistId, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
-				{ value: playlist.name, link: '/dealer/playlists/' + playlist.playlistId, editable: false, hidden: false },
+				{ value: playlist.name, link: '/dealer/playlists/' + playlist.playlistId, editable: false, hidden: false, new_tab_link: true, },
 				{ value: this._title.transform(playlist.description), link: null, editable: false, hidden: false },
 				{ value: this._date.transform(playlist.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
 				{ value: playlist.totalScreens > 0 ? true : false, link: null, hidden: true }
