@@ -971,6 +971,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	private getLicenseById() {
+		this._license
+			.get_license_by_id(this.license_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if ('message' in response) return;
+					const { license } = response as API_SINGLE_LICENSE_PAGE;
+					this.license_data = license;
+					this.display_status = license.displayStatus;
+				},
+				(e) => {
+					throw new Error(e);
+				}
+			);
+	}
+
 	private initializeSocketServer() {
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -1758,6 +1775,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._socket.on('SS_online_pi', (licenseId: string) => {
 			if (this.license_id !== licenseId) return;
 			this.pi_status = true;
+			this.getLicenseById();
 		});
 	}
 
@@ -1767,6 +1785,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.displayPopup('Oh snap! Your Pi with this license is currently offline', 'error');
 			this.pi_status = false;
 			this.player_status = false;
+			this.display_status = 0;
+			this.license_data.isCecEnabled = 0;
 		});
 	}
 
