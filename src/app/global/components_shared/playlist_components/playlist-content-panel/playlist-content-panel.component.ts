@@ -262,13 +262,19 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		const currentStatusFilter = this.currentStatusFilter;
 		const contents = Array.from(this._contentsBackup);
 
-		if (type === 'all' && currentStatusFilter.key === 'default') {
-			this.playlist_contents = Array.from(contents);
+		if (type === 'all') {
+			if (currentStatusFilter.key === 'default') {
+				this.playlist_contents = Array.from(contents);
+				this.getCurrentAssetCount();
+				return;
+			}
+
+			this.playlist_contents = [...Array.from(contents).filter((content: API_CONTENT) => content.scheduleStatus === currentStatusFilter.key)];
 			this.getCurrentAssetCount();
 			return;
 		}
 
-		this.playlist_contents = [...contents.filter((content) => fileTypes(type).includes(content.fileType.toLowerCase()))];
+		this.playlist_contents = [...Array.from(contents).filter((content) => fileTypes(type).includes(content.fileType.toLowerCase()))];
 
 		if (hasStatusFilter && currentStatusFilter.key !== 'default') {
 			this.playlist_contents = [...this.playlist_contents.filter((content: API_CONTENT) => content.scheduleStatus === currentStatusFilter.key)];
@@ -935,24 +941,44 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	private subscribeToSearch(): void {
-		this.search_control.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((data) => {
-			if (data !== '') {
-				this.playlist_contents = this.playlist_content_backup.filter((i) => {
-					if (i) {
-						if (i.fileName) {
-							return i.fileName.toLowerCase().includes(data.toLowerCase());
-						} else {
-							return i.title.toLowerCase().includes(data.toLowerCase());
-						}
-					}
-				});
-			} else {
+		const original = Array.from(this._contentsBackup);
+		const control = this.search_control;
+		const fileTypes = (type: string) => this.getFileTypesByTypeName(type);
+
+		control.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe((data) => {
+			// if user erased the keyword
+			if (typeof data === 'undefined' || !data || data.trim().length === 0) {
 				this.playlist_contents = this.playlist_content_backup;
 
 				if (localStorage.getItem('playlist_order')) {
 					this.rearrangePlaylistContents(localStorage.getItem('playlist_order').split(','));
 				}
+
+				this.playlist_contents = original.filter((content: API_CONTENT) => {
+					const hasCurrentFileType = fileTypes(this.currentFileTypeFilter).includes(content.fileType.toLowerCase());
+					return content.scheduleStatus === this.currentStatusFilter.key && hasCurrentFileType;
+				});
+
+				if (this.currentFileTypeFilter === 'all') {
+					this.playlist_contents = original.filter((content: API_CONTENT) => content.scheduleStatus === this.currentStatusFilter.key);
+					this.getAssetCount();
+					return;
+				}
+
+				return;
 			}
+
+			// else if has keyword
+
+			this.playlist_contents = this.playlist_contents.filter((i) => {
+				if (i) {
+					if (i.fileName) {
+						return i.fileName.toLowerCase().includes(data.toLowerCase());
+					} else {
+						return i.title.toLowerCase().includes(data.toLowerCase());
+					}
+				}
+			});
 		});
 	}
 
