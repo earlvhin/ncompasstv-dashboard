@@ -5,16 +5,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { forkJoin, Observable, Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
-import {
-	API_DEALER,
-	API_HOST,
-	API_LICENSE_PROPS,
-	API_TEMPLATE,
-	API_ZONE,
-	PAGING,
-	UI_ROLE_DEFINITION,
-	UI_ROLE_DEFINITION_TEXT
-} from 'src/app/global/models';
+import { API_DEALER, API_HOST, API_LICENSE_PROPS, API_TEMPLATE, API_ZONE, PAGING, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService, HostService, LicenseService, PlaylistService, ScreenService, TemplateService } from 'src/app/global/services';
 import { DealerService } from 'src/app/global/services/dealer-service/dealer.service';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -629,6 +620,7 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	private get hasUnusedLicenseWithoutInstallDate() {
+		if (this.has_no_licenses) return false;
 		return typeof this.licenses.find((license) => this.assigned_licenses.includes(license.licenseId) && !license.installDate) !== 'undefined';
 	}
 
