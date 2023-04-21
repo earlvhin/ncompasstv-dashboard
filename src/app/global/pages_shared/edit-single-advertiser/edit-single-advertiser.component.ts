@@ -5,8 +5,19 @@ import { TitleCasePipe } from '@angular/common';
 import { takeUntil, map } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { AdvertiserService, AuthService, CategoryService, ConfirmationDialogService, DealerService } from 'src/app/global/services';
-import { API_ADVERTISER, API_DEALER, API_PARENT_CATEGORY, API_UPDATE_ADVERTISER, PAGING, UI_CONFIRMATION_MODAL } from 'src/app/global/models';
+import { AdvertiserService, AuthService, CategoryService, ConfirmationDialogService, DealerService, LocationService } from 'src/app/global/services';
+
+import {
+	API_ADVERTISER,
+	API_DEALER,
+	API_PARENT_CATEGORY,
+	API_UPDATE_ADVERTISER,
+	City,
+	PAGING,
+	UI_CONFIRMATION_MODAL,
+	UI_ROLE_DEFINITION
+} from 'src/app/global/models';
+
 @Component({
 	selector: 'app-edit-single-advertiser',
 	templateUrl: './edit-single-advertiser.component.html',
@@ -15,19 +26,25 @@ import { API_ADVERTISER, API_DEALER, API_PARENT_CATEGORY, API_UPDATE_ADVERTISER,
 })
 export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 	advertiser: API_ADVERTISER = this.dialog_data.advertiser;
+	canada_selected: boolean = false;
 	category_selected: string;
 	categories_data: API_PARENT_CATEGORY[] = [];
 	categories_loaded = false;
+	cities_loaded = false;
+	city_selected: string;
+	city_state: City[] = [];
 	closed_without_edit: boolean = false;
 	current_dealer: API_DEALER;
 	dealer_name: string;
-	dealers_data: API_DEALER[] = [];
+	dealers_data: any;
 	dealers_loaded = false;
 	disable_business_name: boolean = true;
 	edit_advertiser_form: FormGroup;
 	edit_advertiser_form_fields = this._editAdvertiserFormFields;
 	initial_dealer_id: string;
 	is_active_advertiser = this.advertiser.status === 'A';
+	is_current_user_admin = this._auth.current_role === 'administrator';
+	is_dealer_change_disabled = true;
 	is_form_ready = false;
 	is_dealer = this._auth.current_role === 'dealer';
 	paging: PAGING;
@@ -43,6 +60,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		private _dealer: DealerService,
 		private _dialogReference: MatDialogRef<EditSingleAdvertiserComponent>,
 		private _form: FormBuilder,
+		private _location: LocationService,
 		private _titlecase: TitleCasePipe
 	) {}
 
@@ -50,6 +68,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this.searchDealers();
 		this.getCategories();
 		this.initializeForm();
+		this.getCities();
+		this.fillCityOfAdvertiser();
 	}
 
 	ngOnDestroy(): void {
@@ -57,9 +77,114 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
+	fillCityOfAdvertiser() {
+		this._location
+			.get_states_by_abbreviation(this.advertiser.state)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					let city = this.advertiser.city;
+					this.city_selected = city;
+					this.setCity(city);
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			);
+	}
+
+	setCategory(event: string): void {
+		if (!event || event.length <= 0) return;
+		event = event.replace(/_/g, ' ');
+		this.category_selected = this._titlecase.transform(event);
+		this._formControls.category.setValue(event);
+	}
+
+	setCity(data): void {
+		if (!this.canada_selected) {
+			this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
+			this._location
+				.get_states_regions(data.substr(data.indexOf(',') + 2))
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						this._formControls.state.setValue(data[0].abbreviation);
+						this._formControls.region.setValue(data[0].region);
+					},
+					(error) => {
+						throw new Error(error);
+					}
+				);
+		} else {
+			let sliced_address = data.split(', ');
+			let filtered_data = this.city_state.filter((city) => {
+				return city.city === sliced_address[0];
+			});
+
+			this._formControls.city.setValue(data + ', ' + filtered_data[0].whole_state);
+			this._formControls.state.setValue(filtered_data[0].state);
+			this._formControls.region.setValue(filtered_data[0].region);
+		}
+	}
+
 	editBusinessName(value: boolean): void {
 		this.closed_without_edit = value;
 		this.disable_business_name = value;
+	}
+
+	getCanadaAddress(value) {
+		this.canada_selected = value.checked;
+		this.clearAddressValue();
+		if (value.checked) {
+			this.getCanadaCities();
+		} else {
+			this.getCities();
+		}
+	}
+
+	clearAddressValue() {
+		this._formControls.address.setValue('');
+		this.city_selected = '';
+		this._formControls.city.setValue('');
+		this._formControls.state.setValue('');
+		this._formControls.region.setValue('');
+		this._formControls.zip.setValue('');
+	}
+
+	getCanadaCities() {
+		this._location
+			.get_canada_cities()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response: any) => {
+				this.city_state = response.map((city) => {
+					return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
+				});
+			});
+	}
+
+	getCities() {
+		this._location
+			.get_cities()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response: any) => {
+				this.city_state = response.map((city) => {
+					return new City(city.city, `${city.city}, ${city.state}`, city.state);
+				});
+			})
+			.add(() => (this.cities_loaded = true));
+	}
+
+	private addCurrentDealerToList(): void {
+		const filtered = this.dealers_data.filter((dealer) => dealer.dealerId === this.dealers_data.dealerId);
+
+		if (filtered.length > 0) return;
+
+		this._dealer
+			.get_dealer_by_id(this.current_dealer.dealerId)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response) => {
+				this.dealers_data.push(response);
+			});
 	}
 
 	onSelectCategory(name: string) {
@@ -176,6 +301,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			lat: ['', Validators.required]
 		});
 
+		this.edit_advertiser_form.markAllAsTouched();
+
 		this.setFormData();
 	}
 
@@ -224,34 +351,42 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 				col: 'col-lg-6'
 			},
 			{
+				label: 'Canada',
+				control: 'is_canada',
+				placeholder: 'Input for Canada Address',
+				col: 'col-lg-12',
+				is_required: false,
+				checkbox: true
+			},
+			{
 				label: 'Address',
 				control: 'address',
 				placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-				col: 'col-lg-12'
+				col: 'col-lg-5'
 			},
 			{
 				label: 'City',
 				control: 'city',
 				placeholder: 'Ex. Chicago',
-				col: 'col-lg-6'
+				col: 'col-lg-4'
 			},
 			{
 				label: 'State',
 				control: 'state',
 				placeholder: 'Ex. IL',
-				col: 'col-lg-6'
+				col: 'col-lg-2'
 			},
 			{
 				label: 'Region',
 				control: 'region',
 				placeholder: 'Ex. SW',
-				col: 'col-lg-6'
+				col: 'col-lg-2'
 			},
 			{
 				label: 'Zip Code',
 				control: 'zip',
 				placeholder: 'Ex. 54001',
-				col: 'col-lg-6'
+				col: 'col-lg-4'
 			}
 		];
 	}

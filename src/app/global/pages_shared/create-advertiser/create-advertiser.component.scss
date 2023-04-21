@@ -1,0 +1,33 @@
+.select-image-container {
+	.image-preview {
+		border: dashed;
+		flex-basis: 55%;
+		margin-right: 20px;
+
+		.image-container {
+			max-width: 500px;
+			max-height: 200px;
+
+			img {
+				height: 100%;
+				width: 100%;
+				object-fit: cover;
+				vertical-align: bottom;
+			}
+		}
+	}
+}
+
+.select-image-button {
+	flex-basis: 25%;
+	font-size: 12px;
+	max-width: 160px;
+}
+
+.flex-basis-80 {
+	flex-basis: 80%;
+}
+
+.flex-basis-100 {
+	flex-basis: 100%;
+}

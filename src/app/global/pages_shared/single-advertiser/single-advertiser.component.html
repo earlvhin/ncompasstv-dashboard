@@ -1,7 +1,7 @@
 <div class="container">
 	<ng-container *ngIf="is_banner_data_ready; else loading">
 		<app-banner
-			[image]="img"
+			[image]="currentImage"
 			[title]="advertiser.name"
 			[description]="description"
 			[editable]="!has_only_view_permission"

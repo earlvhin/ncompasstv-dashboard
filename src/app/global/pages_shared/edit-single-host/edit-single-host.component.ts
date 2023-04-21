@@ -7,14 +7,12 @@ import { map, pairwise, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import * as uuid from 'uuid';
 
-import { LocationService } from 'src/app/global/services/data-service/location.service';
-import { City, State } from 'src/app/global/models/ui_city_state_region.model';
-
 import {
 	API_CONTENT,
 	API_DEALER,
 	API_PARENT_CATEGORY,
 	API_UPDATE_HOST,
+	City,
 	UI_ROLE_DEFINITION,
 	UI_OPERATION_DAYS,
 	API_HOST,
@@ -24,7 +22,8 @@ import {
 	UI_STORE_HOUR_PERIOD
 } from 'src/app/global/models';
 
-import { AuthService, CategoryService, ConfirmationDialogService, DealerService, HostService } from 'src/app/global/services';
+import { AuthService, CategoryService, ConfirmationDialogService, DealerService, HostService, LocationService } from 'src/app/global/services';
+
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import * as moment from 'moment';
 
@@ -36,7 +35,7 @@ import * as moment from 'moment';
 })
 export class EditSingleHostComponent implements OnInit, OnDestroy {
 	business_hours: UI_STORE_HOUR[];
-    canada_selected: boolean = false;
+	canada_selected: boolean = false;
 	city_state: City[] = [];
 	cities_loaded = false;
 	city_selected: string;
@@ -393,37 +392,32 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	setTimezone(data: string): void {
 		this._formControls.timezone.setValue(data);
 	}
-	
+
 	setCity(data): void {
-        if(!this.canada_selected) {
-            this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
-		    this._location
-			.get_states_regions(data.substr(data.indexOf(',') + 2))
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					this._formControls.state.setValue(data[0].abbreviation);
-					this._formControls.region.setValue(data[0].region);
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
-        } else {
-            let sliced_address = data.split(', ');
-            let filtered_data = this.city_state.filter(
-                city => {
-                    return city.city === sliced_address[0];
-                }
-            )
-            
-            this._formControls.city.setValue(data+', '+filtered_data[0].whole_state);
-            this._formControls.state.setValue(filtered_data[0].state)
-            this._formControls.region.setValue(filtered_data[0].region)
-        }
+		if (!this.canada_selected) {
+			this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
+			this._location
+				.get_states_regions(data.substr(data.indexOf(',') + 2))
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						this._formControls.state.setValue(data[0].abbreviation);
+						this._formControls.region.setValue(data[0].region);
+					},
+					(error) => {
+						throw new Error(error);
+					}
+				);
+		} else {
+			let sliced_address = data.split(', ');
+			let filtered_data = this.city_state.filter((city) => {
+				return city.city === sliced_address[0];
+			});
 
-
-		
+			this._formControls.city.setValue(data + ', ' + filtered_data[0].whole_state);
+			this._formControls.state.setValue(filtered_data[0].state);
+			this._formControls.region.setValue(filtered_data[0].region);
+		}
 	}
 
 	setCategory(event: string): void {
@@ -432,7 +426,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this.category_selected = this._titlecase.transform(event);
 		this._formControls.category.setValue(event);
 	}
-	
+
 	setToOpenAllDay(businessHourIndex: number, periodIndex: number) {
 		this.business_hours[businessHourIndex].periods[periodIndex].openingHourData = { hour: 0, minute: 0, second: 0 };
 		this.business_hours[businessHourIndex].periods[periodIndex].closingHourData = { hour: 23, minute: 59, second: 0 };
@@ -542,7 +536,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			others: ['']
 		});
 
-        this.edit_host_form.markAllAsTouched();
+		this.edit_host_form.markAllAsTouched();
 	}
 
 	private parseBusinessHours(data: UI_STORE_HOUR[]) {
@@ -583,7 +577,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					let city = this.host.city + ', ' + data[0].state;
+					let city = this.host.city;
 					this.city_selected = city;
 					this.setCity(city);
 				},
@@ -692,36 +686,35 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		return controls.filter((formControl) => FIELD_CONTROL_NAMES.includes(formControl.control)).map((formControl) => formControl.control);
 	}
 
-    getCanadaAddress(value) {
-        this.canada_selected = value.checked;
-        this.clearAddressValue();
-        if(value.checked) {
-            this.getCanadaCities();
-        } else {
-            this.getCities();
-        }
-    }
+	getCanadaAddress(value) {
+		this.canada_selected = value.checked;
+		this.clearAddressValue();
+		if (value.checked) {
+			this.getCanadaCities();
+		} else {
+			this.getCities();
+		}
+	}
 
-    clearAddressValue() {
-        this._formControls.address.setValue('');
-        this.city_selected = '';
-        this._formControls.city.setValue('');
-        this._formControls.state.setValue('');
-        this._formControls.region.setValue('');
-        this._formControls.zip.setValue('');
-    }
+	clearAddressValue() {
+		this._formControls.address.setValue('');
+		this.city_selected = '';
+		this._formControls.city.setValue('');
+		this._formControls.state.setValue('');
+		this._formControls.region.setValue('');
+		this._formControls.zip.setValue('');
+	}
 
-    getCanadaCities() {
-        this._location.get_canada_cities()
-			.pipe(
-				takeUntil(this._unsubscribe),
-			)
-			.subscribe((response:any) => {
+	getCanadaCities() {
+		this._location
+			.get_canada_cities()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((response: any) => {
 				this.city_state = response.map((city) => {
-                    return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
-                });
-			})
-    }
+					return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
+				});
+			});
+	}
 
 	protected get _editHostFormControls() {
 		return [
@@ -753,13 +746,13 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				type: 'number',
 				col: 'col-lg-6'
 			},
-            {
+			{
 				label: 'Canada',
 				control: 'is_canada',
 				placeholder: 'Input for Canada Address',
 				col: 'col-lg-12',
 				is_required: false,
-                checkbox: true
+				checkbox: true
 			},
 			{
 				label: 'Address',
