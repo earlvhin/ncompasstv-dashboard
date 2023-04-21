@@ -52,25 +52,25 @@ export class LicensesComponent implements OnInit {
 	worksheet: any;
 	is_view_only = false;
 
-    // FOR GRID VIEW
-    active_view: string = 'list';
-    license_data_for_grid_view: any = [];
-    favorites_list: any = [];
-    favorite_view: boolean = true;
-    show_more_clicked: boolean = false;
-    favorites_list_cache: any = [];
-    grid_list_cache: any = [];
-    no_favorites: boolean;
-    total_favorites: 0;
-    total_not_favorites: 0;
-    hide_all_license: boolean = false;
-    no_licenses: boolean;
-    paging_data_favorites: any;
+	// FOR GRID VIEW
+	active_view: string = 'list';
+	license_data_for_grid_view: any = [];
+	favorites_list: any = [];
+	favorite_view: boolean = true;
+	show_more_clicked: boolean = false;
+	favorites_list_cache: any = [];
+	grid_list_cache: any = [];
+	no_favorites: boolean;
+	total_favorites: 0;
+	total_not_favorites: 0;
+	hide_all_license: boolean = false;
+	no_licenses: boolean;
+	paging_data_favorites: any;
 
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
-		{ name: 'Status', sortable: false, key: 'piStatus', hidden: true, no_show: true },
+		{ name: 'Status', sortable: false, key: 'new_status', hidden: true, no_show: true },
 		{ name: 'License Key', sortable: true, key: 'licenseKey', column: 'LicenseKey' },
 		{ name: 'Type', sortable: true, key: 'screenType', column: 'ScreenType' },
 		{ name: 'Host', sortable: true, key: 'hostName', column: 'HostName' },
@@ -140,13 +140,13 @@ export class LicensesComponent implements OnInit {
 		switch (type) {
 			case 'status':
 				this.resetFilterStatus();
-                this.filters.status = value;
+				this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
-                this.filters.pending = false;
-                this.filters.isactivated = 1;
+				this.filters.pending = false;
+				this.filters.isactivated = 1;
 				if (value == 0) {
 					var filter = {
 						column: 'TimeIn',
@@ -160,22 +160,22 @@ export class LicensesComponent implements OnInit {
 			case 'zone':
 				this.filters.zone = value;
 				this.filters.label_zone = value;
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'activated':
 				this.resetFilterStatus();
 				this.filters.status = '';
-                this.filters.isactivated = 0;
+				this.filters.isactivated = 0;
 				this.filters.assigned = true;
 				this.filters.label_status = 'Inactive';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'recent':
 				this.resetFilterStatus();
 				this.filters.status = '';
 				this.filters.recent = value;
 				this.filters.label_status = 'Recent Installs';
-                this.sortList('desc');
+				this.sortList('desc');
 				break;
 			case 'days_offline':
 				this.resetFilterStatus();
@@ -183,7 +183,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.days_offline_from = value;
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
-                let filter_active = { column: 'TimeIn', order: 'desc' };
+				let filter_active = { column: 'TimeIn', order: 'desc' };
 				this.getColumnsAndOrder(filter_active);
 				break;
 			case 'assigned':
@@ -200,7 +200,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.pending = value;
 				this.filters.label_status = value == 'true' ? 'Pending' : '';
 				this.sortList('desc');
-                break;
+				break;
 			default:
 		}
 	}
@@ -236,14 +236,14 @@ export class LicensesComponent implements OnInit {
 			label_host: '',
 			label_admin: ''
 		};
-		if(this.active_view === 'grid') {
-            this.getFavoriteLicenses(false);
-            this.license_data_for_grid_view = [];
-            this.getLicenses(1, 24, true)
-        } else {
-            this.sortList('desc');
-            this.getLicenses(1)
-        }
+		if (this.active_view === 'grid') {
+			this.getFavoriteLicenses(false);
+			this.license_data_for_grid_view = [];
+			this.getLicenses(1, 24, true);
+		} else {
+			this.sortList('desc');
+			this.getLicenses(1);
+		}
 	}
 
 	getTotalCount(id: string): void {
@@ -292,19 +292,19 @@ export class LicensesComponent implements OnInit {
 	}
 
 	getLicenses(page: number, pageSize?, fromShowMore?) {
-        var favorite: any;
-        this.no_licenses_result = false;
-		if(this.active_view != 'grid') {
-            favorite = '';
-            this.searching_license = true;
-        } else {
-            if(page > 1) {
-                this.searching_license = false;
-            } else {
-                this.searching_license = true;
-            }
-            favorite = false;
-        }
+		var favorite: any;
+		this.no_licenses_result = false;
+		if (this.active_view != 'grid') {
+			favorite = '';
+			this.searching_license = true;
+		} else {
+			if (page > 1) {
+				this.searching_license = false;
+			} else {
+				this.searching_license = true;
+			}
+			favorite = false;
+		}
 
 		this._license
 			.sort_license_by_dealer_id(
@@ -325,42 +325,40 @@ export class LicensesComponent implements OnInit {
 				this.filters.pending,
 				this.filters.online,
 				this.filters.isactivated,
-                favorite
+				favorite
 			)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-                    this.paging_data_license = data.paging;
+					this.paging_data_license = data.paging;
 
-                    if(this.active_view === 'grid') {
-                        if (data.paging.entities.length > 0) {
-                            data.paging.entities.map(
-                                entities => {
-                                    this.license_data_for_grid_view.push(entities)
-                                }
-                            )
-                            if(fromShowMore && page > 1) {
-                                this.grid_list_cache = this.license_data_for_grid_view;
-                            }
-                            if(this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
-                                this.license_data_for_grid_view = this.grid_list_cache;
-                            }
-                        } else {
-                            this.no_licenses_result = true;
-                        }
-                    } else {
-                        if (data.licenses.length > 0) {
-                            const mapped = this.mapToLicensesTable(data.licenses);
-                            this.license_data = [...mapped];
-                            this.license_filtered_data = [...mapped];
-                        } else {
-                            if (this.search_data_license == '') this.no_licenses_result = true;
-                            this.license_filtered_data = [];
-                        }
-                    }
+					if (this.active_view === 'grid') {
+						if (data.paging.entities.length > 0) {
+							data.paging.entities.map((entities) => {
+								this.license_data_for_grid_view.push(entities);
+							});
+							if (fromShowMore && page > 1) {
+								this.grid_list_cache = this.license_data_for_grid_view;
+							}
+							if (this.grid_list_cache.length > 0 && page === 1 && fromShowMore === true) {
+								this.license_data_for_grid_view = this.grid_list_cache;
+							}
+						} else {
+							this.no_licenses_result = true;
+						}
+					} else {
+						if (data.licenses.length > 0) {
+							const mapped = this.mapToLicensesTable(data.licenses);
+							this.license_data = [...mapped];
+							this.license_filtered_data = [...mapped];
+						} else {
+							if (this.search_data_license == '') this.no_licenses_result = true;
+							this.license_filtered_data = [];
+						}
+					}
 
 					this.initial_load_license = false;
-                    this.searching_license = false;
+					this.searching_license = false;
 				},
 				(error) => {
 					throw new Error(error);
@@ -372,36 +370,35 @@ export class LicensesComponent implements OnInit {
 			});
 	}
 
-    sortDisplay(arrangement) {
-        var filter = {
-            column: 'DisplayStatus',
-            order: arrangement
-        };
-        this.getColumnsAndOrder(filter);
-    }
+	sortDisplay(arrangement) {
+		var filter = {
+			column: 'DisplayStatus',
+			order: arrangement
+		};
+		this.getColumnsAndOrder(filter);
+	}
 
 	licenseFilterData(e) {
-        if(e) {
-            this.search_data_license = e;
-            if(this.active_view === 'grid') {
-                this.license_data_for_grid_view = [];
-                this.getFavoriteLicenses(false);
-                this.getLicenses(1, 24, false)
-            } else {
-                this.getLicenses(1);
-            }
-            this.hide_all_license = false;
-        } else {
-            this.search_data_license = '';
-			if(this.active_view === 'grid') {
-                this.license_data_for_grid_view = [];
-                this.getFavoriteLicenses(false);
-                this.getLicenses(1, 24, false)
-            } else {
-                this.getLicenses(1);
-            }
-        }
-        
+		if (e) {
+			this.search_data_license = e;
+			if (this.active_view === 'grid') {
+				this.license_data_for_grid_view = [];
+				this.getFavoriteLicenses(false);
+				this.getLicenses(1, 24, false);
+			} else {
+				this.getLicenses(1);
+			}
+			this.hide_all_license = false;
+		} else {
+			this.search_data_license = '';
+			if (this.active_view === 'grid') {
+				this.license_data_for_grid_view = [];
+				this.getFavoriteLicenses(false);
+				this.getLicenses(1, 24, false);
+			} else {
+				this.getLicenses(1);
+			}
+		}
 	}
 
 	sortList(order: string, column?): void {
@@ -412,13 +409,13 @@ export class LicensesComponent implements OnInit {
 	getColumnsAndOrder(data: { column: string; order: string }) {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
-		if(this.active_view === 'grid') {
-            this.license_data_for_grid_view = [];
-            this.getFavoriteLicenses();
-            this.getLicenses(1, this.grid_list_cache.length, false)
-        } else {
-            this.getLicenses(1);
-        }
+		if (this.active_view === 'grid') {
+			this.license_data_for_grid_view = [];
+			this.getFavoriteLicenses();
+			this.getLicenses(1, this.grid_list_cache.length, false);
+		} else {
+			this.getLicenses(1);
+		}
 	}
 
 	getLabel(data) {
@@ -477,71 +474,70 @@ export class LicensesComponent implements OnInit {
 					this.filters.host = data.host.id;
 					this.filters.label_host = data.host.name;
 				}
-				if(this.active_view === 'grid') {
-                    this.license_data_for_grid_view = [];
-                    this.getFavoriteLicenses(false);
-                    this.getLicenses(1, 24, false)
-                } else {
-                    this.getLicenses(1);
-                }
-                this.hide_all_license = false;
+				if (this.active_view === 'grid') {
+					this.license_data_for_grid_view = [];
+					this.getFavoriteLicenses(false);
+					this.getLicenses(1, 24, false);
+				} else {
+					this.getLicenses(1);
+				}
+				this.hide_all_license = false;
 			}
 		});
 	}
 
-    changeView(view) {
-        this.active_view = view;
-        if(view === 'grid') {
-            this.getFavoriteLicenses(true);
-            this.license_data_for_grid_view = [];
-            this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24)
-        } else {
-            this.getLicenses(1)
-        }
-    }
+	changeView(view) {
+		this.active_view = view;
+		if (view === 'grid') {
+			this.getFavoriteLicenses(true);
+			this.license_data_for_grid_view = [];
+			this.getLicenses(1, this.grid_list_cache.length > 0 ? this.grid_list_cache.length : 24);
+		} else {
+			this.getLicenses(1);
+		}
+	}
 
-    getFavoriteLicenses(reset?) {
-        this.favorites_list = [];
-        this._license.sort_license_by_dealer_id(
-			this.currentUser.roleInfo.dealerId,
-            1,
-			!reset ? this.search_data_license : '',
-			this.sort_column,
-			this.sort_order,
-			24,
-			this.filters.status,
-			this.filters.days_offline_from,
-			this.filters.days_offline_to,
-			this.filters.activated,
-			this.filters.recent,
-			this.filters.zone,
-			this.filters.host,
-			this.filters.assigned,
-			this.filters.pending,
-			this.filters.online,
-			this.filters.isactivated,
-            true
-		).pipe(takeUntil(this._unsubscribe)).subscribe(
-			(data) => {
-                if(data.paging.entities.length === 0) {
-                    this.no_favorites = true;
-                } else {
-                    this.paging_data_favorites = data.paging;
-                    data.paging.entities.map(
-                        entities => {
-                            this.favorites_list.push(entities)
-                        }
-                    )
-                    this.favorites_list_cache = this.favorites_list;
-                    this.no_favorites = false;
-                }
-                if(reset) {
-                    this.favorites_list_cache = this.favorites_list;
-                    this.no_favorites = false;
-                }
-            }
-        )
-    }
+	getFavoriteLicenses(reset?) {
+		this.favorites_list = [];
+		this._license
+			.sort_license_by_dealer_id(
+				this.currentUser.roleInfo.dealerId,
+				1,
+				!reset ? this.search_data_license : '',
+				this.sort_column,
+				this.sort_order,
+				24,
+				this.filters.status,
+				this.filters.days_offline_from,
+				this.filters.days_offline_to,
+				this.filters.activated,
+				this.filters.recent,
+				this.filters.zone,
+				this.filters.host,
+				this.filters.assigned,
+				this.filters.pending,
+				this.filters.online,
+				this.filters.isactivated,
+				true
+			)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data) => {
+				if (data.paging.entities.length === 0) {
+					this.no_favorites = true;
+				} else {
+					this.paging_data_favorites = data.paging;
+					data.paging.entities.map((entities) => {
+						this.favorites_list.push(entities);
+					});
+					this.favorites_list_cache = this.favorites_list;
+					this.no_favorites = false;
+				}
+				if (reset) {
+					this.favorites_list_cache = this.favorites_list;
+					this.no_favorites = false;
+				}
+			});
+	}
 
 	getDataForExport(id: string): void {
 		const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
@@ -589,6 +585,7 @@ export class LicensesComponent implements OnInit {
 	}
 
 	modifyItem(item: API_LICENSE['license']) {
+		item.new_status = this.checkStatusForExport(item);
 		item.zone = this.getZoneHours(item);
 		item.screenType = this._title.transform(item.screenType);
 		item.contentsUpdated = this._date.transform(item.contentsUpdated, 'MMM dd, yyyy h:mm a');
@@ -689,20 +686,20 @@ export class LicensesComponent implements OnInit {
 					editable: false,
 					hidden: false,
 					isImage: true,
-                    new_tab_link: true
+					new_tab_link: true
 				},
 				{ 
-                    value: i.licenseKey, 
-                    link: `/${this.currentRole}/licenses/` + i.licenseId, 
-                    editable: false, 
-                    hidden: false, 
-                    status: true,
-                    new_tab_link: true,
-                    has_favorites: true,
-                    is_favorite: i.isFavorite,
-                    show_tags: i.tags != null ? true : false,
-                    tags: i.tags != null ? i.tags : []
-                },
+					value: i.licenseKey,
+					link: `/${this.currentRole}/licenses/` + i.licenseId,
+					editable: false,
+					hidden: false,
+					status: true,
+					new_tab_link: true,
+					has_favorites: true,
+					is_favorite: i.isFavorite,
+					show_tags: i.tags != null ? true : false,
+					tags: i.tags != null ? i.tags : []
+				},
 				{ value: i.screenType ? this._title.transform(i.screenType) : '--', link: null, editable: false, hidden: false },
 				{
 					value: i.hostId ? i.hostName : '--',
@@ -711,8 +708,8 @@ export class LicensesComponent implements OnInit {
 					hidden: false,
 					business_hours: i.hostId ? true : false,
 					business_hours_label: i.hostId ? this.getLabel(i) : null,
-                    new_tab_link: true,
-                    compressed: true,
+					new_tab_link: true,
+					compressed: true
 				},
 				{
 					value: i.alias ? i.alias : '--',
@@ -720,31 +717,31 @@ export class LicensesComponent implements OnInit {
 					editable: true,
 					label: 'License Alias',
 					id: i.licenseId,
-					hidden: false,
+					hidden: false
 				},
 				{ value: i.contentsUpdated ? this._date.transform(i.contentsUpdated) : '--', link: null, editable: false, hidden: false },
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
 				{ 
-                    value: i.anydeskId ? i.anydeskId : '--', 
-                    link: null, 
-                    editable: false, 
-                    hidden: false, 
-                    copy: true, 
-                    label: 'Anydesk Id', 
-                    anydesk: true,
-                    password: i.anydeskId ? this.splitKey(i.licenseId) : '--',
-                },
+					value: i.anydeskId ? i.anydeskId : '--',
+					link: null,
+					editable: false,
+					hidden: false,
+					copy: true,
+					label: 'Anydesk Id',
+					anydesk: true,
+					password: i.anydeskId ? this.splitKey(i.licenseId) : '--'
+				},
 				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{ 
-                    value: i.installDate ? this._date.transform(i.installDate) : '--', 
-                    link: null, 
-                    editable: true, 
-                    hidden: false,
-                    label: 'Install Date',
-                    id: i.licenseId 
-                },
+					value: i.installDate ? this._date.transform(i.installDate) : '--',
+					link: null,
+					editable: true,
+					hidden: false,
+					label: 'Install Date',
+					id: i.licenseId
+				},
 				{ value: this.checkStatus(i), link: null, editable: false, hidden: true, label: this.checkStatusForExport(i), new_status: true },
 				{ value: i.playerStatus, link: null, editable: false, hidden: true },
 				{ value: i.isActivated, link: null, editable: false, hidden: true }
@@ -752,32 +749,33 @@ export class LicensesComponent implements OnInit {
 		});
 	}
 
-    checkStatus(license) {
+	checkStatus(license) {
 		let currentDate = new Date();
 		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 1) {
 			return 'text-primary';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 0) {
 			return 'text-danger';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+		} else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1) {
 			return 'text-orange';
-		} else if (license.isActivated === 0 && license.hostName) {
+		} else if (license.isActivated === 0 && license.hostName != null) {
 			return 'text-light-gray';
 		} else {
 			return 'text-gray';
 		}
 	}
 
-    checkStatusForExport(license) {
+	checkStatusForExport(license) {
 		let currentDate = new Date();
 		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+
+		if (new Date(license.installDate) <= currentDate && license.isActivated == 1 && license.hostName != null && license.piStatus == 1) {
 			return 'Online';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated == 1 && license.hostName != null && license.piStatus == 0) {
 			return 'Offline';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+		} else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1) {
 			return 'Pending';
-		} else if (license.isActivated === 0 && license.hostName) {
+		} else if (license.isActivated == 0 && license.hostName != null) {
 			return 'Inactive';
 		} else {
 			return 'Unassigned';
@@ -792,38 +790,38 @@ export class LicensesComponent implements OnInit {
 		return this._auth.current_role;
 	}
 
-    showMore(event) {
-        this.show_more_clicked = true;
-        this.getLicenses(event.page, event.pageSize, true)
-    }
+	showMore(event) {
+		this.show_more_clicked = true;
+		this.getLicenses(event.page, event.pageSize, true);
+	}
 
-    toggleFavorites(value) {
-        if(value === 'false') {
-            this.favorite_view = false;
-        } else {
-            this.favorites_list = this.favorites_list_cache;
-            this.no_favorites = false;
-            this.favorite_view = true;
-        }
-    }
+	toggleFavorites(value) {
+		if (value == 'false') {
+			this.favorite_view = false;
+		} else {
+			this.favorites_list = this.favorites_list_cache;
+			this.no_favorites = false;
+			this.favorite_view = true;
+		}
+	}
 
-    getTotalShownLicenses() {
-        if(this.active_view === 'grid') {
-            if(this.favorite_view) {
-                return this.favorites_list.length + this.paging_data_license.entities.length;
-            } else {
-                return this.paging_data_license.entities.length;
-            }
-        } else {
-            return this.paging_data_license.entities.length;
-        }
-    }
+	getTotalShownLicenses() {
+		if (this.active_view == 'grid') {
+			if (this.favorite_view) {
+				return this.favorites_list.length + this.paging_data_license.entities.length;
+			} else {
+				return this.paging_data_license.entities.length;
+			}
+		} else {
+			return this.paging_data_license.entities.length;
+		}
+	}
     
-    getTotalLicenses() {
-        if(this.active_view === 'grid') {
-            return this.paging_data_favorites.totalEntities + this.paging_data_license.totalEntities;
-        } else {
-            return this.paging_data_license.totalEntities;
-        }
-    }
+	getTotalLicenses() {
+		if (this.active_view === 'grid') {
+			return this.paging_data_favorites.totalEntities + this.paging_data_license.totalEntities;
+		} else {
+			return this.paging_data_license.totalEntities;
+		}
+	}
 }

@@ -172,16 +172,16 @@ export class LicensesComponent implements OnInit {
 		this.getLicenses(1);
 	}
 
-	checkStatus(license: API_LICENSE_PROPS) {
+	checkStatus(license) {
 		let currentDate = new Date();
 		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 1) {
 			return 'text-primary';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 0) {
 			return 'text-danger';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+		} else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1) {
 			return 'text-orange';
-		} else if (license.isActivated === 0 && license.hostName) {
+		} else if (license.isActivated === 0 && license.hostName != null) {
 			return 'text-light-gray';
 		} else {
 			return 'text-gray';
@@ -191,13 +191,13 @@ export class LicensesComponent implements OnInit {
 	checkStatusForExport(license: API_LICENSE_PROPS) {
 		let currentDate = new Date();
 		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+		if (new Date(license.installDate) <= currentDate && license.isActivated == 1 && license.hostName != null && license.piStatus == 1) {
 			return 'Online';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated == 1 && license.hostName != null && license.piStatus == 0) {
 			return 'Offline';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+		} else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1) {
 			return 'Pending';
-		} else if (license.isActivated === 0 && license.hostName) {
+		} else if (license.isActivated == 0 && license.hostName != null) {
 			return 'Inactive';
 		} else {
 			return 'Unassigned';
@@ -545,7 +545,7 @@ export class LicensesComponent implements OnInit {
 				}
 			);
 	}
-
+    
 	getTotalHours(data: { storeHours: any }) {
 		if (data.storeHours) {
 			data.storeHours = JSON.parse(data.storeHours);

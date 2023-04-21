@@ -173,7 +173,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'Notes', no_show: true, hidden: true, key: 'notes' },
 		{ name: 'Others', no_show: true, hidden: true, key: 'others' },
 		{ name: 'Status', sortable: true, column: 'Status', no_export: true, hidden: true },
-        { name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true },
+		{ name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true }
 	];
 
 	license_table_columns = [
@@ -241,8 +241,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		label_zone: '',
 		label_dealer: '',
 		label_admin: '',
-        days_offline_from: '',
-		days_offline_to: '',
+		days_offline_from: '',
+		days_offline_to: ''
 	};
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -675,12 +675,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.license_data = [];
 			this.license_filtered_data = [];
 		} else {
-            if(this.is_dealer_admin) {
-                this.license_data_api = response.licenses;
-            } else {
-                this.license_data_api = response.licenses;
-            }
-			
+			if (this.is_dealer_admin) {
+				this.license_data_api = response.licenses;
+			} else {
+				this.license_data_api = response.licenses;
+			}
+
 			this.no_licenses = false;
 
 			this.license_data_api.map((i) => {
@@ -815,10 +815,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					hidden: false,
 					status: true,
 					new_tab_link: true,
-                    has_favorites: true,
-                    is_favorite: l.isFavorite,
-                    show_tags: l.tags != null ? true : false,
-                    tags: l.tags != null ? l.tags : []
+					has_favorites: true,
+					is_favorite: l.isFavorite,
+					show_tags: l.tags != null ? true : false,
+					tags: l.tags != null ? l.tags : []
 				},
 				{
 					value: l.hostId ? l.hostName : '--',
@@ -828,7 +828,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					business_hours: l.hostId ? true : false,
 					business_hours_label: l.hostId ? this.getLabel(l) : null,
 					new_tab_link: true,
-                    compressed: true,
+					compressed: true
 				},
 				{
 					value: l.alias ? l.alias : '--',
@@ -843,15 +843,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: l.timeOut ? this._date.transform(l.timeOut, 'MMM dd y \n h:mm a') : '--', hidden: false },
 				{ value: l.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
 				{
-                    value: l.anydeskId ? l.anydeskId : '--', 
-                    link: null, 
-                    editable: false, 
-                    hidden: false, 
-                    copy: true, 
-                    label: 'Anydesk Id',
-                    anydesk: true,
-                    password: l.anydeskId ? this.splitKey(l.licenseId) : '--',
-                },
+					value: l.anydeskId ? l.anydeskId : '--',
+					link: null,
+					editable: false,
+					hidden: false,
+					copy: true,
+					label: 'Anydesk Id',
+					anydesk: true,
+					password: l.anydeskId ? this.splitKey(l.licenseId) : '--'
+				},
 				// {
 				// 	value: l.anydeskId ? this.splitKey(l.licenseId) : '--',
 				// 	link: null,
@@ -899,13 +899,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	checkStatus(license) {
 		let currentDate = new Date();
 		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 1) {
 			return 'text-primary';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 0) {
 			return 'text-danger';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+		} else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1) {
 			return 'text-orange';
-		} else if (license.isActivated === 0 && license.hostName) {
+		} else if (license.isActivated === 0 && license.hostName != null) {
 			return 'text-light-gray';
 		} else {
 			return 'text-gray';
@@ -915,13 +915,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	checkStatusForExport(license) {
 		let currentDate = new Date();
 		currentDate.setHours(0, 0, 0, 0);
-		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 1) {
+		if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 1) {
 			return 'Online';
-		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName && license.piStatus === 0) {
+		} else if (new Date(license.installDate) <= currentDate && license.isActivated === 1 && license.hostName != null && license.piStatus === 0) {
 			return 'Offline';
-		} else if (new Date(license.installDate) > currentDate && license.hostName && license.isActivated === 1) {
+		} else if (new Date(license.installDate) > currentDate && license.hostName != null && license.isActivated === 1) {
 			return 'Pending';
-		} else if (license.isActivated === 0 && license.hostName) {
+		} else if (license.isActivated === 0 && license.hostName != null) {
 			return 'Inactive';
 		} else {
 			return 'Unassigned';
@@ -1410,14 +1410,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.tagsToString = item.tags.join(',');
 				break;
 			case 'Hosts':
-                item.storeHoursParse = this.getStoreHourseParse(item)
-                item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
+				item.storeHoursParse = this.getStoreHourseParse(item);
+				item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
 				item.businessName = this.dealer.businessName;
 				break;
 		}
 	}
 
-    getStoreHourseParse(data) {
+	getStoreHourseParse(data) {
 		let days = [];
 		if (data.storeHours) {
 			let storehours = JSON.parse(data.storeHours);
@@ -1685,7 +1685,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				// this.filters.status = value;
 				this.filters.activated = true;
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
-                this.filters.online = value == 1 ? true : false;
+				this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
 				this.filters.isactivated = 1;
 				if (value == 0) {
@@ -1693,7 +1693,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						column: 'TimeIn',
 						order: 'desc'
 					};
-                    this.getColumnsAndOrder(filter);
+					this.getColumnsAndOrder(filter);
 				} else {
 					this.sortList('desc');
 				}
@@ -1711,14 +1711,14 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				this.filters.label_status = 'Inactive';
 				this.sortList('desc');
 				break;
-            case 'days_offline':
+			case 'days_offline':
 				this.resetFilterStatus();
 				this.filters.status = 0;
 				this.filters.days_offline_from = value;
 				this.filters.days_offline_to = value2;
 				this.filters.label_status = 'Offline for ' + days;
 				const filter = { column: 'TimeIn', order: 'desc' };
-			    this.getColumnsAndOrder(filter);
+				this.getColumnsAndOrder(filter);
 				break;
 			case 'assigned':
 				this.resetFilterStatus();
@@ -1778,8 +1778,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			label_dealer: '',
 			label_host: '',
 			label_admin: '',
-            days_offline_from: '',
-		    days_offline_to: '',
+			days_offline_from: '',
+			days_offline_to: ''
 		};
 		this.sortList('desc');
 		this.getLicensesofDealer(1);
