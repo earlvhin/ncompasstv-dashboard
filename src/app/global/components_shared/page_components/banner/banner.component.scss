@@ -1,10 +1,7 @@
 .theme-banner {
 	background: #eaeaea;
-	//padding: 60px 20px 170px 20px;
-	padding: 120px 20px;
+	padding: 60px 20px 170px 20px;
 	border-bottom: 1px solid #d0d0d0;
-	// padding: 105px 20px 100px 220px;
-	// position: absolute;
 	left: 0;
 	top: 0;
 	width: 100%;
@@ -79,7 +76,11 @@
 		&:hover {
 			color: #87af3c;
 		}
-	}
+	}	
+}
+
+.host-padding{
+	padding: 60px 20px !important;
 }
 
 a.text-white {
