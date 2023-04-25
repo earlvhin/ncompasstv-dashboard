@@ -5,7 +5,7 @@ import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { PAGING, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
-import { TagService } from 'src/app/global/services';
+import { TagService, AuthService } from 'src/app/global/services';
 import { CreateTagComponent } from '../../dialogs';
 import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.component';
 
@@ -33,7 +33,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	selectedTag: TAG;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _dialog: MatDialog, private _tag: TagService) {}
+	constructor(private _dialog: MatDialog, private _tag: TagService, private _auth: AuthService) {}
 
 	ngOnInit() {
 		const defaultType = this.tagTypes[0];
@@ -117,7 +117,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 		const role = this.tab === 'admin' ? 1 : 2;
 
 		this._tag
-			.searchOwnersByTagType({ keyword, tagId, typeId, page, role })
+			.searchOwnersByTagType({ keyword, tagId, typeId, page, role }, this._isDealer())
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map(({ tags, paging, message }) => {
@@ -166,12 +166,25 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 		});
 	}
 
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
 	protected get _tagOwnerTypes() {
-		return [
-			{ id: 1, name: 'dealer' },
-			{ id: 2, name: 'license' },
-			{ id: 3, name: 'host' },
-			{ id: 4, name: 'advertiser' }
-		];
+		if (!this._isDealer()) {
+			return [
+				{ id: 1, name: 'dealer' },
+				{ id: 2, name: 'license' },
+				{ id: 3, name: 'host' },
+				{ id: 4, name: 'advertiser' }
+			];
+		} else {
+			return [
+				{ id: 2, name: 'license' },
+				{ id: 3, name: 'host' },
+				{ id: 4, name: 'advertiser' }
+			];
+		}
 	}
 }

@@ -158,7 +158,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -241,7 +241,7 @@ export const API_ENDPOINTS = {
 		sub_dealer_account: 'account/createsubaccount',
 		tag: 'tag/create',
 		tag_add_and_assign: 'tag/admin/create/generic',
-		tag_owners: 'tag/addOwners',
+		tag_owners: 'tag/addowners',
 		tag_type: 'tag/createtype'
 	},
 	third_party: {

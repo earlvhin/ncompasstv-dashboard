@@ -54,6 +54,11 @@ export class TagsComponent implements OnInit, OnDestroy {
 		return this._auth.current_role;
 	}
 
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
 	private getAllTagTypes() {
 		return this._tag
 			.getAllTagTypes()
@@ -92,9 +97,8 @@ export class TagsComponent implements OnInit, OnDestroy {
 
 	private getTagsCount(): void {
 		this.isLoadingCount = true;
-
 		this._tag
-			.getAllTagsCount()
+			.getAllTagsCount(this._isDealer())
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map((response) => response.tags)

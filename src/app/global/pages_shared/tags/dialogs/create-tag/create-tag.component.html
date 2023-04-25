@@ -15,13 +15,13 @@
 		<!-- FORM SECTION -->
 		<div class="form-section">
 			<form [formGroup]="form" (ngSubmit)="onSubmit()">
-
 				<div class="fields d-flex flex-column">
-
 					<!-- TAG COLOR PICKER -->
 					<mat-form-field class="tag">
 						<mat-label>Tag Color</mat-label>
-						<input matInput type="text"
+						<input
+							matInput
+							type="text"
 							formControlName="tagColor"
 							autocomplete="off"
 							[(colorPicker)]="selectedTagColor"
@@ -29,42 +29,44 @@
 							[cpDisableInput]="true"
 							[style.background]="selectedTagColor"
 							[value]="selectedTagColor || ''"
-							(colorPickerChange)="onSelectTagColor(selectedTagColor)">
+							(colorPickerChange)="onSelectTagColor(selectedTagColor)" />
 					</mat-form-field>
 
 					<!-- TAG NAME -->
 					<mat-form-field>
 						<mat-label>Tag Name</mat-label>
-						<input matInput type="text" autocomplete="off" formControlName="tagName">
+						<input matInput type="text" autocomplete="off" formControlName="tagName" />
 					</mat-form-field>
 
 					<!-- TAG DESCRIPTION -->
 					<mat-form-field>
 						<mat-label>Tag Description</mat-label>
-						<input matInput type="text" autocomplete="off" formControlName="description">
+						<input matInput type="text" autocomplete="off" formControlName="description" />
 					</mat-form-field>
 
 					<!-- IS TAG EXCLUDED? -->
-					<mat-slide-toggle formControlName="exclude" [checked]="isTagExcluded" [labelPosition]="'before'" (change)="onExcludeTag($event)">
+					<mat-slide-toggle
+						formControlName="exclude"
+						[checked]="isTagExcluded"
+						[labelPosition]="'before'"
+						(change)="onExcludeTag($event)"
+						*ngIf="_isAdmin()">
 						Exclude tag?
 					</mat-slide-toggle>
-
 				</div>
-				
+
 				<!-- SUBMIT BUTTON -->
 				<div mat-dialog-actions>
 					<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="form.invalid">Submit</button>
 				</div>
 			</form>
 		</div>
-	
 	</div>
-
 </div>
 
 <ng-template #selectOwner>
 	<mat-form-field class="full-width">
 		<mat-label>Select Owner</mat-label>
-		<input matInput disabled>
+		<input matInput disabled />
 	</mat-form-field>
 </ng-template>

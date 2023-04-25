@@ -163,7 +163,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 		};
 
 		this._tag
-			.getAllTags(params)
+			.getAllTags(params, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, message }) => {
@@ -322,5 +322,10 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 
 	protected get _tagNameControl() {
 		return this.getFormControl('name');
+	}
+
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
 	}
 }

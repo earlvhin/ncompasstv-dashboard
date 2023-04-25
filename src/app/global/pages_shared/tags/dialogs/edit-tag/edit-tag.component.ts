@@ -3,7 +3,7 @@ import { MatDialogRef } from '@angular/material';
 import { Subject } from 'rxjs';
 
 import { TAG } from 'src/app/global/models/tag.model';
-import { TagService } from 'src/app/global/services/tag.service';
+import { TagService, AuthService } from 'src/app/global/services';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
 
@@ -26,7 +26,12 @@ export class EditTagComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(public _dialog_ref: MatDialogRef<EditTagComponent>, private _form_builder: FormBuilder, private _tag: TagService) {}
+	constructor(
+		public _dialog_ref: MatDialogRef<EditTagComponent>,
+		private _form_builder: FormBuilder,
+		private _tag: TagService,
+		private _auth: AuthService
+	) {}
 
 	ngOnInit() {
 		this.initializeForm();
@@ -88,5 +93,9 @@ export class EditTagComponent implements OnInit, OnDestroy {
 		});
 
 		this.selectedTagColor = this.form.get('tagColor').value;
+	}
+
+	_isAdmin() {
+		return this._auth.current_role === 'administrator';
 	}
 }

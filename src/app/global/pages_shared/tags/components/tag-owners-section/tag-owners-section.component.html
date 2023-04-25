@@ -1,78 +1,63 @@
-<!-- DROPDOWN AND SEARCH BOX ROW -->
-<div class="dropdown-and-search-section d-flex justify-content-between">
-
-	<div class="action-buttons-container d-inline-flex">
-		<!-- ADD TAGS -->
-		<ng-container *ngIf="currentUserRole.includes(tab)">
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
-				<span class="fas fa-tags"></span> <span class="ml-2 button_text_animation">Add Tags</span>
-			</button>
-		</ng-container>
-
-		<!-- ASSIGN TAGS -->
-		<ng-container *ngIf="currentUserRole.includes(tab)">
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _teal" title="Assign Tags" (click)="openDialog('assign_tags')">
-				<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation" >Assign Tags</span>
-			</button>
-		</ng-container>
-
-		<!-- SELECTED TAG INDICATOR -->
-		<ng-container *ngIf="hasTagSelected">
-			<div class="pill selected-tag ">
-				<div class="d-flex align-items-end">
-					<div>Tag: <strong>{{ selectedTag.name }}</strong></div>
-					<mat-icon (click)="onClearSelectedTag()">close</mat-icon>
+<div class="row">
+	<div class="col-lg-8">
+		<div class="d-inline-flex">
+			<div *ngIf="tab != 'dealer'">
+				<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
+					<span class="fas fa-tags"></span>
+					<span class="ml-2 button_text_animation">Add Tags</span>
+				</button>
+			</div>
+			<div *ngIf="tab != 'dealer'">
+				<button
+					mat-button
+					mat-raised-button
+					class="theme-btn pi-control sm-text mr-2 _teal"
+					title="Assign Tags"
+					(click)="openDialog('assign_tags')">
+					<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation">Assign Tags</span>
+				</button>
+			</div>
+			<div *ngIf="hasTagSelected">
+				<div class="p-2 bg-dark text-white text-center br-5">
+					<div class="d-flex">
+						<span class="mr-2 font-italic md-text">Filtered Tag :</span> <span class="f-500 md-text">{{ selectedTag.name }}</span>
+						<span class="ml-2 normal-text f-500 cursor-pointer fas fa-times text-danger" (click)="onClearSelectedTag()"></span>
+					</div>
 				</div>
 			</div>
-		</ng-container>
-
-		<!-- FILTER TAG BY OWNER TYPE -->
-		<!-- <button mat-button mat-raised-button [matMenuTriggerFor]="tagOwnerTypeMenu" mat-raised-button class="theme-btn">
-			<span class="button-label">Owner Types</span>
-			<span class="fas fa-angle-down ml-2"></span>
-		</button>
-		<mat-menu #tagOwnerTypeMenu="matMenu">
-			<button mat-menu-item *ngFor="let owner of ownerTypes" (click)="onFilterByOwnerType(owner)">
-				<span class="md-text">{{ owner.name | titlecase }}</span>
-			</button>
-		</mat-menu> -->
-
-		<!-- EXPORT TAGS -->
-		<!-- <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _primary" title="Export">
-			<span class="fas fa-file-excel"></span> <span class="ml-2 button_text_animation">Export</span>
-		</button> -->
+		</div>
 	</div>
 
-	<!-- SEARCH FIELD -->
-	<div class="search-container">
+	<div class="col-lg-4">
 		<mat-form-field class="full-width" *ngIf="!isLoading">
-			<mat-label>Search by tag or @assignee</mat-label>
-			<input matInput [formControl]="searchFormControl">
+			<mat-label><i class="fas fa-search mr-3"></i>Search by tag or @assignee</mat-label>
+			<input matInput [formControl]="searchFormControl" />
 		</mat-form-field>
 	</div>
-
 </div>
 
-<mat-card>
-	<ng-container *ngIf="!isLoading; else loading">
-		<!-- TABLE -->
-		<app-tags-table *ngIf="owners.length > 0; else noResults"
-			[tableType]="'tag-owners'"
-			[isLoading]="isLoading"
-			[paging]="pagingData"
-			[tab]="tab"
-			[tableColumns]="columns"
-			[tableData]="owners"
-			[currentTagType]="currentTagType"
-			[currentUserRole]="currentUserRole"
-			[currentUserId]="currentUserId"
-			(onClickPageNumber)="clickedPageNumber($event)">
-		</app-tags-table>
-	</ng-container>
-</mat-card>
+<div class="row">
+	<div class="col-lg-12">
+		<div class="mat-card" *ngIf="!isLoading; else loading">
+			<app-tags-table
+				*ngIf="owners.length > 0; else noResults"
+				[tableType]="'tag-owners'"
+				[isLoading]="isLoading"
+				[paging]="pagingData"
+				[tab]="tab"
+				[tableColumns]="columns"
+				[tableData]="owners"
+				[currentTagType]="currentTagType"
+				[currentUserRole]="currentUserRole"
+				[currentUserId]="currentUserId"
+				(onClickPageNumber)="clickedPageNumber($event)">
+			</app-tags-table>
+		</div>
+	</div>
+</div>
 
 <ng-template #loading>
-	<div class="py-4">
+	<div class="py-4 mt-3 mat-card">
 		<app-spinner [diameter]="60"></app-spinner>
 	</div>
 </ng-template>

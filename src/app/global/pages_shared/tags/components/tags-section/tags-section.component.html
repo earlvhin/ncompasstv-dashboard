@@ -1,11 +1,11 @@
-<div class="title">
+<div class="bg-dark text-white text-center font-500 pt-1 pb-1 normal-text">
 	<h4>{{ title | uppercase }}</h4>
 </div>
 
 <mat-card>
 	<ng-container *ngIf="!isLoading; else loading">
-		<!-- TABLE -->
-		<app-tags-table *ngIf="tags.length > 0; else noResults"
+		<app-tags-table
+			*ngIf="tags.length > 0; else noResults"
 			[currentTagType]="currentTagType"
 			[currentUserId]="currentUserId"
 			[currentUserRole]="currentUserRole"

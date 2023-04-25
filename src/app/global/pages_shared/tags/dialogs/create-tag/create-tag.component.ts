@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { TagService } from 'src/app/global/services';
+import { TagService, AuthService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-create-tag',
@@ -24,6 +24,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<CreateTagComponent>,
 		private _form_builder: FormBuilder,
@@ -40,16 +41,13 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	onExcludeTag(event: { checked: boolean }): void {
-
 		const isExcludedValue = event.checked ? 1 : 0;
 
 		this.form.get('exclude').setValue(isExcludedValue, { emitValue: false });
-
 	}
 
 	onSubmit(): void {
-
-		let dataToSubmit: { name: string, role: number, tagColor: string, description?: string, createdBy: string, exclude: number } = {
+		let dataToSubmit: { name: string; role: number; tagColor: string; description?: string; createdBy: string; exclude: number } = {
 			name: null,
 			tagColor: null,
 			createdBy: this.currentUserId,
@@ -61,7 +59,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		const name = form.tagName as string;
 		const tagColor = form.tagColor as string;
 		const description = form.description as string;
-		const role = this.tab === 'admin' ? 1 : 2;
+		const role = this._isDealer() ? 2 : 1;
 		const exclude = form.exclude;
 
 		dataToSubmit.name = name;
@@ -71,7 +69,9 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 		if (description) dataToSubmit.description = description;
 
-		this._tag.createTag(dataToSubmit).pipe(takeUntil(this._unsubscribe))
+		this._tag
+			.createTag(dataToSubmit)
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
 				(error) => {
@@ -85,19 +85,17 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	private initializeForm(): void {
-
 		let role = this.tab === 'admin' ? 1 : 2;
 
 		this.form = this._form_builder.group({
-			tagName: [ null, Validators.required ],
-			tagColor: [ null, Validators.required ],
-			role: [ role, Validators.required ],
-			description: [ null ],
-			exclude: [ 0, Validators.required ]
+			tagName: [null, Validators.required],
+			tagColor: [null, Validators.required],
+			role: [role, Validators.required],
+			description: [null],
+			exclude: [0, Validators.required]
 		});
 
 		this.form.get('role').disable({ emitEvent: false });
-
 	}
 
 	private showSuccessModal(): void {
@@ -112,6 +110,15 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 
 	protected get tagColorCtrl() {
 		return this.getCtrl('tagColor');
+	}
+
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isAdmin() {
+		return this._auth.current_role === 'administrator';
 	}
 
 	protected getCtrl(name: string) {

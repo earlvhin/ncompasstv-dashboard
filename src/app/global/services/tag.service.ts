@@ -20,7 +20,7 @@ export class TagService extends BaseService {
 		super(_auth, _http);
 	}
 
-	assignTags(owners: { ownerId: string; tagTypeId: string }[], tagIds: string[]) {
+	assignTags(owners: { ownerId: string; tagTypeId: string }[], tagIds: string[], isDealer) {
 		const body = { owners, tagIds };
 		return this.postRequest(this.creators.tag_owners, body);
 	}
@@ -62,18 +62,23 @@ export class TagService extends BaseService {
 		return this.postRequest(url, {});
 	}
 
-	getAllTags(filters: API_FILTERS): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
+	getAllTags(filters: API_FILTERS, isDealer) {
 		const params = this.setUrlParams(filters);
 		const url = `${this.getters.tags_get_all}${params}`;
-		return this.getRequest(url);
+		let url_split = this.getters.tags_get_all.split('/');
+		let new_url = url_split[0] + '/dealer/' + url_split[1];
+		new_url = `${new_url}${params}`;
+		return this.getRequest(isDealer ? new_url : url);
 	}
 
 	getAllTagTypes() {
 		return this.getRequest(this.getters.tag_types_get_all);
 	}
 
-	getAllTagsCount() {
-		return this.getRequest(this.getters.tags_count);
+	getAllTagsCount(isDealer?) {
+		let url_split = this.getters.tags_count.split('/');
+		let new_url = url_split[0] + '/dealer/' + url_split[1];
+		return this.getRequest(!isDealer ? this.getters.tags_count : new_url);
 	}
 
 	getTag(tagId: number) {
@@ -101,28 +106,36 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
 	}
 
-	searchAllTags({ keyword = '', page = 1, role = 1, pageSize = 10000 }): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
-		let url = `${this.getters.search_tags}?page=${page}&pageSize=${pageSize}&role=${role}`;
+	searchAllTags(
+		{ keyword = '', page = 1, role = 1, pageSize = 10000 },
+		isDealer?
+	): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
+		let url_split = this.getters.search_tags.split('/');
+		let new_url = url_split[0] + '/dealer/' + url_split[1];
+		let final_url = !isDealer ? this.getters.search_tags : new_url;
+		let url = `${final_url}?page=${page}&pageSize=${pageSize}&role=${role}`;
 
 		if (keyword.length > 0) url += `&key=${encodeURIComponent(keyword)}`;
 
 		return this.getRequest(url);
 	}
 
-	searchOwners(key: string = null): Observable<{ owners: OWNER[] }> {
+	searchOwners(key: string = null, isDealer) {
 		let url = `${this.getters.search_owners}`;
-		if (key) url += `?key=${key}`;
-		return this.getRequest(url);
+		let url_split = this.getters.search_owners.split('/');
+		let new_url = url_split[0] + '/dealer/' + url_split[1];
+		if (key) isDealer ? (new_url += `?key=${key}`) : (url += `?key=${key}`);
+		return this.getRequest(isDealer ? new_url : url);
 	}
 
-	searchOwnersByTagType({
-		keyword = null,
-		tagId = null,
-		typeId = null,
-		page = 1,
-		role = 1
-	}): Observable<{ tags?: TAG_OWNER[]; paging?: PAGING; message?: string }> {
-		let url = `${this.getters.search_owner_tags}?page=${page}&role=${role}`;
+	searchOwnersByTagType(
+		{ keyword = null, tagId = null, typeId = null, page = 1, role = 1 },
+		isDealer
+	): Observable<{ tags?: TAG_OWNER[]; paging?: PAGING; message?: string }> {
+		let url_split = this.getters.search_owner_tags.split('/');
+		let new_url = url_split[0] + '/dealer/' + url_split[1];
+		let final_url = !isDealer ? this.getters.search_owner_tags : new_url;
+		let url = `${final_url}?page=${page}&role=${role}`;
 
 		const params = [
 			{ name: 'search', value: keyword },

@@ -4,7 +4,7 @@ import { takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
 import { PAGING, TAG, TAG_TYPE } from 'src/app/global/models';
-import { TagService } from 'src/app/global/services';
+import { TagService, AuthService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-tags-section',
@@ -29,7 +29,7 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _tag: TagService) {}
+	constructor(private _tag: TagService, private _auth: AuthService) {}
 
 	ngOnInit() {
 		if (!this.tags || this.tags.length <= 0) this.searchTags();
@@ -47,20 +47,20 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 	}
 
 	private searchTags(keyword = '', page = 1) {
-
 		let role = 0;
 		this.isLoading = true;
 
 		if (this.tab && this.tab.trim().length > 0) role = this.tab === 'admin' ? 1 : 2;
 
-		let searchParams: { page: number, role: number, keyword?: string } = { page, role };
+		let searchParams: { page: number; role: number; keyword?: string } = { page, role };
 
 		if (keyword && keyword.length > 0) searchParams.keyword = keyword;
 
-		return this._tag.searchAllTags(searchParams).pipe(takeUntil(this._unsubscribe))
+		return this._tag
+			.searchAllTags(searchParams, this._isDealer())
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, paging, message }) => {
-
 					if (message) {
 						this.tags = [];
 						return;
@@ -68,13 +68,17 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 
 					this.tags = tags;
 					this.pagingData = paging;
-
 				},
 				(error) => {
-					throw new Error(error)
+					throw new Error(error);
 				}
 			)
 			.add(() => (this.isLoading = false));
+	}
+
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
 	}
 
 	private subscribeToSearch(): void {

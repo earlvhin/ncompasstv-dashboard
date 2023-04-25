@@ -11,53 +11,55 @@
 		</div>
 	</div>
 
-	<br>
+	<br />
 
 	<div class="content">
 		<form [formGroup]="form" (ngSubmit)="onSubmit()">
-
 			<div class="fields-container" *ngIf="!isLoading; else loading">
 				<!-- TAG COLOR PICKER -->
 				<mat-form-field class="full-width">
 					<mat-label>Tag Color</mat-label>
-					<input matInput type="text"
+					<input
+						matInput
+						type="text"
 						class="tag-color-text"
-						[(colorPicker)]="selectedTagColor" 
+						[(colorPicker)]="selectedTagColor"
 						[cpAlphaChannel]="'disabled'"
 						[cpDisableInput]="true"
-						(colorPickerChange)="onSelectTagColor(selectedTagColor)" 
+						(colorPickerChange)="onSelectTagColor(selectedTagColor)"
 						[style.background]="selectedTagColor"
-						[value]="selectedTagColor">
+						[value]="selectedTagColor" />
 				</mat-form-field>
-	
+
 				<!-- TAG NAME -->
 				<mat-form-field class="full-width">
 					<mat-label>Tag Name</mat-label>
-					<input matInput formControlName="name">
+					<input matInput formControlName="name" />
 				</mat-form-field>
 
 				<!-- TAG DESCRIPTION -->
 				<mat-form-field class="full-width">
 					<mat-label>Tag Description</mat-label>
-					<input matInput formControlName="description">
+					<input matInput formControlName="description" />
 				</mat-form-field>
 
 				<!-- IS TAG EXCLUDED? -->
-				<mat-slide-toggle formControlName="exclude" [checked]="isTagExcluded" [labelPosition]="'before'" (change)="onExcludeTag($event)">
+				<mat-slide-toggle
+					formControlName="exclude"
+					[checked]="isTagExcluded"
+					[labelPosition]="'before'"
+					(change)="onExcludeTag($event)"
+					*ngIf="_isAdmin()">
 					Exclude tag?
 				</mat-slide-toggle>
 			</div>
 
 			<!-- SUBMIT BUTTON -->
 			<div mat-dialog-actions align="end">
-				<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" 
-					[disabled]="!form.valid">Submit
-				</button>
+				<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" [disabled]="!form.valid">Submit</button>
 			</div>
-
 		</form>
 	</div>
-
 </div>
 
 <ng-template #loading>

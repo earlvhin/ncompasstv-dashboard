@@ -4,7 +4,7 @@ import { MatDialog, MatDialogRef, MatSelect } from '@angular/material';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { ReplaySubject, Subject } from 'rxjs';
 
-import { TagService } from 'src/app/global/services';
+import { TagService, AuthService } from 'src/app/global/services';
 import { CREATE_AND_ASSIGN_TAG, OWNER, TAG, TAG_OWNER } from 'src/app/global/models';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -31,6 +31,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
+		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<AssignTagsComponent>,
 		private _form_builder: FormBuilder,
@@ -62,7 +63,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 		});
 
 		this._tag
-			.assignTags(ownersToSubmit, tagsToSubmit)
+			.assignTags(ownersToSubmit, tagsToSubmit, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => this.showSuccessModal(),
@@ -70,6 +71,11 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 					throw new Error(error);
 				}
 			);
+	}
+
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
 	}
 
 	onRemoveOwner(index: number) {
@@ -98,10 +104,10 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 			sortOrder: 'desc'
 		};
 
-		if (this.tab === 'dealer') params.role = 2;
+		if (this._isDealer()) params.role = 2;
 
 		this._tag
-			.getAllTags(params)
+			.getAllTags(params, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, message }) => {
@@ -124,7 +130,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 		this.isSearchingOwners = true;
 
 		this._tag
-			.searchOwners(key)
+			.searchOwners(key, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { owners: OWNER[] }) => {
@@ -150,7 +156,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 		if (this.tab === 'dealer') params.role = 2;
 
 		this._tag
-			.searchAllTags(params)
+			.searchAllTags(params, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				({ tags, message }) => {
