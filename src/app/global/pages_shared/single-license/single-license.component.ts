@@ -937,6 +937,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this.title = licenseData.license.alias;
 		this.license_data = licenseData.license;
+		this.initializeLicenseSettingsForm(licenseData.license);
+		this.initializeFastEdgeSettingsForm();
 
 		// if no host data
 		if (!licenseData.host) {
@@ -960,15 +962,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.setDealerData(licenseData);
 		this.getScreenById(licenseData.screen.screenId, this.license_id);
 		this.getFormValue();
-		this.prepareLicenseSettingsForm(licenseData.license);
 		this.has_host = true;
 		this.has_screen = true;
 		this.hasLoadedLicenseData = true;
-
-		// Setup Fastedge DCP Tool Form
-		this.fastEdgeSettings = new FormGroup({
-			password: new FormControl(null, [Validators.minLength(5), Validators.required])
-		});
 	}
 
 	private getLicenseById() {
@@ -986,6 +982,54 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					throw new Error(e);
 				}
 			);
+	}
+
+	private initializeFastEdgeSettingsForm() {
+		this.fastEdgeSettings = new FormGroup({
+			password: new FormControl(null, [Validators.minLength(5), Validators.required])
+		});
+	}
+
+	private initializeLicenseSettingsForm(license: API_LICENSE_PROPS): void {
+		let form_group_obj = {};
+		const rebootTimes = JSON.parse(license.rebootTime) as { rebootTime: string }[];
+
+		/** Loop through form fields object and prepare for group */
+		this._additionalLicenseSettingsFormFields.map((field) => {
+			let fieldValue: any = license[field.form_control_name];
+
+			if (field.form_control_name.includes('rebootTime') && license.rebootTime && license.rebootTime.length > 0) {
+				const fieldLength = field.form_control_name.length;
+				const index = parseInt(field.form_control_name.substring(fieldLength - 1, fieldLength));
+				const rebootTimeRaw = rebootTimes[index - 1];
+
+				if (!rebootTimeRaw) {
+					fieldValue = null;
+				} else {
+					const rebootTime = rebootTimes[index - 1].rebootTime.split(':');
+					const hour = parseInt(rebootTime[0]);
+					const minute = parseInt(rebootTime[1]);
+					fieldValue = { hour, minute };
+				}
+			}
+
+			Object.assign(form_group_obj, {
+				[field.form_control_name]: [fieldValue, field.required ? Validators.required : null]
+			});
+		});
+
+		this.additional_license_settings_form = this._form.group(form_group_obj);
+		const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } = this._form.group(form_group_obj).value;
+
+		this.initial_additional_settings_value = {
+			bootDelay,
+			rebootTime1,
+			rebootTime2,
+			rebootTime3,
+			rebootTime4
+		};
+
+		this.subscribeToAdditionalSettingsFormChanges();
 	}
 
 	private initializeSocketServer() {
@@ -1504,48 +1548,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			data.description,
 			data.order
 		);
-	}
-
-	private prepareLicenseSettingsForm(license: API_LICENSE_PROPS): void {
-		let form_group_obj = {};
-		const rebootTimes = JSON.parse(license.rebootTime) as { rebootTime: string }[];
-
-		/** Loop through form fields object and prepare for group */
-		this._additionalLicenseSettingsFormFields.map((field) => {
-			let fieldValue: any = license[field.form_control_name];
-
-			if (field.form_control_name.includes('rebootTime') && license.rebootTime && license.rebootTime.length > 0) {
-				const fieldLength = field.form_control_name.length;
-				const index = parseInt(field.form_control_name.substring(fieldLength - 1, fieldLength));
-				const rebootTimeRaw = rebootTimes[index - 1];
-
-				if (!rebootTimeRaw) {
-					fieldValue = null;
-				} else {
-					const rebootTime = rebootTimes[index - 1].rebootTime.split(':');
-					const hour = parseInt(rebootTime[0]);
-					const minute = parseInt(rebootTime[1]);
-					fieldValue = { hour, minute };
-				}
-			}
-
-			Object.assign(form_group_obj, {
-				[field.form_control_name]: [fieldValue, field.required ? Validators.required : null]
-			});
-		});
-
-		this.additional_license_settings_form = this._form.group(form_group_obj);
-		const { bootDelay, rebootTime1, rebootTime2, rebootTime3, rebootTime4 } = this._form.group(form_group_obj).value;
-
-		this.initial_additional_settings_value = {
-			bootDelay,
-			rebootTime1,
-			rebootTime2,
-			rebootTime3,
-			rebootTime4
-		};
-
-		this.subscribeToAdditionalSettingsFormChanges();
 	}
 
 	private renameWebmThumb(source: string) {
