@@ -173,7 +173,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				{ value: contentId, editable: false, hidden: true },
 				{ value: feedId, editable: false, hidden: true },
 				{ value: count++, editable: false, hidden: false },
-				{ value: title, link: `/{$role}/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
+				{ value: title, link: `/${role}/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
 				{ value: businessName, link: `/${role}/dealers/${dealerId}`, id: dealerId, editable: false, hidden: false, new_tab_link: true },
 				{ value: data.classification ? classification : '--', editable: false, hidden: false },
 				{ value: createdByName, editable: false, hidden: false },
