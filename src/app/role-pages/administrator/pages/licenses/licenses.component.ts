@@ -287,7 +287,7 @@ export class LicensesComponent implements OnInit {
 				this.filters.label_status = value == 1 ? 'Online' : 'Offline';
 				this.filters.online = value == 1 ? true : false;
 				this.filters.assigned = true;
-				this.filters.pending = false;
+				this.filters.pending = '';
 				this.filters.isactivated = 1;
 				if (value == 0) {
 					const filter = { column: 'TimeIn', order: 'desc' };
@@ -545,7 +545,7 @@ export class LicensesComponent implements OnInit {
 				}
 			);
 	}
-    
+
 	getTotalHours(data: { storeHours: any }) {
 		if (data.storeHours) {
 			data.storeHours = JSON.parse(data.storeHours);
@@ -1083,7 +1083,7 @@ export class LicensesComponent implements OnInit {
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 		item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
-		const parse_version = JSON.parse(item.appVersion);
+		const parse_version = item.appVersion ? JSON.parse(item.appVersion) : '';
 		item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
 		item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
 		item.tagsToString = item.tags.join(',');
