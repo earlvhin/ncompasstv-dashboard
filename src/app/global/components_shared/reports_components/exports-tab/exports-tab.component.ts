@@ -185,6 +185,7 @@ export class ExportsTabComponent implements OnInit {
 	}
 
 	private mapLicensesForExport(item) {
+		const isBlank = (data: string) => !data || data.trim().length === 0;
 		item.main_zone = item.templateMain != 'NO DATA' ? this.msToTime(item.templateMain) : '';
 		item.background_zone = item.templateBackground != 'NO DATA' ? this.msToTime(item.templateBackground) : '';
 		item.horizontal_zone = item.templateHorizontal != 'NO DATA' ? this.msToTime(item.templateHorizontal) : '';
@@ -201,7 +202,7 @@ export class ExportsTabComponent implements OnInit {
 		item.internetType = this.getInternetType(item.internetType);
 		item.internetSpeed = item.internetSpeed == 'Fast' ? 'Good' : item.internetSpeed;
 		item.isActivated = item.isActivated == 0 ? 'No' : 'Yes';
-		const parse_version = JSON.parse(item.appVersion);
+		const parse_version = isBlank(item.appVersion) ? { ui: 'N/A', server: 'N/A' } : JSON.parse(item.appVersion);
 		item.ui = parse_version && parse_version.ui ? parse_version.ui : '1.0.0';
 		item.server = parse_version && parse_version.server ? parse_version.server : '1.0.0';
 		item.tagsToString = item.tags.join(',');
