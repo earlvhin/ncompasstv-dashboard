@@ -83,7 +83,13 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					let city = this.advertiser.city;
+					let city = '';
+					if (this.advertiser.city.indexOf(',') > -1) {
+						city = this.advertiser.city;
+					} else {
+						city = this.advertiser.city + ', ' + data[0].state;
+					}
+
 					this.city_selected = city;
 					this.setCity(city);
 				},
