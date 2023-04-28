@@ -83,7 +83,13 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					let city = this.advertiser.city;
+					let city = '';
+					if (this.advertiser.city.indexOf(',') > -1) {
+						city = this.advertiser.city;
+					} else {
+						city = this.advertiser.city + ', ' + data[0].state;
+					}
+					this._formControls.city.setValue(city);
 					this.city_selected = city;
 					this.setCity(city);
 				},
@@ -100,9 +106,9 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this._formControls.category.setValue(event);
 	}
 
-	setCity(data): void {
+	setCity(data, fromSelect?): void {
 		if (!this.canada_selected) {
-			this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
+			this._formControls.city.setValue(data);
 			this._location
 				.get_states_regions(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
@@ -110,6 +116,9 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					(data) => {
 						this._formControls.state.setValue(data[0].abbreviation);
 						this._formControls.region.setValue(data[0].region);
+						if (fromSelect) {
+							this._formControls.zip.setValue('');
+						}
 					},
 					(error) => {
 						throw new Error(error);

@@ -393,9 +393,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this._formControls.timezone.setValue(data);
 	}
 
-	setCity(data): void {
+	setCity(data, fromSelect?): void {
 		if (!this.canada_selected) {
-			this._formControls.city.setValue(data.substr(0, data.indexOf(', ')));
+			this._formControls.city.setValue(data);
 			this._location
 				.get_states_regions(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
@@ -403,6 +403,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					(data) => {
 						this._formControls.state.setValue(data[0].abbreviation);
 						this._formControls.region.setValue(data[0].region);
+						if (fromSelect) {
+							this._formControls.zip.setValue('');
+						}
 					},
 					(error) => {
 						throw new Error(error);
@@ -459,7 +462,12 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this._formControls.lat.setValue(host.latitude, { emitEvent: false });
 		this._formControls.long.setValue(host.longitude, { emitEvent: false });
 		this._formControls.address.setValue(host.address, { emitEvent: false });
-		this._formControls.city.setValue(host.city, { emitEvent: false });
+		if (host.city.indexOf(',') > -1) {
+			this._formControls.city.setValue(host.city, { emitEvent: false });
+		} else {
+			this.fillCityOfHost();
+		}
+
 		this._formControls.state.setValue(host.state, { emitEvent: false });
 		this._formControls.zip.setValue(host.postalCode, { emitEvent: false });
 		this._formControls.region.setValue(host.region, { emitEvent: false });
@@ -577,7 +585,13 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					let city = this.host.city;
+					let city = '';
+					if (this.host.city.indexOf(',') > -1) {
+						city = this.host.city;
+					} else {
+						city = this.host.city + ', ' + data[0].state;
+					}
+					this._formControls.city.setValue(city);
 					this.city_selected = city;
 					this.setCity(city);
 				},
