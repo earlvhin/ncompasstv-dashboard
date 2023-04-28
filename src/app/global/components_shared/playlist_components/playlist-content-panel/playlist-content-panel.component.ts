@@ -541,7 +541,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		};
 
 		const onEnd = () => {
-			this.search_control.setValue('');
+			this.search_control.setValue('', { emitEvent: false });
 		};
 
 		const sortable = new Sortable(this.draggables.nativeElement, {
