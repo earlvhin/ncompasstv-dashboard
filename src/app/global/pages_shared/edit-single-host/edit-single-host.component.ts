@@ -393,7 +393,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this._formControls.timezone.setValue(data);
 	}
 
-	setCity(data): void {
+	setCity(data, fromSelect?): void {
 		if (!this.canada_selected) {
 			this._formControls.city.setValue(data);
 			this._location
@@ -403,6 +403,9 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					(data) => {
 						this._formControls.state.setValue(data[0].abbreviation);
 						this._formControls.region.setValue(data[0].region);
+						if (fromSelect) {
+							this._formControls.zip.setValue('');
+						}
 					},
 					(error) => {
 						throw new Error(error);
