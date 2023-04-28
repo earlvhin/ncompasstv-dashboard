@@ -459,7 +459,12 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 		this._formControls.lat.setValue(host.latitude, { emitEvent: false });
 		this._formControls.long.setValue(host.longitude, { emitEvent: false });
 		this._formControls.address.setValue(host.address, { emitEvent: false });
-		this._formControls.city.setValue(host.city, { emitEvent: false });
+		if (host.city.indexOf(',') > -1) {
+			this._formControls.city.setValue(host.city, { emitEvent: false });
+		} else {
+			this.fillCityOfHost();
+		}
+
 		this._formControls.state.setValue(host.state, { emitEvent: false });
 		this._formControls.zip.setValue(host.postalCode, { emitEvent: false });
 		this._formControls.region.setValue(host.region, { emitEvent: false });
@@ -577,7 +582,13 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					let city = this.host.city;
+					let city = '';
+					if (this.host.city.indexOf(',') > -1) {
+						city = this.host.city;
+					} else {
+						city = this.host.city + ', ' + data[0].state;
+					}
+
 					this.city_selected = city;
 					this.setCity(city);
 				},
