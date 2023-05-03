@@ -1845,12 +1845,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private socketOnMonitorCheck(): void {
-		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: string }) => {
+		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: number }) => {
 			if (this.license_id !== data.licenseId) return;
 
-			let displayStatus = 0;
-			if (data.monitorStatus && data.monitorStatus.includes('on')) displayStatus = 1;
-			if (data.monitorStatus && data.monitorStatus.includes('unknown')) displayStatus = 2;
+			const displayStatus = data.monitorStatus;
 			this.display_status = displayStatus;
 
 			const statusForSubmission = displayStatus === 2 ? 0 : displayStatus;
