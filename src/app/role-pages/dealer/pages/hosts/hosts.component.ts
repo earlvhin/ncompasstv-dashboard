@@ -265,7 +265,10 @@ export class HostsComponent implements OnInit {
 					new_this_week_description: 'New this week',
 					new_last_week_value: response.newHostsLastWeek,
 					new_last_week_label: 'Host(s)',
-					new_last_week_description: 'New last week'
+					new_last_week_description: 'New last week',
+					pending_installation_value: response.forInstallationScheduled,
+					pending_installation_label: 'Pending Host(s)',
+					pending_installation_description: 'For Installation'
 				};
 			});
 	}
