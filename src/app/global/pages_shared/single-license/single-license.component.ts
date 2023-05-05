@@ -87,7 +87,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
 	display_status: number;
 	enable_edit_alias = false;
-	hasAdminPrivileges: boolean;
+	hasAdminPrivileges = false;
 	isCheckingElectronRunning = false;
 	has_background_zone = false;
 	has_host = false;
