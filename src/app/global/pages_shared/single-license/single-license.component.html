@@ -951,189 +951,199 @@
 				</mat-tab>
 
 				<!-- Settings Tab -->
-				<mat-tab label="Settings" *ngIf="isCurrentUserAdmin && license_data">
+				<mat-tab label="Settings" *ngIf="license_data">
 					<div class="row mt-4">
 						<div class="col-lg-5">
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Enable Scheduled Screenshot</h4>
-										<p class="sm-text mb-0">
-											For players with limited internet data, Disabling this feature is recommended. Manual screenshot will
-											still be available of use.
-										</p>
-									</div>
-									<div class="ml-5 text-right">
-										<mat-slide-toggle
-											(change)="disableScreenshot($event)"
-											[checked]="license_data.screenshotSettings == 1 ? true : false">
-										</mat-slide-toggle>
-									</div>
-								</div>
-							</mat-card>
-
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Enable Speedtest</h4>
-										<p class="sm-text mb-0">
-											Internet Speedtest uses almost 200MB of internet data. For players with limited internet data, disabling
-											this feature is recommended.
-										</p>
-									</div>
-									<div class="ml-5 text-right">
-										<mat-slide-toggle
-											(change)="disableSpeedtest($event)"
-											[checked]="license_data.speedtestSettings == 1 ? true : false">
-										</mat-slide-toggle>
-									</div>
-								</div>
-							</mat-card>
-
-							<!-- EMAIL SETTINGS -->
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Enable Email Settings</h4>
-										<p class="sm-text mb-0">
-											Allows the dealer to receive EMAIL notifications from this license when the device is offline.
-										</p>
-									</div>
-									<div class="ml-5 text-right">
-										<mat-slide-toggle
-											(change)="onUpdateNotificationSettings($event, 'email')"
-											[checked]="license_data.emailSettings == 1 ? true : false">
-										</mat-slide-toggle>
-									</div>
-								</div>
-							</mat-card>
-
-							<!-- NOTIFICATION SETTINGS -->
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Enable Notification Settings</h4>
-										<p class="sm-text mb-0">
-											Allows the dealer to receive ALERT notifications from this license when the device is offline.
-										</p>
-									</div>
-									<div class="ml-5 text-right">
-										<mat-slide-toggle
-											(change)="onUpdateNotificationSettings($event, 'notification')"
-											[checked]="license_data.notificationSettings == 1 ? true : false">
-										</mat-slide-toggle>
-									</div>
-								</div>
-							</mat-card>
-
-							<mat-card class="p-4 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even">
-										<h4>Enable Resource Log Sending</h4>
-										<p class="sm-text mb-0">
-											This will send the player’s CPU and RAM average usage every 2 hours. Requires data usage, toggle off to
-											disable.
-										</p>
-									</div>
-									<div class="ml-5 text-right">
-										<mat-slide-toggle
-											(change)="disableResource($event)"
-											[checked]="license_data.resourceSettings == 1 ? true : false">
-										</mat-slide-toggle>
-									</div>
-								</div>
-							</mat-card>
-
-							<mat-card class="px-4 pb-0 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even mb-3">
-										<h4>Enable FE-DCP Tool</h4>
-										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
-									</div>
-									<div *ngIf="fastEdgeSettingsSaving">
-										<mat-spinner [diameter]="20"></mat-spinner>
-									</div>
-								</div>
-
-								<div class="fast-edge-setting-form-wrapper">
-									<form [formGroup]="fastEdgeSettings">
-										<div class="d-flex">
-											<div class="flex-even">
-												<mat-form-field class="w-100" appearance="fill">
-													<mat-label>Enter Password*</mat-label>
-													<input matInput formControlName="password" type="password" />
-												</mat-form-field>
-											</div>
-											<div class="pt-3 ml-5 text-right">
-												<mat-slide-toggle
-													(change)="toggleFastEdgeTool($event)"
-													[disabled]="!fastEdgeSettings.valid"
-													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
-												</mat-slide-toggle>
-											</div>
+							<ng-container *ngIf="hasAdminPrivileges">
+								<!-- SCREENSHOT SETTINGS -->
+								<mat-card class="p-4 mb-3">
+									<div class="d-flex align-items-center">
+										<div class="flex-even">
+											<h4>Enable Scheduled Screenshot</h4>
+											<p class="sm-text mb-0">
+												For players with limited internet data, Disabling this feature is recommended. Manual screenshot will
+												still be available of use.
+											</p>
 										</div>
-									</form>
-								</div>
-							</mat-card>
-						</div>
+										<div class="ml-5 text-right">
+											<mat-slide-toggle
+												(change)="disableScreenshot($event)"
+												[checked]="license_data.screenshotSettings == 1 ? true : false">
+											</mat-slide-toggle>
+										</div>
+									</div>
+								</mat-card>
 
-						<div class="col-lg-7">
-							<mat-card class="p-4">
-								<h4 class="mb-4">Additional Settings</h4>
+								<!-- SPEEDTEST SETTINGS -->
+								<mat-card class="p-4 mb-3">
+									<div class="d-flex align-items-center">
+										<div class="flex-even">
+											<h4>Enable Speedtest</h4>
+											<p class="sm-text mb-0">
+												Internet Speedtest uses almost 200MB of internet data. For players with limited internet data,
+												disabling this feature is recommended.
+											</p>
+										</div>
+										<div class="ml-5 text-right">
+											<mat-slide-toggle
+												(change)="disableSpeedtest($event)"
+												[checked]="license_data.speedtestSettings == 1 ? true : false">
+											</mat-slide-toggle>
+										</div>
+									</div>
+								</mat-card>
 
-								<ng-container *ngIf="license_data && additional_license_settings_form">
-									<form [formGroup]="additional_license_settings_form" (ngSubmit)="saveAdditionalLicenseSettings()">
-										<div class="row flex-column">
-											<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
-												<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
-													<mat-form-field class="full-width">
-														<mat-label>{{ control.label }}</mat-label>
+								<!-- EMAIL SETTINGS -->
+								<mat-card class="p-4 mb-3">
+									<div class="d-flex align-items-center">
+										<div class="flex-even">
+											<h4>Enable Email Settings</h4>
+											<p class="sm-text mb-0">
+												Allows the dealer to receive EMAIL notifications from this license when the device is offline.
+											</p>
+										</div>
+										<div class="ml-5 text-right">
+											<mat-slide-toggle
+												(change)="onUpdateNotificationSettings($event, 'email')"
+												[checked]="license_data.emailSettings == 1 ? true : false">
+											</mat-slide-toggle>
+										</div>
+									</div>
+								</mat-card>
 
-														<input
-															matInput
-															appearance="fill"
-															placeholder="Enter number of seconds, ex: 20"
-															[formControlName]="control.form_control_name"
-															[type]="control.type" />
+								<!-- NOTIFICATION SETTINGS -->
+								<mat-card class="p-4 mb-3">
+									<div class="d-flex align-items-center">
+										<div class="flex-even">
+											<h4>Enable Notification Settings</h4>
+											<p class="sm-text mb-0">
+												Allows the dealer to receive ALERT notifications from this license when the device is offline.
+											</p>
+										</div>
+										<div class="ml-5 text-right">
+											<mat-slide-toggle
+												(change)="onUpdateNotificationSettings($event, 'notification')"
+												[checked]="license_data.notificationSettings == 1 ? true : false">
+											</mat-slide-toggle>
+										</div>
+									</div>
+								</mat-card>
+
+								<!-- RESOURCE LOG SETTINGS -->
+								<mat-card class="p-4 mb-3">
+									<div class="d-flex align-items-center">
+										<div class="flex-even">
+											<h4>Enable Resource Log Sending</h4>
+											<p class="sm-text mb-0">
+												This will send the player’s CPU and RAM average usage every 2 hours. Requires data usage, toggle off
+												to disable.
+											</p>
+										</div>
+										<div class="ml-5 text-right">
+											<mat-slide-toggle
+												(change)="disableResource($event)"
+												[checked]="license_data.resourceSettings == 1 ? true : false">
+											</mat-slide-toggle>
+										</div>
+									</div>
+								</mat-card>
+							</ng-container>
+
+							<ng-container *ngIf="hasAdminPrivileges || isCurrentUserDealer">
+								<!-- FASTEDGE DCP SETTINGS -->
+								<mat-card class="px-4 pb-0 mb-3">
+									<div class="d-flex align-items-center">
+										<div class="flex-even mb-3">
+											<h4>Enable FE-DCP Tool</h4>
+											<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
+										</div>
+										<div *ngIf="fastEdgeSettingsSaving">
+											<mat-spinner [diameter]="20"></mat-spinner>
+										</div>
+									</div>
+
+									<div class="fast-edge-setting-form-wrapper">
+										<form [formGroup]="fastEdgeSettings">
+											<div class="d-flex">
+												<div class="flex-even">
+													<mat-form-field class="w-100" appearance="fill">
+														<mat-label>Enter Password*</mat-label>
+														<input matInput formControlName="password" type="password" />
 													</mat-form-field>
-												</ng-container>
-
-												<ng-template #otherFieldTypes>
-													<ng-container *ngIf="control.type === 'time'">
-														<div class="d-flex align-items-center reboot-time">
-															<span>{{ control.label }}:</span>
-
-															<ngb-timepicker
-																[formControlName]="control.form_control_name"
-																[meridian]="true"
-																[size]="'small'">
-															</ngb-timepicker>
-															<ng-container *ngIf="control"></ng-container>
-															<mat-icon
-																class="remove-reboot-btn"
-																(click)="onRemoveRebootTime(control.form_control_name)"
-																>delete</mat-icon
-															>
-														</div>
-													</ng-container>
-												</ng-template>
+												</div>
+												<div class="pt-3 ml-5 text-right">
+													<mat-slide-toggle
+														(change)="toggleFastEdgeTool($event)"
+														[disabled]="!fastEdgeSettings.valid"
+														[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
+													</mat-slide-toggle>
+												</div>
 											</div>
-										</div>
-
-										<div class="d-flex">
-											<button
-												mat-button
-												mat-raised-button
-												class="theme-btn mr-2"
-												[disabled]="saving_license_settings || !has_unsaved_additional_settings">
-												Save
-											</button>
-											<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
-										</div>
-									</form>
-								</ng-container>
-							</mat-card>
+										</form>
+									</div>
+								</mat-card>
+							</ng-container>
 						</div>
+
+						<ng-container *ngIf="hasAdminPrivileges">
+							<div class="col-lg-7">
+								<mat-card class="p-4">
+									<h4 class="mb-4">Additional Settings</h4>
+
+									<ng-container *ngIf="license_data && additional_license_settings_form">
+										<form [formGroup]="additional_license_settings_form" (ngSubmit)="saveAdditionalLicenseSettings()">
+											<div class="row flex-column">
+												<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
+													<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
+														<mat-form-field class="full-width">
+															<mat-label>{{ control.label }}</mat-label>
+
+															<input
+																matInput
+																appearance="fill"
+																placeholder="Enter number of seconds, ex: 20"
+																[formControlName]="control.form_control_name"
+																[type]="control.type" />
+														</mat-form-field>
+													</ng-container>
+
+													<ng-template #otherFieldTypes>
+														<ng-container *ngIf="control.type === 'time'">
+															<div class="d-flex align-items-center reboot-time">
+																<span>{{ control.label }}:</span>
+
+																<ngb-timepicker
+																	[formControlName]="control.form_control_name"
+																	[meridian]="true"
+																	[size]="'small'">
+																</ngb-timepicker>
+																<ng-container *ngIf="control"></ng-container>
+																<mat-icon
+																	class="remove-reboot-btn"
+																	(click)="onRemoveRebootTime(control.form_control_name)"
+																	>delete</mat-icon
+																>
+															</div>
+														</ng-container>
+													</ng-template>
+												</div>
+											</div>
+
+											<div class="d-flex">
+												<button
+													mat-button
+													mat-raised-button
+													class="theme-btn mr-2"
+													[disabled]="saving_license_settings || !has_unsaved_additional_settings">
+													Save
+												</button>
+												<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
+											</div>
+										</form>
+									</ng-container>
+								</mat-card>
+							</div>
+						</ng-container>
 					</div>
 				</mat-tab>
 
@@ -1150,50 +1160,6 @@
 						<app-installation-tab [license_id]="license_id"> </app-installation-tab>
 					</ng-template>
 				</mat-tab>
-
-				<!-- Settings For Dealers -->
-				<ng-container *ngIf="!isCurrentUserAdmin && license_data">
-					<mat-tab label="Settings">
-						<ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
-							<div class="row mt-4">
-								<div class="col-lg-6">
-									<mat-card class="px-4 pb-0 mb-3">
-										<div class="d-flex align-items-center">
-											<div class="flex-even mb-3">
-												<h4>Enable FE-DCP Tool</h4>
-												<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
-											</div>
-											<div *ngIf="fastEdgeSettingsSaving">
-												<mat-spinner [diameter]="20"></mat-spinner>
-											</div>
-										</div>
-
-										<div class="fast-edge-setting-form-wrapper">
-											<form [formGroup]="fastEdgeSettings">
-												<div class="d-flex">
-													<div class="flex-even">
-														<mat-form-field class="w-100" appearance="fill">
-															<mat-label>Enter Password*</mat-label>
-															<input matInput formControlName="password" type="password" />
-														</mat-form-field>
-													</div>
-													<div class="pt-3 ml-5 text-right">
-														<mat-slide-toggle
-															(change)="toggleFastEdgeTool($event)"
-															[disabled]="!fastEdgeSettings.valid"
-															[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
-														</mat-slide-toggle>
-													</div>
-												</div>
-											</form>
-										</div>
-									</mat-card>
-								</div>
-							</div>
-						</ng-container>
-					</mat-tab>
-				</ng-container>
-				<!-- Settings For Dealers -->
 			</mat-tab-group>
 		</div>
 	</div>

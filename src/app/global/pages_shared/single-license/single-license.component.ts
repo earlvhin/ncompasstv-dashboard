@@ -87,7 +87,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	duration_breakdown_text = { advertisers: '0 sec', feeds: '0s', fillers: '0s', hosts: '0s', others: '0s', total: '0s' };
 	display_status: number;
 	enable_edit_alias = false;
-	hasAdminPrivileges: boolean;
+	hasAdminPrivileges = false;
 	isCheckingElectronRunning = false;
 	has_background_zone = false;
 	has_host = false;
@@ -1845,12 +1845,10 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private socketOnMonitorCheck(): void {
-		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: string }) => {
+		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: number }) => {
 			if (this.license_id !== data.licenseId) return;
 
-			let displayStatus = 0;
-			if (data.monitorStatus && data.monitorStatus.includes('on')) displayStatus = 1;
-			if (data.monitorStatus && data.monitorStatus.includes('unknown')) displayStatus = 2;
+			const displayStatus = data.monitorStatus;
 			this.display_status = displayStatus;
 
 			const statusForSubmission = displayStatus === 2 ? 0 : displayStatus;
