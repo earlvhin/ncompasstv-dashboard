@@ -954,7 +954,7 @@
 				<mat-tab label="Settings" *ngIf="license_data">
 					<div class="row mt-4">
 						<div class="col-lg-5">
-							<ng-container *ngIf="hasAdminPrivileges">
+							<ng-container *ngIf="isCurrentUserAdmin">
 								<!-- SCREENSHOT SETTINGS -->
 								<mat-card class="p-4 mb-3">
 									<div class="d-flex align-items-center">
@@ -1035,7 +1035,7 @@
 										<div class="flex-even">
 											<h4>Enable Resource Log Sending</h4>
 											<p class="sm-text mb-0">
-												This will send the player’s CPU and RAM average usage every 2 hours. Requires data usage, toggle off
+												This will send the player's CPU and RAM average usage every 2 hours. Requires data usage, toggle off
 												to disable.
 											</p>
 										</div>
@@ -1049,40 +1049,38 @@
 								</mat-card>
 							</ng-container>
 
-							<ng-container *ngIf="hasAdminPrivileges || isCurrentUserDealer">
-								<!-- FASTEDGE DCP SETTINGS -->
-								<mat-card class="px-4 pb-0 mb-3">
-									<div class="d-flex align-items-center">
-										<div class="flex-even mb-3">
-											<h4>Enable FE-DCP Tool</h4>
-											<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
-										</div>
-										<div *ngIf="fastEdgeSettingsSaving">
-											<mat-spinner [diameter]="20"></mat-spinner>
-										</div>
+							<!-- FASTEDGE DCP SETTINGS -->
+							<mat-card class="px-4 pb-0 mb-3">
+								<div class="d-flex align-items-center">
+									<div class="flex-even mb-3">
+										<h4>Enable FE-DCP Tool</h4>
+										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
 									</div>
+									<div *ngIf="fastEdgeSettingsSaving">
+										<mat-spinner [diameter]="20"></mat-spinner>
+									</div>
+								</div>
 
-									<div class="fast-edge-setting-form-wrapper">
-										<form [formGroup]="fastEdgeSettings">
-											<div class="d-flex">
-												<div class="flex-even">
-													<mat-form-field class="w-100" appearance="fill">
-														<mat-label>Enter Password*</mat-label>
-														<input matInput formControlName="password" type="password" />
-													</mat-form-field>
-												</div>
-												<div class="pt-3 ml-5 text-right">
-													<mat-slide-toggle
-														(change)="toggleFastEdgeTool($event)"
-														[disabled]="!fastEdgeSettings.valid"
-														[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
-													</mat-slide-toggle>
-												</div>
+								<div class="fast-edge-setting-form-wrapper">
+									<form [formGroup]="fastEdgeSettings">
+										<div class="d-flex">
+											<div class="flex-even">
+												<mat-form-field class="w-100" appearance="fill">
+													<mat-label>Enter Password*</mat-label>
+													<input matInput formControlName="password" type="password" />
+												</mat-form-field>
 											</div>
-										</form>
-									</div>
-								</mat-card>
-							</ng-container>
+											<div class="pt-3 ml-5 text-right">
+												<mat-slide-toggle
+													(change)="toggleFastEdgeTool($event)"
+													[disabled]="!fastEdgeSettings.valid"
+													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
+												</mat-slide-toggle>
+											</div>
+										</div>
+									</form>
+								</div>
+							</mat-card>
 						</div>
 
 						<ng-container *ngIf="hasAdminPrivileges">
