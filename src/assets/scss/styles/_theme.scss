@@ -778,6 +778,10 @@ agm-map {
 	overflow-y: auto;
 }
 
+.overflow-x-hidden {
+	overflow-x: hidden !important;
+}
+
 .h-45 {
 	height: 45px;
 }
@@ -901,87 +905,87 @@ agm-map {
 }
 
 .center-vertically {
-    position: absolute;
-    top: 30%; 
+	position: absolute;
+	top: 30%;
 }
 .active-button {
-    background-color: $primary;
+	background-color: $primary;
 }
 
 .active-text {
-    color: $primary;
+	color: $primary;
 }
 
 .hover-primary {
-    &:hover {
-        color: $primary;
-    }
+	&:hover {
+		color: $primary;
+	}
 }
 
 .screenshot-holder {
-    width: 100%;
-    background: #022457;
-    height: 150px;
-    color: $lighten_white;
-    font-size: 120px;
-    text-align: center;
-    line-height: 150px !important;
-    background-size: contain;
-    background-repeat: no-repeat;
+	width: 100%;
+	background: #022457;
+	height: 150px;
+	color: $lighten_white;
+	font-size: 120px;
+	text-align: center;
+	line-height: 150px !important;
+	background-size: contain;
+	background-repeat: no-repeat;
 }
 
 .contents {
-    display: contents;
+	display: contents;
 }
 
 .top-0 {
-    top: 0;
+	top: 0;
 }
 
 .right-0 {
-    right: 0;
+	right: 0;
 }
 
 .bottom-0 {
-    bottom: 0;
+	bottom: 0;
 }
 
 .h-150 {
-    height: 150px;
+	height: 150px;
 }
 
 .h-69 {
-    height: 69px;
+	height: 69px;
 }
 
 .black-opacity {
-    background: rgba(0,0,0,0.6);
+	background: rgba(0, 0, 0, 0.6);
 }
 
 .z-index-5 {
-    z-index: 5;
+	z-index: 5;
 }
 
 .z-index-10 {
-    z-index: 10;
+	z-index: 10;
 }
 
 .flow-wrap {
-    flex-flow: wrap;
+	flex-flow: wrap;
 }
 
 .for-shadowing {
-    text-shadow: 1px 2px rgb(110 109 107 / 75%)
+	text-shadow: 1px 2px rgb(110 109 107 / 75%);
 }
 
 .favorites {
-    color: orange;
+	color: orange;
 }
 
 .white-space {
-    white-space: pre;
+	white-space: pre;
 }
 
 .text-shadow-black {
-    text-shadow: 1px 1px 1px black;
+	text-shadow: 1px 1px 1px black;
 }

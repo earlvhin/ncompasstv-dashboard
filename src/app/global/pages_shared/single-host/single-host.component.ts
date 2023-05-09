@@ -147,7 +147,13 @@ export class SingleHostComponent implements OnInit {
 			.subscribe(
 				(response) => {
 					if (response.message) return;
-					this.setPageData({ host: response.host, dealer: response.dealer, hostTags: response.hostTags, timezone: response.timezone });
+					this.setPageData({
+						host: response.host,
+						dealer: response.dealer,
+						hostTags: response.hostTags,
+						timezone: response.timezone,
+						createdBy: response.createdBy
+					});
 				},
 				(error) => {
 					throw new Error(error);
