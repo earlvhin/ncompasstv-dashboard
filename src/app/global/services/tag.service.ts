@@ -30,14 +30,21 @@ export class TagService extends BaseService {
 		return this.postRequest(endpoint, {});
 	}
 
-	createAndAssignTags(body: CREATE_AND_ASSIGN_TAG): Observable<{ message: string; tags: any }> {
-		const endpoint = this.creators.tag_add_and_assign;
-		return this.postRequest(endpoint, body);
+	createAndAssignTags(body: CREATE_AND_ASSIGN_TAG, isDealer?): Observable<{ message: string; tags: any }> {
+		if (isDealer) {
+			let url_split = this.creators.tag_add_and_assign.split('/');
+			let new_endpoint = url_split[0] + '/dealer/' + url_split[2] + '/' + url_split[3];
+			return this.postRequest(new_endpoint, body);
+		} else {
+			const endpoint = this.creators.tag_add_and_assign;
+			return this.postRequest(endpoint, body);
+		}
 	}
 
 	createTag(data: { role: number; name: string; tagColor: string; createdBy: string; description?: string; exclude?: number }) {
 		const { exclude, createdBy, name, tagColor, description, role } = data;
-		const endpoint = role === 1 ? this.creators.admin_tag : this.creators.dealer_tag;
+		let url_split = this.creators.admin_tag.split('/');
+		const endpoint = role === 1 ? this.creators.admin_tag : role === 2 ? this.creators.dealer_tag : url_split[0] + '/' + url_split[2];
 		const body = { exclude, createdBy, names: [{ name, tagColor, description }] };
 		return this.postRequest(endpoint, body);
 	}
@@ -106,10 +113,7 @@ export class TagService extends BaseService {
 		return this.getRequest(`${this.getters.distinct_tags_by_type_and_name}?typeid=${typeId}&name=${tagName}`);
 	}
 
-	searchAllTags(
-		{ keyword = '', page = 1, role = 1, pageSize = 10000 },
-		isDealer?
-	): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
+	searchAllTags({ keyword = '', page = 1, role = 1, pageSize = 20 }, isDealer?): Observable<{ tags?: TAG[]; paging?: PAGING; message?: string }> {
 		let url_split = this.getters.search_tags.split('/');
 		let new_url = url_split[0] + '/dealer/' + url_split[1];
 		let final_url = !isDealer ? this.getters.search_tags : new_url;

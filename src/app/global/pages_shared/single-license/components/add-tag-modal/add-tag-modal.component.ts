@@ -140,7 +140,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 		};
 
 		this._tag
-			.createAndAssignTags(data)
+			.createAndAssignTags(data, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				async (response) => {
@@ -161,6 +161,14 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 			sortColumn: 'DateCreated',
 			sortOrder: 'desc'
 		};
+
+		if (this._isDealer()) {
+			params.role = 2;
+		} else if (this._isDealerAdmin()) {
+			params.role = 3;
+		} else {
+			params.role = 1;
+		}
 
 		this._tag
 			.getAllTags(params, this._isDealer())
@@ -233,6 +241,14 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 		this.isSearchingTags = true;
 
 		const params: { keyword: string; role?: number } = { keyword };
+
+		if (this._isDealer()) {
+			params.role = 2;
+		} else if (this._isDealerAdmin()) {
+			params.role = 3;
+		} else {
+			params.role = 1;
+		}
 
 		this._tag
 			.searchAllTags(params)
@@ -327,5 +343,13 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 	_isDealer() {
 		const DEALER_ROLES = ['dealer', 'sub-dealer'];
 		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
+	}
+
+	_isAdmin() {
+		return this._auth.current_role === 'administrator';
 	}
 }

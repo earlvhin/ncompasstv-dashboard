@@ -46,7 +46,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 	@Input() page = '';
 	@Input() page_data:
 		| { dealer: API_DEALER; user: API_USER_DATA }
-		| { host: API_HOST; dealer: API_DEALER }
+		| { host: API_HOST; dealer: API_DEALER; createdBy: any }
 		| { advertiser: API_ADVERTISER; dealer: API_DEALER } = null;
 	@Input() is_host_page = false;
 	@Output() single_host_assign_license = new EventEmitter();
@@ -132,7 +132,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 		let dialog: ComponentType<EditSingleDealerComponent | EditSingleHostComponent | EditSingleAdvertiserComponent>;
 		let data:
 			| { dealer: API_DEALER; user: API_USER_DATA }
-			| { host: API_HOST; dealer: API_DEALER }
+			| { host: API_HOST; dealer: API_DEALER; createdBy: any }
 			| { advertiser: API_ADVERTISER; dealer: API_DEALER };
 		const config: MatDialogConfig = {
 			panelClass: 'app-edit-single-advertiser',
@@ -150,7 +150,7 @@ export class BannerComponent implements OnInit, OnDestroy {
 			case 'single-host':
 				dialog = EditSingleHostComponent;
 				config.width = '900px';
-				data = this.page_data as { host: API_HOST; dealer: API_DEALER };
+				data = this.page_data as { host: API_HOST; dealer: API_DEALER; createdBy: any };
 				break;
 
 			default: // single-advertiser
@@ -255,8 +255,8 @@ export class BannerComponent implements OnInit, OnDestroy {
 	}
 
 	private setLicenseStats(): void {
-        this.license_stats_array = [];
-        this.license_stats_label = [];
+		this.license_stats_array = [];
+		this.license_stats_label = [];
 		const {
 			total_ads_label,
 			total_menu_label,

@@ -62,4 +62,5 @@ export class API_SINGLE_HOST {
 	hostTags?: TAG[];
 	dealerTags?: TAG[];
 	fieldGroups?: any[];
+	createdBy?: any[];
 }

@@ -200,6 +200,7 @@ export class HostService extends BaseService {
 		dealerTags?: TAG[];
 		timezone?: API_TIMEZONE;
 		fieldGroups?: any[];
+		createdBy?: any[];
 	}> {
 		const url = `${this.getters.api_get_host_by_id}${id}`;
 		return this.getRequest(url);

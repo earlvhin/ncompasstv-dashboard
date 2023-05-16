@@ -43,6 +43,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	categories_data: API_PARENT_CATEGORY[];
 	category_selected: string;
 	closed_without_edit = false;
+	created_by = this.page_data.createdBy[0];
 	dealer = this.page_data.dealer;
 	dealers_data: API_DEALER[] = [];
 	dealers_loaded = false;
@@ -69,7 +70,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public page_data: { host: API_HOST; dealer: API_DEALER },
+		@Inject(MAT_DIALOG_DATA) public page_data: { host: API_HOST; dealer: API_DEALER; createdBy: any },
 		private _auth: AuthService,
 		private _categories: CategoryService,
 		private _confirmationDialog: ConfirmationDialogService,

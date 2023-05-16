@@ -114,7 +114,7 @@ export class ScreensComponent implements OnInit {
 				return new UI_DEALER_TABLE_SCREEN (
 					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
-					{ value: this._titlecase.transform(s.screenName), link: '/dealer/screens/' +  s.screenId, editable: false, hidden: false},
+					{ value: this._titlecase.transform(s.screenName), link: '/dealer/screens/' +  s.screenId, editable: false, hidden: false, new_tab_link: true},
 					{ value: s.screenTypeName ? this._titlecase.transform(s.screenTypeName) : '--', link: '/dealer/hosts/' +  s.hostId, editable: false, hidden: false},
 					{ value: this._titlecase.transform(s.hostName), link: '/dealer/hosts/' +  s.hostId, editable: false, hidden: false},
 					{ value: s.templateId ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},
