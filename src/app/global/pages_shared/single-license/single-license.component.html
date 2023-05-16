@@ -33,7 +33,7 @@
 			<ng-container *ngIf="license_data">
 				<div class="d-flex align-items-center">
 					<p class="sm-text mb-0">{{ license_key }}</p>
-					<ng-container *ngIf="isCurrentUserAdmin">
+					<ng-container>
 						<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license">new_label</mat-icon>
 					</ng-container>
 				</div>
@@ -52,7 +52,7 @@
 						<ng-container *ngIf="tag.exclude === 1">
 							<mat-icon class="excluded" matTooltip="This tag is excluded">visibility_off</mat-icon>
 						</ng-container>
-						<ng-container *ngIf="hasAdminPrivileges">
+						<ng-container>
 							<mat-icon class="remove-btn cursor-pointer" (click)="onRemoveTag(i, tag)" matTooltip="Remove tag on this license">
 								close
 							</mat-icon>

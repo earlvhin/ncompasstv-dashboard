@@ -4,7 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { PAGING, TAG, TAG_OWNER, TAG_TYPE } from 'src/app/global/models';
+import { PAGING, TAG, TAG_OWNER, TAG_TYPE, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { TagService, AuthService } from 'src/app/global/services';
 import { CreateTagComponent } from '../../dialogs';
 import { AssignTagsComponent } from '../../dialogs/assign-tags/assign-tags.component';
@@ -43,6 +43,9 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 		this.subscribeToRefreshTableData();
 		this.subscribeToSearch();
 		this.subscribeToTagNameClick();
+		if (this.currentUserRole === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.currentUserRole = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 	}
 
 	ngOnDestroy() {
@@ -114,7 +117,14 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 		this.isLoading = true;
 
 		if (this.searchFormControl.value) keyword = this.searchFormControl.value;
-		const role = this.tab === 'admin' ? 1 : 2;
+		let role: number;
+		if (this._isDealer()) {
+			role = 2;
+		} else if (this._isDealerAdmin()) {
+			role = 3;
+		} else {
+			role = 1;
+		}
 
 		this._tag
 			.searchOwnersByTagType({ keyword, tagId, typeId, page, role }, this._isDealer())
@@ -169,6 +179,10 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	_isDealer() {
 		const DEALER_ROLES = ['dealer', 'sub-dealer'];
 		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 
 	protected get _tagOwnerTypes() {

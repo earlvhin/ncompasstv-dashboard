@@ -50,7 +50,13 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 		let role = 0;
 		this.isLoading = true;
 
-		if (this.tab && this.tab.trim().length > 0) role = this.tab === 'admin' ? 1 : 2;
+		if (this._isDealer()) {
+			role = 2;
+		} else if (this._isDealerAdmin()) {
+			role = 3;
+		} else {
+			role = 1;
+		}
 
 		let searchParams: { page: number; role: number; keyword?: string } = { page, role };
 
@@ -79,6 +85,10 @@ export class TagsSectionComponent implements OnInit, OnDestroy {
 	_isDealer() {
 		const DEALER_ROLES = ['dealer', 'sub-dealer'];
 		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 
 	private subscribeToSearch(): void {

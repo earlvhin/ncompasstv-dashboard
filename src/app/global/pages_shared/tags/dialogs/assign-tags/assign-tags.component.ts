@@ -78,6 +78,10 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 		return DEALER_ROLES.includes(this._auth.current_role);
 	}
 
+	_isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
+	}
+
 	onRemoveOwner(index: number) {
 		this.selectedOwnersControl.value.splice(index, 1);
 		this.ownerMultiSelect.compareWith = (a, b) => a && b && a.ownerId === b.ownerId;
@@ -104,7 +108,13 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 			sortOrder: 'desc'
 		};
 
-		if (this._isDealer()) params.role = 2;
+		if (this._isDealer()) {
+			params.role = 2;
+		} else if (this._isDealerAdmin()) {
+			params.role = 3;
+		} else {
+			params.role = 1;
+		}
 
 		this._tag
 			.getAllTags(params, this._isDealer())

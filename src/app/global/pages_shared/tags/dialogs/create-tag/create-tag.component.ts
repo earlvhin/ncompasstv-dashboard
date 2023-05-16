@@ -59,7 +59,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 		const name = form.tagName as string;
 		const tagColor = form.tagColor as string;
 		const description = form.description as string;
-		const role = this._isDealer() ? 2 : 1;
+		const role = this._isDealer() ? 2 : this._isAdmin() ? 1 : 3;
 		const exclude = form.exclude;
 
 		dataToSubmit.name = name;
@@ -85,7 +85,14 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	}
 
 	private initializeForm(): void {
-		let role = this.tab === 'admin' ? 1 : 2;
+		let role: number;
+		if (this._isDealer()) {
+			role = 2;
+		} else if (this._isDealerAdmin()) {
+			role = 3;
+		} else {
+			role = 1;
+		}
 
 		this.form = this._form_builder.group({
 			tagName: [null, Validators.required],
@@ -115,6 +122,10 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 	_isDealer() {
 		const DEALER_ROLES = ['dealer', 'sub-dealer'];
 		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 
 	_isAdmin() {
