@@ -45,10 +45,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		if (this.isCurrentRoleDealer) {
-			this.feeds_table_column.splice(
-				this.feeds_table_column.findIndex(({ name }) => name == 'Business Name'),
-				1
-			);
+			this.feeds_table_column = this.feeds_table_column.filter((col) => col.name != 'Business Name');
 			this.feeds_table_column.map((column) => {
 				if (column.name == 'Created By') {
 					column.sortable = false;
