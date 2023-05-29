@@ -158,33 +158,9 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		let count = 1;
 		const role = this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
 
-		if (!this.isCurrentRoleDealer) {
-			return feeds.map((f: any) => {
-				const table = new UI_TABLE_FEED(
-					{ value: f.contentId, editable: false, hidden: true },
-					{ value: f.feedId, editable: false, hidden: true },
-					{ value: count++, editable: false, hidden: false },
-					{ value: f.title, link: `/${role}/media-library/${f.contentId}`, editable: false, hidden: false, new_tab_link: true },
-					{
-						value: f.businessName ? f.businessName : '--',
-						link: `/${role}/dealers/${f.dealerId}`,
-						id: f.dealerId,
-						editable: false,
-						hidden: false,
-						new_tab_link: true
-					},
-					{ value: f.classification ? f.classification : '--', editable: false, hidden: false },
-					{ value: f.createdByName, editable: false, hidden: false },
-					{ value: this._date.transform(f.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
-					{ value: f.title, link: f.url, editable: false, hidden: true },
-					{ value: f.description, editable: false, hidden: true },
-					{ value: f.embeddedscript, editable: false, hidden: true }
-				);
-				return table;
-			});
-		} else {
-			return feeds.map((f: any) => {
-				const table = new UI_TABLE_FEED_DEALER(
+		return feeds.map((f: any) => {
+			if (this.isCurrentRoleDealer) {
+				return new UI_TABLE_FEED_DEALER(
 					{ value: f.feed.contentId, editable: false, hidden: true },
 					{ value: f.feed.feedId, editable: false, hidden: true },
 					{ value: count++, editable: false, hidden: false },
@@ -202,9 +178,29 @@ export class FeedsComponent implements OnInit, OnDestroy {
 					{ value: f.feed.feedDescription, editable: false, hidden: true },
 					{ value: f.feed.embeddedscript, editable: false, hidden: true }
 				);
-				return table;
-			});
-		}
+			}
+
+			return new UI_TABLE_FEED(
+				{ value: f.contentId, editable: false, hidden: true },
+				{ value: f.feedId, editable: false, hidden: true },
+				{ value: count++, editable: false, hidden: false },
+				{ value: f.title, link: `/${role}/media-library/${f.contentId}`, editable: false, hidden: false, new_tab_link: true },
+				{
+					value: f.businessName ? f.businessName : '--',
+					link: `/${role}/dealers/${f.dealerId}`,
+					id: f.dealerId,
+					editable: false,
+					hidden: false,
+					new_tab_link: true
+				},
+				{ value: f.classification ? f.classification : '--', editable: false, hidden: false },
+				{ value: f.createdByName, editable: false, hidden: false },
+				{ value: this._date.transform(f.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
+				{ value: f.title, link: f.url, editable: false, hidden: true },
+				{ value: f.description, editable: false, hidden: true },
+				{ value: f.embeddedscript, editable: false, hidden: true }
+			);
+		});
 	}
 
 	protected get currentRole() {
