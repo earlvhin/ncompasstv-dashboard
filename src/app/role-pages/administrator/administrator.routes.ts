@@ -7,15 +7,16 @@ import { AuthGuard } from '../../global/guards/auth/auth.guard';
 import { CategoriesComponent } from './pages/categories/categories.component';
 import { CreateAdvertiserComponent } from '../../global/pages_shared/create-advertiser/create-advertiser.component';
 import { CreateHostComponent } from '../../global/pages_shared/create-host/create-host.component';
-import { CreatePlaylistComponent } from '../../global/pages_shared/create-playlist/create-playlist.component'; 
+import { CreatePlaylistComponent } from '../../global/pages_shared/create-playlist/create-playlist.component';
 import { CreateScreenComponent } from '../../global/pages_shared/create-screen/create-screen.component';
 import { CreateTemplateComponent } from './pages/create-template/create-template.component';
 import { CreateUserComponent } from '../../global/pages_shared/create-user/create-user.component';
 import { CreateUserTypeComponent } from '../../global/pages_shared/create-user-type/create-user-type.component';
-import { DashboardComponent } from  './pages/dashboard/dashboard.component';
+import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DealersComponent } from './pages/dealers/dealers.component';
 import { DirectoryComponent } from './pages/directory/directory.component';
 import { FeedsComponent } from '../../global/pages_shared/feeds/feeds.component';
+import { FillersComponent } from '../../global/pages_shared/fillers/fillers.component';
 import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
 import { HostCustomFieldsComponent } from '../../global/pages_shared/host-custom-fields/host-custom-fields.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
@@ -50,427 +51,437 @@ import { ReleaseNotesComponent } from './pages/release-notes/release-notes.compo
 import { ReleaseNotesViewComponent } from './pages/release-notes/components/release-notes-view/release-notes-view.component';
 
 export const ADMINISTRATOR_ROUTES: Routes = [
-    {
-        path: 'administrator',
-        component: AdministratorLayoutComponent,
-        canActivate: [AuthGuard],
-        data: { 
-            role: [UI_ROLE_DEFINITION.administrator],
-            breadcrumb: 'Dashboard'
-        },
-        children: [
-            {
-                path: '',
-                component: DashboardComponent
-            },
-            { 
-                path: 'advertisers', 
-                component: AdvertisersComponent,
-                data: {
-                    breadcrumb: 'Advertisers'
-                },
-            },
-            { 
-                path: 'advertisers/:data', 
-                component: SingleAdvertiserComponent,
-            },
-            { 
-                path: 'advertisers/:data/:breadcrumb', 
-                component: SingleAdvertiserComponent,
-            },
-            { 
-                path: 'create-advertiser', 
-                component: CreateAdvertiserComponent,
-                data: {
-                    breadcrumb: 'Create Advertiser'
-                }
-            },
-            { 
-                path: 'categories', 
-                component: CategoriesComponent,
-                data: {
-                    breadcrumb: 'Categories'
-                }
-            },
-            { 
-                path: 'dashboard', 
-                component: DashboardComponent
-            },
-            { 
-                path: 'dealers',
-                data: {
-                    breadcrumb: 'Dealers'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: DealersComponent,
-                        
-                    },
-                    { 
-                        path: ':data', 
-                        component: SingleDealerComponent,
-                        data: {
-                            breadcrumb: 'Single Dealers Page'
-                        }
-                    },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleDealerComponent,
-                    },
-                ]
-            },
-			{ 
-                path: 'directory', 
-                component: DirectoryComponent,
-                data: {
-                    breadcrumb: 'Directory'
-                }
-            },
-			{ 
-                path: 'feeds', 
-                data: {
-                    breadcrumb: 'Feeds'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: FeedsComponent,
-                    },
-                    { 
-                        path: 'generate', 
-                        component: GenerateFeedComponent,
-                        data: {
-                            breadcrumb: 'Generate Feeds'
-                        }
-                    },
-                    { 
-                        path: 'edit-generated/:data', 
-                        component: GenerateFeedComponent,
-                        data: {
-                            breadcrumb: 'Edit Generated Feeds'
-                        }
-                    },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: GenerateFeedComponent,
-                    },
-                ]
-            },
-            { 
-                path: 'hosts', 
-                data: {
-                    breadcrumb: 'Hosts'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: HostsComponent,
-                        
-                    },
-                    { 
-                        path: 'create-host', 
-                        component: CreateHostComponent,
-                        data: {
-                            breadcrumb: 'Create Host'
-                        }
-                    },
-                    { 
-                        path: ':data', 
-                        component: SingleHostComponent,
-                        data: {
-                            breadcrumb: 'Single Hosts Page'
-                        }
-                    },
-                    { 
-                        path: ':data/:breadcrumb',
-                        component: SingleHostComponent
-                    }
-                ]
-            },
-            { 
-                path: 'hosts-fields', 
-                component: HostCustomFieldsComponent
-            },
-            { 
-                path: 'installations', 
-                component: InstallationsComponent, 
-                data: {
-                    breadcrumb: 'Installations'
-                }
-            },
-            { 
-                path: 'licenses', 
-                data: {
-                    breadcrumb: 'Licenses'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: LicensesComponent,
-                    },
-                    { 
-                        path: ':data', 
-                        component: SingleLicenseComponent,
-                        data: {
-                            breadcrumb: 'Single License Page'
-                        }
-                    },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleLicenseComponent
-                    }
-                ]
-            },
-            { 
-                path: 'locator', 
-                component: LocatorComponent,
-                data: {
-                    breadcrumb: 'Locator'
-                }
-            },
-            { 
-                path: 'media-library', 
-                data: {
-                    breadcrumb: 'Media Library'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: MediaLibraryComponent,
-                    },
-                    {
-                        path: ':data', 
-                        component: SingleContentComponent,
-                        data: {
-                            breadcrumb: 'Single Content Page'
-                        }
-                    },
-                    { 
-                        path: ':data/:breadcrumb',
-                        component: SingleContentComponent
-                    }
-                ]
-            },
-            {
-                path: 'notifications', 
-                component: NotificationsComponent,
-                data: {
-                    breadcrumb: 'Notifications'
-                }
-            },
-            {
-                path: 'playlists', 
-                data: {
-                    breadcrumb: 'Playlists'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: PlaylistsComponent,
-                    },
-                    { 
-                        path: 'create-playlist', 
-                        component: CreatePlaylistComponent,
-                        data: {
-                            breadcrumb: 'Create Playlist'
-                        },
-                    },
-                    {
-                        path: ':data', 
-                        component: SinglePlaylistComponent,
-                        data: {
-                            breadcrumb: 'Single Playlist'
-                        },
-                    },
-                    {
-                        path: ':data/:breadcrumb', 
-                        component: SinglePlaylistComponent
-                    }
-                ]
-            },
-            {
-                path: 'reports', 
-                component: ReportsComponent,
-                data: {
-                    breadcrumb: 'Reports'
-                },
-            },
-            { 
-                path: 'roles', 
-                component: RolesComponent,
-                data: {
-                    breadcrumb: 'Roles'
-                },
-            },
-            { 
-                path: 'screens', 
-                data: {
-                    breadcrumb: 'Screens'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: ScreensComponent,
-                    },
-                    { 
-                        path: 'create-screen', 
-                        component: CreateScreenComponent,
-                        data: {
-                            breadcrumb: 'Create Screen'
-                        },
-                    },
-                    { 
-                        path: ':data', 
-                        component: SingleScreenComponent,
-                        data: {
-                            breadcrumb: 'Single Screen Page'
-                        },
-                    },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleScreenComponent
-                    }
-                ]
-            },
-            { 
-                path: 'tags', 
-                component: TagsComponent,
-                data: {
-                    breadcrumb: 'Tags'
-                },
-            },
-            { 
-                path: 'templates', 
-                data: {
-                    breadcrumb: 'Templates'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: TemplatesComponent,
-                    },
-                    { 
-                        path: 'create-template', 
-                        component: CreateTemplateComponent,
-                        data: {
-                            breadcrumb: 'Create Template'
-                        },
-                    },
+	{
+		path: 'administrator',
+		component: AdministratorLayoutComponent,
+		canActivate: [AuthGuard],
+		data: {
+			role: [UI_ROLE_DEFINITION.administrator],
+			breadcrumb: 'Dashboard'
+		},
+		children: [
+			{
+				path: '',
+				component: DashboardComponent
+			},
+			{
+				path: 'advertisers',
+				component: AdvertisersComponent,
+				data: {
+					breadcrumb: 'Advertisers'
+				}
+			},
+			{
+				path: 'advertisers/:data',
+				component: SingleAdvertiserComponent
+			},
+			{
+				path: 'advertisers/:data/:breadcrumb',
+				component: SingleAdvertiserComponent
+			},
+			{
+				path: 'create-advertiser',
+				component: CreateAdvertiserComponent,
+				data: {
+					breadcrumb: 'Create Advertiser'
+				}
+			},
+			{
+				path: 'categories',
+				component: CategoriesComponent,
+				data: {
+					breadcrumb: 'Categories'
+				}
+			},
+			{
+				path: 'dashboard',
+				component: DashboardComponent
+			},
+			{
+				path: 'dealers',
+				data: {
+					breadcrumb: 'Dealers'
+				},
+				children: [
+					{
+						path: '',
+						component: DealersComponent
+					},
+					{
+						path: ':data',
+						component: SingleDealerComponent,
+						data: {
+							breadcrumb: 'Single Dealers Page'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SingleDealerComponent
+					}
+				]
+			},
+			{
+				path: 'directory',
+				component: DirectoryComponent,
+				data: {
+					breadcrumb: 'Directory'
+				}
+			},
+			{
+				path: 'feeds',
+				data: {
+					breadcrumb: 'Feeds'
+				},
+				children: [
+					{
+						path: '',
+						component: FeedsComponent
+					},
+					{
+						path: 'generate',
+						component: GenerateFeedComponent,
+						data: {
+							breadcrumb: 'Generate Feeds'
+						}
+					},
+					{
+						path: 'edit-generated/:data',
+						component: GenerateFeedComponent,
+						data: {
+							breadcrumb: 'Edit Generated Feeds'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: GenerateFeedComponent
+					}
+				]
+			},
+			{
+				path: 'fillers',
+				data: {
+					breadcrumb: 'Fillers'
+				},
+				children: [
+					{
+						path: '',
+						component: FillersComponent
+					}
+				]
+			},
+			{
+				path: 'hosts',
+				data: {
+					breadcrumb: 'Hosts'
+				},
+				children: [
+					{
+						path: '',
+						component: HostsComponent
+					},
+					{
+						path: 'create-host',
+						component: CreateHostComponent,
+						data: {
+							breadcrumb: 'Create Host'
+						}
+					},
+					{
+						path: ':data',
+						component: SingleHostComponent,
+						data: {
+							breadcrumb: 'Single Hosts Page'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SingleHostComponent
+					}
+				]
+			},
+			{
+				path: 'hosts-fields',
+				component: HostCustomFieldsComponent
+			},
+			{
+				path: 'installations',
+				component: InstallationsComponent,
+				data: {
+					breadcrumb: 'Installations'
+				}
+			},
+			{
+				path: 'licenses',
+				data: {
+					breadcrumb: 'Licenses'
+				},
+				children: [
+					{
+						path: '',
+						component: LicensesComponent
+					},
+					{
+						path: ':data',
+						component: SingleLicenseComponent,
+						data: {
+							breadcrumb: 'Single License Page'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SingleLicenseComponent
+					}
+				]
+			},
+			{
+				path: 'locator',
+				component: LocatorComponent,
+				data: {
+					breadcrumb: 'Locator'
+				}
+			},
+			{
+				path: 'media-library',
+				data: {
+					breadcrumb: 'Media Library'
+				},
+				children: [
+					{
+						path: '',
+						component: MediaLibraryComponent
+					},
+					{
+						path: ':data',
+						component: SingleContentComponent,
+						data: {
+							breadcrumb: 'Single Content Page'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SingleContentComponent
+					}
+				]
+			},
+			{
+				path: 'notifications',
+				component: NotificationsComponent,
+				data: {
+					breadcrumb: 'Notifications'
+				}
+			},
+			{
+				path: 'playlists',
+				data: {
+					breadcrumb: 'Playlists'
+				},
+				children: [
+					{
+						path: '',
+						component: PlaylistsComponent
+					},
+					{
+						path: 'create-playlist',
+						component: CreatePlaylistComponent,
+						data: {
+							breadcrumb: 'Create Playlist'
+						}
+					},
+					{
+						path: ':data',
+						component: SinglePlaylistComponent,
+						data: {
+							breadcrumb: 'Single Playlist'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SinglePlaylistComponent
+					}
+				]
+			},
+			{
+				path: 'reports',
+				component: ReportsComponent,
+				data: {
+					breadcrumb: 'Reports'
+				}
+			},
+			{
+				path: 'roles',
+				component: RolesComponent,
+				data: {
+					breadcrumb: 'Roles'
+				}
+			},
+			{
+				path: 'screens',
+				data: {
+					breadcrumb: 'Screens'
+				},
+				children: [
+					{
+						path: '',
+						component: ScreensComponent
+					},
+					{
+						path: 'create-screen',
+						component: CreateScreenComponent,
+						data: {
+							breadcrumb: 'Create Screen'
+						}
+					},
+					{
+						path: ':data',
+						component: SingleScreenComponent,
+						data: {
+							breadcrumb: 'Single Screen Page'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SingleScreenComponent
+					}
+				]
+			},
+			{
+				path: 'tags',
+				component: TagsComponent,
+				data: {
+					breadcrumb: 'Tags'
+				}
+			},
+			{
+				path: 'templates',
+				data: {
+					breadcrumb: 'Templates'
+				},
+				children: [
+					{
+						path: '',
+						component: TemplatesComponent
+					},
+					{
+						path: 'create-template',
+						component: CreateTemplateComponent,
+						data: {
+							breadcrumb: 'Create Template'
+						}
+					},
 					{
 						path: ':data',
 						component: SingleTemplateComponent,
-						data: {  breadcrumb: 'Single Template' },
+						data: { breadcrumb: 'Single Template' }
 					},
-                    {
+					{
 						path: ':data/:breadcrumb',
 						component: SingleTemplateComponent
+					}
+				]
+			},
+			{
+				path: 'tools',
+				component: ToolsComponent,
+				data: {
+					breadcrumb: 'Tools'
+				}
+			},
+			{
+				path: 'users',
+				data: {
+					breadcrumb: 'Users'
+				},
+				children: [
+					{
+						path: '',
+						component: UsersComponent
 					},
-                ]
-            },
-			{ 
-                path: 'tools', 
-                component: ToolsComponent,
-                data: {
-                    breadcrumb: 'Tools'
-                },
-            },
-            { 
-                path: 'users', 
-                data: {
-                    breadcrumb: 'Users'
-                },
-                children: [
-                    {
-                        path: '',
-                        component: UsersComponent,
-                    },
-                    { 
-                        path: 'create-user', 
-                        data: {
-                            breadcrumb: 'Create User'
-                        },
-                        children: [
-                            {
-                                path: '',
-                                component: CreateUserComponent,
-                            },
-                            { 
-                                path: ':data', 
-                                component: CreateUserTypeComponent,
-                                data: {
-                                    breadcrumb: 'User Type'
-                                },
-                            },
-                            { 
-                                path: ':data/:breadcrumb', 
-                                component: CreateUserTypeComponent
-                            }
-                        ]
-                    },
-                    { 
-                        path: ':data', 
-                        component: SingleUserComponent,
-                        data: {
-                            breadcrumb: 'Single User Page'
-                        },
-                    },
-                    { 
-                        path: ':data/:breadcrumb', 
-                        component: SingleUserComponent
-                    }
-                ]
-            },
-            // { 
-            //     path: 'user-profile/:data', 
-            //     component: UserProfileComponent,
-            //     data: {
-            //         breadcrumb: 'User Profile'
-            //     }, 
-            // },
-            // { 
-            //     path: 'user-profile/:data/:breadcrumb', 
-            //     component: UserProfileComponent
-            // },
-            { 
-                path: 'profile-setting/:data', 
-                component: ProfileSettingComponent,
-                data: {
-                    breadcrumb: 'Profile Settings'
-                },  
-            },
-            // { 
-            //     path: 'user-account-setting/:data', 
-            //     component: UserAccountSettingComponent,
-            //     data: {
-            //         breadcrumb: 'User Account Settings'
-            //     },  
-            // },
-            // { 
-            //     path: 'user-account-setting/:data/:breadcrumb', 
-            //     component: UserAccountSettingComponent 
-            // },
-            { 
-                path: 'version-control', 
-                component: UpdateComponent,
-                data: {
-                    breadcrumb: 'Version Control'
-                },
-            },
-            { 
-                path: 'release-notes', 
-                component: ReleaseNotesComponent,
-                data: {
-                    breadcrumb: 'Release Notes'
-                },
-            },
-            { 
-                path: 'release-notes-view', 
-                component: ReleaseNotesViewComponent,
-                data: {
-                    breadcrumb: 'Current Release Notes'
-                },
-            },
-        ]
-    }
-]
+					{
+						path: 'create-user',
+						data: {
+							breadcrumb: 'Create User'
+						},
+						children: [
+							{
+								path: '',
+								component: CreateUserComponent
+							},
+							{
+								path: ':data',
+								component: CreateUserTypeComponent,
+								data: {
+									breadcrumb: 'User Type'
+								}
+							},
+							{
+								path: ':data/:breadcrumb',
+								component: CreateUserTypeComponent
+							}
+						]
+					},
+					{
+						path: ':data',
+						component: SingleUserComponent,
+						data: {
+							breadcrumb: 'Single User Page'
+						}
+					},
+					{
+						path: ':data/:breadcrumb',
+						component: SingleUserComponent
+					}
+				]
+			},
+			// {
+			//     path: 'user-profile/:data',
+			//     component: UserProfileComponent,
+			//     data: {
+			//         breadcrumb: 'User Profile'
+			//     },
+			// },
+			// {
+			//     path: 'user-profile/:data/:breadcrumb',
+			//     component: UserProfileComponent
+			// },
+			{
+				path: 'profile-setting/:data',
+				component: ProfileSettingComponent,
+				data: {
+					breadcrumb: 'Profile Settings'
+				}
+			},
+			// {
+			//     path: 'user-account-setting/:data',
+			//     component: UserAccountSettingComponent,
+			//     data: {
+			//         breadcrumb: 'User Account Settings'
+			//     },
+			// },
+			// {
+			//     path: 'user-account-setting/:data/:breadcrumb',
+			//     component: UserAccountSettingComponent
+			// },
+			{
+				path: 'version-control',
+				component: UpdateComponent,
+				data: {
+					breadcrumb: 'Version Control'
+				}
+			},
+			{
+				path: 'release-notes',
+				component: ReleaseNotesComponent,
+				data: {
+					breadcrumb: 'Release Notes'
+				}
+			},
+			{
+				path: 'release-notes-view',
+				component: ReleaseNotesViewComponent,
+				data: {
+					breadcrumb: 'Current Release Notes'
+				}
+			}
+		]
+	}
+];

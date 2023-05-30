@@ -1,0 +1,66 @@
+<div class="theme-container">
+	<div class="row mt-5">
+		<div class="col-lg-12">
+			<h1 class="page-title">{{ title }}</h1>
+		</div>
+	</div>
+	<hr class="my-4" />
+
+	<div class="content-section">
+		<div class="row">
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count [data_value]="'235'" [data_label]="'Admin'" [data_description]="'Fillers'"> </app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count [data_value]="'100'" [data_label]="'Dealer Admin'" [data_description]="'Fillers'"> </app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count [data_value]="'500'" [data_label]="'Dealer'" [data_description]="'Fillers'"> </app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count [data_value]="'400'" [data_label]="'Host'" [data_description]="'Fillers'"> </app-data-card-count>
+				</mat-card>
+			</div>
+		</div>
+
+		<hr class="my-4" />
+
+		<div class="row no-gutters">
+			<div class="col-lg-12">
+				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" class="custom-mat-tab">
+					<mat-tab id="admin-view-tab" label="Admin">
+						<div *ngIf="tabGroup.selectedIndex === 0">
+							<div class="row mt-5">
+								<div class="col-lg-3">
+									<div class="black-opacity black-solid-hover h-100 text-center cursor-pointer">
+										<i class="fas fa-plus text-white f-50 mt-5 pt-2" title="Add New Filler Group"></i>
+									</div>
+								</div>
+								<div class="col-lg-3">
+									<div class="h-100">
+										<img [src]="'/assets/media-files/dyk.jpg'" class="full-width" />
+									</div>
+								</div>
+							</div>
+						</div>
+					</mat-tab>
+
+					<mat-tab id="dealer-admin-view-tab" label="Dealer Admin">
+						<div *ngIf="tabGroup.selectedIndex === 1"></div>
+					</mat-tab>
+
+					<mat-tab id="dealer-view-tab" label="Dealer">
+						<div *ngIf="tabGroup.selectedIndex === 2"></div>
+					</mat-tab>
+				</mat-tab-group>
+			</div>
+		</div>
+	</div>
+</div>

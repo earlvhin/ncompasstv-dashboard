@@ -960,6 +960,13 @@ agm-map {
 
 .black-opacity {
 	background: rgba(0, 0, 0, 0.6);
+	transition: background 2s;
+}
+
+.black-solid-hover {
+	&:hover {
+		background: $black;
+	}
 }
 
 .z-index-5 {

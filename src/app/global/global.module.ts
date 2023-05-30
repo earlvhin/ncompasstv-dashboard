@@ -79,6 +79,7 @@ import { FeedInfoComponent } from './components_shared/feed_components/feed-info
 import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
 import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
 import { FilenamePipe } from './pipes/filename.pipe';
+import { FillersComponent } from './pages_shared/fillers/fillers.component';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
@@ -291,6 +292,7 @@ const ngComponents = [
 	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
+	FillersComponent,
 	FillerDemoComponent,
 	FillerFormComponent,
 	FilterLabelsComponent,
@@ -324,6 +326,7 @@ const ngComponents = [
 	NavbarComponent,
 	NewAdminComponent,
 	NewAdvertiserComponent,
+	NewDealerAdminComponent,
 	NewDealerComponent,
 	NewHostUserComponent,
 	NewSubDealerComponent,
@@ -433,7 +436,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, NewDealerAdminComponent],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
 		AssignLicenseModalComponent,
