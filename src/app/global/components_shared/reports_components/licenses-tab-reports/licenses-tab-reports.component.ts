@@ -18,8 +18,10 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 	//graph
 	label_graph: any = [];
 	value_graph: any = [];
+	month_value_graph: any = [];
 	label_graph_detailed: any = [];
 	value_graph_detailed: any = [];
+	month_value_graph_detailed: any = [];
 	total = 0;
 	total_detailed = 0;
 	sub_title: string;
@@ -35,6 +37,9 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 	licenses_graph_data_detailed: API_LICENSE_MONTHLY_STAT[] = [];
 	generate = false;
     current_year: any;
+	total_month: number = 0;
+	total_month_detailed: number = 0;
+	
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -86,13 +91,13 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 	private getLicensesStatistics(): void {
 		let isNarrowedDownResult = false;
 		// reset value
-		this.total_detailed = 0;
 		this.sum = 0;
 		this.licenses_graph_data = [];
 		this.label_graph = [];
 		this.value_graph = [];
 		this.average = 0;
-		this.number_of_months = 0;
+		this.number_of_months = 0;	
+		this.total_month = 0;
 
 		let getStatsRequest = this._license.get_licenses_statistics('', '', '');
 
@@ -134,20 +139,24 @@ export class LicensesTabReportsComponent implements OnInit, OnDestroy {
 		const totalCumulativeLicenses = data.map(cumulativeSum);
 
 		data = data.map((license, index) => {
+			this.total_month = license.totalLicenses;
 			license.totalLicenses = totalCumulativeLicenses[index];
+			this.month_value_graph_detailed.push(this.total_month);
+			
+			this.month_value_graph.push(this.total_month);
 			return license;
 		});
 
 		data.forEach((license) => {
 			if (isNarrowedDownResult) {
-				this.total_detailed = this.total_detailed + license.totalLicenses;
+				this.total = license.totalLicenses;
 				this.licenses_graph_data.push(license);
-				this.label_graph.push(`${this._months[license.month - 1]} ${license.totalLicenses}`);
+				this.label_graph.push(this._months[license.month - 1]);
 				this.value_graph.push(license.totalLicenses);
 				this.sum = this.sum + license.totalLicenses;
 			} else {
-				this.total = this.total + license.totalLicenses;
-				this.label_graph_detailed.push(`${this._months[license.month - 1]} ${license.totalLicenses}`);
+				this.total_detailed = license.totalLicenses;
+				this.label_graph_detailed.push(this._months[license.month - 1]);
 				this.value_graph_detailed.push(license.totalLicenses);
 			}
 		});

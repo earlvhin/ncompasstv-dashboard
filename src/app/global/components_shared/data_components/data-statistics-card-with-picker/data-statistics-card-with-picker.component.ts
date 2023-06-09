@@ -36,6 +36,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	@Input() total: string;
 	@Input() label_array: [];
 	@Input() value_array: [];
+	@Input() month_array: [];
 	@Input() whole_data: [];
 	@Input() generate_chart: boolean;
 	@Input() num_of_months: string;
