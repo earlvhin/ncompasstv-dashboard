@@ -255,7 +255,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 			);
 
 		this._license
-			.get_license_total_per_dealer(id)
+			.get_licenses_total_by_dealer(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
