@@ -212,7 +212,7 @@
 				[class.undraggable]="content.isProtected && is_dealer"
 				[attr.data-id]="content.playlistContentId"
 				[ngClass]="{
-					marked: selected_contents.includes(content.playlistContentId),
+					marked: isMarked(content),
 					'col-lg-4': list_view_mode,
 					'col-lg-1': !list_view_mode
 				}">
@@ -249,7 +249,7 @@
 				[class.future-schedule]="content.scheduleStatus === 'future'"
 				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
 				[ngClass]="{
-					marked: selected_contents.includes(content.playlistContentId),
+					marked: isMarked(content.playlistContentId),
 					'col-lg-1': !list_view_mode,
 					'col-lg-4': list_view_mode
 				}">

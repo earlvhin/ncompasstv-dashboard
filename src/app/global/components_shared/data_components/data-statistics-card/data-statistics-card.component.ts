@@ -17,6 +17,7 @@ export class DataStatisticsCardComponent implements OnInit {
 	@Input() total: string;
     @Input() label_array: [];
     @Input() value_array: [];
+    @Input() month_array: [];
     @Input() whole_data: [];
     @Input() no_click: boolean = false;
     @Input() num_of_months: string;
@@ -103,8 +104,10 @@ export class DataStatisticsCardComponent implements OnInit {
                         backgroundColor: 'rgb(142, 198, 65)',
                         borderColor: 'rgb(64, 109, 2)',
                         data,
-                    }]
+                    },
+                    ]
                 },
+                
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
@@ -153,15 +156,24 @@ export class DataStatisticsCardComponent implements OnInit {
                 },
             });
         } else {
+            const footer = (tooltipItems) => {
+                let sum = 0;
+
+                tooltipItems.forEach((t) => {
+                    sum = t.dataIndex > 0 ? this.month_array[t.dataIndex] : t.parsed.y
+                });
+                return 'Added this month: ' + sum;
+            };
+
             this.chart = new Chart(canvas, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: '',
+                        label: "Overall Total",
                         backgroundColor: 'rgb(142, 198, 65)',
                         borderColor: 'rgb(64, 109, 2)',
-                        data,
+                        data
                     }],
                 },
                 options: {
@@ -180,12 +192,17 @@ export class DataStatisticsCardComponent implements OnInit {
                                 boxWidth: 10,
                             }
                         },
+                        tooltip: {
+                            callbacks: {
+                                footer
+                            }
+                        }
                    },
                     animations: {
                         tension: {
                             duration: 1000,
                             easing: 'linear',
-                            from: 1,
+                            from: 0,
                             to: 0,
                             loop: false
                         }

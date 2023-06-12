@@ -13,8 +13,10 @@ export class InstallationsTabComponent implements OnInit {
     //graph
     label_graph: any = [];
     value_graph: any = [];
+	month_value_graph: any = [];
     label_graph_detailed: any = [];
     value_graph_detailed: any = [];
+	month_value_graph_detailed: any = [];
     total: number = 0;
     total_detailed: number = 0;
     sub_title: string;
@@ -34,6 +36,8 @@ export class InstallationsTabComponent implements OnInit {
     temp_end_date: any;
     loading_graph: boolean = false;
     current_year: any;
+	total_month: number = 0;
+	total_month_detailed: number = 0;
 
     constructor(
         private _license: LicenseService,
@@ -60,6 +64,7 @@ export class InstallationsTabComponent implements OnInit {
                         this.generate = true;
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+
                         data.licenses.map(
                             i => {
                                 this.total_detailed = this.total_detailed + 1;
@@ -69,6 +74,7 @@ export class InstallationsTabComponent implements OnInit {
                                 i.installDate = this.date_format_to_time(i.installDate);
                             }
                         )
+                        
                         this.licenses_graph_data_detailed = data.licenses;
                         this.number_of_months = data.licenses.length;
                         this.average = this.sum / this.number_of_months; 
@@ -87,13 +93,19 @@ export class InstallationsTabComponent implements OnInit {
                         data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
                         this.whole_data = data.licenses;
                         this.whole_data = this.whole_data.filter(item => item.year == new Date().getFullYear());
+                       
+                        let cumulativeTotalInstallations = 0;
+
                         this.whole_data.map(
                             i => {
                                 this.total = this.total + i.totalLicenses;
+                                cumulativeTotalInstallations += i.totalLicenses;
+
                                 this.licenses_graph_data.push(i)
-                                this.label_graph.push(months[i.month - 1] + " " + i.totalLicenses)
-                                this.value_graph.push(i.totalLicenses)
-                            }
+                                this.label_graph.push(months[i.month - 1])
+                                this.value_graph.push(cumulativeTotalInstallations)
+                                this.month_value_graph.push(i.totalLicenses)
+                            }    
                         )
                     } else {
                         this.generate = false;

@@ -6,7 +6,7 @@ import { Subject } from 'rxjs';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
-import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED } from 'src/app/global/models';
+import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feeds',
@@ -15,10 +15,10 @@ import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED } from '
 })
 export class FeedsComponent implements OnInit, OnDestroy {
 	current_user = this._auth.current_user_value;
-	feed_data: UI_TABLE_FEED[] = [];
+	feed_data: UI_TABLE_FEED[] | UI_TABLE_FEED_DEALER = [];
 	feed_stats: any = {};
 	feeds_stats: any = {};
-	filtered_data: any = [];
+	filtered_data: UI_TABLE_FEED[] | UI_TABLE_FEED_DEALER[] = [];
 	initial_load = true;
 	is_view_only = false;
 	no_feeds = false;
@@ -44,6 +44,14 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	constructor(private _auth: AuthService, private _date: DatePipe, private _dialog: MatDialog, private _feed: FeedService) {}
 
 	ngOnInit() {
+		if (this.isCurrentRoleDealer) {
+			this.feeds_table_column = this.feeds_table_column.filter((col) => col.name != 'Business Name');
+			this.feeds_table_column.map((column) => {
+				if (column.name == 'Created By') {
+					column.sortable = false;
+				}
+			});
+		}
 		this.getFeedsTotal();
 		this.getFeeds(1);
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
@@ -92,7 +100,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 						return;
 					}
 
-					const mappedData = this.mapToTableFormat(response.paging.entities);
+					const mappedData = this.mapToTableFormat(this.isCurrentRoleDealer ? response.cFeeds : response.paging.entities);
 					this.feed_data = [...mappedData];
 					this.filtered_data = [...mappedData];
 					this.paging_data = response.paging;
@@ -146,41 +154,51 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	private mapToTableFormat(feeds: FEED[]): UI_TABLE_FEED[] {
+	private mapToTableFormat(feeds): any {
 		let count = 1;
+		const role = this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
 
-		return feeds.map((data: FEED) => {
-			const {
-				contentId,
-				dealerId,
-				feedId,
-				url,
-				title,
-				classification,
-				createdByName,
-				dateCreated,
-				description,
-				embeddedScript: embeddedscript
-			} = data;
-
-			let businessName = dealerId ? data.businessName : '--';
-
-			if (this.isCurrentRoleDealer || this.isCurrentRoleSubDealer) businessName = this.current_user.roleInfo.businessName;
-
-			const role = this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
+		return feeds.map((f: any) => {
+			if (this.isCurrentRoleDealer) {
+				return new UI_TABLE_FEED_DEALER(
+					{ value: f.feed.contentId, editable: false, hidden: true },
+					{ value: f.feed.feedId, editable: false, hidden: true },
+					{ value: count++, editable: false, hidden: false },
+					{
+						value: f.feed.feedTitle,
+						link: `/${role}/media-library/${f.feed.contentId}`,
+						editable: false,
+						hidden: false,
+						new_tab_link: true
+					},
+					{ value: f.feed.classification ? f.feed.classification : '--', editable: false, hidden: false },
+					{ value: f.owner.firstName + ' ' + f.owner.lastName, editable: false, hidden: false },
+					{ value: this._date.transform(f.feed.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
+					{ value: f.feed.feedTitle, link: f.feed.feedUrl, editable: false, hidden: true },
+					{ value: f.feed.feedDescription, editable: false, hidden: true },
+					{ value: f.feed.embeddedscript, editable: false, hidden: true }
+				);
+			}
 
 			return new UI_TABLE_FEED(
-				{ value: contentId, editable: false, hidden: true },
-				{ value: feedId, editable: false, hidden: true },
+				{ value: f.contentId, editable: false, hidden: true },
+				{ value: f.feedId, editable: false, hidden: true },
 				{ value: count++, editable: false, hidden: false },
-				{ value: title, link: `/${role}/media-library/${contentId}`, editable: false, hidden: false, new_tab_link: true },
-				{ value: businessName, link: `/${role}/dealers/${dealerId}`, id: dealerId, editable: false, hidden: false, new_tab_link: true },
-				{ value: data.classification ? classification : '--', editable: false, hidden: false },
-				{ value: createdByName, editable: false, hidden: false },
-				{ value: this._date.transform(dateCreated, 'MMMM d, y'), editable: false, hidden: false },
-				{ value: title, link: url, editable: false, hidden: true },
-				{ value: description, editable: false, hidden: true },
-				{ value: embeddedscript, editable: false, hidden: true }
+				{ value: f.title, link: `/${role}/media-library/${f.contentId}`, editable: false, hidden: false, new_tab_link: true },
+				{
+					value: f.businessName ? f.businessName : '--',
+					link: `/${role}/dealers/${f.dealerId}`,
+					id: f.dealerId,
+					editable: false,
+					hidden: false,
+					new_tab_link: true
+				},
+				{ value: f.classification ? f.classification : '--', editable: false, hidden: false },
+				{ value: f.createdByName, editable: false, hidden: false },
+				{ value: this._date.transform(f.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
+				{ value: f.title, link: f.url, editable: false, hidden: true },
+				{ value: f.description, editable: false, hidden: true },
+				{ value: f.embeddedscript, editable: false, hidden: true }
 			);
 		});
 	}

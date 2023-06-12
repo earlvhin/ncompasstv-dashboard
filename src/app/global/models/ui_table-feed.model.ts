@@ -50,6 +50,7 @@ export class UI_TABLE_FEED_DEALER {
 	date_created: object;
 	feed_url: object;
 	description: object;
+	embeddedScript?: any;
 
 	constructor(
 		id: object,
@@ -60,7 +61,8 @@ export class UI_TABLE_FEED_DEALER {
 		created_by: object,
 		date_created: object,
 		feed_url: object,
-		description: object
+		description: object,
+		embeddedscript?: any
 	) {
 		this.id = id;
 		this.feed_id = feed_id;
@@ -71,5 +73,6 @@ export class UI_TABLE_FEED_DEALER {
 		this.date_created = date_created;
 		this.feed_url = feed_url;
 		this.description = description;
+		this.embeddedScript = embeddedscript;
 	}
 }

@@ -14,6 +14,7 @@ export * from './form-service/form.service';
 export * from './helper-service/helper.service';
 export * from './host-service/host.service';
 export * from './license-service/license.service';
+export * from './notification-service/notification.service';
 export * from './map-service/map.service';
 export * from './playlist-service/playlist.service';
 export * from './release-notes/release-notes.service';

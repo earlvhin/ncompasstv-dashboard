@@ -104,7 +104,7 @@ export class ProfileSettingComponent implements OnInit {
 
 	getTotalLicenses(id) {
 		this._license
-			.get_license_total_per_dealer(id)
+			.get_licenses_total_by_dealer(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
