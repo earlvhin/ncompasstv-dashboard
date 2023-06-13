@@ -380,59 +380,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	isMarked(data: API_CONTENT) {
-		if (
-			typeof data === 'undefined' ||
-			typeof data.playlistContentId === 'undefined' ||
-			!data.playlistContentId ||
-			this.selected_contents.length <= 0
-		)
-			return;
-
-		return this.selected_contents.includes(data.playlistContentId);
-	}
-
-	isMarking(event: { checked: boolean }): void {
-		this.is_bulk_selecting = event.checked;
-
-		if (this.is_bulk_selecting == false) {
-			this.selected_contents = [];
-			this.selected_content_ids = [];
-			this.can_set_schedule = false;
-			this.can_update_schedule = false;
-		}
-	}
-
-	logRemovedContent(data: any) {
-		this.logContentHistory(data, false);
-	}
-
-	logContentHistory(data: any, isAdd: any) {
-		if (isAdd) {
-			data.forEach((i) => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)));
-		} else {
-			if (this.selected_content_ids.length > 0) {
-				data.forEach((i) => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)));
-			} else {
-				this.playlist_new_content.push(new API_CONTENT_DATA(data.id, data.contentId));
-			}
-		}
-
-		this._playlist
-			.log_content_history(this.structureContentHistory(isAdd))
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				async () => {
-					this.selected_content_ids = [];
-					this.playlist_new_content = [];
-				},
-				(error) => {
-					this.selected_content_ids = [];
-					this.playlist_new_content = [];
-				}
-			);
-	}
-
 	mapIncomingContent(data: any[]): any[] {
 		return data.map((i) => {
 			return {
