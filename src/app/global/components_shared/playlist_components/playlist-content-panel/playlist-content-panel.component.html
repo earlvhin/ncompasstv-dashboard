@@ -37,7 +37,7 @@
 				mat-raised-button
 				class="theme-btn flex-even mx-1"
 				(click)="openPlaylistMedia('swap')"
-				[disabled]="is_view_only || !is_bulk_selecting || selected_contents.length !== 1">
+				[disabled]="is_view_only || !is_bulk_selecting || selected_playlist_content_ids.length !== 1">
 				Swap Content
 				<span class="fas fa-exchange-alt ml-2 sm-text"></span>
 			</button>
@@ -110,7 +110,7 @@
 				mat-raised-button
 				class="theme-btn flex-even mx-1"
 				(click)="bulkModify()"
-				[disabled]="selected_contents.length == 0 || is_view_only">
+				[disabled]="selected_playlist_content_ids.length == 0 || is_view_only">
 				Modify
 				<span class="fas fa-cog ml-2 sm-text"></span>
 			</button>
@@ -120,7 +120,7 @@
 				mat-raised-button
 				class="theme-btn flex-even mx-1 _danger"
 				(click)="bulkContentRemove()"
-				[disabled]="selected_contents.length == 0 || is_view_only">
+				[disabled]="selected_playlist_content_ids.length == 0 || is_view_only">
 				Remove
 				<span class="fas fa-trash ml-2 sm-text"></span>
 			</button>
