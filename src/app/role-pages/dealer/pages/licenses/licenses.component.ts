@@ -36,7 +36,7 @@ export class LicensesComponent implements OnInit {
 	licenses_to_export: API_LICENSE['license'][] = [];
 	no_licenses_result: boolean = false;
 	now: any;
-	paging_data_license: any;
+	paging_data_license: any = [];
 	splitted_text: any;
 	title: string = 'Licenses';
 	no_record: boolean;
@@ -534,7 +534,11 @@ export class LicensesComponent implements OnInit {
 				}
 				if (reset) {
 					this.favorites_list_cache = this.favorites_list;
-					this.no_favorites = false;
+					if (this.favorites_list_cache.length > 0) {
+						this.no_favorites = false;
+					} else {
+						this.no_favorites = true;
+					}
 				}
 			});
 	}
@@ -688,7 +692,7 @@ export class LicensesComponent implements OnInit {
 					isImage: true,
 					new_tab_link: true
 				},
-				{ 
+				{
 					value: i.licenseKey,
 					link: `/${this.currentRole}/licenses/` + i.licenseId,
 					editable: false,
@@ -723,7 +727,7 @@ export class LicensesComponent implements OnInit {
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{ 
+				{
 					value: i.anydeskId ? i.anydeskId : '--',
 					link: null,
 					editable: false,
@@ -734,7 +738,7 @@ export class LicensesComponent implements OnInit {
 					password: i.anydeskId ? this.splitKey(i.licenseId) : '--'
 				},
 				{ value: i.displayStatus == 1 ? 'ON' : 'OFF', link: null, editable: false, hidden: false },
-				{ 
+				{
 					value: i.installDate ? this._date.transform(i.installDate) : '--',
 					link: null,
 					editable: true,
@@ -816,10 +820,14 @@ export class LicensesComponent implements OnInit {
 			return this.paging_data_license.entities.length;
 		}
 	}
-    
+
 	getTotalLicenses() {
 		if (this.active_view === 'grid') {
-			return this.paging_data_favorites.totalEntities + this.paging_data_license.totalEntities;
+			if (this.no_favorites) {
+				return this.paging_data_license.totalEntities;
+			} else {
+				return this.paging_data_favorites.totalEntities + this.paging_data_license.totalEntities;
+			}
 		} else {
 			return this.paging_data_license.totalEntities;
 		}
