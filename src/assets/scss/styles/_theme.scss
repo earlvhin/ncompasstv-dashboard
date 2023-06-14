@@ -615,6 +615,10 @@ button {
 	font-weight: 500;
 }
 
+.box-shadowing {
+	box-shadow: 2px 2px 5px 5px $gray;
+}
+
 .disabled a {
 	pointer-events: none;
 	opacity: 0.6;
@@ -857,6 +861,22 @@ agm-map {
 
 .h-100-px {
 	height: 100px !important;
+}
+
+.h-120-px {
+	height: 120px;
+}
+
+.h-130-px {
+	height: 130px;
+}
+
+.h-200-px {
+	height: 200px;
+}
+
+.w-200-px {
+	width: 200px;
 }
 
 .strike {

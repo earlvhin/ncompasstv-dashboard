@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
+import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
@@ -65,7 +66,9 @@ import { DeletePlaylistComponent } from './components_shared/playlist_components
 import { DemoZoneComponent } from './components_shared/zone_components/demo-zone/demo-zone.component';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DmaTabComponent } from './components_shared/locator_components/dma-tab/dma-tab.component';
+import { DropdownMultipleSelectionFieldComponent } from './components_shared/page_components/dropdown-multiple-selection-field/dropdown-multiple-selection-field.component';
 import { EditFeedComponent } from './components_shared/feed_components/edit-feed/edit-feed.component';
+import { EditFillerGroupComponent } from './pages_shared/fillers/components/edit-filler-group/edit-filler-group.component';
 import { EditSingleAdvertiserComponent } from './pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from './pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-single-host.component';
@@ -225,6 +228,7 @@ import {
 
 const ngComponents = [
 	AddCardComponent,
+	AddFillerGroupComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
 	AutocompleteFieldComponent,
@@ -276,7 +280,9 @@ const ngComponents = [
 	DeletePlaylistComponent,
 	DemoZoneComponent,
 	DmaTabComponent,
+	DropdownMultipleSelectionFieldComponent,
 	EditFeedComponent,
+	EditFillerGroupComponent,
 	EditSingleAdvertiserComponent,
 	EditSingleDealerComponent,
 	EditSingleHostComponent,
@@ -439,6 +445,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
+		AddFillerGroupComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
 		BulkOptionsComponent,
@@ -453,6 +460,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		DeleteDealerDialogComponent,
 		DeletePlaylistComponent,
 		EditFeedComponent,
+		EditFillerGroupComponent,
 		EditSingleAdvertiserComponent,
 		EditSingleDealerComponent,
 		EditSingleHostComponent,

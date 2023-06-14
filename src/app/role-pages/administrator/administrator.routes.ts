@@ -160,7 +160,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 			{
 				path: 'fillers',
 				data: {
-					breadcrumb: 'Fillers'
+					breadcrumb: 'Fillers Library'
 				},
 				children: [
 					{

@@ -57,6 +57,7 @@ export const API_ENDPOINTS = {
 		api_get_content_total_by_dealer: 'content/gettotal?dealerid=',
 		api_get_dealer_by_id: 'dealer/getbyid?dealer_id=',
 		api_get_dealers: 'dealer/getall',
+		api_get_dealer_admins: 'dealeradmin/getall',
 		api_get_dealers_fetch: 'dealer/fetchallsorttotaldefault',
 		// api_get_dealers_content_metrics: 'contentplaysdaily/exportscontentmetricsbydealer',
 		api_get_dealers_content_metrics: 'contentplaysdaily/getcontentmetricsbydealerexport',
@@ -158,7 +159,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',

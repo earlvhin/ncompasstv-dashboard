@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { MatDialog, MatDialogRef } from '@angular/material';
+import { AddFillerGroupComponent } from './components/add-filler-group/add-filler-group.component';
+import { EditFillerGroupComponent } from './components/edit-filler-group/edit-filler-group.component';
 
 @Component({
 	selector: 'app-fillers',
@@ -8,7 +11,7 @@ import { Component, OnInit } from '@angular/core';
 export class FillersComponent implements OnInit {
 	title = 'Fillers Library';
 
-	constructor() {}
+	constructor(private _dialog: MatDialog) {}
 
 	ngOnInit() {}
 
@@ -25,5 +28,27 @@ export class FillersComponent implements OnInit {
 				break;
 			default:
 		}
+	}
+
+	onSearchFiller(event) {}
+
+	onAddFillerGroup() {
+		let dialog = this._dialog.open(AddFillerGroupComponent, {
+			width: '500px',
+			data: {
+				// dealer: this.selected_dealer,
+				// singleSelect: true
+			}
+		});
+	}
+
+	onEditFillerGroup() {
+		let dialog = this._dialog.open(EditFillerGroupComponent, {
+			width: '500px',
+			data: {
+				// dealer: this.selected_dealer,
+				// singleSelect: true
+			}
+		});
 	}
 }
