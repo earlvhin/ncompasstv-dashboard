@@ -225,6 +225,7 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -442,7 +443,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES],
+	declarations: [ngComponents, DIRECTIVES, ViewFillersGroupComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerGroupComponent,

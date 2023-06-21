@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { AddFillerGroupComponent } from './components/add-filler-group/add-filler-group.component';
 import { EditFillerGroupComponent } from './components/edit-filler-group/edit-filler-group.component';
+import { Router } from '@angular/router';
 
 @Component({
 	selector: 'app-fillers',
@@ -11,7 +12,7 @@ import { EditFillerGroupComponent } from './components/edit-filler-group/edit-fi
 export class FillersComponent implements OnInit {
 	title = 'Fillers Library';
 
-	constructor(private _dialog: MatDialog) {}
+	constructor(private _dialog: MatDialog, private _router: Router) {}
 
 	ngOnInit() {}
 
@@ -49,6 +50,12 @@ export class FillersComponent implements OnInit {
 				// dealer: this.selected_dealer,
 				// singleSelect: true
 			}
+		});
+	}
+
+	navigateToFillerGroup() {
+		this._router.navigate([]).then(() => {
+			window.open(`/administrator/fillers/view-fillers-group`, '_blank');
 		});
 	}
 }

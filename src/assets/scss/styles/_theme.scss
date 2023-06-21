@@ -1016,3 +1016,9 @@ agm-map {
 .text-shadow-black {
 	text-shadow: 1px 1px 1px black;
 }
+
+.hover-prime {
+	&:hover {
+		color: $primary;
+	}
+}
