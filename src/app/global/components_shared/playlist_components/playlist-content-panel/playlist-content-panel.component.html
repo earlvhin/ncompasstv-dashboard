@@ -204,76 +204,80 @@
 		</div>
 	</div>
 
-	<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? 'd-none' : null">
-		<div class="row no-gutters" #draggables id="draggables">
-			<div
-				id="{{ 'drg_' + content.playlistContentId }}"
-				*ngFor="let content of playlist_contents; let i = index"
-				[class.undraggable]="content.isProtected && is_dealer"
-				[attr.data-id]="content.playlistContentId"
-				[ngClass]="{
-					marked: isMarked(content),
-					'col-lg-4': list_view_mode,
-					'col-lg-1': !list_view_mode
-				}">
-				<app-playlist-content
-					[playlist_host_license]="playlist_host_license"
-					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-					[dealer]="content.dealerId"
-					[content]="content"
-					[is_marking]="is_bulk_selecting"
-					[schedule_status]="content.scheduleStatus"
-					[page]="page"
-					[total_contents]="_contentsBackup.length"
-					[is_list]="list_view_mode"
-					[is_view_only]="is_view_only"
-					[is_admin]="is_admin"
-					[is_dealer]="is_dealer"
-					(options_saved)="optionsSaved($event)"
-					(reset_playlist_content)="reloadPlaylist()"
-					(remove_playlist_content)="removePlaylistContent($event)"
-					(log_content_history)="logRemovedContent($event)"
-					[playlist_contents]="playlist_contents">
-				</app-playlist-content>
+	<ng-container *ngIf="!is_loading || playlist_contents.length > 0; else loader">
+		<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? 'd-none' : null">
+			<div class="row no-gutters" #draggables id="draggables">
+				<div
+					*ngFor="let content of playlist_contents; let i = index"
+					id="{{ 'drg_' + content.playlistContentId }}"
+					[class.undraggable]="content.isProtected && is_dealer"
+					[attr.data-id]="content.playlistContentId"
+					[ngClass]="{
+						marked: isMarked(content),
+						'col-lg-4': list_view_mode,
+						'col-lg-1': !list_view_mode
+					}">
+					<app-playlist-content
+						[playlist_host_license]="playlist_host_license"
+						[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+						[content]="content"
+						[dealer]="content.dealerId"
+						[is_marking]="is_bulk_selecting"
+						[page]="page"
+						[total_contents]="_contentsBackup.length"
+						[is_list]="list_view_mode"
+						[is_view_only]="is_view_only"
+						[is_admin]="is_admin"
+						[is_dealer]="is_dealer"
+						[schedule_status]="content.scheduleStatus"
+						(options_saved)="optionsSaved($event)"
+						(reset_playlist_content)="reloadPlaylist()"
+						(remove_playlist_content)="removePlaylistContent($event)"
+						(log_content_history)="logRemovedContent($event)"
+						[playlist_contents]="playlist_contents">
+					</app-playlist-content>
+				</div>
 			</div>
 		</div>
-	</div>
+	</ng-container>
 
-	<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? null : 'd-none'" *ngIf="!is_loading; else loader">
-		<div class="row no-gutters">
-			<div
-				id="{{ 'drg_' + content.playlistContentId }}"
-				*ngFor="let content of playlist_contents; let i = index"
-				[attr.data-id]="content.playlistContentId"
-				[class.undraggable]="content.isProtected && is_dealer"
-				[class.future-schedule]="content.scheduleStatus === 'future'"
-				[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
-				[ngClass]="{
-					marked: isMarked(content.playlistContentId),
-					'col-lg-1': !list_view_mode,
-					'col-lg-4': list_view_mode
-				}">
-				<app-playlist-content
-					[playlist_host_license]="playlist_host_license"
-					[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
-					[content]="content"
-					[dealer]="content.dealerId"
-					[is_marking]="is_bulk_selecting"
-					[schedule_status]="content.scheduleStatus"
-					[page]="page"
-					[total_contents]="_contentsBackup.length"
-					[is_list]="list_view_mode"
-					[is_view_only]="is_view_only"
-					[is_admin]="is_admin"
-					[is_dealer]="is_dealer"
-					(options_saved)="optionsSaved($event)"
-					(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency, content.classification)"
-					(reset_playlist_content)="reloadPlaylist()"
-					(remove_playlist_content)="removePlaylistContent($event)">
-				</app-playlist-content>
+	<ng-container *ngIf="!is_loading; else loader">
+		<div class="playlist-content-panel" [ngClass]="is_bulk_selecting ? null : 'd-none'">
+			<div class="row no-gutters">
+				<div
+					id="{{ 'drg_' + content.playlistContentId }}"
+					*ngFor="let content of playlist_contents; let i = index"
+					[attr.data-id]="content.playlistContentId"
+					[class.undraggable]="content.isProtected && is_dealer"
+					[class.future-schedule]="content.scheduleStatus === 'future'"
+					[class.inactive-schedule]="content.scheduleStatus === 'inactive'"
+					[ngClass]="{
+						marked: isMarked(content.playlistContentId),
+						'col-lg-1': !list_view_mode,
+						'col-lg-4': list_view_mode
+					}">
+					<app-playlist-content
+						[playlist_host_license]="playlist_host_license"
+						[array_index]="playlist_content_backup.indexOf(content) + 1 || i + 1"
+						[content]="content"
+						[dealer]="content.dealerId"
+						[is_marking]="is_bulk_selecting"
+						[page]="page"
+						[total_contents]="_contentsBackup.length"
+						[is_list]="list_view_mode"
+						[is_view_only]="is_view_only"
+						[is_admin]="is_admin"
+						[is_dealer]="is_dealer"
+						[schedule_status]="content.scheduleStatus"
+						(options_saved)="optionsSaved($event)"
+						(click)="selectedContent(content.playlistContentId, content.contentId, content.frequency, content.classification)"
+						(reset_playlist_content)="reloadPlaylist()"
+						(remove_playlist_content)="removePlaylistContent($event)">
+					</app-playlist-content>
+				</div>
 			</div>
 		</div>
-	</div>
+	</ng-container>
 
 	<div class="loading-overlay d-flex align-items-center" *ngIf="playlist_saving">
 		<div class="flex-even text-center">
