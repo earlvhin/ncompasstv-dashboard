@@ -798,8 +798,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				this.removeToBlocklist();
 			}
 		}
-
-		// this.search_control.setValue('');
 	}
 
 	private setScheduleStatus(): void {
