@@ -425,7 +425,7 @@ export class LicensesComponent implements OnInit {
 				}
 				if (reset) {
 					this.favorites_list_cache = this.favorites_list;
-					this.no_favorites = false;
+					// this.no_favorites = false;
 				}
 			});
 	}
@@ -525,10 +525,15 @@ export class LicensesComponent implements OnInit {
 					if (this.active_view === 'grid') {
 						this.license_data_for_grid_view = [...data.licenses];
 
-						if (fromShowMore && page > 1) this.grid_list_cache = this.license_data_for_grid_view;
+						if (fromShowMore && page > 1) {
+							this.license_data_for_grid_view.map((lic) => {
+								this.grid_list_cache.push(lic);
+							});
+							this.license_data_for_grid_view = this.grid_list_cache;
+						}
 
-						if (this.grid_list_cache.length > 0 && page === 1 && fromShowMore) {
-							this.license_data_for_grid_view = [...this.grid_list_cache];
+						if (page === 1) {
+							this.grid_list_cache = this.license_data_for_grid_view;
 						}
 
 						this.hideLicenseSpinner();
@@ -582,8 +587,15 @@ export class LicensesComponent implements OnInit {
 	}
 
 	getTotalLicenses() {
-		if (this.active_view === 'grid') return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
-		return this.paging_data_licenses.totalEntities;
+		if (this.active_view === 'grid') {
+			if (this.no_favorites) {
+				return this.paging_data_licenses.totalEntities;
+			} else {
+				return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
+			}
+		} else {
+			return this.paging_data_licenses.totalEntities;
+		}
 	}
 
 	getZoneHours(data: API_LICENSE_PROPS) {
