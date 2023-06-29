@@ -65,8 +65,8 @@ export class EditFillerGroupComponent implements OnInit {
 
 	getDealers() {
 		this.subscription.add(
-			this._dealer.get_dealers_with_page(1, '', 0).subscribe((data) => {
-				this.dealers_list = data.dealers;
+			this._dealer.get_dealers_with_page_minified(1, '', 0).subscribe((data) => {
+				this.dealers_list = data.paging.entities;
 				this.fillForm();
 			})
 		);
