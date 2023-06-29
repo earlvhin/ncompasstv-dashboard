@@ -18,6 +18,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	feed_data: UI_TABLE_FEED[] = [];
 	feed_stats: any = {};
 	feeds_stats: any = {};
+	filler_stats: any = {};
 	filtered_data: any = [];
 	initial_load = true;
 	is_view_only = false;
@@ -39,12 +40,24 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		{ name: 'Action', sortable: false }
 	];
 
+	fillers_table_column = [
+		{ name: '#', sortable: false },
+		{ name: 'Name', sortable: true, column: 'Name' },
+		{ name: 'Quantity', sortable: true, column: 'Quantity' },
+		{ name: 'Interval (Days)', sortable: true, column: 'Interval' },
+		{ name: 'Owner', sortable: true, column: 'Owner' },
+		{ name: '# of Groups', sortable: true, column: 'Groups' },
+		{ name: 'Created Date', sortable: true, column: 'CreatedDate' },
+		{ name: 'Action', sortable: false }
+	];
+
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(private _auth: AuthService, private _date: DatePipe, private _dialog: MatDialog, private _feed: FeedService) {}
 
 	ngOnInit() {
 		this.getFeedsTotal();
+		this.getFillersTotal();
 		this.getFeeds(1);
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
 	}
@@ -138,12 +151,31 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				total_label: 'Feed(s)',
 				this_week_value: response.newFeedsThisWeek,
 				this_week_value_label: 'Feed(s)',
-				this_week_value_description: 'New this week',
-				last_week_value: response.newFeedsLastWeek,
-				last_week_value_label: 'Feed(s)',
-				last_week_value_description: 'New this week'
+				this_week_value_description: 'New this week'
 			};
 		});
+	}
+
+	private getFillersTotal(): void {
+		this.filler_stats = {
+			total_value: '86',
+			total_label: 'Filler(s)',
+			this_week_value: '50',
+			this_week_value_label: 'Filler(s)',
+			this_week_value_description: 'New this week'
+		};
+	}
+
+	onTabChanged(tab: { index: number }) {
+		switch (tab.index) {
+			case 0:
+				// this.getLicenses(1);
+				break;
+			case 2:
+				// this.getHosts(1);
+				break;
+			default:
+		}
 	}
 
 	private mapToTableFormat(feeds: FEED[]): UI_TABLE_FEED[] {

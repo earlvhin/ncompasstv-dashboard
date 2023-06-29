@@ -41,7 +41,7 @@
 							<div class="row mt-3">
 								<div class="offset-lg-8 col-lg-4">
 									<app-search-field
-										*ngIf="!initial_load_advertiser"
+										*ngIf="filler_group_cache.length > 0"
 										[form_title]="'Search Filler Group or Business Name'"
 										[placeholder]="'Example: N-Compass'"
 										[data_reference]=""
@@ -51,87 +51,56 @@
 										[api_search]="true"></app-search-field>
 								</div>
 							</div>
-							<div class="row pb-2">
-								<div class="col-lg-2">
-									<div
-										class="black-opacity black-solid-hover h-100 text-center cursor-pointer box-shadowing"
-										(click)="onAddFillerGroup()">
-										<i class="fas fa-plus text-white f-50 mt-5 pt-4" title="Add New Filler Group"></i>
-									</div>
-								</div>
-								<div class="col-lg-2">
-									<div class="bg-white p-3 h-200-px full-width text-center br-5 box-shadowing">
-										<div class="row">
-											<div class="col-lg-12">
-												<img
-													[src]="'/assets/media-files/dyk.jpg'"
-													class="clickable full-width h-130-px br-5"
-													(click)="navigateToFillerGroup()" />
-											</div>
+							<div *ngIf="!is_loading; else loader">
+								<div class="row pb-2">
+									<div class="col-lg-2 mb-4">
+										<div
+											class="black-opacity black-solid-hover h-100 text-center cursor-pointer box-shadowing"
+											(click)="onAddFillerGroup()">
+											<i class="fas fa-plus text-white f-50 mt-5 pt-4 mb-5 pb-4" title="Add New Filler Group"></i>
 										</div>
-										<div class="row mt-3">
-											<div class="col-lg-6">
-												<span class="text-dark primary md-text f-500">Trivia</span>
-												<span
-													class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
-													(click)="onEditFillerGroup()"></span>
+									</div>
+									<div class="col-lg-2 mb-4" *ngFor="let group of filler_group_cache">
+										<div class="bg-white p-3 h-200-px full-width text-center br-5 box-shadowing">
+											<div class="row">
+												<div class="col-lg-12">
+													<img
+														[src]="'/assets/media-files/filler-group-placeholder.png'"
+														class="clickable full-width h-130-px br-5"
+														(click)="navigateToFillerGroup()" />
+												</div>
 											</div>
-											<div class="col-lg-6">
-												<div class="hover-prime clickable">
-													<i class="fas fa-photo-video mr-3"></i>
-													<span class="text-dark primary sm-text">300</span>
+											<div class="row mt-3">
+												<div class="col-lg-6">
+													<span
+														class="text-dark primary sm-text f-500 clickable hover-prime"
+														title="{{ group.name }}"
+														(click)="navigateToFillerGroup()"
+														>{{ group.name | slice : 0 : 6 }}{{ group.name.length > 6 ? '...' : '' }}</span
+													>
+													<span
+														class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
+														title="Edit Filler Group"
+														(click)="onEditFillerGroup(group.fillerGroupId)"></span>
+												</div>
+												<div class="col-lg-6">
+													<div class="hover-prime clickable">
+														<i class="fas fa-photo-video mr-3"></i>
+														<span class="text-dark primary sm-text">{{ group.count }}</span>
+													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-								<div class="col-lg-2">
-									<div class="bg-white p-3 h-200-px full-width text-center br-5 box-shadowing">
-										<div class="row">
-											<div class="col-lg-12">
-												<img
-													[src]="'/assets/media-files/qanda.jpg'"
-													class="clickable full-width h-130-px br-5"
-													(click)="navigateToFillerGroup()" />
-											</div>
-										</div>
-										<div class="row mt-3">
-											<div class="col-lg-6">
-												<span class="text-dark primary md-text f-500">Q & A</span>
-												<span
-													class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
-													(click)="onEditFillerGroup()"></span>
-											</div>
-											<div class="col-lg-6">
-												<div class="hover-prime clickable">
-													<i class="fas fa-photo-video mr-3"></i>
-													<span class="text-dark primary sm-text">56</span>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="col-lg-2">
-									<div class="bg-white p-3 h-200-px full-width text-center br-5 box-shadowing">
-										<div class="row">
-											<div class="col-lg-12">
-												<img [src]="'/assets/media-files/holiday.jpg'" class="clickable full-width h-130-px br-5" />
-											</div>
-										</div>
-										<div class="row mt-3">
-											<div class="col-lg-6">
-												<span class="text-dark primary md-text f-500">Holidays</span>
-												<span
-													class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
-													(click)="onEditFillerGroup()"></span>
-											</div>
-											<div class="col-lg-6">
-												<div class="hover-prime clickable">
-													<i class="fas fa-photo-video mr-3"></i>
-													<span class="text-dark primary sm-text">10</span>
-												</div>
-											</div>
-										</div>
+								<div class="row" *ngIf="filler_group.hasNextPage">
+									<div class="col-lg-12 text-center p-0 mt-3">
+										<button
+											class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
+											(click)="getAllFillers(filler_group.page + 1, 12)"
+											[disabled]="is_loading">
+											<span>SHOW MORE</span>
+										</button>
 									</div>
 								</div>
 							</div>
@@ -150,3 +119,9 @@
 		</div>
 	</div>
 </div>
+
+<ng-template #loader>
+	<div class="py-4 h-500">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>

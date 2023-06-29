@@ -11,6 +11,7 @@ export * from './export-service/export.service';
 export * from './fastedge-service/fastedge.service';
 export * from './feed-service/feed.service';
 export * from './filestack-service/filestack.service';
+export * from './filler-service/filler.service';
 export * from './form-service/form.service';
 export * from './helper-service/helper.service';
 export * from './host-service/host.service';

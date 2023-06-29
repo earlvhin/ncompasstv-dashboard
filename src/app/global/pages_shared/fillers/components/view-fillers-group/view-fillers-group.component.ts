@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FillerService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-view-fillers-group',
@@ -8,7 +9,9 @@ import { Component, OnInit } from '@angular/core';
 export class ViewFillersGroupComponent implements OnInit {
 	title = 'Fillers Library';
 
-	constructor() {}
+	constructor(private _filler: FillerService) {}
 
 	ngOnInit() {}
+
+	openGenerateLicenseModal() {}
 }
