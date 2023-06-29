@@ -152,7 +152,7 @@ export class EditFillerGroupComponent implements OnInit {
 		});
 		const dealeradmins = this._formControls.dealerAdmins.value;
 		dealeradmins.map((dealeradmin) => {
-			this.selected_dealeradmins.push(dealeradmin.dealerAdminId);
+			this.selected_dealeradmins.push(dealeradmin.userId);
 		});
 	}
 
