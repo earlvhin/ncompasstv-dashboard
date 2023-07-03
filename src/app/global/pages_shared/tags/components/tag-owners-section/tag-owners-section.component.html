@@ -17,6 +17,18 @@
 					<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation">Assign Tags</span>
 				</button>
 			</div>
+			<div *ngIf="tab != 'dealer'">
+				<button
+					mat-button
+					mat-raised-button
+					class="theme-btn pi-control sm-text _primary mr-2"
+					(click)="exportTable()"
+					[disabled]="workbook_generation"
+					title="Export to CSV">
+					<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+					<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
+				</button>
+			</div>
 			<div *ngIf="hasTagSelected">
 				<div class="p-2 bg-dark text-white text-center br-5">
 					<div class="d-flex">
