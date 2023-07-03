@@ -4,6 +4,8 @@ import { Subject, Subscription } from 'rxjs';
 import { MatSelect, MatDialog } from '@angular/material';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
+import * as filestack from 'filestack-js';
+import { environment } from 'src/environments/environment';
 
 import { DealerService, DealerAdminService, FillerService } from 'src/app/global/services';
 import { API_UPDATE_FILLER_GROUP } from 'src/app/global/models/api_update-filler-groups';
@@ -40,9 +42,9 @@ export class EditFillerGroupComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-		this.initializeForm();
 		this.getDealers();
 		this.getAllDealerAdmin();
+		this.initializeForm();
 		this.getSelectedGroup();
 	}
 
@@ -67,7 +69,6 @@ export class EditFillerGroupComponent implements OnInit {
 		this.subscription.add(
 			this._dealer.get_dealers_with_page_minified(1, '', 0).subscribe((data) => {
 				this.dealers_list = data.paging.entities;
-				this.fillForm();
 			})
 		);
 	}
@@ -86,7 +87,10 @@ export class EditFillerGroupComponent implements OnInit {
 			.get_filler_group_by_id(this.selected_group_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
-				this.selected_group_data = response;
+				this.selected_group_data = response.data[0];
+				setTimeout(() => {
+					this.fillForm();
+				}, 1000);
 			});
 	}
 
@@ -160,7 +164,47 @@ export class EditFillerGroupComponent implements OnInit {
 		this._formControls.inPairs.setValue(toggle.checked === true ? 1 : 0);
 	}
 
-	onUploadImage() {}
+	onUploadImage() {
+		const client = filestack.init(environment.third_party.filestack_api_key);
+		client.picker(this.filestackOptions).open();
+	}
+
+	protected get filestackOptions(): filestack.PickerOptions {
+		return {
+			storeTo: {
+				location: 's3',
+				container: this.selected_group_data.bucketName,
+				region: 'us-east-1'
+			},
+			accept: ['image/jpg', 'image/jpeg', 'image/png'],
+			maxFiles: 1,
+			imageMax: [720, 640],
+			onUploadDone: (response) => {
+				console.log('RESPONSE', response);
+				// const files = response.filesUploaded.map((uploaded) => {
+				// 	const { filename, key } = uploaded;
+				// 	return { oldFile: filename, newFile: key };
+				// });
+
+				// const toUpload: HOST_S3_FILE = {
+				// 	hostId: this.hostId,
+				// 	type: 1,
+				// 	createdBy: this.currentUser.user_id,
+				// 	files
+				// };
+
+				// this._host
+				// 	.upload_s3_files(toUpload)
+				// 	.pipe(takeUntil(this._unsubscribe))
+				// 	.subscribe(
+				// 		() => this.ngOnInit(),
+				// 		(error) => {
+				// 			throw new Error(error);
+				// 		}
+				// 	);
+			}
+		};
+	}
 
 	protected get _formControls() {
 		return this.form.controls;

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
@@ -9,6 +9,10 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 	providedIn: 'root'
 })
 export class FillerService extends BaseService {
+	http_options = {
+		headers: new HttpHeaders({ 'Content-Type': 'multipart/form-data' })
+	};
+
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}
@@ -31,6 +35,6 @@ export class FillerService extends BaseService {
 
 	get_filler_group_by_id(id: string) {
 		let url = `${this.getters.api_get_filler_group_by_id}?id=${id}`;
-		return this.getRequest(url).map((data) => data.data[0]);
+		return this.getRequest(url);
 	}
 }

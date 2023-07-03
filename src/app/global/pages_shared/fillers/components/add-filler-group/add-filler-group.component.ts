@@ -88,6 +88,4 @@ export class AddFillerGroupComponent implements OnInit {
 	onTogglePairs(toggle) {
 		this.inpairs = toggle.returnValue == true ? 1 : 0;
 	}
-
-	onUploadImage() {}
 }
