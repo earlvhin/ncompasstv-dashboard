@@ -154,57 +154,52 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 			.getAllOwnerAndTags({ keyword, page, pageSize }, this._isDealer())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
-				const tags = response.paging.entities as TAG[];
-
-				if (tags.length <= 0) {
-					this.tags_to_export = [];
-					return;
-				} else {
+				if (response.paging && response.paging.entities) {
 					this.tags_to_export = [...response.paging.entities];
-				}
 
-				this.tags_to_export.sort((a, b) => {
-					const assigneeA = a.displayName.toLowerCase();
-					const assigneeB = b.displayName.toLowerCase();
+					this.tags_to_export.sort((a, b) => {
+						const assigneeA = a.displayName.toLowerCase();
+						const assigneeB = b.displayName.toLowerCase();
 
-					if (assigneeA < assigneeB) {
-						return -1;
-					} else if (assigneeA > assigneeB) {
-						return 1;
-					} else {
-						return 0;
+						if (assigneeA < assigneeB) {
+							return -1;
+						} else if (assigneeA > assigneeB) {
+							return 1;
+						} else {
+							return 0;
+						}
+					});
+
+					this.tags_to_export.sort((a, b) => {
+						const tagTypeNameA = a.tagTypeName.toLowerCase();
+						const tagTypeNameB = b.tagTypeName.toLowerCase();
+
+						if (tagTypeNameA < tagTypeNameB) {
+							return -1;
+						} else if (tagTypeNameA > tagTypeNameB) {
+							return 1;
+						} else {
+							return 0;
+						}
+					});
+
+					this.tags_to_export.forEach((item) => {
+						const tagNames = item.tags.map((tag) => tag.name).join(', ');
+						const ownerAlias = item.owner.alias || item.owner.dealerIdAlias;
+						const row = {
+							licenseKey: item.owner.licenseKey,
+							displayName: item.displayName,
+							tagTypeName: item.tagTypeName,
+							tags: tagNames,
+							owner: ownerAlias
+						};
+						this.worksheet.addRow(row).font = { bold: false };
+					});
+
+					let rowIndex = 1;
+					for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
+						this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 					}
-				});
-
-				this.tags_to_export.sort((a, b) => {
-					const tagTypeNameA = a.tagTypeName.toLowerCase();
-					const tagTypeNameB = b.tagTypeName.toLowerCase();
-
-					if (tagTypeNameA < tagTypeNameB) {
-						return -1;
-					} else if (tagTypeNameA > tagTypeNameB) {
-						return 1;
-					} else {
-						return 0;
-					}
-				});
-
-				this.tags_to_export.forEach((item) => {
-					const tagNames = item.tags.map((tag) => tag.name).join(', ');
-					const ownerAlias = item.owner.alias || item.owner.dealerIdAlias;
-					const row = {
-						licenseKey: item.owner.licenseKey,
-						displayName: item.displayName,
-						tagTypeName: item.tagTypeName,
-						tags: tagNames,
-						owner: ownerAlias
-					};
-					this.worksheet.addRow(row).font = { bold: false };
-				});
-
-				let rowIndex = 1;
-				for (rowIndex; rowIndex <= this.worksheet.rowCount; rowIndex++) {
-					this.worksheet.getRow(rowIndex).alignment = { vertical: 'middle', horizontal: 'center', wrapText: true };
 				}
 
 				this.workbook.xlsx.writeBuffer().then((file: any) => {
@@ -215,6 +210,16 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 				this.workbook_generation = false;
 			});
+
+		if (!this.tags_to_export) {
+			this.workbook.xlsx.writeBuffer().then((file: any) => {
+				const blob = new Blob([file], { type: EXCEL_TYPE });
+				const filename = 'Tags' + '.xlsx';
+				saveAs(blob, filename);
+			});
+
+			this.workbook_generation = false;
+		}
 	}
 
 	private clearSelectedTag(): void {
