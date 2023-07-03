@@ -37,4 +37,9 @@ export class FillerService extends BaseService {
 		let url = `${this.getters.api_get_filler_group_by_id}?id=${id}`;
 		return this.getRequest(url);
 	}
+
+	update_filler_group_photo(data: any) {
+		const url = this.updaters.api_update_filler_group_photo;
+		return this.postRequest(url, data);
+	}
 }

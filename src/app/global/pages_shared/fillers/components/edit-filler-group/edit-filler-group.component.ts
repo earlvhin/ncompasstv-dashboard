@@ -129,11 +129,11 @@ export class EditFillerGroupComponent implements OnInit {
 			.add_filler_group(updateFillerGroup)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				this.openConfirmationModal('success', 'Filler Group Updated!', 'Hurray! You successfully modified a Filler Group');
+				this.openConfirmationModal('success', 'Filler Group Updated!', 'Hurray! You successfully modified a Filler Group', true);
 			});
 	}
 
-	openConfirmationModal(status: string, message: string, data: any): void {
+	openConfirmationModal(status: string, message: string, data: any, close?): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -144,9 +144,11 @@ export class EditFillerGroupComponent implements OnInit {
 			}
 		});
 
-		dialog.afterClosed().subscribe(() => {
-			this._dialog.closeAll();
-		});
+		if (close) {
+			dialog.afterClosed().subscribe(() => {
+				this._dialog.closeAll();
+			});
+		}
 	}
 
 	modifyData() {
@@ -172,36 +174,34 @@ export class EditFillerGroupComponent implements OnInit {
 	protected get filestackOptions(): filestack.PickerOptions {
 		return {
 			storeTo: {
-				location: 's3',
-				container: this.selected_group_data.bucketName,
-				region: 'us-east-1'
+				container: this.selected_group_data.bucketName + '/',
+				region: 'us-east-2'
 			},
 			accept: ['image/jpg', 'image/jpeg', 'image/png'],
 			maxFiles: 1,
 			imageMax: [720, 640],
 			onUploadDone: (response) => {
-				console.log('RESPONSE', response);
-				// const files = response.filesUploaded.map((uploaded) => {
-				// 	const { filename, key } = uploaded;
-				// 	return { oldFile: filename, newFile: key };
-				// });
+				let sliced_imagekey = response.filesUploaded[0].key.split('/');
+				sliced_imagekey = sliced_imagekey[sliced_imagekey.length - 1].split('_');
+				const coverphoto = {
+					fillerGroupId: this.selected_group_data.fillerGroupId,
+					coverPhoto: sliced_imagekey[0] + '_' + response.filesUploaded[0].filename
+				};
 
-				// const toUpload: HOST_S3_FILE = {
-				// 	hostId: this.hostId,
-				// 	type: 1,
-				// 	createdBy: this.currentUser.user_id,
-				// 	files
-				// };
-
-				// this._host
-				// 	.upload_s3_files(toUpload)
-				// 	.pipe(takeUntil(this._unsubscribe))
-				// 	.subscribe(
-				// 		() => this.ngOnInit(),
-				// 		(error) => {
-				// 			throw new Error(error);
-				// 		}
-				// 	);
+				this._filler
+					.update_filler_group_photo(coverphoto)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						() =>
+							this.openConfirmationModal(
+								'success',
+								'Filler Group Cover Photo Updated!',
+								'Hurray! You successfully updated Filler Group Cover Photo'
+							)
+						// (error) => {
+						// 	throw new Error(error);
+						// }
+					);
 			}
 		};
 	}

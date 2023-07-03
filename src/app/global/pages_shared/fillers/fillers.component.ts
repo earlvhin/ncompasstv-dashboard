@@ -72,6 +72,9 @@ export class FillersComponent implements OnInit {
 				filler_group_id: id
 			}
 		});
+		dialog.afterClosed().subscribe(() => {
+			this.ngOnInit();
+		});
 	}
 
 	navigateToFillerGroup() {

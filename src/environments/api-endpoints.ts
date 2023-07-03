@@ -281,6 +281,7 @@ export const API_ENDPOINTS = {
 		api_update_dealer: 'dealer/update',
 		api_update_dealer_values: 'dealer/updatedealervalues',
 		api_update_feed: 'feed/update',
+		api_update_filler_group_photo: 'filler/group/update/coverphoto',
 		api_update_generated_feed: 'feed/edit',
 		api_update_host: 'host/updatehost',
 		api_update_license_boot_delay: 'license/bootdelay',

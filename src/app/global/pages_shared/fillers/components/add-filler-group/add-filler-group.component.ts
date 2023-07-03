@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { MatDialog } from '@angular/material';
 import { Route, Router } from '@angular/router';
+import * as filestack from 'filestack-js';
+import { environment } from 'src/environments/environment';
 
 import { API_CREATE_FILLER_GROUP } from 'src/app/global/models/api_create_filler_group';
 import { FillerService, AuthService } from 'src/app/global/services';
@@ -15,6 +17,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 	styleUrls: ['./add-filler-group.component.scss']
 })
 export class AddFillerGroupComponent implements OnInit {
+	added_data: any;
 	description = 'Enter filler group details ';
 	form: FormGroup;
 	inpairs = 0;
@@ -52,24 +55,88 @@ export class AddFillerGroupComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
-					this.openConfirmationModal('success', 'Filler Group Created!', 'Hurray! You successfully created a Filler Group');
+					this.added_data = data;
+					this.selectionModal(
+						'warning',
+						'Filler Group Created!',
+						'Hurray! You successfully created a Filler Group.' +
+							'\n' +
+							'Do you want to proceed with uploading the Filler Group Album Photo?'
+					);
 				},
-				(error) => {
-					// this.is_creating_host = false;
-					// this.openConfirmationModal('error', 'Host Place Creation Failed', 'An error occured while saving your data', null);
-				}
+				(error) => {}
 			);
+	}
+
+	selectionModal(status, message, data) {
+		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status: status,
+				message: message,
+				data: data,
+				rename: true,
+				filler_photo: true,
+				is_selection: false
+			}
+		});
+
+		dialogRef.afterClosed().subscribe((response) => {
+			if (response === 'no_upload') {
+				this._dialog.closeAll();
+			} else {
+				console.log('DATA', this.added_data);
+				this.onUploadImage();
+			}
+		});
+	}
+
+	onUploadImage() {
+		const client = filestack.init(environment.third_party.filestack_api_key);
+		client.picker(this.filestackOptions).open();
+	}
+
+	protected get filestackOptions(): filestack.PickerOptions {
+		return {
+			storeTo: {
+				container: this.added_data.bucketName + '/',
+				region: 'us-east-2'
+			},
+			accept: ['image/jpg', 'image/jpeg', 'image/png'],
+			maxFiles: 1,
+			imageMax: [720, 640],
+			onUploadDone: (response) => {
+				let sliced_imagekey = response.filesUploaded[0].key.split('/');
+				sliced_imagekey = sliced_imagekey[sliced_imagekey.length - 1].split('_');
+				const coverphoto = {
+					fillerGroupId: this.added_data.fillerGroupId,
+					coverPhoto: sliced_imagekey[0] + '_' + response.filesUploaded[0].filename
+				};
+
+				this._filler
+					.update_filler_group_photo(coverphoto)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe(
+						() =>
+							this.openConfirmationModal(
+								'success',
+								'Filler Group Cover Photo Updated!',
+								'Hurray! You successfully updated Filler Group Cover Photo'
+							)
+						// (error) => {
+						// 	throw new Error(error);
+						// }
+					);
+			}
+		};
 	}
 
 	openConfirmationModal(status: string, message: string, data: any): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
+			data: { status, message, data }
 		});
 
 		dialog.afterClosed().subscribe(() => {
