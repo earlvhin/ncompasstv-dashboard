@@ -105,7 +105,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.subscribeToSearch();
 		this.playlist_content_backup = this._contentsBackup;
 		this.setScheduleStatus();
+
+		// ensure that all contents are initially ordered by sequence
+		this.playlist_contents = [...this.fixSequences()];
+
+		// filter out contents to show only active ones
 		this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
+
 		this.getAssetCount();
 		this.currentStatusFilter = this.statusFilterOptions[1];
 		this.playlist_saving = false;
@@ -132,9 +138,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		});
 
 		this.getCurrentAssetCount();
-
-		// ensure that all content are initially ordered by sequence
-		this.playlist_contents = [...this.fixSequences()];
 	}
 
 	ngOnDestroy() {
