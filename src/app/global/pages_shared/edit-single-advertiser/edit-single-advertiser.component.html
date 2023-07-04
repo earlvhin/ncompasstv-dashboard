@@ -99,7 +99,7 @@
 
 			<div class="row mb-3">
 				<div class="col-lg-12">
-					<mat-checkbox (change)="getCanadaAddress($event)"> Canada Address </mat-checkbox>
+					<mat-checkbox [(ngModel)]="canada_selected" [ngModelOptions]="{ standalone: true }" (change)="getCanadaAddress($event)"> Canada Address </mat-checkbox>
 				</div>
 			</div>
 
@@ -122,7 +122,8 @@
 							[search_keyword]="'city_state'"
 							[primary_keyword]="'city_state'"
 							[new_value]="city_selected"
-							[initial_value]="city_selected">
+							[initial_value]="city_selected"
+							[is_city]="true">
 						</app-autocomplete-field>
 					</div>
 				</ng-container>
@@ -161,7 +162,7 @@
 				</div>
 			</div>
 
-			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" color="primary" [disabled]="edit_advertiser_form.invalid">
+			<button mat-button mat-raised-button type="submit" class="theme-btn mt-4 mr-2" color="primary" [disabled]="edit_advertiser_form.invalid || (canada_selected && edit_advertiser_form.get('zip').value.length !== 6) || (!canada_selected && edit_advertiser_form.get('zip').value.length !== 5)">
 				Update
 			</button>
 			<button mat-button mat-raised-button class="theme-btn mt-4" [mat-dialog-close]="false">Cancel</button>
