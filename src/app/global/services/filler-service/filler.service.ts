@@ -38,8 +38,18 @@ export class FillerService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_filler_group_contents(id: string) {
+		let url = `${this.getters.api_get_filler_group_contents}?id=${id}`;
+		return this.getRequest(url);
+	}
+
 	update_filler_group_photo(data: any) {
 		const url = this.updaters.api_update_filler_group_photo;
+		return this.postRequest(url, data);
+	}
+
+	update_filler_contents(data: any) {
+		const url = this.updaters.api_update_fillers_content;
 		return this.postRequest(url, data);
 	}
 }

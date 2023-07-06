@@ -181,6 +181,7 @@ export class EditFillerGroupComponent implements OnInit {
 			maxFiles: 1,
 			imageMax: [720, 640],
 			onUploadDone: (response) => {
+				console.log('RESPONSE', response);
 				let sliced_imagekey = response.filesUploaded[0].key.split('/');
 				sliced_imagekey = sliced_imagekey[sliced_imagekey.length - 1].split('_');
 				const coverphoto = {

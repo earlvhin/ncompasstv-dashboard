@@ -167,8 +167,11 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 						component: FillersComponent
 					},
 					{
-						path: 'view-fillers-group',
-						component: ViewFillersGroupComponent
+						path: 'view-fillers-group/:data',
+						component: ViewFillersGroupComponent,
+						data: {
+							breadcrumb: 'View Filler Group Contents'
+						}
 					}
 				]
 			},

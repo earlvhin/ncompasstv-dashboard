@@ -67,7 +67,7 @@
 													<span
 														class="sm-text f-500 clickable hover-prime"
 														title="{{ group.name }}"
-														(click)="navigateToFillerGroup()"
+														(click)="navigateToFillerGroup(group.fillerGroupId)"
 														>{{ group.name | slice : 0 : 20 }}{{ group.name.length > 20 ? '...' : '' }}</span
 													>
 												</div>
@@ -78,7 +78,7 @@
 														<img
 															[src]="group.coverPhoto"
 															class="clickable full-width h-130-px br-5"
-															(click)="navigateToFillerGroup()" />
+															(click)="navigateToFillerGroup(group.fillerGroupId)" />
 													</div>
 												</div>
 											</div>
@@ -142,6 +142,6 @@
 		<img
 			[src]="'/assets/media-files/filler-group-placeholder.png'"
 			class="clickable full-width h-130-px br-5"
-			(click)="navigateToFillerGroup()" />
+			(click)="navigateToFillerGroup(group.fillerGroupId)" />
 	</div>
 </ng-template>

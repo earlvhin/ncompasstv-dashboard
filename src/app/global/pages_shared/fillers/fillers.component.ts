@@ -77,9 +77,9 @@ export class FillersComponent implements OnInit {
 		});
 	}
 
-	navigateToFillerGroup() {
+	navigateToFillerGroup(id) {
 		this._router.navigate([]).then(() => {
-			window.open(`/administrator/fillers/view-fillers-group`, '_blank');
+			window.open(`/administrator/fillers/view-fillers-group/` + id, '_blank');
 		});
 	}
 
@@ -99,6 +99,7 @@ export class FillersComponent implements OnInit {
 						});
 					} else {
 						this.filler_group_cache = data.paging.entities;
+						console.log('FGC', this.filler_group_cache);
 					}
 					this.filler_group = data.paging;
 				} else {

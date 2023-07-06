@@ -8,6 +8,7 @@ import { RouterModule } from '@angular/router';
 import { environment } from '../../environments/environment';
 import { EditorModule } from '@tinymce/tinymce-angular';
 import { AddCardComponent } from './pages_shared/profile-setting/payment-setting/add-card/add-card.component';
+import { AddFillerContentComponent } from './pages_shared/fillers/components/add-filler-content/add-filler-content.component';
 import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-filler-group/add-filler-group.component';
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
@@ -192,6 +193,7 @@ import { LicenseViewComponent } from './components_shared/locator_components/lic
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
+import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.component';
 
@@ -225,10 +227,10 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
-import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 
 const ngComponents = [
 	AddCardComponent,
+	AddFillerContentComponent,
 	AddFillerGroupComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
@@ -401,6 +403,7 @@ const ngComponents = [
 	UserTypeComponent,
 	ViewCardsComponent,
 	ViewDmaHostComponent,
+	ViewFillersGroupComponent,
 	ViewSchedulesComponent,
 	WarningAnimationComponent,
 	WarningPopupComponent,
@@ -443,9 +446,10 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, ViewFillersGroupComponent],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
+		AddFillerContentComponent,
 		AddFillerGroupComponent,
 		AssignLicenseModalComponent,
 		BulkEditBusinessHoursComponent,
