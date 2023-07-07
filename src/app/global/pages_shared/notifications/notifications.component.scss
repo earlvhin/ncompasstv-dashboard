@@ -17,6 +17,15 @@
     }
 }
 
+.notification-header {
+	padding: 10px 0;
+	position: relative;
+}
+
+.notification-content {
+	width: 83%;
+}
+
 .mark-as-resolved {
     border: none;
     font-size: 10px;
@@ -86,3 +95,9 @@
     }
   }
   
+
+  @media only screen and (max-width: 1024px) {
+    .notification-content {
+      width: 80%;
+    }
+  } 
