@@ -30,7 +30,9 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 	searching: boolean = false;
 	initial_load: boolean = true;
 	search_data: string = '';
-	search_field_placeholder = !this.call_to_other_page ? 'Search Dealer Alias, Business Name, or #Tag' : 'Search Advertiser Name or Business Name';
+	search_field_placeholder = !this.call_to_other_page
+		? 'Search Dealer Alias, Business Name, Contact Person or #Tag'
+		: 'Search Advertiser Name or Business Name';
 	sort_column: string = '';
 	sort_order: string = '';
 	workbook: any;
