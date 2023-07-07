@@ -56,6 +56,7 @@ export class AddFillerGroupComponent implements OnInit {
 			.subscribe(
 				(data: any) => {
 					this.added_data = data;
+					this._dialog.closeAll();
 					this.selectionModal(
 						'warning',
 						'Filler Group Created!',
@@ -86,7 +87,6 @@ export class AddFillerGroupComponent implements OnInit {
 			if (response === 'no_upload') {
 				this._dialog.closeAll();
 			} else {
-				console.log('DATA', this.added_data);
 				this.onUploadImage();
 			}
 		});

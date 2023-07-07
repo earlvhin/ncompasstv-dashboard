@@ -9,6 +9,7 @@ import { UI_CONFIRMATION_MODAL } from 'src/app/global/models';
 })
 export class ConfirmationModalComponent implements OnInit {
 	action: string;
+	delete = false;
 	message: string;
 	title: string;
 	rename: boolean;
@@ -30,6 +31,7 @@ export class ConfirmationModalComponent implements OnInit {
 		this.is_selection = typeof this.dialogData.is_selection !== 'undefined' ? this.dialogData.is_selection : false;
 		this.is_installation = typeof this.dialogData.is_installation !== 'undefined' ? this.dialogData.is_installation : false;
 		this.filler_photo = typeof this.dialogData.filler_photo !== 'undefined' ? this.dialogData.filler_photo : false;
+		this.delete = this.dialogData.delete;
 	}
 
 	displaySuccess() {
@@ -52,5 +54,9 @@ export class ConfirmationModalComponent implements OnInit {
 
 	continueUpload() {
 		this.dialogRef.close('upload');
+	}
+
+	deleteContent() {
+		this.dialogRef.close('delete');
 	}
 }

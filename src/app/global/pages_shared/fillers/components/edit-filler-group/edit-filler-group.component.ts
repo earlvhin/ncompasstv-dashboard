@@ -167,6 +167,7 @@ export class EditFillerGroupComponent implements OnInit {
 	}
 
 	onUploadImage() {
+		this._dialog.closeAll();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions).open();
 	}
@@ -181,30 +182,28 @@ export class EditFillerGroupComponent implements OnInit {
 			maxFiles: 1,
 			imageMax: [720, 640],
 			onUploadDone: (response) => {
-				console.log('RESPONSE', response);
-				let sliced_imagekey = response.filesUploaded[0].key.split('/');
-				sliced_imagekey = sliced_imagekey[sliced_imagekey.length - 1].split('_');
 				const coverphoto = {
 					fillerGroupId: this.selected_group_data.fillerGroupId,
-					coverPhoto: sliced_imagekey[0] + '_' + response.filesUploaded[0].filename
+					coverPhoto: this.splitFileName(response.filesUploaded[0].key)
 				};
 
 				this._filler
 					.update_filler_group_photo(coverphoto)
 					.pipe(takeUntil(this._unsubscribe))
-					.subscribe(
-						() =>
-							this.openConfirmationModal(
-								'success',
-								'Filler Group Cover Photo Updated!',
-								'Hurray! You successfully updated Filler Group Cover Photo'
-							)
-						// (error) => {
-						// 	throw new Error(error);
-						// }
+					.subscribe(() =>
+						this.openConfirmationModal(
+							'success',
+							'Filler Group Cover Photo Updated!',
+							'Hurray! You successfully updated Filler Group Cover Photo'
+						)
 					);
 			}
 		};
+	}
+
+	splitFileName(name) {
+		const splitted_file_name = name.split('/').pop();
+		return splitted_file_name;
 	}
 
 	protected get _formControls() {

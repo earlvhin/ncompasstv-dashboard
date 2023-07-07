@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { AddFillerContentComponent } from '../add-filler-content/add-filler-content.component';
+import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-view-fillers-group',
@@ -13,9 +14,10 @@ import { AddFillerContentComponent } from '../add-filler-content/add-filler-cont
 })
 export class ViewFillersGroupComponent implements OnInit {
 	filler_group_contents: [];
-	filler_group_data: [];
+	filler_group_data: any;
 	filler_group_id: string;
 	is_loading = true;
+	selected_filler: string;
 	title = 'Fillers Library';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -23,6 +25,7 @@ export class ViewFillersGroupComponent implements OnInit {
 	constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog) {}
 
 	ngOnInit() {
+		console.log('CALLED');
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
 			this.filler_group_id = this._params.snapshot.params.data;
 		});
@@ -63,11 +66,13 @@ export class ViewFillersGroupComponent implements OnInit {
 		let dialog = this._dialog.open(AddFillerContentComponent, {
 			width: '500px',
 			data: {
-				group: group
+				group: group,
+				all_media: this.filler_group_contents
 			}
 		});
 
 		dialog.afterClosed().subscribe(() => {
+			console.log('HERE');
 			this.ngOnInit();
 		});
 	}
@@ -77,4 +82,40 @@ export class ViewFillersGroupComponent implements OnInit {
 	}
 
 	openGenerateLicenseModal() {}
+
+	deleteContent(id) {
+		this.selected_filler = id;
+		this.warningModal('warning', 'Delete Filler', 'Are you sure you want to delete this filler?', '', 'delete', true);
+	}
+
+	private warningModal(status: string, message: string, data: string, return_msg: string, action: string, todelete?: boolean): void {
+		this._dialog.closeAll();
+
+		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: {
+				status,
+				message,
+				data,
+				return_msg,
+				action,
+				delete: todelete
+			}
+		});
+
+		dialogRef.afterClosed().subscribe((result) => {
+			if (result == 'delete') {
+				this._filler
+					.delete_filler_contents(this.selected_filler)
+					.pipe(takeUntil(this._unsubscribe))
+					.subscribe((data: any) => {
+						this.warningModal('success', 'Delete Filler', 'Filler Content ' + data.message, '', '', false);
+						this.ngOnInit();
+					});
+			} else {
+				this.ngOnInit();
+			}
+		});
+	}
 }

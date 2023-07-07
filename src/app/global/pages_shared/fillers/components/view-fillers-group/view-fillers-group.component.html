@@ -36,7 +36,10 @@
 							<span class="fa fa-wifi text-primary" *ngIf="data.fileType === 'feed'" title="Feed"></span>
 						</div>
 						<div class="col-lg-6 text-right bg-dark p-2">
-							<span class="fas fa-times text-danger"></span>
+							<span
+								class="fas fa-times text-danger clickable"
+								title="Delete Content"
+								(click)="deleteContent(data.fillerContentId)"></span>
 						</div>
 					</div>
 					<div class="row no-gutters">

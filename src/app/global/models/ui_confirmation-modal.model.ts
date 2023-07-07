@@ -8,4 +8,5 @@ export interface UI_CONFIRMATION_MODAL {
 	rename?: boolean;
 	return_msg?: string;
 	status?: string;
+	delete?: boolean;
 }

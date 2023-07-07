@@ -338,6 +338,7 @@ export const API_ENDPOINTS = {
 		api_delete_contract_details: 'dealer/deletecontractfiles?filename=',
 		api_delete_credit_card: 'billing/delete/creditcard',
 		api_delete_dealer_admin: 'dealeradmin/delete/assigned/dealers',
+		api_delete_filler_content: 'filler/content/delete',
 		api_delete_territory_details: 'dealer/deleteterritoryfiles?filename=',
 		api_delete_screenshot: 'pi/deletescreenshots',
 		api_remove_advertiser: 'advertiser/removeadvertiser?advertiserid=',

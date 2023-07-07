@@ -17,13 +17,14 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 export class AddFillerContentComponent implements OnInit {
 	form: FormGroup;
 	media_type = 'photos';
+	all_media = this.page_data.all_media;
 	selected_group = this.page_data.group;
 	upload_holder: any;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public page_data: { group: any },
+		@Inject(MAT_DIALOG_DATA) public page_data: { group: any; all_media: any },
 		private _form_builder: FormBuilder,
 		private _filler: FillerService,
 		private _dialog: MatDialog,
@@ -43,12 +44,14 @@ export class AddFillerContentComponent implements OnInit {
 
 	onUploadImage() {
 		this.upload_holder = [];
+		// this._dialog.closeAll();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions(['image/jpg', 'image/jpeg', 'image/png'], [720, 640], 'Image')).open();
 	}
 
 	onUploadVideo() {
 		this.upload_holder = [];
+		this._dialog.closeAll();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video')).open();
 	}
@@ -62,6 +65,64 @@ export class AddFillerContentComponent implements OnInit {
 			accept: filetypes,
 			maxFiles: 10,
 			imageMax: imagemaximum,
+			// onFileSelected: (e) => {
+			// 	this.data_to_upload = [];
+			// 	return new Promise((resolve, reject) => {
+			// 		// Do something async
+			// 		this.all_media.map((med) => {
+			// 			if (med.title != null && !this.removed_index) {
+			// 				med.fileName = med.title;
+			// 				var name_no_index = this.removeIndexes(med.fileName);
+			// 				med.fileName = name_no_index + '.' + med.fileType;
+			// 			} else {
+			// 				var temp = med.fileName.split('.');
+			// 				med.fileName = this.removeIndexes(med.fileName);
+			// 				med.fileName = med.fileName + '.' + temp[temp.length - 1];
+			// 			}
+			// 		});
+
+			// 		//Additional Checking for video conversion duplicate
+			// 		if (e.originalFile.type.includes('video') && !convert_to_webm) {
+			// 			var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
+			// 			temp = temp + '.webm';
+			// 			e.originalFile.name = temp;
+			// 		}
+
+			// 		e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
+
+			// 		if (!this.is_dealer) {
+			// 			this.duplicate_files = this.summarized_media.filter((media) => {
+			// 				return media.title.indexOf(e.originalFile.name) !== -1;
+			// 			});
+			// 		} else {
+			// 			this.duplicate_files = this.all_media.filter((media) => {
+			// 				return media.title.indexOf(e.originalFile.name) !== -1;
+			// 			});
+			// 		}
+
+			// 		if (this.duplicate_files.length > 0) {
+			// 			this.data_to_upload.push(e);
+
+			// 			this.warningModal('warning', 'Duplicate Filename', 'Are you sure you want to continue upload?', '', 'rename').then(
+			// 				(result) => {
+			// 					if (result === 'upload') {
+			// 						this.postContentInfo(this.duplicate_files, this.data_to_upload, false);
+			// 						resolve({ filename: this.modified_data[0].filename });
+			// 						//temporarily add recently uploaded to array
+			// 						this.all_media.push({ fileName: this.modified_data[0].filename });
+			// 					} else {
+			// 						this.renameModal().then((name) => {
+			// 							var temp = this.data_to_upload[0].mimetype.split('/');
+			// 							resolve({ filename: name + '.' + temp[temp.length - 1] });
+			// 						});
+			// 					}
+			// 				}
+			// 			);
+			// 		} else {
+			// 			resolve({});
+			// 		}
+			// 	});
+			// },
 			onUploadDone: (response) => {
 				response.filesUploaded.map((uploaded) => {
 					const file_type = uploaded.mimetype.split('/');
@@ -78,18 +139,27 @@ export class AddFillerContentComponent implements OnInit {
 					files: this.upload_holder
 				};
 
-				if (type === 'Video') {
-					console.log('FILES UPLOADED', response.filesUploaded);
-					const file_data = this._filestack.process_uploaded_files(response.filesUploaded, '');
-					// if (file_data) {
-					console.log('FILE DATA', file_data);
-					// this.uploadContentToDatabase(file_data, type);
-					// }
-				} else {
-					this.uploadContentToDatabase(final_upload_to_db, type);
-				}
+				// if (type === 'Video') {
+				// 	console.log('FILES UPLOADED', response.filesUploaded);
+				// 	console.log('FILES CONVERTED', this._filestack.convert_videos(response.filesUploaded[0]));
+				// 	// const file_data = this._filestack.convert_videos(response.filesUploaded);
+				// 	// if (file_data) {
+				// 	// console.log('FILE DATA', file_data);
+				// 	// this.uploadContentToDatabase(file_data.__zone_symbol__value, type);
+				// 	// }
+				// } else {
+				this.uploadContentToDatabase(final_upload_to_db, type);
+				// }
 			}
 		};
+	}
+
+	removeIndexes(data) {
+		if (data.indexOf('(') > 0) {
+			return data.slice(0, data.indexOf('('));
+		} else {
+			return data.slice(0, data.indexOf('.'));
+		}
 	}
 
 	uploadContentToDatabase(data, type) {
