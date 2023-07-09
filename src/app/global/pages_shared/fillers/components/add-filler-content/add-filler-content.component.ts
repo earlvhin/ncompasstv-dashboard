@@ -4,10 +4,11 @@ import * as filestack from 'filestack-js';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
-import { MAT_DIALOG_DATA, MatDialog } from '@angular/material';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
 import { FillerService, FilestackService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { AddFillerFeedsComponent } from './components/add-filler-feeds/add-filler-feeds.component';
 
 @Component({
 	selector: 'app-add-filler-content',
@@ -16,7 +17,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 })
 export class AddFillerContentComponent implements OnInit {
 	form: FormGroup;
-	media_type = 'photos';
+	media_type = 'image';
 	all_media = this.page_data.all_media;
 	selected_group = this.page_data.group;
 	upload_holder: any;
@@ -44,7 +45,7 @@ export class AddFillerContentComponent implements OnInit {
 
 	onUploadImage() {
 		this.upload_holder = [];
-		// this._dialog.closeAll();
+		this._dialog.closeAll();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions(['image/jpg', 'image/jpeg', 'image/png'], [720, 640], 'Image')).open();
 	}
@@ -54,6 +55,32 @@ export class AddFillerContentComponent implements OnInit {
 		this._dialog.closeAll();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video')).open();
+	}
+
+	onUploadFeed() {
+		this._dialog.closeAll();
+		let dialogRef = this._dialog.open(AddFillerFeedsComponent, {
+			width: '500px',
+			height: '350px',
+			data: {}
+		});
+
+		dialogRef.afterClosed().subscribe((response) => {
+			if (response) {
+				const modified_details = {
+					title: response.title,
+					filetype: this.media_type,
+					url: response.url
+				};
+				const files_temp = [];
+				files_temp.push(modified_details);
+				const final_upload_to_db = {
+					fillerGroupId: this.selected_group.fillerGroupId,
+					files: files_temp
+				};
+				this.uploadContentToDatabase(final_upload_to_db, this.media_type);
+			}
+		});
 	}
 
 	filestackOptions(filetypes, imagemaximum, type): filestack.PickerOptions {
@@ -128,7 +155,7 @@ export class AddFillerContentComponent implements OnInit {
 					const file_type = uploaded.mimetype.split('/');
 					const modified_details = {
 						filename: this.splitFileName(uploaded.key),
-						filetype: file_type[0],
+						filetype: this.media_type,
 						handlerid: uploaded.handle
 					};
 					this.upload_holder.push(modified_details);

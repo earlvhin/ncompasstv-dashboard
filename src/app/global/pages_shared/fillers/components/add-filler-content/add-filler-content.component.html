@@ -20,7 +20,7 @@
 			<mat-form-field class="full-width">
 				<mat-label>Select Media Type</mat-label>
 				<mat-select [(value)]="media_type">
-					<mat-option value="photo">Photo</mat-option>
+					<mat-option value="image">Image</mat-option>
 					<mat-option value="video">Video</mat-option>
 					<mat-option value="feed">Feed</mat-option>
 				</mat-select>
@@ -30,15 +30,20 @@
 
 	<div class="row no-gutters">
 		<div class="col-lg-12 text-right">
-			<button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'photo'" (click)="onUploadImage()">
+			<button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'image'" (click)="onUploadImage()">
 				<span class="fas fa-image mr-2"></span>
-				<span> Upload Photos Here </span>
+				<span> Upload Images Here </span>
 			</button>
 
 			<!-- <button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'video'" (click)="onUploadVideo()">
 				<span class="fas fa-image mr-2"></span>
 				<span> Upload Videos Here </span>
 			</button> -->
+
+			<button mat-button mat-raised-button class="theme-btn" *ngIf="media_type === 'feed'" (click)="onUploadFeed()">
+				<span class="fas fa-news mr-2"></span>
+				<span> Upload Feed Here </span>
+			</button>
 		</div>
 	</div>
 </div>
