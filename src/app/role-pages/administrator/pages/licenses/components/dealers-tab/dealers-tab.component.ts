@@ -5,7 +5,7 @@ import { Subject } from 'rxjs';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 
 import { API_DEALER, API_FILTERS, PAGING, UI_TABLE_LICENSE_BY_DEALER } from 'src/app/global/models';
-import { DealerService } from 'src/app/global/services';
+import { AuthService, DealerService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-dealers-tab',
@@ -22,15 +22,17 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 	isPreloadDataReady = false;
 	searchControl = new FormControl(null);
 	tableColumns = this._tableColumns;
+	role_label: string = '';
 
 	private currentPaging: PAGING = null;
 	private queuedForReset: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	private queuedTableData: UI_TABLE_LICENSE_BY_DEALER[] = [];
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _datePipe: DatePipe, private _dealer: DealerService, private _titlePipe: TitleCasePipe) {}
+	constructor(private _datePipe: DatePipe, private _dealer: DealerService, private _titlePipe: TitleCasePipe, private _auth: AuthService) {}
 
 	ngOnInit() {
+		this.formTitle();
 		this.loadDealers().add(() => (this.queuedForReset = Array.from(this.currentTableData)));
 		this.subscribeToDealerSearch();
 	}
@@ -67,6 +69,14 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 				throw new Error(error);
 			}
 		);
+	}
+
+	formTitle() {
+		if (this._auth.current_role === 'administrator') {
+			this.role_label = 'Search Dealer Alias, Business Name, Contact Person or #Tag';
+		} else {
+			this.role_label = 'Search Dealer Alias, Business Name or Tag';
+		}
 	}
 
 	private getDealers() {
