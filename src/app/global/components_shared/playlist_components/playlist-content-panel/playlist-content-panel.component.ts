@@ -958,14 +958,15 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			// if user erased the keyword
 			if (typeof data === 'undefined' || !data || data.trim().length === 0) {
 				this.playlist_contents = [...this.playlist_content_backup];
-
 				this.playlist_contents = original.filter((content: API_CONTENT) => {
 					const hasCurrentFileType = fileTypes(this.currentFileTypeFilter).includes(content.fileType.toLowerCase());
-					return content.scheduleStatus === this.currentStatusFilter.key && hasCurrentFileType;
+					return content.scheduleStatus == this.currentStatusFilter.key && hasCurrentFileType;
 				});
 
 				if (this.currentFileTypeFilter === 'all') {
-					this.playlist_contents = [...original];
+					this.playlist_contents = original.filter((content) => {
+						return content.scheduleStatus == this.currentStatusFilter.key;
+					});
 					this.getAssetCount();
 					return;
 				}
