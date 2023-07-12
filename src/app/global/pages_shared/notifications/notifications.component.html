@@ -2,9 +2,11 @@
     <div class="row justify-content-center mt-4" *ngIf="notifications; else loading;">
         <div class="col-lg-8">
             <mat-card class="p-4">
-                <h3 class="mb-0">Notifications</h3>
-                <p class="sm-text">All unresolved offline licenses notification. Click "Mark as Resolved" to hide resolved issues.</p>
-                <button class="mark-as-resolved" *ngIf="all_unresolved" (click)="updateAllNotifStatus()">Mark all as resolved</button>
+				<div class="notification-header">
+					<h3 class="mb-0">Notifications</h3>
+					<p class="sm-text">All unresolved offline licenses notification. Click "Mark as Resolved" to hide resolved issues.</p>
+					<button class="mark-as-resolved" *ngIf="all_unresolved" (click)="updateAllNotifStatus()">Mark all as resolved</button>
+				</div>
 
                 <hr class="my-3">
                 
@@ -15,19 +17,21 @@
                         <div class="mark-as-resolved bg-primary text-white">Resolved</div>
                     </ng-template>
 
-                    <h6 class="text-gray font-italic">#{{ i + 1}}</h6>
+					<div class="notification-content">
+						<h6 class="text-gray font-italic">#{{ i + 1}}</h6>
 
-                    <div *ngIf="is_admin">
-                        <p class="mt-0 mb-1">
-                            <a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
-                                <strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
-                                <strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
-                        </a> 
-                            of <a [routerLink]="[route + '/dealers', n.dealerId]" target="_blank"><strong class="font-italic">{{ n.businessName }}</strong></a> 
-                            has been offline for more than an hour now.
-                        </p>
-                        <p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>
-                    </div>
+						<div *ngIf="is_admin">
+							<p class="mt-0 mb-1">
+								<a class="font-italic" [routerLink]="[route + '/licenses', n.licenseId]" target="_blank">
+									<strong *ngIf="n.licenseAlias">{{ n.hostName }} - {{ n.licenseAlias }}</strong>
+									<strong *ngIf="!n.licenseAlias">{{ n.hostName }}</strong>
+							</a> 
+								of <a [routerLink]="[route + '/dealers', n.dealerId]" target="_blank"><strong class="font-italic">{{ n.businessName }}</strong></a> 
+								has been offline for more than an hour now.
+							</p>
+							<p class="sm-text m-0">{{ n.dateTime | date:'MMM d, y, h:mm:ss a' }} - {{ n.timeZone }}</p>
+						</div>
+					</div>
 
                     <div *ngIf="is_dealer">
                         <p class="mt-0 mb-1">
