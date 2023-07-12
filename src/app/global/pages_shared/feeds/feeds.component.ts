@@ -176,7 +176,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 					{ value: this._date.transform(f.feed.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
 					{ value: f.feed.feedTitle, link: f.feed.feedUrl, editable: false, hidden: true },
 					{ value: f.feed.feedDescription, editable: false, hidden: true },
-					{ value: f.feed.embeddedscript, editable: false, hidden: true }
+					{ value: f.feed.embeddedScript, editable: false, hidden: true }
 				);
 			}
 
@@ -198,7 +198,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				{ value: this._date.transform(f.dateCreated, 'MMMM d, y'), editable: false, hidden: false },
 				{ value: f.title, link: f.url, editable: false, hidden: true },
 				{ value: f.description, editable: false, hidden: true },
-				{ value: f.embeddedscript, editable: false, hidden: true }
+				{ value: f.embeddedScript, editable: false, hidden: true }
 			);
 		});
 	}
