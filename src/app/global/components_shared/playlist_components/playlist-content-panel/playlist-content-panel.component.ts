@@ -964,9 +964,13 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				});
 
 				if (this.currentFileTypeFilter === 'all') {
-					this.playlist_contents = original.filter((content) => {
-						return content.scheduleStatus == this.currentStatusFilter.key;
-					});
+					if (this.currentStatusFilter.key != 'default') {
+						this.playlist_contents = original.filter((content) => {
+							return content.scheduleStatus == this.currentStatusFilter.key;
+						});
+					} else {
+						this.playlist_contents = [...this._contentsBackup];
+					}
 					this.getAssetCount();
 					return;
 				}
