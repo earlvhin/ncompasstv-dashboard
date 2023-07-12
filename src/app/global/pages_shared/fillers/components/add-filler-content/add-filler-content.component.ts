@@ -5,8 +5,9 @@ import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import { environment } from 'src/environments/environment';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
+import { Router } from '@angular/router';
 
-import { FillerService, FilestackService } from 'src/app/global/services';
+import { FillerService, FilestackService, AuthService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { AddFillerFeedsComponent } from './components/add-filler-feeds/add-filler-feeds.component';
 
@@ -29,36 +30,27 @@ export class AddFillerContentComponent implements OnInit {
 		private _form_builder: FormBuilder,
 		private _filler: FillerService,
 		private _dialog: MatDialog,
-		private _filestack: FilestackService
+		private _filestack: FilestackService,
+		private _router: Router,
+		private _auth: AuthService
 	) {}
 
-	ngOnInit() {
-		console.log('FG', this.selected_group);
-		this.initializeForm();
-	}
-
-	private initializeForm(): void {
-		// this.form = this._form_builder.group({
-		// 	media_type: [null, Validators.required]
-		// });
-	}
+	ngOnInit() {}
 
 	onUploadImage() {
-		this.upload_holder = [];
-		this._dialog.closeAll();
+		this.hidePrevModal();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions(['image/jpg', 'image/jpeg', 'image/png'], [720, 640], 'Image')).open();
 	}
 
 	onUploadVideo() {
-		this.upload_holder = [];
-		this._dialog.closeAll();
+		this.hidePrevModal();
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video')).open();
 	}
 
 	onUploadFeed() {
-		this._dialog.closeAll();
+		this.hidePrevModal();
 		let dialogRef = this._dialog.open(AddFillerFeedsComponent, {
 			width: '500px',
 			height: '350px',
@@ -83,6 +75,13 @@ export class AddFillerContentComponent implements OnInit {
 		});
 	}
 
+	hidePrevModal() {
+		this.upload_holder = [];
+		let body = document.getElementsByClassName('cdk-overlay-pane')[0];
+		body.classList.add('hidden');
+		body.classList.add('z-index-10');
+	}
+
 	filestackOptions(filetypes, imagemaximum, type): filestack.PickerOptions {
 		return {
 			storeTo: {
@@ -92,67 +91,8 @@ export class AddFillerContentComponent implements OnInit {
 			accept: filetypes,
 			maxFiles: 10,
 			imageMax: imagemaximum,
-			// onFileSelected: (e) => {
-			// 	this.data_to_upload = [];
-			// 	return new Promise((resolve, reject) => {
-			// 		// Do something async
-			// 		this.all_media.map((med) => {
-			// 			if (med.title != null && !this.removed_index) {
-			// 				med.fileName = med.title;
-			// 				var name_no_index = this.removeIndexes(med.fileName);
-			// 				med.fileName = name_no_index + '.' + med.fileType;
-			// 			} else {
-			// 				var temp = med.fileName.split('.');
-			// 				med.fileName = this.removeIndexes(med.fileName);
-			// 				med.fileName = med.fileName + '.' + temp[temp.length - 1];
-			// 			}
-			// 		});
-
-			// 		//Additional Checking for video conversion duplicate
-			// 		if (e.originalFile.type.includes('video') && !convert_to_webm) {
-			// 			var temp = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
-			// 			temp = temp + '.webm';
-			// 			e.originalFile.name = temp;
-			// 		}
-
-			// 		e.originalFile.name = e.originalFile.name.substr(0, e.originalFile.name.lastIndexOf('.'));
-
-			// 		if (!this.is_dealer) {
-			// 			this.duplicate_files = this.summarized_media.filter((media) => {
-			// 				return media.title.indexOf(e.originalFile.name) !== -1;
-			// 			});
-			// 		} else {
-			// 			this.duplicate_files = this.all_media.filter((media) => {
-			// 				return media.title.indexOf(e.originalFile.name) !== -1;
-			// 			});
-			// 		}
-
-			// 		if (this.duplicate_files.length > 0) {
-			// 			this.data_to_upload.push(e);
-
-			// 			this.warningModal('warning', 'Duplicate Filename', 'Are you sure you want to continue upload?', '', 'rename').then(
-			// 				(result) => {
-			// 					if (result === 'upload') {
-			// 						this.postContentInfo(this.duplicate_files, this.data_to_upload, false);
-			// 						resolve({ filename: this.modified_data[0].filename });
-			// 						//temporarily add recently uploaded to array
-			// 						this.all_media.push({ fileName: this.modified_data[0].filename });
-			// 					} else {
-			// 						this.renameModal().then((name) => {
-			// 							var temp = this.data_to_upload[0].mimetype.split('/');
-			// 							resolve({ filename: name + '.' + temp[temp.length - 1] });
-			// 						});
-			// 					}
-			// 				}
-			// 			);
-			// 		} else {
-			// 			resolve({});
-			// 		}
-			// 	});
-			// },
 			onUploadDone: (response) => {
 				response.filesUploaded.map((uploaded) => {
-					const file_type = uploaded.mimetype.split('/');
 					const modified_details = {
 						filename: this.splitFileName(uploaded.key),
 						filetype: this.media_type,
@@ -166,26 +106,43 @@ export class AddFillerContentComponent implements OnInit {
 					files: this.upload_holder
 				};
 
-				// if (type === 'Video') {
-				// 	console.log('FILES UPLOADED', response.filesUploaded);
-				// 	console.log('FILES CONVERTED', this._filestack.convert_videos(response.filesUploaded[0]));
-				// 	// const file_data = this._filestack.convert_videos(response.filesUploaded);
-				// 	// if (file_data) {
-				// 	// console.log('FILE DATA', file_data);
-				// 	// this.uploadContentToDatabase(file_data.__zone_symbol__value, type);
-				// 	// }
-				// } else {
-				this.uploadContentToDatabase(final_upload_to_db, type);
-				// }
+				if (this.media_type == 'video') {
+					this.processUploadedFiles(response.filesUploaded);
+				} else {
+					this.uploadContentToDatabase(final_upload_to_db, type);
+				}
 			}
 		};
 	}
 
-	removeIndexes(data) {
-		if (data.indexOf('(') > 0) {
-			return data.slice(0, data.indexOf('('));
-		} else {
-			return data.slice(0, data.indexOf('.'));
+	async processUploadedFiles(data): Promise<void> {
+		const file_data = await this._filestack.process_uploaded_files(data, '', true);
+		if (file_data) {
+			this._filestack
+				.post_content_info(file_data)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(res) => {
+						res.handlers.map((data) => {
+							const modified_details = {
+								filename: this.splitFileName(data.filename),
+								filetype: this.media_type,
+								handlerid: data.handle
+							};
+							this.upload_holder.push(modified_details);
+						});
+
+						const final_upload_to_db = {
+							fillerGroupId: this.selected_group.fillerGroupId,
+							files: this.upload_holder
+						};
+
+						this.uploadContentToDatabase(final_upload_to_db, this.media_type);
+					},
+					(error) => {
+						throw new Error(error);
+					}
+				);
 		}
 	}
 
@@ -201,6 +158,10 @@ export class AddFillerContentComponent implements OnInit {
 	splitFileName(name) {
 		const splitted_file_name = name.split('/').pop();
 		return splitted_file_name;
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 
 	openConfirmationModal(status: string, message: string, data: any): void {

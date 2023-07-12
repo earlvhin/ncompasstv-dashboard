@@ -62,7 +62,7 @@
 								(click)="gotoFileURL(data.url)"
 								class="sm-text p-3 full-width clickable"
 								title="{{ splitOriginalFilename(data.filename) }}"
-								*ngIf="data.fileType == 'image'; else videotitle">
+								*ngIf="data.fileType != 'feed'; else videotitle">
 								{{ splitOriginalFilename(data.filename) | slice : 0 : 27
 								}}{{ splitOriginalFilename(data.filename).length > 27 ? '...' : '' }}</span
 							>

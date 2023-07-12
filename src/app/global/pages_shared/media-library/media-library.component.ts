@@ -170,6 +170,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 			maxFiles: 10,
 			imageMax: [1280, 720],
 			onFileSelected: (e) => {
+				console.log('E', e);
 				this.data_to_upload = [];
 				return new Promise((resolve, reject) => {
 					// Do something async
