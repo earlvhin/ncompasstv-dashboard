@@ -45,6 +45,7 @@ export class HostsComponent implements OnInit {
 	workbook: any;
 	workbook_generation = false;
 	worksheet: any;
+	role_label: string = '';
 
 	dealers_table_columns = ['#', 'Dealer Alias', 'Business Name', 'Contact Person', 'Total', 'Active', 'To Install', 'Recently Added Host'];
 
@@ -111,6 +112,7 @@ export class HostsComponent implements OnInit {
 		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
 			this.is_dealer_admin = true;
 		}
+		this.formTitle();
 		this.getHosts(1);
 		this.getHostTotal();
 		this.subscribeToStatusFilterClick();
@@ -154,6 +156,14 @@ export class HostsComponent implements OnInit {
 				}
 				break;
 			default:
+		}
+	}
+
+	formTitle() {
+		if (this._auth.current_role === 'administrator') {
+			this.role_label = 'Search Dealer Alias, Business Name, Contact Person or #Tag';
+		} else {
+			this.role_label = 'Search Dealer Alias, Business Name or Tag';
 		}
 	}
 
