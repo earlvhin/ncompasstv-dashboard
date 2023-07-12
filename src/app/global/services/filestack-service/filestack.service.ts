@@ -56,7 +56,8 @@ export class FilestackService extends BaseService {
 					filename = `${file.key.substring(0, file.key.lastIndexOf('.'))}.webm`;
 					// filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
 
-					let convert_data = await this.convert_videos(file, fillers);
+					let convert_data: any;
+					convert_data = await this.convert_videos(file, fillers);
 
 					const upload_data = {
 						hostid: users ? users.host : '',

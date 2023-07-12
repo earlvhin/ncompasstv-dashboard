@@ -92,12 +92,17 @@
 											</div>
 											<div class="row mt-3">
 												<div class="col-lg-6 text-left">
-													<div class="hover-prime clickable">
+													<div class="hover-prime clickable" title="View Filler Group">
 														<i class="fas fa-photo-video mr-3"></i>
 														<span class="text-dark primary sm-text">{{ group.count }}</span>
 													</div>
 												</div>
 												<div class="col-lg-6 text-right">
+													<span
+														class="fas fa-upload text-gray ml-3 clickable hover-prime"
+														title="Upload Filler"
+														(click)="addFillerContent(group)"></span>
+
 													<span
 														class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
 														title="Edit Filler Group"

@@ -7,6 +7,7 @@ import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs';
 
 import { FillerService } from 'src/app/global/services';
+import { AddFillerContentComponent } from './components/add-filler-content/add-filler-content.component';
 
 @Component({
 	selector: 'app-fillers',
@@ -80,6 +81,20 @@ export class FillersComponent implements OnInit {
 	navigateToFillerGroup(id) {
 		this._router.navigate([]).then(() => {
 			window.open(`/administrator/fillers/view-fillers-group/` + id, '_blank');
+		});
+	}
+
+	addFillerContent(group) {
+		let dialog = this._dialog.open(AddFillerContentComponent, {
+			width: '500px',
+			data: {
+				group: group
+			}
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			console.log('CLOSED');
+			this.ngOnInit();
 		});
 	}
 

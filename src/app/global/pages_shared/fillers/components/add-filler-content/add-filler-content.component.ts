@@ -77,8 +77,7 @@ export class AddFillerContentComponent implements OnInit {
 
 	hidePrevModal() {
 		this.upload_holder = [];
-		let body = document.getElementsByClassName('cdk-overlay-pane')[0];
-		body.classList.add('hidden');
+		let body = document.getElementsByClassName('cdk-overlay-container')[0];
 		body.classList.add('z-index-10');
 	}
 
