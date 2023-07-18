@@ -40,17 +40,6 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		{ name: 'Action', sortable: false }
 	];
 
-	fillers_table_column = [
-		{ name: '#', sortable: false },
-		{ name: 'Name', sortable: true, column: 'Name' },
-		{ name: 'Quantity', sortable: true, column: 'Quantity' },
-		{ name: 'Interval (Days)', sortable: true, column: 'Interval' },
-		{ name: 'Owner', sortable: true, column: 'Owner' },
-		{ name: '# of Groups', sortable: true, column: 'Groups' },
-		{ name: 'Created Date', sortable: true, column: 'CreatedDate' },
-		{ name: 'Action', sortable: false }
-	];
-
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(private _auth: AuthService, private _date: DatePipe, private _dialog: MatDialog, private _feed: FeedService) {}

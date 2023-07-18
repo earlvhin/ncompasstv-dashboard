@@ -26,6 +26,7 @@ export class AddFillerFeedsComponent implements OnInit {
 	onSubmit() {
 		const fillerFeedDetails = {
 			title: this._formControls.feedName.value,
+			filename: this._formControls.feedName.value,
 			url: this._formControls.feedUrl.value
 		};
 		this.dialogRef.close(fillerFeedDetails);

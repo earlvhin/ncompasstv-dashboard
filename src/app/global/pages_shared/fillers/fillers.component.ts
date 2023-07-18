@@ -15,10 +15,13 @@ import { AddFillerContentComponent } from './components/add-filler-content/add-f
 	styleUrls: ['./fillers.component.scss']
 })
 export class FillersComponent implements OnInit {
+	fillers_count: any;
 	filler_group: any;
 	filler_group_cache = [];
 	is_loading = true;
 	search_keyword: string;
+	sorting_order: string = '';
+	sorting_column: string = '';
 	title = 'Fillers Library';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -26,6 +29,7 @@ export class FillersComponent implements OnInit {
 	constructor(private _dialog: MatDialog, private _router: Router, private _filler: FillerService) {}
 
 	ngOnInit() {
+		this.getFillersTotal();
 		this.getAllFillers(1);
 	}
 
@@ -93,9 +97,27 @@ export class FillersComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			console.log('CLOSED');
 			this.ngOnInit();
 		});
+	}
+
+	getFillersTotal() {
+		this._filler
+			.get_filler_totals()
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				this.fillers_count = {
+					label: 'Fillers',
+					admin_label: 'Admin',
+					admin_count: data.totalSuperAdmin,
+					dealer_label: 'Dealer',
+					dealer_count: data.totalDealer,
+					dealer_admin_label: 'Dealer Admin',
+					dealer_admin_count: data.totalDealerAdmin,
+					host_label: 'Host',
+					host_count: data.totalHost
+				};
+			});
 	}
 
 	getAllFillers(page, size?) {
@@ -104,7 +126,7 @@ export class FillersComponent implements OnInit {
 		}
 
 		this._filler
-			.get_filler_groups(page, this.search_keyword, size)
+			.get_filler_groups(page, this.search_keyword, size, this.sorting_column, this.sorting_order)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				if (!data.message) {
@@ -114,7 +136,6 @@ export class FillersComponent implements OnInit {
 						});
 					} else {
 						this.filler_group_cache = data.paging.entities;
-						console.log('FGC', this.filler_group_cache);
 					}
 					this.filler_group = data.paging;
 				} else {
@@ -124,5 +145,19 @@ export class FillersComponent implements OnInit {
 			.add(() => {
 				this.is_loading = false;
 			});
+	}
+
+	sortFillerGroup(order) {
+		this.is_loading = true;
+		this.sorting_column = 'Name';
+		this.sorting_order = order;
+		this.getAllFillers(1);
+	}
+
+	clearFilter() {
+		this.is_loading = true;
+		this.sorting_column = '';
+		this.sorting_order = '';
+		this.getAllFillers(1);
 	}
 }

@@ -34,6 +34,7 @@ import { ContentsTabComponent } from './components_shared/reports_components/con
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
 import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
+import { CreateFillerFeedComponent } from './pages_shared/fillers/components/create-filler-feed/create-filler-feed.component';
 import { CreateHostComponent } from './pages_shared/create-host/create-host.component';
 import { CreatePlaylistComponent } from './pages_shared/create-playlist/create-playlist.component';
 import { CreatePlaylistContentComponent } from './components_shared/playlist_components/create-playlist-content/create-playlist-content.component';
@@ -253,6 +254,7 @@ const ngComponents = [
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
 	CreateFeedComponent,
+	CreateFillerFeedComponent,
 	CreateHostComponent,
 	CreatePlaylistComponent,
 	CreatePlaylistContentComponent,
@@ -462,6 +464,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		CloneFeedDialogComponent,
 		ClonePlaylistComponent,
 		CloneScreenComponent,
+		CreateFillerFeedComponent,
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
 		CreateFeedComponent,

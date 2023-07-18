@@ -4,8 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatDialog, MatDialogRef } from '@angular/material';
+
 import { AddFillerContentComponent } from '../add-filler-content/add-filler-content.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { CreateFillerFeedComponent } from '../create-filler-feed/create-filler-feed.component';
 
 @Component({
 	selector: 'app-view-fillers-group',
@@ -17,7 +19,10 @@ export class ViewFillersGroupComponent implements OnInit {
 	filler_group_data: any;
 	filler_group_id: string;
 	is_loading = true;
+	search_keyword: string;
 	selected_filler: string;
+	sorting_order: string = '';
+	sorting_column: string = '';
 	title = 'Fillers Library';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -25,7 +30,6 @@ export class ViewFillersGroupComponent implements OnInit {
 	constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog) {}
 
 	ngOnInit() {
-		console.log('CALLED');
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
 			this.filler_group_id = this._params.snapshot.params.data;
 		});
@@ -42,9 +46,9 @@ export class ViewFillersGroupComponent implements OnInit {
 			});
 	}
 
-	getFillerGroupContents(id) {
+	getFillerGroupContents(id, page?) {
 		this._filler
-			.get_filler_group_contents(id)
+			.get_filler_group_contents(id, this.search_keyword, page, 30, this.sorting_column, this.sorting_order)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				if (!data.message) {
@@ -72,7 +76,19 @@ export class ViewFillersGroupComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			console.log('HERE');
+			this.ngOnInit();
+		});
+	}
+
+	createFillerFeed(group, single_filler) {
+		let dialog = this._dialog.open(CreateFillerFeedComponent, {
+			width: '500px',
+			data: {
+				group: group
+			}
+		});
+
+		dialog.afterClosed().subscribe(() => {
 			this.ngOnInit();
 		});
 	}
@@ -117,5 +133,23 @@ export class ViewFillersGroupComponent implements OnInit {
 				this.ngOnInit();
 			}
 		});
+	}
+
+	onSearchFiller(keyword) {
+		this.is_loading = true;
+		if (keyword) {
+			this.search_keyword = keyword;
+			this.is_loading = true;
+		} else {
+			this.search_keyword = '';
+		}
+		this.getFillerGroupContents(this.filler_group_id, 1);
+	}
+
+	sortFillerGroup(order) {
+		this.is_loading = true;
+		this.sorting_column = 'Filename';
+		this.sorting_order = order;
+		this.getFillerGroupContents(this.filler_group_id, 1);
 	}
 }

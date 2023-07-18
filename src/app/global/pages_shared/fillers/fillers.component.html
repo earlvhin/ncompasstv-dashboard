@@ -10,22 +10,38 @@
 		<div class="row">
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count [data_value]="'0'" [data_label]="'Admin'" [data_description]="'Fillers'"> </app-data-card-count>
+					<app-data-card-count
+						[data_value]="fillers_count.admin_count"
+						[data_label]="fillers_count.admin_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
 				</mat-card>
 			</div>
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count [data_value]="'0'" [data_label]="'Dealer Admin'" [data_description]="'Fillers'"> </app-data-card-count>
+					<app-data-card-count
+						[data_value]="fillers_count.dealer_admin_count"
+						[data_label]="fillers_count.dealer_admin_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
 				</mat-card>
 			</div>
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count [data_value]="'0'" [data_label]="'Dealer'" [data_description]="'Fillers'"> </app-data-card-count>
+					<app-data-card-count
+						[data_value]="fillers_count.dealer_count"
+						[data_label]="fillers_count.label.dealer_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
 				</mat-card>
 			</div>
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count [data_value]="'0'" [data_label]="'Host'" [data_description]="'Fillers'"> </app-data-card-count>
+					<app-data-card-count
+						[data_value]="fillers_count.host_count"
+						[data_label]="fillers_count.host_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
 				</mat-card>
 			</div>
 		</div>
@@ -36,19 +52,53 @@
 			<div class="col-lg-12">
 				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" class="custom-mat-tab">
 					<mat-tab id="admin-view-tab" label="Admin">
-						<!-- *ngIf="tabGroup.selectedIndex === 0" -->
 						<div>
-							<div class="row mt-3 mb-3">
-								<div class="offset-lg-8 col-lg-4">
+							<div class="row mt-3 mb-2" *ngIf="filler_group_cache.length > 0">
+								<div class="col-lg-8">
+									<button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn mt-2">
+										<span class="button-label">Order by Name</span>
+										<span class="fas fa-sort ml-2"></span>
+									</button>
+									<mat-menu #orderSort="matMenu">
+										<button mat-menu-item (click)="sortFillerGroup('asc')">
+											<i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending
+										</button>
+										<button mat-menu-item (click)="sortFillerGroup('desc')">
+											<i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending
+										</button>
+									</mat-menu>
+								</div>
+								<div class="col-lg-4">
 									<app-search-field
-										*ngIf="filler_group_cache.length > 0"
-										[form_title]="'Search Filler Group or Business Name'"
-										[placeholder]="'Example: N-Compass'"
+										[form_title]="'Search Filler Group'"
+										[placeholder]="'Example: Trivia'"
 										[data_reference]=""
 										[primary_keyword]="'name'"
 										[secondary_keyword]="'name'"
 										(searched)="onSearchFiller($event)"
-										[api_search]="true"></app-search-field>
+										[api_search]="true">
+									</app-search-field>
+								</div>
+							</div>
+							<div class="row mb-3 no-gutters" *ngIf="sorting_order != ''">
+								<div class="col-lg-12">
+									<div class="p-2 bg-gray">
+										<div class="row no-gutters">
+											<div class="col-lg-11">
+												<div class="filter-pills pt-1">
+													<div class="filetype-pill pill">
+														Ordered by Name : <strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
+													</div>
+												</div>
+											</div>
+											<div class="control col-lg-1 text-right">
+												<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+													<span class="button-label"> Clear Filter </span>
+													<span class="fas fa-times ml-2 sm-text"></span>
+												</button>
+											</div>
+										</div>
+									</div>
 								</div>
 							</div>
 							<div *ngIf="!is_loading; else loader">

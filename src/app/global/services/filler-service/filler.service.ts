@@ -17,6 +17,11 @@ export class FillerService extends BaseService {
 		super(_auth, _http);
 	}
 
+	get_filler_totals() {
+		const url = `${this.getters.api_get_filler_gettotal}`;
+		return this.getRequest(url);
+	}
+
 	// ------------------------------------
 	// CRUD FILLER GROUPS
 	// ------------------------------------
@@ -26,8 +31,8 @@ export class FillerService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
-	get_filler_groups(page: number, key: string, pageSize) {
-		let url = `${this.getters.api_get_filler_groups}?page=${page}&pageSize=${pageSize}`;
+	get_filler_groups(page: number, key: string, pageSize, column: string, order: string) {
+		let url = `${this.getters.api_get_filler_groups}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
 
 		if (key && key.trim().length > 0) {
 			const search = encodeURIComponent(key);
@@ -51,8 +56,8 @@ export class FillerService extends BaseService {
 	// CRUD FILLER CONTENTS
 	// ------------------------------------
 
-	get_filler_group_contents(id: string) {
-		let url = `${this.getters.api_get_filler_group_contents}?id=${id}`;
+	get_filler_group_contents(id: string, key = '', page = 1, pageSize = 30, column, order) {
+		let url = `${this.getters.api_get_filler_group_contents}?id=${id}&pageSize=${pageSize}&page=${page}&search=${key}&sortColumn=${column}&sortOrder=${order}`;
 		return this.getRequest(url);
 	}
 
@@ -64,5 +69,19 @@ export class FillerService extends BaseService {
 	delete_filler_contents(id) {
 		const url = `${this.deleters.api_delete_filler_content}?id=${id}`;
 		return this.postRequest(url, {});
+	}
+
+	// ------------------------------------
+	// CRUD FILLER FEEDS
+	// ------------------------------------
+
+	add_filler_feed(data: any) {
+		const url = this.creators.api_create_filler_feed;
+		return this.postRequest(url, data);
+	}
+
+	get_filler_feeds(search: string, pagesize = 15) {
+		let url = `${this.getters.api_get_filler_feeds}?search=${search}&pagesize=${pagesize}`;
+		return this.getRequest(url);
 	}
 }

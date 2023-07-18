@@ -62,7 +62,8 @@ export class AddFillerContentComponent implements OnInit {
 				const modified_details = {
 					title: response.title,
 					filetype: this.media_type,
-					url: response.url
+					url: response.url,
+					filename: response.filename
 				};
 				const files_temp = [];
 				files_temp.push(modified_details);
@@ -95,8 +96,10 @@ export class AddFillerContentComponent implements OnInit {
 					const modified_details = {
 						filename: this.splitFileName(uploaded.key),
 						filetype: this.media_type,
-						handlerid: uploaded.handle
+						handlerid: uploaded.handle,
+						title: ''
 					};
+					modified_details.title = this.removeHandleIdOnFileName(modified_details.filename);
 					this.upload_holder.push(modified_details);
 				});
 
@@ -156,6 +159,11 @@ export class AddFillerContentComponent implements OnInit {
 
 	splitFileName(name) {
 		const splitted_file_name = name.split('/').pop();
+		return splitted_file_name;
+	}
+
+	removeHandleIdOnFileName(name) {
+		const splitted_file_name = name.split('_').slice(1).join('_');
 		return splitted_file_name;
 	}
 
