@@ -15,6 +15,7 @@ export class FillerFeedsTableComponent implements OnInit {
 	initial_load = true;
 	filtered_data = [];
 	fillers_paging: any;
+	searching = false;
 
 	fillers_table_column = [
 		{ name: '#', sortable: false },
@@ -35,7 +36,8 @@ export class FillerFeedsTableComponent implements OnInit {
 		this.getAllFillerFeeds();
 	}
 
-	getAllFillerFeeds() {
+	getAllFillerFeeds(page?) {
+		this.searching = true;
 		this._filler
 			.get_filler_feeds('')
 			.pipe(takeUntil(this._unsubscribe))
@@ -46,6 +48,7 @@ export class FillerFeedsTableComponent implements OnInit {
 			})
 			.add(() => {
 				this.initial_load = false;
+				this.searching = false;
 			});
 	}
 
@@ -63,5 +66,9 @@ export class FillerFeedsTableComponent implements OnInit {
 				{ value: this._date.transform(filler.dateCreated, 'MMM dd y'), editable: false, hidden: false }
 			);
 		});
+	}
+
+	reloadPage(e: boolean): void {
+		if (e) this.ngOnInit();
 	}
 }

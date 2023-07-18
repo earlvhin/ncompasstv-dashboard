@@ -19,6 +19,7 @@ export class FillersComponent implements OnInit {
 	filler_group: any;
 	filler_group_cache = [];
 	is_loading = true;
+	no_search_result = false;
 	search_keyword: string;
 	sorting_order: string = '';
 	sorting_column: string = '';
@@ -130,6 +131,7 @@ export class FillersComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				if (!data.message) {
+					this.no_search_result = false;
 					if (page > 1) {
 						data.paging.entities.map((group) => {
 							this.filler_group_cache.push(group);
@@ -139,7 +141,12 @@ export class FillersComponent implements OnInit {
 					}
 					this.filler_group = data.paging;
 				} else {
-					this.filler_group = [];
+					if (this.search_keyword != '') {
+						this.no_search_result = true;
+					} else {
+						this.filler_group = [];
+						this.no_search_result = false;
+					}
 				}
 			})
 			.add(() => {

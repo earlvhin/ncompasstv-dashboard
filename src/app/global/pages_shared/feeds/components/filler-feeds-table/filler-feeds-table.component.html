@@ -5,16 +5,16 @@
 			<div class="row">
 				<div class="col-lg-8"></div>
 				<div class="col-lg-4">
-					<app-search-field
+					<!-- <app-search-field
 						*ngIf="!initial_load"
-						[form_title]="'Search Filler Name or Owner Name'"
+						[form_title]="'Search Filler Name or Owner'"
 						[placeholder]="'Example: N-Compass Feed'"
-						[data_reference]="feed_data"
+						[data_reference]="filtered_data"
 						[primary_keyword]="'title'"
 						[secondary_keyword]="'business_name'"
 						(searched)="filterData($event)"
 						[api_search]="true">
-					</app-search-field>
+					</app-search-field> -->
 				</div>
 			</div>
 			<div class="row" *ngIf="!initial_load">
@@ -27,9 +27,8 @@
 								[new_table]="true"
 								[paging_details]="fillers_paging"
 								[has_action]="true"
-								(page_triggered)="getFeeds($event)"
+								(page_triggered)="getAllFillerFeeds($event)"
 								(reload_page)="reloadPage($event)"
-								(to_sort_column)="getColumnsAndOrder($event)"
 								(update_info)="reloadPage($event)">
 							</app-data-table>
 						</mat-card>
@@ -48,6 +47,18 @@
 	<ng-template #small_loader>
 		<div class="py-4 white-bg">
 			<app-spinner [diameter]="60"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #nodata>
+		<div class="col-lg-12 pl-0 pr-0">
+			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
+				<div class="mb-4">
+					<i class="text-gray fa-5x far fa-file-alt"></i>
+				</div>
+				<h3 class="text-gray col-lg-12">No Results Found.</h3>
+				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+			</mat-card>
 		</div>
 	</ng-template>
 </div>

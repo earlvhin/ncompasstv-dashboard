@@ -5,6 +5,7 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
+import { CreateFillerFeedComponent } from '../fillers/components/create-filler-feed/create-filler-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
 import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED } from 'src/app/global/models';
 
@@ -14,6 +15,7 @@ import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED } from '
 	styleUrls: ['./feeds.component.scss']
 })
 export class FeedsComponent implements OnInit, OnDestroy {
+	active_tab: any;
 	current_user = this._auth.current_user_value;
 	feed_data: UI_TABLE_FEED[] = [];
 	feed_stats: any = {};
@@ -46,7 +48,6 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.getFeedsTotal();
-		this.getFillersTotal();
 		this.getFeeds(1);
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
 	}
@@ -142,29 +143,20 @@ export class FeedsComponent implements OnInit, OnDestroy {
 				this_week_value_label: 'Feed(s)',
 				this_week_value_description: 'New this week'
 			};
+
+			this.filler_stats = {
+				total_value: response.fillerTotal,
+				total_label: 'Filler(s)',
+				this_week_value: response.newFillerThisWeek,
+				this_week_value_label: 'Filler(s)',
+				this_week_value_description: 'New this week'
+			};
 		});
 	}
 
-	private getFillersTotal(): void {
-		this.filler_stats = {
-			total_value: '86',
-			total_label: 'Filler(s)',
-			this_week_value: '50',
-			this_week_value_label: 'Filler(s)',
-			this_week_value_description: 'New this week'
-		};
-	}
-
 	onTabChanged(tab: { index: number }) {
-		switch (tab.index) {
-			case 0:
-				// this.getLicenses(1);
-				break;
-			case 2:
-				// this.getHosts(1);
-				break;
-			default:
-		}
+		this.active_tab = tab.index;
+		console.log('ACTIVE TAB', this.active_tab);
 	}
 
 	private mapToTableFormat(feeds: FEED[]): UI_TABLE_FEED[] {
@@ -208,5 +200,18 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	protected get currentRole() {
 		return this._auth.current_role;
+	}
+
+	createFillerFeed() {
+		let dialog = this._dialog.open(CreateFillerFeedComponent, {
+			width: '500px',
+			data: {
+				group: []
+			}
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			this.ngOnInit();
+		});
 	}
 }

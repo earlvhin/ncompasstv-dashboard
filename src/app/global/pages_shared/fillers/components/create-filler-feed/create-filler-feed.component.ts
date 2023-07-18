@@ -36,7 +36,7 @@ export class CreateFillerFeedComponent implements OnInit {
 			fillerQuantity: [null, Validators.required],
 			fillerInterval: [null, Validators.required],
 			fillerDuration: [null, Validators.required],
-			fillerGroup: [{ value: this.selected_group.name, disabled: true }, Validators.required]
+			fillerGroup: [{ value: this.selected_group ? this.selected_group.name : null, disabled: true }, Validators.required]
 		});
 	}
 

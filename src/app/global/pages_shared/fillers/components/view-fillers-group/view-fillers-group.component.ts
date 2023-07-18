@@ -19,6 +19,7 @@ export class ViewFillersGroupComponent implements OnInit {
 	filler_group_data: any;
 	filler_group_id: string;
 	is_loading = true;
+	no_search_result = false;
 	search_keyword: string;
 	selected_filler: string;
 	sorting_order: string = '';
@@ -53,8 +54,14 @@ export class ViewFillersGroupComponent implements OnInit {
 			.subscribe((data: any) => {
 				if (!data.message) {
 					this.filler_group_contents = data.paging.entities;
+					this.no_search_result = false;
 				} else {
-					this.filler_group_contents = [];
+					if (this.search_keyword != '') {
+						this.no_search_result = true;
+					} else {
+						this.filler_group_contents = [];
+						this.no_search_result = false;
+					}
 				}
 			})
 			.add(() => {
@@ -139,7 +146,6 @@ export class ViewFillersGroupComponent implements OnInit {
 		this.is_loading = true;
 		if (keyword) {
 			this.search_keyword = keyword;
-			this.is_loading = true;
 		} else {
 			this.search_keyword = '';
 		}
@@ -148,8 +154,15 @@ export class ViewFillersGroupComponent implements OnInit {
 
 	sortFillerGroup(order) {
 		this.is_loading = true;
-		this.sorting_column = 'Filename';
+		this.sorting_column = 'Title';
 		this.sorting_order = order;
+		this.getFillerGroupContents(this.filler_group_id, 1);
+	}
+
+	clearFilter() {
+		this.is_loading = true;
+		this.sorting_column = '';
+		this.sorting_order = '';
 		this.getFillerGroupContents(this.filler_group_id, 1);
 	}
 }

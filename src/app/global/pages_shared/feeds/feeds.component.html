@@ -4,23 +4,30 @@
 			<h1 class="page-title">{{ title }}</h1>
 		</div>
 		<div class="col-lg-6 text-right">
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control _info sm-text mr-2"
-				(click)="onCreateUrlFeed()"
-				title="Add URL Feed"
-				[disabled]="is_view_only">
-				<span class="fas fa-plus"></span>
-				<span class="ml-2 button_text_animation">Add URL Feed</span>
-			</button>
-
-			<a [routerLink]="['generate']" target="_blank">
-				<button mat-button mat-raised-button class="theme-btn pi-control _teal sm-text mr-2" title="Generate Feed" [disabled]="is_view_only">
-					<span class="fas fa-cogs"></span>
-					<span class="ml-2 button_text_animation">Generate Feed</span>
+			<div *ngIf="active_tab === 0; else fillerFeedButtons">
+				<button
+					mat-button
+					mat-raised-button
+					class="theme-btn pi-control _info sm-text mr-2"
+					(click)="onCreateUrlFeed()"
+					title="Add URL Feed"
+					[disabled]="is_view_only">
+					<span class="fas fa-plus"></span>
+					<span class="ml-2 button_text_animation">Add URL Feed</span>
 				</button>
-			</a>
+
+				<a [routerLink]="['generate']" target="_blank">
+					<button
+						mat-button
+						mat-raised-button
+						class="theme-btn pi-control _teal sm-text mr-2"
+						title="Generate Feed"
+						[disabled]="is_view_only">
+						<span class="fas fa-cogs"></span>
+						<span class="ml-2 button_text_animation">Generate Feed</span>
+					</button>
+				</a>
+			</div>
 		</div>
 	</div>
 
@@ -158,6 +165,27 @@
 	<ng-template #small_loader>
 		<div class="py-4 white-bg">
 			<app-spinner [diameter]="60"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #small_loader>
+		<div class="py-4 white-bg">
+			<app-spinner [diameter]="60"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #fillerFeedButtons>
+		<div>
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn pi-control _cool sm-text mr-2"
+				(click)="createFillerFeed()"
+				title="Create Filler Feed"
+				[disabled]="true">
+				<span class="fas fa-list-ol"></span>
+				<span class="ml-2 button_text_animation">Create Filler Feed</span>
+			</button>
 		</div>
 	</ng-template>
 </div>
