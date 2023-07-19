@@ -89,6 +89,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	enable_edit_alias = false;
 	hasAdminPrivileges = false;
 	isCheckingElectronRunning = false;
+
 	has_background_zone = false;
 	has_host = false;
 	has_screen = false;
