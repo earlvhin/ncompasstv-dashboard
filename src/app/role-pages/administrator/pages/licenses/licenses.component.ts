@@ -1076,7 +1076,7 @@ export class LicensesComponent implements OnInit {
 
 	private mapHostsForExport(data: API_HOST) {
 		data.storeHours = data.storeHours;
-		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
 		data.tagsToString = data.tags.join(',');
 	}
 

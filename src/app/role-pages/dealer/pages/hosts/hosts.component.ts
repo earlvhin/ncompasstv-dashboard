@@ -275,7 +275,7 @@ export class HostsComponent implements OnInit {
 
 	private mapForExport(hosts: any) {
 		return hosts.map((host) => {
-			host.generalCategory = host.generalCategory ? host.generalCategory : 'Others';
+			host.generalCategory = host.generalCategory ? host.generalCategory : 'Other';
 			if (host.tags) {
 				host.tagsToString = host.tags.join(',');
 			}

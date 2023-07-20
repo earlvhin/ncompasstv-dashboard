@@ -587,7 +587,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	private modifyDataForExport(data) {
-		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
 		data.storeHours = data.storeHours;
 		data.storeHoursTotal = data.storeHoursTotal;
 
