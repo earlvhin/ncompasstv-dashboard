@@ -5,6 +5,7 @@ import { DatePipe } from '@angular/common';
 
 import { takeUntil } from 'rxjs/operators';
 import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed.model';
+import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
 	selector: 'app-filler-feeds-table',
@@ -59,13 +60,34 @@ export class FillerFeedsTableComponent implements OnInit {
 			return new UI_TABLE_FILLER_FEED(
 				{ value: count++, editable: false, hidden: false },
 				{ value: filler.name, editable: false, hidden: false },
-				{ value: 0, editable: false, hidden: false },
+				{
+					value: this.formulateDisplayforQuantity(filler),
+					editable: false,
+					link: null,
+					hidden: false,
+					quantity: true,
+					filler_groups: filler.fillerGroups
+				},
 				{ value: filler.interval, link: null, editable: false, hidden: false, new_tab_link: true },
 				{ value: filler.createdByName, link: null, editable: false, hidden: false, new_tab_link: true },
 				{ value: filler.fillerGroups.length, editable: false, hidden: false },
 				{ value: this._date.transform(filler.dateCreated, 'MMM dd y'), editable: false, hidden: false }
 			);
 		});
+	}
+
+	formulateDisplayforQuantity(filler) {
+		let place_holder = '';
+		filler.fillerGroups.map((filler, i, { length }) => {
+			if (length - 1 === i) {
+				place_holder = place_holder + filler.quantity;
+			} else {
+				place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-danger ml-2 mr-2"></i>';
+			}
+		});
+
+		console.log('PH', place_holder);
+		return place_holder;
 	}
 
 	reloadPage(e: boolean): void {

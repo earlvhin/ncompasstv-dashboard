@@ -29,25 +29,13 @@
 				</div>
 
 				<div class="row">
-					<div class="col-lg-12">
-						<mat-form-field class="full-width">
-							<mat-label>Selected Quantity</mat-label>
-							<input matInput type="number" autocomplete="off" formControlName="fillerQuantity" min="0" />
-						</mat-form-field>
-					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-lg-12">
+					<div class="col-lg-6">
 						<mat-form-field class="full-width">
 							<mat-label>Interval (days)</mat-label>
 							<input matInput type="number" autocomplete="off" formControlName="fillerInterval" min="0" />
 						</mat-form-field>
 					</div>
-				</div>
-
-				<div class="row">
-					<div class="col-lg-12">
+					<div class="col-lg-6">
 						<mat-form-field class="full-width">
 							<mat-label>Duration (seconds)</mat-label>
 							<input matInput type="number" autocomplete="off" formControlName="fillerDuration" min="0" />
@@ -55,18 +43,103 @@
 					</div>
 				</div>
 
-				<div class="row">
+				<div class="row mb-2">
 					<div class="col-lg-12">
-						<mat-form-field class="full-width">
-							<mat-label>Filler Group</mat-label>
-							<input matInput type="text" autocomplete="off" formControlName="fillerGroup" />
-						</mat-form-field>
+						<span class="sm-text">
+							<b>FILLER GROUP INSTRUCTIONS: </b>
+							<br />
+							<span class="text-gray"
+								>Select at least 1 Filler Group, then click the Add button. Expand the panel and input desired quantity.</span
+							>
+							<br />
+							<span class="text-danger"><b>NOTE: </b>Total Quantity should <u>not be greater</u> than 20.</span>
+						</span>
+					</div>
+				</div>
+				<div class="row" *ngIf="groups_loaded; else loaderSmall">
+					<div class="col-lg-10">
+						<app-autocomplete-field
+							(data_value)="setFillerGroup($event)"
+							(searched)="getAllFillers($event)"
+							[data_reference]="filler_groups"
+							[primary_keyword]="'name'"
+							[key_of_value]="'fillerGroupId'"
+							[required]="true"
+							[label]="'Select Filler Group'"
+							[initial_value]="filler_name"
+							[new_value]="filler_name"
+							[disabled]="disableSelectionField()">
+						</app-autocomplete-field>
+					</div>
+					<div class="col-lg-2 text-right">
+						<button
+							mat-button
+							mat-raised-button
+							class="mt-2 theme-btn _cool"
+							type="button"
+							(click)="addToSelectedFillerGroup()"
+							title="Add Selected Filler Group"
+							[disabled]="!enable_add_button">
+							<i class="fas fa-plus"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class="row" *ngIf="selected_groups.length > 0">
+					<div class="col-lg-12">
+						<div class="full-width bg-gray p-3">
+							<mat-expansion-panel class="mt-2" *ngFor="let groups of selected_groups; let i = index">
+								<mat-expansion-panel-header>
+									<mat-panel-title class="md-text">
+										<b class="mr-3">Filler Group:</b> <i>{{ groups.name }}</i>
+										<span class="text-primary ml-2 xsm-text mt-1">(Total Fillers {{ groups.count }})</span>
+									</mat-panel-title>
+								</mat-expansion-panel-header>
+								<div class="row no-gutters">
+									<div class="col-lg-8">
+										<div class="full-width border-bottom">
+											<mat-label>
+												Select Quantity
+												<i class="text-danger"> </i>
+												<span class="text-danger sm-text"
+													>(Maximum: {{ groups.count > remaining ? remaining : groups.count }})
+												</span>
+											</mat-label>
+											<input
+												matInput
+												type="number"
+												autocomplete="off"
+												formControlName="fillerQuantity"
+												min="1"
+												[max]="groups.count > remaining ? remaining : groups.count"
+												value="1"
+												class="mt-2"
+												(focusout)="saveQuantity(i)" />
+										</div>
+									</div>
+									<div class="col-lg-4 text-right">
+										<div class="text-danger clickable mt-4" (click)="removeSelectedFiller(groups)">
+											<i class="fas fa-times mr-3"></i> <span class="md-text font-weight-bold">REMOVE</span>
+										</div>
+									</div>
+								</div>
+							</mat-expansion-panel>
+						</div>
 					</div>
 				</div>
 
 				<div class="row no-gutters mt-3">
-					<div class="offset-lg-6 col-lg-6 text-right">
-						<button mat-button mat-raised-button class="theme-btn" type="submit" (click)="arrangeData()" [disabled]="!form.valid">
+					<div class="col-lg-4">
+						<h4 class="text-danger font-weight-bold pt-2">TOTAL: {{ total_quantity }}</h4>
+					</div>
+					<div class="offset-lg-2 col-lg-6 text-right">
+						<button
+							mat-button
+							mat-raised-button
+							class="theme-btn"
+							type="submit"
+							(click)="arrangeData()"
+							[disabled]="!form.valid && selected_groups.length == 0">
 							Create Filler Feed
 						</button>
 					</div>

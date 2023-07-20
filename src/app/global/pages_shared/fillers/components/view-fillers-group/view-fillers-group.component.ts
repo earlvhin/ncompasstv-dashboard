@@ -15,7 +15,7 @@ import { CreateFillerFeedComponent } from '../create-filler-feed/create-filler-f
 	styleUrls: ['./view-fillers-group.component.scss']
 })
 export class ViewFillersGroupComponent implements OnInit {
-	filler_group_contents: [];
+	filler_group_contents: any = [];
 	filler_group_data: any;
 	filler_group_id: string;
 	is_loading = true;

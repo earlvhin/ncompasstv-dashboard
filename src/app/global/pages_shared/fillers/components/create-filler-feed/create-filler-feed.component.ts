@@ -13,9 +13,17 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 	styleUrls: ['./create-filler-feed.component.scss']
 })
 export class CreateFillerFeedComponent implements OnInit {
+	enable_add_button: boolean = false;
 	form: FormGroup;
+	filler_name: string = '';
+	filler_groups: any = [];
+	groups_loaded: boolean = false;
 	selected_group = this.page_data.group;
+	selected_groups: any = [];
 	final_data_to_upload: any;
+	fillerQuantity: any = {};
+	total_quantity = 0;
+	remaining = 20;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -28,15 +36,16 @@ export class CreateFillerFeedComponent implements OnInit {
 
 	ngOnInit() {
 		this.initializeForm();
+		this.getAllFillers();
 	}
 
 	private initializeForm(): void {
 		this.form = this._form_builder.group({
 			fillerGroupName: [null, Validators.required],
-			fillerQuantity: [null, Validators.required],
 			fillerInterval: [null, Validators.required],
 			fillerDuration: [null, Validators.required],
-			fillerGroup: [{ value: this.selected_group ? this.selected_group.name : null, disabled: true }, Validators.required]
+			fillerQuantity: [null, Validators.required],
+			fillerGroupId: [null]
 		});
 	}
 
@@ -44,8 +53,28 @@ export class CreateFillerFeedComponent implements OnInit {
 		return this.form.controls;
 	}
 
+	getAllFillers(key?) {
+		this._filler
+			.get_filler_groups(1, key, 0, 'Name', 'asc')
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				let groups_with_count_only = data.paging.entities.filter((group) => {
+					return group.count > 0;
+				});
+				this.filler_groups = groups_with_count_only;
+				this.groups_loaded = true;
+			})
+			.add(() => {
+				console.log('SG', this.selected_group);
+				if (this.selected_group.length != 0) {
+					this.filler_name = this.selected_group.name;
+					this.setFillerGroup(this.selected_group.fillerGroupId);
+					this.addToSelectedFillerGroup();
+				}
+			});
+	}
+
 	onSubmit(data) {
-		console.log('HERE', data);
 		this._filler
 			.add_filler_feed(data)
 			.pipe(takeUntil(this._unsubscribe))
@@ -75,6 +104,37 @@ export class CreateFillerFeedComponent implements OnInit {
 		}
 	}
 
+	setFillerGroup(id: string) {
+		this._formControls.fillerGroupId.setValue(id);
+		this.enable_add_button = true;
+	}
+
+	addToSelectedFillerGroup() {
+		let group = this.filler_groups.filter((groups) => {
+			groups.quantity = 1;
+			return groups.fillerGroupId == this._formControls.fillerGroupId.value;
+		});
+		this.selected_groups.push(group[0]);
+
+		//Remove from current selection
+		this.filler_groups = this.filler_groups.filter((groups) => {
+			return groups.fillerGroupId != this._formControls.fillerGroupId.value;
+		});
+		this.enable_add_button = false;
+		this.countTotalQuantity();
+	}
+
+	removeSelectedFiller(group) {
+		//Push to current selection
+		this.filler_groups.push(group);
+
+		//Remove from selected groups
+		this.selected_groups = this.selected_groups.filter((groups) => {
+			return groups.fillerGroupId != group.fillerGroupId;
+		});
+		this.countTotalQuantity();
+	}
+
 	arrangeData() {
 		this.final_data_to_upload = {
 			name: this._formControls.fillerGroupName.value,
@@ -83,14 +143,40 @@ export class CreateFillerFeedComponent implements OnInit {
 			PlaylistGroups: []
 		};
 
-		if (this.selected_group) {
-			const groups = {
-				fillerGroupId: this.selected_group.fillerGroupId,
-				Quantity: this._formControls.fillerQuantity.value
+		this.selected_groups.map((group) => {
+			let group_selected = {
+				fillerGroupId: group.fillerGroupId,
+				Quantity: group.quantity
 			};
-			this.final_data_to_upload.PlaylistGroups.push(groups);
-		}
+			this.final_data_to_upload.PlaylistGroups.push(group_selected);
+		});
 
 		this.onSubmit(this.final_data_to_upload);
 	}
+
+	saveQuantity(index) {
+		this.selected_groups[index].quantity = this._formControls.fillerQuantity.value;
+		this.countTotalQuantity();
+	}
+
+	disableSelectionField() {
+		if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	countTotalQuantity() {
+		this.total_quantity = 0;
+		this.remaining = 20;
+		this.selected_groups.map((group) => {
+			this.total_quantity = this.total_quantity + group.quantity;
+		});
+		this.remaining = this.remaining - this.total_quantity;
+	}
+
+	// getMaximumValue(group) {
+	// 	console.log(group.quantity != 0 ? group.quantity + this.remaining : group.count > this.remaining ? this.remaining : group.count);
+	// }
 }

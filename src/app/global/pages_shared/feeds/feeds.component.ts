@@ -146,9 +146,9 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 			this.filler_stats = {
 				total_value: response.fillerTotal,
-				total_label: 'Filler(s)',
+				total_label: 'Filler Feed(s)',
 				this_week_value: response.newFillerThisWeek,
-				this_week_value_label: 'Filler(s)',
+				this_week_value_label: 'Filler Feed(s)',
 				this_week_value_description: 'New this week'
 			};
 		});
