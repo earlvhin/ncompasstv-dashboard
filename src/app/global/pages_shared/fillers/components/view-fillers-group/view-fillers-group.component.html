@@ -116,12 +116,12 @@
 										class="sm-text p-3 full-width clickable"
 										title="{{ splitOriginalFilename(data.filename) }}"
 										*ngIf="data.fileType != 'feed'; else videotitle">
-										{{ splitOriginalFilename(data.filename) | slice : 0 : 27
-										}}{{ splitOriginalFilename(data.filename).length > 27 ? '...' : '' }}</span
+										{{ splitOriginalFilename(data.filename) | slice : 0 : 25
+										}}{{ splitOriginalFilename(data.filename).length > 25 ? '...' : '' }}</span
 									>
 									<ng-template #videotitle>
 										<span class="sm-text p-3 full-width clickable" title="data.title" (click)="gotoFileURL(data.url)">
-											{{ data.title | slice : 0 : 27 }}{{ data.title.length > 27 ? '...' : '' }}</span
+											{{ data.title | slice : 0 : 25 }}{{ data.title.length > 25 ? '...' : '' }}</span
 										>
 									</ng-template>
 								</div>

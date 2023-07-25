@@ -42,9 +42,9 @@ export class CreateFillerFeedComponent implements OnInit {
 	private initializeForm(): void {
 		this.form = this._form_builder.group({
 			fillerGroupName: [null, Validators.required],
-			fillerInterval: [null, Validators.required],
-			fillerDuration: [null, Validators.required],
-			fillerQuantity: [null, Validators.required],
+			fillerInterval: [1, Validators.required],
+			fillerDuration: [20, Validators.required],
+			fillerQuantity: [null],
 			fillerGroupId: [null]
 		});
 	}
@@ -154,11 +154,6 @@ export class CreateFillerFeedComponent implements OnInit {
 		this.onSubmit(this.final_data_to_upload);
 	}
 
-	saveQuantity(index) {
-		this.selected_groups[index].quantity = this._formControls.fillerQuantity.value;
-		this.countTotalQuantity();
-	}
-
 	disableSelectionField() {
 		if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') {
 			return true;
@@ -174,9 +169,22 @@ export class CreateFillerFeedComponent implements OnInit {
 			this.total_quantity = this.total_quantity + group.quantity;
 		});
 		this.remaining = this.remaining - this.total_quantity;
+		console.log('TQ', this.total_quantity);
 	}
 
-	// getMaximumValue(group) {
-	// 	console.log(group.quantity != 0 ? group.quantity + this.remaining : group.count > this.remaining ? this.remaining : group.count);
-	// }
+	enforceMinMax(el) {
+		if (el.target.value != '') {
+			if (parseInt(el.target.value) < parseInt(el.target.min)) {
+				el.target.value = el.target.min;
+			}
+			if (parseInt(el.target.value) > parseInt(el.target.max)) {
+				el.target.value = el.target.max;
+			}
+		}
+	}
+
+	saveQuantity(index) {
+		this.selected_groups[index].quantity = this._formControls.fillerQuantity.value;
+		this.countTotalQuantity();
+	}
 }

@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
@@ -26,6 +26,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	is_view_only = false;
 	no_feeds = false;
 	paging_data: any;
+	reload_detected = false;
 	search_data = '';
 	searching = false;
 	sort_column = 'DateCreated';
@@ -44,12 +45,22 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _auth: AuthService, private _date: DatePipe, private _dialog: MatDialog, private _feed: FeedService) {}
+	constructor(
+		private _auth: AuthService,
+		private _date: DatePipe,
+		private _dialog: MatDialog,
+		private _feed: FeedService,
+		private cdRef: ChangeDetectorRef
+	) {}
 
 	ngOnInit() {
+		this.onTabChanged(0);
 		this.getFeedsTotal();
-		this.getFeeds(1);
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
+	}
+
+	ngAfterViewInit() {
+		this.cdRef.detectChanges();
 	}
 
 	ngOnDestroy() {
@@ -154,9 +165,16 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	onTabChanged(tab: { index: number }) {
-		this.active_tab = tab.index;
-		console.log('ACTIVE TAB', this.active_tab);
+	onTabChanged(index) {
+		this.active_tab = index;
+		switch (index) {
+			case 0:
+				this.getFeeds(1);
+				break;
+			case 1:
+				break;
+			default:
+		}
 	}
 
 	private mapToTableFormat(feeds: FEED[]): UI_TABLE_FEED[] {
@@ -212,6 +230,8 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe(() => {
 			this.ngOnInit();
+			this.reload_detected = true;
+			this.onTabChanged(1);
 		});
 	}
 }

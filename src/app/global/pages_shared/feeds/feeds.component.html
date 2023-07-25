@@ -130,7 +130,7 @@
 						</div>
 					</mat-tab>
 					<mat-tab id="fillers-view-tab" label="Fillers">
-						<app-filler-feeds-table></app-filler-feeds-table>
+						<app-filler-feeds-table *ngIf="tabGroup.selectedIndex == 1" [reload]="reload_detected"></app-filler-feeds-table>
 					</mat-tab>
 				</mat-tab-group>
 			</div>

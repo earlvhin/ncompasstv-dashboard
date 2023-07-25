@@ -1,11 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 
 import { takeUntil } from 'rxjs/operators';
 import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed.model';
-import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 
 @Component({
 	selector: 'app-filler-feeds-table',
@@ -13,6 +12,8 @@ import { Placeholder } from '@angular/compiler/src/i18n/i18n_ast';
 	styleUrls: ['./filler-feeds-table.component.scss']
 })
 export class FillerFeedsTableComponent implements OnInit {
+	@Input() reload: boolean;
+
 	initial_load = true;
 	filtered_data = [];
 	fillers_paging: any;
@@ -35,6 +36,10 @@ export class FillerFeedsTableComponent implements OnInit {
 
 	ngOnInit() {
 		this.getAllFillerFeeds();
+	}
+
+	ngOnChanges() {
+		if (this.reload) this.ngOnInit();
 	}
 
 	getAllFillerFeeds(page?) {
@@ -86,7 +91,6 @@ export class FillerFeedsTableComponent implements OnInit {
 			}
 		});
 
-		console.log('PH', place_holder);
 		return place_holder;
 	}
 

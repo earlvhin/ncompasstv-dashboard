@@ -22,7 +22,7 @@
 				<div class="row">
 					<div class="col-lg-12">
 						<mat-form-field class="full-width">
-							<mat-label>Filler Name</mat-label>
+							<mat-label>Filler Name *</mat-label>
 							<input matInput type="text" autocomplete="off" formControlName="fillerGroupName" />
 						</mat-form-field>
 					</div>
@@ -98,22 +98,17 @@
 								<div class="row no-gutters">
 									<div class="col-lg-8">
 										<div class="full-width border-bottom">
-											<mat-label>
-												Select Quantity
-												<i class="text-danger"> </i>
-												<span class="text-danger sm-text"
-													>(Maximum: {{ groups.count > remaining ? remaining : groups.count }})
-												</span>
-											</mat-label>
+											<mat-label> Select Quantity </mat-label>
 											<input
 												matInput
 												type="number"
 												autocomplete="off"
 												formControlName="fillerQuantity"
 												min="1"
-												[max]="groups.count > remaining ? remaining : groups.count"
+												[max]="groups.count"
 												value="1"
 												class="mt-2"
+												(keyup)="enforceMinMax($event)"
 												(focusout)="saveQuantity(i)" />
 										</div>
 									</div>
@@ -139,7 +134,7 @@
 							class="theme-btn"
 							type="submit"
 							(click)="arrangeData()"
-							[disabled]="!form.valid && selected_groups.length == 0">
+							[disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
 							Create Filler Feed
 						</button>
 					</div>
