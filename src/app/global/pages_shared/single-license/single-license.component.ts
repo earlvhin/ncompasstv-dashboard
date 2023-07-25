@@ -1565,7 +1565,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			if (!operation.periods || !operation.status) result[index].periods.push('CLOSED');
 			else
 				result[index].periods = operation.periods.map((period) => {
-					if (!period.open && !period.close) return 'Open 24 hours';
+					if ((!period.open && !period.close) || (period.open === '12:00 AM' && period.close === '11:59 PM')) return 'Open 24 hours';
 					return `${period.open} - ${period.close}`;
 				});
 
