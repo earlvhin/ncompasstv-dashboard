@@ -25,6 +25,7 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
+import { CreateFillerFeedComponent } from 'src/app/global/pages_shared/fillers/components/create-filler-feed/create-filler-feed.component';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
@@ -253,6 +254,26 @@ export class DataTableComponent implements OnInit {
 		if (this.is_view_only) return;
 
 		let dialogRef = this._dialog.open(EditFeedComponent, { width: '600px', data });
+
+		dialogRef.afterClosed().subscribe(
+			(response) => {
+				if (!response) return;
+				this.reload_page.emit(true);
+			},
+			(error) => {
+				throw new Error(error);
+			}
+		);
+	}
+
+	editFillerFeed(id) {
+		let dialogRef = this._dialog.open(CreateFillerFeedComponent, {
+			width: '600px',
+			data: {
+				id: id,
+				from_edit_table: true
+			}
+		});
 
 		dialogRef.afterClosed().subscribe(
 			(response) => {

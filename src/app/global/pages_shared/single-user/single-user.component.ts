@@ -125,7 +125,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	clearSelectedDealers() {
 		if (!this.has_loaded_dealers_list) {
-			console.log('Dealers list is still loading');
 			return;
 		}
 
@@ -161,7 +160,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	removeSelectedDealer(index: number): void {
 		if (!this.has_loaded_dealers_list) {
-			console.log('Dealers list is still loading');
 			return;
 		}
 

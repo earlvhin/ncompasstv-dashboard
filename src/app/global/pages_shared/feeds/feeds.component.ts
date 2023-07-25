@@ -170,7 +170,6 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 	onTabChanged(index) {
 		if (this.isFillersTab) {
-			console.log('HERE');
 			index = 1;
 		}
 		this.isActiveTab = index;
@@ -235,9 +234,11 @@ export class FeedsComponent implements OnInit, OnDestroy {
 			}
 		});
 
-		dialog.afterClosed().subscribe(() => {
+		dialog.afterClosed().subscribe((response) => {
 			this._dialog.closeAll();
-			this._route.navigate([`/${this.roleRoute}/feeds?tab=1`]);
+			if (response) {
+				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
+			}
 		});
 	}
 

@@ -1,7 +1,10 @@
 <div class="create-dialog p-2" id="create-filler-dialog">
 	<div class="row">
 		<div class="col-lg-11">
-			<h3>Create Filler Feed</h3>
+			<h3 *ngIf="!page_data.from_edit_table; else editTitle">Create Filler Feed</h3>
+			<ng-template #editTitle>
+				<h3>Edit Filler Feed</h3>
+			</ng-template>
 		</div>
 		<div class="col-lg-1">
 			<button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
@@ -106,7 +109,7 @@
 												formControlName="fillerQuantity"
 												min="1"
 												[max]="groups.count"
-												value="1"
+												[value]="groups.quantity ? groups.quantity : 1"
 												class="mt-2"
 												(keyup)="enforceMinMax($event)"
 												(focusout)="saveQuantity(i)" />

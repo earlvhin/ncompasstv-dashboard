@@ -71,6 +71,12 @@ export class FillerService extends BaseService {
 		return this.postRequest(url, {});
 	}
 
+	// SOLO CONTENT
+	get_filler_group_solo(id: string) {
+		let url = `${this.getters.api_get_filler_feed_solo}?id=${id}`;
+		return this.getRequest(url).map((data) => data.data[0]);
+	}
+
 	// ------------------------------------
 	// CRUD FILLER FEEDS
 	// ------------------------------------

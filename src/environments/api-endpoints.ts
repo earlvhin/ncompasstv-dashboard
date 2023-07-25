@@ -81,6 +81,7 @@ export const API_ENDPOINTS = {
 		api_get_feed_by_id: 'feed/getfeedbycontentid?contentid=',
 		api_get_feed_types: 'feedtype/getall',
 		api_get_filler_gettotal: 'filler/group/gettotal',
+		api_get_filler_feed_solo: 'filler/playlist/getbyid',
 		api_get_filler_group_contents: 'filler/content/getbygroupid',
 		api_get_fillers: 'feed/getallfillers',
 		api_get_host_by_dealer: 'host/getbydealer?dealerid=',

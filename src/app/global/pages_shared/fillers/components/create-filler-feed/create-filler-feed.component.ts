@@ -29,7 +29,7 @@ export class CreateFillerFeedComponent implements OnInit {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public page_data: { group: any },
+		@Inject(MAT_DIALOG_DATA) public page_data: { group: any; id: any; from_edit_table: any },
 		private _form_builder: FormBuilder,
 		private _filler: FillerService,
 		private _dialog: MatDialog,
@@ -40,6 +40,39 @@ export class CreateFillerFeedComponent implements OnInit {
 	ngOnInit() {
 		this.initializeForm();
 		this.getAllFillers();
+		if (this.page_data.from_edit_table) {
+			this.getFillerFeedDetail(this.page_data.id);
+		}
+	}
+
+	private getFillerFeedDetail(id) {
+		this._filler
+			.get_filler_group_solo(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				this.fillUpForm(data);
+			});
+	}
+
+	fillUpForm(data) {
+		this._formControls.fillerGroupName.setValue(data.name);
+		this._formControls.fillerInterval.setValue(data.interval);
+		this._formControls.fillerDuration.setValue(data.duration);
+
+		this.selected_groups = data.fillerGroups;
+		this.countTotalQuantity();
+
+		setTimeout(() => {
+			this.selected_groups.map((groups) => {
+				this.removeItemsOnTheList(groups.fillerGroupId);
+			});
+		}, 1000);
+	}
+
+	removeItemsOnTheList(id) {
+		this.filler_groups = this.filler_groups.filter((groups) => {
+			return groups.fillerGroupId != id;
+		});
 	}
 
 	private initializeForm(): void {
@@ -68,11 +101,16 @@ export class CreateFillerFeedComponent implements OnInit {
 				this.groups_loaded = true;
 			})
 			.add(() => {
-				console.log('SG', this.selected_group);
 				if (this.selected_group.length != 0) {
 					this.filler_name = this.selected_group.name;
 					this.setFillerGroup(this.selected_group.fillerGroupId);
 					this.addToSelectedFillerGroup();
+				}
+
+				if (this.page_data.from_edit_table) {
+					if (this.page_data.from_edit_table) {
+						this.getFillerFeedDetail(this.page_data.id);
+					}
 				}
 			});
 	}
@@ -101,7 +139,7 @@ export class CreateFillerFeedComponent implements OnInit {
 		});
 
 		if (close) {
-			dialog.afterClosed().subscribe(() => {
+			dialog.afterClosed().subscribe((response) => {
 				this._dialog.closeAll();
 				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
 			});
@@ -173,7 +211,6 @@ export class CreateFillerFeedComponent implements OnInit {
 			this.total_quantity = this.total_quantity + group.quantity;
 		});
 		this.remaining = this.remaining - this.total_quantity;
-		console.log('TQ', this.total_quantity);
 	}
 
 	enforceMinMax(el) {

@@ -22,8 +22,8 @@ export class ViewFillersGroupComponent implements OnInit {
 	no_search_result = false;
 	search_keyword: string;
 	selected_filler: string;
-	sorting_order: string = 'asc';
-	sorting_column: string = 'Title';
+	sorting_order: string = '';
+	sorting_column: string = '';
 	title = 'Fillers Library';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
