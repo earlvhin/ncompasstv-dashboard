@@ -1,11 +1,11 @@
 <div>
 	<div *ngIf="!initial_load; else loader">
 		<!-- <div *ngIf="!no_feeds; else no_data_feed"> -->
-		<div>
+		<div class="mt-4">
 			<div class="row">
 				<div class="col-lg-8"></div>
 				<div class="col-lg-4">
-					<!-- <app-search-field
+					<app-search-field
 						*ngIf="!initial_load"
 						[form_title]="'Search Filler Name or Owner'"
 						[placeholder]="'Example: N-Compass Feed'"
@@ -14,7 +14,7 @@
 						[secondary_keyword]="'business_name'"
 						(searched)="filterData($event)"
 						[api_search]="true">
-					</app-search-field> -->
+					</app-search-field>
 				</div>
 			</div>
 			<div class="row" *ngIf="!initial_load">
@@ -29,7 +29,8 @@
 								[has_action]="true"
 								(page_triggered)="getAllFillerFeeds($event)"
 								(reload_page)="reloadPage($event)"
-								(update_info)="reloadPage($event)">
+								(update_info)="reloadPage($event)"
+								[fillers]="true">
 							</app-data-table>
 						</mat-card>
 					</ng-container>

@@ -411,6 +411,11 @@
 						(click)="onCloneFeed(data.id.value)"></i>
 				</td>
 
+				<td class="p-3 control-toggle md-text" *ngIf="fillers">
+					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" (click)="editFeed(data)"> </i>
+					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" (click)="deleteFillers(data.id.value)"></i>
+				</td>
+
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">
 					<i class="fas fa-trash cursor-pointer" title="Delete Advertiser" (click)="deleteAdvertiser(data.id.value)"></i>
 				</td>

@@ -1,8 +1,9 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { DatePipe } from '@angular/common';
+import { DatePipe, Location } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { CreateFillerFeedComponent } from '../fillers/components/create-filler-feed/create-filler-feed.component';
@@ -15,7 +16,6 @@ import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED } from '
 	styleUrls: ['./feeds.component.scss']
 })
 export class FeedsComponent implements OnInit, OnDestroy {
-	active_tab: any;
 	current_user = this._auth.current_user_value;
 	feed_data: UI_TABLE_FEED[] = [];
 	feed_stats: any = {};
@@ -23,6 +23,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	filler_stats: any = {};
 	filtered_data: any = [];
 	initial_load = true;
+	isActiveTab = 0;
 	is_view_only = false;
 	no_feeds = false;
 	paging_data: any;
@@ -50,7 +51,9 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		private _date: DatePipe,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
-		private cdRef: ChangeDetectorRef
+		private cdRef: ChangeDetectorRef,
+		private _location: Location,
+		private _route: Router
 	) {}
 
 	ngOnInit() {
@@ -166,7 +169,11 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	}
 
 	onTabChanged(index) {
-		this.active_tab = index;
+		if (this.isFillersTab) {
+			console.log('HERE');
+			index = 1;
+		}
+		this.isActiveTab = index;
 		switch (index) {
 			case 0:
 				this.getFeeds(1);
@@ -229,9 +236,16 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			this.ngOnInit();
-			this.reload_detected = true;
-			this.onTabChanged(1);
+			this._dialog.closeAll();
+			this._route.navigate([`/${this.roleRoute}/feeds?tab=1`]);
 		});
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
+	}
+
+	private get isFillersTab(): boolean {
+		return this._location.path().includes('tab=1');
 	}
 }

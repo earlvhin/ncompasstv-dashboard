@@ -10,6 +10,7 @@ import {
 	BillingService,
 	ContentService,
 	FeedService,
+	FillerService,
 	HelperService,
 	HostService,
 	LicenseService,
@@ -44,6 +45,7 @@ export class DataTableComponent implements OnInit {
 	@Input() ctrl_toggle: boolean;
 	@Input() can_toggle_email_notifications = false;
 	@Input() current_user?: UI_CURRENT_USER;
+	@Input() fillers: boolean;
 	@Input() has_action = false;
 	@Input() has_timestamp_beside_image = true;
 	@Input() is_dealer: boolean;
@@ -108,6 +110,7 @@ export class DataTableComponent implements OnInit {
 		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
+		private _filler: FillerService,
 		private _host: HostService,
 		private _helper: HelperService,
 		private _license: LicenseService,
@@ -266,6 +269,10 @@ export class DataTableComponent implements OnInit {
 		this.warningModal('warning', 'Delete Feed', 'Are you sure you want to delete this feed?', '', 'feed_delete', id);
 	}
 
+	deleteFillers(id): void {
+		this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
+	}
+
 	deleteAdvertiser(id) {
 		this._content.get_content_by_advertiser_id(id).subscribe((data) => {
 			this.warningModal(
@@ -343,6 +350,9 @@ export class DataTableComponent implements OnInit {
 					break;
 				case 'feed_delete':
 					this.postDeleteFeed(id);
+					break;
+				case 'fillers_delete':
+					this.postDeleteFillerFeed(id);
 					break;
 				case 'license_delete':
 					var array_to_delete = [];
@@ -436,6 +446,17 @@ export class DataTableComponent implements OnInit {
 	postDeleteFeed(data): void {
 		this.subscription.add(
 			this._content.remove_content([{ contentid: data }]).subscribe(
+				() => this.reload_page.emit(true),
+				(error) => {
+					throw new Error(error);
+				}
+			)
+		);
+	}
+
+	postDeleteFillerFeed(data): void {
+		this.subscription.add(
+			this._filler.delete_filler_feeds(data).subscribe(
 				() => this.reload_page.emit(true),
 				(error) => {
 					throw new Error(error);

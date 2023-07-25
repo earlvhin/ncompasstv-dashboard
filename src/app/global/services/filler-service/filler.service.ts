@@ -80,8 +80,13 @@ export class FillerService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
-	get_filler_feeds(search: string, pagesize = 15) {
-		let url = `${this.getters.api_get_filler_feeds}?search=${search}&pagesize=${pagesize}`;
+	get_filler_feeds(page = 1, search = '', pagesize = 15) {
+		let url = `${this.getters.api_get_filler_feeds}?page=${page}&search=${search}&pagesize=${pagesize}`;
 		return this.getRequest(url);
+	}
+
+	delete_filler_feeds(id) {
+		const url = `${this.deleters.api_delete_filler_feed}?id=${id}`;
+		return this.postRequest(url, {});
 	}
 }

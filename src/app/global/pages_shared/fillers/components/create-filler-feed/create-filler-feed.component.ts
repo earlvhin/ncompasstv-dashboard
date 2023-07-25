@@ -2,8 +2,9 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
-import { FillerService } from 'src/app/global/services';
+import { FillerService, AuthService } from 'src/app/global/services';
 import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -31,7 +32,9 @@ export class CreateFillerFeedComponent implements OnInit {
 		@Inject(MAT_DIALOG_DATA) public page_data: { group: any },
 		private _form_builder: FormBuilder,
 		private _filler: FillerService,
-		private _dialog: MatDialog
+		private _dialog: MatDialog,
+		private _route: Router,
+		private _auth: AuthService
 	) {}
 
 	ngOnInit() {
@@ -100,6 +103,7 @@ export class CreateFillerFeedComponent implements OnInit {
 		if (close) {
 			dialog.afterClosed().subscribe(() => {
 				this._dialog.closeAll();
+				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
 			});
 		}
 	}
@@ -186,5 +190,9 @@ export class CreateFillerFeedComponent implements OnInit {
 	saveQuantity(index) {
 		this.selected_groups[index].quantity = this._formControls.fillerQuantity.value;
 		this.countTotalQuantity();
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

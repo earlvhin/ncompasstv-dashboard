@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -12,12 +12,11 @@ import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed
 	styleUrls: ['./filler-feeds-table.component.scss']
 })
 export class FillerFeedsTableComponent implements OnInit {
-	@Input() reload: boolean;
-
 	initial_load = true;
 	filtered_data = [];
 	fillers_paging: any;
 	searching = false;
+	search_data: string = '';
 
 	fillers_table_column = [
 		{ name: '#', sortable: false },
@@ -38,14 +37,10 @@ export class FillerFeedsTableComponent implements OnInit {
 		this.getAllFillerFeeds();
 	}
 
-	ngOnChanges() {
-		if (this.reload) this.ngOnInit();
-	}
-
 	getAllFillerFeeds(page?) {
 		this.searching = true;
 		this._filler
-			.get_filler_feeds('')
+			.get_filler_feeds(page, this.search_data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
 				const mappedData = this.mapToTableFormat(response.paging.entities);
@@ -63,6 +58,7 @@ export class FillerFeedsTableComponent implements OnInit {
 
 		return filler_feeds.map((filler) => {
 			return new UI_TABLE_FILLER_FEED(
+				{ value: filler.fillerPlaylistId, editable: false, hidden: true },
 				{ value: count++, editable: false, hidden: false },
 				{ value: filler.name, editable: false, hidden: false },
 				{
@@ -96,5 +92,11 @@ export class FillerFeedsTableComponent implements OnInit {
 
 	reloadPage(e: boolean): void {
 		if (e) this.ngOnInit();
+	}
+
+	filterData(keyword: string): void {
+		this.search_data = '';
+		if (keyword && keyword.length > 0) this.search_data = keyword;
+		this.getAllFillerFeeds(1);
 	}
 }
