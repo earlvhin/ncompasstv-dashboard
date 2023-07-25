@@ -12,8 +12,8 @@ export class InformationModalComponent implements OnInit {
 	contents: any;
 	title: string;
 	type: string;
-	graph: boolean = false;
-	installation: boolean = false;
+	graph = false;
+	installation = false;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
@@ -28,6 +28,7 @@ export class InformationModalComponent implements OnInit {
 		this.graph = graph;
 		this.installation = installation;
 		if (character_limit) this.character_limit = character_limit;
+		if (this.isBusinessHours) this.parseBusinessHours();
 	}
 
 	get isArrayContent(): boolean {
@@ -83,5 +84,15 @@ export class InformationModalComponent implements OnInit {
 
 	formatDate(date) {
 		return moment(date).format('ll');
+	}
+
+	private parseBusinessHours() {
+		this.contents = this.contents.map((content: { periods: string[] }) => {
+			content.periods.forEach((period, index) => {
+				if (period === '12:00 AM - 11:59 PM') content.periods[index] = 'Open 24 hours';
+			});
+
+			return content;
+		});
 	}
 }
