@@ -277,8 +277,11 @@ export class DataTableComponent implements OnInit {
 
 		dialogRef.afterClosed().subscribe(
 			(response) => {
-				if (!response) return;
-				this.reload_page.emit(true);
+				if (response != false) {
+					this.reload_page.emit(true);
+				} else {
+					return;
+				}
 			},
 			(error) => {
 				throw new Error(error);

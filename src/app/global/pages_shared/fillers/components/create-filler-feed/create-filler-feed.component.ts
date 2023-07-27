@@ -63,6 +63,12 @@ export class CreateFillerFeedComponent implements OnInit {
 		this.countTotalQuantity();
 
 		setTimeout(() => {
+			// Set Max Quantity for Edit
+			this.selected_groups.map((groups) => {
+				const existing_list = this.filler_groups.filter((list) => list.fillerGroupId == groups.fillerGroupId);
+				groups.count = existing_list[0].count;
+			});
+
 			this.selected_groups.map((groups) => {
 				this.removeItemsOnTheList(groups.fillerGroupId);
 			});

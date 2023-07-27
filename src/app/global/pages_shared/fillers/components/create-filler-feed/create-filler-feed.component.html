@@ -138,7 +138,7 @@
 							type="submit"
 							(click)="arrangeData()"
 							[disabled]="!form.valid || total_quantity > 20 || total_quantity == 0">
-							Create Filler Feed
+							{{ !page_data.from_edit_table ? 'Create Filler Feed' : 'Update Filler Feed' }}
 						</button>
 					</div>
 				</div>

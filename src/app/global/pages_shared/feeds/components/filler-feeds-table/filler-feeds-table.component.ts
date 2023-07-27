@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -12,6 +12,8 @@ import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed
 	styleUrls: ['./filler-feeds-table.component.scss']
 })
 export class FillerFeedsTableComponent implements OnInit {
+	@Input() reload_page = false;
+
 	initial_load = true;
 	filtered_data = [];
 	fillers_paging: any;
@@ -35,6 +37,10 @@ export class FillerFeedsTableComponent implements OnInit {
 
 	ngOnInit() {
 		this.getAllFillerFeeds();
+	}
+
+	ngOnChanges() {
+		if (this.reload_page) this.ngOnInit();
 	}
 
 	getAllFillerFeeds(page?) {
@@ -80,17 +86,26 @@ export class FillerFeedsTableComponent implements OnInit {
 	formulateDisplayforQuantity(filler) {
 		let place_holder = '';
 		filler.fillerGroups.map((filler, i, { length }) => {
-			if (length - 1 === i) {
-				place_holder = place_holder + filler.quantity;
+			if (filler.isPair) {
+				if (length - 1 === i) {
+					place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>';
+				} else {
+					place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>' + ' , ';
+				}
 			} else {
-				place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-danger ml-2 mr-2"></i>';
+				if (length - 1 === i) {
+					place_holder = place_holder + filler.quantity;
+				} else {
+					place_holder = place_holder + filler.quantity + ' , ';
+				}
 			}
 		});
 
 		return place_holder;
 	}
 
-	reloadPage(e: boolean): void {
+	reloadPage(e) {
+		console.log('E', e);
 		if (e) this.ngOnInit();
 	}
 

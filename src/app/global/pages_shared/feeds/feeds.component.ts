@@ -27,6 +27,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	is_view_only = false;
 	no_feeds = false;
 	paging_data: any;
+	reload = false;
 	reload_detected = false;
 	search_data = '';
 	searching = false;
@@ -60,10 +61,21 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		this.onTabChanged(0);
 		this.getFeedsTotal();
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
+		if (this.isFillersTab) {
+			this.reload = true;
+			console.log(this.reload);
+			this.onTabChanged(1);
+		}
 	}
 
 	ngAfterViewInit() {
 		this.cdRef.detectChanges();
+	}
+
+	reloadSent() {
+		this.reload = true;
+		console.log(this.reload);
+		this.onTabChanged(1);
 	}
 
 	ngOnDestroy() {
@@ -169,9 +181,6 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	}
 
 	onTabChanged(index) {
-		if (this.isFillersTab) {
-			index = 1;
-		}
 		this.isActiveTab = index;
 		switch (index) {
 			case 0:

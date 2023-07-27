@@ -78,7 +78,7 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<div class="custom-mat-tab mt-30">
-				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" [selectedIndex]="isActiveTab">
+				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event.index)" [selectedIndex]="isActiveTab">
 					<mat-tab id="feeds-view-tab" label="Feeds">
 						<div *ngIf="!initial_load; else loader">
 							<div *ngIf="!no_feeds; else no_data_feed">
@@ -130,7 +130,7 @@
 						</div>
 					</mat-tab>
 					<mat-tab id="fillers-view-tab" label="Fillers">
-						<app-filler-feeds-table *ngIf="isActiveTab == 1"></app-filler-feeds-table>
+						<app-filler-feeds-table *ngIf="isActiveTab == 1" (reload_page)="reloadSent()"></app-filler-feeds-table>
 					</mat-tab>
 				</mat-tab-group>
 			</div>
