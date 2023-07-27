@@ -306,7 +306,7 @@ export class NewHostUserComponent implements OnInit {
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.', false);
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return false;
@@ -314,7 +314,7 @@ export class NewHostUserComponent implements OnInit {
 
 		this._user.create_new_user(this.f.roleid.value, this.new_host_form.value).subscribe(
 			(data) => {
-				this.openConfirmationModal('success', 'Account creation successful!', 'Host Owner account has been added to database.');
+				this.openConfirmationModal('success', 'Account creation successful!', 'Host Owner account has been added to database.', true);
 				formDirective.resetForm();
 				this.is_submitted = false;
 				this.form_invalid = false;
@@ -324,7 +324,7 @@ export class NewHostUserComponent implements OnInit {
 			(error) => {
 				this.is_submitted = false;
 				this.form_invalid = false;
-				this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+				this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message, false);
 			}
 		);
 	}
@@ -338,7 +338,7 @@ export class NewHostUserComponent implements OnInit {
 		this.f.hostid.setValue(e);
 	}
 
-	openConfirmationModal(status, message, data): void {
+	openConfirmationModal(status, message, data, redirect): void {
 		var dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -349,8 +349,10 @@ export class NewHostUserComponent implements OnInit {
 			}
 		});
 
-		dialog.afterClosed().subscribe((r) => {
-			this._router.navigate([`/${this.roleRoute}/dealers/`]);
+		dialog.afterClosed().subscribe(() => {
+			if (redirect) {
+				this._router.navigate([`/${this.roleRoute}/users/`]);
+			}
 		});
 	}
 

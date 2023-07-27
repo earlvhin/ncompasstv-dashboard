@@ -70,7 +70,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.', false);
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return;
@@ -81,7 +81,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer account has been added to database.');
+					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer account has been added to database.', true);
 					directive.resetForm();
 					this.is_submitted = false;
 					this.form_invalid = false;
@@ -91,7 +91,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 				(error) => {
 					this.is_submitted = false;
 					this.form_invalid = false;
-					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message, false);
 				}
 			);
 	}
@@ -113,7 +113,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 			);
 	}
 
-	openConfirmationModal(status: string, message: string, data: string): void {
+	openConfirmationModal(status: string, message: string, data: string, redirect: boolean): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -121,7 +121,9 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			this._router.navigate([`/${this.roleRoute}/dealers/`]);
+			if (redirect) {
+				this._router.navigate([`/${this.roleRoute}/users/`]);
+			}
 		});
 	}
 

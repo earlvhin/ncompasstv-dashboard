@@ -195,7 +195,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 		this.f.parentId.setValue(e);
 	}
 
-	openConfirmationModal(status: string, message: string, data: any): void {
+	openConfirmationModal(status: string, message: string, data: any, redirect: boolean): void {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -205,9 +205,10 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 				data: data
 			}
 		});
-
 		dialog.afterClosed().subscribe(() => {
-			this._router.navigate([`/${this.roleRoute}/users/`]);
+			if (redirect) {
+				this._router.navigate([`/${this.roleRoute}/users/`]);
+			}
 		});
 	}
 
@@ -216,7 +217,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 		this.form_invalid = true;
 
 		if (!this._user.validate_email(this.f.email.value)) {
-			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.');
+			this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', 'The email you entered is not valid.', false);
 			this.is_submitted = false;
 			this.form_invalid = false;
 			return false;
@@ -228,7 +229,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 		this.subscription.add(
 			this._user.create_new_user(this.f.roleId.value, data).subscribe(
 				() => {
-					this.openConfirmationModal('success', 'Account creation successful!', 'Sub-Dealer account has been saved');
+					this.openConfirmationModal('success', 'Account creation successful!', 'Sub-Dealer account has been saved', true);
 					form.resetForm();
 					this.is_submitted = false;
 					this.form_invalid = false;
@@ -239,7 +240,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 					this.is_submitted = false;
 					this.form_invalid = false;
 
-					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message);
+					this.openConfirmationModal('error', 'Oops something went wrong, Sorry!', error.error.message, false);
 				}
 			)
 		);
