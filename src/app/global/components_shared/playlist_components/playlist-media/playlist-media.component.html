@@ -153,7 +153,8 @@
 														</div>
 														<ng-template #breakdownFillers>
 															<div class="sm-text" *ngFor="let group of data.fillerGroups">
-																{{ group.quantity }} - {{ group.name }}
+																{{ group.quantity }} <span *ngIf="group.isPair">(In Pairs)</span> - {{ group.name }}
+																<span></span>
 															</div>
 														</ng-template>
 													</div>
@@ -210,7 +211,12 @@
 				<ng-template #fillerButton>
 					<div class="row no-gutters">
 						<div class="offset-lg-9 col-lg-3 text-right">
-							<button mat-button mat-raised-button class="theme-btn" [disabled]="current_selection == ''">
+							<button
+								mat-button
+								mat-raised-button
+								class="theme-btn"
+								[disabled]="current_content.length == 0"
+								(click)="addFillerOnPlaylist()">
 								Add Filler to Playlist
 								<span class="fas fa-plus ml-2"></span>
 							</button>

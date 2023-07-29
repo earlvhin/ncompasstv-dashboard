@@ -393,7 +393,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	openPlaylistMedia(type = 'add'): void {
-		const data = { playlist_host_license: this.playlist_host_license, dealer_id: this.dealer_id, existing_contents: this.playlist_contents };
+		const data = {
+			playlist_host_license: this.playlist_host_license,
+			dealer_id: this.dealer_id,
+			existing_contents: this.playlist_contents,
+			playlist_id: this.playlist_id
+		};
 
 		const playlist_content_dialog: MatDialogRef<PlaylistMediaComponent> = this._dialog.open(PlaylistMediaComponent, {
 			data: data,

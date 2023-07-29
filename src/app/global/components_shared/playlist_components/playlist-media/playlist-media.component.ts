@@ -34,7 +34,7 @@ export class PlaylistMediaComponent implements OnInit {
 
 	current_selection: any = '';
 	prev_selection: any = '';
-	current_content: any = [];
+	current_content: any;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -226,7 +226,11 @@ export class PlaylistMediaComponent implements OnInit {
 					data.paging.entities.map((group) => {
 						var sum = 0;
 						group.fillerGroups.map((inside_group) => {
-							sum = sum + inside_group.quantity;
+							if (inside_group.isPair) {
+								sum = sum + inside_group.quantity * 2;
+							} else {
+								sum = sum + inside_group.quantity;
+							}
 						});
 						group.totalFillers = sum;
 					});
@@ -239,20 +243,46 @@ export class PlaylistMediaComponent implements OnInit {
 	prepareDataToAddToPlaylist(id) {
 		console.log('this._dialog_data', this._dialog_data);
 
-		this.current_selection = id;
+		this.current_content = [];
 
+		//map existing contents to comply with format
+		this._dialog_data.existing_contents.map((contents) => {
+			let x = {
+				contentId: contents.contentId,
+				duration: contents.duration,
+				isFullScreen: contents.isFullScreen,
+				playlistContentId: contents.playlistContentId,
+				seq: contents.seq
+			};
+			this.current_content.push(x);
+		});
+		this.current_selection = id;
 		this._filler
 			.get_single_filler_feeds_placeholder(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
-					console.log('data', data);
 					data.data.map((filler) => {
-						this.current_content.push({ contentId: filler.contentId });
+						this.current_content.push({
+							contentId: filler.contentId,
+							duration: filler.duration,
+							isFullScreen: 0,
+							playlistContentId: null,
+							seq: 0
+						});
 					});
 				},
 				(error) => {}
-			);
+			)
+			.add(() => {
+				this.current_content.map((content, index) => {
+					if (content.seq == 0) {
+						content.seq = index + 1;
+					}
+				});
+
+				console.log('CC', this.current_content);
+			});
 
 		if (this.current_selection != this.prev_selection) {
 			this.addFillerSelectedEffect(id);
@@ -275,6 +305,24 @@ export class PlaylistMediaComponent implements OnInit {
 		box.classList.remove('selected-box');
 		box.classList.add('bg-dark');
 		this.prev_selection = this.current_selection;
+	}
+
+	addFillerOnPlaylist() {
+		let final_format = {
+			playlist: {
+				playlistId: this._dialog_data.playlist_id
+			},
+			playlistContents: this.current_content
+		};
+		this._playlist
+			.update_playlist_contents(final_format)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					console.log('data', data);
+				},
+				(error) => {}
+			);
 	}
 
 	onTabChanged(index) {
