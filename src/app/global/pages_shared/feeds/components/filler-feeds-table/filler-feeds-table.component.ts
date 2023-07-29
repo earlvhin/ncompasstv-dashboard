@@ -2,6 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
+import { Router } from '@angular/router';
 
 import { takeUntil } from 'rxjs/operators';
 import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed.model';
@@ -12,7 +13,7 @@ import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed
 	styleUrls: ['./filler-feeds-table.component.scss']
 })
 export class FillerFeedsTableComponent implements OnInit {
-	@Input() reload_page = false;
+	@Input() reloads: any = false;
 
 	initial_load = true;
 	filtered_data = [];
@@ -33,14 +34,14 @@ export class FillerFeedsTableComponent implements OnInit {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _filler: FillerService, private _date: DatePipe) {}
+	constructor(private _filler: FillerService, private _date: DatePipe, private _route: Router) {}
 
 	ngOnInit() {
 		this.getAllFillerFeeds();
 	}
 
 	ngOnChanges() {
-		if (this.reload_page) this.ngOnInit();
+		this.ngOnInit();
 	}
 
 	getAllFillerFeeds(page?) {
@@ -105,7 +106,6 @@ export class FillerFeedsTableComponent implements OnInit {
 	}
 
 	reloadPage(e) {
-		console.log('E', e);
 		if (e) this.ngOnInit();
 	}
 

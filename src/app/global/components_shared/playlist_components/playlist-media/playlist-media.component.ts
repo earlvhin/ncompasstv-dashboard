@@ -4,7 +4,7 @@ import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { API_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { AuthService, ContentService } from 'src/app/global/services';
+import { AuthService, ContentService, FillerService, PlaylistService } from 'src/app/global/services';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
 
 @Component({
@@ -21,12 +21,20 @@ export class PlaylistMediaComponent implements OnInit {
 	media_files_backup: API_CONTENT[] = [];
 	floating_contents: API_CONTENT[] = [];
 	file_not_found: boolean = false;
+	filler_groups: any = [];
 	show_floating: boolean = false;
 	page: number = 1;
 	paging: any;
 	isDealer: boolean = true;
 	isGettingData: boolean = true;
+	selected_groups: any = [];
+	isActiveTab: number = 0;
+	active_filler: string = 'own';
 	// subscription: Subscription = new Subscription();
+
+	current_selection: any = '';
+	prev_selection: any = '';
+	current_content: any = [];
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -34,12 +42,13 @@ export class PlaylistMediaComponent implements OnInit {
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		private _dialog: MatDialog,
 		private _content: ContentService,
-		private _auth: AuthService
+		private _auth: AuthService,
+		private _filler: FillerService,
+		private _playlist: PlaylistService
 	) {}
 
 	ngOnInit() {
-		this.getDealerContent(this._dialog_data.dealer_id);
-
+		this.onTabChanged(this.isActiveTab);
 		if (
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech
@@ -170,6 +179,7 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	addToMarked(e: API_CONTENT) {
+		console.log('MARK', e);
 		if (this.type === 'add') {
 			if (this.selected_contents.includes(e)) {
 				this.selected_contents = this.selected_contents.filter((i) => {
@@ -205,5 +215,78 @@ export class PlaylistMediaComponent implements OnInit {
 				return;
 			}
 		});
+	}
+
+	getAllFillerGroups() {
+		this._filler
+			.get_filler_feeds(1, '', 0)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					data.paging.entities.map((group) => {
+						var sum = 0;
+						group.fillerGroups.map((inside_group) => {
+							sum = sum + inside_group.quantity;
+						});
+						group.totalFillers = sum;
+					});
+					this.filler_groups = data.paging.entities;
+				},
+				(error) => {}
+			);
+	}
+
+	prepareDataToAddToPlaylist(id) {
+		console.log('this._dialog_data', this._dialog_data);
+
+		this.current_selection = id;
+
+		this._filler
+			.get_single_filler_feeds_placeholder(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					console.log('data', data);
+					data.data.map((filler) => {
+						this.current_content.push({ contentId: filler.contentId });
+					});
+				},
+				(error) => {}
+			);
+
+		if (this.current_selection != this.prev_selection) {
+			this.addFillerSelectedEffect(id);
+		}
+	}
+
+	addFillerSelectedEffect(id) {
+		const box = document.getElementById(id);
+		box.classList.add('selected-box');
+		box.classList.remove('bg-dark');
+		if (this.prev_selection != '') {
+			this.removeFillerSelectedEffect(this.prev_selection);
+		} else {
+			this.prev_selection = id;
+		}
+	}
+
+	removeFillerSelectedEffect(id) {
+		const box = document.getElementById(id);
+		box.classList.remove('selected-box');
+		box.classList.add('bg-dark');
+		this.prev_selection = this.current_selection;
+	}
+
+	onTabChanged(index) {
+		this.isActiveTab = index;
+		switch (index) {
+			case 0:
+				this.getDealerContent(this._dialog_data.dealer_id);
+				break;
+			case 1:
+				this.getAllFillerGroups();
+				break;
+			default:
+		}
 	}
 }

@@ -11,6 +11,7 @@
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
 						[data_value]="fillers_count.admin_count"
 						[data_label]="fillers_count.admin_label"
 						[data_description]="fillers_count.label">
@@ -20,6 +21,7 @@
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
 						[data_value]="fillers_count.dealer_admin_count"
 						[data_label]="fillers_count.dealer_admin_label"
 						[data_description]="fillers_count.label">
@@ -29,6 +31,7 @@
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
 						[data_value]="fillers_count.dealer_count"
 						[data_label]="fillers_count.label.dealer_label"
 						[data_description]="fillers_count.label">
@@ -38,6 +41,7 @@
 			<div class="col-lg-3">
 				<mat-card class="h-100 dealer-card">
 					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
 						[data_value]="fillers_count.host_count"
 						[data_label]="fillers_count.host_label"
 						[data_description]="fillers_count.label">
@@ -183,11 +187,11 @@
 						</div>
 					</mat-tab>
 
-					<mat-tab id="dealer-admin-view-tab" label="Dealer Admin">
+					<mat-tab id="dealer-admin-view-tab" label="Dealer Admin" [disabled]="true">
 						<div *ngIf="tabGroup.selectedIndex === 1"></div>
 					</mat-tab>
 
-					<mat-tab id="dealer-view-tab" label="Dealer">
+					<mat-tab id="dealer-view-tab" label="Dealer" [disabled]="true">
 						<div *ngIf="tabGroup.selectedIndex === 2"></div>
 					</mat-tab>
 				</mat-tab-group>
@@ -195,6 +199,12 @@
 		</div>
 	</div>
 </div>
+
+<ng-template #small_loader>
+	<div class="py-4 white-bg">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
 
 <ng-template #loader>
 	<div class="py-4 h-500">

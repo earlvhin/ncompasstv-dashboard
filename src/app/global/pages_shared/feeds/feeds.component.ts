@@ -27,8 +27,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	is_view_only = false;
 	no_feeds = false;
 	paging_data: any;
-	reload = false;
-	reload_detected = false;
+	reload_detected: boolean = false;
 	search_data = '';
 	searching = false;
 	sort_column = 'DateCreated';
@@ -62,20 +61,13 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		this.getFeedsTotal();
 		this.is_view_only = this.current_user.roleInfo.permission === 'V';
 		if (this.isFillersTab) {
-			this.reload = true;
-			console.log(this.reload);
 			this.onTabChanged(1);
+			this.reload_detected = !this.reload_detected;
 		}
 	}
 
 	ngAfterViewInit() {
 		this.cdRef.detectChanges();
-	}
-
-	reloadSent() {
-		this.reload = true;
-		console.log(this.reload);
-		this.onTabChanged(1);
 	}
 
 	ngOnDestroy() {
@@ -244,10 +236,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		});
 
 		dialog.afterClosed().subscribe((response) => {
-			this._dialog.closeAll();
-			if (response) {
-				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
-			}
+			this.ngOnInit();
 		});
 	}
 

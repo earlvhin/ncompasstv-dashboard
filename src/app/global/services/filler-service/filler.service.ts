@@ -95,4 +95,14 @@ export class FillerService extends BaseService {
 		const url = `${this.deleters.api_delete_filler_feed}?id=${id}`;
 		return this.postRequest(url, {});
 	}
+
+	get_all_filler_feeds_minified() {
+		let url = `${this.getters.api_get_filler_feeds_minify}?pagesize=0`;
+		return this.getRequest(url);
+	}
+
+	get_single_filler_feeds_placeholder(id) {
+		let url = `${this.getters.api_get_filler_feed_placeholder}?fillerplaylistid=${id}`;
+		return this.getRequest(url);
+	}
 }
