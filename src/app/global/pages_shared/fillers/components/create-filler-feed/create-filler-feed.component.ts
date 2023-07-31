@@ -220,7 +220,6 @@ export class CreateFillerFeedComponent implements OnInit {
 	}
 
 	enforceMinMax(el) {
-		console.log('MAX', el.target.max);
 		if (el.target.value != '') {
 			if (parseInt(el.target.value) < parseInt(el.target.min)) {
 				el.target.value = el.target.min;

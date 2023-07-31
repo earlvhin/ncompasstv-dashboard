@@ -147,7 +147,10 @@
 												</div>
 												<div class="row mt-3">
 													<div class="col-lg-6 text-left">
-														<div class="hover-prime clickable" title="View Filler Group">
+														<div
+															class="hover-prime clickable"
+															title="View Filler Group"
+															(click)="navigateToFillerGroup(group.fillerGroupId)">
 															<i class="fas fa-photo-video mr-3"></i>
 															<span class="text-dark primary sm-text">{{ group.count }}</span>
 														</div>
@@ -166,7 +169,7 @@
 														<span
 															class="fas fa-trash text-danger ml-3 clickable"
 															title="Delete Filler Group"
-															(click)="onEditFillerGroup(group.fillerGroupId)"></span>
+															(click)="onDeleteFillerGroup(group.fillerGroupId)"></span>
 													</div>
 												</div>
 											</div>

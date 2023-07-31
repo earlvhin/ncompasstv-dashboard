@@ -408,23 +408,31 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		playlist_content_dialog.componentInstance.type = type;
 
 		playlist_content_dialog.afterClosed().subscribe((response) => {
-			// if add content
+			//if fillers added
+			if (response.mode === 'fillers') {
+				this.reload_playlist.emit(true);
+			}
 
-			if (type === 'add') {
+			// if add content
+			if (response.mode === 'add') {
 				if (!response) return localStorage.removeItem('to_blocklist');
 				if (localStorage.getItem('to_blocklist')) this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
-				this.structureAddedPlaylistContent(response);
+				this.structureAddedPlaylistContent(response.data);
 				return;
 			}
 
-			// if swap content
+			//just exit
 			if (!response || typeof response === 'undefined') return;
-			const content: API_CONTENT = response[0];
-			const playlistContentIdToBeReplaced = this.selected_contents[0];
-			if (content.playlistContentId === playlistContentIdToBeReplaced)
-				return this.showErrorDialog('Cannot select the same content to be swapped');
 
-			this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced });
+			// if swap content
+			if (response.mode === 'swap') {
+				const content: API_CONTENT = response.data[0];
+				const playlistContentIdToBeReplaced = this.selected_contents[0];
+				if (content.playlistContentId === playlistContentIdToBeReplaced)
+					return this.showErrorDialog('Cannot select the same content to be swapped');
+
+				this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced });
+			}
 		});
 	}
 

@@ -52,6 +52,16 @@ export class FillerService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	validate_delete_filler_group(id: string) {
+		let url = `${this.getters.api_get_filler_group_validation}?id=${id}`;
+		return this.getRequest(url);
+	}
+
+	delete_filler_group(id) {
+		const url = `${this.deleters.api_delete_filler_group}?id=${id}`;
+		return this.postRequest(url, {});
+	}
+
 	// ------------------------------------
 	// CRUD FILLER CONTENTS
 	// ------------------------------------

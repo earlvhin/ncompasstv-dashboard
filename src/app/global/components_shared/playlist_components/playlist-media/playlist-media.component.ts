@@ -1,11 +1,12 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { API_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { AuthService, ContentService, FillerService, PlaylistService } from 'src/app/global/services';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
+import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-playlist-media',
@@ -34,7 +35,8 @@ export class PlaylistMediaComponent implements OnInit {
 
 	current_selection: any = '';
 	prev_selection: any = '';
-	current_content: any;
+	current_content: any = [];
+	in_progress_saving_fillers: boolean = false;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -44,7 +46,8 @@ export class PlaylistMediaComponent implements OnInit {
 		private _content: ContentService,
 		private _auth: AuthService,
 		private _filler: FillerService,
-		private _playlist: PlaylistService
+		private _playlist: PlaylistService,
+		private _currentDialog: MatDialogRef<PlaylistMediaComponent>
 	) {}
 
 	ngOnInit() {
@@ -179,7 +182,6 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	addToMarked(e: API_CONTENT) {
-		console.log('MARK', e);
 		if (this.type === 'add') {
 			if (this.selected_contents.includes(e)) {
 				this.selected_contents = this.selected_contents.filter((i) => {
@@ -241,8 +243,6 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	prepareDataToAddToPlaylist(id) {
-		console.log('this._dialog_data', this._dialog_data);
-
 		this.current_content = [];
 
 		//map existing contents to comply with format
@@ -280,8 +280,6 @@ export class PlaylistMediaComponent implements OnInit {
 						content.seq = index + 1;
 					}
 				});
-
-				console.log('CC', this.current_content);
 			});
 
 		if (this.current_selection != this.prev_selection) {
@@ -308,6 +306,7 @@ export class PlaylistMediaComponent implements OnInit {
 	}
 
 	addFillerOnPlaylist() {
+		this.in_progress_saving_fillers = true;
 		let final_format = {
 			playlist: {
 				playlistId: this._dialog_data.playlist_id
@@ -319,10 +318,32 @@ export class PlaylistMediaComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
-					console.log('data', data);
+					if (data) {
+						this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
+					}
 				},
 				(error) => {}
 			);
+	}
+
+	addToPlaylist() {
+		this._currentDialog.close({ mode: 'add', data: this.selected_contents });
+	}
+
+	swapContents() {
+		this._currentDialog.close({ mode: 'swap', data: this.selected_contents });
+	}
+
+	openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			this._currentDialog.close({ mode: 'fillers' });
+		});
 	}
 
 	onTabChanged(index) {

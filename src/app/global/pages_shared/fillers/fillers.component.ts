@@ -8,6 +8,8 @@ import { Subject } from 'rxjs';
 
 import { FillerService } from 'src/app/global/services';
 import { AddFillerContentComponent } from './components/add-filler-content/add-filler-content.component';
+import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { DeleteFillerGroupComponent } from './components/delete-filler-group/delete-filler-group.component';
 
 @Component({
 	selector: 'app-fillers',
@@ -15,6 +17,7 @@ import { AddFillerContentComponent } from './components/add-filler-content/add-f
 	styleUrls: ['./fillers.component.scss']
 })
 export class FillersComponent implements OnInit {
+	current_filer: any;
 	fillers_count: any;
 	filler_group: any;
 	filler_group_cache = [];
@@ -37,13 +40,10 @@ export class FillersComponent implements OnInit {
 	onTabChanged(e: { index: number }) {
 		switch (e.index) {
 			case 1:
-				// this.pageRequested(1);
 				break;
 			case 0:
-				// this.getLicenses(1);
 				break;
 			case 3:
-				// this.getHosts(1);
 				break;
 			default:
 		}
@@ -80,6 +80,56 @@ export class FillersComponent implements OnInit {
 		});
 		dialog.afterClosed().subscribe(() => {
 			this.ngOnInit();
+		});
+	}
+
+	onDeleteFillerGroup(id) {
+		//check first if any content is in used
+		this._filler
+			.validate_delete_filler_group(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				console.log('DATA TO DELETE VALID?', data);
+				if (data.message) {
+					this.openConfirmationModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this feed?', 'filler_delete', id);
+				} else {
+					const delete_dialog = this._dialog.open(DeleteFillerGroupComponent, {
+						width: '500px',
+						height: '450px',
+						data: {
+							filler_feeds: data.fillerPlaylistGroups
+						}
+					});
+
+					// delete_dialog.afterClosed().subscribe()
+				}
+			});
+	}
+
+	continueToDeleteProcess(id) {
+		this._filler
+			.delete_filler_group(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				this.openConfirmationModal('success', 'Success!', 'Filler Group ' + data.message);
+				this.ngOnInit();
+			});
+	}
+
+	openConfirmationModal(status, message, data, action?, id?): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data, delete: true, id }
+		});
+
+		dialog.afterClosed().subscribe((result) => {
+			switch (result) {
+				case 'delete':
+					this.continueToDeleteProcess(id);
+					break;
+				default:
+			}
 		});
 	}
 
@@ -125,6 +175,14 @@ export class FillersComponent implements OnInit {
 		if (page === 1) {
 			size = 11;
 		}
+
+		this.current_filer = {
+			page: 1,
+			key: this.search_keyword,
+			size: size,
+			sort_col: this.sorting_column,
+			sort_ord: this.sorting_order
+		};
 
 		this._filler
 			.get_filler_groups(page, this.search_keyword, size, this.sorting_column, this.sorting_order)

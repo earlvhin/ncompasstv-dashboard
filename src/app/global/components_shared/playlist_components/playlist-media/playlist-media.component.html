@@ -196,12 +196,7 @@
 						<span class="sm-text" *ngIf="paging"> Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets </span>
 					</div>
 					<div class="col-lg-2">
-						<button
-							mat-button
-							mat-raised-button
-							class="theme-btn"
-							[mat-dialog-close]="selected_contents"
-							[disabled]="selected_contents.length == 0">
+						<button mat-button mat-raised-button class="theme-btn" (click)="addToPlaylist()" [disabled]="selected_contents.length == 0">
 							Add to Playlist
 							<span class="fas fa-plus ml-2"></span>
 						</button>
@@ -215,10 +210,10 @@
 								mat-button
 								mat-raised-button
 								class="theme-btn"
-								[disabled]="current_content.length == 0"
+								[disabled]="current_content.length == 0 || in_progress_saving_fillers"
 								(click)="addFillerOnPlaylist()">
-								Add Filler to Playlist
-								<span class="fas fa-plus ml-2"></span>
+								{{ in_progress_saving_fillers ? 'Saving Playlist ...' : 'Add Filler to Playlist' }}
+								<span [class]="in_progress_saving_fillers ? 'fas fa-spinner ml-2' : 'fas fa-plus ml-2'"></span>
 							</button>
 						</div>
 					</div>
@@ -231,12 +226,7 @@
 						<span class="sm-text" *ngIf="paging">Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets</span>
 					</div>
 					<div class="col-lg-2 text-right">
-						<button
-							mat-button
-							mat-raised-button
-							class="theme-btn"
-							[mat-dialog-close]="selected_contents"
-							[disabled]="selected_contents.length === 0">
+						<button mat-button mat-raised-button class="theme-btn" (click)="swapContents()" [disabled]="selected_contents.length === 0">
 							Select
 						</button>
 					</div>
