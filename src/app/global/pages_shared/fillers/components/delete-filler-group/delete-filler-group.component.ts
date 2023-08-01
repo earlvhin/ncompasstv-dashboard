@@ -3,10 +3,11 @@ import { MAT_DIALOG_DATA } from '@angular/material';
 import { MatDialog, MatDialogRef } from '@angular/material';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
-import { FillerService } from 'src/app/global/services';
+import { FillerService, AuthService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-delete-filler-group',
@@ -18,7 +19,13 @@ export class DeleteFillerGroupComponent implements OnInit {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(@Inject(MAT_DIALOG_DATA) public page_data: { filler_feeds: any }, private _dialog: MatDialog, private _filler: FillerService) {}
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public page_data: { filler_feeds: any },
+		private _dialog: MatDialog,
+		private _filler: FillerService,
+		private _router: Router,
+		private _auth: AuthService
+	) {}
 
 	ngOnInit() {}
 
@@ -67,5 +74,14 @@ export class DeleteFillerGroupComponent implements OnInit {
 					return groups.fillerPlaylistId != id;
 				});
 			});
+	}
+
+	onClickPlaylistName(id) {
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/playlists/${id}`], {}));
+		window.open(url, '_blank');
+	}
+
+	protected get roleRoute() {
+		return this._auth.roleRoute;
 	}
 }

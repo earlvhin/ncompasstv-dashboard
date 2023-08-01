@@ -25,13 +25,16 @@
 	<div class="row">
 		<div class="col-lg-12">
 			<mat-accordion>
-				<!-- [ngClass]="dma.totalHosts > 0 ? '': 'not-clickable'" -->
-				<mat-expansion-panel *ngFor="let groups of filler_groups" class="mb-3">
+				<mat-expansion-panel
+					*ngFor="let groups of filler_groups"
+					class="mb-3"
+					[hideToggle]="groups.playlists != null ? false : true"
+					[disabled]="groups.playlists == null">
 					<mat-expansion-panel-header class="mt-2">
 						<mat-panel-title class="md-text p-0">
 							<div class="name font-weight-bold md-text">
 								<mat-checkbox [checked]="groups.checked" (change)="uncheckCheckItem($event.checked, groups)"> </mat-checkbox>
-								<span class="ml-3 mr-3">
+								<span class="ml-3 mr-3 text-dark">
 									{{ groups.name }}
 								</span>
 								<span
@@ -46,14 +49,18 @@
                             </div>
                         </mat-panel-description> -->
 					</mat-expansion-panel-header>
-					<div class="expansion-panel-content full-width">
+					<div class="expansion-panel-content full-width" *ngIf="groups.playlists != null">
 						<hr />
-						<!-- <mat-list class="dma-host-list">
-                            <mat-list-item *ngFor="let host of dma.hosts" class="name sm-text"
-                                (click)="onClickHostName(host.hostId)">
-                                {{ host.hostName }}
-                            </mat-list-item>
-                        </mat-list> -->
+						<span class="sm-text font-weight-bold"> Playing Where:</span>
+						<mat-list>
+							<mat-list-item
+								*ngFor="let playlist of groups.playlists"
+								class="name md-text clickable with-primary-hover"
+								(click)="onClickPlaylistName(playlist.playlistId)">
+								<span class="fas fa-circle sm-text text-dark mr-2"></span>
+								{{ playlist.name }}
+							</mat-list-item>
+						</mat-list>
 					</div>
 				</mat-expansion-panel>
 			</mat-accordion>
