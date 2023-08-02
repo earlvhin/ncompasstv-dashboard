@@ -89,9 +89,14 @@ export class FillersComponent implements OnInit {
 			.validate_delete_filler_group(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				console.log('DATA TO DELETE VALID?', data);
 				if (data.message) {
-					this.openConfirmationModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this feed?', 'filler_delete', id);
+					this.openConfirmationModal(
+						'warning',
+						'Delete Filler Group',
+						'Are you sure you want to delete this filler group?',
+						'filler_delete',
+						id
+					);
 				} else {
 					const delete_dialog = this._dialog.open(DeleteFillerGroupComponent, {
 						width: '500px',
@@ -101,7 +106,15 @@ export class FillersComponent implements OnInit {
 						}
 					});
 
-					// delete_dialog.afterClosed().subscribe()
+					delete_dialog.afterClosed().subscribe(() => {
+						this.openConfirmationModal(
+							'warning',
+							'Delete Filler Group',
+							'Are you sure you want to delete this filler group?',
+							'filler_delete',
+							id
+						);
+					});
 				}
 			});
 	}

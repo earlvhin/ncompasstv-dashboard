@@ -15,6 +15,7 @@ import { FillerService, AuthService } from 'src/app/global/services';
 	styleUrls: ['./delete-filler-group.component.scss']
 })
 export class DeleteFillerGroupComponent implements OnInit {
+	to_delete: any = [];
 	filler_groups = this.page_data.filler_feeds;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -32,6 +33,14 @@ export class DeleteFillerGroupComponent implements OnInit {
 	selectUnselectAll(event) {
 		this.filler_groups.map((filler_feeds) => {
 			filler_feeds.checked = event;
+			if (event) {
+				this.to_delete.push(filler_feeds.fillerPlaylistId);
+			} else {
+				const index = this.to_delete.indexOf(filler_feeds.fillerPlaylistId);
+				if (index > -1) {
+					this.to_delete.splice(index, 1);
+				}
+			}
 		});
 	}
 
@@ -39,8 +48,20 @@ export class DeleteFillerGroupComponent implements OnInit {
 		this.filler_groups.filter((groups) => {
 			if (groups.fillerPlaylistId === data.fillerPlaylistId) {
 				groups.checked = event;
+				if (event) {
+					this.to_delete.push(groups.fillerPlaylistId);
+				} else {
+					const index = this.to_delete.indexOf(groups.fillerPlaylistId);
+					if (index > -1) {
+						this.to_delete.splice(index, 1);
+					}
+				}
 			}
 		});
+	}
+
+	deleteSelection() {
+		this.continueToDeleteProcess(this.to_delete);
 	}
 
 	deleteFillerFeedSolo(id) {
@@ -57,9 +78,10 @@ export class DeleteFillerGroupComponent implements OnInit {
 		dialog.afterClosed().subscribe((result) => {
 			switch (result) {
 				case 'delete':
-					this.continueToDeleteProcess(id);
+					this.continueToDeleteProcess([id]);
 					break;
 				default:
+					this._dialog.closeAll();
 			}
 		});
 	}

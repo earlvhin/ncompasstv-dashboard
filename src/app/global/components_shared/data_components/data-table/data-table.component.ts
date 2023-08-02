@@ -22,6 +22,7 @@ import {
 
 import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { DeleteFillerGroupComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-group/delete-filler-group.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
@@ -30,6 +31,7 @@ import { MediaViewerComponent } from '../../../components_shared/media_component
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
 import { dateFormat } from 'highcharts';
+import { DeleteFillerFeedsComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
 
 @Component({
 	selector: 'app-data-table',
@@ -294,7 +296,25 @@ export class DataTableComponent implements OnInit {
 	}
 
 	deleteFillers(id): void {
-		this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
+		this._filler.check_if_filler_has_dependency(id).subscribe((data) => {
+			if (data.message) {
+				this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
+			} else {
+				const delete_dialog = this._dialog.open(DeleteFillerFeedsComponent, {
+					width: '500px',
+					height: '450px',
+					data: {
+						filler_feeds: data.fillerPlaylists
+					}
+				});
+
+				delete_dialog.afterClosed().subscribe((result) => {
+					if (result == 'delete') {
+						this.postDeleteFillerFeed([id]);
+					}
+				});
+			}
+		});
 	}
 
 	deleteAdvertiser(id) {
@@ -376,7 +396,7 @@ export class DataTableComponent implements OnInit {
 					this.postDeleteFeed(id);
 					break;
 				case 'fillers_delete':
-					this.postDeleteFillerFeed(id);
+					this.postDeleteFillerFeed([id]);
 					break;
 				case 'license_delete':
 					var array_to_delete = [];

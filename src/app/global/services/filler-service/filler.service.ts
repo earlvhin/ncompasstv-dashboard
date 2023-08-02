@@ -101,9 +101,9 @@ export class FillerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	delete_filler_feeds(id) {
-		const url = `${this.deleters.api_delete_filler_feed}?id=${id}`;
-		return this.postRequest(url, {});
+	delete_filler_feeds(data_id) {
+		const url = `${this.deleters.api_delete_filler_feed}`;
+		return this.postRequest(url, data_id);
 	}
 
 	get_all_filler_feeds_minified() {
@@ -113,6 +113,11 @@ export class FillerService extends BaseService {
 
 	get_single_filler_feeds_placeholder(id) {
 		let url = `${this.getters.api_get_filler_feed_placeholder}?fillerplaylistid=${id}`;
+		return this.getRequest(url);
+	}
+
+	check_if_filler_has_dependency(id) {
+		let url = `${this.getters.api_get_filler_feed_dependency}?fillerplaylistid=${id}`;
 		return this.getRequest(url);
 	}
 }

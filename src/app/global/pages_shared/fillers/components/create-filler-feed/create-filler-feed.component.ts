@@ -15,11 +15,12 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 })
 export class CreateFillerFeedComponent implements OnInit {
 	enable_add_button: boolean = false;
+	existing_data: any;
 	form: FormGroup;
 	filler_name: string = '';
 	filler_groups: any = [];
 	groups_loaded: boolean = false;
-	selected_group = this.page_data.group;
+	selected_group: any = this.page_data.group;
 	selected_groups: any = [];
 	final_data_to_upload: any;
 	fillerQuantity: any = {};
@@ -50,7 +51,10 @@ export class CreateFillerFeedComponent implements OnInit {
 			.get_filler_group_solo(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				this.fillUpForm(data);
+				this.existing_data = data;
+			})
+			.add(() => {
+				this.fillUpForm(this.existing_data);
 			});
 	}
 
@@ -59,19 +63,18 @@ export class CreateFillerFeedComponent implements OnInit {
 		this._formControls.fillerInterval.setValue(data.interval);
 		this._formControls.fillerDuration.setValue(data.duration);
 
-		this.selected_groups = data.fillerGroups;
-		this.countTotalQuantity();
-
 		setTimeout(() => {
-			// Set Max Quantity for Edit
-			this.selected_groups.map((groups) => {
+			data.fillerGroups.map((groups) => {
 				const existing_list = this.filler_groups.filter((list) => list.fillerGroupId == groups.fillerGroupId);
 				groups.count = existing_list[0].count;
 			});
 
-			this.selected_groups.map((groups) => {
+			data.fillerGroups.map((groups) => {
 				this.removeItemsOnTheList(groups.fillerGroupId);
 			});
+
+			this.selected_groups = data.fillerGroups;
+			this.countTotalQuantity();
 		}, 1000);
 	}
 

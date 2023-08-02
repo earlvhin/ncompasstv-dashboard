@@ -70,7 +70,9 @@
 	<div class="row">
 		<div class="col-lg-12 text-right">
 			<button mat-button mat-raised-button class="mt-3 theme-btn mr-2" [mat-dialog-close]="false">Cancel</button>
-			<button mat-button mat-raised-button class="mt-3 theme-btn bg-danger" [disabled]="true">Delete Selection</button>
+			<button mat-button mat-raised-button class="mt-3 theme-btn bg-danger" (click)="deleteSelection()" [disabled]="to_delete.length == 0">
+				Delete Selection
+			</button>
 		</div>
 	</div>
 </div>

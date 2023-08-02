@@ -36,6 +36,7 @@ export const API_ENDPOINTS = {
 		api_get_dealer_values: 'dealer/getdealervaluesbydealerid?dealerid=',
 		api_get_filler_feeds: 'filler/playlist/getall',
 		api_get_filler_feeds_minify: 'filler/playlist/getall/minify',
+		api_get_filler_feed_dependency: 'filler/playlist/getplaylistsbyfillerplaylistid',
 		api_get_filler_feed_placeholder: 'filler/playlist/placeholder',
 		api_get_filler_groups: 'filler/group/getall',
 		api_get_filler_group_by_id: 'filler/group/getbyid',
