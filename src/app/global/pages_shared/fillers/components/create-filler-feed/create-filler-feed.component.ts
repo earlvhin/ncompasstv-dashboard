@@ -125,12 +125,23 @@ export class CreateFillerFeedComponent implements OnInit {
 	}
 
 	onSubmit(data) {
+		let type_of_activity = '';
+		if (this.page_data.from_edit_table) {
+			type_of_activity = ' Updated ';
+		} else {
+			type_of_activity = ' Created ';
+		}
 		this._filler
 			.add_filler_feed(data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
-					this.openConfirmationModal('success', 'Filler Feed Created!', 'Hurray! You successfully created a Filler Feed', true);
+					this.openConfirmationModal(
+						'success',
+						'Filler Feed' + type_of_activity + '!',
+						'Hurray! You successfully' + type_of_activity + 'a Filler Feed',
+						true
+					);
 				},
 				(error) => {}
 			);
@@ -194,6 +205,10 @@ export class CreateFillerFeedComponent implements OnInit {
 			PlaylistGroups: []
 		};
 
+		if (this.page_data.from_edit_table) {
+			this.final_data_to_upload.fillerPlaylistId = this.existing_data.fillerPlaylistId;
+		}
+
 		this.selected_groups.map((group) => {
 			let group_selected = {
 				fillerGroupId: group.fillerGroupId,
@@ -236,6 +251,11 @@ export class CreateFillerFeedComponent implements OnInit {
 	saveQuantity(index) {
 		this.selected_groups[index].quantity = this._formControls.fillerQuantity.value;
 		this.countTotalQuantity();
+	}
+
+	routeToFillerGroup(id) {
+		const url = this._route.serializeUrl(this._route.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}));
+		window.open(url, '_blank');
 	}
 
 	protected get roleRoute() {
