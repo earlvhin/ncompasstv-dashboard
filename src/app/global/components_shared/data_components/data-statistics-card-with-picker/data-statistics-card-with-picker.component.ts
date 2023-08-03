@@ -25,6 +25,8 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	selected_dealer_name: string = '';
 	start_date: Date;
 	subscription: Subscription = new Subscription();
+	isDateValid: boolean;
+	
 
 	contentsForm: FormGroup = this._form_builder.group({
 		start_date: ['', Validators.required],
@@ -82,15 +84,31 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		}
 	}
 
+	dateFilter = (date: Date | null): boolean => {
+		if (!date || !this.start_date) {
+		  return true;
+		}
+	  
+		const msPerDay = 24 * 60 * 60 * 1000; 
+		const startDate = new Date(this.start_date);
+		const endDate = new Date(date);
+		const daysDifference = (endDate.getTime() - startDate.getTime()) / msPerDay;
+
+		this.isDateValid = daysDifference <= 365
+	  
+		return daysDifference <= 365;
+	  };
+
+
 	onSelectStartDate(e) {
 		this.start_date = e.format('YYYY-MM-DD');
 		this.checkIfCompleteData();
 	}
 
 	onSelectEndDate(e) {
-		this.end_date = e.format('YYYY-MM-DD');
-		this.checkIfCompleteData();
-	}
+        this.end_date = e.format('YYYY-MM-DD');
+        this.checkIfCompleteData();
+    }
 
 	checkIfCompleteData() {
 		if (this.selected_dealer) {
