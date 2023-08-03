@@ -272,16 +272,16 @@ export class LicensesComponent implements OnInit {
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{ 
-                    value: i.anydeskId ? i.anydeskId : '--', 
-                    link: null, 
-                    editable: false, 
-                    hidden: false, 
-                    copy: true, 
-                    label: 'Anydesk Id',
-                    anydesk: true,
+				{
+					value: i.anydeskId ? i.anydeskId : '--',
+					link: null,
+					editable: false,
+					hidden: false,
+					copy: true,
+					label: 'Anydesk Id',
+					anydesk: true,
                     password: i.anydeskId ? this.splitKey(i.licenseId) : '--', 
-                },
+				},
 				// {
 				// 	value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
 				// 	link: null,
@@ -307,12 +307,15 @@ export class LicensesComponent implements OnInit {
 		storehours = storehours.sort((a, b) => {
 			return a.id - b.id;
 		});
+
+		const isAlmostOpenAllDay = storehours[this.now].periods.some((i) => i.open === '12:00 AM' && i.close === '11:59 PM');
+
 		var modified_label = {
 			date: moment().format('LL'),
 			address: data.hostAddress,
 			schedule:
 				storehours[this.now] && storehours[this.now].status
-					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+					? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') || isAlmostOpenAllDay
 						? 'Open 24 Hours'
 						: storehours[this.now].periods.map((i) => {
 								return i.open + ' - ' + i.close;
