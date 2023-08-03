@@ -25,8 +25,9 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	selected_dealer_name: string = '';
 	start_date: Date;
 	subscription: Subscription = new Subscription();
-	isDateValid: boolean;
-	
+	is_date_valid: boolean = false;
+	is_valid_onchange: boolean = false;
+
 
 	contentsForm: FormGroup = this._form_builder.group({
 		start_date: ['', Validators.required],
@@ -59,7 +60,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		if (this.value_array.length == 0) {
 			this.no_data = true;
 		}
-		this.getDealers(1);
+		this.getDealers(1);	
 	}
 
 	ngOnChanges() {
@@ -85,18 +86,16 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	}
 
 	dateFilter = (date: Date | null): boolean => {
+		if (!this.installation) {
+			return true;
+		  }
+
 		if (!date || !this.start_date) {
 		  return true;
 		}
 	  
-		const msPerDay = 24 * 60 * 60 * 1000; 
-		const startDate = new Date(this.start_date);
-		const endDate = new Date(date);
-		const daysDifference = (endDate.getTime() - startDate.getTime()) / msPerDay;
-
-		this.isDateValid = daysDifference <= 365
-	  
-		return daysDifference <= 365;
+		this.is_date_valid = this.calculateDateDifference(this.start_date, date.toISOString()) <= 365;
+		return this.is_date_valid;
 	  };
 
 
@@ -114,9 +113,11 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		if (this.selected_dealer) {
 			this.dealer_selected.emit(this.selected_dealer);
 		} else if (this.end_date && this.start_date) {
+			this.is_valid_onchange = this.calculateDateDifference(this.start_date, this.end_date) <= 365;
+		
 			this.s_date.emit(this.start_date);
 			this.e_date.emit(this.end_date);
-		} else {
+		} else {		
 		}
 	}
 
@@ -181,4 +182,11 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 			})
 		);
 	}
+
+	private calculateDateDifference(startDate: any, endDate: any): number {
+		const msPerDay = 24 * 60 * 60 * 1000;
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		return (end.getTime() - start.getTime()) / msPerDay;
+	  }
 }
