@@ -1,3 +1,4 @@
+export * from './filesize.pipe';
 export * from './filename.pipe';
 export * from './is-empty.pipe';
 export * from './is-feed.pipe';

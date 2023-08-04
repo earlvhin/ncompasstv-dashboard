@@ -102,7 +102,7 @@
 					</span>
 				</div>
 				<div class="col-lg-12 sm-text p-0">
-					<span>File Size: </span> <span class="font-weight-bold">{{ content.filesize }}</span>
+					<span>File Size: </span> <span class="font-weight-bold" *ngIf="content.filesize">{{ content.filesize | filesize }}</span>
 				</div>
 				<div class="col-lg-12 sm-text p-0">
 					<span>Duration: </span> <span class="font-weight-bold">{{ content.duration }} s</span>
