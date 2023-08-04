@@ -4,6 +4,8 @@ import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import 'chartjs-adapter-moment';
 import * as moment from 'moment';
+import zoomPlugin from 'chartjs-plugin-zoom';
+Chart.register(zoomPlugin);
 
 @Component({
   selector: 'app-data-statistics-card',
@@ -126,6 +128,12 @@ export class DataStatisticsCardComponent implements OnInit {
                                 afterTitle: function(val) {
                                     return "Host: " + whole[val[0].dataIndex].hostName;
                                 }
+                            }
+                        },
+                        zoom: {
+                            pan: {
+                              enabled: true,
+                              mode: 'xy'
                             }
                         }
                    },
