@@ -4,8 +4,6 @@ import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import 'chartjs-adapter-moment';
 import * as moment from 'moment';
-import zoomPlugin from 'chartjs-plugin-zoom';
-Chart.register(zoomPlugin);
 
 @Component({
   selector: 'app-data-statistics-card',
@@ -130,12 +128,7 @@ export class DataStatisticsCardComponent implements OnInit {
                                 }
                             }
                         },
-                        zoom: {
-                            pan: {
-                              enabled: true,
-                              mode: 'xy'
-                            }
-                        }
+                    
                    },
                     animations: {
                         tension: {
@@ -167,6 +160,22 @@ export class DataStatisticsCardComponent implements OnInit {
                     }       
                 },
             });
+            canvas.addEventListener('wheel', (e) => {
+                const scale = this.chart.scales.y;
+                const deltaY = e.deltaY;
+              
+                const stepSize = (scale.max - scale.min) * 0.05;
+                const newMin = scale.min + (deltaY > 0 ? stepSize : -stepSize);
+                const newMax = scale.max + (deltaY > 0 ? stepSize : -stepSize);
+              
+                this.chart.options.animation = false;
+                this.chart.options.scales.y.min = newMin;
+                this.chart.options.scales.y.max = newMax;
+                this.chart.update();
+              
+                e.preventDefault();
+              });
+            
         } else {
             const footer = (tooltipItems) => {
                 let sum = 0;
