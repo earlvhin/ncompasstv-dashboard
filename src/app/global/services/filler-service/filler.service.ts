@@ -120,4 +120,9 @@ export class FillerService extends BaseService {
 		let url = `${this.getters.api_get_filler_feed_dependency}?fillerplaylistid=${id}`;
 		return this.getRequest(url);
 	}
+
+	check_if_filler_is_in_playlist(id) {
+		let url = `${this.getters.api_get_filler_check_if_in_playlist}?playlistId=${id}`;
+		return this.getRequest(url);
+	}
 }

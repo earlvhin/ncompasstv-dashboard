@@ -37,6 +37,7 @@ export class PlaylistMediaComponent implements OnInit {
 	prev_selection: any = '';
 	current_content: any = [];
 	in_progress_saving_fillers: boolean = false;
+	has_fillers: boolean = false;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -51,6 +52,7 @@ export class PlaylistMediaComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
+		this.checkIfPlaylistHasFillers();
 		this.onTabChanged(this.isActiveTab);
 		if (
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
@@ -353,9 +355,24 @@ export class PlaylistMediaComponent implements OnInit {
 				this.getDealerContent(this._dialog_data.dealer_id);
 				break;
 			case 1:
-				this.getAllFillerGroups();
+				if (!this.has_fillers) {
+					this.getAllFillerGroups();
+				}
 				break;
 			default:
 		}
+	}
+
+	checkIfPlaylistHasFillers() {
+		this._filler
+			.check_if_filler_is_in_playlist(this._dialog_data.playlist_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				if (data.message) {
+					this.has_fillers = false;
+				} else {
+					this.has_fillers = true;
+				}
+			});
 	}
 }

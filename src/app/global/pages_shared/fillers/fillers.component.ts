@@ -100,8 +100,10 @@ export class FillersComponent implements OnInit {
 						}
 					});
 
-					delete_dialog.afterClosed().subscribe(() => {
-						this.onDeleteFillerGroup(id);
+					delete_dialog.afterClosed().subscribe((result) => {
+						if (result != false) {
+							this.onDeleteFillerGroup(id);
+						}
 					});
 				}
 			});

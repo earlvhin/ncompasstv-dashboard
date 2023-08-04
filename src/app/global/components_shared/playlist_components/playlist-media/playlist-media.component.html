@@ -108,7 +108,7 @@
 					</div>
 				</div>
 			</mat-tab>
-			<mat-tab label="Fillers">
+			<mat-tab label="Fillers" [disabled]="has_fillers" [title]="has_fillers ? 'Playlist has fillers already' : ''">
 				<div class="row mb-2">
 					<div class="col-lg-10">
 						<div class="row mt-3">

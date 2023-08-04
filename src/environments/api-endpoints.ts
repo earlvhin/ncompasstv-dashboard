@@ -34,6 +34,7 @@ export const API_ENDPOINTS = {
 		api_get_dealer_orders: 'billing/get/dealer/purchases',
 		api_get_dealer_territory_files: 'dealer/getterritoryfiles?dealerid=',
 		api_get_dealer_values: 'dealer/getdealervaluesbydealerid?dealerid=',
+		api_get_filler_check_if_in_playlist: 'filler/playlist/getfillerplaylistinuse',
 		api_get_filler_feeds: 'filler/playlist/getall',
 		api_get_filler_feeds_minify: 'filler/playlist/getall/minify',
 		api_get_filler_feed_dependency: 'filler/playlist/getplaylistsbyfillerplaylistid',
