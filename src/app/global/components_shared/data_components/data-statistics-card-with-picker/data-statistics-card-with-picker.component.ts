@@ -105,7 +105,8 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	}
 
 	onSelectEndDate(e) {
-        this.end_date = e.format('YYYY-MM-DD');
+		this.end_date = e.format('YYYY-MM-DD');	
+		this.updateValidity();
         this.checkIfCompleteData();
     }
 
@@ -113,11 +114,17 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		if (this.selected_dealer) {
 			this.dealer_selected.emit(this.selected_dealer);
 		} else if (this.end_date && this.start_date) {
-			this.is_valid_onchange = this.calculateDateDifference(this.start_date, this.end_date) <= 365;
-		
 			this.s_date.emit(this.start_date);
 			this.e_date.emit(this.end_date);
+			this.updateValidity();
 		} else {		
+		}
+	}
+
+	updateValidity() {
+		if (this.start_date && this.end_date) {
+			const dateDifference = this.calculateDateDifference(this.start_date, this.end_date);
+			this.is_valid_onchange = dateDifference <= 365;
 		}
 	}
 

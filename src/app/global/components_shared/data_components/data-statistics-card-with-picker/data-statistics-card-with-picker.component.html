@@ -51,7 +51,7 @@
     </div>
     <div [ngClass]="installation ? 'col-lg-10': 'col-lg-8'">
         <mat-card>
-            <app-data-statistics-card *ngIf="(generate_chart && !installation ) || (is_date_valid && is_valid_onchange); else no_content"
+            <app-data-statistics-card *ngIf="(generate_chart && !installation ) || is_valid_onchange; else no_content"
                 [id]="'average-view'"
                 [total_dealer]="total_dealer"
                 [label_array]="label_array"
@@ -76,7 +76,7 @@
             <div class="text-center w-100">
                 <span class="fas fa-briefcase fa-2x text-primary mb-3"></span>
                 <h3>{{ !generate_chart ? 'No Data Found' : 'Date Exceeded' }}</h3>
-                <p class="sm-text mb-3">{{ installation ? "Adjust the dealer or date range up to 1 year to display selected dealer's breakdown." : "Adjust the dealer or date to display selected dealer's breakdown." }}</p>
+                <p class="sm-text mb-3">{{ installation ? "Adjust the dealer or date range up to 1 year to display selected dealer's breakdown." : "Adjust the dealer or date range to display selected dealer's breakdown." }}</p>
             </div>
         </div>
     </ng-template>
