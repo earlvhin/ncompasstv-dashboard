@@ -128,6 +128,13 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		}
 	}
 
+	calculateDateDifference(startDate: any, endDate: any): number {
+		const msPerDay = 24 * 60 * 60 * 1000;
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		return (end.getTime() - start.getTime()) / msPerDay;
+	  }
+
 	getGraphPoints(e) {}
 
 	getDealers(e) {
@@ -189,11 +196,4 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 			})
 		);
 	}
-
-	private calculateDateDifference(startDate: any, endDate: any): number {
-		const msPerDay = 24 * 60 * 60 * 1000;
-		const start = new Date(startDate);
-		const end = new Date(endDate);
-		return (end.getTime() - start.getTime()) / msPerDay;
-	  }
 }
