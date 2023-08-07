@@ -228,10 +228,17 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	}
 
 	private searchOwnerTags(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
+		if (keyword && keyword.startsWith("^")) {
+			this.searchDealerData(keyword)
+		} else {
+			this.searchOwnersByTagType(keyword)
+		}
+	}
+
+	private searchOwnersByTagType(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
 		if (!this.currentTagType) return;
 		this.isLoading = true;
 
-		if (this.searchFormControl.value) keyword = this.searchFormControl.value;
 		let role: number;
 		if (this._isDealer()) {
 			role = 2;
@@ -243,6 +250,46 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 
 		this._tag
 			.searchOwnersByTagType({ keyword, tagId, typeId, page, role }, this._isDealer())
+			.pipe(
+				takeUntil(this._unsubscribe),
+				map(({ tags, paging, message }) => {
+					if (message) return { tags: [] };
+
+					tags.forEach((data, index) => {
+						const { tagTypeName } = data;
+						tags[index].url = `/${this.currentUserRole}/${tagTypeName.toLowerCase()}s/${data.ownerId}`;
+					});
+
+					return { tags, paging };
+				})
+			)
+			.subscribe(
+				({ tags, paging }) => {
+					this.owners = tags;
+					this.pagingData = paging;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => (this.isLoading = false));
+	}
+
+	private searchDealerData(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
+		if (!this.currentTagType) return;
+		this.isLoading = true;
+
+		let role: number;
+		if (this._isDealer()) {
+			role = 2;
+		} else if (this._isDealerAdmin()) {
+			role = 3;
+		} else {
+			role = 1;
+		}
+
+		this._tag
+			.searchDealerData({ keyword, tagId, typeId, page, role }, this._isDealer())
 			.pipe(
 				takeUntil(this._unsubscribe),
 				map(({ tags, paging, message }) => {

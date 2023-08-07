@@ -177,6 +177,32 @@ export class TagService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	searchDealerData(
+		{ keyword = null, tagId = null, typeId = null, page = 1, role = 1 },
+		isDealer
+	): Observable<{ tags?: TAG_OWNER[]; paging?: PAGING; message?: string }> {
+		const url_split = this.getters.search_dealer_data.split('/');
+		const new_url = url_split[0] + '/dealer/' + url_split[1];
+		const final_url = !isDealer ? this.getters.search_dealer_data : new_url;
+		let url = `${final_url}?page=${page}&role=${role}`;
+
+		const params = [
+			{ name: 'search', value: keyword },
+			{ name: 'typeId', value: typeId },
+			{ name: 'tagId', value: tagId }
+		];
+
+		params.forEach((param) => {
+			if (param.value) {
+				if (url.includes('?')) url += '&';
+				else url += '?';
+				url += `${param.name}=${encodeURIComponent(param.value)}`;
+			}
+		});
+
+		return this.getRequest(url);
+	}
+
 	updateTag(
 		tagId: string,
 		name: string,

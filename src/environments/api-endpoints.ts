@@ -181,6 +181,7 @@ export const API_ENDPOINTS = {
 		search_license: 'license/search?searchkey=',
 		search_license_by_host: 'license/getbyhost',
 		search_owner_tags: 'tag/searchOwnerTag',
+		search_dealer_data: 'tag/searchDealersTagData',
 		search_owners: 'tag/searchOwners',
 		search_tags: 'tag/search',
 		tag_check_name: 'tag/check',
