@@ -51,12 +51,16 @@
 					Creation Date: {{ content_data.dateCreated | date }}
 				</p>
 				<hr>
-				<mat-slide-toggle
-				(change)="toggleFullscreen($event)"
-				[checked]="content_data.isFullScreen == 1 ? true : false"
-				[disabled]="is_child_frequency">
-					<h5 class="mb-0 ml-2">Set to Fullscreen</h5>
-				</mat-slide-toggle>
+				<div class="d-flex align-items-center">
+					<mat-slide-toggle
+					(change)="toggleFullscreen($event)"
+					[checked]="content_data.isFullScreen == 1 ? true : false"
+					[disabled]="is_child_frequency">
+						<h5 class="mb-0 ml-2">Set to Fullscreen</h5>
+					</mat-slide-toggle>
+
+					<p class="md-text ml-5 font-bold" *ngIf="content_data.filesize">File Size: {{ content_data.filesize | filesize }}</p>
+				</div>
 			</div>
 
 			<div *ngIf="!is_livestream">

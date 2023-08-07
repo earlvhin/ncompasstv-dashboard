@@ -58,7 +58,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 	invalid_schedules: UI_STORE_HOUR_PERIOD[] = [];
 	is_active_host = this.host.status === 'A';
 	is_current_user_admin = this._auth.current_role === 'administrator';
-	is_current_user_dealer = this._auth.current_role === 'dealer';
+	is_current_user_dealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
 	is_host_data_ready = false;
 	paging: PAGING;
 	timezones: API_TIMEZONE[];

@@ -831,12 +831,14 @@ export class LicensesComponent implements OnInit {
 		let storehours = JSON.parse(data.storeHours);
 		storehours = storehours.sort((a, b) => a.id - b.id);
 
+		const isAlmostOpenAllDay = storehours[this.now].periods.some((i) => i.open === '12:00 AM' && i.close === '11:59 PM');
+
 		const modified_label = {
 			date: moment().format('LL'),
 			address: data.hostAddress,
 			schedule:
 				storehours[this.now] && storehours[this.now].status
-					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+					? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') || isAlmostOpenAllDay
 						? 'Open 24 Hours'
 						: storehours[this.now].periods.map((i) => {
 								return i.open + ' - ' + i.close;
@@ -1076,7 +1078,7 @@ export class LicensesComponent implements OnInit {
 
 	private mapHostsForExport(data: API_HOST) {
 		data.storeHours = data.storeHours;
-		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
 		data.tagsToString = data.tags.join(',');
 	}
 

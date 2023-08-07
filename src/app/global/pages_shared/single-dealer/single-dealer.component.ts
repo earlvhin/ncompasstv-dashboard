@@ -1411,7 +1411,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 			case 'Hosts':
 				item.storeHoursParse = this.getStoreHourseParse(item);
-				item.generalCategory = item.generalCategory ? item.generalCategory : 'Others';
+				item.generalCategory = item.generalCategory ? item.generalCategory : 'Other';
 				item.businessName = this.dealer.businessName;
 				break;
 		}

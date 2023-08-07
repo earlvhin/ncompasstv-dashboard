@@ -71,7 +71,7 @@ export class HostsComponent implements OnInit {
 		{ name: 'Postal Code', key: 'postalCode' },
 		{ name: 'Number of Licenses', sortable: true, key: 'totalLicenses', column: 'TotalLicenses' },
 		{ name: 'Status', key: 'status' },
-		{ name: 'Notes', sortable: false, key: 'notes' },
+		//{ name: 'Notes', sortable: false, key: 'notes' },
 		{ name: 'Others', sortable: false, key: 'others' },
 		{ name: 'Tags', key: 'tagsToString', no_show: true, hidden: true }
 	];
@@ -275,7 +275,7 @@ export class HostsComponent implements OnInit {
 
 	private mapForExport(hosts: any) {
 		return hosts.map((host) => {
-			host.generalCategory = host.generalCategory ? host.generalCategory : 'Others';
+			host.generalCategory = host.generalCategory ? host.generalCategory : 'Other';
 			if (host.tags) {
 				host.tagsToString = host.tags.join(',');
 			}
@@ -302,7 +302,7 @@ export class HostsComponent implements OnInit {
 					hidden: true
 				},
 				{ value: hosts.status ? (hosts.status === 'A' ? 'Active' : 'Inactive') : 'Inactive', link: null, editable: false, hidden: false },
-				{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: false },
+				{ value: hosts.notes ? hosts.notes : '--', link: null, editable: false, hidden: true },
 				{ value: hosts.others ? hosts.others : '--', link: null, editable: false, hidden: false }
 			);
 		});

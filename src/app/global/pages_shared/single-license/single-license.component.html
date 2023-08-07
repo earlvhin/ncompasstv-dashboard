@@ -440,14 +440,16 @@
 															</div>
 														</div>
 
-														<hr class="my-3" />
+														<div *ngIf="!isCurrentUserDealer">
+															<hr class="my-3" />
 
-														<!-- Notes -->
-														<div class="notes">
-															<span class="sm-text">Host Notes: </span>
-															<p (click)="onShowNotes()" class="sm-text hoverable">
-																{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
-															</p>
+															<!-- Notes -->
+															<div class="notes">
+																<span class="sm-text">Host Notes: </span>
+																<p (click)="onShowNotes()" class="sm-text hoverable">
+																	{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
+																</p>
+															</div>
 														</div>
 													</mat-card>
 												</div>

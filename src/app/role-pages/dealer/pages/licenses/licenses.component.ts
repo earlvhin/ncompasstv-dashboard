@@ -425,12 +425,15 @@ export class LicensesComponent implements OnInit {
 		storehours = storehours.sort((a, b) => {
 			return a.id - b.id;
 		});
+
+		const isAlmostOpenAllDay = storehours[this.now].periods.some((i) => i.open === '12:00 AM' && i.close === '11:59 PM');
+
 		var modified_label = {
 			date: moment().format('LL'),
 			address: data.hostAddress,
 			schedule:
 				storehours[this.now] && storehours[this.now].status
-					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+					? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') || isAlmostOpenAllDay
 						? 'Open 24 Hours'
 						: storehours[this.now].periods.map((i) => {
 								return i.open + ' - ' + i.close;

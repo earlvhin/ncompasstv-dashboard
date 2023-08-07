@@ -12,8 +12,8 @@ export class InformationModalComponent implements OnInit {
 	contents: any;
 	title: string;
 	type: string;
-	graph: boolean = false;
-	installation: boolean = false;
+	graph = false;
+	installation = false;
 
 	constructor(
 		@Inject(MAT_DIALOG_DATA)
