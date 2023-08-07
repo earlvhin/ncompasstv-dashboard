@@ -49,12 +49,12 @@ export class DataStatisticsCardComponent implements OnInit {
 
 	ngOnInit() {
         this.averaging = this.average;
-        this.start = moment(this.s_date).format("MMM Do YY");
-        this.end = moment(this.e_date).format("MMM Do YY");
         this._changeDetector.markForCheck();
 	}
 
     ngOnChanges() {
+        this.start = moment(this.s_date).format("MMM Do YY");
+        this.end = moment(this.e_date).format("MMM Do YY");
         this.averaging = this.average;
         this.loading_graph = this.loading_graph;
         if(this.chart) {
@@ -95,6 +95,9 @@ export class DataStatisticsCardComponent implements OnInit {
             var min_value = this.time_conversion();
             var max_value = this.time_conversion_end();
 
+            const required_width = this.calculate_width(labels.length);
+            canvas.style.minWidth = required_width + 'px';
+
             this.chart = new Chart(canvas, {
                 type: 'line',
                 data: {
@@ -124,7 +127,8 @@ export class DataStatisticsCardComponent implements OnInit {
                                     return "Host: " + whole[val[0].dataIndex].hostName;
                                 }
                             }
-                        }
+                        },
+                    
                    },
                     animations: {
                         tension: {
@@ -149,12 +153,29 @@ export class DataStatisticsCardComponent implements OnInit {
                         },
                         x: {
                             ticks: {
-                                autoSkip: false
+                                autoSkip: false,
+                                minRotation: 70
                             }
                         }
                     }       
                 },
             });
+            canvas.addEventListener('wheel', (e) => {
+                const scale = this.chart.scales.y;
+                const deltaY = e.deltaY;
+              
+                const stepSize = (scale.max - scale.min) * 0.05;
+                const newMin = scale.min + (deltaY > 0 ? stepSize : -stepSize);
+                const newMax = scale.max + (deltaY > 0 ? stepSize : -stepSize);
+              
+                this.chart.options.animation = false;
+                this.chart.options.scales.y.min = newMin;
+                this.chart.options.scales.y.max = newMax;
+                this.chart.update();
+              
+                e.preventDefault();
+              });
+            
         } else {
             const footer = (tooltipItems) => {
                 let sum = 0;
@@ -218,4 +239,11 @@ export class DataStatisticsCardComponent implements OnInit {
             });
         }
     }
+
+    calculate_width(data_length: number): number {
+        const data_point_width = 18
+        const calculated_width = data_point_width * data_length;
+        const min_width = 300;
+        return Math.max(min_width, calculated_width);
+      }
 }

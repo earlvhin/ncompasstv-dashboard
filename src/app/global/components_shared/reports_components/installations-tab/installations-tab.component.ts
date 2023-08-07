@@ -67,8 +67,11 @@ export class InstallationsTabComponent implements OnInit {
 
                         data.licenses.map(
                             i => {
+                                const shortened_alias = i.alias && i.alias.length > 17 ? i.alias.slice(0, 17) + "..." : i.alias;
+                                const shortened_licenseKey = i.licenseKey && i.licenseKey.length > 17 ? i.licenseKey.slice(0, 17) + "..." : i.licenseKey;
+
                                 this.total_detailed = this.total_detailed + 1;
-                                this.label_graph_detailed.push(i.alias)
+                                this.label_graph_detailed.push(i.alias === null ? shortened_licenseKey : shortened_alias);
                                 this.value_graph_detailed.push(this.date_format_to_time(i.installDate))
                                 this.sum = this.sum + i.totalLicenses;
                                 i.installDate = this.date_format_to_time(i.installDate);

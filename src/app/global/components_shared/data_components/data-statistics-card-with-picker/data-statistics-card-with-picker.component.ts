@@ -25,6 +25,9 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	selected_dealer_name: string = '';
 	start_date: Date;
 	subscription: Subscription = new Subscription();
+	is_date_valid: boolean = false;
+	is_valid_onchange: boolean = false;
+
 
 	contentsForm: FormGroup = this._form_builder.group({
 		start_date: ['', Validators.required],
@@ -57,7 +60,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		if (this.value_array.length == 0) {
 			this.no_data = true;
 		}
-		this.getDealers(1);
+		this.getDealers(1);	
 	}
 
 	ngOnChanges() {
@@ -82,15 +85,30 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		}
 	}
 
+	dateFilter = (date: Date | null): boolean => {
+		if (!this.installation) {
+			return true;
+		  }
+
+		if (!date || !this.start_date) {
+		  return true;
+		}
+	  
+		this.is_date_valid = this.calculateDateDifference(this.start_date, date.toISOString()) <= 365;
+		return this.is_date_valid;
+	  };
+
+
 	onSelectStartDate(e) {
 		this.start_date = e.format('YYYY-MM-DD');
 		this.checkIfCompleteData();
 	}
 
 	onSelectEndDate(e) {
-		this.end_date = e.format('YYYY-MM-DD');
-		this.checkIfCompleteData();
-	}
+		this.end_date = e.format('YYYY-MM-DD');	
+		this.updateValidity();
+        this.checkIfCompleteData();
+    }
 
 	checkIfCompleteData() {
 		if (this.selected_dealer) {
@@ -98,9 +116,24 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		} else if (this.end_date && this.start_date) {
 			this.s_date.emit(this.start_date);
 			this.e_date.emit(this.end_date);
-		} else {
+			this.updateValidity();
+		} else {		
 		}
 	}
+
+	updateValidity() {
+		if (this.start_date && this.end_date) {
+			const dateDifference = this.calculateDateDifference(this.start_date, this.end_date);
+			this.is_valid_onchange = dateDifference <= 365;
+		}
+	}
+
+	calculateDateDifference(startDate: any, endDate: any): number {
+		const msPerDay = 24 * 60 * 60 * 1000;
+		const start = new Date(startDate);
+		const end = new Date(endDate);
+		return (end.getTime() - start.getTime()) / msPerDay;
+	  }
 
 	getGraphPoints(e) {}
 

@@ -5,7 +5,7 @@
                 <div class="col-lg-12 p-0">
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">Start Date</mat-label>
-                        <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                        <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepickerFilter]="dateFilter" [matDatepicker]="datePicker" readonly>
                         <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
                         <mat-datepicker #datePicker></mat-datepicker>
                     </mat-form-field>
@@ -15,7 +15,7 @@
                 <div class="col-lg-12 p-0">
                     <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                         <mat-label class="md-text">End Date</mat-label>
-                        <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date" readonly>
+                        <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepickerFilter]="dateFilter" [matDatepicker]="datePicker2" [min]="start_date" readonly>
                         <mat-datepicker-toggle matSuffix [for]="datePicker2" [disabled]="searching"></mat-datepicker-toggle>
                         <mat-datepicker #datePicker2></mat-datepicker>
                     </mat-form-field>
@@ -51,7 +51,7 @@
     </div>
     <div [ngClass]="installation ? 'col-lg-10': 'col-lg-8'">
         <mat-card>
-            <app-data-statistics-card *ngIf="generate_chart; else no_content"
+            <app-data-statistics-card *ngIf="(generate_chart && !installation ) || is_valid_onchange; else no_content"
                 [id]="'average-view'"
                 [total_dealer]="total_dealer"
                 [label_array]="label_array"
@@ -75,8 +75,8 @@
         <div class="border-dashed d-flex align-items-center h-100 p-5 w-100">
             <div class="text-center w-100">
                 <span class="fas fa-briefcase fa-2x text-primary mb-3"></span>
-                <h3>No Data Found</h3>
-                <p class="sm-text mb-3">Adjust the dealer or date range to display selected dealer's breakdown.</p>
+                <h3>{{ !generate_chart ? 'No Data Found' : 'Date Exceeded' }}</h3>
+                <p class="sm-text mb-3">{{ installation ? "Adjust the dealer or date range up to 1 year to display selected dealer's breakdown." : "Adjust the dealer or date range to display selected dealer's breakdown." }}</p>
             </div>
         </div>
     </ng-template>

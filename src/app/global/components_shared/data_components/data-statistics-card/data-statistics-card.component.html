@@ -28,7 +28,7 @@
                 {{sub_title}}
             </span>
         </h6>
-        <div class="col-lg-12 p-0 flex">
+        <div class="col-lg-12 p-0 flex" [ngClass]="installation && label_array.length > 50 ? 'optional' : (installation ? 'normal' : '')">
             <div class="col-lg-12 p-0">
                 <canvas id="stat-{{ id }}" height="300" width="400"></canvas>
             </div>
