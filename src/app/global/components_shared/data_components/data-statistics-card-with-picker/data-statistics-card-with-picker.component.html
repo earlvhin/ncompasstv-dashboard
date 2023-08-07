@@ -51,7 +51,7 @@
     </div>
     <div [ngClass]="installation ? 'col-lg-10': 'col-lg-8'">
         <mat-card>
-            <app-data-statistics-card *ngIf="(generate_chart && !installation ) || (this.installation && this.total !== 0 && this.is_valid_onchange); else no_content"
+            <app-data-statistics-card *ngIf="(generate_chart && !installation ) || installation && total > 0 && is_valid_onchange; else no_content"
                 [id]="'average-view'"
                 [total_dealer]="total_dealer"
                 [label_array]="label_array"
