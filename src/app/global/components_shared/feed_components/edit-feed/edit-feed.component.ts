@@ -10,6 +10,7 @@ import { DealerService, FeedService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { CreateFeedComponent } from '../create-feed/create-feed.component';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { debounceTime } from 'rxjs/operators';
 
 @Component({
 	selector: 'app-edit-feed',
@@ -28,6 +29,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 	is_current_user_dealer = this.current_user_role === 'dealer';
 	is_current_user_dealer_admin = this.current_user_role === 'dealeradmin';
 	is_form_ready = false;
+	is_invalid_url = true;
 	is_dealer = false;
 	is_search = false;
 	is_widget_feed = false;
@@ -157,12 +159,15 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 			const decodedScript = decodeURIComponent(embeddedScriptData.value.replace(/\+/g, ' '));
 			const embeddedScriptControl = new FormControl(decodedScript, Validators.required);
 			this.edit_feed_form.addControl('embeddedScript', embeddedScriptControl);
+			this.is_invalid_url = false;
 			return;
 		}
 
 		const feedUrlData = this._dialog_data.feed_url as { link: string };
 		const feedUrlControl = new FormControl(feedUrlData.link, Validators.required);
 		this.edit_feed_form.addControl('feedUrl', feedUrlControl);
+		this.is_invalid_url = this.urlCheck(feedUrlControl.value);
+		this.subscribeToFeedUrlChanges();
 	}
 
 	private setDealerData() {
@@ -182,6 +187,26 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 		const dialogData = { status, message, data };
 		const dialogConfig = { width: '500px', height: '350px', data: dialogData };
 		this._dialog.open(ConfirmationModalComponent, dialogConfig);
+	}
+
+	private subscribeToFeedUrlChanges() {
+		const form = this.edit_feed_form;
+		const control = form.get('feedUrl');
+
+		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(() => {
+			if (this.is_widget_feed) return;
+			const url = control.value as string;
+			this.is_invalid_url = this.urlCheck(url);
+		});
+	}
+
+	// returns false if url is VALID
+	private urlCheck(data: string) {
+		if (typeof data === 'undefined' || !data || data.trim().length <= 0) return true;
+		const protocols = ['http://', 'https://'];
+		const hasProtocol = protocols.some((p) => data.includes(p));
+		if (!hasProtocol) return true;
+		return false;
 	}
 
 	protected get _currentUserRole() {

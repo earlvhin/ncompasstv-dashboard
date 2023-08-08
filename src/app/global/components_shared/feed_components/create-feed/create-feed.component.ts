@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, EventEmitter, Output } from '@angular/core';
 import { AbstractControl, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Observable, Subject } from 'rxjs';
-import { startWith, map, takeUntil, distinctUntilChanged } from 'rxjs/operators';
+import { startWith, map, takeUntil, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { DealerService, FeedService } from 'src/app/global/services';
@@ -22,6 +22,8 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	dealers: API_DEALER[];
 	dealers_data: Array<any> = [];
 	filtered_options: Observable<any[]>;
+	has_loaded_dealers = false;
+	is_invalid_url = true;
 	has_selected_dealer_id = false;
 	has_selected_widget_feed_type = false;
 	is_current_user_dealer = this._isDealer;
@@ -34,7 +36,6 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	loading_search = false;
 	new_feed_form: FormGroup;
 	paging: PAGING;
-	has_loaded_dealers = false;
 
 	private selected_dealer_id: string;
 	protected _unsubscribe = new Subject<void>();
@@ -212,6 +213,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 		});
 
 		this.subscribeToFeedTypeChanges();
+		this.subscribeToFeedUrlChanges();
 	}
 
 	// Autocomplete beyond this point
@@ -252,6 +254,24 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 
 			setControlAsRequired(feedUrlControl);
 			setControlAsNotRequired(embeddedScriptControl);
+		});
+	}
+
+	private subscribeToFeedUrlChanges() {
+		const control = this.new_feed_form.get('feedUrl');
+
+		// returns false if url is valid
+		const urlCheck = (data: string) => {
+			if (typeof data === 'undefined' || !data || data.trim().length <= 0) return true;
+			const protocols = ['http://', 'https://'];
+			const hasProtocol = protocols.some((p) => data.includes(p));
+			if (!hasProtocol) return true;
+			return false;
+		};
+
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((response) => {
+			const url = response as string;
+			this.is_invalid_url = urlCheck(url);
 		});
 	}
 
