@@ -228,10 +228,10 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	}
 
 	private searchOwnerTags(keyword: string = null, tagId: string = null, typeId: number = null, page = 1): void {
-		if (keyword && keyword.startsWith("^")) {
-			this.searchDealerData(keyword)
+		if (keyword && keyword.startsWith('^')) {
+			this.searchDealerData(keyword, tagId, typeId, page);
 		} else {
-			this.searchOwnersByTagType(keyword)
+			this.searchOwnersByTagType(keyword, tagId, typeId, page);
 		}
 	}
 
