@@ -96,13 +96,14 @@ export class FillersComponent implements OnInit {
 						width: '500px',
 						height: '450px',
 						data: {
-							filler_feeds: data.fillerPlaylistGroups
+							filler_feeds: data.fillerPlaylistGroups,
+							filler_group_id: id
 						}
 					});
 
 					delete_dialog.afterClosed().subscribe((result) => {
 						if (result != false) {
-							this.onDeleteFillerGroup(id);
+							this.ngOnInit();
 						}
 					});
 				}

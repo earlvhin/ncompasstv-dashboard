@@ -21,7 +21,7 @@ export class DeleteFillerGroupComponent implements OnInit {
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
 	constructor(
-		@Inject(MAT_DIALOG_DATA) public page_data: { filler_feeds: any },
+		@Inject(MAT_DIALOG_DATA) public page_data: { filler_feeds: any; filler_group_id: string },
 		private _dialog: MatDialog,
 		private _filler: FillerService,
 		private _router: Router,
@@ -61,7 +61,7 @@ export class DeleteFillerGroupComponent implements OnInit {
 	}
 
 	deleteSelection() {
-		this.continueToDeleteProcess(this.to_delete);
+		this.continueToDeleteProcess();
 	}
 
 	deleteFillerFeedSolo(id) {
@@ -78,7 +78,7 @@ export class DeleteFillerGroupComponent implements OnInit {
 		dialog.afterClosed().subscribe((result) => {
 			switch (result) {
 				case 'delete':
-					this.continueToDeleteProcess([id]);
+					this.continueToDeleteProcess();
 					break;
 				default:
 					this._dialog.closeAll();
@@ -86,15 +86,23 @@ export class DeleteFillerGroupComponent implements OnInit {
 		});
 	}
 
-	continueToDeleteProcess(id) {
+	continueToDeleteProcess() {
+		// this._filler
+		// 	.delete_filler_feeds(id)
+		// 	.pipe(takeUntil(this._unsubscribe))
+		// 	.subscribe((data: any) => {
+		// 		this.openConfirmationModal('success', 'Success!', 'Filler Playlist ' + data.message);
+		// 		this.filler_groups = this.filler_groups.filter((groups) => {
+		// 			return groups.fillerPlaylistId != id;
+		// 		});
+		// 	});
+
 		this._filler
-			.delete_filler_feeds(id)
+			.delete_filler_group(this.page_data.filler_group_id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				this.openConfirmationModal('success', 'Success!', 'Filler Playlist ' + data.message);
-				this.filler_groups = this.filler_groups.filter((groups) => {
-					return groups.fillerPlaylistId != id;
-				});
+				this.openConfirmationModal('success', 'Success!', 'Filler Group ' + data.message);
+				this.ngOnInit();
 			});
 	}
 

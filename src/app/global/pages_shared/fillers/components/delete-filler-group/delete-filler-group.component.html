@@ -10,17 +10,19 @@
 		<div class="col-lg-12 text-center">
 			<app-warning-animation></app-warning-animation>
 			<h3 class="mb-1 mt-2">Delete Filler Group</h3>
-			<p class="mb-4 sm-text font-weight-md text-warning">This filler group is in use. Delete the Filler feeds first before proceeding:</p>
+			<p class="mb-4 sm-text font-weight-md text-warning">
+				<span class="text-danger">NOTE: </span>This filler group is in use by the following filler feeds:
+			</p>
 		</div>
 	</div>
 
-	<div class="row mb-2">
+	<!-- <div class="row mb-2">
 		<div class="col-lg-12">
 			<mat-checkbox (change)="selectUnselectAll($event.checked)" class="mr-3">
 				<span class="sm-text font-weight-bold">SELECT ALL</span>
 			</mat-checkbox>
 		</div>
-	</div>
+	</div> -->
 
 	<div class="row">
 		<div class="col-lg-12">
@@ -33,21 +35,16 @@
 					<mat-expansion-panel-header class="mt-2">
 						<mat-panel-title class="md-text p-0">
 							<div class="name font-weight-bold md-text">
-								<mat-checkbox [checked]="groups.checked" (change)="uncheckCheckItem($event.checked, groups)"> </mat-checkbox>
+								<!-- <mat-checkbox [checked]="groups.checked" (change)="uncheckCheckItem($event.checked, groups)"> </mat-checkbox> -->
 								<span class="ml-3 mr-3 text-dark">
 									{{ groups.name }}
 								</span>
-								<span
+								<!-- <span
 									class="text-danger clickable fas fa-times font-weight-bold"
 									title="Delete Filler Feed"
-									(click)="deleteFillerFeedSolo(groups.fillerPlaylistId)"></span>
+									(click)="deleteFillerFeedSolo(groups.fillerPlaylistId)"></span> -->
 							</div>
 						</mat-panel-title>
-						<!-- <mat-panel-description class="md-text p-0" *ngIf="dma.hosts">
-                            <div [ngClass]="dma.totalHosts > 0 ? 'text-primary': 'text-danger'">
-                                <b>{{ dma.hosts.length }}</b> Host(s)
-                            </div>
-                        </mat-panel-description> -->
 					</mat-expansion-panel-header>
 					<div class="expansion-panel-content full-width" *ngIf="groups.playlists != null">
 						<hr />
@@ -70,9 +67,7 @@
 	<div class="row">
 		<div class="col-lg-12 text-right">
 			<button mat-button mat-raised-button class="mt-3 theme-btn mr-2" [mat-dialog-close]="false">Cancel</button>
-			<button mat-button mat-raised-button class="mt-3 theme-btn bg-danger" (click)="deleteSelection()" [disabled]="to_delete.length == 0">
-				Delete Selection
-			</button>
+			<button mat-button mat-raised-button class="mt-3 theme-btn bg-danger" (click)="deleteSelection()">Continue Delete</button>
 		</div>
 	</div>
 </div>
