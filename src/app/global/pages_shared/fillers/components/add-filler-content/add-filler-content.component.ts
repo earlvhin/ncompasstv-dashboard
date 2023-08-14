@@ -40,13 +40,13 @@ export class AddFillerContentComponent implements OnInit {
 	onUploadImage() {
 		this.hidePrevModal();
 		const client = filestack.init(environment.third_party.filestack_api_key);
-		client.picker(this.filestackOptions(['image/jpg', 'image/jpeg', 'image/png'], [720, 640], 'Image')).open();
+		client.picker(this.filestackOptions(['image/jpg', 'image/jpeg', 'image/png'], [720, 640], 'Image', 1000)).open();
 	}
 
 	onUploadVideo() {
 		this.hidePrevModal();
 		const client = filestack.init(environment.third_party.filestack_api_key);
-		client.picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video')).open();
+		client.picker(this.filestackOptions(['video/mp4', 'video/webm'], [1280, 720], 'Video', 10)).open();
 	}
 
 	onUploadFeed() {
@@ -82,14 +82,14 @@ export class AddFillerContentComponent implements OnInit {
 		body.classList.add('z-index-10');
 	}
 
-	filestackOptions(filetypes, imagemaximum, type): filestack.PickerOptions {
+	filestackOptions(filetypes, imagemaximum, type, maxitems?): filestack.PickerOptions {
 		return {
 			storeTo: {
 				container: this.selected_group.bucketName + '/',
 				region: 'us-east-2'
 			},
 			accept: filetypes,
-			maxFiles: 10,
+			maxFiles: maxitems,
 			imageMax: imagemaximum,
 			onUploadDone: (response) => {
 				response.filesUploaded.map((uploaded) => {

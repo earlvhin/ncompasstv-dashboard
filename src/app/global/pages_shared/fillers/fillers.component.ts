@@ -216,9 +216,9 @@ export class FillersComponent implements OnInit {
 			});
 	}
 
-	sortFillerGroup(order) {
+	sortFillerGroup(col, order) {
 		this.is_loading = true;
-		this.sorting_column = 'Name';
+		this.sorting_column = col;
 		this.sorting_order = order;
 		this.getAllFillers(1);
 	}

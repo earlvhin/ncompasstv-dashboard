@@ -86,7 +86,7 @@
 				</mat-slide-toggle>
 			</div>
 
-			<div *ngIf="!is_livestream && content_data.classification == null">
+			<div *ngIf="!is_livestream">
 				<mat-form-field class="w-100">
 					<mat-label>Set Content Duration</mat-label>
 					<input
@@ -98,8 +98,13 @@
 						(change)="setDuration()"
 						min="5"
 						max="100"
-						[disabled]="is_child_frequency || (content_data.fileType | isvideo)" />
-					<mat-hint align="start"><strong>Applicable to feeds and images only. Min of 5 seconds.</strong> </mat-hint>
+						[disabled]="is_child_frequency || (content_data.fileType | isvideo) || content_data.classification == 'filler-v2'" />
+					<mat-hint align="start" *ngIf="content_data.classification != 'filler-v2'; else forFillers"
+						><strong>Applicable to feeds and images only. Min of 5 seconds.</strong>
+					</mat-hint>
+					<ng-template #forFillers>
+						<mat-hint align="start"><strong>Image Fillers Duration is set to Filler Feeds Duration.</strong> </mat-hint>
+					</ng-template>
 				</mat-form-field>
 			</div>
 

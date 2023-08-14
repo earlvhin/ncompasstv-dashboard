@@ -59,16 +59,32 @@
 						<div>
 							<div class="row mt-3 mb-2" *ngIf="filler_group_cache.length > 0">
 								<div class="col-lg-8">
-									<button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn mt-2">
-										<span class="button-label">Order by Name</span>
+									<button mat-button mat-raised-button [matMenuTriggerFor]="orderBy" class="theme-btn mt-2">
+										<span class="button-label">Sort by :</span>
 										<span class="fas fa-sort ml-2"></span>
 									</button>
-									<mat-menu #orderSort="matMenu">
-										<button mat-menu-item (click)="sortFillerGroup('asc')">
+									<mat-menu #orderBy="matMenu">
+										<button mat-menu-item [matMenuTriggerFor]="nameSort">
+											<i class="fa fa-list mr-3" aria-hidden="true"></i>Name
+										</button>
+										<button mat-menu-item [matMenuTriggerFor]="dateSort">
+											<i class="fa fa-clock mr-3" aria-hidden="true"></i>Date Created
+										</button>
+									</mat-menu>
+									<mat-menu #nameSort="matMenu">
+										<button mat-menu-item (click)="sortFillerGroup('Name', 'asc')">
 											<i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending
 										</button>
-										<button mat-menu-item (click)="sortFillerGroup('desc')">
+										<button mat-menu-item (click)="sortFillerGroup('Name', 'desc')">
 											<i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending
+										</button>
+									</mat-menu>
+									<mat-menu #dateSort="matMenu">
+										<button mat-menu-item (click)="sortFillerGroup('DateCreated', 'asc')">
+											<i class="fa fa-sort-numeric-asc mr-3" aria-hidden="true"></i>Oldest
+										</button>
+										<button mat-menu-item (click)="sortFillerGroup('DateCreated', 'desc')">
+											<i class="fa fa-sort-numeric-desc mr-3" aria-hidden="true"></i>Newest
 										</button>
 									</mat-menu>
 								</div>
@@ -91,8 +107,14 @@
 											<div class="col-lg-11">
 												<div class="filter-pills pt-1">
 													<div class="filetype-pill pill">
-														Ordered by Name : <strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
+														Sorted by {{ sorting_column }} :
+														<strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{
+															sorting_order == 'asc' ? 'Oldest' : 'Newest'
+														}}</strong>
 													</div>
+													<ng-template #nameFilter>
+														<strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
+													</ng-template>
 												</div>
 											</div>
 											<div class="control col-lg-1 text-right">
@@ -147,12 +169,20 @@
 												</div>
 												<div class="row mt-3">
 													<div class="col-lg-6 text-left">
-														<div
-															class="hover-prime clickable"
-															title="View Filler Group"
-															(click)="navigateToFillerGroup(group.fillerGroupId)">
-															<i class="fas fa-photo-video mr-3"></i>
-															<span class="text-dark primary sm-text">{{ group.count }}</span>
+														<div class="row no-gutters">
+															<div class="col-lg-3 pr-0" *ngIf="group.paired == 1">
+																<span class="font-weight-bold sm-text text-orange" title="In Pairs"
+																	><i class="fas fa-times"> 2</i></span
+																>
+															</div>
+															<div class="col-lg-7">
+																<div
+																	class="hover-prime clickable"
+																	title="View Filler Group"
+																	(click)="navigateToFillerGroup(group.fillerGroupId)">
+																	<span class="text-dark primary sm-text">{{ group.count }} Fillers</span>
+																</div>
+															</div>
 														</div>
 													</div>
 													<div class="col-lg-6 text-right">

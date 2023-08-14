@@ -53,6 +53,7 @@
 					<span *ngIf="content.fileType | isvideo"> video </span>
 
 					<span *ngIf="content.fileType | isFeed"> feed </span>
+					<span *ngIf="content.classification == 'filler-v2'"> filler </span>
 				</p>
 
 				<p class="sm-text text-primary mr-1" *ngIf="content.isFullScreen == 1">

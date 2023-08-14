@@ -108,7 +108,7 @@
 					</div>
 				</div>
 			</mat-tab>
-			<mat-tab label="Fillers" [disabled]="has_fillers" [title]="has_fillers ? 'Playlist has fillers already' : ''">
+			<mat-tab label="Fillers">
 				<div class="row mb-2">
 					<div class="col-lg-10">
 						<div class="row mt-3">
@@ -126,37 +126,42 @@
 				<div class="row no-gutters">
 					<div class="col-lg-12">
 						<div class="playlist-media-panel overflow-x-hidden border material-shadow bg-light p-2 mb-4">
-							<div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
-								<div class="col-lg-2" *ngFor="let data of filler_groups">
-									<div class="row">
-										<div class="col-lg-11 clickable" (click)="prepareDataToAddToPlaylist(data.fillerPlaylistId)">
-											<div class="box-shadowing mb-4 bg-dark h-150" [attr.id]="data.fillerPlaylistId">
-												<div class="row no-gutters">
-													<div class="col-lg-12 text-center p-2">
-														<span class="mt-4 fa-3x text-primary fa fa-folder-o"></span>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-lg-12 text-center">
-														<h5 class="text-white" title="{{ data.name }}">
-															{{ data.name | slice : 0 : 15 }}{{ data.name.length > 15 ? '...' : '' }}
-														</h5>
-													</div>
-												</div>
-												<div class="row">
-													<div class="col-lg-12 text-center">
-														<div class="sm-text text-white">
-															<span>{{ data.totalFillers }} Fillers</span>
-															<span
-																class="fas fa-info info xsm-text ml-2 br-100"
-																[ngbTooltip]="breakdownFillers"></span>
+							<div *ngIf="!in_progress_saving_fillers; else savingFillers">
+								<div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
+									<div class="col-lg-2" *ngFor="let data of filler_groups">
+										<div class="row">
+											<div
+												class="col-lg-11 clickable"
+												(click)="prepareDataToAddToPlaylist(data.fillerPlaylistId, data.totalFillers)">
+												<div class="box-shadowing mb-4 bg-dark h-150" [attr.id]="data.fillerPlaylistId">
+													<div class="row no-gutters">
+														<div class="col-lg-12 text-center p-2">
+															<span class="mt-4 fa-3x text-primary fa fa-folder-o"></span>
 														</div>
-														<ng-template #breakdownFillers>
-															<div class="sm-text" *ngFor="let group of data.fillerGroups">
-																{{ group.quantity }} <span *ngIf="group.isPair">(In Pairs)</span> - {{ group.name }}
-																<span></span>
+													</div>
+													<div class="row">
+														<div class="col-lg-12 text-center">
+															<h5 class="text-white" title="{{ data.name }}">
+																{{ data.name | slice : 0 : 15 }}{{ data.name.length > 15 ? '...' : '' }}
+															</h5>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-lg-12 text-center">
+															<div class="sm-text text-white">
+																<span>{{ data.totalFillers }} Fillers</span>
+																<span
+																	class="fas fa-info info xsm-text ml-2 br-100"
+																	[ngbTooltip]="breakdownFillers"></span>
 															</div>
-														</ng-template>
+															<ng-template #breakdownFillers>
+																<div class="sm-text" *ngFor="let group of data.fillerGroups">
+																	{{ group.quantity }} <span *ngIf="group.isPair">(In Pairs)</span> -
+																	{{ group.name }}
+																	<span></span>
+																</div>
+															</ng-template>
+														</div>
 													</div>
 												</div>
 											</div>
@@ -164,6 +169,13 @@
 									</div>
 								</div>
 							</div>
+							<ng-template #savingFillers>
+								<div class="loader-overlay bg-dark text-white text-center h-100 pt-5">
+									<h4 class="mt-5">Saving Fillers</h4>
+									<span class="sm-text">Please wait, while we update your playlist contents. </span>
+									<mat-spinner [diameter]="100" class="mt-5"></mat-spinner>
+								</div>
+							</ng-template>
 						</div>
 					</div>
 				</div>

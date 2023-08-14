@@ -52,7 +52,7 @@ export class PlaylistMediaComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-		this.checkIfPlaylistHasFillers();
+		// this.checkIfPlaylistHasFillers();
 		this.onTabChanged(this.isActiveTab);
 		if (
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
@@ -244,43 +244,37 @@ export class PlaylistMediaComponent implements OnInit {
 			);
 	}
 
-	prepareDataToAddToPlaylist(id) {
+	prepareDataToAddToPlaylist(id, total) {
 		this.current_content = [];
-
-		//map existing contents to comply with format
-		this._dialog_data.existing_contents.map((contents) => {
-			let x = {
-				contentId: contents.contentId,
-				duration: contents.duration,
-				isFullScreen: contents.isFullScreen,
-				playlistContentId: contents.playlistContentId,
-				seq: contents.seq
-			};
-			this.current_content.push(x);
-		});
 		this.current_selection = id;
 		this._filler
 			.get_single_filler_feeds_placeholder(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
-					data.data.map((filler) => {
+					data.data.map((filler, index) => {
 						this.current_content.push({
 							contentId: filler.contentId,
 							duration: filler.duration,
 							isFullScreen: 0,
 							playlistContentId: null,
-							seq: 0
+							seq: index + 1
 						});
 					});
 				},
 				(error) => {}
 			)
 			.add(() => {
-				this.current_content.map((content, index) => {
-					if (content.seq == 0) {
-						content.seq = index + 1;
-					}
+				//map existing contents to comply with format
+				this._dialog_data.existing_contents.map((contents) => {
+					let x = {
+						contentId: contents.contentId,
+						duration: contents.duration,
+						isFullScreen: contents.isFullScreen,
+						playlistContentId: contents.playlistContentId,
+						seq: contents.seq + total
+					};
+					this.current_content.push(x);
 				});
 			});
 
@@ -355,24 +349,24 @@ export class PlaylistMediaComponent implements OnInit {
 				this.getDealerContent(this._dialog_data.dealer_id);
 				break;
 			case 1:
-				if (!this.has_fillers) {
-					this.getAllFillerGroups();
-				}
+				// if (!this.has_fillers) {
+				this.getAllFillerGroups();
+				// }
 				break;
 			default:
 		}
 	}
 
-	checkIfPlaylistHasFillers() {
-		this._filler
-			.check_if_filler_is_in_playlist(this._dialog_data.playlist_id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				if (data.message) {
-					this.has_fillers = false;
-				} else {
-					this.has_fillers = true;
-				}
-			});
-	}
+	// checkIfPlaylistHasFillers() {
+	// 	this._filler
+	// 		.check_if_filler_is_in_playlist(this._dialog_data.playlist_id)
+	// 		.pipe(takeUntil(this._unsubscribe))
+	// 		.subscribe((data: any) => {
+	// 			if (data.message) {
+	// 				this.has_fillers = false;
+	// 			} else {
+	// 				this.has_fillers = true;
+	// 			}
+	// 		});
+	// }
 }
