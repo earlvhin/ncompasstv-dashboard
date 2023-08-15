@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, FormsModule } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
@@ -30,7 +30,8 @@ export class AddFillerGroupComponent implements OnInit {
 		private _filler: FillerService,
 		private _dialog: MatDialog,
 		private _router: Router,
-		private _auth: AuthService
+		private _auth: AuthService,
+		private el: ElementRef
 	) {}
 
 	ngOnInit() {
@@ -56,7 +57,7 @@ export class AddFillerGroupComponent implements OnInit {
 			.subscribe(
 				(data: any) => {
 					this.added_data = data;
-					this._dialog.closeAll();
+					// this._dialog.closeAll();
 					this.selectionModal(
 						'warning',
 						'Filler Group Created!',
@@ -87,6 +88,10 @@ export class AddFillerGroupComponent implements OnInit {
 			if (response === 'no_upload') {
 				this._dialog.closeAll();
 			} else {
+				//temporary since the modal arrangement conflicts with other dashboard function [duplicate name]
+				const child = document.getElementById('cdk-overlay-0');
+				child.parentElement.parentElement.classList.add('hidden');
+
 				this.onUploadImage();
 			}
 		});
@@ -113,21 +118,20 @@ export class AddFillerGroupComponent implements OnInit {
 					fillerGroupId: this.added_data.fillerGroupId,
 					coverPhoto: sliced_imagekey[0] + '_' + response.filesUploaded[0].filename
 				};
-
 				this._filler
 					.update_filler_group_photo(coverphoto)
 					.pipe(takeUntil(this._unsubscribe))
-					.subscribe(
-						() =>
-							this.openConfirmationModal(
-								'success',
-								'Filler Group Cover Photo Updated!',
-								'Hurray! You successfully updated Filler Group Cover Photo'
-							)
-						// (error) => {
-						// 	throw new Error(error);
-						// }
+					.subscribe(() =>
+						this.openConfirmationModal(
+							'success',
+							'Filler Group Cover Photo Updated!',
+							'Hurray! You successfully updated Filler Group Cover Photo'
+						)
 					);
+
+				//temporary since the modal arrangement conflicts with other dashboard function [duplicate name]
+				const child = document.getElementById('cdk-overlay-0');
+				child.parentElement.parentElement.classList.remove('hidden');
 			}
 		};
 	}

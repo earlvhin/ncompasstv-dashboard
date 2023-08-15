@@ -16,6 +16,7 @@ import { CreateFillerFeedComponent } from '../create-filler-feed/create-filler-f
 })
 export class ViewFillersGroupComponent implements OnInit {
 	filler_group_contents: any = [];
+	filler_group_pagination: any = [];
 	filler_group_data: any;
 	filler_group_id: string;
 	is_loading = true;
@@ -53,12 +54,20 @@ export class ViewFillersGroupComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				if (!data.message) {
-					this.filler_group_contents = data.paging.entities;
-					this.no_search_result = false;
+					this.filler_group_pagination = data.paging;
+					if (page > 1) {
+						data.paging.entities.map((data) => {
+							this.filler_group_contents.push(data);
+						});
+					} else {
+						this.filler_group_contents = data.paging.entities;
+						this.no_search_result = false;
+					}
 				} else {
 					if (this.search_keyword != '') {
 						this.no_search_result = true;
 					} else {
+						this.filler_group_pagination = [];
 						this.filler_group_contents = [];
 						this.no_search_result = false;
 					}
