@@ -16,18 +16,14 @@ export class FilestackService extends BaseService {
 		super(_auth, _http);
 	}
 
-	convert_videos(data, fillers?: boolean) {
+	/** @TODO - pass filler_id (optional) */
+	convert_videos(data, filler_id?: string, fillers?: boolean) {
 		return new Promise((resolve, reject) => {
-			let url = ``;
 			// Pass data to Backend then Convert Video
-			let handle = data.handle;
-			if (fillers) {
-				let originalName = data.filename;
-				url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${originalName}/${handle}`;
-			} else {
-				let filename = data.key.substring(0, data.key.lastIndexOf('.'));
-				url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,filename:${filename}/${handle}`;
-			}
+			const path = fillers && filler_id ? `path:"fillers/dev/${filler_id}"` : '';
+			const handle = data.handle;
+			const filename = fillers ? data.filename : data.key.substring(0, data.key.lastIndexOf('.'));
+			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,${path},filename:${filename}/${handle}`;
 
 			this.subscription.add(
 				this.getRequest(url, null, true, true).subscribe(
