@@ -125,6 +125,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 
 		dialog.afterClosed().subscribe((data) => {
 			if (data) this.getFeeds(1);
+			this.reloadPage(true);
 		});
 	}
 
