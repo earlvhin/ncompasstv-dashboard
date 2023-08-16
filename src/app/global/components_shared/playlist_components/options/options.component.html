@@ -108,6 +108,17 @@
 				</mat-form-field>
 			</div>
 
+			<div *ngIf="content_data.classification == 'filler-v2'">
+				<hr clas="mt-2" />
+				<div class="row">
+					<div class="col-lg-12">
+						<span class="sm-text"
+							>Filler Group: <b>{{ content_data.fillerGroupName }}</b>
+						</span>
+					</div>
+				</div>
+			</div>
+
 			<hr *ngIf="!is_livestream && content_data.classification == null" />
 			<!-- FREQUENCY SETTINGS -->
 			<div class="frequency-settings d-flex flex-column" *ngIf="!is_livestream && content_data.classification == null">

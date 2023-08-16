@@ -64,10 +64,10 @@ export class ViewFillersGroupComponent implements OnInit {
 						this.no_search_result = false;
 					}
 				} else {
+					this.filler_group_pagination = [];
 					if (this.search_keyword != '') {
 						this.no_search_result = true;
 					} else {
-						this.filler_group_pagination = [];
 						this.filler_group_contents = [];
 						this.no_search_result = false;
 					}
