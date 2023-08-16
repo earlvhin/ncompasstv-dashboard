@@ -20,10 +20,10 @@ export class FilestackService extends BaseService {
 	convert_videos(data, filler_id?: string, fillers?: boolean) {
 		return new Promise((resolve, reject) => {
 			// Pass data to Backend then Convert Video
-			const path = fillers && filler_id ? `path:"fillers/dev/${filler_id}"` : '';
+			const path = fillers && filler_id ? `path:"fillers/dev/${filler_id}",` : '';
 			const handle = data.handle;
 			const filename = fillers ? data.filename : data.key.substring(0, data.key.lastIndexOf('.'));
-			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,${path},filename:${filename}/${handle}`;
+			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,${path}filename:${filename}/${handle}`;
 
 			this.subscription.add(
 				this.getRequest(url, null, true, true).subscribe(
