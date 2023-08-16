@@ -17,7 +17,7 @@ export class FilestackService extends BaseService {
 	}
 
 	/** @TODO - pass filler_id (optional) */
-	convert_videos(data, filler_id?: string, fillers?: boolean) {
+	convert_videos(data, filler_id?: any, fillers?: boolean) {
 		return new Promise((resolve, reject) => {
 			// Pass data to Backend then Convert Video
 			const path = fillers && filler_id ? `path:"fillers/dev/${filler_id}",` : '';
@@ -53,7 +53,7 @@ export class FilestackService extends BaseService {
 					// filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
 
 					let convert_data: any;
-					convert_data = await this.convert_videos(file, fillers);
+					convert_data = await this.convert_videos(file, null, fillers);
 
 					const upload_data = {
 						hostid: users ? users.host : '',
