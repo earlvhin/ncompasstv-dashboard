@@ -66,7 +66,8 @@ export class FilestackService extends BaseService {
 						handle: file.handle,
 						filename: filename,
 						filesize: file.size,
-						uuid: convert_data.uuid
+						uuid: convert_data.uuid,
+						classification: fillers ? 'fillers-v2' : ''
 					};
 
 					// Uploaded File Data Model for backend saving
