@@ -119,6 +119,7 @@ export class AddFillerContentComponent implements OnInit {
 
 	async processUploadedFiles(data): Promise<void> {
 		const file_data = await this._filestack.process_uploaded_files(data, '', true, this.selected_group.fillerGroupId);
+		console.log('FILE_DATA', file_data);
 		if (file_data) {
 			this._filestack
 				.post_content_info(file_data)
@@ -127,8 +128,9 @@ export class AddFillerContentComponent implements OnInit {
 					(res) => {
 						this.upload_holder = [];
 						res.handlers.map((data) => {
+							let file_name = this.splitFileName(data.filename);
 							const modified_details = {
-								filename: this.splitFileName(data.filename),
+								filename: file_name.substring(file_name.indexOf('_') + 1),
 								filetype: this.media_type,
 								handlerid: data.handle
 							};
