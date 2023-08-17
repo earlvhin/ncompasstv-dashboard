@@ -79,7 +79,9 @@ export class ViewFillersGroupComponent implements OnInit {
 	}
 
 	gotoFileURL(url) {
-		window.open(url, '_blank');
+		let new_url = url.replace(/ /g, '+');
+		console.log('new_url', new_url);
+		window.open(new_url, '_blank');
 	}
 
 	addFillerContent(group) {

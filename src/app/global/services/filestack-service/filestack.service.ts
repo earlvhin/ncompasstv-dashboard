@@ -22,7 +22,7 @@ export class FilestackService extends BaseService {
 			// Pass data to Backend then Convert Video
 			const path = fillers && filler_id ? `path:"fillers/dev/${filler_id}",` : '';
 			const handle = data.handle;
-			const filename = fillers ? data.filename : data.key.substring(0, data.key.lastIndexOf('.'));
+			const filename = fillers ? data.filename.substring(0, data.filename.lastIndexOf('.')) : data.key.substring(0, data.key.lastIndexOf('.'));
 			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,${path}filename:${filename}/${handle}`;
 
 			this.subscription.add(
@@ -38,7 +38,7 @@ export class FilestackService extends BaseService {
 		});
 	}
 
-	process_uploaded_files(file_data, users, fillers?: boolean) {
+	process_uploaded_files(file_data, users, fillers?: boolean, group?: string) {
 		const convert_to_webm = localStorage.getItem('optimize_video') == 'false' ? false : true;
 
 		return new Promise((resolve, reject) => {
@@ -53,7 +53,11 @@ export class FilestackService extends BaseService {
 					// filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
 
 					let convert_data: any;
-					convert_data = await this.convert_videos(file, null, fillers);
+					if (fillers) {
+						convert_data = await this.convert_videos(file, group, true);
+					} else {
+						convert_data = await this.convert_videos(file);
+					}
 
 					const upload_data = {
 						hostid: users ? users.host : '',
