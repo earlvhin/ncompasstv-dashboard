@@ -17,10 +17,10 @@ export class FilestackService extends BaseService {
 	}
 
 	/** @TODO - pass filler_id (optional) */
-	convert_videos(data, filler_id?: any, fillers?: boolean) {
+	convert_videos(data, filler_id?: any, fillers?: boolean, env?) {
 		return new Promise((resolve, reject) => {
 			// Pass data to Backend then Convert Video
-			const path = fillers && filler_id ? `path:"fillers/dev/${filler_id}",` : '';
+			const path = fillers && filler_id ? `path:"fillers/${env}/${filler_id}",` : '';
 			const handle = data.handle;
 			const filename = fillers ? data.filename.substring(0, data.filename.lastIndexOf('.')) : data.key.substring(0, data.key.lastIndexOf('.'));
 			const url = `https://cdn.filestackcontent.com/${environment.third_party.filestack_api_key}/video_convert=preset:webm,width:848,height:480,video_bitrate:1000,${path}filename:${filename}/${handle}`;
@@ -38,7 +38,7 @@ export class FilestackService extends BaseService {
 		});
 	}
 
-	process_uploaded_files(file_data, users, fillers?: boolean, group?: string) {
+	process_uploaded_files(file_data, users, fillers?: boolean, group?: string, env?) {
 		const convert_to_webm = localStorage.getItem('optimize_video') == 'false' ? false : true;
 
 		return new Promise((resolve, reject) => {
@@ -54,7 +54,7 @@ export class FilestackService extends BaseService {
 
 					let convert_data: any;
 					if (fillers) {
-						convert_data = await this.convert_videos(file, group, true);
+						convert_data = await this.convert_videos(file, group, true, env);
 					} else {
 						convert_data = await this.convert_videos(file);
 					}

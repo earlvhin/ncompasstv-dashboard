@@ -120,7 +120,13 @@ export class AddFillerContentComponent implements OnInit {
 
 	async processUploadedFiles(data): Promise<void> {
 		let file_data: any;
-		file_data = await this._filestack.process_uploaded_files(data, '', true, this.selected_group.fillerGroupId);
+		file_data = await this._filestack.process_uploaded_files(
+			data,
+			'',
+			true,
+			this.selected_group.fillerGroupId,
+			!environment.production ? 'dev' : 'prod'
+		);
 		if (file_data) {
 			this._filestack
 				.post_content_info(file_data)
