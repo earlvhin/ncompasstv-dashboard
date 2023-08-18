@@ -22,6 +22,7 @@ export class AddFillerContentComponent implements OnInit {
 	all_media = this.page_data.all_media;
 	selected_group = this.page_data.group;
 	upload_holder: any;
+	converted: boolean = false;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -118,8 +119,8 @@ export class AddFillerContentComponent implements OnInit {
 	}
 
 	async processUploadedFiles(data): Promise<void> {
-		const file_data = await this._filestack.process_uploaded_files(data, '', true, this.selected_group.fillerGroupId);
-		console.log('FILE_DATA', file_data);
+		let file_data: any;
+		file_data = await this._filestack.process_uploaded_files(data, '', true, this.selected_group.fillerGroupId);
 		if (file_data) {
 			this._filestack
 				.post_content_info(file_data)

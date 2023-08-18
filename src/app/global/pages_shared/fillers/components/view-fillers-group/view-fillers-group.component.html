@@ -107,7 +107,7 @@
 										*ngIf="data.fileType == 'image'; else video" />
 									<ng-template #video>
 										<div class="h-130-px">
-											<object [attr.data]="data.url | sanitize" class="clickable full-width h-130-px br-5"></object>
+											<object [attr.data]="data.url | sanitize" class="text-center full-width h-130-px br-5"></object>
 										</div>
 									</ng-template>
 								</div>
