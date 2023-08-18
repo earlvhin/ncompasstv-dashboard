@@ -1,0 +1,260 @@
+<div class="theme-container">
+	<div class="row mt-5">
+		<div class="col-lg-12">
+			<h1 class="page-title">{{ title }}</h1>
+		</div>
+	</div>
+	<hr class="my-4" />
+
+	<div class="content-section">
+		<div class="row">
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
+						[data_value]="fillers_count.admin_count"
+						[data_label]="fillers_count.admin_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
+						[data_value]="fillers_count.dealer_admin_count"
+						[data_label]="fillers_count.dealer_admin_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
+						[data_value]="fillers_count.dealer_count"
+						[data_label]="fillers_count.label.dealer_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
+				</mat-card>
+			</div>
+			<div class="col-lg-3">
+				<mat-card class="h-100 dealer-card">
+					<app-data-card-count
+						*ngIf="fillers_count; else small_loader"
+						[data_value]="fillers_count.host_count"
+						[data_label]="fillers_count.host_label"
+						[data_description]="fillers_count.label">
+					</app-data-card-count>
+				</mat-card>
+			</div>
+		</div>
+
+		<hr class="my-4" />
+
+		<div class="row no-gutters">
+			<div class="col-lg-12">
+				<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)" class="custom-mat-tab">
+					<mat-tab id="admin-view-tab" label="Admin">
+						<div>
+							<div class="row mt-3 mb-2" *ngIf="filler_group_cache.length > 0">
+								<div class="col-lg-8">
+									<button mat-button mat-raised-button [matMenuTriggerFor]="orderBy" class="theme-btn mt-2">
+										<span class="button-label">Sort by :</span>
+										<span class="fas fa-sort ml-2"></span>
+									</button>
+									<mat-menu #orderBy="matMenu">
+										<button mat-menu-item [matMenuTriggerFor]="nameSort">
+											<i class="fa fa-list mr-3" aria-hidden="true"></i>Name
+										</button>
+										<button mat-menu-item [matMenuTriggerFor]="dateSort">
+											<i class="fa fa-clock mr-3" aria-hidden="true"></i>Date Created
+										</button>
+									</mat-menu>
+									<mat-menu #nameSort="matMenu">
+										<button mat-menu-item (click)="sortFillerGroup('Name', 'asc')">
+											<i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending
+										</button>
+										<button mat-menu-item (click)="sortFillerGroup('Name', 'desc')">
+											<i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending
+										</button>
+									</mat-menu>
+									<mat-menu #dateSort="matMenu">
+										<button mat-menu-item (click)="sortFillerGroup('DateCreated', 'asc')">
+											<i class="fa fa-sort-numeric-asc mr-3" aria-hidden="true"></i>Oldest
+										</button>
+										<button mat-menu-item (click)="sortFillerGroup('DateCreated', 'desc')">
+											<i class="fa fa-sort-numeric-desc mr-3" aria-hidden="true"></i>Newest
+										</button>
+									</mat-menu>
+								</div>
+								<div class="col-lg-4">
+									<app-search-field
+										[form_title]="'Search Filler Group'"
+										[placeholder]="'Example: Trivia'"
+										[data_reference]=""
+										[primary_keyword]="'name'"
+										[secondary_keyword]="'name'"
+										(searched)="onSearchFiller($event)"
+										[api_search]="true">
+									</app-search-field>
+								</div>
+							</div>
+							<div class="row mb-3 no-gutters" *ngIf="sorting_order != ''">
+								<div class="col-lg-12">
+									<div class="p-2 bg-gray">
+										<div class="row no-gutters">
+											<div class="col-lg-11">
+												<div class="filter-pills pt-1">
+													<div class="filetype-pill pill">
+														Sorted by {{ sorting_column }} :
+														<strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{
+															sorting_order == 'asc' ? 'Oldest' : 'Newest'
+														}}</strong>
+													</div>
+													<ng-template #nameFilter>
+														<strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
+													</ng-template>
+												</div>
+											</div>
+											<div class="control col-lg-1 text-right">
+												<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+													<span class="button-label"> Clear Filter </span>
+													<span class="fas fa-times ml-2 sm-text"></span>
+												</button>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div *ngIf="!is_loading; else loader">
+								<div *ngIf="!no_search_result; else noResultsFound">
+									<div class="row pb-2">
+										<div class="col-lg-2 mb-4">
+											<div
+												class="black-opacity black-solid-hover h-100 text-center cursor-pointer box-shadowing"
+												(click)="onAddFillerGroup()">
+												<i class="fas fa-plus text-white f-50 mt-5 pt-5 mb-5 pb-4" title="Add New Filler Group"></i>
+											</div>
+										</div>
+										<div class="col-lg-2 mb-4" *ngFor="let group of filler_group_cache">
+											<div class="bg-white p-3 full-width text-center br-5 box-shadowing">
+												<div class="row">
+													<div class="col-lg-12 text-center text-primary uppercase">
+														<span
+															class="sm-text f-500 clickable hover-prime"
+															title="{{ group.name }}"
+															(click)="navigateToFillerGroup(group.fillerGroupId)"
+															>{{ group.name | slice : 0 : 20 }}{{ group.name.length > 20 ? '...' : '' }}</span
+														>
+													</div>
+												</div>
+												<div class="row mt-2">
+													<div class="col-lg-12">
+														<div *ngIf="group.coverPhoto != ''; else defaultphoto">
+															<img
+																[src]="group.coverPhoto"
+																class="clickable full-width h-130-px br-5"
+																(click)="navigateToFillerGroup(group.fillerGroupId)" />
+														</div>
+														<ng-template #defaultphoto>
+															<div>
+																<img
+																	[src]="'/assets/media-files/filler-group-placeholder.png'"
+																	class="clickable full-width h-130-px br-5"
+																	(click)="navigateToFillerGroup(group.fillerGroupId)" />
+															</div>
+														</ng-template>
+													</div>
+												</div>
+												<div class="row mt-3">
+													<div class="col-lg-6 text-left">
+														<div class="row no-gutters">
+															<div class="col-lg-3 pr-0" *ngIf="group.paired == 1">
+																<span class="font-weight-bold sm-text text-orange" title="In Pairs"
+																	><i class="fas fa-times"> 2</i></span
+																>
+															</div>
+															<div class="col-lg-7">
+																<div
+																	class="hover-prime clickable"
+																	title="View Filler Group"
+																	(click)="navigateToFillerGroup(group.fillerGroupId)">
+																	<span class="text-dark primary sm-text">{{ group.count }} Fillers</span>
+																</div>
+															</div>
+														</div>
+													</div>
+													<div class="col-lg-6 text-right">
+														<span
+															class="fas fa-upload text-gray ml-3 clickable hover-prime"
+															title="Upload Filler"
+															(click)="addFillerContent(group)"></span>
+
+														<span
+															class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
+															title="Edit Filler Group"
+															(click)="onEditFillerGroup(group.fillerGroupId)"></span>
+
+														<span
+															class="fas fa-trash text-danger ml-3 clickable"
+															title="Delete Filler Group"
+															(click)="onDeleteFillerGroup(group.fillerGroupId)"></span>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row" *ngIf="filler_group.hasNextPage">
+										<div class="col-lg-12 text-center p-0 mt-3">
+											<button
+												class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
+												(click)="getAllFillers(filler_group.page + 1, 12)"
+												[disabled]="is_loading">
+												<span>SHOW MORE</span>
+											</button>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</mat-tab>
+
+					<mat-tab id="dealer-admin-view-tab" label="Dealer Admin" [disabled]="true">
+						<div *ngIf="tabGroup.selectedIndex === 1"></div>
+					</mat-tab>
+
+					<mat-tab id="dealer-view-tab" label="Dealer" [disabled]="true">
+						<div *ngIf="tabGroup.selectedIndex === 2"></div>
+					</mat-tab>
+				</mat-tab-group>
+			</div>
+		</div>
+	</div>
+</div>
+
+<ng-template #small_loader>
+	<div class="py-4 white-bg">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #loader>
+	<div class="py-4 h-500">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #noResultsFound>
+	<div class="row">
+		<div class="col-lg-12">
+			<div class="full-width bg-white pt-5 pb-5 col-lg-12 text-center">
+				<div class="mb-4">
+					<i class="text-gray fa-5x far fa-file-alt"></i>
+				</div>
+				<h3 class="text-gray col-lg-12">No Results Found.</h3>
+				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+			</div>
+		</div>
+	</div>
+</ng-template>

@@ -9,7 +9,15 @@ import { ClonePlaylistComponent } from '../../components_shared/playlist_compone
 import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { PlaylistDemoComponent } from '../../components_shared/playlist_components/playlist-demo/playlist-demo.component';
 import { PlaylistEditModalComponent } from '../../components_shared/playlist_components/playlist-edit-modal/playlist-edit-modal.component';
-import { API_LICENSE_PROPS, API_SCREEN_OF_PLAYLIST, API_SINGLE_PLAYLIST, UI_ROLE_DEFINITION, UI_PLAYLIST_SCREENS_NEW, UI_CONFIRMATION_MODAL, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import {
+	API_LICENSE_PROPS,
+	API_SCREEN_OF_PLAYLIST,
+	API_SINGLE_PLAYLIST,
+	UI_ROLE_DEFINITION,
+	UI_PLAYLIST_SCREENS_NEW,
+	UI_CONFIRMATION_MODAL,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 import { AuthService, HelperService, PlaylistService, RoleService } from 'src/app/global/services';
 import { environment } from 'src/environments/environment';
 
@@ -61,13 +69,13 @@ export class SinglePlaylistComponent implements OnInit {
 		// If changes made
 		if (this.reload) this.reload.subscribe(() => this.playlistRouteInit());
 
-        let role = this.currentRole;
-        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = UI_ROLE_DEFINITION_TEXT.administrator;
-        }
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 
-		this.host_url = `/` +role+ `/hosts/`;
-		this.license_url = `/` +role+ `/licenses/`;
+		this.host_url = `/` + role + `/hosts/`;
+		this.license_url = `/` + role + `/licenses/`;
 
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
@@ -170,16 +178,16 @@ export class SinglePlaylistComponent implements OnInit {
 	screensMapToTable(screens) {
 		let counter = 1;
 		// const route = Object.keys(UI_ROLE_DEFINITION).find((key) => UI_ROLE_DEFINITION[key] === this._auth.current_user_value.role_id);
-        let role = this.currentRole;
-        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = UI_ROLE_DEFINITION_TEXT.administrator;
-        }
+		let role = this.currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = UI_ROLE_DEFINITION_TEXT.administrator;
+		}
 		if (screens) {
 			this.playlist_screen_table = screens.map((i) => {
 				return new UI_PLAYLIST_SCREENS_NEW(
 					{ value: i.screenId, link: null, editable: false, hidden: true },
 					{ value: counter++, link: null, editable: false, hidden: false },
-					{ value: i.screenName, link: `/` +role+ `/screens/` + i.screenId, editable: false, hidden: false, new_tab_link: true },
+					{ value: i.screenName, link: `/` + role + `/screens/` + i.screenId, editable: false, hidden: false, new_tab_link: true },
 					{ value: i.businessName, link: null, editable: false, hidden: false },
 					{ value: i.hostName, link: null, editable: false, hidden: false },
 					{ value: i.screenTypeName || '--', link: null, editable: false, hidden: false },
@@ -195,12 +203,10 @@ export class SinglePlaylistComponent implements OnInit {
 	}
 
 	reloadPlaylist(dataOnly: boolean = false) {
-
 		// if set to true, then it will only call the swapped content
-		if (dataOnly) return this.getPlaylistDataAndScreens(this._params.snapshot.params.data); 
+		if (dataOnly) return this.getPlaylistDataAndScreens(this._params.snapshot.params.data);
 
 		this.ngOnInit();
-
 	}
 
 	reloadDemo(e) {
