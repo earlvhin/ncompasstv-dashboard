@@ -89,6 +89,7 @@ export const API_ENDPOINTS = {
 		api_get_filler_group_contents: 'filler/content/getbygroupid',
 		api_get_filler_group_validation: 'filler/playlistgroup/getfillerplaylistsbyfillergroupid',
 		api_get_fillers: 'feed/getallfillers',
+		api_get_fillers_playing_where: 'filler/playlistgroup/getplayingwherebyfillergroupid',
 		api_get_host_by_dealer: 'host/getbydealer?dealerid=',
 		api_get_host_for_dealer: 'host/gethostbydealer?dealerid=',
 		api_get_host_total: 'host/gettotal',

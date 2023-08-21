@@ -409,9 +409,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 
 		playlist_content_dialog.afterClosed().subscribe((response) => {
 			//if fillers added
-			if (response.mode === 'fillers') {
-				this.reload_playlist.emit(true);
-			}
+			if (response.mode === 'fillers') this.reload_playlist.emit(true);
 
 			// if add content
 			if (response.mode === 'add') {
@@ -430,7 +428,6 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				const playlistContentIdToBeReplaced = this.selected_contents[0];
 				if (content.playlistContentId === playlistContentIdToBeReplaced)
 					return this.showErrorDialog('Cannot select the same content to be swapped');
-
 				this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced });
 			}
 		});
@@ -729,11 +726,9 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		if (isAdd) {
 			data.forEach((i) => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)));
 		} else {
-			if (this.selected_content_ids.length > 0) {
+			if (this.selected_content_ids.length > 0)
 				data.forEach((i) => this.playlist_new_content.push(new API_CONTENT_DATA(i.playlistContentId, i.contentId)));
-			} else {
-				this.playlist_new_content.push(new API_CONTENT_DATA(data.id, data.contentId));
-			}
+			this.playlist_new_content.push(new API_CONTENT_DATA(data.id, data.contentId));
 		}
 
 		this._playlist
@@ -981,15 +976,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			// else if has keyword
-
 			this.playlist_contents = this.playlist_contents.filter((i) => {
 				if (i) {
 					if (i.fileName) {
 						return i.fileName.toLowerCase().includes(data.toLowerCase());
-					} else {
-						return i.title.toLowerCase().includes(data.toLowerCase());
 					}
+					return i.title.toLowerCase().includes(data.toLowerCase());
 				}
 			});
 		});

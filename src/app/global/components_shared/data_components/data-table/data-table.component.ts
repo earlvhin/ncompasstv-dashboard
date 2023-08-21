@@ -279,11 +279,8 @@ export class DataTableComponent implements OnInit {
 
 		dialogRef.afterClosed().subscribe(
 			(response) => {
-				if (response != false) {
-					this.reload_page.emit(true);
-				} else {
-					return;
-				}
+				if (!response) return;
+				this.reload_page.emit(true);
 			},
 			(error) => {
 				throw new Error(error);
@@ -297,23 +294,20 @@ export class DataTableComponent implements OnInit {
 
 	deleteFillers(id): void {
 		this._filler.check_if_filler_has_dependency(id).subscribe((data) => {
-			if (data.message) {
-				this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
-			} else {
-				const delete_dialog = this._dialog.open(DeleteFillerFeedsComponent, {
-					width: '500px',
-					height: '450px',
-					data: {
-						filler_feeds: data.fillerPlaylists
-					}
-				});
-
-				delete_dialog.afterClosed().subscribe((result) => {
-					if (result == 'delete') {
-						this.postDeleteFillerFeed([id]);
-					}
-				});
+			if (!data.message) {
+				this._dialog
+					.open(DeleteFillerFeedsComponent, {
+						width: '500px',
+						height: '450px',
+						data: {
+							filler_feeds: data.fillerPlaylists
+						}
+					})
+					.afterClosed()
+					.subscribe((result) => result == 'delete' && this.postDeleteFillerFeed([id]));
+				return;
 			}
+			this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
 		});
 	}
 

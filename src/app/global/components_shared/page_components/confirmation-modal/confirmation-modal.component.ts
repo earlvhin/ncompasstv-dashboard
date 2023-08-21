@@ -47,9 +47,9 @@ export class ConfirmationModalComponent implements OnInit {
 	renameAllowed() {
 		if (this.filler_photo) {
 			this.dialogRef.close('no_upload');
-		} else {
-			this.dialogRef.close('rename');
+			return;
 		}
+		this.dialogRef.close('rename');
 	}
 
 	continueUpload() {

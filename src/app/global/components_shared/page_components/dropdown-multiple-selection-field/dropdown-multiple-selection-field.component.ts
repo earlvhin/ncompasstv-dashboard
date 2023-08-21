@@ -28,33 +28,24 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 
 	onRemoveDealer(index: number) {
 		this.selectedDropdownControl.value.splice(index, 1);
-		if (!this.dealerAdmin) {
-			this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
-		} else {
-			this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
-		}
-
+		if (!this.dealerAdmin) this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+		else this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
 		this.onSubmit();
 	}
 
 	onClearDealer() {
 		this.selectedDropdownControl.value.length = 0;
-		if (!this.dealerAdmin) {
-			this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
-		} else {
-			this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
-		}
+		if (!this.dealerAdmin) this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+		else this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
 		this.onSubmit();
 	}
 
 	onSubmit() {
-		const data_selected = this.selectedDropdownControl.value;
-		const selectedData = data_selected.map((data) => {
+		let data_selected = this.selectedDropdownControl.value;
+		data_selected.map((data) => {
 			if (!this.dealerAdmin) {
-				const { dealerId } = data;
-				return dealerId;
+				return data;
 			} else {
-				const { userId } = data;
 				return data.userId;
 			}
 		});
@@ -62,29 +53,6 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 
 	private subscribeToDealerSearch(): void {
 		const control = this.dropdownFilterControl;
-
-		control.valueChanges
-			.pipe
-			// takeUntil(this._unsubscribe),
-			// debounceTime(1000),
-			// map((keyword) => {
-			// 	if (control.invalid) return;
-
-			// 	if (keyword && keyword.trim().length > 0) {
-			// 		// this.searchData(keyword);
-			// 		let filtered = [];
-			// 		console.log('DEALER', this.dealers_list);
-			// 		this.dealers_list.map((dealer) => {
-			// 			if (dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) > -1) {
-			// 				filtered.push(dealer);
-			// 			}
-			// 		});
-			// 		this.dealers_list = filtered;
-			// 	} else {
-			// 		this.dealers_list = this.original_dealers;
-			// 	}
-			// })
-			()
-			.subscribe(() => (this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
+		control.valueChanges.pipe().subscribe(() => (this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
 	}
 }

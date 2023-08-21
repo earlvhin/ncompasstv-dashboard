@@ -26,6 +26,7 @@ export class ViewFillersGroupComponent implements OnInit {
 	sorting_order: string = '';
 	sorting_column: string = '';
 	title = 'Fillers Library';
+	isActiveTab = 0;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -175,5 +176,24 @@ export class ViewFillersGroupComponent implements OnInit {
 		this.sorting_column = '';
 		this.sorting_order = '';
 		this.getFillerGroupContents(this.filler_group_id, 1);
+	}
+
+	getFillerGroupPlayingWhere(id) {
+		this._filler
+			.get_filler_group_playing_where(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				console.log('DD', data);
+			});
+	}
+
+	onTabChanged(tab) {
+		this.isActiveTab = tab;
+		switch (tab) {
+			case 1:
+				this.getFillerGroupPlayingWhere(this.filler_group_id);
+				break;
+			default:
+		}
 	}
 }
