@@ -1,133 +1,118 @@
-import { Component, OnInit } from '@angular/core';
-import { UI_ROLE_DEFINITION } from '../../models';
-import { NotificationsPaginated, Notification } from '../../models/api_notification.model';
-import { AuthService } from '../../services';
-import { NotificationService } from '../../services/notification-service/notification.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Observable, Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+
+import { AuthService, NotificationService } from 'src/app/global/services';
+import { Notification, NotificationsPaginated } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-notifications',
 	templateUrl: './notifications.component.html',
 	styleUrls: ['./notifications.component.scss']
 })
-
-export class NotificationsComponent implements OnInit {
+export class NotificationsComponent implements OnInit, OnDestroy {
+	all_unresolved = false;
 	getting_notification_data: boolean = false;
+	is_admin = this.currentRole === 'administrator' || this.currentRole === 'dealeradmin';
+	is_dealer = this.currentRole === 'dealer';
 	notifications: NotificationsPaginated;
 	notification_items: Notification[] = [];
-	is_admin: boolean;
-	is_dealer: boolean;
-	route: string;
 	page: number = 1;
-	all_unresolved: boolean = false;
+	route = this.is_admin ? '/administrator' : '/dealer';
+	protected _unsubscribe = new Subject<void>();
 
-	constructor(
-		private _auth: AuthService,
-		private _notification: NotificationService
-	) { }
+	constructor(private _auth: AuthService, private _notification: NotificationService) {}
 
 	ngOnInit() {
-		if (this.currentUser) {
-			const { firstname, user_id, role_id } = this.currentUser
+		this.getNotifications();
+	}
 
-			if(role_id === UI_ROLE_DEFINITION.administrator) {
-				this.is_admin = true
-				this.route = '/administrator'
-			};
-
-			if (role_id === UI_ROLE_DEFINITION.dealer) {
-				this.is_dealer = true;
-				this.route = '/dealer'
-			};
-			
-			this.getNotifications();
-		}
+	ngOnDestroy(): void {
+		this._unsubscribe.next();
+		this._unsubscribe.complete();
 	}
 
 	public updateNotifStatus(id: string) {
-		this._notification.updateNotificationStatus(id).subscribe(
-			() => {
-				this.notification_items.map(
-					i => {
-						if (i.notificationId == id) {
-							i.isOpened = 1;
-						}
-					}
-				)
-			}
-		)
+		this._notification.updateNotificationStatus(id).subscribe(() => {
+			this.notification_items.map((i) => {
+				if (i.notificationId == id) {
+					i.isOpened = 1;
+				}
+			});
+		});
 	}
 
 	public updateAllNotifStatus() {
-		if (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer') {
-		this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, 1, 0).subscribe(
-				(data: any) => {
-					this.notification_items = [];
-					this.notification_items.push(...data.entities);
-					this.notification_items.forEach(notif => {
-						notif.isOpened = 1;
-					});
+		let request: Observable<any> = null;
 
-					this._notification.updateNotificationStatusByDealerId(this.currentUser.roleInfo.dealerId).subscribe(
-					() => {
-						this.all_unresolved = false;
+		switch (this.currentRole) {
+			case 'dealer':
+			case 'sub-dealer':
+				request = this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, 1, 0);
+				break;
 
-						/** Fire ResolveAllEvent if request is successful */
-						this._notification.emitResolveAllEvent(true);
-					});					
-				}
-			);
+			default:
+				request = this._notification.getAll(1, 0);
 		}
 
-		if (this.currentRole === 'administrator') {
-			this._notification.getAll(1, 0).subscribe(
-				(data: any) => {
-					this.notification_items = [];
-					this.notification_items.push(...data.entities);
-					this.notification_items.forEach(notif => {
-						notif.isOpened = 1;
-					});
-					this._notification.updateAllNotificationStatus().subscribe(
-					() => {
-						this.all_unresolved = false;
+		request.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			this.notification_items = [];
+			this.notification_items.push(...response.entities);
 
-						/** Fire ResolveAllEvent if request is successful */
-						this._notification.emitResolveAllEvent(true);
-					});	
-				}
-			)
-		}
+			this.notification_items.forEach((notification) => {
+				notification.isOpened = 1;
+			});
+
+			switch (this.currentRole) {
+				case 'dealer':
+				case 'sub-dealer':
+					this._notification
+						.updateNotificationStatusByDealerId(this.currentUser.roleInfo.dealerId)
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe(() => {
+							this.all_unresolved = false;
+
+							// Fire ResolveAllEvent if request is successful
+							this._notification.emitResolveAllEvent(true);
+						});
+					break;
+
+				default:
+					this._notification
+						.updateAllNotificationStatus()
+						.pipe(takeUntil(this._unsubscribe))
+						.subscribe(() => {
+							this.all_unresolved = false;
+
+							// Fire ResolveAllEvent if request is successful
+							this._notification.emitResolveAllEvent(true);
+						});
+			}
+		});
 	}
 
 	public getNotifications(page?: boolean) {
 		this.getting_notification_data = true;
-		
-		if (this.currentRole === 'dealer' || this.currentRole === 'sub-dealer') {
-			this.page = page ? this.page + 1 : this.page;
-			this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, page ? this.page : null).subscribe(
-				(data: any) => {
-					this.getting_notification_data = false;
-					this.notifications = data;
-					this.notification_items.push(...data.entities);
-					if(this.notifications.entities.length > 0){
-						this.all_unresolved = true;
-					}
-				}
-			);
+		this.page = page ? this.page + 1 : this.page;
+
+		let request: Observable<any> = null;
+
+		switch (this.currentRole) {
+			case 'dealer':
+			case 'sub-dealer':
+				request = this._notification.getByDealerId(this.currentUser.roleInfo.dealerId, 1, 0);
+				break;
+
+			default:
+				request = this._notification.getAll(1, 0);
 		}
 
-		if (this.currentRole === 'administrator') {
-			this.page = page ? this.page + 1 : this.page;
-			this._notification.getAll(page ? this.page : null).subscribe(
-				(data: any) => {
-					this.getting_notification_data = false;
-					this.notifications = data;
-					this.notification_items.push(...data.entities);
-					if(this.notifications.entities.length > 0){
-						this.all_unresolved = true;
-					}
-				}
-			)
-		}
+		request.pipe(takeUntil(this._unsubscribe)).subscribe((response) => {
+			this.notifications = response;
+			this.notification_items.push(...response.entities);
+			if (this.notifications.entities.length > 0) this.all_unresolved = true;
+			this.getting_notification_data = false;
+		});
 	}
 
 	private get currentUser() {

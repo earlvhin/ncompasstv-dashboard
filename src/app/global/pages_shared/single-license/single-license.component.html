@@ -298,14 +298,9 @@
 															</div>
 
 															<div class="flex-even">
-																<span class="sm-text">Display ON/OFF</span>
+																<span class="sm-text">IP Address</span>
 																<br />
-																<mat-slide-toggle
-																	[matTooltip]="getCECStatusTooltip(license_data.isCecEnabled)"
-																	(change)="monitorToggle($event)"
-																	[checked]="display_status === 1 ? 'checked' : 'false'"
-																	[disabled]="license_data.isCecEnabled === 0">
-																</mat-slide-toggle>
+																<h5 class="sm-text">{{ license_data.publicIP ? license_data.publicIP : 'N/A' }}</h5>
 															</div>
 														</div>
 														<hr class="my-3" />
@@ -440,14 +435,16 @@
 															</div>
 														</div>
 
-														<hr class="my-3" />
+														<div *ngIf="!isCurrentUserDealer">
+															<hr class="my-3" />
 
-														<!-- Notes -->
-														<div class="notes">
-															<span class="sm-text">Host Notes: </span>
-															<p (click)="onShowNotes()" class="sm-text hoverable">
-																{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
-															</p>
+															<!-- Notes -->
+															<div class="notes">
+																<span class="sm-text">Host Notes: </span>
+																<p (click)="onShowNotes()" class="sm-text hoverable">
+																	{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
+																</p>
+															</div>
 														</div>
 													</mat-card>
 												</div>

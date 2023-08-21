@@ -121,7 +121,7 @@ export class CreateHostComponent implements OnInit {
 			this.setToDealer(this.dealer_id);
 		}
 
-		this.watchCategoryField();
+		this.WatchFields();
 	}
 
 	ngOnDestroy() {
@@ -230,22 +230,22 @@ export class CreateHostComponent implements OnInit {
 
 		const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
 
-		const newHostPlace = new API_CREATE_HOST(
-			this.newHostFormControls.dealerId.value,
-			this.newHostFormControls.businessName.value,
-			this._auth.current_user_value.user_id,
-			this.newHostFormControls.lat.value,
-			this.newHostFormControls.long.value,
-			this.newHostFormControls.address.value,
-			this.newHostFormControls.city.value,
-			this.newHostFormControls.state.value,
-			this.newHostFormControls.region.value,
-			this.newHostFormControls.zip.value,
-			JSON.stringify(this.operation_days),
-			this.newHostFormControls.category.value,
-			this.newHostFormControls.timezone.value,
-			this.current_host_image
-		);
+		const newHostPlace = new API_CREATE_HOST({
+			dealerId: this.newHostFormControls.dealerId.value,
+			businessName: this.newHostFormControls.businessName.value,
+			createdBy: this._auth.current_user_value.user_id,
+			latitude: this.newHostFormControls.lat.value,
+			longitude: this.newHostFormControls.long.value,
+			address: this.newHostFormControls.address.value,
+			city: this.newHostFormControls.city.value,
+			state: this.newHostFormControls.state.value,
+			postalCode: this.newHostFormControls.zip.value,
+			region: this.newHostFormControls.region.value,
+			storeHours: JSON.stringify(this.operation_days),
+			category: this.newHostFormControls.category.value,
+			timezone: this.newHostFormControls.timezone.value,
+			logo: this.current_host_image
+	});
 
 		if (this.logo_data) {
 			newHostPlace.logo = this.logo_data.logo;
@@ -371,12 +371,11 @@ export class CreateHostComponent implements OnInit {
 		this.newHostFormControls.long.setValue(data.longitude);
 
 		// ADDRESS MAPPING
-
 		if (state.includes('Canada')) {
 			let state_zip = sliced_address[2].split(' ');
 			this.newHostFormControls.address.setValue(sliced_address[0]);
 			this.fillCityOfHost(state_zip[0], sliced_address[1]);
-			this.newHostFormControls.zip.setValue(`${state_zip[1]}` + ' ' + `${state_zip[2]}`);
+			this.newHostFormControls.zip.setValue(`${state_zip[1]}${state_zip[2]}`);
 		} else {
 			if (sliced_address.length == 3) {
 				let state_zip = sliced_address[2].split(' ');
@@ -394,6 +393,7 @@ export class CreateHostComponent implements OnInit {
 				let state_zip = sliced_address[3].split(' ');
 				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
 				this.setCity(sliced_address[1]);
+
 				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
 			}
 		}
@@ -599,8 +599,10 @@ export class CreateHostComponent implements OnInit {
 	}
 
 	setCity(data): void {
+		let cityState = data.split(',')[0].trim();
 		if (!this.canada_selected) {
-			this.newHostFormControls.city.setValue(data);
+			this.newHostFormControls.city.setValue(cityState);
+			this.city_selected = cityState;
 			this._location
 				.get_states_regions(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
@@ -619,7 +621,7 @@ export class CreateHostComponent implements OnInit {
 				return city.city === sliced_address[0];
 			});
 
-			this.newHostFormControls.city.setValue(data);
+			this.newHostFormControls.city.setValue(cityState);
 			this.newHostFormControls.state.setValue(filtered_data[0].state);
 			this.newHostFormControls.region.setValue(filtered_data[0].region);
 		}
@@ -743,19 +745,33 @@ export class CreateHostComponent implements OnInit {
 		this.newHostFormControls.zip.setValue('');
 	}
 
-	private watchCategoryField() {
+	private WatchFields() {
 		this.newHostFormControls.category.valueChanges.subscribe((data) => {
-			if (data === '') this.no_category = false;
+		  if (data === '') this.no_category = false;
 		});
-
+	  
 		this.newHostFormControls.category2.valueChanges.subscribe((data) => {
-			if (data === '') this.no_category2 = false;
+		  if (data === '') this.no_category2 = false;
 		});
-
+	  
 		this.newHostFormControls.city.valueChanges.subscribe((data) => {
-			this.city_selected = data;
+		  this.city_selected = data;
 		});
-	}
+	  
+		this.new_host_form.controls['zip'].setValidators([
+		  Validators.required,
+		  Validators.maxLength(7),
+		]);
+	  
+		this.new_host_form.controls['zip'].valueChanges.subscribe((data) => {
+		  if (this.canada_selected) {
+			this.new_host_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
+		  }else{
+			this.new_host_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
+		  }
+		});
+	  }
+	
 
 	protected get _createFormFields() {
 		return [

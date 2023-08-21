@@ -1,5 +1,16 @@
-import { Component, OnInit, Input, Output, EventEmitter, HostListener, OnDestroy, AfterViewInit, OnChanges,
-	SimpleChanges, SimpleChange } from '@angular/core';
+import {
+	Component,
+	OnInit,
+	Input,
+	Output,
+	EventEmitter,
+	HostListener,
+	OnDestroy,
+	AfterViewInit,
+	OnChanges,
+	SimpleChanges,
+	SimpleChange
+} from '@angular/core';
 import { TitleCasePipe } from '@angular/common';
 import { FormControl } from '@angular/forms';
 import { takeUntil } from 'rxjs/operators';
@@ -42,6 +53,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	@Input() type?: string;
 	@Input() isLocator?: boolean;
 	@Input() disable_minimum_search_length = false;
+	@Input() is_city = false;
 
 	input_field_control = new FormControl();
 	view_value: string;
@@ -68,7 +80,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	}
 
 	ngOnChanges(changes: SimpleChanges) {
-        this.view_value = this.new_value;
+		this.view_value = this.new_value;
 
 		if (this.reset_value) this.view_value = '';
 		this.data_reference = this.data_reference;
@@ -76,22 +88,17 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 		if (this.no_edit) {
 			this.view_value = this.initial_value;
 		} else {
-
 			if (this.paging && this.search_via_api && this.data_reference.length > 0) {
 				this.data_reference = this.data_reference;
 				this.search_result = this.data_reference;
 			}
-
 		}
 
 		if (changes.disabled as SimpleChange) {
-
 			if (changes.disabled.currentValue) {
-
 				this.input_field_control.disable();
 				this.paginated_input_field_control.disable();
 				return;
-
 			}
 
 			this.input_field_control.enable();
@@ -110,16 +117,14 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	}
 
 	customBlur = (event) => {
-
 		if (!event || event.target.className.includes('skip-blur')) return;
 		this.emptySearch();
-
 	};
 
 	dataSelected(data) {
 		this.data_value.emit(data.target.getAttribute('data-value'));
 		this.view_value = data.target.getAttribute('data-text');
-		this.emptySearch();
+		if (this.is_city) this.view_value = this.view_value.split(',')[0].trim();
 	}
 
 	emptySearch() {
@@ -128,47 +133,37 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 		}, 300);
 	}
 
-	initializeSearch(event: { target: {  value: any }}) {
-
+	initializeSearch(event: { target: { value: any } }) {
 		if (event.target.value) {
-
 			this.search_result = this.data_reference.filter((res) => {
 				if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
 					return res;
 				}
 			});
-
 		} else if (event.target.value === '') {
 			this.search_result = this.data_reference;
 		}
 	}
 
-	search(event: { target: { value: any }}) {
-
+	search(event: { target: { value: any } }) {
 		if (event.target.value) {
-
 			this.search_result = this.data_reference.filter((res) => {
 				if (res[this.primary_keyword].toLowerCase().includes(event.target.value.toLowerCase())) {
 					return res;
 				}
 			});
-			
 		} else if (event.target.value === '') {
 			this.search_result = this.data_reference;
 		}
-
 	}
 
 	search_by_api() {
-
 		clearTimeout(this.timeOut);
 
 		this.timeOut = setTimeout(() => {
-
 			// hotfix only
 			// should be refactored
 			if (this.disable_minimum_search_length) {
-
 				this.search_via_api = true;
 				this.searched.emit(this.view_value);
 
@@ -179,24 +174,18 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 				}
 
 				return;
-
 			}
 
 			if (this.view_value.length >= 3) {
-
 				this.search_via_api = true;
 				this.searched.emit(this.view_value);
-
 			} else {
-
 				if (this.view_value.length == 0) {
 					this.search_via_api = true;
 					this.paging = true;
 					this.call_next_page.emit({ page: 1, is_search: true, no_keyword: true });
 				}
-
 			}
-
 		}, this.timeOutDuration);
 	}
 
@@ -219,18 +208,15 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	}
 
 	private subscribeToResetField(): void {
-
-		this._helper.onResetAutocompleteField.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(response: string) => {
-					if (response !== this.type) return;
-					this.ngOnInit();
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			);
-
+		this._helper.onResetAutocompleteField.pipe(takeUntil(this._unsubscribe)).subscribe(
+			(response: string) => {
+				if (response !== this.type) return;
+				this.ngOnInit();
+			},
+			(error) => {
+				throw new Error(error);
+			}
+		);
 	}
 
 	private subscribeToMarkAsTouched() {

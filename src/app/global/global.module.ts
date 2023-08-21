@@ -87,6 +87,7 @@ import { FeedInfoComponent } from './components_shared/feed_components/feed-info
 import { FeedMediaComponent } from './components_shared/feed_components/feed-media/feed-media.component';
 import { FeedsPageActionButtonsComponent } from './components_shared/data_components/data-table/components/feeds-page-action-buttons/feeds-page-action-buttons.component';
 import { FilenamePipe } from './pipes/filename.pipe';
+import { FileSizePipe } from './pipes/filesize.pipe';
 import { FillersComponent } from './pages_shared/fillers/fillers.component';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
@@ -309,6 +310,7 @@ const ngComponents = [
 	FeedMediaComponent,
 	FeedsPageActionButtonsComponent,
 	FilenamePipe,
+	FileSizePipe,
 	FillersComponent,
 	FillerDemoComponent,
 	FillerFormComponent,

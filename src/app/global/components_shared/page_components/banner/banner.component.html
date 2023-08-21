@@ -76,7 +76,7 @@
 				<ng-template #openHours>
 					<div class="text-white mt-1 md-text mb-0"><strong>Business Hours:</strong> <span class="ml-2">CLOSED</span></div>
 				</ng-template>
-				<ng-container *ngIf="page === 'single-host'">
+				<ng-container *ngIf="page === 'single-host' && !is_current_user_dealer">
 					<div class="mt-1 md-text mb-0">
 						<div class="cursor-pointer text-white" (click)="onShowNotes('notes')">
 							<strong>Notes: </strong>

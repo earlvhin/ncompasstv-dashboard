@@ -71,7 +71,12 @@
 				mat-button
 				mat-raised-button
 				class="theme-btn mr-2"
-				[disabled]="new_feed_form.invalid || is_creating_feed || (is_current_user_dealer_admin && !has_selected_dealer_id)">
+				[disabled]="
+					new_feed_form.invalid ||
+					is_creating_feed ||
+					(is_invalid_url && !has_selected_widget_feed_type) ||
+					(is_current_user_dealer_admin && !has_selected_dealer_id)
+				">
 				{{ is_creating_feed ? 'Creating feed...' : 'Submit' }}
 			</button>
 

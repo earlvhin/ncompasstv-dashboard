@@ -45,10 +45,37 @@ export class HostsComponent implements OnInit {
 	workbook: any;
 	workbook_generation = false;
 	worksheet: any;
+	role_label: string = '';
 
 	dealers_table_columns = ['#', 'Dealer Alias', 'Business Name', 'Contact Person', 'Total', 'Active', 'To Install', 'Recently Added Host'];
 
 	hosts_table_column = [
+		{ name: '#', sortable: false, no_export: true },
+		{ name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
+		{ name: 'Host Name', sortable: true, column: 'HostName', key: 'hostName' },
+		{ name: 'Category', hidden: true, no_show: true, key: 'category' },
+		{ name: 'General Category', hidden: true, no_show: true, key: 'generalCategory' },
+		{ name: 'Dealer Name', sortable: true, column: 'BusinessName', key: 'businessName' },
+		{ name: 'Address', sortable: true, column: 'Address', key: 'address' },
+		{ name: 'City', sortable: true, column: 'City', key: 'city' },
+		{ name: 'State', sortable: true, column: 'State', key: 'state' },
+		{ name: 'Postal Code', sortable: true, column: 'PostalCode', key: 'postalCode' },
+		{ name: 'Timezone', sortable: true, column: 'TimezoneName', key: 'timezoneName' },
+		{ name: 'Total Licenses', sortable: true, column: 'TotalLicenses', key: 'totalLicenses' },
+		{ name: 'Tags', hidden: true, no_show: true, key: 'tagsToString' },
+		{ name: 'Business Hours', sortable: false, key: 'storeHoursParse', hidden: true, no_show: true },
+		{ name: 'Total Business Hours', sortable: false, key: 'storeHoursTotal', hidden: true, no_show: true },
+		{ name: 'DMA Rank', sortable: false, hidden: true, key: 'dmaRank', no_show: true },
+		{ name: 'DMA Code', sortable: false, hidden: true, key: 'dmaCode', no_show: true },
+		{ name: 'DMA Name', sortable: false, hidden: true, key: 'dmaName', no_show: true },
+		{ name: 'Latitude', sortable: false, hidden: true, key: 'latitude', no_show: true },
+		{ name: 'Longitude', sortable: false, hidden: true, key: 'longitude', no_show: true },
+		{ name: 'Vistar ID', no_show: true, key: 'vistarVenueId' },
+		{ name: 'Notes', no_show: true, hidden: true, key: 'notes' },
+		{ name: 'Others', no_show: true, hidden: true, key: 'others' }
+	];
+
+	hosts_table_column_da = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: 'Host ID', sortable: true, key: 'hostId', hidden: true, no_show: true },
 		{ name: 'Host Name', sortable: true, column: 'HostName', key: 'hostName' },
@@ -85,6 +112,7 @@ export class HostsComponent implements OnInit {
 		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
 			this.is_dealer_admin = true;
 		}
+		this.formTitle();
 		this.getHosts(1);
 		this.getHostTotal();
 		this.subscribeToStatusFilterClick();
@@ -128,6 +156,14 @@ export class HostsComponent implements OnInit {
 				}
 				break;
 			default:
+		}
+	}
+
+	formTitle() {
+		if (this._auth.current_role === 'administrator') {
+			this.role_label = 'Search Dealer Alias, Business Name, Contact Person or #Tag';
+		} else {
+			this.role_label = 'Search Dealer Alias, Business Name or Tag';
 		}
 	}
 
@@ -395,17 +431,32 @@ export class HostsComponent implements OnInit {
 		this.workbook.created = new Date();
 		switch (tab) {
 			case 'hosts':
-				this.worksheet = this.workbook.addWorksheet('Host View');
-				Object.keys(this.hosts_table_column).forEach((key) => {
-					if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
-						header.push({
-							header: this.hosts_table_column[key].name,
-							key: this.hosts_table_column[key].key,
-							width: 30,
-							style: { font: { name: 'Arial', bold: true } }
-						});
-					}
-				});
+				if (this.is_dealer_admin === true) {
+					this.worksheet = this.workbook.addWorksheet('Host View');
+					Object.keys(this.hosts_table_column_da).forEach((key) => {
+						if (this.hosts_table_column_da[key].name && !this.hosts_table_column_da[key].no_export) {
+							header.push({
+								header: this.hosts_table_column_da[key].name,
+								key: this.hosts_table_column_da[key].key,
+								width: 30,
+								style: { font: { name: 'Arial', bold: true } }
+							});
+						}
+					});
+				} else {
+					this.worksheet = this.workbook.addWorksheet('Host View');
+
+					Object.keys(this.hosts_table_column).forEach((key) => {
+						if (this.hosts_table_column[key].name && !this.hosts_table_column[key].no_export) {
+							header.push({
+								header: this.hosts_table_column[key].name,
+								key: this.hosts_table_column[key].key,
+								width: 30,
+								style: { font: { name: 'Arial', bold: true } }
+							});
+						}
+					});
+				}
 				break;
 			default:
 		}
@@ -536,7 +587,7 @@ export class HostsComponent implements OnInit {
 	}
 
 	private modifyDataForExport(data) {
-		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
 		data.storeHours = data.storeHours;
 		data.storeHoursTotal = data.storeHoursTotal;
 

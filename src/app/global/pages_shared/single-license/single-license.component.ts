@@ -89,6 +89,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	enable_edit_alias = false;
 	hasAdminPrivileges = false;
 	isCheckingElectronRunning = false;
+
 	has_background_zone = false;
 	has_host = false;
 	has_screen = false;
@@ -959,7 +960,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.timezone = licenseData.timezone;
 		this.setLicenseDetails(licenseData.license);
 		this.setHostDetails(licenseData.host);
-		this.setDealerData(licenseData);
 		this.getScreenById(licenseData.screen.screenId, this.license_id);
 		this.getFormValue();
 		this.has_host = true;
@@ -1358,6 +1358,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						return;
 					}
 
+					this.setDealerData(response);
 					this.screen = this.mapScreenToUI(response);
 					this.screen_route = `/${this.roleRoute}/screens/${id}`;
 					this.getTemplateData(response.template.templateId);
@@ -1564,7 +1565,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			if (!operation.periods || !operation.status) result[index].periods.push('CLOSED');
 			else
 				result[index].periods = operation.periods.map((period) => {
-					if (!period.open && !period.close) return 'Open 24 hours';
+					if ((!period.open && !period.close) || (period.open === '12:00 AM' && period.close === '11:59 PM')) return 'Open 24 hours';
 					return `${period.open} - ${period.close}`;
 				});
 
@@ -1687,7 +1688,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		return moment.utc(dateTime, toParseFormat).format(toExpectedFormat);
 	}
 
-	private setDealerData(data: API_SINGLE_LICENSE_PAGE) {
+	private setDealerData(data) {
 		const dealerId = data.dealer ? data.dealer.dealerId : data.host.dealerId;
 		this.businessName = data.dealer ? data.dealer.businessName : data.host.businessName;
 		this.dealer_route = `/${this.roleRoute}/dealers/${dealerId}/`;

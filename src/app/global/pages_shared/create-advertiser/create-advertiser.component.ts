@@ -311,8 +311,10 @@ export class CreateAdvertiserComponent implements OnInit {
 	}
 
 	setCity(data): void {
+		let cityState = data.split(',')[0].trim();
 		if (!this.canada_selected) {
-			this.newAdvertiserFormControls.city.setValue(data);
+			this.newAdvertiserFormControls.city.setValue(cityState);
+			this.city_selected = cityState;
 			this._location
 				.get_states_regions(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
@@ -331,7 +333,7 @@ export class CreateAdvertiserComponent implements OnInit {
 				return city.city === sliced_address[0];
 			});
 
-			this.newAdvertiserFormControls.city.setValue(data);
+			this.newAdvertiserFormControls.city.setValue(cityState);
 			this.newAdvertiserFormControls.state.setValue(filtered_data[0].state);
 			this.newAdvertiserFormControls.region.setValue(filtered_data[0].region);
 		}
@@ -464,7 +466,7 @@ export class CreateAdvertiserComponent implements OnInit {
 			let state_zip = sliced_address[2].split(' ');
 			this.newAdvertiserFormControls.address.setValue(sliced_address[0]);
 			this.fillCityOfHost(state_zip[0], sliced_address[1]);
-			this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]}` + ' ' + `${state_zip[2]}`);
+			this.newAdvertiserFormControls.zip.setValue(`${state_zip[1]}${state_zip[2]}`);
 		} else {
 			if (sliced_address.length == 3) {
 				let state_zip = sliced_address[2].split(' ');
@@ -636,6 +638,19 @@ export class CreateAdvertiserComponent implements OnInit {
 		this.newAdvertiserFormControls.city.valueChanges.subscribe((data) => {
 			this.city_selected = data;
 		});
+
+		this.new_advertiser_form.controls['zip'].setValidators([
+			Validators.required,
+			Validators.maxLength(7),
+		  ]);
+		
+		  this.new_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
+			if (this.canada_selected) {
+			  this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
+			}else{
+			  this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
+			}
+		  });
 	}
 
 	protected get currentRole() {

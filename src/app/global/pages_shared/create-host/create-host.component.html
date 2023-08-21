@@ -86,7 +86,8 @@
 											[search_keyword]="'city_state'"
 											[primary_keyword]="'city_state'"
 											[new_value]="city_selected"
-											[initial_value]="city_selected">
+											[initial_value]="city_selected"
+											[is_city]="true">
 										</app-autocomplete-field>
 
 										<ng-template #no_category_selected>
@@ -196,7 +197,7 @@
 									</div>
 								</div>
 							</div>
-							<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host">
+							<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host || (canada_selected && new_host_form.get('zip').value.length !== 6) || (!canada_selected && new_host_form.get('zip').value.length !== 5)">
 								{{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
 							</button>
 						</form>

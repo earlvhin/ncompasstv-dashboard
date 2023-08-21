@@ -444,10 +444,6 @@ export class LicenseService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_license_total_per_dealer(id) {
-		return this.getRequest(`${this.getters.api_get_licenses_total_by_dealer}${id}`);
-	}
-
 	get_ad_licenses_total() {
 		return this.getRequest(`${this.getters.api_get_ad_licenses_total}`);
 	}
@@ -476,12 +472,12 @@ export class LicenseService extends BaseService {
 		const url = `${this.updaters.api_activate_license}?licenseKey=${id}`;
 		return this.postRequest(url, {});
 	}
-	
+
 	add_license_favorite(id) {
 		const url = `${this.updaters.api_add_license_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});
 	}
-    
+
 	remove_license_favorite(id) {
 		const url = `${this.deleters.api_remove_favorite}?licenseId=${id}`;
 		return this.postRequest(url, {});

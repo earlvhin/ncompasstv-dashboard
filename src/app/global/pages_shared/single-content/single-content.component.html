@@ -299,11 +299,8 @@
 					</mat-tab>
 					<mat-tab label="Playing Where">
 						<mat-card *ngIf="playing_where.length > 0; else nodata">
-							<app-data-table
-								[table_data]="playing_where"
-								[table_columns]="table_columns"
-								[new_table]="true"></app-data-table> </mat-card
-						>nodata" class="mt-4" nodata" class="mt-4" nodata" class="mt-4" nodata" class="mt-4"
+							<app-data-table [table_data]="playing_where" [table_columns]="table_columns" [new_table]="true"></app-data-table>
+						</mat-card>
 					</mat-tab>
 					<mat-tab label="History">
 						<mat-card *ngIf="content_history.length > 0; else nodata">

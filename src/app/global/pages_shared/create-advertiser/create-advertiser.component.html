@@ -79,7 +79,8 @@
 											[search_keyword]="'city_state'"
 											[primary_keyword]="'city_state'"
 											[new_value]="city_selected"
-											[initial_value]="city_selected">
+											[initial_value]="city_selected"
+											[is_city]="true">
 										</app-autocomplete-field>
 
 										<ng-template #no_category_selected>
@@ -115,7 +116,7 @@
 								mat-button
 								mat-raised-button
 								class="theme-btn mr-2"
-								[disabled]="form_invalid"
+								[disabled]="form_invalid || (canada_selected && new_advertiser_form.get('zip').value.length !== 6) || (!canada_selected && new_advertiser_form.get('zip').value.length !== 5)"
 								*ngIf="!is_creating_advertiser; else publishing">
 								Save Advertiser Profile
 							</button>

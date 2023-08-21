@@ -68,7 +68,9 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this.searchDealers();
 		this.getCategories();
 		this.initializeForm();
-		this.getCities();
+		this.zipCodeValidation();
+		if(this.advertiser.postalCode.length > 5) {this.getCanadaAddress({checked: true}, false)}
+		else {this.getCities()}
 		this.fillCityOfAdvertiser();
 	}
 
@@ -84,11 +86,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(data) => {
 					let city = '';
-					if (this.advertiser.city.indexOf(',') > -1) {
-						city = this.advertiser.city;
-					} else {
-						city = this.advertiser.city + ', ' + data[0].state;
-					}
+					city = this.advertiser.city.split(',')[0].trim();
 					this._formControls.city.setValue(city);
 					this.city_selected = city;
 					this.setCity(city);
@@ -107,8 +105,10 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 	}
 
 	setCity(data, fromSelect?): void {
+		let cityState = data.split(',')[0].trim();
 		if (!this.canada_selected) {
-			this._formControls.city.setValue(data);
+			this._formControls.city.setValue(cityState);
+			this.city_selected = cityState;
 			this._location
 				.get_states_regions(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
@@ -130,9 +130,11 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 				return city.city === sliced_address[0];
 			});
 
-			this._formControls.city.setValue(data + ', ' + filtered_data[0].whole_state);
-			this._formControls.state.setValue(filtered_data[0].state);
-			this._formControls.region.setValue(filtered_data[0].region);
+			this._formControls.city.setValue(cityState);
+			if(filtered_data.length) {
+				this._formControls.state.setValue(filtered_data[0].state);
+				this._formControls.region.setValue(filtered_data[0].region);
+			}
 		}
 	}
 
@@ -141,14 +143,11 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this.disable_business_name = value;
 	}
 
-	getCanadaAddress(value) {
+	getCanadaAddress(value, clearAction = true) {
 		this.canada_selected = value.checked;
-		this.clearAddressValue();
-		if (value.checked) {
-			this.getCanadaCities();
-		} else {
-			this.getCities();
-		}
+		if(clearAction) this.clearAddressValue();
+		if(value.checked)this.getCanadaCities();
+		else this.getCities();
 	}
 
 	clearAddressValue() {
@@ -168,7 +167,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 				this.city_state = response.map((city) => {
 					return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
 				});
-			});
+			})
+			.add(() => (this.cities_loaded = true));
 	}
 
 	getCities() {
@@ -296,15 +296,31 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			.add(() => (this.categories_loaded = true));
 	}
 
+	private zipCodeValidation() {
+		this.edit_advertiser_form.controls['zip'].setValidators([
+			Validators.required,
+			Validators.maxLength(7),
+		  ]);
+		
+		  this.edit_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
+			if (this.canada_selected) {
+			  this.edit_advertiser_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
+			}else{
+			  this.edit_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
+  
+			}
+		  });
+	}
+
 	private initializeForm() {
 		this.edit_advertiser_form = this._form.group({
 			dealerId: ['', Validators.required],
 			businessName: ['', Validators.required],
 			address: ['', Validators.required],
 			city: ['', Validators.required],
-			state: ['', Validators.required],
+			state: [{value: '', disabled: true}, Validators.required],
 			zip: ['', Validators.required],
-			region: ['', Validators.required],
+			region: [{value: '', disabled: true}, Validators.required],
 			category: ['', Validators.required],
 			long: ['', Validators.required],
 			lat: ['', Validators.required]
@@ -321,7 +337,12 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this._formControls.lat.setValue(advertiser.latitude);
 		this._formControls.long.setValue(advertiser.longitude);
 		this._formControls.address.setValue(advertiser.address);
-		this._formControls.city.setValue(advertiser.city);
+		if (advertiser.city.indexOf(',') > -1) {
+			this._formControls.city.setValue(advertiser.city, { emitEvent: false });
+		} else {
+			this.fillCityOfAdvertiser();
+		}
+
 		this._formControls.state.setValue(advertiser.state);
 		this._formControls.zip.setValue(advertiser.postalCode);
 		this._formControls.region.setValue(advertiser.region);

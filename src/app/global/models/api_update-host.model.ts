@@ -18,36 +18,38 @@ export class API_UPDATE_HOST {
 	status = 'A' || 'I';
 
 	constructor(
-		hostId: string,
-		dealerId: string,
-		name: string,
-		latitude: string,
-		longitude: string,
-		city: string,
-		state: string,
-		postalCode: string,
-		region: string,
-		address: string,
-		category: string,
-		storeHours: string,
-		timezone: string,
-		vistar_venue_id: string,
-		status: string
+		hostData: {
+			hostId: string,
+			dealerId: string,
+			name: string,
+			latitude: string,
+			longitude: string,
+			city: string,
+			state: string,
+			postalCode: string,
+			region: string,
+			address: string,
+			category: string,
+			storeHours: string,
+			timezone: string,
+			vistarVenueId: string,
+			status: string
+		}
 	) {
-		this.hostId = hostId;
-		this.dealerId = dealerId;
-		this.name = name;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.city = city;
-		this.state = state;
-		this.postalCode = postalCode;
-		this.region = region;
-		this.address = address;
-		this.category = category;
-		this.storeHours = storeHours;
-		this.timezone = timezone;
-		this.vistarVenueId = vistar_venue_id;
-		this.status = status;
+		this.hostId = hostData.hostId;
+		this.dealerId = hostData.dealerId;
+		this.name = hostData.name;
+		this.latitude = hostData.latitude;
+		this.longitude = hostData.longitude;
+		this.city = hostData.city;
+		this.state = hostData.state;
+		this.postalCode = hostData.postalCode;
+		this.region = hostData.region;
+		this.address = hostData.address;
+		this.category = hostData.category;
+		this.storeHours = hostData.storeHours;
+		this.timezone = hostData.timezone;
+		this.vistarVenueId = hostData.vistarVenueId;
+		this.status = hostData.status;
 	}
 }

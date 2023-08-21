@@ -425,7 +425,7 @@ export class LicensesComponent implements OnInit {
 				}
 				if (reset) {
 					this.favorites_list_cache = this.favorites_list;
-					this.no_favorites = false;
+					// this.no_favorites = false;
 				}
 			});
 	}
@@ -525,10 +525,15 @@ export class LicensesComponent implements OnInit {
 					if (this.active_view === 'grid') {
 						this.license_data_for_grid_view = [...data.licenses];
 
-						if (fromShowMore && page > 1) this.grid_list_cache = this.license_data_for_grid_view;
+						if (fromShowMore && page > 1) {
+							this.license_data_for_grid_view.map((lic) => {
+								this.grid_list_cache.push(lic);
+							});
+							this.license_data_for_grid_view = this.grid_list_cache;
+						}
 
-						if (this.grid_list_cache.length > 0 && page === 1 && fromShowMore) {
-							this.license_data_for_grid_view = [...this.grid_list_cache];
+						if (page === 1) {
+							this.grid_list_cache = this.license_data_for_grid_view;
 						}
 
 						this.hideLicenseSpinner();
@@ -582,8 +587,15 @@ export class LicensesComponent implements OnInit {
 	}
 
 	getTotalLicenses() {
-		if (this.active_view === 'grid') return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
-		return this.paging_data_licenses.totalEntities;
+		if (this.active_view === 'grid') {
+			if (this.no_favorites) {
+				return this.paging_data_licenses.totalEntities;
+			} else {
+				return this.paging_data_favorites.totalEntities + this.paging_data_licenses.totalEntities;
+			}
+		} else {
+			return this.paging_data_licenses.totalEntities;
+		}
 	}
 
 	getZoneHours(data: API_LICENSE_PROPS) {
@@ -819,12 +831,14 @@ export class LicensesComponent implements OnInit {
 		let storehours = JSON.parse(data.storeHours);
 		storehours = storehours.sort((a, b) => a.id - b.id);
 
+		const isAlmostOpenAllDay = storehours[this.now].periods.some((i) => i.open === '12:00 AM' && i.close === '11:59 PM');
+
 		const modified_label = {
 			date: moment().format('LL'),
 			address: data.hostAddress,
 			schedule:
 				storehours[this.now] && storehours[this.now].status
-					? storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == ''
+					? (storehours[this.now].periods[0].open == '' && storehours[this.now].periods[0].close == '') || isAlmostOpenAllDay
 						? 'Open 24 Hours'
 						: storehours[this.now].periods.map((i) => {
 								return i.open + ' - ' + i.close;
@@ -1064,7 +1078,7 @@ export class LicensesComponent implements OnInit {
 
 	private mapHostsForExport(data: API_HOST) {
 		data.storeHours = data.storeHours;
-		data.generalCategory = data.generalCategory ? data.generalCategory : 'Others';
+		data.generalCategory = data.generalCategory ? data.generalCategory : 'Other';
 		data.tagsToString = data.tags.join(',');
 	}
 

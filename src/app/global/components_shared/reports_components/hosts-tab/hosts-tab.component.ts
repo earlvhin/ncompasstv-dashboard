@@ -31,8 +31,10 @@ export class HostsTabComponent implements OnInit {
 	//graph
 	label_graph: any = [];
 	value_graph: any = [];
+	month_value_graph: any = [];
 	label_graph_detailed: any = [];
 	value_graph_detailed: any = [];
+	month_value_graph_detailed: any = [];
 	total: number = 0;
 	total_detailed: number = 0;
 	sub_title: string;
@@ -47,6 +49,8 @@ export class HostsTabComponent implements OnInit {
 	hosts_graph_data: any = [];
 	hosts_graph_data_detailed: any = [];
 	generate: boolean = false;
+	total_month: number = 0;
+	total_month_detailed: number = 0;
 
 	constructor(private _host: HostService, private _uppercase: UpperCasePipe, private _dialog: MatDialog) {}
 
@@ -200,61 +204,80 @@ export class HostsTabComponent implements OnInit {
 	}
 
 	getHostsStatistics() {
-		//reset value
-		this.total_detailed = 0;
+		// Reset values
 		this.sum = 0;
 		this.hosts_graph_data = [];
 		this.label_graph = [];
 		this.value_graph = [];
 		this.average = 0;
 		this.number_of_months = 0;
-
+		this.total_month = 0;
+	  
 		if (this.selected_dealer || (this.start_date && this.end_date)) {
-			this.subscription.add(
-				this._host.get_host_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe((data) => {
-					if (!data.message) {
-						var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-						data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-						this.hosts_graph_data = [...data.hosts];
-						data.hosts.map((i) => {
-							this.total_detailed = this.total_detailed + i.totalHosts;
-							this.hosts_graph_data.push(i);
-							this.label_graph.push(months[i.month - 1] + ' ' + i.totalHosts);
-							this.value_graph.push(i.totalHosts);
-							this.sum = this.sum + i.totalHosts;
-						});
-						this.number_of_months = data.hosts.length;
-
-						this.average = this.sum / this.number_of_months;
-						this.sub_title_detailed = 'Found ' + data.hosts.length + ' months with record as per shown in the graph.';
-						this.generate = true;
-					} else {
-						this.generate = false;
-					}
-				})
-			);
+		  this.subscription.add(
+			this._host.get_host_statistics(this.selected_dealer, this.start_date, this.end_date).subscribe((data) => {
+			  if (!data.message) {
+				var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+				data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+	  
+				let cumulativeTotalHosts = 0;
+	  
+				data.hosts.forEach((host) => {
+					this.total_month = host.totalHosts;
+					cumulativeTotalHosts += host.totalHosts;
+		
+					host.totalHosts = cumulativeTotalHosts;
+		
+					this.total = host.totalHosts;
+					this.hosts_graph_data.push(host);
+					this.label_graph.push(months[host.month - 1] + ' ' + host.totalHosts);
+					this.value_graph.push(host.totalHosts);
+					this.month_value_graph.push(this.total_month);
+					this.sum += host.totalHosts;
+				});
+	  
+				this.number_of_months = data.hosts.length;
+				this.average = this.sum / this.number_of_months;
+				this.sub_title_detailed = 'Found ' + data.hosts.length + ' months with record as per shown in the graph.';
+				this.generate = true;
+			  } else {
+				this.generate = false;
+			  }
+			})
+		  );
 		} else {
-			this.subscription.add(
-				this._host.get_host_statistics('', '', '').subscribe((data) => {
-					if (!data.message) {
-						var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-						data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
-						this.hosts_graph_data_detailed = [...data.hosts];
-						this.hosts_graph_data_detailed = this.hosts_graph_data_detailed.filter((item) => item.year == new Date().getFullYear());
-						this.hosts_graph_data_detailed.map((i) => {
-							this.total = this.total + i.totalHosts;
-							this.label_graph_detailed.push(months[i.month - 1] + ' ' + i.totalHosts);
-							this.value_graph_detailed.push(i.totalHosts);
-						});
-					} else {
-						this.generate = false;
-					}
-				})
-			);
-		}
+		  this.subscription.add(
+			this._host.get_host_statistics('', '', '').subscribe((data) => {
+			  if (!data.message) {
+				var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June', 'July', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+				data.hosts.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+	  
+				this.hosts_graph_data_detailed = [...data.hosts];
+				this.hosts_graph_data_detailed = this.hosts_graph_data_detailed.filter((item) => item.year == new Date().getFullYear());
+	  
+				let cumulativeTotalHosts = 0;
+	  
+				this.hosts_graph_data_detailed.forEach((host) => {
+					
+				  this.total_month_detailed = host.totalHosts;
+				  cumulativeTotalHosts += host.totalHosts;
+				  host.totalHosts = cumulativeTotalHosts;
 
+				  this.total_detailed = host.totalHosts;
+				  this.label_graph_detailed.push(months[host.month - 1]);
+				  this.value_graph_detailed.push(host.totalHosts);
+				  this.month_value_graph_detailed.push(this.total_month_detailed);
+				});
+			  } else {
+				this.generate = false;
+			  }
+			})
+		  );
+		}
+	  
 		this.sub_title = 'Total Hosts as per year ' + new Date().getFullYear();
-	}
+	  }
+	  
 
 	getStartDate(s_date) {
 		this.start_date = s_date;
