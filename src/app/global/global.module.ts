@@ -30,6 +30,7 @@ import { ContentScheduleCardComponent } from './components_shared/playlist_compo
 import { ContentsTabComponent } from './components_shared/reports_components/contents-tab/contents-tab.component';
 import { CreateAdvertiserComponent } from './pages_shared/create-advertiser/create-advertiser.component';
 import { CreateCustomHostFieldsComponent } from './pages_shared/create-custom-host-fields/create-custom-host-fields.component';
+import { CreateEntryComponent } from './components_shared/host_components/create-entry/create-entry.component';
 import { CreateFeedComponent } from './components_shared/feed_components/create-feed/create-feed.component';
 import { CreateHostComponent } from './pages_shared/create-host/create-host.component';
 import { CreatePlaylistComponent } from './pages_shared/create-playlist/create-playlist.component';
@@ -243,6 +244,7 @@ const ngComponents = [
 	ContentsTabComponent,
 	CreateAdvertiserComponent,
 	CreateCustomHostFieldsComponent,
+	CreateEntryComponent,
 	CreateFeedComponent,
 	CreateHostComponent,
 	CreatePlaylistComponent,
@@ -448,6 +450,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		CloneScreenComponent,
 		ConfirmTemplateModalComponent,
 		ConfirmationModalComponent,
+		CreateEntryComponent,
 		CreateFeedComponent,
 		DeleteDealerDialogComponent,
 		DeletePlaylistComponent,

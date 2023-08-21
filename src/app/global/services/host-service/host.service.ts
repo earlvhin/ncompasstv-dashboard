@@ -36,6 +36,11 @@ export class HostService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
+	create_support_entry(data) {
+		const url = `${this.creators.api_create_support}`;
+		return this.postRequest(url, data);
+	}
+
 	delete_host(hostIds: string[], forceDelete: boolean) {
 		const data = { hostIds, forceDelete };
 		const url = this.deleters.host;
@@ -180,6 +185,13 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_support_entries(page: number): Observable<any> {
+		const base = `${this.getters.api_get_support}`;
+		const params = this.setUrlParams({ page }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
+	}
+
 	get_host_by_dealer_id_with_sort(filters: API_FILTERS) {
 		const base = `${this.getters.api_get_host_by_id_optimized}`;
 		const params = this.setUrlParams(filters, false, true);
@@ -260,5 +272,15 @@ export class HostService extends BaseService {
 	upload_s3_files(body: HOST_S3_FILE) {
 		const url = this.creators.host_s3_files;
 		return this.postRequest(url, body);
+	}
+
+	validate_url(url: string){
+		const pattern =  new RegExp('^(https?:\\/\\/)?'+
+		'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
+		'((\\d{1,3}\\.){3}\\d{1,3}))'+
+		'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ 
+		'(\\?[;&a-z\\d%_.~+=-]*)?'+ 
+		'(\\#[-a-z\\d_]*)?$','i');
+	  	return !!pattern.test(url);
 	}
 }

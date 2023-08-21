@@ -9,7 +9,7 @@ import * as io from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_LICENSE_PROPS, API_HOST } from 'src/app/global/models';
+import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_LICENSE_PROPS, API_HOST, UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-host',
@@ -28,6 +28,7 @@ export class SingleHostComponent implements OnInit {
 	host: API_SINGLE_HOST;
 	hostData: API_HOST;
 	hostLicenseStatistics: HOST_LICENSE_STATISTICS;
+	is_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
 	isBannerDataReady = false;
 	isViewOnly = this.currentUser.roleInfo.permission === 'V';
 	singleHostData: { dealer_id: string; host_id: string };
