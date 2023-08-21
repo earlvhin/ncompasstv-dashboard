@@ -54,9 +54,7 @@ export class FillersComponent implements OnInit {
 		if (keyword) {
 			this.search_keyword = keyword;
 			this.is_loading = true;
-		} else {
-			this.search_keyword = '';
-		}
+		} else this.search_keyword = '';
 		this.getAllFillers(1);
 	}
 
@@ -102,9 +100,7 @@ export class FillersComponent implements OnInit {
 					});
 
 					delete_dialog.afterClosed().subscribe((result) => {
-						if (result != false) {
-							this.ngOnInit();
-						}
+						if (!result) this.ngOnInit();
 					});
 				}
 			});
@@ -198,14 +194,11 @@ export class FillersComponent implements OnInit {
 						data.paging.entities.map((group) => {
 							this.filler_group_cache.push(group);
 						});
-					} else {
-						this.filler_group_cache = data.paging.entities;
-					}
+					} else this.filler_group_cache = data.paging.entities;
 					this.filler_group = data.paging;
 				} else {
-					if (this.search_keyword != '') {
-						this.no_search_result = true;
-					} else {
+					if (this.search_keyword != '') this.no_search_result = true;
+					else {
 						this.filler_group = [];
 						this.no_search_result = false;
 					}

@@ -41,9 +41,7 @@ export class CreateFillerFeedComponent implements OnInit {
 	ngOnInit() {
 		this.initializeForm();
 		this.getAllFillers();
-		if (this.page_data.from_edit_table) {
-			this.getFillerFeedDetail(this.page_data.id);
-		}
+		if (this.page_data.from_edit_table) this.getFillerFeedDetail(this.page_data.id);
 	}
 
 	private getFillerFeedDetail(id) {
@@ -126,11 +124,9 @@ export class CreateFillerFeedComponent implements OnInit {
 
 	onSubmit(data) {
 		let type_of_activity = '';
-		if (this.page_data.from_edit_table) {
-			type_of_activity = ' Updated ';
-		} else {
-			type_of_activity = ' Created ';
-		}
+		if (this.page_data.from_edit_table) type_of_activity = ' Updated ';
+		else type_of_activity = ' Created ';
+
 		this._filler
 			.add_filler_feed(data)
 			.pipe(takeUntil(this._unsubscribe))
@@ -221,11 +217,8 @@ export class CreateFillerFeedComponent implements OnInit {
 	}
 
 	disableSelectionField() {
-		if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') {
-			return true;
-		} else {
-			return false;
-		}
+		if ((this.filler_groups.length == 0 && this.groups_loaded) || this.filler_name != '') return true;
+		else return false;
 	}
 
 	countTotalQuantity() {
@@ -239,12 +232,8 @@ export class CreateFillerFeedComponent implements OnInit {
 
 	enforceMinMax(el) {
 		if (el.target.value != '') {
-			if (parseInt(el.target.value) < parseInt(el.target.min)) {
-				el.target.value = el.target.min;
-			}
-			if (parseInt(el.target.value) > parseInt(el.target.max)) {
-				el.target.value = el.target.max;
-			}
+			if (parseInt(el.target.value) < parseInt(el.target.min)) el.target.value = el.target.min;
+			if (parseInt(el.target.value) > parseInt(el.target.max)) el.target.value = el.target.max;
 		}
 	}
 

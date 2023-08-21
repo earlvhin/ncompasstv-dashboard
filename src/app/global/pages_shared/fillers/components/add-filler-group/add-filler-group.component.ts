@@ -87,13 +87,13 @@ export class AddFillerGroupComponent implements OnInit {
 		dialogRef.afterClosed().subscribe((response) => {
 			if (response === 'no_upload') {
 				this._dialog.closeAll();
-			} else {
-				//temporary since the modal arrangement conflicts with other dashboard function [duplicate name]
-				const child = document.getElementById('cdk-overlay-0');
-				child.parentElement.parentElement.classList.add('hidden');
-
-				this.onUploadImage();
+				return;
 			}
+			//temporary since the modal arrangement conflicts with other dashboard function [duplicate name]
+			const child = document.getElementById('cdk-overlay-0');
+			child.parentElement.parentElement.classList.add('hidden');
+
+			this.onUploadImage();
 		});
 	}
 

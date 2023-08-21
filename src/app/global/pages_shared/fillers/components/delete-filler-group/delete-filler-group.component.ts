@@ -30,36 +30,6 @@ export class DeleteFillerGroupComponent implements OnInit {
 
 	ngOnInit() {}
 
-	selectUnselectAll(event) {
-		this.filler_groups.map((filler_feeds) => {
-			filler_feeds.checked = event;
-			if (event) {
-				this.to_delete.push(filler_feeds.fillerPlaylistId);
-			} else {
-				const index = this.to_delete.indexOf(filler_feeds.fillerPlaylistId);
-				if (index > -1) {
-					this.to_delete.splice(index, 1);
-				}
-			}
-		});
-	}
-
-	uncheckCheckItem(event, data) {
-		this.filler_groups.filter((groups) => {
-			if (groups.fillerPlaylistId === data.fillerPlaylistId) {
-				groups.checked = event;
-				if (event) {
-					this.to_delete.push(groups.fillerPlaylistId);
-				} else {
-					const index = this.to_delete.indexOf(groups.fillerPlaylistId);
-					if (index > -1) {
-						this.to_delete.splice(index, 1);
-					}
-				}
-			}
-		});
-	}
-
 	deleteSelection() {
 		this.continueToDeleteProcess();
 	}
@@ -87,16 +57,6 @@ export class DeleteFillerGroupComponent implements OnInit {
 	}
 
 	continueToDeleteProcess() {
-		// this._filler
-		// 	.delete_filler_feeds(id)
-		// 	.pipe(takeUntil(this._unsubscribe))
-		// 	.subscribe((data: any) => {
-		// 		this.openConfirmationModal('success', 'Success!', 'Filler Playlist ' + data.message);
-		// 		this.filler_groups = this.filler_groups.filter((groups) => {
-		// 			return groups.fillerPlaylistId != id;
-		// 		});
-		// 	});
-
 		this._filler
 			.delete_filler_group(this.page_data.filler_group_id)
 			.pipe(takeUntil(this._unsubscribe))

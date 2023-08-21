@@ -66,9 +66,8 @@ export class ViewFillersGroupComponent implements OnInit {
 					}
 				} else {
 					this.filler_group_pagination = [];
-					if (this.search_keyword != '') {
-						this.no_search_result = true;
-					} else {
+					if (this.search_keyword != '') this.no_search_result = true;
+					else {
 						this.filler_group_contents = [];
 						this.no_search_result = false;
 					}
@@ -81,7 +80,6 @@ export class ViewFillersGroupComponent implements OnInit {
 
 	gotoFileURL(url) {
 		let new_url = url.replace(/ /g, '+');
-		console.log('new_url', new_url);
 		window.open(new_url, '_blank');
 	}
 
@@ -148,19 +146,15 @@ export class ViewFillersGroupComponent implements OnInit {
 						this.warningModal('success', 'Delete Filler', 'Filler Content ' + data.message, '', '', false);
 						this.ngOnInit();
 					});
-			} else {
-				this.ngOnInit();
 			}
+			this.ngOnInit();
 		});
 	}
 
 	onSearchFiller(keyword) {
 		this.is_loading = true;
-		if (keyword) {
-			this.search_keyword = keyword;
-		} else {
-			this.search_keyword = '';
-		}
+		if (keyword) this.search_keyword = keyword;
+		else this.search_keyword = '';
 		this.getFillerGroupContents(this.filler_group_id, 1);
 	}
 
@@ -183,7 +177,7 @@ export class ViewFillersGroupComponent implements OnInit {
 			.get_filler_group_playing_where(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				console.log('DD', data);
+				//next sprint implementation
 			});
 	}
 

@@ -88,17 +88,12 @@ export class FillerFeedsTableComponent implements OnInit {
 		let place_holder = '';
 		filler.fillerGroups.map((filler, i, { length }) => {
 			if (filler.isPair) {
-				if (length - 1 === i) {
+				if (length - 1 === i)
 					place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>';
-				} else {
-					place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>' + ' , ';
-				}
+				else place_holder = place_holder + filler.quantity + '<i class="fas fa-circle text-orange ml-1 mr-2" title="In Pairs"></i>' + ' , ';
 			} else {
-				if (length - 1 === i) {
-					place_holder = place_holder + filler.quantity;
-				} else {
-					place_holder = place_holder + filler.quantity + ' , ';
-				}
+				if (length - 1 === i) place_holder = place_holder + filler.quantity;
+				else place_holder = place_holder + filler.quantity + ' , ';
 			}
 		});
 

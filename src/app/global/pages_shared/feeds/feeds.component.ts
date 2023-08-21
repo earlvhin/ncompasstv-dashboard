@@ -3,12 +3,11 @@ import { MatDialog } from '@angular/material/dialog';
 import { DatePipe, Location } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { Router } from '@angular/router';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { CreateFillerFeedComponent } from '../fillers/components/create-filler-feed/create-filler-feed.component';
 import { AuthService, FeedService } from 'src/app/global/services';
-import { API_FEED, FEED, PAGING, UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'src/app/global/models';
+import { UI_ROLE_DEFINITION_TEXT, UI_TABLE_FEED, UI_TABLE_FEED_DEALER } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-feeds',
@@ -52,17 +51,14 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _feed: FeedService,
 		private cdRef: ChangeDetectorRef,
-		private _location: Location,
-		private _route: Router
+		private _location: Location
 	) {}
 
 	ngOnInit() {
 		if (this.isCurrentRoleDealer) {
 			this.feeds_table_column = this.feeds_table_column.filter((col) => col.name != 'Business Name');
 			this.feeds_table_column.map((column) => {
-				if (column.name == 'Created By') {
-					column.sortable = false;
-				}
+				if (column.name == 'Created By') column.sortable = false;
 			});
 		}
 		this.onTabChanged(0);
@@ -194,7 +190,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	private mapToTableFormat(feed): any {
+	private mapToTableFormat(feeds): any {
 		let count = 1;
 		const role = this.currentRole === UI_ROLE_DEFINITION_TEXT.dealeradmin ? UI_ROLE_DEFINITION_TEXT.administrator : this.currentRole;
 
