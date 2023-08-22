@@ -66,20 +66,14 @@ export class EditFillerGroupComponent implements OnInit {
 	}
 
 	getDealers() {
-		this.subscription.add(
-			this._dealer.get_dealers_with_page_minified(1, '', 0).subscribe((data) => {
-				this.dealers_list = data.paging.entities;
-			})
-		);
+		this.subscription.add(this._dealer.get_dealers_with_page_minified(1, '', 0).subscribe((data) => (this.dealers_list = data.paging.entities)));
 	}
 
 	getAllDealerAdmin() {
 		this._dealer_admin
 			.get_search_dealer_admin_getall()
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				this.dealer_admins = response.dealerAdmin;
-			});
+			.subscribe((response) => (this.dealer_admins = response.dealerAdmin));
 	}
 
 	private getSelectedGroup() {
@@ -128,38 +122,33 @@ export class EditFillerGroupComponent implements OnInit {
 		this._filler
 			.add_filler_group(updateFillerGroup)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				this.openConfirmationModal('success', 'Filler Group Updated!', 'Hurray! You successfully modified a Filler Group', true);
-			});
+			.subscribe((data: any) =>
+				this.openConfirmationModal('success', 'Filler Group Updated!', 'Hurray! You successfully modified a Filler Group', true)
+			);
 	}
 
 	openConfirmationModal(status: string, message: string, data: any, close?): void {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
-		});
-
-		if (close) {
-			dialog.afterClosed().subscribe(() => {
-				this._dialog.closeAll();
+		this._dialog
+			.open(ConfirmationModalComponent, {
+				width: '500px',
+				height: '350px',
+				data: {
+					status: status,
+					message: message,
+					data: data
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				if (close) this._dialog.closeAll();
 			});
-		}
 	}
 
 	modifyData() {
 		const dealers = this._formControls.dealers.value;
-		dealers.map((dealer) => {
-			this.selected_dealers.push(dealer.dealerId);
-		});
+		dealers.map((dealer) => this.selected_dealers.push(dealer.dealerId));
 		const dealeradmins = this._formControls.dealerAdmins.value;
-		dealeradmins.map((dealeradmin) => {
-			this.selected_dealeradmins.push(dealeradmin.userId);
-		});
+		dealeradmins.map((dealeradmin) => this.selected_dealeradmins.push(dealeradmin.userId));
 	}
 
 	onTogglePairs(toggle) {

@@ -33,9 +33,7 @@ export class ViewFillersGroupComponent implements OnInit {
 	constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog) {}
 
 	ngOnInit() {
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			this.filler_group_id = this._params.snapshot.params.data;
-		});
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));
 		this.getFillerGroupContents(this.filler_group_id);
 		this.getFillerGroupDetails(this.filler_group_id);
 	}
@@ -44,9 +42,7 @@ export class ViewFillersGroupComponent implements OnInit {
 		this._filler
 			.get_filler_group_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => {
-				this.filler_group_data = response.data[0];
-			});
+			.subscribe((response) => (this.filler_group_data = response.data[0]));
 	}
 
 	getFillerGroupContents(id, page?) {
@@ -84,37 +80,37 @@ export class ViewFillersGroupComponent implements OnInit {
 	}
 
 	addFillerContent(group) {
-		let dialog = this._dialog.open(AddFillerContentComponent, {
-			width: '500px',
-			data: {
-				group: group,
-				all_media: this.filler_group_contents
-			}
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			this.ngOnInit();
-		});
+		this._dialog
+			.open(AddFillerContentComponent, {
+				width: '500px',
+				data: {
+					group: group,
+					all_media: this.filler_group_contents
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this.ngOnInit();
+			});
 	}
 
 	createFillerFeed(group, single_filler) {
-		let dialog = this._dialog.open(CreateFillerFeedComponent, {
-			width: '500px',
-			data: {
-				group: group
-			}
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			this.ngOnInit();
-		});
+		this._dialog
+			.open(CreateFillerFeedComponent, {
+				width: '500px',
+				data: {
+					group: group
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this.ngOnInit();
+			});
 	}
 
 	splitOriginalFilename(name) {
 		return name.substring(name.indexOf('_') + 1);
 	}
-
-	openGenerateLicenseModal() {}
 
 	deleteContent(id) {
 		this.selected_filler = id;

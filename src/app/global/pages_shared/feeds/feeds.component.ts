@@ -3,6 +3,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DatePipe, Location } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { Router } from '@angular/router';
 
 import { CreateFeedComponent } from '../../components_shared/feed_components/create-feed/create-feed.component';
 import { CreateFillerFeedComponent } from '../fillers/components/create-filler-feed/create-filler-feed.component';
@@ -51,7 +52,8 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _feed: FeedService,
 		private cdRef: ChangeDetectorRef,
-		private _location: Location
+		private _location: Location,
+		private _route: Router
 	) {}
 
 	ngOnInit() {
@@ -244,16 +246,18 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	}
 
 	createFillerFeed() {
-		let dialog = this._dialog.open(CreateFillerFeedComponent, {
-			width: '500px',
-			data: {
-				group: []
-			}
-		});
-
-		dialog.afterClosed().subscribe((response) => {
-			this.ngOnInit();
-		});
+		this._dialog
+			.open(CreateFillerFeedComponent, {
+				width: '500px',
+				data: {
+					group: []
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
+				this.ngOnInit();
+			});
 	}
 
 	protected get roleRoute() {

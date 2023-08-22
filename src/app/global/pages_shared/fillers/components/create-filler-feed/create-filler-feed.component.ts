@@ -114,11 +114,7 @@ export class CreateFillerFeedComponent implements OnInit {
 					this.addToSelectedFillerGroup();
 				}
 
-				if (this.page_data.from_edit_table) {
-					if (this.page_data.from_edit_table) {
-						this.getFillerFeedDetail(this.page_data.id);
-					}
-				}
+				if (this.page_data.from_edit_table) this.getFillerFeedDetail(this.page_data.id);
 			});
 	}
 
@@ -135,31 +131,29 @@ export class CreateFillerFeedComponent implements OnInit {
 					this.openConfirmationModal(
 						'success',
 						'Filler Feed' + type_of_activity + '!',
-						'Hurray! You successfully' + type_of_activity + 'a Filler Feed',
-						true
+						'Hurray! You successfully' + type_of_activity + 'a Filler Feed'
 					);
 				},
 				(error) => {}
 			);
 	}
 
-	openConfirmationModal(status: string, message: string, data: any, close?): void {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: {
-				status: status,
-				message: message,
-				data: data
-			}
-		});
-
-		if (close) {
-			dialog.afterClosed().subscribe((response) => {
-				this._dialog.closeAll();
+	openConfirmationModal(status: string, message: string, data: any): void {
+		this._dialog
+			.open(ConfirmationModalComponent, {
+				width: '500px',
+				height: '350px',
+				data: {
+					status: status,
+					message: message,
+					data: data
+				}
+			})
+			.afterClosed()
+			.subscribe((response) => {
 				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
+				this._dialog.closeAll();
 			});
-		}
 	}
 
 	setFillerGroup(id: string) {

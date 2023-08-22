@@ -50,9 +50,14 @@ export class FillerFeedsTableComponent implements OnInit {
 			.get_filler_feeds(page, this.search_data)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
-				const mappedData = this.mapToTableFormat(response.paging.entities);
-				this.filtered_data = [...mappedData];
-				this.fillers_paging = response.paging;
+				if (!response.message) {
+					const mappedData = this.mapToTableFormat(response.paging.entities);
+					this.filtered_data = mappedData;
+					this.fillers_paging = response.paging;
+					return;
+				}
+				this.filtered_data = [];
+				this.fillers_paging = [];
 			})
 			.add(() => {
 				this.initial_load = false;

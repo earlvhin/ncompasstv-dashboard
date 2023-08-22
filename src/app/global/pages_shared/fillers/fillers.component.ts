@@ -59,26 +59,29 @@ export class FillersComponent implements OnInit {
 	}
 
 	onAddFillerGroup() {
-		let dialog = this._dialog.open(AddFillerGroupComponent, {
-			width: '500px',
-			data: {}
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			this.ngOnInit();
-		});
+		this._dialog
+			.open(AddFillerGroupComponent, {
+				width: '500px',
+				data: {}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this.ngOnInit();
+			});
 	}
 
 	onEditFillerGroup(id) {
-		let dialog = this._dialog.open(EditFillerGroupComponent, {
-			width: '500px',
-			data: {
-				filler_group_id: id
-			}
-		});
-		dialog.afterClosed().subscribe(() => {
-			this.ngOnInit();
-		});
+		this._dialog
+			.open(EditFillerGroupComponent, {
+				width: '500px',
+				data: {
+					filler_group_id: id
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this.ngOnInit();
+			});
 	}
 
 	onDeleteFillerGroup(id) {
@@ -140,16 +143,17 @@ export class FillersComponent implements OnInit {
 	}
 
 	addFillerContent(group) {
-		let dialog = this._dialog.open(AddFillerContentComponent, {
-			width: '500px',
-			data: {
-				group: group
-			}
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			this.ngOnInit();
-		});
+		this._dialog
+			.open(AddFillerContentComponent, {
+				width: '500px',
+				data: {
+					group: group
+				}
+			})
+			.afterClosed()
+			.subscribe(() => {
+				this.ngOnInit();
+			});
 	}
 
 	getFillersTotal() {
@@ -172,10 +176,7 @@ export class FillersComponent implements OnInit {
 	}
 
 	getAllFillers(page, size?) {
-		if (page === 1) {
-			size = 11;
-		}
-
+		if (page === 1) size = 11;
 		this.current_filer = {
 			page: 1,
 			key: this.search_keyword,
@@ -183,7 +184,6 @@ export class FillersComponent implements OnInit {
 			sort_col: this.sorting_column,
 			sort_ord: this.sorting_order
 		};
-
 		this._filler
 			.get_filler_groups(page, this.search_keyword, size, this.sorting_column, this.sorting_order)
 			.pipe(takeUntil(this._unsubscribe))

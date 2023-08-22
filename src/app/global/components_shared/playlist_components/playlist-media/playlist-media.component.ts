@@ -228,13 +228,10 @@ export class PlaylistMediaComponent implements OnInit {
 			.subscribe(
 				(data: any) => {
 					data.paging.entities.map((group) => {
-						var sum = 0;
+						let sum = 0;
 						group.fillerGroups.map((inside_group) => {
-							if (inside_group.isPair) {
-								sum = sum + inside_group.quantity * 2;
-							} else {
-								sum = sum + inside_group.quantity;
-							}
+							if (inside_group.isPair) sum = sum + inside_group.quantity * 2;
+							else sum = sum + inside_group.quantity;
 						});
 						group.totalFillers = sum;
 					});
@@ -287,11 +284,8 @@ export class PlaylistMediaComponent implements OnInit {
 		const box = document.getElementById(id);
 		box.classList.add('selected-box');
 		box.classList.remove('bg-dark');
-		if (this.prev_selection != '') {
-			this.removeFillerSelectedEffect(this.prev_selection);
-		} else {
-			this.prev_selection = id;
-		}
+		if (this.prev_selection != '') this.removeFillerSelectedEffect(this.prev_selection);
+		else this.prev_selection = id;
 	}
 
 	removeFillerSelectedEffect(id) {
@@ -314,9 +308,7 @@ export class PlaylistMediaComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data: any) => {
-					if (data) {
-						this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
-					}
+					if (data) this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
 				},
 				(error) => {}
 			);
@@ -349,24 +341,9 @@ export class PlaylistMediaComponent implements OnInit {
 				this.getDealerContent(this._dialog_data.dealer_id);
 				break;
 			case 1:
-				// if (!this.has_fillers) {
 				this.getAllFillerGroups();
-				// }
 				break;
 			default:
 		}
 	}
-
-	// checkIfPlaylistHasFillers() {
-	// 	this._filler
-	// 		.check_if_filler_is_in_playlist(this._dialog_data.playlist_id)
-	// 		.pipe(takeUntil(this._unsubscribe))
-	// 		.subscribe((data: any) => {
-	// 			if (data.message) {
-	// 				this.has_fillers = false;
-	// 			} else {
-	// 				this.has_fillers = true;
-	// 			}
-	// 		});
-	// }
 }
