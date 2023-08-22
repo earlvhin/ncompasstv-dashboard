@@ -85,15 +85,13 @@ export class AddFillerGroupComponent implements OnInit {
 		});
 
 		dialogRef.afterClosed().subscribe((response) => {
-			if (response === 'no_upload') {
-				this._dialog.closeAll();
+			if (response != 'no_upload') {
+				const child = document.getElementById('cdk-overlay-0');
+				child.parentElement.parentElement.classList.add('hidden');
+				this.onUploadImage();
 				return;
 			}
-			//temporary since the modal arrangement conflicts with other dashboard function [duplicate name]
-			const child = document.getElementById('cdk-overlay-0');
-			child.parentElement.parentElement.classList.add('hidden');
-
-			this.onUploadImage();
+			this._dialog.closeAll();
 		});
 	}
 
@@ -128,10 +126,13 @@ export class AddFillerGroupComponent implements OnInit {
 							'Hurray! You successfully updated Filler Group Cover Photo'
 						)
 					);
-
-				//temporary since the modal arrangement conflicts with other dashboard function [duplicate name]
 				const child = document.getElementById('cdk-overlay-0');
 				child.parentElement.parentElement.classList.remove('hidden');
+			},
+			onCancel: () => {
+				const child = document.getElementById('cdk-overlay-0');
+				child.parentElement.parentElement.classList.remove('hidden');
+				this._dialog.closeAll();
 			}
 		};
 	}
