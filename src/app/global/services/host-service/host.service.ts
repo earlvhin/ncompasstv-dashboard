@@ -188,10 +188,10 @@ export class HostService extends BaseService {
 	get_support_entries(
 		hostId: string,
 		page: number,
-		column: string,
-		order: string ): Observable<{paging: PAGING; message?: string}> {
+		sortColumn: string,
+		sortOrder: string ): Observable<{paging: PAGING; message?: string}> {
 		const base = `${this.getters.api_get_support}`;
-		const params = this.setUrlParams({ hostId, page, column, order }, false, true);
+		const params = this.setUrlParams({ hostId, page, sortColumn, sortOrder }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
@@ -279,12 +279,15 @@ export class HostService extends BaseService {
 	}
 
 	validate_url(url: string){
-		const pattern =  new RegExp('^(https?:\\/\\/)?'+
-		'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
-		'((\\d{1,3}\\.){3}\\d{1,3}))'+
-		'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ 
-		'(\\?[;&a-z\\d%_.~+=-]*)?'+ 
-		'(\\#[-a-z\\d_]*)?$','i');
-	  	return !!pattern.test(url);
+		const pattern = new RegExp(
+			'^([a-zA-Z]+:\\/\\/)?' +
+			  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+			  '((\\d{1,3}\\.){3}\\d{1,3}))' +
+			  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + 
+			  '(\\?[;&a-z\\d%_.~+=-]*)?' +
+			  '(\\#[-a-z\\d_]*)?$',
+			'i'
+		  );
+		  return pattern.test(url);
 	}
 }

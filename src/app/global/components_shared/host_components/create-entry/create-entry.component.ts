@@ -16,11 +16,10 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 })
 export class CreateEntryComponent implements OnInit {
 	@Output() reload_page = new EventEmitter();
+	disabled_submit = true;
+	form_invalid : boolean;
 	is_creating_support = false;
 	new_support_form: FormGroup;
-	is_submitted: boolean;
-	form_invalid : boolean;
-	disabled_submit = true;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -41,7 +40,6 @@ export class CreateEntryComponent implements OnInit {
 		return this.new_support_form.controls
 	}
 
-
 	saveSupport() {
 		this.is_creating_support = true;
 		this.form_invalid = true;
@@ -54,11 +52,11 @@ export class CreateEntryComponent implements OnInit {
 			createdBy
 		);
 
-		// if (!this._host.validate_url(this.s.supportUrl.value)) {
-		// 	this.showConfirmationDialog('error', 'Oops something went wrong, Sorry!', 'The URL you entered is not valid.');
-		// 	this.form_invalid = false;
-		// 	return false;
-		// }
+		if (!this._host.validate_url(this.s.supportUrl.value) && this.s.supportUrl.value.length > 0) {
+			this.showConfirmationDialog('error', 'Oops something went wrong, Sorry!', 'The URL you entered is not valid.');
+			this.form_invalid = false;
+			return false;
+		}
 
 		this._host
 			.create_support_entry(new_entry)
@@ -79,8 +77,8 @@ export class CreateEntryComponent implements OnInit {
 
 	private initializeForm() {
 		this.new_support_form = this._form.group({
-			supportUrl: [null],
-			supportNotes: [null]
+			supportUrl: [""],
+			supportNotes: [""]
 		});
 
 		this.new_support_form.valueChanges.subscribe((v) => {
@@ -97,6 +95,5 @@ export class CreateEntryComponent implements OnInit {
 		const dialogConfig = { width: '500px', height: '350px', data: dialogData };
 		this._dialog.open(ConfirmationModalComponent, dialogConfig);
 	}
-
 	
 }

@@ -19,13 +19,13 @@ export class SupportTabComponent implements OnInit {
 	support_data: UI_HOST_SUPPORT[] = [];
 	paging_data: any;
 	initial_load = true;
-	sortColumn = 'DateCreated';
-	sortOrder = 'desc';
+	sort_column = 'DateCreated';
+	sort_order = 'desc';
 	no_support_data = false;
 
 	support_table_column = [
 		{ name: '#', sortable: false },
-		{ name: 'Date Added', column: 'dateCreated', sortable: false },
+		{ name: 'Date Added', column: 'dateCreated', sortable: true },
 		{ name: 'URL', column: 'url', sortable: false },
 		{ name: 'Notes', column: 'notes', sortable: false }
 	];
@@ -41,8 +41,8 @@ export class SupportTabComponent implements OnInit {
 	}
 
 	getColumnsAndOrder(data: { column: string; order: string }) : void {
-		this.sortColumn = data.column;
-		this.sortOrder = data.order;
+		this.sort_column = data.column;
+		this.sort_order = data.order;
 		this.getSupport(1);
 	}
 
@@ -51,11 +51,11 @@ export class SupportTabComponent implements OnInit {
 		this.support_data = [];
 
 		this._host
-			.get_support_entries(this.hostId, page, this.sortColumn, this.sortOrder)
+			.get_support_entries(this.hostId, page, this.sort_column, this.sort_order)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((res) => {
 
-				if (res.message === 'No records found!') {
+				if (res.paging.entities.length === 0) {
 					this.no_support_data = true;
 					this.support_data = []
 					return;
