@@ -1640,6 +1640,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.lastDisconnect = this.setDefaultDateTimeFormat(data.timeOut, 'MMMM DD, YYYY, h:mm:ss A');
 		this.tags = data.tags as { name: string; tagColor: string }[];
 		this.display_status = data.piStatus === 1 ? data.displayStatus : 0;
+		this.cec_status = data.piStatus === 1 ? data.isCecEnabled === 1 : false;
 		this.pi_status = data.piStatus === 1;
 		this.player_status = data.playerStatus === 1;
 		this.content_time_update = this.setDefaultDateTimeFormat(data.contentsUpdated, 'YYYY-MM-DDThh:mm:ssTZD');
@@ -1647,7 +1648,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.apps = data.appVersion ? JSON.parse(data.appVersion) : null;
 		this.anydesk_id = data.anydeskId;
 		this.tv_brand = data.tvBrand ? data.tvBrand : '--';
-		this.cec_status = data.isCecEnabled === 1;
 		this.setStorageCapacity(this.license_data.freeStorage, this.license_data.totalStorage);
 
 		if (data.internetInfo) {
@@ -1846,11 +1846,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	private socketOnMonitorCheck(): void {
-		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: number }) => {
+		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: number; tvCecAvailability: boolean }) => {
 			if (this.license_id !== data.licenseId) return;
 
 			const displayStatus = data.monitorStatus;
 			this.display_status = displayStatus;
+			this.cec_status = data.tvCecAvailability;
 
 			const statusForSubmission = displayStatus === 2 ? 0 : displayStatus;
 
