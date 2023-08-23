@@ -92,9 +92,6 @@ export class AddFillerContentComponent implements OnInit {
 			accept: filetypes,
 			maxFiles: maxitems,
 			imageMax: imagemaximum,
-			onFileSelected: (e) => {
-				console.log('FILE SELECTED', e);
-			},
 			onUploadDone: (response) => {
 				response.filesUploaded.map((uploaded) => {
 					const modified_details = {
@@ -121,7 +118,6 @@ export class AddFillerContentComponent implements OnInit {
 	async processUploadedFiles(data): Promise<void> {
 		let file_data: any;
 		let folder = 'dev';
-
 		if (environment.production) folder = 'prod';
 		else if (environment.base_uri.includes('stg')) folder = 'staging';
 		else folder = 'dev';
