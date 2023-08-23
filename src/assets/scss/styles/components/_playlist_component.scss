@@ -29,21 +29,19 @@
 .cdk-drag-preview {
 	box-sizing: border-box;
 	border-radius: 4px;
-	box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-				0 8px 10px 1px rgba(0, 0, 0, 0.14),
-				0 3px 14px 2px rgba(0, 0, 0, 0.12);
+	box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
 }
 
 .cdk-drag-placeholder {
-  	opacity: 1;
+	opacity: 1;
 }
 
 .cdk-drag-animating {
-  	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
 .example-box:last-child {
-  	border: none;
+	border: none;
 }
 
 .example-list.cdk-drop-list-dragging .example-box:not(.cdk-drag-placeholder) {
@@ -61,7 +59,7 @@
 
 .playlist-media-panel {
 	background-color: $playlist_bg;
-	height: 500px;
+	height: 450px;
 	overflow-y: scroll;
 	padding: 5px;
 	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
@@ -79,7 +77,7 @@
 
 .demo-panel {
 	video {
-    	width: 100%;
+		width: 100%;
 		height: 100%;
 		position: absolute;
 		left: 0;
@@ -101,7 +99,7 @@
 .screen-demo-panel {
 	video {
 		object-fit: fill;
-    	width: 100%;
+		width: 100%;
 		height: 100%;
 		position: absolute;
 		left: 0;
@@ -123,8 +121,7 @@
 	height: 50px;
 }
 
-.playlist-expansion-header
-.mat-expansion-indicator {
+.playlist-expansion-header .mat-expansion-indicator {
 	display: none !important;
 }
 
@@ -135,8 +132,7 @@
 	}
 }
 
-.playlist-expansion-panel
-.mat-expansion-panel-body {
+.playlist-expansion-panel .mat-expansion-panel-body {
 	padding: 0;
 }
 
@@ -146,7 +142,9 @@
 	padding-top: 56.25%;
 	position: relative;
 
-	img, iframe, video {
+	img,
+	iframe,
+	video {
 		height: 100%;
 		position: absolute;
 		left: 0;
@@ -158,25 +156,26 @@
 	}
 }
 
-
 .screen-demo-container {
-	img, video, iframe {
+	img,
+	video,
+	iframe {
 		object-fit: unset !important;
 	}
 }
 
 //Playlist Content
 .content-thumbnail {
-    height: 70px;
+	height: 70px;
 	width: 100%;
 	position: relative;
 	overflow: hidden;
-	
-    img {
-        object-fit: contain;
-        object-position: center;
+
+	img {
+		object-fit: contain;
+		object-position: center;
 	}
-	
+
 	.number-overlay {
 		background: rgba(#000, 0.8);
 		color: $primary;
@@ -189,14 +188,14 @@
 }
 
 .remove-content {
-    background-color: $transparent;
-    color: $danger;
+	background-color: $transparent;
+	color: $danger;
 }
 
 .host_license_list {
-    &:last-child {
-        margin-bottom: 0;
-    }
+	&:last-child {
+		margin-bottom: 0;
+	}
 }
 
 .loading-overlay {

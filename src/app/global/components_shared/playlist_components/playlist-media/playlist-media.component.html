@@ -1,145 +1,249 @@
-<div class="playlist-media bg-white">
-	<div class="d-flex align-items-center">
-		<div class="flex-even mr-5">
+<div class="playlist-media bg-white container">
+	<div class="row no-gutters">
+		<div class="col-lg-11">
 			<h3 class="mb-0">
 				{{ type === 'add' ? 'Media Library' : 'Swap Content' }}
 			</h3>
 
 			<p class="sm-text">
-				<ng-container *ngIf="type === 'add'; else swap_content_sub_heading;">
+				<ng-container *ngIf="type === 'add'; else swap_content_sub_heading">
 					Click a single or multiple content you wish to add to your playlist. New playlist content are added at the beginning.
 				</ng-container>
 
-				<ng-template #swap_content_sub_heading>
-					Select a content you want to swap
-				</ng-template>
+				<ng-template #swap_content_sub_heading> Select a content you want to swap </ng-template>
 			</p>
-
 		</div>
 
-		<div>
+		<div class="col-lg-1 text-right pt-2">
 			<button class="naked-btn" mat-dialog-close>
 				<span class="fas fa-times"></span>
 			</button>
 		</div>
 	</div>
 
-	<hr class="my-3">
+	<hr class="my-3" />
 
-	<div class="row" *ngIf="media_files">
-		<div class="col-lg-7">
-			<mat-form-field class="full-width position-relative" appearance="fill">
-				<mat-label>Search a Filename or a Feed Title</mat-label>
-				<input matInput type="text" 
-				placeholder="Search a File"
-				(keyup)="searchContent($event)">
-			</mat-form-field>
-		</div>
+	<div class="custom-mat-tab mt-30">
+		<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event.index)" [selectedIndex]="isActiveTab">
+			<mat-tab label="Media Files">
+				<div class="row mt-3" *ngIf="media_files">
+					<div class="col-lg-7">
+						<mat-form-field class="full-width position-relative" appearance="fill">
+							<mat-label>Search a Filename or a Feed Title</mat-label>
+							<input matInput type="text" placeholder="Search a File" (keyup)="searchContent($event)" />
+						</mat-form-field>
+					</div>
 
-		<div class="col-lg-5 pt-3" *ngIf="media_files && !isDealer">
-			<div class="d-flex align-items-center">
-				<div class="mr-2">
-					<mat-slide-toggle
-						[checked]="dealer_has_no_contents && floating_contents.length > 0"
-						(change)="displayFloating($event)"
-						[disabled]="dealer_has_no_contents && floating_contents.length > 0">
-					</mat-slide-toggle>
-				</div>
-				<div class="flex-even">
-					<h6 class="sm-text">Display Floating Contents</h6>
-					<p class="xsm-text">
-						Display all content that are not assigned to any Dealer
-					</p>
-				</div>
-			</div>
-		</div>
-	</div>
-	
-	<div class="playlist-media-panel border material-shadow bg-light p-2 mb-4">
-		<ng-container *ngIf="media_files; else loading">
-				<div *ngIf="!file_not_found; else not_found" class="h-100">
-					<div class="row no-gutters" *ngIf="media_files.length > 0; else loading">
-						<div class="col-lg-2" *ngFor="let content of media_files; let i = index">
-							<div class="m-1 position-relative" [ngClass]="isMarked(content) ? 'marked' : null">
-								<app-playlist-media-thumbnail
-								[content]="content"
-								(converted)="videoConverted($event)"
-								(click)="(content.isConverted && content.fileType == 'webm') || (content.fileType != 'webm') ? addToMarked(content) : contentNotReady()">
-								</app-playlist-media-thumbnail>
+					<div class="col-lg-5 pt-3" *ngIf="media_files && !isDealer">
+						<div class="row">
+							<div class="col-lg-2">
+								<mat-slide-toggle
+									[checked]="dealer_has_no_contents && floating_contents.length > 0"
+									(change)="displayFloating($event)"
+									[disabled]="dealer_has_no_contents && floating_contents.length > 0">
+								</mat-slide-toggle>
+							</div>
+							<div class="col-lg-10">
+								<h6 class="sm-text">Display Floating Contents</h6>
+								<p class="xsm-text">Display all content that are not assigned to any Dealer</p>
 							</div>
 						</div>
 					</div>
+				</div>
 
-					<div class="d-flex align-items-center w-100 mt-3" *ngIf="media_files.length > 0 && isGettingData">
-						<div class="w-100">
-							<app-spinner></app-spinner>
+				<div class="row no-gutters">
+					<div class="col-lg-12">
+						<div class="playlist-media-panel border material-shadow bg-light p-2 mb-4">
+							<ng-container *ngIf="media_files; else loading">
+								<div *ngIf="!file_not_found; else not_found" class="h-100">
+									<div class="row no-gutters" *ngIf="media_files.length > 0; else loading">
+										<div class="col-lg-2" *ngFor="let content of media_files; let i = index">
+											<div class="m-1 position-relative" [ngClass]="isMarked(content) ? 'marked' : null">
+												<app-playlist-media-thumbnail
+													[content]="content"
+													(converted)="videoConverted($event)"
+													(click)="
+														(content.isConverted && content.fileType == 'webm') || content.fileType != 'webm'
+															? addToMarked(content)
+															: contentNotReady()
+													">
+												</app-playlist-media-thumbnail>
+											</div>
+										</div>
+									</div>
+
+									<div class="d-flex align-items-center w-100 mt-3" *ngIf="media_files.length > 0 && isGettingData">
+										<div class="w-100">
+											<app-spinner></app-spinner>
+										</div>
+									</div>
+								</div>
+							</ng-container>
+
+							<ng-template #not_found>
+								<div class="row no-gutters">
+									<div class="col-lg-12">
+										<div class="full-width text-center loader-overlay h-100 text-center pt-5">
+											<ng-container
+												*ngIf="media_files.length > 0 && floating_contents.length > 0 && !isGettingData; else no_contents">
+												<h3>Content Not Found</h3>
+												<p class="sm-text mb-0">Please try another keyword</p>
+											</ng-container>
+
+											<ng-template #no_contents>
+												<h3>No Contents Available</h3>
+												<p class="sm-text mb-0">This dealer has yet to add contents</p>
+											</ng-template>
+										</div>
+									</div>
+								</div>
+							</ng-template>
+
+							<ng-template #loading>
+								<div class="loader-overlay h-100">
+									<app-spinner></app-spinner>
+								</div>
+							</ng-template>
 						</div>
 					</div>
 				</div>
-		</ng-container>
-
-		<ng-template #not_found>
-			<div class="d-flex w-100 align-items-center loader-overlay h-100 text-center pt-5">
-
-				<div class="flex-even">
-					<ng-container *ngIf="media_files.length > 0 && floating_contents.length > 0 && !isGettingData; else no_contents;">
-						<h3>Content Not Found</h3>
-						<p class="sm-text mb-0">Please try another keyword</p>
-					</ng-container>
-	
-					<ng-template #no_contents>
-						<h3>No Contents Available</h3>
-						<p class="sm-text mb-0">This dealer has yet to add contents</p>
-					</ng-template>
+			</mat-tab>
+			<mat-tab label="Fillers">
+				<div class="row mb-2">
+					<div class="col-lg-10">
+						<div class="row mt-3">
+							<div class="col-lg-5">
+								<mat-label class="font-weight-bold sm-text text-dark mb-2"> Select Filler Owner: </mat-label>
+								<mat-select [(value)]="active_filler">
+									<mat-option value="own"> Admin Fillers </mat-option>
+									<mat-option [disabled]="true" value="dealer_admin"> Dealer Admin Fillers </mat-option>
+									<mat-option [disabled]="true" value="dealers"> Dealers </mat-option>
+								</mat-select>
+							</div>
+						</div>
+					</div>
 				</div>
-
-			</div>
-		</ng-template>
-
-		<ng-template #loading>
-			<div class="loader-overlay h-100">
-				<app-spinner></app-spinner>
-			</div>
-		</ng-template>
+				<div class="row no-gutters">
+					<div class="col-lg-12">
+						<div class="playlist-media-panel overflow-x-hidden border material-shadow bg-light p-2 mb-4">
+							<div *ngIf="!in_progress_saving_fillers; else savingFillers">
+								<div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
+									<div class="col-lg-2" *ngFor="let data of filler_groups">
+										<div class="row">
+											<div
+												class="col-lg-11 clickable"
+												(click)="prepareDataToAddToPlaylist(data.fillerPlaylistId, data.totalFillers)">
+												<div class="box-shadowing mb-4 bg-dark h-150" [attr.id]="data.fillerPlaylistId">
+													<div class="row no-gutters">
+														<div class="col-lg-12 text-center p-2">
+															<span class="mt-4 fa-3x text-primary fa fa-folder-o"></span>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-lg-12 text-center">
+															<h5 class="text-white" title="{{ data.name }}">
+																{{ data.name | slice : 0 : 15 }}{{ data.name.length > 15 ? '...' : '' }}
+															</h5>
+														</div>
+													</div>
+													<div class="row">
+														<div class="col-lg-12 text-center">
+															<div class="sm-text text-white">
+																<span>{{ data.totalFillers }} Fillers</span>
+																<span
+																	class="fas fa-info info xsm-text ml-2 br-100"
+																	[ngbTooltip]="breakdownFillers"></span>
+															</div>
+															<ng-template #breakdownFillers>
+																<div class="sm-text" *ngFor="let group of data.fillerGroups">
+																	{{ group.quantity }} <span *ngIf="group.isPair">(In Pairs)</span> -
+																	{{ group.name }}
+																	<span></span>
+																</div>
+															</ng-template>
+														</div>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<ng-template #savingFillers>
+								<div class="loader-overlay bg-dark text-white text-center h-100 pt-5">
+									<h4 class="mt-5">Saving Fillers</h4>
+									<span class="sm-text">Please wait, while we update your playlist contents. </span>
+									<mat-spinner [diameter]="100" class="mt-5"></mat-spinner>
+								</div>
+							</ng-template>
+						</div>
+					</div>
+				</div>
+			</mat-tab>
+		</mat-tab-group>
 	</div>
 
-	<div class="d-flex align-items-center">
+	<div class="row no-gutters">
+		<div class="col-lg-12 text-center">
+			<ng-container *ngIf="type === 'add'; else swap_content_controls">
+				<div class="row no-gutters" *ngIf="isActiveTab == 0; else fillerButton">
+					<div class="col-lg-2">
+						<button
+							mat-button
+							mat-raised-button
+							class="theme-btn mr-2"
+							(click)="deselectAll()"
+							[disabled]="selected_contents.length == 0">
+							Deselect All
+							<span class="fas fa-minus-circle ml-2"></span>
+						</button>
+					</div>
+					<div class="col-lg-2">
+						<button mat-button mat-raised-button class="theme-btn mr-2" (click)="playWhere()" [disabled]="selected_contents.length == 0">
+							Play Where
+							<span class="fas fa-play ml-2"></span>
+						</button>
+					</div>
+					<div class="col-lg-6 text-center">
+						<span class="sm-text" *ngIf="paging"> Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets </span>
+					</div>
+					<div class="col-lg-2">
+						<button mat-button mat-raised-button class="theme-btn" (click)="addToPlaylist()" [disabled]="selected_contents.length == 0">
+							Add to Playlist
+							<span class="fas fa-plus ml-2"></span>
+						</button>
+					</div>
+				</div>
 
-		<ng-container *ngIf="type === 'add'; else swap_content_controls;">
-			<div class="flex-even">
-				<button mat-button mat-raised-button class="theme-btn mr-2" (click)="deselectAll()" [disabled]="selected_contents.length == 0">
-					Deselect All
-					<span class="fas fa-minus-circle ml-2"></span>
-				</button>
-				
-				<button mat-button mat-raised-button class="theme-btn mr-2" (click)="playWhere()" [disabled]="selected_contents.length == 0">
-					Play Where
-					<span class="fas fa-play ml-2"></span>
-				</button>
-			</div>
-			<div class="flex-even text-center">
-				<span class="sm-text" *ngIf="paging">
-					Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets
-				</span>
-			</div>
-			<div class="text-right">
-				<button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="selected_contents" [disabled]="selected_contents.length == 0">
-					Add to Playlist
-					<span class="fas fa-plus ml-2"></span>
-				</button>
-			</div>
-		</ng-container>
+				<ng-template #fillerButton>
+					<div class="row no-gutters">
+						<div class="offset-lg-9 col-lg-3 text-right">
+							<button
+								mat-button
+								mat-raised-button
+								class="theme-btn"
+								[disabled]="current_content.length == 0 || in_progress_saving_fillers"
+								(click)="addFillerOnPlaylist()">
+								{{ in_progress_saving_fillers ? 'Saving Playlist ...' : 'Add Filler to Playlist' }}
+								<span [class]="in_progress_saving_fillers ? 'fas fa-spinner ml-2' : 'fas fa-plus ml-2'"></span>
+							</button>
+						</div>
+					</div>
+				</ng-template>
+			</ng-container>
 
-		<ng-template #swap_content_controls>
-			<div class="flex-even text-center">
-				<span class="sm-text" *ngIf="paging">Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets</span>
-			</div>
-
-			<div class="text-right">
-				<button mat-button mat-raised-button class="theme-btn" [mat-dialog-close]="selected_contents" [disabled]="selected_contents.length === 0">
-					Select
-				</button>
-			</div>
-		</ng-template>
+			<ng-template #swap_content_controls>
+				<div class="row" *ngIf="isActiveTab == 0">
+					<div class="col-lg-10 text-left">
+						<span class="sm-text" *ngIf="paging">Loaded {{ media_files.length }} of {{ paging.totalEntities }} Assets</span>
+					</div>
+					<div class="col-lg-2 text-right">
+						<button mat-button mat-raised-button class="theme-btn" (click)="swapContents()" [disabled]="selected_contents.length === 0">
+							Select
+						</button>
+					</div>
+				</div>
+			</ng-template>
+		</div>
 	</div>
 </div>

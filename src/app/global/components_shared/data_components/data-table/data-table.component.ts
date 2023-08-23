@@ -10,6 +10,7 @@ import {
 	BillingService,
 	ContentService,
 	FeedService,
+	FillerService,
 	HelperService,
 	HostService,
 	LicenseService,
@@ -21,13 +22,16 @@ import {
 
 import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
+import { DeleteFillerGroupComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-group/delete-filler-group.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
 import { EditableFieldModalComponent } from '../../page_components/editable-field-modal/editable-field-modal.component';
 import { EditFeedComponent } from '../../feed_components/edit-feed/edit-feed.component';
+import { CreateFillerFeedComponent } from 'src/app/global/pages_shared/fillers/components/create-filler-feed/create-filler-feed.component';
 import { MediaViewerComponent } from '../../../components_shared/media_components/media-viewer/media-viewer.component';
 import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed-dialog.component';
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
 import { dateFormat } from 'highcharts';
+import { DeleteFillerFeedsComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
 
 @Component({
 	selector: 'app-data-table',
@@ -44,6 +48,7 @@ export class DataTableComponent implements OnInit {
 	@Input() ctrl_toggle: boolean;
 	@Input() can_toggle_email_notifications = false;
 	@Input() current_user?: UI_CURRENT_USER;
+	@Input() fillers: boolean;
 	@Input() has_action = false;
 	@Input() has_timestamp_beside_image = true;
 	@Input() is_dealer: boolean;
@@ -108,6 +113,7 @@ export class DataTableComponent implements OnInit {
 		private _content: ContentService,
 		private _dialog: MatDialog,
 		private _feed: FeedService,
+		private _filler: FillerService,
 		private _host: HostService,
 		private _helper: HelperService,
 		private _license: LicenseService,
@@ -262,8 +268,43 @@ export class DataTableComponent implements OnInit {
 		);
 	}
 
+	editFillerFeed(id) {
+		let dialogRef = this._dialog
+			.open(CreateFillerFeedComponent, {
+				width: '600px',
+				data: {
+					id: id,
+					from_edit_table: true
+				}
+			})
+			.afterClosed()
+			.subscribe((response) => {
+				if (!response) this.reload_page.emit(true);
+				else return;
+			});
+	}
+
 	deleteFeed(id): void {
 		this.warningModal('warning', 'Delete Feed', 'Are you sure you want to delete this feed?', '', 'feed_delete', id);
+	}
+
+	deleteFillers(id): void {
+		this._filler.check_if_filler_has_dependency(id).subscribe((data) => {
+			if (!data.message) {
+				this._dialog
+					.open(DeleteFillerFeedsComponent, {
+						width: '500px',
+						height: '450px',
+						data: {
+							filler_feeds: data.fillerPlaylists
+						}
+					})
+					.afterClosed()
+					.subscribe((result) => result == 'delete' && this.postDeleteFillerFeed([id]));
+				return;
+			}
+			this.warningModal('warning', 'Delete Filler Feed', 'Are you sure you want to delete this Filler Feed?', '', 'fillers_delete', id);
+		});
 	}
 
 	deleteAdvertiser(id) {
@@ -343,6 +384,9 @@ export class DataTableComponent implements OnInit {
 					break;
 				case 'feed_delete':
 					this.postDeleteFeed(id);
+					break;
+				case 'fillers_delete':
+					this.postDeleteFillerFeed([id]);
 					break;
 				case 'license_delete':
 					var array_to_delete = [];
@@ -436,6 +480,17 @@ export class DataTableComponent implements OnInit {
 	postDeleteFeed(data): void {
 		this.subscription.add(
 			this._content.remove_content([{ contentid: data }]).subscribe(
+				() => this.reload_page.emit(true),
+				(error) => {
+					throw new Error(error);
+				}
+			)
+		);
+	}
+
+	postDeleteFillerFeed(data): void {
+		this.subscription.add(
+			this._filler.delete_filler_feeds(data).subscribe(
 				() => this.reload_page.emit(true),
 				(error) => {
 					throw new Error(error);
