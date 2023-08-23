@@ -117,13 +117,12 @@ export class AddFillerContentComponent implements OnInit {
 
 	async processUploadedFiles(data): Promise<void> {
 		let file_data: any;
-		file_data = await this._filestack.process_uploaded_files(
-			data,
-			'',
-			true,
-			this.selected_group.fillerGroupId,
-			!environment.production ? 'dev' : 'prod'
-		);
+		let folder = 'dev';
+		if (environment.production) folder = 'prod';
+		else if (environment.base_uri.includes('stg')) folder = 'staging';
+		else folder = 'dev';
+
+		file_data = await this._filestack.process_uploaded_files(data, '', true, this.selected_group.fillerGroupId, folder);
 		if (file_data) {
 			this._filestack
 				.post_content_info(file_data)
@@ -134,7 +133,7 @@ export class AddFillerContentComponent implements OnInit {
 						res.handlers.map((data) => {
 							let file_name = this.splitFileName(data.filename);
 							const modified_details = {
-								filename: file_name.substring(file_name.indexOf('_') + 1),
+								filename: file_name,
 								filetype: this.media_type,
 								handlerid: data.handle
 							};

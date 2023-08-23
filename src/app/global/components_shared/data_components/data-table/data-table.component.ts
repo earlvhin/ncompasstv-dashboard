@@ -269,23 +269,19 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editFillerFeed(id) {
-		let dialogRef = this._dialog.open(CreateFillerFeedComponent, {
-			width: '600px',
-			data: {
-				id: id,
-				from_edit_table: true
-			}
-		});
-
-		dialogRef.afterClosed().subscribe(
-			(response) => {
-				if (!response) return;
-				this.reload_page.emit(true);
-			},
-			(error) => {
-				throw new Error(error);
-			}
-		);
+		let dialogRef = this._dialog
+			.open(CreateFillerFeedComponent, {
+				width: '600px',
+				data: {
+					id: id,
+					from_edit_table: true
+				}
+			})
+			.afterClosed()
+			.subscribe((response) => {
+				if (!response) this.reload_page.emit(true);
+				else return;
+			});
 	}
 
 	deleteFeed(id): void {
