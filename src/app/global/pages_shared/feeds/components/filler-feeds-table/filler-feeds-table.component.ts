@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
 import { Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
@@ -33,6 +33,7 @@ export class FillerFeedsTableComponent implements OnInit {
 	];
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
+	@Output() reload_page = new EventEmitter();
 
 	constructor(private _filler: FillerService, private _date: DatePipe, private _route: Router) {}
 
@@ -107,6 +108,7 @@ export class FillerFeedsTableComponent implements OnInit {
 
 	reloadPage(e) {
 		if (e) this.ngOnInit();
+		this.reload_page.emit(true);
 	}
 
 	filterData(keyword: string): void {
