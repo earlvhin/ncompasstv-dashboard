@@ -23,7 +23,7 @@ export class FillersComponent implements OnInit {
 	filler_group_cache = [];
 	is_loading = true;
 	no_search_result = false;
-	search_keyword: string;
+	search_keyword: string = '';
 	sorting_order: string = '';
 	sorting_column: string = '';
 	title = 'Fillers Library';
