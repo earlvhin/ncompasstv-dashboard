@@ -84,7 +84,8 @@ export class FilestackService extends BaseService {
 						handle: file.handle,
 						filename: filename,
 						filesize: file.size,
-						isconverted: !convert_to_webm ? 1 : 0
+						isconverted: !convert_to_webm ? 1 : 0,
+						classification: fillers ? 'filler-v2' : ''
 					};
 
 					// Generate MP4 Thumbnail
