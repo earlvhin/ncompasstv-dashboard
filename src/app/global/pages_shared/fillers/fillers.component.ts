@@ -194,14 +194,15 @@ export class FillersComponent implements OnInit {
 						data.paging.entities.map((group) => {
 							this.filler_group_cache.push(group);
 						});
+						return;
 					} else this.filler_group_cache = data.paging.entities;
 					this.filler_group = data.paging;
 				} else {
-					if (this.search_keyword != '') this.no_search_result = true;
-					else {
+					if (this.search_keyword == '') {
 						this.filler_group = [];
 						this.no_search_result = false;
-					}
+						return;
+					} else this.no_search_result = true;
 				}
 			})
 			.add(() => {
