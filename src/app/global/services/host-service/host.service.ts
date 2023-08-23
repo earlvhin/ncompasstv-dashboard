@@ -185,9 +185,13 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_support_entries(page: number): Observable<any> {
+	get_support_entries(
+		hostId: string,
+		page: number,
+		column: string,
+		order: string ): Observable<{paging: PAGING; message?: string}> {
 		const base = `${this.getters.api_get_support}`;
-		const params = this.setUrlParams({ page }, false, true);
+		const params = this.setUrlParams({ hostId, page, column, order }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

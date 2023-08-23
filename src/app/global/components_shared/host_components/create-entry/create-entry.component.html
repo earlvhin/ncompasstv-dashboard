@@ -19,7 +19,7 @@
 			mat-button 
 			mat-raised-button 
 			class="theme-btn mr-2" 	
-			[disabled]="is_creating_support && form_invalid">
+			[disabled]="disabled_submit">
 			{{ is_creating_support && form_invalid ? 'Creating Entry...' : 'Submit' }}
 		</button>
 

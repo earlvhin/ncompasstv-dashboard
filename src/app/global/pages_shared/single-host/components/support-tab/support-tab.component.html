@@ -8,10 +8,11 @@
 		</div>
 	</div>
 
-	<div class="content-section">
-		<div class="row" *ngIf="!initial_load">
+	<div class="content-section" >
+		<div *ngIf="!initial_load; else loader">
+			<ng-container class="row">
 				<div class="col-lg-12">
-					<mat-card>
+					<mat-card *ngIf="support_data.length > 0; else no_data">
 						<ng-container>
 							<app-data-table
 								[table_data]="support_data"
@@ -21,13 +22,29 @@
 								(reload_page)="reload_page($event)"
 								(update_info)="reload_page($event)"
 								(page_triggered)="getSupport($event)"
+								(to_sort_column)="getColumnsAndOrder($event)"
 								>
 							</app-data-table>
 						</ng-container>
 					</mat-card>
 				</div>
+			</ng-container>
 		</div>
 	</div>
-
-
 </div>
+
+
+<ng-template #loader>
+	<div class="py-4 white-bg h-500">
+		<app-spinner></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #no_data>
+	<mat-card class="p-5">
+		<h3>Oh Boy.</h3>
+		<p class="sm-text mb-3">
+			There are no available entries at the moment.
+		</p>
+	</mat-card>
+</ng-template>

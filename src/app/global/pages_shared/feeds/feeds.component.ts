@@ -77,6 +77,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	}
 
 	getColumnsAndOrder(data: { column: string; order: string }): void {
+		console.log(data, "feed")
 		this.sort_column = data.column;
 		this.sort_order = data.order;
 		this.getFeeds(1);

@@ -18,16 +18,16 @@ export class CreateEntryComponent implements OnInit {
 	@Output() reload_page = new EventEmitter();
 	is_creating_support = false;
 	new_support_form: FormGroup;
-	create_support_fields = this._formFields;
 	is_submitted: boolean;
 	form_invalid : boolean;
+	disabled_submit = true;
 
 	protected _unsubscribe = new Subject<void>();
 
 	constructor(
+		@Inject(MAT_DIALOG_DATA) public data: { hostId: string },
 		private _form: FormBuilder,
 		private _host: HostService,
-		@Inject(MAT_DIALOG_DATA) public data: { hostId: string },
 		private _auth: AuthService,
 		private _dialog: MatDialog,
 		private _dialog_ref: MatDialogRef<CreateEntryComponent>
@@ -35,7 +35,6 @@ export class CreateEntryComponent implements OnInit {
 
 	ngOnInit() {
 		this.initializeForm();
-		console.log(this.data);
 	}
 
 	get s() {
@@ -45,7 +44,6 @@ export class CreateEntryComponent implements OnInit {
 
 	saveSupport() {
 		this.is_creating_support = true;
-		this.is_submitted = true;
 		this.form_invalid = true;
 		const createdBy = this._auth.current_user_value.user_id;
 
@@ -56,28 +54,23 @@ export class CreateEntryComponent implements OnInit {
 			createdBy
 		);
 
-		if (!this._host.validate_url(this.s.supportUrl.value)) {
-			this.showConfirmationDialog('error', 'Oops something went wrong, Sorry!', 'The URL you entered is not valid.');
-			this.is_submitted = false;
-			this.form_invalid = false;
-			return false;
-		}
+		// if (!this._host.validate_url(this.s.supportUrl.value)) {
+		// 	this.showConfirmationDialog('error', 'Oops something went wrong, Sorry!', 'The URL you entered is not valid.');
+		// 	this.form_invalid = false;
+		// 	return false;
+		// }
 
 		this._host
 			.create_support_entry(new_entry)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					console.log(data);
-					this.is_submitted = false;
 					this.form_invalid = false;
 					this._dialog_ref.close(data);
 					this.reload_page.emit(true);
 					this.showConfirmationDialog('success', 'Entry Saved Successfully', 'Click OK to continue');
 				},
 				(error) => {
-					console.log(error);
-					this.is_submitted = false;
 					this.form_invalid = false;
 					this.showConfirmationDialog('error', 'Error while saving Entry', error.error.message);
 				}
@@ -89,6 +82,10 @@ export class CreateEntryComponent implements OnInit {
 			supportUrl: [null],
 			supportNotes: [null]
 		});
+
+		this.new_support_form.valueChanges.subscribe((v) => {
+			this.disabled_submit = !((v.supportUrl || v.supportNotes !== null) && (v.supportUrl || v.supportNotes !== ''))
+		})
 	}
 
 	private get form_controls() {
@@ -101,20 +98,5 @@ export class CreateEntryComponent implements OnInit {
 		this._dialog.open(ConfirmationModalComponent, dialogConfig);
 	}
 
-	protected get _formFields() {
-		return [
-			{
-				label: 'URL *',
-				control: 'supportUrl',
-				placeholder: 'Ticket URL',
-				type: 'link'
-			},
-			{
-				label: 'Notes',
-				control: 'supportNotes',
-				placeholder: 'Ticket Notes/Details',
-				type: 'text'
-			}
-		];
-	}
+	
 }
