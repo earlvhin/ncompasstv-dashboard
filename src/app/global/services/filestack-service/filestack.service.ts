@@ -18,7 +18,6 @@ export class FilestackService extends BaseService {
 
 	/** @TODO - pass filler_id (optional) */
 	convert_videos(data, filler_id?: any, fillers?: boolean, env?) {
-		console.log('DATA', data);
 		return new Promise((resolve, reject) => {
 			// Pass data to Backend then Convert Video
 
