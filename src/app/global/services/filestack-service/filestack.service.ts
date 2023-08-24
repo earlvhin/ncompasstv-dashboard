@@ -18,8 +18,14 @@ export class FilestackService extends BaseService {
 
 	/** @TODO - pass filler_id (optional) */
 	convert_videos(data, filler_id?: any, fillers?: boolean, env?) {
+		console.log('DATA', data);
 		return new Promise((resolve, reject) => {
 			// Pass data to Backend then Convert Video
+
+			//for fillers additional concatination
+			let init_code = '';
+			if (fillers) init_code = data.key.lastIndexOf('/');
+
 			const path = fillers && filler_id ? `path:"fillers/${env}/${filler_id}",` : '';
 			const handle = data.handle;
 			const filename = fillers ? data.filename.substring(0, data.filename.lastIndexOf('.')) : data.key.substring(0, data.key.lastIndexOf('.'));
@@ -50,10 +56,11 @@ export class FilestackService extends BaseService {
 				// Change mp4 filetype/filename to webm
 				if (file.mimetype === 'video/mp4' && convert_to_webm) {
 					filename = `${file.key.substring(0, file.key.lastIndexOf('.'))}.webm`;
-					// filename = `${file.key.substring(0, file.key.lastIndexOf("."))}.mp4`;
 
 					let convert_data: any;
 					if (fillers) {
+						let new_filename = file.key.split('/').pop();
+						file.filename = new_filename;
 						convert_data = await this.convert_videos(file, group, true, env);
 					} else {
 						convert_data = await this.convert_videos(file);

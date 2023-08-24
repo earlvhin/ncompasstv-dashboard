@@ -96,7 +96,7 @@ export class AddFillerContentComponent implements OnInit {
 				response.filesUploaded.map((uploaded) => {
 					const modified_details = {
 						filename: this.splitFileName(uploaded.key),
-						filetype: this.media_type,
+						filetype: uploaded.key.substring(uploaded.key.lastIndexOf('.') + 1),
 						handlerid: uploaded.handle,
 						title: ''
 					};
@@ -134,8 +134,9 @@ export class AddFillerContentComponent implements OnInit {
 							let file_name = this.splitFileName(data.filename);
 							const modified_details = {
 								filename: file_name,
-								filetype: this.media_type,
-								handlerid: data.handle
+								filetype: data.filename.substring(data.filename.lastIndexOf('.') + 1),
+								handlerid: data.handle,
+								title: file_name
 							};
 							this.upload_holder.push(modified_details);
 						});

@@ -85,8 +85,8 @@
 								<div class="box-shadowing mb-4">
 									<div class="row no-gutters">
 										<div class="col-lg-6 text-left bg-dark p-2">
-											<span class="fa fa-image text-primary" *ngIf="data.fileType === 'image'" title="Image"></span>
-											<span class="fa fa-video text-primary" *ngIf="data.fileType === 'video'" title="Video"></span>
+											<span class="fa fa-image text-primary" *ngIf="data.fileType | isimage" title="Image"></span>
+											<span class="fa fa-video text-primary" *ngIf="data.fileType | isvideo" title="Video"></span>
 											<span class="fa fa-wifi text-primary" *ngIf="data.fileType === 'feed'" title="Feed"></span>
 										</div>
 										<div class="col-lg-6 text-right bg-dark p-2">
@@ -100,7 +100,7 @@
 												[src]="data.url"
 												class="clickable full-width br-5 h-130-px"
 												(click)="gotoFileURL(data.url)"
-												*ngIf="data.fileType == 'image'; else video" />
+												*ngIf="data.fileType | isimage; else video" />
 											<ng-template #video>
 												<div class="h-130-px">
 													<object [attr.data]="data.url | sanitize" class="text-center full-width h-130-px br-5"></object>

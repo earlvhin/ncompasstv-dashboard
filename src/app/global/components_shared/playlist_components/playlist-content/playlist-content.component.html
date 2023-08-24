@@ -16,18 +16,18 @@
 			<img
 				[src]="content.thumbnail"
 				alt="thumbnail"
-				*ngIf="content.fileType !== 'feed' && content.classification == null; else feed_thumb"
+				*ngIf="content.fileType !== 'feed' && content.classification != 'filler-v2'; else feed_thumb"
 				class="full-width height-100 border-bottom" />
 
 			<ng-template #feed_thumb>
-				<img
-					[src]="fs_screenshot + '/' + content.url | sanitize"
+				<object
+					[attr.data]="content.url | sanitize"
 					class="full-width height-100 border-bottom"
-					*ngIf="content.classification == ''" />
+					*ngIf="content.fileType == 'feed' || (content.classification == 'filler-v2' && content.fileType | isvideo)"></object>
 				<img
 					[src]="content.url"
 					alt="filler preview"
-					*ngIf="content.classification == 'filler-v2'"
+					*ngIf="content.classification == 'filler-v2' && content.fileType | isimage"
 					class="full-width height-100 border-bottom" />
 			</ng-template>
 
