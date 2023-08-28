@@ -55,6 +55,15 @@ export class BaseService {
 		return this._http.post(url, body, headers);
 	}
 
+	protected customHeader_postRequest(endpoint: string, body: object, options: any = null, customheader): Observable<any> {
+		let headers = customheader;
+		let baseUri = this.baseUri;
+		if (options) headers = { headers, ...options };
+		if (this._auth.current_role === 'dealeradmin') baseUri += 'dealeradmin/';
+		const url = `${baseUri}${endpoint}`;
+		return this._http.post(url, body, headers);
+	}
+
 	protected get baseUri() {
 		return `${environment.base_uri}`;
 	}

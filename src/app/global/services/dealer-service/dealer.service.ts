@@ -119,6 +119,11 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_dealers_with_page_minified(page: number, key: string, pageSize = 15) {
+		const url = `${this.getters.api_get_dealers_minified}?page=${page}&search=${key}&pageSize=${pageSize}`;
+		return this.getRequest(url);
+	}
+
 	get_dealers_with_sort(
 		page: number,
 		search: string,
