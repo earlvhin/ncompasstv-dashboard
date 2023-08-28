@@ -1,0 +1,55 @@
+<div *ngIf="!initial_load; else loader">
+	<div class="row mt-4">
+		<div class="offset-lg-8 col-lg-4">
+			<app-search-field
+				*ngIf="!initial_load"
+				[form_title]="'Search Filler Name or Owner'"
+				[placeholder]="'Example: N-Compass Feed'"
+				[data_reference]="filtered_data"
+				[primary_keyword]="'title'"
+				[secondary_keyword]="'business_name'"
+				(searched)="filterData($event)"
+				[api_search]="true">
+			</app-search-field>
+		</div>
+	</div>
+	<div class="row" *ngIf="!initial_load">
+		<div class="col-lg-12">
+			<ng-container *ngIf="!searching; else loader">
+				<mat-card *ngIf="filtered_data.length > 0; else nodata">
+					<app-data-table
+						[table_data]="filtered_data"
+						[table_columns]="fillers_table_column"
+						[new_table]="true"
+						[paging_details]="fillers_paging"
+						[has_action]="true"
+						(page_triggered)="getAllFillerFeeds($event)"
+						(reload_page)="reloadPage($event)"
+						(update_info)="reloadPage($event)"
+						[fillers]="true">
+					</app-data-table>
+				</mat-card>
+			</ng-container>
+		</div>
+	</div>
+</div>
+
+<ng-template #loader>
+	<div class="py-4 white-bg h-500">
+		<app-spinner></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #small_loader>
+	<div class="py-4 white-bg">
+		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #nodata>
+	<mat-card class="pt-5 pb-5 text-center text-gray">
+		<i class="fa-5x far fa-file-alt"></i>
+		<h3 class="mt-4">No Results Found.</h3>
+		<span>Try adjusting your search to find what you're looking for.</span>
+	</mat-card>
+</ng-template>

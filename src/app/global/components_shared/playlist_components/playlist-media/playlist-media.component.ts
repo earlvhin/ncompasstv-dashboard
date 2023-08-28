@@ -1,11 +1,12 @@
 import { Component, Inject, Input, OnInit } from '@angular/core';
-import { MatDialog, MAT_DIALOG_DATA } from '@angular/material';
+import { MatDialog, MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { API_CONTENT, UI_ROLE_DEFINITION } from 'src/app/global/models';
-import { AuthService, ContentService } from 'src/app/global/services';
+import { AuthService, ContentService, FillerService, PlaylistService } from 'src/app/global/services';
 import { MediaPlaywhereComponent } from '../media-playwhere/media-playwhere.component';
+import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-playlist-media',
@@ -21,12 +22,22 @@ export class PlaylistMediaComponent implements OnInit {
 	media_files_backup: API_CONTENT[] = [];
 	floating_contents: API_CONTENT[] = [];
 	file_not_found: boolean = false;
+	filler_groups: any = [];
 	show_floating: boolean = false;
 	page: number = 1;
 	paging: any;
 	isDealer: boolean = true;
 	isGettingData: boolean = true;
+	selected_groups: any = [];
+	isActiveTab: number = 0;
+	active_filler: string = 'own';
 	// subscription: Subscription = new Subscription();
+
+	current_selection: any = '';
+	prev_selection: any = '';
+	current_content: any = [];
+	in_progress_saving_fillers: boolean = false;
+	has_fillers: boolean = false;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -34,12 +45,15 @@ export class PlaylistMediaComponent implements OnInit {
 		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
 		private _dialog: MatDialog,
 		private _content: ContentService,
-		private _auth: AuthService
+		private _auth: AuthService,
+		private _filler: FillerService,
+		private _playlist: PlaylistService,
+		private _currentDialog: MatDialogRef<PlaylistMediaComponent>
 	) {}
 
 	ngOnInit() {
-		this.getDealerContent(this._dialog_data.dealer_id);
-
+		// this.checkIfPlaylistHasFillers();
+		this.onTabChanged(this.isActiveTab);
 		if (
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech
@@ -205,5 +219,131 @@ export class PlaylistMediaComponent implements OnInit {
 				return;
 			}
 		});
+	}
+
+	getAllFillerGroups() {
+		this._filler
+			.get_filler_feeds(1, '', 0)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					data.paging.entities.map((group) => {
+						let sum = 0;
+						group.fillerGroups.map((inside_group) => {
+							if (inside_group.isPair) sum = sum + inside_group.quantity * 2;
+							else sum = sum + inside_group.quantity;
+						});
+						group.totalFillers = sum;
+					});
+					this.filler_groups = data.paging.entities;
+				},
+				(error) => {}
+			);
+	}
+
+	prepareDataToAddToPlaylist(id, total) {
+		this.current_content = [];
+		this.current_selection = id;
+		this._filler
+			.get_single_filler_feeds_placeholder(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					data.data.map((filler, index) => {
+						this.current_content.push({
+							contentId: filler.contentId,
+							duration: filler.duration,
+							isFullScreen: 0,
+							playlistContentId: null,
+							seq: index + 1
+						});
+					});
+				},
+				(error) => {}
+			)
+			.add(() => {
+				//map existing contents to comply with format
+				this._dialog_data.existing_contents.map((contents) => {
+					let x = {
+						contentId: contents.contentId,
+						duration: contents.duration,
+						isFullScreen: contents.isFullScreen,
+						playlistContentId: contents.playlistContentId,
+						seq: contents.seq + total
+					};
+					this.current_content.push(x);
+				});
+			});
+
+		if (this.current_selection != this.prev_selection) {
+			this.addFillerSelectedEffect(id);
+		}
+	}
+
+	addFillerSelectedEffect(id) {
+		const box = document.getElementById(id);
+		box.classList.add('selected-box');
+		box.classList.remove('bg-dark');
+		if (this.prev_selection != '') this.removeFillerSelectedEffect(this.prev_selection);
+		else this.prev_selection = id;
+	}
+
+	removeFillerSelectedEffect(id) {
+		const box = document.getElementById(id);
+		box.classList.remove('selected-box');
+		box.classList.add('bg-dark');
+		this.prev_selection = this.current_selection;
+	}
+
+	addFillerOnPlaylist() {
+		this.in_progress_saving_fillers = true;
+		let final_format = {
+			playlist: {
+				playlistId: this._dialog_data.playlist_id
+			},
+			playlistContents: this.current_content
+		};
+		this._playlist
+			.update_playlist_contents(final_format)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data: any) => {
+					if (data) this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
+				},
+				(error) => {}
+			);
+	}
+
+	addToPlaylist() {
+		this._currentDialog.close({ mode: 'add', data: this.selected_contents });
+	}
+
+	swapContents() {
+		this._currentDialog.close({ mode: 'swap', data: this.selected_contents });
+	}
+
+	openConfirmationModal(status, message, data): void {
+		const dialog = this._dialog.open(ConfirmationModalComponent, {
+			width: '500px',
+			height: '350px',
+			data: { status, message, data }
+		});
+
+		dialog.afterClosed().subscribe(() => {
+			this._currentDialog.close({ mode: 'fillers' });
+		});
+	}
+
+	onTabChanged(index) {
+		this.isActiveTab = index;
+		switch (index) {
+			case 0:
+				this.getDealerContent(this._dialog_data.dealer_id);
+				break;
+			case 1:
+				this.getAllFillerGroups();
+				break;
+			default:
+		}
 	}
 }

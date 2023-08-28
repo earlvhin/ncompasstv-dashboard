@@ -37,7 +37,7 @@
 				mat-raised-button
 				class="theme-btn"
 				(click)="displaySuccess()"
-				*ngIf="!rename && action != 'playlist_delete' && is_selection && !is_installation">
+				*ngIf="!rename && action != 'playlist_delete' && is_selection && !is_installation && !delete">
 				Yes
 			</button>
 			<button
@@ -45,27 +45,22 @@
 				mat-raised-button
 				class="theme-btn"
 				(click)="displaySuccess()"
-				*ngIf="!rename && action != 'playlist_delete' && !is_selection">
+				*ngIf="!rename && action != 'playlist_delete' && !is_selection && !delete">
 				Continue
 			</button>
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn"
-				(click)="deletePlaylist()"
-				*ngIf="!rename && action == 'playlist_delete' && !is_selection">
-				Continue
+			<button mat-button mat-raised-button class="theme-btn" (click)="deleteContent()" *ngIf="delete">Continue</button>
+			<button mat-button mat-raised-button class="theme-btn mr-2" (click)="renameAllowed()" *ngIf="rename && !is_selection">
+				{{ filler_photo ? 'No' : 'Rename' }}
 			</button>
-			<button mat-button mat-raised-button class="theme-btn mr-2" (click)="renameAllowed()" *ngIf="rename && !is_selection">Rename</button>
 			<button mat-button mat-raised-button class="theme-btn" (click)="continueUpload()" *ngIf="rename && !is_selection">Continue Upload</button>
 		</div>
 
 		<!-- Warn User to be Logged Out -->
-		<div class="text-center" *ngIf="status === 'logout'">
+		<!-- <div class="text-center" *ngIf="status === 'logout'">
 			<app-warning-animation></app-warning-animation>
 			<h3 class="mb-1">{{ title }}</h3>
 			<p class="mb-0 sm-text font-weight-md">{{ message }}</p>
 			<button mat-button mat-raised-button [mat-dialog-close]="action || true" class="mt-4 theme-btn" (click)="displaySuccess()">OK</button>
-		</div>
+		</div> -->
 	</div>
 </div>
