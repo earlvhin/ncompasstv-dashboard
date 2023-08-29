@@ -19,14 +19,16 @@ export class ViewFillersGroupComponent implements OnInit {
 	filler_group_pagination: any = [];
 	filler_group_data: any;
 	filler_group_id: string;
+	isActiveTab = 0;
 	is_loading = true;
+	loading_playing_where = false;
 	no_search_result = false;
+	playing_where: any = [];
 	search_keyword: string;
 	selected_filler: string;
 	sorting_order: string = '';
 	sorting_column: string = '';
 	title = 'Fillers Library';
-	isActiveTab = 0;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -173,7 +175,10 @@ export class ViewFillersGroupComponent implements OnInit {
 			.get_filler_group_playing_where(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				//next sprint implementation
+				this.loading_playing_where = false;
+				if (data.fillerFeeds.length > 0) {
+					this.playing_where = data.fillerFeeds;
+				}
 			});
 	}
 
@@ -182,6 +187,7 @@ export class ViewFillersGroupComponent implements OnInit {
 		switch (tab) {
 			case 1:
 				this.getFillerGroupPlayingWhere(this.filler_group_id);
+				this.loading_playing_where = true;
 				break;
 			default:
 		}
