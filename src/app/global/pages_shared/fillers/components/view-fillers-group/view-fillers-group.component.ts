@@ -24,8 +24,15 @@ export class ViewFillersGroupComponent implements OnInit {
 	loading_playing_where = false;
 	no_search_result = false;
 	playing_where: any = [];
+	playing_where_selected: any = [];
+	playlist_selected: any = [];
+	host_selected: any = [];
 	search_keyword: string;
 	selected_filler: string;
+	selected_filler_feed_index: string;
+	selected_playlist_index: string;
+	selected_host_index: string;
+	selected_license_index: string;
 	sorting_order: string = '';
 	sorting_column: string = '';
 	title = 'Fillers Library';
@@ -178,8 +185,31 @@ export class ViewFillersGroupComponent implements OnInit {
 				this.loading_playing_where = false;
 				if (data.fillerFeeds.length > 0) {
 					this.playing_where = data.fillerFeeds;
+					this.selectFillerFeeds(data.fillerFeeds[0], 0);
 				}
 			});
+	}
+
+	selectFillerFeeds(data, index) {
+		this.selected_filler_feed_index = index;
+		this.playing_where_selected = data.playlists;
+		this.selectPlaylist(this.playing_where_selected[0], 0);
+	}
+
+	selectPlaylist(data, index) {
+		this.selected_playlist_index = index;
+		this.playlist_selected = data.hosts;
+		this.selectHost(this.playlist_selected[0], 0);
+	}
+
+	selectHost(data, index) {
+		this.selected_host_index = index;
+		this.host_selected = data.licenses;
+		this.selectLicenses(this.host_selected[0], 0);
+	}
+
+	selectLicenses(data, index) {
+		this.selected_license_index = index;
 	}
 
 	onTabChanged(tab) {
