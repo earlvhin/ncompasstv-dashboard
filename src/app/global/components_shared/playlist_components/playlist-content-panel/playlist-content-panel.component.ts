@@ -111,10 +111,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_contents = [...this.fixSequences()];
 
 		// filter out contents to show only active ones
-		this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
+		// this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
 
 		this.getAssetCount();
-		this.currentStatusFilter = this.statusFilterOptions[1];
+		this.currentStatusFilter = this.statusFilterOptions[0];
 		this.playlist_saving = false;
 		this.selected_playlist_content_ids = [];
 		this.selected_contents = [];
