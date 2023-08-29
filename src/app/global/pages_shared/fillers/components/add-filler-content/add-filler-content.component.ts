@@ -136,7 +136,7 @@ export class AddFillerContentComponent implements OnInit {
 								filename: file_name,
 								filetype: data.filename.substring(data.filename.lastIndexOf('.') + 1),
 								handlerid: data.handle,
-								title: file_name
+								title: file_name.substring(file_name.indexOf('_') + 1)
 							};
 							this.upload_holder.push(modified_details);
 						});
