@@ -138,8 +138,14 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 				},
 				internet_type: { value: license.internetType ? license.internetType : '--', link: null, editable: false, hidden: false },
 				internet_speed: { value: license.internetSpeed ? license.internetSpeed : '--', link: null, editable: false, hidden: false },
-				last_push_update: {
-					value: license.contentsUpdated ? this._date.transform(license.contentsUpdated) : '--',
+				// last_push_update: {
+				// 	value: license.contentsUpdated ? this._date.transform(license.contentsUpdated) : '--',
+				// 	link: null,
+				// 	editable: false,
+				// 	hidden: false
+				// },
+				mac_address: {
+					value: license.macAddress ? license.macAddress : '--',
 					link: null,
 					editable: false,
 					hidden: false
@@ -236,7 +242,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			'Screen',
 			'Internet Type',
 			'Internet Speed',
-			'Last Push Update',
+			'Mac Address',
 			'Last Startup',
 			'Last Disconnect',
 			'Installation Date'
