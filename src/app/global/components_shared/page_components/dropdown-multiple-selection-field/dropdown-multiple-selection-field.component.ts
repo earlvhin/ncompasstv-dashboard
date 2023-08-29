@@ -1,6 +1,8 @@
 import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { MatSelect } from '@angular/material';
 import { FormControl, FormGroup } from '@angular/forms';
+import { debounceTime, map, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Component({
 	selector: 'app-dropdown-multiple-selection-field',
@@ -18,13 +20,19 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 	@Input() public form: FormGroup;
 	dealer_admins = [];
 	dealers = [];
+	original_data = [];
 
 	selected_data: any;
 	dropdownFilterControl = new FormControl(null);
 
+	protected _unsubscribe: Subject<void> = new Subject<void>();
+
 	constructor() {}
 
-	ngOnInit() {}
+	ngOnInit() {
+		this.original_data = [...this.dropdownData];
+		this.subscribeToDealerSearch();
+	}
 
 	onRemoveDealer(index: number) {
 		this.selectedDropdownControl.value.splice(index, 1);
@@ -53,6 +61,30 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 
 	private subscribeToDealerSearch(): void {
 		const control = this.dropdownFilterControl;
-		control.valueChanges.pipe().subscribe(() => (this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
+		control.valueChanges
+			.pipe(
+				takeUntil(this._unsubscribe),
+				debounceTime(500),
+				map((keyword) => {
+					if (control.invalid) return;
+
+					if (keyword && keyword.trim().length > 0) {
+						let filtered = [];
+						this.dropdownData.map((dealer) => {
+							if (!this.dealerAdmin) {
+								if (dealer.businessName.toLowerCase().indexOf(keyword.toLowerCase()) > -1) filtered.push(dealer);
+							} else {
+								if (
+									dealer.firstName.toLowerCase().indexOf(keyword.toLowerCase()) > -1 ||
+									dealer.lastName.toLowerCase().indexOf(keyword.toLowerCase()) > -1
+								)
+									filtered.push(dealer);
+							}
+						});
+						this.dropdownData = filtered;
+					} else this.dropdownData = this.original_data;
+				})
+			)
+			.subscribe(() => (this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
 	}
 }
