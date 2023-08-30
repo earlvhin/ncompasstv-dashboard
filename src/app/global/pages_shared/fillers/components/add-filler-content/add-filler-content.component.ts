@@ -111,7 +111,6 @@ export class AddFillerContentComponent implements OnInit {
 
 				this.uploadContentToDatabase(final_upload_to_db, type);
 				if (this.media_type == 'video') this.processUploadedFiles(response.filesUploaded);
-				else this.uploadContentToDatabase(final_upload_to_db, type);
 			}
 		};
 	}
