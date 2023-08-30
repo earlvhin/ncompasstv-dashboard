@@ -125,6 +125,9 @@ export class DataStatisticsCardComponent implements OnInit {
                             callbacks: {
                                 afterTitle: function(val) {
                                     return "Host: " + whole[val[0].dataIndex].hostName;
+                                },
+                                beforeBody: function(val) {
+                                    return "Dealer: " + whole[val[0].dataIndex].businessName;
                                 }
                             }
                         },
@@ -143,7 +146,12 @@ export class DataStatisticsCardComponent implements OnInit {
                         y: {
                             type: 'time',
                             time: {
-                                unit: 'month'
+                                unit: 'day',
+                                tooltipFormat: 'MMMM, DD, YYYY',
+                                displayFormats: {
+                                    day: 'MMM YYYY',
+                                }
+
                             },
                             min: min_value,
                             max: max_value,
