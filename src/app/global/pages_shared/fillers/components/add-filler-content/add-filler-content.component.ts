@@ -96,9 +96,9 @@ export class AddFillerContentComponent implements OnInit {
 				response.filesUploaded.map((uploaded) => {
 					const modified_details = {
 						filename: this.splitFileName(uploaded.key),
-						filetype: uploaded.key.substring(uploaded.key.lastIndexOf('.') + 1),
+						filetype: this.media_type == 'video' ? 'webm' : uploaded.key.substring(uploaded.key.lastIndexOf('.') + 1),
 						handlerid: uploaded.handle,
-						title: ''
+						title: uploaded.filename
 					};
 					modified_details.title = this.removeHandleIdOnFileName(modified_details.filename);
 					this.upload_holder.push(modified_details);
@@ -109,6 +109,7 @@ export class AddFillerContentComponent implements OnInit {
 					files: this.upload_holder
 				};
 
+				this.uploadContentToDatabase(final_upload_to_db, type);
 				if (this.media_type == 'video') this.processUploadedFiles(response.filesUploaded);
 				else this.uploadContentToDatabase(final_upload_to_db, type);
 			}
@@ -124,34 +125,7 @@ export class AddFillerContentComponent implements OnInit {
 
 		file_data = await this._filestack.process_uploaded_files(data, '', true, this.selected_group.fillerGroupId, folder);
 		if (file_data) {
-			this._filestack
-				.post_content_info(file_data)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(res) => {
-						this.upload_holder = [];
-						res.handlers.map((data) => {
-							let file_name = this.splitFileName(data.filename);
-							const modified_details = {
-								filename: file_name,
-								filetype: data.filename.substring(data.filename.lastIndexOf('.') + 1),
-								handlerid: data.handle,
-								title: file_name
-							};
-							this.upload_holder.push(modified_details);
-						});
-
-						const final_upload_to_db = {
-							fillerGroupId: this.selected_group.fillerGroupId,
-							files: this.upload_holder
-						};
-
-						this.uploadContentToDatabase(final_upload_to_db, this.media_type);
-					},
-					(error) => {
-						throw new Error(error);
-					}
-				);
+			this._filestack.post_content_info(file_data).pipe(takeUntil(this._unsubscribe)).subscribe();
 		}
 	}
 
