@@ -1042,3 +1042,8 @@ agm-map {
 	color: $lighten_white;
 	padding: 5px 8px;
 }
+
+.active-selection {
+	background: $primary;
+	color: white;
+}
