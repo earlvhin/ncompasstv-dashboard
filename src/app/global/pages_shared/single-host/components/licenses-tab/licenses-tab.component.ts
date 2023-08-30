@@ -138,12 +138,6 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 				},
 				internet_type: { value: license.internetType ? license.internetType : '--', link: null, editable: false, hidden: false },
 				internet_speed: { value: license.internetSpeed ? license.internetSpeed : '--', link: null, editable: false, hidden: false },
-				// last_push_update: {
-				// 	value: license.contentsUpdated ? this._date.transform(license.contentsUpdated) : '--',
-				// 	link: null,
-				// 	editable: false,
-				// 	hidden: false
-				// },
 				mac_address: {
 					value: license.macAddress ? license.macAddress : '--',
 					link: null,
