@@ -52,11 +52,6 @@ export class CreateEntryComponent implements OnInit {
 			createdBy
 		);
 
-		if (!this._host.validate_url(this.s.supportUrl.value) && this.s.supportUrl.value.length > 0) {
-			this.showConfirmationDialog('error', 'Oops something went wrong, Sorry!', 'The URL you entered is not valid.');
-			this.form_invalid = false;
-			return false;
-		}
 
 		this._host
 			.create_support_entry(new_entry)

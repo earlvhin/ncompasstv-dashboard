@@ -101,7 +101,7 @@ export class SupportTabComponent implements OnInit {
 					{ value: s.ticketId, hidden: true },
 					{ value: s.hostId, hidden: true  },
 					{ value: this._date.transform(s.dateCreated, "MMMM d, y"), hidden: false },
-					{ value: s.url ? s.url : "--", hidden: false },
+					{ value: s.url ? s.url : "--", hidden: false, globalLink: `${s.url}`, new_tab_link: true },
 					{ value: s.notes ? s.notes : "--", hidden: false  },
 					{ value: s.dateUpdated, hidden: true  },
 					{ value: s.createdBy, hidden: true  }
