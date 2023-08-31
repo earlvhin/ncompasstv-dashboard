@@ -51,11 +51,8 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 	onSubmit() {
 		let data_selected = this.selectedDropdownControl.value;
 		data_selected.map((data) => {
-			if (!this.dealerAdmin) {
-				return data;
-			} else {
-				return data.userId;
-			}
+			if (!this.dealerAdmin) return data;
+			else return data.userId;
 		});
 	}
 
@@ -66,6 +63,7 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 				takeUntil(this._unsubscribe),
 				debounceTime(500),
 				map((keyword) => {
+					this.dropdownData = this.original_data;
 					if (control.invalid) return;
 
 					if (keyword && keyword.trim().length > 0) {
@@ -82,9 +80,12 @@ export class DropdownMultipleSelectionFieldComponent implements OnInit {
 							}
 						});
 						this.dropdownData = filtered;
-					} else this.dropdownData = this.original_data;
+					}
 				})
 			)
-			.subscribe(() => (this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId));
+			.subscribe(() => {
+				if (!this.dealerAdmin) this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+				else this.dropdownMultipleSelect.compareWith = (a, b) => a && b && a.userId === b.userId;
+			});
 	}
 }

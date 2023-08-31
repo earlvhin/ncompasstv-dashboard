@@ -192,20 +192,30 @@ export class ViewFillersGroupComponent implements OnInit {
 
 	selectFillerFeeds(data, index) {
 		this.selected_filler_feed_index = index;
-		this.playing_where_selected = data.playlists;
-		this.selectPlaylist(this.playing_where_selected[0], 0);
+		if (data.playlists) {
+			this.playing_where_selected = data.playlists;
+			this.selectPlaylist(this.playing_where_selected[0], 0);
+		} else {
+			this.playing_where_selected = [];
+			this.playlist_selected = [];
+			this.host_selected = [];
+		}
 	}
 
 	selectPlaylist(data, index) {
 		this.selected_playlist_index = index;
-		this.playlist_selected = data.hosts;
-		this.selectHost(this.playlist_selected[0], 0);
+		if (data.hosts) {
+			this.playlist_selected = data.hosts;
+			this.selectHost(this.playlist_selected[0], 0);
+		}
 	}
 
 	selectHost(data, index) {
 		this.selected_host_index = index;
-		this.host_selected = data.licenses;
-		this.selectLicenses(this.host_selected[0], 0);
+		if (data.licenses) {
+			this.host_selected = data.licenses;
+			this.selectLicenses(this.host_selected[0], 0);
+		}
 	}
 
 	selectLicenses(data, index) {
