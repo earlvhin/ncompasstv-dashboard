@@ -18,12 +18,16 @@ import { DeleteFillerGroupComponent } from './components/delete-filler-group/del
 })
 export class FillersComponent implements OnInit {
 	current_filer: any;
+	dimension: string = '';
 	fillers_count: any;
 	filler_group: any;
 	filler_group_cache = [];
 	is_loading = true;
+	no_preview = true;
 	no_search_result = false;
 	search_keyword: string = '';
+	selected_preview = [];
+	selected_preview_index = '';
 	sorting_order: string = '';
 	sorting_column: string = '';
 	title = 'Fillers Library';
@@ -142,6 +146,43 @@ export class FillersComponent implements OnInit {
 		});
 	}
 
+	showAlbumPreview(id, index) {
+		this.no_preview = false;
+		this.selected_preview_index = index;
+		this.selected_preview = [];
+		this._filler
+			.get_filler_thumbnails(id, 4)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				switch (data.length) {
+					case 1:
+						this.dimension = '150px';
+						break;
+					case 2:
+						this.dimension = '120px';
+						break;
+					default:
+						this.dimension = '85px';
+						break;
+				}
+				data.map((fillers) => {
+					if (fillers.fileType == 'webm') {
+						let lastIndex = fillers.url.lastIndexOf('.');
+						let requiredPath = fillers.url.slice(0, lastIndex + 1);
+						fillers.url = requiredPath + 'jpg';
+					}
+					fillers.dimension = this.dimension;
+				});
+				this.selected_preview = data;
+				console.log('SELECTED PREVIEW', this.selected_preview);
+			});
+	}
+
+	hidePreview() {
+		this.no_preview = true;
+		this.selected_preview_index = '';
+	}
+
 	addFillerContent(group) {
 		this._dialog
 			.open(AddFillerContentComponent, {
@@ -190,13 +231,13 @@ export class FillersComponent implements OnInit {
 			.subscribe((data: any) => {
 				if (!data.message) {
 					this.no_search_result = false;
+					this.filler_group = data.paging;
 					if (page > 1) {
 						data.paging.entities.map((group) => {
 							this.filler_group_cache.push(group);
 						});
 						return;
 					} else this.filler_group_cache = data.paging.entities;
-					this.filler_group = data.paging;
 				} else {
 					if (this.search_keyword == '') {
 						this.filler_group = [];
