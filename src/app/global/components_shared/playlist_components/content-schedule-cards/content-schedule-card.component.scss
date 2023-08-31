@@ -1,22 +1,21 @@
 .content-schedule-card {
-
 	.schedule {
 		flex-direction: row;
 		align-items: center;
-	
+
 		.thumbnail {
 			width: 105px;
 			height: 85px;
 			padding: 10px;
-	
+
 			img {
 				width: 100%;
 				height: 100%;
 				object-fit: cover;
 			}
 		}
-	
-		.info {
+
+		.info-content {
 			font-size: 11px;
 			width: 65%;
 			padding: 10px 0;
@@ -27,7 +26,5 @@
 				text-overflow: ellipsis;
 			}
 		}
-	
 	}
-
 }

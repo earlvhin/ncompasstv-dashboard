@@ -192,7 +192,7 @@ export class ViewFillersGroupComponent implements OnInit {
 
 	selectFillerFeeds(data, index) {
 		this.selected_filler_feed_index = index;
-		if (data.playlists) {
+		if (data.playlists && data.playlists.length) {
 			this.playing_where_selected = data.playlists;
 			this.selectPlaylist(this.playing_where_selected[0], 0);
 		} else {
@@ -204,9 +204,12 @@ export class ViewFillersGroupComponent implements OnInit {
 
 	selectPlaylist(data, index) {
 		this.selected_playlist_index = index;
-		if (data.hosts) {
+		if (data.hosts && data.hosts.length) {
 			this.playlist_selected = data.hosts;
 			this.selectHost(this.playlist_selected[0], 0);
+		} else {
+			this.playlist_selected = [];
+			this.host_selected = [];
 		}
 	}
 
@@ -215,6 +218,8 @@ export class ViewFillersGroupComponent implements OnInit {
 		if (data.licenses) {
 			this.host_selected = data.licenses;
 			this.selectLicenses(this.host_selected[0], 0);
+		} else {
+			this.host_selected = [];
 		}
 	}
 
