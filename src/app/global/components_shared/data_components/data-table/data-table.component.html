@@ -317,9 +317,12 @@
 
 									<ng-template #defaultValue>
 										<!-- DEFAULT DATA DISPLAY -->
-										<div *ngIf="!data[d].type">
+										<div *ngIf="!data[d].type" class="d-flex">
 											<div *ngIf="!data[d].anydesk; else anydesk">
-												{{ data[d].value }}
+												<span *ngIf="data[d].quantity; else default" [innerHTML]="data[d].value"></span>
+												<ng-template #default>
+													{{ data[d].value }}
+												</ng-template>
 												<button
 													class="fas fa-copy text-primary no-border"
 													*ngIf="data[d].copy && data[d].value != '--'"
@@ -360,6 +363,27 @@
 														[routerLink]="['/administrator/hosts', host.hostId]"
 														target="_blank">
 														{{ host.hostName }}
+													</a>
+												</div>
+											</div>
+
+											<!-- FILLER FEEDS QUANTITY -->
+											<div ngbDropdown class="float-right d-inline-block" *ngIf="data[d].quantity">
+												<button class="hidden-button no-background" id="quantity" ngbDropdownToggle>
+													<i
+														class="pl-3 cursor-pointer text-right fa fa-list-ol text-primary"
+														data-toggle="tooltip"
+														title="Show Quantity List"></i>
+												</button>
+
+												<div class="dropdown-menu bg-dark text-white" aria-labelledby="quantity" ngbDropdownMenu>
+													<span class="sm-text pl-2">QUANTITY BREAKDOWN:</span>
+													<a
+														class="dropdown-item sm-text text-white"
+														*ngFor="let group of data[d].filler_groups"
+														[routerLink]="['/administrator/fillers/view-fillers-group/', group.fillerGroupId]"
+														target="_blank">
+														{{ group.quantity }} - {{ group.name }}
 													</a>
 												</div>
 											</div>
@@ -476,6 +500,11 @@
 						title="Clone Feed"
 						*ngIf="!is_view_only"
 						(click)="onCloneFeed(data.id.value)"></i>
+				</td>
+
+				<td class="p-3 control-toggle md-text" *ngIf="fillers">
+					<i class="fas fa-edit cursor-pointer mx-3 text-dark" title="Edit" (click)="editFillerFeed(data.id.value)"> </i>
+					<i class="fas fa-trash cursor-pointer mx-2 text-danger" title="Delete" (click)="deleteFillers(data.id.value)"></i>
 				</td>
 
 				<td class="p-3 control-toggle" *ngIf="advertiser_delete">

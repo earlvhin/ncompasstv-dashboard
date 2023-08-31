@@ -42,7 +42,11 @@
 
 	<div class="col-lg-4">
 		<mat-form-field class="full-width" *ngIf="!isLoading">
-			<mat-label><i class="fas fa-search mr-3"></i>Search by tag, @assignee or ^dealer </mat-label>
+			<mat-label><i class="fas fa-search mr-3"></i>
+				<ng-container *ngIf="!is_dealer; else notAdmin">
+					Search by tag, @assignee or ^dealer
+				  </ng-container>
+			</mat-label>
 			<input matInput [formControl]="searchFormControl" />
 		</mat-form-field>
 	</div>
@@ -76,4 +80,8 @@
 
 <ng-template #noResults>
 	<p>No results found</p>
+</ng-template>
+
+<ng-template #notAdmin>
+	Search by tag or @assignee
 </ng-template>

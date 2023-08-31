@@ -2,8 +2,7 @@
 	class="bg-white border m-1 playlist-content-thumb"
 	[attr.title]="!is_list ? content.title : ''"
 	[class.is-protected]="content.isProtected === 1 && is_dealer && is_marking"
-	[class.cursor-not-allowed]="content.isProtected === 1 && is_dealer"
->
+	[class.cursor-not-allowed]="content.isProtected === 1 && is_dealer">
 	<div
 		*ngIf="!is_list; else list_mode"
 		class="h-100 w-100"
@@ -11,19 +10,25 @@
 		(mouseleave)="unsetHoveredBaseFrequency()"
 		[class.frequency-hover-grid]="canSetFrequencyBorder"
 		[class.future-schedule]="schedule_status === 'future'"
-		[class.inactive-schedule]="schedule_status === 'inactive'"
-	>
+		[class.inactive-schedule]="schedule_status === 'inactive'">
 		<!-- <div class="h-100 w-100"> -->
 		<div class="content-thumbnail inline-block">
 			<img
 				[src]="content.thumbnail"
 				alt="thumbnail"
-				*ngIf="content.fileType !== 'feed'; else feed_thumb"
-				class="full-width height-100 border-bottom"
-			/>
+				*ngIf="content.fileType !== 'feed' && content.classification != 'filler-v2'; else feed_thumb"
+				class="full-width height-100 border-bottom" />
 
 			<ng-template #feed_thumb>
-				<img [src]="fs_screenshot + '/' + content.url | sanitize" class="full-width height-100 border-bottom" />
+				<object
+					[attr.data]="content.url | sanitize"
+					class="full-width height-100 border-bottom"
+					*ngIf="content.fileType == 'feed' || (content.classification == 'filler-v2' && content.fileType | isvideo)"></object>
+				<img
+					[src]="content.url"
+					alt="filler preview"
+					*ngIf="content.classification == 'filler-v2' && content.fileType | isimage"
+					class="full-width height-100 border-bottom" />
 			</ng-template>
 
 			<div class="number-overlay mb-0 xsm-text font-weight-bold d-flex justify-content-between">
@@ -31,8 +36,7 @@
 					class="fas fa-user-circle mr-2"
 					*ngIf="page !== 'single-playlist'"
 					[ngClass]="dealer == null || dealer == '' ? 'text-gray' : 'text-primary'"
-					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'"
-				>
+					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'">
 				</i>
 				<div class="content-title" [class.text-info]="isBaseFrequency">
 					{{ contentTitle }}
@@ -49,6 +53,7 @@
 					<span *ngIf="content.fileType | isvideo"> video </span>
 
 					<span *ngIf="content.fileType | isFeed"> feed </span>
+					<span *ngIf="content.classification == 'filler-v2'"> filler </span>
 				</p>
 
 				<p class="sm-text text-primary mr-1" *ngIf="content.isFullScreen == 1">
@@ -58,8 +63,7 @@
 				<p
 					*ngIf="!is_marking && !is_view_only && !isChildFrequency && !(is_dealer && content.isProtected === 1)"
 					class="sm-text mb-0 cursor-pointer text-danger mx-1"
-					(click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)"
-				>
+					(click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)">
 					<span class="fas fa-trash"></span>
 				</p>
 
@@ -80,8 +84,7 @@
 			(mouseleave)="unsetHoveredBaseFrequency()"
 			[class.frequency-hover-list]="canSetFrequencyBorder"
 			[class.future-schedule]="schedule_status === 'future'"
-			[class.inactive-schedule]="schedule_status === 'inactive'"
-		>
+			[class.inactive-schedule]="schedule_status === 'inactive'">
 			<div class="col-lg-2 p-0">
 				<img [src]="content.thumbnail" alt="thumbnail" class="full-width max-height-90 height-100 border-bottom" />
 			</div>
@@ -91,7 +94,7 @@
 				</div>
 				<div class="col-lg-12 sm-text p-0">
 					<span>Filename: </span>
-					<span class="font-weight-bold">{{ content.title.length > 30 ? (content.title | slice: 0:30) + '...' : content.title }}</span>
+					<span class="font-weight-bold">{{ content.title.length > 30 ? (content.title | slice : 0 : 30) + '...' : content.title }}</span>
 				</div>
 				<div class="col-lg-12 sm-text p-0">
 					<span>Type: </span>
@@ -112,16 +115,14 @@
 				<i
 					class="fas fa-user-circle md-text mb-1"
 					[ngClass]="dealer == null || dealer == '' ? 'text-gray' : 'text-primary'"
-					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'"
-				></i>
+					[title]="dealer == null || dealer == '' ? 'Unassigned' : 'Assigned'"></i>
 				<p class="md-text text-primary mb-1" *ngIf="content.isFullScreen == 1">
 					<i class="fas fa-expand" [title]="content.isFullScreen ? 'Fullscreen' : 'Not Fullscreen'"></i>
 				</p>
 				<p
 					class="md-text cursor-pointer text-danger mb-1"
 					*ngIf="!is_marking && !(is_dealer && content.isProtected === 1)"
-					(click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)"
-				>
+					(click)="removeContentToPlaylistModal(content.playlistContentId, content.contentId)">
 					<span class="fas fa-trash" title="Delete"></span>
 				</p>
 				<p (click)="optionsModal()" class="md-text cursor-pointer" *ngIf="!is_marking">

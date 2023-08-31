@@ -86,6 +86,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	incoming_blacklist_licenses = [];
 	search_control = new FormControl();
 	bulk_toggle: boolean;
+
 	statusFilterOptions = this._statusFilterOptions;
 
 	private selected_contents: { playlistContentId: string; contentId: string; classification: any }[];
@@ -110,10 +111,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_contents = [...this.fixSequences()];
 
 		// filter out contents to show only active ones
-		this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
+		// this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
 
 		this.getAssetCount();
-		this.currentStatusFilter = this.statusFilterOptions[1];
+		this.currentStatusFilter = this.statusFilterOptions[0];
 		this.playlist_saving = false;
 		this.selected_playlist_content_ids = [];
 		this.selected_contents = [];
@@ -451,7 +452,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	}
 
 	openPlaylistMedia(type = 'add'): void {
-		const data = { playlist_host_license: this.playlist_host_license, dealer_id: this.dealer_id };
+		const data = {
+			playlist_host_license: this.playlist_host_license,
+			dealer_id: this.dealer_id,
+			existing_contents: this.playlist_contents,
+			playlist_id: this.playlist_id
+		};
 
 		const playlist_content_dialog: MatDialogRef<PlaylistMediaComponent> = this._dialog.open(PlaylistMediaComponent, {
 			data: data,
@@ -461,23 +467,33 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		playlist_content_dialog.componentInstance.type = type;
 
 		playlist_content_dialog.afterClosed().subscribe((response) => {
-			// if add content
+			//if fillers added
+			if (response.mode === 'fillers') this.reload_playlist.emit(true);
 
-			if (type === 'add') {
+			// if add content
+			if (response.mode === 'add') {
 				if (!response) return localStorage.removeItem('to_blocklist');
 				if (localStorage.getItem('to_blocklist')) this.incoming_blacklist_licenses = localStorage.getItem('to_blocklist').split(',');
-				this.structureAddedPlaylistContent(response);
+				this.structureAddedPlaylistContent(response.data);
 				return;
 			}
 
-			// if swap content
+			//just exit
 			if (!response || typeof response === 'undefined') return;
-			const content: API_CONTENT = response[0];
+
+			const content: API_CONTENT = response.data[0];
 			const playlistContentIdToBeReplaced = this.selected_playlist_content_ids[0];
 			if (content.playlistContentId === playlistContentIdToBeReplaced)
 				return this.showErrorDialog('Cannot select the same content to be swapped');
 
-			this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced });
+			// if swap content
+			if (response.mode === 'swap') {
+				const content: API_CONTENT = response.data[0];
+				const playlistContentIdToBeReplaced = this.selected_contents[0];
+				if (content.playlistContentId === playlistContentIdToBeReplaced.playlistContentId)
+					return this.showErrorDialog('Cannot select the same content to be swapped');
+				this.swapContent({ contentId: content.contentId, playlistContentId: playlistContentIdToBeReplaced.playlistContentId });
+			}
 		});
 	}
 
@@ -732,6 +748,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 	): void {
 		this.playlist_saving = true;
 		this.is_bulk_selecting = false;
+
 		if (data) {
 			this._playlist
 				.update_playlist_contents(data)
@@ -801,6 +818,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				this.removeToBlocklist();
 			}
 		}
+
+		this.search_control.setValue('');
+	}
+
+	structurePlaylistUpdatePayload(updated_playlist_content): API_UPDATE_PLAYLIST_CONTENT {
+		return new API_UPDATE_PLAYLIST_CONTENT(this.playlist_id, updated_playlist_content);
 	}
 
 	private setScheduleStatus(): void {
@@ -978,15 +1001,12 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				return;
 			}
 
-			// else if has keyword
-
 			this.playlist_contents = this.playlist_contents.filter((i) => {
 				if (i) {
 					if (i.fileName) {
 						return i.fileName.toLowerCase().includes(data.toLowerCase());
-					} else {
-						return i.title.toLowerCase().includes(data.toLowerCase());
 					}
+					return i.title.toLowerCase().includes(data.toLowerCase());
 				}
 			});
 		});

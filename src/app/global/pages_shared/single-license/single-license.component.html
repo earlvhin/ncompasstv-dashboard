@@ -266,12 +266,12 @@
 																</h5>
 															</div>
 
-															<!-- CEC Status -->
+															<!-- TV Status -->
 															<div class="flex-even">
-																<span class="sm-text"> CEC Enabled </span>
+																<span class="sm-text"> TV Status </span>
 
-																<h5 class="sm-text">
-																	{{ cec_status ? 'YES' : 'NO' }}
+																<h5 class="sm-text" [ngClass]="{ good: cec_status, bad: !cec_status }">
+																	{{ cec_status ? 'ON' : 'OFF' }}
 																</h5>
 															</div>
 

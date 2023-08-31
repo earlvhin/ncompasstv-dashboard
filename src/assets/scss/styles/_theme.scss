@@ -615,6 +615,20 @@ button {
 	font-weight: 500;
 }
 
+.box-shadowing {
+	box-shadow: 2px 2px 5px 5px $gray;
+	&:hover {
+		box-shadow: 2px 2px 5px 5px #c1e1c1;
+	}
+}
+
+.selected-box {
+	background: $cool !important;
+	.fa-info {
+		background: $black;
+	}
+}
+
 .disabled a {
 	pointer-events: none;
 	opacity: 0.6;
@@ -859,6 +873,22 @@ agm-map {
 	height: 100px !important;
 }
 
+.h-120-px {
+	height: 120px;
+}
+
+.h-130-px {
+	height: 130px;
+}
+
+.h-200-px {
+	height: 200px;
+}
+
+.w-200-px {
+	width: 200px;
+}
+
 .strike {
 	text-decoration: line-through;
 }
@@ -960,6 +990,13 @@ agm-map {
 
 .black-opacity {
 	background: rgba(0, 0, 0, 0.6);
+	transition: background 2s;
+}
+
+.black-solid-hover {
+	&:hover {
+		background: $black;
+	}
 }
 
 .z-index-5 {
@@ -968,6 +1005,10 @@ agm-map {
 
 .z-index-10 {
 	z-index: 10;
+}
+
+.z-index-1005 {
+	z-index: 1005;
 }
 
 .flow-wrap {
@@ -988,4 +1029,21 @@ agm-map {
 
 .text-shadow-black {
 	text-shadow: 1px 1px 1px black;
+}
+
+.hover-prime {
+	&:hover {
+		color: $primary;
+	}
+}
+
+.info {
+	background: rgb(11, 96, 136);
+	color: $lighten_white;
+	padding: 5px 8px;
+}
+
+.active-selection {
+	background: $primary;
+	color: white;
 }

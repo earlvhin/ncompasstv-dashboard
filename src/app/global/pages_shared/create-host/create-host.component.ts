@@ -671,8 +671,19 @@ export class CreateHostComponent implements OnInit {
 				return { hour: parseInt(hourData[0]), minute: parseInt(hourData[1]), second: 0 };
 			};
 
-			hour.openingHourData = setHourData(hour.open);
-			hour.closingHourData = setHourData(hour.close);
+			if (hour.open == "12:00 AM" && (hour.close == '' || null)) {
+				const close = '11:59 PM';
+				const open = '12:00 AM';
+
+				hour.close = close;
+				hour.open = open;
+				hour.openingHourData = setHourData(open);
+				hour.closingHourData = setHourData(close);
+			} else {
+				hour.openingHourData = setHourData(hour.open);
+				hour.closingHourData = setHourData(hour.close);
+			}
+
 			return hour;
 		});
 
@@ -681,8 +692,8 @@ export class CreateHostComponent implements OnInit {
 				id: h.id,
 				label: h.label,
 				day: h.day,
-				periods: this.operation_hours.filter((t) => t.day_id == h.id),
-				status: this.operation_hours.filter((t) => t.day_id == h.id).length !== 0
+				periods: this.operation_hours.filter((t) => t.day_id == h.id || (t.open === "12:00 AM" && t.close === "11:59 PM")),
+				status: this.operation_hours.filter((t) => (t.open === "12:00 AM" && t.close === "11:59 PM") || t.day_id == h.id).length !== 0
 			};
 		});
 	}
@@ -747,31 +758,30 @@ export class CreateHostComponent implements OnInit {
 
 	private WatchFields() {
 		this.newHostFormControls.category.valueChanges.subscribe((data) => {
-		  if (data === '') this.no_category = false;
+			if (data === '') this.no_category = false;
 		});
-	  
+		
 		this.newHostFormControls.category2.valueChanges.subscribe((data) => {
-		  if (data === '') this.no_category2 = false;
+			if (data === '') this.no_category2 = false;
 		});
-	  
+
 		this.newHostFormControls.city.valueChanges.subscribe((data) => {
-		  this.city_selected = data;
+			this.city_selected = data;
 		});
-	  
+
 		this.new_host_form.controls['zip'].setValidators([
 		  Validators.required,
 		  Validators.maxLength(7),
 		]);
-	  
+		
 		this.new_host_form.controls['zip'].valueChanges.subscribe((data) => {
-		  if (this.canada_selected) {
-			this.new_host_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
+			if (this.canada_selected) {
+				this.new_host_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
 		  }else{
-			this.new_host_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
-		  }
+				this.new_host_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
+			}
 		});
-	  }
-	
+	}
 
 	protected get _createFormFields() {
 		return [
@@ -865,14 +875,14 @@ export class CreateHostComponent implements OnInit {
 				id: 1,
 				label: 'M',
 				day: 'Monday',
-				preiods: [],
+				periods: [],
 				status: false
 			},
 			{
 				id: 2,
 				label: 'T',
 				day: 'Tuesday',
-				preiods: [],
+				periods: [],
 				status: false
 			},
 			{

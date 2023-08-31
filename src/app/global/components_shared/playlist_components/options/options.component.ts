@@ -20,7 +20,7 @@ export class OptionsComponent implements OnInit, OnDestroy, AfterContentChecked 
 	blacklisted_content: API_BLOCKLIST_CONTENT[] = [];
 	can_toggle_credits = true;
 	c_index: number;
-	content_data: API_CONTENT;
+	content_data: any;
 	content_frequency: number;
 	contents_list: any[] = [];
 	credits: number = null;

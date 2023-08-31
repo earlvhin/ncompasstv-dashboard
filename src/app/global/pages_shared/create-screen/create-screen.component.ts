@@ -124,11 +124,13 @@ export class CreateScreenComponent implements OnInit {
 	}
 
 	addPlaylistButton() {
-		this._router.navigate([`/${this.roleRoute}/playlists/create-playlist`]);
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/playlists/create-playlist`], {}));
+		window.open(url, '_blank');
 	}
 
 	addHostButton() {
-		this._router.navigate([`/${this.roleRoute}/create-host`]);
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/hosts/create-host`], {}));
+		window.open(url, '_blank');
 	}
 
 	checkIfStep1Complete() {
@@ -601,7 +603,8 @@ export class CreateScreenComponent implements OnInit {
 		});
 
 		dialog.afterClosed().subscribe(() => {
-			this._router.navigate([`/${this.roleRoute}/screens`]);
+			const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/screens`], {}));
+			window.open(url, '_blank');
 		});
 	}
 
