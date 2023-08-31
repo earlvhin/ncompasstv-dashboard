@@ -174,7 +174,6 @@ export class FillersComponent implements OnInit {
 					fillers.dimension = this.dimension;
 				});
 				this.selected_preview = data;
-				console.log('SELECTED PREVIEW', this.selected_preview);
 			});
 	}
 
