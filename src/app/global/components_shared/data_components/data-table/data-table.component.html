@@ -146,7 +146,6 @@
 									</ng-container>
 									
 									<ng-template #isglobalLink>
-										<ng-container *ngIf="data[d].globalLink.startsWith('http'); else insideLink">
 											<a
 											class="cursor-pointer table-row-url"
 											target="{{ data[d].new_tab_link ? '_blank' : '_self' }}"
@@ -187,51 +186,6 @@
 											  </ng-template>
 											</ng-container>
 										  </a>
-										</ng-container>
-									</ng-template>
-
-									<ng-template #insideLink>
-										<a
-										class="cursor-pointer table-row-url"
-										target="{{ data[d].new_tab_link ? '_blank' : '_self' }}"
-										[routerLink]="data[d].globalLink"
-										[queryParams]="query_params"
-										[ngClass]="{ 'text-danger': data[d].past, 'new-order-color': data[d].is_new_order }">
-										<ng-container>
-											<div *ngIf="!data[d].permission; else userWithPermission">
-												<span *ngIf="!data[d].compressed; else shortened_tooltip">
-													<div class="default-value-with-url d-flex align-items-center">
-														<div class="value">
-															{{ data[d].value }}
-														</div>
-														<ng-container *ngIf="pagesWithStatusIndicator.includes(page)">
-															<span>
-																<i class="fas fa-circle" [ngClass]="getStatusColor(data.status.value)"></i>
-															</span>
-														</ng-container>
-														<ng-container *ngIf="data[d].has_favorites && data[d].is_favorite">
-															<span>
-																<i class="fas fa-star favorites" title="Favorite"></i>
-															</span>
-														</ng-container>
-													</div>
-												</span>
-
-												<ng-template #shortened_tooltip>
-													<span [title]="data[d].value">
-														{{ data[d].value | substring : 10 }}
-													</span>
-												</ng-template>
-											</div>
-
-											<ng-template #userWithPermission>
-												<div class="d-flex name-and-permission">
-													<div>{{ data[d].value }}</div>
-													<div class="permission-container">{{ data[d].permission }}</div>
-												</div>
-											</ng-template>
-										</ng-container>
-									  </a>
 									</ng-template>
 								  </ng-container>
 
