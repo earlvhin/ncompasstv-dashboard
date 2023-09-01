@@ -36,10 +36,6 @@ export class CreateEntryComponent implements OnInit {
 		this.initializeForm();
 	}
 
-	get s() {
-		return this.new_support_form.controls
-	}
-
 	saveSupport() {
 		this.is_creating_support = true;
 		this.form_invalid = true;

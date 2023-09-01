@@ -74,15 +74,13 @@ export class SupportTabComponent implements OnInit {
 	}
 
 	onCreateEntry(): void {
-		const dialog = this._dialog.open(CreateEntryComponent, {
+		this._dialog.open(CreateEntryComponent, {
 			width: '600px',
 			panelClass: 'app-media-modal',
 			autoFocus: false,
 			disableClose: true,
 			data: { hostId: this.hostId }
-		});
-
-		dialog.afterClosed().subscribe((data) => {
+		}).afterClosed().subscribe((data) => {
 			if (data) this.getSupport(1);
 			this.reload_page(true);
 		});
