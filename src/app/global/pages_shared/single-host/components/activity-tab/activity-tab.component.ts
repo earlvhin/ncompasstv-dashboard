@@ -47,6 +47,12 @@ export class ActivityTabComponent implements OnInit {
     this._unsubscribe.next();
     this._unsubscribe.complete();
   }
+
+  getColumnsAndOrder(data: { column: string; order: string }) : void {
+		this.sort_column = data.column;
+		this.sort_order = data.order;
+		this.getActivity(1);
+	}
   
 
   getActivity(page: number): void {
