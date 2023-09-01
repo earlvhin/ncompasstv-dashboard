@@ -65,6 +65,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 				() => {
 					this.assign_success = true;
 					this._helper.onRefreshBannerData.next();
+					this._host.emitActivity()
 				},
 				(error) => {
 					throw new Error(error);

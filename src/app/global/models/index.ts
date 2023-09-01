@@ -86,11 +86,13 @@ export * from './ui_dealer-license.model';
 export * from './ui_dealer-playlist.model';
 export * from './ui_feed_item.model';
 export * from './ui_filetype';
+export * from './ui_host-activity'
 export * from './ui_host-content.model';
 export * from './ui_host-file.model';
 export * from './ui_host-license.model';
 export * from './ui_host-license-statistics';
 export * from './ui_host-locator.model';
+export * from './ui_host-support';
 export * from './ui_license_by_tags.model';
 export * from './ui_operation-hours.model';
 export * from './ui_reboot-time.model';

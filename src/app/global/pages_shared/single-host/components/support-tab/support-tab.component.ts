@@ -4,9 +4,8 @@ import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
-import { UI_CURRENT_USER } from 'src/app/global/models';
+import { UI_CURRENT_USER, UI_HOST_SUPPORT } from 'src/app/global/models';
 import { CreateEntryComponent } from 'src/app/global/components_shared/host_components/create-entry/create-entry.component';
-import { UI_HOST_SUPPORT } from 'src/app/global/models/ui_host_support';
 import { HostService } from 'src/app/global/services';
 
 

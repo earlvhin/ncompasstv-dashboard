@@ -11,6 +11,12 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 })
 export class HostService extends BaseService {
 	onUpdateBusinessHours = new Subject<boolean>();
+	dialogClosedSubject = new Subject<void>();
+	dialogClosed$ = this.dialogClosedSubject.asObservable();
+
+	emitActivity() {
+	  this.dialogClosedSubject.next();
+	}
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
@@ -115,6 +121,13 @@ export class HostService extends BaseService {
 	get_host(): Observable<API_HOST> {
 		const url = `${this.getters.api_get_hosts}`;
 		return this.getRequest(url).map((data) => data.host);
+	}
+
+	get_host_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_hosts_activity}`;
+		const params = this.setUrlParams({ownerId, sortColumn, sortOrder, page}, false, true);
+		const url = `${base}${params}`
+		return this.getRequest(url)
 	}
 
 	get_host_statistics(dealerId?: string, startDate?: string, endDate?: string) {
