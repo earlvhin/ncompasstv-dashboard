@@ -11,6 +11,7 @@ import { DealerService } from 'src/app/global/services/dealer-service/dealer.ser
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { EditableFieldModalComponent } from '../../components_shared/page_components/editable-field-modal/editable-field-modal.component';
 import { ScreenCreatedModalComponent } from '../../components_shared/screen_components/screen-created-modal/screen-created-modal.component';
+import { HOST_ACTIVITY_LOGS } from '../../models/api_host_activity_logs.model';
 
 @Component({
 	selector: 'app-create-screen',
@@ -292,6 +293,8 @@ export class CreateScreenComponent implements OnInit {
 			licenses: screen_licenses
 		};
 
+		const newHostActivityLog = new HOST_ACTIVITY_LOGS(this.hostId, 'create_screen', this._auth.current_user_value.user_id);
+
 		if (this.creating_screen) {
 			// if installation dates are set
 			if (this.queued_install_dates.length > 0) {
@@ -325,6 +328,18 @@ export class CreateScreenComponent implements OnInit {
 					},
 					(error) => {
 						throw new Error(error);
+					}
+				);
+
+			this._host
+				.create_host_activity_logs(newHostActivityLog)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						console.log(data);
+					},
+					(error) => {
+						console.log(error);
 					}
 				);
 		}

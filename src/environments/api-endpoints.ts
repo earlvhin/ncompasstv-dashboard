@@ -262,7 +262,8 @@ export const API_ENDPOINTS = {
 		tag: 'tag/create',
 		tag_add_and_assign: 'tag/admin/create/generic',
 		tag_owners: 'tag/addowners',
-		tag_type: 'tag/createtype'
+		tag_type: 'tag/createtype',
+		new_host_activity_logs: 'hostActivityLog/create'
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',

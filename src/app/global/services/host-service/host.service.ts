@@ -41,6 +41,11 @@ export class HostService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
+	create_host_activity_logs(data) {
+		const url = `${this.creators.new_host_activity_logs}`;
+		return this.postRequest(url, data);
+	}
+
 	delete_host(hostIds: string[], forceDelete: boolean) {
 		const data = { hostIds, forceDelete };
 		const url = this.deleters.host;
@@ -185,11 +190,7 @@ export class HostService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_support_entries(
-		hostId: string,
-		page: number,
-		sortColumn: string,
-		sortOrder: string ): Observable<{paging: PAGING; message?: string}> {
+	get_support_entries(hostId: string, page: number, sortColumn: string, sortOrder: string): Observable<{ paging: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_support}`;
 		const params = this.setUrlParams({ hostId, page, sortColumn, sortOrder }, false, true);
 		const url = `${base}${params}`;
@@ -278,16 +279,16 @@ export class HostService extends BaseService {
 		return this.postRequest(url, body);
 	}
 
-	validate_url(url: string){
+	validate_url(url: string) {
 		const pattern = new RegExp(
 			'^([a-zA-Z]+:\\/\\/)?' +
-			  '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
-			  '((\\d{1,3}\\.){3}\\d{1,3}))' +
-			  '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' + 
-			  '(\\?[;&a-z\\d%_.~+=-]*)?' +
-			  '(\\#[-a-z\\d_]*)?$',
+				'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+				'((\\d{1,3}\\.){3}\\d{1,3}))' +
+				'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+				'(\\?[;&a-z\\d%_.~+=-]*)?' +
+				'(\\#[-a-z\\d_]*)?$',
 			'i'
-		  );
-		  return pattern.test(url);
+		);
+		return pattern.test(url);
 	}
 }
