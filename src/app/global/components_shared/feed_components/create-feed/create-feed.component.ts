@@ -23,7 +23,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	dealers_data: Array<any> = [];
 	filtered_options: Observable<any[]>;
 	has_loaded_dealers = false;
-	is_invalid_url = true;
+	is_invalid_url = false;
 	has_selected_dealer_id = false;
 	has_selected_widget_feed_type = false;
 	is_current_user_dealer = this._isDealer;
@@ -234,13 +234,13 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 		const setControlAsRequired = (control: AbstractControl) => {
 			control.setValidators(Validators.required);
 			control.setErrors(null);
-			control.updateValueAndValidity();
+			control.updateValueAndValidity({ emitEvent: false });
 		};
 
 		const setControlAsNotRequired = (control: AbstractControl) => {
 			control.clearValidators();
 			control.setErrors(null);
-			control.updateValueAndValidity();
+			control.updateValueAndValidity({ emitEvent: false });
 		};
 
 		// put distinctUntilChanged() here because for some reason, this fires A LOT which crashes the script
