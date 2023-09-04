@@ -31,6 +31,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	is_current_user_dealer_admin = this._isDealerAdmin;
 	is_creating_feed = false;
 	is_search = false;
+	is_validating_url = false;
 	feed_types = this._feedTypes;
 	loading_data = true;
 	loading_search = false;
@@ -260,18 +261,11 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	private subscribeToFeedUrlChanges() {
 		const control = this.new_feed_form.get('feedUrl');
 
-		// returns false if url is valid
-		const urlCheck = (data: string) => {
-			if (typeof data === 'undefined' || !data || data.trim().length <= 0) return true;
-			const protocols = ['http://', 'https://'];
-			const hasProtocol = protocols.some((p) => data.includes(p));
-			if (!hasProtocol) return true;
-			return false;
-		};
-
-		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe((response) => {
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async (response) => {
+			this.is_validating_url = true;
 			const url = response as string;
-			this.is_invalid_url = urlCheck(url);
+			this.is_invalid_url = !(await this._feed.check_url(url));
+			this.is_validating_url = false;
 		});
 	}
 

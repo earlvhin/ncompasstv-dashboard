@@ -160,21 +160,9 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 	/** Validate rss_url if is within API jurisdiction
 	 * @param {string} rss_url Entered rss_url
 	 */
-	private validateRssUrl(rss_url: string) {
-		this._feed
-			.validate_rss_url(rss_url)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data: boolean) => {
-					this.rss_url_valid = data;
-				},
-				(error) => {
-					throw new Error(error);
-				}
-			)
-			.add(() => {
-				this.rss_url_checking = false;
-			});
+	private async validateRssUrl(rss_url: string) {
+		this.rss_url_valid = await this._feed.check_url(rss_url, true);
+		this.rss_url_checking = false;
 	}
 
 	protected get _createFormFields() {
