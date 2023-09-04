@@ -77,7 +77,7 @@ export class UnassignHostLicenseComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(data) => {
-					console.log(data);
+					return data;
 				},
 				(error) => {
 					console.log(error);
