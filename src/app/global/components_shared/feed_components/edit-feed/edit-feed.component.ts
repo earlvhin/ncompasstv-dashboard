@@ -34,6 +34,7 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 	is_search = false;
 	is_widget_feed = false;
 	is_loading_dealers = true;
+	is_validating_url = false;
 	loading_search = false;
 	paging: PAGING;
 
@@ -193,14 +194,15 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 		const form = this.edit_feed_form;
 		const control = form.get('feedUrl');
 
-		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(() => {
+		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async () => {
 			if (this.is_widget_feed) return;
+			this.is_validating_url = true;
 			const url = control.value as string;
-			this.is_invalid_url = this.urlCheck(url);
+			this.is_invalid_url = !(await this._feed.check_url(url));
+			this.is_validating_url = false;
 		});
 	}
 
-	// returns false if url is VALID
 	private urlCheck(data: string) {
 		if (typeof data === 'undefined' || !data || data.trim().length <= 0) return true;
 		const protocols = ['http://', 'https://'];
