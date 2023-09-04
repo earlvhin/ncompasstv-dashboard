@@ -1,10 +1,10 @@
 import { DatePipe } from '@angular/common';
 import { Component, OnInit, Input } from '@angular/core';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 import { UI_CURRENT_USER, UI_HOST_ACTIVITY } from 'src/app/global/models';
-import { HostService } from 'src/app/global/services';
+import { HostService, UserService } from 'src/app/global/services';
 
 @Component({
   selector: 'app-activity-tab',
@@ -18,6 +18,7 @@ export class ActivityTabComponent implements OnInit {
 	@Input() hostId: string;
 
   activity_data: UI_HOST_ACTIVITY[] = []
+  created_by: any;
   hostData: any;
   initial_load = true;
   paging_data: any;
@@ -33,7 +34,7 @@ export class ActivityTabComponent implements OnInit {
 
   ]
 
-  constructor(private _date: DatePipe, private _host: HostService) { }
+  constructor(private _date: DatePipe, private _host: HostService, private _user: UserService) { }
   protected _unsubscribe: Subject<void> = new Subject<void>();
 
   ngOnInit() {
@@ -59,25 +60,28 @@ export class ActivityTabComponent implements OnInit {
     this.activity_data = [];
 
     this._host
-    .get_host_activity(this.hostId, this.sort_column, this.sort_order, page)
-    .pipe(takeUntil(this._unsubscribe))
-    .subscribe((res) => {
-      
+      .get_host_activity(this.hostId, this.sort_column, this.sort_order, page)
+      .pipe(takeUntil(this._unsubscribe))
+      .subscribe((res) => {
         if (res.paging.entities.length === 0) {
           this.no_activity_data = true;
           this.activity_data = []
           return
         }
-
-        const mappedData = this.mapToTableFormat(res.paging.entities)
-        this.activity_data = [...mappedData]
-        this.paging_data = res.paging;
-    },
-        (error) => {
-          throw new Error(error);
-        }
-      )
-      .add(() => this.initial_load = false)
+  
+        this.getUserById(res.paging.entities.map(a => a.initiatedBy))
+          .subscribe((responses) => {
+            this.created_by = responses;
+  
+            const mappedData = this.mapToTableFormat(res.paging.entities);
+            this.paging_data = res.paging;
+            this.activity_data = [...mappedData];
+          });
+      },
+      (error) => {
+        throw new Error(error);
+      })
+      .add(() => this.initial_load = false);
   }
 
   getHost(){
@@ -88,6 +92,19 @@ export class ActivityTabComponent implements OnInit {
         this.dateFormatted = this._date.transform(res.host.dateCreated, "MMMM d, y" );
     });
   }
+
+  
+  getUserById(ids: any[]) {
+    const userObservables = ids.map(id =>
+      this._user.get_user_by_id(id)
+        .pipe(
+          takeUntil(this._unsubscribe),
+        )
+    );
+  
+    return forkJoin(userObservables);
+  }
+  
 
   reloadTable(){
     this._host.dialogClosed$
@@ -104,23 +121,34 @@ export class ActivityTabComponent implements OnInit {
 
   mapToTableFormat(activity): any {
     let count = 1;
-
+  
     return activity.map((a: any) => {
-      const activity = a.activityCode;
-      let activityMessage;
+      const activityCode = a.activityCode;
+      let activityMessage = "";
+      let createdBy;
 
-      if (activity === "assign_license") {
-        activityMessage =`${this.currentUser.firstname} ${this.currentUser.lastname} assigned a license`
-      } else if (activity === "unassign_license" ) {
-        activityMessage =`${this.currentUser.firstname} ${this.currentUser.lastname} unassigned a license`
-      } else if (activity === "modify_host" ) {
-        activityMessage =`${this.currentUser.firstname} ${this.currentUser.lastname} modified the host`
-      } else if (activity === "create_screen") {
-        activityMessage =`${this.currentUser.firstname} ${this.currentUser.lastname} created a screen`
-      } else {
-       activityMessage ="hi"
-      }
-
+      this.created_by.map(c => {
+        if (c.userId === a.initiatedBy) {
+          return createdBy = c;
+        }
+   
+      })
+        
+        if (activityCode === "assign_license") {  
+            activityMessage = `${createdBy.firstName} ${createdBy.lastName} assigned a license`;
+        }
+        else if (activityCode === "unassign_license") {
+            activityMessage = `${createdBy.firstName} ${createdBy.lastName} unassigned a license`;
+        } else if (activityCode === "modify_host") {
+            activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the host`;
+        } else if (activityCode === "create_screen") {
+            activityMessage = `${createdBy.firstName} ${createdBy.lastName} created a screen`;
+        } else {
+            activityMessage = "hi";
+        }
+      
+    
+  
       return new UI_HOST_ACTIVITY(
         {value: count++, editable: false},
         {value: a.ownerId, hidden: true},

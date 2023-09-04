@@ -374,6 +374,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 					await this._confirmationDialog.success(dialogData).toPromise();
 					this._dialogRef.close(true);
+					this._host.emitActivity();
 				},
 				(error) => {
 					this._confirmationDialog.error();
