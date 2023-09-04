@@ -198,7 +198,7 @@
 										*ngFor="let license of host_selected; let i = index"
 										[ngClass]="selected_license_index == i ? 'active-selection' : ''"
 										(click)="selectLicenses(license, i)">
-										{{ license.licenseAlias }}
+										{{ license.licenseAlias ? license.licenseAlias : license.licenseId }}
 									</li>
 								</ul>
 							</mat-card>
