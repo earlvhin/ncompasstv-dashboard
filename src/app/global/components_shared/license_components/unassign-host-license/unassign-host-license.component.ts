@@ -31,7 +31,6 @@ export class UnassignHostLicenseComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.licenses = this._dialog_data;
-		console.log(this.licenses);
 	}
 
 	ngOnDestroy() {
