@@ -40,6 +40,7 @@ export const API_ENDPOINTS = {
 		api_get_filler_feed_dependency: 'filler/playlist/getplaylistsbyfillerplaylistid',
 		api_get_filler_feed_placeholder: 'filler/playlist/placeholder',
 		api_get_filler_groups: 'filler/group/getall',
+		api_get_dealer_filler_groups: 'filler/group/dealer/getall',
 		api_get_filler_group_by_id: 'filler/group/getbyid',
 		api_get_global_settings: 'globalSettings/getall',
 		api_get_host_fields: 'fieldgroup/getall',
@@ -172,7 +173,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',

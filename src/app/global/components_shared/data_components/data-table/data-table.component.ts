@@ -168,6 +168,11 @@ export class DataTableComponent implements OnInit {
 		this._router.navigate([`/${this.roleRoute}/feeds/edit-generated/${data.feed_id.value}`]);
 	}
 
+	navigateToFiller(id: string) {
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}));
+		window.open(url, '_blank');
+	}
+
 	onSelectRow(data: any, index: number): void {
 		if (this.page !== 'dealers-orders' || this.in_progress) return;
 

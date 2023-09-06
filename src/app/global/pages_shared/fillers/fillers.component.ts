@@ -5,6 +5,7 @@ import { EditFillerGroupComponent } from './components/edit-filler-group/edit-fi
 import { Router } from '@angular/router';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/global/services';
 
 import { FillerService } from 'src/app/global/services';
 import { AddFillerContentComponent } from './components/add-filler-content/add-filler-content.component';
@@ -18,9 +19,11 @@ import { DeleteFillerGroupComponent } from './components/delete-filler-group/del
 })
 export class FillersComponent implements OnInit {
 	current_filer: any;
+	current_user_id: string = '';
 	fillers_count: any;
 	filler_group: any;
 	filler_group_cache = [];
+	is_dealer = this._isDealer;
 	is_loading = true;
 	no_search_result = false;
 	search_keyword: string = '';
@@ -30,9 +33,10 @@ export class FillersComponent implements OnInit {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _dialog: MatDialog, private _router: Router, private _filler: FillerService) {}
+	constructor(private _dialog: MatDialog, private _router: Router, private _filler: FillerService, private _auth: AuthService) {}
 
 	ngOnInit() {
+		this.current_user_id = this._auth.current_user_value.user_id;
 		this.getFillersTotal();
 		this.getAllFillers(1);
 	}
@@ -168,9 +172,7 @@ export class FillersComponent implements OnInit {
 					dealer_label: 'Dealer',
 					dealer_count: data.totalDealer,
 					dealer_admin_label: 'Dealer Admin',
-					dealer_admin_count: data.totalDealerAdmin,
-					host_label: 'Host',
-					host_count: data.totalHost
+					dealer_admin_count: data.totalDealerAdmin
 				};
 			});
 	}
@@ -222,5 +224,10 @@ export class FillersComponent implements OnInit {
 		this.sorting_column = '';
 		this.sorting_order = '';
 		this.getAllFillers(1);
+	}
+
+	protected get _isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
 	}
 }
