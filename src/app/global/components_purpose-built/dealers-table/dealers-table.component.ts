@@ -208,7 +208,7 @@ export class DealersTableComponent implements OnInit {
 			this.no_dealer = true;
 			return;
 		}
-		if (this._auth.current_role === 'dealeradmin') {
+		if (this._auth.current_role === 'dealeradmin' && !this.ongoing_filter) {
 			this.dealers_data = this.mapToUIFormat(response.entities);
 		} else {
 			this.dealers_data = this.mapToUIFormat(response.paging.entities);
