@@ -111,10 +111,10 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 		this.playlist_contents = [...this.fixSequences()];
 
 		// filter out contents to show only active ones
-		this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
+		// this.playlist_contents = [...this.showOnlyActiveContents(this.playlist_contents)];
 
 		this.getAssetCount();
-		this.currentStatusFilter = this.statusFilterOptions[1];
+		this.currentStatusFilter = this.statusFilterOptions[0];
 		this.playlist_saving = false;
 		this.selected_playlist_content_ids = [];
 		this.selected_contents = [];
@@ -481,7 +481,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			//just exit
 			if (!response || typeof response === 'undefined') return;
 
-			const content: API_CONTENT = response[0];
+			const content: API_CONTENT = response.data[0];
 			const playlistContentIdToBeReplaced = this.selected_playlist_content_ids[0];
 			if (content.playlistContentId === playlistContentIdToBeReplaced)
 				return this.showErrorDialog('Cannot select the same content to be swapped');

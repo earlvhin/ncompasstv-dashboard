@@ -22,6 +22,11 @@ export class FillerService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_filler_thumbnails(id, count) {
+		const url = `${this.getters.api_get_content_thumbnails}?id=${id}&take=${count}`;
+		return this.getRequest(url).map((data) => data.data);
+	}
+
 	// ------------------------------------
 	// CRUD FILLER GROUPS
 	// ------------------------------------

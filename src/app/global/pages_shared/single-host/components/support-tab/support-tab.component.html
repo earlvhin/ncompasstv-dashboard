@@ -1,0 +1,51 @@
+<div class="theme-container pt-4">
+	<div class="row">
+		<div class="col-lg-12">
+			<button mat-button mat-raised-button class="theme-btn" (click)="onCreateEntry()">
+				<span class="button-label"> Add Entry </span>
+				<span class="fas fa-plus ml-2 sm-text"></span>
+			</button>
+		</div>
+	</div>
+
+	<div class="content-section" >
+		<div *ngIf="!initial_load; else loader">
+			<div class="row">
+				<div class="col-lg-12">
+					<mat-card *ngIf="support_data.length > 0; else loader">
+						<ng-container>
+							<app-data-table
+								[table_data]="support_data"
+								[table_columns]="support_table_column"
+								[new_table]="true"
+								[paging_details]="paging_data"
+								[active_tab]="sort_column"
+								[sort_column]="sort_column"
+								[sort_order]="sort_order"
+								(reload_page)="reload_page($event)"
+								(update_info)="reload_page($event)"
+								(page_triggered)="getSupport($event)"
+								(to_sort_column)="getColumnsAndOrder($event)"
+								>
+							</app-data-table>
+						</ng-container>
+					</mat-card>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<ng-template #loader>
+	<ng-container *ngIf="!no_support_data; else no_data">
+		<div class="py-4 white-bg h-500">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-container>
+</ng-template>
+
+<ng-template #no_data>
+	<mat-card class="p-5">
+		<app-error-message></app-error-message>
+	</mat-card>
+</ng-template>

@@ -1,0 +1,29 @@
+<div class="p-4 user-form position-relative">
+	<h3 class="mb-4">Add a Support Ticket</h3>
+
+	<form class="text-left" [formGroup]="new_support_form" (ngSubmit)="saveSupport()" #formDirective="ngForm">
+		<div class="d-flex flex-column mb-4">
+			<mat-form-field class="full-width">
+				<mat-label>URL</mat-label>
+				<input matInput formControlName="supportUrl" matInput type="link" placeholder="URL should start with http/s" />
+			</mat-form-field>
+
+			<mat-form-field class="full-width">
+				<mat-label>Notes</mat-label>
+				<input matInput formControlName="supportNotes" matInput type="text" placeholder="Ticket Notes/Details" />
+			</mat-form-field>
+		</div>
+
+		<div class="d-flex flex-even">
+			<button 
+			mat-button 
+			mat-raised-button 
+			class="theme-btn mr-2" 	
+			[disabled]="disabled_submit">
+			{{ is_creating_support && form_invalid ? 'Creating Entry...' : 'Submit' }}
+		</button>
+
+			<button mat-button mat-raised-button class="theme-btn" mat-dialog-close>Cancel</button>
+		</div>
+	</form>
+</div>

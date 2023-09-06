@@ -1,4 +1,4 @@
-<div class="theme-container" *ngIf="filler_group_data">
+<div class="theme-container mt-3" *ngIf="filler_group_data">
 	<div class="row no-gutters">
 		<div class="col-lg-6">
 			<h1 class="page-title">{{ filler_group_data.name }}</h1>
@@ -140,7 +140,72 @@
 					</div>
 				</div>
 			</mat-tab>
-			<mat-tab label="Playing Where" [disabled]="true"></mat-tab>
+			<mat-tab label="Playing Where">
+				<div *ngIf="!loading_playing_where; else loading">
+					<div class="row mt-3 mb-2" *ngIf="playing_where.length > 0; else notInUse">
+						<div class="col-lg-3">
+							<mat-card>
+								<div class="md-text font-weight-bold text-gray pl-3">FILLER FEEDS</div>
+								<hr />
+								<ul class="list-unstyled">
+									<li
+										class="sm-text p-3 clickable"
+										*ngFor="let playwhere of playing_where; let i = index"
+										[ngClass]="selected_filler_feed_index == i ? 'active-selection' : ''"
+										(click)="selectFillerFeeds(playwhere, i)">
+										{{ playwhere.fillerFeedName }}
+									</li>
+								</ul>
+							</mat-card>
+						</div>
+						<div class="col-lg-3" *ngIf="playing_where_selected">
+							<mat-card>
+								<div class="md-text font-weight-bold text-gray pl-3">PLAYLISTS</div>
+								<hr />
+								<ul class="list-unstyled">
+									<li
+										class="sm-text p-3 clickable"
+										*ngFor="let playlist of playing_where_selected; let i = index"
+										[ngClass]="selected_playlist_index == i ? 'active-selection' : ''"
+										(click)="selectPlaylist(playlist, i)">
+										{{ playlist.playlistName }}
+									</li>
+								</ul>
+							</mat-card>
+						</div>
+						<div class="col-lg-3" *ngIf="playlist_selected">
+							<mat-card>
+								<div class="md-text font-weight-bold text-gray pl-3">HOSTS</div>
+								<hr />
+								<ul class="list-unstyled">
+									<li
+										class="sm-text p-3 clickable"
+										*ngFor="let host of playlist_selected; let i = index"
+										[ngClass]="selected_host_index == i ? 'active-selection' : ''"
+										(click)="selectHost(host, i)">
+										{{ host.hostName }}
+									</li>
+								</ul>
+							</mat-card>
+						</div>
+						<div class="col-lg-3" *ngIf="host_selected">
+							<mat-card>
+								<div class="md-text font-weight-bold text-gray pl-3">LICENSES</div>
+								<hr />
+								<ul class="list-unstyled">
+									<li
+										class="sm-text p-3 clickable"
+										*ngFor="let license of host_selected; let i = index"
+										[ngClass]="selected_license_index == i ? 'active-selection' : ''"
+										(click)="selectLicenses(license, i)">
+										{{ license.licenseAlias ? license.licenseAlias : license.licenseId }}
+									</li>
+								</ul>
+							</mat-card>
+						</div>
+					</div>
+				</div>
+			</mat-tab>
 		</mat-tab-group>
 	</div>
 </div>
@@ -163,9 +228,35 @@
 		</div>
 	</div>
 </ng-template>
+<ng-template #notInUse>
+	<div class="row no-gutters">
+		<div class="col-lg-12">
+			<mat-card class="pt-5 pb-5 text-center">
+				<div class="mb-4">
+					<i class="text-gray fa-5x far fa-file-alt"></i>
+				</div>
+				<h3 class="text-gray col-lg-12">No Records Found.</h3>
+				<span class="text-gray col-lg-12">Make sure to use this Filler Group in Filler Feeds >> Playlists >> Screen.</span>
+			</mat-card>
+		</div>
+	</div>
+</ng-template>
 
 <ng-template #loader>
 	<div class="py-4 h-500">
 		<app-spinner [diameter]="60"></app-spinner>
+	</div>
+</ng-template>
+
+<ng-template #loading>
+	<div class="vh-50 white-bg">
+		<div class="row">
+			<div class="col-lg-12 p-0 text-center text-gray pt-5">
+				<strong>P R O C E S S I N G</strong>
+				<br />
+				<span class="sm-text">Please wait while we filter our database for you. Filtering may take up to 30 seconds.</span>
+			</div>
+		</div>
+		<app-spinner></app-spinner>
 	</div>
 </ng-template>

@@ -4,7 +4,8 @@ import { takeUntil, debounceTime } from 'rxjs/operators';
 import { Subject, forkJoin } from 'rxjs';
 
 import { API_LICENSE_PROPS, PAGING } from 'src/app/global/models';
-import { HelperService, LicenseService } from 'src/app/global/services';
+import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
+import { HOST_ACTIVITY_LOGS } from 'src/app/global/models/api_host_activity_logs.model';
 
 @Component({
 	selector: 'app-assign-license-modal',
@@ -27,7 +28,13 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(@Inject(MAT_DIALOG_DATA) public _dialog_data: any, private _license: LicenseService, private _helper: HelperService) {}
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public _dialog_data: any,
+		private _license: LicenseService,
+		private _helper: HelperService,
+		private _host: HostService,
+		private _auth: AuthService
+	) {}
 
 	ngOnInit() {
 		this.getAvailableLicenses();
@@ -49,6 +56,8 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 			})
 		};
 
+		const newHostActivityLog = new HOST_ACTIVITY_LOGS(this._dialog_data.host_id, 'assign_license', this._auth.current_user_value.user_id);
+
 		this._license
 			.assign_licenses_to_host(license_host_data)
 			.pipe(takeUntil(this._unsubscribe))
@@ -56,9 +65,22 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 				() => {
 					this.assign_success = true;
 					this._helper.onRefreshBannerData.next();
+					this._host.emitActivity()
 				},
 				(error) => {
 					throw new Error(error);
+				}
+			);
+
+		this._host
+			.create_host_activity_logs(newHostActivityLog)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
 				}
 			);
 	}

@@ -19,14 +19,23 @@ export class ViewFillersGroupComponent implements OnInit {
 	filler_group_pagination: any = [];
 	filler_group_data: any;
 	filler_group_id: string;
+	isActiveTab = 0;
 	is_loading = true;
+	loading_playing_where = false;
 	no_search_result = false;
+	playing_where: any = [];
+	playing_where_selected: any = [];
+	playlist_selected: any = [];
+	host_selected: any = [];
 	search_keyword: string;
 	selected_filler: string;
+	selected_filler_feed_index: string;
+	selected_playlist_index: string;
+	selected_host_index: string;
+	selected_license_index: string;
 	sorting_order: string = '';
 	sorting_column: string = '';
 	title = 'Fillers Library';
-	isActiveTab = 0;
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
@@ -173,8 +182,49 @@ export class ViewFillersGroupComponent implements OnInit {
 			.get_filler_group_playing_where(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
-				//next sprint implementation
+				this.loading_playing_where = false;
+				if (data.fillerFeeds.length > 0) {
+					this.playing_where = data.fillerFeeds;
+					this.selectFillerFeeds(data.fillerFeeds[0], 0);
+				}
 			});
+	}
+
+	selectFillerFeeds(data, index) {
+		this.selected_filler_feed_index = index;
+		if (data.playlists && data.playlists.length) {
+			this.playing_where_selected = data.playlists;
+			this.selectPlaylist(this.playing_where_selected[0], 0);
+		} else {
+			this.playing_where_selected = [];
+			this.playlist_selected = [];
+			this.host_selected = [];
+		}
+	}
+
+	selectPlaylist(data, index) {
+		this.selected_playlist_index = index;
+		if (data.hosts && data.hosts.length) {
+			this.playlist_selected = data.hosts;
+			this.selectHost(this.playlist_selected[0], 0);
+		} else {
+			this.playlist_selected = [];
+			this.host_selected = [];
+		}
+	}
+
+	selectHost(data, index) {
+		this.selected_host_index = index;
+		if (data.licenses) {
+			this.host_selected = data.licenses;
+			this.selectLicenses(this.host_selected[0], 0);
+		} else {
+			this.host_selected = [];
+		}
+	}
+
+	selectLicenses(data, index) {
+		this.selected_license_index = index;
 	}
 
 	onTabChanged(tab) {
@@ -182,6 +232,7 @@ export class ViewFillersGroupComponent implements OnInit {
 		switch (tab) {
 			case 1:
 				this.getFillerGroupPlayingWhere(this.filler_group_id);
+				this.loading_playing_where = true;
 				break;
 			default:
 		}

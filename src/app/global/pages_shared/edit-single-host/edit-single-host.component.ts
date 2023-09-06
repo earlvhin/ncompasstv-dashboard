@@ -26,6 +26,7 @@ import { AuthService, CategoryService, ConfirmationDialogService, DealerService,
 
 import { BulkEditBusinessHoursComponent } from '../../components_shared/page_components/bulk-edit-business-hours/bulk-edit-business-hours.component';
 import * as moment from 'moment';
+import { HOST_ACTIVITY_LOGS } from '../../models/api_host_activity_logs.model';
 
 @Component({
 	selector: 'app-edit-single-host',
@@ -345,6 +346,8 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 			status: status
 		});
 
+		const newHostActivityLog = new HOST_ACTIVITY_LOGS(this.host.hostId, 'modify_host', this._auth.current_user_value.user_id);
+
 		const { notes, others } = this._formControls;
 
 		if (notes.value && notes.value.trim().length > 0) newHostPlace.notes = notes.value;
@@ -371,9 +374,22 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 
 					await this._confirmationDialog.success(dialogData).toPromise();
 					this._dialogRef.close(true);
+					this._host.emitActivity();
 				},
 				(error) => {
 					this._confirmationDialog.error();
+				}
+			);
+
+		this._host
+			.create_host_activity_logs(newHostActivityLog)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
 				}
 			);
 	}

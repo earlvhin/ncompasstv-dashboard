@@ -11,6 +11,12 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 })
 export class HostService extends BaseService {
 	onUpdateBusinessHours = new Subject<boolean>();
+	dialogClosedSubject = new Subject<void>();
+	dialogClosed$ = this.dialogClosedSubject.asObservable();
+
+	emitActivity() {
+	  this.dialogClosedSubject.next();
+	}
 
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
@@ -33,6 +39,16 @@ export class HostService extends BaseService {
 
 	create_field_group_value(data: any) {
 		const url = `${this.creators.api_fieldgroup_value_create}`;
+		return this.postRequest(url, data);
+	}
+
+	create_support_entry(data) {
+		const url = `${this.creators.api_create_support}`;
+		return this.postRequest(url, data);
+	}
+
+	create_host_activity_logs(data) {
+		const url = `${this.creators.new_host_activity_logs}`;
 		return this.postRequest(url, data);
 	}
 
@@ -107,6 +123,13 @@ export class HostService extends BaseService {
 		return this.getRequest(url).map((data) => data.host);
 	}
 
+	get_host_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_hosts_activity}`;
+		const params = this.setUrlParams({ownerId, sortColumn, sortOrder, page}, false, true);
+		const url = `${base}${params}`
+		return this.getRequest(url)
+	}
+
 	get_host_statistics(dealerId?: string, startDate?: string, endDate?: string) {
 		const url = `${this.getters.api_get_hosts_statistics}?dealerid=${dealerId}&startdate=${startDate}&enddate=${endDate}`;
 		return this.getRequest(url);
@@ -177,6 +200,13 @@ export class HostService extends BaseService {
 			url += `&search=${search}`;
 		}
 
+		return this.getRequest(url);
+	}
+
+	get_support_entries(hostId: string, page: number, sortColumn: string, sortOrder: string): Observable<{ paging: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_support}`;
+		const params = this.setUrlParams({ hostId, page, sortColumn, sortOrder }, false, true);
+		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 
@@ -260,5 +290,18 @@ export class HostService extends BaseService {
 	upload_s3_files(body: HOST_S3_FILE) {
 		const url = this.creators.host_s3_files;
 		return this.postRequest(url, body);
+	}
+
+	validate_url(url: string) {
+		const pattern = new RegExp(
+			'^([a-zA-Z]+:\\/\\/)?' +
+				'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+				'((\\d{1,3}\\.){3}\\d{1,3}))' +
+				'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+				'(\\?[;&a-z\\d%_.~+=-]*)?' +
+				'(\\#[-a-z\\d_]*)?$',
+			'i'
+		);
+		return pattern.test(url);
 	}
 }

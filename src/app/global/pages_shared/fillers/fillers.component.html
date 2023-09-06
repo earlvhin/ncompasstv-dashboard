@@ -120,8 +120,36 @@
 											<i class="fas fa-plus text-white f-50 mt-5 pt-5 mb-5 pb-4" title="Add New Filler Group"></i>
 										</div>
 									</div>
-									<div class="col-lg-2 mb-4" *ngFor="let group of filler_group_cache">
+									<div class="col-lg-2 mb-4" *ngFor="let group of filler_group_cache; let i = index">
 										<div class="bg-white p-3 full-width text-center br-5 box-shadowing">
+											<div class="album-preview" [ngClass]="no_preview ? 'hidden' : ''" *ngIf="selected_preview_index == i">
+												<div class="row mt-3 no-gutters" *ngIf="selected_preview.length > 0; else filler_loader">
+													<div class="col-lg-12">
+														<div class="items" *ngFor="let filler of selected_preview">
+															<div *ngIf="filler.fileType | isFeed; else imagePrev">
+																<object
+																	[attr.data]="filler.url | sanitize"
+																	[ngStyle]="{ width: filler.dimension, height: filler.dimension }"></object>
+															</div>
+															<ng-template #imagePrev>
+																<img
+																	[src]="filler.url"
+																	[ngStyle]="{ width: filler.dimension, height: filler.dimension }" />
+															</ng-template>
+														</div>
+													</div>
+												</div>
+												<div class="row no-gutters controls">
+													<div class="col-lg-6">
+														<button class="theme-btn _cool sm-text" (click)="navigateToFillerGroup(group.fillerGroupId)">
+															View Album
+														</button>
+													</div>
+													<div class="col-lg-6">
+														<button class="theme-btn _caution sm-text" (click)="hidePreview()">Close</button>
+													</div>
+												</div>
+											</div>
 											<div class="row">
 												<div class="col-lg-12 text-center text-primary uppercase">
 													<span
@@ -136,14 +164,16 @@
 														<img
 															[src]="group.coverPhoto"
 															class="clickable full-width h-130-px br-5"
-															(click)="navigateToFillerGroup(group.fillerGroupId)" />
+															title="Click to Preview Album"
+															(click)="showAlbumPreview(group.fillerGroupId, i)" />
 													</div>
 													<ng-template #defaultphoto>
 														<div>
 															<img
 																[src]="'/assets/media-files/filler-group-placeholder.png'"
 																class="clickable full-width h-130-px br-5"
-																(click)="navigateToFillerGroup(group.fillerGroupId)" />
+																title="Click to Preview Album"
+																(click)="showAlbumPreview(group.fillerGroupId, i)" />
 														</div>
 													</ng-template>
 												</div>
@@ -186,7 +216,7 @@
 									<div class="col-lg-12 text-center p-0 mt-3">
 										<button
 											class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
-											(click)="getAllFillers(filler_group.page + 1, 12)"
+											(click)="getAllFillers(filler_group.page + 1, 11)"
 											[disabled]="is_loading">
 											<span>SHOW MORE</span>
 										</button>
@@ -232,5 +262,11 @@
 				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
 			</div>
 		</div>
+	</div>
+</ng-template>
+
+<ng-template #filler_loader>
+	<div class="pt-5 mt-3 bg-dark">
+		<app-spinner [diameter]="60"></app-spinner>
 	</div>
 </ng-template>

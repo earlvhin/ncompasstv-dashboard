@@ -63,7 +63,11 @@ export class InstallationsTabComponent implements OnInit {
                     if(!data.message) {
                         this.generate = true;
                         var months = [ "Jan", "Feb", "Mar", "Apr", "May", "June", "July", "Aug", "Sep", "Oct", "Nov", "Dec" ];
-                        data.licenses.sort((a, b) => parseFloat(a.month) - parseFloat(b.month));
+                            data.licenses.sort((a, b) => {
+                                const dateA = new Date(a.installDate).getTime();
+                                const dateB = new Date(b.installDate).getTime();
+                                return dateA - dateB;
+                            });
 
                         data.licenses.map(
                             i => {

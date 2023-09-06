@@ -27,6 +27,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 	currentFilter = 'All';
 	currentTagType: TAG_TYPE;
 	hasTagSelected = false;
+	is_dealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
 	isLoading = false;
 	owners: TAG_OWNER[] = [];
 	ownerTypes = this._tagOwnerTypes;
