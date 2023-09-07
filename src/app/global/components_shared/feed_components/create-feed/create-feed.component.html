@@ -74,20 +74,14 @@
 				[disabled]="
 					new_feed_form.invalid ||
 					is_creating_feed ||
-					is_validating_url ||
-					(is_invalid_url && !has_selected_widget_feed_type) ||
+					!has_selected_widget_feed_type ||
 					(is_current_user_dealer_admin && !has_selected_dealer_id)
 				">
 				<ng-container *ngIf="is_creating_feed"> Creating feed... </ng-container>
-				<ng-container *ngIf="is_validating_url"> Validating url... </ng-container>
-				<ng-container *ngIf="!is_creating_feed && !is_validating_url"> Submit </ng-container>
+				<ng-container *ngIf="!is_creating_feed"> Submit </ng-container>
 			</button>
 
 			<button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>Cancel</button>
-
-			<ng-container *ngIf="is_invalid_url">
-				<p class="xsm-text text-danger pl-3">Invalid URL!</p>
-			</ng-container>
 		</div>
 	</form>
 
