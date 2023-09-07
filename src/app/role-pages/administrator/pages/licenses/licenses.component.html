@@ -312,25 +312,27 @@
 								</div>
 								<div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
 									<div class="row flex p-0" *ngIf="!no_licenses; else no_data">
-										<div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
-											<ng-container>
-												<mat-card *ngIf="filtered_data_licenses.length > 0; else nodata">
-													<app-data-table
-														[table_data]="filtered_data_licenses"
-														[table_columns]="license_table_column"
-														[new_table]="true"
-														[paging_details]="paging_data_licenses"
-														[query_params]="tab"
-														(page_triggered)="getLicenses($event)"
-														[license_status_column]="true"
-														(to_sort_column)="getColumnsAndOrder($event, 'licenses')"
-														[active_tab]="sort_column"
-														[sort_column]="sort_column"
-														[sort_order]="sort_order">
-													</app-data-table>
-												</mat-card>
-											</ng-container>
-										</div>
+											<div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
+												<ng-container >
+													<div *ngIf="!initial_load_licenses; else loader">
+														<mat-card *ngIf="filtered_data_licenses.length > 0; else nodata">
+															<app-data-table
+																[table_data]="filtered_data_licenses"
+																[table_columns]="license_table_column"
+																[new_table]="true"
+																[paging_details]="paging_data_licenses"
+																[query_params]="tab"
+																(page_triggered)="getLicenses($event)"
+																[license_status_column]="true"
+																(to_sort_column)="getColumnsAndOrder($event, 'licenses')"
+																[active_tab]="sort_column"
+																[sort_column]="sort_column"
+																[sort_order]="sort_order">
+															</app-data-table>
+														</mat-card>
+													</div>
+												</ng-container>
+											</div>
 										<ng-template #grid>
 											<app-grid-view-license
 												[license_data_for_grid_view]="license_data_for_grid_view"

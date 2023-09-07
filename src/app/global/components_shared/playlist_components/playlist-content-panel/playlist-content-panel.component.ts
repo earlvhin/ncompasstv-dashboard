@@ -482,7 +482,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 			if (!response || typeof response === 'undefined') return;
 
 			const content: API_CONTENT = response.data[0];
-            const playlistContentIdToBeReplaced = this.selected_playlist_content_ids[0];
+			const playlistContentIdToBeReplaced = this.selected_playlist_content_ids[0];
 			if (content.playlistContentId === playlistContentIdToBeReplaced)
 				return this.showErrorDialog('Cannot select the same content to be swapped');
 

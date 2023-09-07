@@ -296,12 +296,6 @@
 																	</h5>
 																</ng-template>
 															</div>
-
-															<div class="flex-even">
-																<span class="sm-text">IP Address</span>
-																<br />
-																<h5 class="sm-text">{{ license_data.publicIP ? license_data.publicIP : 'N/A' }}</h5>
-															</div>
 														</div>
 														<hr class="my-3" />
 														<div class="d-flex">
@@ -596,6 +590,26 @@
 																<h5 class="sm-text">{{ apps && apps.chromium ? apps.chromium : 'N/A' }}</h5>
 															</div>
 														</div>
+
+														<ng-container *ngIf="isCurrentUserAdmin">
+															<hr class="my-3" />
+															<div class="d-flex">
+																<div class="flex-even">
+																	<span class="sm-text">Current IP</span>
+																	<br />
+																	<h5 class="sm-text">
+																		{{ license_data.publicIP ? license_data.publicIP : 'N/A' }}
+																	</h5>
+																</div>
+																<div class="flex-even">
+																	<span class="sm-text">Previous IP</span>
+																	<br />
+																	<h5 class="sm-text">
+																		{{ license_data.prevPublicIP ? license_data.prevPublicIP : 'N/A' }}
+																	</h5>
+																</div>
+															</div>
+														</ng-container>
 													</mat-card>
 												</div>
 

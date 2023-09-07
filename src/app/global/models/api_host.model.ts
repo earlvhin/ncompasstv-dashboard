@@ -64,3 +64,16 @@ export class API_SINGLE_HOST {
 	fieldGroups?: any[];
 	createdBy?: any[];
 }
+export class API_CREATE_SUPPORT {
+	hostId: string;
+	notes: string;
+	url: string;
+	createdBy: string;
+
+	constructor(hostId: string, notes: string, url: string, createdBy: string) {
+		this.hostId = hostId;
+		this.notes = notes;
+		this.url = url;
+		this.createdBy = createdBy;
+	}
+}

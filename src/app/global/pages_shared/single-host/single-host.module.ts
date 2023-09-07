@@ -11,6 +11,8 @@ import { ImagesTabComponent } from './components/images-tab/images-tab.component
 import { DocumentsTabComponent } from './components/documents-tab/documents-tab.component';
 import { UploadImageDialogComponent } from './components/upload-image-dialog/upload-image-dialog.component';
 import { UploadDocumentDialogComponent } from './components/upload-document-dialog/upload-document-dialog.component';
+import { SupportTabComponent } from './components/support-tab/support-tab.component';
+import { ActivityTabComponent } from './components/activity-tab/activity-tab.component';
 
 const DIALOGS = [
 	UploadImageDialogComponent,
@@ -25,6 +27,8 @@ const DIALOGS = [
 		ImagesTabComponent,
 		DocumentsTabComponent,
 		DIALOGS,
+		SupportTabComponent,
+		ActivityTabComponent,
 	],
 	entryComponents: [
 		DIALOGS

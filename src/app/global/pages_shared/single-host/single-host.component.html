@@ -55,6 +55,18 @@
 							<app-documents-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-documents-tab>
 						</ng-template>
 					</mat-tab>
+					<!-- SUPPORT TAB -->
+					<mat-tab label="Support" *ngIf="is_admin">
+						<ng-template matTabContent>
+							<app-support-tab  [currentUser]="currentUser" [hostId]="hostId"> </app-support-tab>
+						</ng-template>
+					</mat-tab>
+					<!-- ACTIVITY TAB -->
+					<mat-tab label="Activity">
+						<ng-template matTabContent>
+							<app-activity-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-activity-tab>
+						</ng-template>
+					</mat-tab>
 				</mat-tab-group>
 			</div>
 		</div>

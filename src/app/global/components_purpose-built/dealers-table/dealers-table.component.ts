@@ -126,6 +126,7 @@ export class DealersTableComponent implements OnInit {
 	}
 
 	clearFilter() {
+		this.ongoing_filter = false;
 		this.filters = {
 			label_age: '',
 			label_unassigned: '',
@@ -200,7 +201,6 @@ export class DealersTableComponent implements OnInit {
 	}
 
 	dealerSetMappingData(response) {
-		this.ongoing_filter = false;
 		this.initial_load = false;
 		this.paging_data = response.paging;
 		if (!response.paging.entities) {
@@ -208,7 +208,7 @@ export class DealersTableComponent implements OnInit {
 			this.no_dealer = true;
 			return;
 		}
-		if (this._auth.current_role === 'dealeradmin') {
+		if (this._auth.current_role === 'dealeradmin' && !this.ongoing_filter) {
 			this.dealers_data = this.mapToUIFormat(response.entities);
 		} else {
 			this.dealers_data = this.mapToUIFormat(response.paging.entities);

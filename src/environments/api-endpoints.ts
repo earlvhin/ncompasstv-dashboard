@@ -60,6 +60,7 @@ export const API_ENDPOINTS = {
 		api_get_content_hourly_by_license: 'contentplayshourly/getdailytotalbylicense',
 		api_get_content_playing_where: 'content/getplayingwherebycontentsid',
 		api_get_content_history: 'content/getcontenthistorybycontentid?contentid=',
+		api_get_content_thumbnails: 'filler/content/thumbnails',
 		api_get_content_total: 'content/gettotal',
 		api_get_content_total_by_dealer: 'content/gettotal?dealerid=',
 		api_get_dealer_by_id: 'dealer/getbyid?dealer_id=',
@@ -100,6 +101,7 @@ export const API_ENDPOINTS = {
 		api_get_host_licenses_by_state_details: 'host/getdealershostslicensesperstate?state=',
 		api_get_host_report: 'host/getaddedreport',
 		api_get_hosts: 'host/getall',
+		api_get_hosts_activity: 'hostactivitylog/getall',
 		api_get_hosts_fetch: 'host/getalldefault',
 		api_get_hosts_fetch_for_export: 'host/export',
 		api_get_hosts_categories: 'host/gethostcategories',
@@ -150,6 +152,7 @@ export const API_ENDPOINTS = {
 		api_get_screens_type: 'screentype/getall',
 		api_get_screenshots: 'pi/getfiles?licenseid=',
 		api_get_stats: 'dealer/getstatistics',
+		api_get_support: 'support/getall',
 		api_get_timezone: 'timezone/getall',
 		api_get_template_by_dealer_id: 'template/gettemplatebydealerid?dealerid=',
 		api_get_template_by_id: 'template/gettemplatebyid?templateId=',
@@ -210,7 +213,8 @@ export const API_ENDPOINTS = {
 		upcoming_installations: 'license/getUpComingInstall',
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
-		validate_rss_url: 'feed/news/validate?url='
+		validate_rss_url: 'feed/news/validate?url=',
+		validate_feed_url: 'feed/validate/url'
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',
@@ -245,6 +249,7 @@ export const API_ENDPOINTS = {
 		api_new_template: 'template/create',
 		api_new_app_version: 'playerapp/addversion',
 		api_new_app: 'playerapp/create',
+		api_create_support: 'support/create',
 		api_new_content_history_log: 'playlists/logcontenthistory',
 		api_fieldgroup_value_create: 'fieldgroupdvalue/create',
 		api_save_activity: 'activity/log',
@@ -259,7 +264,8 @@ export const API_ENDPOINTS = {
 		tag: 'tag/create',
 		tag_add_and_assign: 'tag/admin/create/generic',
 		tag_owners: 'tag/addowners',
-		tag_type: 'tag/createtype'
+		tag_type: 'tag/createtype',
+		new_host_activity_logs: 'hostActivityLog/create'
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
