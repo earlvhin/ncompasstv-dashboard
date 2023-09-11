@@ -274,7 +274,7 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editFillerFeed(id) {
-		let dialogRef = this._dialog
+		this._dialog
 			.open(CreateFillerFeedComponent, {
 				width: '600px',
 				data: {

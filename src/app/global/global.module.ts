@@ -233,6 +233,7 @@ import {
 	MatIconModule,
 	MatButtonToggleModule
 } from '@angular/material';
+import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -458,7 +459,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES],
+	declarations: [ngComponents, DIRECTIVES, FillerMainViewComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,

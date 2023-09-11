@@ -1,35 +1,52 @@
 <mat-card class="h-100">
-    <div class="p-3">
-        <h2 class="mb-2">
-            <span class="text-primary font-weight-medium mr-2">{{ data_value }}</span>
-            <span class="normal-text font-weight-medium">{{ data_label }}</span>
-        </h2>
-        <h4 class="md-text">{{ data_description }}</h4>
-        <div class="p-3" *ngIf="is_this_week">
-            <span class="text-primary font-weight-medium mr-2">{{ this_week_ad_value }}</span>
-            <span class="sm-text font-weight-medium">{{ ad_value_label }}</span>
-            /
-            <span class="text-primary font-weight-medium mr-2">{{ this_week_menu_value }}</span>
-            <span class="sm-text font-weight-medium">{{ menu_value_label }}</span>
-            /
-            <span class="text-primary font-weight-medium mr-2">{{ this_week_closed_value }}</span>
-            <span class="sm-text font-weight-medium">{{ closed_value_label }}</span>
-            /
-            <span class="text-primary font-weight-medium mr-2">{{ this_week_unassigned_value }}</span>
-            <span class="sm-text font-weight-medium">{{ unassigned_value_label }}</span>
-        </div>
-        <div class="p-3" *ngIf="is_last_week">
-            <span class="text-primary font-weight-medium mr-2">{{ last_week_ad_value }}</span>
-            <span class="sm-text font-weight-medium">{{ ad_value_label }}</span>
-            /
-            <span class="text-primary font-weight-medium mr-2">{{ last_week_menu_value }}</span>
-            <span class="sm-text font-weight-medium">{{ menu_value_label }}</span>
-            /
-            <span class="text-primary font-weight-medium mr-2">{{ last_week_closed_value }}</span>
-            <span class="sm-text font-weight-medium">{{ closed_value_label }}</span>
-            /
-            <span class="text-primary font-weight-medium mr-2">{{ last_week_unassigned_value }}</span>
-            <span class="sm-text font-weight-medium">{{ unassigned_value_label }}</span>
-        </div>
-    </div>
+	<div class="p-3">
+		<h2 class="mb-2">
+			<span class="text-primary font-weight-medium mr-2">{{ data_value }}</span>
+			<span class="normal-text font-weight-medium">{{ data_label }}</span>
+		</h2>
+		<h4 class="md-text">{{ data_description }}</h4>
+		<div class="p-3" *ngIf="is_this_week">
+			<span class="text-primary font-weight-medium mr-2">{{ this_week_ad_value }}</span>
+			<span class="sm-text font-weight-medium">{{ ad_value_label }}</span>
+			/
+			<span class="text-primary font-weight-medium mr-2">{{ this_week_menu_value }}</span>
+			<span class="sm-text font-weight-medium">{{ menu_value_label }}</span>
+			/
+			<span class="text-primary font-weight-medium mr-2">{{ this_week_closed_value }}</span>
+			<span class="sm-text font-weight-medium">{{ closed_value_label }}</span>
+			/
+			<span class="text-primary font-weight-medium mr-2">{{ this_week_unassigned_value }}</span>
+			<span class="sm-text font-weight-medium">{{ unassigned_value_label }}</span>
+		</div>
+		<div class="p-3" *ngIf="is_last_week">
+			<span class="text-primary font-weight-medium mr-2">{{ last_week_ad_value }}</span>
+			<span class="sm-text font-weight-medium">{{ ad_value_label }}</span>
+			/
+			<span class="text-primary font-weight-medium mr-2">{{ last_week_menu_value }}</span>
+			<span class="sm-text font-weight-medium">{{ menu_value_label }}</span>
+			/
+			<span class="text-primary font-weight-medium mr-2">{{ last_week_closed_value }}</span>
+			<span class="sm-text font-weight-medium">{{ closed_value_label }}</span>
+			/
+			<span class="text-primary font-weight-medium mr-2">{{ last_week_unassigned_value }}</span>
+			<span class="sm-text font-weight-medium">{{ unassigned_value_label }}</span>
+		</div>
+		<div class="row no-gutters" *ngIf="is_filler">
+			<div class="col-lg-4">
+				<i class="lg-text text-primary fa fa-camera-retro mr-2"></i>
+				<span class="normal-text"> {{ filler_data ? filler_data.totalImages : 0 }} </span>
+				<span class="md-text">IMAGES</span>
+			</div>
+			<div class="col-lg-4">
+				<i class="lg-text text-primary fa fa-video-camera mr-2"></i>
+				<span class="normal-text"> {{ filler_data ? filler_data.totalVideos : 0 }} </span>
+				<span class="md-text">VIDEOS</span>
+			</div>
+			<div class="col-lg-4">
+				<i class="lg-text text-primary fa fa-newspaper-o mr-2"></i>
+				<span class="normal-text"> {{ filler_data ? filler_data.totalFeeds : 0 }} </span>
+				<span class="md-text">FEEDS</span>
+			</div>
+		</div>
+	</div>
 </mat-card>
