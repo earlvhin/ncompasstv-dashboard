@@ -49,7 +49,7 @@ export class FillersComponent implements OnInit {
 	ngOnInit() {
 		this.current_user_id = this._auth.current_user_value.user_id;
 		this.getFillersTotal();
-		this.getAllFillers(1);
+		this.getAllFillers(1, '');
 	}
 
 	ngAfterContentChecked() {
@@ -58,19 +58,19 @@ export class FillersComponent implements OnInit {
 
 	onTabChanged(e: { index: number }) {
 		this.current_tab = e.index;
+		this.filler_group_cache = [];
+		this.filler_group = [];
 		switch (e.index) {
 			case 0:
-				this.getAllFillers(1);
+				this.getAllFillers(1, '');
 				break;
 			case 1:
 				if (this.is_dealer) {
 					this.current_role = 1;
-					this.getFillersOtherRole(this.current_role, 1);
+					this.getFillersOtherRole(this.current_role, 1, '');
 				}
 				break;
 			case 2:
-				this.filler_group_cache = [];
-				this.filler_group = [];
 				this.getDealers(1);
 				break;
 			default:
