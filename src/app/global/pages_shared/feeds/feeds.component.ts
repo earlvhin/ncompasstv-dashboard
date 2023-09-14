@@ -90,6 +90,10 @@ export class FeedsComponent implements OnInit, OnDestroy {
 		return this.currentRole === 'sub-dealer';
 	}
 
+	get isCurrentRoleDealerAdmin() {
+		return this.currentRole === 'dealeradmin';
+	}
+
 	filterData(keyword: string): void {
 		this.search_data = '';
 		if (keyword && keyword.length > 0) this.search_data = keyword;

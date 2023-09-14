@@ -64,8 +64,10 @@ export class PlaylistMediaComponent implements OnInit {
 			this.getFloatingContents();
 			this.active_filler = 1;
 		} else this.active_filler = 2;
+	}
 
-		console.log('AC FILLER', this.active_filler);
+	get isCurrentRoleDealerAdmin() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin;
 	}
 
 	ngOnDestroy() {
