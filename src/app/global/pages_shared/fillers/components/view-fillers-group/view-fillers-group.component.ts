@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FillerService } from 'src/app/global/services';
+import { FillerService, AuthService, UserService } from 'src/app/global/services';
 import { ActivatedRoute } from '@angular/router';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
@@ -8,6 +8,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 import { AddFillerContentComponent } from '../add-filler-content/add-filler-content.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { CreateFillerFeedComponent } from '../create-filler-feed/create-filler-feed.component';
+import { UI_ROLE_DEFINITION } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-view-fillers-group',
@@ -27,6 +28,7 @@ export class ViewFillersGroupComponent implements OnInit {
 	playing_where_selected: any = [];
 	playlist_selected: any = [];
 	host_selected: any = [];
+	restricted: boolean = false;
 	search_keyword: string;
 	selected_filler: string;
 	selected_filler_feed_index: string;
@@ -39,7 +41,13 @@ export class ViewFillersGroupComponent implements OnInit {
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _filler: FillerService, private _params: ActivatedRoute, private _dialog: MatDialog) {}
+	constructor(
+		private _filler: FillerService,
+		private _params: ActivatedRoute,
+		private _dialog: MatDialog,
+		private _auth: AuthService,
+		private _user: UserService
+	) {}
 
 	ngOnInit() {
 		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => (this.filler_group_id = this._params.snapshot.params.data));
@@ -51,7 +59,10 @@ export class ViewFillersGroupComponent implements OnInit {
 		this._filler
 			.get_filler_group_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response) => (this.filler_group_data = response.data[0]));
+			.subscribe((response) => {
+				this.filler_group_data = response.data[0];
+			})
+			.add(() => this.allowedToDelete());
 	}
 
 	getFillerGroupContents(id, page?) {
@@ -236,5 +247,32 @@ export class ViewFillersGroupComponent implements OnInit {
 				break;
 			default:
 		}
+	}
+
+	allowedToDelete() {
+		if (this._isDealer || this._isSubDealer) {
+			if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id) this.restricted = true;
+			else this.restricted = false;
+		} else if (this._isAdmin) {
+			this._user
+				.get_user_role_by_id(this.filler_group_data.createdBy)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe((data: any) => {
+					if (UI_ROLE_DEFINITION.dealer in data.role) this.restricted = true;
+					else this.restricted = false;
+				});
+		}
+	}
+
+	protected get _isAdmin() {
+		return this._auth.current_role === 'administrator';
+	}
+
+	protected get _isDealer() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealer;
+	}
+
+	protected get _isSubDealer() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION['sub-dealer'];
 	}
 }

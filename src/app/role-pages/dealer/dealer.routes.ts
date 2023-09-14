@@ -10,6 +10,7 @@ import { CreateUserTypeComponent } from '../../global/pages_shared/create-user-t
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DealerLayoutComponent } from './dealer-layout/dealer-layout.component';
 import { FeedsComponent } from '../../global/pages_shared/feeds/feeds.component';
+import { FillersComponent } from '../../global/pages_shared/fillers/fillers.component';
 import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
 import { HostsComponent } from './pages/hosts/hosts.component';
 import { LicensesComponent } from './pages/licenses/licenses.component';
@@ -28,6 +29,7 @@ import { SingleScreenComponent } from '../../global/pages_shared/single-screen/s
 import { SingleUserComponent } from '../../global/pages_shared/single-user/single-user.component';
 import { TagsComponent } from 'src/app/global/pages_shared/tags/tags.component';
 import { UsersComponent } from './pages/users/users.component';
+import { ViewFillersGroupComponent } from '../../global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 
 import { AuthGuard, OwnerGuard } from '../../global/guards';
 import { UI_ROLE_DEFINITION } from '../../global/models';
@@ -174,6 +176,25 @@ export const DEALER_ROUTES: Routes = [
 					{
 						path: 'edit-generated/:data/:breadcrumb',
 						component: GenerateFeedComponent
+					}
+				]
+			},
+			{
+				path: 'fillers',
+				data: {
+					breadcrumb: 'Fillers Library'
+				},
+				children: [
+					{
+						path: '',
+						component: FillersComponent
+					},
+					{
+						path: 'view-fillers-group/:data',
+						component: ViewFillersGroupComponent,
+						data: {
+							breadcrumb: 'View Filler Group Contents'
+						}
 					}
 				]
 			},

@@ -1,15 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { AddFillerGroupComponent } from './components/add-filler-group/add-filler-group.component';
-import { EditFillerGroupComponent } from './components/edit-filler-group/edit-filler-group.component';
-import { Router } from '@angular/router';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { MatDialog } from '@angular/material';
 import { takeUntil } from 'rxjs/internal/operators/takeUntil';
 import { Subject } from 'rxjs';
+import { AuthService } from 'src/app/global/services';
 
-import { FillerService } from 'src/app/global/services';
+import { FillerService, DealerService } from 'src/app/global/services';
 import { AddFillerContentComponent } from './components/add-filler-content/add-filler-content.component';
-import { ConfirmationModalComponent } from '../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { DeleteFillerGroupComponent } from './components/delete-filler-group/delete-filler-group.component';
+import { API_DEALER, PAGING } from '../../models';
 
 @Component({
 	selector: 'app-fillers',
@@ -17,169 +14,67 @@ import { DeleteFillerGroupComponent } from './components/delete-filler-group/del
 	styleUrls: ['./fillers.component.scss']
 })
 export class FillersComponent implements OnInit {
-	current_filer: any;
-	dimension: string = '';
+	current_filter: any;
+	current_role: number;
+	current_tab = 0;
+	current_user_id: string = '';
 	fillers_count: any;
 	filler_group: any;
 	filler_group_cache = [];
-	is_loading = true;
-	no_preview = true;
+	is_dealer = this._isDealer;
+	is_loading: boolean;
 	no_search_result = false;
-	search_keyword: string = '';
-	selected_preview = [];
-	selected_preview_index = '';
-	sorting_order: string = '';
-	sorting_column: string = '';
+
+	// Dealers Dropdown
+	current_dealer_selected: string = '';
+	dealers_data: API_DEALER[] = [];
+	dealer_initial_load: boolean = true;
+	loading_data = true;
+	paging: PAGING;
+	loading_search = false;
+	private is_search = false;
+
 	title = 'Fillers Library';
 
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	constructor(private _dialog: MatDialog, private _router: Router, private _filler: FillerService) {}
+	constructor(
+		private _dialog: MatDialog,
+		private _filler: FillerService,
+		private _auth: AuthService,
+		private _cdr: ChangeDetectorRef,
+		private _dealer: DealerService
+	) {}
 
 	ngOnInit() {
+		this.current_user_id = this._auth.current_user_value.user_id;
 		this.getFillersTotal();
-		this.getAllFillers(1);
+		this.getAllFillers(1, '');
+	}
+
+	ngAfterContentChecked() {
+		this._cdr.detectChanges();
 	}
 
 	onTabChanged(e: { index: number }) {
+		this.current_tab = e.index;
+		this.filler_group_cache = [];
+		this.filler_group = [];
 		switch (e.index) {
-			case 1:
-				break;
 			case 0:
+				this.getAllFillers(1, '');
 				break;
-			case 3:
+			case 1:
+				if (this.is_dealer) {
+					this.current_role = 1;
+					this.getFillersOtherRole(this.current_role, 1, '');
+				}
+				break;
+			case 2:
+				this.getDealers(1);
 				break;
 			default:
 		}
-	}
-
-	onSearchFiller(keyword) {
-		this.is_loading = true;
-		if (keyword) {
-			this.search_keyword = keyword;
-			this.is_loading = true;
-		} else this.search_keyword = '';
-		this.getAllFillers(1);
-	}
-
-	onAddFillerGroup() {
-		this._dialog
-			.open(AddFillerGroupComponent, {
-				width: '500px',
-				data: {}
-			})
-			.afterClosed()
-			.subscribe(() => {
-				this.ngOnInit();
-			});
-	}
-
-	onEditFillerGroup(id) {
-		this._dialog
-			.open(EditFillerGroupComponent, {
-				width: '500px',
-				data: {
-					filler_group_id: id
-				}
-			})
-			.afterClosed()
-			.subscribe(() => {
-				this.ngOnInit();
-			});
-	}
-
-	onDeleteFillerGroup(id) {
-		//check first if any content is in used
-		this._filler
-			.validate_delete_filler_group(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				if (data.message) {
-					this.openConfirmationModal('warning', 'Delete Filler Group', 'Are you sure you want to delete this filler group?', 'delete', id);
-				} else {
-					const delete_dialog = this._dialog.open(DeleteFillerGroupComponent, {
-						width: '500px',
-						height: '450px',
-						data: {
-							filler_feeds: data.fillerPlaylistGroups,
-							filler_group_id: id
-						}
-					});
-
-					delete_dialog.afterClosed().subscribe((result) => {
-						if (!result) this.ngOnInit();
-					});
-				}
-			});
-	}
-
-	continueToDeleteProcess(id) {
-		this._filler
-			.delete_filler_group(id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				this.openConfirmationModal('success', 'Success!', 'Filler Group ' + data.message);
-				this.ngOnInit();
-			});
-	}
-
-	openConfirmationModal(status, message, data, action?, id?): void {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data, delete: true, id }
-		});
-
-		dialog.afterClosed().subscribe((result) => {
-			switch (result) {
-				case 'delete':
-					this.continueToDeleteProcess(id);
-					break;
-				default:
-			}
-		});
-	}
-
-	navigateToFillerGroup(id) {
-		this._router.navigate([]).then(() => {
-			window.open(`/administrator/fillers/view-fillers-group/` + id, '_blank');
-		});
-	}
-
-	showAlbumPreview(id, index) {
-		this.no_preview = false;
-		this.selected_preview_index = index;
-		this.selected_preview = [];
-		this._filler
-			.get_filler_thumbnails(id, 4)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data: any) => {
-				switch (data.length) {
-					case 1:
-						this.dimension = '150px';
-						break;
-					case 2:
-						this.dimension = '120px';
-						break;
-					default:
-						this.dimension = '85px';
-						break;
-				}
-				data.map((fillers) => {
-					if (fillers.fileType == 'webm') {
-						let lastIndex = fillers.url.lastIndexOf('.');
-						let requiredPath = fillers.url.slice(0, lastIndex + 1);
-						fillers.url = requiredPath + 'jpg';
-					}
-					fillers.dimension = this.dimension;
-				});
-				this.selected_preview = data;
-			});
-	}
-
-	hidePreview() {
-		this.no_preview = true;
-		this.selected_preview_index = '';
 	}
 
 	addFillerContent(group) {
@@ -203,29 +98,23 @@ export class FillersComponent implements OnInit {
 			.subscribe((data: any) => {
 				this.fillers_count = {
 					label: 'Fillers',
-					admin_label: 'Admin',
-					admin_count: data.totalSuperAdmin,
-					dealer_label: 'Dealer',
-					dealer_count: data.totalDealer,
-					dealer_admin_label: 'Dealer Admin',
-					dealer_admin_count: data.totalDealerAdmin,
-					host_label: 'Host',
-					host_count: data.totalHost
+					admin_label: 'Admin Fillers',
+					admin_count: data.admin ? data.admin.total : 0,
+					admin_data: data.admin,
+					dealer_label: 'Dealer Fillers',
+					dealer_count: data.dealer.total,
+					dealer_data: data.dealer,
+					dealer_admin_label: 'Dealer Admin Fillers',
+					dealer_admin_count: data.dealerAdmin ? data.dealerAdmin.total : 0,
+					dealer_admin_data: data.dealerAdmin
 				};
 			});
 	}
 
-	getAllFillers(page, size?) {
-		if (page === 1) size = 11;
-		this.current_filer = {
-			page: 1,
-			key: this.search_keyword,
-			size: size,
-			sort_col: this.sorting_column,
-			sort_ord: this.sorting_order
-		};
+	getFillersOtherRole(role, page?, keyword?, sort_col?, sort_ord?) {
+		if (page == 1) this.is_loading = true;
 		this._filler
-			.get_filler_groups(page, this.search_keyword, size, this.sorting_column, this.sorting_order)
+			.get_filler_group_of_other_roles(role, page, keyword, 11, sort_col, sort_ord)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				if (!data.message) {
@@ -238,7 +127,7 @@ export class FillersComponent implements OnInit {
 						return;
 					} else this.filler_group_cache = data.paging.entities;
 				} else {
-					if (this.search_keyword == '') {
+					if (keyword == '') {
 						this.filler_group = [];
 						this.no_search_result = false;
 						return;
@@ -250,17 +139,144 @@ export class FillersComponent implements OnInit {
 			});
 	}
 
-	sortFillerGroup(col, order) {
-		this.is_loading = true;
-		this.sorting_column = col;
-		this.sorting_order = order;
-		this.getAllFillers(1);
+	setFilters(event) {
+		this.current_filter = {
+			page: event.page ? event.page : 1,
+			keyword: event.keyword ? event.keyword : '',
+			sort_col: event.sort_col ? event.sort_col : '',
+			sort_ord: event.sort_ord ? event.sort_ord : ''
+		};
+
+		if (this.current_tab == 0)
+			this.getAllFillers(this.current_filter.page, this.current_filter.keyword, this.current_filter.sort_col, this.current_filter.sort_ord);
+		else if (this.current_tab == 1)
+			this.getFillersOtherRole(
+				this.current_role,
+				this.current_filter.page,
+				this.current_filter.keyword,
+				this.current_filter.sort_col,
+				this.current_filter.sort_ord
+			);
+		else if (this.current_tab == 2)
+			this.getDealerFillersAdminView(
+				this.current_filter.page,
+				this.current_filter.keyword,
+				this.current_filter.sort_col,
+				this.current_filter.sort_ord
+			);
 	}
 
-	clearFilter() {
-		this.is_loading = true;
-		this.sorting_column = '';
-		this.sorting_order = '';
-		this.getAllFillers(1);
+	getAllFillers(page, keyword?, sort_col?, sort_ord?) {
+		if (page == 1) this.is_loading = true;
+		this._filler
+			.get_filler_groups(page, keyword, 11, sort_col, sort_ord, this.is_dealer)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				if (!data.message) {
+					this.no_search_result = false;
+					this.filler_group = data.paging;
+					if (page > 1) {
+						data.paging.entities.map((group) => {
+							this.filler_group_cache.push(group);
+						});
+						return;
+					} else this.filler_group_cache = data.paging.entities;
+				} else {
+					if (keyword == '') {
+						this.filler_group = [];
+						this.no_search_result = false;
+						return;
+					} else this.no_search_result = true;
+				}
+			})
+			.add(() => {
+				this.is_loading = false;
+			});
+	}
+
+	private getDealers(page: number) {
+		if (page > 1) this.loading_data = true;
+		else {
+			if (this.is_search) this.loading_search = true;
+		}
+		this._dealer
+			.get_dealers_with_page(page, '')
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					this.dealers_data = data.dealers;
+					this.paging = data.paging;
+					this.loading_data = false;
+					if (page == 1) this.loading_search = false;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => (this.dealer_initial_load = false));
+	}
+
+	searchBoxTrigger(event: { is_search: boolean; page: number }) {
+		this.is_search = event.is_search;
+		this.getDealers(event.page);
+	}
+
+	searchDealer(keyword: string) {
+		this.loading_search = true;
+
+		this._dealer
+			.get_search_dealer(keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					if (data.paging.entities && data.paging.entities.length > 0) this.dealers_data = data.paging.entities;
+					else this.dealers_data = [];
+					this.paging = data.paging;
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => {
+				this.loading_search = false;
+			});
+	}
+
+	setToDealer(id: string) {
+		this.current_dealer_selected = id;
+		this.getDealerFillersAdminView(1);
+	}
+
+	getDealerFillersAdminView(page, keyword?, sort_col?, sort_ord?) {
+		if (page == 1) this.is_loading = true;
+		this._filler
+			.get_filler_group_dealer_admin_view(this.current_dealer_selected, page, keyword, 11, sort_col, sort_ord)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				if (!data.message) {
+					this.no_search_result = false;
+					this.filler_group = data.paging;
+					if (page > 1) {
+						data.paging.entities.map((group) => {
+							this.filler_group_cache.push(group);
+						});
+						return;
+					} else this.filler_group_cache = data.paging.entities;
+				} else {
+					if (keyword == '') {
+						this.filler_group = [];
+						this.no_search_result = false;
+						return;
+					} else this.no_search_result = true;
+				}
+			})
+			.add(() => {
+				this.is_loading = false;
+			});
+	}
+
+	protected get _isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
 	}
 }

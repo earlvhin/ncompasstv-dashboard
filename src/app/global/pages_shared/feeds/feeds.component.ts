@@ -250,7 +250,8 @@ export class FeedsComponent implements OnInit, OnDestroy {
 			.open(CreateFillerFeedComponent, {
 				width: '500px',
 				data: {
-					group: []
+					group: [],
+					from_edit_table: false
 				}
 			})
 			.afterClosed()

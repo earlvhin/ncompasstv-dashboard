@@ -1,144 +1,144 @@
 .form-spinner {
-    position: absolute;
-    right: 10px;
-    top: 10px;
+	position: absolute;
+	right: 10px;
+	top: 10px;
 }
 
 .img-responsive {
-    width: 100%;
+	width: 100%;
 }
 
 .theme-container {
-    max-width: 1650px;
-    margin: auto;
+	max-width: 1650px;
+	margin: auto;
 }
 
 .word-break {
-    word-wrap: break-word !important;
+	word-wrap: break-word !important;
 }
 
 .submit-on-load {
-    background-color: rgba($light, 0.85);
-    left: 0;
-    position: absolute;
-    height: 100%;
-    top: 0;
-    width: 100%;
+	background-color: rgba($light, 0.85);
+	left: 0;
+	position: absolute;
+	height: 100%;
+	top: 0;
+	width: 100%;
 }
 
 //Cursor
 .cursor-pointer {
-    cursor: pointer;    
+	cursor: pointer;
 }
 
 .cursor-move {
-    cursor: move;
+	cursor: move;
 }
 
 .cursor-void {
-    cursor: no-drop;    
+	cursor: no-drop;
 }
 
 // Display
 .inline-block {
-    display: inline-block;
+	display: inline-block;
 }
 .flex-even {
-    flex: 1;
+	flex: 1;
 }
 
 .flex {
-    display: flex;
+	display: flex;
 }
 
 //borders, backgrounds and outlines
 .no-border {
-    border: 0;
+	border: 0;
 }
 .no-background {
-    background: none;
+	background: none;
 }
 .no-outline {
-    outline: none;
+	outline: none;
 }
 .br-100 {
-    border-radius: 100%;
+	border-radius: 100%;
 }
 .right-border {
-    border-right: 1px solid gray;
+	border-right: 1px solid gray;
 }
 
 //width
 .full-width {
-    width: 100%;
+	width: 100%;
 }
 
 // Image Full Width Cover
 .image-w-100 {
-    height: 100%;
-    width: 100%;
-    object-fit: cover;
+	height: 100%;
+	width: 100%;
+	object-fit: cover;
 }
 
 //height
 .vh-100 {
-    height: 100vh !important;
+	height: 100vh !important;
 }
 
 .vh-50 {
-    height: 50vh !important;
+	height: 50vh !important;
 }
 
 .vh-60 {
-    height: 60vh !important;
+	height: 60vh !important;
 }
 
 .vh-64 {
-    height: 64vh !important;
+	height: 64vh !important;
 }
 
 .vh-75 {
-    height: 75vh !important;
+	height: 75vh !important;
 }
 
 .vh-30 {
-    height: 30vh !important;
+	height: 30vh !important;
 }
 
 .min-height-30 {
-    min-height: 30vh;
+	min-height: 30vh;
 }
 
 .min-height-500 {
-    min-height: 500px !important;
+	min-height: 500px !important;
 }
 
 .height-100 {
-    height: 100%;
+	height: 100%;
 }
 
 //positions
 .p-fixed {
-    position: fixed !important;
+	position: fixed !important;
 }
 .p-relative {
-    position: relative;
+	position: relative;
 }
 .p-absolute {
-    position: absolute;
+	position: absolute;
 }
 .right-0 {
-    right: 0;
+	right: 0;
 }
 .top-0 {
-    top: 0;
+	top: 0;
 }
 .left-0 {
-    left: 0;
+	left: 0;
 }
 
 .font-weight-medium {
-    font-weight: 600;
+	font-weight: 600;
 }
 
 //margins
@@ -174,51 +174,55 @@
 
 //text sizes
 .sm-text {
-    font-size: $sm !important;
+	font-size: $sm !important;
 }
 
 .xxsm-text {
-    font-size: $xxsm !important;
-} 
-
-.x-sm-text {
-    font-size: 9px !important;
+	font-size: $xxsm !important;
 }
 
-.xsm-text{
+.x-sm-text {
+	font-size: 9px !important;
+}
+
+.xsm-text {
 	font-size: $xsm;
 }
 
 .md-text {
-    font-size: $md !important;
+	font-size: $md !important;
 }
 .normal-text {
-    font-size: $normal !important;
+	font-size: $normal !important;
+}
+
+.lg-text {
+	font-size: $lg !important;
 }
 
 .xlg-text {
-    font-size: $xlg !important;
+	font-size: $xlg !important;
 }
 
 //Overflows
 .overflow-hidden {
-    overflow: hidden !important;
+	overflow: hidden !important;
 }
 
 //Colors
 .text-white {
-    color: $light;
+	color: $light;
 }
 
 //Font Weight
 .font-weight-md {
-    font-weight: 500 !important;
+	font-weight: 500 !important;
 }
 .font-weight-bold {
-    font-weight: 700;
+	font-weight: 700;
 }
 
 //Ordered Unordered List
 .list-unstyled {
-    list-style: none;
+	list-style: none;
 }
