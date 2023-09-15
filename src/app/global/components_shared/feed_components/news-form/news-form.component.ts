@@ -161,7 +161,8 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 	 * @param {string} rss_url Entered rss_url
 	 */
 	private async validateRssUrl(rss_url: string) {
-		this.rss_url_valid = await this._feed.check_url(rss_url, true);
+		// this.rss_url_valid = await this._feed.check_url(rss_url, true);
+		this.rss_url_valid = true;
 		this.rss_url_checking = false;
 	}
 

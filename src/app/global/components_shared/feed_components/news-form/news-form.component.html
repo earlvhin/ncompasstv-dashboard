@@ -68,13 +68,7 @@
 			<p class="sm-text font-weight-bold">Entered RSS URL is an unsupported format.</p>
 		</div>
 
-		<button
-			mat-button
-			mat-raised-button
-			matStepperNext
-			class="theme-btn"
-			[disabled]="!rss_url_valid || rss_url_checking || news_form.invalid"
-			(click)="generateNewsFeed()">
+		<button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="generateNewsFeed()">
 			Next <span class="fas fa-long-arrow-right"></span>
 		</button>
 	</form>
