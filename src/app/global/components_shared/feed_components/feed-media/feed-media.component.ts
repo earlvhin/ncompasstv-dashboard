@@ -102,12 +102,13 @@ export class FeedMediaComponent implements OnInit {
 		if (e.checked) {
 			if (this.floating_content) this.no_media = false;
 			this.media_files = this.media_files.concat(this.floating_content);
-		} else {
-			this.media_files = this.media_files.filter((i) => i.dealerId !== null && i.dealerId !== '');
-			this.image_search_key = null;
-			this.media_files = this.media_files_backup;
-			if (this.media_files.length == 0) this.no_media = true;
+			return;
 		}
+
+		this.media_files = this.media_files.filter((i) => i.dealerId !== null && i.dealerId !== '');
+		this.image_search_key = null;
+		this.media_files = this.media_files_backup;
+		if (this.media_files.length == 0) this.no_media = true;
 	}
 
 	// Search Content Field

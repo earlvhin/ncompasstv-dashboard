@@ -1,85 +1,87 @@
 <div *ngIf="media_files">
-    <div class="row align-items-center">
-        <div class="col-lg-8 mb-2">
-            <h3>Media Library</h3>
-            <p class="sm-text mb-0">Select image(s) to use on your custom feed.</p>
-        </div>
-        <div class="col-lg-4 text-right">
-            <button class="naked-btn" [mat-dialog-close]>
-                <span class="fas fa-times"></span>
-            </button>
-        </div>
-    </div>
+	<div class="row align-items-center">
+		<div class="col-lg-8 mb-2">
+			<h3>Media Library</h3>
+			<p class="sm-text mb-0">Select image(s) to use on your custom feed.</p>
+		</div>
+		<div class="col-lg-4 text-right">
+			<button class="naked-btn" [mat-dialog-close]>
+				<span class="fas fa-times"></span>
+			</button>
+		</div>
+	</div>
 
-    <hr>
+	<hr />
 
-    <div class="row align-items-start">
-        <div class="col-lg-6">
-            <mat-form-field class="full-width" appearance="fill">
-                <mat-label>Search an image, Type in a filename ...</mat-label>
-                <input matInput type="text" [(ngModel)]="image_search_key" (keyup)="searchContent($event)">
-            </mat-form-field>
-        </div>
-        <div class="col-lg-6 pt-2">
-            <ng-container *ngIf="is_admin">
-                <div class="d-flex align-items-center" *ngIf="floating_content.length > 0; else spinner;">
-                    <div class="mr-3">
-                        <mat-slide-toggle [checked]="show_floating_contents_toggle" (change)="showFloatingContent($event)" [disabled]="show_only_floating_contents"></mat-slide-toggle>
-                    </div>
-                    <div class="flex-even">
-                        <h6 class="sm-text">Display Floating Contents</h6>
-                        <p class="xsm-text">
-                            Display all content that are not assigned to any Dealer
-                        </p>
-                    </div>
-                </div>
+	<div class="row align-items-start">
+		<div class="col-lg-6">
+			<mat-form-field class="full-width" appearance="fill">
+				<mat-label>Search an image, Type in a filename ...</mat-label>
+				<input matInput type="text" [(ngModel)]="image_search_key" (keyup)="searchContent($event)" />
+			</mat-form-field>
+		</div>
+		<div class="col-lg-6 pt-2">
+			<ng-container *ngIf="is_admin">
+				<div class="d-flex align-items-center" *ngIf="floating_content.length > 0; else spinner">
+					<div class="mr-3">
+						<mat-slide-toggle
+							[checked]="show_floating_contents_toggle"
+							(change)="showFloatingContent($event)"
+							[disabled]="show_only_floating_contents"></mat-slide-toggle>
+					</div>
+					<div class="flex-even">
+						<h6 class="sm-text">Display Floating Contents</h6>
+						<p class="xsm-text">Display all content that are not assigned to any Dealer</p>
+					</div>
+				</div>
 
-                <ng-template #spinner>
-                    <app-spinner [diameter]="20"></app-spinner>
-                </ng-template>
-            </ng-container>
-        </div>
-    </div>
+				<ng-template #spinner>
+					<app-spinner [diameter]="20"></app-spinner>
+				</ng-template>
+			</ng-container>
+		</div>
+	</div>
 
-    <hr class="mt-0">
+	<hr class="mt-0" />
 
-    <div class="media-files mb-4" (scroll)="onScroll($event)">
-        <ng-container *ngIf="!no_media; else no_available_media">
-            <div class="row no-gutters" *ngIf="media_files">
-                <div class="col-lg-2 mb-3" *ngFor="let m of media_files">
-                    <div class="media-file-thumbnail mx-2" (click)="imageSelected(m)" [ngClass]="selected_media_files.includes(m) ? 'selected' : ''">
-                        <img [src]="m.previewThumbnail" [alt]="m.fileName">
-        
-                        <div class="overlay">
-                            <span class="xsm-text" [title]="m.title">{{ m.title | substring:10 }}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </ng-container>
+	<div class="media-files mb-4" (scroll)="onScroll($event)">
+		<ng-container *ngIf="!no_media; else no_available_media">
+			<div class="row no-gutters" *ngIf="media_files">
+				<div class="col-lg-2 mb-3" *ngFor="let m of media_files">
+					<div class="media-file-thumbnail mx-2" (click)="imageSelected(m)" [ngClass]="selected_media_files.includes(m) ? 'selected' : ''">
+						<img [src]="m.thumbnail" [alt]="m.fileName" />
 
-        <ng-template #no_available_media>
-            <div class="py-4 text-center">
-                <h3>
-                    No Media File Available
-                </h3>
-                <p class="sm-text">
-                    No available or appropriate media file for Slide Feed, Go to Media Library to upload images.
-                </p>
-            </div>
-        </ng-template>
+						<div class="overlay">
+							<span class="xsm-text" [title]="m.title">{{ m.title | substring : 10 }}</span>
+						</div>
+					</div>
+				</div>
+			</div>
+		</ng-container>
 
-        <div class="py-4" *ngIf="!pageEnd">
-            <app-spinner [diameter]="70"></app-spinner>
-        </div>
-    </div>
+		<ng-template #no_available_media>
+			<div class="py-4 text-center">
+				<h3>No Media File Available</h3>
+				<p class="sm-text">No available or appropriate media file for Slide Feed, Go to Media Library to upload images.</p>
+			</div>
+		</ng-template>
 
-    <div class="row">
-        <div class="col-lg-12">
-            <button mat-button mat-raised-button class="theme-btn" [disabled]="selected_media_files.length == 0" [mat-dialog-close]="selected_media_files">
-                Done
-                <span class="fas fa-plus ml-2"></span>
-            </button>
-        </div>
-    </div>
+		<div class="py-4" *ngIf="!pageEnd">
+			<app-spinner [diameter]="70"></app-spinner>
+		</div>
+	</div>
+
+	<div class="row">
+		<div class="col-lg-12">
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn"
+				[disabled]="selected_media_files.length == 0"
+				[mat-dialog-close]="selected_media_files">
+				Done
+				<span class="fas fa-plus ml-2"></span>
+			</button>
+		</div>
+	</div>
 </div>
