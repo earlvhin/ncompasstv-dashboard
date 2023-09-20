@@ -27,6 +27,7 @@ import {
 	UI_ROLE_DEFINITION_TEXT,
 	UI_ROLE_DEFINITION
 } from 'src/app/global/models';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -256,6 +257,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _host: HostService,
 		private _license: LicenseService,
+		private _snackbar: MatSnackBar,
 		private _location: Location,
 		private _params: ActivatedRoute,
 		private _role: RoleService,
@@ -1301,6 +1303,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	resyncSocketConnection() {
 		this.licenses.forEach((i) => {
 			this._socket.emit('D_is_electron_running', i.licenseId);
+		});
+	}
+
+	runTerminalScript(script: string) {
+		this.licenses.forEach((i) => {
+			this._socket.emit('D_run_terminal', {
+				license_id: i.licenseId,
+				script: script
+			});
+		});
+
+		this._snackbar.open(`Terminal fired!`, '', {
+			duration: 3000
 		});
 	}
 
