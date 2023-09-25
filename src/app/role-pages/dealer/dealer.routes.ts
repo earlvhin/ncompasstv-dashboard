@@ -28,6 +28,7 @@ import { SinglePlaylistComponent } from '../../global/pages_shared/single-playli
 import { SingleScreenComponent } from '../../global/pages_shared/single-screen/single-screen.component';
 import { SingleUserComponent } from '../../global/pages_shared/single-user/single-user.component';
 import { TagsComponent } from 'src/app/global/pages_shared/tags/tags.component';
+import { UnsavedChangesGuard } from '../../global/guards';
 import { UsersComponent } from './pages/users/users.component';
 import { ViewFillersGroupComponent } from '../../global/pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
 
@@ -162,6 +163,7 @@ export const DEALER_ROUTES: Routes = [
 					{
 						path: 'generate',
 						component: GenerateFeedComponent,
+						canDeactivate: [UnsavedChangesGuard],
 						data: {
 							breadcrumb: 'Generate Feeds'
 						}
@@ -169,6 +171,7 @@ export const DEALER_ROUTES: Routes = [
 					{
 						path: 'edit-generated/:data',
 						component: GenerateFeedComponent,
+						canDeactivate: [UnsavedChangesGuard],
 						data: {
 							breadcrumb: 'Edit Generated Feeds'
 						}

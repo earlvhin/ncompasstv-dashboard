@@ -20,13 +20,14 @@ import { FeedItem } from '../../models/ui_feed_item.model';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../models/ui_role-definition.model';
 import { API_FEED_TYPES } from '../../models/api_feed.model';
 import { takeUntil } from 'rxjs/operators';
+import { CanComponentDeactivate } from '../../guards';
 
 @Component({
 	selector: 'app-generate-feed',
 	templateUrl: './generate-feed.component.html',
 	styleUrls: ['./generate-feed.component.scss']
 })
-export class GenerateFeedComponent implements OnInit {
+export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 	@Input() background_image: string;
 	@Input() banner_image: string;
 
@@ -50,6 +51,7 @@ export class GenerateFeedComponent implements OnInit {
 	route: string;
 	dealers: { dealerId: string; businessName: string }[];
 	apply_to_all_btn_status: boolean = false;
+	unsavedChanges: boolean = false;
 
 	private roleRoute = this._roleRoute;
 	protected _unsubscribe = new Subject<void>();
@@ -83,6 +85,20 @@ export class GenerateFeedComponent implements OnInit {
 	ngOnDestroy(): void {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	canDeactivate(): boolean {
+		const paramss = `/${this.roleRoute}/feeds/generate`;
+
+		if (this.unsavedChanges && !this.saving && paramss && !this._feed.logoutConfirmed) {
+			return window.confirm('Changes you made may not be saved.');
+		}
+
+		return true;
+	}
+
+	onFormChanges(changes: any) {
+		this.unsavedChanges = changes;
 	}
 
 	/**

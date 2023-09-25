@@ -6,20 +6,23 @@ import { UI_ROLE_DEFINITION } from '../../../../global/models/ui_role-definition
 import { NotificationService } from '../../../../global/services/notification-service/notification.service';
 import { environment } from '../../../../../environments/environment';
 import { NotificationsPaginated, Notification } from '../../../../global/models/api_notification.model';
+import { FeedService } from 'src/app/global/services';
+import { Router } from '@angular/router';
 @Component({
 	selector: 'app-navbar',
 	templateUrl: './navbar.component.html',
 	styleUrls: ['./navbar.component.scss']
 })
-
 export class NavbarComponent implements OnInit {
 	@Input() sidebar_state: boolean;
 	current_username: string;
 	current_userid: string;
+	feeds_params: string;
 	is_admin: boolean = false;
 	is_dealer: boolean = false;
 	has_alerts: boolean = false;
-	
+	has_unsaved_changes: boolean = false;
+
 	notifications: Notification[];
 	notification_paginated: NotificationsPaginated;
 	notification_count: string;
@@ -29,12 +32,18 @@ export class NavbarComponent implements OnInit {
 
 	constructor(
 		private _auth: AuthService,
+		private _feed: FeedService,
 		private _user: UserService,
-		private _notification: NotificationService
-	) { 
+		private _notification: NotificationService,
+		private _router: Router
+	) {
 		this._socket = io(environment.socket_server, {
 			transports: ['websocket'],
 			query: 'client=Dashboard__NavbarComponent'
+		});
+
+		this._feed.hasUnsavedChanges$.subscribe((value) => {
+			this.has_unsaved_changes = value;
 		});
 	}
 
@@ -59,6 +68,7 @@ export class NavbarComponent implements OnInit {
 		}
 
 		this.subscribeToResolvedAllEvent();
+		this.feeds_params = `/${this._roleRoute}/feeds/generate`;
 
 		this._socket.on('SS_notify', () => {
 			this.getUserNotifications();
@@ -83,6 +93,13 @@ export class NavbarComponent implements OnInit {
 	}
 
 	logOut() {
+		const current_routes = this._router.url;
+
+		if (this.has_unsaved_changes && current_routes === this.feeds_params) {
+			if (!window.confirm('Changes you made may not be saved.')) return;
+			this._feed.setLogoutConfirmed(true);
+		}
+
 		this._auth.logout();
 	}
 
@@ -112,5 +129,9 @@ export class NavbarComponent implements OnInit {
 
 	protected get currentUser() {
 		return this._auth.current_user_value;
+	}
+
+	protected get _roleRoute() {
+		return this._auth.roleRoute;
 	}
 }
