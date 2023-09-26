@@ -1,45 +1,66 @@
 <div class="p-5 user-form">
-    <div class="d-flex align-items-center mb-5">
-        <div class="mr-3">
-            <img src="/assets/media-files/advertiser-icon.png" class="user-icon" alt="dealer-icon">
-        </div>
-        <div class="flex-even">
-            <h3 class="mb-0">New Advertiser</h3>
-            <p class="sm-text mb-0">Fill the forms below to create a new Advertiser.</p>
-        </div>
-        <div class="text-right">
-            <a class="sm-text font-weight-bold text-primary" [routerLink]="back_btn">
-                <span class="fas fa-angle-left mr-2"></span>
-                Select User Type
-            </a>
-        </div>
-    </div>
+	<div class="d-flex align-items-center mb-5">
+		<div class="mr-3">
+			<img src="/assets/media-files/advertiser-icon.png" class="user-icon" alt="dealer-icon" />
+		</div>
+		<div class="flex-even">
+			<h3 class="mb-0">New Advertiser</h3>
+			<p class="sm-text mb-0">Fill the forms below to create a new Advertiser.</p>
+		</div>
+		<div class="text-right">
+			<a class="sm-text font-weight-bold text-primary" [routerLink]="back_btn">
+				<span class="fas fa-angle-left mr-2"></span>
+				Select User Type
+			</a>
+		</div>
+	</div>
 
-    <form [formGroup]="new_advertiser_form" #formDirective="ngForm" (ngSubmit)="createNewAdvertiser(formDirective)" class="text-left" *ngIf="dealers.length > 0; else loader">
-        <div class="row mb-4">
-            <ng-container *ngFor="let f of form_fields_view">
-                <div class="{{ f.width }}">
-                    <mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
-                        <mat-label>{{ f.label }}</mat-label>
-                        <input *ngIf="f.type !== 'password'; else passwordField" formControlName="{{ f.control }}" matInput type="{{ f.type }}" placeholder="{{ f.placeholder }}">
+	<form
+		[formGroup]="new_advertiser_form"
+		#formDirective="ngForm"
+		(ngSubmit)="createNewAdvertiser(formDirective)"
+		class="text-left"
+		*ngIf="!is_loading; else loader">
+		<div class="row mb-4">
+			<ng-container *ngFor="let f of form_fields_view">
+				<div class="{{ f.width }}">
+					<mat-form-field class="full-width" *ngIf="!f.is_autocomplete; else autocomplete">
+						<mat-label>{{ f.label }}</mat-label>
+						<input
+							*ngIf="f.type !== 'password'; else passwordField"
+							formControlName="{{ f.control }}"
+							matInput
+							type="{{ f.type }}"
+							placeholder="{{ f.placeholder }}" />
 
 						<ng-template #passwordField>
 							<div class="password-container" *ngIf="f.control === 'password'">
 								<div class="field">
-									<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
-									<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+									<input
+										formControlName="{{ f.control }}"
+										matInput
+										placeholder="{{ f.placeholder }}"
+										[type]="is_password_field_type ? 'password' : 'text'" />
+									<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
+										is_password_field_type ? 'visibility_off' : 'visibility'
+									}}</mat-icon>
 								</div>
 							</div>
 
 							<div class="password-container" *ngIf="f.control === 're_password'">
 								<div class="field">
-									<input formControlName="{{ f.control }}" matInput placeholder="{{ f.placeholder }}" [type]="is_retype_password_field_type ? 'password' : 'text'">
-									<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+									<input
+										formControlName="{{ f.control }}"
+										matInput
+										placeholder="{{ f.placeholder }}"
+										[type]="is_retype_password_field_type ? 'password' : 'text'" />
+									<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{
+										is_retype_password_field_type ? 'visibility_off' : 'visibility'
+									}}</mat-icon>
 								</div>
 							</div>
 						</ng-template>
-						
-                    </mat-form-field>
+					</mat-form-field>
 
 					<div class="validation" *ngIf="f.type === 'password'">
 						<span *ngIf="f.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
@@ -51,8 +72,9 @@
 						</span>
 					</div>
 
-                    <ng-template #autocomplete>
-						<app-autocomplete-field *ngIf="!f.advertiser_field; else advertiser_dropdown"
+					<ng-template #autocomplete>
+						<app-autocomplete-field
+							*ngIf="!f.advertiser_field; else advertiser_dropdown"
 							(data_value)="dealerSelected($event)"
 							(call_next_page)="searchBoxTrigger($event)"
 							(searched)="searchData($event)"
@@ -69,9 +91,9 @@
 							[new_value]="dealer_name"
 							[disabled]="is_dealer">
 						</app-autocomplete-field>
-                    </ng-template>
+					</ng-template>
 
-                    <ng-template #advertiser_dropdown>
+					<ng-template #advertiser_dropdown>
 						<app-autocomplete-field
 							(data_value)="advertiserSelected($event)"
 							[key_of_value]="'id'"
@@ -87,22 +109,20 @@
 							[loading_search]="loading_search_adv"
 							[disabled]="!advertisers"
 							[reset_value]="initial_load_advertiser">
-                        </app-autocomplete-field>
-                    </ng-template>
-                </div>
-            </ng-container>
-        </div>
-        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">
-            Create Advertiser
-        </button>
-    </form>
+						</app-autocomplete-field>
+					</ng-template>
+				</div>
+			</ng-container>
+		</div>
+		<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Advertiser</button>
+	</form>
 
-    <div class="submit-on-load d-flex align-items-center justify-content-center w-100" *ngIf="is_submitted">
-        <app-spinner></app-spinner>
-    </div>
-    <ng-template #loader>
-        <div class="vh-50 d-flex align-items-center justify-content-center">
-            <app-spinner></app-spinner>
-        </div>
-    </ng-template>
+	<div class="submit-on-load d-flex align-items-center justify-content-center w-100" *ngIf="is_submitted">
+		<app-spinner></app-spinner>
+	</div>
+	<ng-template #loader>
+		<div class="vh-50 d-flex align-items-center justify-content-center">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
 </div>
