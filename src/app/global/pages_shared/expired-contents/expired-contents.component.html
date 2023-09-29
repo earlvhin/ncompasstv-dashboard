@@ -1,0 +1,150 @@
+<div class="theme-container mt-4">
+	<div class="row no-gutters">
+		<div class="col-lg-12">
+			<h1 class="page-title">{{ title }}</h1>
+		</div>
+	</div>
+
+	<hr class="my-3" />
+
+	<div class="row">
+		<div class="col-lg-12 pt-4">
+			<span class="sm-text text-dark">
+				<span class="text-danger font-weight-bold"> NOTE: </span>
+				The following contents <span class="font-weight-bold text-danger">has not been found</span> in any playlist and not been played for
+				<span class="font-weight-bold text-danger">6 months and beyond</span>.
+			</span>
+		</div>
+		<div class="col-lg-4 mt-4">
+			<div class="bg-white p-3">
+				<div class="row">
+					<div class="col-lg-8">
+						<span class="md-text font-weight-bold text-dark uppercase"
+							>List of <span class="text-danger">{{ total_contents }}</span> Expired Media Files :</span
+						>
+					</div>
+					<div class="col-lg-4 text-right" *ngIf="contents">
+						<mat-slide-toggle (change)="onSelectAllToggle($event.checked)" [checked]="total_contents == selected_count">
+						</mat-slide-toggle>
+						<span class="md-text ml-3">Select All</span>
+					</div>
+					<div class="col-lg-12">
+						<span class="sm-text text-gray">Checking of content means you're confirming it's deletion.</span>
+					</div>
+				</div>
+
+				<hr class="my-3" />
+
+				<div class="row no-gutters">
+					<div class="col-lg-12" *ngIf="!is_loading; else loader">
+						<ul class="h-500 overflow-y-auto" *ngIf="contents; else nocontent">
+							<li class="clickable list-unstyled md-text p-2 hover-primary" *ngFor="let content of contents">
+								<mat-checkbox
+									class="mr-3"
+									[checked]="content.forDeletion == 1"
+									(change)="onCheckContent($event.checked, content.contentId)"></mat-checkbox>
+								<span (click)="selectedContent(content)">{{ content.title }}</span>
+							</li>
+						</ul>
+					</div>
+					<div class="col-lg-6">
+						<span class="md-text text-danger" *ngIf="selected_count > 0">{{ selected_count }} File(s) Selected</span>
+					</div>
+					<div class="col-lg-6 text-right" *ngIf="contents">
+						<button class="theme-btn sm-text bg-primary p-2" (click)="saveForDeletion()" [disabled]="selection_for_delete.length == 0">
+							Save Selection
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="col-lg-8">
+			<div class="row mt-5">
+				<div class="col-lg-3 pt-2">
+					<button mat-button mat-raised-button class="theme-btn sm-text mr-3 mx-1" [matMenuTriggerFor]="filetype">
+						<span>
+							Sort by File Type
+							<span class="fa fa-file-image-o ml-2 sm-text"></span>
+						</span>
+					</button>
+					<mat-menu #filetype="matMenu">
+						<button class="md-text" mat-menu-item (click)="filterContent('image')">Image</button>
+						<button class="md-text" mat-menu-item (click)="filterContent('video')">Video</button>
+						<button class="md-text" mat-menu-item (click)="filterContent('feed')">Feed</button>
+					</mat-menu>
+				</div>
+				<div class="offset-lg-3 col-lg-6">
+					<app-search-field
+						[form_title]="'Search Content File Name'"
+						[placeholder]="'Example: Pizza-Banner.jpg'"
+						[data_reference]="file_name"
+						[primary_keyword]="'title'"
+						[secondary_keyword]="'business_name'"
+						(searched)="filterData($event)"
+						[api_search]="true">
+					</app-search-field>
+				</div>
+				<div class="col-lg-12 mb-2" *ngIf="current_type != ''">
+					<div class="filter-pills p-2 bg-gray-2">
+						<div class="filetype-pill pill">
+							Filtered by Type: <strong>{{ current_type }}</strong>
+						</div>
+						<div class="control float-right">
+							<button class="theme-btn" (click)="clearFilter()">
+								<span class="button-label"> Clear Filter </span>
+								<span class="fas fa-times ml-2 sm-text"></span>
+							</button>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12">
+					<div class="preview-area h-500 bg-light-gray text-center">
+						<div class="p-5" *ngIf="!has_content_selected; else realpreview">
+							<i class="fa fa-file-image-o f-300 text-white"></i>
+							<br />
+							<div class="md-text mt-3 text-gray">Select a filename on the left list to preview the content.</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-12 mt-2 text-right" *ngIf="has_content_selected">
+					<span class="md-text"
+						>Click <span class="text-danger clickable" (click)="navigateToContent(selected_content.contentId)">here</span> to view more
+						details of this content <i class="fas fa-info-circle text-primary"></i
+					></span>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<ng-template #realpreview>
+		<video
+			[src]="selected_content.url + selected_content.fileName"
+			*ngIf="selected_content.file_type == 'Video'"
+			[muted]="true"
+			controls
+			class="full-width height-100"></video>
+
+		<img
+			[src]="selected_content.url + selected_content.fileName"
+			alt="image-content"
+			*ngIf="selected_content.file_type == 'Image'"
+			class="full-width height-100 contain-bg" />
+
+		<div class="full-width height-100 position-relative" *ngIf="selected_content.file_type == 'Feed'">
+			<iframe class="full-width left-0 height-100 position-absolute" [src]="selected_content.url | sanitize" frameborder="0"></iframe>
+		</div>
+	</ng-template>
+
+	<ng-template #nocontent>
+		<div class="sm-text text-gray">
+			<i>No Contents Found.</i>
+		</div>
+	</ng-template>
+
+	<ng-template #loader>
+		<div class="col-lg-12 text-center h-500">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
+</div>

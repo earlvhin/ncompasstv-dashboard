@@ -9,6 +9,7 @@ import { CreateUserComponent } from '../../global/pages_shared/create-user/creat
 import { CreateUserTypeComponent } from '../../global/pages_shared/create-user-type/create-user-type.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { DealerLayoutComponent } from './dealer-layout/dealer-layout.component';
+import { ExpiredContentsComponent } from '../../global/pages_shared/expired-contents/expired-contents.component';
 import { FeedsComponent } from '../../global/pages_shared/feeds/feeds.component';
 import { FillersComponent } from '../../global/pages_shared/fillers/fillers.component';
 import { GenerateFeedComponent } from '../../global/pages_shared/generate-feed/generate-feed.component';
@@ -288,6 +289,13 @@ export const DEALER_ROUTES: Routes = [
 					{
 						path: '',
 						component: MediaLibraryComponent
+					},
+					{
+						path: 'expired-contents',
+						component: ExpiredContentsComponent,
+						data: {
+							breadcrumb: 'Expired Contents'
+						}
 					},
 					{
 						path: ':data',

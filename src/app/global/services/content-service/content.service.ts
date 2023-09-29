@@ -67,6 +67,12 @@ export class ContentService extends BaseService {
 		return this.getRequest(`${this.getters.api_get_content_playing_where}` + '?contentid=' + `${id}`);
 	}
 
+	get_unused_contents(id, type = '', key?) {
+		return this.getRequest(
+			`${this.getters.api_get_usused_contents}` + '?dealerid=' + `${id}` + '&filetype=' + `${type}` + '&search=' + `${key}` + '&pageSize=0'
+		);
+	}
+
 	get_contents_history(id, page) {
 		return this.getRequest(`${this.getters.api_get_content_history}${id}` + '&page=' + `${page}`);
 	}
@@ -171,6 +177,11 @@ export class ContentService extends BaseService {
 	update_content_to_filler(body: { contentId: string; isFiller: boolean }) {
 		const url = `${this.updaters.content_to_filler}`;
 		return this.postRequest(url, body);
+	}
+
+	update_unused_contents(data) {
+		const url = `${this.updaters.api_update_unused_content}`;
+		return this.postRequest(url, data);
 	}
 
 	sort_ascending(files) {

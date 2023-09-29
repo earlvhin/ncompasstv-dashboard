@@ -166,6 +166,7 @@ export const API_ENDPOINTS = {
 		api_get_users: 'user/getall',
 		api_get_users_total: 'user/gettotal',
 		api_get_users_role_by_id: 'user/getuserrole',
+		api_get_usused_contents: 'content/getunusedcontents',
 		api_generate_content_logs_report: 'contentplaysdaily/ExportPlayLogsPerHostsByContent',
 		api_google_map: 'googleapi/searchplaces?place=',
 		api_google_store_hours: 'googleapi/getstorehours?placeid=',
@@ -181,7 +182,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -326,6 +327,7 @@ export const API_ENDPOINTS = {
 		api_update_filler_feed: 'feed/update/fillers',
 		api_update_slide_feed: 'feed/update/slides',
 		api_update_content: 'content/unassigndealer',
+		api_update_unused_content: 'content/updateunusedcontents',
 		api_update_user: 'user/update',
 		api_update_weather_feed: 'feed/update/weather',
 		content_protection: 'content/setProtection',

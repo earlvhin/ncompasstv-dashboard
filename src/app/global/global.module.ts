@@ -81,6 +81,7 @@ import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-si
 import { EditableFieldModalComponent } from './components_shared/page_components/editable-field-modal/editable-field-modal.component';
 import { ErrorMessageComponent } from './components_shared/page_components/error-message/error-message.component';
 import { ExpansionPanelComponent } from './components_shared/data_components/expansion-panel/expansion-panel.component';
+import { ExpiredContentsComponent } from './pages_shared/expired-contents/expired-contents.component';
 import { ExportsTabComponent } from './components_shared/reports_components/exports-tab/exports-tab.component';
 import { FailAnimationComponent } from './components_shared/page_components/fail-animation/fail-animation.component';
 import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
@@ -308,6 +309,7 @@ const ngComponents = [
 	ErrorMessageComponent,
 	ErrorMessageComponent,
 	ExpansionPanelComponent,
+	ExpiredContentsComponent,
 	ExportsTabComponent,
 	FailAnimationComponent,
 	FeedDemoComponent,
