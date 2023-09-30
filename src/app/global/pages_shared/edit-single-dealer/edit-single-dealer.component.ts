@@ -7,7 +7,7 @@ import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 
 import { AuthService, ConfirmationDialogService, DealerService, UserService } from 'src/app/global/services';
-import { API_DEALER, API_UPDATE_DEALER_PROFILE_BY_ADMIN, API_USER_DATA, USER } from 'src/app/global/models';
+import { ACTIVITY_LOGS, API_DEALER, API_UPDATE_DEALER_PROFILE_BY_ADMIN, API_USER_DATA, USER } from 'src/app/global/models';
 import { ReassignDealerComponent } from './reassign-dealer/reassign-dealer.component';
 import { DeleteDealerDialogComponent } from './delete-dealer-dialog/delete-dealer-dialog.component';
 
@@ -104,6 +104,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	onReassignDealer(): void {
 		const editDialog = this._dialogReference;
+		const reassignActivityLog = new ACTIVITY_LOGS(this.dealer.dealerId, 'reassign_dealer', this._auth.current_user_value.user_id);
 		const width = '350px';
 		const height = '400px';
 
@@ -118,6 +119,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 				data: { dealer_id: this.edit_dealer_form.get('dealer_id').value }
 			})
 		);
+
+		this.createActivity(reassignActivityLog);
 	}
 
 	onSelectStartDate(e, hasValue?) {
@@ -142,6 +145,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 		const currentStatus = this.dealer.status;
 		const newStatus = this.is_active_dealer ? 'A' : 'I';
 		const observables = [this.updateDealerData(), this.updateUserData()];
+		const newDealerActivityLog = new ACTIVITY_LOGS(this.dealer.dealerId, 'modify_dealer', this._auth.current_user_value.user_id);
 
 		if (currentStatus !== newStatus) {
 			message += `This will ${newStatus === 'A' ? 'activate' : 'deactivate'} the dealer`;
@@ -166,6 +170,22 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 				},
 				(error) => {
 					throw new Error(error);
+				}
+			);
+
+		this.createActivity(newDealerActivityLog);
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
 				}
 			);
 	}

@@ -81,6 +81,7 @@ export const API_ENDPOINTS = {
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
 		api_get_dealers_with_license: 'dealer/getdealerswithlicense',
 		api_get_dealer_report: 'dealer/getaddedreport',
+		api_get_dealer_activity: 'dealeractivitylog/getall',
 		api_get_dealer_admin_user: 'dealeradmin/dealer/assigneddealers',
 		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone',
 		api_get_dma: 'dma/gethosttotalbyrank',
@@ -272,7 +273,9 @@ export const API_ENDPOINTS = {
 		tag_add_and_assign: 'tag/admin/create/generic',
 		tag_owners: 'tag/addowners',
 		tag_type: 'tag/createtype',
-		new_host_activity_logs: 'hostActivityLog/create'
+		new_host_activity_logs: 'hostActivityLog/create',
+		new_dealer_activity_logs: 'dealeractivitylog/create'
+
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',

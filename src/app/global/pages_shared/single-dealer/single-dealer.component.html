@@ -408,7 +408,8 @@
 															(to_sort_column)="getColumnsAndOrder($event)"
 															[active_tab]="sort_column"
 															[sort_column]="sort_column"
-															[sort_order]="sort_order">
+															[sort_order]="sort_order"
+															[dealer_id]="dealer_id">
 														</app-data-table>
 													</mat-card>
 												</ng-container>
@@ -629,6 +630,31 @@
 								</div>
 							</div>
 						</mat-tab>
+
+						<mat-tab label="Activity">
+							<div class="col-lg-12 p-0" *ngIf="current_tab === 'activity'">
+								<div class="theme-container">
+									<div class="row">
+										<div class="col-lg-12" *ngIf="!initial_load; else loader_activity">
+											<app-single-activity-tab
+												*ngIf="activity_data.length; else loader_activity"
+												[activity_data]="activity_data"
+												[paging_data]="paging_data"
+												[sort_column]="sort_column_activity"
+												[sort_order]="sort_order_activity"
+												[currentUser]="currentUser"
+												[currentRole]="currentRole"
+												[ownerId]="dealer_id"
+												[initial_load]="initial_load_activity"
+												[owner_data]="dealer_data"
+												[reload_data]="reload_data"
+												(pageChanged)="getDealerActivity($event)">
+											</app-single-activity-tab>
+										</div>
+									</div>
+								</div>
+							</div>
+						</mat-tab>
 					</mat-tab-group>
 				</div>
 			</div>
@@ -645,6 +671,18 @@
 				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
 			</mat-card>
 		</div>
+	</ng-template>
+
+	<ng-template #no_data_activity>
+		<mat-card class="p-5"> <app-error-message></app-error-message></mat-card>
+	</ng-template>
+
+	<ng-template #loader_activity>
+		<ng-container *ngIf="!no_activity_data; else no_data_activity">
+			<div class="py-4 white-bg h-500">
+				<app-spinner></app-spinner>
+			</div>
+		</ng-container>
 	</ng-template>
 
 	<ng-template #loader>

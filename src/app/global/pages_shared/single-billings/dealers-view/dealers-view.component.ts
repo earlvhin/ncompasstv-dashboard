@@ -8,7 +8,7 @@ import { environment } from 'src/environments/environment';
 
 import { LicenseService, AuthService, DealerService } from 'src/app/global/services';
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { API_DEALER_VALUES, API_DEALER_VALUE, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_DEALER_VALUES, API_DEALER_VALUE, UI_ROLE_DEFINITION, ACTIVITY_LOGS } from 'src/app/global/models';
 
 @Component({
 	selector: 'app-dealers-view',
@@ -431,6 +431,8 @@ export class DealersViewComponent implements OnInit {
 	}
 
 	updateUserInfo() {
+		const newDealerActivityLog = new ACTIVITY_LOGS(this.dealer, 'modify_billing', this._auth.current_user_value.user_id);
+
 		this._dealer.update_dealer_values(this.mapUserInfoChanges()).subscribe(
 			() => {
 				this.openConfirmationModal('success', 'Success!', 'Dealer Billing Info changed succesfully');
@@ -440,6 +442,22 @@ export class DealersViewComponent implements OnInit {
 				throw new Error(error);
 			}
 		);
+
+		this.createActivity(newDealerActivityLog);
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
+				}
+			);
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string) {

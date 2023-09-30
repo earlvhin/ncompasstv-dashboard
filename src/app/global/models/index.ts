@@ -1,4 +1,5 @@
 export * from './api_activity.model';
+export * from './api_activity_logs.model';
 export * from './api_advertiser.model';
 export * from './api_blocklist-content.model';
 export * from './api_category.model';
@@ -73,6 +74,7 @@ export * from './tag.model';
 export * from './tag-owner.model';
 export * from './tag-type.model';
 export * from './table-row-format.model';
+export * from './ui_activity_logs.model';
 export * from './ui_advertiser.model';
 export * from './ui_city_state_region.model';
 export * from './ui_confirmation-modal.model';
@@ -86,7 +88,7 @@ export * from './ui_dealer-license.model';
 export * from './ui_dealer-playlist.model';
 export * from './ui_feed_item.model';
 export * from './ui_filetype';
-export * from './ui_host-activity'
+export * from './ui_host-activity.model';
 export * from './ui_host-content.model';
 export * from './ui_host-file.model';
 export * from './ui_host-license.model';

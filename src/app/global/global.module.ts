@@ -167,6 +167,7 @@ import { ScreenshotPipe } from './pipes/screenshot.pipe';
 import { SearchFieldComponent } from './components_shared/page_components/search-field/search-field.component';
 import { SelectOwnerComponent } from './components_shared/user_components/select-owner/select-owner.component';
 import { SidebarComponent } from './components_shared/page_components/sidebar/sidebar.component';
+import { SingleActivityTabComponent } from './pages_shared/single-activity-tab/single-activity-tab.component';
 import { SingleAdvertiserComponent } from './pages_shared/single-advertiser/single-advertiser.component';
 import { SingleBillingsComponent } from './pages_shared/single-billings/single-billings.component';
 import { SingleContentComponent } from './pages_shared/single-content/single-content.component';
@@ -396,6 +397,7 @@ const ngComponents = [
 	SearchFieldComponent,
 	SelectOwnerComponent,
 	SidebarComponent,
+	SingleActivityTabComponent,
 	SingleAdvertiserComponent,
 	SingleBillingsComponent,
 	SingleContentComponent,
