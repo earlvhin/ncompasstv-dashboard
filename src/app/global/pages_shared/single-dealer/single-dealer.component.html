@@ -623,7 +623,8 @@
 												[initial_load]="initial_load_activity"
 												[owner_data]="dealer_data"
 												[reload_data]="reload_data"
-												(pageChanged)="getDealerActivity($event)">
+												(pageChanged)="getDealerActivity($event)"
+												(sortColumnEvent)="getActivityColumnsAndOrder($event)">
 											</app-single-activity-tab>
 										</div>
 									</div>

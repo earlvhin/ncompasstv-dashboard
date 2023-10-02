@@ -24,6 +24,7 @@ export class SingleActivityTabComponent implements OnInit {
 	@Input() no_activity_data: boolean;
 	@Input() reload_data: boolean;
 	@Output() pageChanged = new EventEmitter<number>();
+	@Output() sortColumnEvent = new EventEmitter<{ column: string; order: string }>();
 
 	dateFormatted: any;
 
@@ -47,6 +48,10 @@ export class SingleActivityTabComponent implements OnInit {
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	sortOrder(data: { column: string; order: string }): void {
+		this.sortColumnEvent.emit(data);
 	}
 
 	onPageChange(newPage: number): void {

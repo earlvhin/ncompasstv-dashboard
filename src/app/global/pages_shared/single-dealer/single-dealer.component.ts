@@ -506,6 +506,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		);
 	}
 
+	getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+		this.sort_column_activity = data.column;
+		this.sort_order_activity = data.order;
+		this.getDealerActivity(1);
+	}
+
 	getDealerActivity(page: number): void {
 		this.activity_data = [];
 

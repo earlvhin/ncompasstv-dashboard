@@ -21,7 +21,8 @@
 							[sort_order]="sort_order"
 							(reload_page)="reload_page($event)"
 							(update_info)="reload_page($event)"
-							(page_triggered)="onPageChange($event)">
+							(page_triggered)="onPageChange($event)"
+							(to_sort_column)="sortOrder($event)">
 						</app-data-table>
 					</mat-card>
 				</div>
