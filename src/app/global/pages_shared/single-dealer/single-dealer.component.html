@@ -605,6 +605,32 @@
 							</div>
 						</mat-tab>
 
+						<!-- ACTIVITY TAB -->
+						<mat-tab label="Activity">
+							<div class="col-lg-12 p-0" *ngIf="current_tab === 'activity'">
+								<div class="theme-container">
+									<div class="row">
+										<div class="col-lg-12" *ngIf="!initial_load; else loader_activity">
+											<app-single-activity-tab
+												*ngIf="activity_data.length; else loader_activity"
+												[activity_data]="activity_data"
+												[paging_data]="paging_data"
+												[sort_column]="sort_column_activity"
+												[sort_order]="sort_order_activity"
+												[currentUser]="currentUser"
+												[currentRole]="currentRole"
+												[ownerId]="dealer_id"
+												[initial_load]="initial_load_activity"
+												[owner_data]="dealer_data"
+												[reload_data]="reload_data"
+												(pageChanged)="getDealerActivity($event)">
+											</app-single-activity-tab>
+										</div>
+									</div>
+								</div>
+							</div>
+						</mat-tab>
+
 						<!-- TERMINAL TAB -->
 						<mat-tab label="Terminal" *ngIf="is_admin">
 							<div class="row mt-4">
@@ -625,31 +651,6 @@
 									<div class="row">
 										<div class="col-lg-12">
 											<app-single-billings [dealer]="dealer_id" [reload]="reload_billing"> </app-single-billings>
-										</div>
-									</div>
-								</div>
-							</div>
-						</mat-tab>
-
-						<mat-tab label="Activity">
-							<div class="col-lg-12 p-0" *ngIf="current_tab === 'activity'">
-								<div class="theme-container">
-									<div class="row">
-										<div class="col-lg-12" *ngIf="!initial_load; else loader_activity">
-											<app-single-activity-tab
-												*ngIf="activity_data.length; else loader_activity"
-												[activity_data]="activity_data"
-												[paging_data]="paging_data"
-												[sort_column]="sort_column_activity"
-												[sort_order]="sort_order_activity"
-												[currentUser]="currentUser"
-												[currentRole]="currentRole"
-												[ownerId]="dealer_id"
-												[initial_load]="initial_load_activity"
-												[owner_data]="dealer_data"
-												[reload_data]="reload_data"
-												(pageChanged)="getDealerActivity($event)">
-											</app-single-activity-tab>
 										</div>
 									</div>
 								</div>

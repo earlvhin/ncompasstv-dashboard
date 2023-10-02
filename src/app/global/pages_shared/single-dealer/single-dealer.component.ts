@@ -1078,16 +1078,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 
 			case 4:
-				if (this.is_admin) {
-					this.current_tab = 'billing';
-					break;
-				} else {
-					this.current_tab = 'activity';
-				}
-
-			case 5:
 				this.current_tab = 'activity';
 				this.getDealerActivity(1);
+				break;
+
+			case 5:
+				this.current_tab = 'terminal';
+				break;
+
+			case 6:
+				this.current_tab = 'billing';
 
 				break;
 
@@ -1698,12 +1698,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this._location.path().includes('tab=3');
 	}
 
-	private get isBillingTabOnLoad(): boolean {
-		return this.is_dealer_admin ? this._location.path().includes('tab=5') : this._location.path().includes('tab=4');
+	private get isActivityTabOnLoad(): boolean {
+		return this._location.path().includes('tab=4');
 	}
 
-	private get isActivityTabOnLoad(): boolean {
-		return this.is_dealer_admin ? this._location.path().includes('tab=4') : this._location.path().includes('tab=5');
+	private get isTerminalTabOnLoad(): boolean {
+		return this._location.path().includes('tab=5');
+	}
+
+	private get isBillingTabOnLoad(): boolean {
+		return this._location.path().includes('tab=6');
 	}
 
 	private getDealer(): void {
@@ -1816,14 +1820,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			return;
 		}
 
+		if (this.isActivityTabOnLoad) {
+			this.current_tab = 'activity';
+			return;
+		}
+
+		if (this.isTerminalTabOnLoad) {
+			this.current_tab = 'terminal';
+			return;
+		}
+
 		if (this.isBillingTabOnLoad) {
 			this.current_tab = 'billing';
 			this.reload_billing = true;
 			this.cd.detectChanges();
-			return;
-		}
-		if (this.isActivityTabOnLoad) {
-			this.current_tab = 'activity';
 			return;
 		}
 
