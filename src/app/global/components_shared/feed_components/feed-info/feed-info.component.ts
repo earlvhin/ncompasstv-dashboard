@@ -1,10 +1,11 @@
-import { EventEmitter, Output } from '@angular/core';
+import { EventEmitter, HostListener, Output } from '@angular/core';
 import { Component, Input, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { Observable } from 'rxjs';
+import { Observable, Subscription  } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 
 import { API_FEED_TYPES, API_GENERATED_FEED, GenerateSlideFeed } from 'src/app/global/models';
+import { AuthService, FeedService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-feed-info',
@@ -20,20 +21,49 @@ export class FeedInfoComponent implements OnInit {
 	@Input() feed_types: API_FEED_TYPES[];
 	@Input() is_dealer: boolean = false;
 	@Output() feed_info = new EventEmitter();
+	@Output() formChanges: EventEmitter<boolean> = new EventEmitter<boolean>();
 
 	existing: any;
 	filtered_options: Observable<{dealerId: string, businessName: string}[]>;
 	generated_feed: GenerateSlideFeed;
+	hasUnsavedChanges: boolean = false;
+	isDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
 	new_feed_form: FormGroup;
 	selected_dealer: string;
+	private formSubscription: Subscription;
 
 	constructor(
-		private _form: FormBuilder
+		private _auth: AuthService,
+		private _form: FormBuilder,
+		private _feed: FeedService
 	) { }
 
 	ngOnInit() {
 		this.prepareFeedInfoForm();
+
+		this.formSubscription = this.new_feed_form.valueChanges.subscribe((f) => {
+			this.hasUnsavedChanges =  f.feed_title || f. feed_type || f.description || f.assign_to !== "" && !this.isDealer;
+			this.formChanges.emit(this.hasUnsavedChanges);
+			this.updateHasUnsavedChanges(this.hasUnsavedChanges)
+		})
+
 	}
+
+	ngOnDestroy() {
+		window.removeEventListener('beforeunload', this.unloadNotification);
+		this.formSubscription.unsubscribe();
+	}
+
+	@HostListener('window:beforeunload', ['$event'])
+	unloadNotification($event: any): void {
+		if (this.hasUnsavedChanges) {
+			$event.returnValue = true;
+		}
+	}
+
+	updateHasUnsavedChanges(value: boolean) {
+		this._feed.setInputChanges(value);
+	  }
 
 	/** Structure Feed Information and Pass */
 	structureFeedInfo() {

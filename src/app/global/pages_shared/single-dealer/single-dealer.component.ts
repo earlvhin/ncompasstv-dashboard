@@ -2,7 +2,7 @@ import { DatePipe, Location, TitleCasePipe } from '@angular/common';
 import { Component, OnInit, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
-import { Observable, Subject, Subscription } from 'rxjs';
+import { Observable, Subject, Subscription, forkJoin } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
 import { saveAs } from 'file-saver';
 import { Workbook } from 'exceljs';
@@ -25,8 +25,11 @@ import {
 	UI_DEALER_LICENSE,
 	UI_DEALER_LICENSE_ZONE,
 	UI_ROLE_DEFINITION_TEXT,
-	UI_ROLE_DEFINITION
+	UI_ROLE_DEFINITION,
+	ACTIVITY_LOGS,
+	UI_ACTIVITY_LOGS
 } from 'src/app/global/models';
+import { MatSnackBar } from '@angular/material';
 
 @Component({
 	selector: 'app-single-dealer',
@@ -44,6 +47,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	license_zone_data: any = [];
 	license_zone_filtered_data: any = [];
 	combined_data: API_HOST[];
+	currentRole = this._auth.current_role;
+	currentUser = this._auth.current_user_value;
 	current_tab = 'hosts';
 	current_advertiser_status_filter = 'active';
 	current_host_status_filter = 'all';
@@ -102,6 +107,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	paging_data_zone: any;
 	pi_updating: boolean = false;
 	reload_billing: boolean = false;
+	reload_activity: boolean = false;
 	remote_update_disabled = false;
 	remote_reboot_disabled = false;
 	screenshot_disabled = false;
@@ -136,6 +142,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	workbook_generation: boolean = false;
 	worksheet: any;
 
+	activity_data: UI_ACTIVITY_LOGS[] = [];
+	created_by: any;
+	dealer_data: any;
+	initial_load_activity = true;
+	paging_data_activity: any;
+	sort_column_activity = 'DateCreated';
+	sort_order_activity = 'desc';
+	no_activity_data = false;
+	dateFormatted: any;
+	page: any;
+	reload_data: boolean = false;
+
 	saved_license_page: any;
 	saved_hosts_page: any;
 	saved_adv_page: any;
@@ -150,6 +168,12 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		{ name: 'State', sortable: true, column: 'State' },
 		{ name: 'Status', sortable: true, column: 'Status' },
 		{ name: 'Assigned User', sortable: true, column: 'AdvertiserUser' }
+	];
+
+	activity_table_column = [
+		{ name: '#', sortable: false },
+		{ name: 'Date Created', column: 'dateCreated', sortable: true },
+		{ name: 'Activity', column: 'activityCode', sortable: false }
 	];
 
 	//Documentation for columns:
@@ -256,6 +280,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _host: HostService,
 		private _license: LicenseService,
+		private _snackbar: MatSnackBar,
 		private _location: Location,
 		private _params: ActivatedRoute,
 		private _role: RoleService,
@@ -479,6 +504,97 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				}
 			)
 		);
+	}
+
+	getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+		this.sort_column_activity = data.column;
+		this.sort_order_activity = data.order;
+		this.getDealerActivity(1);
+	}
+
+	getDealerActivity(page: number): void {
+		this.activity_data = [];
+
+		this._dealer
+			.get_dealer_activity(this.dealer_id, this.sort_column_activity, this.sort_order_activity, page)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(res) => {
+					if (res.paging.entities.length === 0) {
+						this.no_activity_data = true;
+						this.activity_data = [];
+						return;
+					}
+					this.getUserById(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
+						this.created_by = responses;
+
+						const mappedData = this.activity_mapToUI(res.paging.entities);
+						this.paging_data = res.paging;
+						this.activity_data = [...mappedData];
+						this.reload_data = true;
+					});
+				},
+				(error) => {
+					throw new Error(error);
+				}
+			)
+			.add(() => (this.initial_load_activity = false));
+	}
+
+	getUserById(ids: any[]) {
+		const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
+
+		return forkJoin(userObservables);
+	}
+
+	reload_page(e: boolean): void {
+		if (e) this.ngOnInit();
+	}
+
+	activity_mapToUI(activity): any {
+		let count = 1;
+
+		return activity.map((a: any) => {
+			const activityCode = a.activityCode;
+			let activityMessage = '';
+			let createdBy;
+
+			this.created_by.map((c) => {
+				if (c.userId === a.initiatedBy) {
+					return (createdBy = c);
+				}
+			});
+
+			if (activityCode === 'modify_dealer') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the dealer`;
+			} else if (activityCode === 'modify_billing') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the billing details`;
+			} else if (activityCode === 'deleted_license') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted a license`;
+			} else if (activityCode === 'deleted_multiple_license') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple license`;
+			} else if (activityCode === 'updated_license') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated the system`;
+			} else if (activityCode === 'reboot_player') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the player`;
+			} else if (activityCode === 'reboot_pi') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the pi`;
+			} else if (activityCode === 'reassign_dealer') {
+				activityMessage = `${createdBy.firstName} ${createdBy.lastName} re-assign the dealer`;
+			} else {
+				activityMessage = 'Other Activity Detected';
+			}
+
+			return new UI_ACTIVITY_LOGS(
+				{ value: count++, editable: false },
+				{ value: a.ownerId, hidden: true },
+				{ value: a.activityLogId, hidden: true },
+				{ value: this._date.transform(a.dateCreated, 'MMMM d, y'), hidden: false },
+				{ value: activityMessage, hidden: false },
+				{ value: a.initiatedBy, hidden: true },
+				{ value: a.dateUpdated, hidden: true }
+			);
+		});
 	}
 
 	getAdvertiserTotalCount(id): void {
@@ -968,7 +1084,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 
 			case 4:
+				this.current_tab = 'activity';
+				this.getDealerActivity(1);
+				break;
+
+			case 5:
+				this.current_tab = 'terminal';
+				break;
+
+			case 6:
 				this.current_tab = 'billing';
+
 				break;
 
 			default:
@@ -1181,6 +1307,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 	warningModal(status, message, data, return_msg, action, id?): void {
 		this._dialog.closeAll();
+		const updateLicenseActivity = new ACTIVITY_LOGS(this.dealer_id, 'updated_license', this._auth.current_user_value.user_id);
+		const rebootPlayerActivity = new ACTIVITY_LOGS(this.dealer_id, 'reboot_player', this._auth.current_user_value.user_id);
+		const rebootPiActivity = new ACTIVITY_LOGS(this.dealer_id, 'reboot_pi', this._auth.current_user_value.user_id);
+		const deletedLicenseActivity = new ACTIVITY_LOGS(this.dealer_id, 'deleted_multiple_license', this._auth.current_user_value.user_id);
 
 		let dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
@@ -1200,16 +1330,25 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.licenses.forEach((i) => {
 						this._socket.emit('D_system_update_by_license', i.licenseId);
 					});
+
+					this.createActivity(updateLicenseActivity);
 					break;
 				case 'reboot':
 					this.licenses.forEach((i) => {
 						this._socket.emit('D_pi_restart', i.licenseId);
 					});
+
+					this.createActivity(rebootPiActivity);
+
 					break;
 				case 'reboot_player':
 					this.licenses.forEach((i) => {
 						this._socket.emit('D_player_restart', i.licenseId);
+						this._host.emitActivity();
 					});
+
+					this.createActivity(rebootPlayerActivity);
+
 					break;
 				case 'license_delete':
 					this.subscription.add(
@@ -1217,6 +1356,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							this.warningModal('success', 'License Deleted', 'License successfully deleted.', '', ''), this.reloadLicense();
 						})
 					);
+
+					this.createActivity(deletedLicenseActivity);
+
 					break;
 				case 'upgrade_to_v2':
 					this.licenses.forEach((i) => {
@@ -1240,6 +1382,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this.remote_update_disabled = true;
 			this.screenshot_disabled = true;
 		});
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
+				}
+			);
 	}
 
 	getMultipleDeleteData(data) {
@@ -1301,6 +1457,19 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	resyncSocketConnection() {
 		this.licenses.forEach((i) => {
 			this._socket.emit('D_is_electron_running', i.licenseId);
+		});
+	}
+
+	runTerminalScript(script: string) {
+		this.licenses.forEach((i) => {
+			this._socket.emit('D_run_terminal', {
+				license_id: i.licenseId,
+				script: script
+			});
+		});
+
+		this._snackbar.open(`Terminal fired!`, '', {
+			duration: 3000
 		});
 	}
 
@@ -1535,8 +1704,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 		return this._location.path().includes('tab=3');
 	}
 
-	private get isBillingTabOnLoad(): boolean {
+	private get isActivityTabOnLoad(): boolean {
 		return this._location.path().includes('tab=4');
+	}
+
+	private get isTerminalTabOnLoad(): boolean {
+		return this._location.path().includes('tab=5');
+	}
+
+	private get isBillingTabOnLoad(): boolean {
+		return this._location.path().includes('tab=6');
 	}
 
 	private getDealer(): void {
@@ -1552,6 +1729,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.dealer_id = response.dealerId;
 					this.dealer_name = response.businessName;
 					this.getDealerUserData(response.userId);
+					this.dealer_data = response;
+
+					this.getDealerActivity(1);
 				},
 				(error) => {
 					throw new Error(error);
@@ -1643,6 +1823,16 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		if (this.isZoneTabOnLoad) {
 			this.current_tab = 'zone';
+			return;
+		}
+
+		if (this.isActivityTabOnLoad) {
+			this.current_tab = 'activity';
+			return;
+		}
+
+		if (this.isTerminalTabOnLoad) {
+			this.current_tab = 'terminal';
 			return;
 		}
 

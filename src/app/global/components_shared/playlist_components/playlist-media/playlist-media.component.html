@@ -108,16 +108,18 @@
 					</div>
 				</div>
 			</mat-tab>
-			<mat-tab label="Fillers">
+			<mat-tab label="Fillers" *ngIf="!isCurrentRoleDealerAdmin">
 				<div class="row mb-2">
 					<div class="col-lg-10">
 						<div class="row mt-3">
 							<div class="col-lg-5">
 								<mat-label class="font-weight-bold sm-text text-dark mb-2"> Select Filler Owner: </mat-label>
-								<mat-select [(value)]="active_filler">
-									<mat-option value="own"> Admin Fillers </mat-option>
-									<mat-option [disabled]="true" value="dealer_admin"> Dealer Admin Fillers </mat-option>
-									<mat-option [disabled]="true" value="dealers"> Dealers </mat-option>
+								<mat-select [(value)]="active_filler" (valueChange)="getAllFillerGroups($event)">
+									<mat-option [value]="1" *ngIf="!isDealer"> Admin Fillers </mat-option>
+									<mat-option [disabled]="true" [value]="3" *ngIf="!isDealer"> Dealer Admin Fillers </mat-option>
+									<mat-option [value]="2">
+										{{ isDealer ? 'My Fillers' : 'Dealer Fillers' }}
+									</mat-option>
 								</mat-select>
 							</div>
 						</div>
@@ -127,40 +129,42 @@
 					<div class="col-lg-12">
 						<div class="playlist-media-panel overflow-x-hidden border material-shadow bg-light p-2 mb-4">
 							<div *ngIf="!in_progress_saving_fillers; else savingFillers">
-								<div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
-									<div class="col-lg-2" *ngFor="let data of filler_groups">
-										<div class="row">
-											<div
-												class="col-lg-11 clickable"
-												(click)="prepareDataToAddToPlaylist(data.fillerPlaylistId, data.totalFillers)">
-												<div class="box-shadowing mb-4 bg-dark h-150" [attr.id]="data.fillerPlaylistId">
-													<div class="row no-gutters">
-														<div class="col-lg-12 text-center p-2">
-															<span class="mt-4 fa-3x text-primary fa fa-folder-o"></span>
-														</div>
-													</div>
-													<div class="row">
-														<div class="col-lg-12 text-center">
-															<h5 class="text-white" title="{{ data.name }}">
-																{{ data.name | slice : 0 : 15 }}{{ data.name.length > 15 ? '...' : '' }}
-															</h5>
-														</div>
-													</div>
-													<div class="row">
-														<div class="col-lg-12 text-center">
-															<div class="sm-text text-white">
-																<span>{{ data.totalFillers }} Fillers</span>
-																<span
-																	class="fas fa-info info xsm-text ml-2 br-100"
-																	[ngbTooltip]="breakdownFillers"></span>
+								<div *ngIf="!no_filler_groups; else nodata">
+									<div class="row no-gutters" *ngIf="filler_groups.length > 0; else loading">
+										<div class="col-lg-2" *ngFor="let data of filler_groups">
+											<div class="row">
+												<div
+													class="col-lg-11 clickable"
+													(click)="prepareDataToAddToPlaylist(data.fillerPlaylistId, data.totalFillers)">
+													<div class="box-shadowing mb-4 bg-dark h-150" [attr.id]="data.fillerPlaylistId">
+														<div class="row no-gutters">
+															<div class="col-lg-12 text-center p-2">
+																<span class="mt-4 fa-3x text-primary fa fa-folder-o"></span>
 															</div>
-															<ng-template #breakdownFillers>
-																<div class="sm-text" *ngFor="let group of data.fillerGroups">
-																	{{ group.quantity }} <span *ngIf="group.isPair">(In Pairs)</span> -
-																	{{ group.name }}
-																	<span></span>
+														</div>
+														<div class="row">
+															<div class="col-lg-12 text-center">
+																<h5 class="text-white" title="{{ data.name }}">
+																	{{ data.name | slice : 0 : 15 }}{{ data.name.length > 15 ? '...' : '' }}
+																</h5>
+															</div>
+														</div>
+														<div class="row">
+															<div class="col-lg-12 text-center">
+																<div class="sm-text text-white">
+																	<span>{{ data.totalFillers }} Fillers</span>
+																	<span
+																		class="fas fa-info info xsm-text ml-2 br-100"
+																		[ngbTooltip]="breakdownFillers"></span>
 																</div>
-															</ng-template>
+																<ng-template #breakdownFillers>
+																	<div class="sm-text" *ngFor="let group of data.fillerGroups">
+																		{{ group.quantity }} <span *ngIf="group.isPair">(In Pairs)</span> -
+																		{{ group.name }}
+																		<span></span>
+																	</div>
+																</ng-template>
+															</div>
 														</div>
 													</div>
 												</div>
@@ -169,6 +173,17 @@
 									</div>
 								</div>
 							</div>
+							<ng-template #nodata>
+								<div class="row no-gutters">
+									<div class="col-lg-12 bg-white text-center pt-5 pb-5">
+										<div class="mb-4">
+											<i class="text-gray fa-5x far fa-file-alt"></i>
+										</div>
+										<h3 class="text-gray col-lg-12">No Data Found.</h3>
+										<span class="text-gray col-lg-12">Add Filler Feeds first.</span>
+									</div>
+								</div>
+							</ng-template>
 							<ng-template #savingFillers>
 								<div class="loader-overlay bg-dark text-white text-center h-100 pt-5">
 									<h4 class="mt-5">Saving Fillers</h4>

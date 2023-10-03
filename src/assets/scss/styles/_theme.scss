@@ -650,6 +650,10 @@ button {
 	cursor: pointer;
 }
 
+.contain-bg {
+	object-fit: contain;
+}
+
 .not-clickable {
 	pointer-events: none;
 	.mat-expansion-indicator {
@@ -843,6 +847,10 @@ agm-map {
 	&:hover {
 		color: $primary;
 	}
+}
+
+.f-300 {
+	font-size: 300px;
 }
 
 .f-50 {

@@ -9,6 +9,7 @@ import {
 	AuthService,
 	BillingService,
 	ContentService,
+	DealerService,
 	FeedService,
 	FillerService,
 	HelperService,
@@ -20,7 +21,14 @@ import {
 	UserService
 } from 'src/app/global/services';
 
-import { DEALER_UI_TABLE_ADVERTISERS, UI_CURRENT_USER, UI_DEALER_ORDERS, UI_ROLE_DEFINITION, UI_TABLE_FEED } from 'src/app/global/models';
+import {
+	ACTIVITY_LOGS,
+	DEALER_UI_TABLE_ADVERTISERS,
+	UI_CURRENT_USER,
+	UI_DEALER_ORDERS,
+	UI_ROLE_DEFINITION,
+	UI_TABLE_FEED
+} from 'src/app/global/models';
 import { ConfirmationModalComponent } from '../../page_components/confirmation-modal/confirmation-modal.component';
 import { DeleteFillerGroupComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-group/delete-filler-group.component';
 import { DeletePlaylistComponent } from '../../../components_shared/playlist_components/delete-playlist/delete-playlist.component';
@@ -84,6 +92,7 @@ export class DataTableComponent implements OnInit {
 	@Input() feed_edit: boolean;
 	@Output() delete_feed = new EventEmitter();
 	@Output() edit_feed = new EventEmitter();
+	@Input() dealer_id: string;
 	@Output() delete_license = new EventEmitter();
 	@Output() delete_screen = new EventEmitter();
 	@Output() export_content_details = new EventEmitter();
@@ -121,7 +130,8 @@ export class DataTableComponent implements OnInit {
 		private _release: ReleaseNotesService,
 		private _router: Router,
 		private _screen: ScreenService,
-		private _user: UserService
+		private _user: UserService,
+		private _dealer: DealerService
 	) {}
 
 	ngOnInit() {
@@ -166,6 +176,11 @@ export class DataTableComponent implements OnInit {
 	editGeneratedFeed(data: any) {
 		if (this.is_view_only) return;
 		this._router.navigate([`/${this.roleRoute}/feeds/edit-generated/${data.feed_id.value}`]);
+	}
+
+	navigateToFiller(id: string) {
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/fillers/view-fillers-group/${id}`], {}));
+		window.open(url, '_blank');
 	}
 
 	onSelectRow(data: any, index: number): void {
@@ -269,7 +284,7 @@ export class DataTableComponent implements OnInit {
 	}
 
 	editFillerFeed(id) {
-		let dialogRef = this._dialog
+		this._dialog
 			.open(CreateFillerFeedComponent, {
 				width: '600px',
 				data: {
@@ -369,6 +384,8 @@ export class DataTableComponent implements OnInit {
 	}
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
+		const deleteLicenseActivity = new ACTIVITY_LOGS(this.dealer_id, 'deleted_license', this._auth.current_user_value.user_id);
+
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -392,6 +409,8 @@ export class DataTableComponent implements OnInit {
 					var array_to_delete = [];
 					array_to_delete.push(id);
 					this.licenseDelete(array_to_delete);
+
+					this.createActivity(deleteLicenseActivity);
 					break;
 				case 'playlist_delete':
 					this.playlistDelete(id);
@@ -434,6 +453,20 @@ export class DataTableComponent implements OnInit {
 				default:
 			}
 		});
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
+				}
+			);
 	}
 
 	licenseDelete(data): void {

@@ -48,6 +48,11 @@ export class UserService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_user_role_by_id(id) {
+		const url = `${this.getters.api_get_users_role_by_id}` + '?userid=' + `${id}`;
+		return this.getRequest(url);
+	}
+
 	get_user_by_id(userId: string): Observable<{ user?: API_USER_DATA; message?: string }> {
 		const url = `${this.getters.api_get_user_by_id}?user_id=${userId}`;
 

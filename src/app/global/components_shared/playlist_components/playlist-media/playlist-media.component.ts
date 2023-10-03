@@ -23,6 +23,7 @@ export class PlaylistMediaComponent implements OnInit {
 	floating_contents: API_CONTENT[] = [];
 	file_not_found: boolean = false;
 	filler_groups: any = [];
+	no_filler_groups: boolean = false;
 	show_floating: boolean = false;
 	page: number = 1;
 	paging: any;
@@ -30,7 +31,8 @@ export class PlaylistMediaComponent implements OnInit {
 	isGettingData: boolean = true;
 	selected_groups: any = [];
 	isActiveTab: number = 0;
-	active_filler: string = 'own';
+	active_filler: number;
+	current_role: number = 1;
 	// subscription: Subscription = new Subscription();
 
 	current_selection: any = '';
@@ -60,7 +62,12 @@ export class PlaylistMediaComponent implements OnInit {
 		) {
 			this.isDealer = false;
 			this.getFloatingContents();
-		}
+			this.active_filler = 1;
+		} else this.active_filler = 2;
+	}
+
+	get isCurrentRoleDealerAdmin() {
+		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin;
 	}
 
 	ngOnDestroy() {
@@ -221,12 +228,15 @@ export class PlaylistMediaComponent implements OnInit {
 		});
 	}
 
-	getAllFillerGroups() {
+	getAllFillerGroups(role?) {
+		let dealer_id = '';
+		if (role != 1) dealer_id = this._dialog_data.dealer_id;
+
 		this._filler
-			.get_filler_feeds(1, '', 0)
+			.get_filler_feeds_by_role(role, dealer_id)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data: any) => {
+			.subscribe((data: any) => {
+				if (!data.message) {
 					data.paging.entities.map((group) => {
 						let sum = 0;
 						group.fillerGroups.map((inside_group) => {
@@ -236,9 +246,9 @@ export class PlaylistMediaComponent implements OnInit {
 						group.totalFillers = sum;
 					});
 					this.filler_groups = data.paging.entities;
-				},
-				(error) => {}
-			);
+					this.no_filler_groups = false;
+				} else this.no_filler_groups = true;
+			});
 	}
 
 	prepareDataToAddToPlaylist(id, total) {
@@ -341,7 +351,7 @@ export class PlaylistMediaComponent implements OnInit {
 				this.getDealerContent(this._dialog_data.dealer_id);
 				break;
 			case 1:
-				this.getAllFillerGroups();
+				this.getAllFillerGroups(this.active_filler);
 				break;
 			default:
 		}

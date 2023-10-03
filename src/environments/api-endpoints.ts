@@ -39,7 +39,12 @@ export const API_ENDPOINTS = {
 		api_get_filler_feeds_minify: 'filler/playlist/getall/minify',
 		api_get_filler_feed_dependency: 'filler/playlist/getplaylistsbyfillerplaylistid',
 		api_get_filler_feed_placeholder: 'filler/playlist/placeholder',
+		api_get_filler_feed_by_role: 'filler/playlist/getbyrole',
 		api_get_filler_groups: 'filler/group/getall',
+		api_get_filler_group_for_feeds: 'filler/group/getbyuser',
+		api_get_dealer_filler_groups_admin_view: 'filler/group/dealer',
+		api_get_dealer_filler_groups: 'filler/group/dealer/getall',
+		api_get_dealer_filler_groups_other_roles: 'filler/group/dealer/byrole',
 		api_get_filler_group_by_id: 'filler/group/getbyid',
 		api_get_global_settings: 'globalSettings/getall',
 		api_get_host_fields: 'fieldgroup/getall',
@@ -76,6 +81,7 @@ export const API_ENDPOINTS = {
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
 		api_get_dealers_with_license: 'dealer/getdealerswithlicense',
 		api_get_dealer_report: 'dealer/getaddedreport',
+		api_get_dealer_activity: 'dealeractivitylog/getall',
 		api_get_dealer_admin_user: 'dealeradmin/dealer/assigneddealers',
 		api_get_dealer_license_zone: 'dealer/getdealerlicensebyzone',
 		api_get_dma: 'dma/gethosttotalbyrank',
@@ -160,6 +166,8 @@ export const API_ENDPOINTS = {
 		api_get_user_by_id: 'user/getbyid',
 		api_get_users: 'user/getall',
 		api_get_users_total: 'user/gettotal',
+		api_get_users_role_by_id: 'user/getuserrole',
+		api_get_usused_contents: 'content/getunusedcontents',
 		api_generate_content_logs_report: 'contentplaysdaily/ExportPlayLogsPerHostsByContent',
 		api_google_map: 'googleapi/searchplaces?place=',
 		api_google_store_hours: 'googleapi/getstorehours?placeid=',
@@ -265,7 +273,9 @@ export const API_ENDPOINTS = {
 		tag_add_and_assign: 'tag/admin/create/generic',
 		tag_owners: 'tag/addowners',
 		tag_type: 'tag/createtype',
-		new_host_activity_logs: 'hostActivityLog/create'
+		new_host_activity_logs: 'hostActivityLog/create',
+		new_dealer_activity_logs: 'dealeractivitylog/create'
+
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
@@ -320,6 +330,7 @@ export const API_ENDPOINTS = {
 		api_update_filler_feed: 'feed/update/fillers',
 		api_update_slide_feed: 'feed/update/slides',
 		api_update_content: 'content/unassigndealer',
+		api_update_unused_content: 'content/updateunusedcontents',
 		api_update_user: 'user/update',
 		api_update_weather_feed: 'feed/update/weather',
 		content_protection: 'content/setProtection',

@@ -335,8 +335,7 @@
 													<a
 														class="dropdown-item sm-text text-white"
 														*ngFor="let group of data[d].filler_groups"
-														[routerLink]="['/administrator/fillers/view-fillers-group/', group.fillerGroupId]"
-														target="_blank">
+														(click)="navigateToFiller(group.fillerGroupId)">
 														{{ group.quantity }} - {{ group.name }}
 													</a>
 												</div>

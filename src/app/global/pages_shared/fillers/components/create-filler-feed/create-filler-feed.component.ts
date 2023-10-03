@@ -96,9 +96,10 @@ export class CreateFillerFeedComponent implements OnInit {
 		return this.form.controls;
 	}
 
+	//is_Dealer temporary only until has API
 	getAllFillers(key?) {
 		this._filler
-			.get_filler_groups(1, key, 0, 'Name', 'asc')
+			.get_filler_group_for_feeds()
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				let groups_with_count_only = data.paging.entities.filter((group) => {
