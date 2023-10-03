@@ -125,7 +125,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	onSelectStartDate(e, hasValue?) {
 		if (hasValue) {
-			let value: any = moment(new Date(e));
+			let value: any = moment(e, 'YYYY-MM-DD').toDate();
 			if (!e || e.trim().length <= 0 || e.includes('--')) value = moment();
 			this.start_date = value;
 			this.edit_dealer_form.get('start_date').setValidators(null);
