@@ -108,16 +108,16 @@
 				<div class="p-3">
 					<h4>
 						<span class="fas fa-chart-bar text-primary mr-3"></span>
-						<span class="font-weight-bold">Total Statistics Average for Dealer</span>
+						<span class="fs-normal">Total Statistics Average for Dealer</span>
 					</h4>
 					<hr class="mb-3" />
 					<div class="row">
 						<div class="col-lg-4">
 							<div *ngIf="host_stats.total; else spinner">
-								<h4 class="font-weight-bold xlg-text text-primary">
+								<h4 class="xlg-text text-primary">
 									{{ getAverage(host_stats.total) }}
 								</h4>
-								<p class="font-weight-bold">
+								<p>
 									<span class="{{ host_stats.icon }} text-primary mr-1"></span>
 									<span class="sm-text text-gray">
 										{{ host_stats.total_label }}
@@ -127,10 +127,10 @@
 						</div>
 						<div class="col-lg-4">
 							<div *ngIf="advertiser_stats.total; else spinner">
-								<h4 class="font-weight-bold xlg-text text-primary">
+								<h4 class="xlg-text text-primary">
 									{{ getAverage(advertiser_stats.total) }}
 								</h4>
-								<p class="font-weight-bold">
+								<p>
 									<span class="{{ advertiser_stats.icon }} text-primary mr-1"></span>
 									<span class="sm-text text-gray">
 										{{ advertiser_stats.total_label }}
@@ -140,10 +140,10 @@
 						</div>
 						<div class="col-lg-4">
 							<div *ngIf="license_stats.total; else spinner">
-								<h4 class="font-weight-bold xlg-text text-primary">
+								<h4 class="xlg-text text-primary">
 									{{ getAverage(license_stats.total) }}
 								</h4>
-								<p class="font-weight-bold">
+								<p>
 									<span class="{{ license_stats.icon }}  text-primary mr-1"></span>
 									<span class="sm-text text-gray">
 										{{ license_stats.total_label }}
@@ -162,14 +162,14 @@
 				<div class="p-3">
 					<h4>
 						<span class="fas fa-history text-primary mr-3"></span>
-						<span class="font-weight-bold">Today's Activities</span>
+						<span class="fs-normal">Today's Activities</span>
 					</h4>
 					<hr class="mb-3" />
 					<div class="row no-gutters">
 						<div class="col-lg-6">
 							<div *ngIf="daily_content_total; else loader">
-								<h4 class="font-weight-bold xlg-text text-primary">{{ daily_content_total }}</h4>
-								<p class="font-weight-bold">
+								<h4 class="xlg-text text-primary">{{ daily_content_total }}</h4>
+								<p>
 									<span class="fas fa-photo-video text-primary mr-1"></span>
 									<span class="sm-text text-gray"> Content Uploads </span>
 								</p>
@@ -177,8 +177,8 @@
 						</div>
 						<div class="col-lg-6">
 							<div *ngIf="daily_feed_total; else loader">
-								<h4 class="font-weight-bold xlg-text text-primary">{{ daily_feed_total }}</h4>
-								<p class="font-weight-bold">
+								<h4 class="xlg-text text-primary">{{ daily_feed_total }}</h4>
+								<p>
 									<span class="fas fa-newspaper text-primary mr-1"></span>
 									<span class="sm-text text-gray"> Feeds Created </span>
 								</p>
@@ -195,14 +195,14 @@
 				<div class="p-3">
 					<h4>
 						<span class="fas fa-calendar text-primary mr-3"></span>
-						<span class="font-weight-bold">Scheduled Installation Stats</span>
+						<span class="fs-normal">Scheduled Installation Stats</span>
 					</h4>
 					<hr class="mb-3" />
 					<div class="row no-gutters">
 						<div class="col-lg-4">
 							<div *ngIf="installation_stats.total; else spinner">
-								<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.this_month }}</h4>
-								<p class="font-weight-bold">
+								<h4 class="xlg-text text-primary">{{ installation_stats.this_month }}</h4>
+								<p>
 									<span class="{{ installation_stats.icon }} text-danger mr-1"></span>
 									<span class="sm-text text-gray"> Current Month </span>
 								</p>
@@ -210,8 +210,8 @@
 						</div>
 						<div class="col-lg-4">
 							<div *ngIf="installation_stats.total; else spinner">
-								<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.last_month }}</h4>
-								<p class="font-weight-bold">
+								<h4 class="xlg-text text-primary">{{ installation_stats.last_month }}</h4>
+								<p>
 									<span class="{{ installation_stats.icon }} text-gray mr-1"></span>
 									<span class="sm-text text-gray"> Prev Month </span>
 								</p>
@@ -219,8 +219,8 @@
 						</div>
 						<div class="col-lg-4">
 							<div *ngIf="installation_stats.total; else spinner">
-								<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.next_month }}</h4>
-								<p class="font-weight-bold">
+								<h4 class="xlg-text text-primary">{{ installation_stats.next_month }}</h4>
+								<p>
 									<span class="{{ installation_stats.icon }} text-primary mr-1"></span>
 									<span class="sm-text text-gray"> Next Month </span>
 								</p>
@@ -236,12 +236,12 @@
 				<div class="p-3">
 					<h4>
 						<span class="fas fa-tv text-primary mr-3"></span>
-						<span class="font-weight-bold">Installation</span>
+						<span class="fs-normal">Installation</span>
 					</h4>
 					<hr class="mb-3" />
 					<div *ngIf="installation_stats.total; else loader">
-						<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.total }}</h4>
-						<p class="font-weight-bold">
+						<h4 class="xlg-text text-primary">{{ installation_stats.total }}</h4>
+						<p>
 							<span class="fas fa-tools text-primary mr-1"></span>
 							<span class="sm-text text-gray"> Total Installations </span>
 						</p>
@@ -258,12 +258,12 @@
 				<div class="p-3">
 					<h4>
 						<span class="fas fa-tv text-primary mr-3"></span>
-						<span class="font-weight-bold">Installation</span>
+						<span class="fs-normal">Installation</span>
 					</h4>
 					<hr class="mb-3" />
 					<div *ngIf="installation_stats.total; else loader">
-						<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.total }}</h4>
-						<p class="font-weight-bold">
+						<h4 class="xlg-text text-primary">{{ installation_stats.total }}</h4>
+						<p>
 							<span class="fas fa-tools text-primary mr-1"></span>
 							<span class="sm-text text-gray"> Total Installations </span>
 						</p>
@@ -276,12 +276,12 @@
 				<div class="p-3">
 					<h4>
 						<span class="fas fa-users text-primary mr-3"></span>
-						<span class="font-weight-bold">Users Today</span>
+						<span class="fs-normal">Users Today</span>
 					</h4>
 					<hr class="mb-3" />
 					<div *ngIf="daily_login_total; else loader">
-						<h4 class="font-weight-bold xlg-text text-primary">{{ daily_login_total }}</h4>
-						<p class="font-weight-bold">
+						<h4 class="xlg-text text-primary">{{ daily_login_total }}</h4>
+						<p>
 							<span class="fas fa-sign-in-alt text-primary mr-1"></span>
 							<span class="sm-text text-gray"> User Sign-ins </span>
 						</p>
@@ -307,8 +307,8 @@
 
 	<ng-template #no_data>
 		<div>
-			<h4 class="font-weight-bold xlg-text text-primary">0</h4>
-			<p class="font-weight-bold">
+			<h4 class="xlg-text text-primary">0</h4>
+			<p>
 				<span class="sm-text text-gray"> No available data </span>
 			</p>
 		</div>
