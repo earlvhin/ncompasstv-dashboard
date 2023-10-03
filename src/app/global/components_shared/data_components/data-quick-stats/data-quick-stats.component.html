@@ -1,56 +1,76 @@
-<mat-card class="h-100">
-    <div class="p-3" *ngIf="total_label; else spinner">
-        <h4>
-            <span class="{{icon}} text-primary mr-3"></span>
-            <span class="">{{total_label}}</span>
-        </h4>
-        <hr class="mb-2">
-        <div class="col-lg-12 flex" *ngIf="active || inactive">
-            <div class="col-lg-6 grid p-2 text-center bg-primary">
-                <span class="xlg-text text-white">
-                    {{active}}
-                </span>
-                <span class="col-lg-12 p-0 xsm-text text-white">
-                    {{active_label}}
-                </span>
-            </div>
-            <div class="col-lg-6 grid p-2 ml-2 text-center bg-gray-2">
-                <span class="xlg-text text-white">
-                    {{inactive}}
-                </span>
-                <span class="col-lg-12 p-0 xsm-text text-white">
-                    {{inactive_label}}
-                </span>
-            </div>
-        </div>
-        <div class="col-lg-12 grid mt-2 text-center">
-            <span class="xlg-text text-primary">
-                {{total}}
-            </span>
-            <span class="col-lg-12 p-0 xsm-text text-gray">
-                TOTAL {{total_label}}
-            </span>
-        </div>
-        <div class="col-lg-12 grid mt-2 text-center" *ngIf="notes">
-            <span class="col-lg-12 p-0 xsm-text text-danger">
-                {{notes}}
-            </span>
-        </div>
-        <div class="col-lg-12 flex mt-2" *ngIf="sub_label_left && sub_label_right">
-            <div class="col-lg-6 p-0 sm-text text-left">
-                <span class="{{sub_label_left_icon}} text-primary"></span>
-                <span class="text-light-gray ml-1"><b class="text-primary">{{sub_label_left_value}}</b> {{sub_label_left}}</span>
-            </div>
-            <div class="col-lg-6 p-0 sm-text text-right">
-                <span class="{{sub_label_right_icon}} text-gray"></span>
-                <span class="text-light-gray ml-1"><b class="text-gray">{{sub_label_right_value}}</b> {{sub_label_right}}</span>
-            </div>
-        </div>
-    </div>
-</mat-card>
+<mat-card>
+	<div class="p-3" *ngIf="total_label; else spinner">
+		<h4>
+			<span class="{{ icon }} text-primary mr-3"></span>
+			<span class="font-weight-bold">{{ total_label }}</span>
+		</h4>
+		<hr class="mb-2" />
+		<div class="row">
+			<div class="col-lg-12 mb-3" *ngIf="active || inactive">
+				<div class="row row-eq-height no-gutters">
+					<div class="col-lg-6">
+						<div class="p-2 text-center bg-primary mr-1">
+							<span class="font-weight-bold xlg-text text-white">
+								{{ active }}
+							</span>
+							<span class="font-weight-bold xsm-text text-white">
+								{{ active_label }}
+							</span>
+						</div>
+					</div>
+					<div class="col-lg-6">
+						<div class="p-2 text-center bg-gray-2 ml-1">
+							<span class="font-weight-bold xlg-text">
+								{{ inactive }}
+							</span>
+							<span class="font-weight-bold xsm-text">
+								{{ inactive_label }}
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-12 text-center">
+				<h4 class="font-weight-bold xlg-text text-primary line-height-xlg">
+					{{ total }}
+				</h4>
+				<span class="font-weight-bold p-0 xsm-text text-gray"> Total {{ total_label }} </span>
+			</div>
+			<div class="col-lg-12 mb-2 text-center text-notes">
+				<span class="font-weight-bold xsm-text text-danger" *ngIf="notes">
+					{{ notes }}
+				</span>
+			</div>
+			<div class="col-lg-12 flex" *ngIf="sub_label_left && sub_label_right">
+				<div class="col-lg-6">
+					<div class="font-weight-bold text-primary">
+						<span class="{{ sub_label_left_icon }} "></span>
+						<span class="ml-1">
+							{{ sub_label_left_value }}
+						</span>
+						<span class="xsm-text">
+							{{ sub_label_left }}
+						</span>
+					</div>
+				</div>
+				<div class="col-lg-6">
+					<div class="font-weight-bold text-right w-100">
+						<span class="{{ sub_label_right_icon }}"></span>
+						<span class="text-gray ml-1">
+							{{ sub_label_right_value }}
+						</span>
+						<span class="xsm-text">
+							{{ sub_label_right }}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-<ng-template #spinner>
-    <div class="py-5">
-        <app-spinner [diameter]="85"></app-spinner>
-    </div>
-</ng-template>
+	<ng-template #spinner>
+		<div class="py-5">
+			<app-spinner [diameter]="85"></app-spinner>
+		</div>
+	</ng-template>
+</mat-card>

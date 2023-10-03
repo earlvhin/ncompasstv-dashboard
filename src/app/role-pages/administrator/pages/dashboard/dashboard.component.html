@@ -10,16 +10,16 @@
 
 	<hr class="my-3" />
 
-	<div class="row mb-5 mt-5">
+	<div class="row my-4">
 		<div class="col-lg-8">
 			<div class="d-inline-flex pl-0">
 				<div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
 					<span class="fas fa-user-shield text-white"></span>
 				</div>
 				<div class="ml-3">
-					<span class="lg-text text-primary f-20">Welcome back, Admin {{ user_name }}</span>
+					<span class="lg-text text-primary f-20">Welcome back, Admin {{ user_name }}!</span>
 					<br />
-					<span class="text-gray sm-text"> This is your N-Compass Dashboard. Look around. </span>
+					<span class="text-gray sm-text"> This is your N-Compass Dashboard. Look around! </span>
 				</div>
 			</div>
 		</div>
@@ -32,7 +32,7 @@
 		</div>
 	</div>
 
-	<div class="row mt-3">
+	<div class="row mid-gutters mt-3">
 		<div class="col-lg-3">
 			<app-data-quick-stats
 				[total]="dealer_stats.total"
@@ -101,97 +101,190 @@
 		</div>
 	</div>
 
-	<div class="row mt-3">
-		<div class="col-lg-3">
-			<app-data-quick-stats
-				class="h-100"
-				[total]="installation_stats.total"
-				[total_label]="installation_stats.total_label"
-				[icon]="installation_stats.icon">
-			</app-data-quick-stats>
-		</div>
+	<div class="row mid-gutters mt-3">
+		<!-- Total Statistics Average for Dealer -->
 		<div class="col-lg-4">
 			<mat-card class="h-100">
 				<div class="p-3">
 					<h4>
-						<span class="fas fa-calendar text-primary mr-3"></span>
-						<span class="">SCHEDULED INSTALLATIONS STATISTICS</span>
+						<span class="fas fa-chart-bar text-primary mr-3"></span>
+						<span class="font-weight-bold">Total Statistics Average for Dealer</span>
 					</h4>
-					<hr class="mb-5" />
-					<div class="row no-gutters">
+					<hr class="mb-3" />
+					<div class="row">
 						<div class="col-lg-4">
-							<div *ngIf="installation_stats.total; else spinner">
-								<span class="{{ installation_stats.icon }} text-danger mr-3"></span>
-								<span class="xlg-text text-primary">
-									{{ installation_stats.this_month }}
-								</span>
-								<span class="sm-text text-gray"> CURRENT MONTH </span>
+							<div *ngIf="host_stats.total; else spinner">
+								<h4 class="font-weight-bold xlg-text text-primary">
+									{{ getAverage(host_stats.total) }}
+								</h4>
+								<p class="font-weight-bold">
+									<span class="{{ host_stats.icon }} text-primary mr-1"></span>
+									<span class="sm-text text-gray">
+										{{ host_stats.total_label }}
+									</span>
+								</p>
 							</div>
 						</div>
 						<div class="col-lg-4">
-							<div *ngIf="installation_stats.total; else spinner">
-								<span class="{{ installation_stats.icon }} text-gray mr-3"></span>
-								<span class="xlg-text text-primary">
-									{{ installation_stats.last_month }}
-								</span>
-								<span class="sm-text text-gray"> PREV MONTH </span>
+							<div *ngIf="advertiser_stats.total; else spinner">
+								<h4 class="font-weight-bold xlg-text text-primary">
+									{{ getAverage(advertiser_stats.total) }}
+								</h4>
+								<p class="font-weight-bold">
+									<span class="{{ advertiser_stats.icon }} text-primary mr-1"></span>
+									<span class="sm-text text-gray">
+										{{ advertiser_stats.total_label }}
+									</span>
+								</p>
 							</div>
 						</div>
 						<div class="col-lg-4">
-							<div *ngIf="installation_stats.total; else spinner">
-								<span class="{{ installation_stats.icon }} text-primary mr-3"></span>
-								<span class="xlg-text text-primary">
-									{{ installation_stats.next_month }}
-								</span>
-								<span class="sm-text text-gray"> NEXT MONTH </span>
+							<div *ngIf="license_stats.total; else spinner">
+								<h4 class="font-weight-bold xlg-text text-primary">
+									{{ getAverage(license_stats.total) }}
+								</h4>
+								<p class="font-weight-bold">
+									<span class="{{ license_stats.icon }}  text-primary mr-1"></span>
+									<span class="sm-text text-gray">
+										{{ license_stats.total_label }}
+									</span>
+								</p>
 							</div>
 						</div>
 					</div>
 				</div>
 			</mat-card>
 		</div>
-		<div class="col-lg-5">
+
+		<!-- Activity -->
+		<div class="col-lg-4" *ngIf="is_admin">
 			<mat-card class="h-100">
 				<div class="p-3">
 					<h4>
-						<span class="fas fa-chart-bar text-primary mr-3"></span>
-						<span class="">TOTAL STATISTICS AVERAGE FOR DEALER</span>
+						<span class="fas fa-history text-primary mr-3"></span>
+						<span class="font-weight-bold">Today's Activities</span>
 					</h4>
-					<hr class="mb-5" />
-					<div class="row">
+					<hr class="mb-3" />
+					<div class="row no-gutters">
+						<div class="col-lg-6">
+							<div *ngIf="daily_content_total; else loader">
+								<h4 class="font-weight-bold xlg-text text-primary">{{ daily_content_total }}</h4>
+								<p class="font-weight-bold">
+									<span class="fas fa-photo-video text-primary mr-1"></span>
+									<span class="sm-text text-gray"> Content Uploads </span>
+								</p>
+							</div>
+						</div>
+						<div class="col-lg-6">
+							<div *ngIf="daily_feed_total; else loader">
+								<h4 class="font-weight-bold xlg-text text-primary">{{ daily_feed_total }}</h4>
+								<p class="font-weight-bold">
+									<span class="fas fa-newspaper text-primary mr-1"></span>
+									<span class="sm-text text-gray"> Feeds Created </span>
+								</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+
+		<!-- Scheduled Installation Stats -->
+		<div class="col-lg-4">
+			<mat-card class="h-100">
+				<div class="p-3">
+					<h4>
+						<span class="fas fa-calendar text-primary mr-3"></span>
+						<span class="font-weight-bold">Scheduled Installation Stats</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="row no-gutters">
 						<div class="col-lg-4">
-							<div *ngIf="host_stats; else spinner">
-								<span class="{{ host_stats.icon }} text-primary mr-3"></span>
-								<span class="xlg-text text-primary">
-									{{ getAverage(host_stats.total) }}
-								</span>
-								<span class="col-lg-12 p-0 sm-text text-gray">
-									{{ host_stats.total_label }}
-								</span>
+							<div *ngIf="installation_stats.total; else spinner">
+								<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.this_month }}</h4>
+								<p class="font-weight-bold">
+									<span class="{{ installation_stats.icon }} text-danger mr-1"></span>
+									<span class="sm-text text-gray"> Current Month </span>
+								</p>
 							</div>
 						</div>
 						<div class="col-lg-4">
-							<div *ngIf="advertiser_stats; else spinner">
-								<span class="{{ advertiser_stats.icon }} text-primary mr-3"></span>
-								<span class="xlg-text text-primary">
-									{{ getAverage(advertiser_stats.total) }}
-								</span>
-								<span class="col-lg-12 p-0 sm-text text-gray">
-									{{ advertiser_stats.total_label }}
-								</span>
+							<div *ngIf="installation_stats.total; else spinner">
+								<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.last_month }}</h4>
+								<p class="font-weight-bold">
+									<span class="{{ installation_stats.icon }} text-gray mr-1"></span>
+									<span class="sm-text text-gray"> Prev Month </span>
+								</p>
 							</div>
 						</div>
 						<div class="col-lg-4">
-							<div *ngIf="license_stats; else spinner">
-								<span class="{{ license_stats.icon }} text-primary mr-3"></span>
-								<span class="xlg-text text-primary">
-									{{ getAverage(license_stats.total) }}
-								</span>
-								<span class="col-lg-12 p-0 sm-text text-gray">
-									{{ license_stats.total_label }}
-								</span>
+							<div *ngIf="installation_stats.total; else spinner">
+								<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.next_month }}</h4>
+								<p class="font-weight-bold">
+									<span class="{{ installation_stats.icon }} text-primary mr-1"></span>
+									<span class="sm-text text-gray"> Next Month </span>
+								</p>
 							</div>
 						</div>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+
+		<div class="col-lg-4" *ngIf="is_dealeradmin">
+			<mat-card class="h-100">
+				<div class="p-3">
+					<h4>
+						<span class="fas fa-users text-primary mr-3"></span>
+						<span class="font-weight-bold">Installation</span>
+					</h4>
+					<hr class="mb-3" />
+					<div *ngIf="installation_stats.total; else loader">
+						<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.total }}</h4>
+						<p class="font-weight-bold">
+							<span class="fas fa-tools text-primary mr-1"></span>
+							<span class="sm-text text-gray"> Total Installations </span>
+						</p>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+	</div>
+
+	<div class="row mid-gutters mt-3">
+		<div class="col-lg-3" *ngIf="is_admin">
+			<!-- Using this since data being passed is not as complete as the ones that are using data-quick-stats to match sibling card -->
+			<mat-card class="h-100">
+				<div class="p-3">
+					<h4>
+						<span class="fas fa-users text-primary mr-3"></span>
+						<span class="font-weight-bold">Installation</span>
+					</h4>
+					<hr class="mb-3" />
+					<div *ngIf="installation_stats.total; else loader">
+						<h4 class="font-weight-bold xlg-text text-primary">{{ installation_stats.total }}</h4>
+						<p class="font-weight-bold">
+							<span class="fas fa-tools text-primary mr-1"></span>
+							<span class="sm-text text-gray"> Total Installations </span>
+						</p>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+		<div class="col-lg-3" *ngIf="is_admin">
+			<mat-card class="h-100">
+				<div class="p-3">
+					<h4>
+						<span class="fas fa-users text-primary mr-3"></span>
+						<span class="font-weight-bold">Users Today</span>
+					</h4>
+					<hr class="mb-3" />
+					<div *ngIf="daily_login_total; else loader">
+						<h4 class="font-weight-bold xlg-text text-primary">{{ daily_login_total }}</h4>
+						<p class="font-weight-bold">
+							<span class="fas fa-sign-in-alt text-primary mr-1"></span>
+							<span class="sm-text text-gray"> User Sign-ins </span>
+						</p>
 					</div>
 				</div>
 			</mat-card>
@@ -200,7 +293,24 @@
 
 	<ng-template #spinner>
 		<div>
-			<app-spinner [diameter]="85"></app-spinner>
+			<app-spinner [diameter]="40"></app-spinner>
+		</div>
+	</ng-template>
+
+	<ng-template #loader>
+		<ng-container *ngIf="!no_feed_total || !no_content_total || !no_user_total; else no_data">
+			<div>
+				<app-spinner [diameter]="40"></app-spinner>
+			</div>
+		</ng-container>
+	</ng-template>
+
+	<ng-template #no_data>
+		<div>
+			<h4 class="font-weight-bold xlg-text text-primary">0</h4>
+			<p class="font-weight-bold">
+				<span class="sm-text text-gray"> No available data </span>
+			</p>
 		</div>
 	</ng-template>
 </div>
