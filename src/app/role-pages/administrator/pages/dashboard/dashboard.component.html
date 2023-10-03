@@ -298,7 +298,7 @@
 	</ng-template>
 
 	<ng-template #loader>
-		<ng-container *ngIf="!no_feed_total || !no_content_total || !no_user_total; else no_data">
+		<ng-container *ngIf="!no_feed_total && !no_content_total && !no_user_total; else no_data">
 			<div>
 				<app-spinner [diameter]="40"></app-spinner>
 			</div>
