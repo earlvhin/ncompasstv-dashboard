@@ -340,7 +340,7 @@ export class ContentsTabComponent implements OnInit {
 		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet(this.start_date + ' - ' + this.end_date);
+		this.worksheet = this.workbook.addWorksheet(this.start_date_for_query + ' - ' + this.end_date_for_query);
 		switch (tab) {
 			case 'dealer':
 				this.workbook_generation = true;
