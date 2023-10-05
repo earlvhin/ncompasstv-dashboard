@@ -63,7 +63,7 @@ export class ResourceTabComponent implements OnInit {
 	// }
 
 	onSelectDate(e) {
-		this.select_date = e.format('YYYY-MM-DD');
+		this.select_date = moment(e).format('YYYY-MM-DD');
 		this.getLicenseResourceUsage(this.license_id);
 		// if (this.end_date) this.getLicenseResourceUsage(this.license_id);
 	}

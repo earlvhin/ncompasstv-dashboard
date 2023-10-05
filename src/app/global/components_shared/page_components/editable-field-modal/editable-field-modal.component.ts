@@ -38,19 +38,19 @@ export class EditableFieldModalComponent implements OnInit {
 
 		if (this.status.label.includes('Date')) {
 			const data = this.data;
-			let value: any = moment(new Date(data));
+			let value: any = moment(data).toDate();
 			if (!data || data.trim().length <= 0 || data.includes('--')) value = moment();
 			this.date = value;
 		}
 	}
 
 	updateField(value: any): void {
-		if (this.status.label.includes('Date')) value = this.date.format('MM/DD/YYYY');
+		if (this.status.label.includes('Date')) value = moment(this.date).format('MM/DD/YYYY');
 		this.dialogRef.close(value);
 	}
 
 	onSelectDate(value: any): void {
-		this.date = moment(new Date(value));
+		this.date = moment(value, 'YYYY-MM-DD').toDate();
 	}
 
 	getScreenType() {

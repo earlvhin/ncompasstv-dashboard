@@ -59,8 +59,8 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 		this._unsubscribe.complete();
 	}
 
-	dateSelected(value: moment.Moment, type = 'default'): void {
-		this.currentFilters = { page: 1, installDate: value.format('MM-DD-YYYY') };
+	dateSelected(value, type = 'default'): void {
+		this.currentFilters = { page: 1, installDate: moment(value).format('MM-DD-YYYY') };
 		this.loadInstallationsData(type);
 	}
 
@@ -211,21 +211,21 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 
 	private mapToTableFormat(data: any[]): INSTALLATION[] {
 		let count = this.pagingData.pageStart;
-        let role = this._currentRole;
-        if(role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            role = 'administrator'
-        }
+		let role = this._currentRole;
+		if (role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			role = 'administrator';
+		}
 
 		return data.map((license) => {
-            // subtract 1 day from date today, because todays date is considered as past
-			const isPast = moment(license.installDate).isBefore(moment().subtract(1,'d'));
+			// subtract 1 day from date today, because todays date is considered as past
+			const isPast = moment(license.installDate).isBefore(moment().subtract(1, 'd'));
 
 			return new INSTALLATION(
 				{ value: license.licenseKey, link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false, past: isPast },
 				{
 					value: license.licenseKey,
-					link: `/`+role+`/licenses/${license.licenseId}`,
+					link: `/` + role + `/licenses/${license.licenseId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
@@ -233,7 +233,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				},
 				{
 					value: license.hostName != null ? license.hostName : '--',
-					link: `/`+role+`/hosts/${license.hostId}`,
+					link: `/` + role + `/hosts/${license.hostId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
@@ -241,7 +241,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				},
 				{
 					value: license.dealerIdAlias != null ? license.dealerIdAlias : '--',
-					link: `/`+role+`/dealers/${license.dealerId}`,
+					link: `/` + role + `/dealers/${license.dealerId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
@@ -249,7 +249,7 @@ export class InstallationsComponent implements OnInit, OnDestroy {
 				},
 				{
 					value: license.businessName,
-					link: `/`+role+`/dealers/${license.dealerId}`,
+					link: `/` + role + `/dealers/${license.dealerId}`,
 					new_tab_link: true,
 					editable: false,
 					hidden: false,
