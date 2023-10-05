@@ -46,8 +46,7 @@
 												(dateInput)="onSelectDate($event.value, 'start')"
 												[matDatepicker]="startDatePicker"
 												[min]="yesterday"
-												readonly
-											/>
+												readonly />
 											<mat-datepicker-toggle matSuffix [for]="startDatePicker"></mat-datepicker-toggle>
 											<mat-datepicker #startDatePicker></mat-datepicker>
 										</mat-form-field>
@@ -63,8 +62,7 @@
 												(dateInput)="onSelectDate($event.value, 'end')"
 												[matDatepicker]="endDatePicker"
 												[min]="form.controls.from.value"
-												readonly
-											/>
+												readonly />
 											<mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
 											<mat-datepicker #endDatePicker></mat-datepicker>
 										</mat-form-field>
@@ -89,8 +87,7 @@
 										<mat-checkbox
 											*ngFor="let day of days_list; let i = index"
 											(change)="onSelectDay($event, i)"
-											[checked]="day.checked"
-										>
+											[checked]="day.checked">
 											<span class="sm-text mr-2">{{ day.name }}</span>
 										</mat-checkbox>
 									</div>
@@ -126,14 +123,12 @@
 									<div class="start-time">
 										<h5>Start Time</h5>
 										<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeStartData"></ngb-timepicker>
-
 									</div>
 								</div>
 								<div class="col-md-6">
 									<div class="end-time">
 										<h5>End Time</h5>
 										<ngb-timepicker [spinners]="false" [meridian]="true" formControlName="playTimeEndData"></ngb-timepicker>
-
 									</div>
 								</div>
 							</div>
