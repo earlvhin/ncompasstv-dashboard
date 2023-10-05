@@ -150,10 +150,10 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 		this._type.setValue(data);
 	}
 
-	onSelectDate(value: moment.Moment, type: string): void {
+	onSelectDate(value, type: string): void {
 		if (!type) return;
 
-		let date = value.format('YYYY-MM-DD');
+		let date = moment(value).format('YYYY-MM-DD');
 
 		if (type === 'end') {
 			this.end_date = date;
