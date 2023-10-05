@@ -3,6 +3,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { DealerService } from '../../../../global/services/dealer-service/dealer.service';
 import { API_DEALER } from '../../../../global/models/api_dealer.model';
+import * as moment from 'moment';
 
 @Component({
 	selector: 'app-data-statistics-card-with-picker',
@@ -24,10 +25,14 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	selected_dealer: string;
 	selected_dealer_name: string = '';
 	start_date: Date;
+
+	//needs to be string since it has to be some format for BE Query:
+	start_date_for_query: string;
+	end_date_for_query: string;
+
 	subscription: Subscription = new Subscription();
 	is_date_valid: boolean = false;
 	is_valid_onchange: boolean = false;
-
 
 	contentsForm: FormGroup = this._form_builder.group({
 		start_date: ['', Validators.required],
@@ -60,7 +65,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		if (this.value_array.length == 0) {
 			this.no_data = true;
 		}
-		this.getDealers(1);	
+		this.getDealers(1);
 	}
 
 	ngOnChanges() {
@@ -88,36 +93,37 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 	dateFilter = (date: Date | null): boolean => {
 		if (!this.installation) {
 			return true;
-		  }
+		}
 
 		if (!date || !this.start_date) {
-		  return true;
+			return true;
 		}
-	  
+
 		this.is_date_valid = this.calculateDateDifference(this.start_date, date.toISOString()) <= 365;
 		return this.is_date_valid;
-	  };
-
+	};
 
 	onSelectStartDate(e) {
-		this.start_date = e.format('YYYY-MM-DD');
+		this.start_date = e;
+		this.start_date_for_query = moment(e).format('YYYY-MM-DD');
 		this.checkIfCompleteData();
 	}
 
 	onSelectEndDate(e) {
-		this.end_date = e.format('YYYY-MM-DD');	
+		this.end_date = e;
+		this.end_date_for_query = moment(e).format('YYYY-MM-DD');
 		this.updateValidity();
-        this.checkIfCompleteData();
-    }
+		this.checkIfCompleteData();
+	}
 
 	checkIfCompleteData() {
 		if (this.selected_dealer) {
 			this.dealer_selected.emit(this.selected_dealer);
 		} else if (this.end_date && this.start_date) {
-			this.s_date.emit(this.start_date);
-			this.e_date.emit(this.end_date);
+			this.s_date.emit(this.start_date_for_query);
+			this.e_date.emit(this.end_date_for_query);
 			this.updateValidity();
-		} else {		
+		} else {
 		}
 	}
 
@@ -133,7 +139,7 @@ export class DataStatisticsCardWithPickerComponent implements OnInit {
 		const start = new Date(startDate);
 		const end = new Date(endDate);
 		return (end.getTime() - start.getTime()) / msPerDay;
-	  }
+	}
 
 	getGraphPoints(e) {}
 

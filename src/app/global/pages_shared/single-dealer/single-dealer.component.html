@@ -138,19 +138,32 @@
 													<button class="md-text" mat-menu-item (click)="filterTable('status', '1')">
 														<span class="fas fa-circle text-primary mr-3"></span>Online
 													</button>
-													<button class="md-text" mat-menu-item (click)="filterTable('status', '0')" [matMenuTriggerFor]="offlineSubMenu">
-                                                        <span class="fas fa-circle text-danger mr-3"></span>Offline
-                                                    </button>
+													<button
+														class="md-text"
+														mat-menu-item
+														(click)="filterTable('status', '0')"
+														[matMenuTriggerFor]="offlineSubMenu">
+														<span class="fas fa-circle text-danger mr-3"></span>Offline
+													</button>
 													<button class="md-text" mat-menu-item (click)="filterTable('pending', 'true')">
 														<span class="fas fa-circle text-orange mr-3"></span>Pending
 													</button>
 												</mat-menu>
 
-                                                <mat-menu #offlineSubMenu="matMenu">
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">5 Days</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">6 - 30 Days</button>
-                                                    <button class="md-text" mat-menu-item (click)="filterTable('days_offline', '31', '365', 'Long Time')"> > 30 Days</button>
-                                                </mat-menu>
+												<mat-menu #offlineSubMenu="matMenu">
+													<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '0', '5', '5 days')">
+														5 Days
+													</button>
+													<button class="md-text" mat-menu-item (click)="filterTable('days_offline', '6', '30', '30 days')">
+														6 - 30 Days
+													</button>
+													<button
+														class="md-text"
+														mat-menu-item
+														(click)="filterTable('days_offline', '31', '365', 'Long Time')">
+														> 30 Days
+													</button>
+												</mat-menu>
 
 												<button
 													mat-button
@@ -395,7 +408,8 @@
 															(to_sort_column)="getColumnsAndOrder($event)"
 															[active_tab]="sort_column"
 															[sort_column]="sort_column"
-															[sort_order]="sort_order">
+															[sort_order]="sort_order"
+															[dealer_id]="dealer_id">
 														</app-data-table>
 													</mat-card>
 												</ng-container>
@@ -591,6 +605,47 @@
 							</div>
 						</mat-tab>
 
+						<!-- ACTIVITY TAB -->
+						<mat-tab label="Activity">
+							<div class="col-lg-12 p-0" *ngIf="current_tab === 'activity'">
+								<div class="theme-container">
+									<div class="row">
+										<div class="col-lg-12" *ngIf="!initial_load; else loader_activity">
+											<app-single-activity-tab
+												*ngIf="activity_data.length; else loader_activity"
+												[activity_data]="activity_data"
+												[paging_data]="paging_data"
+												[sort_column]="sort_column_activity"
+												[sort_order]="sort_order_activity"
+												[currentUser]="currentUser"
+												[currentRole]="currentRole"
+												[ownerId]="dealer_id"
+												[initial_load]="initial_load_activity"
+												[owner_data]="dealer_data"
+												[reload_data]="reload_data"
+												(pageChanged)="getDealerActivity($event)"
+												(sortColumnEvent)="getActivityColumnsAndOrder($event)">
+											</app-single-activity-tab>
+										</div>
+									</div>
+								</div>
+							</div>
+						</mat-tab>
+
+						<!-- TERMINAL TAB -->
+						<mat-tab label="Terminal" *ngIf="is_admin">
+							<div class="row mt-4">
+								<div class="col-lg-7">
+									<h3>Remote Terminal</h3>
+									<p class="sm-text mb-3">Write a short script and send it to all online players.</p>
+
+									<div class="terminal-area mt-4">
+										<app-remote-terminal (run)="runTerminalScript($event)"></app-remote-terminal>
+									</div>
+								</div>
+							</div>
+						</mat-tab>
+
 						<mat-tab label="Billing" *ngIf="!is_dealer_admin">
 							<div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
 								<div class="theme-container">
@@ -618,6 +673,18 @@
 				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
 			</mat-card>
 		</div>
+	</ng-template>
+
+	<ng-template #no_data_activity>
+		<mat-card class="p-5"> <app-error-message></app-error-message></mat-card>
+	</ng-template>
+
+	<ng-template #loader_activity>
+		<ng-container *ngIf="!no_activity_data; else no_data_activity">
+			<div class="py-4 white-bg h-500">
+				<app-spinner></app-spinner>
+			</div>
+		</ng-container>
 	</ng-template>
 
 	<ng-template #loader>

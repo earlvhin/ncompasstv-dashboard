@@ -16,6 +16,7 @@
                             <div class="col-lg-8">
 								<ng-container *ngIf="dealers && dealers.length > 0; else spinner;">
 									<app-feed-info
+										(formChanges)="onFormChanges($event)"
 										[feed_types]="feed_types"
 										[fetched_feed]="fetched_feed"
 										[dealers]="dealers"

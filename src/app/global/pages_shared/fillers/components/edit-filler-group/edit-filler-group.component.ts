@@ -7,7 +7,7 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 import * as filestack from 'filestack-js';
 import { environment } from 'src/environments/environment';
 
-import { DealerService, DealerAdminService, FillerService } from 'src/app/global/services';
+import { DealerService, DealerAdminService, FillerService, AuthService } from 'src/app/global/services';
 import { API_UPDATE_FILLER_GROUP } from 'src/app/global/models/api_update-filler-groups';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
@@ -38,12 +38,15 @@ export class EditFillerGroupComponent implements OnInit {
 		private _form_builder: FormBuilder,
 		private _dealer: DealerService,
 		private _filler: FillerService,
-		private _dialog: MatDialog
+		private _dialog: MatDialog,
+		private _auth: AuthService
 	) {}
 
 	ngOnInit() {
-		this.getDealers();
-		this.getAllDealerAdmin();
+		if (!this._isDealer()) {
+			this.getDealers();
+			this.getAllDealerAdmin();
+		}
 		this.initializeForm();
 		this.getSelectedGroup();
 	}
@@ -53,6 +56,11 @@ export class EditFillerGroupComponent implements OnInit {
 		this._unsubscribe.complete();
 	}
 
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
 	private initializeForm(): void {
 		this.form = this._form_builder.group({
 			fillerGroupName: [null, Validators.required],
@@ -60,9 +68,10 @@ export class EditFillerGroupComponent implements OnInit {
 			dealers: [[]],
 			dealerAdmins: [[]]
 		});
-
-		this.selectedDealersControl = this.form.get('dealers');
-		this.selectedDealerAdminsControl = this.form.get('dealerAdmins');
+		if (!this._isDealer()) {
+			this.selectedDealersControl = this.form.get('dealers');
+			this.selectedDealerAdminsControl = this.form.get('dealerAdmins');
+		}
 	}
 
 	getDealers() {
@@ -94,19 +103,21 @@ export class EditFillerGroupComponent implements OnInit {
 		this._formControls.inPairs.setValue(filler_group.paired);
 		this.filler_group_form_loaded = true;
 
-		const dealers_value = this.selected_group_data.blacklistedDealers.map((dealer) => {
-			return this.dealers_list.find((dealers) => {
-				return dealers.dealerId === dealer.dealerId;
+		if (!this._isDealer()) {
+			const dealers_value = this.selected_group_data.blacklistedDealers.map((dealer) => {
+				return this.dealers_list.find((dealers) => {
+					return dealers.dealerId === dealer.dealerId;
+				});
 			});
-		});
-		this.selectedDealersControl.setValue(dealers_value);
+			this.selectedDealersControl.setValue(dealers_value);
 
-		const dealer_admins_value = this.selected_group_data.blacklistedDealerAdmins.map((dealeradmin) => {
-			return this.dealer_admins.find((da) => {
-				return da.userId === dealeradmin.userId;
+			const dealer_admins_value = this.selected_group_data.blacklistedDealerAdmins.map((dealeradmin) => {
+				return this.dealer_admins.find((da) => {
+					return da.userId === dealeradmin.userId;
+				});
 			});
-		});
-		this.selectedDealerAdminsControl.setValue(dealer_admins_value);
+			this.selectedDealerAdminsControl.setValue(dealer_admins_value);
+		}
 	}
 
 	onSubmit() {
@@ -140,7 +151,7 @@ export class EditFillerGroupComponent implements OnInit {
 			})
 			.afterClosed()
 			.subscribe(() => {
-				if (close) this._dialog.closeAll();
+				this._dialog.closeAll();
 			});
 	}
 
@@ -156,7 +167,8 @@ export class EditFillerGroupComponent implements OnInit {
 	}
 
 	onUploadImage() {
-		this._dialog.closeAll();
+		let body = document.getElementsByClassName('cdk-overlay-container')[0];
+		body.classList.add('z-index-10');
 		const client = filestack.init(environment.third_party.filestack_api_key);
 		client.picker(this.filestackOptions).open();
 	}

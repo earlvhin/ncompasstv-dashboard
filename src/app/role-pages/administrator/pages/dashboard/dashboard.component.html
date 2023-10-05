@@ -1,211 +1,291 @@
-<div class="theme-container">
-    <div class="title-section col-lg-12 p-0 flex mt-4">
-        <div class="col-lg-6 p-0 text-left">
-            <h1 class="page-title">{{ title }}</h1>
-        </div>
-        <div class="col-lg-6 p-0 text-right date-section">
-            <div class="text-gray md-text">{{ date }}</div>
-        </div>
-    </div>
+<div class="theme-container mt-4">
+	<div class="row no-gutters">
+		<div class="col-lg-6">
+			<h1 class="page-title">{{ title }}</h1>
+		</div>
+		<div class="col-lg-6 text-right">
+			<div class="text-gray md-text">{{ date }}</div>
+		</div>
+	</div>
 
-    <hr class="my-3">
+	<hr class="my-3" />
 
-    <div class="row">
-        <div class="col-lg-12 mb-3 mt-3 d-flex">
-            <div class="col-lg-8 pl-0">
-                <div class="col-lg-12 d-flex pl-0">
-                    <div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
-                        <span class="fas fa-user-shield text-white"></span>
-                    </div>
-                    <div class="ml-3">
-                        <span class="lg-text text-primary f-20">Welcome back, Admin {{user_name}}</span>
-                        <br>
-                        <span class="text-gray sm-text">
-                            This is your N-Compass Dashboard. Look around.
-                        </span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 text-right pr-0">
-                <a class="clickable" [routerLink]="['/administrator/release-notes-view']" target="_blank">
-                    <i class="fas fa-bullhorn mr-3"></i><span class="sm-text text-info font-weight-bold">WHAT'S NEW</span>
-                </a>
-            </div>
-        </div>
-        <div class="col-lg-12 mt-3 flex p-0">
-            <div class="col-lg-3">
-                <app-data-quick-stats
-                [total]="dealer_stats.total"
-                [total_label]="dealer_stats.total_label"
-                [active]="dealer_stats.active"
-                [active_label]="dealer_stats.active_label"
-                [inactive]="dealer_stats.inactive"
-                [inactive_label]="dealer_stats.inactive_label"
-                [icon]="dealer_stats.icon"
-                [sub_label_left]="'New this week'"
-                [sub_label_left_value]="dealer_stats.this_week"
-                [sub_label_left_icon]="'fas fa-arrow-up'"
-                [sub_label_right]="'New last week'"
-                [sub_label_right_value]="dealer_stats.last_week"
-                [sub_label_right_icon]="'fas fa-arrow-up'">
-                </app-data-quick-stats>
-            </div>
-            <div class="col-lg-3">
-                <app-data-quick-stats
-                [total]="host_stats.total"
-                [total_label]="host_stats.total_label"
-                [active]="host_stats.active"
-                [active_label]="host_stats.active_label"
-                [inactive]="host_stats.inactive"
-                [inactive_label]="host_stats.inactive_label"
-                [icon]="host_stats.icon"
-                [sub_label_left]="'New this week'"
-                [sub_label_left_value]="host_stats.this_week"
-                [sub_label_left_icon]="'fas fa-arrow-up'"
-                [sub_label_right]="'New last week'"
-                [sub_label_right_value]="host_stats.last_week"
-                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
-            </div>
-            <div class="col-lg-3">
-                <app-data-quick-stats
-                [total]="advertiser_stats.total"
-                [total_label]="advertiser_stats.total_label"
-                [active]="advertiser_stats.active"
-                [active_label]="advertiser_stats.active_label"
-                [inactive]="advertiser_stats.inactive"
-                [inactive_label]="advertiser_stats.inactive_label"
-                [icon]="advertiser_stats.icon"
-                [sub_label_left]="'New this week'"
-                [sub_label_left_value]="advertiser_stats.this_week"
-                [sub_label_left_icon]="'fas fa-arrow-up'"
-                [sub_label_right]="'New last week'"
-                [sub_label_right_value]="advertiser_stats.last_week"
-                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
-            </div>
-            <div class="col-lg-3">
-                <app-data-quick-stats
-                [total]="license_stats.total"
-                [total_label]="license_stats.total_label"
-                [active]="license_stats.active"
-                [active_label]="license_stats.active_label"
-                [inactive]="license_stats.inactive"
-                [inactive_label]="license_stats.inactive_label"
-                [icon]="license_stats.icon"
-                [sub_label_left]="'New this week'"
-                [sub_label_left_value]="license_stats.this_week"
-                [sub_label_left_icon]="'fas fa-arrow-up'"
-                [sub_label_right]="'New last week'"
-                [sub_label_right_value]="license_stats.last_week"
-                [notes]="license_stats.notes"
-                [sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
-            </div>
-        </div>
-        <div class="col-lg-12 flex p-0 mt-4">
-            <div class="col-lg-3 h-100">
-                <app-data-quick-stats
-                [total]="installation_stats.total"
-                [total_label]="installation_stats.total_label"
-                [icon]="installation_stats.icon"></app-data-quick-stats>
-            </div>
-            <div class="col-lg-4">
-                <mat-card class="h-100">
-                    <div class="p-3">
-                        <h4>
-                            <span class="fas fa-calendar text-primary mr-3"></span>
-                            <span class="">SCHEDULED INSTALLATIONS STATISTICS</span>
-                        </h4>
-                        <hr class="mb-2">
-                        <div class="col-lg-12 pt-3 flex">
-                            <div class="col-lg-4">
-                                <div *ngIf="installation_stats.total; else spinner">
-                                    <span class="{{installation_stats.icon}} text-danger mr-3"></span>
-                                    <span class="xlg-text text-primary">
-                                        {{installation_stats.this_month}}
-                                    </span>
-                                    <span class="col-lg-12 p-0 sm-text text-gray">
-                                        CURRENT MONTH
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div *ngIf="installation_stats.total; else spinner">
-                                    <span class="{{installation_stats.icon}} text-gray mr-3"></span>
-                                    <span class="xlg-text text-primary">
-                                        {{installation_stats.last_month}}
-                                    </span>
-                                    <span class="col-lg-12 p-0 sm-text text-gray">
-                                        PREVIOUS MONTH
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-4">
-                                <div *ngIf="installation_stats.total; else spinner">
-                                    <span class="{{installation_stats.icon}} text-primary mr-3"></span>
-                                    <span class="xlg-text text-primary">
-                                        {{installation_stats.next_month}}
-                                    </span>
-                                    <br/>
-                                    <span class="col-lg-12 p-0 sm-text text-gray">
-                                        NEXT MONTH
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </mat-card>
-            </div>
-            <div class="col-lg-5">
-                <mat-card class="h-100">
-                    <div class="p-3">
-                        <h4>
-                            <span class="fas fa-chart-bar text-primary mr-3"></span>
-                            <span class="">TOTAL STATISTICS AVERAGE FOR DEALER</span>
-                        </h4>
-                        <hr class="mb-2">
-                        <div class="col-lg-12 pt-3 flex">
-                            <div class="col-lg-4">
-                                <div *ngIf="host_stats; else spinner">
-                                    <span class="{{host_stats.icon}} text-primary mr-3"></span>
-                                    <span class="xlg-text text-primary">
-                                        {{getAverage(host_stats.total)}}
-                                    </span>
-                                    <span class="col-lg-12 p-0 sm-text text-gray">
-                                        {{host_stats.total_label}}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 p-0">
-                                <div *ngIf="advertiser_stats; else spinner">
-                                    <span class="{{advertiser_stats.icon}} text-primary mr-3"></span>
-                                    <span class="xlg-text text-primary">
-                                        {{getAverage(advertiser_stats.total)}}
-                                    </span>
-                                    <span class="col-lg-12 p-0 sm-text text-gray">
-                                        {{advertiser_stats.total_label}}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="col-lg-4 p-0">
-                                <div *ngIf="license_stats; else spinner">
-                                    <span class="{{license_stats.icon}} text-primary mr-3"></span>
-                                    <span class="xlg-text text-primary">
-                                        {{getAverage(license_stats.total)}}
-                                    </span>
-                                    <span class="col-lg-12 p-0 sm-text text-gray">
-                                        {{license_stats.total_label}}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </mat-card>
-            </div>
-        </div>
-    </div>
+	<div class="row my-4">
+		<div class="col-lg-8">
+			<div class="d-inline-flex pl-0">
+				<div class="icon-container mt-2 text-center h-40 w-40 bg-dark br-100 lh-40">
+					<span class="fas fa-user-shield text-white"></span>
+				</div>
+				<div class="ml-3">
+					<span class="lg-text text-primary f-20">Welcome back, Admin {{ user_name }}!</span>
+					<br />
+					<span class="text-gray sm-text"> This is your N-Compass Dashboard. Look around! </span>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4">
+			<div class="text-right clickable">
+				<a [routerLink]="['/administrator/release-notes-view']" target="_blank">
+					<i class="fas fa-bullhorn mr-3"></i><span class="sm-text text-info font-weight-bold">WHAT'S NEW</span>
+				</a>
+			</div>
+		</div>
+	</div>
+
+	<div class="row mid-gutters mt-3">
+		<div class="col-lg-3">
+			<app-data-quick-stats
+				[total]="dealer_stats.total"
+				[total_label]="dealer_stats.total_label"
+				[active]="dealer_stats.active"
+				[active_label]="dealer_stats.active_label"
+				[inactive]="dealer_stats.inactive"
+				[inactive_label]="dealer_stats.inactive_label"
+				[icon]="dealer_stats.icon"
+				[sub_label_left]="'New this week'"
+				[sub_label_left_value]="dealer_stats.this_week"
+				[sub_label_left_icon]="'fas fa-arrow-up'"
+				[sub_label_right]="'New last week'"
+				[sub_label_right_value]="dealer_stats.last_week"
+				[sub_label_right_icon]="'fas fa-arrow-up'">
+			</app-data-quick-stats>
+		</div>
+		<div class="col-lg-3">
+			<app-data-quick-stats
+				[total]="host_stats.total"
+				[total_label]="host_stats.total_label"
+				[active]="host_stats.active"
+				[active_label]="host_stats.active_label"
+				[inactive]="host_stats.inactive"
+				[inactive_label]="host_stats.inactive_label"
+				[icon]="host_stats.icon"
+				[sub_label_left]="'New this week'"
+				[sub_label_left_value]="host_stats.this_week"
+				[sub_label_left_icon]="'fas fa-arrow-up'"
+				[sub_label_right]="'New last week'"
+				[sub_label_right_value]="host_stats.last_week"
+				[sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
+		</div>
+		<div class="col-lg-3">
+			<app-data-quick-stats
+				[total]="advertiser_stats.total"
+				[total_label]="advertiser_stats.total_label"
+				[active]="advertiser_stats.active"
+				[active_label]="advertiser_stats.active_label"
+				[inactive]="advertiser_stats.inactive"
+				[inactive_label]="advertiser_stats.inactive_label"
+				[icon]="advertiser_stats.icon"
+				[sub_label_left]="'New this week'"
+				[sub_label_left_value]="advertiser_stats.this_week"
+				[sub_label_left_icon]="'fas fa-arrow-up'"
+				[sub_label_right]="'New last week'"
+				[sub_label_right_value]="advertiser_stats.last_week"
+				[sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
+		</div>
+		<div class="col-lg-3">
+			<app-data-quick-stats
+				[total]="license_stats.total"
+				[total_label]="license_stats.total_label"
+				[active]="license_stats.active"
+				[active_label]="license_stats.active_label"
+				[inactive]="license_stats.inactive"
+				[inactive_label]="license_stats.inactive_label"
+				[icon]="license_stats.icon"
+				[sub_label_left]="'New this week'"
+				[sub_label_left_value]="license_stats.this_week"
+				[sub_label_left_icon]="'fas fa-arrow-up'"
+				[sub_label_right]="'New last week'"
+				[sub_label_right_value]="license_stats.last_week"
+				[notes]="license_stats.notes"
+				[sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
+		</div>
+	</div>
+
+	<div class="row mid-gutters mt-3">
+		<!-- Total Statistics Average for Dealer -->
+		<div class="col-lg-4">
+			<mat-card class="h-100">
+				<div class="p-2">
+					<h4>
+						<span class="fas fa-chart-bar text-primary mr-3"></span>
+						<span class="fs-normal">Total Statistics Average for Dealer</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="row">
+						<div class="col-lg-4 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(host_stats.total); else spinner">
+								{{ getAverage(host_stats.total) }}
+							</h4>
+							<p>
+								<span class="{{ host_stats.icon }} text-primary mr-1"></span>
+								<span class="sm-text text-gray">
+									{{ host_stats.total_label }}
+								</span>
+							</p>
+						</div>
+						<div class="col-lg-4 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(advertiser_stats.total); else spinner">
+								{{ getAverage(advertiser_stats.total) }}
+							</h4>
+							<p>
+								<span class="{{ advertiser_stats.icon }} text-primary mr-1"></span>
+								<span class="sm-text text-gray">
+									{{ advertiser_stats.total_label }}
+								</span>
+							</p>
+						</div>
+						<div class="col-lg-4 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(license_stats.total); else spinner">
+								{{ getAverage(license_stats.total) }}
+							</h4>
+							<p>
+								<span class="{{ license_stats.icon }}  text-primary mr-1"></span>
+								<span class="sm-text text-gray">
+									{{ license_stats.total_label }}
+								</span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+
+		<!-- Activity -->
+		<div class="col-lg-4" *ngIf="is_admin">
+			<mat-card class="h-100">
+				<div class="p-2">
+					<h4>
+						<span class="fas fa-history text-primary mr-3"></span>
+						<span class="fs-normal">Today's Activities</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="row no-gutters">
+						<div class="col-lg-6 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(daily_content_total); else spinner">
+								{{ daily_content_total || 0 }}
+							</h4>
+							<p>
+								<span class="fas fa-photo-video text-primary mr-1"></span>
+								<span class="sm-text text-gray"> Content Uploads </span>
+							</p>
+						</div>
+						<div class="col-lg-6 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(daily_feed_total); else spinner">{{ daily_feed_total }}</h4>
+							<p>
+								<span class="fas fa-newspaper text-primary mr-1"></span>
+								<span class="sm-text text-gray"> Feeds Created </span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+
+		<!-- Scheduled Installation Stats -->
+		<div class="col-lg-4">
+			<mat-card class="h-100">
+				<div class="p-2">
+					<h4>
+						<span class="fas fa-calendar text-primary mr-3"></span>
+						<span class="fs-normal">Scheduled Installation Stats</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="row no-gutters">
+						<div class="col-lg-4 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.this_month); else spinner">
+								{{ installation_stats.this_month }}
+							</h4>
+							<p>
+								<span class="{{ installation_stats.icon }} text-danger mr-1"></span>
+								<span class="sm-text text-gray"> Current Month </span>
+							</p>
+						</div>
+						<div class="col-lg-4 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.last_month); else spinner">
+								{{ installation_stats.last_month }}
+							</h4>
+							<p>
+								<span class="{{ installation_stats.icon }} text-gray mr-1"></span>
+								<span class="sm-text text-gray"> Previous Month </span>
+							</p>
+						</div>
+						<div class="col-lg-4 text-center">
+							<h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.next_month); else spinner">
+								{{ installation_stats.next_month }}
+							</h4>
+							<p>
+								<span class="{{ installation_stats.icon }} text-primary mr-1"></span>
+								<span class="sm-text text-gray"> Next Month </span>
+							</p>
+						</div>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+
+		<div class="col-lg-4" *ngIf="is_dealeradmin">
+			<mat-card class="h-100">
+				<div class="p-2">
+					<h4>
+						<span class="fas fa-tv text-primary mr-3"></span>
+						<span class="fs-normal">Installation</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="text-center">
+						<h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.total); else spinner">{{ installation_stats.total }}</h4>
+						<p>
+							<span class="fas fa-tools text-primary mr-1"></span>
+							<span class="sm-text text-gray"> Total Installations </span>
+						</p>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+	</div>
+
+	<div class="row mid-gutters mt-3">
+		<div class="col-lg-3" *ngIf="is_admin">
+			<!-- Using this since data being passed is not as complete as the ones that are using data-quick-stats to match sibling card -->
+			<mat-card class="h-100">
+				<div class="p-2">
+					<h4>
+						<span class="fas fa-tv text-primary mr-3"></span>
+						<span class="fs-normal">Installation</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="text-center">
+						<h4 class="xlg-text text-primary" *ngIf="isNumber(installation_stats.total); else spinner">{{ installation_stats.total }}</h4>
+						<p>
+							<span class="fas fa-tools text-primary mr-1"></span>
+							<span class="sm-text text-gray"> Total Installations </span>
+						</p>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+		<div class="col-lg-3" *ngIf="is_admin">
+			<mat-card class="h-100">
+				<div class="p-2">
+					<h4>
+						<span class="fas fa-users text-primary mr-3"></span>
+						<span class="fs-normal">Users Today</span>
+					</h4>
+					<hr class="mb-3" />
+					<div class="text-center">
+						<h4 class="xlg-text text-primary" *ngIf="isNumber(daily_login_total); else spinner">
+							{{ daily_login_total }}
+						</h4>
+						<p>
+							<span class="fas fa-sign-in-alt text-primary mr-1"></span>
+							<span class="sm-text text-gray"> User Sign-ins </span>
+						</p>
+					</div>
+				</div>
+			</mat-card>
+		</div>
+	</div>
+
+	<ng-template #spinner>
+		<mat-spinner [diameter]="40" class="mb-2"></mat-spinner>
+	</ng-template>
 </div>
-
-<ng-template #spinner>
-    <div>
-        <app-spinner [diameter]="85"></app-spinner>
-    </div>
-</ng-template>

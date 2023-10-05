@@ -23,7 +23,7 @@ export class DealerService extends BaseService {
 	onSuccessReassigningDealer = new Subject<null>();
 	onDealerDataLoaded = new Subject<{ email: string }>();
 
-	constructor(_auth: AuthService, _http: HttpClient) {
+	constructor(_auth: AuthService, _http: HttpClient, private _httpClient: HttpClient) {
 		super(_auth, _http);
 	}
 
@@ -38,6 +38,11 @@ export class DealerService extends BaseService {
 
 	add_dealers_of_dealer_admin(data) {
 		return this.postRequest(this.creators.api_new_dealer_admin_dealers, data);
+	}
+
+	create_dealer_activity_logs(data) {
+		const url = `${this.creators.new_dealer_activity_logs}`;
+		return this.postRequest(url, data);
 	}
 
 	content_dealer_metrics(data) {
@@ -68,6 +73,13 @@ export class DealerService extends BaseService {
 
 	get_credit_cards(dealerId: string) {
 		const url = `${this.getters.dealer_cards}?dealerid=${dealerId}`;
+		return this.getRequest(url);
+	}
+
+	get_dealer_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_dealer_activity}`;
+		const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
+		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
 

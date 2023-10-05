@@ -129,7 +129,7 @@
 							</div>
 						</div>
 					</mat-tab>
-					<mat-tab id="fillers-view-tab" label="Fillers">
+					<mat-tab id="fillers-view-tab" label="Fillers" *ngIf="!isCurrentRoleDealerAdmin">
 						<div *ngIf="isActiveTab == 1">
 							<app-filler-feeds-table [reloads]="reload_detected" (reload_page)="reloadPage($event)"></app-filler-feeds-table>
 						</div>

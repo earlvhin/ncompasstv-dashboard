@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormControl } from '@angular/forms';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 
 import { API_DEALER, API_FEED, API_USER_DATA, CREATE_WIDGET_FEED, PAGING, WEATHER_FEED_STYLE_DATA } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
@@ -12,9 +12,21 @@ import { BaseService } from '../base.service';
 	providedIn: 'root'
 })
 export class FeedService extends BaseService {
+	public logoutConfirmed = false;
+	private unsavedChangesSubject = new BehaviorSubject<boolean>(false);
+  	hasUnsavedChanges$: Observable<boolean> = this.unsavedChangesSubject.asObservable();
+
 	constructor(_auth: AuthService, _http: HttpClient) {
 		super(_auth, _http);
 	}
+
+	setLogoutConfirmed(value: boolean) {
+	  this.logoutConfirmed = value;
+	}
+	
+	setInputChanges(value: boolean) {
+		this.unsavedChangesSubject.next(value);
+	  }
 
 	/**
 	 * Use this function to check if a feed URL is well-formed and is existing.

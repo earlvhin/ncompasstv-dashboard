@@ -3,6 +3,7 @@ import { FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { Subscription } from 'rxjs';
 import { Workbook } from 'exceljs';
 import { saveAs } from 'file-saver';
+import * as moment from 'moment';
 
 import { API_DEALER } from '../../../../global/models/api_dealer.model';
 import { AuthService } from '../../../../global/services/auth-service/auth.service';
@@ -76,7 +77,11 @@ export class ContentsTabComponent implements OnInit {
 	workbook: any;
 	workbook_generation: boolean = false;
 	worksheet: any;
-    route: any;
+	route: any;
+
+	//needs to be string since it has to be some format for BE Query:
+	start_date_for_query: string;
+	end_date_for_query: string;
 
 	constructor(private _form_builder: FormBuilder, private _dealer: DealerService, private _content: ContentService, private _auth: AuthService) {}
 
@@ -89,11 +94,10 @@ export class ContentsTabComponent implements OnInit {
 			this.setDealerId(this.dealer_id);
 		}
 
-        this.route = this._auth.current_role;
+		this.route = this._auth.current_role;
 		if (this.route === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
 			this.route = UI_ROLE_DEFINITION_TEXT.administrator;
 		}
-
 	}
 
 	filterData(key) {
@@ -106,14 +110,16 @@ export class ContentsTabComponent implements OnInit {
 	}
 
 	onSelectStartDate(e) {
-		this.start_date = e.format('YYYY-MM-DD');
+		this.start_date = e;
+		this.start_date_for_query = moment(e).format('YYYY-MM-DD');
 		if (this.end_date && this.selected_dealer) {
 			this.getMediaFiles(1);
 		}
 	}
 
 	onSelectEndDate(e) {
-		this.end_date = e.format('YYYY-MM-DD');
+		this.end_date = e;
+		this.end_date_for_query = moment(e).format('YYYY-MM-DD');
 		if (this.start_date && this.selected_dealer) {
 			this.getMediaFiles(1);
 		}
@@ -123,8 +129,8 @@ export class ContentsTabComponent implements OnInit {
 		var tab = 'dealer';
 		var filter = {
 			dealerid: this.selected_dealer,
-			from: this.start_date,
-			to: this.end_date,
+			from: this.start_date_for_query,
+			to: this.end_date_for_query,
 			contenttitle: this.search_data
 		};
 		this.subscription.add(
@@ -145,8 +151,8 @@ export class ContentsTabComponent implements OnInit {
 		var tab = 'contents';
 		var filter = {
 			contentid: this.selected_content,
-			from: this.start_date,
-			to: this.end_date,
+			from: this.start_date_for_query,
+			to: this.end_date_for_query,
 			contenttitle: this.search_data
 		};
 		this.subscription.add(
@@ -246,8 +252,8 @@ export class ContentsTabComponent implements OnInit {
 		this.searching = true;
 		var filter = {
 			dealerid: this.selected_dealer,
-			from: this.start_date,
-			to: this.end_date,
+			from: this.start_date_for_query,
+			to: this.end_date_for_query,
 			pageSize: 10,
 			page: e,
 			contenttitle: this.search_data
@@ -334,7 +340,7 @@ export class ContentsTabComponent implements OnInit {
 		this.workbook = new Workbook();
 		this.workbook.creator = 'NCompass TV';
 		this.workbook.created = new Date();
-		this.worksheet = this.workbook.addWorksheet(this.start_date + ' - ' + this.end_date);
+		this.worksheet = this.workbook.addWorksheet(this.start_date_for_query + ' - ' + this.end_date_for_query);
 		switch (tab) {
 			case 'dealer':
 				this.workbook_generation = true;

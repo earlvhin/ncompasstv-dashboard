@@ -275,12 +275,12 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 
 	/** Content Logs Report: StarDate Picker */
 	onSelectStartDate(e) {
-		this.start_date = e.format('YYYY-MM-DD');
+		this.start_date = moment(e).format('YYYY-MM-DD');
 	}
 
 	/** Content Logs Report: EndDate Picker */
 	onSelectEndDate(e) {
-		this.end_date = e.format('YYYY-MM-DD');
+		this.end_date = moment(e).format('YYYY-MM-DD');
 	}
 
 	private getPlaylistsOfContent(id: string) {

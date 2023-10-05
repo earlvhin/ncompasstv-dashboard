@@ -81,6 +81,7 @@ import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-si
 import { EditableFieldModalComponent } from './components_shared/page_components/editable-field-modal/editable-field-modal.component';
 import { ErrorMessageComponent } from './components_shared/page_components/error-message/error-message.component';
 import { ExpansionPanelComponent } from './components_shared/data_components/expansion-panel/expansion-panel.component';
+import { ExpiredContentsComponent } from './pages_shared/expired-contents/expired-contents.component';
 import { ExportsTabComponent } from './components_shared/reports_components/exports-tab/exports-tab.component';
 import { FailAnimationComponent } from './components_shared/page_components/fail-animation/fail-animation.component';
 import { FeedDemoComponent } from './components_shared/feed_components/feed-demo/feed-demo.component';
@@ -155,6 +156,7 @@ import { PlaylistMediaComponent } from './components_shared/playlist_components/
 import { PlaylistMediaThumbnailComponent } from './components_shared/playlist_components/playlist-media-thumbnail/playlist-media-thumbnail.component';
 import { ProfileSettingComponent } from './pages_shared/profile-setting/profile-setting.component';
 import { PushUpdateComponent } from './components_shared/playlist_components/push-update/push-update.component';
+import { RemoteTerminalComponent } from './components_shared/tools_component/remote-terminal/remote-terminal.component';
 import { RenameModalComponent } from './components_shared/media_components/rename-modal/rename-modal.component';
 import { SanitizePipe } from './pipes/sanitize.pipe';
 import { ScreenCreatedModalComponent } from './components_shared/screen_components/screen-created-modal/screen-created-modal.component';
@@ -165,6 +167,7 @@ import { ScreenshotPipe } from './pipes/screenshot.pipe';
 import { SearchFieldComponent } from './components_shared/page_components/search-field/search-field.component';
 import { SelectOwnerComponent } from './components_shared/user_components/select-owner/select-owner.component';
 import { SidebarComponent } from './components_shared/page_components/sidebar/sidebar.component';
+import { SingleActivityTabComponent } from './pages_shared/single-activity-tab/single-activity-tab.component';
 import { SingleAdvertiserComponent } from './pages_shared/single-advertiser/single-advertiser.component';
 import { SingleBillingsComponent } from './pages_shared/single-billings/single-billings.component';
 import { SingleContentComponent } from './pages_shared/single-content/single-content.component';
@@ -231,8 +234,11 @@ import {
 	MatProgressBarModule,
 	MatTooltipModule,
 	MatIconModule,
-	MatButtonToggleModule
+	MatButtonToggleModule,
+	MatSnackBar,
+	MatSnackBarModule
 } from '@angular/material';
+import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -304,6 +310,7 @@ const ngComponents = [
 	ErrorMessageComponent,
 	ErrorMessageComponent,
 	ExpansionPanelComponent,
+	ExpiredContentsComponent,
 	ExportsTabComponent,
 	FailAnimationComponent,
 	FeedDemoComponent,
@@ -378,6 +385,7 @@ const ngComponents = [
 	PlaylistMediaThumbnailComponent,
 	ProfileSettingComponent,
 	PushUpdateComponent,
+	RemoteTerminalComponent,
 	RenameModalComponent,
 	SanitizePipe,
 	ScreenCreatedModalComponent,
@@ -389,6 +397,7 @@ const ngComponents = [
 	SearchFieldComponent,
 	SelectOwnerComponent,
 	SidebarComponent,
+	SingleActivityTabComponent,
 	SingleAdvertiserComponent,
 	SingleBillingsComponent,
 	SingleContentComponent,
@@ -430,9 +439,12 @@ const ngComponents = [
 const MaterialModules = [
 	MatAutocompleteModule,
 	MatButtonModule,
+	MatButtonToggleModule,
 	MatCardModule,
 	MatCheckboxModule,
 	MatChipsModule,
+	MatDatepickerModule,
+	MatDatepickerModule,
 	MatDialogModule,
 	MatDividerModule,
 	MatExpansionModule,
@@ -440,25 +452,26 @@ const MaterialModules = [
 	MatInputModule,
 	MatListModule,
 	MatMenuModule,
+	MatMomentDateModule,
+	MatNativeDateModule,
+	MatNativeDateModule,
 	MatPaginatorModule,
-	MatRadioModule,
+	MatProgressBarModule,
 	MatProgressSpinnerModule,
+	MatRadioModule,
 	MatSelectModule,
+	MatSnackBarModule,
 	MatSlideToggleModule,
 	MatStepperModule,
 	MatTableModule,
 	MatTabsModule,
-	MatDatepickerModule,
-	MatNativeDateModule,
-	MatProgressBarModule,
-	MatTooltipModule,
-	MatButtonToggleModule
+	MatTooltipModule
 ];
 
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES],
+	declarations: [ngComponents, DIRECTIVES, FillerMainViewComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,
@@ -524,10 +537,6 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		FormsModule,
 		HttpClientModule,
 		MaterialModules,
-		MatInputModule,
-		MatDatepickerModule,
-		MatNativeDateModule,
-		MatMomentDateModule,
 		MomentDateModule,
 		NgbModule,
 		NgxPaginationModule,

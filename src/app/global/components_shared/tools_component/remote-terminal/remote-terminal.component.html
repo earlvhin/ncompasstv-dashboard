@@ -1,0 +1,14 @@
+<div id="remote-terminal" class="remote-terminal">
+	<div class="entered-scripts">
+		<div *ngFor="let s of enteredScripts">
+			<p class="sm-text text-primary">> {{ s }}</p>
+		</div>
+	</div>
+
+	<div class="d-flex">
+		<input [(ngModel)]="script" placeholder="Enter Command" class="terminal-text-entry mb-3 flex-even" />
+		<button class="terminal-submit-button" (click)="submitTerminalCommand()" [disabled]="script === undefined || script === ''">
+			Run <span class="fas fa-play sm-text ml-2"></span>
+		</button>
+	</div>
+</div>

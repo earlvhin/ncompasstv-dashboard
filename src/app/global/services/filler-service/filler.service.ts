@@ -24,7 +24,7 @@ export class FillerService extends BaseService {
 
 	get_filler_thumbnails(id, count) {
 		const url = `${this.getters.api_get_content_thumbnails}?id=${id}&take=${count}`;
-		return this.getRequest(url).map((data) => data.data);
+		return this.getRequest(url).map((data) => (data.message ? data : data.data));
 	}
 
 	// ------------------------------------
@@ -36,8 +36,10 @@ export class FillerService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
-	get_filler_groups(page: number, key: string, pageSize, column: string, order: string) {
-		let url = `${this.getters.api_get_filler_groups}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+	get_filler_groups(page: number, key: string, pageSize, column = '', order = '', dealer?: boolean) {
+		let url = '';
+		if (dealer) url = `${this.getters.api_get_dealer_filler_groups}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+		else url = `${this.getters.api_get_filler_groups}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
 
 		if (key && key.trim().length > 0) {
 			const search = encodeURIComponent(key);
@@ -52,8 +54,32 @@ export class FillerService extends BaseService {
 		return this.postRequest(url, data);
 	}
 
+	get_filler_group_for_feeds() {
+		let url = `${this.getters.api_get_filler_group_for_feeds}`;
+		return this.getRequest(url);
+	}
+
 	get_filler_group_by_id(id: string) {
 		let url = `${this.getters.api_get_filler_group_by_id}?id=${id}`;
+		return this.getRequest(url);
+	}
+
+	get_filler_group_dealer_admin_view(id: string, page: number, key: string, pageSize = 11, column = '', order = '') {
+		let url = `${this.getters.api_get_dealer_filler_groups_admin_view}?id=${id}&page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+		if (key && key.trim().length > 0) {
+			const search = encodeURIComponent(key);
+			url += `&search=${search}`;
+		}
+		return this.getRequest(url);
+		return this.getRequest(url);
+	}
+
+	get_filler_group_of_other_roles(role: string, page: number, key: string, pageSize = 11, column = '', order = '') {
+		let url = `${this.getters.api_get_dealer_filler_groups_other_roles}?role=${role}&page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+		if (key && key.trim().length > 0) {
+			const search = encodeURIComponent(key);
+			url += `&search=${search}`;
+		}
 		return this.getRequest(url);
 	}
 
@@ -108,6 +134,11 @@ export class FillerService extends BaseService {
 
 	get_filler_feeds(page = 1, search = '', pagesize = 15) {
 		let url = `${this.getters.api_get_filler_feeds}?page=${page}&search=${search}&pagesize=${pagesize}`;
+		return this.getRequest(url);
+	}
+
+	get_filler_feeds_by_role(role, id = '') {
+		let url = `${this.getters.api_get_filler_feed_by_role}?role=${role}&dealerid=${id}`;
 		return this.getRequest(url);
 	}
 

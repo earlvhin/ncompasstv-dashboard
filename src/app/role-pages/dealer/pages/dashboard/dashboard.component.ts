@@ -1,13 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import Chart from 'chart.js/auto';
 import { Subscription } from 'rxjs';
-
-import { AdvertiserService } from 'src/app/global/services/advertiser-service/advertiser.service';
-import { AuthService } from '../../../../global/services/auth-service/auth.service';
-import { HostService } from '../../../../global/services/host-service/host.service';
-import { LicenseService } from '../../../../global/services/license-service/license.service';
-import { UI_TABLE_HOSTS } from '../../../../global/models/ui_table_hosts_report.model';
+import { AdvertiserService, AuthService, HostService, LicenseService, ContentService } from 'src/app/global/services';
 import * as moment from 'moment';
 
 @Component({
@@ -18,6 +12,7 @@ import * as moment from 'moment';
 })
 export class DashboardComponent implements OnInit {
 	advertiser_report_chart: any;
+	contents_total: number = 0;
 	date: any;
 	dealer_report_chart: any;
 	host_report_chart: any;
@@ -56,6 +51,7 @@ export class DashboardComponent implements OnInit {
 		private _advertiser: AdvertiserService,
 		private _host: HostService,
 		private _license: LicenseService,
+		private _content: ContentService,
 		private _date: DatePipe
 	) {}
 
@@ -73,6 +69,13 @@ export class DashboardComponent implements OnInit {
 		this.getAdvertiserReport();
 		this.getHostReport();
 		this.getAdLicenseReport();
+		this.getAllContents();
+	}
+
+	getAllContents() {
+		this._content.get_unused_contents(this.dealerId, '', '').subscribe((data) => {
+			this.contents_total = data.paging.totalEntities;
+		});
 	}
 
 	getLicenseReport() {
@@ -176,19 +179,6 @@ export class DashboardComponent implements OnInit {
 						others_label: 'Others',
 						average_duration: this.calculateTime(data.mainAverageDuration)
 					};
-					if (this.ad_licenses_details) {
-						this.ad_license_label.push(this.ad_licenses_details.hosts_label + ': ' + this.ad_licenses_details.hosts_value);
-						this.ad_license_label.push(this.ad_licenses_details.advertisers_label + ': ' + this.ad_licenses_details.advertisers_value);
-						this.ad_license_label.push(this.ad_licenses_details.fillers_label + ': ' + this.ad_licenses_details.fillers_value);
-						this.ad_license_label.push(this.ad_licenses_details.feeds_label + ': ' + this.ad_licenses_details.feeds_value);
-						this.ad_license_label.push(this.ad_licenses_details.others_label + ': ' + this.ad_licenses_details.others_value);
-						this.ad_license_array.push(this.ad_licenses_details.hosts_value);
-						this.ad_license_array.push(this.ad_licenses_details.advertisers_value);
-						this.ad_license_array.push(this.ad_licenses_details.fillers_value);
-						this.ad_license_array.push(this.ad_licenses_details.feeds_value);
-						this.ad_license_array.push(this.ad_licenses_details.others_value);
-					}
-
 					if (this.ad_licenses_details) {
 						this.ad_license_label.push(this.ad_licenses_details.hosts_label + ': ' + this.ad_licenses_details.hosts_value);
 						this.ad_license_label.push(this.ad_licenses_details.advertisers_label + ': ' + this.ad_licenses_details.advertisers_value);

@@ -9,10 +9,12 @@
 		<div class="col-lg-6 text-right">
 			<div *ngIf="isActiveTab == 0">
 				<button
+					*ngIf="!restricted"
 					mat-button
 					mat-raised-button
 					class="theme-btn pi-control _info sm-text mr-2"
 					(click)="addFillerContent(filler_group_data)"
+					[disabled]="restricted"
 					title="Upload Filler">
 					<span class="fas fa-upload"></span>
 					<span class="ml-2 button_text_animation">Upload Filler</span>
@@ -91,6 +93,7 @@
 										</div>
 										<div class="col-lg-6 text-right bg-dark p-2">
 											<span
+												*ngIf="!restricted"
 												class="fas fa-times text-danger clickable"
 												title="Delete Content"
 												(click)="deleteContent(data.fillerContentId)"></span>
@@ -213,7 +216,9 @@
 <ng-template #noContent>
 	<div class="row">
 		<div class="col-lg-12 mt-3">
-			<i class="md-text">There are no contents right now. Click on the Upload Filler button above if you wish to add one.</i>
+			<i class="md-text"
+				>There are no contents right now. <span *ngIf="!restricted">Click on the Upload Filler button above if you wish to add one.</span></i
+			>
 		</div>
 	</div>
 </ng-template>
