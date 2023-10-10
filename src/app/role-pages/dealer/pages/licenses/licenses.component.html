@@ -8,7 +8,7 @@
 	<hr class="my-4" *ngIf="!no_header" />
 
 	<div class="row" *ngIf="!no_header">
-		<div class="col-3 col-lg">
+		<div class="col-6 col-lg">
 			<mat-card class="h-100">
 				<app-data-card-graph
 					*ngIf="licenses_count; else small_loader"
@@ -21,6 +21,8 @@
 					[bad_value]="licenses_count.bad_value"
 					[bad_value_label]="licenses_count.bad_value_label"
 					[has_breakdown]="true"
+					[label_array]="temp_label"
+					[value_array]="temp_array"
 					[breakdown1_value]="licenses_count.breakdown1_value"
 					[breakdown1_label]="licenses_count.breakdown1_label"
 					[breakdown2_value]="licenses_count.breakdown2_value"
@@ -36,22 +38,28 @@
 		</div>
 		<div class="col-3 col-lg">
 			<mat-card class="h-100 dealer-card">
-				<app-data-card-count
-					*ngIf="licenses_count; else small_loader"
-					[data_value]="licenses_count.new_this_week_value"
-					[data_label]="licenses_count.new_this_week_label"
-					[data_description]="licenses_count.new_this_week_description">
-				</app-data-card-count>
+				<ng-container *ngIf="licenses_count; else small_loader">
+					<app-data-card-graph
+						[id]="'dealer-statistics'"
+						[compare_basis]="licenses_count.new_this_week_value"
+						[compare_basis_label]="licenses_count.new_this_week_value_description"
+						[label_array]="temp_label_this_week"
+						[value_array]="temp_array_this_week">
+					</app-data-card-graph>
+				</ng-container>
 			</mat-card>
 		</div>
 		<div class="col-3 col-lg">
 			<mat-card class="h-100 dealer-card">
-				<app-data-card-count
-					*ngIf="licenses_count; else small_loader"
-					[data_value]="licenses_count.new_last_week_value"
-					[data_label]="licenses_count.new_last_week_label"
-					[data_description]="licenses_count.new_last_week_description">
-				</app-data-card-count>
+				<ng-container *ngIf="licenses_count; else small_loader">
+					<app-data-card-graph
+						[id]="'host-statistics'"
+						[compare_basis]="licenses_count.new_last_week_value"
+						[compare_basis_label]="licenses_count.new_last_week_value_description"
+						[label_array]="temp_label_last_week"
+						[value_array]="temp_array_last_week">
+					</app-data-card-graph>
+				</ng-container>
 			</mat-card>
 		</div>
 	</div>

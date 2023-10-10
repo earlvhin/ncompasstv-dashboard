@@ -33,7 +33,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 	@Input() is_green: boolean;
 	@Input() icon: string;
 	@Input() label_array: [];
-	@Input() value_array: [];
+	@Input() value_array: any = [];
 	@Input() page?: string;
 	@Input() has_dealer_status_filter? = false;
 	@Input() has_breakdown? = false;
@@ -51,6 +51,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 
 	has_selected_active = false;
 	has_selected_inactive = false;
+	no_data_display = false;
 
 	private chart: any;
 	protected _unsubscribe = new Subject<void>();
@@ -61,6 +62,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 
 	ngAfterViewInit() {
 		if (this.label_array) {
+			this.checkIfhasValue();
 			this.generateChart();
 		}
 	}
@@ -71,10 +73,21 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 		}
 	}
 
+	// to show empty chart if this is removed there will be no chart
+	checkIfhasValue() {
+		let count = 0;
+		this.value_array.map((value) => {
+			if (value == 0) count += 1;
+		});
+		if (count == this.value_array.length) {
+			this.no_data_display = true;
+		}
+	}
+
 	generateChart() {
 		const canvas = (<HTMLCanvasElement>document.getElementById(`breakdown-${this.id}`)) as HTMLCanvasElement;
 		const labels = this.label_array;
-		const data = this.value_array;
+		const data = this.no_data_display ? [-1] : this.value_array;
 
 		this.chart = new Chart(canvas, {
 			type: 'pie',
@@ -96,7 +109,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 							boxWidth: 10
 						},
 						position: 'bottom',
-						align: 'end'
+						align: 'center'
 					},
 					tooltip: {
 						enabled: false
