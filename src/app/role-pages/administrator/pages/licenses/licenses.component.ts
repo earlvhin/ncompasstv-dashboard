@@ -906,12 +906,12 @@ export class LicensesComponent implements OnInit {
 					if (this.licenses_details) {
 						this.temp_label.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value);
 						this.temp_label.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.menu_value);
-						this.temp_label.push(this.licenses_details.closed_value_label + ': ' + this.licenses_details.closed_value);
 						this.temp_label.push(this.licenses_details.unassigned_value_label + ': ' + this.licenses_details.unassigned_value);
+						this.temp_label.push(this.licenses_details.closed_value_label + ': ' + this.licenses_details.closed_value);
 						this.temp_array.push(this.licenses_details.ad_value);
 						this.temp_array.push(this.licenses_details.menu_value);
-						this.temp_array.push(this.licenses_details.closed_value);
 						this.temp_array.push(this.licenses_details.unassigned_value);
+						this.temp_array.push(this.licenses_details.closed_value);
 
 						this.temp_label_this_week.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.this_week_ad_value);
 						this.temp_label_this_week.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.this_week_menu_value);

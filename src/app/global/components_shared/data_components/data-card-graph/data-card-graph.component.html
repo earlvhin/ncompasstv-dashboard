@@ -1,115 +1,114 @@
-<div class="h-100 d-flex align-items-center">
-	<div class="p-3 w-100">
-        <h4 class="mb-2">
-            <span class="text-dark font-weight-medium" *ngIf="compare_basis_label">
-                Total {{ compare_basis_label }}
-            </span>
+<div class="row">
+	<div class="col-lg-12 mb-2">
+		<span class="text-dark font-weight-medium" *ngIf="compare_basis_label"> Total {{ compare_basis_label }} </span>
+	</div>
+	<div class="col-lg-7">
+		<div class="row no-gutters">
+			<div class="col-lg-12" *ngIf="!average_basis_label">
+				<span class="text-primary font-weight-medium xlg-text">{{ compare_basis }}</span>
+				<span class="md-text text-gray f-500">
+					{{ compare_basis_sub_label }}
+				</span>
+			</div>
+			<div class="col-lg-12 mt-2 pb-2 border-bottom">
+				<div class="row">
+					<div class="col-lg-3" *ngIf="third_value_label">
+						<span class="info-text lg-text font-weight-medium">
+							{{ third_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ third_value_label }}
+						</span>
+					</div>
+					<div class="col-lg-3" *ngIf="fourth_value_label">
+						<span class="text-gray lg-text font-weight-medium">
+							{{ fourth_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ fourth_value_label }}
+						</span>
+					</div>
+					<div class="col-lg-3">
+						<span class="text-gray lg-text font-weight-medium">
+							{{ bad_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ bad_value_label }}
+						</span>
+					</div>
+					<div class="col-lg-3">
+						<span class="text-gray lg-text font-weight-medium">
+							{{ good_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ good_value_label }}
+						</span>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-12 mt-2">
+				<div class="row">
+					<div class="col-lg-3" *ngIf="third_value_label">
+						<span class="text-primary lg-text font-weight-medium">
+							{{ breakdown1_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ breakdown1_label }}
+						</span>
+					</div>
+					<div class="col-lg-3" *ngIf="third_value_label">
+						<span class="text-danger lg-text font-weight-medium">
+							{{ breakdown2_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ breakdown2_label }}
+						</span>
+					</div>
+					<div class="col-lg-3" *ngIf="third_value_label">
+						<span class="text-orange lg-text font-weight-medium">
+							{{ breakdown3_value }}
+						</span>
+						<br />
+						<span class="f-500 md-text text-gray">
+							{{ breakdown3_label }}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-            <span class="text-dark font-weight-medium" *ngIf="average_basis_label">
-                {{ average_basis_label }}
-            </span>
-        </h4>
-        <div class="col-lg-12 p-0 flex">
-            <div class="p-0" [ngClass]="label_array && has_breakdown ? 'col-lg-6' : 'col-lg-4'">
-                <span class="sm-text text-gray font-weight-medium">
-                    {{ compare_basis_sub_label}}
-                </span>
-                <h2>
-                    <span class="text-primary font-weight-medium" *ngIf="!average_basis_label">
-                        {{ compare_basis }}
-                    </span>
-
-                    <span class="text-primary font-weight-medium" *ngIf="average_basis_label">
-                        {{ average_basis }}
-                    </span>
-                </h2>
-                <div class="col-lg-12 p-0" *ngIf="!label_array; else breakdownpart">
-                </div>
-            </div>
-            <div class="col-lg-6 p-0" [ngClass]="label_array && has_breakdown ? 'col-lg-6':'col-lg-8 mt-1'">
-                <div *ngIf="label_array; else breakdownpart" class="col-lg-12">
-                    <canvas id="breakdown-{{ id }}" height="150"></canvas>
-                </div>
-                <div class="col-lg-12 p-0 text-center">
-                    <div class="p-0 mt-2" *ngIf="has_breakdown && breakdown4_label">
-                        <div class="col-lg-12 sm-text p-0 text-gray font-weight-medium">
-                            {{ breakdown4_sub_label }}
-                        </div>
-                        <div class="col-lg-12 p-0 flex">
-                            <div class="col-lg-6 pl-0">
-                                <span class="fas fa-circle mr-2 text-light-gray xsm-text"></span>
-                                <span class="sm-text text-dark">
-                                    <span class="font-weight-medium">{{ breakdown4_value }}</span> {{ breakdown4_label }}
-                                </span>
-                            </div>
-                            <div class="col-lg-6">
-                                <span class="fas fa-circle text-light-gray mr-2 xsm-text"></span>
-                                <span class="sm-text text-dark">
-                                    <span class="font-weight-medium">{{ breakdown5_value }}</span> {{ breakdown5_label }}
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <ng-template #breakdownpart>
-            <div class="col-lg-12 p-0 mt-1" *ngIf="good_value || bad_value">
-                <div class="col-lg-12 sm-text p-0 text-gray font-weight-medium" *ngIf="has_breakdown">
-                    {{ compare_basis_sub_label}} Breakdown:
-                </div>
-                <div class="col-lg-12 p-0 flex">
-                    <div class="p-0 mr-2" [ngClass]="label_array ? 'col-lg-6' : 'col-lg-4'">
-                        <div class="p-0" *ngIf="third_value_label">
-                            <span class="fas fa-user-shield mr-2 xsm-text info-text"></span>
-                            <span class="sm-text info-text">
-                                <span class="info-text font-weight-medium">{{ third_value }}</span> {{ third_value_label }}
-                            </span>
-                        </div>
-                        <div class="p-0" *ngIf="fourth_value_label">
-                            <span class="fas fa-user mr-2 xsm-text text-light-gray"></span>
-                            <span class="sm-text text-gray">
-                                <span class="text-gray font-weight-medium">{{ fourth_value }}</span> {{ fourth_value_label }}
-                            </span>
-                        </div>
-                        <span class="text-danger fas fa-circle mr-2 xsm-text" *ngIf="!has_breakdown; else breakdown_icon_disable">
-                        </span>
-                        <ng-template #breakdown_icon_disable>
-                            <span class="fas fa-user-alt-slash mr-2 xsm-text text-gray"></span>
-                        </ng-template>
-                        <span class="sm-text text-dark">
-                            <span class="text-gray font-weight-medium">{{ bad_value }}</span> {{ bad_value_label }}
-                        </span>
-                        <br>
-                        <span class="text-primary fas fa-circle mr-2 xsm-text" *ngIf="!has_breakdown; else breakdown_icon">
-                        </span>
-                        <ng-template #breakdown_icon>
-                            <span class="fas fa-user mr-2 xsm-text text-primary"></span>
-                        </ng-template>
-                        <span class="sm-text text-dark">
-                            <span class="text-primary font-weight-medium">{{ good_value }}</span> {{ good_value_label }}
-                        </span>
-                    </div>
-                </div>
-                <div class="p-0" *ngIf="has_breakdown" [ngClass]="label_array ? 'col-lg-12':'col-lg-8'" >
-                    <hr class="m-0 mt-2 mb-2">
-                    <span class="text-primary fas fa-circle mr-2 xsm-text"></span>
-                    <span class="sm-text text-dark">
-                        <span class="text-gray font-weight-medium">{{ breakdown1_value }}</span> {{ breakdown1_label }}
-                    </span>
-                    <br>
-                    <span class="text-danger fas fa-circle mr-2 xsm-text"></span>
-                    <span class="sm-text text-dark">
-                        <span class="text-gray font-weight-medium">{{ breakdown2_value }}</span> {{ breakdown2_label }}
-                    </span>
-                    <br>
-                    <span class="text-orange fas fa-circle mr-2 xsm-text"></span>
-                    <span class="sm-text text-dark">
-                        <span class="text-gray font-weight-medium">{{ breakdown3_value }}</span> {{ breakdown3_label }}
-                    </span>
-                </div>
-            </div>
-        </ng-template>
+	<!-- CHART SECTION -->
+	<div class="col-lg-5 pt-3">
+		<div *ngIf="label_array; else breakdownpart" class="col-lg-12">
+			<canvas id="breakdown-{{ id }}" height="150"></canvas>
+		</div>
+		<div class="col-lg-12 p-0 text-center">
+			<div class="p-0 mt-2" *ngIf="has_breakdown && breakdown4_label">
+				<div class="col-lg-12 sm-text p-0 text-gray font-weight-medium">
+					{{ breakdown4_sub_label }}
+				</div>
+				<div class="col-lg-12 p-0 flex">
+					<div class="col-lg-6 pl-0">
+						<span class="fas fa-circle mr-2 text-light-gray xsm-text"></span>
+						<span class="sm-text text-dark">
+							<span class="font-weight-medium">{{ breakdown4_value }}</span> {{ breakdown4_label }}
+						</span>
+					</div>
+					<div class="col-lg-6">
+						<span class="fas fa-circle text-light-gray mr-2 xsm-text"></span>
+						<span class="sm-text text-dark">
+							<span class="font-weight-medium">{{ breakdown5_value }}</span> {{ breakdown5_label }}
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
 	</div>
 </div>
