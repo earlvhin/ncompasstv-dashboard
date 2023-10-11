@@ -79,9 +79,7 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 		this.value_array.map((value) => {
 			if (value == 0) count += 1;
 		});
-		if (count == this.value_array.length) {
-			this.no_data_display = true;
-		}
+		if (count == this.value_array.length) this.no_data_display = true;
 	}
 
 	generateChart() {
