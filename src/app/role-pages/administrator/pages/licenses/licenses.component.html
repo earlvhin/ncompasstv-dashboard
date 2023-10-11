@@ -303,11 +303,11 @@
 										</div>
 									</div>
 									<div class="col-lg-12" *ngIf="!searching_licenses">
-										<span class="col-lg-12 sm-text bg-gray"
-											>Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
+										<p class="sm-text py-2 m-0">
+											Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
 											<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
 											<span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
-										</span>
+										</p>
 									</div>
 								</div>
 								<div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
