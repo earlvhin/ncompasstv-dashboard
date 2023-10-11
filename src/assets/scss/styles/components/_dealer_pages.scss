@@ -1,25 +1,27 @@
 .gray-back {
-    background: $gray;
-    padding: 5px;
-    margin-top: 10px;
+	background: $gray;
+	padding: 5px;
+	margin-top: 10px;
 }
-.dealer-card {
-    app-data-card-count {
-        mat-card {
-            box-shadow: none !important;
-            padding: 0px;
-        }
-    }
-}
-.select-dealer-field {
-    right: 30px;
-    top: 100px;
-    width: 400px;
 
-    .icon {
-        color: #555;
-        top:  15px;
-        right: 0;
-        position: absolute;        
-    }
+.dealer-card {
+	app-data-card-count {
+		mat-card {
+			box-shadow: none !important;
+			padding: 0px;
+		}
+	}
+}
+
+.select-dealer-field {
+	right: 30px;
+	top: 100px;
+	width: 400px;
+
+	.icon {
+		color: #555;
+		top: 15px;
+		right: 0;
+		position: absolute;
+	}
 }

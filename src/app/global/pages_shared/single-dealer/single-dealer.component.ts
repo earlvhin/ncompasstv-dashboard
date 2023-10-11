@@ -603,11 +603,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				(data) => {
 					this.advertiser_card = {
 						basis: data.total,
-						basis_label: 'ADVERTISERS',
+						basis_label: 'Advertisers',
 						good_value: data.totalActive,
-						good_value_label: 'ACTIVE',
+						good_value_label: 'Active',
 						bad_value: data.totalInActive,
-						bad_value_label: 'INACTIVE'
+						bad_value_label: 'Inactive'
 					};
 				},
 				(error) => {
@@ -717,11 +717,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					(data: any) => {
 						this.host_card = {
 							basis: data.total,
-							basis_label: 'HOSTS',
+							basis_label: 'Hosts',
 							good_value: data.totalActive,
-							good_value_label: 'ACTIVE',
+							good_value_label: 'Active',
 							bad_value: data.totalInActive,
-							bad_value_label: 'INACTIVE'
+							bad_value_label: 'Inactive'
 						};
 					},
 					(error) => {
@@ -735,11 +735,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	setHostCount(data) {
 		this.host_card = {
 			basis: data.total,
-			basis_label: 'HOSTS',
+			basis_label: 'Hosts',
 			good_value: data.totalActive,
-			good_value_label: 'ACTIVE',
+			good_value_label: 'Active',
 			bad_value: data.totalInActive,
-			bad_value_label: 'INACTIVE'
+			bad_value_label: 'Inactive'
 		};
 	}
 
@@ -843,7 +843,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			breakdown4_value: data.totalLan,
 			breakdown4_label: 'LAN',
 			breakdown5_value: data.totalWifi,
-			breakdown5_label: 'WIFI',
+			breakdown5_label: 'WiFi',
 			third_value: data.totalPending,
 			third_value_label: 'Pending',
 			fourth_value: data.totalDisabled,

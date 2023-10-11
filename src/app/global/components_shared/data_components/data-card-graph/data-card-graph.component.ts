@@ -101,12 +101,16 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 				]
 			},
 			options: {
+				layout: {
+					padding: 0
+				},
 				maintainAspectRatio: false,
 				plugins: {
 					legend: {
 						display: true,
 						labels: {
-							boxWidth: 10
+							boxWidth: 10,
+							padding: 10
 						},
 						position: 'bottom',
 						align: 'center'

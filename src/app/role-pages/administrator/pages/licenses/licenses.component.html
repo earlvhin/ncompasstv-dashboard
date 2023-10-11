@@ -20,7 +20,7 @@
 	</div>
 
 	<div class="content-section">
-		<div class="row">
+		<div class="row row-eq-height">
 			<div class="col-lg-6">
 				<mat-card class="h-100">
 					<ng-container *ngIf="licenses_details; else small_loader">
@@ -51,7 +51,7 @@
 				</mat-card>
 			</div>
 			<div class="col-lg-3">
-				<mat-card class="h-100 dealer-card">
+				<mat-card>
 					<ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
 							[id]="'dealer-statistics'"
@@ -64,7 +64,7 @@
 				</mat-card>
 			</div>
 			<div class="col-lg-3">
-				<mat-card class="h-100 dealer-card">
+				<mat-card>
 					<ng-container *ngIf="licenses_details; else small_loader">
 						<app-data-card-graph
 							[id]="'host-statistics'"
