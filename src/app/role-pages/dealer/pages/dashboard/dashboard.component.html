@@ -14,8 +14,10 @@
 		<div class="bg-danger text-white p-2 px-3 rounded">
 			<h6 class="md-text">
 				<i class="fa fa-exclamation-triangle mr-3"></i>
-				Warning! You have <span class="text-dark font-weight-bold">{{ contents_total }}</span> contents about to expire.
-				<a class="clickable ml-2 sort" [routerLink]="['/dealer/media-library/expired-contents']" target="_blank">
+				<span class="md-text"
+					>Warning! You have <span class="text-dark font-weight-bold">{{ contents_total }}</span> unused contents.</span
+				>
+				<a class="md-text clickable ml-2 sort" [routerLink]="['/dealer/media-library/expired-contents']" target="_blank">
 					<span>Click here to manage <i class="ml-2 fa fa-angle-double-right"></i></span>
 				</a>
 			</h6>
