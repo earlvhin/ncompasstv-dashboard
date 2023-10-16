@@ -42,7 +42,8 @@ export const API_ENDPOINTS = {
 		api_get_filler_feed_by_role: 'filler/playlist/getbyrole',
 		api_get_filler_groups: 'filler/group/getall',
 		api_get_filler_group_for_feeds: 'filler/group/getbyuser',
-		api_get_dealer_filler_groups_admin_view: 'filler/group/dealer',
+		api_get_dealer_filler_groups_admin_view: 'filler/group/dealer/getall',
+		api_get_dealeradmin_filler_groups_view: 'filler/group/dealeradmin/getall',
 		api_get_dealer_filler_groups: 'filler/group/dealer/getall',
 		api_get_dealer_filler_groups_other_roles: 'filler/group/dealer/byrole',
 		api_get_filler_group_by_id: 'filler/group/getbyid',
@@ -183,7 +184,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',

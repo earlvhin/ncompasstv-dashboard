@@ -650,8 +650,13 @@ button {
 	cursor: pointer;
 }
 
+
 .contain-bg {
 	object-fit: contain;
+}
+
+.cover-bg {
+	object-fit: cover;
 }
 
 .not-clickable {

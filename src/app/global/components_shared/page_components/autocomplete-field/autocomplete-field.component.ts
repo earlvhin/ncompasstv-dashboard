@@ -54,6 +54,8 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 	@Input() isLocator?: boolean;
 	@Input() disable_minimum_search_length = false;
 	@Input() is_city = false;
+	@Input() display_role: boolean = false;
+	@Input() role: string;
 
 	input_field_control = new FormControl();
 	view_value: string;

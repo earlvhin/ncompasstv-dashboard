@@ -45,7 +45,7 @@ export class EditFillerGroupComponent implements OnInit {
 	ngOnInit() {
 		if (!this._isDealer()) {
 			this.getDealers();
-			this.getAllDealerAdmin();
+			if (!this._isDealerAdmin()) this.getAllDealerAdmin();
 		}
 		this.initializeForm();
 		this.getSelectedGroup();
@@ -59,6 +59,14 @@ export class EditFillerGroupComponent implements OnInit {
 	_isDealer() {
 		const DEALER_ROLES = ['dealer', 'sub-dealer'];
 		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isAdmin() {
+		return this._auth.current_role === 'administrator';
+	}
+
+	_isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 
 	private initializeForm(): void {

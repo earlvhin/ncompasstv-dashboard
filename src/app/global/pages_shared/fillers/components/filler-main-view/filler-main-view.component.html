@@ -77,7 +77,7 @@
 											[ngStyle]="{ width: filler.dimension, height: filler.dimension }"></object>
 									</div>
 									<ng-template #imagePrev>
-										<img [src]="filler.url" [ngStyle]="{ width: filler.dimension, height: filler.dimension }" />
+										<img class="cover-bg" [src]="filler.url" [ngStyle]="{ width: filler.dimension, height: filler.dimension }" />
 									</ng-template>
 								</div>
 							</div>
@@ -104,7 +104,7 @@
 							<div *ngIf="group.coverPhoto != ''; else defaultphoto">
 								<img
 									[src]="group.coverPhoto"
-									class="clickable full-width h-130-px br-5"
+									class="clickable full-width h-130-px br-5 cover-bg"
 									title="Click to Preview Album"
 									(click)="showAlbumPreview(group.fillerGroupId, i)" />
 							</div>
@@ -128,21 +128,28 @@
 								<span class="text-dark sm-text">{{ group.count }} Fillers</span>
 							</div>
 						</div>
-						<div class="col-lg-6 text-right" *ngIf="!restricted">
-							<span
-								class="fas fa-upload text-gray ml-3 clickable hover-prime"
-								title="Upload Filler"
-								(click)="addFillerContent(group)"></span>
+						<div class="col-lg-6 text-right">
+							<ng-container *ngIf="!restricted; else createdbyarea">
+								<span
+									class="fas fa-upload text-gray ml-3 clickable hover-prime"
+									title="Upload Filler"
+									(click)="addFillerContent(group)"></span>
 
-							<span
-								class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
-								title="Edit Filler Group"
-								(click)="onEditFillerGroup(group.fillerGroupId)"></span>
+								<span
+									class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
+									title="Edit Filler Group"
+									(click)="onEditFillerGroup(group.fillerGroupId)"></span>
 
-							<span
-								class="fas fa-trash text-danger ml-3 clickable"
-								title="Delete Filler Group"
-								(click)="onDeleteFillerGroup(group.fillerGroupId)"></span>
+								<span
+									class="fas fa-trash text-danger ml-3 clickable"
+									title="Delete Filler Group"
+									(click)="onDeleteFillerGroup(group.fillerGroupId)"></span>
+							</ng-container>
+							<ng-template #createdbyarea>
+								<span class="sm-text text-dark" title="{{ group.createdByName }}">{{
+									group.createdByName.length > 10 ? (group.createdByName | slice : 0 : 10) + '...' : group.createdByName
+								}}</span>
+							</ng-template>
 						</div>
 					</div>
 				</div>
