@@ -1,10 +1,6 @@
-import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { UI_ACTIVITY_LOGS, UI_CURRENT_USER } from '../../models';
-import { DealerService } from '../../services';
-import { ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { DatePipe } from '@angular/common';
 
 @Component({
 	selector: 'app-single-activity-tab',
@@ -12,17 +8,19 @@ import { DatePipe } from '@angular/common';
 	styleUrls: ['./single-activity-tab.component.scss']
 })
 export class SingleActivityTabComponent implements OnInit {
+	@Input() activity_data: UI_ACTIVITY_LOGS[] = [];
+	@Input() createdBy: string;
 	@Input() currentRole: string;
 	@Input() currentUser: UI_CURRENT_USER;
-	@Input() ownerId: string;
-	@Input() owner_data: any;
-	@Input() activity_data: UI_ACTIVITY_LOGS[] = [];
-	@Input() paging_data: any;
-	@Input() sort_column: string;
-	@Input() sort_order: string;
+	@Input() dateCreated: string;
 	@Input() initial_load: boolean;
 	@Input() no_activity_data: boolean;
+	@Input() owner_data: any;
+	@Input() ownerId: string;
+	@Input() paging_data: any;
 	@Input() reload_data: boolean;
+	@Input() sort_column: string;
+	@Input() sort_order: string;
 	@Output() pageChanged = new EventEmitter<number>();
 	@Output() sortColumnEvent = new EventEmitter<{ column: string; order: string }>();
 
@@ -34,16 +32,10 @@ export class SingleActivityTabComponent implements OnInit {
 		{ name: 'Activity', column: 'activityCode', sortable: false }
 	];
 
-	constructor(private _date: DatePipe) {}
+	constructor() {}
 	protected _unsubscribe: Subject<void> = new Subject<void>();
 
-	ngOnInit() {
-		this.getDate();
-	}
-
-	getDate() {
-		this.dateFormatted = this._date.transform(this.owner_data.dateCreated, 'MMMM d, y');
-	}
+	ngOnInit() {}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();

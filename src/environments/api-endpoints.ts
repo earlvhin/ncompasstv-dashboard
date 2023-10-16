@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
 		api_get_activities: 'activity/getall',
 		api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
 		api_get_advertisers: 'advertiser/getall',
+		api_get_advertisers_activity: 'advertiseractivitylog/getall',
 		api_get_advertisers_by_dealer_id: 'advertiser/getbydealerid',
 		api_get_advertisers_by_id: 'advertiser/getbyid?id=',
 		api_get_advertiser_report: 'advertiser/getaddedreport',
@@ -184,7 +185,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -275,8 +276,8 @@ export const API_ENDPOINTS = {
 		tag_owners: 'tag/addowners',
 		tag_type: 'tag/createtype',
 		new_host_activity_logs: 'hostActivityLog/create',
-		new_dealer_activity_logs: 'dealeractivitylog/create'
-
+		new_dealer_activity_logs: 'dealeractivitylog/create',
+		new_advertiser_activity_logs: 'advertiseractivitylog/create'
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',

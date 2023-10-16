@@ -385,6 +385,7 @@ export class DataTableComponent implements OnInit {
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
 		const deleteLicenseActivity = new ACTIVITY_LOGS(this.dealer_id, 'deleted_license', this._auth.current_user_value.user_id);
+		const deleteAdvertiser = new ACTIVITY_LOGS(this.dealer_id, 'deleted_advertiser', this._auth.current_user_value.user_id);
 
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
@@ -420,6 +421,8 @@ export class DataTableComponent implements OnInit {
 					break;
 				case 'advertiser_delete':
 					this.advertiserDelete(id, 0);
+					this.createActivity(deleteAdvertiser);
+
 					break;
 				case 'advertiser_delete_force':
 					this.advertiserDelete(id, 1);
