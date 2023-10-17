@@ -276,6 +276,10 @@ export class DealerService extends BaseService {
 		return this.postRequest(`${this.updaters.api_update_dealer}`, data);
 	}
 
+	update_dealer_logo(data) {
+		return this.postRequest(`${this.updaters.api_update_dealer_logo}`, data);
+	}
+
 	update_dealer_values(data) {
 		return this.postRequest(`${this.updaters.api_update_dealer_values}`, data);
 	}

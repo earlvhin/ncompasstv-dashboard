@@ -183,7 +183,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -275,7 +275,6 @@ export const API_ENDPOINTS = {
 		tag_type: 'tag/createtype',
 		new_host_activity_logs: 'hostActivityLog/create',
 		new_dealer_activity_logs: 'dealeractivitylog/create'
-
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
@@ -307,6 +306,7 @@ export const API_ENDPOINTS = {
 		api_update_alias: 'license/updatealias',
 		api_update_card: 'billing/dealer/upsert/addressBook',
 		api_update_dealer: 'dealer/update',
+		api_update_dealer_logo: 'dealer/updatedealerlogo',
 		api_update_dealer_values: 'dealer/updatedealervalues',
 		api_update_feed: 'feed/update',
 		api_update_filler_group_photo: 'filler/group/update/coverphoto',
