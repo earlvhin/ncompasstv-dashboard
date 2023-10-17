@@ -248,13 +248,14 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 
 					await this._confirmationDialog.success(dialogData).toPromise();
 					this._dialogReference.close(true);
+					this.createActivity(modifyAdvertiser);
+
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			);
 
-		this.createActivity(modifyAdvertiser);
 	}
 
 	createActivity(activity) {

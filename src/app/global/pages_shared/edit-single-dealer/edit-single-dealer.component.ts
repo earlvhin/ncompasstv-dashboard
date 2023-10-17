@@ -167,13 +167,14 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 					await this._confirmationDialog.success(dialogData).toPromise();
 					this._dialogReference.close(true);
+					this.createActivity(newDealerActivityLog);
+
 				},
 				(error) => {
 					throw new Error(error);
 				}
 			);
 
-		this.createActivity(newDealerActivityLog);
 	}
 
 	createActivity(activity) {

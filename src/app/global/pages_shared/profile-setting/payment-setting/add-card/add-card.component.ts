@@ -7,6 +7,8 @@ import { HttpErrorResponse } from '@angular/common/http';
 
 import { BillingService } from 'src/app/global/services/billing-service/billing-service';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
+import { ACTIVITY_LOGS } from 'src/app/global/models';
+import { AuthService, DealerService } from 'src/app/global/services';
 
 @Component({
   selector: 'app-add-card',
@@ -17,10 +19,13 @@ export class AddCardComponent implements OnInit {
 
     addCardForm: FormGroup;
     processing: boolean = false;
+	dealer_id = this._auth.current_user_value.roleInfo.dealerId;
     protected _unsubscribe = new Subject<void>();
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public _dialog_data: any,
+		private _auth: AuthService,
+		private _dealer: DealerService,
         private _formBuilder: FormBuilder,
         private _billing: BillingService,
         private _dialog: MatDialog,
@@ -59,6 +64,7 @@ export class AddCardComponent implements OnInit {
     }
 
     addCard() {
+		const addCard = new ACTIVITY_LOGS(this.dealer_id, 'added_card', this._auth.current_user_value.user_id);
         this.processing = true;
         var card_to_add = {
             dealerId: this._dialog_data.id,
@@ -72,6 +78,7 @@ export class AddCardComponent implements OnInit {
         this._billing.add_credit_card(card_to_add).pipe(takeUntil(this._unsubscribe)).subscribe(
             response => {
                 this.openConfirmationModal('success', 'Success!', 'Credit card successfully saved.');
+				this.createActivity(addCard);
             } ,(error: HttpErrorResponse) => {
                 if (error.status === 400) {
                     this.openConfirmationModal('error', 'Failed!', error.error.message);
@@ -80,6 +87,20 @@ export class AddCardComponent implements OnInit {
             }
         )
     }
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.log(error);
+				}
+			);
+	}
 
     openConfirmationModal(status, message, data): void {
 		var dialog = this._dialog.open(ConfirmationModalComponent, {

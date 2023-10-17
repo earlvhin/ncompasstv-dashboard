@@ -557,33 +557,58 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		return activity.map((a: any) => {
 			const activityCode = a.activityCode;
-			let activityMessage = '';
+			let activityMessage = 'Other activitiy detected';
 			let createdBy;
 
 			this.created_by.map((c) => {
-				if (c.userId === a.initiatedBy) {
-					return (createdBy = c);
-				}
+				if (c.userId === a.initiatedBy) createdBy = c;
 			});
 
-			if (activityCode === 'modify_dealer') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the dealer`;
-			} else if (activityCode === 'modify_billing') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the billing details`;
-			} else if (activityCode === 'deleted_license') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted a license`;
-			} else if (activityCode === 'deleted_multiple_license') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple license`;
-			} else if (activityCode === 'updated_license') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated the system`;
-			} else if (activityCode === 'reboot_player') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the player`;
-			} else if (activityCode === 'reboot_pi') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the pi`;
-			} else if (activityCode === 'reassign_dealer') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} re-assign the dealer`;
-			} else {
-				activityMessage = 'Other Activity Detected';
+			switch (activityCode) {
+				case 'modify_dealer':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the dealer`;
+					break;
+				case 'modify_billing':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the billing details`;
+					break;
+				case 'deleted_license':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted a license`;
+					break;
+				case 'deleted_multiple_license':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple license`;
+					break;
+				case 'updated_license':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated the system`;
+					break;
+				case 'reboot_player':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the player`;
+					break;
+				case 'reboot_pi':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the pi`;
+					break;
+				case 'reassign_dealer':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} re-assign the dealer`;
+					break;
+				case 'modify_dealer_profile':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified their profile info`;
+					break;
+				case 'change_password':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} changed their password`;
+					break;
+				case 'added_card':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} added their card`;
+					break;
+				case 'update_billing_address':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated their billing address`;
+					break;
+				case 'delete_card':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted their card`;
+					break;
+				case 'update_card':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated their card details`;
+					break;
+				default:
+					return activityMessage;
 			}
 
 			return new UI_ACTIVITY_LOGS(

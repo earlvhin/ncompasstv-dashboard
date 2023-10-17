@@ -193,19 +193,66 @@
 						</div>
 					</div>
 				</mat-tab>
-                <mat-tab label="Orders" *ngIf="is_dealer">
-                    <div class="col-lg-12 p-0">
-                        <div class="theme-container">
-                            <div class="row">
-                                <div class="col-lg-12 mt-4">
-                                    <app-orders [dealerId]="dealer_id">
-                                    </app-orders>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </mat-tab>
-            </mat-tab-group>
-        </div>
-    </div>
+				<mat-tab label="Orders" *ngIf="is_dealer">
+					<div class="col-lg-12 p-0">
+						<div class="theme-container">
+							<div class="row">
+								<div class="col-lg-12 mt-4">
+									<app-orders [dealerId]="dealer_id"> </app-orders>
+								</div>
+							</div>
+						</div>
+					</div>
+				</mat-tab>
+				<mat-tab label="Activity" *ngIf="is_dealer">
+					<div class="col-lg-12 p-0">
+						<div class="theme-container pt-4">
+							<div class="row">
+								<div class="col-lg-12 ml-2">
+									<h5>{{ created_by }}</h5>
+									<h6>{{ date_created | date : 'MMMM d, y' }}</h6>
+								</div>
+							</div>
+
+							<div class="row">
+								<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
+									<app-single-activity-tab
+										*ngIf="activity_data.length; else loadingContents"
+										[activity_data]="activity_data"
+										[paging_data]="paging_data_activity"
+										[sort_column]="sort_column_activity"
+										[sort_order]="sort_order_activity"
+										[currentUser]="current_user"
+										[currentRole]="current_role"
+										[reload_data]="reload_data"
+										(pageChanged)="getDealerActivity($event)"
+										(sortColumnEvent)="getActivityColumnsAndOrder($event)">
+									</app-single-activity-tab>
+								</div>
+							</div>
+						</div>
+					</div>
+				</mat-tab>
+			</mat-tab-group>
+		</div>
+	</div>
 </div>
+
+<ng-template #loadingContents>
+	<ng-container *ngIf="!no_activity_data; else noDataActivity">
+		<div class="loading-wrapper">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-container>
+</ng-template>
+
+<ng-template #noDataActivity>
+	<mat-card>
+		<div class="no-contents d-flex flex-column align-items-center">
+			<div class="mb-4">
+				<i class="text-gray fa-5x far fa-file-alt"></i>
+			</div>
+			<h3 class="text-gray">No Activities Found</h3>
+		</div>
+	</mat-card>
+</ng-template>
