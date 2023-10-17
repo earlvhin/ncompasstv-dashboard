@@ -93,7 +93,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.setCity(city);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -122,7 +122,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 						}
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -249,13 +249,11 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					await this._confirmationDialog.success(dialogData).toPromise();
 					this._dialogReference.close(true);
 					this.createActivity(modifyAdvertiser);
-
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
-
 	}
 
 	createActivity(activity) {
@@ -267,7 +265,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}

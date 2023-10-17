@@ -133,7 +133,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 					this.filtered_data = mappedData;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -188,7 +188,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -221,7 +221,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -249,7 +249,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 				);
 				return result;
 			} else {
-                
 				const result = new UI_TABLE_USERS(
 					{ value: user.userId, link: null, editable: false, hidden: true },
 					{ value: count++, link: null, editable: false, hidden: false },
@@ -258,9 +257,9 @@ export class UsersComponent implements OnInit, OnDestroy {
 					{ value: user.contactNumber, link: null, editable: false, hidden: false },
 					{ value: role.roleName, link: null, editable: false, hidden: false },
 					{ value: user.organization ? user.organization : '--', link: null, editable: false, hidden: false },
-                    { value: allowEmail, type: 'toggle' },
+					{ value: allowEmail, type: 'toggle' },
 					{ value: this._date.transform(user.dateCreated), link: null, editable: false, hidden: false },
-					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true },
+					{ value: user.creatorName, link: `/administrator/users/${user.createdBy}`, editable: false, hidden: false, new_tab_link: true }
 				);
 				return result;
 			}
@@ -271,7 +270,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this._helper.onRefreshUsersPage.pipe(takeUntil(this._unsubscribe)).subscribe(
 			() => this.ngOnInit(),
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -283,7 +282,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 				this.confirmEmailNotificationToggle(userId, value, tableDataIndex, currentEmail);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -294,12 +293,11 @@ export class UsersComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: { user: API_USER_DATA }) => {
-
 					// const updatedIndex = this.filtered_data.findIndex((user) => user.user_id.value === response.user.userId);
 					// this.filtered_data[updatedIndex].allow_email.value = response.user.allowEmail === 1;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

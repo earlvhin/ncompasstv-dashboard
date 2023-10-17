@@ -197,7 +197,7 @@ export class SingleScreenComponent implements OnInit {
 					this._socket.emit('D_activated', license.license_id.value);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -225,7 +225,7 @@ export class SingleScreenComponent implements OnInit {
 			.deactivate_license(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(() => (error) => {
-				throw new Error(error);
+				console.error(error);
 			});
 	}
 
@@ -255,7 +255,7 @@ export class SingleScreenComponent implements OnInit {
 							this._router.navigate([`/${this.roleRoute}/screens`]);
 						},
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			}
@@ -291,7 +291,7 @@ export class SingleScreenComponent implements OnInit {
 					this.openConfirmationModal('success', 'Success!', 'Screen successfully updated!');
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -335,7 +335,7 @@ export class SingleScreenComponent implements OnInit {
 					this.dealer_playlist = playlists;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -360,7 +360,7 @@ export class SingleScreenComponent implements OnInit {
 						}
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -400,7 +400,7 @@ export class SingleScreenComponent implements OnInit {
 						this.loading_search_host = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -413,7 +413,7 @@ export class SingleScreenComponent implements OnInit {
 			.subscribe(
 				(data) => (this.screen_types = data),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -494,12 +494,12 @@ export class SingleScreenComponent implements OnInit {
 							this.getScreenType();
 						},
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -663,7 +663,7 @@ export class SingleScreenComponent implements OnInit {
 					this.checkMissingZones(response.template.templateId);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -675,7 +675,7 @@ export class SingleScreenComponent implements OnInit {
 			.subscribe(
 				(data: API_TEMPLATE[]) => (this.templates = data),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

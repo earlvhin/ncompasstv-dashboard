@@ -91,7 +91,7 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 					this.is_data_ready = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -135,7 +135,7 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 						this._dialog_ref.close();
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		});
@@ -155,7 +155,7 @@ export class ReassignDealerComponent implements OnInit, OnDestroy {
 					this.dealer = response;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

@@ -80,7 +80,9 @@ export class UsersComponent implements OnInit {
 
 					this.loading_data = false;
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 		);
 	}
@@ -99,7 +101,7 @@ export class UsersComponent implements OnInit {
 				{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false },
 				{ value: u.creatorName, link: null, editable: false, hidden: false },
 				{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false },
-                { value: u.allowEmail, type: 'toggle' }
+				{ value: u.allowEmail, type: 'toggle' }
 			);
 		});
 	}

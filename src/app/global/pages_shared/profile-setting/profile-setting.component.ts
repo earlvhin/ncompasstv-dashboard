@@ -13,7 +13,6 @@ import { DatePipe } from '@angular/common';
 	styleUrls: ['./profile-setting.component.scss']
 })
 export class ProfileSettingComponent implements OnInit {
-
 	activity_created_by: any;
 	activity_data: UI_ACTIVITY_LOGS[] = [];
 	advertiser_data: any;
@@ -122,7 +121,7 @@ export class ProfileSettingComponent implements OnInit {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.initial_load_activity = false));
@@ -218,7 +217,7 @@ export class ProfileSettingComponent implements OnInit {
 					this.created_by = response.createdBy;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -263,7 +262,7 @@ export class ProfileSettingComponent implements OnInit {
 					this.loading_license = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -278,7 +277,7 @@ export class ProfileSettingComponent implements OnInit {
 					this.loading_advertiser = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -293,7 +292,7 @@ export class ProfileSettingComponent implements OnInit {
 					this.loading_host = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -311,7 +310,7 @@ export class ProfileSettingComponent implements OnInit {
 					this.loading_content = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

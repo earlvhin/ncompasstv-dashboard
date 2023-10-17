@@ -130,7 +130,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 					this.paging_data = response.paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {

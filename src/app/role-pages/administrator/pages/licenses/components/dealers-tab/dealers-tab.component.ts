@@ -66,7 +66,7 @@ export class DealersTabComponent implements OnInit, OnDestroy {
 			},
 			(error) => {
 				this.isPageReady = true;
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

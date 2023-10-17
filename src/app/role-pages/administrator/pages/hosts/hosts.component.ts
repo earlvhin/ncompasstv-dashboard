@@ -189,7 +189,7 @@ export class HostsComponent implements OnInit {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -208,7 +208,7 @@ export class HostsComponent implements OnInit {
 					this.setData(data);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

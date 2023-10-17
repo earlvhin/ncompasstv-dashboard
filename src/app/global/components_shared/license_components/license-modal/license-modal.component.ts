@@ -57,7 +57,9 @@ export class LicenseModalComponent implements OnInit {
 			(data) => {
 				this.license_generated = true;
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 

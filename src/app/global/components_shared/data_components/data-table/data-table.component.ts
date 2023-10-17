@@ -278,7 +278,7 @@ export class DataTableComponent implements OnInit {
 				this.reload_page.emit(true);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -362,7 +362,7 @@ export class DataTableComponent implements OnInit {
 				);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -467,7 +467,7 @@ export class DataTableComponent implements OnInit {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}
@@ -477,7 +477,7 @@ export class DataTableComponent implements OnInit {
 			this._license.delete_license(data).subscribe(
 				() => this.update_info.emit(true),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -490,7 +490,7 @@ export class DataTableComponent implements OnInit {
 					this.update_info.emit(true);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -507,7 +507,7 @@ export class DataTableComponent implements OnInit {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -518,7 +518,7 @@ export class DataTableComponent implements OnInit {
 			this._content.remove_content([{ contentid: data }]).subscribe(
 				() => this.reload_page.emit(true),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -529,7 +529,7 @@ export class DataTableComponent implements OnInit {
 			this._filler.delete_filler_feeds(data).subscribe(
 				() => this.reload_page.emit(true),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -540,7 +540,7 @@ export class DataTableComponent implements OnInit {
 			this._screen.delete_screen(data).subscribe(
 				() => this.update_info.emit(true),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -566,7 +566,7 @@ export class DataTableComponent implements OnInit {
 							this._license.update_alias({ licenseId: fields.id, alias: response }).subscribe(
 								() => this.openConfirmationModal('success', 'Success!', 'License Alias changed succesfully'),
 								(error) => {
-									throw new Error(error);
+									console.error(error);
 								}
 							)
 						);
@@ -579,7 +579,7 @@ export class DataTableComponent implements OnInit {
 									this._helper.onUpdateInstallationDate.next();
 								},
 								(error) => {
-									throw new Error(error);
+									console.error(error);
 								}
 							)
 						);
@@ -596,7 +596,7 @@ export class DataTableComponent implements OnInit {
 							this._screen.edit_screen(filter_screen).subscribe(
 								() => this.openConfirmationModal('success', 'Success!', 'Screen Type changed succesfully'),
 								(error) => {
-									throw new Error(error);
+									console.error(error);
 								}
 							)
 						);
@@ -613,7 +613,7 @@ export class DataTableComponent implements OnInit {
 				}
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -679,7 +679,7 @@ export class DataTableComponent implements OnInit {
 						this.openConfirmationModal('success', 'Success!', 'Feed cloned');
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		});
@@ -802,7 +802,7 @@ export class DataTableComponent implements OnInit {
 			.subscribe(
 				() => this._helper.onRefreshUsersPage.next(),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -845,7 +845,7 @@ export class DataTableComponent implements OnInit {
 				this.table_data[tableDataIndex]['allow_email'].value = !currentValue;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

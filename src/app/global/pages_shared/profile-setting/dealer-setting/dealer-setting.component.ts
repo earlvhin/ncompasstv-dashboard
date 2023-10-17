@@ -154,7 +154,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 					this.readyUpdateForm();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -245,9 +245,10 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 				this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully');
 				this.ngOnInit();
 				this.createActivity(modifyDealer);
-
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 
@@ -260,7 +261,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}

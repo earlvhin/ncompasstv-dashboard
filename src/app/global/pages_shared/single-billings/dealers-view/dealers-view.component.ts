@@ -223,7 +223,7 @@ export class DealersViewComponent implements OnInit {
 						.subscribe(
 							() => this.ngOnInit(),
 							(error) => {
-								throw new Error(error);
+								console.error(error);
 							}
 						);
 				} else {
@@ -233,7 +233,7 @@ export class DealersViewComponent implements OnInit {
 						.subscribe(
 							() => this.ngOnInit(),
 							(error) => {
-								throw new Error(error);
+								console.error(error);
 							}
 						);
 				}
@@ -365,7 +365,7 @@ export class DealersViewComponent implements OnInit {
 						this.readyUpdateForm();
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 		);
@@ -439,7 +439,7 @@ export class DealersViewComponent implements OnInit {
 				this.ngOnInit();
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 
@@ -455,7 +455,7 @@ export class DealersViewComponent implements OnInit {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}

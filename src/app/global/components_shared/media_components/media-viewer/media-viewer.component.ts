@@ -82,7 +82,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			.subscribe(
 				async () => await this.updateContentsArray(contentId),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -123,7 +123,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => this._dialog_ref.close(true),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -146,7 +146,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			.subscribe(
 				async () => await this.updateContentsArray(content_id),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -194,7 +194,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(data) => (this.file_data.selected.owner_name = data.advertiser.name),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -206,7 +206,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(data) => (this.file_data.selected.owner_name = data.businessName),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -224,7 +224,7 @@ export class MediaViewerComponent implements OnInit, OnDestroy {
 		this._host.get_host_by_id(id).subscribe(
 			(data) => (this.file_data.selected.owner_name = data.host.name),
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

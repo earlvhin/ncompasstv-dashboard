@@ -62,7 +62,7 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 					this.tableData = this.mapToTable([...images]);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -125,7 +125,7 @@ export class ImagesTabComponent implements OnInit, OnDestroy {
 					.subscribe(
 						() => this.ngOnInit(),
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			}

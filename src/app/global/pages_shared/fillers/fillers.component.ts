@@ -278,7 +278,7 @@ export class FillersComponent implements OnInit {
 					if (page == 1) this.loading_search = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.dealer_initial_load = false));
@@ -302,7 +302,7 @@ export class FillersComponent implements OnInit {
 					this.paging = data.paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {

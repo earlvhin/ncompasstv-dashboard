@@ -91,7 +91,7 @@ export class CredentialSettingComponent implements OnInit {
 					this.readyChangePassword();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -124,9 +124,9 @@ export class CredentialSettingComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				() => {
-					this.openConfirmationModal('success', 'Success!', 'Password changed succesfully')
+					this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
 					this.createActivity(changePassword);
-	},
+				},
 				(error: HttpErrorResponse) => {
 					this.change_password_form_disabled = false;
 
@@ -147,7 +147,7 @@ export class CredentialSettingComponent implements OnInit {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}
@@ -165,7 +165,7 @@ export class CredentialSettingComponent implements OnInit {
 			.subscribe(
 				() => this.openConfirmationModal('success', 'Success', 'Updated email notification settings'),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

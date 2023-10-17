@@ -216,7 +216,7 @@ export class AutocompleteFieldComponent implements OnInit, OnDestroy, AfterViewI
 				this.ngOnInit();
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

@@ -301,7 +301,7 @@ export class LocatorComponentComponent implements OnInit {
 					this.hasLoadedExpansionData = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

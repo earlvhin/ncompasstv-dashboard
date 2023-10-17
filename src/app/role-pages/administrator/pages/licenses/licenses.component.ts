@@ -459,7 +459,7 @@ export class LicensesComponent implements OnInit {
 					this.filtered_data_host = [...mappedData];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -546,7 +546,7 @@ export class LicensesComponent implements OnInit {
 					this.hideLicenseSpinner();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -941,7 +941,7 @@ export class LicensesComponent implements OnInit {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

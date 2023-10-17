@@ -207,7 +207,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}

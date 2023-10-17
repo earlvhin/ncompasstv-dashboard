@@ -400,7 +400,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -437,7 +437,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response) => (this.playing_where = this.mapToUIFormat(response.licenses)),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -473,7 +473,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					this.monthly_chart_updating = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -490,7 +490,7 @@ export class SingleContentComponent implements OnInit, OnDestroy {
 					this.yearly_chart_updating = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

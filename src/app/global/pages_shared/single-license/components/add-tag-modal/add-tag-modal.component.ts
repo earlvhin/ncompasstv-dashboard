@@ -79,7 +79,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 				return;
 			}
 		} catch (error) {
-			console.log('Error verifying tag existence', error);
+			console.error('Error verifying tag existence', error);
 			this.isCheckingTagExistence = false;
 		}
 
@@ -181,7 +181,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 					this.filteredTags.next(removedDuplicateTags);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingTags = false));
@@ -218,7 +218,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 					this.currentTags = [...data.tags];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -269,7 +269,7 @@ export class AddTagModalComponent implements OnInit, OnDestroy {
 					this.filteredTags.next(filtered);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingTags = false));

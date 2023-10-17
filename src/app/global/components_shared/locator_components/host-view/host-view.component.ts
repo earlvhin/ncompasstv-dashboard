@@ -84,7 +84,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 					this.categoriesData = [...(response.paging.entities as API_CATEGORY[])].filter((category) => category.totalLicenses > 0);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingHostsByCategory = false));
@@ -121,7 +121,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 					this.hostsData = response.host;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingHosts = false));
@@ -140,7 +140,7 @@ export class HostViewComponent implements OnInit, OnDestroy {
 					this.statesData = [...response.paging.entities];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingHostsByState = false));

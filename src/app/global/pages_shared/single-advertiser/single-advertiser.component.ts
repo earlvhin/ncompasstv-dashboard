@@ -114,7 +114,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.initial_load_activity = false));
@@ -165,7 +165,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 			try {
 				dealer = await this._dealer.get_dealer_by_id(this.advertiser.dealerId).toPromise();
 			} catch (error) {
-				throw new Error(error);
+				console.error(error);
 			}
 
 			this.is_loading = false;
@@ -188,7 +188,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					try {
 						dealer = await this._dealer.get_dealer_by_id(advertiser.dealerId).toPromise();
 					} catch (error) {
-						throw new Error(error);
+						console.error(error);
 					}
 
 					this.advertiserAndDealer = { advertiser, dealer };
@@ -196,7 +196,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.is_banner_data_ready = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.is_loading = false));
@@ -218,7 +218,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.contents_loaded = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.contents_loaded = true));

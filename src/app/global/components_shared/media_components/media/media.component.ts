@@ -258,7 +258,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 				this.reassignContent(data);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -432,7 +432,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 				m.title,
 				'',
 				m.createdByName,
-                m.ownerRoleId,
+				m.ownerRoleId,
 				m.classification
 			);
 		});
@@ -456,7 +456,7 @@ export class MediaComponent implements OnInit, OnDestroy {
 					this.ngOnInit();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);

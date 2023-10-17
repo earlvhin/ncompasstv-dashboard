@@ -89,7 +89,7 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 					this.isPageReady = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

@@ -68,7 +68,7 @@ export class UnassignHostLicenseComponent implements OnInit, OnDestroy {
 					this.unassigning = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 
@@ -80,7 +80,7 @@ export class UnassignHostLicenseComponent implements OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}

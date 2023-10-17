@@ -8,7 +8,6 @@ import { UI_CURRENT_USER, UI_HOST_SUPPORT } from 'src/app/global/models';
 import { CreateEntryComponent } from 'src/app/global/components_shared/host_components/create-entry/create-entry.component';
 import { HostService } from 'src/app/global/services';
 
-
 @Component({
 	selector: 'app-support-tab',
 	templateUrl: './support-tab.component.html',
@@ -39,53 +38,54 @@ export class SupportTabComponent implements OnInit {
 		this.getSupport(1);
 	}
 
-	getColumnsAndOrder(data: { column: string; order: string }) : void {
+	getColumnsAndOrder(data: { column: string; order: string }): void {
 		this.sort_column = data.column;
 		this.sort_order = data.order;
 		this.getSupport(1);
 	}
 
-
-	getSupport( page: number): void {
+	getSupport(page: number): void {
 		this.support_data = [];
 
 		this._host
 			.get_support_entries(this.hostId, page, this.sort_column, this.sort_order)
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((res) => {
+			.subscribe(
+				(res) => {
+					if (res.paging.entities.length === 0) {
+						this.no_support_data = true;
+						this.support_data = [];
+						return;
+					}
 
-				if (res.paging.entities.length === 0) {
-					this.no_support_data = true;
-					this.support_data = []
-					return;
-				}
-
-				const mappedData = this.mapToTableFormat(res.paging.entities);
-				this.support_data = [...mappedData];
-				this.paging_data = res.paging;
-			},
+					const mappedData = this.mapToTableFormat(res.paging.entities);
+					this.support_data = [...mappedData];
+					this.paging_data = res.paging;
+				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
-			.add(() => this.initial_load = false)
-			
+			.add(() => (this.initial_load = false));
 	}
 
 	onCreateEntry(): void {
-		this._dialog.open(CreateEntryComponent, {
-			width: '600px',
-			panelClass: 'app-media-modal',
-			autoFocus: false,
-			disableClose: true,
-			data: { hostId: this.hostId }
-		}).afterClosed().subscribe((data) => {
-			if (data) this.getSupport(1);
-			this.reload_page(true);
-		});
+		this._dialog
+			.open(CreateEntryComponent, {
+				width: '600px',
+				panelClass: 'app-media-modal',
+				autoFocus: false,
+				disableClose: true,
+				data: { hostId: this.hostId }
+			})
+			.afterClosed()
+			.subscribe((data) => {
+				if (data) this.getSupport(1);
+				this.reload_page(true);
+			});
 	}
 
-	reload_page(e: boolean):void {
+	reload_page(e: boolean): void {
 		if (e) this.ngOnInit();
 	}
 
@@ -93,16 +93,16 @@ export class SupportTabComponent implements OnInit {
 		let count = 1;
 
 		return support.map((s: any) => {
-				return new UI_HOST_SUPPORT(
-					{value: count++, editable: false},
-					{ value: s.ticketId, hidden: true },
-					{ value: s.hostId, hidden: true  },
-					{ value: this._date.transform(s.dateCreated, "MMMM d, y"), hidden: false },
-					{ value: s.url ? s.url : "--", hidden: false, globalLink: `${s.url}`, new_tab_link: true },
-					{ value: s.notes ? s.notes : "--", hidden: false  },
-					{ value: s.dateUpdated, hidden: true  },
-					{ value: s.createdBy, hidden: true  }
-				);
+			return new UI_HOST_SUPPORT(
+				{ value: count++, editable: false },
+				{ value: s.ticketId, hidden: true },
+				{ value: s.hostId, hidden: true },
+				{ value: this._date.transform(s.dateCreated, 'MMMM d, y'), hidden: false },
+				{ value: s.url ? s.url : '--', hidden: false, globalLink: `${s.url}`, new_tab_link: true },
+				{ value: s.notes ? s.notes : '--', hidden: false },
+				{ value: s.dateUpdated, hidden: true },
+				{ value: s.createdBy, hidden: true }
+			);
 		});
 	}
 }

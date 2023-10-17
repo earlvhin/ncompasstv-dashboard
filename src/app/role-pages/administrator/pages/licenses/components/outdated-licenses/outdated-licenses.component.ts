@@ -153,7 +153,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 			},
 			(error) => {
 				this.hasNoData = true;
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

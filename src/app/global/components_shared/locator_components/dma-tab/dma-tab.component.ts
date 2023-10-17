@@ -31,7 +31,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 	longitude = -105.1524133;
 	searchKeyword = '';
 	searchSelectForm: FormGroup;
-    status: boolean = false;
+	status: boolean = false;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -69,9 +69,9 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 		this.updateDMAHostLocations();
 	}
 
-    onClearDMA() {
-        this._dmaListControl.value.length = 0;
-        this.searchSelectDMADropdown.compareWith = (a, b) => a && b && a === b;
+	onClearDMA() {
+		this._dmaListControl.value.length = 0;
+		this.searchSelectDMADropdown.compareWith = (a, b) => a && b && a === b;
 		this.updateDMAHostLocations();
 	}
 
@@ -235,7 +235,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 		if (currentDMAList.length <= 0) {
 			// if no DMA is selected then do nothing
 			this.isSearchingDMA = false;
-            this.dmaHostLocations = [];
+			this.dmaHostLocations = [];
 			return;
 		}
 
@@ -251,9 +251,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 				map((response: { paging: PAGING }[]) => {
 					response.forEach((dmaPagingResponse) => {
 						let dmaHosts: any = dmaPagingResponse.paging.entities;
-                        dmaHosts = dmaHosts.filter(
-                            host => host.totalLicenses > 0
-                        )
+						dmaHosts = dmaHosts.filter((host) => host.totalLicenses > 0);
 
 						dmaHosts = dmaHosts.map((host) => {
 							host.storeHoursParsed = JSON.parse(host.storeHours);
@@ -284,7 +282,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 					this.hasSelectedDMA = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingDMA = false));
@@ -299,7 +297,7 @@ export class DmaTabComponent implements OnInit, OnDestroy {
 		this.onSelectDMA();
 	}
 
-    toggleOverMap() {
-        this.status = !this.status; 
-    }
+	toggleOverMap() {
+		this.status = !this.status;
+	}
 }

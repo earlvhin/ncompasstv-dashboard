@@ -343,7 +343,7 @@ export class LicensesComponent implements OnInit {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -418,7 +418,7 @@ export class LicensesComponent implements OnInit {
 					this.searching_license = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {

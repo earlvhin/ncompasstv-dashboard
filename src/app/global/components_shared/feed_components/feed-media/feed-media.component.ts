@@ -173,7 +173,7 @@ export class FeedMediaComponent implements OnInit {
 					this.pageEnd = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -185,7 +185,7 @@ export class FeedMediaComponent implements OnInit {
 			.subscribe(
 				(data) => (this.floating_content = data.iContents.filter((i) => this._is_image.transform(i.fileType))),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

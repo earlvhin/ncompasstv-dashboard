@@ -166,7 +166,7 @@ export class ScreenLicenseComponent implements OnInit {
 					this.licenses = response;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

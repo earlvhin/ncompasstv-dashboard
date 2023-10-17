@@ -338,7 +338,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.adminButton();
 					this.getDealerLicenses();
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 		);
 
@@ -346,7 +348,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._params.queryParams.subscribe(
 				(data) => (this.selected_index = data.tab),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -373,7 +375,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._license.activate_license(e).subscribe(
 				() => this.warningModal('success', 'License Activated', 'License successfully activated.', '', ''),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -501,7 +503,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._license.deactivate_license(e).subscribe(
 				() => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -536,7 +538,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.initial_load_activity = false));
@@ -637,7 +639,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -679,7 +681,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -725,7 +727,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -751,7 +753,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						};
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 				.add(() => (this.is_host_stats_loaded = true))
@@ -1268,7 +1270,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						this.paging = response.paging;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 		);
@@ -1419,7 +1421,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1763,7 +1765,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getDealerActivity(1);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1786,7 +1788,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.loaded = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1833,7 +1835,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.statistics = response;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -1880,7 +1882,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._dealer.onSuccessReassigningDealer.subscribe(
 				() => this.ngOnInit(),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);

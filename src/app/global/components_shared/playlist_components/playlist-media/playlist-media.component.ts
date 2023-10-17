@@ -265,7 +265,9 @@ export class PlaylistMediaComponent implements OnInit {
 						});
 					});
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 			.add(() => {
 				//map existing contents to comply with format
@@ -316,7 +318,9 @@ export class PlaylistMediaComponent implements OnInit {
 				(data: any) => {
 					if (data) this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			);
 	}
 
