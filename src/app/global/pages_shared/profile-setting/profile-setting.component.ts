@@ -162,10 +162,10 @@ export class ProfileSettingComponent implements OnInit {
 					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple licenses`;
 					break;
 				case 'updated_license':
-					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated the system`;
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated system on licenses`;
 					break;
 				case 'reboot_player':
-					activityMessage = `${createdBy.firstName} ${createdBy.lastName} rebooted the player`;
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} rebooted the player software`;
 					break;
 				case 'reboot_pi':
 					activityMessage = `${createdBy.firstName} ${createdBy.lastName} rebooted the pi`;

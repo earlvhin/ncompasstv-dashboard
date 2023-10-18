@@ -580,10 +580,10 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple license`;
 					break;
 				case 'updated_license':
-					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated the system`;
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated system on licenses`;
 					break;
 				case 'reboot_player':
-					activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the player`;
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} rebooted the player software`;
 					break;
 				case 'reboot_pi':
 					activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the pi`;

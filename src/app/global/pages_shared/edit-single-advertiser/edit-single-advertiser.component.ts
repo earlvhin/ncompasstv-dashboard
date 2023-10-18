@@ -247,8 +247,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					};
 
 					await this._confirmationDialog.success(dialogData).toPromise();
+					await this.createActivity(modifyAdvertiser).toPromise();
 					this._dialogReference.close(true);
-					this.createActivity(modifyAdvertiser);
 				},
 				(error) => {
 					console.error(error);
@@ -257,18 +257,9 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 	}
 
 	createActivity(activity) {
-		this._advertiser
-			.create_advertiser_activity_logs(activity)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					return data;
-				},
-				(error) => {
-					console.error(error);
-				}
-			);
-	}
+		return this._advertiser.create_advertiser_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe));
+	  }
 
 	searchDealers(keyword = '') {
 		this._dealer

@@ -104,7 +104,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	onReassignDealer(): void {
 		const editDialog = this._dialogReference;
-		const reassignActivityLog = new ACTIVITY_LOGS(this.dealer.dealerId, 'reassign_dealer', this._auth.current_user_value.user_id);
 		const width = '350px';
 		const height = '400px';
 
@@ -119,8 +118,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 				data: { dealer_id: this.edit_dealer_form.get('dealer_id').value }
 			})
 		);
-
-		this.createActivity(reassignActivityLog);
 	}
 
 	onSelectStartDate(e, hasValue?) {
@@ -131,7 +128,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 			this.edit_dealer_form.get('start_date').setValidators(null);
 			this.edit_dealer_form.get('start_date').updateValueAndValidity();
 		} else {
-			this.start_date = e.format('YYYY-MM-DD');
+			this.start_date = moment(e).format('YYYY-MM-DD');
 		}
 	}
 
@@ -166,8 +163,10 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 					};
 
 					await this._confirmationDialog.success(dialogData).toPromise();
+					await this.createActivity(newDealerActivityLog).toPromise();
 					this._dialogReference.close(true);
-					this.createActivity(newDealerActivityLog);
+				
+
 				},
 				(error) => {
 					console.error(error);
@@ -176,18 +175,9 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	}
 
 	createActivity(activity) {
-		this._dealer
-			.create_dealer_activity_logs(activity)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					return data;
-				},
-				(error) => {
-					console.error(error);
-				}
-			);
-	}
+		return this._dealer.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe));
+	  }
 
 	togglePasswordFieldType(): void {
 		this.is_password_field_type = !this.is_password_field_type;

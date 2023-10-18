@@ -436,6 +436,7 @@ export class DealersViewComponent implements OnInit {
 		this._dealer.update_dealer_values(this.mapUserInfoChanges()).subscribe(
 			() => {
 				this.openConfirmationModal('success', 'Success!', 'Dealer Billing Info changed succesfully');
+				this.createActivity(newDealerActivityLog);
 				this.ngOnInit();
 			},
 			(error) => {
@@ -443,7 +444,6 @@ export class DealersViewComponent implements OnInit {
 			}
 		);
 
-		this.createActivity(newDealerActivityLog);
 	}
 
 	createActivity(activity) {
