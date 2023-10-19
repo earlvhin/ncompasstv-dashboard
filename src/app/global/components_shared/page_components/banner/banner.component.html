@@ -5,7 +5,7 @@
 				*ngIf="page === 'single-dealer'; else singleHostImage"
 				[page_data]="page_data.dealer"
 				[dealer]="true"
-				(refreshimage)="subscribeToRefreshBannerData()">
+				(refresh_image)="refreshInfo()">
 			</app-update-profile-photo>
 
 			<!-- to be deleted if edit host image is implemented -->

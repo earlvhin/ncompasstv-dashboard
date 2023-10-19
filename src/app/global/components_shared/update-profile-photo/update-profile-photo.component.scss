@@ -1,6 +1,6 @@
 .profile-options {
 	top: 140px;
-	width: 150px;
+	width: 200px;
 	border-radius: 5px;
 	box-shadow: 3px 3px 7px #1c2731;
 	z-index: 10;
@@ -19,7 +19,8 @@
 	li {
 		&:hover {
 			font-weight: 600;
-			color: #8ec641;
+			color: #1c2731;
+			background: #f1f1f1;
 		}
 	}
 }
@@ -27,6 +28,6 @@
 .profile-picture-container {
 	width: 100px;
 	height: 100px;
-	object-fit: contain;
+	object-fit: cover;
 	border-radius: 100%;
 }

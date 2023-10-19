@@ -5,6 +5,7 @@ import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 
 import { ConfirmationModalComponent } from '../page_components/confirmation-modal/confirmation-modal.component';
 import { DealerService } from '../../services';
+import { ImageSelectionModalComponent } from '../page_components/image-selection-modal/image-selection-modal.component';
 
 @Component({
 	selector: 'app-update-profile-photo',
@@ -12,16 +13,19 @@ import { DealerService } from '../../services';
 	styleUrls: ['./update-profile-photo.component.scss']
 })
 export class UpdateProfilePhotoComponent implements OnInit {
+	@Input() creation: boolean = false;
 	@Input() dealer: boolean;
 	@Input() page_data: any;
 	@Output() refresh_image = new EventEmitter();
 
-	edit_dealer_logo: false;
-	show_options: false;
+	edit_dealer_logo: boolean = false;
+	show_options: boolean = false;
 
 	constructor(private _dialog: MatDialog, private _dealer: DealerService) {}
 
-	ngOnInit() {}
+	ngOnInit() {
+		if (this.creation) this.page_data = [];
+	}
 
 	closeProfileOptions() {
 		this.edit_dealer_logo = false;
@@ -37,8 +41,6 @@ export class UpdateProfilePhotoComponent implements OnInit {
 			})
 			.afterClosed()
 			.subscribe((response) => {
-				// change to emit data
-				// this.subscribeToRefreshBannerData();
 				this.closeProfileOptions();
 				this._dialog.closeAll();
 				this.refresh_image.emit(true);
@@ -64,12 +66,16 @@ export class UpdateProfilePhotoComponent implements OnInit {
 			maxFiles: 1,
 			imageMax: [720, 640],
 			onUploadDone: (response) => {
+				let sliced_imagekey = response.filesUploaded[0].key.split('/');
+				sliced_imagekey = sliced_imagekey[sliced_imagekey.length - 1].split('_');
+				let logo = sliced_imagekey[0] + '_' + response.filesUploaded[0].filename;
+
 				let dealer_info = {
 					dealerid: this.page_data.dealerId,
-					logo: response.filesUploaded[0].filename
+					logo: logo
 				};
 				this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
-					this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.');
+					this.successMessage();
 				});
 			}
 		};
@@ -81,13 +87,31 @@ export class UpdateProfilePhotoComponent implements OnInit {
 			logo: logo
 		};
 		this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
-			this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.');
+			this.successMessage();
 		});
+	}
+
+	successMessage() {
+		this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.');
 	}
 
 	getDealerExistingPhotos() {
 		this._dealer.get_dealer_logo(this.page_data.dealerId).subscribe((response) => {
-			console.log('RES', response);
+			if (!response.message) {
+				let imagesArray = response.files;
+
+				this._dialog
+					.open(ImageSelectionModalComponent, {
+						width: '700px',
+						disableClose: true,
+						data: { fromDealer: true, imagesArray, dealerId: this.page_data.dealerId }
+					})
+					.afterClosed()
+					.subscribe((response) => {
+						if (!response) return;
+						if (response == 'success') this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.');
+					});
+			}
 		});
 	}
 }

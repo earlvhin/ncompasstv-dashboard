@@ -332,4 +332,8 @@ export class BannerComponent implements OnInit, OnDestroy {
 		const currentRole = this._auth.current_role;
 		return currentRole === 'administrator' || currentRole === 'dealeradmin';
 	}
+
+	refreshInfo() {
+		this.update_info.emit(true);
+	}
 }

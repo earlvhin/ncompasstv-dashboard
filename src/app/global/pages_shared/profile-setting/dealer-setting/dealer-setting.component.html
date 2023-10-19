@@ -4,7 +4,7 @@
 			<mat-card class="p-5">
 				<form [formGroup]="update_user" (ngSubmit)="updateUserInfo()">
 					<div class="d-flex align-items-center mb-4">
-						<app-update-profile-photo [page_data]="user_data" [dealer]="true" (refreshimage)="ngOnInit()"> </app-update-profile-photo>
+						<app-update-profile-photo [page_data]="user_data" [dealer]="true" (refresh_image)="ngOnInit()"> </app-update-profile-photo>
 						<div class="flex-even">
 							<h3>Dealer Profile Info</h3>
 							<p class="sm-text mb-0">Modify Basic Dealer Info and Save Changes.</p>

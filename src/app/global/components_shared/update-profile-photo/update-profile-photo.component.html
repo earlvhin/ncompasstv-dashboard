@@ -5,12 +5,22 @@
 	<div *ngIf="show_options" class="profile-options position-absolute bg-white p-3 sm-text">
 		<div class="top-arrow"></div>
 		<ul class="list-unstyled mb-0">
-			<li class="clickable" (click)="getDealerExistingPhotos()">Select profile photo</li>
-			<li class="clickable" (click)="uploadDealerPhoto()">Upload photo</li>
-			<li class="clickable" (click)="closeProfileOptions()">Close</li>
+			<li *ngIf="!creation" class="clickable p-2" (click)="getDealerExistingPhotos()">
+				<i class="fas fa-camera mr-2 text-orange"></i>Select profile photo
+			</li>
+			<li class="clickable p-2" (click)="uploadDealerPhoto()"><i class="fas fa-upload mr-2 text-gray"></i>Upload photo</li>
+			<li class="clickable p-2" (click)="closeProfileOptions()"><i class="fas fa-times mr-2 text-danger"></i>Close</li>
 		</ul>
 	</div>
 	<ng-container>
-		<img class="profile-picture-container" [src]="page_data.logo != null ? page_data.logo : '/assets/media-files/dealer-icon.png'" />
+		<img
+			class="profile-picture-container"
+			[src]="
+				creation
+					? '/assets/media-files/dealer-icon.png'
+					: page_data.logo != '' && page_data.logo != null
+					? page_data.logo
+					: '/assets/media-files/dealer-icon.png'
+			" />
 	</ng-container>
 </div>
