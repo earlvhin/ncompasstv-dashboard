@@ -1,0 +1,16 @@
+<div class="single-image mr-3" (mouseover)="edit_dealer_logo = true" (mouseleave)="edit_dealer_logo = false">
+	<div *ngIf="edit_dealer_logo" class="position-absolute w-100-px h-100-px br-100 text-white black-opacity text-center pt-4-5">
+		<i class="fa fa-pencil clickable" (click)="show_options = true"></i>
+	</div>
+	<div *ngIf="show_options" class="profile-options position-absolute bg-white p-3 sm-text">
+		<div class="top-arrow"></div>
+		<ul class="list-unstyled mb-0">
+			<li class="clickable" (click)="getDealerExistingPhotos()">Select profile photo</li>
+			<li class="clickable" (click)="uploadDealerPhoto()">Upload photo</li>
+			<li class="clickable" (click)="closeProfileOptions()">Close</li>
+		</ul>
+	</div>
+	<ng-container>
+		<img class="profile-picture-container" [src]="page_data.logo != null ? page_data.logo : '/assets/media-files/dealer-icon.png'" />
+	</ng-container>
+</div>

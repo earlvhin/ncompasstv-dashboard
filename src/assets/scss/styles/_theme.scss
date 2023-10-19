@@ -353,6 +353,8 @@ button {
 .user-form {
 	.user-icon {
 		width: 70px;
+		height: 70px;
+		object-fit: contain;
 	}
 	form {
 		position: relative;

@@ -76,6 +76,7 @@ export const API_ENDPOINTS = {
 		// api_get_dealers_content_metrics: 'contentplaysdaily/exportscontentmetricsbydealer',
 		api_get_dealers_content_metrics: 'contentplaysdaily/getcontentmetricsbydealerexport',
 		api_get_dealers_directory: 'dealer/getdirectorytree',
+		api_get_dealer_logo: 'dealer/getlogo',
 		api_get_dealers_with_sort: 'dealer/fetchallsorttotal',
 		api_get_dealers_with_host: 'dealer/getdealerswithhost',
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',

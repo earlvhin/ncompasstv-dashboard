@@ -6,8 +6,6 @@ import { Router } from '@angular/router';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
-import * as filestack from 'filestack-js';
-import { environment } from 'src/environments/environment';
 
 import {
 	API_DEALER,
@@ -64,8 +62,6 @@ export class BannerComponent implements OnInit, OnDestroy {
 	current_operations: any;
 	dealer: API_DEALER = null;
 	dealer_url = '';
-	edit_dealer_logo: false;
-	show_options: false;
 	host: API_HOST = null;
 
 	is_admin = this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.administrator;
@@ -335,53 +331,5 @@ export class BannerComponent implements OnInit, OnDestroy {
 	protected get _isAdmin() {
 		const currentRole = this._auth.current_role;
 		return currentRole === 'administrator' || currentRole === 'dealeradmin';
-	}
-
-	uploadDealerPhoto() {
-		const client = filestack.init(environment.third_party.filestack_api_key);
-		client.picker(this.filestackOptions).open();
-	}
-
-	protected get filestackOptions(): filestack.PickerOptions {
-		let folder = 'dev/';
-		if (environment.production) folder = 'prod/';
-		else if (environment.base_uri.includes('stg')) folder = 'staging/';
-		return {
-			storeTo: {
-				location: 's3',
-				container: 'nctv-images-dev/logo/dealers/' + this.page_data.dealer.dealerId + '/',
-				region: 'us-east-1'
-			},
-			accept: ['image/jpg', 'image/jpeg', 'image/png'],
-			maxFiles: 1,
-			imageMax: [720, 640],
-			onUploadDone: (response) => {
-				let dealer_info = {
-					dealerid: this.page_data.dealer.dealerId,
-					logo: response.filesUploaded[0].filename
-				};
-				this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
-					this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.');
-				});
-			}
-		};
-	}
-
-	private openConfirmationModal(status: string, message: string, data: string) {
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data }
-		});
-
-		dialogRef.afterClosed().subscribe((response) => {
-			this.subscribeToRefreshBannerData();
-			this._dialog.closeAll();
-		});
-	}
-
-	closeProfileOptions() {
-		this.edit_dealer_logo = false;
-		this.show_options = false;
 	}
 }

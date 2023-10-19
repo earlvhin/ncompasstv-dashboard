@@ -1,29 +1,12 @@
 <div class="theme-banner bg-dark-light" [ngClass]="is_host_page && 'host-padding'">
 	<div class="theme-container">
 		<div class="d-flex align-items-center">
-			<div
-				class="single-image mr-3"
-				(mouseover)="edit_dealer_logo = true"
-				(mouseleave)="edit_dealer_logo = false"
-				*ngIf="page === 'single-dealer'; else singleHostImage">
-				<div *ngIf="edit_dealer_logo" class="position-absolute w-100-px h-100-px br-100 text-white black-opacity text-center pt-4-5">
-					<i class="fa fa-pencil clickable" (click)="show_options = true"></i>
-				</div>
-				<div *ngIf="show_options" class="profile-options position-absolute bg-white p-3 sm-text">
-					<div class="top-arrow"></div>
-					<ul class="list-unstyled mb-0">
-						<li class="clickable">Select profile photo {{ page_data.dealer.logo }}</li>
-						<li class="clickable" (click)="uploadDealerPhoto()">Upload photo</li>
-						<li class="clickable" (click)="closeProfileOptions()">Close</li>
-					</ul>
-				</div>
-				<ng-container *ngIf="page_data.dealer.logo != null; else noLogo">
-					<img class="image-field" [src]="page_data.dealer.logo" />
-				</ng-container>
-				<ng-template #noLogo>
-					<img class="host-image" [src]="image" />
-				</ng-template>
-			</div>
+			<app-update-profile-photo
+				*ngIf="page === 'single-dealer'; else singleHostImage"
+				[page_data]="page_data.dealer"
+				[dealer]="true"
+				(refreshimage)="subscribeToRefreshBannerData()">
+			</app-update-profile-photo>
 
 			<!-- to be deleted if edit host image is implemented -->
 			<ng-template #singleHostImage>
