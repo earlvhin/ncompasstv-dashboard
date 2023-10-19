@@ -124,4 +124,8 @@ export class DataCardGraphComponent implements OnInit, OnDestroy, AfterViewInit 
 			}
 		});
 	}
+
+	isNumber(val): boolean {
+		return typeof val === 'number';
+	}
 }
