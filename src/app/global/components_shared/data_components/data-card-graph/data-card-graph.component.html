@@ -101,9 +101,8 @@
 			<div class="w-100 position-relative overflow-hidden">
 				<!-- Compare Basis -->
 				<div class="compare-basis text-center" *ngIf="!has_breakdown">
-					<h4 class="text-primary font-weight-medium xlg-text mr-1">
-						<span>{{ compare_basis }}</span>
-
+					<h4>
+						<span class="font-weight-medium text-primary mr-1 xlg-text">{{ compare_basis }}</span>
 						<span class="md-text text-gray f-500">
 							{{ compare_basis_label }}
 						</span>
@@ -111,9 +110,7 @@
 				</div>
 
 				<!-- Canvas -->
-				<div
-					class="wrapper-for-canvas full-width position-relative text-center canvas-pull-bottom"
-					[ngClass]="{ 'canvas-pull-bottom': !breakdown4_sub_label }">
+				<div class="wrapper-for-canvas full-width position-relative text-center" [ngClass]="!breakdown4_sub_label && 'canvas-pull-bottom'">
 					<canvas id="breakdown-{{ id }}" height="150" width="150"></canvas>
 				</div>
 

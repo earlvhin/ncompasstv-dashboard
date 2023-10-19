@@ -3,7 +3,7 @@
 }
 
 .chart-section {
-	min-width: 60%;
+	min-width: calc(60% - 1.5rem);
 }
 
 .canvas-pull-bottom {
