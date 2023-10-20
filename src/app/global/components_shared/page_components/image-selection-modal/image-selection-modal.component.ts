@@ -38,8 +38,10 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 		this.imagesArray = this._dialog_data.imagesArray;
 		this.dealerId = this._dialog_data.dealerId;
 
-		if (this.fromDealer) this.images = this.imagesArray;
-		else this.getHostPlaceImages();
+		if (this.fromDealer) {
+			this.images = this.imagesArray;
+			if (this.imagesArray.length == 0) this.hasNoData = true;
+		} else this.getHostPlaceImages();
 	}
 
 	ngOnDestroy() {
