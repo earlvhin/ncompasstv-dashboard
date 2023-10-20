@@ -55,7 +55,7 @@ export class FillerService extends BaseService {
 	}
 
 	get_filler_group_for_feeds() {
-		let url = `${this.getters.api_get_filler_group_for_feeds}`;
+		let url = `${this.getters.api_get_filler_group_for_feeds}?pageSize=0`;
 		return this.getRequest(url);
 	}
 
@@ -64,13 +64,17 @@ export class FillerService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_filler_group_dealer_admin_view(id: string, page: number, key: string, pageSize = 11, column = '', order = '') {
-		let url = `${this.getters.api_get_dealer_filler_groups_admin_view}?id=${id}&page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+	get_filler_group_dealer_admin_view(id: string, page: number, key: string, pageSize = 11, column = '', order = '', userview?) {
+		let url = '';
+		if (userview == 'dealeradmin')
+			url = `${this.getters.api_get_dealeradmin_filler_groups_view}?page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+		else
+			url = `${this.getters.api_get_dealer_filler_groups_admin_view}?id=${id}&page=${page}&pageSize=${pageSize}&sortColumn=${column}&sortOrder=${order}`;
+
 		if (key && key.trim().length > 0) {
 			const search = encodeURIComponent(key);
 			url += `&search=${search}`;
 		}
-		return this.getRequest(url);
 		return this.getRequest(url);
 	}
 

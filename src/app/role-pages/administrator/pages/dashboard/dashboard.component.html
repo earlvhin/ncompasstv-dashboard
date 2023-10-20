@@ -32,7 +32,7 @@
 		</div>
 	</div>
 
-	<div class="row mid-gutters mt-3">
+	<div class="row mb-4">
 		<div class="col-lg-3">
 			<app-data-quick-stats
 				[total]="dealer_stats.total"
@@ -47,6 +47,7 @@
 				[sub_label_left_icon]="'fas fa-arrow-up'"
 				[sub_label_right]="'New last week'"
 				[sub_label_right_value]="dealer_stats.last_week"
+				[notes]="' '"
 				[sub_label_right_icon]="'fas fa-arrow-up'">
 			</app-data-quick-stats>
 		</div>
@@ -64,6 +65,7 @@
 				[sub_label_left_icon]="'fas fa-arrow-up'"
 				[sub_label_right]="'New last week'"
 				[sub_label_right_value]="host_stats.last_week"
+				[notes]="' '"
 				[sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
 		</div>
 		<div class="col-lg-3">
@@ -80,6 +82,7 @@
 				[sub_label_left_icon]="'fas fa-arrow-up'"
 				[sub_label_right]="'New last week'"
 				[sub_label_right_value]="advertiser_stats.last_week"
+				[notes]="' '"
 				[sub_label_right_icon]="'fas fa-arrow-up'"></app-data-quick-stats>
 		</div>
 		<div class="col-lg-3">
@@ -101,7 +104,7 @@
 		</div>
 	</div>
 
-	<div class="row mid-gutters mt-3">
+	<div class="row mb-4">
 		<!-- Total Statistics Average for Dealer -->
 		<div class="col-lg-4">
 			<mat-card class="h-100">
@@ -243,7 +246,7 @@
 		</div>
 	</div>
 
-	<div class="row mid-gutters mt-3">
+	<div class="row">
 		<div class="col-lg-3" *ngIf="is_admin">
 			<!-- Using this since data being passed is not as complete as the ones that are using data-quick-stats to match sibling card -->
 			<mat-card class="h-100">

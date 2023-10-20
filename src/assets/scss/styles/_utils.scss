@@ -179,7 +179,7 @@
 
 .xxsm-text {
 	font-size: $xxsm !important;
-} 
+}
 
 .x-sm-text {
 	font-size: 9px !important;
@@ -202,6 +202,10 @@
 
 .xlg-text {
 	font-size: $xlg !important;
+}
+
+.line-height-lg {
+	line-height: $lg;
 }
 
 .line-height-xlg {

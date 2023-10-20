@@ -67,12 +67,10 @@
 					</div>
 				</div>
 				<div class="col-lg-12" *ngIf="!searching">
-					<div class="row">
-						<span class="col-lg-12 sm-text bg-gray"
-							>Showing <span class="text-danger">{{ paging_data.entities.length }}</span> out of
-							<span class="text-danger">{{ paging_data.totalEntities }}</span> dealers result.</span
-						>
-					</div>
+					<p class="sm-text py-2 m-0">
+						Showing <span class="text-danger">{{ paging_data.entities.length }}</span> out of
+						<span class="text-danger">{{ paging_data.totalEntities }}</span> dealers result.
+					</p>
 				</div>
 			</div>
 
@@ -139,7 +137,9 @@
 															class="float-right cursor-pointer text-right fas fa-filter"
 															data-toggle="tooltip"
 															title="{{
-																selected_filter.filter_column == 'totalLicenses' ? tooltip : 'Click to Filter Licenses'
+																selected_filter.filter_column == 'totalLicenses'
+																	? tooltip
+																	: 'Click to Filter Licenses'
 															}}"></i>
 													</button>
 													<div class="dropdown-menu" aria-labelledby="dropdownMenu1" ngbDropdownMenu>

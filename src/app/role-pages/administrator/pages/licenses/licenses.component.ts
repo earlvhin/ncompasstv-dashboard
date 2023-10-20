@@ -859,19 +859,19 @@ export class LicensesComponent implements OnInit {
 						basis: data.total,
 						basis_label: 'License(s)',
 						basis_sub_label: 'Current Count',
-						good_value: data.totalAssigned,
+						good_value: data.totalAssigned || 0,
 						good_value_label: 'Assigned',
-						bad_value: data.totalUnAssigned,
+						bad_value: data.totalUnAssigned || 0,
 						bad_value_label: 'Unassigned',
-						breakdown1_value: data.totalOnline,
+						breakdown1_value: data.totalOnline || 0,
 						breakdown1_label: 'Online',
-						breakdown2_value: data.totalOffline,
+						breakdown2_value: data.totalOffline || 0,
 						breakdown2_label: 'Offline',
-						breakdown3_value: data.totalPending,
+						breakdown3_value: data.totalPending || 0,
 						breakdown3_label: 'Pending',
-						third_value: data.totalAdminLicenses,
+						third_value: data.totalAdminLicenses || 0,
 						third_value_label: 'Demo',
-						fourth_value: data.totalDisabled,
+						fourth_value: data.totalDisabled || 0,
 						fourth_value_label: 'Inactive',
 
 						ad_value: data.totalAd,
@@ -906,12 +906,12 @@ export class LicensesComponent implements OnInit {
 					if (this.licenses_details) {
 						this.temp_label.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.ad_value);
 						this.temp_label.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.menu_value);
-						this.temp_label.push(this.licenses_details.closed_value_label + ': ' + this.licenses_details.closed_value);
 						this.temp_label.push(this.licenses_details.unassigned_value_label + ': ' + this.licenses_details.unassigned_value);
+						this.temp_label.push(this.licenses_details.closed_value_label + ': ' + this.licenses_details.closed_value);
 						this.temp_array.push(this.licenses_details.ad_value);
 						this.temp_array.push(this.licenses_details.menu_value);
-						this.temp_array.push(this.licenses_details.closed_value);
 						this.temp_array.push(this.licenses_details.unassigned_value);
+						this.temp_array.push(this.licenses_details.closed_value);
 
 						this.temp_label_this_week.push(this.licenses_details.ad_value_label + ': ' + this.licenses_details.this_week_ad_value);
 						this.temp_label_this_week.push(this.licenses_details.menu_value_label + ': ' + this.licenses_details.this_week_menu_value);

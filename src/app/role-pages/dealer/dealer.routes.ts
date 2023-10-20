@@ -294,7 +294,7 @@ export const DEALER_ROUTES: Routes = [
 						path: 'expired-contents',
 						component: ExpiredContentsComponent,
 						data: {
-							breadcrumb: 'Expired Contents'
+							breadcrumb: 'Unused Contents'
 						}
 					},
 					{

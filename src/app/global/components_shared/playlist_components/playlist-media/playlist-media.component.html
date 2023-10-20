@@ -34,7 +34,7 @@
 						</mat-form-field>
 					</div>
 
-					<div class="col-lg-5 pt-3" *ngIf="media_files && !isDealer">
+					<div class="col-lg-5 pt-3" *ngIf="media_files && !_isDealer()">
 						<div class="row">
 							<div class="col-lg-2">
 								<mat-slide-toggle
@@ -108,17 +108,17 @@
 					</div>
 				</div>
 			</mat-tab>
-			<mat-tab label="Fillers" *ngIf="!isCurrentRoleDealerAdmin">
+			<mat-tab label="Fillers">
 				<div class="row mb-2">
 					<div class="col-lg-10">
 						<div class="row mt-3">
 							<div class="col-lg-5">
 								<mat-label class="font-weight-bold sm-text text-dark mb-2"> Select Filler Owner: </mat-label>
 								<mat-select [(value)]="active_filler" (valueChange)="getAllFillerGroups($event)">
-									<mat-option [value]="1" *ngIf="!isDealer"> Admin Fillers </mat-option>
-									<mat-option [disabled]="true" [value]="3" *ngIf="!isDealer"> Dealer Admin Fillers </mat-option>
+									<mat-option [value]="1" *ngIf="!_isDealer() && !_isDealerAdmin()"> Admin Fillers </mat-option>
+									<mat-option [value]="3" *ngIf="!_isDealer()"> Dealer Admin Fillers </mat-option>
 									<mat-option [value]="2">
-										{{ isDealer ? 'My Fillers' : 'Dealer Fillers' }}
+										{{ _isDealer() ? 'My Fillers' : 'Dealer Fillers' }}
 									</mat-option>
 								</mat-select>
 							</div>
