@@ -8,8 +8,8 @@
 		</div>
 	</div>
 
-	<div class="row" [ngClass]="breakdown4_sub_label ? 'align-items-start' : 'align-items-end'">
-		<div class="col-lg-6" *ngIf="has_breakdown">
+	<div class="d-flex align-items-end">
+		<div class="breakdown-section mr-4" *ngIf="has_breakdown">
 			<!-- Compare Basis -->
 			<div class="row mb-3">
 				<div class="col-lg-12" *ngIf="!average_basis_label">
@@ -21,8 +21,8 @@
 			</div>
 
 			<!-- Good/Bad Value -->
-			<div class="d-flex" *ngIf="good_value || bad_value">
-				<div class="mr-4" *ngIf="third_value_label">
+			<div class="d-flex">
+				<div class="mr-4" *ngIf="isNumber(third_value)">
 					<h5 class="info-text lg-text line-height-lg font-weight-medium m-0">
 						{{ third_value }}
 					</h5>
@@ -31,7 +31,7 @@
 						{{ third_value_label }}
 					</p>
 				</div>
-				<div class="mr-4" *ngIf="fourth_value_label">
+				<div class="mr-4" *ngIf="isNumber(fourth_value)">
 					<h5 class="text-gray lg-text line-height-lg font-weight-medium m-0">
 						{{ fourth_value }}
 					</h5>
@@ -40,7 +40,7 @@
 						{{ fourth_value_label }}
 					</p>
 				</div>
-				<div class="mr-4">
+				<div class="mr-4" *ngIf="isNumber(bad_value)">
 					<h5 class="text-gray lg-text line-height-lg font-weight-medium m-0">
 						{{ bad_value }}
 					</h5>
@@ -49,7 +49,7 @@
 						{{ bad_value_label }}
 					</p>
 				</div>
-				<div class="mr-4">
+				<div class="mr-4" *ngIf="isNumber(good_value)">
 					<h5 class="text-primary lg-text line-height-lg font-weight-medium m-0">
 						{{ good_value }}
 					</h5>
@@ -97,39 +97,39 @@
 		</div>
 
 		<!-- Chart Section -->
-		<div [ngClass]="has_breakdown ? 'col-lg-6' : 'col-lg-12 text-center'">
-			<div class="row align-items-end">
-				<div class="col-lg-12" *ngIf="!has_breakdown">
-					<span class="text-primary font-weight-medium xlg-text mr-1">{{ compare_basis }}</span>
-					<span class="md-text text-gray f-500">
-						{{ compare_basis_label }}
-					</span>
+		<div class="chart-section" [ngClass]="!has_breakdown && 'w-100'">
+			<div class="w-100 position-relative overflow-hidden">
+				<!-- Compare Basis -->
+				<div class="compare-basis text-center" *ngIf="!has_breakdown">
+					<h4>
+						<span class="font-weight-medium text-primary mr-1 xlg-text">{{ compare_basis }}</span>
+						<span class="md-text text-gray f-500">
+							{{ compare_basis_label }}
+						</span>
+					</h4>
 				</div>
 
-				<div class="col-lg-12">
-					<div class="wrapper-for-canvas full-width text-center" [ngClass]="has_breakdown ? '' : 'pt-2'">
-						<canvas id="breakdown-{{ id }}" height="150" width="150"></canvas>
-					</div>
+				<!-- Canvas -->
+				<div class="wrapper-for-canvas full-width position-relative text-center" [ngClass]="!breakdown4_sub_label && 'canvas-pull-bottom'">
+					<canvas id="breakdown-{{ id }}" height="150" width="150"></canvas>
 				</div>
 
 				<!-- Breakdown -->
-				<div class="col-lg-12" *ngIf="breakdown4_sub_label">
-					<div class="d-flex justify-content-center">
-						<h6 class="text-gray sm-text font-weight-medium m-0 mr-3">
-							<i class="fas fa-ethernet mr-1"></i>
-							<span class="mr-1 md-text">
-								{{ breakdown4_value }}
-							</span>
-							<span> {{ breakdown4_label }}</span>
-						</h6>
-						<h6 class="text-gray sm-text ml-3 font-weight-medium m-0">
-							<i class="fas fa-wifi"></i>
-							<span class="mr-1 md-text">
-								{{ breakdown5_value }}
-							</span>
-							<span> {{ breakdown5_label }}</span>
-						</h6>
-					</div>
+				<div class="d-flex justify-content-center" *ngIf="breakdown4_sub_label">
+					<h6 class="text-gray sm-text font-weight-medium m-0 mr-3">
+						<i class="fas fa-ethernet mr-1"></i>
+						<span class="mr-1 md-text">
+							{{ breakdown4_value }}
+						</span>
+						<span> {{ breakdown4_label }}</span>
+					</h6>
+					<h6 class="text-gray sm-text ml-3 font-weight-medium m-0">
+						<i class="fas fa-wifi"></i>
+						<span class="mr-1 md-text">
+							{{ breakdown5_value }}
+						</span>
+						<span> {{ breakdown5_label }}</span>
+					</h6>
 				</div>
 			</div>
 		</div>
