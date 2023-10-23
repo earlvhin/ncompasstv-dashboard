@@ -1,29 +1,15 @@
-ul.images {
-	list-style: none;
-
-	li.image {
-
-		height: 40vh;
-		flex-grow: 1;
-		border: 2px solid black;
-		max-width: 200px;
-		max-height: 200px;
-		margin-bottom: 2%;
-
-		img {
-			height: 100%;
-			width: 100%;
-			object-fit: cover;
-			vertical-align: bottom;
-		}
-	}
-
+.image-holder-container {
+	height: fit-content;
 }
 
-.margin-left-auto {
-	margin-left: auto;
+.image-holder {
+	img {
+		width: 150px;
+		height: 150px;
+		object-fit: cover;
+	}
 }
 
 .selected-image {
-	border: 4px solid #8EC641 !important;
+	box-shadow: 2px 2px 5px #8ec641;
 }

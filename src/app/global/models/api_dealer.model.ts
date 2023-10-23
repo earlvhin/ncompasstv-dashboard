@@ -22,6 +22,7 @@ export class API_DEALER {
 	hosts: API_HOST[];
 	license?: any;
 	licenses: API_LICENSE_PROPS[];
+	logo?: string;
 	monthAsDealer: string;
 	offlineLicenseCount?: number;
 	onlineLicenseCount?: number;

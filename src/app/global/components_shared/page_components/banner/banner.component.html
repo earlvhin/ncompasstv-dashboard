@@ -1,9 +1,19 @@
 <div class="theme-banner bg-dark-light" [ngClass]="is_host_page && 'host-padding'">
 	<div class="theme-container">
 		<div class="d-flex align-items-center">
-			<div class="single-image mr-3">
-				<img class="host-image" [src]="image" />
-			</div>
+			<app-update-profile-photo
+				*ngIf="page === 'single-dealer'; else singleHostImage"
+				[page_data]="page_data.dealer"
+				[dealer]="true"
+				(refresh_image)="refreshInfo()">
+			</app-update-profile-photo>
+
+			<!-- to be deleted if edit host image is implemented -->
+			<ng-template #singleHostImage>
+				<div class="single-image mr-3">
+					<img class="host-image" [src]="image" />
+				</div>
+			</ng-template>
 			<div class="single-info flex-even">
 				<div class="d-flex align-items-center">
 					<h3 class="text-white">{{ title | titlecase }}</h3>
