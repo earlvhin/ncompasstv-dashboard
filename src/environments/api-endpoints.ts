@@ -186,7 +186,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -384,7 +384,7 @@ export const API_ENDPOINTS = {
 		api_remove_playlist: 'playlists/removeplaylist?playlistid=',
 		api_remove_playlist_content: 'playlists/removecontent',
 		api_remove_playlist_contents: 'playlists/removecontents',
-		api_remove_screenshots: 'pi/removefiles?licenseid=',
+		api_remove_screenshots: 'pi/removefiles',
 		api_remove_in_blacklist: 'blacklistedcontents/delete',
 		api_bulk_remove_in_blacklist: 'blacklistedcontents/bulkdelete',
 		api_remove_license: 'license/removebylicenseid',

@@ -1387,7 +1387,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					if (!response || !response.files || response.files.length <= 0) return;
 
 					response.files.forEach((data) => {
-						if (count <= response.files.length) this.screenshots.push(`${environment.base_uri}${data.replace('/API/', '')}`);
+						if (count <= response.files.length) this.screenshots.push(data);
 						count++;
 					});
 

@@ -557,7 +557,7 @@ export class LicenseService extends BaseService {
 
 	delete_screenshots(id) {
 		const base = `${this.deleters.api_remove_screenshots}`;
-		const params = this.setUrlParams({ id }, false, true);
+		const params = this.setUrlParams({ licenseId: id }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}
