@@ -122,7 +122,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	onSelectStartDate(e, hasValue?) {
 		if (hasValue) {
-			let value: any = moment(e, 'YYYY-MM-DD').toDate();
+			let value: any = moment(e).format('YYYY-MM-DD');
 			if (!e || e.trim().length <= 0 || e.includes('--')) value = moment();
 			this.start_date = value;
 			this.edit_dealer_form.get('start_date').setValidators(null);
@@ -165,8 +165,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 					await this._confirmationDialog.success(dialogData).toPromise();
 					await this.createActivity(newDealerActivityLog).toPromise();
 					this._dialogReference.close(true);
-				
-
 				},
 				(error) => {
 					console.error(error);
@@ -175,9 +173,8 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 	}
 
 	createActivity(activity) {
-		return this._dealer.create_dealer_activity_logs(activity)
-			.pipe(takeUntil(this._unsubscribe));
-	  }
+		return this._dealer.create_dealer_activity_logs(activity).pipe(takeUntil(this._unsubscribe));
+	}
 
 	togglePasswordFieldType(): void {
 		this.is_password_field_type = !this.is_password_field_type;
