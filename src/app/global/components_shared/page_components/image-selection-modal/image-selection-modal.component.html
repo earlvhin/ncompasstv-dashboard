@@ -10,7 +10,7 @@
 	<div class="col-lg-12 image-holder" *ngIf="images && images.length > 0; else loading">
 		<div class="row no-gutters mid-gutters h-350-px overflow-y-auto">
 			<div
-				class="col-lg-3 text-center mb-2 p-2"
+				class="col-lg-3 image-holder-container text-center mb-2 p-2"
 				*ngFor="let image of images; let i = index"
 				[class.selected-image]="selectedImageIndex === i"
 				(click)="onSelectImage(i, image)">

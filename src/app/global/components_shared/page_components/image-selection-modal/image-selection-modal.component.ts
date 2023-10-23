@@ -20,7 +20,7 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	selectedImageUrl: string;
 
 	dealerId: string;
-	fromDealer: boolean;
+	fromDealer: boolean = false;
 	imagesArray: any = [];
 
 	protected _unsubscribe = new Subject<void>();
@@ -34,11 +34,11 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	) {}
 
 	ngOnInit() {
-		this.fromDealer = this._dialog_data.fromDealer;
-		this.imagesArray = this._dialog_data.imagesArray;
-		this.dealerId = this._dialog_data.dealerId;
+		if (this._dialog_data) {
+			this.fromDealer = this._dialog_data.fromDealer;
+			this.imagesArray = this._dialog_data.imagesArray;
+			this.dealerId = this._dialog_data.dealerId;
 
-		if (this.fromDealer) {
 			this.images = this.imagesArray;
 			if (this.imagesArray.length == 0) this.hasNoData = true;
 		} else this.getHostPlaceImages();
