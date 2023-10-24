@@ -944,8 +944,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: l.licenseId, link: null, editable: false, hidden: true, key: true, table: 'license' },
 				{
-					value: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
-					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
+					value: l.screenshotUrl ? l.screenshotUrl : null,
+					link: l.screenshotUrl ? l.screenshotUrl : null,
 					editable: false,
 					hidden: false,
 					isImage: true,
