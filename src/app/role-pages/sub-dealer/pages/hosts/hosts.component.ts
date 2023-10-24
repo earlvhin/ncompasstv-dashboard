@@ -511,8 +511,8 @@ export class HostsComponent implements OnInit {
 				{ value: i.hostId ? i.hostId : '--', link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
 				{
-					value: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
-					link: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
+					value: i.screenshotUrl ? i.screenshotUrl : null,
+					link: i.screenshotUrl ? i.screenshotUrl : null,
 					editable: false,
 					hidden: false,
 					isImage: true
@@ -539,15 +539,16 @@ export class HostsComponent implements OnInit {
 				{ value: i.timeIn ? this._date.transform(i.timeIn) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetType ? this.getInternetType(i.internetType) : '--', link: null, editable: false, hidden: false },
 				{ value: i.internetSpeed ? i.internetSpeed : '--', link: null, editable: false, hidden: false },
-				{ 
-                    value: i.anydeskId ? i.anydeskId : '--', 
-                    link: null, editable: false, 
-                    hidden: false, 
-                    copy: true, 
-                    label: 'Anydesk Id',
-                    anydesk: true,
-                    password: i.anydeskId ? this.splitKey(i.licenseId) : '--',
-                },
+				{
+					value: i.anydeskId ? i.anydeskId : '--',
+					link: null,
+					editable: false,
+					hidden: false,
+					copy: true,
+					label: 'Anydesk Id',
+					anydesk: true,
+					password: i.anydeskId ? this.splitKey(i.licenseId) : '--'
+				},
 				// {
 				// 	value: i.anydeskId ? this.splitKey(i.licenseId) : '--',
 				// 	link: null,

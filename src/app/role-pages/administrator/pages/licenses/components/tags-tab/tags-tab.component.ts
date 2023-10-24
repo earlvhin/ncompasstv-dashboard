@@ -108,8 +108,8 @@ export class TagsTabComponent implements OnInit, OnDestroy {
 				index: { value: count++, editable: false, hidden: false },
 				id: { value: data.licenseId, link: null, editable: false, hidden: true, key: false, table: 'license' },
 				screenshot: {
-					value: data.screenshotUrl ? `${environment.base_uri}${data.screenshotUrl.replace('/API/', '')}` : null,
-					link: data.screenshotUrl ? `${environment.base_uri}${data.screenshotUrl.replace('/API/', '')}` : null,
+					value: data.screenshotUrl ? data.screenshotUrl : null,
+					link: data.screenshotUrl ? data.screenshotUrl : null,
 					editable: false,
 					hidden: false,
 					isImage: true,
