@@ -58,7 +58,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsCount.next();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -78,7 +78,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsCount.next();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -98,7 +98,7 @@ export class TagsTableComponent implements OnInit, OnDestroy {
 					this._tag.onRefreshTagsCount.next();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

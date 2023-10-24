@@ -131,6 +131,11 @@ export class DealerService extends BaseService {
 		return this.getRequest(url);
 	}
 
+	get_dealer_logo(id) {
+		const url = `${this.getters.api_get_dealer_logo}?dealerId=${id}`;
+		return this.getRequest(url);
+	}
+
 	get_dealers_with_page_minified(page: number, key: string, pageSize = 15) {
 		const url = `${this.getters.api_get_dealers_minified}?page=${page}&search=${key}&pageSize=${pageSize}`;
 		return this.getRequest(url);
@@ -274,6 +279,10 @@ export class DealerService extends BaseService {
 
 	update_dealer(data) {
 		return this.postRequest(`${this.updaters.api_update_dealer}`, data);
+	}
+
+	update_dealer_logo(data) {
+		return this.postRequest(`${this.updaters.api_update_dealer_logo}`, data);
 	}
 
 	update_dealer_values(data) {

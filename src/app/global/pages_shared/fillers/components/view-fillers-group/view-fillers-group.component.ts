@@ -253,19 +253,26 @@ export class ViewFillersGroupComponent implements OnInit {
 		if (this._isDealer || this._isSubDealer) {
 			if (this.filler_group_data.createdBy != this._auth.current_user_value.user_id) this.restricted = true;
 			else this.restricted = false;
-		} else if (this._isAdmin) {
+		} else if (this._isAdmin || this._isDealerAdmin) {
 			this._user
 				.get_user_role_by_id(this.filler_group_data.createdBy)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe((data: any) => {
 					if (UI_ROLE_DEFINITION.dealer in data.role) this.restricted = true;
 					else this.restricted = false;
+
+					if (this._isDealerAdmin && UI_ROLE_DEFINITION.administrator in data.role) this.restricted = true;
+					if (this._isAdmin && UI_ROLE_DEFINITION.dealeradmin in data.role) this.restricted = true;
 				});
 		}
 	}
 
 	protected get _isAdmin() {
 		return this._auth.current_role === 'administrator';
+	}
+
+	protected get _isDealerAdmin() {
+		return this._auth.current_role === 'dealeradmin';
 	}
 
 	protected get _isDealer() {

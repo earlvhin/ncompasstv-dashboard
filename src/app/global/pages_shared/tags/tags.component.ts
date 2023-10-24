@@ -71,7 +71,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 					this.currentTagType = response.tag_types.filter((type) => type.name.toLowerCase() === 'dealer')[0];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -108,7 +108,7 @@ export class TagsComponent implements OnInit, OnDestroy {
 					response.forEach((data) => Object.keys(data).forEach((key) => (this.count[key.toLowerCase()] = data[key])));
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isLoadingCount = false));

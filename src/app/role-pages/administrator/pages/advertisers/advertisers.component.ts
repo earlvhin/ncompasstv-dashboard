@@ -129,7 +129,9 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 							this.initial_load = false;
 						}
 					},
-					(error) => {}
+					(error) => {
+						console.error(error);
+					}
 				)
 			);
 		} else {
@@ -168,7 +170,9 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 							this.initial_load = false;
 						}
 					},
-					(error) => {}
+					(error) => {
+						console.error(error);
+					}
 				)
 			);
 		}

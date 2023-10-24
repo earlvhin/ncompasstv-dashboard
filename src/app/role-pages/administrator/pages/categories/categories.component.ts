@@ -42,7 +42,9 @@ export class CategoriesComponent implements OnInit {
 					count++;
 				});
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 

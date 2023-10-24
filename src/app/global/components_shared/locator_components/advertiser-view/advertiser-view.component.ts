@@ -86,7 +86,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 						this.loading_search_advertiser = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -114,7 +114,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 						this.loading_advertisers = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -158,7 +158,7 @@ export class AdvertiserViewComponent implements OnInit, OnDestroy {
 					// });
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

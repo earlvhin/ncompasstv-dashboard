@@ -305,7 +305,7 @@ export class CreateAdvertiserComponent implements OnInit {
 					this.is_page_ready = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -324,7 +324,7 @@ export class CreateAdvertiserComponent implements OnInit {
 						this.newAdvertiserFormControls.region.setValue(data[0].region);
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -441,7 +441,7 @@ export class CreateAdvertiserComponent implements OnInit {
 					this.google_result = data.google_search;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -503,7 +503,7 @@ export class CreateAdvertiserComponent implements OnInit {
 						this.setCity(city);
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -639,18 +639,15 @@ export class CreateAdvertiserComponent implements OnInit {
 			this.city_selected = data;
 		});
 
-		this.new_advertiser_form.controls['zip'].setValidators([
-			Validators.required,
-			Validators.maxLength(7),
-		  ]);
-		
-		  this.new_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
+		this.new_advertiser_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
+
+		this.new_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
 			if (this.canada_selected) {
-			  this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
-			}else{
-			  this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
+				this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
+			} else {
+				this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
 			}
-		  });
+		});
 	}
 
 	protected get currentRole() {

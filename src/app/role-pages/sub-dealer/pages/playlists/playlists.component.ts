@@ -69,7 +69,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -101,7 +101,7 @@ export class PlaylistsComponent implements OnInit, OnDestroy {
 					this.searching = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

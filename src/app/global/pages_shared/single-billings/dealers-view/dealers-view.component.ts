@@ -223,7 +223,7 @@ export class DealersViewComponent implements OnInit {
 						.subscribe(
 							() => this.ngOnInit(),
 							(error) => {
-								throw new Error(error);
+								console.error(error);
 							}
 						);
 				} else {
@@ -233,7 +233,7 @@ export class DealersViewComponent implements OnInit {
 						.subscribe(
 							() => this.ngOnInit(),
 							(error) => {
-								throw new Error(error);
+								console.error(error);
 							}
 						);
 				}
@@ -365,7 +365,7 @@ export class DealersViewComponent implements OnInit {
 						this.readyUpdateForm();
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 		);
@@ -436,14 +436,14 @@ export class DealersViewComponent implements OnInit {
 		this._dealer.update_dealer_values(this.mapUserInfoChanges()).subscribe(
 			() => {
 				this.openConfirmationModal('success', 'Success!', 'Dealer Billing Info changed succesfully');
+				this.createActivity(newDealerActivityLog);
 				this.ngOnInit();
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 
-		this.createActivity(newDealerActivityLog);
 	}
 
 	createActivity(activity) {
@@ -455,7 +455,7 @@ export class DealersViewComponent implements OnInit {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}

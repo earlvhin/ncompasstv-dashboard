@@ -62,7 +62,7 @@ export class ContentsTabComponent implements OnInit {
 					this.tableData = this.mapToTable(response.contents);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

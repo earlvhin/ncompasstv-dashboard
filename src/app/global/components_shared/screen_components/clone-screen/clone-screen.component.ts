@@ -162,7 +162,7 @@ export class CloneScreenComponent implements OnInit {
 						this.loading_data = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -180,7 +180,7 @@ export class CloneScreenComponent implements OnInit {
 						this.loading_search = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -285,7 +285,7 @@ export class CloneScreenComponent implements OnInit {
 						this.loading_data_host = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 				.add(() => (this.loading_data_host = false));
@@ -333,7 +333,7 @@ export class CloneScreenComponent implements OnInit {
 					this.screen_type = data.filter((type) => type.screenTypeId === screenTypeId)[0];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

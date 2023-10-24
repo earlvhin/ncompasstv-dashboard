@@ -175,7 +175,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						}
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -204,7 +204,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				}
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -257,7 +257,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					this.structured_bulk_remove_in_blocklist = [];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -521,7 +521,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						this.structured_remove_in_blocklist = [];
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -546,7 +546,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					this.saveOrderChanges();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -565,7 +565,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 					this.saveOrderChanges();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -808,7 +808,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 						}
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -930,7 +930,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				}
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -955,7 +955,7 @@ export class PlaylistContentPanelComponent implements OnInit, OnDestroy {
 				this.emitReloadPlaylist();
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

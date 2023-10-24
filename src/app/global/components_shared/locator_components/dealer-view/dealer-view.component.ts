@@ -293,7 +293,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					this.filteredDealers.next(unique);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -339,7 +339,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					statistics.bad_value = this.hostLicenses.length - online;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => setTimeout(() => (this.isLoadingLicenseCount = false), 1000));
@@ -471,7 +471,7 @@ export class DealerViewComponent implements OnInit, OnDestroy {
 					this.filteredDealers.next(unique);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearching = false));

@@ -74,7 +74,7 @@ export class EditTagComponent implements OnInit, OnDestroy {
 					this._dialog_ref.close(returnData);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

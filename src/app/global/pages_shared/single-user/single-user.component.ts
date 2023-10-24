@@ -152,7 +152,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/users`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		});
@@ -289,7 +289,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				},
 				(error) => {
 					this.has_loaded_assigned_dealers = true;
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -313,7 +313,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 				},
 				(error) => {
 					this.has_loaded_dealers_list = true;
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -331,7 +331,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 					this.setPageData(userData);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

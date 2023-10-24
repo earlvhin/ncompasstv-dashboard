@@ -38,38 +38,43 @@ import { MatSnackBar } from '@angular/material';
 	providers: [DatePipe, TitleCasePipe, SubstringPipe]
 })
 export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
+	activity_data: UI_ACTIVITY_LOGS[] = [];
 	advertiser_card: any;
 	advertiser_data: any = [];
 	advertiser_filtered_data: any = [];
 	apps: any;
 	array_to_delete: any = [];
 	banner_description = '';
-	license_zone_data: any = [];
-	license_zone_filtered_data: any = [];
 	combined_data: API_HOST[];
-	currentRole = this._auth.current_role;
-	currentUser = this._auth.current_user_value;
-	current_tab = 'hosts';
+	created_by: any;
+	createdBy: string;
 	current_advertiser_status_filter = 'active';
 	current_host_status_filter = 'all';
-	dealer: API_DEALER;
-	dealers: API_DEALER[];
-	dealers_data: Array<any> = [];
+	current_tab = 'hosts';
+	currentRole = this._auth.current_role;
+	currentUser = this._auth.current_user_value;
+	d_desc: string = 'Dealer since January 25, 2019';
+	d_name: string = 'Business Name';
+	dateCreated: any;
+	dateFormatted: any;
+	dealer_and_user_data: { dealer: API_DEALER; user: API_USER_DATA };
+	dealer_data: any;
 	dealer_id: string;
 	dealer_loading = true;
 	dealer_name: string;
-	dealer_and_user_data: { dealer: API_DEALER; user: API_USER_DATA };
-	d_desc: string = 'Dealer since January 25, 2019';
-	d_name: string = 'Business Name';
+	dealer: API_DEALER;
+	dealers_data: Array<any> = [];
+	dealers: API_DEALER[];
 	from_change: boolean = false;
 	height_show: boolean = true;
 	host_card: any;
-	host_data: any = [];
 	host_data_api: API_HOST[];
+	host_data: any = [];
 	host_filtered_data: any = [];
 	hosts_to_export: any = [];
 	img: string = 'assets/media-files/admin-icon.png';
 	initial_load = true;
+	initial_load_activity = true;
 	initial_load_advertiser = true;
 	initial_load_license = true;
 	initial_load_zone = true;
@@ -77,44 +82,50 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	is_dealer_admin = this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin;
 	is_host_stats_loaded = false;
 	is_search: boolean = false;
-	license$: Observable<API_LICENSE[]>;
-	licenses: any[];
 	license_card: any;
 	license_count: number;
-	license_data: any = [];
 	license_data_api: any;
+	license_data: any = [];
 	license_filtered_data: any = [];
 	license_row_slug: string = 'host_id';
 	license_row_url: string = '/dealer/hosts';
 	license_tbl_row_slug: string = 'license_id';
 	license_tbl_row_url: string = '/administrator/licenses/';
+	license_zone_data: any = [];
+	license_zone_filtered_data: any = [];
+	license$: Observable<API_LICENSE[]>;
 	licenses_to_export: any = [];
+	licenses: any[];
 	loaded: boolean = false;
 	loading_data: boolean = true;
 	loading_search: boolean = false;
 	loading_statistics = { activity: true, status: true, connection: true, screen: true };
+	no_activity_data = false;
 	no_advertisers = false;
 	no_case: boolean = true;
 	no_hosts = false;
-	no_licenses = false;
 	no_license_zone = false;
+	no_licenses = false;
 	no_record: boolean = false;
 	now: any;
-	paging: any;
-	paging_data: any;
+	page: any;
+	paging_data_activity: any;
 	paging_data_advertiser: any;
 	paging_data_license: any;
 	paging_data_zone: any;
+	paging_data: any;
+	paging: any;
 	pi_updating: boolean = false;
-	reload_billing: boolean = false;
 	reload_activity: boolean = false;
-	remote_update_disabled = false;
+	reload_billing: boolean = false;
+	reload_data: boolean = false;
 	remote_reboot_disabled = false;
+	remote_update_disabled = false;
 	screenshot_disabled = false;
-	search_data: string = '';
 	search_data_advertiser: string = '';
-	search_data_license: string = '';
 	search_data_license_zone: string = '';
+	search_data_license: string = '';
+	search_data: string = '';
 	searching = false;
 	searching_advertiser = false;
 	searching_license = false;
@@ -122,37 +133,27 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	selected_index: number;
 	show_admin_buttons: boolean = false;
 	single_info: Array<any>;
-	sort_column: string = '';
+	sort_column_activity = 'DateCreated';
 	sort_column_advertisers: string = '';
 	sort_column_hosts: string = '';
-	sort_order: string = '';
+	sort_column: string = '';
+	sort_order_activity = 'desc';
 	sort_order_advertisers: string = '';
 	sort_order_hosts: string = '';
+	sort_order: string = '';
 	splitted_text: any;
 	statistics: any;
 	subscription: Subscription = new Subscription();
+	temp_array_value: any = [];
 	temp_array: any = [];
 	temp_label: any = [];
-	temp_array_value: any = [];
 	timeout_duration: number;
 	timeout_message: string;
 	title: string = 'The Dealer';
 	user: API_USER_DATA;
-	workbook: any;
 	workbook_generation: boolean = false;
+	workbook: any;
 	worksheet: any;
-
-	activity_data: UI_ACTIVITY_LOGS[] = [];
-	created_by: any;
-	dealer_data: any;
-	initial_load_activity = true;
-	paging_data_activity: any;
-	sort_column_activity = 'DateCreated';
-	sort_order_activity = 'desc';
-	no_activity_data = false;
-	dateFormatted: any;
-	page: any;
-	reload_data: boolean = false;
 
 	saved_license_page: any;
 	saved_hosts_page: any;
@@ -337,7 +338,9 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.adminButton();
 					this.getDealerLicenses();
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 		);
 
@@ -345,7 +348,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._params.queryParams.subscribe(
 				(data) => (this.selected_index = data.tab),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -372,7 +375,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._license.activate_license(e).subscribe(
 				() => this.warningModal('success', 'License Activated', 'License successfully activated.', '', ''),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -500,7 +503,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._license.deactivate_license(e).subscribe(
 				() => this.warningModal('success', 'License Deactivated', 'License successfully deactivated.', '', ''),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -535,7 +538,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.initial_load_activity = false));
@@ -556,33 +559,58 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 
 		return activity.map((a: any) => {
 			const activityCode = a.activityCode;
-			let activityMessage = '';
+			let activityMessage = 'Other activitiy detected';
 			let createdBy;
 
 			this.created_by.map((c) => {
-				if (c.userId === a.initiatedBy) {
-					return (createdBy = c);
-				}
+				if (c.userId === a.initiatedBy) createdBy = c;
 			});
 
-			if (activityCode === 'modify_dealer') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the dealer`;
-			} else if (activityCode === 'modify_billing') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the billing details`;
-			} else if (activityCode === 'deleted_license') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted a license`;
-			} else if (activityCode === 'deleted_multiple_license') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple license`;
-			} else if (activityCode === 'updated_license') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated the system`;
-			} else if (activityCode === 'reboot_player') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the player`;
-			} else if (activityCode === 'reboot_pi') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the pi`;
-			} else if (activityCode === 'reassign_dealer') {
-				activityMessage = `${createdBy.firstName} ${createdBy.lastName} re-assign the dealer`;
-			} else {
-				activityMessage = 'Other Activity Detected';
+			switch (activityCode) {
+				case 'modify_dealer':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the dealer`;
+					break;
+				case 'modify_billing':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the billing details`;
+					break;
+				case 'deleted_license':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted a license`;
+					break;
+				case 'deleted_multiple_license':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted multiple license`;
+					break;
+				case 'updated_license':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated system on licenses`;
+					break;
+				case 'reboot_player':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} rebooted the player software`;
+					break;
+				case 'reboot_pi':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} reboot the pi`;
+					break;
+				case 'reassign_dealer':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} re-assign the dealer`;
+					break;
+				case 'modify_dealer_profile':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified their profile info`;
+					break;
+				case 'change_password':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} changed their password`;
+					break;
+				case 'added_card':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} added their card`;
+					break;
+				case 'update_billing_address':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated their billing address`;
+					break;
+				case 'delete_card':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} deleted their card`;
+					break;
+				case 'update_card':
+					activityMessage = `${createdBy.firstName} ${createdBy.lastName} updated their card details`;
+					break;
+				default:
+					return activityMessage;
 			}
 
 			return new UI_ACTIVITY_LOGS(
@@ -603,15 +631,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				(data) => {
 					this.advertiser_card = {
 						basis: data.total,
-						basis_label: 'ADVERTISERS',
+						basis_label: 'Advertisers',
 						good_value: data.totalActive,
-						good_value_label: 'ACTIVE',
+						good_value_label: 'Active',
 						bad_value: data.totalInActive,
-						bad_value_label: 'INACTIVE'
+						bad_value_label: 'Inactive'
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -653,7 +681,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -699,7 +727,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -717,15 +745,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					(data: any) => {
 						this.host_card = {
 							basis: data.total,
-							basis_label: 'HOSTS',
+							basis_label: 'Hosts',
 							good_value: data.totalActive,
-							good_value_label: 'ACTIVE',
+							good_value_label: 'Active',
 							bad_value: data.totalInActive,
-							bad_value_label: 'INACTIVE'
+							bad_value_label: 'Inactive'
 						};
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 				.add(() => (this.is_host_stats_loaded = true))
@@ -735,11 +763,11 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	setHostCount(data) {
 		this.host_card = {
 			basis: data.total,
-			basis_label: 'HOSTS',
+			basis_label: 'Hosts',
 			good_value: data.totalActive,
-			good_value_label: 'ACTIVE',
+			good_value_label: 'Active',
 			bad_value: data.totalInActive,
-			bad_value_label: 'INACTIVE'
+			bad_value_label: 'Inactive'
 		};
 	}
 
@@ -829,24 +857,24 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			basis: data.total,
 			basis_label: 'Licenses',
 			basis_sub_label: 'Current Count',
-			good_value: data.totalAssigned,
+			good_value: data.totalAssigned || 0,
 			good_value_label: 'Assigned',
-			bad_value: data.totalUnAssigned,
+			bad_value: data.totalUnAssigned || 0,
 			bad_value_label: 'Unassigned',
-			breakdown1_value: data.totalOnline,
+			breakdown1_value: data.totalOnline || 0,
 			breakdown1_label: 'Online',
-			breakdown2_value: data.totalOffline,
+			breakdown2_value: data.totalOffline || 0,
 			breakdown2_label: 'Offline',
-			breakdown3_value: data.totalPending,
+			breakdown3_value: data.totalPending || 0,
 			breakdown3_label: 'Pending',
 			breakdown4_sub_label: 'Connection Status Breakdown :',
-			breakdown4_value: data.totalLan,
+			breakdown4_value: data.totalLan || 0,
 			breakdown4_label: 'LAN',
-			breakdown5_value: data.totalWifi,
-			breakdown5_label: 'WIFI',
-			third_value: data.totalPending,
+			breakdown5_value: data.totalWifi || 0,
+			breakdown5_label: 'WiFi',
+			third_value: data.totalPending || 0,
 			third_value_label: 'Pending',
-			fourth_value: data.totalDisabled,
+			fourth_value: data.totalDisabled || 0,
 			fourth_value_label: 'Inactive',
 
 			ad_value: data.totalAd,
@@ -916,8 +944,8 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				{ value: count++, link: null, editable: false, hidden: false },
 				{ value: l.licenseId, link: null, editable: false, hidden: true, key: true, table: 'license' },
 				{
-					value: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
-					link: l.screenshotUrl ? `${environment.base_uri}${l.screenshotUrl.replace('/API/', '')}` : null,
+					value: l.screenshotUrl ? l.screenshotUrl : null,
+					link: l.screenshotUrl ? l.screenshotUrl : null,
 					editable: false,
 					hidden: false,
 					isImage: true,
@@ -1242,7 +1270,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						this.paging = response.paging;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				)
 		);
@@ -1393,7 +1421,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1731,10 +1759,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.getDealerUserData(response.userId);
 					this.dealer_data = response;
 
+					this.createdBy = response.createdBy;
+					this.dateCreated = response.dateCreated;
+
 					this.getDealerActivity(1);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1757,7 +1788,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.loaded = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1804,7 +1835,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 					this.statistics = response;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);
@@ -1851,7 +1882,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 			this._dealer.onSuccessReassigningDealer.subscribe(
 				() => this.ngOnInit(),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);

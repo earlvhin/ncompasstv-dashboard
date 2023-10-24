@@ -65,10 +65,10 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 				() => {
 					this.assign_success = true;
 					this._helper.onRefreshBannerData.next();
-					this._host.emitActivity()
+					this._host.emitActivity();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 
@@ -80,7 +80,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}
@@ -115,7 +115,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 
 			firstPageResult = firstPageRequest;
 		} catch (error) {
-			throw new Error(error);
+			console.error(error);
 		}
 
 		if ('message' in firstPageResult || firstPageResult.licenses.length === 0) {
@@ -157,7 +157,7 @@ export class AssignLicenseModalComponent implements OnInit, OnDestroy {
 					if (merged.length <= 0) this.no_available_licenses = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

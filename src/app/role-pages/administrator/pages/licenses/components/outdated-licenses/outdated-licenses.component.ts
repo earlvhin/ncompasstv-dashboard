@@ -153,7 +153,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 			},
 			(error) => {
 				this.hasNoData = true;
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -174,7 +174,7 @@ export class OutdatedLicensesComponent implements OnInit, OnDestroy {
 	private mapToDataTable(data: API_LICENSE_PROPS[]): UI_LICENSE[] {
 		let count = this.currentPaging.pageStart;
 
-		const parseImageUrl = (image: string) => (image ? `${environment.base_uri}${image.replace('/API/', '')}` : null);
+		const parseImageUrl = (image: string) => (image ? image : null);
 
 		return data.map((license) => {
 			let mapped = {} as UI_LICENSE;

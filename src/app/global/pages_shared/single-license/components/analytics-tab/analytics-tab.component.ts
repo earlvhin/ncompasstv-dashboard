@@ -149,7 +149,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 					}, 1000);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -172,7 +172,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 					}, 1000);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -189,7 +189,7 @@ export class AnalyticsTabComponent implements OnInit, OnDestroy {
 					this.yearly_chart_updating = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

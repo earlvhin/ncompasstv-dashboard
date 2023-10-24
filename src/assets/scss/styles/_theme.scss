@@ -353,6 +353,8 @@ button {
 .user-form {
 	.user-icon {
 		width: 70px;
+		height: 70px;
+		object-fit: contain;
 	}
 	form {
 		position: relative;
@@ -650,8 +652,13 @@ button {
 	cursor: pointer;
 }
 
+
 .contain-bg {
 	object-fit: contain;
+}
+
+.cover-bg {
+	object-fit: cover;
 }
 
 .not-clickable {
@@ -893,6 +900,10 @@ agm-map {
 	height: 200px;
 }
 
+.h-350-px {
+	height: 350px;
+}
+
 .w-200-px {
 	width: 200px;
 }
@@ -994,6 +1005,10 @@ agm-map {
 
 .h-69 {
 	height: 69px;
+}
+
+.pt-4-5 {
+	padding-top: 2.5rem !important;
 }
 
 .black-opacity {

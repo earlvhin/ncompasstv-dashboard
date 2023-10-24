@@ -14,7 +14,6 @@ import { UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 	templateUrl: './user-setting.component.html',
 	styleUrls: ['./user-setting.component.scss']
 })
-
 export class UserSettingComponent implements OnInit {
 	subscription: Subscription = new Subscription();
 	update_user: FormGroup;
@@ -108,9 +107,9 @@ export class UserSettingComponent implements OnInit {
 	) {}
 
 	ngOnInit() {
-        if(this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
-            this.is_dealer_admin = true
-        }
+		if (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin) {
+			this.is_dealer_admin = true;
+		}
 		this.update_info_form_disabled = false;
 
 		this.update_user = this._form.group(
@@ -129,29 +128,32 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	getUserById(id: string): void {
-        let isAdmin = (this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator ? true : false) 
-        this.subscription.add(
-            this._user.get_user_alldata_by_id(id, isAdmin).subscribe(
-                (response: any) => {
-                    this.setUserById(response)
-                },
-                (error) => {
-                    throw new Error(error);
-                }
-            )
-        );
+		let isAdmin =
+			this._auth.current_role === UI_ROLE_DEFINITION_TEXT.dealeradmin || this._auth.current_role === UI_ROLE_DEFINITION_TEXT.administrator
+				? true
+				: false;
+		this.subscription.add(
+			this._user.get_user_alldata_by_id(id, isAdmin).subscribe(
+				(response: any) => {
+					this.setUserById(response);
+				},
+				(error) => {
+					console.error(error);
+				}
+			)
+		);
 	}
 
-    setUserById(response) {
-        if (response.dealer.length > 0) {
-            this.user_data = Object.assign({}, response.dealer[0], response.user);
-            this.is_dealer = true;
-        } else {
-            this.user_data = response.user;
-        }
+	setUserById(response) {
+		if (response.dealer.length > 0) {
+			this.user_data = Object.assign({}, response.dealer[0], response.user);
+			this.is_dealer = true;
+		} else {
+			this.user_data = response.user;
+		}
 
-        this.readyUpdateForm();
-    }
+		this.readyUpdateForm();
+	}
 
 	get f() {
 		return this.update_user.controls;
@@ -170,20 +172,20 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	updateUserInfo() {
-        this._user.update_user(this.mapUserInfoChanges()).subscribe(
-            () => {
-                this.updateModalAndRefresh();
-            },
-            (error) => {
-                throw new Error(error);
-            }
-        );
+		this._user.update_user(this.mapUserInfoChanges()).subscribe(
+			() => {
+				this.updateModalAndRefresh();
+			},
+			(error) => {
+				console.error(error);
+			}
+		);
 	}
 
-    updateModalAndRefresh() {
-        this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
+	updateModalAndRefresh() {
+		this.openConfirmationModal('success', 'Success!', 'User info changed succesfully');
 		this.ngOnInit();
-    }
+	}
 
 	readyUpdateForm() {
 		this.update_user = this._form.group({

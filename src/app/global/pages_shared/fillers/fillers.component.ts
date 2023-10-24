@@ -18,10 +18,13 @@ export class FillersComponent implements OnInit {
 	current_role: number;
 	current_tab = 0;
 	current_user_id: string = '';
+	current_user_view: string = '';
 	fillers_count: any;
 	filler_group: any;
 	filler_group_cache = [];
+	is_admin = this._isAdmin;
 	is_dealer = this._isDealer;
+	is_dealer_admin = this._isDealerAdmin;
 	is_loading: boolean;
 	no_search_result = false;
 
@@ -49,7 +52,8 @@ export class FillersComponent implements OnInit {
 	ngOnInit() {
 		this.current_user_id = this._auth.current_user_value.user_id;
 		this.getFillersTotal();
-		this.getAllFillers(1, '');
+		if (!this.is_dealer_admin) this.getAllFillers(1, '');
+		else this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
 	}
 
 	ngAfterContentChecked() {
@@ -62,16 +66,21 @@ export class FillersComponent implements OnInit {
 		this.filler_group = [];
 		switch (e.index) {
 			case 0:
-				this.getAllFillers(1, '');
+				if (this.is_dealer_admin) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
+				else this.getAllFillers(1, '');
 				break;
 			case 1:
 				if (this.is_dealer) {
 					this.current_role = 1;
 					this.getFillersOtherRole(this.current_role, 1, '');
-				}
+				} else if (this.is_dealer_admin) this.getAllFillers(1, '');
+				else this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
+
 				break;
 			case 2:
-				this.getDealers(1);
+				if (this.is_dealer_admin) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealer');
+				else if (this.is_dealer) this.getDealerAdminsDealerFillers(1, '', '', '', 'dealeradmin');
+				else this.getDealers(1);
 				break;
 			default:
 		}
@@ -150,26 +159,85 @@ export class FillersComponent implements OnInit {
 		if (this.current_tab == 0)
 			this.getAllFillers(this.current_filter.page, this.current_filter.keyword, this.current_filter.sort_col, this.current_filter.sort_ord);
 		else if (this.current_tab == 1)
-			this.getFillersOtherRole(
-				this.current_role,
-				this.current_filter.page,
-				this.current_filter.keyword,
-				this.current_filter.sort_col,
-				this.current_filter.sort_ord
-			);
-		else if (this.current_tab == 2)
-			this.getDealerFillersAdminView(
-				this.current_filter.page,
-				this.current_filter.keyword,
-				this.current_filter.sort_col,
-				this.current_filter.sort_ord
-			);
+			if (this.is_dealer) {
+				this.getFillersOtherRole(
+					this.current_role,
+					this.current_filter.page,
+					this.current_filter.keyword,
+					this.current_filter.sort_col,
+					this.current_filter.sort_ord
+				);
+			} else if (this.is_dealer_admin)
+				this.getAllFillers(this.current_filter.page, this.current_filter.keyword, this.current_filter.sort_col, this.current_filter.sort_ord);
+			else {
+				this.getDealerAdminsDealerFillers(
+					this.current_filter.page,
+					this.current_filter.keyword,
+					this.current_filter.sort_col,
+					this.current_filter.sort_ord,
+					'dealeradmin'
+				);
+			}
+		else {
+			if (this.is_dealer_admin) {
+				this.getDealerAdminsDealerFillers(
+					this.current_filter.page,
+					this.current_filter.keyword,
+					this.current_filter.sort_col,
+					this.current_filter.sort_ord,
+					'dealer'
+				);
+			} else if (this.is_dealer) {
+				this.getDealerAdminsDealerFillers(
+					this.current_filter.page,
+					this.current_filter.keyword,
+					this.current_filter.sort_col,
+					this.current_filter.sort_ord,
+					'dealeradmin'
+				);
+			} else {
+				this.getDealerFillersAdminView(
+					this.current_filter.page,
+					this.current_filter.keyword,
+					this.current_filter.sort_col,
+					this.current_filter.sort_ord
+				);
+			}
+		}
 	}
 
 	getAllFillers(page, keyword?, sort_col?, sort_ord?) {
 		if (page == 1) this.is_loading = true;
 		this._filler
 			.get_filler_groups(page, keyword, 11, sort_col, sort_ord, this.is_dealer)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((data: any) => {
+				if (!data.message) {
+					this.no_search_result = false;
+					this.filler_group = data.paging;
+					if (page > 1) {
+						data.paging.entities.map((group) => {
+							this.filler_group_cache.push(group);
+						});
+						return;
+					} else this.filler_group_cache = data.paging.entities;
+				} else {
+					if (keyword == '') {
+						this.filler_group = [];
+						this.no_search_result = false;
+						return;
+					} else this.no_search_result = true;
+				}
+			})
+			.add(() => {
+				this.is_loading = false;
+			});
+	}
+
+	getDealerAdminsDealerFillers(page, keyword?, sort_col?, sort_ord?, user?) {
+		if (page == 1) this.is_loading = true;
+		this._filler
+			.get_filler_group_dealer_admin_view('', page, keyword, 11, sort_col, sort_ord, user)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				if (!data.message) {
@@ -210,7 +278,7 @@ export class FillersComponent implements OnInit {
 					if (page == 1) this.loading_search = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.dealer_initial_load = false));
@@ -234,7 +302,7 @@ export class FillersComponent implements OnInit {
 					this.paging = data.paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -278,5 +346,15 @@ export class FillersComponent implements OnInit {
 	protected get _isDealer() {
 		const DEALER_ROLES = ['dealer', 'sub-dealer'];
 		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	protected get _isDealerAdmin() {
+		const DEALER_ADMIN_ROLE = ['dealeradmin'];
+		return DEALER_ADMIN_ROLE.includes(this._auth.current_role);
+	}
+
+	protected get _isAdmin() {
+		const ADMIN_ROLE = ['administrator'];
+		return ADMIN_ROLE.includes(this._auth.current_role);
 	}
 }

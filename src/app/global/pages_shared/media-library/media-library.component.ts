@@ -125,7 +125,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -141,7 +141,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -157,7 +157,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -325,7 +325,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 						this.emitReloadMedia();
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -340,7 +340,7 @@ export class MediaLibraryComponent implements OnInit, OnDestroy {
 					// this.compare = undefined;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

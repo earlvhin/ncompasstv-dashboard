@@ -135,7 +135,9 @@ export class CreateFillerFeedComponent implements OnInit {
 						'Hurray! You successfully' + type_of_activity + 'a Filler Feed'
 					);
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			);
 	}
 

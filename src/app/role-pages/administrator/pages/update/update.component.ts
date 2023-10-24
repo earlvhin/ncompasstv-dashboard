@@ -160,7 +160,9 @@ export class UpdateComponent implements OnInit {
 					});
 				});
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 }

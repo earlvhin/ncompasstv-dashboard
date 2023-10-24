@@ -10,44 +10,44 @@
 
 	<hr class="my-3" />
 
-	<div class="row no-gutters">
-		<div class="offset-lg-8 col-lg-4">
-			<div class="text-right bg-danger text-white p-2 br-5">
+	<div class="d-flex justify-content-end w-100">
+		<div class="bg-danger text-white p-2 px-3 rounded">
+			<h6 class="md-text">
 				<i class="fa fa-exclamation-triangle mr-3"></i>
 				<span class="md-text"
-					>Warning! You have <span class="text-dark font-weight-bold">{{ contents_total }}</span> contents about to expire.</span
+					>Warning! You have <span class="text-dark font-weight-bold">{{ contents_total }}</span> unused contents.</span
 				>
 				<a class="md-text clickable ml-2 sort" [routerLink]="['/dealer/media-library/expired-contents']" target="_blank">
 					<span>Click here to manage <i class="ml-2 fa fa-angle-double-right"></i></span>
 				</a>
-			</div>
+			</h6>
 		</div>
 	</div>
 
-	<div class="row mb-5 mt-4">
+	<div class="row mb-4 mt-4">
 		<div class="col-lg-3">
 			<mat-card class="h-100" *ngIf="licenses_details; else spinner">
-				<div class="row p-3">
-					<div class="col-lg-2">
-						<h2 class="text-primary">
+				<div class="p-2">
+					<div class="d-flex align-items-center mb-4">
+						<h2 class="text-primary mr-3">
 							<i class="fas fa-home"></i>
 						</h2>
-					</div>
-					<div class="col-lg-10">
+
 						<h3 class="pt-2">Welcome, {{ user_name }}!</h3>
 					</div>
-				</div>
-				<div class="row mt-3">
-					<div class="col-lg-12">
-						<span class="text-gray sm-text">
-							N-Compass TV's Dealers are in 33 states and 90 Markets with over 1,700 locations and growing. Our commitment is to serving
-							our Dealers with this unsurpassed business opportunity.
-						</span>
+					<div class="welcome-message">
+						<p class="text-gray">
+							<a class="clickable text-primary font-weight-medium" href="https://n-compass.tv/" target="_blank"> N-Compass TV's </a>
+							dealers are in <span class="normal-text text-primary font-weight-medium">33</span> states and
+							<span class="normal-text text-primary font-weight-medium">90</span> markets with over
+							<span class="normal-text text-primary font-weight-medium">1,700</span> locations and growing. Our commitment is to serving
+							our dealers with this unsurpassed business opportunity.
+						</p>
 					</div>
 				</div>
 			</mat-card>
 		</div>
-		<div class="col-lg-4">
+		<div class="col-lg-3">
 			<mat-card class="h-100" *ngIf="licenses_details; else spinner">
 				<app-data-graph-compare
 					[id]="'status'"
@@ -57,7 +57,7 @@
 				</app-data-graph-compare>
 			</mat-card>
 		</div>
-		<div class="col-lg-5">
+		<div class="col-lg-6">
 			<mat-card class="h-100" *ngIf="licenses_details; else spinner">
 				<ng-container>
 					<app-data-card-graph
@@ -137,8 +137,8 @@
 				<ng-container>
 					<app-data-card-graph
 						[id]="'ad_average'"
-						[average_basis]="ad_licenses_details.basis"
-						[average_basis_label]="ad_licenses_details.basis_label"
+						[compare_basis]="ad_licenses_details.basis"
+						[compare_basis_label]="ad_licenses_details.basis_label"
 						[compare_basis_sub_label]="ad_licenses_details.basis_sub_label"
 						[label_array]="ad_license_label"
 						[value_array]="ad_license_array">

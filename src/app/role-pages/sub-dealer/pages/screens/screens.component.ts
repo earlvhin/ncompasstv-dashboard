@@ -76,7 +76,7 @@ export class ScreensComponent implements OnInit {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -107,7 +107,7 @@ export class ScreensComponent implements OnInit {
 					this.searching = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

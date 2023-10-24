@@ -239,6 +239,7 @@ import {
 	MatSnackBarModule
 } from '@angular/material';
 import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
+import { UpdateProfilePhotoComponent } from './components_shared/update-profile-photo/update-profile-photo.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -471,7 +472,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, FillerMainViewComponent],
+	declarations: [ngComponents, DIRECTIVES, FillerMainViewComponent, UpdateProfilePhotoComponent],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,

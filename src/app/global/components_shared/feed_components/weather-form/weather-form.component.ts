@@ -172,7 +172,7 @@ export class WeatherFormComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(data: { success: boolean }) => (this.zipcode_valid = data.success),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.zipcode_checking = false));

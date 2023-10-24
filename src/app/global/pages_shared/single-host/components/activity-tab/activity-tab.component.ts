@@ -75,7 +75,7 @@ export class ActivityTabComponent implements OnInit {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.initial_load = false));

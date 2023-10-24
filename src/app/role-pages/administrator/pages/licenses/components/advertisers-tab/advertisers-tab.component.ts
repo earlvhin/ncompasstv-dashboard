@@ -54,7 +54,7 @@ export class AdvertisersTabComponent implements OnInit, OnDestroy {
 			try {
 				await this._export.generate('advertisers', exportConfig);
 			} catch (error) {
-				throw new Error(error);
+				console.error(error);
 			}
 
 			this.isExporting = false;

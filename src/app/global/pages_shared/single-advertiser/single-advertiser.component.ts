@@ -2,10 +2,18 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { DatePipe } from '@angular/common';
 import { takeUntil } from 'rxjs/operators';
-import { Subject } from 'rxjs';
+import { Subject, forkJoin } from 'rxjs';
 
-import { API_CONTENT, UI_TABLE_ADVERTISERS_CONTENT, UI_ROLE_DEFINITION_TEXT, API_ADVERTISER, API_DEALER } from 'src/app/global/models';
-import { AdvertiserService, ContentService, HelperService, DealerService } from 'src/app/global/services';
+import {
+	API_CONTENT,
+	UI_TABLE_ADVERTISERS_CONTENT,
+	UI_ROLE_DEFINITION_TEXT,
+	API_ADVERTISER,
+	API_DEALER,
+	UI_ACTIVITY_LOGS,
+	API_USER_DATA
+} from 'src/app/global/models';
+import { AdvertiserService, ContentService, HelperService, DealerService, UserService } from 'src/app/global/services';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 
 @Component({
@@ -15,21 +23,35 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 	providers: [DatePipe]
 })
 export class SingleAdvertiserComponent implements OnInit, OnDestroy {
-	array_to_preview: API_CONTENT[] = [];
+	activity_data: UI_ACTIVITY_LOGS[] = [];
+	advertiser_data: any;
+	advertiser_id: string;
 	advertiser: API_ADVERTISER;
 	advertiserAndDealer: { advertiser: API_ADVERTISER; dealer: API_DEALER } = null;
-	advertiser_id: string;
+	array_to_preview: API_CONTENT[] = [];
 	content_data: any = [];
-	currentImage = 'assets/media-files/admin-icon.png';
-	current_user = this._auth.current_user_value;
-	current_role = this._auth.current_role;
 	contents_loaded = false;
+	created_by: any;
+	createdBy: string;
+	current_role = this._auth.current_role;
+	current_user = this._auth.current_user_value;
+	currentImage = 'assets/media-files/admin-icon.png';
+	dateCreated: any;
+	dateFormatted: any;
 	dealer: API_DEALER;
 	description: string;
-	is_banner_data_ready = false;
 	has_only_view_permission = this._auth.current_user_value.roleInfo.permission === 'V';
+	initial_load_activity = true;
+	is_banner_data_ready = false;
+	no_activity_data = false;
+	page: any;
+	paging_data_activity: any;
+	reload_data: boolean = false;
 	selected_index: number;
+	sort_column_activity = 'DateCreated';
+	sort_order_activity = 'desc';
 	table_columns = ['#', 'Name', 'Type', 'Upload Date', 'Uploaded By'];
+	user: API_USER_DATA;
 
 	private is_loading = false;
 	protected _unsubscribe: Subject<void> = new Subject<void>();
@@ -41,7 +63,8 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 		private _dealer: DealerService,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
-		private _content: ContentService
+		private _content: ContentService,
+		private _user: UserService
 	) {}
 
 	ngOnInit() {
@@ -51,12 +74,85 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 			this.getContents();
 		});
 
+		this.getAdvertiserActivity(1);
+
 		this._params.queryParams.pipe(takeUntil(this._unsubscribe)).subscribe((data) => (this.selected_index = data.tab));
 	}
 
 	ngOnDestroy() {
 		this._unsubscribe.next();
 		this._unsubscribe.complete();
+	}
+
+	getActivityColumnsAndOrder(data: { column: string; order: string }): void {
+		this.sort_column_activity = data.column;
+		this.sort_order_activity = data.order;
+		this.getAdvertiserActivity(1);
+	}
+
+	getAdvertiserActivity(page: number) {
+		this.activity_data = [];
+
+		this._advertiser
+			.get_advertiser_activity(this.advertiser_id, this.sort_column_activity, this.sort_order_activity, page)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(res) => {
+					if (res.paging.entities.length === 0) {
+						this.no_activity_data = true;
+						this.activity_data = [];
+						return;
+					}
+
+					this.getUserByIds(res.paging.entities.map((a) => a.initiatedBy)).subscribe((responses) => {
+						this.created_by = responses;
+
+						const mappedData = this.activity_mapToUI(res.paging.entities);
+						this.paging_data_activity = res.paging;
+						this.activity_data = [...mappedData];
+						this.reload_data = true;
+					});
+				},
+				(error) => {
+					console.error(error);
+				}
+			)
+			.add(() => (this.initial_load_activity = false));
+	}
+
+	reload_page(e: boolean): void {
+		if (e) this.ngOnInit();
+	}
+	getUserByIds(ids: any[]) {
+		const userObservables = ids.map((id) => this._user.get_user_by_id(id).pipe(takeUntil(this._unsubscribe)));
+
+		return forkJoin(userObservables);
+	}
+
+	activity_mapToUI(activity): any {
+		let count = 1;
+
+		return activity.map((a: any) => {
+			const activityCode = a.activityCode;
+			let activityMessage = 'Other Activity Detected';
+			let createdBy;
+
+			this.created_by.map((c) => {
+				if (c.userId === a.initiatedBy) createdBy = c;
+			});
+
+			if (activityCode === 'modify_advertiser') activityMessage = `${createdBy.firstName} ${createdBy.lastName} modified the advertiser`;
+
+			return new UI_ACTIVITY_LOGS(
+				{ value: count++, editable: false },
+				{ value: a.ownerId, hidden: true },
+				{ value: a.activityLogId, hidden: true },
+				{ value: this._date.transform(a.dateCreated, 'MMMM d, y'), hidden: false },
+				{ value: activityMessage, hidden: false },
+				{ value: a.initiatedBy, hidden: true },
+				{ value: a.dateUpdated, hidden: true }
+			);
+		});
 	}
 
 	private async getAdvertiser() {
@@ -69,7 +165,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 			try {
 				dealer = await this._dealer.get_dealer_by_id(this.advertiser.dealerId).toPromise();
 			} catch (error) {
-				throw new Error(error);
+				console.error(error);
 			}
 
 			this.is_loading = false;
@@ -86,11 +182,13 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					advertiser.tags = tags;
 					this.advertiser = advertiser;
 					this.setDescription();
+					this.getUser(response.advertiser.createdBy);
+					this.dateCreated = response.advertiser.dateCreated;
 
 					try {
 						dealer = await this._dealer.get_dealer_by_id(advertiser.dealerId).toPromise();
 					} catch (error) {
-						throw new Error(error);
+						console.error(error);
 					}
 
 					this.advertiserAndDealer = { advertiser, dealer };
@@ -98,7 +196,7 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.is_banner_data_ready = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.is_loading = false));
@@ -120,10 +218,22 @@ export class SingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.contents_loaded = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.contents_loaded = true));
+	}
+
+	getUser(id: any) {
+		this._user
+			.get_user_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((res) => {
+				if ('message' in res) return;
+				const userData = res as API_USER_DATA;
+
+				this.createdBy = `${userData.firstName} ${userData.lastName}`;
+			});
 	}
 
 	private mapContentsToTableUI(contents: API_CONTENT[]): UI_TABLE_ADVERTISERS_CONTENT[] {

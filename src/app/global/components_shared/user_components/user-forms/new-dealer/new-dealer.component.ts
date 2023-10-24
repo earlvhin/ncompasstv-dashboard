@@ -108,7 +108,7 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 					this.f.region.setValue(data[0].region);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

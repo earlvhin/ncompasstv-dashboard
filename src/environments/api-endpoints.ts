@@ -8,6 +8,7 @@ export const API_ENDPOINTS = {
 		api_get_activities: 'activity/getall',
 		api_get_activities_by_license_id: 'activity/getactivitybylicenseid?licenseid=',
 		api_get_advertisers: 'advertiser/getall',
+		api_get_advertisers_activity: 'advertiseractivitylog/getall',
 		api_get_advertisers_by_dealer_id: 'advertiser/getbydealerid',
 		api_get_advertisers_by_id: 'advertiser/getbyid?id=',
 		api_get_advertiser_report: 'advertiser/getaddedreport',
@@ -42,7 +43,8 @@ export const API_ENDPOINTS = {
 		api_get_filler_feed_by_role: 'filler/playlist/getbyrole',
 		api_get_filler_groups: 'filler/group/getall',
 		api_get_filler_group_for_feeds: 'filler/group/getbyuser',
-		api_get_dealer_filler_groups_admin_view: 'filler/group/dealer',
+		api_get_dealer_filler_groups_admin_view: 'filler/group/dealer/getall',
+		api_get_dealeradmin_filler_groups_view: 'filler/group/dealeradmin/getall',
 		api_get_dealer_filler_groups: 'filler/group/dealer/getall',
 		api_get_dealer_filler_groups_other_roles: 'filler/group/dealer/byrole',
 		api_get_filler_group_by_id: 'filler/group/getbyid',
@@ -76,6 +78,7 @@ export const API_ENDPOINTS = {
 		// api_get_dealers_content_metrics: 'contentplaysdaily/exportscontentmetricsbydealer',
 		api_get_dealers_content_metrics: 'contentplaysdaily/getcontentmetricsbydealerexport',
 		api_get_dealers_directory: 'dealer/getdirectorytree',
+		api_get_dealer_logo: 'dealer/getlogo',
 		api_get_dealers_with_sort: 'dealer/fetchallsorttotal',
 		api_get_dealers_with_host: 'dealer/getdealerswithhost',
 		api_get_dealers_with_advertiser: 'dealer/getdealerswithadvertiser',
@@ -274,8 +277,8 @@ export const API_ENDPOINTS = {
 		tag_owners: 'tag/addowners',
 		tag_type: 'tag/createtype',
 		new_host_activity_logs: 'hostActivityLog/create',
-		new_dealer_activity_logs: 'dealeractivitylog/create'
-
+		new_dealer_activity_logs: 'dealeractivitylog/create',
+		new_advertiser_activity_logs: 'advertiseractivitylog/create'
 	},
 	third_party: {
 		api_post_content_info: 'webhooks/processhandler',
@@ -307,6 +310,7 @@ export const API_ENDPOINTS = {
 		api_update_alias: 'license/updatealias',
 		api_update_card: 'billing/dealer/upsert/addressBook',
 		api_update_dealer: 'dealer/update',
+		api_update_dealer_logo: 'dealer/updatedealerlogo',
 		api_update_dealer_values: 'dealer/updatedealervalues',
 		api_update_feed: 'feed/update',
 		api_update_filler_group_photo: 'filler/group/update/coverphoto',
@@ -380,7 +384,7 @@ export const API_ENDPOINTS = {
 		api_remove_playlist: 'playlists/removeplaylist?playlistid=',
 		api_remove_playlist_content: 'playlists/removecontent',
 		api_remove_playlist_contents: 'playlists/removecontents',
-		api_remove_screenshots: 'pi/removefiles?licenseid=',
+		api_remove_screenshots: 'pi/removefiles',
 		api_remove_in_blacklist: 'blacklistedcontents/delete',
 		api_bulk_remove_in_blacklist: 'blacklistedcontents/bulkdelete',
 		api_remove_license: 'license/removebylicenseid',

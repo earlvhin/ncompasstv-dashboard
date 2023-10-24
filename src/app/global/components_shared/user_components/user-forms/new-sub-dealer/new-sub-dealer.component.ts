@@ -78,7 +78,7 @@ export class NewSubDealerComponent implements OnInit, OnDestroy {
 			this._dealer.get_dealers().subscribe(
 				(data) => (this.dealers = data),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);

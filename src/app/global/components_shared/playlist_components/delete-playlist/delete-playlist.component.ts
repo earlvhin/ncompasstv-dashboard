@@ -52,7 +52,9 @@ export class DeletePlaylistComponent implements OnInit {
 						}
 					});
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 		);
 	}

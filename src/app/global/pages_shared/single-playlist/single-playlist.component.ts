@@ -257,7 +257,7 @@ export class SinglePlaylistComponent implements OnInit {
 					this.screensMapToTable(this.playlist_screens);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -272,7 +272,7 @@ export class SinglePlaylistComponent implements OnInit {
 					this.screensMapToTable(this.playlist_screens);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

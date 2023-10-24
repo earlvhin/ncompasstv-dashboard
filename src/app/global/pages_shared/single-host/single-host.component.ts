@@ -130,7 +130,7 @@ export class SingleHostComponent implements OnInit {
 					this.isBannerDataReady = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -157,7 +157,7 @@ export class SingleHostComponent implements OnInit {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

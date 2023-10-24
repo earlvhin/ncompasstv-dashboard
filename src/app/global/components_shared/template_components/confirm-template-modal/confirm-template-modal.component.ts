@@ -41,7 +41,7 @@ export class ConfirmTemplateModalComponent implements OnInit, OnDestroy {
 					this.is_submitted = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

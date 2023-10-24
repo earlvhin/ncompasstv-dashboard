@@ -180,7 +180,7 @@ export class CreateHostComponent implements OnInit {
 				this.operation_days = response;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -245,7 +245,7 @@ export class CreateHostComponent implements OnInit {
 			category: this.newHostFormControls.category.value,
 			timezone: this.newHostFormControls.timezone.value,
 			logo: this.current_host_image
-	});
+		});
 
 		if (this.logo_data) {
 			newHostPlace.logo = this.logo_data.logo;
@@ -293,7 +293,7 @@ export class CreateHostComponent implements OnInit {
 					this.google_result = data.google_search;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -436,7 +436,7 @@ export class CreateHostComponent implements OnInit {
 					this.paging = data.paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -473,7 +473,7 @@ export class CreateHostComponent implements OnInit {
 						this.loading_data = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -490,7 +490,7 @@ export class CreateHostComponent implements OnInit {
 						this.loading_search = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -571,7 +571,7 @@ export class CreateHostComponent implements OnInit {
 					this.is_page_ready = true;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -612,7 +612,7 @@ export class CreateHostComponent implements OnInit {
 						this.newHostFormControls.region.setValue(data[0].region);
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -638,7 +638,7 @@ export class CreateHostComponent implements OnInit {
 						this.setCity(city);
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -671,7 +671,7 @@ export class CreateHostComponent implements OnInit {
 				return { hour: parseInt(hourData[0]), minute: parseInt(hourData[1]), second: 0 };
 			};
 
-			if (hour.open == "12:00 AM" && (hour.close == '' || null)) {
+			if (hour.open == '12:00 AM' && (hour.close == '' || null)) {
 				const close = '11:59 PM';
 				const open = '12:00 AM';
 
@@ -692,8 +692,8 @@ export class CreateHostComponent implements OnInit {
 				id: h.id,
 				label: h.label,
 				day: h.day,
-				periods: this.operation_hours.filter((t) => t.day_id == h.id || (t.open === "12:00 AM" && t.close === "11:59 PM")),
-				status: this.operation_hours.filter((t) => (t.open === "12:00 AM" && t.close === "11:59 PM") || t.day_id == h.id).length !== 0
+				periods: this.operation_hours.filter((t) => t.day_id == h.id || (t.open === '12:00 AM' && t.close === '11:59 PM')),
+				status: this.operation_hours.filter((t) => (t.open === '12:00 AM' && t.close === '11:59 PM') || t.day_id == h.id).length !== 0
 			};
 		});
 	}
@@ -760,7 +760,7 @@ export class CreateHostComponent implements OnInit {
 		this.newHostFormControls.category.valueChanges.subscribe((data) => {
 			if (data === '') this.no_category = false;
 		});
-		
+
 		this.newHostFormControls.category2.valueChanges.subscribe((data) => {
 			if (data === '') this.no_category2 = false;
 		});
@@ -769,15 +769,12 @@ export class CreateHostComponent implements OnInit {
 			this.city_selected = data;
 		});
 
-		this.new_host_form.controls['zip'].setValidators([
-		  Validators.required,
-		  Validators.maxLength(7),
-		]);
-		
+		this.new_host_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
+
 		this.new_host_form.controls['zip'].valueChanges.subscribe((data) => {
 			if (this.canada_selected) {
 				this.new_host_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
-		  }else{
+			} else {
 				this.new_host_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
 			}
 		});

@@ -136,7 +136,7 @@ export class ThumbnailCardComponent implements OnInit {
 							this.deleted.emit(true);
 						},
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			}
