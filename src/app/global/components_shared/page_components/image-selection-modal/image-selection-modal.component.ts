@@ -69,7 +69,7 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 			this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
 				this.dialogRef.close('success');
 			});
-		} else return { images: this.images, logo: this.selectedImageUrl };
+		} else this.dialogRef.close({ images: this.images, logo: this.selectedImageUrl });
 	}
 
 	private getHostPlaceImages(): void {
