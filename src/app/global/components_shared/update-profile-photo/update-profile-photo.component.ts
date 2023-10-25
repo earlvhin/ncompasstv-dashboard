@@ -53,13 +53,13 @@ export class UpdateProfilePhotoComponent implements OnInit {
 	}
 
 	protected get filestackOptions(): filestack.PickerOptions {
-		let folder = 'dev/';
-		if (environment.production) folder = 'prod/';
-		else if (environment.base_uri.includes('stg')) folder = 'staging/';
+		let folder = 'dev';
+		if (environment.production) folder = 'prod';
+		else if (environment.base_uri.includes('stg')) folder = 'stg';
 		return {
 			storeTo: {
 				location: 's3',
-				container: 'nctv-images-dev/logo/dealers/' + this.page_data.dealerId + '/',
+				container: 'nctv-images-' + folder + '/logo/dealers/' + this.page_data.dealerId + '/',
 				region: 'us-east-1'
 			},
 			accept: ['image/jpg', 'image/jpeg', 'image/png'],
