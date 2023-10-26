@@ -471,7 +471,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			.subscribe(
 				() => this.dialog_reference.close(message),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -483,7 +483,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 				else this.invalid_form = false;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -518,7 +518,7 @@ export class PlaylistContentSchedulingDialogComponent implements OnDestroy, OnIn
 			.subscribe(
 				() => this.dialog_reference.close('update'),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

@@ -21,11 +21,12 @@ import {
 	UI_STORE_HOUR
 } from 'src/app/global/models';
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
-import { HelperService } from 'src/app/global/services';
+import { HelperService, DealerService } from 'src/app/global/services';
 import { EditSingleAdvertiserComponent } from 'src/app/global/pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from 'src/app/global/pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from 'src/app/global/pages_shared/edit-single-host/edit-single-host.component';
 import { InformationModalComponent } from '../information-modal/information-modal.component';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-banner',
@@ -80,7 +81,8 @@ export class BannerComponent implements OnInit, OnDestroy {
 		private _helper: HelperService,
 		private _dialog: MatDialog,
 		private _router: Router,
-		private _titlecase: TitleCasePipe
+		private _titlecase: TitleCasePipe,
+		private _dealer: DealerService
 	) {}
 
 	ngOnInit() {
@@ -322,12 +324,16 @@ export class BannerComponent implements OnInit, OnDestroy {
 	private subscribeToRefreshBannerData() {
 		this._helper.onRefreshBannerData.pipe(takeUntil(this._unsubscribe)).subscribe(
 			() => this.update_info.emit(),
-			(error) => console.log('Error refreshing banner data', error)
+			(error) => console.error('Error refreshing banner data', error)
 		);
 	}
 
 	protected get _isAdmin() {
 		const currentRole = this._auth.current_role;
 		return currentRole === 'administrator' || currentRole === 'dealeradmin';
+	}
+
+	refreshInfo() {
+		this.update_info.emit(true);
 	}
 }

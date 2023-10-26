@@ -123,7 +123,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 							}
 						},
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			}
@@ -334,7 +334,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					this.openConfirmationModal('success', 'Content assignment successfully edited.', 'Click OK to continue');
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -350,7 +350,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					this.advertiserSelected(response.advertiser.id);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -383,7 +383,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_search_advertiser = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -413,7 +413,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_form = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -437,7 +437,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_search = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -464,7 +464,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_search = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -481,7 +481,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					this.dealerSelected(response.dealerId);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -504,7 +504,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_search_host = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -534,7 +534,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 						this.loading_form = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -551,7 +551,7 @@ export class MediaModalComponent implements OnInit, OnDestroy {
 					this.hostSelected(response.host.hostId);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

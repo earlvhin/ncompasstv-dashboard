@@ -234,7 +234,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 				if (response) this.business_hours = response;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -267,12 +267,12 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 							else this._router.navigate([`/${this.roleRoute}/hosts`]);
 						},
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -389,7 +389,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					return data;
 				},
 				(error) => {
-					console.log(error);
+					console.error(error);
 				}
 			);
 	}
@@ -431,7 +431,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 						}
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -530,7 +530,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					this.has_content = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -544,7 +544,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					this.timezones = response;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.timezones_loaded = true));
@@ -618,7 +618,7 @@ export class EditSingleHostComponent implements OnInit, OnDestroy {
 					this.setCity(city);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

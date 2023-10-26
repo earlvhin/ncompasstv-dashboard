@@ -1,9 +1,19 @@
 <div class="theme-banner bg-dark-light" [ngClass]="is_host_page && 'host-padding'">
 	<div class="theme-container">
 		<div class="d-flex align-items-center">
-			<div class="single-image mr-3">
-				<img class="host-image" [src]="image" />
-			</div>
+			<app-update-profile-photo
+				*ngIf="page === 'single-dealer'; else singleHostImage"
+				[page_data]="page_data.dealer"
+				[dealer]="true"
+				(refresh_image)="refreshInfo()">
+			</app-update-profile-photo>
+
+			<!-- to be deleted if edit host image is implemented -->
+			<ng-template #singleHostImage>
+				<div class="single-image mr-3">
+					<img class="host-image" [src]="image" />
+				</div>
+			</ng-template>
 			<div class="single-info flex-even">
 				<div class="d-flex align-items-center">
 					<h3 class="text-white">{{ title | titlecase }}</h3>
@@ -96,16 +106,12 @@
 				</ng-container>
 			</div>
 			<ng-container *ngIf="has_host_controls && host_license_count">
-				<div class="col-lg-6 license_count">
+				<div class="col-lg-4 license_count">
 					<mat-card class="h-100">
 						<app-data-card-graph
 							[id]="'license-statistics'"
 							[compare_basis]="host_license_count.total_count"
 							[compare_basis_label]="host_license_count.total_count_label"
-							[good_value]="host_license_count.online_value"
-							[good_value_label]="host_license_count.online_value_label"
-							[bad_value]="host_license_count.offline_value"
-							[bad_value_label]="host_license_count.offline_value_label"
 							[label_array]="license_stats_label"
 							[value_array]="license_stats_array">
 						</app-data-card-graph>

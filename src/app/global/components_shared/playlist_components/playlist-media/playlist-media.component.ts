@@ -27,12 +27,10 @@ export class PlaylistMediaComponent implements OnInit {
 	show_floating: boolean = false;
 	page: number = 1;
 	paging: any;
-	isDealer: boolean = true;
 	isGettingData: boolean = true;
 	selected_groups: any = [];
 	isActiveTab: number = 0;
 	active_filler: number;
-	current_role: number = 1;
 	// subscription: Subscription = new Subscription();
 
 	current_selection: any = '';
@@ -60,14 +58,12 @@ export class PlaylistMediaComponent implements OnInit {
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.administrator ||
 			this._auth.current_user_value.role_id == UI_ROLE_DEFINITION.tech
 		) {
-			this.isDealer = false;
 			this.getFloatingContents();
 			this.active_filler = 1;
-		} else this.active_filler = 2;
-	}
-
-	get isCurrentRoleDealerAdmin() {
-		return this._auth.current_user_value.role_id === UI_ROLE_DEFINITION.dealeradmin;
+		} else {
+			if (this._isDealer()) this.active_filler = 2;
+			else if (this._isDealerAdmin()) this.active_filler = 3;
+		}
 	}
 
 	ngOnDestroy() {
@@ -230,8 +226,8 @@ export class PlaylistMediaComponent implements OnInit {
 
 	getAllFillerGroups(role?) {
 		let dealer_id = '';
-		if (role != 1) dealer_id = this._dialog_data.dealer_id;
-
+		if (role == 2) dealer_id = this._dialog_data.dealer_id;
+		if (this._isAdmin() && role == 3) dealer_id = this._dialog_data.dealer_id;
 		this._filler
 			.get_filler_feeds_by_role(role, dealer_id)
 			.pipe(takeUntil(this._unsubscribe))
@@ -269,7 +265,9 @@ export class PlaylistMediaComponent implements OnInit {
 						});
 					});
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 			.add(() => {
 				//map existing contents to comply with format
@@ -320,7 +318,9 @@ export class PlaylistMediaComponent implements OnInit {
 				(data: any) => {
 					if (data) this.openConfirmationModal('success', 'Success!', 'Filler Feed successfully added to playlist.');
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			);
 	}
 
@@ -355,5 +355,20 @@ export class PlaylistMediaComponent implements OnInit {
 				break;
 			default:
 		}
+	}
+
+	_isDealer() {
+		const DEALER_ROLES = ['dealer', 'sub-dealer'];
+		return DEALER_ROLES.includes(this._auth.current_role);
+	}
+
+	_isDealerAdmin() {
+		const DEALER_ADMIN_ROLE = ['dealeradmin'];
+		return DEALER_ADMIN_ROLE.includes(this._auth.current_role);
+	}
+
+	_isAdmin() {
+		const ADMIN_ROLE = ['administrator'];
+		return ADMIN_ROLE.includes(this._auth.current_role);
 	}
 }

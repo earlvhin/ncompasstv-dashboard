@@ -37,7 +37,7 @@
 
 		<div class="stat-cards top-120 mb-4">
 			<div class="theme-container">
-				<div class="row">
+				<div class="row row-eq-height">
 					<div class="col-lg-6">
 						<mat-card class="h-100">
 							<app-data-card-graph
@@ -608,25 +608,32 @@
 						<!-- ACTIVITY TAB -->
 						<mat-tab label="Activity">
 							<div class="col-lg-12 p-0" *ngIf="current_tab === 'activity'">
-								<div class="theme-container">
-									<div class="row">
-										<div class="col-lg-12" *ngIf="!initial_load; else loader_activity">
-											<app-single-activity-tab
-												*ngIf="activity_data.length; else loader_activity"
-												[activity_data]="activity_data"
-												[paging_data]="paging_data"
-												[sort_column]="sort_column_activity"
-												[sort_order]="sort_order_activity"
-												[currentUser]="currentUser"
-												[currentRole]="currentRole"
-												[ownerId]="dealer_id"
-												[initial_load]="initial_load_activity"
-												[owner_data]="dealer_data"
-												[reload_data]="reload_data"
-												(pageChanged)="getDealerActivity($event)"
-												(sortColumnEvent)="getActivityColumnsAndOrder($event)">
-											</app-single-activity-tab>
-										</div>
+								<div class="row">
+									<div class="col-lg-12 ml-2 pt-4">
+										<h5>{{ createdBy }}</h5>
+										<h6>{{ dateCreated | date : 'MMMM d, y' }}</h6>
+									</div>
+								</div>
+
+								<div class="row">
+									<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loader_activity">
+										<app-single-activity-tab
+											*ngIf="activity_data.length; else loader_activity"
+											[activity_data]="activity_data"
+											[paging_data]="paging_data"
+											[sort_column]="sort_column_activity"
+											[sort_order]="sort_order_activity"
+											[currentUser]="currentUser"
+											[currentRole]="currentRole"
+											[ownerId]="dealer_id"
+											[initial_load]="initial_load_activity"
+											[createdBy]="createdBy"
+											[dateCreated]="dateCreated"
+											[owner_data]="dealer_data"
+											[reload_data]="reload_data"
+											(pageChanged)="getDealerActivity($event)"
+											(sortColumnEvent)="getActivityColumnsAndOrder($event)">
+										</app-single-activity-tab>
 									</div>
 								</div>
 							</div>

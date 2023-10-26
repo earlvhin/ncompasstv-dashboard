@@ -145,7 +145,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 			.subscribe(
 				(response) => (this.dealers = response),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -171,7 +171,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -194,7 +194,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -278,7 +278,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -288,7 +288,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -305,7 +305,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -315,7 +315,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -332,7 +332,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -342,7 +342,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -359,7 +359,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -369,7 +369,7 @@ export class GenerateFeedComponent implements OnInit, CanComponentDeactivate {
 				.subscribe(
 					() => this._router.navigate([`/${this.roleRoute}/feeds`]).then((_) => window.location.reload()),
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}

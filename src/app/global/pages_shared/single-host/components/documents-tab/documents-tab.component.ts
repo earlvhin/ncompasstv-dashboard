@@ -61,7 +61,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 					this.tableData = this.mapToTable([...documents]);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -122,7 +122,7 @@ export class DocumentsTabComponent implements OnInit, OnDestroy {
 					.subscribe(
 						() => this.ngOnInit(),
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 			}

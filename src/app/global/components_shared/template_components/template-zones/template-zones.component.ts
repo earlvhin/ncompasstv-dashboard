@@ -46,7 +46,7 @@ export class TemplateZonesComponent implements OnInit, OnDestroy {
 			this._template.onSelectZone.subscribe(
 				(name: string) => (this.zone_selected = name),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 		);

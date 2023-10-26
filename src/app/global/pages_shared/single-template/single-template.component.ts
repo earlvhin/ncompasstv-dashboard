@@ -45,7 +45,7 @@ export class SingleTemplateComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => this.getTemplateData(this.templateId).add(() => (this.isLoading = false)),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -60,7 +60,7 @@ export class SingleTemplateComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response) => (this.data = response),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

@@ -270,7 +270,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 					this.pagingData = paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isLoading = false));
@@ -310,7 +310,7 @@ export class TagOwnersSectionComponent implements OnInit, OnDestroy {
 					this.pagingData = paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isLoading = false));

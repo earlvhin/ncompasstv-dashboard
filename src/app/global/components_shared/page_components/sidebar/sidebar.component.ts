@@ -34,7 +34,7 @@ export class SidebarComponent implements OnInit, OnDestroy {
 				}
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 

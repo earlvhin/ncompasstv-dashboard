@@ -33,7 +33,13 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _date: DatePipe, private _dialog: MatDialog, private _helper: HelperService, private _license: LicenseService, private _titlecase: TitleCasePipe) {}
+	constructor(
+		private _date: DatePipe,
+		private _dialog: MatDialog,
+		private _helper: HelperService,
+		private _license: LicenseService,
+		private _titlecase: TitleCasePipe
+	) {}
 
 	ngOnInit() {
 		this.tableColumns = this.columns;
@@ -109,7 +115,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 				license_key: {
 					value: license.licenseKey,
 					link: `/${this.currentRole}/licenses/` + license.licenseId,
-                    new_tab_link: true,
+					new_tab_link: true,
 					editable: false,
 					hidden: false,
 					status: true
@@ -117,7 +123,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 				alias: {
 					value: license.alias ? license.alias : '--',
 					link: `/${this.currentRole}/licenses/` + license.licenseId,
-                    new_tab_link: true,
+					new_tab_link: true,
 					editable: true,
 					label: 'License Alias',
 					id: license.licenseId,
@@ -132,7 +138,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 				screen: {
 					value: license.screenId != null ? this._titlecase.transform(license.screenName) : '--',
 					link: license.screenId != null ? `/${this.currentRole}/screens/` + license.screenId : null,
-                    new_tab_link: true,
+					new_tab_link: true,
 					editable: false,
 					hidden: false
 				},
@@ -212,7 +218,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 					this.tableData = this.mapToTable([...response]);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

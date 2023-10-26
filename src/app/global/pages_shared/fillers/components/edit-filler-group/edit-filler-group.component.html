@@ -29,17 +29,19 @@
 					<div class="col-lg-12">
 						<span class="md-text text-gray"> Display To: </span>
 					</div>
-					<div class="col-lg-12" *ngIf="dealer_admins.length > 0; else loaderSmall">
-						<span class="md-text text-gray"> All Dealer Admins except: </span>
-						<app-dropdown-multiple-selection-field
-							[dropdownData]="dealer_admins"
-							[dropdownPlaceholder]="'Select Dealer Admin Name(s)'"
-							[selectedDropdownControl]="selectedDealerAdminsControl"
-							[form]="form"
-							[titleForSelectedValue]="'Selected Dealers Admins :'"
-							[dealerAdmin]="true">
-						</app-dropdown-multiple-selection-field>
-					</div>
+					<ng-container *ngIf="!_isDealerAdmin()">
+						<div class="col-lg-12" *ngIf="dealer_admins.length > 0; else loaderSmall">
+							<span class="md-text text-gray"> All Dealer Admins except: </span>
+							<app-dropdown-multiple-selection-field
+								[dropdownData]="dealer_admins"
+								[dropdownPlaceholder]="'Select Dealer Admin Name(s)'"
+								[selectedDropdownControl]="selectedDealerAdminsControl"
+								[form]="form"
+								[titleForSelectedValue]="'Selected Dealers Admins :'"
+								[dealerAdmin]="true">
+							</app-dropdown-multiple-selection-field>
+						</div>
+					</ng-container>
 					<div class="col-lg-12 mt-3" *ngIf="dealers_list.length; else loaderSmall">
 						<span class="md-text text-gray"> All Dealers except: </span>
 						<app-dropdown-multiple-selection-field

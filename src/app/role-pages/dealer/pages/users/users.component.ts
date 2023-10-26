@@ -160,7 +160,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 					this.filtered_data = mappedUsers;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.loading_data = false));
@@ -194,7 +194,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 		this._helper.onRefreshUsersPage.pipe(takeUntil(this._unsubscribe)).subscribe(
 			() => this.ngOnInit(),
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -206,7 +206,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 				this.confirmEmailNotificationToggle(userId, value, tableDataIndex, currentEmail);
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -216,7 +216,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 			.update_email_notifications(userId, value)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(() => (error) => {
-				throw new Error(error);
+				console.error(error);
 			});
 	}
 }

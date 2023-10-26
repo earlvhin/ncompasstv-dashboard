@@ -170,7 +170,9 @@ export class CreatePlaylistComponent implements OnInit {
 						this.creating_playlist = false;
 						this.openConfirmationModal(data.playlist.playlistId);
 					},
-					(error) => {}
+					(error) => {
+						console.error(error);
+					}
 				)
 			);
 		}

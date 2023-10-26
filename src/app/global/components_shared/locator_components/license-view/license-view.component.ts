@@ -280,7 +280,7 @@ export class LicenseViewComponent implements OnInit {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.loading_search = false));
@@ -320,7 +320,7 @@ export class LicenseViewComponent implements OnInit {
 					});
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.loading_licenses = false));
@@ -396,7 +396,7 @@ export class LicenseViewComponent implements OnInit {
 					if (this.license_page_count <= pageCount) this.getDealerLicenses(this.license_page_count++);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -430,7 +430,7 @@ export class LicenseViewComponent implements OnInit {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.loading_license_count = false));

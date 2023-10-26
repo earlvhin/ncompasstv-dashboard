@@ -1,61 +1,74 @@
 <div class="p-5 user-form">
-    <div class="d-flex align-items-center mb-5">
-        <div class="mr-3">
-            <img src="/assets/media-files/dealer-icon.png" class="user-icon" alt="dealer-icon">
-        </div>
-        <div class="flex-even">
-            <h3 class="mb-0">{{ form_title }}</h3>
-            <p class="sm-text mb-0">{{ form_description }}</p>
-        </div>
-        <div class="text-right">
-            <a class="sm-text font-weight-bold text-primary" [routerLink]="['/administrator/users/create-user']">
-                <span class="fas fa-angle-left mr-2"></span>
-                Select User Type
-            </a>
-        </div>
-    </div>
-    <ng-container *ngIf="new_dealer_form">
-        <form [formGroup]="new_dealer_form" #formDirective="ngForm" (ngSubmit)="createNewDealer(formDirective)" class="text-left position-relative">
-            <div class="row mb-4">
-                <ng-container *ngFor="let field of form_fields_view" >
-                    <div class="{{ field.width }}">
-                        <mat-form-field class="full-width" *ngIf="!field.is_autocomplete; else autocomplete">
-                            <mat-label>{{ field.label }}</mat-label>
-                            <input *ngIf="field.type !== 'password'; else passwordField" formControlName="{{ field.control }}" type="{{ field.type }}" matInput placeholder="{{ field.placeholder }}">
-                            
+	<div class="d-flex align-items-center mb-5">
+		<div class="mr-3">
+			<img src="/assets/media-files/dealer-icon.png" class="user-icon" alt="admin-icon" />
+		</div>
+		<div class="flex-even">
+			<h3 class="mb-0">{{ form_title }}</h3>
+			<p class="sm-text mb-0">{{ form_description }}</p>
+		</div>
+		<div class="text-right">
+			<a class="sm-text font-weight-bold text-primary" [routerLink]="['/administrator/users/create-user']">
+				<span class="fas fa-angle-left mr-2"></span>
+				Select User Type
+			</a>
+		</div>
+	</div>
+	<ng-container *ngIf="new_dealer_form">
+		<form [formGroup]="new_dealer_form" #formDirective="ngForm" (ngSubmit)="createNewDealer(formDirective)" class="text-left position-relative">
+			<div class="row mb-4">
+				<ng-container *ngFor="let field of form_fields_view">
+					<div class="{{ field.width }}">
+						<mat-form-field class="full-width" *ngIf="!field.is_autocomplete; else autocomplete">
+							<mat-label>{{ field.label }}</mat-label>
+							<input
+								*ngIf="field.type !== 'password'; else passwordField"
+								formControlName="{{ field.control }}"
+								type="{{ field.type }}"
+								matInput
+								placeholder="{{ field.placeholder }}" />
+
 							<ng-template #passwordField>
 								<div class="password-container" *ngIf="field.control === 'password'">
 									<div class="field">
-										<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" [type]="is_password_field_type ? 'password' : 'text'">
-										<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{ is_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+										<input
+											formControlName="{{ field.control }}"
+											matInput
+											placeholder="{{ field.placeholder }}"
+											[type]="is_password_field_type ? 'password' : 'text'" />
+										<mat-icon class="pw-visibility" matSuffix (click)="togglePasswordFieldType()">{{
+											is_password_field_type ? 'visibility_off' : 'visibility'
+										}}</mat-icon>
 									</div>
 								</div>
-	
+
 								<div class="password-container" *ngIf="field.control === 're_password'">
 									<div class="field">
-										<input matInput 
-											formControlName="{{ field.control }}" 
-											placeholder="{{ field.placeholder }}" 
-											[type]="is_retype_password_field_type ? 'password' : 'text'">
-										<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{ is_retype_password_field_type ? 'visibility_off' : 'visibility' }}</mat-icon>
+										<input
+											matInput
+											formControlName="{{ field.control }}"
+											placeholder="{{ field.placeholder }}"
+											[type]="is_retype_password_field_type ? 'password' : 'text'" />
+										<mat-icon class="pw-visibility" matSuffix (click)="toggleRetypePasswordFieldType()">{{
+											is_retype_password_field_type ? 'visibility_off' : 'visibility'
+										}}</mat-icon>
 									</div>
 								</div>
 							</ng-template>
-
-                        </mat-form-field>
+						</mat-form-field>
 
 						<div class="validation" *ngIf="field.type === 'password'">
 							<span *ngIf="field.password_field" class="validation_msg sm-text" [ngClass]="password_is_valid ? 'success' : 'error'">
 								{{ password_is_valid_msg }}
 							</span>
-	
+
 							<span *ngIf="field.re_password_field" class="validation_msg sm-text" [ngClass]="password_is_match ? 'success' : 'error'">
 								{{ password_match_msg }}
 							</span>
 						</div>
-    
-                        <ng-template #autocomplete>
-                            <app-autocomplete-field
+
+						<ng-template #autocomplete>
+							<app-autocomplete-field
 								(data_value)="citySelected($event)"
 								[key_of_value]="'city_state'"
 								[placeholder]="field.placeholder"
@@ -63,17 +76,15 @@
 								[data_reference]="field.data"
 								[search_keyword]="'city_state'"
 								[primary_keyword]="'city_state'">
-                            </app-autocomplete-field>
-                        </ng-template>
-                    </div>
-                </ng-container>
-            </div>
-            <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">
-                Create Dealer
-            </button>
-        </form>
-    </ng-container>
-    <div class="submit-on-load d-flex align-items-center justify-content-center" *ngIf="is_submitted">
-        <app-spinner></app-spinner>
-    </div>
+							</app-autocomplete-field>
+						</ng-template>
+					</div>
+				</ng-container>
+			</div>
+			<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="form_invalid">Create Dealer</button>
+		</form>
+	</ng-container>
+	<div class="submit-on-load d-flex align-items-center justify-content-center" *ngIf="is_submitted">
+		<app-spinner></app-spinner>
+	</div>
 </div>

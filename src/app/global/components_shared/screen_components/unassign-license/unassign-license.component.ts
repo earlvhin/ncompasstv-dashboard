@@ -79,7 +79,9 @@ export class UnassignLicenseComponent implements OnInit {
 				this.to_unassign = [];
 				this.dialogRef.close(true);
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 }

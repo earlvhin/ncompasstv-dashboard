@@ -68,7 +68,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => this.showSuccessModal(),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -125,7 +125,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 					this.filteredTags.next(tags);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingTags = false));
@@ -152,7 +152,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 					this.filteredOwners.next(assignedPrefix);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingOwners = false));
@@ -176,7 +176,7 @@ export class AssignTagsComponent implements OnInit, OnDestroy {
 					this.filteredTags.next(unique);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.isSearchingTags = false));

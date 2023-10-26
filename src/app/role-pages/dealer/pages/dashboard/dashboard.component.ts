@@ -153,7 +153,9 @@ export class DashboardComponent implements OnInit {
 						this.host_array.push(this.hosts_details.for_installation_value);
 					}
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			)
 		);
 	}

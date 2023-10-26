@@ -8,6 +8,7 @@ import { Subject } from 'rxjs';
 import { AdvertiserService, AuthService, CategoryService, ConfirmationDialogService, DealerService, LocationService } from 'src/app/global/services';
 
 import {
+	ACTIVITY_LOGS,
 	API_ADVERTISER,
 	API_DEALER,
 	API_PARENT_CATEGORY,
@@ -69,8 +70,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 		this.getCategories();
 		this.initializeForm();
 		this.zipCodeValidation();
-		if(this.advertiser.postalCode.length > 5) {this.getCanadaAddress({checked: true}, false)}
-		else {this.getCities()}
+		if (this.advertiser.postalCode.length > 5) this.getCanadaAddress({ checked: true }, false);
+		else this.getCities();
 		this.fillCityOfAdvertiser();
 	}
 
@@ -92,7 +93,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					this.setCity(city);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -121,7 +122,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 						}
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -131,7 +132,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			});
 
 			this._formControls.city.setValue(cityState);
-			if(filtered_data.length) {
+			if (filtered_data.length) {
 				this._formControls.state.setValue(filtered_data[0].state);
 				this._formControls.region.setValue(filtered_data[0].region);
 			}
@@ -145,8 +146,8 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 
 	getCanadaAddress(value, clearAction = true) {
 		this.canada_selected = value.checked;
-		if(clearAction) this.clearAddressValue();
-		if(value.checked)this.getCanadaCities();
+		if (clearAction) this.clearAddressValue();
+		if (value.checked) this.getCanadaCities();
 		else this.getCities();
 	}
 
@@ -210,6 +211,7 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 	async saveAdvertiserData() {
 		const title = 'Update Advertiser Details';
 		let message = 'Are you sure you want to proceed?';
+		const modifyAdvertiser = new ACTIVITY_LOGS(this.advertiser.id, 'modify_advertiser', this._auth.current_user_value.user_id);
 
 		const newStatus = this.is_active_advertiser ? 'A' : 'I';
 
@@ -245,13 +247,19 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 					};
 
 					await this._confirmationDialog.success(dialogData).toPromise();
+					await this.createActivity(modifyAdvertiser).toPromise();
 					this._dialogReference.close(true);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
+
+	createActivity(activity) {
+		return this._advertiser.create_advertiser_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe));
+	  }
 
 	searchDealers(keyword = '') {
 		this._dealer
@@ -297,19 +305,15 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 	}
 
 	private zipCodeValidation() {
-		this.edit_advertiser_form.controls['zip'].setValidators([
-			Validators.required,
-			Validators.maxLength(7),
-		  ]);
-		
-		  this.edit_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
+		this.edit_advertiser_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
+
+		this.edit_advertiser_form.controls['zip'].valueChanges.subscribe((data) => {
 			if (this.canada_selected) {
-			  this.edit_advertiser_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
-			}else{
-			  this.edit_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
-  
+				this.edit_advertiser_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
+			} else {
+				this.edit_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
 			}
-		  });
+		});
 	}
 
 	private initializeForm() {
@@ -318,9 +322,9 @@ export class EditSingleAdvertiserComponent implements OnInit, OnDestroy {
 			businessName: ['', Validators.required],
 			address: ['', Validators.required],
 			city: ['', Validators.required],
-			state: [{value: '', disabled: true}, Validators.required],
+			state: [{ value: '', disabled: true }, Validators.required],
 			zip: ['', Validators.required],
-			region: [{value: '', disabled: true}, Validators.required],
+			region: [{ value: '', disabled: true }, Validators.required],
 			category: ['', Validators.required],
 			long: ['', Validators.required],
 			lat: ['', Validators.required]

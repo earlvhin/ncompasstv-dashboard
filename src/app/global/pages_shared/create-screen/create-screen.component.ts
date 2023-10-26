@@ -170,7 +170,7 @@ export class CreateScreenComponent implements OnInit {
 				});
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -247,7 +247,7 @@ export class CreateScreenComponent implements OnInit {
 				this.licenses[index].installDate = date;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -311,7 +311,7 @@ export class CreateScreenComponent implements OnInit {
 							this.creating_screen = false;
 						},
 						(error) => {
-							throw new Error(error);
+							console.error(error);
 						}
 					);
 
@@ -327,7 +327,7 @@ export class CreateScreenComponent implements OnInit {
 						this.creating_screen = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 
@@ -339,7 +339,7 @@ export class CreateScreenComponent implements OnInit {
 						return data;
 					},
 					(error) => {
-						console.log(error);
+						console.error(error);
 					}
 				);
 		}
@@ -369,7 +369,7 @@ export class CreateScreenComponent implements OnInit {
 					this.paging = data.paging;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -413,7 +413,7 @@ export class CreateScreenComponent implements OnInit {
 					this.is_dealer_present = { id: data.dealerId, name: data.businessName };
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -477,7 +477,7 @@ export class CreateScreenComponent implements OnInit {
 						this.loading_data_host = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		} else {
@@ -517,7 +517,7 @@ export class CreateScreenComponent implements OnInit {
 						this.loading_search_host = false;
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		}
@@ -535,7 +535,7 @@ export class CreateScreenComponent implements OnInit {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -555,7 +555,7 @@ export class CreateScreenComponent implements OnInit {
 					this.licenses = [...licenses];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -587,7 +587,7 @@ export class CreateScreenComponent implements OnInit {
 			.subscribe(
 				(data) => (this.screen_types = data),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

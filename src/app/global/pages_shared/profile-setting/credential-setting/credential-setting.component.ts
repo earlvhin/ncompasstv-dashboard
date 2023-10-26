@@ -12,6 +12,8 @@ import { API_UPDATE_USER_INFO } from '../../../models/api_update-user-info.model
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
 import { HttpErrorResponse } from '@angular/common/http';
 import { UserService } from '../../../services/user-service/user.service';
+import { ACTIVITY_LOGS } from 'src/app/global/models';
+import { DealerService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-credential-setting',
@@ -22,6 +24,7 @@ export class CredentialSettingComponent implements OnInit {
 	change_password: FormGroup;
 	change_password_form_disabled: boolean = true;
 	current_password_validation_message: string;
+	dealer_id = this._auth.current_user_value.roleInfo.dealerId;
 	is_dealer: boolean = false;
 	is_password_field_type = true;
 	is_new_password_field_type = true;
@@ -43,7 +46,8 @@ export class CredentialSettingComponent implements OnInit {
 		private _user: UserService,
 		private _params: ActivatedRoute,
 		private _form: FormBuilder,
-		private _dialog: MatDialog
+		private _dialog: MatDialog,
+		private _dealer: DealerService
 	) {}
 
 	ngOnInit() {
@@ -87,7 +91,7 @@ export class CredentialSettingComponent implements OnInit {
 					this.readyChangePassword();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -105,6 +109,7 @@ export class CredentialSettingComponent implements OnInit {
 	}
 
 	changeUserPassword() {
+		const changePassword = new ACTIVITY_LOGS(this.dealer_id, 'change_password', this._auth.current_user_value.user_id);
 		this.change_password_form_disabled = true;
 
 		const body = {
@@ -118,7 +123,10 @@ export class CredentialSettingComponent implements OnInit {
 			.update_user(body)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => this.openConfirmationModal('success', 'Success!', 'Password changed succesfully'),
+				() => {
+					this.openConfirmationModal('success', 'Success!', 'Password changed succesfully');
+					this.createActivity(changePassword);
+				},
 				(error: HttpErrorResponse) => {
 					this.change_password_form_disabled = false;
 
@@ -126,6 +134,20 @@ export class CredentialSettingComponent implements OnInit {
 						this.current_password_validation_message = 'Old password does not match';
 						this.password_old_not_match = true;
 					}
+				}
+			);
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.error(error);
 				}
 			);
 	}
@@ -143,7 +165,7 @@ export class CredentialSettingComponent implements OnInit {
 			.subscribe(
 				() => this.openConfirmationModal('success', 'Success', 'Updated email notification settings'),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

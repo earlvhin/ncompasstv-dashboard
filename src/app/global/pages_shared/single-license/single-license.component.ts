@@ -273,7 +273,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.showSuccessModal('Success!', 'Settings updated');
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => (this.saving_license_settings = false));
@@ -312,7 +312,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.getScreenshots();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -328,7 +328,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					alert(`Screenshot ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -344,7 +344,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					alert(`Speedtest ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -360,7 +360,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					alert(`Resource Log Sending ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -428,7 +428,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 						this._router.navigate([`/${this.roleRoute}/licenses`]);
 					},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		});
@@ -520,7 +520,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.getLicenseTags();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -581,7 +581,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.showSuccessModal('Success!', `${this._titleCasePipe.transform(type)} setting updated`);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -688,7 +688,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					alert(`TV Display ${event.checked ? 'ON' : 'OFF'} for this license`);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -705,7 +705,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.activateEdit(false);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -773,7 +773,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				(error) => {
 					this.fastEdgeSettingsSaving = false;
 					alert(`Failed saving DCP Tool changes, ${error.error}`);
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1320,7 +1320,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.activities = response.paging.entities as API_ACTIVITY[];
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1370,7 +1370,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.screen_loading = false;
 					this.no_screen_assigned = true;
 					this.hasLoadedScreenData = true;
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1387,7 +1387,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					if (!response || !response.files || response.files.length <= 0) return;
 
 					response.files.forEach((data) => {
-						if (count <= response.files.length) this.screenshots.push(`${environment.base_uri}${data.replace('/API/', '')}`);
+						if (count <= response.files.length) this.screenshots.push(data);
 						count++;
 					});
 
@@ -1396,7 +1396,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					}, 2000);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1441,7 +1441,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					}
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1594,7 +1594,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => this.getLicenseActivity(),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -1924,7 +1924,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				.subscribe(
 					() => {},
 					(error) => {
-						throw new Error(error);
+						console.error(error);
 					}
 				);
 		});
@@ -1994,7 +1994,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				this.has_unsaved_additional_settings = bootDelayChanged || rebootTimeChanged;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -2038,7 +2038,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 				else this.background_zone_selected = false;
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}
@@ -2074,7 +2074,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.license_data = newLicenseReference;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -2086,7 +2086,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => {},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

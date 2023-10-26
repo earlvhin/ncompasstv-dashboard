@@ -6,8 +6,8 @@ import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../components_shared/page_components/confirmation-modal/confirmation-modal.component';
-import { API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from '../../../models';
-import { DealerService } from '../../../services';
+import { ACTIVITY_LOGS, API_CREDIT_CARD_DETAILS, UI_CREDIT_CARD_DETAILS, UI_CURRENT_USER } from '../../../models';
+import { AuthService, DealerService } from '../../../services';
 import { BillingService } from '../../../services/billing-service/billing-service';
 import { AddCardComponent } from '../../../pages_shared/profile-setting/payment-setting/add-card/add-card.component';
 import { ViewCardsComponent } from '../../../pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
@@ -36,7 +36,13 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	addressFormFields = ['AddressLine1', 'AddressLine2', 'AddressCity', 'AddressState', 'AddressZip'];
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _billing: BillingService, private _dealer: DealerService, private _dialog: MatDialog, private _formBuilder: FormBuilder) {}
+	constructor(
+		private _auth: AuthService,
+		private _billing: BillingService,
+		private _dealer: DealerService,
+		private _dialog: MatDialog,
+		private _formBuilder: FormBuilder
+	) {}
 
 	ngOnInit() {
 		this.loadingDetails = true;
@@ -73,6 +79,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	}
 
 	updateBillingDetails() {
+		const updateBillingAddress = new ACTIVITY_LOGS(this.dealerId, 'update_billing_address', this._auth.current_user_value.user_id);
 		var billing = {
 			DealerId: this.dealerId,
 			AddressLine1: this.paymentSettingForm.get('AddressLine1').value,
@@ -88,6 +95,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 			.subscribe((response) => {
 				if (response) {
 					this.openConfirmationModal('success', 'Success!', 'Billing Address successfully saved.');
+					this.createActivity(updateBillingAddress);
 				}
 			});
 	}
@@ -107,6 +115,8 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	}
 
 	warningModal(status: string, message: string, data: string, return_msg: string, action: string, id: any): void {
+		const deleteCardActivity = new ACTIVITY_LOGS(this.dealerId, 'delete_card', this._auth.current_user_value.user_id);
+
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -126,6 +136,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 						.subscribe(
 							(response) => {
 								this.openConfirmationModal('success', 'Success!', 'Credit card successfully deleted.');
+								this.createActivity(deleteCardActivity);
 							},
 							(error: HttpErrorResponse) => {
 								if (error.status === 400) {
@@ -141,6 +152,8 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 	}
 
 	updateCard() {
+		const updateCardActivity = new ACTIVITY_LOGS(this.dealerId, 'update_card', this._auth.current_user_value.user_id);
+
 		var card_to_update = {
 			cardId: this.cardSelected[0].id,
 			dealerId: this.dealerId,
@@ -155,6 +168,7 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 			.subscribe(
 				(response) => {
 					this.openConfirmationModal('success', 'Success!', 'Credit card details successfully updated.');
+					this.createActivity(updateCardActivity);
 				},
 				(error: HttpErrorResponse) => {
 					if (error.status === 400) {
@@ -182,6 +196,20 @@ export class PaymentSettingComponent implements OnInit, OnDestroy {
 		} else {
 			this.cardForm.disable();
 		}
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.error(error);
+				}
+			);
 	}
 
 	private fillOutDealerAddressForm(): void {

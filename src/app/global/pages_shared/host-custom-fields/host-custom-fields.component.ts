@@ -29,7 +29,9 @@ export class HostCustomFieldsComponent implements OnInit {
 
 		this._host.create_field_group(fieldgroup).subscribe(
 			(data) => {},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 
@@ -49,7 +51,9 @@ export class HostCustomFieldsComponent implements OnInit {
 					this.custom_host_fields.push(new Fields(i.fieldName, i.fieldType, i.fieldLength));
 				});
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 
@@ -58,7 +62,9 @@ export class HostCustomFieldsComponent implements OnInit {
 			(data) => {
 				this.custom_fields = data.paging.entities;
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
 	}
 

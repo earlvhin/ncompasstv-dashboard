@@ -1,7 +1,9 @@
-import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, Inject } from '@angular/core';
 import { Subject } from 'rxjs';
 import { map, takeUntil } from 'rxjs/operators';
-import { HostService } from 'src/app/global/services';
+import { HostService, DealerService } from 'src/app/global/services';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material';
+import { ConfirmationModalComponent } from '../confirmation-modal/confirmation-modal.component';
 
 @Component({
 	selector: 'app-image-selection-modal',
@@ -17,12 +19,29 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	selectedImageIndex: number;
 	selectedImageUrl: string;
 
+	dealerId: string;
+	fromDealer: boolean = false;
+	imagesArray: any = [];
+
 	protected _unsubscribe = new Subject<void>();
 
-	constructor(private _host: HostService) {}
+	constructor(
+		@Inject(MAT_DIALOG_DATA)
+		public _dialog_data: any,
+		private _host: HostService,
+		private _dealer: DealerService,
+		public dialogRef: MatDialogRef<ImageSelectionModalComponent>
+	) {}
 
 	ngOnInit() {
-		this.getHostPlaceImages();
+		if (this._dialog_data) {
+			this.fromDealer = this._dialog_data.fromDealer;
+			this.imagesArray = this._dialog_data.imagesArray;
+			this.dealerId = this._dialog_data.dealerId;
+
+			this.images = this.imagesArray;
+			if (this.imagesArray.length == 0) this.hasNoData = true;
+		} else this.getHostPlaceImages();
 	}
 
 	ngOnDestroy() {
@@ -41,7 +60,16 @@ export class ImageSelectionModalComponent implements OnInit, OnDestroy {
 	}
 
 	returnSelectedImageData() {
-		return { images: this.images, logo: this.selectedImageUrl };
+		if (this.fromDealer) {
+			let dealer_info = {
+				dealerid: this.dealerId,
+				logo: this.selectedImageUrl
+			};
+
+			this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
+				this.dialogRef.close('success');
+			});
+		} else this.dialogRef.close({ images: this.images, logo: this.selectedImageUrl });
 	}
 
 	private getHostPlaceImages(): void {

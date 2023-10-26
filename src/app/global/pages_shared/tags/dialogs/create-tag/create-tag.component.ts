@@ -75,7 +75,7 @@ export class CreateTagComponent implements OnInit, OnDestroy {
 			.subscribe(
 				() => this.showSuccessModal(),
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

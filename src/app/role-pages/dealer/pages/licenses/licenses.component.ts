@@ -67,6 +67,14 @@ export class LicensesComponent implements OnInit {
 	no_licenses: boolean;
 	paging_data_favorites: any;
 
+	// for graph
+	temp_label: any = [];
+	temp_array: any = [];
+	temp_label_this_week: any = [];
+	temp_array_this_week: any = [];
+	temp_label_last_week: any = [];
+	temp_array_last_week: any = [];
+
 	license_table_columns = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: 'Screenshot', sortable: false, no_export: true },
@@ -269,13 +277,62 @@ export class LicensesComponent implements OnInit {
 						third_value: data.totalDisabled,
 						third_value_label: 'Inactive',
 
+						ad_value: data.totalAd,
+						ad_value_label: 'Ad',
+						menu_value: data.totalMenu,
+						menu_value_label: 'Menu',
+						closed_value: data.totalClosed,
+						closed_value_label: 'Closed',
+						unassigned_value: data.totalUnassignedScreenCount,
+						unassigned_value_label: 'Unassigned',
 						new_this_week_value: data.newLicensesThisWeek,
-						new_this_week_label: 'License(s)',
-						new_this_week_description: 'New this week',
+						new_this_week_value_label: 'License(s)',
+						new_this_week_value_description: 'New this week',
 						new_last_week_value: data.newLicensesLastWeek,
-						new_last_week_label: 'License(s)',
-						new_last_week_description: 'New last week'
+						new_last_week_value_label: 'License(s)',
+						new_last_week_value_description: 'New last week',
+						this_week_ad_value: data.thisWeekTotalAd,
+						this_week_menu_value: data.thisWeekTotalMenu,
+						this_week_closed_value: data.thisWeekTotalClosed,
+						this_week_unassigned_value: data.thisWeekUnassignedCount,
+						last_week_ad_value: data.lastWeekTotalAd,
+						last_week_menu_value: data.lastWeekTotalMenu,
+						last_week_closed_value: data.lastWeekTotalClosed,
+						last_week_unassigned_value: data.lastWeekUnassignedCount
 					};
+
+					if (this.licenses_count) {
+						this.temp_label.push(this.licenses_count.ad_value_label + ': ' + this.licenses_count.ad_value);
+						this.temp_label.push(this.licenses_count.menu_value_label + ': ' + this.licenses_count.menu_value);
+						this.temp_label.push(this.licenses_count.unassigned_value_label + ': ' + this.licenses_count.unassigned_value);
+						this.temp_label.push(this.licenses_count.closed_value_label + ': ' + this.licenses_count.closed_value);
+						this.temp_array.push(this.licenses_count.ad_value);
+						this.temp_array.push(this.licenses_count.menu_value);
+						this.temp_array.push(this.licenses_count.unassigned_value);
+						this.temp_array.push(this.licenses_count.closed_value);
+
+						this.temp_label_this_week.push(this.licenses_count.ad_value_label + ': ' + this.licenses_count.this_week_ad_value);
+						this.temp_label_this_week.push(this.licenses_count.menu_value_label + ': ' + this.licenses_count.this_week_menu_value);
+						this.temp_label_this_week.push(this.licenses_count.closed_value_label + ': ' + this.licenses_count.this_week_closed_value);
+						this.temp_label_this_week.push(
+							this.licenses_count.unassigned_value_label + ': ' + this.licenses_count.this_week_unassigned_value
+						);
+						this.temp_array_this_week.push(this.licenses_count.this_week_ad_value);
+						this.temp_array_this_week.push(this.licenses_count.this_week_menu_value);
+						this.temp_array_this_week.push(this.licenses_count.this_week_closed_value);
+						this.temp_array_this_week.push(this.licenses_count.this_week_unassigned_value);
+
+						this.temp_label_last_week.push(this.licenses_count.ad_value_label + ': ' + this.licenses_count.last_week_ad_value);
+						this.temp_label_last_week.push(this.licenses_count.menu_value_label + ': ' + this.licenses_count.last_week_menu_value);
+						this.temp_label_last_week.push(this.licenses_count.closed_value_label + ': ' + this.licenses_count.last_week_closed_value);
+						this.temp_label_last_week.push(
+							this.licenses_count.unassigned_value_label + ': ' + this.licenses_count.last_week_unassigned_value
+						);
+						this.temp_array_last_week.push(this.licenses_count.last_week_ad_value);
+						this.temp_array_last_week.push(this.licenses_count.last_week_menu_value);
+						this.temp_array_last_week.push(this.licenses_count.last_week_closed_value);
+						this.temp_array_last_week.push(this.licenses_count.last_week_unassigned_value);
+					}
 
 					this.licenses_status = {
 						basis_label: 'License(s)',
@@ -286,7 +343,7 @@ export class LicensesComponent implements OnInit {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -361,7 +418,7 @@ export class LicensesComponent implements OnInit {
 					this.searching_license = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			)
 			.add(() => {
@@ -688,8 +745,8 @@ export class LicensesComponent implements OnInit {
 				{ value: i.hostId ? i.hostId : '--', link: null, editable: false, hidden: true },
 				{ value: count++, link: null, editable: false, hidden: false },
 				{
-					value: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
-					link: i.screenshotUrl ? `${environment.base_uri}${i.screenshotUrl.replace('/API/', '')}` : null,
+					value: i.screenshotUrl ? i.screenshotUrl : null,
+					link: i.screenshotUrl ? i.screenshotUrl : null,
 					editable: false,
 					hidden: false,
 					isImage: true,

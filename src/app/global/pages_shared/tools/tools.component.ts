@@ -124,11 +124,11 @@ export class ToolsComponent implements OnInit {
 					this._socket.emit('D_run_script_to_all', this.terminal_value);
 				} else if (result == 'renew_socket') {
 					this._tool.resetSocketConnection().subscribe((data) => (error) => {
-						throw new Error(error);
+						console.error(error);
 					});
 				} else if (result == 'delete_screenshots') {
 					this._tool.deleteScreenshots().subscribe((data) => (error) => {
-						throw new Error(error);
+						console.error(error);
 					});
 				}
 

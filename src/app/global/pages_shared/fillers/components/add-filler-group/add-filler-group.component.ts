@@ -66,7 +66,9 @@ export class AddFillerGroupComponent implements OnInit {
 							'Do you want to proceed with uploading the Filler Group Album Photo?'
 					);
 				},
-				(error) => {}
+				(error) => {
+					console.error(error);
+				}
 			);
 	}
 

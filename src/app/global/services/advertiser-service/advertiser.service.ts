@@ -10,9 +10,21 @@ import { API_ADVERTISER, API_FILTERS, PAGING, TAG } from 'src/app/global/models'
 export class AdvertiserService extends BaseService {
 	token = JSON.parse(localStorage.getItem('tokens'));
 
+	create_advertiser_activity_logs(data) {
+		const url = `${this.creators.new_advertiser_activity_logs}`;
+		return this.postRequest(url, data);
+	}
+
 	get_advertisers(filters: API_FILTERS): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
 		const base = `${this.getters.api_get_advertisers}`;
 		const params = this.setUrlParams(filters, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
+	}
+
+	get_advertiser_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
+		const base = `${this.getters.api_get_advertisers_activity}`;
+		const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
 		const url = `${base}${params}`;
 		return this.getRequest(url);
 	}

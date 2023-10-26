@@ -120,7 +120,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 					this.loading_advertiser_report_chart = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -140,7 +140,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 					this.latest_hosts = this.hosts_mapToUI(hosts).slice(0, 5);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -185,7 +185,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 					this.loading_host_report_chart = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -229,7 +229,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 					this.loading_license_report_chart = false;
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -250,7 +250,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 					};
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 
@@ -265,7 +265,7 @@ export class DashboardComponent implements OnInit, OnDestroy {
 					this.generateChart(response.totalLan, response.totalWifi);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}

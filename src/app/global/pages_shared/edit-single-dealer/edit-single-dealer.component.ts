@@ -104,7 +104,6 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 
 	onReassignDealer(): void {
 		const editDialog = this._dialogReference;
-		const reassignActivityLog = new ACTIVITY_LOGS(this.dealer.dealerId, 'reassign_dealer', this._auth.current_user_value.user_id);
 		const width = '350px';
 		const height = '400px';
 
@@ -119,19 +118,17 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 				data: { dealer_id: this.edit_dealer_form.get('dealer_id').value }
 			})
 		);
-
-		this.createActivity(reassignActivityLog);
 	}
 
 	onSelectStartDate(e, hasValue?) {
 		if (hasValue) {
-			let value: any = moment(e, 'YYYY-MM-DD').toDate();
+			let value: any = moment(e).format('YYYY-MM-DD');
 			if (!e || e.trim().length <= 0 || e.includes('--')) value = moment();
 			this.start_date = value;
 			this.edit_dealer_form.get('start_date').setValidators(null);
 			this.edit_dealer_form.get('start_date').updateValueAndValidity();
 		} else {
-			this.start_date = e.format('YYYY-MM-DD');
+			this.start_date = moment(e).format('YYYY-MM-DD');
 		}
 	}
 
@@ -166,28 +163,17 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 					};
 
 					await this._confirmationDialog.success(dialogData).toPromise();
+					await this.createActivity(newDealerActivityLog).toPromise();
 					this._dialogReference.close(true);
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
-
-		this.createActivity(newDealerActivityLog);
 	}
 
 	createActivity(activity) {
-		this._dealer
-			.create_dealer_activity_logs(activity)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					return data;
-				},
-				(error) => {
-					console.log(error);
-				}
-			);
+		return this._dealer.create_dealer_activity_logs(activity).pipe(takeUntil(this._unsubscribe));
 	}
 
 	togglePasswordFieldType(): void {
@@ -290,7 +276,7 @@ export class EditSingleDealerComponent implements OnInit, OnDestroy {
 				}
 			},
 			(error) => {
-				throw new Error(error);
+				console.error(error);
 			}
 		);
 	}

@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
 
 import { ConfirmationModalComponent } from '../../../../global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
 
-import { API_UPDATE_DEALER_PROFILE, API_USER_DATA, DEALER_PROFILE, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
+import { ACTIVITY_LOGS, API_UPDATE_DEALER_PROFILE, API_USER_DATA, DEALER_PROFILE, UI_ROLE_DEFINITION_TEXT } from 'src/app/global/models';
 import { AuthService, DealerService, UserService } from 'src/app/global/services';
 
 @Component({
@@ -154,7 +154,7 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 					this.readyUpdateForm();
 				},
 				(error) => {
-					throw new Error(error);
+					console.error(error);
 				}
 			);
 	}
@@ -238,13 +238,32 @@ export class DealerSettingComponent implements OnInit, OnDestroy {
 	}
 
 	updateDealer() {
+		const modifyDealer = new ACTIVITY_LOGS(this.user_data.dealerId, 'modify_dealer_profile', this._auth.current_user_value.user_id);
+
 		this._dealer.update_dealer(this.mapDealerInfoChanges()).subscribe(
 			(data) => {
 				this.openConfirmationModal('success', 'Success!', 'Dealer info changed succesfully');
 				this.ngOnInit();
+				this.createActivity(modifyDealer);
 			},
-			(error) => {}
+			(error) => {
+				console.error(error);
+			}
 		);
+	}
+
+	createActivity(activity) {
+		this._dealer
+			.create_dealer_activity_logs(activity)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(data) => {
+					return data;
+				},
+				(error) => {
+					console.error(error);
+				}
+			);
 	}
 
 	openConfirmationModal(status, message, data): void {
