@@ -18,6 +18,7 @@ export class ConfirmationModalComponent implements OnInit {
 	is_selection?: boolean;
 	is_installation?: boolean;
 	filler_photo?: boolean;
+	picture_upload?: boolean = false;
 
 	constructor(@Inject(MAT_DIALOG_DATA) public dialogData: UI_CONFIRMATION_MODAL, public dialogRef: MatDialogRef<ConfirmationModalComponent>) {}
 
@@ -32,6 +33,7 @@ export class ConfirmationModalComponent implements OnInit {
 		this.is_installation = typeof this.dialogData.is_installation !== 'undefined' ? this.dialogData.is_installation : false;
 		this.filler_photo = typeof this.dialogData.filler_photo !== 'undefined' ? this.dialogData.filler_photo : false;
 		this.delete = this.dialogData.delete;
+		this.picture_upload = typeof this.dialogData.picture_upload !== 'undefined' ? this.dialogData.picture_upload : false;
 	}
 
 	displaySuccess() {
@@ -45,10 +47,11 @@ export class ConfirmationModalComponent implements OnInit {
 	}
 
 	renameAllowed() {
-		if (this.filler_photo) {
+		if (this.filler_photo || this.picture_upload) {
 			this.dialogRef.close('no_upload');
 			return;
 		}
+
 		this.dialogRef.close('rename');
 	}
 

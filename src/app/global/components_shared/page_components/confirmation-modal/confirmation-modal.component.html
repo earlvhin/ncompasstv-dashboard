@@ -50,7 +50,7 @@
 			</button>
 			<button mat-button mat-raised-button class="theme-btn" (click)="deleteContent()" *ngIf="delete">Continue</button>
 			<button mat-button mat-raised-button class="theme-btn mr-2" (click)="renameAllowed()" *ngIf="rename && !is_selection">
-				{{ filler_photo ? 'No' : 'Rename' }}
+				{{ filler_photo ? 'No' : picture_upload ? 'Use Default Photo' : 'Rename' }}
 			</button>
 			<button mat-button mat-raised-button class="theme-btn" (click)="continueUpload()" *ngIf="rename && !is_selection">Continue Upload</button>
 		</div>
