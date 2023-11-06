@@ -977,6 +977,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					const { license } = response as API_SINGLE_LICENSE_PAGE;
 					this.license_data = license;
 					this.display_status = license.displayStatus;
+
+					// remove after play server 2.8.6 has been released
+					if (this.apps.server === '2.8.51') {
+						this.display_status = 1;
+						this.cec_status = true;
+					}
 				},
 				(e) => {
 					throw new Error(e);
@@ -1668,6 +1674,12 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			else if (this.license_data.internetType.charAt(0) === 'w') this.license_data.internetType = 'Wi-fi';
 			else this.license_data.internetType == this.license_data.internetType;
 		}
+
+		// remove after play server 2.8.6 has been released
+		if (this.apps.server === '2.8.51') {
+			this.display_status = 1;
+			this.cec_status = true;
+		}
 	}
 
 	private setNotes(data: string): string {
@@ -1849,7 +1861,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this._socket.on('SS_monitor_status_response', (data: { licenseId: string; monitorStatus: number; tvCecAvailability: boolean }) => {
 			if (this.license_id !== data.licenseId) return;
 
-			const displayStatus = data.monitorStatus;
+			let displayStatus = data.monitorStatus;
+
+			// remove after play server 2.8.6 has been released
+			if (this.apps.server === '2.8.51') displayStatus = 1;
+
 			this.display_status = displayStatus;
 			this.cec_status = data.tvCecAvailability;
 
