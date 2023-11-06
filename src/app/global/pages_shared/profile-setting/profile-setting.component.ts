@@ -315,33 +315,12 @@ export class ProfileSettingComponent implements OnInit {
 			);
 	}
 
-	tabSelected(event: { index: number }): void {
-		let tab = '';
-		switch (event.index) {
-			case 0:
-				this.tab_selected = 'Dealer';
-				break;
-			case 1:
-				this.tab_selected = 'Billing';
-				break;
-			case 2:
-				this.tab_selected = 'Security';
-				break;
-			case 3:
-				this.tab_selected = 'Payment';
-				break;
-			case 4:
-				this.tab_selected = 'Transactions';
-				break;
-			case 5:
-				this.tab_selected = 'Orders';
-			case 6:
-				this.tab_selected = 'Activity';
-				this.getDealerActivity(1);
-				break;
-			default:
-		}
-	}
+	tabSelected(event: { index: number }) {
+		this.getDealerActivity(1);
+
+		return event;
+
+	} 
 
 	goToUrl(): void {
 		if (this.is_prod) {

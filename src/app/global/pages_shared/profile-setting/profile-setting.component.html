@@ -76,7 +76,7 @@
 					<div class="col-lg-12 p-0">
 						<div class="theme-container">
 							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Dealer'">
+								<div class="col-lg-12" >
 									<app-dealer-setting> </app-dealer-setting>
 								</div>
 							</div>
@@ -98,7 +98,7 @@
 					<div class="col-lg-12 p-0">
 						<div class="theme-container">
 							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Billing'">
+								<div class="col-lg-12" >
 									<app-single-billings> </app-single-billings>
 								</div>
 							</div>
@@ -120,7 +120,7 @@
 					<div class="col-lg-12 p-0">
 						<div class="theme-container">
 							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Payment'">
+								<div class="col-lg-12" >
 									<app-payment-setting
 										[dealerId]="dealer_id"
 										[dealerEmail]="dealer_email"
@@ -134,7 +134,7 @@
 					<div class="col-lg-12 p-0">
 						<div class="theme-container">
 							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Transactions'">
+								<div class="col-lg-12" >
 									<app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>									
 								</div>
 							</div>
