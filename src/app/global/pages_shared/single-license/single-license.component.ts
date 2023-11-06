@@ -1801,6 +1801,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.pi_status = false;
 			this.player_status = false;
 			this.display_status = 0;
+			this.cec_status = false;
 			this.license_data.isCecEnabled = 0;
 		});
 	}
