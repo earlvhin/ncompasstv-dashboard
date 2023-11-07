@@ -7,6 +7,7 @@
 		"dev": "ng serve -c development",
 		"staging": "ng serve -c staging",
 		"prod": "ng serve -c production",
+		"local": "ng serve -c local",
 		"debug:prod": "ng serve -c debug-production",
 		"start:secure": "ng serve --ssl true --ssl-key ./cert.key --ssl-cert ./cert.crt",
 		"build": "node --max_old_space_size=8192 node_modules/@angular/cli/bin/ng build --aot --output-hashing=all",
