@@ -979,7 +979,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 					this.display_status = license.displayStatus;
 
 					// remove after play server 2.8.6 has been released
-					if (this.apps.server === '2.8.51') {
+					if (this.apps && this.apps.server === '2.8.51') {
 						this.display_status = 1;
 						this.cec_status = true;
 					}
@@ -1676,7 +1676,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		}
 
 		// remove after play server 2.8.6 has been released
-		if (this.apps.server === '2.8.51') {
+		if (this.apps && this.apps.server === '2.8.51') {
 			this.display_status = 1;
 			this.cec_status = true;
 		}
@@ -1865,7 +1865,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			let displayStatus = data.monitorStatus;
 
 			// remove after play server 2.8.6 has been released
-			if (this.apps.server === '2.8.51') displayStatus = 1;
+			if (this.apps && this.apps.server === '2.8.51') displayStatus = 1;
 
 			this.display_status = displayStatus;
 			this.cec_status = data.tvCecAvailability;
