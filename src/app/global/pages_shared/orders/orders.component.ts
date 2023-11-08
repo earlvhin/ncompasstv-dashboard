@@ -29,10 +29,10 @@ export class OrdersComponent implements OnInit {
 	orders: any;
 	orders_paging: any;
 	orders_data: any;
-	
+
 	protected _unsubscribe = new Subject<void>();
 
-	filters = { 
+	filters = {
 		billing_date: '',
 		label_status: ''
 	};
@@ -47,11 +47,7 @@ export class OrdersComponent implements OnInit {
 		{ name: 'Status', sortable: false, key: 'status' }
 	];
 
-	constructor(
-		private _auth: AuthService, 
-		private _billing: BillingService, 
-		private _dialog: MatDialog
-	) {}
+	constructor(private _auth: AuthService, private _billing: BillingService, private _dialog: MatDialog) {}
 
 	ngOnInit() {
 		this.setDefaultStartDate();
@@ -67,14 +63,12 @@ export class OrdersComponent implements OnInit {
 	}
 
 	filterData(event: any): void {
-
 		let searchKey = '';
 
-		if (event) searchKey = event; 
+		if (event) searchKey = event;
 
 		this.search_data_orders = searchKey;
 		this.getOrders(1);
-
 	}
 
 	filterStatus(status: string) {
@@ -89,14 +83,14 @@ export class OrdersComponent implements OnInit {
 
 		let request = this._billing.get_billing_purchases(page, 15, this.search_data_orders, this.end_date, this.start_date, this.filtered_status);
 
-		if (this.dealerId) request = this._billing.get_billing_purchases_per_dealer(this.dealerId, page, 15, this.end_date, this.start_date, this.filtered_status);
+		if (this.dealerId)
+			request = this._billing.get_billing_purchases_per_dealer(this.dealerId, page, 15, this.end_date, this.start_date, this.filtered_status);
 
-		request.pipe(takeUntil(this._unsubscribe))
+		request
+			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				response => {
-
+				(response) => {
 					if (!response.message) {
-
 						this.orders_paging = response.paging;
 
 						if (response.paging.totalEntities > 0) {
@@ -104,23 +98,22 @@ export class OrdersComponent implements OnInit {
 							this.filtered_data_orders = this.orders;
 							this.orders_data = this.billing_mapToUIFormat(this.orders);
 						}
-
 					} else {
 						this.orders = [];
 						this.filtered_data_orders = [];
 					}
 
 					this.is_loading = true;
-
+				},
+				(error) => {
+					this.is_loading = true;
+					console.error(error);
 				}
 			)
-			.add(
-				() => {
-					this.initial_load_orders = false;
-					this.searching_orders = false;
-				}
-			);
-
+			.add(() => {
+				this.initial_load_orders = false;
+				this.searching_orders = false;
+			});
 	}
 
 	onSelectEndDate(date: moment.Moment) {
@@ -133,8 +126,7 @@ export class OrdersComponent implements OnInit {
 		this.getOrders(1);
 	}
 
-	shipOrder(event: { order_id: string, order_status: string }) {
-
+	shipOrder(event: { order_id: string; order_status: string }) {
 		const data_order = this.orders.filter((orders) => orders.orderNo === event.order_id);
 
 		const shipping_details = {
@@ -144,46 +136,49 @@ export class OrdersComponent implements OnInit {
 			status: event.order_status
 		};
 
-		this._billing.update_billing_order(shipping_details)
-			.subscribe(
-				(response) => {
+		this._billing.update_billing_order(shipping_details).subscribe((response) => {
+			if (!response) return;
 
-					if (!response) return;
-
-					this.openConfirmationModal('success', 'Success!', 'Order has been marked as ' + event.order_status);
-					
-				}
-			);
+			this.openConfirmationModal('success', 'Success!', 'Order has been marked as ' + event.order_status);
+		});
 	}
 
 	private billing_mapToUIFormat(data: API_ORDER[]): UI_DEALER_ORDERS[] {
-
 		let count = this.orders_paging.pageStart;
 
-		return data.map(
-			order => {
+		return data.map((order) => {
+			const is_new_order = order.hasViewed === 0;
 
-				const is_new_order = order.hasViewed === 0;
+			const table = new UI_DEALER_ORDERS(
+				{ value: count++, link: null, editable: false, hidden: false, is_new_order },
+				{ value: order.date, link: null, editable: false, hidden: false, is_new_order },
+				{ value: order.orderNo, link: null, editable: false, hidden: false, is_new_order },
+				{
+					value: order.dealerAlias,
+					link: `/administrator/dealers/${order.dealerId}`,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					is_new_order
+				},
+				{
+					value: order.businessName,
+					link: `/administrator/dealers/${order.dealerId}`,
+					new_tab_link: true,
+					editable: false,
+					hidden: false,
+					is_new_order
+				},
+				{ value: order.quantity, link: null, editable: false, hidden: false, is_new_order },
+				{ value: order.status, link: null, editable: false, hidden: false, is_new_order },
+				{ value: order.hasViewed, link: null, editable: false, hidden: true }
+			);
 
-				const table = new UI_DEALER_ORDERS(
-					{ value: count++, link: null, editable: false, hidden: false, is_new_order },
-					{ value: order.date, link: null, editable: false, hidden: false, is_new_order },
-					{ value: order.orderNo, link: null, editable: false, hidden: false, is_new_order },
-					{ value: order.dealerAlias, link: `/administrator/dealers/${order.dealerId}`, new_tab_link: true, editable: false, hidden: false, is_new_order },
-					{ value: order.businessName, link: `/administrator/dealers/${order.dealerId}`, new_tab_link: true, editable: false, hidden: false, is_new_order },
-					{ value: order.quantity, link: null, editable: false, hidden: false, is_new_order },
-					{ value: order.status, link: null, editable: false, hidden: false, is_new_order },
-					{ value: order.hasViewed, link: null, editable: false, hidden: true },
-				);
-
-				return table;
-			}
-		);
-
+			return table;
+		});
 	}
 
 	private openConfirmationModal(status: string, message: string, data: string): void {
-
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
@@ -194,13 +189,11 @@ export class OrdersComponent implements OnInit {
 	}
 
 	private setDefaultStartDate() {
-
 		const current_year = moment().format('YYYY');
 		const current_day = moment().format('MM-DD-YYYY');
 		this.start_date = moment(new Date(current_year)).format('MM-DD-YYYY');
 		this.end_date = current_day;
 		this.start = new Date(moment(new Date(current_year)).format('MM-DD-YYYY'));
 		this.end = new Date(current_day);
-
 	}
 }

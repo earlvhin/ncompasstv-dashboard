@@ -4,13 +4,15 @@ import { MatDialog } from '@angular/material';
 import { Router } from '@angular/router';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import * as filestack from 'filestack-js';
+import { environment } from 'src/environments/environment';
 
 import { AuthService } from '../../../../services/auth-service/auth.service';
 import { City, State } from '../../../../models/ui_city_state_region.model';
 import { ConfirmationModalComponent } from '../../../page_components/confirmation-modal/confirmation-modal.component';
 import { LocationService } from '../../../../services/data-service/location.service';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../../models/ui_role-definition.model';
-import { UserService } from 'src/app/global/services/user-service/user.service';
+import { UserService, DealerService } from 'src/app/global/services';
 
 @Component({
 	selector: 'app-new-dealer',
@@ -20,6 +22,7 @@ import { UserService } from 'src/app/global/services/user-service/user.service';
 export class NewDealerComponent implements OnInit, OnDestroy {
 	@Output() dealer_created = new EventEmitter();
 	city_state: City[] = [];
+	current_dealer_id: string;
 	form_description: string = 'Fill the form below to create a new Dealer.';
 	form_fields_view: any[];
 	form_invalid: boolean = true;
@@ -43,7 +46,8 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		private _form: FormBuilder,
 		private _location: LocationService,
 		private _router: Router,
-		private _user: UserService
+		private _user: UserService,
+		private _dealer: DealerService
 	) {}
 
 	ngOnInit() {
@@ -80,13 +84,14 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 			.create_new_user(this.f.roleid.value, this.new_dealer_form.getRawValue())
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				() => {
-					this.openConfirmationModal('success', 'Account creation successful!', 'Dealer account has been added to database.', true);
-					directive.resetForm();
-					this.is_submitted = false;
-					this.form_invalid = false;
-					this.new_dealer_form.reset();
-					this.ngOnInit();
+				(response) => {
+					this.current_dealer_id = response.dealerId;
+					this.openConfirmationModal(
+						'warning',
+						'Account creation successful!',
+						'Dealer account has been added to database. Do you want to use the default picture for this dealer or upload a new one?',
+						false
+					);
 				},
 				(error) => {
 					this.is_submitted = false;
@@ -117,14 +122,59 @@ export class NewDealerComponent implements OnInit, OnDestroy {
 		const dialog = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '350px',
-			data: { status, message, data }
-		});
-
-		dialog.afterClosed().subscribe(() => {
-			if (redirect) {
-				this._router.navigate([`/${this.roleRoute}/users/`]);
+			data: {
+				status: status,
+				message: message,
+				data: data,
+				picture_upload: true,
+				rename: true
 			}
 		});
+
+		dialog.afterClosed().subscribe((response) => {
+			if (redirect || response == 'no_upload') {
+				this.is_submitted = false;
+				this.form_invalid = false;
+				this.new_dealer_form.reset();
+				this.ngOnInit();
+				this._router.navigate([`/${this.roleRoute}/users/`]);
+			}
+			if (response == 'upload') this.uploadDealerPhoto();
+		});
+	}
+
+	uploadDealerPhoto() {
+		const client = filestack.init(environment.third_party.filestack_api_key);
+		client.picker(this.filestackOptions).open();
+	}
+
+	protected get filestackOptions(): filestack.PickerOptions {
+		let folder = 'dev';
+		if (environment.production) folder = 'prod';
+		else if (environment.base_uri.includes('stg')) folder = 'stg';
+		return {
+			storeTo: {
+				location: 's3',
+				container: 'nctv-images-' + folder + '/logo/dealers/' + this.current_dealer_id + '/',
+				region: 'us-east-1'
+			},
+			accept: ['image/jpg', 'image/jpeg', 'image/png'],
+			maxFiles: 1,
+			imageMax: [720, 640],
+			onUploadDone: (response) => {
+				let sliced_imagekey = response.filesUploaded[0].key.split('/');
+				sliced_imagekey = sliced_imagekey[sliced_imagekey.length - 1].split('_');
+				let logo = sliced_imagekey[0] + '_' + response.filesUploaded[0].filename;
+
+				let dealer_info = {
+					dealerid: this.current_dealer_id,
+					logo: logo
+				};
+				this._dealer.update_dealer_logo(dealer_info).subscribe(() => {
+					this.openConfirmationModal('success', 'Success!', 'Profile picture successfully updated.', true);
+				});
+			}
+		};
 	}
 
 	togglePasswordFieldType(): void {
