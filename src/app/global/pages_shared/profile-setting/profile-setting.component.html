@@ -1,190 +1,191 @@
 <div class="theme-container">
-	<div class="row">
-		<div class="offset-lg-8 col-lg-4 pt-5 mb-4 text-right" *ngIf="is_dealer">
-			<button
-				class="full-width p-0 f-500 md-text bg-primary text-white d-flex hidden-button"
-				(click)="goToUrl()"
-				[disabled]="no_dealer_values || no_credit_card">
-				<div class="col-lg-10 p-2">SHOP LICENSES NOW!</div>
-				<div class="col-lg-2 p-2 white-bg"><i class="text-dark fas fa-shopping-cart"></i></div>
-			</button>
-		</div>
-		<ng-container *ngIf="is_dealer">
-			<div class="col-lg-2">
-				<mat-card class="h-100 text-center pt-3" *ngIf="!loading_license; else spinner">
-					<a [routerLink]="['/dealer/licenses/']" target="_blank" class="text-primary">
-						<span class="font-weight-bold text-primary f-50">{{ license_details.basis }}</span>
-						<br />
-						<span class="md-text font-weight-bold text-dark">TOTAL LICENSES</span>
-					</a>
-				</mat-card>
-			</div>
-			<div class="col-lg-2">
-				<mat-card class="h-100 text-center pt-3" *ngIf="!loading_advertiser; else spinner">
-					<a [routerLink]="['/dealer/advertisers/']" target="_blank" class="text-primary">
-						<span class="font-weight-bold text-primary f-50">{{ advertiser_details.basis }}</span>
-						<br />
-						<span class="md-text font-weight-bold text-dark">TOTAL ADVERTISERS</span>
-					</a>
-				</mat-card>
-			</div>
-			<div class="col-lg-2">
-				<mat-card class="h-100 text-center pt-3" *ngIf="!loading_host; else spinner">
-					<a [routerLink]="['/dealer/hosts/']" target="_blank" class="text-primary">
-						<span class="font-weight-bold text-primary f-50">{{ host_details.basis }}</span>
-						<br />
-						<span class="md-text font-weight-bold text-dark">TOTAL HOSTS</span>
-					</a>
-				</mat-card>
-			</div>
-			<div class="col-lg-6">
-				<mat-card class="h-100 text-center pt-3" *ngIf="!loading_host; else spinner">
-					<div class="row">
-						<div class="col-lg-4">
-							<a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
-								<span class="font-weight-bold text-primary f-50">{{ content_details.images }}</span>
-								<span class="md-text font-weight-medium font-italic ml-2 text-dark">IMAGES</span>
-							</a>
-						</div>
-						<div class="col-lg-4">
-							<a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
-								<span class="font-weight-bold text-primary f-50">{{ content_details.videos }}</span>
-								<span class="md-text font-weight-medium font-italic ml-2 text-dark">VIDEOS</span>
-							</a>
-						</div>
-						<div class="col-lg-4">
-							<a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
-								<span class="font-weight-bold text-primary f-50">{{ content_details.videos }}</span>
-								<span class="md-text font-weight-medium font-italic ml-2 text-dark">FEEDS</span>
-							</a>
-						</div>
-					</div>
-					<span class="md-text font-weight-bold text-dark">MEDIA LIBRARY</span>
-				</mat-card>
-			</div>
-			<ng-template #spinner>
-				<mat-card class="py-5">
-					<app-spinner [diameter]="65"></app-spinner>
-				</mat-card>
-			</ng-template>
-		</ng-container>
+    <div class="row">
+        <div class="offset-lg-8 col-lg-4 pt-5 mb-4 text-right" *ngIf="is_dealer">
+            <button
+                class="full-width p-0 f-500 md-text bg-primary text-white d-flex hidden-button"
+                (click)="goToUrl()"
+                [disabled]="no_dealer_values || no_credit_card">
+                <div class="col-lg-10 p-2">SHOP LICENSES NOW!</div>
+                <div class="col-lg-2 p-2 white-bg"><i class="text-dark fas fa-shopping-cart"></i></div>
+            </button>
+        </div>
+        <ng-container *ngIf="is_dealer">
+            <div class="col-lg-2">
+                <mat-card class="h-100 text-center pt-3" *ngIf="!loading_license; else spinner">
+                    <a [routerLink]="['/dealer/licenses/']" target="_blank" class="text-primary">
+                        <span class="font-weight-bold text-primary f-50">{{ license_details.basis }}</span>
+                        <br />
+                        <span class="md-text font-weight-bold text-dark">TOTAL LICENSES</span>
+                    </a>
+                </mat-card>
+            </div>
+            <div class="col-lg-2">
+                <mat-card class="h-100 text-center pt-3" *ngIf="!loading_advertiser; else spinner">
+                    <a [routerLink]="['/dealer/advertisers/']" target="_blank" class="text-primary">
+                        <span class="font-weight-bold text-primary f-50">{{ advertiser_details.basis }}</span>
+                        <br />
+                        <span class="md-text font-weight-bold text-dark">TOTAL ADVERTISERS</span>
+                    </a>
+                </mat-card>
+            </div>
+            <div class="col-lg-2">
+                <mat-card class="h-100 text-center pt-3" *ngIf="!loading_host; else spinner">
+                    <a [routerLink]="['/dealer/hosts/']" target="_blank" class="text-primary">
+                        <span class="font-weight-bold text-primary f-50">{{ host_details.basis }}</span>
+                        <br />
+                        <span class="md-text font-weight-bold text-dark">TOTAL HOSTS</span>
+                    </a>
+                </mat-card>
+            </div>
+            <div class="col-lg-6">
+                <mat-card class="h-100 text-center pt-3" *ngIf="!loading_host; else spinner">
+                    <div class="row">
+                        <div class="col-lg-4">
+                            <a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
+                                <span class="font-weight-bold text-primary f-50">{{ content_details.images }}</span>
+                                <span class="md-text font-weight-medium font-italic ml-2 text-dark">IMAGES</span>
+                            </a>
+                        </div>
+                        <div class="col-lg-4">
+                            <a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
+                                <span class="font-weight-bold text-primary f-50">{{ content_details.videos }}</span>
+                                <span class="md-text font-weight-medium font-italic ml-2 text-dark">VIDEOS</span>
+                            </a>
+                        </div>
+                        <div class="col-lg-4">
+                            <a [routerLink]="['/dealer/media-library/']" target="_blank" class="text-primary">
+                                <span class="font-weight-bold text-primary f-50">{{ content_details.videos }}</span>
+                                <span class="md-text font-weight-medium font-italic ml-2 text-dark">FEEDS</span>
+                            </a>
+                        </div>
+                    </div>
+                    <span class="md-text font-weight-bold text-dark">MEDIA LIBRARY</span>
+                </mat-card>
+            </div>
+            <ng-template #spinner>
+                <mat-card class="py-5">
+                    <app-spinner [diameter]="65"></app-spinner>
+                </mat-card>
+            </ng-template>
+        </ng-container>
 
-		<!-- TABS -->
-		<div class="col-lg-12 min-height-500 custom-mat-tab mt-5">
-			<mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
-				<mat-tab label="Profile" *ngIf="is_dealer">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12" *ngIf="tab_selected === 'Dealer'">
-								<app-dealer-setting> </app-dealer-setting>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="User" *ngIf="!is_dealer">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12">
-								<app-user-setting> </app-user-setting>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Billing" *ngIf="is_dealer">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12" *ngIf="tab_selected === 'Billing'">
-								<app-single-billings> </app-single-billings>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Security">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12" *ngIf="tab_selected === 'Security'">
-								<app-credential-setting> </app-credential-setting>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Payment" *ngIf="is_dealer">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12" *ngIf="tab_selected === 'Payment'">
-								<app-payment-setting
-									[dealerId]="dealer_id"
-									[dealerEmail]="dealer_email"
-									[currentUser]="current_user"></app-payment-setting>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Transactions" *ngIf="is_dealer">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12" *ngIf="tab_selected === 'Transactions'">
-								<app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Orders" *ngIf="is_dealer">
-					<div class="col-lg-12 p-0">
-						<div class="row">
-							<div class="col-lg-12 mt-4">
-								<app-orders [dealerId]="dealer_id"> </app-orders>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Activity" *ngIf="is_dealer">
-					<div class="pt-4">
-						<div class="row">
-							<div class="col-lg-12 ml-2">
-								<h5>{{ created_by }}</h5>
-								<h6>{{ date_created | date : 'MMMM d, y' }}</h6>
-							</div>
-						</div>
+        <!-- TABS -->
+        <div class="col-lg-12 min-height-500 custom-mat-tab mt-5">
+            <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
+                <mat-tab label="Profile" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <app-dealer-setting> </app-dealer-setting>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="User" *ngIf="!is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <app-user-setting> </app-user-setting>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Billing" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <app-single-billings> </app-single-billings>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Security">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <app-credential-setting> </app-credential-setting>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Payment" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <app-payment-setting
+                                    [dealerId]="dealer_id"
+                                    [dealerEmail]="dealer_email"
+                                    [currentUser]="current_user"></app-payment-setting>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Transactions" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Orders" *ngIf="is_dealer">
+                    <div class="col-lg-12 p-0">
+                        <div class="row">
+                            <div class="col-lg-12 mt-4">
+                                <app-orders [dealerId]="dealer_id"> </app-orders>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Activity" *ngIf="is_dealer">
+                    <div class="pt-4">
+                        <div class="row">
+                            <div class="col-lg-12 ml-2">
+                                <h5>{{ created_by }}</h5>
+                                <h6>{{ date_created | date : 'MMMM d, y' }}</h6>
+                            </div>
+                        </div>
 
-						<div class="row">
-							<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
-								<app-single-activity-tab
-									*ngIf="activity_data.length; else loadingContents"
-									[activity_data]="activity_data"
-									[paging_data]="paging_data_activity"
-									[sort_column]="sort_column_activity"
-									[sort_order]="sort_order_activity"
-									[currentUser]="current_user"
-									[currentRole]="current_role"
-									[reload_data]="reload_data"
-									(pageChanged)="getDealerActivity($event)"
-									(sortColumnEvent)="getActivityColumnsAndOrder($event)">
-								</app-single-activity-tab>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-			</mat-tab-group>
-		</div>
-	</div>
+                        <div class="row">
+                            <div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
+                                <app-single-activity-tab
+                                    *ngIf="activity_data.length; else loadingContents"
+                                    [activity_data]="activity_data"
+                                    [paging_data]="paging_data_activity"
+                                    [sort_column]="sort_column_activity"
+                                    [sort_order]="sort_order_activity"
+                                    [currentUser]="current_user"
+                                    [currentRole]="current_role"
+                                    [reload_data]="reload_data"
+                                    (pageChanged)="getDealerActivity($event)"
+                                    (sortColumnEvent)="getActivityColumnsAndOrder($event)">
+                                </app-single-activity-tab>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
 </div>
 
 <ng-template #loadingContents>
-	<ng-container *ngIf="!no_activity_data; else noDataActivity">
-		<div class="loading-wrapper">
-			<app-spinner></app-spinner>
-		</div>
-	</ng-container>
+    <ng-container *ngIf="!no_activity_data; else noDataActivity">
+        <div class="loading-wrapper">
+            <app-spinner></app-spinner>
+        </div>
+    </ng-container>
 </ng-template>
 
 <ng-template #noDataActivity>
-	<mat-card>
-		<div class="no-contents d-flex flex-column align-items-center">
-			<div class="mb-4">
-				<i class="text-gray fa-5x far fa-file-alt"></i>
-			</div>
-			<h3 class="text-gray">No Activities Found</h3>
-		</div>
-	</mat-card>
+    <mat-card>
+        <div class="no-contents d-flex flex-column align-items-center">
+            <div class="mb-4">
+                <i class="text-gray fa-5x far fa-file-alt"></i>
+            </div>
+            <h3 class="text-gray">No Activities Found</h3>
+        </div>
+    </mat-card>
 </ng-template>
+
