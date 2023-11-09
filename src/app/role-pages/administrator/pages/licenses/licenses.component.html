@@ -1,6 +1,6 @@
 <div class="theme-container">
 	<div class="title-section">
-		<div class="d-flex">
+		<div class="d-flex align-items-center">
 			<div class="flex-even">
 				<h1 class="page-title">{{ title }}</h1>
 			</div>
@@ -19,7 +19,7 @@
 		<hr class="my-4" />
 	</div>
 
-	<div class="content-section">
+	<div>
 		<div class="row row-eq-height">
 			<div class="col-lg-6">
 				<mat-card class="h-100">
@@ -78,9 +78,11 @@
 			</div>
 		</div>
 
+		<hr class="my-4" />
+
 		<div class="row">
 			<div class="col-lg-12">
-				<div class="custom-mat-tab mt-5">
+				<div class="custom-mat-tab">
 					<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
 						<!-- LICENSES TAB -->
 						<mat-tab id="licenses-view-tab" label="Licenses View">
@@ -311,7 +313,7 @@
 									</div>
 								</div>
 								<div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
-									<div class="row flex p-0" *ngIf="!no_licenses; else no_data">
+									<div class="row no-gutters flex p-0" *ngIf="!no_licenses; else no_data">
 										<div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
 											<ng-container>
 												<div *ngIf="!initial_load_licenses; else loader">

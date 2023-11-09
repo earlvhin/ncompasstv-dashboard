@@ -74,110 +74,96 @@
 			<mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
 				<mat-tab label="Profile" *ngIf="is_dealer">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Dealer'">
-									<app-dealer-setting> </app-dealer-setting>
-								</div>
+						<div class="row">
+							<div class="col-lg-12" *ngIf="tab_selected === 'Dealer'">
+								<app-dealer-setting> </app-dealer-setting>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="User" *ngIf="!is_dealer">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12">
-									<app-user-setting> </app-user-setting>
-								</div>
+						<div class="row">
+							<div class="col-lg-12">
+								<app-user-setting> </app-user-setting>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="Billing" *ngIf="is_dealer">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Billing'">
-									<app-single-billings> </app-single-billings>
-								</div>
+						<div class="row">
+							<div class="col-lg-12" *ngIf="tab_selected === 'Billing'">
+								<app-single-billings> </app-single-billings>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="Security">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Security'">
-									<app-credential-setting> </app-credential-setting>
-								</div>
+						<div class="row">
+							<div class="col-lg-12" *ngIf="tab_selected === 'Security'">
+								<app-credential-setting> </app-credential-setting>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="Payment" *ngIf="is_dealer">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Payment'">
-									<app-payment-setting
-										[dealerId]="dealer_id"
-										[dealerEmail]="dealer_email"
-										[currentUser]="current_user"></app-payment-setting>
-								</div>
+						<div class="row">
+							<div class="col-lg-12" *ngIf="tab_selected === 'Payment'">
+								<app-payment-setting
+									[dealerId]="dealer_id"
+									[dealerEmail]="dealer_email"
+									[currentUser]="current_user"></app-payment-setting>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="Transactions" *ngIf="is_dealer">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12" *ngIf="tab_selected === 'Transactions'">
-									<app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>									
-								</div>
+						<div class="row">
+							<div class="col-lg-12" *ngIf="tab_selected === 'Transactions'">
+								<app-transaction-tab [dealerId]="dealer_id"></app-transaction-tab>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="Orders" *ngIf="is_dealer">
 					<div class="col-lg-12 p-0">
-						<div class="theme-container">
-							<div class="row">
-								<div class="col-lg-12 mt-4">
-									<app-orders [dealerId]="dealer_id"> </app-orders>
-								</div>
+						<div class="row">
+							<div class="col-lg-12 mt-4">
+								<app-orders [dealerId]="dealer_id"> </app-orders>
 							</div>
 						</div>
 					</div>
 				</mat-tab>
 				<mat-tab label="Activity" *ngIf="is_dealer">
-						<div class="theme-container pt-4">
-							<div class="row">
-								<div class="col-lg-12 ml-2">
-									<h5>{{ created_by }}</h5>
-									<h6>{{ date_created | date : 'MMMM d, y' }}</h6>
-								</div>
-							</div>
-
-							<div class="row">
-								<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
-									<app-single-activity-tab
-										*ngIf="activity_data.length; else loadingContents"
-										[activity_data]="activity_data"
-										[paging_data]="paging_data_activity"
-										[sort_column]="sort_column_activity"
-										[sort_order]="sort_order_activity"
-										[currentUser]="current_user"
-										[currentRole]="current_role"
-										[reload_data]="reload_data"
-										(pageChanged)="getDealerActivity($event)"
-										(sortColumnEvent)="getActivityColumnsAndOrder($event)">
-									</app-single-activity-tab>
-								</div>
+					<div class="pt-4">
+						<div class="row">
+							<div class="col-lg-12 ml-2">
+								<h5>{{ created_by }}</h5>
+								<h6>{{ date_created | date : 'MMMM d, y' }}</h6>
 							</div>
 						</div>
+
+						<div class="row">
+							<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
+								<app-single-activity-tab
+									*ngIf="activity_data.length; else loadingContents"
+									[activity_data]="activity_data"
+									[paging_data]="paging_data_activity"
+									[sort_column]="sort_column_activity"
+									[sort_order]="sort_order_activity"
+									[currentUser]="current_user"
+									[currentRole]="current_role"
+									[reload_data]="reload_data"
+									(pageChanged)="getDealerActivity($event)"
+									(sortColumnEvent)="getActivityColumnsAndOrder($event)">
+								</app-single-activity-tab>
+							</div>
+						</div>
+					</div>
 				</mat-tab>
 			</mat-tab-group>
 		</div>

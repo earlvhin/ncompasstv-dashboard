@@ -1,250 +1,285 @@
-<div class="theme-container mt-5">
-    <div class="row table-row" *ngIf="values_data">
-        <div class="mt-3 white-bg p-5 table-cell" [ngClass]="!_isDealer && !_isSubDealer ? 'col-lg-8': 'col-lg-12'">
-            <div class="offset-lg-11 col-lg-1 p-0 mb-5" *ngIf="_isDealer || _isSubDealer">
-                <!-- <button class="btn bg-dark text-center" (click)="ecommerce()">
+<div class="mt-5">
+	<div class="row table-row" *ngIf="values_data">
+		<div class="mt-3 white-bg p-5 table-cell" [ngClass]="!_isDealer && !_isSubDealer ? 'col-lg-8' : 'col-lg-12'">
+			<div class="offset-lg-11 col-lg-1 p-0 mb-5" *ngIf="_isDealer || _isSubDealer">
+				<!-- <button class="btn bg-dark text-center" (click)="ecommerce()">
                     <span class="fas fa-shopping-cart text-white mr-3"></span>
                     <span class="md-text text-white f-500">SHOP NOW</span>
                 </button> -->
-            </div>
+			</div>
 			<div class="billing-status">
 				<span class="fas fa-circle" [ngClass]="autoCharge === 1 ? 'text-primary' : 'text-danger'"></span>
 				{{ autoCharge === 1 ? 'Auto-charged' : 'Billed' }} every {{ billingDateText }} of the month
 			</div>
-            <div class="col-lg-12 flex mb-5">
-                <div class="col-lg-3 p-3 pb-5 pt-5 br-5 text-white bg-primary text-center bg-gray mr-3">
-                    <div>
-                        <span class="fas fa-barcode mr-2 f-25"></span>
-                        <span class="f-25">{{all_info_data.totalLicenses ? all_info_data.totalLicenses: 0}}</span>
-                        <br>
-                        <span class="md-text f-500">CURRENT LICENSES</span>
-                    </div>
-                </div>
-                <div class="col-lg-3 p-3 pb-5 pt-5 br-5 text-dark bg-gray text-center mr-3">
-                    <span class="fas fa-flag mr-2 f-25"></span>
-                    <span class="f-25">{{values_data.billableLicenses}}</span>
-                    <br>
-                    <span class="md-text f-500">BILLABLE LICENSES</span>
-                </div>
-                <div class="col-lg-5 p-3 pb-5 pt-5 br-5 text-dark text-center bg-gray mr-3">
-                    <div class="ribbon ribbon-top-right"><span>BILLING: ${{values_data.billing}}</span></div>
-                    <div class="col-lg-12 flex">
-                        <div class="col-lg-6">
-                            <span class="fas fa-dollar-sign mr-2 f-25"></span>
-                            <span class="f-25">{{values_data.baseFee}}</span>
-                            <br>
-                            <span class="md-text f-500">BASE FEE</span>
-                        </div>
-                        <div class="col-lg-6">
-                            <span class="fas fa-dollar-sign mr-2 f-25"></span>
-                            <span class="f-25">{{values_data.perLicense}}</span>
-                            <br>
-                            <span class="md-text f-500">PRICE PER LICENSE</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+			<div class="col-lg-12 flex mb-5">
+				<div class="col-lg-3 p-3 pb-5 pt-5 br-5 text-white bg-primary text-center bg-gray mr-3">
+					<div>
+						<span class="fas fa-barcode mr-2 f-25"></span>
+						<span class="f-25">{{ all_info_data.totalLicenses ? all_info_data.totalLicenses : 0 }}</span>
+						<br />
+						<span class="md-text f-500">CURRENT LICENSES</span>
+					</div>
+				</div>
+				<div class="col-lg-3 p-3 pb-5 pt-5 br-5 text-dark bg-gray text-center mr-3">
+					<span class="fas fa-flag mr-2 f-25"></span>
+					<span class="f-25">{{ values_data.billableLicenses }}</span>
+					<br />
+					<span class="md-text f-500">BILLABLE LICENSES</span>
+				</div>
+				<div class="col-lg-5 p-3 pb-5 pt-5 br-5 text-dark text-center bg-gray mr-3">
+					<div class="ribbon ribbon-top-right">
+						<span>BILLING: ${{ values_data.billing }}</span>
+					</div>
+					<div class="col-lg-12 flex">
+						<div class="col-lg-6">
+							<span class="fas fa-dollar-sign mr-2 f-25"></span>
+							<span class="f-25">{{ values_data.baseFee }}</span>
+							<br />
+							<span class="md-text f-500">BASE FEE</span>
+						</div>
+						<div class="col-lg-6">
+							<span class="fas fa-dollar-sign mr-2 f-25"></span>
+							<span class="f-25">{{ values_data.perLicense }}</span>
+							<br />
+							<span class="md-text f-500">PRICE PER LICENSE</span>
+						</div>
+					</div>
+				</div>
+			</div>
 
-            <div class="col-lg-12 mb-5 pl-0 pr-0">
-                <div class="col-lg-12">
-                    <span class="lg-text f-500">
-                        CONTRACT LICENSES:
-                    </span>
-                </div>
-                <div class="col-lg-12 flex p-0 pt-3">
-                    <div class="col-lg-2 pr-0">
-                        <span class="md-text f-500">
-                            1 Month: 
-                            <span class="text-primary">{{values_data.month1}}
-                                <span *ngIf="all_info_data.currentMonth === 'Month1'">
-                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
-                                        / +{{all_info_data.licensesDifference}} 
-                                    </span>
-                                    <ng-template #negative>
-                                        <span class="text-danger">
-                                            / {{all_info_data.licensesDifference}} 
-                                        </span>
-                                    </ng-template>
-                                </span>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="col-lg-2 pr-0">
-                        <span class="md-text f-500">
-                            19 Months: 
-                            <span class="text-primary">
-                                {{values_data.month19}}
-                                <span *ngIf="all_info_data.currentMonth === 'Month19'">
-                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
-                                        / +{{all_info_data.licensesDifference}} 
-                                    </span>
-                                    <ng-template #negative>
-                                        <span class="text-danger">
-                                            / {{all_info_data.licensesDifference}} 
-                                        </span>
-                                    </ng-template>
-                                </span>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="col-lg-2 pr-0">
-                        <span class="md-text f-500">
-                            25 Months: 
-                            <span class="text-primary">
-                                {{values_data.month25}}
-                                <span *ngIf="all_info_data.currentMonth === 'Month25'">
-                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
-                                        / +{{all_info_data.licensesDifference}} 
-                                    </span>
-                                    <ng-template #negative>
-                                        <span class="text-danger">
-                                            / {{all_info_data.licensesDifference}} 
-                                        </span>
-                                    </ng-template>
-                                </span>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="col-lg-2 pr-0">
-                        <span class="md-text f-500">
-                            31 Months: 
-                            <span class="text-primary">
-                                {{values_data.month31}}
-                                <span *ngIf="all_info_data.currentMonth === 'Month31'">
-                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
-                                        / +{{all_info_data.licensesDifference}} 
-                                    </span>
-                                    <ng-template #negative>
-                                        <span class="text-danger">
-                                            / {{all_info_data.licensesDifference}} 
-                                        </span>
-                                    </ng-template>
-                                </span>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="col-lg-2 pl-0">
-                        <span class="md-text f-500">
-                            37 Months: 
-                            <span class="text-primary">
-                                {{values_data.month37}}
-                                <span *ngIf="all_info_data.currentMonth === 'Month37'">
-                                    <span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
-                                        / +{{all_info_data.licensesDifference}} 
-                                    </span>
-                                    <ng-template #negative>
-                                        <span class="text-danger">
-                                            / {{all_info_data.licensesDifference}} 
-                                        </span>
-                                    </ng-template>
-                                </span>
-                            </span>
-                        </span>
-                    </div>
-                </div>
-            </div>
+			<div class="col-lg-12 mb-5 pl-0 pr-0">
+				<div class="col-lg-12">
+					<span class="lg-text f-500"> CONTRACT LICENSES: </span>
+				</div>
+				<div class="col-lg-12 flex p-0 pt-3">
+					<div class="col-lg-2 pr-0">
+						<span class="md-text f-500">
+							1 Month:
+							<span class="text-primary"
+								>{{ values_data.month1 }}
+								<span *ngIf="all_info_data.currentMonth === 'Month1'">
+									<span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+										/ +{{ all_info_data.licensesDifference }}
+									</span>
+									<ng-template #negative>
+										<span class="text-danger"> / {{ all_info_data.licensesDifference }} </span>
+									</ng-template>
+								</span>
+							</span>
+						</span>
+					</div>
+					<div class="col-lg-2 pr-0">
+						<span class="md-text f-500">
+							19 Months:
+							<span class="text-primary">
+								{{ values_data.month19 }}
+								<span *ngIf="all_info_data.currentMonth === 'Month19'">
+									<span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+										/ +{{ all_info_data.licensesDifference }}
+									</span>
+									<ng-template #negative>
+										<span class="text-danger"> / {{ all_info_data.licensesDifference }} </span>
+									</ng-template>
+								</span>
+							</span>
+						</span>
+					</div>
+					<div class="col-lg-2 pr-0">
+						<span class="md-text f-500">
+							25 Months:
+							<span class="text-primary">
+								{{ values_data.month25 }}
+								<span *ngIf="all_info_data.currentMonth === 'Month25'">
+									<span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+										/ +{{ all_info_data.licensesDifference }}
+									</span>
+									<ng-template #negative>
+										<span class="text-danger"> / {{ all_info_data.licensesDifference }} </span>
+									</ng-template>
+								</span>
+							</span>
+						</span>
+					</div>
+					<div class="col-lg-2 pr-0">
+						<span class="md-text f-500">
+							31 Months:
+							<span class="text-primary">
+								{{ values_data.month31 }}
+								<span *ngIf="all_info_data.currentMonth === 'Month31'">
+									<span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+										/ +{{ all_info_data.licensesDifference }}
+									</span>
+									<ng-template #negative>
+										<span class="text-danger"> / {{ all_info_data.licensesDifference }} </span>
+									</ng-template>
+								</span>
+							</span>
+						</span>
+					</div>
+					<div class="col-lg-2 pl-0">
+						<span class="md-text f-500">
+							37 Months:
+							<span class="text-primary">
+								{{ values_data.month37 }}
+								<span *ngIf="all_info_data.currentMonth === 'Month37'">
+									<span *ngIf="all_info_data.licensesDifference > 0; else negative" class="text-primary">
+										/ +{{ all_info_data.licensesDifference }}
+									</span>
+									<ng-template #negative>
+										<span class="text-danger"> / {{ all_info_data.licensesDifference }} </span>
+									</ng-template>
+								</span>
+							</span>
+						</span>
+					</div>
+				</div>
+			</div>
 
-            <div class="col-lg-12 mt-3 flex pl-0 pr-0" *ngIf="territory || contracts">
-                <div class="col-lg-4" *ngIf="territory.length > 0">
-                    <span class="lg-text f-500">
-                        TERITORIAL DETAILS:
-                    </span>
-                    <br>
-                    <ul class="col-lg-12 mt-2">
-                        <div *ngFor="let ter of territory; let i = index">
-                            <li class="md-text f-500 col-lg-12 p-0" *ngIf="i<3">
-                                <a href="{{ter.url}}" target="_blank" class="text-primary"> {{ter.newFilename}} </a>
-                                <span class="fas fa-times clickable text-danger ml-3" (click)="deleteFile('territory', ter)" *ngIf="!_isDealer && !_isSubDealer"></span>
-                            </li>
-                        </div>
-                    </ul>
-                </div>
-                <div class="col-lg-4" *ngIf="contracts.length > 0">
-                    <span class="lg-text f-500">
-                        CONTRACT DETAILS:
-                    </span>
-                    <br>
-                    <ul>
-                        <div *ngFor="let cont of contracts; let i = index">
-                            <li class="md-text f-500 col-lg-12 p-0" *ngIf="i<3">
-                                <a href="{{cont.url}}" target="_blank" class="text-primary"> {{cont.newFilename}} </a>
-                                <span class="fas fa-times clickable text-danger ml-3" (click)="deleteFile('contract', cont)" *ngIf="!_isDealer && !_isSubDealer"></span>
-                            </li>
-                        </div>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="col-lg-12 mt-3 flex pl-0 pr-0" *ngIf="!_isDealer && !_isSubDealer">
-                <div class="col-lg-4">
-                    <button class="full-width p-3 md-text text-gray" (click)="onUploadBtn('territory')" [disabled]="!dealer_start_date">
-                        <i class="fas fa-images mr-2"></i>
-                        <span>Add/Modify Territory Details</span>
-                    </button>
-                </div>
-                <div class="col-lg-4">
-                    <button class="full-width p-3 md-text text-gray" (click)="onUploadBtn('contract')" [disabled]="!dealer_start_date">
-                        <i class="fas fa-file mr-2"></i>
-                        <span>Add/Modify Contract Details</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-4 mt-3 text-white bg-dark-light table-cell" *ngIf="!_isDealer && !_isSubDealer">
-            <div class="col-lg-12 p-5">
-                <div class="col-lg-12 p-0 flex">
-                    <div class="col-lg-10 p-0">
-                        <h4>BILLING CONTROLS</h4>
-                        <h6>Modify license counts and pricing</h6>
-                    </div>
-                    <div class="col-lg-2 p-0 text-right">
-                        <button class="text-white clickable hidden-button no-background" title="Edit Billing" (click)="activateEdit(true)" [disabled]="edit_mode" *ngIf="dealer_start_date">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                    </div>
-                </div>
-               
-                <div class="col-lg-12 p-3 mt-3 md-text bg-gray" id="billing-controls">
-                    <form [formGroup]="update_billing" class="text-dark" *ngIf="values_data">
-                        <div class="row">
-                            <mat-form-field class="col-lg-6" *ngFor="let f of form_fields_view" >
-                                <mat-label>{{ f.label }}</mat-label>
-                                <input matInput formControlName="{{ f.control }}" [type]="f.type" [placeholder]="f.placeholder" min="0">
-                            </mat-form-field>
-                            <div class="col-lg-6">
-                                <label class="md-required col-lg-12 p-0 xsm-text mb-2 text-dark-light" translate>Select Billing Date</label>
-                                <mat-radio-group aria-label="bill_date" md-autofocus name="bill_date" ng-model="billingDate" layout="row" required>
-                                    <mat-radio-button value="1" class="mr-3" [disabled]="!edit_mode" (change)="billingDateChange($event)" [checked]="billingDate === 1">1st</mat-radio-button>
-                                    <mat-radio-button value="15" [disabled]="!edit_mode" (change)="billingDateChange($event)" [checked]="billingDate === 15">15th</mat-radio-button>
-                                </mat-radio-group>
-                            </div>
-                            <div class="col-lg-6">
-                                <label class="md-required col-lg-12 p-0 xsm-text mb-2 text-dark-light" translate>Auto Charge</label>
-                                <mat-radio-group aria-label="auto_charge" md-autofocus name="auto_charge" ng-model="autoCharge" layout="row" required>
-                                    <mat-radio-button value="1" class="mr-3" [disabled]="!edit_mode" (change)="autoChargeChange($event)" [checked]="autoCharge === 1">Yes</mat-radio-button>
-                                    <mat-radio-button value="0" [disabled]="!edit_mode" (change)="autoChargeChange($event)" [checked]="autoCharge === 0">No</mat-radio-button>
-                                </mat-radio-group>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-                <div class="col-lg-12 p-0 text-right pt-3">
-                    <button mat-button mat-raised-button class="theme-btn mt-4 mr-3 bg-primary text-dark" [disabled]="!edit_mode" (click)="updateUserInfo()">
-                        Update
-                    </button>
-                    <button type="button" mat-button mat-raised-button (click)="activateEdit(false)" class="bg-white text-dark theme-btn" [disabled]="!edit_mode">
-                        Cancel
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
+			<div class="col-lg-12 mt-3 flex pl-0 pr-0" *ngIf="territory || contracts">
+				<div class="col-lg-4" *ngIf="territory.length > 0">
+					<span class="lg-text f-500"> TERITORIAL DETAILS: </span>
+					<br />
+					<ul class="col-lg-12 mt-2">
+						<div *ngFor="let ter of territory; let i = index">
+							<li class="md-text f-500 col-lg-12 p-0" *ngIf="i < 3">
+								<a href="{{ ter.url }}" target="_blank" class="text-primary"> {{ ter.newFilename }} </a>
+								<span
+									class="fas fa-times clickable text-danger ml-3"
+									(click)="deleteFile('territory', ter)"
+									*ngIf="!_isDealer && !_isSubDealer"></span>
+							</li>
+						</div>
+					</ul>
+				</div>
+				<div class="col-lg-4" *ngIf="contracts.length > 0">
+					<span class="lg-text f-500"> CONTRACT DETAILS: </span>
+					<br />
+					<ul>
+						<div *ngFor="let cont of contracts; let i = index">
+							<li class="md-text f-500 col-lg-12 p-0" *ngIf="i < 3">
+								<a href="{{ cont.url }}" target="_blank" class="text-primary"> {{ cont.newFilename }} </a>
+								<span
+									class="fas fa-times clickable text-danger ml-3"
+									(click)="deleteFile('contract', cont)"
+									*ngIf="!_isDealer && !_isSubDealer"></span>
+							</li>
+						</div>
+					</ul>
+				</div>
+			</div>
+
+			<div class="col-lg-12 mt-3 flex pl-0 pr-0" *ngIf="!_isDealer && !_isSubDealer">
+				<div class="col-lg-4">
+					<button class="full-width p-3 md-text text-gray" (click)="onUploadBtn('territory')" [disabled]="!dealer_start_date">
+						<i class="fas fa-images mr-2"></i>
+						<span>Add/Modify Territory Details</span>
+					</button>
+				</div>
+				<div class="col-lg-4">
+					<button class="full-width p-3 md-text text-gray" (click)="onUploadBtn('contract')" [disabled]="!dealer_start_date">
+						<i class="fas fa-file mr-2"></i>
+						<span>Add/Modify Contract Details</span>
+					</button>
+				</div>
+			</div>
+		</div>
+		<div class="col-lg-4 mt-3 text-white bg-dark-light table-cell" *ngIf="!_isDealer && !_isSubDealer">
+			<div class="col-lg-12 p-5">
+				<div class="col-lg-12 p-0 flex">
+					<div class="col-lg-10 p-0">
+						<h4>BILLING CONTROLS</h4>
+						<h6>Modify license counts and pricing</h6>
+					</div>
+					<div class="col-lg-2 p-0 text-right">
+						<button
+							class="text-white clickable hidden-button no-background"
+							title="Edit Billing"
+							(click)="activateEdit(true)"
+							[disabled]="edit_mode"
+							*ngIf="dealer_start_date">
+							<i class="fas fa-edit"></i>
+						</button>
+					</div>
+				</div>
+
+				<div class="col-lg-12 p-3 mt-3 md-text bg-gray" id="billing-controls">
+					<form [formGroup]="update_billing" class="text-dark" *ngIf="values_data">
+						<div class="row">
+							<mat-form-field class="col-lg-6" *ngFor="let f of form_fields_view">
+								<mat-label>{{ f.label }}</mat-label>
+								<input matInput formControlName="{{ f.control }}" [type]="f.type" [placeholder]="f.placeholder" min="0" />
+							</mat-form-field>
+							<div class="col-lg-6">
+								<label class="md-required col-lg-12 p-0 xsm-text mb-2 text-dark-light" translate>Select Billing Date</label>
+								<mat-radio-group aria-label="bill_date" md-autofocus name="bill_date" ng-model="billingDate" layout="row" required>
+									<mat-radio-button
+										value="1"
+										class="mr-3"
+										[disabled]="!edit_mode"
+										(change)="billingDateChange($event)"
+										[checked]="billingDate === 1"
+										>1st</mat-radio-button
+									>
+									<mat-radio-button
+										value="15"
+										[disabled]="!edit_mode"
+										(change)="billingDateChange($event)"
+										[checked]="billingDate === 15"
+										>15th</mat-radio-button
+									>
+								</mat-radio-group>
+							</div>
+							<div class="col-lg-6">
+								<label class="md-required col-lg-12 p-0 xsm-text mb-2 text-dark-light" translate>Auto Charge</label>
+								<mat-radio-group aria-label="auto_charge" md-autofocus name="auto_charge" ng-model="autoCharge" layout="row" required>
+									<mat-radio-button
+										value="1"
+										class="mr-3"
+										[disabled]="!edit_mode"
+										(change)="autoChargeChange($event)"
+										[checked]="autoCharge === 1"
+										>Yes</mat-radio-button
+									>
+									<mat-radio-button
+										value="0"
+										[disabled]="!edit_mode"
+										(change)="autoChargeChange($event)"
+										[checked]="autoCharge === 0"
+										>No</mat-radio-button
+									>
+								</mat-radio-group>
+							</div>
+						</div>
+					</form>
+				</div>
+				<div class="col-lg-12 p-0 text-right pt-3">
+					<button
+						mat-button
+						mat-raised-button
+						class="theme-btn mt-4 mr-3 bg-primary text-dark"
+						[disabled]="!edit_mode"
+						(click)="updateUserInfo()">
+						Update
+					</button>
+					<button
+						type="button"
+						mat-button
+						mat-raised-button
+						(click)="activateEdit(false)"
+						class="bg-white text-dark theme-btn"
+						[disabled]="!edit_mode">
+						Cancel
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <ng-template #spinner>
-    <div class="col-lg-12 py-5">
-        <app-spinner [diameter]="85"></app-spinner>
-    </div>
+	<div class="col-lg-12 py-5">
+		<app-spinner [diameter]="85"></app-spinner>
+	</div>
 </ng-template>
 
 <ng-template #no_billing_details>
