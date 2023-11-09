@@ -208,20 +208,31 @@
 			</div>
 		</div>
 
-		<div class="row no-gutters" *ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host">
+		<div
+			class="row no-gutters"
+			*ngIf="filters.label_status || filters.label_zone || filters.label_dealer || filters.label_host; else showResults">
 			<div class="col-lg-12">
-				<div class="d-inline-flex align-items-center p-2 bg-gray-2">
-					<div class="filter-pills">
-						<div class="filetype-pill pill" *ngIf="filters.label_status">
-							License Status: <strong>{{ filters.label_status }}</strong>
+				<div class="d-flex align-items-center p-2 bg-gray-2">
+					<div class="d-flex align-items-center">
+						<div class="filter-pills">
+							<div class="filetype-pill pill" *ngIf="filters.label_status">
+								License Status: <strong>{{ filters.label_status }}</strong>
+							</div>
+
+							<div class="order-pill pill" *ngIf="filters.label_zone">
+								Timezone: <strong>{{ filters.label_zone }}</strong>
+							</div>
+
+							<div class="host-pill pill" *ngIf="filters.label_host">
+								Host: <strong>{{ filters.label_host }}</strong>
+							</div>
 						</div>
 
-						<div class="order-pill pill" *ngIf="filters.label_zone">
-							Timezone: <strong>{{ filters.label_zone }}</strong>
-						</div>
-
-						<div class="host-pill pill" *ngIf="filters.label_host">
-							Host: <strong>{{ filters.label_host }}</strong>
+						<div class="pl-2" *ngIf="!searching_license">
+							<div class="sm-text">
+								Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
+								<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
+							</div>
 						</div>
 					</div>
 					<div class="control flex-even text-right">
@@ -234,14 +245,16 @@
 			</div>
 		</div>
 
-		<div class="row no-gutters mb-2">
-			<div class="col-lg-12" *ngIf="!searching_license">
-				<div class="pl-3 sm-text bg-gray full-width">
-					Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
-					<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
+		<ng-template #showResults>
+			<div class="row no-gutters mb-2">
+				<div class="col-lg-12" *ngIf="!searching_license && getTotalLicenses() !== 0">
+					<div class="pl-3 sm-text bg-gray full-width">
+						Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
+						<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
+					</div>
 				</div>
 			</div>
-		</div>
+		</ng-template>
 
 		<div class="row" *ngIf="!initial_load_license; else loader">
 			<div class="col-lg-12" *ngIf="!no_licenses; else no_data">
