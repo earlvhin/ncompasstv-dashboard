@@ -56,11 +56,11 @@
 		</div>
 
 		<!-- Warn User to be Logged Out -->
-		<!-- <div class="text-center" *ngIf="status === 'logout'">
+		<div class="text-center" *ngIf="status === 'logout'">
 			<app-warning-animation></app-warning-animation>
 			<h3 class="mb-1">{{ title }}</h3>
 			<p class="mb-0 sm-text font-weight-md">{{ message }}</p>
-			<button mat-button mat-raised-button [mat-dialog-close]="action || true" class="mt-4 theme-btn" (click)="displaySuccess()">OK</button>
-		</div> -->
+			<button mat-button mat-raised-button [mat-dialog-close]="action || true" class="mt-4 theme-btn">OK</button>
+		</div>
 	</div>
 </div>
