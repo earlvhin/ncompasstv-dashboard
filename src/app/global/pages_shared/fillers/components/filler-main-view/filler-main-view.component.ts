@@ -10,6 +10,7 @@ import { ConfirmationModalComponent } from 'src/app/global/components_shared/pag
 import { DeleteFillerGroupComponent } from '../delete-filler-group/delete-filler-group.component';
 import { EditFillerGroupComponent } from '../edit-filler-group/edit-filler-group.component';
 import { FillerService, AuthService } from 'src/app/global/services';
+import { FillerGridCategoryViewComponent } from '../filler-grid-category-view/filler-grid-category-view.component';
 
 @Component({
 	selector: 'app-filler-main-view',
@@ -17,7 +18,10 @@ import { FillerService, AuthService } from 'src/app/global/services';
 	styleUrls: ['./filler-main-view.component.scss']
 })
 export class FillerMainViewComponent implements OnInit {
+	active_view: string = 'folder';
 	dimension: string = '';
+	grid_data = [];
+	original_grid_data = [];
 	initial_loading = true;
 	no_preview = true;
 	no_preview_available = true;
@@ -46,12 +50,19 @@ export class FillerMainViewComponent implements OnInit {
 	ngOnChanges() {
 		this.is_loading = this.is_loading;
 		this.no_search_result = this.no_search_result;
+		this.filler_data = this.filler_data;
 	}
 
 	onSearchFiller(keyword) {
+		this.is_loading = true;
+
+		if (this.active_view === 'grid') {
+			this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
+		}
 		if (keyword) this.search_keyword = keyword;
 		else this.search_keyword = '';
 		this.get_fillers.emit({ page: 1, keyword: keyword });
+		this.is_loading = false;
 	}
 
 	sortFillerGroup(col, order) {
@@ -71,13 +82,13 @@ export class FillerMainViewComponent implements OnInit {
 		this.get_fillers.emit(1);
 	}
 
-	showAlbumPreview(id, index) {
+	showAlbumPreview(id, index, filler_name?, index_arr?) {
 		this.initial_loading = true;
 		this.no_preview = false;
 		this.selected_preview_index = index;
 		this.selected_preview = [];
 		this._filler
-			.get_filler_thumbnails(id, 4)
+			.get_filler_thumbnails(id, index)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((data: any) => {
 				this.initial_loading = false;
@@ -103,10 +114,27 @@ export class FillerMainViewComponent implements OnInit {
 					});
 					this.no_preview_available = false;
 					this.selected_preview = data;
+					if (index > 4) {
+						this.grid_data.splice(index_arr, 0, {
+							id: id,
+							name: filler_name.toLowerCase(),
+							fillers: data
+						});
+						if (this.search_keyword == '') this.original_grid_data = this.grid_data;
+					}
 				} else {
 					this.no_preview_available = true;
 					this.selected_preview = [];
 					this.dimension = '150px';
+					if (index > 4) {
+						this.is_loading = false;
+						this.grid_data.splice(index_arr, 0, {
+							id: id,
+							name: filler_name.toLowerCase(),
+							fillers: []
+						});
+						if (this.search_keyword == '') this.original_grid_data = this.grid_data;
+					}
 				}
 			});
 	}
@@ -114,6 +142,26 @@ export class FillerMainViewComponent implements OnInit {
 	hidePreview() {
 		this.no_preview = true;
 		this.selected_preview_index = '';
+	}
+
+	changeView(value) {
+		this.active_view = value;
+		this.grid_data = [];
+		if (this.active_view == 'grid') {
+			this.is_loading = true;
+
+			//asynchronous api response since this is FE implementation only no BE available,
+			// need to map to grid so sorting of original data will not change see splicing in showAlbumPreview function
+			this.filler_data.map((filler: any, index) => {
+				this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
+			});
+		}
+	}
+
+	removeFromGrid(id) {
+		this.grid_data = this.grid_data.filter((grid) => {
+			return grid.id != id;
+		});
 	}
 
 	navigateToFillerGroup(id) {
@@ -202,19 +250,35 @@ export class FillerMainViewComponent implements OnInit {
 	}
 
 	openConfirmationModal(status, message, data, action?, id?): void {
-		const dialog = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data, delete: true, id }
-		});
+		this._dialog
+			.open(ConfirmationModalComponent, {
+				width: '500px',
+				height: '350px',
+				data: { status, message, data, delete: true, id }
+			})
+			.afterClosed()
+			.subscribe((result) => {
+				switch (result) {
+					case 'delete':
+						this.continueToDeleteProcess(id);
+						break;
+					default:
+				}
+			});
+	}
 
-		dialog.afterClosed().subscribe((result) => {
-			switch (result) {
-				case 'delete':
-					this.continueToDeleteProcess(id);
-					break;
-				default:
-			}
-		});
+	showMoreFillerCategory() {
+		this._dialog
+			.open(FillerGridCategoryViewComponent, {
+				width: '500px',
+				height: '350px',
+				data: this.grid_data
+			})
+			.afterClosed()
+			.subscribe((response) => {
+				response.map((id) => {
+					this.removeFromGrid(id);
+				});
+			});
 	}
 }

@@ -649,7 +649,6 @@ button {
 	cursor: pointer;
 }
 
-
 .contain-bg {
 	object-fit: contain;
 }
@@ -804,6 +803,10 @@ agm-map {
 	overflow-x: hidden !important;
 }
 
+.h-35 {
+	height: 35px;
+}
+
 .h-45 {
 	height: 45px;
 }
@@ -822,6 +825,10 @@ agm-map {
 
 .lh-120 {
 	line-height: 120px;
+}
+
+.lh-150 {
+	line-height: 150px;
 }
 
 .two-columns {
