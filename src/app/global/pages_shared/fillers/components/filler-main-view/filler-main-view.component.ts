@@ -51,18 +51,20 @@ export class FillerMainViewComponent implements OnInit {
 		this.is_loading = this.is_loading;
 		this.no_search_result = this.no_search_result;
 		this.filler_data = this.filler_data;
+		if (this.filler_data && this.active_view == 'grid' && this.search_keyword == '') {
+			this.changeView('grid');
+		}
 	}
 
 	onSearchFiller(keyword) {
-		this.is_loading = true;
+		// this.is_loading = true;
 
 		if (this.active_view === 'grid') {
-			this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
+			this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : [];
 		}
 		if (keyword) this.search_keyword = keyword;
 		else this.search_keyword = '';
 		this.get_fillers.emit({ page: 1, keyword: keyword });
-		this.is_loading = false;
 	}
 
 	sortFillerGroup(col, order) {
@@ -127,7 +129,6 @@ export class FillerMainViewComponent implements OnInit {
 					this.selected_preview = [];
 					this.dimension = '150px';
 					if (index > 4) {
-						this.is_loading = false;
 						this.grid_data.splice(index_arr, 0, {
 							id: id,
 							name: filler_name.toLowerCase(),
@@ -136,6 +137,9 @@ export class FillerMainViewComponent implements OnInit {
 						if (this.search_keyword == '') this.original_grid_data = this.grid_data;
 					}
 				}
+			})
+			.add(() => {
+				this.is_loading = false;
 			});
 	}
 
@@ -147,6 +151,7 @@ export class FillerMainViewComponent implements OnInit {
 	changeView(value) {
 		this.active_view = value;
 		this.grid_data = [];
+		this.original_grid_data = [];
 		if (this.active_view == 'grid') {
 			this.is_loading = true;
 
