@@ -51,17 +51,11 @@ export class FillerMainViewComponent implements OnInit {
 		this.is_loading = this.is_loading;
 		this.no_search_result = this.no_search_result;
 		this.filler_data = this.filler_data;
-		if (this.filler_data && this.active_view == 'grid' && this.search_keyword == '') {
-			this.changeView('grid');
-		}
+		if (this.filler_data && this.active_view == 'grid' && this.search_keyword == '') this.changeView('grid');
 	}
 
 	onSearchFiller(keyword) {
-		// this.is_loading = true;
-
-		if (this.active_view === 'grid') {
-			this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : [];
-		}
+		if (this.active_view === 'grid') this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : [];
 		if (keyword) this.search_keyword = keyword;
 		else this.search_keyword = '';
 		this.get_fillers.emit({ page: 1, keyword: keyword });
