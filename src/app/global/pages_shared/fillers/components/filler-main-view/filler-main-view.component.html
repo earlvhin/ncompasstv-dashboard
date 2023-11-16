@@ -143,7 +143,7 @@
 										[src]="group.coverPhoto"
 										class="clickable full-width h-130-px br-5 cover-bg"
 										title="Click to Preview Album"
-										(click)="showAlbumPreview(group.fillerGroupId, 4)" />
+										(click)="showAlbumPreview(group.fillerGroupId, 4, '', i)" />
 								</div>
 								<ng-template #defaultphoto>
 									<div>
@@ -151,7 +151,7 @@
 											[src]="'assets/media-files/filler-group-placeholder.png'"
 											class="clickable full-width h-130-px br-5"
 											title="Click to Preview Album"
-											(click)="showAlbumPreview(group.fillerGroupId, 1)" />
+											(click)="showAlbumPreview(group.fillerGroupId, 1, '', i)" />
 									</div>
 								</ng-template>
 							</div>

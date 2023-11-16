@@ -85,7 +85,7 @@ export class FillerMainViewComponent implements OnInit {
 	showAlbumPreview(id, index, filler_name?, index_arr?) {
 		this.initial_loading = true;
 		this.no_preview = false;
-		this.selected_preview_index = index;
+		this.selected_preview_index = index_arr;
 		this.selected_preview = [];
 		this._filler
 			.get_filler_thumbnails(id, index)
@@ -121,6 +121,7 @@ export class FillerMainViewComponent implements OnInit {
 							fillers: data
 						});
 						if (this.search_keyword == '') this.original_grid_data = this.grid_data;
+						this.is_loading = false;
 					}
 				} else {
 					this.no_preview_available = true;
