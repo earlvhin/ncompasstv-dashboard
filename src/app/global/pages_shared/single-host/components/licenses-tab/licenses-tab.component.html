@@ -1,38 +1,48 @@
-<div class="theme-container pt-4">
+<div class="pt-4">
 	<div class="row">
 		<div class="col-lg-8">
-			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2" title="Reload"
-				(click)="onReloadLicenses()">
-				<span class="fas fa-sync-alt"></span> 
+			<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2" title="Reload" (click)="onReloadLicenses()">
+				<span class="fas fa-sync-alt"></span>
 				<span class="ml-2 button_text_animation">Reload</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control _danger sm-text mr-2" title="Unassign Licenses"
-				(click)="onUnassignLicense()" 
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn pi-control _danger sm-text mr-2"
+				title="Unassign Licenses"
+				(click)="onUnassignLicense()"
 				[disabled]="licenses.length == 0 || isViewOnly">
-				<span class="fas fa-times"></span> 
+				<span class="fas fa-times"></span>
 				<span class="ml-2 button_text_animation">Unassign Licenses</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control _warning sm-text mr-2" title="Content Update"
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn pi-control _warning sm-text mr-2"
+				title="Content Update"
 				(click)="onPushUpdate()"
 				[disabled]="licenses.length === 0 || isPiUpdating || isViewOnly">
-				<span class="fas fa-upload"></span> 
+				<span class="fas fa-upload"></span>
 				<span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
-			<button mat-button mat-raised-button class="theme-btn pi-control _primary sm-text mr-2" title='{{ updateBtnText }}'
+			<button
+				mat-button
+				mat-raised-button
+				class="theme-btn pi-control _primary sm-text mr-2"
+				title="{{ updateBtnText }}"
 				(click)="onUpdateAndRestart()"
 				[disabled]="licenses.length === 0 || isPiUpdating || isViewOnly">
-				<span class="fas fa-terminal"></span> 
+				<span class="fas fa-terminal"></span>
 				<span class="ml-2 button_text_animation">{{ updateBtnText }}</span>
 			</button>
-
 		</div>
 		<div class="col-lg-4">
 			<mat-form-field class="full-width">
 				<mat-label><span class="fas fa-search sm-text mr-2"></span> Search License Key or Alias</mat-label>
-				<input matInput [formControl]="searchFormControl">
+				<input matInput [formControl]="searchFormControl" />
 			</mat-form-field>
 		</div>
 		<div class="col-lg-12">

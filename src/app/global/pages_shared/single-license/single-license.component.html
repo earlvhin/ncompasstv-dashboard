@@ -165,521 +165,519 @@
 				<mat-tab label="Details">
 					<ng-container *ngIf="hasLoadedLicenseData; else loader">
 						<ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
-							<div class="theme-container">
-								<div class="details-tab-container">
-									<div class="row mb-3">
-										<!-- Screenshots -->
-										<div class="col-lg-12 tab-card">
-											<mat-card class="p-4 h-100">
-												<!-- Screenshot Area -->
-												<div class="row mb-3">
-													<div class="col-lg-12">
-														<div class="d-flex align-items-center">
-															<div class="flex-even">
-																<h5>Player Snapshots</h5>
-																<p class="sm-text">
-																	Click the Screenshot button to see what's playing on this license.
-																</p>
-															</div>
-															<div class="text-right">
-																<button
-																	mat-button
-																	mat-raised-button
-																	class="theme-btn mr-2"
-																	[disabled]="!pi_status || screenshot_timeout"
-																	(click)="screenShotPi()">
-																	<span class="fas fa-camera mr-2"></span>
-																	Screenshot
-																</button>
-																<button
-																	mat-button
-																	mat-raised-button
-																	class="theme-btn"
-																	*ngIf="screenshots.length != 0 && !isCurrentUserDealer"
-																	[disabled]="screenshot_timeout || clear_screenshots"
-																	(click)="clearScreenshots()">
-																	Clear
-																</button>
-															</div>
+							<div class="details-tab-container">
+								<div class="row mb-3">
+									<!-- Screenshots -->
+									<div class="col-lg-12 tab-card">
+										<mat-card class="p-4 h-100">
+											<!-- Screenshot Area -->
+											<div class="row mb-3">
+												<div class="col-lg-12">
+													<div class="d-flex align-items-center">
+														<div class="flex-even">
+															<h5>Player Snapshots</h5>
+															<p class="sm-text">
+																Click the Screenshot button to see what's playing on this license.
+															</p>
+														</div>
+														<div class="text-right">
+															<button
+																mat-button
+																mat-raised-button
+																class="theme-btn mr-2"
+																[disabled]="!pi_status || screenshot_timeout"
+																(click)="screenShotPi()">
+																<span class="fas fa-camera mr-2"></span>
+																Screenshot
+															</button>
+															<button
+																mat-button
+																mat-raised-button
+																class="theme-btn"
+																*ngIf="screenshots.length != 0 && !isCurrentUserDealer"
+																[disabled]="screenshot_timeout || clear_screenshots"
+																(click)="clearScreenshots()">
+																Clear
+															</button>
 														</div>
 													</div>
 												</div>
-												<hr />
-												<div class="horizontal-panel">
-													<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
-														<div class="screenshots" *ngFor="let s of screenshots">
-															<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
-															<p class="sm-text text-center mb-0">{{ s | screenshot }}</p>
-														</div>
-													</ng-container>
-
-													<ng-template #no_screenshots>
-														<div class="p-5 text-center">
-															<h5 class="text-muted mb-0">No Available Screenshots</h5>
-														</div>
-													</ng-template>
-
-													<div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
-														<div class="flex-even text-center">
-															<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
-															<h6 class="text-primary">{{ screenshot_message }}</h6>
-														</div>
+											</div>
+											<hr />
+											<div class="horizontal-panel">
+												<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
+													<div class="screenshots" *ngFor="let s of screenshots">
+														<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
+														<p class="sm-text text-center mb-0">{{ s | screenshot }}</p>
 													</div>
+												</ng-container>
 
-													<div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
-														<div class="flex-even text-center">
-															<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
-															<h6 class="text-primary">Deleting Screenshots. . .</h6>
-														</div>
+												<ng-template #no_screenshots>
+													<div class="p-5 text-center">
+														<h5 class="text-muted mb-0">No Available Screenshots</h5>
+													</div>
+												</ng-template>
+
+												<div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
+													<div class="flex-even text-center">
+														<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
+														<h6 class="text-primary">{{ screenshot_message }}</h6>
 													</div>
 												</div>
-											</mat-card>
+
+												<div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
+													<div class="flex-even text-center">
+														<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
+														<h6 class="text-primary">Deleting Screenshots. . .</h6>
+													</div>
+												</div>
+											</div>
+										</mat-card>
+									</div>
+								</div>
+
+								<div class="d-flex">
+									<div class="flex-even mr-3">
+										<div>
+											<!-- Pi and Player Status -->
+											<div class="w-100 mb-3">
+												<mat-card class="p-4">
+													<h5 class="mb-0 font-weight-medium">Pi and Player Status</h5>
+
+													<hr />
+
+													<div class="flex">
+														<!-- Pi Status -->
+														<div class="flex-even">
+															<span class="sm-text"> Pi Status </span>
+
+															<h5 class="sm-text" [ngClass]="{ good: pi_status, bad: !pi_status }">
+																{{ pi_status ? 'Online' : 'Offline' }}
+															</h5>
+														</div>
+
+														<!-- Player Status -->
+														<div class="flex-even">
+															<span class="sm-text"> Player Status </span>
+
+															<h5 class="sm-text" [ngClass]="{ good: player_status, bad: !player_status }">
+																{{ player_status ? 'Online' : 'Offline' }}
+															</h5>
+														</div>
+
+														<!-- TV Status -->
+														<div class="flex-even">
+															<span class="sm-text"> TV Status </span>
+
+															<h5 class="sm-text" [ngClass]="{ good: cec_status, bad: !cec_status }">
+																{{ cec_status ? 'ON' : 'OFF' }}
+															</h5>
+														</div>
+
+														<!-- Display Status -->
+														<div class="flex-even">
+															<span class="sm-text"> Display Status </span>
+
+															<h5
+																class="sm-text"
+																*ngIf="!isCheckingDisplayStatus; else checkingDisplayStatus"
+																[ngClass]="{ good: display_status === 1, bad: display_status !== 1 }">
+																<ng-container [ngSwitch]="display_status">
+																	<ng-container *ngSwitchCase="1">ON</ng-container>
+																	<ng-container *ngSwitchCase="2">N/A</ng-container>
+																	<ng-container *ngSwitchDefault>OFF</ng-container>
+																</ng-container>
+															</h5>
+
+															<ng-template #checkingDisplayStatus>
+																<h5 class="sm-text text-gray">
+																	{{ pi_status ? 'Checking ...' : 'N/A' }}
+																</h5>
+															</ng-template>
+														</div>
+													</div>
+													<hr class="my-3" />
+													<div class="d-flex">
+														<!-- Last Startup -->
+														<div class="flex-even last-online">
+															<span class="sm-text">Last Startup</span>
+															<h5 class="sm-text">{{ lastStartup }}</h5>
+														</div>
+
+														<!-- Last Disconnect -->
+														<div class="flex-even last-offline">
+															<span class="sm-text">Last Disconnect</span>
+															<h5 class="sm-text">{{ lastDisconnect }}</h5>
+														</div>
+
+														<!-- TV Brand -->
+														<div class="flex-even tv-brand">
+															<span class="sm-text">TV Brand</span>
+															<div class="d-flex align-items-center">
+																<h5 class="sm-text">{{ tv_brand | titlecase }}</h5>
+																<mat-icon class="clickable sm-text" (click)="openUpdateTvBrandDialog()">
+																	{{ is_editing_tv_brand ? 'save' : 'edit' }}
+																</mat-icon>
+															</div>
+														</div>
+													</div>
+													<hr class="my-3" />
+													<div class="d-flex">
+														<!-- Last Update -->
+														<div class="flex-even last-update">
+															<span class="sm-text">Last Update</span>
+															<h5 class="sm-text">{{ content_time_update || 'N/A' }}</h5>
+														</div>
+
+														<!-- Anydesk -->
+														<div class="flex-even">
+															<span class="sm-text">Anydesk</span>
+															<div class="d-flex align-items-center">
+																<h5 class="d-inline-block sm-text mr-3">
+																	{{ anydesk_id ? anydesk_id : 'N/A' }}
+																</h5>
+
+																<ng-container
+																	*ngIf="!anydesk_restarting && anydesk_id; else disabledAnydeskControls">
+																	<!-- RESTART ANYDESK SERVICE BUTTON -->
+																	<button
+																		class="card-button restart-anydesk"
+																		(click)="restartAnydesk()"
+																		title="Restart Anydesk Service">
+																		<span class="fas fa-power-off md-text"></span>
+																	</button>
+
+																	<!-- RESET ANYDESK ID BUTTON -->
+																	<button
+																		*ngIf="hasAdminPrivileges"
+																		class="card-button reset-anydesk-id"
+																		(click)="onResetAnydeskID()"
+																		title="Reset Anydesk ID">
+																		<span class="fa fa-exchange md-text"></span>
+																	</button>
+																</ng-container>
+
+																<ng-template #disabledAnydeskControls>
+																	<ng-container *ngIf="anydesk_restarting">
+																		<button
+																			class="card-button restart-anydesk disabled rotate mr-2"
+																			title="Anydesk Status">
+																			<span class="fas fa-sync md-text"></span>
+																		</button>
+																	</ng-container>
+
+																	<span class="sm-text text-gray">
+																		{{ anydesk_status_text }}
+																	</span>
+																</ng-template>
+															</div>
+														</div>
+
+														<div class="flex-even last-update">
+															<span class="sm-text">Anydesk Password</span>
+															<h5 class="sm-text">{{ splitKey(license_id) }}</h5>
+														</div>
+													</div>
+												</mat-card>
+											</div>
+
+											<!-- Dealer and Host Info -->
+											<div class="w-100 mb-3">
+												<mat-card class="p-4">
+													<h5 class="mb-0 font-weight-medium">Dealer and Host Info</h5>
+													<hr />
+
+													<!-- Host Name -->
+													<div class="d-flex">
+														<div class="flex-even hostname" *ngIf="hasAdminPrivileges">
+															<span class="sm-text"> Dealer </span>
+															<h5 class="mb-0 sm-text">
+																<ng-container *ngIf="hasAdminPrivileges">
+																	<a [routerLink]="dealer_route" target="_blank">
+																		{{ businessName }}
+																	</a>
+																</ng-container>
+															</h5>
+														</div>
+
+														<div class="flex-even hostname">
+															<span class="sm-text"> Hostname </span>
+															<h5 class="mb-0 sm-text">
+																<a [routerLink]="host_route" target="_blank">{{ host.name }}</a>
+															</h5>
+														</div>
+													</div>
+
+													<hr class="my-3" />
+
+													<div class="d-flex">
+														<!-- Timezone -->
+														<div class="flex-even timezone">
+															<span class="sm-text"> Timezone </span>
+															<h5 class="sm-text">
+																{{ timezone.name }}
+															</h5>
+														</div>
+
+														<!-- Business Hours -->
+														<div class="flex-even business-hours">
+															<span class="sm-text">Business Hours:</span>
+															<h5 (click)="onShowHours()" class="hoverable sm-text">
+																{{ current_operation.day }}: {{ current_operation.period }}
+															</h5>
+														</div>
+													</div>
+
+													<div *ngIf="!isCurrentUserDealer">
+														<hr class="my-3" />
+
+														<!-- Notes -->
+														<div class="notes">
+															<span class="sm-text">Host Notes: </span>
+															<p (click)="onShowNotes()" class="sm-text hoverable">
+																{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
+															</p>
+														</div>
+													</div>
+												</mat-card>
+											</div>
 										</div>
 									</div>
 
-									<div class="d-flex">
-										<div class="flex-even mr-3">
-											<div>
-												<!-- Pi and Player Status -->
-												<div class="w-100 mb-3">
-													<mat-card class="p-4">
-														<h5 class="mb-0 font-weight-medium">Pi and Player Status</h5>
+									<div class="flex-even">
+										<div>
+											<!-- System Info -->
+											<div class="w-100 mb-3">
+												<mat-card class="p-4">
+													<h5 class="mb-0 font-weight-medium">System Info</h5>
 
-														<hr />
+													<hr />
 
-														<div class="flex">
-															<!-- Pi Status -->
-															<div class="flex-even">
-																<span class="sm-text"> Pi Status </span>
-
-																<h5 class="sm-text" [ngClass]="{ good: pi_status, bad: !pi_status }">
-																	{{ pi_status ? 'Online' : 'Offline' }}
-																</h5>
-															</div>
-
-															<!-- Player Status -->
-															<div class="flex-even">
-																<span class="sm-text"> Player Status </span>
-
-																<h5 class="sm-text" [ngClass]="{ good: player_status, bad: !player_status }">
-																	{{ player_status ? 'Online' : 'Offline' }}
-																</h5>
-															</div>
-
-															<!-- TV Status -->
-															<div class="flex-even">
-																<span class="sm-text"> TV Status </span>
-
-																<h5 class="sm-text" [ngClass]="{ good: cec_status, bad: !cec_status }">
-																	{{ cec_status ? 'ON' : 'OFF' }}
-																</h5>
-															</div>
-
-															<!-- Display Status -->
-															<div class="flex-even">
-																<span class="sm-text"> Display Status </span>
-
+													<div class="d-flex">
+														<!-- Connection -->
+														<div class="flex-even">
+															<span class="sm-text">Connection Status</span>
+															<ng-container *ngIf="apps && apps.server; else netstatus_v1">
 																<h5
 																	class="sm-text"
-																	*ngIf="!isCheckingDisplayStatus; else checkingDisplayStatus"
-																	[ngClass]="{ good: display_status === 1, bad: display_status !== 1 }">
-																	<ng-container [ngSwitch]="display_status">
-																		<ng-container *ngSwitchCase="1">ON</ng-container>
-																		<ng-container *ngSwitchCase="2">N/A</ng-container>
-																		<ng-container *ngSwitchDefault>OFF</ng-container>
-																	</ng-container>
+																	*ngIf="internet_connection.status && pi_status; else offline_net"
+																	[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
+																	{{ internet_connection.status }}
 																</h5>
 
-																<ng-template #checkingDisplayStatus>
-																	<h5 class="sm-text text-gray">
-																		{{ pi_status ? 'Checking ...' : 'N/A' }}
-																	</h5>
+																<ng-template #offline_net>
+																	<h5 *ngIf="license_data.internetSpeed" class="bad sm-text">Offline</h5>
 																</ng-template>
-															</div>
-														</div>
-														<hr class="my-3" />
-														<div class="d-flex">
-															<!-- Last Startup -->
-															<div class="flex-even last-online">
-																<span class="sm-text">Last Startup</span>
-																<h5 class="sm-text">{{ lastStartup }}</h5>
-															</div>
+															</ng-container>
 
-															<!-- Last Disconnect -->
-															<div class="flex-even last-offline">
-																<span class="sm-text">Last Disconnect</span>
-																<h5 class="sm-text">{{ lastDisconnect }}</h5>
-															</div>
-
-															<!-- TV Brand -->
-															<div class="flex-even tv-brand">
-																<span class="sm-text">TV Brand</span>
-																<div class="d-flex align-items-center">
-																	<h5 class="sm-text">{{ tv_brand | titlecase }}</h5>
-																	<mat-icon class="clickable sm-text" (click)="openUpdateTvBrandDialog()">
-																		{{ is_editing_tv_brand ? 'save' : 'edit' }}
-																	</mat-icon>
-																</div>
-															</div>
-														</div>
-														<hr class="my-3" />
-														<div class="d-flex">
-															<!-- Last Update -->
-															<div class="flex-even last-update">
-																<span class="sm-text">Last Update</span>
-																<h5 class="sm-text">{{ content_time_update || 'N/A' }}</h5>
-															</div>
-
-															<!-- Anydesk -->
-															<div class="flex-even">
-																<span class="sm-text">Anydesk</span>
-																<div class="d-flex align-items-center">
-																	<h5 class="d-inline-block sm-text mr-3">
-																		{{ anydesk_id ? anydesk_id : 'N/A' }}
-																	</h5>
-
-																	<ng-container
-																		*ngIf="!anydesk_restarting && anydesk_id; else disabledAnydeskControls">
-																		<!-- RESTART ANYDESK SERVICE BUTTON -->
-																		<button
-																			class="card-button restart-anydesk"
-																			(click)="restartAnydesk()"
-																			title="Restart Anydesk Service">
-																			<span class="fas fa-power-off md-text"></span>
-																		</button>
-
-																		<!-- RESET ANYDESK ID BUTTON -->
-																		<button
-																			*ngIf="hasAdminPrivileges"
-																			class="card-button reset-anydesk-id"
-																			(click)="onResetAnydeskID()"
-																			title="Reset Anydesk ID">
-																			<span class="fa fa-exchange md-text"></span>
-																		</button>
-																	</ng-container>
-
-																	<ng-template #disabledAnydeskControls>
-																		<ng-container *ngIf="anydesk_restarting">
-																			<button
-																				class="card-button restart-anydesk disabled rotate mr-2"
-																				title="Anydesk Status">
-																				<span class="fas fa-sync md-text"></span>
-																			</button>
-																		</ng-container>
-
-																		<span class="sm-text text-gray">
-																			{{ anydesk_status_text }}
-																		</span>
-																	</ng-template>
-																</div>
-															</div>
-
-															<div class="flex-even last-update">
-																<span class="sm-text">Anydesk Password</span>
-																<h5 class="sm-text">{{ splitKey(license_id) }}</h5>
-															</div>
-														</div>
-													</mat-card>
-												</div>
-
-												<!-- Dealer and Host Info -->
-												<div class="w-100 mb-3">
-													<mat-card class="p-4">
-														<h5 class="mb-0 font-weight-medium">Dealer and Host Info</h5>
-														<hr />
-
-														<!-- Host Name -->
-														<div class="d-flex">
-															<div class="flex-even hostname" *ngIf="hasAdminPrivileges">
-																<span class="sm-text"> Dealer </span>
-																<h5 class="mb-0 sm-text">
-																	<ng-container *ngIf="hasAdminPrivileges">
-																		<a [routerLink]="dealer_route" target="_blank">
-																			{{ businessName }}
-																		</a>
-																	</ng-container>
+															<ng-template #netstatus_v1>
+																<h5
+																	class="sm-text"
+																	[ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
+																	{{ license_data.internetSpeed }}
 																</h5>
-															</div>
-
-															<div class="flex-even hostname">
-																<span class="sm-text"> Hostname </span>
-																<h5 class="mb-0 sm-text">
-																	<a [routerLink]="host_route" target="_blank">{{ host.name }}</a>
-																</h5>
-															</div>
+															</ng-template>
 														</div>
 
-														<hr class="my-3" />
-
-														<div class="d-flex">
-															<!-- Timezone -->
-															<div class="flex-even timezone">
-																<span class="sm-text"> Timezone </span>
-																<h5 class="sm-text">
-																	{{ timezone.name }}
-																</h5>
-															</div>
-
-															<!-- Business Hours -->
-															<div class="flex-even business-hours">
-																<span class="sm-text">Business Hours:</span>
-																<h5 (click)="onShowHours()" class="hoverable sm-text">
-																	{{ current_operation.day }}: {{ current_operation.period }}
-																</h5>
-															</div>
+														<!-- Connection Type -->
+														<div class="flex-even connection-type">
+															<span class="sm-text">Connection Type</span>
+															<h5 class="sm-text">
+																{{ license_data.internetType ? license_data.internetType : 'N/A' }}
+															</h5>
 														</div>
 
-														<div *ngIf="!isCurrentUserDealer">
-															<hr class="my-3" />
-
-															<!-- Notes -->
-															<div class="notes">
-																<span class="sm-text">Host Notes: </span>
-																<p (click)="onShowNotes()" class="sm-text hoverable">
-																	{{ host_notes ? (host_notes | substring : 100) : 'No notes available' }}
-																</p>
-															</div>
+														<!-- Memory -->
+														<div class="flex-even memory">
+															<span class="sm-text">RAM/Memory</span>
+															<h5 class="sm-text">{{ license_data.memory ? license_data.memory : 'N/A' }}</h5>
 														</div>
-													</mat-card>
-												</div>
-											</div>
-										</div>
+													</div>
+													<!-- ID -->
 
-										<div class="flex-even">
-											<div>
-												<!-- System Info -->
-												<div class="w-100 mb-3">
-													<mat-card class="p-4">
-														<h5 class="mb-0 font-weight-medium">System Info</h5>
+													<hr class="my-3" />
 
-														<hr />
+													<div class="align-items-center">
+														<div class="last-speedtest-date mb-3">
+															<span class="sm-text">Last Speedtest</span>
+															<div>
+																<h5 class="d-inline-block mr-4 sm-text">
+																	{{ internet_connection.date ? internet_connection.date : 'N/A' }}
+																</h5>
 
-														<div class="d-flex">
-															<!-- Connection -->
-															<div class="flex-even">
-																<span class="sm-text">Connection Status</span>
-																<ng-container *ngIf="apps && apps.server; else netstatus_v1">
-																	<h5
-																		class="sm-text"
-																		*ngIf="internet_connection.status && pi_status; else offline_net"
-																		[ngClass]="internet_connection.status == 'Good' ? 'good' : 'slow'">
-																		{{ internet_connection.status }}
-																	</h5>
-
-																	<ng-template #offline_net>
-																		<h5 *ngIf="license_data.internetSpeed" class="bad sm-text">Offline</h5>
-																	</ng-template>
+																<ng-container *ngIf="!speedtest_running; else disable_speedtest_btn">
+																	<button
+																		*ngIf="license_data.speedtestSettings == 1"
+																		class="card-button"
+																		(click)="internetSpeedTest()"
+																		title="Test Internet Speed">
+																		<span class="fas fa-sync md-text"></span>
+																	</button>
 																</ng-container>
 
-																<ng-template #netstatus_v1>
-																	<h5
-																		class="sm-text"
-																		[ngClass]="license_data.internetSpeed == 'Good' ? 'good' : 'slow'">
-																		{{ license_data.internetSpeed }}
-																	</h5>
+																<ng-template #disable_speedtest_btn>
+																	<button class="card-button disabled rotate mr-2" title="Speedtest Running">
+																		<span class="fas fa-sync md-text"></span>
+																	</button>
+
+																	<span class="sm-text text-gray"> Speed Test Running </span>
 																</ng-template>
 															</div>
+														</div>
 
-															<!-- Connection Type -->
-															<div class="flex-even connection-type">
-																<span class="sm-text">Connection Type</span>
+														<div class="d-flex">
+															<!-- Download Speed -->
+															<div class="flex-even storage">
+																<span class="sm-text">Download Speed</span>
+																<h5 class="sm-text">{{ internet_connection.downloadMbps }}</h5>
+															</div>
+
+															<!-- Upload Speed -->
+															<div class="flex-even storage">
+																<span class="sm-text">Upload Speed</span>
+																<h5 class="sm-text">{{ internet_connection.uploadMbps }}</h5>
+															</div>
+
+															<!-- Average Latency -->
+															<div class="flex-even ping">
+																<span class="sm-text">Average Latency</span>
+																<h5 class="sm-text">{{ internet_connection.ping }}</h5>
+															</div>
+														</div>
+													</div>
+
+													<hr class="my-3" />
+
+													<div class="d-flex">
+														<!-- Storage -->
+														<div class="flex-even storage">
+															<span class="sm-text">Storage</span>
+															<h5 class="sm-text">{{ storage_capacity ? storage_capacity : 'N/A' }}</h5>
+														</div>
+
+														<!-- Pi Version -->
+														<div class="flex-even storage">
+															<span class="sm-text">Pi Version</span>
+															<h5 class="sm-text">{{ apps && apps.rpi_model ? apps.rpi_model : 'N/A' }}</h5>
+														</div>
+
+														<!-- Player Version -->
+														<div class="flex-even player-version">
+															<span class="sm-text">Player Version</span>
+															<h5 class="sm-text">{{ apps && apps.server ? 'Version 2' : 'Version 1' }}</h5>
+														</div>
+													</div>
+
+													<hr class="my-3" />
+
+													<div class="d-flex">
+														<!-- Player Server -->
+														<div class="flex-even player-server-version">
+															<span class="sm-text">Server Version</span>
+															<h5 class="sm-text">{{ apps && apps.server ? apps.server : 'N/A' }}</h5>
+														</div>
+
+														<!-- Player UI -->
+														<div class="flex-even ui-version">
+															<span class="sm-text">UI Version</span>
+															<h5 class="sm-text">{{ apps && apps.ui ? apps.ui : 'N/A' }}</h5>
+														</div>
+
+														<!-- Player UI -->
+														<div class="flex-even chromium-version">
+															<span class="sm-text">Chromium Version</span>
+															<h5 class="sm-text">{{ apps && apps.chromium ? apps.chromium : 'N/A' }}</h5>
+														</div>
+													</div>
+
+													<ng-container *ngIf="isCurrentUserAdmin">
+														<hr class="my-3" />
+														<div class="d-flex">
+															<div class="flex-even">
+																<span class="sm-text">Current IP</span>
+																<br />
 																<h5 class="sm-text">
-																	{{ license_data.internetType ? license_data.internetType : 'N/A' }}
+																	{{ license_data.publicIP ? license_data.publicIP : 'N/A' }}
+																</h5>
+															</div>
+															<div class="flex-even">
+																<span class="sm-text">Previous IP</span>
+																<br />
+																<h5 class="sm-text">
+																	{{ license_data.prevPublicIP ? license_data.prevPublicIP : 'N/A' }}
+																</h5>
+															</div>
+														</div>
+													</ng-container>
+												</mat-card>
+											</div>
+
+											<!-- Screen Info -->
+											<div class="w-100">
+												<mat-card class="p-4">
+													<ng-container *ngIf="hasLoadedScreenData; else loaderSmall">
+														<h5 class="mb-0 font-weight-medium">Screen Info</h5>
+
+														<hr />
+
+														<div class="d-flex">
+															<!-- Screen Name -->
+															<div class="flex-even">
+																<span class="sm-text">Screen Name</span>
+																<a [routerLink]="screen_route" target="_blank">
+																	<h5 class="hoverable sm-text">
+																		{{ screen.screen_title ? (screen.screen_title | titlecase) : 'N/A' }}
+																	</h5>
+																</a>
+															</div>
+
+															<div class="flex-even">
+																<span class="sm-text">Screen Template</span>
+																<h5 class="sm-text">
+																	{{ screen.assigned_template ? screen.assigned_template : 'N/A' }}
 																</h5>
 															</div>
 
-															<!-- Memory -->
-															<div class="flex-even memory">
-																<span class="sm-text">RAM/Memory</span>
-																<h5 class="sm-text">{{ license_data.memory ? license_data.memory : 'N/A' }}</h5>
-															</div>
-														</div>
-														<!-- ID -->
-
-														<hr class="my-3" />
-
-														<div class="align-items-center">
-															<div class="last-speedtest-date mb-3">
-																<span class="sm-text">Last Speedtest</span>
-																<div>
-																	<h5 class="d-inline-block mr-4 sm-text">
-																		{{ internet_connection.date ? internet_connection.date : 'N/A' }}
-																	</h5>
-
-																	<ng-container *ngIf="!speedtest_running; else disable_speedtest_btn">
-																		<button
-																			*ngIf="license_data.speedtestSettings == 1"
-																			class="card-button"
-																			(click)="internetSpeedTest()"
-																			title="Test Internet Speed">
-																			<span class="fas fa-sync md-text"></span>
-																		</button>
-																	</ng-container>
-
-																	<ng-template #disable_speedtest_btn>
-																		<button class="card-button disabled rotate mr-2" title="Speedtest Running">
-																			<span class="fas fa-sync md-text"></span>
-																		</button>
-
-																		<span class="sm-text text-gray"> Speed Test Running </span>
-																	</ng-template>
-																</div>
-															</div>
-
-															<div class="d-flex">
-																<!-- Download Speed -->
-																<div class="flex-even storage">
-																	<span class="sm-text">Download Speed</span>
-																	<h5 class="sm-text">{{ internet_connection.downloadMbps }}</h5>
-																</div>
-
-																<!-- Upload Speed -->
-																<div class="flex-even storage">
-																	<span class="sm-text">Upload Speed</span>
-																	<h5 class="sm-text">{{ internet_connection.uploadMbps }}</h5>
-																</div>
-
-																<!-- Average Latency -->
-																<div class="flex-even ping">
-																	<span class="sm-text">Average Latency</span>
-																	<h5 class="sm-text">{{ internet_connection.ping }}</h5>
-																</div>
+															<div class="flex-even" *ngIf="screen_type">
+																<span class="sm-text">Screen Type</span>
+																<h5 class="sm-text">
+																	{{ screen_type.name ? (screen_type.name | titlecase) : 'N/A' }}
+																</h5>
 															</div>
 														</div>
 
 														<hr class="my-3" />
 
-														<div class="d-flex">
-															<!-- Storage -->
-															<div class="flex-even storage">
-																<span class="sm-text">Storage</span>
-																<h5 class="sm-text">{{ storage_capacity ? storage_capacity : 'N/A' }}</h5>
-															</div>
-
-															<!-- Pi Version -->
-															<div class="flex-even storage">
-																<span class="sm-text">Pi Version</span>
-																<h5 class="sm-text">{{ apps && apps.rpi_model ? apps.rpi_model : 'N/A' }}</h5>
-															</div>
-
-															<!-- Player Version -->
-															<div class="flex-even player-version">
-																<span class="sm-text">Player Version</span>
-																<h5 class="sm-text">{{ apps && apps.server ? 'Version 2' : 'Version 1' }}</h5>
-															</div>
-														</div>
-
-														<hr class="my-3" />
-
-														<div class="d-flex">
-															<!-- Player Server -->
-															<div class="flex-even player-server-version">
-																<span class="sm-text">Server Version</span>
-																<h5 class="sm-text">{{ apps && apps.server ? apps.server : 'N/A' }}</h5>
-															</div>
-
-															<!-- Player UI -->
-															<div class="flex-even ui-version">
-																<span class="sm-text">UI Version</span>
-																<h5 class="sm-text">{{ apps && apps.ui ? apps.ui : 'N/A' }}</h5>
-															</div>
-
-															<!-- Player UI -->
-															<div class="flex-even chromium-version">
-																<span class="sm-text">Chromium Version</span>
-																<h5 class="sm-text">{{ apps && apps.chromium ? apps.chromium : 'N/A' }}</h5>
-															</div>
-														</div>
-
-														<ng-container *ngIf="isCurrentUserAdmin">
-															<hr class="my-3" />
-															<div class="d-flex">
-																<div class="flex-even">
-																	<span class="sm-text">Current IP</span>
-																	<br />
-																	<h5 class="sm-text">
-																		{{ license_data.publicIP ? license_data.publicIP : 'N/A' }}
-																	</h5>
-																</div>
-																<div class="flex-even">
-																	<span class="sm-text">Previous IP</span>
-																	<br />
-																	<h5 class="sm-text">
-																		{{ license_data.prevPublicIP ? license_data.prevPublicIP : 'N/A' }}
-																	</h5>
-																</div>
-															</div>
-														</ng-container>
-													</mat-card>
-												</div>
-
-												<!-- Screen Info -->
-												<div class="w-100">
-													<mat-card class="p-4">
-														<ng-container *ngIf="hasLoadedScreenData; else loaderSmall">
-															<h5 class="mb-0 font-weight-medium">Screen Info</h5>
-
-															<hr />
-
-															<div class="d-flex">
-																<!-- Screen Name -->
-																<div class="flex-even">
-																	<span class="sm-text">Screen Name</span>
-																	<a [routerLink]="screen_route" target="_blank">
-																		<h5 class="hoverable sm-text">
-																			{{ screen.screen_title ? (screen.screen_title | titlecase) : 'N/A' }}
-																		</h5>
-																	</a>
-																</div>
-
-																<div class="flex-even">
-																	<span class="sm-text">Screen Template</span>
-																	<h5 class="sm-text">
-																		{{ screen.assigned_template ? screen.assigned_template : 'N/A' }}
-																	</h5>
-																</div>
-
-																<div class="flex-even" *ngIf="screen_type">
-																	<span class="sm-text">Screen Type</span>
-																	<h5 class="sm-text">
-																		{{ screen_type.name ? (screen_type.name | titlecase) : 'N/A' }}
-																	</h5>
-																</div>
-															</div>
-
-															<hr class="my-3" />
-
-															<!-- Screen Playlists -->
+														<!-- Screen Playlists -->
+														<div>
+															<span class="sm-text">Screen Playlists</span>
 															<div>
-																<span class="sm-text">Screen Playlists</span>
-																<div>
-																	<ul class="m-0 p-0 list-unstyled">
-																		<li *ngFor="let zone of zone_playlists">
-																			<span
-																				class="fas fa-circle mr-2 align-middle d-inline-block"
-																				style="font-size: 6px"></span>
+																<ul class="m-0 p-0 list-unstyled">
+																	<li *ngFor="let zone of zone_playlists">
+																		<span
+																			class="fas fa-circle mr-2 align-middle d-inline-block"
+																			style="font-size: 6px"></span>
 
-																			<ng-container
-																				*ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
-																				<a [routerLink]="zone.link" target="_blank">
-																					<h5 class="hoverable d-inline-block align-middle sm-text m-0">
-																						{{ zone.name }} - {{ zone.playlist_name }}
-																					</h5>
-																				</a>
-																			</ng-container>
-
-																			<ng-template #no_url>
-																				<h5 class="d-inline-block align-middle sm-text m-0">
-																					{{ zone.name }} - No Playlist
+																		<ng-container
+																			*ngIf="zone.link !== '/administrator/playlists/null'; else no_url">
+																			<a [routerLink]="zone.link" target="_blank">
+																				<h5 class="hoverable d-inline-block align-middle sm-text m-0">
+																					{{ zone.name }} - {{ zone.playlist_name }}
 																				</h5>
-																			</ng-template>
-																		</li>
-																	</ul>
-																</div>
+																			</a>
+																		</ng-container>
+
+																		<ng-template #no_url>
+																			<h5 class="d-inline-block align-middle sm-text m-0">
+																				{{ zone.name }} - No Playlist
+																			</h5>
+																		</ng-template>
+																	</li>
+																</ul>
 															</div>
-														</ng-container>
-													</mat-card>
-												</div>
+														</div>
+													</ng-container>
+												</mat-card>
 											</div>
 										</div>
 									</div>

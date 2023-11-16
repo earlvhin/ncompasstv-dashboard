@@ -5,14 +5,15 @@
 				<h1 class="page-title">Installations</h1>
 			</div>
 		</div>
-		<hr>
+		<hr class="my-4" />
 	</div>
 
-	<div class="content-section">
+	<div>
 		<div class="row">
-            <div class="col-12 col-lg">
+			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count *ngIf="installation_count; else small_loader"
+					<app-data-card-count
+						*ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.scheduled"
 						[data_label]="installation_count.scheduled_label"
 						[data_description]="installation_count.scheduled_description">
@@ -21,7 +22,8 @@
 			</div>
 			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count *ngIf="installation_count; else small_loader"
+					<app-data-card-count
+						*ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.prev"
 						[data_label]="installation_count.prev_label"
 						[data_description]="installation_count.prev_description">
@@ -30,7 +32,8 @@
 			</div>
 			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count *ngIf="installation_count; else small_loader"
+					<app-data-card-count
+						*ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.current"
 						[data_label]="installation_count.current_label"
 						[data_description]="installation_count.current_description">
@@ -39,7 +42,8 @@
 			</div>
 			<div class="col-12 col-lg">
 				<mat-card class="h-100 dealer-card">
-					<app-data-card-count *ngIf="installation_count; else small_loader"
+					<app-data-card-count
+						*ngIf="installation_count; else small_loader"
 						[data_value]="installation_count.next"
 						[data_label]="installation_count.next_label"
 						[data_description]="installation_count.next_description">
@@ -48,9 +52,10 @@
 			</div>
 		</div>
 
-		<div class="col-lg-12 custom-mat-tab mt-5 p-0">
-			<mat-tab-group dynamicHeight #tabGroup animationDuration="0ms" (selectedTabChange)="resetCurrentFilters($event)">
+		<hr class="my-4" />
 
+		<div class="col-lg-12 custom-mat-tab p-0">
+			<mat-tab-group dynamicHeight #tabGroup animationDuration="0ms" (selectedTabChange)="resetCurrentFilters($event)">
 				<ng-container *ngFor="let tab of tabs">
 					<mat-tab [label]="tab.label">
 						<ng-template matTabContent>
@@ -79,7 +84,6 @@
 						</ng-template>
 					</mat-tab>
 				</ng-container>
-
 			</mat-tab-group>
 		</div>
 	</div>

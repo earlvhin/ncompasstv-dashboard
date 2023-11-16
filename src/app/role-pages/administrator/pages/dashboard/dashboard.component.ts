@@ -171,7 +171,7 @@ export class DashboardComponent implements OnInit {
 
 	getAverage(total) {
 		let average = total / this.dealer_stats.active;
-		return average ? average.toFixed(0) : null;
+		return average ? average.toFixed(0) : 0;
 	}
 
 	getFeedsTotal() {

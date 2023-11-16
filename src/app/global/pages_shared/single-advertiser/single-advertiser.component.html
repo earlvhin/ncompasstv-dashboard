@@ -1,4 +1,4 @@
-<div class="container">
+<div>
 	<ng-container *ngIf="is_banner_data_ready; else loading">
 		<app-banner
 			[image]="currentImage"
@@ -13,12 +13,12 @@
 	</ng-container>
 
 	<div class="margin-top-extra-notes">
-		<div class="content-section">
+		<div class="child-container">
 			<div class="row">
 				<div class="col-lg-12">
 					<mat-tab-group dynamicHeight [selectedIndex]="selected_index">
 						<mat-tab label="Content">
-							<div class="container pt-4 pl-0 pr-0 pb-4">
+							<div class="pt-4 pl-0 pr-0 pb-4">
 								<mat-card>
 									<ng-container *ngIf="contents_loaded; else loading">
 										<ng-container *ngIf="content_data.length > 0; else noContents">
@@ -38,7 +38,7 @@
 
 						<!-- Activity Tab -->
 						<mat-tab label="Activity">
-							<div class="container pt-4 px-0">
+							<div class="pt-4 px-0">
 								<div class="row">
 									<div class="col-lg-12 ml-2">
 										<h5>{{ createdBy }}</h5>
@@ -47,7 +47,7 @@
 								</div>
 
 								<div class="row">
-									<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loadingContents">
+									<div class="col-lg-12" *ngIf="!initial_load_activity; else loadingContents">
 										<app-single-activity-tab
 											*ngIf="activity_data.length; else loadingContents"
 											[activity_data]="activity_data"
@@ -90,7 +90,7 @@
 </ng-template>
 
 <ng-template #noDataActivity>
-	<mat-card>
+	<mat-card class="mt-4">
 		<div class="no-contents d-flex flex-column align-items-center">
 			<div class="mb-4">
 				<i class="text-gray fa-5x far fa-file-alt"></i>

@@ -616,7 +616,7 @@
 								</div>
 
 								<div class="row">
-									<div class="col-lg-12 pt-4" *ngIf="!initial_load_activity; else loader_activity">
+									<div class="col-lg-12" *ngIf="!initial_load_activity; else loader_activity">
 										<app-single-activity-tab
 											*ngIf="activity_data.length; else loader_activity"
 											[activity_data]="activity_data"
@@ -655,11 +655,9 @@
 
 						<mat-tab label="Billing" *ngIf="!is_dealer_admin">
 							<div class="col-lg-12 p-0" *ngIf="current_tab === 'billing'">
-								<div class="theme-container">
-									<div class="row">
-										<div class="col-lg-12">
-											<app-single-billings [dealer]="dealer_id" [reload]="reload_billing"> </app-single-billings>
-										</div>
+								<div class="row">
+									<div class="col-lg-12">
+										<app-single-billings [dealer]="dealer_id" [reload]="reload_billing"> </app-single-billings>
 									</div>
 								</div>
 							</div>

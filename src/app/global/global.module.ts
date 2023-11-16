@@ -94,6 +94,8 @@ import { FillersComponent } from './pages_shared/fillers/fillers.component';
 import { FilterLabelsComponent } from './components_shared/media_components/filter-labels/filter-labels.component';
 import { FillerFormComponent } from './components_shared/feed_components/filler-form/filler-form.component';
 import { FillerDemoComponent } from './components_shared/feed_components/filler-demo/filler-demo.component';
+import { FillerGridCategoryViewComponent } from './pages_shared/fillers/components/filler-grid-category-view/filler-grid-category-view.component';
+import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
 import { FooterComponent } from './components_shared/page_components/footer/footer.component';
 import { GenerateFeedComponent } from './pages_shared/generate-feed/generate-feed.component';
 import { GridViewLicenseComponent } from './components_shared/license_components/grid-view-license/grid-view-license.component';
@@ -200,6 +202,7 @@ import { ZoneListComponent } from './components_shared/zone_components/zone-list
 import { ZoneExpansionPanelComponent } from './pages_shared/single-template/components/zone-expansion-panel/zone-expansion-panel.component';
 import { LicenseViewComponent } from './components_shared/locator_components/license-view/license-view.component';
 import { UpcomingInstallModalComponent } from './pages_shared/upcoming-install-modal/upcoming-install-modal.component';
+import { UpdateProfilePhotoComponent } from './components_shared/update-profile-photo/update-profile-photo.component';
 import { UserSettingComponent } from './pages_shared/profile-setting/user-setting/user-setting.component';
 import { ViewCardsComponent } from './pages_shared/profile-setting/payment-setting/view-cards/view-cards.component';
 import { ViewFillersGroupComponent } from './pages_shared/fillers/components/view-fillers-group/view-fillers-group.component';
@@ -238,8 +241,6 @@ import {
 	MatSnackBar,
 	MatSnackBarModule
 } from '@angular/material';
-import { FillerMainViewComponent } from './pages_shared/fillers/components/filler-main-view/filler-main-view.component';
-import { UpdateProfilePhotoComponent } from './components_shared/update-profile-photo/update-profile-photo.component';
 
 const ngComponents = [
 	AddCardComponent,
@@ -324,7 +325,9 @@ const ngComponents = [
 	FillersComponent,
 	FillerDemoComponent,
 	FillerFormComponent,
+	FillerGridCategoryViewComponent,
 	FilterLabelsComponent,
+	FillerMainViewComponent,
 	FooterComponent,
 	GenerateFeedComponent,
 	GridViewLicenseComponent,
@@ -420,6 +423,7 @@ const ngComponents = [
 	UnassignHostLicenseComponent,
 	UnassignLicenseComponent,
 	UpcomingInstallModalComponent,
+	UpdateProfilePhotoComponent,
 	UserSettingComponent,
 	UserSortModalComponent,
 	UserTypeComponent,
@@ -472,7 +476,7 @@ const MaterialModules = [
 const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 
 @NgModule({
-	declarations: [ngComponents, DIRECTIVES, FillerMainViewComponent, UpdateProfilePhotoComponent],
+	declarations: [ngComponents, DIRECTIVES],
 	entryComponents: [
 		AddCardComponent,
 		AddFillerContentComponent,
@@ -502,6 +506,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		EditSingleHostComponent,
 		EditableFieldModalComponent,
 		FeedMediaComponent,
+		FillerGridCategoryViewComponent,
 		ImageSelectionModalComponent,
 		InformationModalComponent,
 		LicenseModalComponent,

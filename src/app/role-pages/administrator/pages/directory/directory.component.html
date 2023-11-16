@@ -1,206 +1,196 @@
 <div class="theme-container">
-    <div class="title-section">
-        <div class="d-flex">
-            <div class="flex-even">
-                <h1 class="page-title">{{ title }}</h1>
-            </div>
-        </div>
-        <hr class="my-4">
-    </div>
+	<div class="title-section">
+		<div class="d-flex">
+			<div class="flex-even">
+				<h1 class="page-title">{{ title }}</h1>
+			</div>
+		</div>
+		<hr class="my-4" />
+	</div>
 
-    <div class="content-section">
-        <div class="row">
-            <div class="col-lg-3">
-                <div class="filter-table p-3 md-text white-bg full-width">
-                    <div class="title pt-2 font-weight-bold">
-                        Dealer Search
-                    </div>
-                    <hr class="my-4">
-                    <div class="">
-                        <app-search-field *ngIf="!initial_load"
-                            [form_title]="'Search Dealer Business Name'"
-                            [placeholder]="'Example: N-Compass'"
-                            [data_reference]="directory_data"
-                            [primary_keyword]="'business_name'"
-                            [secondary_keyword]="'name'"
-                            (searched)="filterData($event, 'dealer')"
-                            [api_search]="true"
-                        ></app-search-field>
-                    </div>
-                    <hr class="my-4">
-                    <div class="title pt-2 font-weight-bold">
-                        Host Search
-                    </div>
-                    <hr class="my-4">
-                    <div class="">
-                        <app-search-field *ngIf="!initial_load"
-                        [form_title]="'Search Host Name or Category'"
-                        [placeholder]="'Example: N-Compass or Pharmacy'"
-                        [data_reference]="directory_data"
-                        [primary_keyword]="'business_name'"
-                        [secondary_keyword]="'name'"
-                        (searched)="filterData($event, 'host')"
-                        [api_search]="true"
-                        ></app-search-field>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-9 text-center mb-4">
-                <div class="col-lg-12 p-0" *ngIf="!searching; else loading">
-                    <mat-accordion *ngIf="filtered_data.length > 0; else nodata">
-                        <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="mb-2 p-2 pl-0 pr-0" *ngFor="let dealer of directory_data; let i = index" hideToggle="true" #example id="outer-mat">
-                            <mat-expansion-panel-header [ngClass]="dealer.hosts.length > 0 ? 'bleft-5-active authorize-click' : 'bleft-5-inactive prevent-click'" >
-                                <mat-panel-title class="md-text col-lg-3 p-0">
-                                    <!-- <span class="col-lg-3">
+	<div>
+		<div class="row">
+			<div class="col-lg-3">
+				<div class="filter-table p-3 md-text white-bg full-width">
+					<div class="title pt-2 font-weight-bold">Dealer Search</div>
+					<hr class="my-4" />
+					<div class="">
+						<app-search-field
+							*ngIf="!initial_load"
+							[form_title]="'Search Dealer Business Name'"
+							[placeholder]="'Example: N-Compass'"
+							[data_reference]="directory_data"
+							[primary_keyword]="'business_name'"
+							[secondary_keyword]="'name'"
+							(searched)="filterData($event, 'dealer')"
+							[api_search]="true"></app-search-field>
+					</div>
+					<hr class="my-4" />
+					<div class="title pt-2 font-weight-bold">Host Search</div>
+					<hr class="my-4" />
+					<div class="">
+						<app-search-field
+							*ngIf="!initial_load"
+							[form_title]="'Search Host Name or Category'"
+							[placeholder]="'Example: N-Compass or Pharmacy'"
+							[data_reference]="directory_data"
+							[primary_keyword]="'business_name'"
+							[secondary_keyword]="'name'"
+							(searched)="filterData($event, 'host')"
+							[api_search]="true"></app-search-field>
+					</div>
+				</div>
+			</div>
+			<div class="col-lg-9 text-center mb-4">
+				<div class="col-lg-12 p-0" *ngIf="!searching; else loading">
+					<mat-accordion *ngIf="filtered_data.length > 0; else nodata">
+						<mat-expansion-panel
+							(opened)="panelOpenState = true"
+							(closed)="panelOpenState = false"
+							class="mb-2 p-2 pl-0 pr-0"
+							*ngFor="let dealer of directory_data; let i = index"
+							hideToggle="true"
+							#example
+							id="outer-mat">
+							<mat-expansion-panel-header
+								[ngClass]="dealer.hosts.length > 0 ? 'bleft-5-active authorize-click' : 'bleft-5-inactive prevent-click'">
+								<mat-panel-title class="md-text col-lg-3 p-0">
+									<!-- <span class="col-lg-3">
                                         <img src="/assets/media-files/dealer-icon.png" class="user-icon full-width" alt="dealer-icon">
                                     </span> -->
-                                    <p class="text-left">
-                                        <span class="font-weight-bold ">
-                                            {{dealer.dealer.businessName}}
-                                        </span>
-                                        <br />
-                                        <span class="text-danger">
-                                            {{dealer.dealer.dealerIdAlias}}
-                                        </span>
-                                    </p>
-                                </mat-panel-title>
-                                <mat-panel-description class="md-text">
-                                    <p class="col-lg-5 text-left">
-                                        <span class="font-weight-bold">
-                                            Dealer
-                                        </span>
-                                        <br />
-                                        <span>
-                                            {{dealer.dealer.contactPerson}}
-                                        </span>
-                                    </p>
-    
-                                    <p class="col-lg-6 text-left">
-                                        <span>
-                                            {{dealer.dealer.contactNumber}}
-                                        </span>
-                                        <br />
-                                        <span>
-                                            {{dealer.dealer.licenseCount}} license(s)
-                                        </span>
-                                    </p>
-                                    <div class="col-lg-1 p-0 pt-1 text-right" *ngIf="dealer.hosts.length > 0">
-                                        <div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
-                                        <div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
-                                    </div>
-                                </mat-panel-description>
-                            </mat-expansion-panel-header>
-                        
-                            <div class="col-lg-12 text-left pl-0 pr-0" *ngIf="dealer.hosts.length > 0">
-                                <mat-expansion-panel (opened)="panelOpenState = true" (closed)="panelOpenState = false" class="p-2 mb-2" *ngFor="let host of dealer.hosts" hideToggle="true" #example>
-                                    <mat-expansion-panel-header class="pr-0">
-                                        <mat-panel-title class="md-text col-lg-3 p-0">
-                                            <!-- <span class="col-lg-3">
+									<p class="text-left">
+										<span class="font-weight-bold">
+											{{ dealer.dealer.businessName }}
+										</span>
+										<br />
+										<span class="text-danger">
+											{{ dealer.dealer.dealerIdAlias }}
+										</span>
+									</p>
+								</mat-panel-title>
+								<mat-panel-description class="md-text">
+									<p class="col-lg-5 text-left">
+										<span class="font-weight-bold"> Dealer </span>
+										<br />
+										<span>
+											{{ dealer.dealer.contactPerson }}
+										</span>
+									</p>
+
+									<p class="col-lg-6 text-left">
+										<span>
+											{{ dealer.dealer.contactNumber }}
+										</span>
+										<br />
+										<span> {{ dealer.dealer.licenseCount }} license(s) </span>
+									</p>
+									<div class="col-lg-1 p-0 pt-1 text-right" *ngIf="dealer.hosts.length > 0">
+										<div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+										<div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+									</div>
+								</mat-panel-description>
+							</mat-expansion-panel-header>
+
+							<div class="col-lg-12 text-left pl-0 pr-0" *ngIf="dealer.hosts.length > 0">
+								<mat-expansion-panel
+									(opened)="panelOpenState = true"
+									(closed)="panelOpenState = false"
+									class="p-2 mb-2"
+									*ngFor="let host of dealer.hosts"
+									hideToggle="true"
+									#example>
+									<mat-expansion-panel-header class="pr-0">
+										<mat-panel-title class="md-text col-lg-3 p-0">
+											<!-- <span class="col-lg-3">
                                                 <img src="/assets/media-files/dealer-icon.png" class="user-icon full-width" alt="dealer-icon">
                                             </span> -->
-                                            <p class="text-left">
-                                                <span class="font-weight-bold ">
-                                                    {{host.name}}
-                                                </span>
-                                                <br />
-                                                <span class="text-danger">
-                                                    {{host.category}}
-                                                </span>
-                                            </p>
-                                        </mat-panel-title>
-                                        <mat-panel-description class="md-text">
-                                            <p class="col-lg-11 text-left">
-                                                <span class="font-weight-bold">
-                                                    Host
-                                                </span>
-                                                <br />
-                                                <span>
-                                                    {{host.address}},{{host.city}},{{host.region}},{{host.state}},{{host.postalCode}}
-                                                </span>
-                                            </p>
-                                            <div class="col-lg-1 ml-2 p-0 pt-1 text-right" >
-                                                <div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
-                                                <div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
-                                            </div>
-                                        </mat-panel-description>
-                                    </mat-expansion-panel-header>
-                                    <div class="description col-lg-12 p-0">
-                                        <p>
-                                            <span class="font-weight-bold">
-                                                Latitude:
-                                            </span>
-                                            <span>
-                                                {{host.latitude}}
-                                            </span>
-                                        </p>
-                                        <p>
-                                            <span class="font-weight-bold">
-                                                Longitude:
-                                            </span>
-                                            <span>
-                                                {{host.longitude}}
-                                            </span>
-                                        </p>
-                                        <p>
-                                            <span class="font-weight-bold">
-                                                Notes:
-                                            </span>
-                                            <span>
-                                                {{host.notes}}
-                                            </span>
-                                        </p>
-                                        <div>
-                                            <span class="font-weight-bold">
-                                                Store Hours:
-                                            </span>
-                                            <ul class="col-lg-12">
-                                                <li *ngFor="let hours of host.storeHours">
-                                                    {{hours.day}} - <span *ngFor="let period of hours.periods">
-                                                        <span *ngIf="!hours.status">
-                                                            Closed
-                                                        </span>
-                                                        <span *ngIf="hours.status && period.open == '' && period.close == ''">
-                                                            Open 24 Hours
-                                                        </span>
-                                                        <span *ngIf="hours.status && period.open != '' && period.close != ''">
-                                                            {{period.open}}-{{period.close}}
-                                                        </span>
-                                                    </span>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </mat-expansion-panel>
-                            </div>
-                        </mat-expansion-panel>
-                    </mat-accordion>
-                    <div class="col-lg-12" id="directory-paging">
-                        <app-pagination-field class="full-width flex text-center"
-                            [paging_data]="paging_data"
-                            (get_page)="getDirectoryTree($event)">
-                        </app-pagination-field>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-    </div>
+											<p class="text-left">
+												<span class="font-weight-bold">
+													{{ host.name }}
+												</span>
+												<br />
+												<span class="text-danger">
+													{{ host.category }}
+												</span>
+											</p>
+										</mat-panel-title>
+										<mat-panel-description class="md-text">
+											<p class="col-lg-11 text-left">
+												<span class="font-weight-bold"> Host </span>
+												<br />
+												<span>
+													{{ host.address }},{{ host.city }},{{ host.region }},{{ host.state }},{{ host.postalCode }}
+												</span>
+											</p>
+											<div class="col-lg-1 ml-2 p-0 pt-1 text-right">
+												<div *ngIf="!example.expanded" class="ctm-accordion-icon"><i class="fas fa-plus"></i></div>
+												<div *ngIf="example.expanded" class="ctm-accordion-icon"><i class="fas fa-minus"></i></div>
+											</div>
+										</mat-panel-description>
+									</mat-expansion-panel-header>
+									<div class="description col-lg-12 p-0">
+										<p>
+											<span class="font-weight-bold"> Latitude: </span>
+											<span>
+												{{ host.latitude }}
+											</span>
+										</p>
+										<p>
+											<span class="font-weight-bold"> Longitude: </span>
+											<span>
+												{{ host.longitude }}
+											</span>
+										</p>
+										<p>
+											<span class="font-weight-bold"> Notes: </span>
+											<span>
+												{{ host.notes }}
+											</span>
+										</p>
+										<div>
+											<span class="font-weight-bold"> Store Hours: </span>
+											<ul class="col-lg-12">
+												<li *ngFor="let hours of host.storeHours">
+													{{ hours.day }} -
+													<span *ngFor="let period of hours.periods">
+														<span *ngIf="!hours.status"> Closed </span>
+														<span *ngIf="hours.status && period.open == '' && period.close == ''"> Open 24 Hours </span>
+														<span *ngIf="hours.status && period.open != '' && period.close != ''">
+															{{ period.open }}-{{ period.close }}
+														</span>
+													</span>
+												</li>
+											</ul>
+										</div>
+									</div>
+								</mat-expansion-panel>
+							</div>
+						</mat-expansion-panel>
+					</mat-accordion>
+					<div class="col-lg-12" id="directory-paging">
+						<app-pagination-field class="full-width flex text-center" [paging_data]="paging_data" (get_page)="getDirectoryTree($event)">
+						</app-pagination-field>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <ng-template #loading>
-        <div class="text-center d-flex align-items-center justify-content-center vh-50">
-            <app-spinner></app-spinner>
-        </div>
-    </ng-template>
+	<ng-template #loading>
+		<div class="text-center d-flex align-items-center justify-content-center vh-50">
+			<app-spinner></app-spinner>
+		</div>
+	</ng-template>
 
 	<ng-template #nodata>
-        <div class="col-lg-12 pl-0 pr-0">
-            <mat-card class="pt-5 pb-5 col-lg-12 text-center">
-                <div class="mb-4">
-                    <i class="text-gray fa-5x far fa-file-alt"></i>
-                </div>
-                <h3 class="text-gray col-lg-12">No Results Found.</h3>
-                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-            </mat-card>
-        </div>
-    </ng-template>
+		<div class="col-lg-12 pl-0 pr-0">
+			<mat-card class="pt-5 pb-5 col-lg-12 text-center">
+				<div class="mb-4">
+					<i class="text-gray fa-5x far fa-file-alt"></i>
+				</div>
+				<h3 class="text-gray col-lg-12">No Results Found.</h3>
+				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+			</mat-card>
+		</div>
+	</ng-template>
 </div>

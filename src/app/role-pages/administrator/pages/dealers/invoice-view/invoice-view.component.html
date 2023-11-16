@@ -1,97 +1,92 @@
-<div class="theme-container">
-    <div class="row table-row">
-        <div class="col-lg-12 p-0 d-flex">
-            <div class="col-lg-8 pb-4">
-                <button id="filter-by-type-btn" mat-button mat-raised-button 
-                    class="theme-btn sm-text mr-2 h-45" 
-                    [matMenuTriggerFor]="type">
-                    <span class="button-label">Billing Date</span>
-                    <span class="fas fa-sort xsm-text"></span>
-                </button>
-                <mat-menu #type="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterBillingDate('1st')">1st</button>
-                    <button class="md-text" mat-menu-item (click)="filterBillingDate('15th')">15th</button>
-                </mat-menu>
-                
-                <button id="filter-by-status-btn" mat-button mat-raised-button 
-                    class="theme-btn sm-text mr-2 h-45" 
-                    [matMenuTriggerFor]="status">
-                    <span class="button-label">Status</span>
-                    <span class="fas fa-sort xsm-text"></span>
-                </button>
-                <mat-menu #status="matMenu">
-                    <button class="md-text" mat-menu-item (click)="filterStatus('paid')">Paid</button>
-                    <button class="md-text" mat-menu-item (click)="filterStatus('unpaid')">Unpaid</button>
-                    <button class="md-text" mat-menu-item (click)="filterStatus('rejected')">Rejected</button>
-                </mat-menu>
-            </div>
-            <div class="col-lg-4">
-                <app-search-field
-                    *ngIf="!initial_load_hosts"
-                    [form_title]="'Search Dealer Name or Alias'"
-                    [placeholder]="'Example: N-Compass TV'"
-                    [data_reference]="transactions"
-                    [primary_keyword]="'dealerAlias'"
-                    [secondary_keyword]="'businessName'"
-                    (searched)="filterData($event)"
-                    [api_search]="true"
-                ></app-search-field>
-            </div>
-        </div>
-    </div>
-    <div class="row full-width m-0 mt-3" *ngIf="filters.billing_date || filters.label_status">
-        <div class="col-lg-12 p-0">
-            <div class="d-flex align-items-center p-2 bg-gray-2" >
-                <div class="filter-pills">
-                    <div class="filetype-pill pill" *ngIf="filters.label_type">
-                        Type: <strong>{{filters.label_type}}</strong>
-                    </div>
+<div>
+	<div class="row table-row">
+		<div class="col-lg-12 p-0 d-flex">
+			<div class="col-lg-8 pb-4">
+				<button id="filter-by-type-btn" mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="type">
+					<span class="button-label">Billing Date</span>
+					<span class="fas fa-sort xsm-text"></span>
+				</button>
+				<mat-menu #type="matMenu">
+					<button class="md-text" mat-menu-item (click)="filterBillingDate('1st')">1st</button>
+					<button class="md-text" mat-menu-item (click)="filterBillingDate('15th')">15th</button>
+				</mat-menu>
 
-                    <div class="order-pill pill" *ngIf="filters.label_status">
-                        Status: <strong>{{filters.label_status}}</strong>
-                    </div>
-                </div>
-                <div class="control flex-even text-right">
-                    <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-                        <span class="button-label">
-                            Clear Filter
-                        </span>
-                        <span class="fas fa-times ml-2 sm-text"></span>
-                    </button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="row table-row">
-        <div class="col-lg-12 pt-2 pb-4" *ngIf="is_loading; else spinner">
-            <mat-card *ngIf="filtered_data_transactions.length > 0;else nodata">
-                <app-data-table id="billingTable" class="full-width" 
-                    [table_columns]="transactions_table_column" 
-                    [table_data]="transaction_data"
-                    [new_table]="true"
-                    [paging_details]="transactions_paging"
-                    (page_triggered)="getTransactions($event)"
-                    [is_view_only]="true"
-                    [transaction_action]="true">
-                </app-data-table>
-            </mat-card>
-        </div>
-    </div>
-    <ng-template #spinner>
-        <div class="py-5 white-bg col-lg-12 text-center mt-4 mb-4">
-            <app-spinner [diameter]="85"></app-spinner>
-        </div>
-    </ng-template>
+				<button id="filter-by-status-btn" mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="status">
+					<span class="button-label">Status</span>
+					<span class="fas fa-sort xsm-text"></span>
+				</button>
+				<mat-menu #status="matMenu">
+					<button class="md-text" mat-menu-item (click)="filterStatus('paid')">Paid</button>
+					<button class="md-text" mat-menu-item (click)="filterStatus('unpaid')">Unpaid</button>
+					<button class="md-text" mat-menu-item (click)="filterStatus('rejected')">Rejected</button>
+				</mat-menu>
+			</div>
+			<div class="col-lg-4">
+				<app-search-field
+					*ngIf="!initial_load_hosts"
+					[form_title]="'Search Dealer Name or Alias'"
+					[placeholder]="'Example: N-Compass TV'"
+					[data_reference]="transactions"
+					[primary_keyword]="'dealerAlias'"
+					[secondary_keyword]="'businessName'"
+					(searched)="filterData($event)"
+					[api_search]="true"></app-search-field>
+			</div>
+		</div>
+	</div>
+	<div class="row full-width m-0 mt-3" *ngIf="filters.billing_date || filters.label_status">
+		<div class="col-lg-12 p-0">
+			<div class="d-flex align-items-center p-2 bg-gray-2">
+				<div class="filter-pills">
+					<div class="filetype-pill pill" *ngIf="filters.label_type">
+						Type: <strong>{{ filters.label_type }}</strong>
+					</div>
+
+					<div class="order-pill pill" *ngIf="filters.label_status">
+						Status: <strong>{{ filters.label_status }}</strong>
+					</div>
+				</div>
+				<div class="control flex-even text-right">
+					<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+						<span class="button-label"> Clear Filter </span>
+						<span class="fas fa-times ml-2 sm-text"></span>
+					</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="row table-row">
+		<div class="col-lg-12 pt-2 pb-4" *ngIf="is_loading; else spinner">
+			<mat-card *ngIf="filtered_data_transactions.length > 0; else nodata">
+				<app-data-table
+					id="billingTable"
+					class="full-width"
+					[table_columns]="transactions_table_column"
+					[table_data]="transaction_data"
+					[new_table]="true"
+					[paging_details]="transactions_paging"
+					(page_triggered)="getTransactions($event)"
+					[is_view_only]="true"
+					[transaction_action]="true">
+				</app-data-table>
+			</mat-card>
+		</div>
+	</div>
+	<ng-template #spinner>
+		<div class="py-5 white-bg col-lg-12 text-center mt-4 mb-4">
+			<app-spinner [diameter]="85"></app-spinner>
+		</div>
+	</ng-template>
 </div>
 
 <ng-template #nodata>
-    <div class="col-lg-12 pl-0 pr-0">
-        <mat-card class="pt-5 pb-5 col-lg-12 text-center">
-            <div class="mb-4">
-                <i class="text-gray fa-5x far fa-file-alt"></i>
-            </div>
-            <h3 class="text-gray col-lg-12">No Results Found.</h3>
-            <span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
-        </mat-card>
-    </div>
+	<div class="col-lg-12 pl-0 pr-0">
+		<mat-card class="pt-5 pb-5 col-lg-12 text-center">
+			<div class="mb-4">
+				<i class="text-gray fa-5x far fa-file-alt"></i>
+			</div>
+			<h3 class="text-gray col-lg-12">No Results Found.</h3>
+			<span class="text-gray col-lg-12">Try adjusting your search or filter to find what you're looking for.</span>
+		</mat-card>
+	</div>
 </ng-template>

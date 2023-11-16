@@ -1,6 +1,6 @@
 <div class="theme-container">
 	<div class="title-section">
-		<div class="d-flex">
+		<div class="d-flex align-items-center">
 			<div class="flex-even">
 				<h1 class="page-title">{{ title }}</h1>
 			</div>
@@ -19,7 +19,7 @@
 		<hr class="my-4" />
 	</div>
 
-	<div class="content-section">
+	<div>
 		<div class="row row-eq-height">
 			<div class="col-lg-6">
 				<mat-card class="h-100">
@@ -78,9 +78,11 @@
 			</div>
 		</div>
 
+		<hr class="my-4" />
+
 		<div class="row">
 			<div class="col-lg-12">
-				<div class="custom-mat-tab mt-5">
+				<div class="custom-mat-tab">
 					<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
 						<!-- LICENSES TAB -->
 						<mat-tab id="licenses-view-tab" label="Licenses View">
@@ -273,25 +275,34 @@
 									">
 									<div class="col-lg-12">
 										<div class="d-flex align-items-center p-2 bg-gray-2">
-											<div class="filter-pills">
-												<div class="filetype-pill pill" *ngIf="filters.label_status">
-													License Status: <strong>{{ filters.label_status }}</strong>
-												</div>
+											<div class="d-flex align-items-center">
+												<div class="filter-pills">
+													<div class="filetype-pill pill" *ngIf="filters.label_status">
+														License Status: <strong>{{ filters.label_status }}</strong>
+													</div>
 
-												<div class="order-pill pill" *ngIf="filters.label_zone">
-													Timezone: <strong>{{ filters.label_zone }}</strong>
-												</div>
+													<div class="order-pill pill" *ngIf="filters.label_zone">
+														Timezone: <strong>{{ filters.label_zone }}</strong>
+													</div>
 
-												<div class="dealer-pill pill" *ngIf="filters.label_dealer">
-													Dealer: <strong>{{ filters.label_dealer }}</strong>
-												</div>
+													<div class="dealer-pill pill" *ngIf="filters.label_dealer">
+														Dealer: <strong>{{ filters.label_dealer }}</strong>
+													</div>
 
-												<div class="host-pill pill" *ngIf="filters.label_host">
-													Host: <strong>{{ filters.label_host }}</strong>
-												</div>
+													<div class="host-pill pill" *ngIf="filters.label_host">
+														Host: <strong>{{ filters.label_host }}</strong>
+													</div>
 
-												<div class="host-pill pill" *ngIf="filters.admin_licenses">
-													Show Admin Licenses: <strong>{{ filters.admin_licenses }}</strong>
+													<div class="host-pill pill" *ngIf="filters.admin_licenses">
+														Show Admin Licenses: <strong>{{ filters.admin_licenses }}</strong>
+													</div>
+												</div>
+												<div class="pl-2" *ngIf="!searching_licenses">
+													<p class="sm-text py-2 m-0">
+														Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
+														<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
+														<span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
+													</p>
 												</div>
 											</div>
 											<div class="control flex-even text-right">
@@ -302,16 +313,9 @@
 											</div>
 										</div>
 									</div>
-									<div class="col-lg-12" *ngIf="!searching_licenses">
-										<p class="sm-text py-2 m-0">
-											Showing <span class="text-danger">{{ getTotalShownLicenses() }}</span> out of
-											<span class="text-danger">{{ getTotalLicenses() }}</span> licenses result.
-											<span class="text-danger" *ngIf="filters.admin_licenses">Including admin licenses.</span>
-										</p>
-									</div>
 								</div>
 								<div class="p-0" *ngIf="!hide_all_license; else showLicensesButton">
-									<div class="row flex p-0" *ngIf="!no_licenses; else no_data">
+									<div class="row no-gutters flex p-0" *ngIf="!no_licenses; else no_data">
 										<div class="col-lg-12 mr-2 p-0" *ngIf="active_view === 'list'; else grid">
 											<ng-container>
 												<div *ngIf="!initial_load_licenses; else loader">
