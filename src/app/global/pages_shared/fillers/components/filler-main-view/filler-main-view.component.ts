@@ -95,13 +95,13 @@ export class FillerMainViewComponent implements OnInit {
 				if (!data.message) {
 					switch (data.length) {
 						case 1:
-							this.dimension = '150px';
+							this.dimension = '160px';
 							break;
 						case 2:
-							this.dimension = '120px';
+							this.dimension = '130px';
 							break;
 						default:
-							this.dimension = '85px';
+							this.dimension = '95px';
 							break;
 					}
 					data.map((fillers) => {
@@ -156,7 +156,7 @@ export class FillerMainViewComponent implements OnInit {
 			this.filler_data.map((filler: any, index) => {
 				this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
 			});
-		}
+		} else this.hidePreview();
 	}
 
 	removeFromGrid(id) {
