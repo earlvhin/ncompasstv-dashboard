@@ -53,11 +53,18 @@ export class FillerMainViewComponent implements OnInit {
 		this.filler_data = this.filler_data;
 	}
 
+	mapFillerDataToGridData() {
+		this.grid_data = [];
+		this.filler_data.map((filler: any, index) => {
+			this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
+		});
+	}
+
 	onSearchFiller(keyword) {
 		this.is_loading = true;
 
 		if (this.active_view === 'grid') {
-			this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
+			this.grid_data = keyword ? this.original_grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
 		}
 		if (keyword) this.search_keyword = keyword;
 		else this.search_keyword = '';
