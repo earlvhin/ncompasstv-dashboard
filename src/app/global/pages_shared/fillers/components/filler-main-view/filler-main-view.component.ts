@@ -63,9 +63,10 @@ export class FillerMainViewComponent implements OnInit {
 	onSearchFiller(keyword) {
 		this.is_loading = true;
 
-		if (this.active_view === 'grid') {
-			this.grid_data = keyword ? this.original_grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
-		}
+		this.grid_data =
+			this.active_view === 'grid' && keyword
+				? this.original_grid_data.filter((d) => d.name.includes(keyword.toLowerCase()))
+				: this.original_grid_data;
 		if (keyword) this.search_keyword = keyword;
 		else this.search_keyword = '';
 		this.get_fillers.emit({ page: 1, keyword: keyword });
@@ -157,13 +158,14 @@ export class FillerMainViewComponent implements OnInit {
 		this.grid_data = [];
 		if (this.active_view == 'grid') {
 			this.is_loading = true;
-
 			//asynchronous api response since this is FE implementation only no BE available,
 			// need to map to grid so sorting of original data will not change see splicing in showAlbumPreview function
 			this.filler_data.map((filler: any, index) => {
 				this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
 			});
-		} else this.hidePreview();
+			return;
+		}
+		this.hidePreview();
 	}
 
 	removeFromGrid(id) {
