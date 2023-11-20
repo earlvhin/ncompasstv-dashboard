@@ -51,12 +51,13 @@ export class FillerMainViewComponent implements OnInit {
 		this.is_loading = this.is_loading;
 		this.no_search_result = this.no_search_result;
 		this.filler_data = this.filler_data;
-		if (this.filler_data && this.search_keyword != '' && this.active_view == 'grid') this.mapFillerDataToGridData();
+		if (this.filler_data && this.search_keyword != '' && this.active_view == 'grid') {
+			this.mapFillerDataToGridData();
+		}
 	}
 
 	mapFillerDataToGridData() {
 		this.grid_data = [];
-		this.original_grid_data = [];
 		this.filler_data.map((filler: any, index) => {
 			this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
 		});
