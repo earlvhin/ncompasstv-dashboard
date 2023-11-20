@@ -26,13 +26,15 @@
 		</mat-menu>
 	</div>
 	<ng-template #gridMenu>
-		<div class="col-lg-7 d-flex pt-2">
-			<div class="bg-dark text-white sm-text h-35 p-2 mr-2" *ngFor="let data of grid_data.slice(0, 6)">
-				<span class="mr-2">{{ data.name }}</span
-				><span class="fas fa-times clickable" (click)="removeFromGrid(data.id)"></span>
-			</div>
-			<div class="bg-dark text-white text-center h-35 p-2 mr-2" *ngIf="grid_data.length > 6">
-				<span class="pl-2 pr-2 clickable" (click)="showMoreFillerCategory()"><i class="fa fa-ellipsis-h"></i></span>
+		<div class="col-lg-7 pt-2">
+			<div *ngIf="!no_search_result" class="d-flex">
+				<div class="bg-dark text-white sm-text h-35 p-2 mr-2" *ngFor="let data of grid_data.slice(0, 6)">
+					<span class="mr-2">{{ data.name }}</span
+					><span class="fas fa-times clickable" (click)="removeFromGrid(data.id)"></span>
+				</div>
+				<div class="bg-dark text-white text-center h-35 p-2 mr-2" *ngIf="grid_data.length > 6">
+					<span class="pl-2 pr-2 clickable" (click)="showMoreFillerCategory()"><i class="fa fa-ellipsis-h"></i></span>
+				</div>
 			</div>
 		</div>
 	</ng-template>

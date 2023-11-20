@@ -51,7 +51,10 @@ export class FillerMainViewComponent implements OnInit {
 		this.is_loading = this.is_loading;
 		this.no_search_result = this.no_search_result;
 		this.filler_data = this.filler_data;
-		if (this.filler_data && this.active_view == 'grid' && this.search_keyword == '') this.changeView('grid');
+		if (this.filler_data && this.active_view == 'grid') {
+		    if(this.search_keyword == '') this.changeView('grid')
+		    else this.mapFillerDataToGridData();
+		}
 	}
 
 	mapFillerDataToGridData() {
