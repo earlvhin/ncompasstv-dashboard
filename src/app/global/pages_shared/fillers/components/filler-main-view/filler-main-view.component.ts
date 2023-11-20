@@ -53,12 +53,20 @@ export class FillerMainViewComponent implements OnInit {
 		this.filler_data = this.filler_data;
 	}
 
+	mapFillerDataToGridData() {
+		this.grid_data = [];
+		this.filler_data.map((filler: any, index) => {
+			this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
+		});
+	}
+
 	onSearchFiller(keyword) {
 		this.is_loading = true;
 
-		if (this.active_view === 'grid') {
-			this.grid_data = keyword ? this.grid_data.filter((d) => d.name.includes(keyword.toLowerCase())) : this.original_grid_data;
-		}
+		this.grid_data =
+			this.active_view === 'grid' && keyword
+				? this.original_grid_data.filter((d) => d.name.includes(keyword.toLowerCase()))
+				: this.original_grid_data;
 		if (keyword) this.search_keyword = keyword;
 		else this.search_keyword = '';
 		this.get_fillers.emit({ page: 1, keyword: keyword });
@@ -85,7 +93,7 @@ export class FillerMainViewComponent implements OnInit {
 	showAlbumPreview(id, index, filler_name?, index_arr?) {
 		this.initial_loading = true;
 		this.no_preview = false;
-		this.selected_preview_index = index;
+		this.selected_preview_index = index_arr;
 		this.selected_preview = [];
 		this._filler
 			.get_filler_thumbnails(id, index)
@@ -95,13 +103,13 @@ export class FillerMainViewComponent implements OnInit {
 				if (!data.message) {
 					switch (data.length) {
 						case 1:
-							this.dimension = '150px';
+							this.dimension = '160px';
 							break;
 						case 2:
-							this.dimension = '120px';
+							this.dimension = '130px';
 							break;
 						default:
-							this.dimension = '85px';
+							this.dimension = '95px';
 							break;
 					}
 					data.map((fillers) => {
@@ -121,6 +129,7 @@ export class FillerMainViewComponent implements OnInit {
 							fillers: data
 						});
 						if (this.search_keyword == '') this.original_grid_data = this.grid_data;
+						this.is_loading = false;
 					}
 				} else {
 					this.no_preview_available = true;
@@ -149,13 +158,14 @@ export class FillerMainViewComponent implements OnInit {
 		this.grid_data = [];
 		if (this.active_view == 'grid') {
 			this.is_loading = true;
-
 			//asynchronous api response since this is FE implementation only no BE available,
 			// need to map to grid so sorting of original data will not change see splicing in showAlbumPreview function
 			this.filler_data.map((filler: any, index) => {
 				this.showAlbumPreview(filler.fillerGroupId, 6, filler.name, index);
 			});
+			return;
 		}
+		this.hidePreview();
 	}
 
 	removeFromGrid(id) {
