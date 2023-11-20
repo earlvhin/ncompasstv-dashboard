@@ -51,6 +51,7 @@ export class FillerMainViewComponent implements OnInit {
 		this.is_loading = this.is_loading;
 		this.no_search_result = this.no_search_result;
 		this.filler_data = this.filler_data;
+		if (this.filler_data && this.active_view == 'grid' && this.search_keyword == '') this.changeView('grid');
 	}
 
 	mapFillerDataToGridData() {
@@ -145,6 +146,9 @@ export class FillerMainViewComponent implements OnInit {
 						if (this.search_keyword == '') this.original_grid_data = this.grid_data;
 					}
 				}
+			})
+			.add(() => {
+				this.is_loading = false;
 			});
 	}
 
@@ -156,8 +160,10 @@ export class FillerMainViewComponent implements OnInit {
 	changeView(value) {
 		this.active_view = value;
 		this.grid_data = [];
+		this.original_grid_data = [];
 		if (this.active_view == 'grid') {
 			this.is_loading = true;
+
 			//asynchronous api response since this is FE implementation only no BE available,
 			// need to map to grid so sorting of original data will not change see splicing in showAlbumPreview function
 			this.filler_data.map((filler: any, index) => {
