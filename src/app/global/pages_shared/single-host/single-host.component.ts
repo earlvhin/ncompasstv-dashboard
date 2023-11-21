@@ -9,7 +9,14 @@ import * as io from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { AssignLicenseModalComponent } from '../../components_shared/license_components/assign-license-modal/assign-license-modal.component';
 import { AuthService, HelperService, HostService, LicenseService } from 'src/app/global/services';
-import { API_SINGLE_HOST, HOST_LICENSE_STATISTICS, API_LICENSE_PROPS, API_HOST, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import {
+	API_SINGLE_HOST,
+	HOST_LICENSE_STATISTICS,
+	API_LICENSE_PROPS,
+	API_HOST,
+	UI_ROLE_DEFINITION,
+	UI_ROLE_DEFINITION_TEXT
+} from 'src/app/global/models';
 
 @Component({
 	selector: 'app-single-host',
@@ -21,7 +28,7 @@ export class SingleHostComponent implements OnInit {
 	_socket: any;
 	address: string;
 	currentImage = 'assets/media-files/admin-icon.png';
-	currentRole = this._auth.current_role;
+	currentRole = this._roleRoute;
 	currentUser = this._auth.current_user_value;
 	hostName: string;
 	hostId: string;
@@ -204,5 +211,9 @@ export class SingleHostComponent implements OnInit {
 					});
 				});
 		});
+	}
+
+	protected get _roleRoute() {
+		return this._auth.roleRoute;
 	}
 }
