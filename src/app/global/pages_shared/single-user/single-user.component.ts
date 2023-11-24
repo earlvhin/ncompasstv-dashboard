@@ -16,6 +16,7 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
 	@ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+	bg_role: any;
 	dealers_form = this._form.group({ dealers: [[], Validators.required] });
 	dealer_filter_control = new FormControl(null);
 	dealers_list: API_DEALER[] = [];
@@ -329,11 +330,42 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
 					this.setPageData(userData);
+					this.getUserSelectedRole(userData);
 				},
 				(error) => {
 					console.error(error);
 				}
 			);
+	}
+
+	getUserSelectedRole(data) {
+		switch (data.userRoles[0].roleId) {
+			case UI_ROLE_DEFINITION.dealer:
+				this.bg_role = '#8ec641';
+				break;
+			case UI_ROLE_DEFINITION.host:
+				this.bg_role = '#17a2b8';
+				break;
+			case UI_ROLE_DEFINITION.advertiser:
+				this.bg_role = '#fd7e14';
+				break;
+			default:
+				this.bg_role = '#1c2731';
+		}
+	}
+
+	copyPassword(val) {
+		const selBox = document.createElement('textarea');
+		selBox.style.position = 'fixed';
+		selBox.style.left = '0';
+		selBox.style.top = '0';
+		selBox.style.opacity = '0';
+		selBox.value = val;
+		document.body.appendChild(selBox);
+		selBox.focus();
+		selBox.select();
+		document.execCommand('copy');
+		document.body.removeChild(selBox);
 	}
 
 	private initializeForms(): void {
