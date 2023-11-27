@@ -2,8 +2,8 @@ import { API_ENDPOINTS } from './api-endpoints';
 
 export const environment = {
 	production: false,
-	base_uri: 'https://dev-api.n-compass.online/api/',
-	base_uri_old: 'https://dev-api.n-compass.online/api/',
+	base_uri: 'https://api-development.n-compass.online:4149/api/',
+	base_uri_old: 'https://api-development.n-compass.online:4149/api/',
 	socket_server: 'https://dev-socket.n-compass.online',
 	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',

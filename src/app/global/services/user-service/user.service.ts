@@ -64,6 +64,17 @@ export class UserService extends BaseService {
 		});
 	}
 
+	get_admin_user_by_id(userId: string): Observable<{ user?: API_USER_DATA; message?: string }> {
+		const url = `${this.getters.api_get_admin_user_by_id}?user_id=${userId}`;
+
+		return this.getRequest(url).map((response: { dealer?: API_DEALER[]; user?: API_USER_DATA; message?: string }) => {
+			let result;
+			if ('message' in response) result = { message: 'User not found' };
+			result = response.user;
+			return result;
+		});
+	}
+
 	get_dealeradmin_dealers(userId: string): Observable<{ dealers: { businessName: string; dealerId: string }[] }> {
 		const url = `${this.getters.api_get_dealer_admin_user}?userid=${userId}`;
 		return this.getRequest(url);

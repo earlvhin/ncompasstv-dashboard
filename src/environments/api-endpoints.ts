@@ -166,6 +166,7 @@ export const API_ENDPOINTS = {
 		api_get_template_by_dealer_id: 'template/gettemplatebydealerid?dealerid=',
 		api_get_template_by_id: 'template/gettemplatebyid?templateId=',
 		api_get_templates: 'template/getall',
+		api_get_admin_user_by_id: 'user/admingetbyid',
 		api_get_user_by_id: 'user/getbyid',
 		api_get_users: 'user/getall',
 		api_get_users_total: 'user/gettotal',
@@ -186,7 +187,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',

@@ -82,12 +82,21 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
-			this.getUserById(this._params.snapshot.params.data).add(() => {
-				this.initializeForms();
-				this.is_loading = false;
-			})
-		);
+		if (this.is_admin) {
+			this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
+				this.getAdminUserById(this._params.snapshot.params.data).add(() => {
+					this.initializeForms();
+					this.is_loading = false;
+				})
+			);
+		} else {
+			this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
+				this.getUserById(this._params.snapshot.params.data).add(() => {
+					this.initializeForms();
+					this.is_loading = false;
+				})
+			);
+		}
 	}
 
 	ngOnDestroy() {
@@ -322,6 +331,25 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	private getUserById(id: string) {
 		return this._user
 			.get_user_by_id(id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					if ('message' in response) return;
+					const userData = response as API_USER_DATA;
+					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
+					this.dealer_admin_user_id = userData.userId;
+					this.setPageData(userData);
+					this.getUserSelectedRole(userData);
+				},
+				(error) => {
+					console.error(error);
+				}
+			);
+	}
+
+	private getAdminUserById(id: string) {
+		return this._user
+			.get_admin_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
