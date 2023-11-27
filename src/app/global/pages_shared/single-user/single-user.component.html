@@ -3,7 +3,7 @@
 		<div class="col-lg-4">
 			<div class="d-inline-flex mb-1">
 				<h2>{{ user.firstName }} {{ user.lastName }}</h2>
-				<span class="sm-text ml-3 p-2 pl-3 pr-3 br-10 text-white font-weight-bold" [style.background-color]="bg_role" *ngIf="is_admin">{{
+				<span class="sm-text ml-3 p-2 px-3 br-10 text-white font-weight-bold" [style.background-color]="bg_role" *ngIf="is_admin">{{
 					user.userRoles[0].roleName
 				}}</span>
 			</div>
@@ -82,7 +82,7 @@
 						<p class="sm-text mb-4">Change this user's password.</p>
 					</div>
 					<div class="col-lg-6 text-right" *ngIf="is_admin">
-						<span class="bg-gray p-3 pl-4 pr-4 br-10 sm-text">
+						<span class="bg-gray p-3 px-4 br-10 sm-text">
 							{{ user.password }} <i class="ml-3 fas fa-copy clickable" (click)="copyPassword(user.password)" title="Copy Password"></i>
 						</span>
 					</div>
