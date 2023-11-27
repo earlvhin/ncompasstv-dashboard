@@ -349,7 +349,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private getAdminUserById(id: string) {
-		76;
 		return this._user
 			.get_admin_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
