@@ -19,6 +19,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	bg_role: any;
 	dealers_form = this._form.group({ dealers: [[], Validators.required] });
 	dealer_filter_control = new FormControl(null);
+	dealer_id: string;
 	dealers_list: API_DEALER[] = [];
 	has_loaded_dealers_list = false;
 	has_loaded_assigned_dealers = false;
@@ -353,9 +354,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			.get_admin_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => {
+				(response: any) => {
 					if ('message' in response) return;
-					const userData = response as API_USER_DATA;
+					if (response.user.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response.dealer[0].dealerId;
+					const userData = response.user as API_USER_DATA;
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
 					this.setPageData(userData);
@@ -403,6 +405,12 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		this._snackbar.open(`Copied to clipboard!`, '', {
 			duration: 1500
 		});
+	}
+
+	goToProfile() {
+		// Currently for dealers only
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/dealers/${this.dealer_id}`], {}));
+		window.open(url, '_blank');
 	}
 
 	private initializeForms(): void {

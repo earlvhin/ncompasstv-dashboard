@@ -70,7 +70,7 @@ export class UserService extends BaseService {
 		return this.getRequest(url).map((response: { dealer?: API_DEALER[]; user?: API_USER_DATA; message?: string }) => {
 			let result;
 			if ('message' in response) result = { message: 'User not found' };
-			result = response.user;
+			result = response;
 			return result;
 		});
 	}
