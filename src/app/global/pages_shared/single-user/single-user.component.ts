@@ -371,6 +371,9 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			case UI_ROLE_DEFINITION.dealer:
 				this.bg_role = '#8ec641';
 				break;
+			case UI_ROLE_DEFINITION.dealeradmin:
+				this.bg_role = '#1abc9c';
+				break;
 			case UI_ROLE_DEFINITION.host:
 				this.bg_role = '#17a2b8';
 				break;
