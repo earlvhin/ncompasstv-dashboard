@@ -2,9 +2,7 @@
 	<div class="row">
 		<div class="col-lg-4">
 			<div class="d-inline-flex mb-1">
-				<h2 class="clickable" *ngIf="user.userRoles[0].roleName == 'Dealer'; else otherUser" (click)="goToProfile()">
-					{{ user.firstName }} {{ user.lastName }}
-				</h2>
+				<h2 class="clickable" *ngIf="dealer_id.length; else otherUser" (click)="goToProfile()">{{ user.firstName }} {{ user.lastName }}</h2>
 				<ng-template #otherUser>
 					<h2>{{ user.firstName }} {{ user.lastName }}</h2>
 				</ng-template>

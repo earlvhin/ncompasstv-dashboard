@@ -651,6 +651,10 @@ button {
 
 .clickable {
 	cursor: pointer;
+
+	&:hover {
+		color: $primary;
+	}
 }
 
 .contain-bg {
