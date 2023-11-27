@@ -1,11 +1,11 @@
-<div class="theme-container" *ngIf="!is_loading; else loader">
-	<div class="row mt-3">
+<div class="theme-container pt-4" *ngIf="!is_loading; else loader">
+	<div class="row">
 		<div class="col-lg-4">
 			<div class="d-inline-flex mb-1">
 				<h2>{{ user.firstName }} {{ user.lastName }}</h2>
-				<span class="sm-text ml-3 p-2 px-3 br-10 text-white font-weight-bold" [style.background-color]="bg_role" *ngIf="is_admin">{{
-					user.userRoles[0].roleName
-				}}</span>
+				<span class="sm-text ml-3 p-2 px-3 br-10 text-white font-weight-bold" [style.background-color]="bg_role" *ngIf="is_admin">
+					{{ user.userRoles[0].roleName }}
+				</span>
 			</div>
 			<p class="sm-text mb-4 font-italic">Created {{ user.dateCreated | date }} by {{ user.creatorName }}</p>
 		</div>

@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog, MatSelect } from '@angular/material';
+import { MatDialog, MatSelect, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
@@ -57,13 +57,14 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _auth: AuthService,
+		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _router: Router,
-		private _user: UserService,
-		private _dealer: DealerService
+		private _snackbar: MatSnackBar,
+		private _user: UserService
 	) {}
 
 	ngOnInit() {
@@ -82,21 +83,21 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		if (this.is_admin) {
-			this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+			if (this.is_admin) {
 				this.getAdminUserById(this._params.snapshot.params.data).add(() => {
 					this.initializeForms();
 					this.is_loading = false;
-				})
-			);
-		} else {
-			this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
-				this.getUserById(this._params.snapshot.params.data).add(() => {
-					this.initializeForms();
-					this.is_loading = false;
-				})
-			);
-		}
+				});
+
+				return;
+			}
+
+			this.getUserById(this._params.snapshot.params.data).add(() => {
+				this.initializeForms();
+				this.is_loading = false;
+			});
+		});
 	}
 
 	ngOnDestroy() {
@@ -348,6 +349,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 	}
 
 	private getAdminUserById(id: string) {
+		76;
 		return this._user
 			.get_admin_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
@@ -397,6 +399,11 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		selBox.select();
 		document.execCommand('copy');
 		document.body.removeChild(selBox);
+
+		// Snackbar
+		this._snackbar.open(`Copied to clipboard!`, '', {
+			duration: 1500
+		});
 	}
 
 	private initializeForms(): void {
