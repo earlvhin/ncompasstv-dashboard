@@ -189,10 +189,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 				{ value: u.email, link: null, editable: false, hidden: false },
 				{ value: u.contactNumber, link: null, editable: false, hidden: false },
 				{ value: u.userRoles[0].roleName, link: null, editable: false, hidden: false },
-				{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false },
-				{ value: u.creatorName, link: null, editable: false, hidden: false },
 				{ value: u.organization ? u.organization : '--', link: null, editable: false, hidden: false },
-				{ value: allowEmail, type: 'toggle' }
+				{ value: allowEmail, type: 'toggle' },
+				{ value: this._date.transform(u.dateCreated), link: null, editable: false, hidden: false },
+				{ value: u.creatorName, link: null, editable: false, hidden: false }
 			);
 		});
 	}
