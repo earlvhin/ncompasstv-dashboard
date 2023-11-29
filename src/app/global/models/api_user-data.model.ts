@@ -1,13 +1,14 @@
 export class API_USER_DATA {
 	allowEmail: number;
 	contactNumber: string;
-	createdBy?: string;
 	creatorName: string;
 	dateCreated: string;
 	dateUpdated: string;
 	email: string;
 	firstName: string;
 	lastName: string;
+	createdBy?: string;
+	dealer?: any;
 	middleName?: string;
 	organization?: string;
 	ownerId?: string;

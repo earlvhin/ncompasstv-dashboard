@@ -57,15 +57,12 @@ export class UserService extends BaseService {
 		const url = `${this.getters.api_get_user_by_id}?user_id=${userId}`;
 
 		return this.getRequest(url).map((response: { dealer?: API_DEALER[]; user?: API_USER_DATA; message?: string }) => {
-			let result;
 			if ('message' in response) {
-				result = { message: 'User not found' };
+				return { message: 'User not response ' };
 			} else {
-				if ('dealer' in response) result = { ...response.user, ...response.dealer };
-				else result = response.user;
+				const result = 'dealer' in response ? { ...response.user, ...response.dealer } : { user: response.user };
+				return result;
 			}
-
-			return result;
 		});
 	}
 
