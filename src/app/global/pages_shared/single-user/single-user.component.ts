@@ -326,11 +326,10 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response: { user: any; dealer: any[] }) => {
+				(response: any) => {
 					if ('message' in response) return;
-					if (response.user.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer && response.dealer.length)
-						this.dealer_id = response.dealer[0].dealerId;
-					const userData = response.user as API_USER_DATA;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response[0].dealerId;
+					const userData = response as API_USER_DATA;
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
 					this.setPageData(userData);
