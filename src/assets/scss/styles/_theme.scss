@@ -610,6 +610,10 @@ button {
 	border-radius: 5px;
 }
 
+.br-10 {
+	border-radius: 10px;
+}
+
 .f-500 {
 	font-weight: 500;
 }
@@ -647,6 +651,10 @@ button {
 
 .clickable {
 	cursor: pointer;
+
+	&:hover {
+		color: $primary;
+	}
 }
 
 .contain-bg {
