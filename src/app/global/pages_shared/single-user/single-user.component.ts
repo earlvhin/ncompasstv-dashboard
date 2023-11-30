@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
-import { MatDialog, MatSelect } from '@angular/material';
+import { MatDialog, MatSelect, MatSnackBar } from '@angular/material';
 import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { forkJoin, Subject, Subscription } from 'rxjs';
@@ -16,8 +16,10 @@ import { ConfirmationModalComponent } from '../../components_shared/page_compone
 })
 export class SingleUserComponent implements OnInit, OnDestroy {
 	@ViewChild('dealerMultiSelect', { static: false }) dealerMultiSelect: MatSelect;
+	bg_role: any;
 	dealers_form = this._form.group({ dealers: [[], Validators.required] });
 	dealer_filter_control = new FormControl(null);
+	dealer_id: string = '';
 	dealers_list: API_DEALER[] = [];
 	has_loaded_dealers_list = false;
 	has_loaded_assigned_dealers = false;
@@ -56,13 +58,14 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private _auth: AuthService,
+		private _dealer: DealerService,
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _helper: HelperService,
 		private _params: ActivatedRoute,
 		private _router: Router,
-		private _user: UserService,
-		private _dealer: DealerService
+		private _snackbar: MatSnackBar,
+		private _user: UserService
 	) {}
 
 	ngOnInit() {
@@ -81,12 +84,12 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			return;
 		}
 
-		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() =>
+		this._params.paramMap.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
 			this.getUserById(this._params.snapshot.params.data).add(() => {
 				this.initializeForms();
 				this.is_loading = false;
-			})
-		);
+			});
+		});
 	}
 
 	ngOnDestroy() {
@@ -323,17 +326,63 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			.get_user_by_id(id)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
-				(response) => {
+				(response: any) => {
 					if ('message' in response) return;
+					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response[0].dealerId;
 					const userData = response as API_USER_DATA;
 					this.is_dealer_admin = userData.userRoles[0].roleId === UI_ROLE_DEFINITION.dealeradmin;
 					this.dealer_admin_user_id = userData.userId;
 					this.setPageData(userData);
+					this.getUserSelectedRole(userData);
 				},
 				(error) => {
 					console.error(error);
 				}
 			);
+	}
+
+	getUserSelectedRole(data) {
+		switch (data.userRoles[0].roleId) {
+			case UI_ROLE_DEFINITION.dealer:
+				this.bg_role = '#8ec641';
+				break;
+			case UI_ROLE_DEFINITION.dealeradmin:
+				this.bg_role = '#1abc9c';
+				break;
+			case UI_ROLE_DEFINITION.host:
+				this.bg_role = '#17a2b8';
+				break;
+			case UI_ROLE_DEFINITION.advertiser:
+				this.bg_role = '#fd7e14';
+				break;
+			default:
+				this.bg_role = '#1c2731';
+		}
+	}
+
+	copyPassword(val) {
+		const selBox = document.createElement('textarea');
+		selBox.style.position = 'fixed';
+		selBox.style.left = '0';
+		selBox.style.top = '0';
+		selBox.style.opacity = '0';
+		selBox.value = val;
+		document.body.appendChild(selBox);
+		selBox.focus();
+		selBox.select();
+		document.execCommand('copy');
+		document.body.removeChild(selBox);
+
+		// Snackbar
+		this._snackbar.open(`Copied to clipboard!`, '', {
+			duration: 1500
+		});
+	}
+
+	goToProfile() {
+		// Currently for dealers only
+		const url = this._router.serializeUrl(this._router.createUrlTree([`/${this.roleRoute}/dealers/${this.dealer_id}`], {}));
+		window.open(url, '_blank');
 	}
 
 	private initializeForms(): void {
