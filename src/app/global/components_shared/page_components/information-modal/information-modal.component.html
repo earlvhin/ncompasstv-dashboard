@@ -3,7 +3,7 @@
 	<h6 mat-dialog-title class="title">{{ title }}</h6>
 
 	<!-- For textareas -->
-	<div mat-dialog-content *ngIf="isTextArea">
+	<div mat-dialog-content *ngIf="isTextArea" class="text-break">
 		<p class="contents" *ngIf="isStringContent">{{ displayContents() }}</p>
 	</div>
 
@@ -11,71 +11,83 @@
 	<div mat-dialog-content *ngIf="isList">
 		<div class="business-hours" *ngIf="isBusinessHours">
 			<ul *ngIf="isArrayContent">
-				<li *ngFor="let item of contents; let i = index" [ngClass]="{ 'good': item.selected }">
-					<b>{{ item.day }}: </b> <span *ngFor="let period of item.periods">{{ period }}<br></span>
+				<li *ngFor="let item of contents; let i = index" [ngClass]="{ good: item.selected }">
+					<b>{{ item.day }}: </b> <span *ngFor="let period of item.periods">{{ period }}<br /></span>
 				</li>
 			</ul>
 		</div>
-        <div class="breakdown" *ngIf="isGraph">
-            <div class="row m-0">
-                <div class="col-lg-12 text-center">
-                    <span class="font-weight-bold">TOTAL : <span class="text-primary">{{getSum()}}</span></span>
-                </div>
-                <hr class="col-lg-12 p-0">
-                <ul class="col-lg-12 p-0 two-columns">
-                    <li class="md-text" *ngFor="let dealer of contents.dealers; let i = index">
-                        <a [routerLink]="['/administrator/dealers', dealer.dealerId]" target="_blank"><span class="text-primary">{{ dealer.businessName }}: </span></a> 
-                        <span *ngIf="dealer.totalHosts"> - {{dealer.totalHosts}}</span>
-                        <span *ngIf="dealer.totalLicenses"> - {{dealer.totalLicenses}}</span>
-                    </li>
-                </ul>
-            </div>
+		<div class="breakdown" *ngIf="isGraph">
+			<div class="row m-0">
+				<div class="col-lg-12 text-center">
+					<span class="font-weight-bold"
+						>TOTAL : <span class="text-primary">{{ getSum() }}</span></span
+					>
+				</div>
+				<hr class="col-lg-12 p-0" />
+				<ul class="col-lg-12 p-0 two-columns">
+					<li class="md-text" *ngFor="let dealer of contents.dealers; let i = index">
+						<a [routerLink]="['/administrator/dealers', dealer.dealerId]" target="_blank"
+							><span class="text-primary">{{ dealer.businessName }}: </span></a
+						>
+						<span *ngIf="dealer.totalHosts"> - {{ dealer.totalHosts }}</span>
+						<span *ngIf="dealer.totalLicenses"> - {{ dealer.totalLicenses }}</span>
+					</li>
+				</ul>
+			</div>
 		</div>
 
-        <div class="breakdown" *ngIf="isInstallation">
-            <div class="row m-0">
-                <div class="col-lg-12 text-center" *ngIf="contents.dealers[0].licenseId">
-                    <span class="font-weight-bold">TOTAL : <span class="text-primary">{{contents.dealers.length}}</span> Installations </span>for the month of <span class="text-primary">{{contents.month}}</span>
-                </div>
-                <div class="col-lg-12 text-center" *ngIf="contents.dealers[0].totalHosts || contents.dealers[0].totalLicenses">
-                    <span class="font-weight-bold">TOTAL : </span><span class="text-primary">{{getSum()}}</span> 
-                    <span *ngIf="contents.dealers[0].totalHosts"> Hosts</span> 
-                    <span *ngIf="contents.dealers[0].totalLicenses"> Licenses</span> 
-                    for the month of <span class="text-primary">{{contents.month}}</span>
-                </div>
-            </div>
-            <div class="row m-0">
-                <hr class="col-lg-12 p-0">
-                <ol class="col-lg-12 p-0">
-                    <li class="md-text mb-2" *ngFor="let data of contents.dealers; let i = index">
-                        <div *ngIf="data.licenseId">
-                            <a [routerLink]="['/administrator/licenses', data.licenseId]" target="_blank"><span class="text-gray">{{ i+1 }}.</span><span class="text-primary"> {{ data.alias }} </span>
-                            <span class="text-gray">( {{data.licenseKey}} )</span></a> 
-                            <br>
-                            <span>
-                                <span class="text-gray font-weight-bold">Host: </span>
-                                <a [routerLink]="['/administrator/hosts', data.hostId]" target="_blank"><span class="text-primary">{{ data.hostName}}</span></a>
-                            </span>
-                            <br>
-                            <span>
-                                <span class="text-gray font-weight-bold">Install Date: </span>
-                                <span class="text-primary">{{ formatDate(data.installDate)}}</span>
-                            </span>
-                        </div>
-                        <div *ngIf="data.totalHosts || data.totalLicenses">
-                            <a [routerLink]="['/administrator/dealers', data.dealerId]" target="_blank"><span class="text-gray">{{ i+1 }}.</span>
-                                <span class="text-gray font-weight-bold"> Dealer Name: </span><span class="text-gray"> {{data.businessName}} </span></a> 
-                                <br>
-                                <span>
-                                    <span class="text-gray font-weight-bold" *ngIf="data.totalHosts"> Total Host: </span>
-                                    <span class="text-gray font-weight-bold" *ngIf="data.totalLicenses"> Total Licenses: </span>
-                                    <span class="text-primary" *ngIf="data.totalHosts">{{ data.totalHosts}}</span>
-                                    <span class="text-primary" *ngIf="data.totalLicenses">{{ data.totalLicenses}}</span>
-                                </span>
-                        </div>
-                    </li>
-                </ol>
-            </div>
+		<div class="breakdown" *ngIf="isInstallation">
+			<div class="row m-0">
+				<div class="col-lg-12 text-center" *ngIf="contents.dealers[0].licenseId">
+					<span class="font-weight-bold"
+						>TOTAL : <span class="text-primary">{{ contents.dealers.length }}</span> Installations </span
+					>for the month of <span class="text-primary">{{ contents.month }}</span>
+				</div>
+				<div class="col-lg-12 text-center" *ngIf="contents.dealers[0].totalHosts || contents.dealers[0].totalLicenses">
+					<span class="font-weight-bold">TOTAL : </span><span class="text-primary">{{ getSum() }}</span>
+					<span *ngIf="contents.dealers[0].totalHosts"> Hosts</span>
+					<span *ngIf="contents.dealers[0].totalLicenses"> Licenses</span>
+					for the month of <span class="text-primary">{{ contents.month }}</span>
+				</div>
+			</div>
+			<div class="row m-0">
+				<hr class="col-lg-12 p-0" />
+				<ol class="col-lg-12 p-0">
+					<li class="md-text mb-2" *ngFor="let data of contents.dealers; let i = index">
+						<div *ngIf="data.licenseId">
+							<a [routerLink]="['/administrator/licenses', data.licenseId]" target="_blank"
+								><span class="text-gray">{{ i + 1 }}.</span><span class="text-primary"> {{ data.alias }} </span>
+								<span class="text-gray">( {{ data.licenseKey }} )</span></a
+							>
+							<br />
+							<span>
+								<span class="text-gray font-weight-bold">Host: </span>
+								<a [routerLink]="['/administrator/hosts', data.hostId]" target="_blank"
+									><span class="text-primary">{{ data.hostName }}</span></a
+								>
+							</span>
+							<br />
+							<span>
+								<span class="text-gray font-weight-bold">Install Date: </span>
+								<span class="text-primary">{{ formatDate(data.installDate) }}</span>
+							</span>
+						</div>
+						<div *ngIf="data.totalHosts || data.totalLicenses">
+							<a [routerLink]="['/administrator/dealers', data.dealerId]" target="_blank"
+								><span class="text-gray">{{ i + 1 }}.</span> <span class="text-gray font-weight-bold"> Dealer Name: </span
+								><span class="text-gray"> {{ data.businessName }} </span></a
+							>
+							<br />
+							<span>
+								<span class="text-gray font-weight-bold" *ngIf="data.totalHosts"> Total Host: </span>
+								<span class="text-gray font-weight-bold" *ngIf="data.totalLicenses"> Total Licenses: </span>
+								<span class="text-primary" *ngIf="data.totalHosts">{{ data.totalHosts }}</span>
+								<span class="text-primary" *ngIf="data.totalLicenses">{{ data.totalLicenses }}</span>
+							</span>
+						</div>
+					</li>
+				</ol>
+			</div>
 		</div>
 	</div>
 </div>

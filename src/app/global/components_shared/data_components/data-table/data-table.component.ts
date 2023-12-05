@@ -40,6 +40,7 @@ import { CloneFeedDialogComponent } from './dialogs/clone-feed-dialog/clone-feed
 import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.component';
 import { dateFormat } from 'highcharts';
 import { DeleteFillerFeedsComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
+import { InformationModalComponent } from '../../page_components/information-modal/information-modal.component';
 
 @Component({
 	selector: 'app-data-table',
@@ -84,6 +85,7 @@ export class DataTableComponent implements OnInit {
 	@Input() order_data: any;
 	@Input() pagination_enabled = true;
 	@Input() spinner_enabled = true;
+	@Input() support_tab: boolean;
 
 	// Feed Controls
 	@Input() feed_controls: boolean;
@@ -108,6 +110,7 @@ export class DataTableComponent implements OnInit {
 
 	active_table: string;
 	in_progress = false;
+	note_value: string;
 	selected_array: any = [];
 	pagination: number;
 	selectAll: boolean = false;
@@ -215,6 +218,20 @@ export class DataTableComponent implements OnInit {
 				(error) => (this.in_progress = false)
 			)
 			.add(() => (this.in_progress = false));
+	}
+
+	private showInformationModal(width: string, height: string, title: string, contents: any, type: string): void {
+		this._dialog.open(InformationModalComponent, {
+			width: width,
+			height: height,
+			data: { title, contents, type },
+			panelClass: 'information-modal',
+			autoFocus: false
+		});
+	}
+
+	onShowNotes(note): void {
+		this.showInformationModal('600px', '350px', 'Notes', note, 'textarea');
 	}
 
 	onPageChange(page: number): void {
