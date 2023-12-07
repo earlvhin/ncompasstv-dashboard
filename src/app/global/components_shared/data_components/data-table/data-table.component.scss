@@ -65,6 +65,20 @@ a:hover {
 	}
 }
 
+.global-value {
+	max-width: 400px;
+}
+
+.with-link-support {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+
+.no-link-support {
+	word-wrap: break-word;
+	white-space: pre-wrap;
+}
+
 .justify-content-evenly {
 	justify-content: space-evenly;
 }
