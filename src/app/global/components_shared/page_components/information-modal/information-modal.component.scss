@@ -1,14 +1,19 @@
 .good {
-	color: #8EC641;
+	color: #8ec641;
 }
 
 .bad {
-	color: #EE5454;
+	color: #ee5454;
 }
 
 .information-modal {
 	.contents {
 		text-align: justify;
+	}
+
+	.text-break {
+		white-space: pre-line;
+		height: 250px;
 	}
 
 	button.dismiss {

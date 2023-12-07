@@ -20,6 +20,7 @@ export class SupportTabComponent implements OnInit {
 	sort_column = 'DateCreated';
 	sort_order = 'desc';
 	no_support_data = false;
+	support_tab = true;
 
 	support_table_column = [
 		{ name: '#', sortable: false },
@@ -99,7 +100,7 @@ export class SupportTabComponent implements OnInit {
 				{ value: s.hostId, hidden: true },
 				{ value: this._date.transform(s.dateCreated, 'MMMM d, y'), hidden: false },
 				{ value: s.url ? s.url : '--', hidden: false, globalLink: `${s.url}`, new_tab_link: true },
-				{ value: s.notes ? s.notes : '--', hidden: false },
+				{ value: s.notes ? s.notes : '--', hidden: false, notes: true },
 				{ value: s.dateUpdated, hidden: true },
 				{ value: s.createdBy, hidden: true }
 			);
