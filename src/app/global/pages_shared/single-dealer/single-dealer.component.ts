@@ -42,6 +42,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	advertiser_card: any;
 	advertiser_data: any = [];
 	advertiser_filtered_data: any = [];
+	advertiser_to_export: any = [];
 	apps: any;
 	array_to_delete: any = [];
 	banner_description = '';
@@ -1545,7 +1546,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				);
 				break;
 			case 'Hosts':
-				const filters = {
+				const hostFilters = {
 					dealerId: this.dealer_id,
 					page: 1,
 					search: this.search_data,
@@ -1555,7 +1556,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				};
 
 				this.subscription.add(
-					this._host.get_host_by_dealer_id_with_sort(filters).subscribe((data) => {
+					this._host.get_host_by_dealer_id_with_sort(hostFilters).subscribe((data) => {
 						this.hosts_to_export = data.paging.entities;
 						this.hosts_to_export.forEach((item, i) => {
 							this.modifyItem(item, tab);
@@ -1565,6 +1566,36 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						});
 						this.generateExcel(tab);
 					})
+				);
+				break;
+
+			case 'Advertisers':
+				const advertiserFilters = {
+					dealerId: this.dealer_id,
+					search: this.search_data,
+					sortColumn: this.sort_column_advertisers,
+					sortOrder: this.sort_order_advertisers,
+					status: this.filters.status
+				};
+
+				this.subscription.add(
+					this._advertiser
+						.export_advertisers(
+							advertiserFilters.dealerId,
+							advertiserFilters.search,
+							advertiserFilters.sortColumn,
+							advertiserFilters.sortOrder
+						)
+						.subscribe((data) => {
+							this.advertiser_to_export = data;
+							this.advertiser_to_export.forEach((item, i) => {
+								this.modifyItem(item, tab);
+								this.worksheet.addRow(item).font = {
+									bold: false
+								};
+							});
+							this.generateExcel(tab);
+						})
 				);
 				break;
 		}
@@ -1610,6 +1641,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.storeHoursParse = this.getStoreHourseParse(item);
 				item.generalCategory = item.generalCategory ? item.generalCategory : 'Other';
 				item.businessName = this.dealer.businessName;
+				break;
+
+			case 'Advertisers':
+				item.dealerName = this.dealer.businessName;
+				item.contentsCount = item.contentCount;
+
+				if (item.contents && item.contents.length > 0) {
+					item.contentsFormatted = item.contents.join(', ');
+				}
 				break;
 		}
 	}
@@ -1714,6 +1754,18 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						});
 					}
 				});
+				break;
+
+			case 'Advertisers':
+				// Define headers for Advertisers
+				header.push(
+					{ header: 'Dealer Name', key: 'dealerName', width: 30, style: { font: { name: 'Arial', bold: true } } },
+					{ header: 'Name', key: 'name', width: 30, style: { font: { name: 'Arial', bold: true } } },
+					{ header: 'State', key: 'state', width: 30, style: { font: { name: 'Arial', bold: true } } },
+					{ header: 'Status', key: 'status', width: 30, style: { font: { name: 'Arial', bold: true } } },
+					{ header: 'Contents Count', key: 'contentsCount', width: 30, style: { font: { name: 'Arial', bold: true } } },
+					{ header: 'Contents', key: 'contentsFormatted', width: 60, style: { font: { name: 'Arial', bold: true } } }
+				);
 				break;
 		}
 		this.worksheet.columns = header;

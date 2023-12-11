@@ -225,7 +225,8 @@ export const API_ENDPOINTS = {
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
 		validate_rss_url: 'feed/news/validate?url=',
-		validate_feed_url: 'feed/validate/url'
+		validate_feed_url: 'feed/validate/url',
+		export_advertiser: 'advertiser/export?dealer_id='
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',
