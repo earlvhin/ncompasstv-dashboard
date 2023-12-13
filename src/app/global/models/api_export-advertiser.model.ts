@@ -1,9 +1,13 @@
 export interface API_EXPORT_ADVERTISER {
 	name: string;
-	state: string;
 	status: string;
 	assignedUser: string;
 	contentCount: number;
+	address: string;
+	city: string;
+	state: string;
+	postalCode: string;
+	dateCreated: string;
 	contents: API_EXPORT_CONTENT[];
 }
 

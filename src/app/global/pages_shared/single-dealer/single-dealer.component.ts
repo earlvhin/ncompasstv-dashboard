@@ -184,6 +184,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	// Column: For BE Key to sort,
 	// Key: Column to be exported as per API,
 	// No_export: Dont Include to Export
+	advertiser_table_columns = [
+		{ name: 'Dealer Name', key: 'dealerName' },
+		{ name: 'Name', key: 'name' },
+		{ name: 'Status', key: 'status' },
+		{ name: 'Assigned User', key: 'assignedUser' },
+		{ name: 'Contents Count', key: 'contentsCount' },
+		{ name: 'Address', key: 'address' },
+		{ name: 'City', key: 'city' },
+		{ name: 'State', key: 'state' },
+		{ name: 'Postal Code', key: 'postalCode' },
+		{ name: 'Date Created', key: 'dateCreated' },
+		{ name: 'Contents', key: 'contentsFormatted' }
+	];
+
 	host_table_col = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: 'Dealer Name', sortable: false, key: 'businessName', hidden: true, no_show: true },
@@ -1757,15 +1771,17 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				break;
 
 			case 'Advertisers':
-				// Define headers for Advertisers
-				header.push(
-					{ header: 'Dealer Name', key: 'dealerName', width: 30, style: { font: { name: 'Arial', bold: true } } },
-					{ header: 'Name', key: 'name', width: 30, style: { font: { name: 'Arial', bold: true } } },
-					{ header: 'State', key: 'state', width: 30, style: { font: { name: 'Arial', bold: true } } },
-					{ header: 'Status', key: 'status', width: 30, style: { font: { name: 'Arial', bold: true } } },
-					{ header: 'Contents Count', key: 'contentsCount', width: 30, style: { font: { name: 'Arial', bold: true } } },
-					{ header: 'Contents', key: 'contentsFormatted', width: 60, style: { font: { name: 'Arial', bold: true } } }
-				);
+				const table_style = {
+					font: { name: 'Arial', bold: true }
+				};
+				this.advertiser_table_columns.forEach((column) => {
+					header.push({
+						header: column.name,
+						key: column.key,
+						width: 30,
+						style: { table_style }
+					});
+				});
 				break;
 		}
 		this.worksheet.columns = header;
