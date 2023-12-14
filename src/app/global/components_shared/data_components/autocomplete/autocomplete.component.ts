@@ -17,7 +17,7 @@ export class AutocompleteComponent implements OnInit {
 	};
 
 	@Output() value_selected: EventEmitter<{ id: string; value: string }> = new EventEmitter();
-	@Output() trigger_search: EventEmitter<string> = new EventEmitter();
+	@Output() no_data_found: EventEmitter<string> = new EventEmitter();
 
 	autoCompleteControl = new FormControl();
 	filteredOptions!: Observable<any[]>;
@@ -37,12 +37,23 @@ export class AutocompleteComponent implements OnInit {
 
 	private _filter(keyword: any) {
 		const filterValue = keyword.hasOwnProperty('value') ? keyword.value.toLowerCase() : keyword.toLowerCase();
-		const filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
-		if (!filterResult.length && this.field_data.allowSearchTrigger) this.trigger_search.emit(keyword);
+		let filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+
+		// In an event that the keyword search returned does not have a result
+		// then we trigger no_data_found event back so the parent can do something about it.
+		if (!filterResult.length) {
+			this.no_data_found.emit(keyword);
+
+			// This means that the field_data.data source has been changed by the parent
+			// and we need to fire it again for the existing search.
+			if (this.field_data.allowSearchTrigger) {
+				filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+			}
+		}
 		return filterResult;
 	}
 
 	valueSelected(e) {
-		this.value_selected.emit(e.option.value.id);
+		this.value_selected.emit(e.option.value);
 	}
 }
