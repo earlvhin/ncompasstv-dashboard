@@ -14,6 +14,7 @@ import { AddFillerGroupComponent } from './pages_shared/fillers/components/add-f
 import { AdvertiserViewComponent } from './components_shared/locator_components/advertiser-view/advertiser-view.component';
 import { AgmCoreModule } from '@agm/core';
 import { AssignLicenseModalComponent } from './components_shared/license_components/assign-license-modal/assign-license-modal.component';
+import { AutocompleteComponent } from './components_shared/data_components/autocomplete/autocomplete.component';
 import { AutocompleteFieldComponent } from './components_shared/page_components/autocomplete-field/autocomplete-field.component';
 import { BannerComponent } from './components_shared/page_components/banner/banner.component';
 import { BreadcrumbsModule } from 'ng6-breadcrumbs';
@@ -209,8 +210,6 @@ import { ViewFillersGroupComponent } from './pages_shared/fillers/components/vie
 import { LocatorComponentComponent } from './components_purpose-built/locator-component/locator-component.component';
 import { WysiwygComponent } from './components_purpose-built/wysiwyg/wysiwyg.component';
 
-// const config: SocketIoConfig = { url: environment.socket_server, options: { autoConnect: false }  };
-
 // Material Theme Module
 import {
 	MatAutocompleteModule,
@@ -249,6 +248,7 @@ const ngComponents = [
 	AddFillerGroupComponent,
 	AdvertiserViewComponent,
 	AssignLicenseModalComponent,
+    AutocompleteComponent,
 	AutocompleteFieldComponent,
 	BannerComponent,
 	BulkEditBusinessHoursComponent,
