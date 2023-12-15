@@ -9,4 +9,5 @@ export interface UI_AUTOCOMPLETE {
 export interface UI_AUTOCOMPLETE_DATA {
 	id: any;
 	value: any;
+	display?: any;
 }

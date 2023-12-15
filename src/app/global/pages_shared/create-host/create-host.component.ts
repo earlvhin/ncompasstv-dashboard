@@ -615,7 +615,8 @@ export class CreateHostComponent implements OnInit {
 
 							return {
 								id: data.id,
-								value: `${data.city}, ${data.state}`
+								value: `${data.city}, ${data.state}`,
+								display: data.city
 							};
 						})
 						.filter((data) => data)
@@ -636,19 +637,16 @@ export class CreateHostComponent implements OnInit {
 				.map((data) => {
 					return {
 						id: data.id,
-						value: `${data.city}, ${data.state}`
+						value: `${data.city}, ${data.state}`,
+						display: data.city
 					};
 				})
 		];
-
-		console.log(this.city_field_data.data);
 	}
 
 	searchCityById(data: UI_AUTOCOMPLETE_DATA) {
 		console.log('data', data);
 		let city = this.cities_state_data.filter((item) => item.id === data.id);
-
-		console.log('CITYY', city);
 	}
 
 	setCity(data): void {

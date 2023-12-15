@@ -35,6 +35,10 @@ export class AutocompleteComponent implements OnInit {
 	}
 
 	displayOption(option: any): string {
+		if (option && option.display) {
+			return option.display;
+		}
+
 		return option ? option.value : '';
 	}
 
