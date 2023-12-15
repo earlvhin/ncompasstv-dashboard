@@ -24,7 +24,10 @@ import {
 	UI_STORE_HOUR,
 	UI_STORE_HOUR_PERIOD,
 	City,
-	State
+	CITIES_STATE_DATA,
+	State,
+	UI_AUTOCOMPLETE,
+	UI_AUTOCOMPLETE_DATA
 } from 'src/app/global/models';
 
 import {
@@ -37,6 +40,7 @@ import {
 	MapService,
 	LocationService
 } from 'src/app/global/services';
+import { CITIES_STATE } from '../../models/api_cities_state.model';
 
 @Component({
 	selector: 'app-create-host',
@@ -45,6 +49,7 @@ import {
 	providers: [TitleCasePipe]
 })
 export class CreateHostComponent implements OnInit {
+	cities_state_data: CITIES_STATE[] = [];
 	categories_data: API_PARENT_CATEGORY[];
 	city_loaded = false;
 	city_state: City[] = [];
@@ -84,6 +89,7 @@ export class CreateHostComponent implements OnInit {
 	selected_location: any;
 	timezone: API_TIMEZONE[];
 	title = 'Create Host Place';
+	create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
 
 	private dealer_id: string;
 	private logo_data: { images: string[]; logo: string };
@@ -91,6 +97,14 @@ export class CreateHostComponent implements OnInit {
 	private operation_hours: UI_STORE_HOUR_PERIOD[];
 	protected default_host_image = 'assets/media-files/admin-icon.png';
 	protected _unsubscribe = new Subject<void>();
+
+	// New Autocomplete Dependencies
+	city_field_data: UI_AUTOCOMPLETE = {
+		label: 'City',
+		placeholder: 'Type a city',
+		data: [],
+		allowSearchTrigger: true
+	};
 
 	constructor(
 		private _auth: AuthService,
@@ -112,7 +126,7 @@ export class CreateHostComponent implements OnInit {
 		this.initializeCreateHostForm();
 		this.initializeGooglePlaceForm();
 		this.loadInitialData();
-		this.getCities();
+		// this.getCities();
 		this.setOperationDays();
 
 		if (this.isDealer || this.isSubDealer) {
@@ -122,6 +136,7 @@ export class CreateHostComponent implements OnInit {
 		}
 
 		this.WatchFields();
+		this.getCitiesAndStates();
 	}
 
 	ngOnDestroy() {
@@ -543,8 +558,8 @@ export class CreateHostComponent implements OnInit {
 			this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
 			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe))
 		];
-
-		forkJoin(requests)
+		//local-dev.n-compass.online:64661/administrator/media-library
+		http: forkJoin(requests)
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				([generalCategories, getCategories, getDealers, getTimeZones]) => {
@@ -578,24 +593,62 @@ export class CreateHostComponent implements OnInit {
 
 	getCities() {
 		this._location
-			.get_cities()
+			.get_cities_data()
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response: any) => {
-				this.city_state = response.map((city) => {
-					return new City(city.city, `${city.city}, ${city.state}`, city.state);
+			.subscribe((response) => {
+				this.cities_state_data = response.map((city) => {
+					return new CITIES_STATE_DATA(city.id, city.city, city.abbreviation, city.state, city.region, city.country);
 				});
 			});
 	}
 
-	getCanadaCities() {
+	getCitiesAndStates() {
 		this._location
-			.get_canada_cities()
+			.get_cities_data()
 			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response: any) => {
-				this.city_state = response.map((city) => {
-					return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
-				});
+			.subscribe((response) => {
+				this.cities_state_data = response;
+				this.city_field_data.data = [
+					...this.cities_state_data
+						.map((data, index) => {
+							if (index > 30) return;
+
+							return {
+								id: data.id,
+								value: `${data.city}, ${data.state}`
+							};
+						})
+						.filter((data) => data)
+				];
+
+				console.log(this.city_field_data.data);
 			});
+	}
+
+	searchCity(key: string) {
+		console.log('searchTriggered =>', key);
+
+		this.city_field_data.data = [];
+
+		this.city_field_data.data = [
+			...this.cities_state_data
+				.filter((data) => data.city.includes(key))
+				.map((data) => {
+					return {
+						id: data.id,
+						value: `${data.city}, ${data.state}`
+					};
+				})
+		];
+
+		console.log(this.city_field_data.data);
+	}
+
+	searchCityById(data: UI_AUTOCOMPLETE_DATA) {
+		console.log('data', data);
+		let city = this.cities_state_data.filter((item) => item.id === data.id);
+
+		console.log('CITYY', city);
 	}
 
 	setCity(data): void {
@@ -604,7 +657,7 @@ export class CreateHostComponent implements OnInit {
 			this.newHostFormControls.city.setValue(cityState);
 			this.city_selected = cityState;
 			this._location
-				.get_states_regions(data.substr(data.indexOf(',') + 2))
+				.get_cities_data(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
@@ -630,7 +683,7 @@ export class CreateHostComponent implements OnInit {
 	fillCityOfHost(state, city_add) {
 		if (!this.canada_selected) {
 			this._location
-				.get_states_by_abbreviation(state)
+				.get_cities_data(state)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
@@ -735,16 +788,6 @@ export class CreateHostComponent implements OnInit {
 				status: data.status
 			};
 		});
-	}
-
-	getCanadaAddress(value) {
-		this.canada_selected = value.checked;
-		this.clearAddressValue();
-		if (value.checked) {
-			this.getCanadaCities();
-		} else {
-			this.getCities();
-		}
 	}
 
 	clearAddressValue() {

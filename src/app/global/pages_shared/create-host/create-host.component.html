@@ -76,7 +76,8 @@
 											[disabled]="true">
 										</app-autocomplete-field>
 
-										<app-autocomplete-field
+										<!-- New Autocomplete Implementation-->
+										<!-- <app-autocomplete-field
 											*ngIf="field.control === 'city'"
 											(data_value)="setCity($event)"
 											[key_of_value]="'city_state'"
@@ -88,7 +89,16 @@
 											[new_value]="city_selected"
 											[initial_value]="city_selected"
 											[is_city]="true">
-										</app-autocomplete-field>
+										</app-autocomplete-field> -->
+
+										<ng-container *ngIf="field.control === 'city'">
+											<app-autocomplete
+												[field_data]="city_field_data"
+												(no_data_found)="searchCity($event)"
+												(value_selected)="searchCityById($event)"></app-autocomplete>
+										</ng-container>
+
+										<!-- New Autocomplete Implementation-->
 
 										<ng-template #no_category_selected>
 											<mat-form-field
@@ -197,7 +207,16 @@
 									</div>
 								</div>
 							</div>
-							<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host || (canada_selected && new_host_form.get('zip').value.length !== 6) || (!canada_selected && new_host_form.get('zip').value.length !== 5)">
+							<button
+								mat-button
+								mat-raised-button
+								class="theme-btn mr-2"
+								[disabled]="
+									new_host_form.invalid ||
+									is_creating_host ||
+									(canada_selected && new_host_form.get('zip').value.length !== 6) ||
+									(!canada_selected && new_host_form.get('zip').value.length !== 5)
+								">
 								{{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
 							</button>
 						</form>

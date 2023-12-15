@@ -1,5 +1,5 @@
 <div class="autocomplete-field w-100">
-	<mat-form-field appearance="fill" class="w-100">
+	<mat-form-field appearance="standard" class="w-100 custom-autocomplete">
 		<mat-label>{{ field_data.label }}</mat-label>
 		<input type="text" [placeholder]="field_data.placeholder" matInput [formControl]="autoCompleteControl" [matAutocomplete]="auto" />
 		<mat-autocomplete #auto="matAutocomplete" [displayWith]="displayOption" (optionSelected)="valueSelected($event)">
