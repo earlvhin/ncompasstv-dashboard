@@ -608,6 +608,7 @@ export class CreateHostComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
 				this.cities_state_data = response;
+
 				this.city_field_data.data = [
 					...this.cities_state_data
 						.map((data, index) => {
@@ -627,13 +628,24 @@ export class CreateHostComponent implements OnInit {
 	}
 
 	searchCity(key: string) {
-		console.log('searchTriggered =>', key);
-
+		// Reset Field Data
 		this.city_field_data.data = [];
+
+		// Prepare Search Keyword
+		const cityKeyword = key.split(', ').map((word) => word.trim());
+		console.log('cityKeyword =>', key, cityKeyword);
 
 		this.city_field_data.data = [
 			...this.cities_state_data
-				.filter((data) => data.city.includes(key))
+				.filter((data) => {
+					for (let i = 0; i < cityKeyword.length; i++) {
+						if (data.city.includes(cityKeyword[i]) || data.state.includes(cityKeyword[i])) {
+							return data;
+						}
+
+						return [...this.cities_state_data];
+					}
+				})
 				.map((data) => {
 					return {
 						id: data.id,
@@ -647,6 +659,9 @@ export class CreateHostComponent implements OnInit {
 	searchCityById(data: UI_AUTOCOMPLETE_DATA) {
 		console.log('data', data);
 		let city = this.cities_state_data.filter((item) => item.id === data.id);
+
+		this.newHostFormControls.state.setValue(city[0].abbreviation);
+		this.newHostFormControls.region.setValue(city[0].region);
 	}
 
 	setCity(data): void {
@@ -692,9 +707,6 @@ export class CreateHostComponent implements OnInit {
 						console.error(error);
 					}
 				);
-		} else {
-			let city = this.city_state.filter((canada_city) => canada_city.city === city_add);
-			this.setCity(city[0].city_state);
 		}
 	}
 

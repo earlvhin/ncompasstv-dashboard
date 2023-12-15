@@ -22,6 +22,8 @@ export class AutocompleteComponent implements OnInit {
 
 	autoCompleteControl = new FormControl();
 	filteredOptions!: Observable<any[]>;
+	filterResult: UI_AUTOCOMPLETE_DATA[] = [];
+	keyword = '';
 
 	constructor() {}
 
@@ -43,21 +45,32 @@ export class AutocompleteComponent implements OnInit {
 	}
 
 	private _filter(keyword: any) {
+		// Reset Filter Result
+		this.filterResult = [];
+
+		// Setup Search
 		const filterValue = keyword.hasOwnProperty('value') ? keyword.value.toLowerCase() : keyword.toLowerCase();
-		let filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+		this.filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+		console.log('FILTER RESULTS =>', filterValue, this.filterResult);
 
 		// In an event that the keyword search returned does not have a result
 		// then we trigger no_data_found event back so the parent can do something about it.
-		if (!filterResult.length) {
-			this.no_data_found.emit(keyword);
 
+		console.log(this.filterResult.length, keyword.length && this.keyword !== keyword);
+
+		if (!this.filterResult.length || (keyword.length && this.keyword !== keyword)) {
 			// This means that the field_data.data source has been changed by the parent
 			// and we need to fire it again for the existing search.
 			if (this.field_data.allowSearchTrigger) {
-				filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+				this.no_data_found.emit(keyword);
+				this.filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+				console.log('FILTER RESULTS II =>', this.filterResult);
 			}
 		}
-		return filterResult;
+
+		// Update Keyword Value
+		this.keyword = keyword;
+		return this.filterResult;
 	}
 
 	valueSelected(e) {

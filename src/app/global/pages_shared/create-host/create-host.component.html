@@ -91,7 +91,7 @@
 											[is_city]="true">
 										</app-autocomplete-field> -->
 
-										<ng-container *ngIf="field.control === 'city'">
+										<ng-container *ngIf="field.control === 'city' && this.city_field_data.data.length">
 											<app-autocomplete
 												[field_data]="city_field_data"
 												(no_data_found)="searchCity($event)"
