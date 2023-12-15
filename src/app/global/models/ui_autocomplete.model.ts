@@ -4,6 +4,7 @@ export interface UI_AUTOCOMPLETE {
 	data: UI_AUTOCOMPLETE_DATA[];
 	disabled?: boolean;
 	allowSearchTrigger?: boolean;
+	initialValue?: UI_AUTOCOMPLETE_DATA[];
 }
 
 export interface UI_AUTOCOMPLETE_DATA {

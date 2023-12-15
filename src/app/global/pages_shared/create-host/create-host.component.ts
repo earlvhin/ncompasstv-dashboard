@@ -86,6 +86,7 @@ export class CreateHostComponent implements OnInit {
 	operation_days: UI_STORE_HOUR[];
 	paging: PAGING;
 	place_id: string;
+	search_keyword: string;
 	selected_location: any;
 	timezone: API_TIMEZONE[];
 	title = 'Create Host Place';
@@ -612,7 +613,7 @@ export class CreateHostComponent implements OnInit {
 				this.city_field_data.data = [
 					...this.cities_state_data
 						.map((data, index) => {
-							if (index > 30) return;
+							if (index > 29) return;
 
 							return {
 								id: data.id,
@@ -627,39 +628,66 @@ export class CreateHostComponent implements OnInit {
 			});
 	}
 
-	searchCity(key: string) {
+	searchCity(keyword: string) {
 		// Reset Field Data
+		// this.city_field_data.data = [];
+
+		// // Prepare Search Keyword
+		// const cityKeyword = key.split(', ').map((word) => word.trim());
+		// console.log('cityKeyword =>', key, cityKeyword);
+
+		// this.city_field_data.data = [
+		// 	...this.cities_state_data
+		// 		.filter((data) => {
+		// 			for (let i = 0; i < cityKeyword.length; i++) {
+		// 				if (data.city.includes(cityKeyword[i]) || data.state.includes(cityKeyword[i])) {
+		// 					return data;
+		// 				}
+
+		// 				return [...this.cities_state_data];
+		// 			}
+		// 		})
+		// 		.map((data) => {
+		// 			return {
+		// 				id: data.id,
+		// 				value: `${data.city}, ${data.state}`,
+		// 				display: data.city
+		// 			};
+		// 		})
+		// ];
+		console.log('searchTriggered!');
+		this.search_keyword = keyword;
 		this.city_field_data.data = [];
+		this._location
+			.get_cities_data(keyword)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe(
+				(response) => {
+					this.cities_state_data = response;
+					this.city_field_data.initialValue = [{ id: '', value: keyword }];
+					this.city_field_data.data = [
+						...this.cities_state_data
+							.map((data, index) => {
+								if (index > 29) return;
 
-		// Prepare Search Keyword
-		const cityKeyword = key.split(', ').map((word) => word.trim());
-		console.log('cityKeyword =>', key, cityKeyword);
-
-		this.city_field_data.data = [
-			...this.cities_state_data
-				.filter((data) => {
-					for (let i = 0; i < cityKeyword.length; i++) {
-						if (data.city.includes(cityKeyword[i]) || data.state.includes(cityKeyword[i])) {
-							return data;
-						}
-
-						return [...this.cities_state_data];
-					}
-				})
-				.map((data) => {
-					return {
-						id: data.id,
-						value: `${data.city}, ${data.state}`,
-						display: data.city
-					};
-				})
-		];
+								return {
+									id: data.id,
+									value: `${data.city}, ${data.state}`,
+									display: data.city
+								};
+							})
+							.filter((data) => data)
+					];
+				},
+				(error) => {
+					this.city_field_data.initialValue = [{ id: '', value: keyword }];
+					this.city_field_data.data = [{ id: '', value: keyword }];
+				}
+			);
 	}
 
 	searchCityById(data: UI_AUTOCOMPLETE_DATA) {
-		console.log('data', data);
-		let city = this.cities_state_data.filter((item) => item.id === data.id);
-
+		const city = this.cities_state_data.filter((item) => item.id === data.id);
 		this.newHostFormControls.state.setValue(city[0].abbreviation);
 		this.newHostFormControls.region.setValue(city[0].region);
 	}
