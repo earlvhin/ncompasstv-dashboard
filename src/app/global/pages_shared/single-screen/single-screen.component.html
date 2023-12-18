@@ -51,8 +51,8 @@
 					</div>
 					<p class="mb-3 sm-text">Below are the zones of {{ screen.assigned_template }} template. Click a zone to edit its playlist.</p>
 				</div>
-				<mat-accordion>
-					<mat-expansion-panel *ngFor="let z of screen.screen_zone_playlist">
+				<mat-accordion *ngIf="screen && screen.screen_zone_playlist && playlist_dropdown.length == screen.screen_zone_playlist.length">
+					<mat-expansion-panel *ngFor="let z of screen.screen_zone_playlist; index as i">
 						<mat-expansion-panel-header>
 							<mat-panel-title class="font-weight-medium"> {{ z.screen_template.name | titlecase }} Zone </mat-panel-title>
 							<mat-panel-description class="align-items-center" *ngIf="z.screen_template.playlist_id">
@@ -63,28 +63,22 @@
 									class="sm-text font-weight-bold ml-2 text-primary">
 									{{ z.screen_template.playlist_name }}
 								</a>
+
+								<div *ngIf="playlist_id === z.screen_template.playlist_id">
+									<i
+										class="pt-3 cursor-pointer fa fa-times text-danger"
+										data-toggle="tooltip"
+										title="Unassign Playlist"
+										(click)="unassignPlaylist(z.screen_template.zone_id)">
+									</i>
+								</div>
 							</mat-panel-description>
 						</mat-expansion-panel-header>
-						<mat-form-field [ngClass]="playlist_id === z.screen_template.playlist_id ? 'col-lg-11' : 'full-width'">
-							<mat-label>Select Playlist for {{ z.screen_template.name }}</mat-label>
-							<mat-select [(value)]="z.screen_template.playlist_id">
-								<mat-option
-									*ngFor="let p of dealer_playlist"
-									[attr.data-zone-id]="p.playlistId"
-									[value]="p.playlistId"
-									(click)="playlistSelected(p.playlistId, z.screen_template.zone_id)">
-									{{ p.name }}
-								</mat-option>
-							</mat-select>
-						</mat-form-field>
-						<div *ngIf="playlist_id === z.screen_template.playlist_id" class="col-lg-1">
-							<i
-								class="pt-3 cursor-pointer fa fa-times text-danger"
-								data-toggle="tooltip"
-								title="Unassign Playlist"
-								(click)="unassignPlaylist(z.screen_template.zone_id)">
-							</i>
-						</div>
+						<app-autocomplete
+							[field_data]="playlist_dropdown[i]"
+							*ngIf="playlist_dropdown[i] && playlist_dropdown[i].data.length > 0"
+							(value_selected)="playlistSelected($event.id, z.screen_template.zone_id)">
+						</app-autocomplete>
 					</mat-expansion-panel>
 				</mat-accordion>
 				<!-- Screen Zone and Playlist -->

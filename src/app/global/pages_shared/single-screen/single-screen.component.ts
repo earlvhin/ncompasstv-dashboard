@@ -30,6 +30,7 @@ import {
 	EDIT_SCREEN_INFO,
 	PAGING,
 	SCREEN_LICENSE,
+	UI_AUTOCOMPLETE,
 	UI_CONTENT,
 	UI_ROLE_DEFINITION,
 	UI_SINGLE_SCREEN,
@@ -71,6 +72,7 @@ export class SingleScreenComponent implements OnInit {
 	paging_host: PAGING;
 	playlist_id: string;
 	playlist_route: string;
+	playlist_dropdown: UI_AUTOCOMPLETE[] = [];
 	playlist_contents: UI_CONTENT[];
 	screen: UI_SINGLE_SCREEN;
 	screen_init: string;
@@ -333,11 +335,37 @@ export class SingleScreenComponent implements OnInit {
 					const { entities } = response.paging;
 					const playlists = entities as API_PLAYLIST[];
 					this.dealer_playlist = playlists;
+					this.readyDataForDropdown(this.dealer_playlist);
 				},
 				(error) => {
 					console.error(error);
 				}
 			);
+	}
+
+	readyDataForDropdown(data) {
+		//Map Data to format
+		this.playlist_dropdown = [];
+		data = data.map((playlist) => {
+			return {
+				value: playlist.name,
+				id: playlist.playlistId
+			};
+		});
+
+		this.screen.screen_zone_playlist.map((zone: any) => {
+			this.playlist_dropdown.push({
+				label: 'Select Playlist for ' + zone.screen_template.name,
+				placeholder: 'Ex. Vertical Foods Playlist',
+				data: data,
+				initialValue: [
+					{
+						id: zone.screen_template.playlist_id,
+						value: zone.screen_template.playlist_name
+					}
+				]
+			});
+		});
 	}
 
 	// Get Host By Dealer
@@ -773,7 +801,6 @@ export class SingleScreenComponent implements OnInit {
 		if (data.screen.screenTypeId != null) screen.type = data.screen.screenTypeId;
 
 		if (data.host.notes && data.host.notes.trim().length > 0) screen.notes = data.host.notes;
-
 		return screen;
 	}
 

@@ -76,6 +76,7 @@ export * from './tag-type.model';
 export * from './table-row-format.model';
 export * from './ui_activity_logs.model';
 export * from './ui_advertiser.model';
+export * from './ui_autocomplete.model';
 export * from './ui_city_state_region.model';
 export * from './ui_confirmation-modal.model';
 export * from './ui_content.model';
