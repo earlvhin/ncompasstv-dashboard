@@ -633,13 +633,11 @@ export class CreateHostComponent implements OnInit {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					console.log('keeeeeeeeyward', keyword, response);
 					this.cities_state_data.data = response.data;
 					this.city_field_data.initialValue = [{ id: '', value: keyword }];
 					this.city_field_data.data = [
 						...this.cities_state_data.data
 							.map((data) => {
-								console.log('>>>>>>>>>', data);
 								return {
 									id: data.id,
 									value: `${data.city}, ${data.state}`,
@@ -648,12 +646,10 @@ export class CreateHostComponent implements OnInit {
 							})
 							.filter((data) => data)
 					];
-
-					console.log('okey', this.city_field_data);
 				},
 				(error) => {
-					this.city_field_data.initialValue = [{ id: '', value: keyword }];
-					this.city_field_data.data = [{ id: '', value: keyword }];
+					this.city_field_data.initialValue = [{ id: '', value: `${keyword} not found` }];
+					this.city_field_data.data = [{ id: '', value: `${keyword} not found` }];
 				}
 			);
 	}

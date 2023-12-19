@@ -68,13 +68,32 @@ export class AutocompleteComponent implements OnInit {
 
 		// In an event that the keyword search returned does not have a result
 		// then we trigger no_data_found event back so the parent can do something about it.
-		if (!filterResult.length || (keyword.length && this.keyword !== keyword)) {
-			this.no_data_found.emit(keyword);
+		const noDataFound = !filterResult.length;
+		const newKeyword = keyword.length && this.keyword !== keyword;
+
+		if (noDataFound) {
+			if (newKeyword) {
+				this.no_data_found.emit(keyword);
+			}
 
 			// This means that the field_data.data source has been changed by the parent
 			// and we need to fire it again for the existing search.
 			if (this.field_data.allowSearchTrigger) {
 				filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+
+				if (!filterResult.length && this.field_data.data.length) {
+					filterResult = this.field_data.data;
+				}
+			}
+		} else if (!noDataFound && newKeyword) {
+			this.no_data_found.emit(keyword);
+
+			if (this.field_data.allowSearchTrigger) {
+				filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
+
+				if (!filterResult.length && this.field_data.data.length) {
+					filterResult = this.field_data.data;
+				}
 			}
 		}
 
