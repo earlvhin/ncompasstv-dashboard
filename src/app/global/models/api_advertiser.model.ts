@@ -27,3 +27,25 @@ export class API_ADVERTISER {
 	tags?: TAG[];
 	totalAssets?: number;
 }
+
+export class API_USER_ADVERTISER {
+	id: string;
+	dealerId: string;
+	userId: string;
+	advertiserId: string | null;
+	name: string;
+	region: string;
+	state: string;
+	status: string;
+	dateCreated: string;
+	dateUpdated: string | null;
+	createdBy: string;
+	updatedBy: string | null;
+	latitude: string;
+	longitude: string;
+	city: string;
+	postalCode: string;
+	address: string;
+	category: string;
+	logo: string;
+}

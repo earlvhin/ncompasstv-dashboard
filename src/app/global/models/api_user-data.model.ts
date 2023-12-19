@@ -8,7 +8,9 @@ export class API_USER_DATA {
 	firstName: string;
 	lastName: string;
 	createdBy?: string;
+	advertiser: any;
 	dealer?: any;
+	host?: any;
 	middleName?: string;
 	organization?: string;
 	ownerId?: string;

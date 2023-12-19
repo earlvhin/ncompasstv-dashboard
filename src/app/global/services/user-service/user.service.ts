@@ -5,7 +5,7 @@ import 'rxjs/add/operator/map';
 
 import { AuthService } from 'src/app/global/services/auth-service/auth.service';
 import { BaseService } from '../base.service';
-import { API_DEALER, API_FILTERS, API_USER_DATA, UI_ROLE_DEFINITION } from 'src/app/global/models';
+import { API_DEALER, API_FILTERS, API_USER_ADVERTISER, API_USER_DATA, API_USER_HOST, UI_ROLE_DEFINITION } from 'src/app/global/models';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -53,17 +53,27 @@ export class UserService extends BaseService {
 		return this.getRequest(url);
 	}
 
-	get_user_by_id(userId: string): Observable<{ user?: API_USER_DATA; message?: string }> {
+	get_user_by_id(userId: string): Observable<{ user?: API_USER_DATA; dealer?: any; host?: any; advertiser?: any; message?: string }> {
 		const url = `${this.getters.api_get_user_by_id}?user_id=${userId}`;
 
-		return this.getRequest(url).map((response: { dealer?: API_DEALER[]; user?: API_USER_DATA; message?: string }) => {
-			if ('message' in response) {
-				return { message: 'User not response ' };
-			} else {
-				const result = 'dealer' in response ? { ...response.user, ...response.dealer } : { user: response.user };
+		return this.getRequest(url).map(
+			(response: {
+				dealer?: API_DEALER[];
+				advertiser?: API_USER_ADVERTISER[];
+				host?: API_USER_HOST[];
+				user?: API_USER_DATA;
+				message?: string;
+			}) => {
+				let result: any = {};
+
+				if ('user' in response) result = { ...response.user };
+				if ('dealer' in response) result = response.dealer.length && { ...result, dealer: response.dealer[0] };
+				if ('advertiser' in response) result = response.advertiser.length && { ...result, advertiser: response.advertiser[0] };
+				if ('host' in response) result = response.host.length && { ...result, host: response.host[0] };
+
 				return result;
 			}
-		});
+		);
 	}
 
 	get_dealeradmin_dealers(userId: string): Observable<{ dealers: { businessName: string; dealerId: string }[] }> {
