@@ -49,7 +49,7 @@ import { CITIES_STATE } from '../../models/api_cities_state.model';
 	providers: [TitleCasePipe]
 })
 export class CreateHostComponent implements OnInit {
-	cities_state_data: CITIES_STATE[] = [];
+	cities_state_data: CITIES_STATE;
 	categories_data: API_PARENT_CATEGORY[];
 	city_loaded = false;
 	city_state: City[] = [];
@@ -594,7 +594,7 @@ export class CreateHostComponent implements OnInit {
 
 	getCities() {
 		this._location
-			.get_cities_data()
+			.get_cities()
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe((response) => {
 				this.cities_state_data = response.map((city) => {
@@ -611,73 +611,45 @@ export class CreateHostComponent implements OnInit {
 				this.cities_state_data = response;
 
 				this.city_field_data.data = [
-					...this.cities_state_data
-						.map((data, index) => {
-							if (index > 29) return;
-
+					...this.cities_state_data.data
+						.map((data) => {
 							return {
 								id: data.id,
 								value: `${data.city}, ${data.state}`,
-								display: data.city
+								display: data.fullSearch
 							};
 						})
 						.filter((data) => data)
 				];
-
-				console.log(this.city_field_data.data);
 			});
 	}
 
 	searchCity(keyword: string) {
-		// Reset Field Data
-		// this.city_field_data.data = [];
-
-		// // Prepare Search Keyword
-		// const cityKeyword = key.split(', ').map((word) => word.trim());
-		// console.log('cityKeyword =>', key, cityKeyword);
-
-		// this.city_field_data.data = [
-		// 	...this.cities_state_data
-		// 		.filter((data) => {
-		// 			for (let i = 0; i < cityKeyword.length; i++) {
-		// 				if (data.city.includes(cityKeyword[i]) || data.state.includes(cityKeyword[i])) {
-		// 					return data;
-		// 				}
-
-		// 				return [...this.cities_state_data];
-		// 			}
-		// 		})
-		// 		.map((data) => {
-		// 			return {
-		// 				id: data.id,
-		// 				value: `${data.city}, ${data.state}`,
-		// 				display: data.city
-		// 			};
-		// 		})
-		// ];
 		console.log('searchTriggered!');
 		this.search_keyword = keyword;
 		this.city_field_data.data = [];
 		this._location
-			.get_cities_data(keyword)
+			.get_cities_data(keyword) // Make sure keyword is a string here
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response) => {
-					this.cities_state_data = response;
+					console.log('keeeeeeeeyward', keyword, response);
+					this.cities_state_data.data = response.data;
 					this.city_field_data.initialValue = [{ id: '', value: keyword }];
 					this.city_field_data.data = [
-						...this.cities_state_data
-							.map((data, index) => {
-								if (index > 29) return;
-
+						...this.cities_state_data.data
+							.map((data) => {
+								console.log('>>>>>>>>>', data);
 								return {
 									id: data.id,
 									value: `${data.city}, ${data.state}`,
-									display: data.city
+									display: data.fullSearch
 								};
 							})
 							.filter((data) => data)
 					];
+
+					console.log('okey', this.city_field_data);
 				},
 				(error) => {
 					this.city_field_data.initialValue = [{ id: '', value: keyword }];
@@ -687,7 +659,7 @@ export class CreateHostComponent implements OnInit {
 	}
 
 	searchCityById(data: UI_AUTOCOMPLETE_DATA) {
-		const city = this.cities_state_data.filter((item) => item.id === data.id);
+		const city = this.cities_state_data.data.filter((item) => item.id === data.id);
 		this.newHostFormControls.state.setValue(city[0].abbreviation);
 		this.newHostFormControls.region.setValue(city[0].region);
 	}
@@ -698,7 +670,7 @@ export class CreateHostComponent implements OnInit {
 			this.newHostFormControls.city.setValue(cityState);
 			this.city_selected = cityState;
 			this._location
-				.get_cities_data(data.substr(data.indexOf(',') + 2))
+				.get_states_regions(data.substr(data.indexOf(',') + 2))
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {

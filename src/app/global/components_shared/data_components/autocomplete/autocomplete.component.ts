@@ -26,10 +26,9 @@ export class AutocompleteComponent implements OnInit {
 
 	ngOnInit() {
 		console.log('====>', this.field_data.initialValue);
-
 		this.filteredOptions = this.autoCompleteControl.valueChanges.pipe(
 			startWith(this.field_data.initialValue && this.field_data.initialValue.length ? this.field_data.initialValue[0].value : ''),
-			debounceTime(500),
+			debounceTime(1000),
 			distinctUntilChanged(),
 			map((keyword) => this._filter(keyword))
 		);
@@ -57,6 +56,8 @@ export class AutocompleteComponent implements OnInit {
 		if (option && option.display) {
 			return option.display;
 		}
+
+		console.log('options', option, 'display', option.display, 'value', option.value);
 
 		return option ? option.value : '';
 	}
