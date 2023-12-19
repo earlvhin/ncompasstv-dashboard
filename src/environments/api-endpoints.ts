@@ -186,7 +186,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
@@ -225,7 +225,8 @@ export const API_ENDPOINTS = {
 		users_by_owner: 'user/GetAllUsersByOwnerId?ownerid=',
 		validate_weather_zip: 'feed/weather/validate?zipcode=',
 		validate_rss_url: 'feed/news/validate?url=',
-		validate_feed_url: 'feed/validate/url'
+		validate_feed_url: 'feed/validate/url',
+		export_advertiser: 'advertiser/export?dealer_id='
 	},
 	create: {
 		add_credit_card: 'billing/add/creditcard',

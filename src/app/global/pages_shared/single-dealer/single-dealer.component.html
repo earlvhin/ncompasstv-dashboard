@@ -517,6 +517,18 @@
 													[ngClass]="current_advertiser_status_filter === 'active' ? 'text-primary' : 'text-gray'">
 												</span>
 											</button>
+											<button
+												mat-button
+												mat-raised-button
+												class="theme-btn pi-control sm-text _primary mr-2"
+												(click)="exportTable('Advertisers')"
+												[disabled]="workbook_generation"
+												title="Export to CSV">
+												<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
+												<span class="ml-2 button_text_animation">{{
+													!workbook_generation ? 'Export' : 'Generating CSV'
+												}}</span>
+											</button>
 											<mat-menu #advertiserStatusList="matMenu">
 												<button mat-menu-item (click)="filterAdvertisersByStatus('active')">
 													<span class="fas fa-circle text-primary mr-2 xsm-text"></span>Active
