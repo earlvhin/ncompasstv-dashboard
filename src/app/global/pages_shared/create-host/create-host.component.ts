@@ -388,24 +388,33 @@ export class CreateHostComponent implements OnInit {
 
 		// ADDRESS MAPPING
 		if (state.includes('Canada')) {
+			console.log('CANADA');
+
 			let state_zip = sliced_address[2].split(' ');
+			let country = sliced_address[3].split(' ');
 			this.newHostFormControls.address.setValue(sliced_address[0]);
-			this.fillCityOfHost(state_zip[0], sliced_address[1]);
+			this.fillCityOfHost(state_zip[0], sliced_address[1], country[0]);
 			this.newHostFormControls.zip.setValue(`${state_zip[1]}${state_zip[2]}`);
+			console.log('CANADAT', state_zip[0], sliced_address[1], country[0], data);
 		} else {
 			if (sliced_address.length == 3) {
+				console.log('first');
 				let state_zip = sliced_address[2].split(' ');
+				let country = sliced_address[3].split(' ');
 				this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
-				this.fillCityOfHost(state_zip[0], sliced_address[1]);
+				this.fillCityOfHost(state_zip[0], sliced_address[1], country[0]);
+				console.log('FIRSTT', state_zip[0], sliced_address[1], data);
 				this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
 			}
 			if (sliced_address.length == 4) {
+				console.log('sec');
 				let state_zip = sliced_address[2].split(' ');
 				this.newHostFormControls.address.setValue(sliced_address[0]);
 				this.setCity(sliced_address[1]);
 				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
 			}
 			if (sliced_address.length == 5) {
+				console.log('thir');
 				let state_zip = sliced_address[3].split(' ');
 				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
 				this.setCity(sliced_address[1]);
@@ -616,7 +625,7 @@ export class CreateHostComponent implements OnInit {
 							return {
 								id: data.id,
 								value: `${data.city}, ${data.state}`,
-								display: data.fullSearch
+								display: data.city
 							};
 						})
 						.filter((data) => data)
@@ -641,7 +650,7 @@ export class CreateHostComponent implements OnInit {
 								return {
 									id: data.id,
 									value: `${data.city}, ${data.state}`,
-									display: data.fullSearch
+									display: data.city
 								};
 							})
 							.filter((data) => data)
@@ -661,17 +670,22 @@ export class CreateHostComponent implements OnInit {
 	}
 
 	setCity(data): void {
+		console.log('holadata', data);
 		let cityState = data.split(',')[0].trim();
 		if (!this.canada_selected) {
 			this.newHostFormControls.city.setValue(cityState);
+			console.log(this.newHostFormControls.city.value, 'the city selected');
 			this.city_selected = cityState;
 			this._location
-				.get_states_regions(data.substr(data.indexOf(',') + 2))
+				.get_cities_data(data)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
-						this.newHostFormControls.state.setValue(data[0].abbreviation);
-						this.newHostFormControls.region.setValue(data[0].region);
+						this.newHostFormControls.state.setValue(data.data[0].abbreviation);
+						this.newHostFormControls.region.setValue(data.data[0].region);
+
+						console.log(this.newHostFormControls.state.value);
+						console.log(this.newHostFormControls.region.value);
 					},
 					(error) => {
 						console.error(error);
@@ -689,15 +703,32 @@ export class CreateHostComponent implements OnInit {
 		}
 	}
 
-	fillCityOfHost(state, city_add) {
-		if (!this.canada_selected) {
+	fillCityOfHost(state, city_add, country_add) {
+		if (country_add !== 'Canada') {
 			this._location
-				.get_cities_data(state)
+				.get_cities_data(city_add)
 				.pipe(takeUntil(this._unsubscribe))
 				.subscribe(
 					(data) => {
-						let city = city_add + ', ' + data[0].state;
+						console.log('this one', data);
+						let city = city_add + ', ' + data.data[0].state;
 						this.setCity(city);
+					},
+					(error) => {
+						console.error(error);
+					}
+				);
+		} else {
+			this._location
+				.get_cities_data(city_add)
+				.pipe(takeUntil(this._unsubscribe))
+				.subscribe(
+					(data) => {
+						let city_data = data.data.filter((data) => data.country === 'CA');
+						let city = city_data[0].city + ', ' + city_data[0].state;
+						this.setCity(city);
+
+						console.log(city);
 					},
 					(error) => {
 						console.error(error);
