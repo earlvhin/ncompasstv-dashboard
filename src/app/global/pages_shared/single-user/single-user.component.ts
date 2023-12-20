@@ -133,7 +133,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 		}
 
 		this.selected_dealers_control.value.length = 0;
-		this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
+		if (this.dealerMultiSelect) this.dealerMultiSelect.compareWith = (a, b) => a && b && a.dealerId === b.dealerId;
 	}
 
 	onDelete(userId: string): void {
@@ -330,6 +330,7 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
+					console.log('wts', response);
 					if ('message' in response) return;
 					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response.dealer.dealerId;
 					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = response.advertiser.id;
