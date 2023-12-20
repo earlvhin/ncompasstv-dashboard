@@ -14,6 +14,7 @@ export class USER_LOGIN {
 	refreshToken: string;
 	userRole: API_USER_ROLES;
 	roleInfo: any;
+	jwt?: any;
 }
 
 export class USER {
@@ -122,4 +123,13 @@ export class DEALER_PROFILE {
 export class JWT_TOKEN {
 	token: string;
 	refreshToken: string;
+}
+
+export interface USER_LOCALSTORAGE {
+	user_id: string;
+	firstname: string;
+	lastname: string;
+	role_id: string;
+	roleInfo: any;
+	jwt: { token: string; refreshToken: string };
 }

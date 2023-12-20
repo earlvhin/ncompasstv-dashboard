@@ -52,7 +52,7 @@ export class NavbarComponent implements OnInit {
 			const { firstname, user_id, role_id } = this.currentUser;
 			this.current_username = firstname;
 			this.current_userid = user_id;
-            this.setCookieForOtherSite(this.current_userid);
+			// this.setCookieForOtherSite(this.current_userid);
 
 			if (role_id === UI_ROLE_DEFINITION.administrator || role_id === UI_ROLE_DEFINITION.dealeradmin) {
 				this.is_admin = true;
@@ -63,7 +63,7 @@ export class NavbarComponent implements OnInit {
 				this.is_dealer = true;
 				this.route = '/dealer';
 			}
-			
+
 			this.getUserNotifications();
 		}
 
@@ -85,11 +85,8 @@ export class NavbarComponent implements OnInit {
 		});
 	}
 
-    setCookieForOtherSite(id) {
-		this._user.set_cookie_for_other_site(id).subscribe(
-			() => {
-			}
-		)
+	setCookieForOtherSite(id) {
+		this._user.set_cookie_for_other_site(id).subscribe(() => {});
 	}
 
 	logOut() {
