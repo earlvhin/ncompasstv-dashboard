@@ -1,7 +1,7 @@
 <div class="p-4 user-form position-relative">
-	<h3 class="mb-4">Add a Support Ticket</h3>
+	<h3 class="mb-4">Edit Ticket</h3>
 
-	<form class="text-left" [formGroup]="new_support_form" (ngSubmit)="saveSupport()" #formDirective="ngForm">
+	<form class="text-left" [formGroup]="edit_ticket_form" (ngSubmit)="saveEditSupport()" #formDirective="ngForm">
 		<div class="d-flex flex-column mb-4">
 			<mat-form-field class="full-width">
 				<mat-label>URL</mat-label>

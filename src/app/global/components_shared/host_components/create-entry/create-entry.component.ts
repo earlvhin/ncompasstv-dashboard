@@ -17,7 +17,7 @@ import { ConfirmationModalComponent } from '../../page_components/confirmation-m
 export class CreateEntryComponent implements OnInit {
 	@Output() reload_page = new EventEmitter();
 	disabled_submit = true;
-	form_invalid : boolean;
+	form_invalid: boolean;
 	is_creating_support = false;
 	new_support_form: FormGroup;
 
@@ -41,13 +41,7 @@ export class CreateEntryComponent implements OnInit {
 		this.form_invalid = true;
 		const createdBy = this._auth.current_user_value.user_id;
 
-		const new_entry = new API_CREATE_SUPPORT(
-			this.data.hostId,
-			this.form_controls.supportNotes.value,
-			this.form_controls.supportUrl.value,
-			createdBy
-		);
-
+		const new_entry = new API_CREATE_SUPPORT(this.data.hostId, this.form_controls.Notes.value, this.form_controls.Url.value, createdBy);
 
 		this._host
 			.create_support_entry(new_entry)
@@ -68,13 +62,13 @@ export class CreateEntryComponent implements OnInit {
 
 	private initializeForm() {
 		this.new_support_form = this._form.group({
-			supportUrl: [""],
-			supportNotes: [""]
+			Url: [''],
+			Notes: ['']
 		});
 
 		this.new_support_form.valueChanges.subscribe((v) => {
-			this.disabled_submit = !((v.supportUrl || v.supportNotes !== null) && (v.supportUrl || v.supportNotes !== ''))
-		})
+			this.disabled_submit = !((v.Url || v.Notes !== null) && (v.Url || v.Notes !== ''));
+		});
 	}
 
 	private get form_controls() {
@@ -86,5 +80,4 @@ export class CreateEntryComponent implements OnInit {
 		const dialogConfig = { width: '500px', height: '350px', data: dialogData };
 		this._dialog.open(ConfirmationModalComponent, dialogConfig);
 	}
-	
 }
