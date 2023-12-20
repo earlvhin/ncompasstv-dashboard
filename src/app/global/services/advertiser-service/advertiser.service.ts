@@ -3,6 +3,8 @@ import { Observable } from 'rxjs';
 
 import { BaseService } from '../base.service';
 import { API_ADVERTISER, API_FILTERS, PAGING, TAG } from 'src/app/global/models';
+import { API_EXPORT_ADVERTISER } from '../../models/api_export-advertiser.model';
+import { HttpParams } from '@angular/common/http';
 
 @Injectable({
 	providedIn: 'root'
@@ -53,6 +55,11 @@ export class AdvertiserService extends BaseService {
 
 	get_advertisers_unassigned_to_user(id: string, page: number, key: string, column = '', order = '') {
 		const url = `${this.getters.api_get_advertisers_unassigned}${id}&page=${page}&search=${key}&sortColumn=${column}&sortOrder=${order}`;
+		return this.getRequest(url);
+	}
+
+	export_advertisers(dealerId: string, filter: string, sortColumn: string, sortOrder: string): Observable<API_EXPORT_ADVERTISER[]> {
+		const url = `${this.getters.export_advertiser}${dealerId}&filter=${filter}&sortColumn=${sortColumn}&status=A&sortOrder=${sortOrder}`;
 		return this.getRequest(url);
 	}
 

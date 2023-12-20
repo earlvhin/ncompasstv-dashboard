@@ -42,6 +42,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	advertiser_card: any;
 	advertiser_data: any = [];
 	advertiser_filtered_data: any = [];
+	advertiser_to_export: any = [];
 	apps: any;
 	array_to_delete: any = [];
 	banner_description = '';
@@ -183,6 +184,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 	// Column: For BE Key to sort,
 	// Key: Column to be exported as per API,
 	// No_export: Dont Include to Export
+	advertiser_table_columns = [
+		{ name: 'Dealer Name', key: 'dealerName' },
+		{ name: 'Name', key: 'name' },
+		{ name: 'Status', key: 'status' },
+		{ name: 'Assigned User', key: 'assignedUser' },
+		{ name: 'Contents Count', key: 'contentsCount' },
+		{ name: 'Address', key: 'address' },
+		{ name: 'City', key: 'city' },
+		{ name: 'State', key: 'state' },
+		{ name: 'Postal Code', key: 'postalCode' },
+		{ name: 'Date Created', key: 'dateCreated' },
+		{ name: 'Contents', key: 'contentsFormatted' }
+	];
+
 	host_table_col = [
 		{ name: '#', sortable: false, no_export: true },
 		{ name: 'Dealer Name', sortable: false, key: 'businessName', hidden: true, no_show: true },
@@ -1545,7 +1560,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				);
 				break;
 			case 'Hosts':
-				const filters = {
+				const hostFilters = {
 					dealerId: this.dealer_id,
 					page: 1,
 					search: this.search_data,
@@ -1555,7 +1570,7 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				};
 
 				this.subscription.add(
-					this._host.get_host_by_dealer_id_with_sort(filters).subscribe((data) => {
+					this._host.get_host_by_dealer_id_with_sort(hostFilters).subscribe((data) => {
 						this.hosts_to_export = data.paging.entities;
 						this.hosts_to_export.forEach((item, i) => {
 							this.modifyItem(item, tab);
@@ -1565,6 +1580,36 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 						});
 						this.generateExcel(tab);
 					})
+				);
+				break;
+
+			case 'Advertisers':
+				const advertiserFilters = {
+					dealerId: this.dealer_id,
+					search: this.search_data,
+					sortColumn: this.sort_column_advertisers,
+					sortOrder: this.sort_order_advertisers,
+					status: this.filters.status
+				};
+
+				this.subscription.add(
+					this._advertiser
+						.export_advertisers(
+							advertiserFilters.dealerId,
+							advertiserFilters.search,
+							advertiserFilters.sortColumn,
+							advertiserFilters.sortOrder
+						)
+						.subscribe((data) => {
+							this.advertiser_to_export = data;
+							this.advertiser_to_export.forEach((item, i) => {
+								this.modifyItem(item, tab);
+								this.worksheet.addRow(item).font = {
+									bold: false
+								};
+							});
+							this.generateExcel(tab);
+						})
 				);
 				break;
 		}
@@ -1610,6 +1655,15 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 				item.storeHoursParse = this.getStoreHourseParse(item);
 				item.generalCategory = item.generalCategory ? item.generalCategory : 'Other';
 				item.businessName = this.dealer.businessName;
+				break;
+
+			case 'Advertisers':
+				item.dealerName = this.dealer.businessName;
+				item.contentsCount = item.contentCount;
+
+				if (item.contents && item.contents.length > 0) {
+					item.contentsFormatted = item.contents.join(', ');
+				}
 				break;
 		}
 	}
@@ -1713,6 +1767,20 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
 							style: { font: { name: 'Arial', bold: true } }
 						});
 					}
+				});
+				break;
+
+			case 'Advertisers':
+				const table_style = {
+					font: { name: 'Arial', bold: true }
+				};
+				this.advertiser_table_columns.forEach((column) => {
+					header.push({
+						header: column.name,
+						key: column.key,
+						width: 30,
+						style: { table_style }
+					});
 				});
 				break;
 		}
