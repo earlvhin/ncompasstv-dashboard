@@ -145,7 +145,7 @@ export class UserSettingComponent implements OnInit {
 	}
 
 	setUserById(response) {
-		if (response.dealer.length > 0) {
+		if (response.dealer && response.dealer.length > 0) {
 			this.user_data = Object.assign({}, response.dealer[0], response.user);
 			this.is_dealer = true;
 		} else {
