@@ -37,6 +37,9 @@
 					{{ preview_column_label || 'Action' }}
 				</th>
 
+				<!-- for delete and edit column [[TICKET TABLE]] -->
+				<th *ngIf="actions_column" class="p-3 text-center">Actions</th>
+
 				<th
 					*ngIf="
 						license_delete ||
@@ -531,6 +534,22 @@
 						}}"
 						(click)="deleteLicense(data.license_id.value)"></i>
 				</td>
+
+				<div class="d-flex justify-content-center" *ngIf="actions_column">
+					<td class="p-3 md-text control-toggle text-center">
+						<i
+							class="fas fa-edit text-primary cursor-pointer mr-2"
+							data-toggle="tooltip"
+							title="Edit Ticket"
+							(click)="editTicket(data)"></i>
+
+						<i
+							class="fas fa-trash text-danger cursor-pointer"
+							data-toggle="tooltip"
+							title="Delete Ticket"
+							(click)="deleteTicket(data.ticketId.value)"></i>
+					</td>
+				</div>
 
 				<td class="p-3 control-toggle text-center" *ngIf="is_user_delete_enabled">
 					<i

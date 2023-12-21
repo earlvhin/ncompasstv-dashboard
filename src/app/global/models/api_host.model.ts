@@ -77,3 +77,39 @@ export class API_CREATE_SUPPORT {
 		this.createdBy = createdBy;
 	}
 }
+
+export class API_USER_HOST {
+	hostId: string;
+	dealerId: string;
+	userId: string;
+	name: string;
+	address: string;
+	street: string;
+	city: string;
+	postalCode: string;
+	region: string;
+	state: string;
+	country: string;
+	groupId?: string;
+	latitude: string;
+	longitude: string;
+	timeZone: string;
+	storeHours: string;
+	venueType: any;
+	monthlyTraffic: string;
+	avgDwellTime: string;
+	avgTicket: string;
+	demographics: string;
+	internet: string;
+	notes: string;
+	installDate: string;
+	dateCreated: string;
+	dateUpdated?: string;
+	createdBy: string;
+	updatedBy?: string;
+	status: string;
+	category?: string;
+	vistarVenueId?: string;
+	others?: string;
+	logo?: string;
+}

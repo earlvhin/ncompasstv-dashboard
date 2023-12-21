@@ -7,7 +7,7 @@ import { first } from 'rxjs/operators';
 
 import { AuthService } from '../../../global/services/auth-service/auth.service';
 import { UI_ROLE_DEFINITION, UI_ROLE_DEFINITION_TEXT } from '../../../global/models/ui_role-definition.model';
-import { USER_LOGIN } from 'src/app/global/models/api_user.model';
+import { USER_LOCALSTORAGE, USER_LOGIN } from 'src/app/global/models/api_user.model';
 import { UpcomingInstallModalComponent } from '../../../global/pages_shared/upcoming-install-modal/upcoming-install-modal.component';
 import { MatDialog } from '@angular/material';
 import * as moment from 'moment';
@@ -82,7 +82,7 @@ export class LoginFormComponent implements OnInit {
 			.pipe(first())
 			.subscribe(
 				(response: USER_LOGIN) => {
-					const user_data = {
+					const user_data: USER_LOCALSTORAGE = {
 						user_id: response.userId,
 						firstname: response.firstName,
 						lastname: response.lastName,
@@ -94,30 +94,8 @@ export class LoginFormComponent implements OnInit {
 					if (response.userRole.roleName === 'Sub Dealer') user_data.roleInfo.permission = response.userRole.permission;
 					localStorage.setItem('current_user', JSON.stringify(user_data));
 					localStorage.setItem('current_token', JSON.stringify(user_data.jwt));
-					this._auth.startRefreshTokenTimer();
-					this.redirectToPage(response.userRole.roleId);
-					if (
-						response.userRole.roleId === UI_ROLE_DEFINITION.administrator ||
-						response.userRole.roleId === UI_ROLE_DEFINITION.dealeradmin ||
-						response.userRole.roleId === UI_ROLE_DEFINITION.tech
-					) {
-						//Show Modal
-						let item = JSON.parse(localStorage.getItem('installation_ischecked'));
-						if (item) {
-							let isNextDay = this.compareTime(item.timestamp, moment().toDate());
-							if (isNextDay) {
-								this.openUpcomingInstallModal();
-							} else {
-								if (!item.value) {
-									this.openUpcomingInstallModal();
-								}
-							}
-						} else {
-							this.openUpcomingInstallModal();
-						}
-					}
 
-					this.getUserCookie(user_data.user_id);
+					this.setUserCookie(user_data);
 				},
 				(error) => {
 					this.show_overlay = false;
@@ -127,9 +105,23 @@ export class LoginFormComponent implements OnInit {
 			);
 	}
 
-	getUserCookie(userId: string) {
-		this._auth.get_user_cookie(userId).subscribe(
-			() => {},
+	setUserCookie(user: USER_LOCALSTORAGE) {
+		this._auth.set_user_cookie(user.jwt.token).subscribe(
+			() => {
+				this._auth.startRefreshTokenTimer();
+				this.redirectToPage(user.role_id);
+				if (
+					user.role_id === UI_ROLE_DEFINITION.administrator ||
+					user.role_id === UI_ROLE_DEFINITION.dealeradmin ||
+					user.role_id === UI_ROLE_DEFINITION.tech
+				) {
+					//Show Modal
+					let item = JSON.parse(localStorage.getItem('installation_ischecked'));
+					if (!item || this.compareTime(item.timestamp, moment().toDate()) || !item.value) {
+						this.openUpcomingInstallModal();
+					}
+				}
+			},
 			(error) => {
 				console.error(error);
 			}

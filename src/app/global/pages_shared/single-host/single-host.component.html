@@ -58,7 +58,7 @@
 					<!-- SUPPORT TAB -->
 					<mat-tab label="Support" *ngIf="is_admin">
 						<ng-template matTabContent>
-							<app-support-tab  [currentUser]="currentUser" [hostId]="hostId"> </app-support-tab>
+							<app-support-tab [currentUser]="currentUser" [hostId]="hostId"> </app-support-tab>
 						</ng-template>
 					</mat-tab>
 					<!-- ACTIVITY TAB -->
@@ -66,6 +66,19 @@
 						<ng-template matTabContent>
 							<app-activity-tab [currentUser]="currentUser" [currentRole]="currentRole" [hostId]="hostId"> </app-activity-tab>
 						</ng-template>
+					</mat-tab>
+					<!-- Terminal -->
+					<mat-tab label="Terminal" *ngIf="is_admin">
+						<div class="row mt-4">
+							<div class="col-lg-7">
+								<h3>Remote Terminal</h3>
+								<p class="sm-text mb-3">Write a short script and send it to all online players.</p>
+
+								<div class="terminal-area mt-4">
+									<app-remote-terminal (run)="runTerminalScript($event)"></app-remote-terminal>
+								</div>
+							</div>
+						</div>
 					</mat-tab>
 				</mat-tab-group>
 			</div>

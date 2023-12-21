@@ -103,12 +103,8 @@ export class AuthService {
 		}
 	}
 
-	get_user_cookie(userId: string) {
-		let httpOptions = {
-			headers: new HttpHeaders({ Authorization: `Bearer ${this.current_user_value.jwt.token}` })
-		};
-
-		return this._http.get(`${environment.base_uri}${environment.getters.get_user_cookie}${userId}`, httpOptions);
+	set_user_cookie(jwt: string) {
+		return this._http.post(`${environment.base_uri}${environment.update.set_user_cookie}`, { token: jwt });
 	}
 
 	session_check(status) {
@@ -126,7 +122,7 @@ export class AuthService {
 		this.current_user_subject.next(null);
 		localStorage.removeItem('current_token');
 		localStorage.removeItem('current_user');
-		this._router.navigate(['/login']);
+		this._router.navigate(['/login']).then(() => location.reload());
 	}
 
 	private refreshTokenTimeout;

@@ -79,6 +79,7 @@ import { EditFillerGroupComponent } from './pages_shared/fillers/components/edit
 import { EditSingleAdvertiserComponent } from './pages_shared/edit-single-advertiser/edit-single-advertiser.component';
 import { EditSingleDealerComponent } from './pages_shared/edit-single-dealer/edit-single-dealer.component';
 import { EditSingleHostComponent } from './pages_shared/edit-single-host/edit-single-host.component';
+import { EditTicketComponent } from './components_shared/host_components/edit-ticket/edit-ticket.component';
 import { EditableFieldModalComponent } from './components_shared/page_components/editable-field-modal/editable-field-modal.component';
 import { ErrorMessageComponent } from './components_shared/page_components/error-message/error-message.component';
 import { ExpansionPanelComponent } from './components_shared/data_components/expansion-panel/expansion-panel.component';
@@ -309,6 +310,7 @@ const ngComponents = [
 	EditSingleDealerComponent,
 	EditSingleHostComponent,
 	EditableFieldModalComponent,
+	EditTicketComponent,
 	ErrorMessageComponent,
 	ErrorMessageComponent,
 	ExpansionPanelComponent,
@@ -505,6 +507,7 @@ const DIRECTIVES = [DefaultDateFormatDirective, MonthDayFormatDirective];
 		EditSingleDealerComponent,
 		EditSingleHostComponent,
 		EditableFieldModalComponent,
+		EditTicketComponent,
 		FeedMediaComponent,
 		FillerGridCategoryViewComponent,
 		ImageSelectionModalComponent,

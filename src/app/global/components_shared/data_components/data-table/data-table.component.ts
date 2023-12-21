@@ -26,6 +26,7 @@ import {
 	DEALER_UI_TABLE_ADVERTISERS,
 	UI_CURRENT_USER,
 	UI_DEALER_ORDERS,
+	UI_HOST_SUPPORT,
 	UI_ROLE_DEFINITION,
 	UI_TABLE_FEED
 } from 'src/app/global/models';
@@ -41,6 +42,7 @@ import { ViewDmaHostComponent } from './dialogs/view-dma-host/view-dma-host.comp
 import { dateFormat } from 'highcharts';
 import { DeleteFillerFeedsComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
 import { InformationModalComponent } from '../../page_components/information-modal/information-modal.component';
+import { EditTicketComponent } from '../../host_components/edit-ticket/edit-ticket.component';
 
 @Component({
 	selector: 'app-data-table',
@@ -48,6 +50,7 @@ import { InformationModalComponent } from '../../page_components/information-mod
 	styleUrls: ['./data-table.component.scss']
 })
 export class DataTableComponent implements OnInit {
+	@Input() actions_column: boolean;
 	@Input() active_tab: string;
 	@Input() advertiser_delete: boolean;
 	@Input() billing_action: boolean;
@@ -316,6 +319,21 @@ export class DataTableComponent implements OnInit {
 			});
 	}
 
+	editTicket(data: UI_HOST_SUPPORT): void {
+		this._dialog
+			.open(EditTicketComponent, { width: '600px', data: data })
+			.afterClosed()
+			.subscribe(
+				(response) => {
+					if (!response) return;
+					this.reload_page.emit(true);
+				},
+				(error) => {
+					console.error(error);
+				}
+			);
+	}
+
 	deleteFeed(id): void {
 		this.warningModal('warning', 'Delete Feed', 'Are you sure you want to delete this feed?', '', 'feed_delete', id);
 	}
@@ -396,6 +414,10 @@ export class DataTableComponent implements OnInit {
 		this.warningModal('warning', 'Delete License', 'Are you sure you want to delete this license', '', 'license_delete', id);
 	}
 
+	deleteTicket(id): void {
+		this.warningModal('warning', 'Delete Note', 'Are you sure you want to delete this Note', '', 'ticket_delete', id);
+	}
+
 	getStatusColor(status: string) {
 		return status === 'A' ? 'text-primary' : 'text-gray';
 	}
@@ -470,6 +492,10 @@ export class DataTableComponent implements OnInit {
 					this._release.onDeleteNoteFromDataTable.next({ releaseNoteId: id });
 					break;
 
+				case 'ticket_delete':
+					this.ticketDelete(id);
+					break;
+
 				default:
 			}
 		});
@@ -493,6 +519,19 @@ export class DataTableComponent implements OnInit {
 		this.subscription.add(
 			this._license.delete_license(data).subscribe(
 				() => this.update_info.emit(true),
+				(error) => {
+					console.error(error);
+				}
+			)
+		);
+	}
+
+	ticketDelete(id): void {
+		this.subscription.add(
+			this._host.delete_ticket(id).subscribe(
+				(data) => {
+					this.update_info.emit(true);
+				},
 				(error) => {
 					console.error(error);
 				}

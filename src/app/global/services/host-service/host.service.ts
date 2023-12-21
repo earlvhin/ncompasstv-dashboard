@@ -15,7 +15,7 @@ export class HostService extends BaseService {
 	dialogClosed$ = this.dialogClosedSubject.asObservable();
 
 	emitActivity() {
-	  this.dialogClosedSubject.next();
+		this.dialogClosedSubject.next();
 	}
 
 	constructor(_auth: AuthService, _http: HttpClient) {
@@ -62,6 +62,14 @@ export class HostService extends BaseService {
 		const url = `${this.deleters.host_file_amazon_s3}?filename=${s3FileName}`;
 		const body = {};
 		return this.postRequest(url, body);
+	}
+
+	delete_ticket(id: string) {
+		return this.deleteRequest(`${this.deleters.api_remove_host_ticket}${id}`);
+	}
+
+	edit_support_ticket(id: string, updatedData: any) {
+		return this.putRequest(`${this.updaters.api_update_host_ticket}${id}`, updatedData);
 	}
 
 	export_host(id: string) {
@@ -125,9 +133,9 @@ export class HostService extends BaseService {
 
 	get_host_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
 		const base = `${this.getters.api_get_hosts_activity}`;
-		const params = this.setUrlParams({ownerId, sortColumn, sortOrder, page}, false, true);
-		const url = `${base}${params}`
-		return this.getRequest(url)
+		const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
+		const url = `${base}${params}`;
+		return this.getRequest(url);
 	}
 
 	get_host_statistics(dealerId?: string, startDate?: string, endDate?: string) {

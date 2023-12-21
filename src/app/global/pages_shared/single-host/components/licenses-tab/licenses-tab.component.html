@@ -20,31 +20,106 @@
 			<button
 				mat-button
 				mat-raised-button
-				class="theme-btn pi-control _warning sm-text mr-2"
+				*ngIf="!ongoing_remote_activity; else disabled_content_update"
+				class="theme-btn pi-control _info sm-text mr-2"
 				title="Content Update"
 				(click)="onPushUpdate()"
-				[disabled]="licenses.length === 0 || isPiUpdating || isViewOnly">
+				[disabled]="ongoing_remote_activity || licenses.length === 0 || isViewOnly">
 				<span class="fas fa-upload"></span>
 				<span class="ml-2 button_text_animation">Content Update</span>
 			</button>
 
+			<ng-template #disabled_content_update>
+				<button mat-button mat-raised-button class="theme-btn pi-control _info sm-text mr-2" [title]="timeout_message" [disabled]="true">
+					<span class="fas fa-upload"></span>
+					<span class="ml-2 button_text_animation">Content Update</span>
+				</button>
+			</ng-template>
+
+			<!-- <button
+				mat-button
+				mat-raised-button
+				*ngIf="!ongoing_remote_activity; else disabled_remote_update"
+				class="theme-btn pi-control _primary sm-text mr-2"
+				title="Update System and Restart"
+				(click)="onUpdateAndRestart()"
+				[disabled]="ongoing_remote_activity || licenses.length === 0 || isViewOnly">
+				<span class="fas fa-terminal"></span>
+				<span class="ml-2 button_text_animation">Update System and Restart</span>
+			</button> -->
+
+			<!-- <ng-template #disabled_remote_update>
+				<button mat-button mat-raised-button class="theme-btn pi-control sm-text _primary mr-2" [disabled]="true" [title]="timeout_message">
+					<span class="fas fa-terminal"></span>
+					<span class="ml-2 button_text_animation">Update System and Restart</span>
+				</button>
+			</ng-template> -->
+
 			<button
 				mat-button
 				mat-raised-button
-				class="theme-btn pi-control _primary sm-text mr-2"
-				title="{{ updateBtnText }}"
-				(click)="onUpdateAndRestart()"
-				[disabled]="licenses.length === 0 || isPiUpdating || isViewOnly">
-				<span class="fas fa-terminal"></span>
-				<span class="ml-2 button_text_animation">{{ updateBtnText }}</span>
+				*ngIf="!ongoing_remote_activity; else disabled_screenshot"
+				class="theme-btn pi-control sm-text _teal mr-2"
+				[disabled]="ongoing_remote_activity || licenses.length === 0 || isViewOnly"
+				(click)="onScreenshotHost()"
+				title="Screenshot">
+				<span class="fas fa-camera"></span>
+				<span class="ml-2 button_text_animation">Screenshot</span>
 			</button>
+
+			<ng-template #disabled_screenshot>
+				<button mat-button mat-raised-button class="theme-btn pi-control sm-text _teal mr-2" [disabled]="true" [title]="timeout_message">
+					<span class="fas fa-camera"></span>
+					<span class="ml-2 button_text_animation">Screenshot</span>
+				</button>
+			</ng-template>
+
+			<button
+				mat-button
+				mat-raised-button
+				*ngIf="!ongoing_remote_activity; else disabled_remote_reboot_player"
+				class="theme-btn pi-control sm-text _warning mr-2"
+				[disabled]="ongoing_remote_activity || licenses.length === 0 || isViewOnly"
+				(click)="onRebootPlayer()"
+				title="Reboot Player">
+				<span class="fas fa-power-off"></span>
+				<span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+			</button>
+
+			<ng-template #disabled_remote_reboot_player>
+				<button mat-button mat-raised-button class="theme-btn pi-control sm-text _warning mr-2" [disabled]="true" [title]="timeout_message">
+					<span class="fas fa-power-off"></span>
+					<span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+				</button>
+			</ng-template>
+
+			<button
+				mat-button
+				mat-raised-button
+				*ngIf="!ongoing_remote_activity; else disabled_remote_reboot_pi"
+				class="theme-btn pi-control sm-text _caution mr-2"
+				[disabled]="ongoing_remote_activity || licenses.length === 0 || isViewOnly"
+				(click)="onRebootPi()"
+				title="Reboot Pi">
+				<span class="fas fa-power-off"></span>
+				<span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+			</button>
+
+			<ng-template #disabled_remote_reboot_pi>
+				<button mat-button mat-raised-button class="theme-btn pi-control sm-text _caution mr-2" [disabled]="true" [title]="timeout_message">
+					<span class="fas fa-power-off"></span>
+					<span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+				</button>
+			</ng-template>
 		</div>
+
 		<div class="col-lg-4">
 			<mat-form-field class="full-width">
 				<mat-label><span class="fas fa-search sm-text mr-2"></span> Search License Key or Alias</mat-label>
 				<input matInput [formControl]="searchFormControl" />
 			</mat-form-field>
 		</div>
+
 		<div class="col-lg-12">
 			<mat-card>
 				<ng-container *ngIf="licenses && licenses.length > 0; else loading">
