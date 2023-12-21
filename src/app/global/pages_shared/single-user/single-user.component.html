@@ -1,12 +1,14 @@
-<div class="theme-container pt-4" *ngIf="!is_loading; else loader">
+<div class="theme-container pt-4" *ngIf="!is_loading && forms_ready; else loader">
 	<div class="row">
 		<div class="col-lg-4">
 			<div class="d-inline-flex mb-1">
-				<h2 class="clickable" *ngIf="dealer_id.length; else otherUser" (click)="goToProfile()">{{ user.firstName }} {{ user.lastName }}</h2>
+				<h2 class="clickable" *ngIf="dealer_id || advertiser_id || host_id; else otherUser" (click)="goToProfile()">
+					{{ user.firstName }} {{ user.lastName }}
+				</h2>
 				<ng-template #otherUser>
 					<h2>{{ user.firstName }} {{ user.lastName }}</h2>
 				</ng-template>
-				<span class="sm-text ml-3 p-2 px-3 br-10 text-white font-weight-bold" [style.background-color]="bg_role" *ngIf="is_admin">
+				<span class="sm-text ml-3 p-2 px-3 br-10 text-white font-weight-bold" [style.background-color]="bg_role">
 					{{ user.userRoles[0].roleName }}
 				</span>
 			</div>

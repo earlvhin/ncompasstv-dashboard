@@ -92,7 +92,7 @@
 				<span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
 			</button>
 
-			<button
+			<!-- <button
 				mat-button
 				mat-raised-button
 				class="theme-btn pi-control sm-text _primary mr-2"
@@ -100,7 +100,7 @@
 				(click)="updateAndRestart()"
 				title="Update System">
 				<span class="fas fa-terminal"></span> <span class="ml-2 button_text_animation">Update System</span>
-			</button>
+			</button> -->
 
 			<button
 				mat-button
@@ -176,9 +176,7 @@
 													<div class="d-flex align-items-center">
 														<div class="flex-even">
 															<h5>Player Snapshots</h5>
-															<p class="sm-text">
-																Click the Screenshot button to see what's playing on this license.
-															</p>
+															<p class="sm-text">Click the Screenshot button to see what's playing on this license.</p>
 														</div>
 														<div class="text-right">
 															<button
@@ -337,8 +335,7 @@
 																	{{ anydesk_id ? anydesk_id : 'N/A' }}
 																</h5>
 
-																<ng-container
-																	*ngIf="!anydesk_restarting && anydesk_id; else disabledAnydeskControls">
+																<ng-container *ngIf="!anydesk_restarting && anydesk_id; else disabledAnydeskControls">
 																	<!-- RESTART ANYDESK SERVICE BUTTON -->
 																	<button
 																		class="card-button restart-anydesk"

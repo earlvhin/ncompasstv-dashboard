@@ -11,16 +11,19 @@ import { environment } from '../../../../environments/environment';
 export class HttpErrorInterceptor implements HttpInterceptor {
 	private refreshingInProgress: boolean;
 	private accessTokenSubject: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+	private errorCatched: boolean = false;
 
 	constructor(private authService: AuthService, private _dialog: MatDialog) {}
 	intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
 		let currentToken = JSON.parse(localStorage.getItem('current_token'));
 		let token = currentToken ? currentToken.token : null;
 		return next.handle(this.addAuthorizationHeader(request, token)).pipe(
-			retry(4),
+			retry(5),
 			catchError((error) => {
 				// in case of 401 http error
 				if (error instanceof HttpErrorResponse && error.status === 401) {
+					if (this.errorCatched == true) return;
+
 					const currentToken = localStorage.getItem('current_token');
 
 					// if there are tokens then send refresh token request
@@ -29,12 +32,13 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 					}
 
 					// otherwise logout and redirect to login page
-					this.authService.logout();
+					this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
 				}
 
 				// in case of 403 http error (refresh token failed)
 				if (error instanceof HttpErrorResponse && error.status === 403) {
-					this.showWarningModal('logout', '', 'You have logged in elsewhere causing your session to be ended.', '', 'OK');
+					if (this.errorCatched == true) return;
+					this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
 				}
 
 				return throwError(error);
@@ -81,6 +85,7 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 	}
 
 	private showWarningModal(status: string, message: string, data: any, return_msg: string, action: string): void {
+		this.errorCatched = true;
 		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
 			width: '500px',
 			height: '300px',

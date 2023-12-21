@@ -4,6 +4,7 @@ import { FormControl, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material';
 import { debounceTime, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import * as moment from 'moment';
 
 import { UnassignHostLicenseComponent } from 'src/app/global/components_shared/license_components/unassign-host-license/unassign-host-license.component';
 import { ConfirmationModalComponent } from 'src/app/global/components_shared/page_components/confirmation-modal/confirmation-modal.component';
@@ -23,13 +24,14 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 
 	hasNoData = false;
 	isViewOnly = false;
-	isPiUpdating: boolean;
 	licenses: API_LICENSE['license'][] = [];
 	pagingData: PAGING;
 	searchFormControl = new FormControl('', Validators.minLength(3));
 	tableColumns: string[];
 	tableData: UI_HOST_LICENSE[] = [];
-	updateBtnText = 'Update System and Restart';
+	timeout_duration: number;
+	timeout_message: string;
+	ongoing_remote_activity = false;
 
 	protected _unsubscribe = new Subject<void>();
 
@@ -46,6 +48,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 		this.isViewOnly = this.currentUser.roleInfo.permission === 'V';
 		this.searchLicenses();
 		this.subscribeToRefresh();
+		this.timeoutButton();
 	}
 
 	ngAfterViewInit() {
@@ -74,6 +77,30 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			'Click OK to push updates for this license',
 			'update'
 		);
+	}
+
+	onScreenshotHost(): void {
+		this.openWarningModal(
+			'warning',
+			'Screenshot Host',
+			"Screenshot all this host's licenses, Requires a reload after a minute or two.",
+			'Click OK to continue',
+			'screenshot'
+		);
+	}
+
+	onRebootPlayer(): void {
+		this.openWarningModal(
+			'warning',
+			'Reboot Player (Software)',
+			'Are you sure you want to reboot player?',
+			'Click OK to reboot software',
+			'reboot_player'
+		);
+	}
+
+	onRebootPi(): void {
+		this.openWarningModal('warning', 'Reboot Pi (Device)', 'Are you sure you want to reboot pi?', 'Click OK to reboot device', 'reboot');
 	}
 
 	onReloadLicenses(): void {
@@ -112,6 +139,14 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			return {
 				license_id: { value: license.licenseId, link: null, editable: false, hidden: true },
 				index: { value: counter++, link: null, editable: false, hidden: false },
+				screenshots: {
+					value: license.screenshotUrl ? license.screenshotUrl : null,
+					link: license.screenshotUrl ? license.screenshotUrl : null,
+					editable: false,
+					hidden: false,
+					isImage: true,
+					new_tab_link: true
+				},
 				license_key: {
 					value: license.licenseKey,
 					link: `/${this.currentRole}/licenses/` + license.licenseId,
@@ -167,6 +202,29 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 		});
 	}
 
+	timeoutButton(): void {
+		const single_host_start_time = localStorage.getItem(`${this.hostId}`);
+
+		if (single_host_start_time) {
+			this.timeout_duration = moment().diff(moment(single_host_start_time, 'MMMM Do YYYY, h:mm:ss a'), 'minutes');
+			if (this.timeout_duration >= 10) {
+				this.ongoing_remote_activity = false;
+				localStorage.removeItem(`${this.hostId}`);
+			} else {
+				this.ongoing_remote_activity = true;
+			}
+			this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
+		}
+	}
+
+	setTimeoutBtn() {
+		const now = moment().format('MMMM Do YYYY, h:mm:ss a');
+		localStorage.setItem(`${this.hostId}`, now);
+		this.timeout_duration = 0;
+		this.timeout_message = `Will be available after ${10 - this.timeout_duration} minutes`;
+		this.ongoing_remote_activity = true;
+	}
+
 	private openWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
 		this._dialog.closeAll();
 
@@ -180,19 +238,35 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 			switch (result) {
 				case 'system_update':
 					this.licenses.forEach((data) => this.socket.emit('D_system_update_by_license', data.licenseId));
-					this.isPiUpdating = true;
-					this.updateBtnText = 'Ongoing System Update';
+					this.setTimeoutBtn();
 					break;
 
 				case 'update':
 					this.licenses.forEach((data) => this.socket.emit('D_update_player', data.licenseId));
-					this.isPiUpdating = true;
-					this.updateBtnText = 'Ongoing Content Update';
+					this.setTimeoutBtn();
 					break;
 
 				case 'upgrade_to_v2':
 					this.licenses.forEach((data) => this.socket.emit('D_upgrade_to_v2_by_license', data.licenseId));
+					this.setTimeoutBtn();
 					break;
+
+				case 'screenshot':
+					this.licenses.forEach((data) => this.socket.emit('D_screenshot_pi', data.licenseId));
+					this.setTimeoutBtn();
+					break;
+
+				case 'reboot_player':
+					this.licenses.forEach((data) => this.socket.emit('D_player_restart', data.licenseId));
+					this.setTimeoutBtn();
+					break;
+
+				case 'reboot':
+					this.licenses.forEach((data) => this.socket.emit('D_player_restart', data.licenseId));
+					this.setTimeoutBtn();
+					break;
+
+				default:
 			}
 		});
 	}
@@ -236,6 +310,7 @@ export class LicensesTabComponent implements OnInit, OnDestroy, AfterViewInit {
 	protected get columns() {
 		return [
 			'#',
+			'Screenshots',
 			'License Key',
 			'License Alias',
 			'Type',

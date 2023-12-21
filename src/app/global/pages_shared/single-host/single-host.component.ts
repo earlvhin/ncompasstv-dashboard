@@ -1,7 +1,7 @@
 import { UpperCasePipe, DatePipe, TitleCasePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { MatDialog } from '@angular/material';
+import { MatDialog, MatSnackBar } from '@angular/material';
 import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import * as io from 'socket.io-client';
@@ -40,6 +40,7 @@ export class SingleHostComponent implements OnInit {
 	isViewOnly = this.currentUser.roleInfo.permission === 'V';
 	singleHostData: { dealer_id: string; host_id: string };
 	lat: number;
+	licenses: any[];
 	long: number;
 
 	private isInitialLoad = true;
@@ -54,7 +55,8 @@ export class SingleHostComponent implements OnInit {
 		private _helper: HelperService,
 		private _host: HostService,
 		private _license: LicenseService,
-		private _activatedRoute: ActivatedRoute
+		private _activatedRoute: ActivatedRoute,
+		private _snackbar: MatSnackBar
 	) {}
 
 	ngOnInit() {
@@ -90,6 +92,41 @@ export class SingleHostComponent implements OnInit {
 		dialogRef.afterClosed().subscribe((response) => {
 			if (!response) return;
 			this._license.onRefreshLicensesTab.next();
+		});
+	}
+
+	getHostLicenses() {
+		this._license
+			.get_licenses_by_host_id(this.singleHostData.host_id)
+			.pipe(takeUntil(this._unsubscribe))
+			.subscribe((res) => {
+				if ('message' in res) return;
+
+				this.setHostAllLicenses(res);
+			});
+	}
+
+	setHostAllLicenses(data) {
+		this.licenses = data;
+		if (this.licenses) this.resyncSocketConnection();
+	}
+
+	resyncSocketConnection() {
+		this.licenses.forEach((i) => {
+			this._socket.emit('D_is_electron_running', i.licenseId);
+		});
+	}
+
+	runTerminalScript(script: string) {
+		this.licenses.forEach((i) => {
+			this._socket.emit('D_run_terminal', {
+				license_id: i.licenseId,
+				script: script
+			});
+		});
+
+		this._snackbar.open(`Terminal fired!`, '', {
+			duration: 3000
 		});
 	}
 
@@ -192,6 +229,7 @@ export class SingleHostComponent implements OnInit {
 		this.lat = parseFloat(host.latitude);
 		this.long = parseFloat(host.longitude);
 		this.getLicenseTotalByHostIdDealerId();
+		this.getHostLicenses();
 	}
 
 	private subscribeToBusinessHoursUpdate(): void {
