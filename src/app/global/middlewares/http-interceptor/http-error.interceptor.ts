@@ -21,22 +21,22 @@ export class HttpErrorInterceptor implements HttpInterceptor {
 			retry(5),
 			catchError((error) => {
 				// in case of 401 http error
-				if (error instanceof HttpErrorResponse && error.status === 401) {
-					if (this.errorCatched == true) return;
+				// if (error instanceof HttpErrorResponse && error.status === 401) {
+				// 	if (this.errorCatched == true) return;
 
-					const currentToken = localStorage.getItem('current_token');
+				// 	const currentToken = localStorage.getItem('current_token');
 
-					// if there are tokens then send refresh token request
-					if (currentToken) {
-						return this.refreshToken(request, next);
-					}
+				// 	// if there are tokens then send refresh token request
+				// 	if (currentToken) {
+				// 		return this.refreshToken(request, next);
+				// 	}
 
-					// otherwise logout and redirect to login page
-					this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
-				}
+				// 	// otherwise logout and redirect to login page
+				// 	this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
+				// }
 
 				// in case of 403 http error (refresh token failed)
-				if (error instanceof HttpErrorResponse && error.status === 403) {
+				if (error instanceof HttpErrorResponse && error.status === 401) {
 					if (this.errorCatched == true) return;
 					this.showWarningModal('logout', '', 'You may have been logged in elsewhere causing your session to be invalid.', '', 'OK');
 				}

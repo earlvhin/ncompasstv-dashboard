@@ -330,7 +330,6 @@ export class SingleUserComponent implements OnInit, OnDestroy {
 			.pipe(takeUntil(this._unsubscribe))
 			.subscribe(
 				(response: any) => {
-					console.log('wts', response);
 					if ('message' in response) return;
 					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.dealer) this.dealer_id = response.dealer.dealerId;
 					if (response.userRoles[0].roleId === UI_ROLE_DEFINITION.advertiser) this.advertiser_id = response.advertiser.id;
