@@ -15,9 +15,9 @@
 							<b>NOTE: </b>Default address selection is within United States only, If you wish to search within Canada click the tick
 							box below.
 						</p>
-						<div class="col-lg-12 mb-3 sm-text p-0">
+						<!-- <div class="col-lg-12 mb-3 sm-text p-0">
 							<mat-checkbox (change)="getCanadaAddress($event)">Search within Canada</mat-checkbox>
-						</div>
+						</div> -->
 						<form [formGroup]="new_host_form" (ngSubmit)="onCreateHostPlace()" class="text-left">
 							<div class="row mb-2">
 								<div class="col-lg-12">
@@ -76,7 +76,8 @@
 											[disabled]="true">
 										</app-autocomplete-field>
 
-										<app-autocomplete-field
+										<!-- New Autocomplete Implementation-->
+										<!-- <app-autocomplete-field
 											*ngIf="field.control === 'city'"
 											(data_value)="setCity($event)"
 											[key_of_value]="'city_state'"
@@ -88,7 +89,27 @@
 											[new_value]="city_selected"
 											[initial_value]="city_selected"
 											[is_city]="true">
-										</app-autocomplete-field>
+										</app-autocomplete-field> -->
+
+										<ng-container *ngIf="field.control === 'city'">
+											<app-autocomplete
+												#autoCompleteFieldCity
+												*ngIf="city_field_data.data.length; else searching"
+												[field_data]="city_field_data"
+												(no_data_found)="searchCity($event)"
+												(value_selected)="searchCityById($event)"></app-autocomplete>
+
+											<ng-template #searching>
+												<div class="form-placeholder">
+													<mat-form-field appearance="standard" class="w-100 custom-autocomplete">
+														<mat-label>Loading ...</mat-label>
+														<input type="text" [value]="search_keyword || 'Please wait'" matInput [disabled]="true" />
+													</mat-form-field>
+												</div>
+											</ng-template>
+										</ng-container>
+
+										<!-- New Autocomplete Implementation-->
 
 										<ng-template #no_category_selected>
 											<mat-form-field
@@ -197,7 +218,16 @@
 									</div>
 								</div>
 							</div>
-							<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host || (canada_selected && new_host_form.get('zip').value.length !== 6) || (!canada_selected && new_host_form.get('zip').value.length !== 5)">
+							<button
+								mat-button
+								mat-raised-button
+								class="theme-btn mr-2"
+								[disabled]="
+									new_host_form.invalid ||
+									is_creating_host ||
+									(canada_selected && new_host_form.get('zip').value.length !== 6) ||
+									(!canada_selected && new_host_form.get('zip').value.length !== 5)
+								">
 								{{ is_creating_host ? 'Saving Host Place...' : 'Submit' }}
 							</button>
 						</form>

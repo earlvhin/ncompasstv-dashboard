@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
 		api_get_checklist: 'installationchecklists/getallitems',
 		api_get_checklist_titles: 'installationchecklists/getall',
 		api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
+		api_get_cities_state: 'citiesStateData/getall',
 		api_get_content: 'content/findall',
 		api_get_content_summary: 'content/getalllimitedfields',
 		api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',
@@ -186,7 +187,7 @@ export const API_ENDPOINTS = {
 		contents_by_host: 'host/GetContents',
 		content_by_host_id: 'content/getbyhostid',
 		dealer_cards: 'billing/Get/CreditCards',
-		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
+		distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled 
 		distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
 		dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
 		export_dealer_licenses: 'license/exportbydealer',
