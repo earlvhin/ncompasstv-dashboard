@@ -358,12 +358,15 @@ export class SingleScreenComponent implements OnInit {
 				label: 'Select Playlist for ' + zone.screen_template.name,
 				placeholder: 'Ex. Vertical Foods Playlist',
 				data: data,
-				initialValue: [
-					{
-						id: zone.screen_template.playlist_id,
-						value: zone.screen_template.playlist_name
-					}
-				]
+				initialValue:
+					zone.screen_template.playlist_id && zone.screen_template.playlist_name
+						? [
+								{
+									id: zone.screen_template.playlist_id,
+									value: zone.screen_template.playlist_name
+								}
+						  ]
+						: []
 			});
 		});
 	}
