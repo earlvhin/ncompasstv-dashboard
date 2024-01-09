@@ -234,11 +234,6 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
         }
     }
 
-    setExportAdvertiser(response) {
-        const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
-        this.all_advertisers_to_export;
-    }
-
     exportProcess() {
         const EXCEL_TYPE = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8';
         this.advertisers_to_export.forEach((item) => {
