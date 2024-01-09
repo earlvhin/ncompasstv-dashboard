@@ -21,6 +21,7 @@ import {
 	ConfirmationDialogService,
 	ContentService,
 	HelperService,
+    HostService,
 	LicenseService,
 	ScreenService,
 	TagService,
@@ -47,7 +48,11 @@ import {
 	UI_SINGLE_SCREEN,
 	UI_REBOOT_TIME,
 	PlaylistContentSchedule,
-	TAG
+	TAG,
+    PAGING,
+ 	API_HOST_FILE,
+ 	UI_HOST_FILE,
+ 	UI_HOST_SUPPORT
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -147,6 +152,19 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	fastEdgeSettings: FormGroup;
 	fastEdgeSettingsSaving = false;
 
+    pagingData: PAGING;
+ 	images: API_HOST_FILE[] = [];
+ 	hasNoData = false;
+ 	tableData: UI_HOST_FILE[] = [];
+ 	host_id: string;
+ 	support_data: UI_HOST_SUPPORT[] = [];
+ 	paging_data: any;
+ 	initial_load = true;
+ 	sort_column = 'DateCreated';
+ 	sort_order = 'desc';
+ 	no_support_data = false;
+ 	support_tab = true;
+
 	private contents_array: any = [];
 	private contents_backup: UI_CONTENT_PER_ZONE[] = [];
 	private current_tab = 'Details';
@@ -166,6 +184,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		private _dialog: MatDialog,
 		private _form: FormBuilder,
 		private _helper: HelperService,
+        private _host: HostService,
 		private _license: LicenseService,
 		private _route: ActivatedRoute,
 		private _router: Router,
@@ -195,6 +214,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 			this.getContents();
 			this.getLicenseActivity();
 		});
+
+  
 
 		this.subscribeToContentSearch();
 	}
@@ -938,6 +959,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 
 		this.title = licenseData.license.alias;
 		this.license_data = licenseData.license;
+        this.host_id = licenseData.host.hostId;
 		this.initializeLicenseSettingsForm(licenseData.license);
 		this.initializeFastEdgeSettingsForm();
 
@@ -965,7 +987,67 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 		this.has_host = true;
 		this.has_screen = true;
 		this.hasLoadedLicenseData = true;
+        this.getImages();
+        this.getSupport(1);
 	}
+
+    getSupport(page: number): void {
+        this.support_data = [];
+
+        this._host
+            .get_support_entries(this.host_id, page, this.sort_column, this.sort_order)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (res) => {
+                    console.log(res, "d");
+
+                    if (res.paging.entities.length === 0) {
+                        this.no_support_data = true;
+                        this.support_data = [];
+                        return;
+                    }
+
+                    this.support_data = res.paging.entities;
+
+
+                },
+                (error) => {
+                    console.error(error);
+                }
+            )
+            .add(() => (this.initial_load = false));
+    }
+
+    onShowTickets(): void {
+        this.showInformationModal('600px', '350px', 'Notes', this.support_data, 'ticket');
+    }
+
+    getImages(page = 1) {
+        this.images = [];
+
+        this._host
+            .get_files_by_type(this.host_id, 1, page)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    this.pagingData = response;
+
+                    if (!response.entities || response.entities.length <= 0) {
+                        this.hasNoData = true;
+                        return;
+                    }
+
+                    
+
+                    const images = response.entities as API_HOST_FILE[];
+                    this.images = [...images];
+
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
+    }
 
 	private getLicenseById() {
 		this._license

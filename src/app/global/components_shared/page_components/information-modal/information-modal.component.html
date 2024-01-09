@@ -90,4 +90,16 @@
 			</div>
 		</div>
 	</div>
+	
+	<div mat-dialog-content *ngIf="isTicket" class="ticket">
+		<div *ngFor="let t of contents">
+			<span class="xsm-text">{{ t.dateCreated | date : 'MMMM d, y' }}</span>
+			<h5 class="my-1">
+				<a class="sm-text" [attr.href]="t.url.startsWith('http') ? t.url : 'http://' + t.url" target="_blank">{{ t.url }}</a>
+			</h5>
+			<p class="sm-text">{{ t.notes }}</p>
+
+			<hr />
+		</div>
+	</div>
 </div>
