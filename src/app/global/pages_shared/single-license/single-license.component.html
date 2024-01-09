@@ -246,7 +246,7 @@
 												<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
 													<div class="screenshots" *ngFor="let s of screenshots">
 														<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
-														<p class="sm-text text-center mb-0">{{ s | screenshot }}</p>
+														<p class="screenshots__text text-center mb-0">{{ s | screenshot }}</p>
 													</div>
 												</ng-container>
 

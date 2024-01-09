@@ -37,6 +37,7 @@
 		width: 9%;
 		margin-right: 15px;
 		margin-bottom: 10px;
+        font-size: 12px;
 
 		&:last-child {
 			margin-right: 0;
@@ -472,6 +473,16 @@
 	}
 }
 
+@media only screen and (max-width: 1440px) {
+	.horizontal-panel {
+		.screenshots {
+			&__text {
+				font-size: 10px;
+			}
+		}
+	}
+}
+
 @media screen and (min-width: 1366px) {
 	.theme-container {
 		.content-tab-container {
@@ -482,3 +493,5 @@
 		}
 	}
 }
+
+
