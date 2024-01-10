@@ -164,6 +164,8 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
  	sort_order = 'desc';
  	no_support_data = false;
  	support_tab = true;
+	tooltipMessage: string = 'Copy license key';
+	showCopiedTooltip: boolean = false;
 
 	private contents_array: any = [];
 	private contents_backup: UI_CONTENT_PER_ZONE[] = [];
@@ -1048,6 +1050,22 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 }
             );
     }
+
+	copyToClipboard(data) {
+		const textarea = document.createElement('textarea');
+		textarea.value = data;
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand('copy');
+		document.body.removeChild(textarea);
+		this.tooltipMessage = 'License key copied!';
+		this.showCopiedTooltip = false;
+
+		setTimeout(() => {
+		this.tooltipMessage = 'Copy license key';
+		this.showCopiedTooltip = true;
+		}, 1000); 
+	}
 
 	private getLicenseById() {
 		this._license

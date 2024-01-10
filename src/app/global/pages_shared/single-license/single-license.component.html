@@ -34,7 +34,8 @@
 				<div class="d-flex align-items-center mb-2">
 					<p class="sm-text mb-0">{{ license_key }}</p>
 					<ng-container>
-						<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license">new_label</mat-icon>
+						<mat-icon class="copy-icon" (click)="copyToClipboard(license_key)" [matTooltip]="tooltipMessage" matTooltipPosition="above">file_copy</mat-icon>
+						<mat-icon class="add-tag" (click)="openAddTagModal()" matTooltip="Add tag to this license" matTooltipPosition="above">new_label</mat-icon>
 					</ng-container>
 				</div>
 			</ng-container>
@@ -195,10 +196,10 @@
 			</button>
 		</div>
 	</div>
-	<hr class="mb-0" />
+	<hr class="mb-0 mt-1" />
 
 	<!-- TABS -->
-	<div class="row mt-2 tabs">
+	<div class="row tabs">
 		<div class="col-lg-12 min-height-500 custom-mat-tab mt-3">
 			<mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
 				<!-- Details Tab -->
@@ -210,66 +211,62 @@
 									<!-- Screenshots -->
 									<div class="col-lg-12 tab-card">
 										<mat-card class="p-4 h-100">
-											<!-- Screenshot Area -->
-											<div class="row">
-												<div class="col-lg-12">
-													<div class="d-flex flex-column">
-														<div class="flex-even">
-															<h5>Player Snapshots</h5>
-															<p class="sm-text">Click the Screenshot button to see what's playing on this license.</p>
+											<!-- Screenshot Area -->	
+												<div class="d-flex w-100">
+													<div class="position-relative m-auto w-10">
+														<div class="d-flex flex-column">
+																<button
+																	mat-button
+																	mat-raised-button
+																	class="theme-btn mb-2 btn-title"
+																	[disabled]="!pi_status || screenshot_timeout"
+																	(click)="screenShotPi()">
+																	<span class="fas fa-camera mr-2"></span>
+																	Screenshot
+																</button>
+																<button
+																	mat-button
+																	mat-raised-button
+																	class="theme-btn"
+																	*ngIf="screenshots.length != 0 && !isCurrentUserDealer"
+																	[disabled]="screenshot_timeout || clear_screenshots"
+																	(click)="clearScreenshots()">
+																	Clear
+																</button>
 														</div>
-														<div class="mt-2">
-															<button
-																mat-button
-																mat-raised-button
-																class="theme-btn mr-2 btn-title"
-																[disabled]="!pi_status || screenshot_timeout"
-																(click)="screenShotPi()">
-																<span class="fas fa-camera mr-2"></span>
-																Screenshot
-															</button>
-															<button
-																mat-button
-																mat-raised-button
-																class="theme-btn"
-																*ngIf="screenshots.length != 0 && !isCurrentUserDealer"
-																[disabled]="screenshot_timeout || clear_screenshots"
-																(click)="clearScreenshots()">
-																Clear
-															</button>
+													</div>		
+													
+													<div class="vl mx-2"></div>
+													
+													<div class="w-90 m-auto text-center horizontal-panel">
+														<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
+															<div class="screenshots" *ngFor="let s of screenshots">
+																<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
+																<p class="screenshots__text text-center mb-0">{{ s | screenshot }}</p>
+															</div>
+														</ng-container>
+		
+														<ng-template #no_screenshots>
+															<div class="p-3 text-center">
+																<h5 class="text-muted mb-0">No Available Screenshots</h5>
+															</div>
+														</ng-template>
+		
+														<div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
+															<div class="flex-even text-center">
+																<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
+																<h6 class="text-primary">{{ screenshot_message }}</h6>
+															</div>
+														</div>
+		
+														<div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
+															<div class="flex-even text-center">
+																<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
+																<h6 class="text-primary">Deleting Screenshots. . .</h6>
+															</div>
 														</div>
 													</div>
 												</div>
-											</div>
-											<hr/>
-											<div class="horizontal-panel">
-												<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
-													<div class="screenshots" *ngFor="let s of screenshots">
-														<a [href]="s" target="_blank"><img [src]="s" alt="screenshots" /></a>
-														<p class="screenshots__text text-center mb-0">{{ s | screenshot }}</p>
-													</div>
-												</ng-container>
-
-												<ng-template #no_screenshots>
-													<div class="p-3 text-center">
-														<h5 class="text-muted mb-0">No Available Screenshots</h5>
-													</div>
-												</ng-template>
-
-												<div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
-													<div class="flex-even text-center">
-														<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
-														<h6 class="text-primary">{{ screenshot_message }}</h6>
-													</div>
-												</div>
-
-												<div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
-													<div class="flex-even text-center">
-														<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
-														<h6 class="text-primary">Deleting Screenshots. . .</h6>
-													</div>
-												</div>
-											</div>
 										</mat-card>
 									</div>
 								</div>
@@ -335,7 +332,7 @@
 																</ng-template>
 															</div>
 														</div>
-														<hr />
+														<hr class="my-2"/>
 														<div class="d-flex">
 															<!-- Last Startup -->
 															<div class="flex-even last-online">
@@ -355,7 +352,7 @@
 																<h5 class="title">{{ content_time_update || 'N/A' }}</h5>
 															</div>
 														</div>
-														<hr />
+														<hr class="my-2"/>
 														<div class="d-flex">
 															<!-- Anydesk -->
 															<div class="flex-even">
@@ -501,14 +498,18 @@
 														<div class="col-lg-4" *ngIf="!isCurrentUserDealer">
 															<div class="notes">
 																<span class="title">Host Notes </span>
-																<p (click)="onShowNotes()" class="title hoverable">
-																	{{ host_notes ? (host_notes | substring : 200) : 'No notes available' }}
-																</p>
+																<ng-container *ngIf="host_notes; else noNotes"></ng-container>
+																	<p (click)="onShowNotes()" class="title hoverable">
+																		{{  host_notes | substring : 200 }}
+																	</p>
 															</div>
 														</div>
 
-														<!-- Pictures -->
+														<ng-template #noNotes>
+															<p class="title">No notes available</p>
+														</ng-template>
 
+														<!-- Pictures -->
 														<div class="col-lg-5">
 															<span class="title">Pictures</span>
 
