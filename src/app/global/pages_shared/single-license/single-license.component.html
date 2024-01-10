@@ -2,7 +2,7 @@
 	<div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">
 		{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span>
 	</div>
-	<div class="d-flex align-items-center mb-3 content-section">
+	<div class="d-flex align-items-center mb-2 content-section">
 		<div class="flex-even">
 			<div class="alias-container">
 				<ng-container *ngIf="license_data">
@@ -196,11 +196,11 @@
 			</button>
 		</div>
 	</div>
-	<hr class="mb-0 mt-1" />
+	<hr class="mb-1 mt-0" />
 
 	<!-- TABS -->
 	<div class="row tabs">
-		<div class="col-lg-12 min-height-500 custom-mat-tab mt-3">
+		<div class="col-lg-12 min-height-500 custom-mat-tab mt-2">
 			<mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
 				<!-- Details Tab -->
 				<mat-tab label="Details">
@@ -227,10 +227,11 @@
 																<button
 																	mat-button
 																	mat-raised-button
-																	class="theme-btn"
+																	class="theme-btn btn-title"
 																	*ngIf="screenshots.length != 0 && !isCurrentUserDealer"
 																	[disabled]="screenshot_timeout || clear_screenshots"
 																	(click)="clearScreenshots()">
+																	<span class="fas fa-times mr-2"></span>
 																	Clear
 																</button>
 														</div>
