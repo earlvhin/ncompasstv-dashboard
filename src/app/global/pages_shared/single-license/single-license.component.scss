@@ -210,7 +210,7 @@
 
 		h1.page-title,
 		form {
-			width: 250px;
+			width: fit-content;
 		}
 
 		input {
@@ -293,7 +293,7 @@
 		}
 
 		.details-tab-container {
-			margin-top: 20px;
+			margin-top: 15px;
 
 			.first-row {
 				.tab-card {
