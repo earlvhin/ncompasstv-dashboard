@@ -5,7 +5,7 @@ import { saveAs } from 'file-saver';
 import { takeUntil } from 'rxjs/operators';
 
 import { DEALER_UI_TABLE_ADVERTISERS, UI_DEALER_ADVERTISERS } from 'src/app/global/models';
-import { AdvertiserService, DealerService, HelperService } from 'src/app/global/services';
+import { AdvertiserService, AuthService, DealerService, HelperService } from 'src/app/global/services';
 import { API_EXPORT_ADVERTISER } from 'src/app/global/models/api_export-advertiser.model';
 
 @Component({
@@ -37,6 +37,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     sort_column_advertisers: string = '';
     sort_order: string = '';
     sort_order_advertisers: string = '';
+    userIsAdmin: boolean = false;
     workbook: any;
     workbook_generation: boolean = false;
     worksheet: any;
@@ -57,12 +58,14 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
 
     protected _unsubscribe = new Subject<void>();
 
-    constructor(private _advertiser: AdvertiserService, private _dealer: DealerService, private _helper: HelperService) {}
+    constructor(private _auth: AuthService, private _advertiser: AdvertiserService, private _dealer: DealerService, private _helper: HelperService) {}
 
     ngOnInit() {
         this.pageRequested(1);
         this.getAdvertiserTotal();
         this.subscribeToStatusFilterClick();
+
+        this.userIsAdmin = this._auth.current_role === 'administrator';
     }
 
     ngOnDestroy(): void {

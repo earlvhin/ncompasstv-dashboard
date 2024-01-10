@@ -22,6 +22,7 @@
                     mat-raised-button
                     class="theme-btn pi-control sm-text _teal mr-2"
                     (click)="exportAdvertisersTable('Advertisers')"
+                    *ngIf="userIsAdmin"
                     [disabled]="workbook_generation"
                     title="Export to CSV"
                 >
