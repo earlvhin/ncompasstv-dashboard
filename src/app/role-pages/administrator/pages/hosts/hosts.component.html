@@ -1,210 +1,223 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right">
-				<a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
-					<button mat-button mat-raised-button class="theme-btn pi-control _teal sm-text mr-2" title="Add Host Place">
-						<span class="fas fa-map-marker"></span>
-						<span class="ml-2 button_text_animation">Add Host Place</span>
-					</button>
-				</a>
+    <div class="title-section">
+        <div class="d-flex">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
+                    <button mat-button mat-raised-button class="theme-btn pi-control _teal sm-text mr-2" title="Add Host Place">
+                        <span class="fas fa-map-marker"></span>
+                        <span class="ml-2 button_text_animation">Add Host Place</span>
+                    </button>
+                </a>
 
-				<a [routerLink]="['/administrator/users/create-user/host']" target="_blank" *ngIf="!is_dealer_admin">
-					<button mat-button mat-raised-button class="theme-btn pi-control _info sm-text mr-2" title="Add Host User">
-						<span class="fas fa-user"></span>
-						<span class="ml-2 button_text_animation">Add Host User</span>
-					</button>
-				</a>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+                <a [routerLink]="['/administrator/users/create-user/host']" target="_blank" *ngIf="!is_dealer_admin">
+                    <button mat-button mat-raised-button class="theme-btn pi-control _info sm-text mr-2" title="Add Host User">
+                        <span class="fas fa-user"></span>
+                        <span class="ml-2 button_text_animation">Add Host User</span>
+                    </button>
+                </a>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row">
-			<div class="col-12 col-lg">
-				<mat-card class="h-100">
-					<app-data-card-compare
-						*ngIf="host_details; else small_loader"
-						[compare_basis]="host_details.basis"
-						[compare_basis_label]="host_details.basis_label"
-						[good_value]="host_details.good_value"
-						[good_value_label]="host_details.good_value_label"
-						[bad_value]="host_details.bad_value"
-						[bad_value_label]="host_details.bad_value_label"
-						[page]="'hosts'"
-						[has_status_filter]="true">
-					</app-data-card-compare>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="host_details; else small_loader"
-						[data_value]="host_details.new_this_week_value"
-						[data_label]="host_details.new_this_week_value_label"
-						[data_description]="host_details.new_this_week_value_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg">
-				<mat-card class="h-100 dealer-card">
-					<app-data-card-count
-						*ngIf="host_details; else small_loader"
-						[data_value]="host_details.new_last_week_value"
-						[data_label]="host_details.new_last_week_value_label"
-						[data_description]="host_details.new_last_week_value_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
+    <div>
+        <div class="row">
+            <div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-compare
+                        *ngIf="host_details; else small_loader"
+                        [compare_basis]="host_details.basis"
+                        [compare_basis_label]="host_details.basis_label"
+                        [good_value]="host_details.good_value"
+                        [good_value_label]="host_details.good_value_label"
+                        [bad_value]="host_details.bad_value"
+                        [bad_value_label]="host_details.bad_value_label"
+                        [page]="'hosts'"
+                        [has_status_filter]="true"
+                    >
+                    </app-data-card-compare>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="host_details; else small_loader"
+                        [data_value]="host_details.new_this_week_value"
+                        [data_label]="host_details.new_this_week_value_label"
+                        [data_description]="host_details.new_this_week_value_description"
+                    >
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg">
+                <mat-card class="h-100 dealer-card">
+                    <app-data-card-count
+                        *ngIf="host_details; else small_loader"
+                        [data_value]="host_details.new_last_week_value"
+                        [data_label]="host_details.new_last_week_value_label"
+                        [data_description]="host_details.new_last_week_value_description"
+                    >
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
 
-		<hr class="my-4" />
+        <hr class="my-4" />
 
-		<div class="col-lg-12 custom-mat-tab p-0">
-			<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
-				<mat-tab label="Hosts View">
-					<div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
-						<div>
-							<div *ngIf="!initial_load_hosts; else loader">
-								<div *ngIf="!no_host; else no_data">
-									<div class="d-flex mt-3 table-controls">
-										<button
-											mat-button
-											mat-raised-button
-											class="theme-btn export-btn pi-control sm-text _primary mr-2"
-											type="button"
-											title="Export to CSV"
-											(click)="exportTable('hosts')"
-											[disabled]="workbook_generation">
-											<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-											<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
-										</button>
-										<div class="search-field">
-											<app-search-field
-												*ngIf="!initial_load_hosts"
-												[form_title]="'Search Host Name, Address, City, Postal Code, DMA Name or #Tag'"
-												[placeholder]="'Example: N-Compass Host'"
-												[data_reference]="hosts_data"
-												[primary_keyword]="'name'"
-												[secondary_keyword]="'name'"
-												(searched)="filterData($event, 'hosts')"
-												[api_search]="true">
-											</app-search-field>
-										</div>
-									</div>
-									<div class="row" *ngIf="!initial_load_hosts">
-										<div class="col-lg-12">
-											<ng-container *ngIf="!searching_hosts; else loader">
-												<mat-card *ngIf="filtered_data_host.length > 0; else nodata">
-													<app-data-table
-														[table_data]="filtered_data_host"
-														[table_columns]="hosts_table_column"
-														[new_table]="true"
-														[paging_details]="paging_data_host"
-														[query_params]="tab"
-														(page_triggered)="getHosts($event)"
-														(to_sort_column)="getColumnsAndOrder($event, 'hosts')"
-														[active_tab]="sort_column_hosts"
-														[sort_column]="sort_column_hosts"
-														[sort_order]="sort_order_hosts">
-													</app-data-table>
-												</mat-card>
-											</ng-container>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="Dealers View">
-					<div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 1">
-						<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-							<div *ngIf="!initial_load; else loader">
-								<div *ngIf="!no_dealer; else no_data">
-									<div class="row">
-										<div class="col-lg-8"></div>
-										<div class="col-lg-4">
-											<app-search-field
-												*ngIf="!initial_load"
-												[form_title]="role_label"
-												[placeholder]="'Example: N-Compass'"
-												[data_reference]="dealers_data"
-												[primary_keyword]="'business_name'"
-												[secondary_keyword]="'dealer_alias'"
-												(searched)="filterData($event, 'dealer')"
-												[api_search]="true"></app-search-field>
-										</div>
-									</div>
-									<div class="row" *ngIf="!initial_load">
-										<div class="col-lg-12">
-											<ng-container *ngIf="!searching; else loader">
-												<mat-card *ngIf="filtered_data.length > 0; else nodata">
-													<app-data-table
-														[table_data]="filtered_data"
-														[table_columns]="dealers_table_columns"
-														[new_table]="true"
-														[paging_details]="paging_data"
-														[query_params]="tab"
-														(page_triggered)="pageRequested($event)">
-													</app-data-table>
-												</mat-card>
-											</ng-container>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-				<mat-tab label="DMA View">
-					<div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 2">
-						<div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
-							<app-dma-view> </app-dma-view>
-						</div>
-					</div>
-				</mat-tab>
-			</mat-tab-group>
-		</div>
+        <div class="col-lg-12 custom-mat-tab p-0">
+            <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event)">
+                <mat-tab label="Hosts View">
+                    <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 0">
+                        <div>
+                            <div *ngIf="!initial_load_hosts; else loader">
+                                <div *ngIf="!no_host; else no_data">
+                                    <div class="d-flex mt-3 table-controls">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn export-btn pi-control sm-text _primary mr-2"
+                                            type="button"
+                                            title="Export to CSV"
+                                            (click)="exportTable('hosts')"
+                                            [disabled]="workbook_generation"
+                                        >
+                                            <span
+                                                class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                                                [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
+                                            ></span>
+                                            <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
+                                                !workbook_generation ? "Export" : "Generating CSV"
+                                            }}</span>
+                                        </button>
+                                        <div class="search-field">
+                                            <app-search-field
+                                                *ngIf="!initial_load_hosts"
+                                                [form_title]="'Search Host Name, Address, City, Postal Code, DMA Name or #Tag'"
+                                                [placeholder]="'Example: N-Compass Host'"
+                                                [data_reference]="hosts_data"
+                                                [primary_keyword]="'name'"
+                                                [secondary_keyword]="'name'"
+                                                (searched)="filterData($event, 'hosts')"
+                                                [api_search]="true"
+                                            >
+                                            </app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load_hosts">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching_hosts; else loader">
+                                                <mat-card *ngIf="filtered_data_host.length > 0; else nodata">
+                                                    <app-data-table
+                                                        [table_data]="filtered_data_host"
+                                                        [table_columns]="hosts_table_column"
+                                                        [new_table]="true"
+                                                        [paging_details]="paging_data_host"
+                                                        [query_params]="tab"
+                                                        (page_triggered)="getHosts($event)"
+                                                        (to_sort_column)="getColumnsAndOrder($event, 'hosts')"
+                                                        [active_tab]="sort_column_hosts"
+                                                        [sort_column]="sort_column_hosts"
+                                                        [sort_order]="sort_order_hosts"
+                                                    >
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="Dealers View">
+                    <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 1">
+                        <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                            <div *ngIf="!initial_load; else loader">
+                                <div *ngIf="!no_dealer; else no_data">
+                                    <div class="row">
+                                        <div class="col-lg-8"></div>
+                                        <div class="col-lg-4">
+                                            <app-search-field
+                                                *ngIf="!initial_load"
+                                                [form_title]="role_label"
+                                                [placeholder]="'Example: N-Compass'"
+                                                [data_reference]="dealers_data"
+                                                [primary_keyword]="'business_name'"
+                                                [secondary_keyword]="'dealer_alias'"
+                                                (searched)="filterData($event, 'dealer')"
+                                                [api_search]="true"
+                                            ></app-search-field>
+                                        </div>
+                                    </div>
+                                    <div class="row" *ngIf="!initial_load">
+                                        <div class="col-lg-12">
+                                            <ng-container *ngIf="!searching; else loader">
+                                                <mat-card *ngIf="filtered_data.length > 0; else nodata">
+                                                    <app-data-table
+                                                        [table_data]="filtered_data"
+                                                        [table_columns]="dealers_table_columns"
+                                                        [new_table]="true"
+                                                        [paging_details]="paging_data"
+                                                        [query_params]="tab"
+                                                        (page_triggered)="pageRequested($event)"
+                                                    >
+                                                    </app-data-table>
+                                                </mat-card>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+                <mat-tab label="DMA View">
+                    <div class="col-lg-12 pl-0 pr-0 pb-4" *ngIf="tabGroup.selectedIndex === 2">
+                        <div class="col-lg-12 pt-4 pl-0 pr-0 pb-4">
+                            <app-dma-view> </app-dma-view>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
 
-		<ng-template #no_data>
-			<mat-card class="p-5">
-				<h3>What the!?</h3>
-				<p class="sm-text mb-3">There are no available dealers and hosts at the moment.</p>
-				<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
-					Add Dealer
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
-			</mat-card>
-		</ng-template>
+        <ng-template #no_data>
+            <mat-card class="p-5">
+                <h3>What the!?</h3>
+                <p class="sm-text mb-3">There are no available dealers and hosts at the moment.</p>
+                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/users/create-user/dealer']">
+                    Add Dealer
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </mat-card>
+        </ng-template>
 
-		<ng-template #nodata>
-			<div class="col-lg-12 pl-0 pr-0">
-				<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-					<div class="mb-4">
-						<i class="text-gray fa-5x far fa-file-alt"></i>
-					</div>
-					<h3 class="text-gray col-lg-12">No Results Found.</h3>
-					<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-				</mat-card>
-			</div>
-		</ng-template>
+        <ng-template #nodata>
+            <div class="col-lg-12 pl-0 pr-0">
+                <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                    <div class="mb-4">
+                        <i class="text-gray fa-5x far fa-file-alt"></i>
+                    </div>
+                    <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                    <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+                </mat-card>
+            </div>
+        </ng-template>
 
-		<ng-template #loader>
-			<div class="py-4 white-bg h-500">
-				<app-spinner></app-spinner>
-			</div>
-		</ng-template>
+        <ng-template #loader>
+            <div class="py-4 white-bg h-500">
+                <app-spinner></app-spinner>
+            </div>
+        </ng-template>
 
-		<ng-template #small_loader>
-			<div class="py-4 white-bg">
-				<app-spinner [diameter]="60"></app-spinner>
-			</div>
-		</ng-template>
-	</div>
-	<router-outlet></router-outlet>
+        <ng-template #small_loader>
+            <div class="py-4 white-bg">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </ng-template>
+    </div>
+    <router-outlet></router-outlet>
 </div>

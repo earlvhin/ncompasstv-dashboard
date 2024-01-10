@@ -2,9 +2,7 @@
     <form [formGroup]="contentsForm" *ngIf="contentsForm" class="col-lg-3 p-0">
         <div class="col-lg-12 mb-2 p-0">
             <div class="col-lg-12 p-0">
-                <span class="md-text">
-                    Select Date Range
-                </span>
+                <span class="md-text"> Select Date Range </span>
             </div>
         </div>
         <div class="row"></div>
@@ -12,16 +10,16 @@
             <div class="col-lg-6 pl-0">
                 <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">Start Date</mat-label>
-                    <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly>
+                    <input formControlName="start_date" (dateInput)="onSelectStartDate($event.value)" matInput [matDatepicker]="datePicker" readonly />
                     <mat-datepicker-toggle matSuffix [for]="datePicker" [disabled]="searching"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker></mat-datepicker>
                 </mat-form-field>
             </div>
-    
+
             <div class="col-lg-6 pl-0">
                 <mat-form-field class="full-width" appearance="fill" appDefaultDateFormat>
                     <mat-label class="md-text">End Date</mat-label>
-                    <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date" readonly>
+                    <input formControlName="end_date" (dateInput)="onSelectEndDate($event.value)" matInput [matDatepicker]="datePicker2" [min]="start_date" readonly />
                     <mat-datepicker-toggle matSuffix [for]="datePicker2" [disabled]="searching"></mat-datepicker-toggle>
                     <mat-datepicker #datePicker2></mat-datepicker>
                 </mat-form-field>
@@ -29,50 +27,53 @@
         </div>
         <div class="row"></div>
         <div class="col-lg-12 p-0">
-            <span class="md-text" *ngIf="!is_dealer">
-                Select Dealer
-            </span>
+            <span class="md-text" *ngIf="!is_dealer"> Select Dealer </span>
         </div>
         <div class="row"></div>
         <div class="col-lg-12 pl-0">
             <app-autocomplete-field
-				(data_value)="setDealerId($event)"
-				[data_reference]="dealers_data"
-				[key_of_value]="'dealerId'"
-				[label]="'Choose A Dealer'"
-				[placeholder]="'Choose A Dealer'"
-				[primary_keyword]="'businessName'"
-				[search_keyword]="'dealer'"
-				[paging]="paging"
-				(call_next_page)="searchBoxTrigger($event)"
-				(searched)="searchData($event)"
-				[loading_data]="loading_data"
-				[loading_search]="loading_search"
-				[disabled]="((!start_date && !end_date) || is_dealer)"
+                (data_value)="setDealerId($event)"
+                [data_reference]="dealers_data"
+                [key_of_value]="'dealerId'"
+                [label]="'Choose A Dealer'"
+                [placeholder]="'Choose A Dealer'"
+                [primary_keyword]="'businessName'"
+                [search_keyword]="'dealer'"
+                [paging]="paging"
+                (call_next_page)="searchBoxTrigger($event)"
+                (searched)="searchData($event)"
+                [loading_data]="loading_data"
+                [loading_search]="loading_search"
+                [disabled]="(!start_date && !end_date) || is_dealer"
                 [initial_value]="dealer_name"
-				[new_value]="dealer_name">							
-			</app-autocomplete-field>
+                [new_value]="dealer_name"
+            >
+            </app-autocomplete-field>
         </div>
         <div class="row"></div>
         <div class="col-lg-12 pl-0">
-            <app-search-field *ngIf="selected_dealer_name != ''"
-				[form_title]="'Search File Name'"
-				[placeholder]="'Example: N-Compass.png'"
-				[data_reference]="content_metrics"
-				[primary_keyword]="'title'"
-				[secondary_keyword]="'title'"
-				(searched)="filterData($event)"
+            <app-search-field
+                *ngIf="selected_dealer_name != ''"
+                [form_title]="'Search File Name'"
+                [placeholder]="'Example: N-Compass.png'"
+                [data_reference]="content_metrics"
+                [primary_keyword]="'title'"
+                [secondary_keyword]="'title'"
+                (searched)="filterData($event)"
                 [api_search]="true"
-			></app-search-field>
+            ></app-search-field>
         </div>
         <div class="row"></div>
         <div class="col-lg-12 pl-0" *ngIf="selected_dealer_name != '' && filtered_data.length != 0">
             <div class="offset-6 col-lg-6 mb-2 pr-0 text-right">
                 <button mat-button mat-raised-button class="theme-btn" (click)="exportTable('dealer')" [disabled]="searching || workbook_generation" title="Export to CSV">
-                    <span class="button-label">
-                        {{!workbook_generation ? 'Export Results' : 'Generating CSV'}}
+                    <span class="button-label" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
+                        {{ !workbook_generation ? "Export Results" : "Generating CSV" }}
                     </span>
-                    <span class="{{!workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner'}} ml-2 sm-text"></span>
+                    <span
+                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }} ml-2 sm-text"
+                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
+                    ></span>
                 </button>
             </div>
         </div>
@@ -81,7 +82,7 @@
         <div class="row flex p-0 m-0">
             <div class="col-lg-12 bg-primary text-white text-center md-text pl-0 pt-1 pb-1">
                 <span>
-                    Media Files from Dealer: <i>{{selected_dealer_name}}</i>
+                    Media Files from Dealer: <i>{{ selected_dealer_name }}</i>
                 </span>
             </div>
         </div>
@@ -89,7 +90,7 @@
             <div class="col-lg-12">
                 <ng-container *ngIf="!searching; else loader">
                     <mat-card *ngIf="filtered_data.length > 0; else nodata">
-                        <app-data-table 
+                        <app-data-table
                             [table_data]="content_metrics"
                             [table_columns]="metrics_table_column"
                             [new_table]="true"
@@ -97,7 +98,8 @@
                             (page_triggered)="getMediaFiles($event)"
                             [content_metrics]="true"
                             [query_params]="{ start_date: start_date, end_date: end_date }"
-                            (export_content_details)="setContentSelected($event)">
+                            (export_content_details)="setContentSelected($event)"
+                        >
                         </app-data-table>
                     </mat-card>
                 </ng-container>
