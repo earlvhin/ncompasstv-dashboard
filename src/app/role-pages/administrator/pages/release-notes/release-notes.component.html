@@ -1,4 +1,4 @@
-<div id="release-notes-page" class="theme-container pl-0 pr-0 pb-4">
+<div id="release-notes-page" class="theme-container pb-4">
 	<div class="title-section">
 		<div class="d-flex align-items-center">
 			<div class="flex-even">
@@ -12,7 +12,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<hr class="my-4">
 
 	<div class="content-section d-flex">
@@ -21,9 +21,9 @@
 
 				<mat-card>
 					<ng-container *ngIf="notesTableData.length > 0; else no_data;">
-						<app-data-table 
+						<app-data-table
 							page="release-notes"
-							[table_columns]="notesTableColumns" 
+							[table_columns]="notesTableColumns"
 							[table_data]="notesTableData"
 							[new_table]="true">
 						</app-data-table>

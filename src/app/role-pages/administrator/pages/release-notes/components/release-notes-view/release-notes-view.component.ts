@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ReleaseNotesService } from 'src/app/global/services';
 import * as moment from 'moment';
 
@@ -11,9 +11,9 @@ import { AuthService } from 'src/app/global/services/auth-service/auth.service';
   styleUrls: ['./release-notes-view.component.scss']
 })
 export class ReleaseNotesViewComponent implements OnInit {
-    @ViewChild('dataContainer', { static: false }) dataContainer: ElementRef;
-    latest_release: any;
+    @ViewChildren('dataContainer') dataContainers: QueryList<ElementRef>;
     is_dealer_admin: boolean = false;
+    recent_releases: Array<any> = [];
 
     constructor(
         private _release: ReleaseNotesService,
@@ -33,10 +33,14 @@ export class ReleaseNotesViewComponent implements OnInit {
     }
 
     setReleaseNotes(data) {
-        this.latest_release = data[0];
-        this.latest_release.dateCreated = moment(this.latest_release.dateCreated).format('MMM DD, YYYY');
-        setTimeout(()=>{                           
-            this.dataContainer.nativeElement.innerHTML = this.latest_release.description;
+        for (let i = 0; i < 3; i++) {
+            this.recent_releases.push(data[i]);
+            this.recent_releases[i].dateCreated = moment(this.recent_releases[i].dateCreated).format('MMM DD, YYYY');
+        }
+        setTimeout(()=>{
+            this.dataContainers.forEach((div: ElementRef, index: number) => {
+                div.nativeElement.innerHTML = this.recent_releases[index].description;
+            });
         }, 500);
     }
 }

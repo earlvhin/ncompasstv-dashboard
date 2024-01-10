@@ -16,10 +16,10 @@
 	<div class="sections d-flex">
 
 		<div class="text-editor-section">
-			
+
 			<ng-container *ngIf="isFormLoaded">
 				<form [formGroup]="notesForm">
-	
+
                     <mat-form-field class="full-width">
 						<mat-label>Title</mat-label>
 						<input formControlName="title" matInput placeholder="e.g. Release Notes for 2022" type="text">
@@ -30,9 +30,9 @@
 						<mat-label>Version</mat-label>
 						<input formControlName="version" matInput placeholder="e.g. v1.2.3" type="text">
 					</mat-form-field>
-	
+
                     <div class="pt-5">
-                        <app-wysiwyg 
+                        <app-wysiwyg
                         (tynimce_value)="fetchingValue($event)"
                         [description]="description"></app-wysiwyg>
                     </div>
@@ -41,11 +41,11 @@
 
 		</div>
 
-		<div class="preview-section d-flex flex-column" id="display">
+		<div class="preview-section d-flex flex-column content-section">
 			<h4><u>Text Preview</u></h4>
             <div #dataContainer></div>
 		</div>
-		
+
 	</div>
 
 	<!-- SUBMIT BUTTON -->
