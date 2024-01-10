@@ -2,6 +2,7 @@ import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild }
 import { FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { debounceTime, distinctUntilChanged, map, startWith } from 'rxjs/operators';
+import { AUTOCOMPLETE_ACTIONS } from 'src/app/global/constants/autocomplete';
 import { UI_AUTOCOMPLETE } from 'src/app/global/models';
 
 @Component({
@@ -21,10 +22,10 @@ export class AutocompleteComponent implements OnInit {
     @Output() no_data_found: EventEmitter<string> = new EventEmitter();
     @ViewChild('autoCompleteInputField', { static: false })
     autoCompleteInputField: ElementRef;
-
     autoCompleteControl = new FormControl();
     filteredOptions!: Observable<any[]>;
     keyword = '';
+    staticVal: boolean = false;
 
     ngOnInit() {
         this.filteredOptions = this.autoCompleteControl.valueChanges.pipe(
@@ -33,16 +34,11 @@ export class AutocompleteComponent implements OnInit {
             distinctUntilChanged(),
             map((keyword) => this._filter(keyword))
         );
-
-        if (this.field_data.trigger) {
-            this.field_data.trigger.subscribe((data: any) => {
-                console.log('triggered!!', data);
-            });
-        }
     }
 
     ngAfterViewInit() {
         this.setupDefaults();
+        this.startTriggerListener();
     }
 
     ngOnChanges() {
@@ -60,6 +56,8 @@ export class AutocompleteComponent implements OnInit {
     }
 
     displayOption(option: any): string {
+        console.log('displayOption =>', this.staticVal);
+
         if (option && option.display) {
             return option.display;
         }
@@ -68,6 +66,8 @@ export class AutocompleteComponent implements OnInit {
     }
 
     private _filter(keyword: any) {
+        if (this.staticVal) return;
+
         const filterValue = keyword.hasOwnProperty('value') ? keyword.value.toLowerCase() : keyword.toLowerCase();
         let filterResult = this.field_data.data.filter((option) => option.value.toLowerCase().includes(filterValue));
 
@@ -97,12 +97,30 @@ export class AutocompleteComponent implements OnInit {
     }
 
     onFocus() {
-        setTimeout(() => {
-            this.field_data.noData = null;
-        }, 1000);
+        this.staticVal = false;
+        this.field_data.noData = null;
     }
 
     valueSelected(e) {
         this.value_selected.emit(e.option.value);
+    }
+
+    startTriggerListener() {
+        if (this.field_data.trigger) {
+            this.field_data.trigger.subscribe((triggerData: { data: any; action: string }) => {
+                switch (triggerData.action) {
+                    case AUTOCOMPLETE_ACTIONS.static:
+                        this.staticVal = true;
+
+                        setTimeout(() => {
+                            this.autoCompleteControl.setValue(triggerData.data);
+                            console.log('formControlValue', triggerData, this.autoCompleteControl.value);
+                        }, 0);
+                        break;
+                    default:
+                        break;
+                }
+            });
+        }
     }
 }

@@ -15,23 +15,22 @@ import { ImageSelectionModalComponent } from '../../components_shared/page_compo
 import {
     API_CREATE_HOST,
     API_DEALER,
-    API_GOOGLE_MAP,
     API_PARENT_CATEGORY,
-    GOOGLE_MAP_SEARCH_RESULT,
-    PAGING,
-    UI_OPERATION_DAYS,
     API_TIMEZONE,
-    UI_STORE_HOUR,
-    UI_STORE_HOUR_PERIOD,
-    City,
     CITIES_STATE_DATA,
-    State,
+    City,
+    PAGING,
     UI_AUTOCOMPLETE,
     UI_AUTOCOMPLETE_DATA,
+    UI_OPERATION_DAYS,
+    UI_STORE_HOUR,
+    UI_STORE_HOUR_PERIOD,
 } from 'src/app/global/models';
 
 import { AuthService, DealerService, FastEdgeService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
 import { CITIES_STATE } from '../../models/api_cities_state.model';
+import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
+import { STATES_PROVINCES } from '../../constants/states';
 
 @Component({
     selector: 'app-create-host',
@@ -79,6 +78,7 @@ export class CreateHostComponent implements OnInit {
     place_id: string;
     search_keyword: string;
     selected_location: any;
+    state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
     timezone: API_TIMEZONE[];
     title = 'Create Host Place';
     trigger_data: Subject<any> = new Subject<any>();
@@ -230,6 +230,7 @@ export class CreateHostComponent implements OnInit {
             return;
         }
 
+        // Still needed?
         const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
 
         const newHostPlace = new API_CREATE_HOST({
@@ -353,7 +354,8 @@ export class CreateHostComponent implements OnInit {
             .get_google_store_info(location.placeId)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe((data) => {
-                location_selected.opening_hours = data.data.result.opening_hours;
+                if (!data.result.opening_hours) return;
+                location_selected.opening_hours = data.result.opening_hours;
                 this.mapOperationHours(location_selected.opening_hours.periods);
             });
     }
@@ -373,41 +375,28 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.lat.setValue(data.latitude);
         this.newHostFormControls.long.setValue(data.longitude);
 
+        console.log('slicedAddress', sliced_address);
+
         // ADDRESS MAPPING
-        if (state.includes('Canada')) {
-            let state_zip = sliced_address[2].split(' ');
-            let country = sliced_address[3].split(' ');
-            this.newHostFormControls.address.setValue(sliced_address[0]);
-            this.fillCityOfHost(sliced_address[1], country[0]);
-            this.newHostFormControls.zip.setValue(`${state_zip[1]}${state_zip[2]}`);
-        } else {
-            if (sliced_address.length == 3) {
-                console.log('first', sliced_address);
-                let state_zip = sliced_address[2].split(' ');
-                let country = sliced_address[2].split(' ');
-                this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
-                this.fillCityOfHost(sliced_address[1], country[0]);
-                this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
-            }
+        const state_zip = sliced_address[2].split(' ');
+        const state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state_zip[0]);
 
-            if (sliced_address.length == 4) {
-                console.log('sec');
-                let state_zip = sliced_address[2].split(' ');
-                this.newHostFormControls.address.setValue(sliced_address[0]);
-                this.setCity(sliced_address[1]);
-                this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-            }
+        // Set Address Value
+        this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
 
-            if (sliced_address.length == 5) {
-                console.log('thir');
-                let state_zip = sliced_address[3].split(' ');
-                this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-                this.setCity(sliced_address[1]);
-                this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-            }
-        }
+        // Set City Value
+        this.trigger_data.next({ data: sliced_address[1], action: AUTOCOMPLETE_ACTIONS.static });
+        this.newHostFormControls.city.setValue(sliced_address);
 
-        this.trigger_data.next(sliced_address[0]);
+        // Set State Value
+        this.newHostFormControls.state.setValue(state_region.abbreviation);
+
+        // Set Region Value
+        this.newHostFormControls.region.setValue(state_region.region);
+
+        // Set Zip Value
+        this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+
         this.getMoreDetailsofBusinessPlace(this.selected_location);
         this.new_host_form.markAllAsTouched();
         this._helper.onTouchPaginatedAutoCompleteField.next();
@@ -415,6 +404,11 @@ export class CreateHostComponent implements OnInit {
 
     removeHours(data: UI_OPERATION_DAYS, index: number) {
         data.periods.splice(index, 1);
+    }
+
+    searchStateAndRegion(state: string) {
+        console.log('searchStateAndRegion =>', state);
+        return this.state_provinces.filter((s) => state == s.state || state == s.abbreviation)[0];
     }
 
     setToGeneralCategory(event: string) {
@@ -513,8 +507,8 @@ export class CreateHostComponent implements OnInit {
             is_canada: [''],
             address: ['', Validators.required],
             city: ['', Validators.required],
-            state: [{ value: '', disabled: true }, Validators.required],
-            region: [{ value: '', disabled: true }, Validators.required],
+            state: ['', Validators.required],
+            region: ['', Validators.required],
             zip: ['', Validators.required],
             category: ['', Validators.required],
             category2: [{ value: '', disabled: true }],
@@ -659,7 +653,6 @@ export class CreateHostComponent implements OnInit {
     }
 
     searchCityById(data: UI_AUTOCOMPLETE_DATA) {
-        console.log('SearchCityById', data);
         const city = this.cities_state_data.data.filter((item) => item.id === data.id);
         this.newHostFormControls.state.setValue(city[0].abbreviation);
         this.newHostFormControls.region.setValue(city[0].region);
@@ -695,36 +688,38 @@ export class CreateHostComponent implements OnInit {
     }
 
     fillCityOfHost(address: string, country?: string) {
-        if (country !== 'Canada') {
-            this._location
-                .get_cities_data(address)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city = address + ', ' + data.data[0].state;
-                        this.setCity(city);
-                    },
-                    (error) => {
-                        console.error(error);
-                    }
-                );
-        } else {
-            this._location
-                .get_cities_data(address)
-                .pipe(takeUntil(this._unsubscribe))
-                .subscribe(
-                    (data) => {
-                        let city_data = data.data.filter((data) => data.country === 'CA');
-                        let city = city_data[0].city + ', ' + city_data[0].state;
-                        this.setCity(city);
+        console.log('fillCityOfHost', address, country);
 
-                        console.log(city);
-                    },
-                    (error) => {
-                        console.error(error);
-                    }
-                );
-        }
+        // if (country !== 'Canada') {
+        //     this._location
+        //         .get_cities_data(address)
+        //         .pipe(takeUntil(this._unsubscribe))
+        //         .subscribe(
+        //             (data) => {
+        //                 let city = address + ', ' + data.data[0].state;
+        //                 this.setCity(city);
+        //             },
+        //             (error) => {
+        //                 console.error(error);
+        //             }
+        //         );
+        // } else {
+        //     this._location
+        //         .get_cities_data(address)
+        //         .pipe(takeUntil(this._unsubscribe))
+        //         .subscribe(
+        //             (data) => {
+        //                 let city_data = data.data.filter((data) => data.country === 'CA');
+        //                 let city = city_data[0].city + ', ' + city_data[0].state;
+        //                 this.setCity(city);
+
+        //                 console.log(city);
+        //             },
+        //             (error) => {
+        //                 console.error(error);
+        //             }
+        //         );
+        // }
     }
 
     private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {

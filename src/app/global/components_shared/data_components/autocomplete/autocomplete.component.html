@@ -10,11 +10,7 @@
             (focus)="onFocus()"
             #autoCompleteInputField
         />
-        <mat-autocomplete
-            #auto="matAutocomplete"
-            [displayWith]="displayOption"
-            (optionSelected)="valueSelected($event)"
-        >
+        <mat-autocomplete #auto="matAutocomplete" [displayWith]="!staticVal && displayOption" (optionSelected)="valueSelected($event)">
             <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
                 {{ option.value }}
             </mat-option>
