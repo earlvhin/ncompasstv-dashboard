@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
         api_get_checklist: 'installationchecklists/getallitems',
         api_get_checklist_titles: 'installationchecklists/getall',
         api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
+        api_get_cities_state: 'citiesStateData/getall',
         api_get_content: 'content/findall',
         api_get_content_summary: 'content/getalllimitedfields',
         api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',
@@ -189,8 +190,6 @@ export const API_ENDPOINTS = {
         distinct_tags_by_tag_type: 'tag/getdistinctagsbytypeid?typeid=', // yes that is intentionally misspelled
         distinct_tags_by_type_and_name: 'tag/GetDistincTagsByTypeIdAndTagName',
         dma_hosts_by_rank: 'dma/GetHostListsByRankLocatorPage',
-        export_advertiser: 'advertiser/export?dealer_id=',
-        export_all_advertiser: 'advertiser/ExportAll',
         export_dealer_licenses: 'license/exportbydealer',
         export_dealers: 'dealer/exportdealer',
         export_content_playlist: 'playlists/exportplaylistscontents?playlistId=',
@@ -227,6 +226,7 @@ export const API_ENDPOINTS = {
         validate_weather_zip: 'feed/weather/validate?zipcode=',
         validate_rss_url: 'feed/news/validate?url=',
         validate_feed_url: 'feed/validate/url',
+        export_advertiser: 'advertiser/export?dealer_id=',
     },
     create: {
         add_credit_card: 'billing/add/creditcard',
@@ -364,6 +364,8 @@ export const API_ENDPOINTS = {
         toggle_credits: 'playlists/enableCredits',
         tv_brand: 'license/Update/TvBrand',
         user_email_settings: 'user/updateemailsettings',
+
+        //DEALER ADMIN
         dealeradmin_update_user: 'dealeradmin/user/update',
     },
     delete: {
