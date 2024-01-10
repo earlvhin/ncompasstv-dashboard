@@ -5,7 +5,7 @@ export class API_UPDATE_USER_INFO {
     lastName: string;
     email: string;
     password: string;
-	allowEmail: number
+    allowEmail: number;
 
     constructor(userId: string, fname: string, mname: string, lname: string, email: string, password: string, allowEmail = 0) {
         this.userId = userId;
@@ -14,7 +14,7 @@ export class API_UPDATE_USER_INFO {
         this.lastName = lname;
         this.email = email;
         this.password = password;
-		this.allowEmail = allowEmail;
+        this.allowEmail = allowEmail;
     }
 }
 
@@ -66,7 +66,22 @@ export class API_UPDATE_DEALER_PROFILE_BY_ADMIN {
     startDate: Date;
     updatedBy: string;
 
-    constructor(userId: string, dealerId: string, contactPerson: string, playerCount: string, businessName: string, dealerIdAlias: string, email: string, contactNumber: string, address: string, region:string, city:string, state:string, startDate: Date, updatedBy: string) {
+    constructor(
+        userId: string,
+        dealerId: string,
+        contactPerson: string,
+        playerCount: string,
+        businessName: string,
+        dealerIdAlias: string,
+        email: string,
+        contactNumber: string,
+        address: string,
+        region: string,
+        city: string,
+        state: string,
+        startDate: Date,
+        updatedBy: string
+    ) {
         this.userId = userId;
         this.dealerId = dealerId;
         this.contactPerson = contactPerson;
@@ -110,6 +125,6 @@ export class API_UPDATE_DEALER_USER_PROFILE_BY_ADMIN {
         this.dealerId = dealerId;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email
+        this.email = email;
     }
 }

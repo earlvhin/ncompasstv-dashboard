@@ -1,35 +1,33 @@
 <div id="release-notes-page" class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">Recent Release Notes</h1>
-				<div class="text-right">
-					<button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/release-notes']">
-						All Releases
-						<span class="fas fa-file-invoice ml-2 sm-text"></span>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
-	<hr class="my-4">
-	<div *ngIf="recent_releases.length > 0; else loading">
-		<mat-accordion multi="true">
-			<div class="row">
-				<div class="col-lg-8">
-					<mat-expansion-panel *ngFor="let release of recent_releases; index as i; first as isFirst" [expanded]="isFirst">
-						<mat-expansion-panel-header>
-							<mat-panel-title>
-								<h4 class="col-8">{{ release.version }}</h4>
-								<div class="col-4 text-right">{{ release.dateCreated }}</div>
-							</mat-panel-title>
-						</mat-expansion-panel-header>
-						<div #dataContainer class="content-section pt-0 pl-4"></div>
-					</mat-expansion-panel>
-				</div>
-			</div>
-		</mat-accordion>
-	</div>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <h1 class="page-title flex-even">Recent Release Notes</h1>
+            <div class="text-right flex-even">
+                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/release-notes']">
+                    All Releases
+                    <span class="fas fa-file-invoice ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" />
+    <div *ngIf="recent_releases.length; else loading">
+        <div class="row">
+            <div class="col-lg-8">
+                <mat-accordion>
+                    <mat-expansion-panel *ngFor="let release of recent_releases; first as isFirst" [expanded]="isFirst">
+                        <mat-expansion-panel-header>
+                            <mat-panel-title>
+                                <h4 class="col-8">{{ release.version }}</h4>
+                                <div class="col-4 text-right">{{ release.dateCreated }}</div>
+                            </mat-panel-title>
+                        </mat-expansion-panel-header>
+                        <div #dataContainer class="content-section pt-0 pl-4"></div>
+                    </mat-expansion-panel>
+                </mat-accordion>
+            </div>
+        </div>
+    </div>
 </div>
 
 <ng-template #loading>
