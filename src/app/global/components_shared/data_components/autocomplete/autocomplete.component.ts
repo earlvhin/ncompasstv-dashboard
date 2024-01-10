@@ -56,8 +56,6 @@ export class AutocompleteComponent implements OnInit {
     }
 
     displayOption(option: any): string {
-        console.log('displayOption =>', this.staticVal);
-
         if (option && option.display) {
             return option.display;
         }
@@ -114,7 +112,6 @@ export class AutocompleteComponent implements OnInit {
 
                         setTimeout(() => {
                             this.autoCompleteControl.setValue(triggerData.data);
-                            console.log('formControlValue', triggerData, this.autoCompleteControl.value);
                         }, 0);
                         break;
                     default:
