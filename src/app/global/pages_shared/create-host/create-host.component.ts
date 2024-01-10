@@ -348,7 +348,7 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    getMoreDetailsofBusinessPlace(location) {
+    getMoreBusinessPlaceDetails(location) {
         let location_selected = location;
         this._map
             .get_google_store_info(location.placeId)
@@ -361,7 +361,6 @@ export class CreateHostComponent implements OnInit {
     }
 
     plotToMap(data: any) {
-        console.log('plotToMap', data);
         let sliced_address = data.address.split(', ');
         let state = data.address.substring(data.address.lastIndexOf(','));
         this.getGeneralCategory(data.type);
@@ -375,8 +374,6 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.lat.setValue(data.latitude);
         this.newHostFormControls.long.setValue(data.longitude);
 
-        console.log('slicedAddress', sliced_address);
-
         // ADDRESS MAPPING
         const state_zip = sliced_address[2].split(' ');
         const state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state_zip[0]);
@@ -386,7 +383,7 @@ export class CreateHostComponent implements OnInit {
 
         // Set City Value
         this.trigger_data.next({ data: sliced_address[1], action: AUTOCOMPLETE_ACTIONS.static });
-        this.newHostFormControls.city.setValue(sliced_address);
+        this.newHostFormControls.city.setValue(sliced_address[1]);
 
         // Set State Value
         this.newHostFormControls.state.setValue(state_region.abbreviation);
@@ -395,9 +392,10 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.region.setValue(state_region.region);
 
         // Set Zip Value
-        this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
+        this.canada_selected = state.includes('Canada');
+        this.newHostFormControls.zip.setValue(this.canada_selected ? `${state_zip[1]}${state_zip[2]}` : `${state_zip[1]}`);
 
-        this.getMoreDetailsofBusinessPlace(this.selected_location);
+        this.getMoreBusinessPlaceDetails(this.selected_location);
         this.new_host_form.markAllAsTouched();
         this._helper.onTouchPaginatedAutoCompleteField.next();
     }
@@ -407,8 +405,7 @@ export class CreateHostComponent implements OnInit {
     }
 
     searchStateAndRegion(state: string) {
-        console.log('searchStateAndRegion =>', state);
-        return this.state_provinces.filter((s) => state == s.state || state == s.abbreviation)[0];
+        return this.state_provinces.filter((s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase())[0];
     }
 
     setToGeneralCategory(event: string) {
@@ -547,7 +544,7 @@ export class CreateHostComponent implements OnInit {
             this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
             this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
         ];
-        //local-dev.n-compass.online:64661/administrator/media-library
+
         http: forkJoin(requests)
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
@@ -613,7 +610,6 @@ export class CreateHostComponent implements OnInit {
     }
 
     searchCity(keyword: string) {
-        console.log('searchTriggered!');
         this.search_keyword = keyword;
         this.city_field_data.data = [];
         this._location
@@ -688,38 +684,34 @@ export class CreateHostComponent implements OnInit {
     }
 
     fillCityOfHost(address: string, country?: string) {
-        console.log('fillCityOfHost', address, country);
-
-        // if (country !== 'Canada') {
-        //     this._location
-        //         .get_cities_data(address)
-        //         .pipe(takeUntil(this._unsubscribe))
-        //         .subscribe(
-        //             (data) => {
-        //                 let city = address + ', ' + data.data[0].state;
-        //                 this.setCity(city);
-        //             },
-        //             (error) => {
-        //                 console.error(error);
-        //             }
-        //         );
-        // } else {
-        //     this._location
-        //         .get_cities_data(address)
-        //         .pipe(takeUntil(this._unsubscribe))
-        //         .subscribe(
-        //             (data) => {
-        //                 let city_data = data.data.filter((data) => data.country === 'CA');
-        //                 let city = city_data[0].city + ', ' + city_data[0].state;
-        //                 this.setCity(city);
-
-        //                 console.log(city);
-        //             },
-        //             (error) => {
-        //                 console.error(error);
-        //             }
-        //         );
-        // }
+        if (country !== 'Canada') {
+            this._location
+                .get_cities_data(address)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        let city = address + ', ' + data.data[0].state;
+                        this.setCity(city);
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            this._location
+                .get_cities_data(address)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        let city_data = data.data.filter((data) => data.country === 'CA');
+                        let city = city_data[0].city + ', ' + city_data[0].state;
+                        this.setCity(city);
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        }
     }
 
     private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {

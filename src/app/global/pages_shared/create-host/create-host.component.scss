@@ -1,34 +1,31 @@
-.select-image-container {
-	.image-preview {
-		border: dashed;
-		flex-basis: 55%;
-		margin-right: 20px;
-
-		.image-container {
-			max-width: 500px;
-			max-height: 200px;
-
-			img {
-				height: 100%;
-				width: 100%;
-				object-fit: cover;
-				vertical-align: bottom;
-			}
-		}
-	}
-
+.image-container {
+    height: 100px;
+    border-radius: 100%;
+    width: 100px;
+    position: relative;
+    overflow: hidden;
 }
 
 .select-image-button {
-	flex-basis: 25%;
-	font-size: 12px;
-	max-width: 160px;
+    flex-basis: 25%;
+    font-size: 12px;
+    max-width: 160px;
 }
 
 .flex-basis-80 {
-	flex-basis: 80%;
+    flex-basis: 80%;
 }
 
 .flex-basis-100 {
-	flex-basis: 100%;
+    flex-basis: 100%;
+}
+
+.business-profile-image {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px;
+    position: absolute;
+    z-index: 7;
+    top: 15px;
+    left: 15px;
 }
