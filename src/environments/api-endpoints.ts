@@ -364,8 +364,6 @@ export const API_ENDPOINTS = {
         toggle_credits: 'playlists/enableCredits',
         tv_brand: 'license/Update/TvBrand',
         user_email_settings: 'user/updateemailsettings',
-
-        //DEALER ADMIN
         dealeradmin_update_user: 'dealeradmin/user/update',
     },
     delete: {
