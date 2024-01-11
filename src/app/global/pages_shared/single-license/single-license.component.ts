@@ -1001,8 +1001,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .pipe(takeUntil(this._unsubscribe))
             .subscribe(
                 (res) => {
-                    console.log(res, "d");
-
                     if (res.paging.entities.length === 0) {
                         this.no_support_data = true;
                         this.support_data = [];
@@ -1010,8 +1008,6 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     }
 
                     this.support_data = res.paging.entities;
-
-
                 },
                 (error) => {
                     console.error(error);
@@ -1034,16 +1030,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 (response) => {
                     this.pagingData = response;
 
-                    if (!response.entities || response.entities.length <= 0) {
-                        this.hasNoData = true;
-                        return;
-                    }
-
-                    
-
+                    if (!response.entities || response.entities.length <= 0) return this.hasNoData = true;  
                     const images = response.entities as API_HOST_FILE[];
                     this.images = [...images];
-
                 },
                 (error) => {
                     console.error(error);
