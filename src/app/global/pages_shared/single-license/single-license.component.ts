@@ -16,29 +16,43 @@ import { InformationModalComponent } from '../../components_shared/page_componen
 import { MediaViewerComponent } from '../../components_shared/media_components/media-viewer/media-viewer.component';
 import { AddTagModalComponent } from './components/add-tag-modal/add-tag-modal.component';
 
-import { AuthService, ConfirmationDialogService, ContentService, HelperService, LicenseService, ScreenService, TagService, TemplateService } from 'src/app/global/services';
+import {
+	AuthService,
+	ConfirmationDialogService,
+	ContentService,
+	HelperService,
+    HostService,
+	LicenseService,
+	ScreenService,
+	TagService,
+	TemplateService
+} from 'src/app/global/services';
 
 import {
-    API_ACTIVITY,
-    API_SINGLE_LICENSE_PAGE,
-    API_DEALER,
-    ACTIVITY_CODES,
-    API_CONTENT,
-    API_HOST,
-    API_LICENSE_PROPS,
-    API_TEMPLATE,
-    API_SINGLE_SCREEN,
-    API_SCREEN_ZONE_PLAYLISTS_CONTENTS,
-    API_SCREEN_TEMPLATE_ZONE,
-    UI_CONTENT,
-    UI_CONTENT_PER_ZONE,
-    UI_OPERATION_DAYS,
-    UI_SCREEN_ZONE_PLAYLIST,
-    UI_ZONE_PLAYLIST,
-    UI_SINGLE_SCREEN,
-    UI_REBOOT_TIME,
-    PlaylistContentSchedule,
-    TAG,
+	API_ACTIVITY,
+	API_SINGLE_LICENSE_PAGE,
+	API_DEALER,
+	ACTIVITY_CODES,
+	API_CONTENT,
+	API_HOST,
+	API_LICENSE_PROPS,
+	API_TEMPLATE,
+	API_SINGLE_SCREEN,
+	API_SCREEN_ZONE_PLAYLISTS_CONTENTS,
+	API_SCREEN_TEMPLATE_ZONE,
+	UI_CONTENT,
+	UI_CONTENT_PER_ZONE,
+	UI_OPERATION_DAYS,
+	UI_SCREEN_ZONE_PLAYLIST,
+	UI_ZONE_PLAYLIST,
+	UI_SINGLE_SCREEN,
+	UI_REBOOT_TIME,
+	PlaylistContentSchedule,
+	TAG,
+    PAGING,
+ 	API_HOST_FILE,
+ 	UI_HOST_FILE,
+ 	UI_HOST_SUPPORT
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -81,62 +95,77 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     hasAdminPrivileges = false;
     isCheckingElectronRunning = false;
 
-    has_background_zone = false;
-    has_host = false;
-    has_screen = false;
-    has_playlist = false;
-    has_unsaved_additional_settings = false;
-    host: API_HOST;
-    host_notes = '';
-    host_route: string;
-    hasLoadedLicenseData = false;
-    hasLoadedScreenData = false;
-    internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
-    isCheckingDisplayStatus = false;
-    isCurrentUserAdmin = this._auth.current_role === 'administrator';
-    isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
-    isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
-    is_editing_tv_brand = false;
-    is_view_only = this.currentUser.roleInfo.permission === 'V';
-    lastStartup = null;
-    lastDisconnect = null;
-    license_data: API_LICENSE_PROPS;
-    license_id: string;
-    license_key: string;
-    minimap_width = '400px';
-    no_screen_assigned = false;
-    pi_status = false;
-    pi_updating: boolean;
-    player_status: boolean;
-    playlist_route: string;
-    popup_message = '';
-    realtime_data = new EventEmitter();
-    screen: UI_SINGLE_SCREEN;
-    screen_loading = true;
-    screen_route: string;
-    screenshot_message: string = 'Taking Screenshot, Please wait. . .';
-    screenshot_timeout = false;
-    screenshots = [];
-    screen_zone: any = {};
-    screen_type: any = {};
-    selected_zone_index = 0;
-    speedtest_running: boolean = false;
-    show_popup = false;
-    status_check_disabled: boolean;
-    storage_capacity = '';
-    template_data: API_TEMPLATE;
-    tags: TAG[] = [];
-    timezone: { name: string };
-    title = '';
-    update_alias: FormGroup;
-    zone_playlists: UI_ZONE_PLAYLIST[];
-    thumb_no_socket: boolean = true;
-    terminal_value: string;
-    terminal_entered_scripts: string[] = [];
-    tv_brand: string = null;
-    saving_license_settings: boolean = false;
-    fastEdgeSettings: FormGroup;
-    fastEdgeSettingsSaving = false;
+	has_background_zone = false;
+	has_host = false;
+	has_screen = false;
+	has_playlist = false;
+	has_unsaved_additional_settings = false;
+	host: API_HOST;
+	host_notes = '';
+	host_route: string;
+	hasLoadedLicenseData = false;
+	hasLoadedScreenData = false;
+	internet_connection = { downloadMbps: 'N/A', uploadMbps: 'N/A', ping: 'N/A', date: 'N/A', status: 'N/A' };
+	isCheckingDisplayStatus = false;
+	isCurrentUserAdmin = this._auth.current_role === 'administrator';
+	isCurrentUserDealerAdmin = this._auth.current_role === 'dealeradmin';
+	isCurrentUserDealer = this._auth.current_role === 'dealer' || this._auth.current_role === 'sub-dealer';
+	is_editing_tv_brand = false;
+	is_view_only = this.currentUser.roleInfo.permission === 'V';
+	lastStartup = null;
+	lastDisconnect = null;
+	license_data: API_LICENSE_PROPS;
+	license_id: string;
+	license_key: string;
+	minimap_width = '400px';
+	no_screen_assigned = false;
+	pi_status = false;
+	pi_updating: boolean;
+	player_status: boolean;
+	playlist_route: string;
+	popup_message = '';
+	realtime_data = new EventEmitter();
+	screen: UI_SINGLE_SCREEN;
+	screen_loading = true;
+	screen_route: string;
+	screenshot_message: string = 'Taking Screenshot, Please wait. . .';
+	screenshot_timeout = false;
+	screenshots = [];
+	screen_zone: any = {};
+	screen_type: any = {};
+	selected_zone_index = 0;
+	speedtest_running: boolean = false;
+	show_popup = false;
+	status_check_disabled: boolean;
+	storage_capacity = '';
+	template_data: API_TEMPLATE;
+	tags: TAG[] = [];
+	timezone: { name: string };
+	title = '';
+	update_alias: FormGroup;
+	zone_playlists: UI_ZONE_PLAYLIST[];
+	thumb_no_socket: boolean = true;
+	terminal_value: string;
+	terminal_entered_scripts: string[] = [];
+	tv_brand: string = null;
+	saving_license_settings: boolean = false;
+	fastEdgeSettings: FormGroup;
+	fastEdgeSettingsSaving = false;
+
+    pagingData: PAGING;
+ 	images: API_HOST_FILE[] = [];
+ 	hasNoData = false;
+ 	tableData: UI_HOST_FILE[] = [];
+ 	host_id: string;
+ 	support_data: UI_HOST_SUPPORT[] = [];
+ 	paging_data: any;
+ 	initial_load = true;
+ 	sort_column = 'DateCreated';
+ 	sort_order = 'desc';
+ 	no_support_data = false;
+ 	support_tab = true;
+	tooltipMessage: string = 'Copy license key';
+	showCopiedTooltip: boolean = false;
 
     private contents_array: any = [];
     private contents_backup: UI_CONTENT_PER_ZONE[] = [];
@@ -150,22 +179,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     protected _socket: any;
     protected _unsubscribe = new Subject<void>();
 
-    constructor(
-        private _auth: AuthService,
-        private _confirmDialog: ConfirmationDialogService,
-        private _content: ContentService,
-        private _dialog: MatDialog,
-        private _form: FormBuilder,
-        private _helper: HelperService,
-        private _license: LicenseService,
-        private _route: ActivatedRoute,
-        private _router: Router,
-        private _screen: ScreenService,
-        private _tag: TagService,
-        private _template: TemplateService,
-        private _titleCasePipe: TitleCasePipe,
-        private _snackBar: MatSnackBar
-    ) {}
+	constructor(
+		private _auth: AuthService,
+		private _confirmDialog: ConfirmationDialogService,
+		private _content: ContentService,
+		private _dialog: MatDialog,
+		private _form: FormBuilder,
+		private _helper: HelperService,
+        private _host: HostService,
+		private _license: LicenseService,
+		private _route: ActivatedRoute,
+		private _router: Router,
+		private _screen: ScreenService,
+		private _tag: TagService,
+		private _template: TemplateService,
+		private _titleCasePipe: TitleCasePipe,
+		private _snackBar: MatSnackBar
+	) {}
 
     @HostListener('window:resize', [])
     onResize() {
@@ -907,10 +937,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.title = licenseData.license.alias;
-        this.license_data = licenseData.license;
-        this.initializeLicenseSettingsForm(licenseData.license);
-        this.initializeFastEdgeSettingsForm();
+		this.title = licenseData.license.alias;
+		this.license_data = licenseData.license;
+        this.host_id = licenseData.host.hostId;
+		this.initializeLicenseSettingsForm(licenseData.license);
+		this.initializeFastEdgeSettingsForm();
 
         // if no host data
         if (!licenseData.host) {
@@ -928,15 +959,80 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             return;
         }
 
-        this.timezone = licenseData.timezone;
-        this.setLicenseDetails(licenseData.license);
-        this.setHostDetails(licenseData.host);
-        this.getScreenById(licenseData.screen.screenId, this.license_id);
-        this.getFormValue();
-        this.has_host = true;
-        this.has_screen = true;
-        this.hasLoadedLicenseData = true;
+		this.timezone = licenseData.timezone;
+		this.setLicenseDetails(licenseData.license);
+		this.setHostDetails(licenseData.host);
+		this.getScreenById(licenseData.screen.screenId, this.license_id);
+		this.getFormValue();
+		this.has_host = true;
+		this.has_screen = true;
+		this.hasLoadedLicenseData = true;
+        this.getImages();
+        this.getSupport(1);
+	}
+
+    getSupport(page: number): void {
+        this.support_data = [];
+
+        this._host
+            .get_support_entries(this.host_id, page, this.sort_column, this.sort_order)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (res) => {
+                    if (res.paging.entities.length === 0) {
+                        this.no_support_data = true;
+                        this.support_data = [];
+                        return;
+                    }
+
+                    this.support_data = res.paging.entities;
+                },
+                (error) => {
+                    console.error(error);
+                }
+            )
+            .add(() => (this.initial_load = false));
     }
+
+    onShowTickets(): void {
+        this.showInformationModal('600px', '350px', 'Notes', this.support_data, 'ticket');
+    }
+
+    getImages(page = 1) {
+        this.images = [];
+
+        this._host
+            .get_files_by_type(this.host_id, 1, page)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    this.pagingData = response;
+
+                    if (!response.entities || response.entities.length <= 0) return this.hasNoData = true;  
+                    const images = response.entities as API_HOST_FILE[];
+                    this.images = [...images];
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
+    }
+
+	copyToClipboard(data) {
+		const textarea = document.createElement('textarea');
+		textarea.value = data;
+		document.body.appendChild(textarea);
+		textarea.select();
+		document.execCommand('copy');
+		document.body.removeChild(textarea);
+		this.tooltipMessage = 'License key copied!';
+		this.showCopiedTooltip = false;
+
+		setTimeout(() => {
+		this.tooltipMessage = 'Copy license key';
+		this.showCopiedTooltip = true;
+		}, 1000); 
+	}
 
     private getLicenseById() {
         this._license
