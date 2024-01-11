@@ -34,7 +34,7 @@
 
 	.screenshots {
 		display: inline-block;
-		width: 7%;
+		width: 8%;
 		margin-right: 25px;
 		margin-bottom: 5px;
         font-size: 11px;
@@ -107,7 +107,11 @@
 	font-weight: bold;
 }
 
-.w-90 {
+.w-left {
+	width: 10%;
+}
+
+.w-right {
 	width: 90%;
 }
 
@@ -119,17 +123,18 @@
 	width: 40%;
 }
 
-.w-10 {
-	width: 10%;
+.gap-5 {
+	gap: 5px;
 }
 
-.gap-15 {
-	gap: 15px;
+.gap-10 {
+	gap: 10px;
 }
 
 .gap-30 {
 	gap: 30px;
 }
+
 
 .title {
 	font-size: 11px;
@@ -137,6 +142,7 @@
 
 .btn-title {
     font-size: 12px;
+	padding-inline: 30px;
 }
 
 .vl {
@@ -486,7 +492,7 @@
 
 .tv-brand {
 	h5, mat-form-field {
-		width: 100px;
+		width: fit-content;
 	}
 
 	mat-icon {
@@ -506,7 +512,16 @@
 	}
 }
 
+@media only screen and (max-width: 1400px) {
+	.btn-title {
+		font-size: 11px;
+		padding-inline: 20px;
+	}
+
+}
+
 @media screen and (min-width: 1366px) {
+
 	.theme-container {
 		.content-tab-container {
 			.assets-chart-container,
