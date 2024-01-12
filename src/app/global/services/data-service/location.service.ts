@@ -14,21 +14,21 @@ export class LocationService extends BaseService {
 	}
 
 	get_cities() {
-		return this.getRequest('./assets/data/city.json');
+		return this.getRequest('./assets/data/city.json', {plain: true});
 	}
 
 	get_canada_cities() {
-		return this.getRequest('./assets/data/canada.json');
+		return this.getRequest('./assets/data/canada.json', {plain: true});
 	}
 
 	get_states_regions(state) {
-		return this.getRequest('./assets/data/states-abbreviation-region.json').map((states: Array<any>) => {
+		return this.getRequest('./assets/data/states-abbreviation-region.json', {plain: true}).map((states: Array<any>) => {
 			return states.filter((s) => s.state === state);
 		});
 	}
 
 	get_states_by_abbreviation(state) {
-		return this.getRequest('./assets/data/states-abbreviation-region.json').map((states: Array<any>) => {
+		return this.getRequest('./assets/data/states-abbreviation-region.json', {plain: true}).map((states: Array<any>) => {
 			return states.filter((s) => s.abbreviation === state);
 		});
 	}
