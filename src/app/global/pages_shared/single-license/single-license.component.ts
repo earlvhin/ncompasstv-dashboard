@@ -324,21 +324,21 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
 	}
 
 	clearScreenshots(): void {
-		this.clear_screenshots = true;
+        this.clear_screenshots = true;
 
-		this._license
-			.delete_screenshots(this.license_id)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				() => {
-					this.clear_screenshots = false;
-					this.getScreenshots();
-				},
-				(error) => {
-					console.error(error);
-				}
-			);
-	}
+        this._license
+            .delete_screenshots(this.license_id)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                () => {
+                    this.clear_screenshots = false;
+                    this.getScreenshots();
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
+    }
 
 	disableScreenshot(event: { checked: boolean }): void {
 		const body = { licenseId: this.license_id, screenshotSettings: event.checked ? 1 : 0 };
