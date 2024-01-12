@@ -1,75 +1,80 @@
 <div *ngIf="!initial_load_billings; else spinner">
-	<div class="row table-row">
-		<div class="col-lg-12 d-flex">
-			<div class="col-lg-8 p-0 mb-3">
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control _primary sm-text mr-2"
-					(click)="exportTable()"
-					[disabled]="workbook_generation"
-					title="Export Table to CSV">
-					<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-					<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
-				</button>
-			</div>
-			<div class="col-lg-4">
-				<app-search-field
-					[form_title]="'Search Dealer Name or Alias'"
-					[placeholder]="'Example: N-Compass'"
-					[data_reference]="alldealervalues"
-					[primary_keyword]="'businessName'"
-					[secondary_keyword]="'dealerIdAlias'"
-					(searched)="filterData($event)"
-					[api_search]="true"
-					[allow_one]="true"></app-search-field>
-			</div>
-		</div>
-	</div>
-	<div class="row">
-		<div class="col-lg-12">
-			<ng-container *ngIf="is_loading; else spinner">
-				<mat-card *ngIf="filtered_data_billings.length > 0; else nodata">
-					<app-data-table
-						id="billingTable"
-						class="full-width"
-						[table_columns]="billings_table_column"
-						[table_data]="billing_data"
-						[new_table]="true"
-						[paging_details]="alldealervalues_paging"
-						(page_triggered)="getAllDealerBillings($event)"
-						[ctrl_column]="true"
-						[ctrl_column_label]="'Auto Charge'"
-						[ctrl_toggle]="true"
-						(toggle_triggered)="toggleCharge($event)"
-						(update_info)="reloadBilling()"
-						[billing_action]="true"
-						[is_view_only]="true"
-						(to_sort_column)="getAdvertisersColumnsAndOrder($event)"
-						[active_tab]="sort_column_billings"
-						[sort_column]="sort_column_billings"
-						[sort_order]="sort_order_billings">
-					</app-data-table>
-				</mat-card>
-			</ng-container>
-		</div>
-	</div>
+    <div class="row table-row">
+        <div class="col-lg-12 d-flex">
+            <div class="col-lg-8 p-0 mb-3">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _primary sm-text mr-2"
+                    (click)="exportTable()"
+                    [disabled]="workbook_generation"
+                    title="Export Table to CSV"
+                >
+                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
+                        !workbook_generation ? "Export" : "Generating CSV"
+                    }}</span>
+                </button>
+            </div>
+            <div class="col-lg-4">
+                <app-search-field
+                    [form_title]="'Search Dealer Name or Alias'"
+                    [placeholder]="'Example: N-Compass'"
+                    [data_reference]="alldealervalues"
+                    [primary_keyword]="'businessName'"
+                    [secondary_keyword]="'dealerIdAlias'"
+                    (searched)="filterData($event)"
+                    [api_search]="true"
+                    [allow_one]="true"
+                ></app-search-field>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-lg-12">
+            <ng-container *ngIf="is_loading; else spinner">
+                <mat-card *ngIf="filtered_data_billings.length > 0; else nodata">
+                    <app-data-table
+                        id="billingTable"
+                        class="full-width"
+                        [table_columns]="billings_table_column"
+                        [table_data]="billing_data"
+                        [new_table]="true"
+                        [paging_details]="alldealervalues_paging"
+                        (page_triggered)="getAllDealerBillings($event)"
+                        [ctrl_column]="true"
+                        [ctrl_column_label]="'Auto Charge'"
+                        [ctrl_toggle]="true"
+                        (toggle_triggered)="toggleCharge($event)"
+                        (update_info)="reloadBilling()"
+                        [billing_action]="true"
+                        [is_view_only]="true"
+                        (to_sort_column)="getAdvertisersColumnsAndOrder($event)"
+                        [active_tab]="sort_column_billings"
+                        [sort_column]="sort_column_billings"
+                        [sort_order]="sort_order_billings"
+                    >
+                    </app-data-table>
+                </mat-card>
+            </ng-container>
+        </div>
+    </div>
 </div>
 
 <ng-template #spinner>
-	<div class="py-4 white-bg h-500">
-		<app-spinner [diameter]="85"></app-spinner>
-	</div>
+    <div class="py-4 white-bg h-500">
+        <app-spinner [diameter]="85"></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #nodata>
-	<div class="col-lg-12 pl-0 pr-0">
-		<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-			<div class="mb-4">
-				<i class="text-gray fa-5x far fa-file-alt"></i>
-			</div>
-			<h3 class="text-gray col-lg-12">No Results Found.</h3>
-			<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-		</mat-card>
-	</div>
+    <div class="col-lg-12 pl-0 pr-0">
+        <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+            <div class="mb-4">
+                <i class="text-gray fa-5x far fa-file-alt"></i>
+            </div>
+            <h3 class="text-gray col-lg-12">No Results Found.</h3>
+            <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+        </mat-card>
+    </div>
 </ng-template>
