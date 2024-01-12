@@ -1,51 +1,40 @@
-<div id="release-notes-page" class="theme-container pl-0 pr-0 pb-4">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right">
-				<button mat-button mat-raised-button class="theme-btn" (click)="onAdd()">
-					<span class="button-label">Add New</span>
-					<span class="fas fa-plus ml-2 sm-text"></span>
-				</button>
-			</div>
-		</div>
-	</div>
-	
-	<hr class="my-4">
+<div id="release-notes-page" class="theme-container pb-4">
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <button mat-button mat-raised-button class="theme-btn" (click)="onAdd()">
+                    <span class="button-label">Add New</span>
+                    <span class="fas fa-plus ml-2 sm-text"></span>
+                </button>
+            </div>
+        </div>
+    </div>
 
-	<div class="content-section d-flex">
-		<ng-container *ngIf="isTableDataLoaded; else spinner;">
-			<div class="table-container">
+    <hr class="my-4" />
 
-				<mat-card>
-					<ng-container *ngIf="notesTableData.length > 0; else no_data;">
-						<app-data-table 
-							page="release-notes"
-							[table_columns]="notesTableColumns" 
-							[table_data]="notesTableData"
-							[new_table]="true">
-						</app-data-table>
+    <div class="content-section d-flex">
+        <ng-container *ngIf="isTableDataLoaded; else spinner">
+            <div class="table-container">
+                <mat-card>
+                    <ng-container *ngIf="notesTableData.length > 0; else no_data">
+                        <app-data-table page="release-notes" [table_columns]="notesTableColumns" [table_data]="notesTableData" [new_table]="true"> </app-data-table>
+                    </ng-container>
 
-					</ng-container>
+                    <ng-template #no_data>
+                        <h3>Oh Boy.</h3>
+                        <p class="sm-text mb-3">There are no release notes at the moment.</p>
+                    </ng-template>
+                </mat-card>
+            </div>
+        </ng-container>
 
-					<ng-template #no_data>
-						<h3>Oh Boy.</h3>
-						<p class="sm-text mb-3">
-							There are no release notes at the moment.
-						</p>
-					</ng-template>
-				</mat-card>
-
-			</div>
-		</ng-container>
-
-		<ng-template #spinner>
-			<mat-card class="spinner-container">
-				<app-spinner [diameter]="60"></app-spinner>
-			</mat-card>
-		</ng-template>
-	</div>
+        <ng-template #spinner>
+            <mat-card class="spinner-container vh-50">
+                <app-spinner [diameter]="60"></app-spinner>
+            </mat-card>
+        </ng-template>
+    </div>
 </div>
-
