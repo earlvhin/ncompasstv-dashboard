@@ -649,9 +649,12 @@ export class CreateHostComponent implements OnInit {
     }
 
     searchCityById(data: UI_AUTOCOMPLETE_DATA) {
-        const city = this.cities_state_data.data.filter((item) => item.id === data.id);
-        this.newHostFormControls.state.setValue(city[0].abbreviation);
-        this.newHostFormControls.region.setValue(city[0].region);
+        const city = this.cities_state_data.data.filter((item) => item.id === data.id)[0];
+
+        if (!city) return;
+        this.newHostFormControls.city.setValue(city.city);
+        this.newHostFormControls.state.setValue(city.abbreviation);
+        this.newHostFormControls.region.setValue(city.region);
     }
 
     setCity(data): void {
