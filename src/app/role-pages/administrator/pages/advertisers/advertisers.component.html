@@ -17,20 +17,6 @@
                         <span class="ml-2 button_text_animation">Add Advertiser Profile</span>
                     </button>
                 </a>
-                <button
-                    mat-button
-                    mat-raised-button
-                    class="theme-btn pi-control sm-text _teal mr-2"
-                    (click)="exportAdvertisersTable('Advertisers')"
-                    *ngIf="userIsAdmin"
-                    [disabled]="workbook_generation"
-                    title="Export to CSV"
-                >
-                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
-                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
-                        {{ !workbook_generation ? "Export All Advetisers" : "Generating CSV" }}
-                    </span>
-                </button>
             </div>
         </div>
         <hr class="my-4" />
@@ -96,6 +82,23 @@
                             ></span>
                             <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">
                                 {{ !workbook_generation ? "Export" : "Generating CSV" }}
+                            </span>
+                        </button>
+                        <button
+                            mat-button
+                            mat-raised-button
+                            class="theme-btn pi-control sm-text _teal mr-2"
+                            (click)="exportAdvertisersTable('Advertisers')"
+                            *ngIf="userIsAdmin"
+                            [disabled]="export_all_workbook_generation"
+                            title="Export to CSV"
+                        >
+                            <span
+                                class="{{ !export_all_workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                                [ngStyle]="{ color: export_all_workbook_generation ? '#222' : 'white' }"
+                            ></span>
+                            <span class="ml-2 button_text_animation" [ngStyle]="{ color: export_all_workbook_generation ? '#222' : 'white' }">
+                                {{ !export_all_workbook_generation ? "Export All Advetisers" : "Generating CSV" }}
                             </span>
                         </button>
                     </div>
