@@ -19,6 +19,7 @@ import {
     API_TIMEZONE,
     CITIES_STATE_DATA,
     City,
+    GOOGLE_MAP_SEARCH_RESULT_V2,
     PAGING,
     UI_AUTOCOMPLETE,
     UI_AUTOCOMPLETE_DATA,
@@ -128,7 +129,6 @@ export class CreateHostComponent implements OnInit {
             this.setToDealer(this.dealer_id);
         }
 
-        this.watchFields();
         this.getCitiesAndStates();
     }
 
@@ -280,6 +280,7 @@ export class CreateHostComponent implements OnInit {
         this.location_candidate_fetched = true;
         this.location_selected = false;
         let country = 'United States';
+
         if (this.canada_selected) {
             country = 'Canada';
         }
@@ -293,6 +294,7 @@ export class CreateHostComponent implements OnInit {
                         this.no_result = true;
                         return;
                     }
+
                     this.google_result = data.google_search;
                 },
                 (error) => {
@@ -360,9 +362,9 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    plotToMap(data: any) {
+    plotToMap(data: GOOGLE_MAP_SEARCH_RESULT_V2) {
+        this.setZipValidatorRule(data.address);
         let sliced_address = data.address.split(', ');
-        let state = data.address.substring(data.address.lastIndexOf(','));
         this.getGeneralCategory(data.type);
         this.setToCategory(data.type);
         this.place_id = data.placeId;
@@ -374,16 +376,46 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.lat.setValue(data.latitude);
         this.newHostFormControls.long.setValue(data.longitude);
 
-        // ADDRESS MAPPING
-        const state_zip = sliced_address[2].split(' ');
-        const state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state_zip[0]);
+        let address;
+        let zipState;
+        let zip;
+        let state;
+        let city;
+        let country;
+
+        if (data.address.includes('USA')  || data.address.includes('Canada') || data.address.includes('United States')) {
+            country = sliced_address[sliced_address.length - 1];
+        }
+
+        // Address Mapping
+        if (sliced_address.length == 5) {
+            zipState = sliced_address[3].split(' ');
+            state = zipState[0];
+            zip = (country && country == 'Canada') ? `${zipState[1]} ${zipState[2]}` : zipState[1];
+            city = sliced_address[2];
+            address = `${sliced_address[0]}, ${sliced_address[1]}`;
+        } else if (sliced_address.length == 4) {
+            zipState = sliced_address[2].split(' ');
+            state = zipState[0];
+            zip = (country && country == 'Canada') ? `${zipState[1]} ${zipState[2]}` : zipState[1];
+            city = sliced_address[1];
+            address = sliced_address[0];
+        } else if (sliced_address.length == 3) {
+            zipState = sliced_address[2].split(' ');
+            state = zipState[0];
+            zip = (country && country == 'Canada') ? `${zipState[1]} ${zipState[2]}` : zipState[1];
+            city = sliced_address[1];
+            address = sliced_address[0];
+        }
+
+        let state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state);
 
         // Set Address Value
         this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
 
         // Set City Value
         this.trigger_data.next({ data: sliced_address[1], action: AUTOCOMPLETE_ACTIONS.static });
-        this.newHostFormControls.city.setValue(sliced_address[1]);
+        this.newHostFormControls.city.setValue(city);
 
         // Set State Value
         this.newHostFormControls.state.setValue(state_region.abbreviation);
@@ -392,9 +424,10 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.region.setValue(state_region.region);
 
         // Set Zip Value
-        this.canada_selected = state.includes('Canada');
-        this.newHostFormControls.zip.setValue(this.canada_selected ? `${state_zip[1]}${state_zip[2]}` : `${state_zip[1]}`);
+        this.canada_selected = country && country.includes('Canada');
+        this.newHostFormControls.zip.setValue(zip);
 
+        // Get Business Place Details
         this.getMoreBusinessPlaceDetails(this.selected_location);
         this.new_host_form.markAllAsTouched();
         this._helper.onTouchPaginatedAutoCompleteField.next();
@@ -402,6 +435,11 @@ export class CreateHostComponent implements OnInit {
 
     removeHours(data: UI_OPERATION_DAYS, index: number) {
         data.periods.splice(index, 1);
+    }
+
+    setZipValidatorRule(googleAddress: string) {
+        const maxLength = googleAddress.includes('Canada') ? 7 : 5;
+        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(maxLength)])
     }
 
     searchStateAndRegion(state: string) {
@@ -814,30 +852,6 @@ export class CreateHostComponent implements OnInit {
         this.newHostFormControls.state.setValue('');
         this.newHostFormControls.region.setValue('');
         this.newHostFormControls.zip.setValue('');
-    }
-
-    private watchFields() {
-        this.newHostFormControls.category.valueChanges.subscribe((data) => {
-            if (data === '') this.no_category = false;
-        });
-
-        this.newHostFormControls.category2.valueChanges.subscribe((data) => {
-            if (data === '') this.no_category2 = false;
-        });
-
-        this.newHostFormControls.city.valueChanges.subscribe((data) => {
-            this.city_selected = data;
-        });
-
-        this.new_host_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
-
-        this.new_host_form.controls['zip'].valueChanges.subscribe((data) => {
-            if (this.canada_selected) {
-                this.new_host_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
-            } else {
-                this.new_host_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
-            }
-        });
     }
 
     protected get _createFormFields() {
