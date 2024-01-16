@@ -1,87 +1,83 @@
 <div class="row">
-	<div class="col-lg-8">
-		<div class="d-inline-flex">
-			<div *ngIf="tab != 'dealer'">
-				<button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
-					<span class="fas fa-tags"></span>
-					<span class="ml-2 button_text_animation">Add Tags</span>
-				</button>
-			</div>
-			<div *ngIf="tab != 'dealer'">
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control sm-text mr-2 _teal"
-					title="Assign Tags"
-					(click)="openDialog('assign_tags')">
-					<span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation">Assign Tags</span>
-				</button>
-			</div>
-			<div *ngIf="tab != 'dealer'">
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control sm-text _primary mr-2"
-					(click)="exportTable()"
-					[disabled]="workbook_generation"
-					title="Export to CSV">
-					<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-					<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
-				</button>
-			</div>
-			<div *ngIf="hasTagSelected">
-				<div class="p-2 bg-dark text-white text-center br-5">
-					<div class="d-flex">
-						<span class="mr-2 font-italic md-text">Filtered Tag :</span> <span class="f-500 md-text">{{ selectedTag.name }}</span>
-						<span class="ml-2 normal-text f-500 cursor-pointer fas fa-times text-danger" (click)="onClearSelectedTag()"></span>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="col-lg-8">
+        <div class="d-inline-flex">
+            <div *ngIf="tab != 'dealer'">
+                <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _cool" title="Add Tags" (click)="openDialog('add_tag')">
+                    <span class="fas fa-tags"></span>
+                    <span class="ml-2 button_text_animation">Add Tags</span>
+                </button>
+            </div>
+            <div *ngIf="tab != 'dealer'">
+                <button mat-button mat-raised-button class="theme-btn pi-control sm-text mr-2 _teal" title="Assign Tags" (click)="openDialog('assign_tags')">
+                    <span class="fas fa-user-plus"></span> <span class="ml-2 button_text_animation">Assign Tags</span>
+                </button>
+            </div>
+            <div *ngIf="tab != 'dealer'">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control sm-text _primary mr-2"
+                    (click)="exportTable()"
+                    [disabled]="workbook_generation"
+                    title="Export to CSV"
+                >
+                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
+                        !workbook_generation ? "Export" : "Generating CSV"
+                    }}</span>
+                </button>
+            </div>
+            <div *ngIf="hasTagSelected">
+                <div class="p-2 bg-dark text-white text-center br-5">
+                    <div class="d-flex">
+                        <span class="mr-2 font-italic md-text">Filtered Tag :</span> <span class="f-500 md-text">{{ selectedTag.name }}</span>
+                        <span class="ml-2 normal-text f-500 cursor-pointer fas fa-times text-danger" (click)="onClearSelectedTag()"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-	<div class="col-lg-4">
-		<mat-form-field class="full-width" *ngIf="!isLoading">
-			<mat-label><i class="fas fa-search mr-3"></i>
-				<ng-container *ngIf="!is_dealer; else notAdmin">
-					Search by tag, @assignee or ^dealer
-				  </ng-container>
-			</mat-label>
-			<input matInput [formControl]="searchFormControl" />
-		</mat-form-field>
-	</div>
+    <div class="col-lg-4">
+        <mat-form-field class="full-width" *ngIf="!isLoading">
+            <mat-label
+                ><i class="fas fa-search mr-3"></i>
+                <ng-container *ngIf="!is_dealer; else notAdmin"> Search by tag, @assignee or ^dealer </ng-container>
+            </mat-label>
+            <input matInput [formControl]="searchFormControl" />
+        </mat-form-field>
+    </div>
 </div>
 
 <div class="row">
-	<div class="col-lg-12">
-		<div class="mat-card" *ngIf="!isLoading; else loading">
-			<app-tags-table
-				*ngIf="owners.length > 0; else noResults"
-				[tableType]="'tag-owners'"
-				[isLoading]="isLoading"
-				[paging]="pagingData"
-				[tab]="tab"
-				[tableColumns]="columns"
-				[tableData]="owners"
-				[currentTagType]="currentTagType"
-				[currentUserRole]="currentUserRole"
-				[currentUserId]="currentUserId"
-				(onClickPageNumber)="clickedPageNumber($event)">
-			</app-tags-table>
-		</div>
-	</div>
+    <div class="col-lg-12">
+        <div class="mat-card" *ngIf="!isLoading; else loading">
+            <app-tags-table
+                *ngIf="owners.length > 0; else noResults"
+                [tableType]="'tag-owners'"
+                [isLoading]="isLoading"
+                [paging]="pagingData"
+                [tab]="tab"
+                [tableColumns]="columns"
+                [tableData]="owners"
+                [currentTagType]="currentTagType"
+                [currentUserRole]="currentUserRole"
+                [currentUserId]="currentUserId"
+                (onClickPageNumber)="clickedPageNumber($event)"
+            >
+            </app-tags-table>
+        </div>
+    </div>
 </div>
 
 <ng-template #loading>
-	<div class="py-4 mt-3 mat-card">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="py-4 mt-3 mat-card">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #noResults>
-	<p>No results found</p>
+    <p>No results found</p>
 </ng-template>
 
-<ng-template #notAdmin>
-	Search by tag or @assignee
-</ng-template>
+<ng-template #notAdmin> Search by tag or @assignee </ng-template>

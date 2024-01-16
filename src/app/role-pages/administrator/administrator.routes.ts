@@ -467,7 +467,7 @@ export const ADMINISTRATOR_ROUTES: Routes = [
 				path: 'release-notes-view',
 				component: ReleaseNotesViewComponent,
 				data: {
-					breadcrumb: 'Current Release Notes'
+					breadcrumb: 'Recent Release Notes'
 				}
 			}
 		]

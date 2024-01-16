@@ -1,148 +1,145 @@
 <div class="theme-container">
-	<div class="title-section">
-		<div class="d-flex align-items-center">
-			<div class="flex-even">
-				<h1 class="page-title">{{ title }}</h1>
-			</div>
-			<div class="flex-even text-right">
-				<a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank" *ngIf="!is_dealer_admin">
-					<button
-						mat-button
-						mat-raised-button
-						class="theme-btn pi-control _cool sm-text mr-2"
-						title="Add Dealer"
-						*ngIf="current_tab === 'Dealer'">
-						<span class="fas fa-suitcase"></span>
-						<span class="ml-2 button_text_animation">Add Dealer</span>
-					</button>
-				</a>
+    <div class="title-section">
+        <div class="d-flex align-items-center">
+            <div class="flex-even">
+                <h1 class="page-title">{{ title }}</h1>
+            </div>
+            <div class="flex-even text-right">
+                <a [routerLink]="['/administrator/users/create-user/dealer']" target="_blank" *ngIf="!is_dealer_admin">
+                    <button mat-button mat-raised-button class="theme-btn pi-control _cool sm-text mr-2" title="Add Dealer" *ngIf="current_tab === 'Dealer'">
+                        <span class="fas fa-suitcase"></span>
+                        <span class="ml-2 button_text_animation">Add Dealer</span>
+                    </button>
+                </a>
 
-				<a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
-					<button
-						mat-button
-						mat-raised-button
-						class="theme-btn pi-control _teal sm-text mr-2"
-						title="Add Host Place"
-						*ngIf="current_tab === 'Dealer'">
-						<span class="fas fa-map-marker"></span>
-						<span class="ml-2 button_text_animation">Add Host Place</span>
-					</button>
-				</a>
+                <a [routerLink]="['/administrator/hosts/create-host']" target="_blank">
+                    <button mat-button mat-raised-button class="theme-btn pi-control _teal sm-text mr-2" title="Add Host Place" *ngIf="current_tab === 'Dealer'">
+                        <span class="fas fa-map-marker"></span>
+                        <span class="ml-2 button_text_animation">Add Host Place</span>
+                    </button>
+                </a>
 
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control _info sm-text mr-2"
-					(click)="openGenerateLicenseModal()"
-					title="Generate License"
-					*ngIf="current_tab === 'Dealer' && !is_dealer_admin">
-					<span class="fas fa-barcode"></span>
-					<span class="ml-2 button_text_animation">Generate License</span>
-				</button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _info sm-text mr-2"
+                    (click)="openGenerateLicenseModal()"
+                    title="Generate License"
+                    *ngIf="current_tab === 'Dealer' && !is_dealer_admin"
+                >
+                    <span class="fas fa-barcode"></span>
+                    <span class="ml-2 button_text_animation">Generate License</span>
+                </button>
 
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control _primary sm-text mr-2"
-					(click)="exportTable()"
-					[disabled]="workbook_generation"
-					title="Export Table to CSV"
-					*ngIf="current_tab === 'Dealer'">
-					<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-					<span class="ml-2 button_text_animation">{{ !workbook_generation ? 'Export' : 'Generating CSV' }}</span>
-				</button>
-			</div>
-		</div>
-		<hr class="my-4" />
-	</div>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _primary sm-text mr-2"
+                    (click)="exportTable()"
+                    [disabled]="workbook_generation"
+                    title="Export Table to CSV"
+                    *ngIf="current_tab === 'Dealer'"
+                >
+                    <span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"></span>
+                    <span class="ml-2 button_text_animation" [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }">{{
+                        !workbook_generation ? "Export" : "Generating CSV"
+                    }}</span>
+                </button>
+            </div>
+        </div>
+        <hr class="my-4" />
+    </div>
 
-	<div>
-		<div class="row">
-			<div class="col-12 col-lg">
-				<mat-card class="h-100">
-					<app-data-card-compare
-						*ngIf="dealer_stats; else loader"
-						[compare_basis]="dealer_stats.basis"
-						[compare_basis_label]="dealer_stats.basis_label"
-						[good_value]="dealer_stats.good_value"
-						[good_value_label]="dealer_stats.good_value_label"
-						[bad_value]="dealer_stats.bad_value || 0"
-						[bad_value_label]="dealer_stats.bad_value_label"
-						[has_status_filter]="true"
-						[page]="'dealers'">
-					</app-data-card-compare>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg dealer-card">
-				<mat-card class="h-100">
-					<app-data-card-count
-						*ngIf="dealer_stats; else loader"
-						[data_value]="dealer_stats.this_week_value"
-						[data_label]="dealer_stats.this_week_value_label"
-						[data_description]="dealer_stats.this_week_value_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-			<div class="col-12 col-lg dealer-card">
-				<mat-card class="h-100">
-					<app-data-card-count
-						*ngIf="dealer_stats; else loader"
-						[data_value]="dealer_stats.last_week_value"
-						[data_label]="dealer_stats.last_week_value_label"
-						[data_description]="dealer_stats.last_week_value_description">
-					</app-data-card-count>
-				</mat-card>
-			</div>
-		</div>
-		<ng-template #loader>
-			<div class="py-4">
-				<app-spinner [diameter]="60"></app-spinner>
-			</div>
-		</ng-template>
-		<hr class="my-4" />
+    <div>
+        <div class="row">
+            <div class="col-12 col-lg">
+                <mat-card class="h-100">
+                    <app-data-card-compare
+                        *ngIf="dealer_stats; else loader"
+                        [compare_basis]="dealer_stats.basis"
+                        [compare_basis_label]="dealer_stats.basis_label"
+                        [good_value]="dealer_stats.good_value"
+                        [good_value_label]="dealer_stats.good_value_label"
+                        [bad_value]="dealer_stats.bad_value || 0"
+                        [bad_value_label]="dealer_stats.bad_value_label"
+                        [has_status_filter]="true"
+                        [page]="'dealers'"
+                    >
+                    </app-data-card-compare>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg dealer-card">
+                <mat-card class="h-100">
+                    <app-data-card-count
+                        *ngIf="dealer_stats; else loader"
+                        [data_value]="dealer_stats.this_week_value"
+                        [data_label]="dealer_stats.this_week_value_label"
+                        [data_description]="dealer_stats.this_week_value_description"
+                    >
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+            <div class="col-12 col-lg dealer-card">
+                <mat-card class="h-100">
+                    <app-data-card-count
+                        *ngIf="dealer_stats; else loader"
+                        [data_value]="dealer_stats.last_week_value"
+                        [data_label]="dealer_stats.last_week_value_label"
+                        [data_description]="dealer_stats.last_week_value_description"
+                    >
+                    </app-data-card-count>
+                </mat-card>
+            </div>
+        </div>
+        <ng-template #loader>
+            <div class="py-4">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </ng-template>
+        <hr class="my-4" />
 
-		<div class="custom-mat-tab">
-			<mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
-				<mat-tab label="Dealers View">
-					<div class="col-lg-12 p-0" *ngIf="current_tab === 'Dealer'">
-						<div class="row">
-							<div class="col-lg-12 mt-4">
-								<app-dealers-table [update_info]="update_info"></app-dealers-table>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
+        <div class="custom-mat-tab">
+            <mat-tab-group dynamicHeight (selectedTabChange)="tabSelected($event)">
+                <mat-tab label="Dealers View">
+                    <div class="col-lg-12 p-0" *ngIf="current_tab === 'Dealer'">
+                        <div class="row">
+                            <div class="col-lg-12 mt-4">
+                                <app-dealers-table [update_info]="update_info"></app-dealers-table>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
 
-				<mat-tab label="Billings" *ngIf="!is_dealer_admin">
-					<div class="col-lg-12 px-0" *ngIf="current_tab === 'Bills'">
-						<div class="row">
-							<div class="col-lg-12 mt-4">
-								<app-billings-view class="full-width"></app-billings-view>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
+                <mat-tab label="Billings" *ngIf="!is_dealer_admin">
+                    <div class="col-lg-12 px-0" *ngIf="current_tab === 'Bills'">
+                        <div class="row">
+                            <div class="col-lg-12 mt-4">
+                                <app-billings-view class="full-width"></app-billings-view>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
 
-				<mat-tab label="Invoice" *ngIf="!is_dealer_admin">
-					<div class="col-lg-12 px-0" *ngIf="current_tab === 'Invoice'">
-						<div class="row no-gutters">
-							<div class="col-lg-12 p-0 mt-4">
-								<app-invoice-view class="full-width"></app-invoice-view>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
+                <mat-tab label="Invoice" *ngIf="!is_dealer_admin">
+                    <div class="col-lg-12 px-0" *ngIf="current_tab === 'Invoice'">
+                        <div class="row no-gutters">
+                            <div class="col-lg-12 p-0 mt-4">
+                                <app-invoice-view class="full-width"></app-invoice-view>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
 
-				<mat-tab label="Orders ({{ orders }})" *ngIf="!is_dealer_admin">
-					<div class="col-lg-12 px-0" *ngIf="current_tab === 'Orders'">
-						<div class="row no-gutters">
-							<div class="col-lg-12 p-0 mt-4">
-								<app-orders class="full-width"></app-orders>
-							</div>
-						</div>
-					</div>
-				</mat-tab>
-			</mat-tab-group>
-		</div>
-	</div>
+                <mat-tab label="Orders ({{ orders }})" *ngIf="!is_dealer_admin">
+                    <div class="col-lg-12 px-0" *ngIf="current_tab === 'Orders'">
+                        <div class="row no-gutters">
+                            <div class="col-lg-12 p-0 mt-4">
+                                <app-orders class="full-width"></app-orders>
+                            </div>
+                        </div>
+                    </div>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
 </div>
