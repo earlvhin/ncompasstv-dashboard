@@ -29,13 +29,15 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 	is_current_user_dealer = this.current_user_role === 'dealer';
 	is_current_user_dealer_admin = this.current_user_role === 'dealeradmin';
 	is_form_ready = false;
-	// is_invalid_url = true;
+	is_invalid_url = true;
 	is_dealer = false;
 	is_search = false;
 	is_widget_feed = false;
 	is_loading_dealers = true;
-	// is_validating_url = false;
+	isUrlValidType: boolean;
+	is_validating_url = false;
 	loading_search = false;
+	onEditUrl= false;
 	paging: PAGING;
 
 	private is_current_user_admin = this.current_user_role === 'administrator';
@@ -160,15 +162,17 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 			const decodedScript = decodeURIComponent(embeddedScriptData.value.replace(/\+/g, ' '));
 			const embeddedScriptControl = new FormControl(decodedScript, Validators.required);
 			this.edit_feed_form.addControl('embeddedScript', embeddedScriptControl);
-			// this.is_invalid_url = false;
+			this.onEditUrl = false;
+			this.is_invalid_url = false;
+			this.isUrlValidType = false;
 			return;
 		}
 
 		const feedUrlData = this._dialog_data.feed_url as { link: string };
 		const feedUrlControl = new FormControl(feedUrlData.link, Validators.required);
 		this.edit_feed_form.addControl('feedUrl', feedUrlControl);
-		// this.is_invalid_url = this.urlCheck(feedUrlControl.value);
-		// this.subscribeToFeedUrlChanges();
+		this.is_invalid_url = this.urlCheck(feedUrlControl.value);
+		this.subscribeToFeedUrlChanges();
 	}
 
 	private setDealerData() {
@@ -190,18 +194,20 @@ export class EditFeedComponent implements OnInit, OnDestroy {
 		this._dialog.open(ConfirmationModalComponent, dialogConfig);
 	}
 
-	// private subscribeToFeedUrlChanges() {
-	// 	const form = this.edit_feed_form;
-	// 	const control = form.get('feedUrl');
+	private subscribeToFeedUrlChanges() {
+		const form = this.edit_feed_form;
+		const control = form.get('feedUrl');
 
-	// 	form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async () => {
-	// 		if (this.is_widget_feed) return;
-	// 		this.is_validating_url = true;
-	// 		const url = control.value as string;
-	// 		this.is_invalid_url = !(await this._feed.check_url(url));
-	// 		this.is_validating_url = false;
-	// 	});
-	// }
+		form.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async () => {
+			if (this.is_widget_feed) return;
+			this.is_validating_url = true;
+			this.onEditUrl = true;
+			const url = control.value as string;
+			this.is_invalid_url = !(await this._feed.check_url(url));
+			this.isUrlValidType = this._feed.isUrlValid;
+			this.is_validating_url = false;
+		});
+	}
 
 	private urlCheck(data: string) {
 		if (typeof data === 'undefined' || !data || data.trim().length <= 0) return true;

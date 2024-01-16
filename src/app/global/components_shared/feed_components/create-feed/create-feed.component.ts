@@ -23,7 +23,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	dealers_data: Array<any> = [];
 	filtered_options: Observable<any[]>;
 	has_loaded_dealers = false;
-	// is_invalid_url = false;
+	is_invalid_url = false;
 	has_selected_dealer_id = false;
 	has_selected_widget_feed_type = false;
 	is_current_user_dealer = this._isDealer;
@@ -31,12 +31,14 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 	is_current_user_dealer_admin = this._isDealerAdmin;
 	is_creating_feed = false;
 	is_search = false;
-	// is_validating_url = false;
+	isUrlValidType: boolean;
+	is_validating_url = false;
 	feed_types = this._feedTypes;
 	loading_data = true;
 	loading_search = false;
 	new_feed_form: FormGroup;
 	paging: PAGING;
+	disabled_submit = true;
 
 	private selected_dealer_id: string;
 	protected _unsubscribe = new Subject<void>();
@@ -214,7 +216,7 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 		});
 
 		this.subscribeToFeedTypeChanges();
-		// this.subscribeToFeedUrlChanges();
+		 this.subscribeToFeedUrlChanges();
 	}
 
 	// Autocomplete beyond this point
@@ -258,16 +260,19 @@ export class CreateFeedComponent implements OnInit, OnDestroy {
 		});
 	}
 
-	// private subscribeToFeedUrlChanges() {
-	// 	const control = this.new_feed_form.get('feedUrl');
 
-	// 	control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async (response) => {
-	// 		this.is_validating_url = true;
-	// 		const url = response as string;
-	// 		this.is_invalid_url = !(await this._feed.check_url(url));
-	// 		this.is_validating_url = false;
-	// 	});
-	// }
+	private subscribeToFeedUrlChanges() {
+		const control = this.new_feed_form.get('feedUrl');
+
+		control.valueChanges.pipe(takeUntil(this._unsubscribe), debounceTime(1000)).subscribe(async (response) => {
+			this.is_validating_url = true;
+			const url = response as string;
+			this.is_invalid_url = !(await this._feed.check_url(url));
+			this.isUrlValidType = this._feed.isUrlValid;
+			this.is_validating_url = false;
+			this.disabled_submit = false
+		});
+	}
 
 	protected get _feedTypes() {
 		return [

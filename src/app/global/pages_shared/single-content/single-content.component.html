@@ -1,117 +1,117 @@
 <ng-container>
-	<div class="theme-container single-content" *ngIf="content$ | async as data; else loading">
-		<div class="title-section">
-			<div class="d-flex align-items-center">
-				<div class="flex-even">
-					<h1 class="page-title" [title]="data.content.title">{{ data.content.title | substring : 40 }}</h1>
-				</div>
-			</div>
-			<hr class="my-4" />
-		</div>
+    <div class="theme-container single-content" *ngIf="content$ | async as data; else loading">
+        <div class="title-section">
+            <div class="d-flex align-items-center">
+                <div class="flex-even">
+                    <h1 class="page-title" [title]="data.content.title">{{ data.content.title | substring : 40 }}</h1>
+                </div>
+            </div>
+            <hr class="my-4" />
+        </div>
 
-		<div class="row mb-4" *ngIf="content$ | async as c">
-			<div class="col-lg-6">
-				<div class="d-flex align-items-center content-wrapper">
-					<ng-container *ngIf="data.content.fileType | isvideo">
-						<video autoplay muted [src]="data.content.url + data.content.fileName"></video>
-					</ng-container>
-					<ng-container *ngIf="data.content.fileType | isimage">
-						<img [src]="data.content.url + data.content.fileName" />
-					</ng-container>
-					<ng-container *ngIf="data.content.fileType == 'feed' && data.content.classification !== 'live_stream'">
-						<img [src]="fs_screenshot + '/' + data.content.url | sanitize" />
-					</ng-container>
-					<ng-container *ngIf="data.content.fileType == 'feed' && data.content.classification === 'live_stream'">
-						<iframe [src]="data.content.url | sanitize"></iframe>
-					</ng-container>
-				</div>
-			</div>
-			<div class="col-lg-6">
-				<mat-card class="p-4">
-					<h5 class="mb-0 font-weight-medium">Content Information</h5>
+        <div class="row mb-4" *ngIf="content$ | async as c">
+            <div class="col-lg-6">
+                <div class="d-flex align-items-center content-wrapper">
+                    <ng-container *ngIf="data.content.fileType | isvideo">
+                        <video autoplay muted [src]="data.content.url + data.content.fileName"></video>
+                    </ng-container>
+                    <ng-container *ngIf="data.content.fileType | isimage">
+                        <img [src]="data.content.url + data.content.fileName" />
+                    </ng-container>
+                    <ng-container *ngIf="data.content.fileType == 'feed' && data.content.classification !== 'live_stream'">
+                        <img [src]="fs_screenshot + '/' + data.content.url | sanitize" />
+                    </ng-container>
+                    <ng-container *ngIf="data.content.fileType == 'feed' && data.content.classification === 'live_stream'">
+                        <iframe [src]="data.content.url | sanitize"></iframe>
+                    </ng-container>
+                </div>
+            </div>
+            <div class="col-lg-6">
+                <mat-card class="p-4">
+                    <h5 class="mb-0 font-weight-medium">Content Information</h5>
 
-					<hr />
+                    <hr />
 
-					<div class="d-flex">
-						<div class="flex-even filename">
-							<span class="sm-text"> Filename </span>
-							<h5 class="mb-0" [title]="data.content.title">
-								{{ data.content.title | substring : 32 }}
-							</h5>
-						</div>
+                    <div class="d-flex">
+                        <div class="flex-even filename">
+                            <span class="sm-text"> Filename </span>
+                            <h5 class="mb-0" [title]="data.content.title">
+                                {{ data.content.title | substring : 32 }}
+                            </h5>
+                        </div>
 
-						<div class="flex-even filetype">
-							<span class="sm-text"> Filetype </span>
-							<h5 class="mb-0">
-								{{ data.content.fileType }}
-							</h5>
-						</div>
-					</div>
+                        <div class="flex-even filetype">
+                            <span class="sm-text"> Filetype </span>
+                            <h5 class="mb-0">
+                                {{ data.content.fileType }}
+                            </h5>
+                        </div>
+                    </div>
 
-					<hr class="my-3" />
+                    <hr class="my-3" />
 
-					<div class="d-flex">
-						<div class="flex-even uploaded-by">
-							<span class="sm-text"> Uploaded by </span>
-							<h5>
-								{{ data.content.createdByName || 'N/A' }}
-							</h5>
-						</div>
+                    <div class="d-flex">
+                        <div class="flex-even uploaded-by">
+                            <span class="sm-text"> Uploaded by </span>
+                            <h5>
+                                {{ data.content.createdByName || "N/A" }}
+                            </h5>
+                        </div>
 
-						<div class="flex-even date-uploaded">
-							<span class="sm-text"> Date Uploaded </span>
-							<h5>
-								{{ data.content.dateCreated | date }}
-							</h5>
-						</div>
+                        <div class="flex-even date-uploaded">
+                            <span class="sm-text"> Date Uploaded </span>
+                            <h5>
+                                {{ data.content.dateCreated | date }}
+                            </h5>
+                        </div>
 
-						<div class="flex-even duration" *ngIf="data.content.fileType == 'webm'">
-							<span class="sm-text"> Duration </span>
-							<h5>
-								{{ data.content.duration }}
-							</h5>
-						</div>
-					</div>
+                        <div class="flex-even duration" *ngIf="data.content.fileType == 'webm'">
+                            <span class="sm-text"> Duration </span>
+                            <h5>
+                                {{ data.content.duration }}
+                            </h5>
+                        </div>
+                    </div>
 
-					<hr class="my-3" />
+                    <hr class="my-3" />
 
-					<div class="d-flex">
-						<div class="flex-even uploaded-by">
-							<span class="sm-text"> License Count </span>
-							<h5>
-								{{ license_count }}
-							</h5>
-						</div>
+                    <div class="d-flex">
+                        <div class="flex-even uploaded-by">
+                            <span class="sm-text"> License Count </span>
+                            <h5>
+                                {{ license_count }}
+                            </h5>
+                        </div>
 
-						<div class="flex-even date-uploaded">
-							<span class="sm-text"> Host Count </span>
-							<h5>
-								{{ host_count }}
-							</h5>
-						</div>
+                        <div class="flex-even date-uploaded">
+                            <span class="sm-text"> Host Count </span>
+                            <h5>
+                                {{ host_count }}
+                            </h5>
+                        </div>
 
-						<div class="flex-even duration">
-							<span class="sm-text"> Playlist Count </span>
-							<h5>
-								{{ in_playlist.length }}
-							</h5>
-						</div>
+                        <div class="flex-even duration">
+                            <span class="sm-text"> Playlist Count </span>
+                            <h5>
+                                {{ in_playlist.length }}
+                            </h5>
+                        </div>
 
-						<div class="flex-even duration">
-							<span class="sm-text"> Screen Count </span>
-							<h5>
-								{{ screen_count }}
-							</h5>
-						</div>
-					</div>
-				</mat-card>
-			</div>
-		</div>
+                        <div class="flex-even duration">
+                            <span class="sm-text"> Screen Count </span>
+                            <h5>
+                                {{ screen_count }}
+                            </h5>
+                        </div>
+                    </div>
+                </mat-card>
+            </div>
+        </div>
 
-		<div class="row">
-			<div class="col-lg-12 custom-mat-tab">
-				<mat-tab-group dynamicHeight>
-					<!-- <mat-tab label="Content Analytics">
+        <div class="row">
+            <div class="col-lg-12 custom-mat-tab">
+                <mat-tab-group dynamicHeight>
+                    <!-- <mat-tab label="Content Analytics">
                         <div class="row align-items-center mt-4">
                             <div class="col-lg-4">
                                 <h3 class="mb-0">Report for {{ date_selected }}</h3>
@@ -174,175 +174,165 @@
                             </div>
                         </div>
                     </mat-tab> -->
-					<mat-tab label="Reports">
-						<div class="row align-items-center mt-4">
-							<div class="col-lg-6">
-								<h2 class="m-0">Playlist Reports</h2>
-								<p class="sm-text">Select Start and End Date then click the Generate button to get started.</p>
-							</div>
-							<div class="col-lg-6">
-								<div class="d-flex">
-									<div class="flex-even">
-										<mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
-											<mat-label class="md-text">Start Date</mat-label>
-											<input
-												(dateInput)="onSelectStartDate($event.value)"
-												[(value)]="start_date"
-												matInput
-												[matDatepicker]="datePicker"
-												readonly />
-											<mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
-											<mat-datepicker #datePicker></mat-datepicker>
-										</mat-form-field>
-									</div>
+                    <mat-tab label="Reports">
+                        <div class="row align-items-center mt-4">
+                            <div class="col-lg-6">
+                                <h2 class="m-0">Playlist Reports</h2>
+                                <p class="sm-text">Select Start and End Date then click the Generate button to get started.</p>
+                            </div>
+                            <div class="col-lg-6">
+                                <div class="d-flex">
+                                    <div class="flex-even">
+                                        <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
+                                            <mat-label class="md-text">Start Date</mat-label>
+                                            <input (dateInput)="onSelectStartDate($event.value)" [(value)]="start_date" matInput [matDatepicker]="datePicker" readonly />
+                                            <mat-datepicker-toggle matSuffix [for]="datePicker"></mat-datepicker-toggle>
+                                            <mat-datepicker #datePicker></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
 
-									<div class="flex-even mx-3">
-										<mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
-											<mat-label class="md-text">End Date</mat-label>
-											<input
-												(dateInput)="onSelectEndDate($event.value)"
-												[(value)]="end_date"
-												matInput
-												[matDatepicker]="datePicker2"
-												[min]="start_date"
-												readonly />
-											<mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
-											<mat-datepicker #datePicker2></mat-datepicker>
-										</mat-form-field>
-									</div>
+                                    <div class="flex-even mx-3">
+                                        <mat-form-field class="w-100" appearance="fill" appDefaultDateFormat>
+                                            <mat-label class="md-text">End Date</mat-label>
+                                            <input
+                                                (dateInput)="onSelectEndDate($event.value)"
+                                                [(value)]="end_date"
+                                                matInput
+                                                [matDatepicker]="datePicker2"
+                                                [min]="start_date"
+                                                readonly
+                                            />
+                                            <mat-datepicker-toggle matSuffix [for]="datePicker2"></mat-datepicker-toggle>
+                                            <mat-datepicker #datePicker2></mat-datepicker>
+                                        </mat-form-field>
+                                    </div>
 
-									<div>
-										<button
-											mat-button
-											mat-raised-button
-											class="theme-btn px-4 height-60"
-											[disabled]="!start_date || !end_date || generating_report"
-											title="Generate Report"
-											(click)="generateReport()">
-											<div class="d-flex align-items-center">
-												<div class="flex-even mr-2">
-													<span class="fas fa-chart-bar"></span>
-													<span class="ml-2">Generate</span>
-												</div>
-												<div *ngIf="generating_report">
-													<mat-spinner [diameter]="20"></mat-spinner>
-												</div>
-											</div>
-										</button>
-									</div>
-								</div>
-							</div>
-						</div>
+                                    <div>
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            class="theme-btn px-4 height-60"
+                                            [disabled]="!start_date || !end_date || generating_report"
+                                            title="Generate Report"
+                                            (click)="generateReport()"
+                                        >
+                                            <div class="d-flex align-items-center">
+                                                <div class="flex-even mr-2">
+                                                    <span class="fas fa-chart-bar"></span>
+                                                    <span class="ml-2">Generate</span>
+                                                </div>
+                                                <div *ngIf="generating_report">
+                                                    <mat-spinner [diameter]="20"></mat-spinner>
+                                                </div>
+                                            </div>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
 
-						<hr *ngIf="report_generated" />
+                        <hr *ngIf="report_generated" />
 
-						<div class="row no-gutters mt-3" *ngIf="report_generated">
-							<!-- From -->
-							<div class="col-lg-3">
-								<div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
-									<h5 class="mb-0 text-white pt-1 align-vertical">
-										Showing records from <span class="text-primary">{{ start_date | date }}</span> to
-										<span class="text-primary">{{ end_date | date }}</span>
-									</h5>
-								</div>
-							</div>
-							<!-- To -->
-							<div class="col-lg-4">
-								<div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
-									<h5 class="mb-0 text-white pt-1">
-										Summary : Total Play Count: <span class="text-primary">{{ total_playcount }}</span> Total Play Duration:
-										<span class="text-primary">{{ total_duration }}</span>
-									</h5>
-								</div>
-							</div>
-							<!-- Export Button -->
-							<div class="col-lg-1">
-								<button
-									mat-button
-									mat-raised-button
-									class="theme-btn sm-text _primary height-60 width-80"
-									(click)="exportTable()"
-									[disabled]="workbook_generation"
-									title="Export to CSV">
-									<span class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner' }}"></span>
-								</button>
-							</div>
-							<!-- Search Field -->
-							<div class="col-lg-4">
-								<mat-form-field class="w-100" appearance="fill">
-									<mat-label class="md-text">Search Host</mat-label>
-									<input
-										matInput
-										type="text"
-										name="search_field"
-										[formControl]="search_field"
-										[placeholder]="'Ex: McDonald\'s'"
-										(change)="searchHostReport()" />
-								</mat-form-field>
-							</div>
-						</div>
+                        <div class="row no-gutters mt-3" *ngIf="report_generated">
+                            <!-- From -->
+                            <div class="col-lg-3">
+                                <div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
+                                    <h5 class="mb-0 text-white pt-1 align-vertical">
+                                        Showing records from <span class="text-primary">{{ start_date | date }}</span> to
+                                        <span class="text-primary">{{ end_date | date }}</span>
+                                    </h5>
+                                </div>
+                            </div>
+                            <!-- To -->
+                            <div class="col-lg-4">
+                                <div class="bg-dark px-3 d-flex align-items-center rounded height-60 mr-2">
+                                    <h5 class="mb-0 text-white pt-1">
+                                        Summary : Total Play Count: <span class="text-primary">{{ total_playcount }}</span> Total Play Duration:
+                                        <span class="text-primary">{{ total_duration }}</span>
+                                    </h5>
+                                </div>
+                            </div>
+                            <!-- Export Button -->
+                            <div class="col-lg-1">
+                                <button
+                                    mat-button
+                                    mat-raised-button
+                                    class="theme-btn sm-text _primary height-60 width-80"
+                                    (click)="exportTable()"
+                                    [disabled]="workbook_generation"
+                                    title="Export to CSV"
+                                >
+                                    <span
+                                        class="{{ !workbook_generation ? 'fas fa-file-excel' : 'fas fa-spinner fa-spin' }}"
+                                        [ngStyle]="{ color: workbook_generation ? '#222' : 'white' }"
+                                    ></span>
+                                </button>
+                            </div>
+                            <!-- Search Field -->
+                            <div class="col-lg-4">
+                                <mat-form-field class="w-100" appearance="fill">
+                                    <mat-label class="md-text">Search Host</mat-label>
+                                    <input matInput type="text" name="search_field" [formControl]="search_field" [placeholder]="'Ex: McDonald\'s'" (change)="searchHostReport()" />
+                                </mat-form-field>
+                            </div>
+                        </div>
 
-						<mat-card *ngIf="content_logs_report_filtered.length > 0; else nodata">
-							<app-data-table
-								[table_data]="content_logs_report_filtered"
-								[table_columns]="content_logs_report_table_columns"
-								[new_table]="true"></app-data-table>
-						</mat-card>
-					</mat-tab>
-					<mat-tab label="In Playlist">
-						<mat-card *ngIf="in_playlist.length > 0; else nodata">
-							<app-data-table
-								[table_data]="in_playlist"
-								[table_columns]="in_playlist_table_columns"
-								[new_table]="true"></app-data-table>
-						</mat-card>
-					</mat-tab>
-					<mat-tab label="Playing Where">
-						<mat-card *ngIf="playing_where.length > 0; else nodata">
-							<app-data-table [table_data]="playing_where" [table_columns]="table_columns" [new_table]="true"></app-data-table>
-						</mat-card>
-					</mat-tab>
-					<mat-tab label="History">
-						<mat-card *ngIf="content_history.length > 0; else nodata">
-							<app-data-table
-								[table_data]="content_history"
-								[table_columns]="content_history_table_columns"
-								[paging_details]="paging_data_history"
-								(page_triggered)="onClickPageNumber($event)"
-								[new_table]="true">
-							</app-data-table>
-						</mat-card>
-					</mat-tab>
-				</mat-tab-group>
-			</div>
-		</div>
+                        <mat-card *ngIf="content_logs_report_filtered.length > 0; else nodata">
+                            <app-data-table [table_data]="content_logs_report_filtered" [table_columns]="content_logs_report_table_columns" [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="In Playlist">
+                        <mat-card *ngIf="in_playlist.length > 0; else nodata">
+                            <app-data-table [table_data]="in_playlist" [table_columns]="in_playlist_table_columns" [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="Playing Where">
+                        <mat-card *ngIf="playing_where.length > 0; else nodata">
+                            <app-data-table [table_data]="playing_where" [table_columns]="table_columns" [new_table]="true"></app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                    <mat-tab label="History">
+                        <mat-card *ngIf="content_history.length > 0; else nodata">
+                            <app-data-table
+                                [table_data]="content_history"
+                                [table_columns]="content_history_table_columns"
+                                [paging_details]="paging_data_history"
+                                (page_triggered)="onClickPageNumber($event)"
+                                [new_table]="true"
+                            >
+                            </app-data-table>
+                        </mat-card>
+                    </mat-tab>
+                </mat-tab-group>
+            </div>
+        </div>
 
-		<ng-template #loader>
-			<div class="loader text-center py-5">
-				<app-spinner></app-spinner>
-				<h3 class="mt-4 mb-2">Please Wait</h3>
-				<p class="sm-text">Getting content logs from database.</p>
-			</div>
-		</ng-template>
+        <ng-template #loader>
+            <div class="loader text-center py-5">
+                <app-spinner></app-spinner>
+                <h3 class="mt-4 mb-2">Please Wait</h3>
+                <p class="sm-text">Getting content logs from database.</p>
+            </div>
+        </ng-template>
 
-		<ng-template #nodata>
-			<div class="col-lg-12 pl-0 pr-0">
-				<mat-card class="pt-5 pb-5 col-lg-12 text-center">
-					<div class="mb-4">
-						<i class="text-gray fa-5x far fa-file-alt"></i>
-					</div>
-					<h3 class="text-gray col-lg-12">
-						{{ generating_report ? 'Generating Content Logs Report, Please Wait ...' : 'No Data Found' }}
-					</h3>
-				</mat-card>
-			</div>
-		</ng-template>
-	</div>
+        <ng-template #nodata>
+            <div class="col-lg-12 pl-0 pr-0">
+                <mat-card class="pt-5 pb-5 col-lg-12 text-center">
+                    <div class="mb-4">
+                        <i class="text-gray fa-5x far fa-file-alt"></i>
+                    </div>
+                    <h3 class="text-gray col-lg-12">
+                        {{ generating_report ? "Generating Content Logs Report, Please Wait ..." : "No Data Found" }}
+                    </h3>
+                </mat-card>
+            </div>
+        </ng-template>
+    </div>
 
-	<ng-template #loading>
-		<div class="loader text-center py-5">
-			<app-spinner></app-spinner>
-			<h3 class="mt-4 mb-2">Please Wait</h3>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div class="loader text-center py-5">
+            <app-spinner></app-spinner>
+            <h3 class="mt-4 mb-2">Please Wait</h3>
+        </div>
+    </ng-template>
 </ng-container>

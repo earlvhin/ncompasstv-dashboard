@@ -12,6 +12,7 @@ import { BaseService } from '../base.service';
 	providedIn: 'root'
 })
 export class FeedService extends BaseService {
+	isUrlValid = false;
 	public logoutConfirmed = false;
 	private unsavedChangesSubject = new BehaviorSubject<boolean>(false);
   	hasUnsavedChanges$: Observable<boolean> = this.unsavedChangesSubject.asObservable();
@@ -207,21 +208,40 @@ export class FeedService extends BaseService {
 	 * @param data
 	 * @returns boolean
 	 */
+
 	private is_proper_feed_url(data: string) {
 		const PROTOCOLS = ['http://', 'https://'];
-
+	
 		if (data.trim().length <= 0) return false;
-
-		const hasProtocol = () => PROTOCOLS.some((p) => data.includes(p));
-
+	
+		const hasProtocol = () => PROTOCOLS.some((p) => data.startsWith(p));
+	
 		const hasValidPattern = () => {
-			const pattern =
-				/^(?:(?:https?|ftp):\/\/)?(?:\S+(?::\S*)?@)?(?:((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+(?:[A-Za-z]{2,6}\.?|[A-Za-z0-9-]{2,}\.?))(?::\d{2,5})?([/?]\S*)?(?:\?\S+)?$/;
+			const pattern = new RegExp('^(https?:\\/\\/)?' +
+				'((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+				'((\\d{1,3}\\.){3}\\d{1,3}))' +
+				'(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+				'(\\?[;&a-z\\d%_.~+=-]*)?' +
+				'(\\#[-a-z\\d_]*)?$', 'i');
 
 			return pattern.test(data);
 		};
+	
+		//Check number of occurence of protocols
+		const countProtocols = () => {
+			let count = 0;
+			PROTOCOLS.forEach((p) => {
+				const regex = new RegExp(p, 'g');
+				const matches = (data.match(regex) || []).length;
+				count += matches;
+			});
+			return count;
+		};
 
-		return hasValidPattern() && hasProtocol();
+		const isValid = hasValidPattern() && hasProtocol() && countProtocols() <= 1;
+		this.isUrlValid = isValid;
+	
+		return isValid;
 	}
 
 	/**
