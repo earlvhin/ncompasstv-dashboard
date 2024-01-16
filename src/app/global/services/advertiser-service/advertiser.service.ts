@@ -7,86 +7,91 @@ import { API_EXPORT_ADVERTISER } from '../../models/api_export-advertiser.model'
 import { HttpParams } from '@angular/common/http';
 
 @Injectable({
-	providedIn: 'root'
+    providedIn: 'root',
 })
 export class AdvertiserService extends BaseService {
-	token = JSON.parse(localStorage.getItem('tokens'));
+    token = JSON.parse(localStorage.getItem('tokens'));
 
-	create_advertiser_activity_logs(data) {
-		const url = `${this.creators.new_advertiser_activity_logs}`;
-		return this.postRequest(url, data);
-	}
+    create_advertiser_activity_logs(data) {
+        const url = `${this.creators.new_advertiser_activity_logs}`;
+        return this.postRequest(url, data);
+    }
 
-	get_advertisers(filters: API_FILTERS): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
-		const base = `${this.getters.api_get_advertisers}`;
-		const params = this.setUrlParams(filters, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
-	}
+    get_advertisers(filters: API_FILTERS): Observable<{ advertisers: API_ADVERTISER[]; paging: PAGING }> {
+        const base = `${this.getters.api_get_advertisers}`;
+        const params = this.setUrlParams(filters, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
 
-	get_advertiser_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
-		const base = `${this.getters.api_get_advertisers_activity}`;
-		const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
-	}
+    get_advertiser_activity(ownerId: string, sortColumn: string, sortOrder: string, page: number): Observable<{ paging: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_advertisers_activity}`;
+        const params = this.setUrlParams({ ownerId, sortColumn, sortOrder, page }, false, true);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
 
-	get_advertisers_total() {
-		return this.getRequest(`${this.getters.api_get_advertiser_total}`);
-	}
+    get_advertisers_total() {
+        return this.getRequest(`${this.getters.api_get_advertiser_total}`);
+    }
 
-	get_advertisers_total_by_dealer(
-		id: string
-	): Observable<{ newAdvertisersLastWeek: number; newAdvertisersThisWeek: number; total: number; totalActive: number; totalInActive: number }> {
-		const url = `${this.getters.api_get_advertiser_total_by_dealer}${id}`;
-		return this.getRequest(url);
-	}
+    get_advertisers_total_by_dealer(
+        id: string
+    ): Observable<{ newAdvertisersLastWeek: number; newAdvertisersThisWeek: number; total: number; totalActive: number; totalInActive: number }> {
+        const url = `${this.getters.api_get_advertiser_total_by_dealer}${id}`;
+        return this.getRequest(url);
+    }
 
-	get_advertisers_by_dealer_id(
-		filters: API_FILTERS,
-		enforceTagKeySearch = false,
-		allowBlankFilters = true
-	): Observable<{ advertisers?: API_ADVERTISER[]; paging?: PAGING; message?: string }> {
-		const base = `${this.getters.api_get_advertisers_by_dealer_id}`;
-		const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);
-		const url = `${base}${params}`;
-		return this.getRequest(url);
-	}
+    get_advertisers_by_dealer_id(
+        filters: API_FILTERS,
+        enforceTagKeySearch = false,
+        allowBlankFilters = true
+    ): Observable<{ advertisers?: API_ADVERTISER[]; paging?: PAGING; message?: string }> {
+        const base = `${this.getters.api_get_advertisers_by_dealer_id}`;
+        const params = this.setUrlParams(filters, enforceTagKeySearch, allowBlankFilters);
+        const url = `${base}${params}`;
+        return this.getRequest(url);
+    }
 
-	get_advertisers_unassigned_to_user(id: string, page: number, key: string, column = '', order = '') {
-		const url = `${this.getters.api_get_advertisers_unassigned}${id}&page=${page}&search=${key}&sortColumn=${column}&sortOrder=${order}`;
-		return this.getRequest(url);
-	}
+    get_advertisers_unassigned_to_user(id: string, page: number, key: string, column = '', order = '') {
+        const url = `${this.getters.api_get_advertisers_unassigned}${id}&page=${page}&search=${key}&sortColumn=${column}&sortOrder=${order}`;
+        return this.getRequest(url);
+    }
 
-	export_advertisers(dealerId: string, filter: string, sortColumn: string, sortOrder: string): Observable<API_EXPORT_ADVERTISER[]> {
-		const url = `${this.getters.export_advertiser}${dealerId}&filter=${filter}&sortColumn=${sortColumn}&status=A&sortOrder=${sortOrder}`;
-		return this.getRequest(url);
-	}
+    export_advertisers(dealerId: string, filter: string, sortColumn: string, sortOrder: string): Observable<API_EXPORT_ADVERTISER[]> {
+        const url = `${this.getters.export_advertiser}${dealerId}&filter=${filter}&sortColumn=${sortColumn}&status=A&sortOrder=${sortOrder}`;
+        return this.getRequest(url);
+    }
 
-	get_advertiser_by_id(id: string): Observable<{ message?: string; advertiser?: any; tags?: TAG[] }> {
-		const url = `${this.getters.api_get_advertisers_by_id}${id}`;
-		const request = this.getRequest(url);
-		return request;
-	}
+    export_all_advertisers(sortColumn: string, sortOrder: string): Observable<API_EXPORT_ADVERTISER[]> {
+        const url = `${this.getters.export_all_advertiser}?sortColumn=${sortColumn}&sortOrder=${sortOrder}`;
+        return this.getRequest(url);
+    }
 
-	get_advertiser_report(data) {
-		return this.postRequest(`${this.getters.api_get_advertiser_report}`, data);
-	}
+    get_advertiser_by_id(id: string): Observable<{ message?: string; advertiser?: any; tags?: TAG[] }> {
+        const url = `${this.getters.api_get_advertisers_by_id}${id}`;
+        const request = this.getRequest(url);
+        return request;
+    }
 
-	add_advertiser_profile(data) {
-		return this.postRequest(`${this.creators.api_new_advertiser_profile}`, data);
-	}
+    get_advertiser_report(data) {
+        return this.postRequest(`${this.getters.api_get_advertiser_report}`, data);
+    }
 
-	search_advertiser(keyword = '') {
-		const url = `${this.baseUri}${this.getters.search_advertiser}${keyword}`;
-		return this.getRequest(url);
-	}
+    add_advertiser_profile(data) {
+        return this.postRequest(`${this.creators.api_new_advertiser_profile}`, data);
+    }
 
-	update_advertiser(data) {
-		return this.postRequest(`${this.updaters.api_update_advertiser}`, data);
-	}
+    search_advertiser(keyword = '') {
+        const url = `${this.baseUri}${this.getters.search_advertiser}${keyword}`;
+        return this.getRequest(url);
+    }
 
-	remove_advertiser(id, force) {
-		return this.postRequest(`${this.deleters.api_remove_advertiser}${id}&force=${force}`, null);
-	}
+    update_advertiser(data) {
+        return this.postRequest(`${this.updaters.api_update_advertiser}`, data);
+    }
+
+    remove_advertiser(id, force) {
+        return this.postRequest(`${this.deleters.api_remove_advertiser}${id}&force=${force}`, null);
+    }
 }

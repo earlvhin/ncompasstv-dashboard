@@ -2,7 +2,7 @@
 	<h3 class="mb-4">Create a Feed</h3>
 
 	<form class="text-left" [formGroup]="new_feed_form" (ngSubmit)="saveFeed()" class="text-left" #formDirective="ngForm">
-		<div class="d-flex flex-column mb-4">
+		<div class="d-flex flex-column">
 			<mat-form-field class="full-width">
 				<mat-label>Feed Type</mat-label>
 				<mat-select formControlName="feedType">
@@ -47,10 +47,15 @@
 			</ng-container>
 
 			<ng-container *ngIf="!has_selected_widget_feed_type; else textAreaScript">
-				<mat-form-field class="full-width">
-					<mat-label>Feed URL</mat-label>
-					<input matInput formControlName="feedUrl" matInput type="text" placeholder="URL needs to be working" />
-				</mat-form-field>
+				<div class="position-relative">
+					<mat-form-field class="full-width">
+						<mat-label>Feed URL</mat-label>
+						<input matInput formControlName="feedUrl" matInput type="text" placeholder="URL needs to be working" />
+					</mat-form-field>
+					<div *ngIf="is_validating_url" class="spinner-container d-flex align-items-center justify-content-between position-absolute top-0 right-0">
+						<app-spinner [diameter]="35"></app-spinner>
+					</div>
+				</div>
 			</ng-container>
 
 			<ng-template #textAreaScript>
@@ -66,10 +71,33 @@
 				</mat-form-field>
 			</ng-template>
 		</div>
+
+		<div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true">
+			<p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
+		</div>
+
+		<ng-container *ngIf="is_invalid_url && !is_validating_url">
+			<ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
+				<div class="alert alert-warning">
+					<p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+				</div>
+			</ng-container>
+	
+			<ng-template #isInvalidType>
+				<div class="alert alert-danger" >
+					<p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
+					<ul class="sm-text font-weight-bold pl-4">
+						<li>The feed URL does not start with "http" or "https"</li>
+						<li>Multiple HTTP protocols. Input one URL only.</li>
+					</ul>
+				</div>
+			</ng-template>
+		</ng-container>
+
 		<div class="d-flex flex-even align-items-center">
-			<button mat-button mat-raised-button class="theme-btn mr-2">
+			<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="is_validating_url && disabled_submit || !isUrlValidType">
 				<ng-container *ngIf="is_creating_feed"> Creating feed... </ng-container>
-				<ng-container *ngIf="!is_creating_feed"> Submit </ng-container>
+				<ng-container *ngIf="!is_creating_feed" > Submit </ng-container>
 			</button>
 
 			<button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>Cancel</button>

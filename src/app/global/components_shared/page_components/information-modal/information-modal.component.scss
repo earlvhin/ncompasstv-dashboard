@@ -30,4 +30,16 @@
 			list-style: none;
 		}
 	}
+
+	.ticket {
+		overflow-x: hidden;
+		overflow-y: auto;
+		height: 250px;
+	
+		p {
+			word-wrap: break-word;
+			white-space: -moz-pre-wrap;
+			white-space: pre-wrap;
+		}
+	}
 }

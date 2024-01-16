@@ -56,17 +56,31 @@
 			</div>
 		</div>
 
-		<div class="alert alert-primary" *ngIf="formControls.rssFeedUrl.valid && rss_url_checking">
-			<p class="sm-text font-weight-bold">Checking RSS URL: {{ formControls.rssFeedUrl.value }} format</p>
+		<div *ngIf="is_validating_url" class="spinner-container d-flex justify-content-between mb-2">
+			<app-spinner [diameter]="35"></app-spinner>
 		</div>
 
-		<div class="alert alert-success" *ngIf="rss_url_valid === true && !rss_url_checking">
+		<div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true">
 			<p class="sm-text font-weight-bold">Entered RSS URL is a supported format.</p>
 		</div>
 
-		<div class="alert alert-danger" *ngIf="rss_url_valid === false && !rss_url_checking">
-			<p class="sm-text font-weight-bold">Entered RSS URL is an unsupported format.</p>
-		</div>
+		<ng-container *ngIf="is_invalid_url && !is_validating_url">
+			<ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
+				<div class="alert alert-warning">
+					<p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
+				</div>
+			</ng-container>
+	
+			<ng-template #isInvalidType>
+				<div class="alert alert-danger" >
+					<p class="sm-text font-weight-bold">Feed URL Error! Possible reasons may be;</p>
+					<ul class="sm-text font-weight-bold pl-4">
+						<li>The feed URL does not start with "http" or "https"</li>
+						<li>Multiple HTTP protocols. Input one URL only.</li>
+					</ul>
+				</div>
+			</ng-template>
+		</ng-container>
 
 		<button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="generateNewsFeed()">
 			Next <span class="fas fa-long-arrow-right"></span>

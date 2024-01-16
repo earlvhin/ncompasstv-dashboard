@@ -61,6 +61,10 @@ export class InformationModalComponent implements OnInit {
 	get isTextField(): boolean {
 		return this.type === 'field';
 	}
+	
+	get isTicket(): boolean {
+		return this.type === 'ticket';
+	}
 
 	displayContents(): string {
 		if (typeof this.contents !== 'string' || !this.contents) return '';
