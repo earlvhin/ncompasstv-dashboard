@@ -391,19 +391,19 @@ export class CreateHostComponent implements OnInit {
         if (sliced_address.length == 5) {
             zipState = sliced_address[3].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]} ${zipState[2]}` : zipState[1];
+            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[2];
             address = `${sliced_address[0]}, ${sliced_address[1]}`;
         } else if (sliced_address.length == 4) {
             zipState = sliced_address[2].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]} ${zipState[2]}` : zipState[1];
+            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
             address = sliced_address[0];
         } else if (sliced_address.length == 3) {
             zipState = sliced_address[2].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]} ${zipState[2]}` : zipState[1];
+            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
             address = sliced_address[0];
         }
@@ -438,8 +438,8 @@ export class CreateHostComponent implements OnInit {
     }
 
     setZipValidatorRule(googleAddress: string) {
-        const maxLength = googleAddress.includes('Canada') ? 7 : 5;
-        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(maxLength)])
+        const zipLength = googleAddress.includes('Canada') ? 6 : 5;
+        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)])
     }
 
     searchStateAndRegion(state: string) {

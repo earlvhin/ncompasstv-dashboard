@@ -206,9 +206,7 @@
                             class="theme-btn mr-2"
                             [disabled]="
                                 new_host_form.invalid ||
-                                is_creating_host ||
-                                (canada_selected && new_host_form.get('zip').value.length !== 6) ||
-                                (!canada_selected && new_host_form.get('zip').value.length !== 5)
+                                is_creating_host
                             "
                         >
                             {{ is_creating_host ? "Saving Host Place..." : "Submit" }}
