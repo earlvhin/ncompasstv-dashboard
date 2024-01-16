@@ -40,6 +40,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     userIsAdmin: boolean = false;
     workbook: any;
     workbook_generation: boolean = false;
+    export_all_workbook_generation: boolean = false;
     worksheet: any;
 
     advertiser_table_column_for_export = [
@@ -131,7 +132,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
             const filename = `All ${data}.xlsx`;
             saveAs(blob, filename);
         });
-        this.workbook_generation = false;
+        this.export_all_workbook_generation = false;
     }
 
     getColumnsAndOrder(data) {
@@ -341,7 +342,7 @@ export class AdvertisersComponent implements OnInit, OnDestroy {
     }
 
     exportAdvertisersTable(data): void {
-        this.workbook_generation = true;
+        this.export_all_workbook_generation = true;
         const header = [];
         this.workbook = new Workbook();
         this.workbook.creator = 'NCompass TV';

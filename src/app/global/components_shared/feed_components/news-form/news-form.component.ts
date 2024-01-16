@@ -19,13 +19,18 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 	@Output() open_media_library: EventEmitter<any> = new EventEmitter();
 	@Output() news_feed_data: EventEmitter<any> = new EventEmitter();
 
+
+	disabled_submit = true;
+	is_invalid_url = false;
 	is_marking: boolean = false;
-	news_form: FormGroup;
+	is_validating_url = false;
+	isUrlValidType: boolean;
 	news_form_fields = this._createFormFields;
+	news_form: FormGroup;
+	rss_url_checking: boolean = false;
+	rss_url_valid: boolean;
 	selected_background_image: string;
 	selected_banner_image: string;
-	rss_url_valid: boolean;
-	rss_url_checking: boolean = false;
 
 	font_family = [{ label: 'Helvetica' }, { label: 'Poppins' }, { label: 'Roboto' }, { label: 'Montserrat' }];
 
@@ -144,16 +149,18 @@ export class NewsFormComponent implements OnInit, OnDestroy {
 			this.formControls.results.setValue(this.edit_news_data.results);
 			this.formControls.rssFeedUrl.setValue(this.edit_news_data.rssFeedUrl);
 			this.formControls.time.setValue(this.edit_news_data.time);
-			this.validateRssUrl(this.formControls.rssFeedUrl.value);
 			this.rss_url_checking = true;
 			this.rss_url_valid = undefined;
 		}
 
 		/** No Debounce for UI Alert Display */
-		this.formControls.rssFeedUrl.valueChanges.pipe(debounceTime(1000), takeUntil(this._unsubscribe)).subscribe(() => {
-			this.rss_url_checking = true;
-			this.rss_url_valid = undefined;
-			this.validateRssUrl(this.formControls.rssFeedUrl.value);
+		this.formControls.rssFeedUrl.valueChanges.pipe(debounceTime(1000), takeUntil(this._unsubscribe)).subscribe(async (response) => {
+			this.is_validating_url = true;
+			const url = response as string;
+			this.is_invalid_url = !(await this._feed.check_url(url));
+			this.isUrlValidType = this._feed.isUrlValid;
+			this.is_validating_url = false;
+			this.disabled_submit = false
 		});
 	}
 
