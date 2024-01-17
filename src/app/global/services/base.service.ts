@@ -38,9 +38,10 @@ export class BaseService {
 		let headers: any = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
 		let baseUri = this.baseUri;
 
+        if (options && options.plain) return this._http.get(endpoint);
 		if (options) headers = { ...this.headers, ...options };
 		if (overrideOptions) headers = { headers: new HttpHeaders(options) };
-		if (this._auth.current_role === 'dealeradmin') baseUri += 'dealeradmin/';
+		if (this._auth.current_role === 'dealeradmin' && (options && !options.global)) baseUri += 'dealeradmin/';
 
 		const url = overrideUrl ? endpoint : `${baseUri}${endpoint}`;
 		return this._http.get(url, headers);
