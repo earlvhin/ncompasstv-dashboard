@@ -712,8 +712,12 @@ button {
     }
 }
 
-.mat-button-wrapper {
-    margin-left: 4px;
+.mat-button,
+.mat-raised-button {
+    .mat-button-wrapper > * {
+        vertical-align: middle;
+        margin-left: 4px;
+    }
 }
 
 .w-30 {
