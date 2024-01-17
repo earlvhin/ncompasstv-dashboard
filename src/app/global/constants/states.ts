@@ -267,12 +267,12 @@ export const STATES_PROVINCES = [
     {
         state: 'New Brunswick',
         abbreviation: 'NB',
-        region: 'WC',
+        region: 'EC',
     },
     {
         state: 'Newfoundland and Labrador',
         abbreviation: 'NL',
-        region: 'WC',
+        region: 'EC',
     },
     {
         state: 'Northwest Territories',
@@ -282,7 +282,7 @@ export const STATES_PROVINCES = [
     {
         state: 'Nova Scotia',
         abbreviation: 'NS',
-        region: 'WC',
+        region: 'EC',
     },
     {
         state: 'Nunavut',
@@ -292,17 +292,17 @@ export const STATES_PROVINCES = [
     {
         state: 'Ontario',
         abbreviation: 'ON',
-        region: 'WC',
+        region: 'CC',
     },
     {
         state: 'Prince Edward Island',
         abbreviation: 'PE',
-        region: 'WC',
+        region: 'EC',
     },
     {
         state: 'Quebec',
         abbreviation: 'QC',
-        region: 'WC',
+        region: 'EC',
     },
     {
         state: 'Saskatchewan',

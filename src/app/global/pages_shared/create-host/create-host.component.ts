@@ -387,15 +387,18 @@ export class CreateHostComponent implements OnInit {
             country = sliced_address[sliced_address.length - 1];
         }
 
+        console.log(sliced_address)
+
         // Address Mapping
         if (sliced_address.length == 5) {
+            // We are sure that this here includes a country, and it is the last index (4)
             zipState = sliced_address[3].split(' ');
             state = zipState[0];
             zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[2];
             address = `${sliced_address[0]}, ${sliced_address[1]}`;
         } else if (sliced_address.length == 4) {
-            zipState = sliced_address[2].split(' ');
+            zipState = country ? sliced_address[2].split(' ') : sliced_address[3].split(' ');
             state = zipState[0];
             zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
