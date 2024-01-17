@@ -15,20 +15,14 @@
 						edit
 					</mat-icon>
 
-					<ng-template #edit_alias>
-						<form class="edit-alias-form" [formGroup]="update_alias">
-							<h1 class="page-title mb-1"><input matInput formControlName="alias" placeholder="License Alias" /></h1>
-						</form>
-						<mat-icon
-							class="save-alias"
-							*ngIf="enable_edit_alias && !is_view_only"
-							(click)="updateLicenseAlias()"
-							matTooltip="Save license alias">
-							save
-						</mat-icon>
-					</ng-template>
-				</ng-container>
-			</div>
+                    <ng-template #edit_alias>
+                        <form class="edit-alias-form" [formGroup]="update_alias">
+                            <h1 class="page-title mb-1"><input matInput formControlName="alias" placeholder="License Alias" /></h1>
+                        </form>
+                        <mat-icon class="save-alias" *ngIf="enable_edit_alias && !is_view_only" (click)="updateLicenseAlias()" matTooltip="Save license alias"> save </mat-icon>
+                    </ng-template>
+                </ng-container>
+            </div>
 
 			<ng-container *ngIf="license_data">
 				<div class="d-flex align-items-center mb-2">
@@ -113,27 +107,29 @@
 				<span class="fas fa-lightbulb"></span> <span class="ml-2 button_text_animation">Check Status</span>
 			</button>
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text mr-2 _info"
-				[disabled]="!pi_status || pi_updating || is_view_only"
-				(click)="pushUpdate()"
-				title="Content Update">
-				<span class="fas fa-upload"></span> <span class="ml-2 button_text_animation">Content Update</span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text mr-2 _info"
+                [disabled]="!pi_status || pi_updating || is_view_only"
+                (click)="pushUpdate()"
+                title="Content Update"
+            >
+                <span class="fas fa-upload"></span> <span class="ml-2 button_text_animation">Content Update</span>
+            </button>
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _cool mr-2"
-				[disabled]="!pi_status || pi_updating"
-				title="Refetch Player Data"
-				(click)="refetchPi()">
-				<span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _cool mr-2"
+                [disabled]="!pi_status || pi_updating"
+                title="Refetch Player Data"
+                (click)="refetchPi()"
+            >
+                <span class="fas fa-sync"></span> <span class="ml-2 button_text_animation">Refetch Content</span>
+            </button>
 
-			<!-- <button
+            <!-- <button
 				mat-button
 				mat-raised-button
 				class="theme-btn pi-control sm-text _primary mr-2"
@@ -143,46 +139,50 @@
 				<span class="fas fa-terminal"></span> <span class="ml-2 button_text_animation">Update System</span>
 			</button> -->
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _warning mr-2"
-				[disabled]="!pi_status || pi_updating || is_view_only"
-				(click)="restartPlayer()"
-				title="Reboot Player">
-				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _warning mr-2"
+                [disabled]="!pi_status || pi_updating || is_view_only"
+                (click)="restartPlayer()"
+                title="Reboot Player"
+            >
+                <span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Player (Software)</span>
+            </button>
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _caution mr-2"
-				[disabled]="!pi_status || pi_updating || is_view_only"
-				(click)="restartPi()"
-				title="Reboot Pi">
-				<span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _caution mr-2"
+                [disabled]="!pi_status || pi_updating || is_view_only"
+                (click)="restartPi()"
+                title="Reboot Pi"
+            >
+                <span class="fas fa-power-off"></span> <span class="ml-2 button_text_animation">Reboot Pi (Device)</span>
+            </button>
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _teal mr-2"
-				[disabled]="!pi_status || pi_updating || is_view_only"
-				(click)="resetPi()"
-				title="Reset Player Data">
-				<span class="fas fa-eraser"></span> <span class="ml-2 button_text_animation">Reset Data</span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _teal mr-2"
+                [disabled]="!pi_status || pi_updating || is_view_only"
+                (click)="resetPi()"
+                title="Reset Player Data"
+            >
+                <span class="fas fa-eraser"></span> <span class="ml-2 button_text_animation">Reset Data</span>
+            </button>
 
-			<button
-				mat-button
-				mat-raised-button
-				class="theme-btn pi-control sm-text _dark mr-2"
-				[disabled]="!pi_status || pi_updating || is_view_only"
-				(click)="upgradeToV2()"
-				title="Reset Player Data"
-				*ngIf="!apps">
-				<span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
-			</button>
+            <button
+                mat-button
+                mat-raised-button
+                class="theme-btn pi-control sm-text _dark mr-2"
+                [disabled]="!pi_status || pi_updating || is_view_only"
+                (click)="upgradeToV2()"
+                title="Reset Player Data"
+                *ngIf="!apps"
+            >
+                <span class="font-weight-bold">2.0</span> <span class="ml-2 button_text_animation">Upgrade to version 2</span>
+            </button>
 
 			<button
 				mat-button
@@ -570,25 +570,26 @@
 																	{{ internet_connection.date ? internet_connection.date : 'N/A' }}
 																</h5>
 
-																<ng-container *ngIf="!speedtest_running; else disable_speedtest_btn">
-																	<button
-																		*ngIf="license_data.speedtestSettings == 1"
-																		class="card-button"
-																		(click)="internetSpeedTest()"
-																		title="Test Internet Speed">
-																		<span class="fas fa-sync md-text"></span>
-																	</button>
-																</ng-container>
+                                                                <ng-container *ngIf="!speedtest_running; else disable_speedtest_btn">
+                                                                    <button
+                                                                        *ngIf="license_data.speedtestSettings == 1"
+                                                                        class="card-button"
+                                                                        (click)="internetSpeedTest()"
+                                                                        title="Test Internet Speed"
+                                                                    >
+                                                                        <span class="fas fa-sync md-text"></span>
+                                                                    </button>
+                                                                </ng-container>
 
-																<ng-template #disable_speedtest_btn>
-																	<button class="card-button disabled rotate mr-2" title="Speedtest Running">
-																		<span class="fas fa-sync md-text"></span>
-																	</button>
+                                                                <ng-template #disable_speedtest_btn>
+                                                                    <button class="card-button disabled rotate mr-2" title="Speedtest Running">
+                                                                        <span class="fas fa-sync md-text"></span>
+                                                                    </button>
 
-																	<span class="sm-text text-gray"> Speed Test Running </span>
-																</ng-template>
-															</div>
-														</div>
+                                                                    <span class="sm-text text-gray"> Speed Test Running </span>
+                                                                </ng-template>
+                                                            </div>
+                                                        </div>
 
 														<div class="d-flex">
 															<!-- Connection -->
@@ -629,6 +630,7 @@
 																<span class="title">Download Speed</span>
 																<h5 class="title">{{ internet_connection.downloadMbps }}</h5>
 															</div>
+
 
 															<!-- Upload Speed -->
 															<div class="flex-even storage">
@@ -714,562 +716,525 @@
 					</ng-container>
 				</mat-tab>
 
-				<!-- Content Tab -->
-				<mat-tab label="Content">
-					<ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
-						<div class="content-tab-container">
-							<div class="container-fluid">
-								<div class="row">
-									<!-- Playlist Info -->
-									<div class="col-lg-3">
-										<div class="playlist-details">
-											<div>
-												<h2>{{ current_zone_name_selected }} Section</h2>
-											</div>
-											<div class="row">
-												<div class="col-lg-10">
-													<a class="playlist-name" [routerLink]="playlist_route">{{ screen_zone.playlistName }}</a>
-												</div>
-											</div>
-											<br />
-											<div>
-												<span class="sm-text"><b>Duration Breakdown</b></span>
-											</div>
-											<div class="hosts-duration">
-												<span class="sm-text">Hosts: {{ duration_breakdown_text.hosts }}</span>
-											</div>
-											<div class="advertisers-duration">
-												<span class="sm-text">Advertisers: {{ duration_breakdown_text.advertisers }}</span>
-											</div>
-											<div class="fillers-duration">
-												<span class="sm-text">Filler: {{ duration_breakdown_text.fillers }}</span>
-											</div>
-											<div class="feeds-duration">
-												<span class="sm-text">Feeds: {{ duration_breakdown_text.feeds }}</span>
-											</div>
-											<div class="others-duration">
-												<span class="sm-text">Other: {{ duration_breakdown_text.others }}</span>
-											</div>
-											<div class="total-duration">
-												<span class="sm-text"
-													><b>Total playtime: {{ duration_breakdown_text.total }}</b></span
-												>
-											</div>
-											<ng-template #no_playlist>
-												<span class="sm-text">No playlist for this zone</span>
-											</ng-template>
-										</div>
-									</div>
+                <!-- Content Tab -->
+                <mat-tab label="Content">
+                    <ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
+                        <div class="content-tab-container">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <!-- Playlist Info -->
+                                    <div class="col-lg-3">
+                                        <div class="playlist-details">
+                                            <div>
+                                                <h2>{{ current_zone_name_selected }} Section</h2>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-lg-10">
+                                                    <a class="playlist-name" [routerLink]="playlist_route">{{ screen_zone.playlistName }}</a>
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div>
+                                                <span class="sm-text"><b>Duration Breakdown</b></span>
+                                            </div>
+                                            <div class="hosts-duration">
+                                                <span class="sm-text">Hosts: {{ duration_breakdown_text.hosts }}</span>
+                                            </div>
+                                            <div class="advertisers-duration">
+                                                <span class="sm-text">Advertisers: {{ duration_breakdown_text.advertisers }}</span>
+                                            </div>
+                                            <div class="fillers-duration">
+                                                <span class="sm-text">Filler: {{ duration_breakdown_text.fillers }}</span>
+                                            </div>
+                                            <div class="feeds-duration">
+                                                <span class="sm-text">Feeds: {{ duration_breakdown_text.feeds }}</span>
+                                            </div>
+                                            <div class="others-duration">
+                                                <span class="sm-text">Other: {{ duration_breakdown_text.others }}</span>
+                                            </div>
+                                            <div class="total-duration">
+                                                <span class="sm-text"
+                                                    ><b>Total playtime: {{ duration_breakdown_text.total }}</b></span
+                                                >
+                                            </div>
+                                            <ng-template #no_playlist>
+                                                <span class="sm-text">No playlist for this zone</span>
+                                            </ng-template>
+                                        </div>
+                                    </div>
 
-									<!-- Minimap -->
-									<div class="col-lg-3">
-										<div class="minimap">
-											<app-template-minimap
-												*ngIf="template_data; else loader"
-												[larger]="false"
-												[zone_focus]="'main'"
-												[is_text_displayed]="true"
-												[is_interactive]="true"
-												[template_data]="template_data"
-												[height]="'180px'"
-												[width]="minimap_width">
-											</app-template-minimap>
+                                    <!-- Minimap -->
+                                    <div class="col-lg-3">
+                                        <div class="minimap">
+                                            <app-template-minimap
+                                                *ngIf="template_data; else loader"
+                                                [larger]="false"
+                                                [zone_focus]="'main'"
+                                                [is_text_displayed]="true"
+                                                [is_interactive]="true"
+                                                [template_data]="template_data"
+                                                [height]="'180px'"
+                                                [width]="minimap_width"
+                                            >
+                                            </app-template-minimap>
 
-											<!-- Background Section Toggle -->
-											<div class="toggle-background-zone" *ngIf="has_background_zone">
-												<mat-slide-toggle [checked]="background_zone_selected" (click)="onSelectBackgroundZone($event)">
-													Select Background Section
-												</mat-slide-toggle>
-											</div>
-										</div>
-									</div>
+                                            <!-- Background Section Toggle -->
+                                            <div class="toggle-background-zone" *ngIf="has_background_zone">
+                                                <mat-slide-toggle [checked]="background_zone_selected" (click)="onSelectBackgroundZone($event)">
+                                                    Select Background Section
+                                                </mat-slide-toggle>
+                                            </div>
+                                        </div>
+                                    </div>
 
-									<!-- Assets Breakdown -->
-									<div class="col-lg-3">
-										<div class="assets-chart-container">
-											<canvas id="assetsBreakdown" height="250"></canvas>
-										</div>
-									</div>
+                                    <!-- Assets Breakdown -->
+                                    <div class="col-lg-3">
+                                        <div class="assets-chart-container">
+                                            <canvas id="assetsBreakdown" height="250"></canvas>
+                                        </div>
+                                    </div>
 
-									<!-- Duration Breakdown -->
-									<div class="col-lg-3">
-										<div class="duration-chart-container">
-											<canvas id="durationBreakdown" height="250"></canvas>
-										</div>
-									</div>
-								</div>
-							</div>
+                                    <!-- Duration Breakdown -->
+                                    <div class="col-lg-3">
+                                        <div class="duration-chart-container">
+                                            <canvas id="durationBreakdown" height="250"></canvas>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
-							<br />
+                            <br />
 
-							<mat-card class="filters-section mb-4">
-								<div class="d-flex align-items-center no-gutters full-width">
-									<!-- PLAYLIST CONTENT SCHEDULE STATUS FILTERS -->
-									<div class="playlist-content-schedule-status-filters mr-2">
-										<button
-											mat-button
-											mat-raised-button
-											[matMenuTriggerFor]="playlistContentScheduleStatusFilters"
-											mat-raised-button
-											class="theme-btn">
-											<span class="button-label">Content Schedule Status</span>
-											<span class="fas fa-angle-down ml-2"></span>
-										</button>
-										<mat-menu #playlistContentScheduleStatusFilters="matMenu">
-											<button
-												*ngFor="let status of content_schedule_statuses"
-												mat-menu-item
-												(click)="onFilterContent('schedule_status', status.toLowerCase())"
-												[ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''">
-												{{ status | titlecase }}
-											</button>
-										</mat-menu>
-									</div>
+                            <mat-card class="filters-section mb-4">
+                                <div class="d-flex align-items-center no-gutters full-width">
+                                    <!-- PLAYLIST CONTENT SCHEDULE STATUS FILTERS -->
+                                    <div class="playlist-content-schedule-status-filters mr-2">
+                                        <button mat-button mat-raised-button [matMenuTriggerFor]="playlistContentScheduleStatusFilters" mat-raised-button class="theme-btn">
+                                            <span class="button-label">Content Schedule Status</span>
+                                            <span class="fas fa-angle-down ml-2"></span>
+                                        </button>
+                                        <mat-menu #playlistContentScheduleStatusFilters="matMenu">
+                                            <button
+                                                *ngFor="let status of content_schedule_statuses"
+                                                mat-menu-item
+                                                (click)="onFilterContent('schedule_status', status.toLowerCase())"
+                                                [ngClass]="content_filters.includes(status.toLowerCase()) ? 'selected-filter' : ''"
+                                            >
+                                                {{ status | titlecase }}
+                                            </button>
+                                        </mat-menu>
+                                    </div>
 
-									<!-- CONTENT OWNER TYPE FILTERS -->
-									<div class="content-owner-type-filters mr-2">
-										<button
-											mat-button
-											mat-raised-button
-											[matMenuTriggerFor]="ownerTypeFilters"
-											mat-raised-button
-											class="theme-btn">
-											<span class="button-label">Owner Type</span>
-											<span class="fas fa-angle-down ml-2"></span>
-										</button>
-										<mat-menu #ownerTypeFilters="matMenu">
-											<button
-												*ngFor="let type of content_owner_types"
-												mat-menu-item
-												(click)="onFilterContent('owner', type.toLowerCase())">
-												{{ type | titlecase }}
-											</button>
-										</mat-menu>
-									</div>
+                                    <!-- CONTENT OWNER TYPE FILTERS -->
+                                    <div class="content-owner-type-filters mr-2">
+                                        <button mat-button mat-raised-button [matMenuTriggerFor]="ownerTypeFilters" mat-raised-button class="theme-btn">
+                                            <span class="button-label">Owner Type</span>
+                                            <span class="fas fa-angle-down ml-2"></span>
+                                        </button>
+                                        <mat-menu #ownerTypeFilters="matMenu">
+                                            <button *ngFor="let type of content_owner_types" mat-menu-item (click)="onFilterContent('owner', type.toLowerCase())">
+                                                {{ type | titlecase }}
+                                            </button>
+                                        </mat-menu>
+                                    </div>
 
-									<!-- CONTENT TYPE FILTERS -->
-									<div class="content-type-filters mr-2">
-										<button
-											mat-button
-											mat-raised-button
-											[matMenuTriggerFor]="contentTypeFilters"
-											mat-raised-button
-											class="theme-btn">
-											<span class="button-label">Content Type</span>
-											<span class="fas fa-angle-down ml-2"></span>
-										</button>
-										<mat-menu #contentTypeFilters="matMenu">
-											<button
-												*ngFor="let type of content_types"
-												mat-menu-item
-												(click)="onFilterContent('content_type', type.toLowerCase())">
-												{{ type | titlecase }}
-											</button>
-										</mat-menu>
-									</div>
+                                    <!-- CONTENT TYPE FILTERS -->
+                                    <div class="content-type-filters mr-2">
+                                        <button mat-button mat-raised-button [matMenuTriggerFor]="contentTypeFilters" mat-raised-button class="theme-btn">
+                                            <span class="button-label">Content Type</span>
+                                            <span class="fas fa-angle-down ml-2"></span>
+                                        </button>
+                                        <mat-menu #contentTypeFilters="matMenu">
+                                            <button *ngFor="let type of content_types" mat-menu-item (click)="onFilterContent('content_type', type.toLowerCase())">
+                                                {{ type | titlecase }}
+                                            </button>
+                                        </mat-menu>
+                                    </div>
 
-									<!-- SELECTED FILTERS -->
-									<ng-container *ngIf="content_filters.length > 0">
-										<div class="current-filters d-flex">
-											<div class="filter d-flex align-items-center mr-2" *ngFor="let filter of content_filters">
-												<div class="name">{{ filter.name | titlecase }}</div>
-												<div class="remove-btn cursor-pointer" (click)="onRemoveContentFilter(filter.name.toLowerCase())">
-													<mat-icon class="no-select">close</mat-icon>
-												</div>
-											</div>
-										</div>
-									</ng-container>
+                                    <!-- SELECTED FILTERS -->
+                                    <ng-container *ngIf="content_filters.length > 0">
+                                        <div class="current-filters d-flex">
+                                            <div class="filter d-flex align-items-center mr-2" *ngFor="let filter of content_filters">
+                                                <div class="name">{{ filter.name | titlecase }}</div>
+                                                <div class="remove-btn cursor-pointer" (click)="onRemoveContentFilter(filter.name.toLowerCase())">
+                                                    <mat-icon class="no-select">close</mat-icon>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
 
-									<!-- RESET FILTERS -->
-									<div class="reset-filters mr-2">
-										<button
-											mat-button
-											mat-raised-button
-											mat-raised-button
-											class="theme-btn btn-danger"
-											(click)="onResetFilters()"
-											[disabled]="content_filters.length === 0">
-											<span class="button-label">Reset Filters</span>
-											<span class="fas fa-times ml-2"></span>
-										</button>
-									</div>
+                                    <!-- RESET FILTERS -->
+                                    <div class="reset-filters mr-2">
+                                        <button
+                                            mat-button
+                                            mat-raised-button
+                                            mat-raised-button
+                                            class="theme-btn btn-danger"
+                                            (click)="onResetFilters()"
+                                            [disabled]="content_filters.length === 0"
+                                        >
+                                            <span class="button-label">Reset Filters</span>
+                                            <span class="fas fa-times ml-2"></span>
+                                        </button>
+                                    </div>
 
-									<!-- CONTENT SEARCH FIELD -->
-									<div class="content-search mr-2">
-										<div class="flex-even form-field">
-											<mat-form-field class="full-width" appearance="fill">
-												<mat-label>Search a content</mat-label>
-												<input matInput type="text" placeholder="Search a File" [formControl]="content_search_control" />
-											</mat-form-field>
-											<span class="fas fa-search"></span>
-										</div>
-									</div>
-								</div>
-							</mat-card>
+                                    <!-- CONTENT SEARCH FIELD -->
+                                    <div class="content-search mr-2">
+                                        <div class="flex-even form-field">
+                                            <mat-form-field class="full-width" appearance="fill">
+                                                <mat-label>Search a content</mat-label>
+                                                <input matInput type="text" placeholder="Search a File" [formControl]="content_search_control" />
+                                            </mat-form-field>
+                                            <span class="fas fa-search"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-card>
 
-							<!-- Media Viewer -->
-							<div class="row no-gutters" *ngIf="has_playlist">
-								<div class="col-md-1" *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
-									<div class="mr-2">
-										<app-thumbnail-card
-											(click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
-											[content_id]="a.content_id"
-											[disconnect_to_socket]="thumb_no_socket"
-											[file_url]="a.file_url"
-											[filename]="a.file_type !== 'feed' ? a.file_name : a.title"
-											[filetype]="a.file_type"
-											[handle]="a.handler_id"
-											[image_uri]="a.thumbnail"
-											[is_converted]="a.is_converted"
-											[is_fullscreen]="a.is_fullscreen"
-											[is_protected]="a.is_protected"
-											[is_scheduled_content]="a.playlist_content_schedule.type === 3"
-											[sequence]="a.seq"
-											[is_view_only]="true"
-											[uuid]="a.uuid"
-											[zone_content]="true">
-										</app-thumbnail-card>
-									</div>
-								</div>
-							</div>
-						</div>
-					</ng-container>
-				</mat-tab>
+                            <!-- Media Viewer -->
+                            <div class="row no-gutters" *ngIf="has_playlist">
+                                <div class="col-md-1" *ngFor="let a of content_per_zone[selected_zone_index].contents; let i = index">
+                                    <div class="mr-2">
+                                        <app-thumbnail-card
+                                            (click)="onOpenMediaViewer(content_per_zone[selected_zone_index].contents, i)"
+                                            [content_id]="a.content_id"
+                                            [disconnect_to_socket]="thumb_no_socket"
+                                            [classification]="a.classification"
+                                            [file_url]="a.file_url"
+                                            [filename]="a.file_type !== 'feed' ? a.file_name : a.title"
+                                            [filetype]="a.file_type"
+                                            [handle]="a.handler_id"
+                                            [image_uri]="a.thumbnail"
+                                            [is_converted]="a.is_converted"
+                                            [is_fullscreen]="a.is_fullscreen"
+                                            [is_protected]="a.is_protected"
+                                            [is_scheduled_content]="a.playlist_content_schedule.type === 3"
+                                            [sequence]="a.seq"
+                                            [is_view_only]="true"
+                                            [uuid]="a.uuid"
+                                            [zone_content]="true"
+                                        >
+                                        </app-thumbnail-card>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </mat-tab>
 
-				<!-- Terminal Tab -->
-				<mat-tab label="Terminal" *ngIf="isCurrentUserAdmin">
-					<ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
-						<div class="terminal-area mt-4">
-							<div class="row">
-								<div class="col-lg-7">
-									<h3>Remote Terminal</h3>
-									<p class="sm-text mb-3">Write a short script and send it to the player to run.</p>
-									<div class="terminal">
-										<div class="entered-scripts">
-											<div *ngFor="let s of terminal_entered_scripts">
-												<p class="sm-text text-primary">> {{ s }}</p>
-											</div>
-										</div>
+                <!-- Terminal Tab -->
+                <mat-tab label="Terminal" *ngIf="isCurrentUserAdmin">
+                    <ng-container *ngIf="has_host && has_screen; else noHostOrScreenData">
+                        <div class="terminal-area mt-4">
+                            <div class="row">
+                                <div class="col-lg-7">
+                                    <h3>Remote Terminal</h3>
+                                    <p class="sm-text mb-3">Write a short script and send it to the player to run.</p>
+                                    <div class="terminal">
+                                        <div class="entered-scripts">
+                                            <div *ngFor="let s of terminal_entered_scripts">
+                                                <p class="sm-text text-primary">> {{ s }}</p>
+                                            </div>
+                                        </div>
 
-										<div class="d-flex">
-											<input
-												[(ngModel)]="terminal_value"
-												placeholder="Enter Command"
-												class="terminal-text-entry mb-3 flex-even" />
-											<button
-												(click)="submitTerminalCommand()"
-												class="terminal-submit-button"
-												[disabled]="terminal_value === undefined || terminal_value === ''">
-												Run <span class="fas fa-play sm-text ml-2"></span>
-											</button>
-										</div>
-									</div>
-								</div>
+                                        <div class="d-flex">
+                                            <input [(ngModel)]="terminal_value" placeholder="Enter Command" class="terminal-text-entry mb-3 flex-even" />
+                                            <button
+                                                (click)="submitTerminalCommand()"
+                                                class="terminal-submit-button"
+                                                [disabled]="terminal_value === undefined || terminal_value === ''"
+                                            >
+                                                Run <span class="fas fa-play sm-text ml-2"></span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
 
-								<div class="col-lg-5"></div>
-							</div>
-						</div>
-					</ng-container>
-				</mat-tab>
+                                <div class="col-lg-5"></div>
+                            </div>
+                        </div>
+                    </ng-container>
+                </mat-tab>
 
-				<!-- Activity Tab -->
-				<mat-tab label="Activity" *ngIf="isCurrentUserAdmin">
-					<ng-container *ngIf="activities && activities.length > 0; else noLicenseActivity">
-						<div class="row mt-4">
-							<div class="col-lg-4">
-								<mat-card class="p-3 mb-3" *ngFor="let a of activities">
-									<h4>{{ a.activityDescription }}</h4>
-									<p class="sm-text">Initiated by {{ a.initiatedBy }} on {{ a.dateCreated | date : 'MMM dd, y hh:mm a' }}</p>
-								</mat-card>
-							</div>
-						</div>
-					</ng-container>
-				</mat-tab>
+                <!-- Activity Tab -->
+                <mat-tab label="Activity" *ngIf="isCurrentUserAdmin">
+                    <ng-container *ngIf="activities && activities.length > 0; else noLicenseActivity">
+                        <div class="row mt-4">
+                            <div class="col-lg-4">
+                                <mat-card class="p-3 mb-3" *ngFor="let a of activities">
+                                    <h4>{{ a.activityDescription }}</h4>
+                                    <p class="sm-text">Initiated by {{ a.initiatedBy }} on {{ a.dateCreated | date : "MMM dd, y hh:mm a" }}</p>
+                                </mat-card>
+                            </div>
+                        </div>
+                    </ng-container>
+                </mat-tab>
 
-				<!-- Settings Tab -->
-				<mat-tab label="Settings" *ngIf="license_data">
-					<div class="row mt-4">
-						<div class="col-lg-5">
-							<ng-container *ngIf="isCurrentUserAdmin">
-								<!-- SCREENSHOT SETTINGS -->
-								<mat-card class="p-4 mb-3">
-									<div class="d-flex align-items-center">
-										<div class="flex-even">
-											<h4>Enable Scheduled Screenshot</h4>
-											<p class="sm-text mb-0">
-												For players with limited internet data, Disabling this feature is recommended. Manual screenshot will
-												still be available of use.
-											</p>
-										</div>
-										<div class="ml-5 text-right">
-											<mat-slide-toggle
-												(change)="disableScreenshot($event)"
-												[checked]="license_data.screenshotSettings == 1 ? true : false">
-											</mat-slide-toggle>
-										</div>
-									</div>
-								</mat-card>
+                <!-- Settings Tab -->
+                <mat-tab label="Settings" *ngIf="license_data">
+                    <div class="row mt-4">
+                        <div class="col-lg-5">
+                            <ng-container *ngIf="isCurrentUserAdmin">
+                                <!-- SCREENSHOT SETTINGS -->
+                                <mat-card class="p-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Enable Scheduled Screenshot</h4>
+                                            <p class="sm-text mb-0">
+                                                For players with limited internet data, Disabling this feature is recommended. Manual screenshot will still be available of use.
+                                            </p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle (change)="disableScreenshot($event)" [checked]="license_data.screenshotSettings == 1 ? true : false">
+                                            </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
 
-								<!-- SPEEDTEST SETTINGS -->
-								<mat-card class="p-4 mb-3">
-									<div class="d-flex align-items-center">
-										<div class="flex-even">
-											<h4>Enable Speedtest</h4>
-											<p class="sm-text mb-0">
-												Internet Speedtest uses almost 200MB of internet data. For players with limited internet data,
-												disabling this feature is recommended.
-											</p>
-										</div>
-										<div class="ml-5 text-right">
-											<mat-slide-toggle
-												(change)="disableSpeedtest($event)"
-												[checked]="license_data.speedtestSettings == 1 ? true : false">
-											</mat-slide-toggle>
-										</div>
-									</div>
-								</mat-card>
+                                <!-- SPEEDTEST SETTINGS -->
+                                <mat-card class="p-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Enable Speedtest</h4>
+                                            <p class="sm-text mb-0">
+                                                Internet Speedtest uses almost 200MB of internet data. For players with limited internet data, disabling this feature is
+                                                recommended.
+                                            </p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle (change)="disableSpeedtest($event)" [checked]="license_data.speedtestSettings == 1 ? true : false">
+                                            </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
 
-								<!-- EMAIL SETTINGS -->
-								<mat-card class="p-4 mb-3">
-									<div class="d-flex align-items-center">
-										<div class="flex-even">
-											<h4>Enable Email Settings</h4>
-											<p class="sm-text mb-0">
-												Allows the dealer to receive EMAIL notifications from this license when the device is offline.
-											</p>
-										</div>
-										<div class="ml-5 text-right">
-											<mat-slide-toggle
-												(change)="onUpdateNotificationSettings($event, 'email')"
-												[checked]="license_data.emailSettings == 1 ? true : false">
-											</mat-slide-toggle>
-										</div>
-									</div>
-								</mat-card>
+                                <!-- EMAIL SETTINGS -->
+                                <mat-card class="p-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Enable Email Settings</h4>
+                                            <p class="sm-text mb-0">Allows the dealer to receive EMAIL notifications from this license when the device is offline.</p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle (change)="onUpdateNotificationSettings($event, 'email')" [checked]="license_data.emailSettings == 1 ? true : false">
+                                            </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
 
-								<!-- NOTIFICATION SETTINGS -->
-								<mat-card class="p-4 mb-3">
-									<div class="d-flex align-items-center">
-										<div class="flex-even">
-											<h4>Enable Notification Settings</h4>
-											<p class="sm-text mb-0">
-												Allows the dealer to receive ALERT notifications from this license when the device is offline.
-											</p>
-										</div>
-										<div class="ml-5 text-right">
-											<mat-slide-toggle
-												(change)="onUpdateNotificationSettings($event, 'notification')"
-												[checked]="license_data.notificationSettings == 1 ? true : false">
-											</mat-slide-toggle>
-										</div>
-									</div>
-								</mat-card>
+                                <!-- NOTIFICATION SETTINGS -->
+                                <mat-card class="p-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Enable Notification Settings</h4>
+                                            <p class="sm-text mb-0">Allows the dealer to receive ALERT notifications from this license when the device is offline.</p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle
+                                                (change)="onUpdateNotificationSettings($event, 'notification')"
+                                                [checked]="license_data.notificationSettings == 1 ? true : false"
+                                            >
+                                            </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
 
-								<!-- RESOURCE LOG SETTINGS -->
-								<mat-card class="p-4 mb-3">
-									<div class="d-flex align-items-center">
-										<div class="flex-even">
-											<h4>Enable Resource Log Sending</h4>
-											<p class="sm-text mb-0">
-												This will send the player's CPU and RAM average usage every 2 hours. Requires data usage, toggle off
-												to disable.
-											</p>
-										</div>
-										<div class="ml-5 text-right">
-											<mat-slide-toggle
-												(change)="disableResource($event)"
-												[checked]="license_data.resourceSettings == 1 ? true : false">
-											</mat-slide-toggle>
-										</div>
-									</div>
-								</mat-card>
-							</ng-container>
+                                <!-- RESOURCE LOG SETTINGS -->
+                                <mat-card class="p-4 mb-3">
+                                    <div class="d-flex align-items-center">
+                                        <div class="flex-even">
+                                            <h4>Enable Resource Log Sending</h4>
+                                            <p class="sm-text mb-0">
+                                                This will send the player's CPU and RAM average usage every 2 hours. Requires data usage, toggle off to disable.
+                                            </p>
+                                        </div>
+                                        <div class="ml-5 text-right">
+                                            <mat-slide-toggle (change)="disableResource($event)" [checked]="license_data.resourceSettings == 1 ? true : false"> </mat-slide-toggle>
+                                        </div>
+                                    </div>
+                                </mat-card>
+                            </ng-container>
 
-							<!-- FASTEDGE DCP SETTINGS -->
-							<mat-card class="px-4 pb-0 mb-3">
-								<div class="d-flex align-items-center">
-									<div class="flex-even mb-3">
-										<h4>Enable FE-DCP Tool</h4>
-										<p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
-									</div>
-									<div *ngIf="fastEdgeSettingsSaving">
-										<mat-spinner [diameter]="20"></mat-spinner>
-									</div>
-								</div>
+                            <!-- FASTEDGE DCP SETTINGS -->
+                            <mat-card class="px-4 pb-0 mb-3">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-even mb-3">
+                                        <h4>Enable FE-DCP Tool</h4>
+                                        <p class="sm-text">Enables DCP Monitoring Tool. Enter password to enable.</p>
+                                    </div>
+                                    <div *ngIf="fastEdgeSettingsSaving">
+                                        <mat-spinner [diameter]="20"></mat-spinner>
+                                    </div>
+                                </div>
 
-								<div class="fast-edge-setting-form-wrapper">
-									<form [formGroup]="fastEdgeSettings">
-										<div class="d-flex">
-											<div class="flex-even">
-												<mat-form-field class="w-100" appearance="fill">
-													<mat-label>Enter Password*</mat-label>
-													<input matInput formControlName="password" type="password" />
-												</mat-form-field>
-											</div>
-											<div class="pt-3 ml-5 text-right">
-												<mat-slide-toggle
-													(change)="toggleFastEdgeTool($event)"
-													[disabled]="!fastEdgeSettings.valid"
-													[checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false">
-												</mat-slide-toggle>
-											</div>
-										</div>
-									</form>
-								</div>
-							</mat-card>
-						</div>
+                                <div class="fast-edge-setting-form-wrapper">
+                                    <form [formGroup]="fastEdgeSettings">
+                                        <div class="d-flex">
+                                            <div class="flex-even">
+                                                <mat-form-field class="w-100" appearance="fill">
+                                                    <mat-label>Enter Password*</mat-label>
+                                                    <input matInput formControlName="password" type="password" />
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="pt-3 ml-5 text-right">
+                                                <mat-slide-toggle
+                                                    (change)="toggleFastEdgeTool($event)"
+                                                    [disabled]="!fastEdgeSettings.valid"
+                                                    [checked]="license_data.fastEdgeMonitoringTool == 1 ? true : false"
+                                                >
+                                                </mat-slide-toggle>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </mat-card>
+                        </div>
 
-						<ng-container *ngIf="hasAdminPrivileges">
-							<div class="col-lg-7">
-								<mat-card class="p-4">
-									<h4 class="mb-4">Additional Settings</h4>
+                        <ng-container *ngIf="hasAdminPrivileges">
+                            <div class="col-lg-7">
+                                <mat-card class="p-4">
+                                    <h4 class="mb-4">Additional Settings</h4>
 
-									<ng-container *ngIf="license_data && additional_license_settings_form">
-										<form [formGroup]="additional_license_settings_form" (ngSubmit)="saveAdditionalLicenseSettings()">
-											<div class="row flex-column">
-												<div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
-													<ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
-														<mat-form-field class="full-width">
-															<mat-label>{{ control.label }}</mat-label>
+                                    <ng-container *ngIf="license_data && additional_license_settings_form">
+                                        <form [formGroup]="additional_license_settings_form" (ngSubmit)="saveAdditionalLicenseSettings()">
+                                            <div class="row flex-column">
+                                                <div *ngFor="let control of additional_license_settings_form_fields" class="col-lg-6">
+                                                    <ng-container *ngIf="control.type === 'number' || control.type === 'text'; else otherFieldTypes">
+                                                        <mat-form-field class="full-width">
+                                                            <mat-label>{{ control.label }}</mat-label>
 
-															<input
-																matInput
-																appearance="fill"
-																placeholder="Enter number of seconds, ex: 20"
-																[formControlName]="control.form_control_name"
-																[type]="control.type" />
-														</mat-form-field>
-													</ng-container>
+                                                            <input
+                                                                matInput
+                                                                appearance="fill"
+                                                                placeholder="Enter number of seconds, ex: 20"
+                                                                [formControlName]="control.form_control_name"
+                                                                [type]="control.type"
+                                                            />
+                                                        </mat-form-field>
+                                                    </ng-container>
 
-													<ng-template #otherFieldTypes>
-														<ng-container *ngIf="control.type === 'time'">
-															<div class="d-flex align-items-center reboot-time">
-																<span>{{ control.label }}:</span>
+                                                    <ng-template #otherFieldTypes>
+                                                        <ng-container *ngIf="control.type === 'time'">
+                                                            <div class="d-flex align-items-center reboot-time">
+                                                                <span>{{ control.label }}:</span>
 
-																<ngb-timepicker
-																	[formControlName]="control.form_control_name"
-																	[meridian]="true"
-																	[size]="'small'">
-																</ngb-timepicker>
-																<ng-container *ngIf="control"></ng-container>
-																<mat-icon
-																	class="remove-reboot-btn"
-																	(click)="onRemoveRebootTime(control.form_control_name)"
-																	>delete</mat-icon
-																>
-															</div>
-														</ng-container>
-													</ng-template>
-												</div>
-											</div>
+                                                                <ngb-timepicker [formControlName]="control.form_control_name" [meridian]="true" [size]="'small'"> </ngb-timepicker>
+                                                                <ng-container *ngIf="control"></ng-container>
+                                                                <mat-icon class="remove-reboot-btn" (click)="onRemoveRebootTime(control.form_control_name)">delete</mat-icon>
+                                                            </div>
+                                                        </ng-container>
+                                                    </ng-template>
+                                                </div>
+                                            </div>
 
-											<div class="d-flex">
-												<button
-													mat-button
-													mat-raised-button
-													class="theme-btn mr-2"
-													[disabled]="saving_license_settings || !has_unsaved_additional_settings">
-													Save
-												</button>
-												<app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
-											</div>
-										</form>
-									</ng-container>
-								</mat-card>
-							</div>
-						</ng-container>
-					</div>
-				</mat-tab>
+                                            <div class="d-flex">
+                                                <button
+                                                    mat-button
+                                                    mat-raised-button
+                                                    class="theme-btn mr-2"
+                                                    [disabled]="saving_license_settings || !has_unsaved_additional_settings"
+                                                >
+                                                    Save
+                                                </button>
+                                                <app-spinner *ngIf="saving_license_settings" [diameter]="20"></app-spinner>
+                                            </div>
+                                        </form>
+                                    </ng-container>
+                                </mat-card>
+                            </div>
+                        </ng-container>
+                    </div>
+                </mat-tab>
 
-				<!-- Resource Tab -->
-				<mat-tab label="Resource" *ngIf="isCurrentUserAdmin">
-					<ng-template matTabContent>
-						<app-resource-tab [license_id]="license_id" [screen]="screen" [realtime_data]="realtime_data"> </app-resource-tab>
-					</ng-template>
-				</mat-tab>
+                <!-- Resource Tab -->
+                <mat-tab label="Resource" *ngIf="isCurrentUserAdmin">
+                    <ng-template matTabContent>
+                        <app-resource-tab [license_id]="license_id" [screen]="screen" [realtime_data]="realtime_data"> </app-resource-tab>
+                    </ng-template>
+                </mat-tab>
 
-				<!-- Installation Tab -->
-				<mat-tab label="Installation">
-					<ng-template matTabContent>
-						<app-installation-tab [license_id]="license_id"> </app-installation-tab>
-					</ng-template>
-				</mat-tab>
-			</mat-tab-group>
-		</div>
-	</div>
+                <!-- Installation Tab -->
+                <mat-tab label="Installation">
+                    <ng-template matTabContent>
+                        <app-installation-tab [license_id]="license_id"> </app-installation-tab>
+                    </ng-template>
+                </mat-tab>
+            </mat-tab-group>
+        </div>
+    </div>
 
-	<ng-template #loader>
-		<div class="loader text-center py-5 d-flex align-items-center vh-50">
-			<div class="w-100">
-				<mat-spinner></mat-spinner>
-				<h3 class="mt-4 mb-2">Please Wait</h3>
-				<p class="sm-text">Retrieving license data ...</p>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #loader>
+        <div class="loader text-center py-5 d-flex align-items-center vh-50">
+            <div class="w-100">
+                <mat-spinner></mat-spinner>
+                <h3 class="mt-4 mb-2">Please Wait</h3>
+                <p class="sm-text">Retrieving license data ...</p>
+            </div>
+        </div>
+    </ng-template>
 
-	<ng-template #loading>
-		<div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="!no_screen_assigned; else no_screen">
-			<div class="w-100">
-				<mat-spinner></mat-spinner>
-				<h3 class="mt-4 mb-2">Please Wait</h3>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #loading>
+        <div class="loader text-center py-5 d-flex align-items-center vh-50" *ngIf="!no_screen_assigned; else no_screen">
+            <div class="w-100">
+                <mat-spinner></mat-spinner>
+                <h3 class="mt-4 mb-2">Please Wait</h3>
+            </div>
+        </div>
+    </ng-template>
 
-	<ng-template #no_data>
-		<div class="col-lg-12 text-center">
-			<div class="loader text-center py-5 d-flex align-items-center vh-50">
-				<div class="w-100">
-					<h3 class="mt-4 mb-2">No Data Found</h3>
-					<p class="sm-text">There are no recorded plays of content during this date.</p>
-				</div>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #no_data>
+        <div class="col-lg-12 text-center">
+            <div class="loader text-center py-5 d-flex align-items-center vh-50">
+                <div class="w-100">
+                    <h3 class="mt-4 mb-2">No Data Found</h3>
+                    <p class="sm-text">There are no recorded plays of content during this date.</p>
+                </div>
+            </div>
+        </div>
+    </ng-template>
 
-	<ng-template #no_zone>
-		<div class="col-lg-12 text-center">
-			<div class="loader text-center py-5 d-flex align-items-center vh-50">
-				<div class="w-100">
-					<h3 class="mt-4 mb-2">No Data Found</h3>
-					<p class="sm-text">Assign a screen first, to see its contents.</p>
-				</div>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #no_zone>
+        <div class="col-lg-12 text-center">
+            <div class="loader text-center py-5 d-flex align-items-center vh-50">
+                <div class="w-100">
+                    <h3 class="mt-4 mb-2">No Data Found</h3>
+                    <p class="sm-text">Assign a screen first, to see its contents.</p>
+                </div>
+            </div>
+        </div>
+    </ng-template>
 
-	<ng-template #no_screen>
-		<div class="no-screen vh-50 row align-items-center justify-content-center">
-			<div class="col-lg-12 text-center">
-				<span class="fa fa-tv"></span>
-				<br />
-				<div class="captions mt-3">No Screen Assigned</div>
-			</div>
-		</div>
-	</ng-template>
+    <ng-template #no_screen>
+        <div class="no-screen vh-50 row align-items-center justify-content-center">
+            <div class="col-lg-12 text-center">
+                <span class="fa fa-tv"></span>
+                <br />
+                <div class="captions mt-3">No Screen Assigned</div>
+            </div>
+        </div>
+    </ng-template>
 </div>
 
 <ng-template #noHostOrScreenData>
-	<div class="no-screen vh-50 row align-items-center justify-content-center">
-		<div class="col-lg-12 text-center">
-			<span class="fa fa-tv"></span>
-			<br />
-			<div class="captions mt-3">
-				{{ license_data ? 'No Host or Screen Assigned' : 'No License Data' }}
-			</div>
-		</div>
-	</div>
+    <div class="no-screen vh-50 row align-items-center justify-content-center">
+        <div class="col-lg-12 text-center">
+            <span class="fa fa-tv"></span>
+            <br />
+            <div class="captions mt-3">
+                {{ license_data ? "No Host or Screen Assigned" : "No License Data" }}
+            </div>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #noLicenseActivity>
-	<div class="no-screen vh-50 row align-items-center justify-content-center">
-		<div class="col-lg-12 text-center">
-			<span class="fa fa-tv"></span>
-			<br />
-			<div class="captions mt-3">No License Activity</div>
-		</div>
-	</div>
+    <div class="no-screen vh-50 row align-items-center justify-content-center">
+        <div class="col-lg-12 text-center">
+            <span class="fa fa-tv"></span>
+            <br />
+            <div class="captions mt-3">No License Activity</div>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #loaderMain>
@@ -1279,5 +1244,5 @@
 </ng-template>
 
 <ng-template #loaderSmall>
-	<app-spinner [diameter]="60"></app-spinner>
+    <app-spinner [diameter]="60"></app-spinner>
 </ng-template>

@@ -1338,9 +1338,16 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
             .subscribe((response) => {
                 if (!response || response.length <= 0) return;
 
-                const mappedContents = this.mapZoneContentToUI(response).map((zone) => {
+                let mappedContents = this.mapZoneContentToUI(response).map((zone) => {
                     zone.contents = zone.contents.map((content) => {
                         content.schedule_status = this.setContentScheduleStatus(content.playlist_content_schedule);
+
+                        //modifyFillerURL to be fixed on API Soon since URL is doubledfilename
+                        if (content.classification == 'filler-v2' && content.file_type == 'webm') {
+                            let url = content.file_url.split('webm');
+                            content.file_url = url[0] + 'webm';
+                            content.thumbnail = url[0] + 'jpg';
+                        }
                         return content;
                     });
 

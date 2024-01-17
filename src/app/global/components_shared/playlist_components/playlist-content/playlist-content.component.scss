@@ -11,6 +11,10 @@
 	}
 }
 
+.playlist-content-list-view {
+    height: 135px;
+}
+
 .future-schedule {
 	border: 3px orange solid;
 }
@@ -61,4 +65,9 @@
 
 .cursor-not-allowed {
 	cursor: not-allowed;
+}
+
+.thumbnail-wrapper {
+    width: 135px;
+    height: 100%;
 }
