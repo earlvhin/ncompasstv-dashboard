@@ -1,4 +1,4 @@
-<div class="theme-container">
+<div class="theme-container" *ngIf="host && timezone && businessName; else loaderMain">
 	<div class="popup" *ngIf="show_popup" [ngClass]="setPopupBackground()">
 		{{ popup_message }} <span class="fas fa-times" (click)="dismissPopup()"></span>
 	</div>
@@ -1269,6 +1269,12 @@
 			<br />
 			<div class="captions mt-3">No License Activity</div>
 		</div>
+	</div>
+</ng-template>
+
+<ng-template #loaderMain>
+	<div class="h-80 d-flex justify-content-center align-items-center">
+		<app-spinner></app-spinner>
 	</div>
 </ng-template>
 
