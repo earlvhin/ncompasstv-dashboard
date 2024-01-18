@@ -13,942 +13,1019 @@ import { BulkEditBusinessHoursComponent } from '../../components_shared/page_com
 import { ImageSelectionModalComponent } from '../../components_shared/page_components/image-selection-modal/image-selection-modal.component';
 
 import {
-	API_CREATE_HOST,
-	API_DEALER,
-	API_GOOGLE_MAP,
-	API_PARENT_CATEGORY,
-	GOOGLE_MAP_SEARCH_RESULT,
-	PAGING,
-	UI_OPERATION_DAYS,
-	API_TIMEZONE,
-	UI_STORE_HOUR,
-	UI_STORE_HOUR_PERIOD,
-	City,
-	State
+    API_CREATE_HOST,
+    API_DEALER,
+    API_PARENT_CATEGORY,
+    API_TIMEZONE,
+    CITIES_STATE_DATA,
+    City,
+    GOOGLE_MAP_SEARCH_RESULT_V2,
+    PAGING,
+    UI_AUTOCOMPLETE,
+    UI_AUTOCOMPLETE_DATA,
+    UI_OPERATION_DAYS,
+    UI_STORE_HOUR,
+    UI_STORE_HOUR_PERIOD,
 } from 'src/app/global/models';
 
-import {
-	AuthService,
-	DealerService,
-	FastEdgeService,
-	CategoryService,
-	HelperService,
-	HostService,
-	MapService,
-	LocationService
-} from 'src/app/global/services';
+import { AuthService, DealerService, FastEdgeService, CategoryService, HelperService, HostService, MapService, LocationService } from 'src/app/global/services';
+import { CITIES_STATE } from '../../models/api_cities_state.model';
+import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
+import { STATES_PROVINCES } from '../../constants/states';
 
 @Component({
-	selector: 'app-create-host',
-	templateUrl: './create-host.component.html',
-	styleUrls: ['./create-host.component.scss'],
-	providers: [TitleCasePipe]
+    selector: 'app-create-host',
+    templateUrl: './create-host.component.html',
+    styleUrls: ['./create-host.component.scss'],
+    providers: [TitleCasePipe],
 })
 export class CreateHostComponent implements OnInit {
-	categories_data: API_PARENT_CATEGORY[];
-	city_loaded = false;
-	city_state: City[] = [];
-	canada_selected: boolean = false;
-	city_selected: string;
-	gen_categories_data: any[];
-	category_selected: string;
-	child_category: string;
-	current_host_image: string;
-	dealers_data: API_DEALER[] = [];
-	dealer_name: string;
-	form_invalid = true;
-	google_operation_days = this._googleOperationDays;
-	google_place_form: FormGroup;
-	google_result: any;
-	is_always_open = false;
-	is_admin = this.isAdmin;
-	is_creating_host = false;
-	is_dealer = this.isDealer;
-	is_loading_categories = true;
-	is_page_ready = false;
-	lat = 39.7395247;
-	lng = -105.1524133;
-	loading_data = true;
-	loading_search = false;
-	location_field = true;
-	location_candidate_fetched = false;
-	location_selected = false;
-	new_host_form: FormGroup;
-	new_host_form_fields = this._createFormFields;
-	no_category = false;
-	no_category2 = false;
-	no_result = false;
-	operation_days: UI_STORE_HOUR[];
-	paging: PAGING;
-	place_id: string;
-	selected_location: any;
-	timezone: API_TIMEZONE[];
-	title = 'Create Host Place';
-
-	private dealer_id: string;
-	private logo_data: { images: string[]; logo: string };
-	private is_search = false;
-	private operation_hours: UI_STORE_HOUR_PERIOD[];
-	protected default_host_image = 'assets/media-files/admin-icon.png';
-	protected _unsubscribe = new Subject<void>();
-
-	constructor(
-		private _auth: AuthService,
-		private _categories: CategoryService,
-		private _fastedge: FastEdgeService,
-		private _form: FormBuilder,
-		private _helper: HelperService,
-		private _host: HostService,
-		private _dealer: DealerService,
-		private _dialog: MatDialog,
-		private _map: MapService,
-		private _router: Router,
-		private _titlecase: TitleCasePipe,
-		private _location: LocationService
-	) {}
-
-	ngOnInit() {
-		this.current_host_image = this.default_host_image;
-		this.initializeCreateHostForm();
-		this.initializeGooglePlaceForm();
-		this.loadInitialData();
-		this.getCities();
-		this.setOperationDays();
-
-		if (this.isDealer || this.isSubDealer) {
-			this.dealer_id = this.roleInfo.dealerId;
-			this.dealer_name = this.roleInfo.businessName;
-			this.setToDealer(this.dealer_id);
-		}
-
-		this.WatchFields();
-	}
-
-	ngOnDestroy() {
-		this._unsubscribe.next();
-		this._unsubscribe.complete();
-	}
-
-	addHours(data: UI_OPERATION_DAYS) {
-		const hours = {
-			id: uuid.v4(),
-			day_id: data.id,
-			open: '',
-			close: ''
-		};
-
-		data.periods.push(hours);
-	}
-
-	getFullDayName(abbreviatedDay: string): string {
-		switch (abbreviatedDay.toLowerCase()) {
-			case 'm':
-				return 'Monday';
-
-			case 't':
-				return 'Tuesday';
-
-			case 'w':
-				return 'Wednesday';
-
-			case 'th':
-				return 'Thursday';
-
-			case 'f':
-				return 'Friday';
-
-			case 'st':
-				return 'Saturday';
-
-			default: // sn
-				return 'Sunday';
-		}
-	}
-
-	onBulkAddHours(): void {
-		const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
-			width: '550px',
-			height: '450px',
-			panelClass: 'position-relative',
-			data: {},
-			autoFocus: false
-		});
-
-		dialog.afterClosed().subscribe(
-			(response: UI_STORE_HOUR[]) => {
-				if (!response) return;
-				this.operation_days = response;
-			},
-			(error) => {
-				console.error(error);
-			}
-		);
-	}
-
-	onChoosePhotos() {
-		const config: MatDialogConfig = {
-			width: '700px',
-			disableClose: true
-		};
-
-		const dialog = this._dialog.open(ImageSelectionModalComponent, config);
-		dialog.componentInstance.placeId = this.place_id;
-
-		dialog.afterClosed().subscribe((response: { images: string[]; logo: string } | boolean) => {
-			if (!response) return;
-			const data = response as { images: string[]; logo: string };
-			this.logo_data = data;
-			this.current_host_image = data.logo;
-		});
-	}
-
-	onCreateHostPlace() {
-		this.operation_days.map((data) => {
-			if (data.status && data.periods.length > 0) {
-				data.periods.map((period) => {
-					if (period.open != '' && period.close == '') {
-						this.form_invalid = true;
-					} else if (period.close != '' && period.open == '') {
-						this.form_invalid = true;
-					} else {
-						this.form_invalid = false;
-					}
-				});
-			}
-		});
-
-		if (this.form_invalid) {
-			this.openWarningModal(
-				'error',
-				'Failed to create host',
-				'Kindly verify that all business hours opening should have closing time.',
-				null,
-				null
-			);
-			return;
-		}
-
-		const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
-
-		const newHostPlace = new API_CREATE_HOST({
-			dealerId: this.newHostFormControls.dealerId.value,
-			businessName: this.newHostFormControls.businessName.value,
-			createdBy: this._auth.current_user_value.user_id,
-			latitude: this.newHostFormControls.lat.value,
-			longitude: this.newHostFormControls.long.value,
-			address: this.newHostFormControls.address.value,
-			city: this.newHostFormControls.city.value,
-			state: this.newHostFormControls.state.value,
-			postalCode: this.newHostFormControls.zip.value,
-			region: this.newHostFormControls.region.value,
-			storeHours: JSON.stringify(this.operation_days),
-			category: this.newHostFormControls.category.value,
-			timezone: this.newHostFormControls.timezone.value,
-			logo: this.current_host_image
-		});
-
-		if (this.logo_data) {
-			newHostPlace.logo = this.logo_data.logo;
-			newHostPlace.images = this.logo_data.images;
-			this.current_host_image = this.logo_data.logo;
-		}
-
-		this.is_creating_host = true;
-
-		if ((this.is_creating_host = true)) {
-			this._host
-				.add_host_place(newHostPlace)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data: any) => {
-						this.openConfirmationModal('success', 'Host Place Created!', 'Hurray! You successfully created a Host Place', data.hostId);
-					},
-					(error) => {
-						this.is_creating_host = false;
-						this.openConfirmationModal('error', 'Host Place Creation Failed', 'An error occured while saving your data', null);
-					}
-				);
-		}
-	}
-
-	onSearchBusiness() {
-		this.no_result = false;
-		this.google_result = [];
-		this.location_candidate_fetched = true;
-		this.location_selected = false;
-		let country = 'United States';
-		if (this.canada_selected) {
-			country = 'Canada';
-		}
-
-		this._fastedge
-			.get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					if (data.google_search.length <= 0) {
-						this.no_result = true;
-						return;
-					}
-					this.google_result = data.google_search;
-				},
-				(error) => {
-					console.error(error);
-				}
-			);
-	}
-
-	onSelectDay(data: UI_STORE_HOUR) {
-		data.periods.length = 0;
-
-		const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
-		const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
-		const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
-		const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
-		const closingHourData = { hour: parseInt(closingHour[0]), minute: parseInt(closingHour[1]), second: 0 };
-
-		const hours = {
-			id: uuid.v4(),
-			day_id: data.id,
-			open: defaultHours.opening,
-			close: defaultHours.closing,
-			openingHourData,
-			closingHourData
-		};
-
-		data.status = !data.status;
-		data.periods.push(hours);
-	}
-
-	openWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
-		this._dialog.closeAll();
-
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data, return_msg, action }
-		});
-
-		dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
-	}
-
-	getGeneralCategory(category) {
-		this._categories
-			.get_category_general(category)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data) => {
-				if (!data.message) {
-					this.setToGeneralCategory(data.category.generalCategory);
-				} else {
-					this.setToGeneralCategory('Others');
-				}
-			});
-	}
-
-	getMoreDetailsofBusinessPlace(location) {
-		let location_selected = location;
-		this._map
-			.get_google_store_info(location.placeId)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((data) => {
-				location_selected.opening_hours = data.data.result.opening_hours;
-				this.mapOperationHours(location_selected.opening_hours.periods);
-			});
-	}
-
-	plotToMap(data: any) {
-		let sliced_address = data.address.split(', ');
-		let state = data.address.substring(data.address.lastIndexOf(','));
-		this.getGeneralCategory(data.type);
-		this.setToCategory(data.type);
-		this.place_id = data.placeId;
-		this.current_host_image = data.thumbnail;
-		this.location_selected = true;
-		this.location_candidate_fetched = false;
-		this.selected_location = data;
-		this.newHostFormControls.businessName.setValue(data.title);
-		this.newHostFormControls.lat.setValue(data.latitude);
-		this.newHostFormControls.long.setValue(data.longitude);
-
-		// ADDRESS MAPPING
-		if (state.includes('Canada')) {
-			let state_zip = sliced_address[2].split(' ');
-			this.newHostFormControls.address.setValue(sliced_address[0]);
-			this.fillCityOfHost(state_zip[0], sliced_address[1]);
-			this.newHostFormControls.zip.setValue(`${state_zip[1]}${state_zip[2]}`);
-		} else {
-			if (sliced_address.length == 3) {
-				let state_zip = sliced_address[2].split(' ');
-				this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
-				this.fillCityOfHost(state_zip[0], sliced_address[1]);
-				this.newHostFormControls.zip.setValue(`${state_zip[1]}`);
-			}
-			if (sliced_address.length == 4) {
-				let state_zip = sliced_address[2].split(' ');
-				this.newHostFormControls.address.setValue(sliced_address[0]);
-				this.setCity(sliced_address[1]);
-				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-			}
-			if (sliced_address.length == 5) {
-				let state_zip = sliced_address[3].split(' ');
-				this.newHostFormControls.address.setValue(`${sliced_address[0]} ${sliced_address[1]}`);
-				this.setCity(sliced_address[1]);
-
-				this.newHostFormControls.zip.setValue(`${state_zip[1]} ${state_zip[2]}`);
-			}
-		}
-
-		this.getMoreDetailsofBusinessPlace(this.selected_location);
-		this.new_host_form.markAllAsTouched();
-		this._helper.onTouchPaginatedAutoCompleteField.next();
-	}
-
-	removeHours(data: UI_OPERATION_DAYS, index: number) {
-		data.periods.splice(index, 1);
-	}
-
-	setToGeneralCategory(event: string) {
-		this.no_category2 = true;
-		this.newHostFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
-	}
-
-	setToCategory(event: string) {
-		this.no_category = true;
-		this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
-		this.getGeneralCategory(event);
-	}
-
-	searchBoxTrigger(event: { is_search: boolean; page: number }) {
-		this.is_search = event.is_search;
-		this.getDealers(event.page);
-	}
-
-	searchDealer(keyword: string) {
-		this.loading_search = true;
-
-		this._dealer
-			.get_search_dealer(keyword)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				(data) => {
-					if (data.paging.entities && data.paging.entities.length > 0) this.dealers_data = data.paging.entities;
-					else this.dealers_data = [];
-					this.paging = data.paging;
-				},
-				(error) => {
-					console.error(error);
-				}
-			)
-			.add(() => {
-				this.loading_search = false;
-			});
-	}
-
-	setTimezone(data) {
-		this.newHostFormControls.timezone.setValue(data);
-	}
-
-	setToDealer(id: string) {
-		this.newHostFormControls.dealerId.setValue(id);
-	}
-
-	private formatTime(data: number): string {
-		const parsed = `${data}`;
-		let time = new Date(`January 1, 1990 ${parsed.slice(0, 2)}:${parsed.slice(2, 4)}`);
-		let options = { hour: 'numeric', minute: 'numeric', hour12: true } as Intl.DateTimeFormatOptions;
-		return time.toLocaleString('en-US', options);
-	}
-
-	private getDealers(page: number) {
-		if (page > 1) {
-			this.loading_data = true;
-
-			this._dealer
-				.get_dealers_with_page(page, '')
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.dealers_data = data.dealers;
-						this.paging = data.paging;
-						this.loading_data = false;
-					},
-					(error) => {
-						console.error(error);
-					}
-				);
-		} else {
-			if (this.is_search) this.loading_search = true;
-
-			this._dealer
-				.get_dealers_with_page(page, '')
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.dealers_data = data.dealers;
-						this.paging = data.paging;
-						this.loading_data = false;
-						this.loading_search = false;
-					},
-					(error) => {
-						console.error(error);
-					}
-				);
-		}
-	}
-
-	private initializeCreateHostForm() {
-		this.new_host_form = this._form.group({
-			dealerId: ['', Validators.required],
-			businessName: ['', Validators.required],
-			is_canada: [''],
-			address: ['', Validators.required],
-			city: ['', Validators.required],
-			state: [{ value: '', disabled: true }, Validators.required],
-			region: [{ value: '', disabled: true }, Validators.required],
-			zip: ['', Validators.required],
-			category: ['', Validators.required],
-			category2: [{ value: '', disabled: true }],
-			long: ['', Validators.required],
-			lat: ['', Validators.required],
-			timezone: ['', Validators.required],
-			createdBy: this._auth.current_user_value.user_id
-		});
-
-		this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.new_host_form.valid) {
-				this.form_invalid = false;
-			} else {
-				this.form_invalid = true;
-			}
-		});
-	}
-
-	private initializeGooglePlaceForm() {
-		this.google_place_form = this._form.group({ location: ['', Validators.required] });
-
-		this.google_place_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
-			if (this.google_place_form.valid) {
-				this.location_field = false;
-			} else {
-				this.location_field = true;
-				this.location_candidate_fetched = false;
-			}
-		});
-	}
-
-	private loadInitialData() {
-		const requests: ObservableInput<any> = [
-			this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe)),
-			this._categories.get_categories().pipe(takeUntil(this._unsubscribe)),
-			this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
-			this._host.get_time_zones().pipe(takeUntil(this._unsubscribe))
-		];
-
-		forkJoin(requests)
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe(
-				([generalCategories, getCategories, getDealers, getTimeZones]) => {
-					const categories = generalCategories;
-					const genCategories = getCategories;
-					const dealersData = getDealers as { dealers: API_DEALER[]; paging: PAGING };
-					const timezones = getTimeZones as API_TIMEZONE[];
-
-					this.categories_data = categories.map((category) => {
-						category.categoryName = this._titlecase.transform(category.categoryName);
-						return category;
-					});
-
-					this.gen_categories_data = genCategories.map((category) => {
-						category.generalCategory = this._titlecase.transform(category.generalCategory);
-						return category;
-					});
-
-					this.city_loaded = true;
-					this.timezone = timezones;
-					this.dealers_data = dealersData.dealers;
-					this.paging = dealersData.paging;
-					this.loading_data = false;
-					this.is_page_ready = true;
-				},
-				(error) => {
-					console.error(error);
-				}
-			);
-	}
-
-	getCities() {
-		this._location
-			.get_cities()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response: any) => {
-				this.city_state = response.map((city) => {
-					return new City(city.city, `${city.city}, ${city.state}`, city.state);
-				});
-			});
-	}
-
-	getCanadaCities() {
-		this._location
-			.get_canada_cities()
-			.pipe(takeUntil(this._unsubscribe))
-			.subscribe((response: any) => {
-				this.city_state = response.map((city) => {
-					return new City(city.city, `${city.city}, ${city.state_whole}`, city.state, city.region, city.state_whole);
-				});
-			});
-	}
-
-	setCity(data): void {
-		let cityState = data.split(',')[0].trim();
-		if (!this.canada_selected) {
-			this.newHostFormControls.city.setValue(cityState);
-			this.city_selected = cityState;
-			this._location
-				.get_states_regions(data.substr(data.indexOf(',') + 2))
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						this.newHostFormControls.state.setValue(data[0].abbreviation);
-						this.newHostFormControls.region.setValue(data[0].region);
-					},
-					(error) => {
-						console.error(error);
-					}
-				);
-		} else {
-			let sliced_address = data.split(', ');
-			let filtered_data = this.city_state.filter((city) => {
-				return city.city === sliced_address[0];
-			});
-
-			this.newHostFormControls.city.setValue(cityState);
-			this.newHostFormControls.state.setValue(filtered_data[0].state);
-			this.newHostFormControls.region.setValue(filtered_data[0].region);
-		}
-	}
-
-	fillCityOfHost(state, city_add) {
-		if (!this.canada_selected) {
-			this._location
-				.get_states_by_abbreviation(state)
-				.pipe(takeUntil(this._unsubscribe))
-				.subscribe(
-					(data) => {
-						let city = city_add + ', ' + data[0].state;
-						this.setCity(city);
-					},
-					(error) => {
-						console.error(error);
-					}
-				);
-		} else {
-			let city = this.city_state.filter((canada_city) => canada_city.city === city_add);
-			this.setCity(city[0].city_state);
-		}
-	}
-
-	private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {
-		this.operation_hours = data.map((hours) => {
-			const hour = {
-				id: uuid.v4(),
-				day_id: hours.open.day,
-				open: hours.open ? this.formatTime(hours.open.time) : '',
-				close: hours.close ? this.formatTime(hours.close.time) : '',
-				openingHourData: null,
-				closingHourData: null
-			};
-
-			const setHourData = (hour: string) => {
-				if (hour.length === 0 || !hour.includes(':')) {
-					return {
-						hour: 0,
-						minute: 0,
-						second: 0
-					};
-				}
-
-				const hourData = moment(hour, 'hh:mm A').format('HH:mm').split(':');
-				return { hour: parseInt(hourData[0]), minute: parseInt(hourData[1]), second: 0 };
-			};
-
-			if (hour.open == '12:00 AM' && (hour.close == '' || null)) {
-				const close = '11:59 PM';
-				const open = '12:00 AM';
-
-				hour.close = close;
-				hour.open = open;
-				hour.openingHourData = setHourData(open);
-				hour.closingHourData = setHourData(close);
-			} else {
-				hour.openingHourData = setHourData(hour.open);
-				hour.closingHourData = setHourData(hour.close);
-			}
-
-			return hour;
-		});
-
-		this.operation_days = this.google_operation_days.map((h) => {
-			return {
-				id: h.id,
-				label: h.label,
-				day: h.day,
-				periods: this.operation_hours.filter((t) => t.day_id == h.id || (t.open === '12:00 AM' && t.close === '11:59 PM')),
-				status: this.operation_hours.filter((t) => (t.open === '12:00 AM' && t.close === '11:59 PM') || t.day_id == h.id).length !== 0
-			};
-		});
-	}
-
-	private openConfirmationModal(status: string, message: string, data: string, hostId: string): void {
-		const dialogRef = this._dialog.open(ConfirmationModalComponent, {
-			width: '500px',
-			height: '350px',
-			data: { status, message, data }
-		});
-
-		dialogRef.afterClosed().subscribe(() => {
-			if (!hostId) return;
-			this._router.navigate([`/${this.roleRoute}/hosts`, hostId]);
-		});
-	}
-
-	private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
-		return data.map((operation) => {
-			operation.periods = operation.periods.map((period) => {
-				const opening = period.openingHourData;
-				const closing = period.closingHourData;
-				period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
-				period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
-
-				return period;
-			});
-			return operation;
-		});
-	}
-
-	private setOperationDays(): void {
-		this.operation_days = this.google_operation_days.map((data) => {
-			return {
-				id: data.id,
-				label: data.label,
-				day: data.day,
-				periods: [],
-				status: data.status
-			};
-		});
-	}
-
-	getCanadaAddress(value) {
-		this.canada_selected = value.checked;
-		this.clearAddressValue();
-		if (value.checked) {
-			this.getCanadaCities();
-		} else {
-			this.getCities();
-		}
-	}
-
-	clearAddressValue() {
-		this.newHostFormControls.address.setValue('');
-		this.city_selected = '';
-		this.newHostFormControls.city.setValue('');
-		this.newHostFormControls.state.setValue('');
-		this.newHostFormControls.region.setValue('');
-		this.newHostFormControls.zip.setValue('');
-	}
-
-	private WatchFields() {
-		this.newHostFormControls.category.valueChanges.subscribe((data) => {
-			if (data === '') this.no_category = false;
-		});
-
-		this.newHostFormControls.category2.valueChanges.subscribe((data) => {
-			if (data === '') this.no_category2 = false;
-		});
-
-		this.newHostFormControls.city.valueChanges.subscribe((data) => {
-			this.city_selected = data;
-		});
-
-		this.new_host_form.controls['zip'].setValidators([Validators.required, Validators.maxLength(7)]);
-
-		this.new_host_form.controls['zip'].valueChanges.subscribe((data) => {
-			if (this.canada_selected) {
-				this.new_host_form.controls['zip'].setValue(data.substring(0, 6), { emitEvent: false });
-			} else {
-				this.new_host_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
-			}
-		});
-	}
-
-	protected get _createFormFields() {
-		return [
-			{
-				label: 'Host Business Name',
-				control: 'businessName',
-				placeholder: 'Ex. SM Center Pasig',
-				col: 'col-lg-12',
-				is_required: true
-			},
-			{
-				label: 'Category',
-				control: 'category',
-				placeholder: 'Ex. Art School',
-				col: 'col-lg-6',
-				autocomplete: true,
-				is_required: true
-			},
-			{
-				label: 'General Category',
-				control: 'category2',
-				placeholder: 'Ex. School',
-				col: 'col-lg-6',
-				autocomplete: true,
-				is_required: false
-			},
-			{
-				label: 'Latitude',
-				control: 'lat',
-				placeholder: 'Ex. 58.933',
-				col: 'col-lg-6',
-				is_required: true
-			},
-			{
-				label: 'Longitude',
-				control: 'long',
-				placeholder: 'Ex. 58.933',
-				col: 'col-lg-6',
-				is_required: true
-			},
-			{
-				label: 'Address',
-				control: 'address',
-				placeholder: 'Ex. 21st Drive Fifth Avenue Place',
-				col: 'col-lg-6',
-				is_required: true
-			},
-			{
-				label: 'City',
-				control: 'city',
-				placeholder: 'Ex. Chicago',
-				col: 'col-lg-6',
-				is_required: true,
-				autocomplete: true
-			},
-			{
-				label: 'State',
-				control: 'state',
-				placeholder: 'Ex. IL',
-				col: 'col-lg-2',
-				is_required: true
-			},
-			{
-				label: 'Region',
-				control: 'region',
-				placeholder: 'Ex. NW',
-				col: 'col-lg-2',
-				is_required: true
-			},
-			{
-				label: 'Zip Code',
-				control: 'zip',
-				placeholder: 'Ex. 54001',
-				col: 'col-lg-4',
-				is_required: true
-			},
-			{
-				label: 'Timezone',
-				control: 'timezone',
-				placeholder: 'Ex. US/Central',
-				col: 'col-lg-4',
-				autocomplete: true,
-				is_required: true
-			}
-		];
-	}
-
-	protected get _googleOperationDays() {
-		return [
-			{
-				id: 1,
-				label: 'M',
-				day: 'Monday',
-				periods: [],
-				status: false
-			},
-			{
-				id: 2,
-				label: 'T',
-				day: 'Tuesday',
-				periods: [],
-				status: false
-			},
-			{
-				id: 3,
-				label: 'W',
-				day: 'Wednesday',
-				periods: [],
-				status: false
-			},
-			{
-				id: 4,
-				label: 'Th',
-				day: 'Thursday',
-				periods: [],
-				status: false
-			},
-			{
-				id: 5,
-				label: 'F',
-				day: 'Friday',
-				periods: [],
-				status: false
-			},
-			{
-				id: 6,
-				label: 'St',
-				day: 'Saturday',
-				periods: [],
-				status: false
-			},
-			{
-				id: 0,
-				label: 'Sn',
-				day: 'Sunday',
-				periods: [],
-				status: false
-			}
-		];
-	}
-
-	protected get currentRole() {
-		return this._auth.current_role;
-	}
-
-	protected get googlePlaceFormControls() {
-		return this.google_place_form.controls;
-	}
-
-	protected get isAdmin() {
-		return this.currentRole === 'administrator';
-	}
-
-	protected get isDealer() {
-		return this.currentRole === 'dealer';
-	}
-
-	protected get isSubDealer() {
-		return this.currentRole === 'sub-dealer';
-	}
-
-	protected get newHostFormControls() {
-		return this.new_host_form.controls;
-	}
-
-	protected get roleInfo() {
-		return this._auth.current_user_value.roleInfo;
-	}
-
-	protected get roleRoute() {
-		return this._auth.roleRoute;
-	}
+    cities_state_data: CITIES_STATE;
+    categories_data: API_PARENT_CATEGORY[];
+    city_loaded = false;
+    city_state: City[] = [];
+    canada_selected: boolean = false;
+    city_selected: string;
+    gen_categories_data: any[];
+    category_selected: string;
+    child_category: string;
+    current_host_image: string;
+    dealers_data: API_DEALER[] = [];
+    dealer_name: string;
+    form_invalid = true;
+    google_operation_days = this._googleOperationDays;
+    google_place_form: FormGroup;
+    google_result: any;
+    is_always_open = false;
+    is_admin = this.isAdmin;
+    is_creating_host = false;
+    is_dealer = this.isDealer;
+    is_loading_categories = true;
+    is_page_ready = false;
+    lat = 39.7395247;
+    lng = -105.1524133;
+    loading_data = true;
+    loading_search = false;
+    location_field = true;
+    location_candidate_fetched = false;
+    location_selected = false;
+    new_host_form: FormGroup;
+    new_host_form_fields = this._createFormFields;
+    no_category = false;
+    no_category2 = false;
+    no_result = false;
+    operation_days: UI_STORE_HOUR[];
+    paging: PAGING;
+    place_id: string;
+    search_keyword: string;
+    selected_location: any;
+    state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
+    timezone: API_TIMEZONE[];
+    title = 'Create Host Place';
+    trigger_data: Subject<any> = new Subject<any>();
+    create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
+
+    private dealer_id: string;
+    private logo_data: { images: string[]; logo: string };
+    private is_search = false;
+    private operation_hours: UI_STORE_HOUR_PERIOD[];
+    protected default_host_image = 'assets/media-files/admin-icon.png';
+    protected _unsubscribe = new Subject<void>();
+
+    // New Autocomplete Dependencies
+    city_field_data: UI_AUTOCOMPLETE = {
+        label: 'City',
+        placeholder: 'Type a city',
+        data: [],
+        allowSearchTrigger: true,
+        trigger: this.trigger_data.asObservable(),
+    };
+
+    constructor(
+        private _auth: AuthService,
+        private _categories: CategoryService,
+        private _fastedge: FastEdgeService,
+        private _form: FormBuilder,
+        private _helper: HelperService,
+        private _host: HostService,
+        private _dealer: DealerService,
+        private _dialog: MatDialog,
+        private _map: MapService,
+        private _router: Router,
+        private _titlecase: TitleCasePipe,
+        private _location: LocationService
+    ) {}
+
+    ngOnInit() {
+        this.current_host_image = this.default_host_image;
+        this.initializeCreateHostForm();
+        this.initializeGooglePlaceForm();
+        this.loadInitialData();
+        this.setOperationDays();
+
+        if (this.isDealer || this.isSubDealer) {
+            this.dealer_id = this.roleInfo.dealerId;
+            this.dealer_name = this.roleInfo.businessName;
+            this.setToDealer(this.dealer_id);
+        }
+
+        this.getCitiesAndStates();
+    }
+
+    ngOnDestroy() {
+        this._unsubscribe.next();
+        this._unsubscribe.complete();
+    }
+
+    addHours(data: UI_OPERATION_DAYS) {
+        const hours = {
+            id: uuid.v4(),
+            day_id: data.id,
+            open: '',
+            close: '',
+        };
+
+        data.periods.push(hours);
+    }
+
+    getFullDayName(abbreviatedDay: string): string {
+        switch (abbreviatedDay.toLowerCase()) {
+            case 'm':
+                return 'Monday';
+
+            case 't':
+                return 'Tuesday';
+
+            case 'w':
+                return 'Wednesday';
+
+            case 'th':
+                return 'Thursday';
+
+            case 'f':
+                return 'Friday';
+
+            case 'st':
+                return 'Saturday';
+
+            default: // sn
+                return 'Sunday';
+        }
+    }
+
+    onBulkAddHours(): void {
+        const dialog = this._dialog.open(BulkEditBusinessHoursComponent, {
+            width: '550px',
+            height: '450px',
+            panelClass: 'position-relative',
+            data: {},
+            autoFocus: false,
+        });
+
+        dialog.afterClosed().subscribe(
+            (response: UI_STORE_HOUR[]) => {
+                if (!response) return;
+                this.operation_days = response;
+            },
+            (error) => {
+                console.error(error);
+            }
+        );
+    }
+
+    onChoosePhotos() {
+        const config: MatDialogConfig = {
+            width: '700px',
+            disableClose: true,
+        };
+
+        const dialog = this._dialog.open(ImageSelectionModalComponent, config);
+        dialog.componentInstance.placeId = this.place_id;
+
+        dialog.afterClosed().subscribe((response: { images: string[]; logo: string } | boolean) => {
+            if (!response) return;
+            const data = response as { images: string[]; logo: string };
+            this.logo_data = data;
+            this.current_host_image = data.logo;
+        });
+    }
+
+    onCreateHostPlace() {
+        this.operation_days.map((data) => {
+            if (data.status && data.periods.length > 0) {
+                data.periods.map((period) => {
+                    if (period.open != '' && period.close == '') {
+                        this.form_invalid = true;
+                    } else if (period.close != '' && period.open == '') {
+                        this.form_invalid = true;
+                    } else {
+                        this.form_invalid = false;
+                    }
+                });
+            }
+        });
+
+        if (this.form_invalid) {
+            this.openWarningModal('error', 'Failed to create host', 'Kindly verify that all business hours opening should have closing time.', null, null);
+            return;
+        }
+
+        // Still needed?
+        const businessHours = this.setBusinessHoursBeforeSubmitting(this.operation_days);
+
+        const newHostPlace = new API_CREATE_HOST({
+            dealerId: this.newHostFormControls.dealerId.value,
+            businessName: this.newHostFormControls.businessName.value,
+            createdBy: this._auth.current_user_value.user_id,
+            latitude: this.newHostFormControls.lat.value,
+            longitude: this.newHostFormControls.long.value,
+            address: this.newHostFormControls.address.value,
+            city: this.newHostFormControls.city.value,
+            state: this.newHostFormControls.state.value,
+            postalCode: this.newHostFormControls.zip.value,
+            region: this.newHostFormControls.region.value,
+            storeHours: JSON.stringify(this.operation_days),
+            category: this.newHostFormControls.category.value,
+            timezone: this.newHostFormControls.timezone.value,
+            logo: this.current_host_image,
+        });
+
+        if (this.logo_data) {
+            newHostPlace.logo = this.logo_data.logo;
+            newHostPlace.images = this.logo_data.images;
+            this.current_host_image = this.logo_data.logo;
+        }
+
+        this.is_creating_host = true;
+
+        if ((this.is_creating_host = true)) {
+            this._host
+                .add_host_place(newHostPlace)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data: any) => {
+                        this.openConfirmationModal('success', 'Host Place Created!', 'Hurray! You successfully created a Host Place', data.hostId);
+                    },
+                    (error) => {
+                        this.is_creating_host = false;
+                        this.openConfirmationModal('error', 'Host Place Creation Failed', 'An error occured while saving your data', null);
+                    }
+                );
+        }
+    }
+
+    onSearchBusiness() {
+        this.no_result = false;
+        this.google_result = [];
+        this.location_candidate_fetched = true;
+        this.location_selected = false;
+        let country = 'United States';
+
+        if (this.canada_selected) {
+            country = 'Canada';
+        }
+
+        this._fastedge
+            .get_google_business_profile(this.googlePlaceFormControls.location.value + ', ' + country)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (data) => {
+                    if (data.google_search.length <= 0) {
+                        this.no_result = true;
+                        return;
+                    }
+
+                    this.google_result = data.google_search;
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
+    }
+
+    onSelectDay(data: UI_STORE_HOUR) {
+        data.periods.length = 0;
+
+        const defaultHours = { opening: '12:00 AM', closing: '11:59 PM' };
+        const openingHour = moment(defaultHours.opening, 'hh:mm A').format('HH:mm').split(':');
+        const closingHour = moment(defaultHours.closing, 'hh:mm A').format('HH:mm').split(':');
+        const openingHourData = { hour: parseInt(openingHour[0]), minute: parseInt(openingHour[1]), second: 0 };
+        const closingHourData = { hour: parseInt(closingHour[0]), minute: parseInt(closingHour[1]), second: 0 };
+
+        const hours = {
+            id: uuid.v4(),
+            day_id: data.id,
+            open: defaultHours.opening,
+            close: defaultHours.closing,
+            openingHourData,
+            closingHourData,
+        };
+
+        data.status = !data.status;
+        data.periods.push(hours);
+    }
+
+    openWarningModal(status: string, message: string, data: string, return_msg: string, action: string): void {
+        this._dialog.closeAll();
+
+        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+            width: '500px',
+            height: '350px',
+            data: { status, message, data, return_msg, action },
+        });
+
+        dialogRef.afterClosed().subscribe(() => (this.form_invalid = false));
+    }
+
+    getGeneralCategory(category) {
+        this._categories
+            .get_category_general(category)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => {
+                if (!data.message) {
+                    this.setToGeneralCategory(data.category.generalCategory);
+                } else {
+                    this.setToGeneralCategory('Others');
+                }
+            });
+    }
+
+    getMoreBusinessPlaceDetails(location) {
+        let location_selected = location;
+        this._map
+            .get_google_store_info(location.placeId)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((data) => {
+                if (!data.result.opening_hours) return;
+                location_selected.opening_hours = data.result.opening_hours;
+                this.mapOperationHours(location_selected.opening_hours.periods);
+            });
+    }
+
+    plotToMap(data: GOOGLE_MAP_SEARCH_RESULT_V2) {
+        this.setZipValidatorRule(data.address);
+        let sliced_address = data.address.split(', ');
+        this.getGeneralCategory(data.type);
+        this.setToCategory(data.type);
+        this.place_id = data.placeId;
+        this.current_host_image = data.thumbnail;
+        this.location_selected = true;
+        this.location_candidate_fetched = false;
+        this.selected_location = data;
+        this.newHostFormControls.businessName.setValue(data.title);
+        this.newHostFormControls.lat.setValue(data.latitude);
+        this.newHostFormControls.long.setValue(data.longitude);
+
+        let address;
+        let zipState;
+        let zip;
+        let state;
+        let city;
+        let country;
+
+        if (data.address.includes('USA')  || data.address.includes('Canada') || data.address.includes('United States')) {
+            country = sliced_address[sliced_address.length - 1];
+        }
+
+        console.log(sliced_address)
+
+        // Address Mapping
+        if (sliced_address.length == 5) {
+            // We are sure that this here includes a country, and it is the last index (4)
+            zipState = sliced_address[3].split(' ');
+            state = zipState[0];
+            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            city = sliced_address[2];
+            address = `${sliced_address[0]}, ${sliced_address[1]}`;
+        } else if (sliced_address.length == 4) {
+            zipState = country ? sliced_address[2].split(' ') : sliced_address[3].split(' ');
+            state = zipState[0];
+            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            city = sliced_address[1];
+            address = sliced_address[0];
+        } else if (sliced_address.length == 3) {
+            zipState = sliced_address[2].split(' ');
+            state = zipState[0];
+            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            city = sliced_address[1];
+            address = sliced_address[0];
+        }
+
+        let state_region: { state: string; abbreviation: string; region: string } = this.searchStateAndRegion(state);
+
+        // Set Address Value
+        this.newHostFormControls.address.setValue(`${sliced_address[0]}`);
+
+        // Set City Value
+        this.trigger_data.next({ data: sliced_address[1], action: AUTOCOMPLETE_ACTIONS.static });
+        this.newHostFormControls.city.setValue(city);
+
+        // Set State Value
+        this.newHostFormControls.state.setValue(state_region.abbreviation);
+
+        // Set Region Value
+        this.newHostFormControls.region.setValue(state_region.region);
+
+        // Set Zip Value
+        this.canada_selected = country && country.includes('Canada');
+        this.newHostFormControls.zip.setValue(zip);
+
+        // Get Business Place Details
+        this.getMoreBusinessPlaceDetails(this.selected_location);
+        this.new_host_form.markAllAsTouched();
+        this._helper.onTouchPaginatedAutoCompleteField.next();
+    }
+
+    removeHours(data: UI_OPERATION_DAYS, index: number) {
+        data.periods.splice(index, 1);
+    }
+
+    setZipValidatorRule(googleAddress: string) {
+        const zipLength = googleAddress.includes('Canada') ? 6 : 5;
+        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)])
+    }
+
+    searchStateAndRegion(state: string) {
+        return this.state_provinces.filter((s) => state.toLowerCase() == s.state.toLowerCase() || state.toLowerCase() == s.abbreviation.toLowerCase())[0];
+    }
+
+    setToGeneralCategory(event: string) {
+        this.no_category2 = true;
+        this.newHostFormControls.category2.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
+    }
+
+    setToCategory(event: string) {
+        this.no_category = true;
+        this.newHostFormControls.category.setValue(this._titlecase.transform(event).replace(/_/g, ' '));
+        this.getGeneralCategory(event);
+    }
+
+    searchBoxTrigger(event: { is_search: boolean; page: number }) {
+        this.is_search = event.is_search;
+        this.getDealers(event.page);
+    }
+
+    searchDealer(keyword: string) {
+        this.loading_search = true;
+
+        this._dealer
+            .get_search_dealer(keyword)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (data) => {
+                    if (data.paging.entities && data.paging.entities.length > 0) this.dealers_data = data.paging.entities;
+                    else this.dealers_data = [];
+                    this.paging = data.paging;
+                },
+                (error) => {
+                    console.error(error);
+                }
+            )
+            .add(() => {
+                this.loading_search = false;
+            });
+    }
+
+    setTimezone(data) {
+        this.newHostFormControls.timezone.setValue(data);
+    }
+
+    setToDealer(id: string) {
+        this.newHostFormControls.dealerId.setValue(id);
+    }
+
+    private formatTime(data: number): string {
+        const parsed = `${data}`;
+        let time = new Date(`January 1, 1990 ${parsed.slice(0, 2)}:${parsed.slice(2, 4)}`);
+        let options = { hour: 'numeric', minute: 'numeric', hour12: true } as Intl.DateTimeFormatOptions;
+        return time.toLocaleString('en-US', options);
+    }
+
+    private getDealers(page: number) {
+        if (page > 1) {
+            this.loading_data = true;
+
+            this._dealer
+                .get_dealers_with_page(page, '')
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        this.dealers_data = data.dealers;
+                        this.paging = data.paging;
+                        this.loading_data = false;
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            if (this.is_search) this.loading_search = true;
+
+            this._dealer
+                .get_dealers_with_page(page, '')
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        this.dealers_data = data.dealers;
+                        this.paging = data.paging;
+                        this.loading_data = false;
+                        this.loading_search = false;
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        }
+    }
+
+    private initializeCreateHostForm() {
+        this.new_host_form = this._form.group({
+            dealerId: ['', Validators.required],
+            businessName: ['', Validators.required],
+            is_canada: [''],
+            address: ['', Validators.required],
+            city: ['', Validators.required],
+            state: ['', Validators.required],
+            region: ['', Validators.required],
+            zip: ['', Validators.required],
+            category: ['', Validators.required],
+            category2: [{ value: '', disabled: true }],
+            long: ['', Validators.required],
+            lat: ['', Validators.required],
+            timezone: ['', Validators.required],
+            createdBy: this._auth.current_user_value.user_id,
+        });
+
+        this.new_host_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            if (this.new_host_form.valid) {
+                this.form_invalid = false;
+            } else {
+                this.form_invalid = true;
+            }
+        });
+    }
+
+    private initializeGooglePlaceForm() {
+        this.google_place_form = this._form.group({ location: ['', Validators.required] });
+
+        this.google_place_form.valueChanges.pipe(takeUntil(this._unsubscribe)).subscribe(() => {
+            if (this.google_place_form.valid) {
+                this.location_field = false;
+            } else {
+                this.location_field = true;
+                this.location_candidate_fetched = false;
+            }
+        });
+    }
+
+    private loadInitialData() {
+        const requests: ObservableInput<any> = [
+            this._categories.get_parent_categories().pipe(takeUntil(this._unsubscribe)),
+            this._categories.get_categories().pipe(takeUntil(this._unsubscribe)),
+            this._dealer.get_dealers_with_page(1, '').pipe(takeUntil(this._unsubscribe)),
+            this._host.get_time_zones().pipe(takeUntil(this._unsubscribe)),
+        ];
+
+        http: forkJoin(requests)
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                ([generalCategories, getCategories, getDealers, getTimeZones]) => {
+                    const categories = generalCategories;
+                    const genCategories = getCategories;
+                    const dealersData = getDealers as { dealers: API_DEALER[]; paging: PAGING };
+                    const timezones = getTimeZones as API_TIMEZONE[];
+
+                    this.categories_data = categories.map((category) => {
+                        category.categoryName = this._titlecase.transform(category.categoryName);
+                        return category;
+                    });
+
+                    this.gen_categories_data = genCategories.map((category) => {
+                        category.generalCategory = this._titlecase.transform(category.generalCategory);
+                        return category;
+                    });
+
+                    this.city_loaded = true;
+                    this.timezone = timezones;
+                    this.dealers_data = dealersData.dealers;
+                    this.paging = dealersData.paging;
+                    this.loading_data = false;
+                    this.is_page_ready = true;
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
+    }
+
+    getCities() {
+        this._location
+            .get_cities()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                this.cities_state_data = response.map((city) => {
+                    return new CITIES_STATE_DATA(city.id, city.city, city.abbreviation, city.state, city.region, city.country);
+                });
+            });
+    }
+
+    getCitiesAndStates() {
+        this._location
+            .get_cities_data()
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe((response) => {
+                this.cities_state_data = response;
+
+                this.city_field_data.data = [
+                    ...this.cities_state_data.data
+                        .map((data) => {
+                            return {
+                                id: data.id,
+                                value: `${data.city}, ${data.state}`,
+                                display: data.city,
+                            };
+                        })
+                        .filter((data) => data),
+                ];
+            });
+    }
+
+    searchCity(keyword: string) {
+        this.search_keyword = keyword;
+        this.city_field_data.data = [];
+        this._location
+            .get_cities_data(keyword) // Make sure keyword is a string here
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                (response) => {
+                    this.cities_state_data.data = response.data;
+                    this.city_field_data.initialValue = [{ id: '', value: keyword }];
+                    this.city_field_data.data = [
+                        ...this.cities_state_data.data
+                            .map((data) => {
+                                return {
+                                    id: data.id,
+                                    value: `${data.city}, ${data.state}`,
+                                    display: data.city,
+                                };
+                            })
+                            .filter((data) => data),
+                    ];
+                },
+                (error) => {
+                    this.city_field_data.noData = `${keyword} not found`;
+                    this.city_field_data.data = [
+                        ...this.cities_state_data.data
+                            .map((data) => {
+                                return {
+                                    id: data.id,
+                                    value: `${data.city}, ${data.state}`,
+                                    display: data.city,
+                                };
+                            })
+                            .filter((data) => data),
+                    ];
+                }
+            );
+    }
+
+    searchCityById(data: UI_AUTOCOMPLETE_DATA) {
+        const city = this.cities_state_data.data.filter((item) => item.id === data.id)[0];
+
+        if (!city) return;
+        this.newHostFormControls.city.setValue(city.city);
+        this.newHostFormControls.state.setValue(city.abbreviation);
+        this.newHostFormControls.region.setValue(city.region);
+    }
+
+    setCity(data): void {
+        let cityState = data.split(',')[0].trim();
+        if (!this.canada_selected) {
+            this.newHostFormControls.city.setValue(cityState);
+            this.city_selected = cityState;
+            this._location
+                .get_cities_data(data)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        this.newHostFormControls.state.setValue(data.data[0].abbreviation);
+                        this.newHostFormControls.region.setValue(data.data[0].region);
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            let sliced_address = data.split(', ');
+            let filtered_data = this.city_state.filter((city) => {
+                return city.city === sliced_address[0];
+            });
+
+            this.newHostFormControls.city.setValue(cityState);
+            this.newHostFormControls.state.setValue(filtered_data[0].state);
+            this.newHostFormControls.region.setValue(filtered_data[0].region);
+        }
+    }
+
+    fillCityOfHost(address: string, country?: string) {
+        if (country !== 'Canada') {
+            this._location
+                .get_cities_data(address)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        let city = address + ', ' + data.data[0].state;
+                        this.setCity(city);
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        } else {
+            this._location
+                .get_cities_data(address)
+                .pipe(takeUntil(this._unsubscribe))
+                .subscribe(
+                    (data) => {
+                        let city_data = data.data.filter((data) => data.country === 'CA');
+                        let city = city_data[0].city + ', ' + city_data[0].state;
+                        this.setCity(city);
+                    },
+                    (error) => {
+                        console.error(error);
+                    }
+                );
+        }
+    }
+
+    private mapOperationHours(data: { close: { day: number; time: number }; open: { day: number; time: number } }[]): void {
+        this.operation_hours = data.map((hours) => {
+            const hour = {
+                id: uuid.v4(),
+                day_id: hours.open.day,
+                open: hours.open ? this.formatTime(hours.open.time) : '',
+                close: hours.close ? this.formatTime(hours.close.time) : '',
+                openingHourData: null,
+                closingHourData: null,
+            };
+
+            const setHourData = (hour: string) => {
+                if (hour.length === 0 || !hour.includes(':')) {
+                    return {
+                        hour: 0,
+                        minute: 0,
+                        second: 0,
+                    };
+                }
+
+                const hourData = moment(hour, 'hh:mm A').format('HH:mm').split(':');
+                return { hour: parseInt(hourData[0]), minute: parseInt(hourData[1]), second: 0 };
+            };
+
+            if (hour.open == '12:00 AM' && (hour.close == '' || null)) {
+                const close = '11:59 PM';
+                const open = '12:00 AM';
+
+                hour.close = close;
+                hour.open = open;
+                hour.openingHourData = setHourData(open);
+                hour.closingHourData = setHourData(close);
+            } else {
+                hour.openingHourData = setHourData(hour.open);
+                hour.closingHourData = setHourData(hour.close);
+            }
+
+            return hour;
+        });
+
+        this.operation_days = this.google_operation_days.map((h) => {
+            return {
+                id: h.id,
+                label: h.label,
+                day: h.day,
+                periods: this.operation_hours.filter((t) => t.day_id == h.id || (t.open === '12:00 AM' && t.close === '11:59 PM')),
+                status: this.operation_hours.filter((t) => (t.open === '12:00 AM' && t.close === '11:59 PM') || t.day_id == h.id).length !== 0,
+            };
+        });
+    }
+
+    private openConfirmationModal(status: string, message: string, data: string, hostId: string): void {
+        const dialogRef = this._dialog.open(ConfirmationModalComponent, {
+            width: '500px',
+            height: '350px',
+            data: { status, message, data },
+        });
+
+        dialogRef.afterClosed().subscribe(() => {
+            if (!hostId) return;
+            this._router.navigate([`/${this.roleRoute}/hosts`, hostId]);
+        });
+    }
+
+    private setBusinessHoursBeforeSubmitting(data: UI_STORE_HOUR[]) {
+        return data.map((operation) => {
+            operation.periods = operation.periods.map((period) => {
+                const opening = period.openingHourData;
+                const closing = period.closingHourData;
+                period.open = moment(`${opening.hour} ${opening.minute}`, 'HH:mm').format('hh:mm A');
+                period.close = moment(`${closing.hour} ${closing.minute}`, 'HH:mm').format('hh:mm A');
+
+                return period;
+            });
+            return operation;
+        });
+    }
+
+    private setOperationDays(): void {
+        this.operation_days = this.google_operation_days.map((data) => {
+            return {
+                id: data.id,
+                label: data.label,
+                day: data.day,
+                periods: [],
+                status: data.status,
+            };
+        });
+    }
+
+    clearAddressValue() {
+        this.newHostFormControls.address.setValue('');
+        this.city_selected = '';
+        this.newHostFormControls.city.setValue('');
+        this.newHostFormControls.state.setValue('');
+        this.newHostFormControls.region.setValue('');
+        this.newHostFormControls.zip.setValue('');
+    }
+
+    protected get _createFormFields() {
+        return [
+            {
+                label: 'Host Business Name',
+                control: 'businessName',
+                placeholder: 'Ex. SM Center Pasig',
+                col: 'col-lg-12',
+                is_required: true,
+            },
+            {
+                label: 'Category',
+                control: 'category',
+                placeholder: 'Ex. Art School',
+                col: 'col-lg-6',
+                autocomplete: true,
+                is_required: true,
+            },
+            {
+                label: 'General Category',
+                control: 'category2',
+                placeholder: 'Ex. School',
+                col: 'col-lg-6',
+                autocomplete: true,
+                is_required: false,
+            },
+            {
+                label: 'Latitude',
+                control: 'lat',
+                placeholder: 'Ex. 58.933',
+                col: 'col-lg-6',
+                is_required: true,
+            },
+            {
+                label: 'Longitude',
+                control: 'long',
+                placeholder: 'Ex. 58.933',
+                col: 'col-lg-6',
+                is_required: true,
+            },
+            {
+                label: 'Address',
+                control: 'address',
+                placeholder: 'Ex. 21st Drive Fifth Avenue Place',
+                col: 'col-lg-6',
+                is_required: true,
+            },
+            {
+                label: 'City',
+                control: 'city',
+                placeholder: 'Ex. Chicago',
+                col: 'col-lg-6',
+                is_required: true,
+                autocomplete: true,
+            },
+            {
+                label: 'State',
+                control: 'state',
+                placeholder: 'Ex. IL',
+                col: 'col-lg-2',
+                is_required: true,
+            },
+            {
+                label: 'Region',
+                control: 'region',
+                placeholder: 'Ex. NW',
+                col: 'col-lg-2',
+                is_required: true,
+            },
+            {
+                label: 'Zip Code',
+                control: 'zip',
+                placeholder: 'Ex. 54001',
+                col: 'col-lg-4',
+                is_required: true,
+            },
+            {
+                label: 'Timezone',
+                control: 'timezone',
+                placeholder: 'Ex. US/Central',
+                col: 'col-lg-4',
+                autocomplete: true,
+                is_required: true,
+            },
+        ];
+    }
+
+    protected get _googleOperationDays() {
+        return [
+            {
+                id: 1,
+                label: 'M',
+                day: 'Monday',
+                periods: [],
+                status: false,
+            },
+            {
+                id: 2,
+                label: 'T',
+                day: 'Tuesday',
+                periods: [],
+                status: false,
+            },
+            {
+                id: 3,
+                label: 'W',
+                day: 'Wednesday',
+                periods: [],
+                status: false,
+            },
+            {
+                id: 4,
+                label: 'Th',
+                day: 'Thursday',
+                periods: [],
+                status: false,
+            },
+            {
+                id: 5,
+                label: 'F',
+                day: 'Friday',
+                periods: [],
+                status: false,
+            },
+            {
+                id: 6,
+                label: 'St',
+                day: 'Saturday',
+                periods: [],
+                status: false,
+            },
+            {
+                id: 0,
+                label: 'Sn',
+                day: 'Sunday',
+                periods: [],
+                status: false,
+            },
+        ];
+    }
+
+    protected get currentRole() {
+        return this._auth.current_role;
+    }
+
+    protected get googlePlaceFormControls() {
+        return this.google_place_form.controls;
+    }
+
+    protected get isAdmin() {
+        return this.currentRole === 'administrator';
+    }
+
+    protected get isDealer() {
+        return this.currentRole === 'dealer';
+    }
+
+    protected get isSubDealer() {
+        return this.currentRole === 'sub-dealer';
+    }
+
+    protected get newHostFormControls() {
+        return this.new_host_form.controls;
+    }
+
+    protected get roleInfo() {
+        return this._auth.current_user_value.roleInfo;
+    }
+
+    protected get roleRoute() {
+        return this._auth.roleRoute;
+    }
 }

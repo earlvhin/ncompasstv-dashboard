@@ -23,6 +23,7 @@ export const API_ENDPOINTS = {
         api_get_checklist: 'installationchecklists/getallitems',
         api_get_checklist_titles: 'installationchecklists/getall',
         api_get_checklist_by_license_id: 'installationchecklists/getlicensechecklist?licenseid=',
+        api_get_cities_state: 'citiesStateData/getall',
         api_get_content: 'content/findall',
         api_get_content_summary: 'content/getalllimitedfields',
         api_get_content_metrics: 'contentplaysdaily/getcontentmetricsbydealer',

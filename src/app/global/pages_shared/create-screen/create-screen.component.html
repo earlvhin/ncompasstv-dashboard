@@ -1,291 +1,304 @@
 <div class="theme-container">
-    <div class="content-section pt-5">
-        <div class="row justify-content-center">
-            <div class="col-lg-9">
-                <h1 class="mb-3 text-center page-title">Create Screen</h1>
-                <p class="mb-5 text-center font-weight-md sm-text"> 
-                    <span *ngIf="is_dealer_present && is_host_present.name">
-                        New Screen for <strong>{{ is_dealer_present.name }}</strong> > 
-                        <strong>{{ is_host_present.name }}</strong>
-                    </span>
-                </p>
-                
-                <mat-horizontal-stepper #stepper class="p-5">
-                    <!-- STEP 1 -->
-                    <mat-step>
-                        <ng-template matStepLabel>Screen Information</ng-template>
-                        <div class="row justify-content-center" style="height: 450px;">
-                            <div class="col-lg-8 py-4" *ngIf="!loading_data; else loader">
-                                <form [formGroup]="new_screen_form" *ngIf="dealers.length > 0">
+	<div class="content-section pt-5">
+		<div class="row justify-content-center">
+			<div class="col-lg-9">
+				<h1 class="mb-3 text-center page-title">Create Screen</h1>
+				<p class="mb-5 text-center font-weight-md sm-text">
+					<span *ngIf="is_dealer_present && is_host_present.name">
+						New Screen for <strong>{{ is_dealer_present.name }}</strong> >
+						<strong>{{ is_host_present.name }}</strong>
+					</span>
+				</p>
+
+				<mat-horizontal-stepper #stepper class="p-5">
+					<!-- STEP 1 -->
+					<mat-step>
+						<ng-template matStepLabel>Screen Information</ng-template>
+						<div class="row justify-content-center">
+							<div class="col-lg-8 py-4" *ngIf="!loading_data; else loader">
+                                <div class="create-screen-height">
+                                    <form [formGroup]="new_screen_form" *ngIf="dealers.length > 0">
+                                        <div class="row">
+                                            <div *ngFor="let f of new_screen_form_view" class="{{ f.width }}">
+                                                <mat-form-field class="full-width">
+                                                    <mat-label>{{ f.label }}</mat-label>
+                                                    <input matInput formControlName="{{ f.control }}" />
+                                                </mat-form-field>
+                                            </div>
+                                        </div>
+                                    </form>
+
                                     <div class="row">
-                                        <div *ngFor="let f of new_screen_form_view" class="{{ f.width }}">
-                                            <mat-form-field class="full-width">
-                                                <mat-label>{{ f.label }}</mat-label>
-                                                <input matInput formControlName="{{ f.control }}">
-                                            </mat-form-field>
+                                        <div [ngClass]="screen_selected == null ? 'col-lg-12' : 'col-lg-11'">
+                                            <app-autocomplete-field
+                                                [data_reference]="screen_types"
+                                                [primary_keyword]="'description'"
+                                                [key_of_value]="'screenTypeId'"
+                                                (data_value)="setScreenType($event)"
+                                                [required]="true"
+                                                [label]="'Click to select a Screen Type'"
+                                                [reset_value]="reset_screen">
+                                            </app-autocomplete-field>
+                                        </div>
+                                        <div class="col-lg-1 cursor-pointer" *ngIf="screen_selected != null">
+                                            <span
+                                                class="pt-3 fa fa-times text-danger"
+                                                data-toggle="tooltip"
+                                                title="Clear Screen Type"
+                                                (click)="clearScreenType()"></span>
+                                        </div>
+                                        <div class="row"></div>
+                                        <div class="col-lg-12 mb-4">
+                                            <ng-container *ngIf="dealerId && is_dealer_present; else no_dealer">
+                                                <mat-form-field class="full-width mt-3">
+                                                    <mat-label class="text-dark">You are creating a screen for:</mat-label>
+                                                    <input matInput disabled value="{{ is_dealer_present.name }}" class="text-dark" />
+                                                </mat-form-field>
+                                            </ng-container>
+                                            <ng-template #no_dealer>
+                                                <app-autocomplete-field
+                                                    [data_reference]="dealers_data"
+                                                    [primary_keyword]="'businessName'"
+                                                    [key_of_value]="'dealerId'"
+                                                    (data_value)="setToDealer($event)"
+                                                    [required]="true"
+                                                    [label]="'Type in a Dealer Business Name'"
+                                                    [new_value]="dealer_name"
+                                                    [initial_value]="dealer_name"
+                                                    [disabled]="is_dealer"
+                                                    [paging]="paging"
+                                                    (call_next_page)="searchBoxTrigger($event)"
+                                                    (searched)="searchData($event)"
+                                                    [loading_data]="loading_data"
+                                                    [loading_search]="loading_search">
+                                                </app-autocomplete-field>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col-lg-12">
+                                            <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="checkIfStep1Complete()">
+                                                <span class="button-label">Next</span>
+                                                <span class="fas fa-long-arrow-alt-right ml-2"></span>
+                                            </button>
                                         </div>
                                     </div>
-                                </form>
-
-                                <div class="row">
-                                    <div [ngClass]="screen_selected == null ? 'col-lg-12' : 'col-lg-11'">
-                                        <app-autocomplete-field
-                                            [data_reference]="screen_types"
-                                            [primary_keyword]="'description'"
-                                            [key_of_value]="'screenTypeId'"
-                                            (data_value)="setScreenType($event)"
-                                            [required]="true"
-                                            [label]="'Click to select a Screen Type'"
-                                            [reset_value]="reset_screen">
-                                        </app-autocomplete-field>
-                                    </div>
-                                    <div class="col-lg-1 cursor-pointer" *ngIf="screen_selected != null">
-                                        <span class="pt-3 fa fa-times text-danger" data-toggle="tooltip" title="Clear Screen Type" (click)="clearScreenType()"></span>
-                                    </div>
-                                    <div class="row"></div>
-                                    <div class="col-lg-12 mb-4">
-                                        <ng-container *ngIf="dealerId && is_dealer_present; else no_dealer">
-                                            <mat-form-field class="full-width mt-3">
-                                                <mat-label class="text-dark">You are creating a screen for:</mat-label>
-                                                <input matInput disabled value="{{ is_dealer_present.name }}" class="text-dark">
-                                            </mat-form-field>
-                                        </ng-container>
-                                        <ng-template #no_dealer>
-                                            <app-autocomplete-field
-                                            [data_reference]="dealers_data"
-                                            [primary_keyword]="'businessName'"
-                                            [key_of_value]="'dealerId'"
-                                            (data_value)="setToDealer($event)"
-                                            [required]="true"
-                                            [label]="'Type in a Dealer Business Name'"
-                                            [new_value]="dealer_name"
-                                            [initial_value]="dealer_name"
-                                            [disabled]="is_dealer"
-                                            [paging]="paging"
-                                            (call_next_page)="searchBoxTrigger($event)"
-                                            (searched)="searchData($event)"
-											[loading_data]="loading_data"
-                                            [loading_search]="loading_search">
-                                            </app-autocomplete-field>
-                                        </ng-template>
-                                    </div>
-                                    <div class="col-lg-12">
-                                        <button mat-button mat-raised-button matStepperNext class="theme-btn" (click)="checkIfStep1Complete()">
-                                            <span class="button-label">Next</span>
-                                            <span class="fas fa-long-arrow-alt-right ml-2"></span>
-                                        </button>
-                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                    </mat-step>
+							</div>
+						</div>
+					</mat-step>
 
-                    <!-- STEP 2 -->
-                    <mat-step>
-                        <ng-template matStepLabel>Choose Template</ng-template>
-                        <div class="row justify-content-center mt-5" *ngIf="!screen_info_error; else screen_info_error_msg">
-                            <ng-container *ngFor="let t of templates$ | async">
-                                <div class="col-lg-6 text-center mb-4">
-                                    <app-template-minimap
-                                        [larger]="true"
-                                        [zone_focus]="zone"
-                                        [is_text_displayed]="true"
-                                        [template_data]="t">
-                                    </app-template-minimap>
-                                    <button mat-button mat-raised-button matStepperNext class="theme-btn mt-4" (click)="getTemplateById(t.template.templateId)">
-                                        {{ t.template.name }}
-                                    </button>
-                                </div>
-                            </ng-container>
-                        </div>
+					<!-- STEP 2 -->
+					<mat-step>
+						<ng-template matStepLabel>Choose Template</ng-template>
+						<div class="row justify-content-center mt-5" *ngIf="!screen_info_error; else screen_info_error_msg">
+							<ng-container *ngFor="let t of templates$ | async">
+								<div class="col-lg-6 text-center mb-4">
+									<app-template-minimap [larger]="true" [zone_focus]="zone" [is_text_displayed]="true" [template_data]="t">
+									</app-template-minimap>
+									<button
+										mat-button
+										mat-raised-button
+										matStepperNext
+										class="theme-btn mt-4"
+										(click)="getTemplateById(t.template.templateId)">
+										{{ t.template.name }}
+									</button>
+								</div>
+							</ng-container>
+						</div>
 
-                        <ng-template #screen_info_error_msg>
-                            <div class="pt-5 text-center">
-                                <h2 class="mb-2">Screen Information Not Valid</h2>
-                                <p>Please go back to <strong>Step 1</strong> and complete the forms to proceed.</p>
-                            </div>
-                        </ng-template>
-                    </mat-step>
+						<ng-template #screen_info_error_msg>
+							<div class="pt-5 text-center">
+								<h2 class="mb-2">Screen Information Not Valid</h2>
+								<p>Please go back to <strong>Step 1</strong> and complete the forms to proceed.</p>
+							</div>
+						</ng-template>
+					</mat-step>
 
-                    <!-- STEP 3 -->
-                    <mat-step>
-                        <ng-template matStepLabel>Assign Playlist</ng-template>
-                        <div class="row justify-content-center" *ngIf="!no_chosen_template; else no_template">
-                            <div class="col-lg-7">
-                                <div class="mb-4 mt-5">
+					<!-- STEP 3 -->
+					<mat-step>
+						<ng-template matStepLabel>Assign Playlist</ng-template>
+						<div class="row justify-content-center" *ngIf="!no_chosen_template; else no_template">
+							<div class="col-lg-7">
+								<div class="mb-4 mt-5">
 									<div *ngIf="template$ | async as template; else loading">
 										<ng-container *ngFor="let t of template">
-											<app-template-minimap
-											[larger]="true"
-											[zone_focus]="zone"
-											[is_text_displayed]="true"
-											[template_data]="t" >
+											<app-template-minimap [larger]="true" [zone_focus]="zone" [is_text_displayed]="true" [template_data]="t">
 											</app-template-minimap>
 										</ng-container>
 									</div>
 
-                                    <form [formGroup]="zone_playlist_form" class="mt-4" *ngIf="!loading_playlist; else loadingPlaylists">
-                                        <ng-container formArrayName="screenZonePlaylist" *ngIf="!no_playlist_data; else noPlaylist">
-                                            <mat-form-field class="full-width"
-                                                *ngFor="let z of zone_playlist_form.get('screenZonePlaylist')['controls']; let i = index" [formGroupName]="i">
-                                                <mat-label>Select Playlist for {{ z.controls['templateName'].value }}</mat-label>
-                                                <mat-select formControlName="zonePlaylist">
-                                                    <div>
-                                                        <mat-option *ngFor="let p of playlist" [value]="p.playlist.playlistId"
-                                                            [attr.data-zone-id]="z.templateZoneId">
-                                                            {{ p.playlist.playlistName }}
-                                                        </mat-option>
-                                                    </div>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </ng-container>
-                                    </form>
+									<form [formGroup]="zone_playlist_form" class="mt-4" *ngIf="!loading_playlist; else loadingPlaylists">
+										<ng-container formArrayName="screenZonePlaylist" *ngIf="!no_playlist_data; else noPlaylist">
+											<mat-form-field
+												class="full-width"
+												*ngFor="let z of zone_playlist_form.get('screenZonePlaylist')['controls']; let i = index"
+												[formGroupName]="i">
+												<mat-label>Select Playlist for {{ z.controls['templateName'].value }}</mat-label>
+												<mat-select formControlName="zonePlaylist">
+													<div>
+														<mat-option
+															*ngFor="let p of playlist"
+															[value]="p.playlist.playlistId"
+															[attr.data-zone-id]="z.templateZoneId">
+															{{ p.playlist.playlistName }}
+														</mat-option>
+													</div>
+												</mat-select>
+											</mat-form-field>
+										</ng-container>
+									</form>
 
 									<ng-template #noPlaylist>
 										<div class="text-left">
 											<h3>Aw Sorry!</h3>
-											<p class="sm-text mb-3">
-												The selected dealer has no available playlist(s) at the moment.
-											</p>
+											<p class="sm-text mb-3">The selected dealer has no available playlist(s) at the moment.</p>
 											<button mat-button mat-raised-button class="theme-btn mr-2" (click)="addPlaylistButton()">
 												Add Playlist
 												<span class="fas fa-plus ml-2 sm-text"></span>
 											</button>
 										</div>
 									</ng-template>
-                                    
-                                    <button mat-button mat-raised-button matStepperNext class="theme-btn mt-4" [disabled]="loading_playlist">
-                                        Next <span class="fas fa-long-arrow-alt-right ml-2"></span>
-                                    </button>
-                                </div>
-                                
-                            </div>
-                        </div>
+
+									<button mat-button mat-raised-button matStepperNext class="theme-btn mt-4" [disabled]="loading_playlist">
+										Next <span class="fas fa-long-arrow-alt-right ml-2"></span>
+									</button>
+								</div>
+							</div>
+						</div>
 						<ng-template #no_template>
-                            <div class="pt-5 text-center">
-                                <h2 class="mb-2">Please Choose a Template</h2>
-                                <p>Please go back to <strong>Step 2</strong> and choose your desired template.</p>
-                            </div>
-                        </ng-template>                    
+							<div class="pt-5 text-center">
+								<h2 class="mb-2">Please Choose a Template</h2>
+								<p>Please go back to <strong>Step 2</strong> and choose your desired template.</p>
+							</div>
+						</ng-template>
 					</mat-step>
 
-                    <!-- STEP 4 -->
-                    <mat-step>
-                        <ng-template matStepLabel>Assign to Host</ng-template>
-                        <div class="row justify-content-center mt-5" *ngIf="!screen_info_error && !no_chosen_template; else assign_to_host_error">
-                            <div class="col-lg-8 mb-5" style="min-height: 600px;">
-                                <div class="mb-4">
-                                    <ng-container *ngFor="let t of template$ | async">
-                                        <app-template-minimap
-                                        [larger]="true"
-                                        [zone_focus]="zone"
-                                        [is_text_displayed]="true"
-                                        [template_data]="t" >
-                                        </app-template-minimap>
-                                    </ng-container>
-                                </div>
+					<!-- STEP 4 -->
+					<mat-step>
+						<ng-template matStepLabel>Assign to Host</ng-template>
+						<div class="row justify-content-center mt-5" *ngIf="!screen_info_error && !no_chosen_template; else assign_to_host_error">
+							<div class="col-lg-8 mb-5" style="min-height: 600px">
+								<div class="mb-4">
+									<ng-container *ngFor="let t of template$ | async">
+										<app-template-minimap [larger]="true" [zone_focus]="zone" [is_text_displayed]="true" [template_data]="t">
+										</app-template-minimap>
+									</ng-container>
+								</div>
 
-                                <div class="mb-3">
-                                    <ng-container *ngIf="hostId && is_host_present; else no_host">
-                                        <mat-form-field class="full-width mt-3">
-                                            <mat-label class="text-dark">You are creating a screen for:</mat-label>
-                                            <input matInput disabled value="{{ is_host_present.name }}" class="text-dark">
-                                        </mat-form-field>
-                                    </ng-container>
-                                    <ng-template #no_host>
-                                        <app-autocomplete-field
-                                        [data_reference]="hosts_data"
-                                        [primary_keyword]="'name'"
-                                        [key_of_value]="'hostId'"
-                                        (data_value)="setToHost($event)"
-                                        [required]="true"
-                                        [label]="'Type in a Host'"
-                                        [paging]="paging_host"
-                                        (call_next_page)="hostSearchBoxTrigger($event)"
-                                        (searched)="searchHostData($event)"
-                                        [loading_data]="loading_data_host"
-                                        [loading_search]="loading_search_host"
-                                        [initial_load]="initial_load"
-                                        *ngIf="hosts.length > 0; else add_host">
-                                        </app-autocomplete-field>
-                                    </ng-template>
-                                    <ng-template #add_host>
-                                        <div class="text-left">
-                                            <h3>Oh Snap!</h3>
-                                            <p class="sm-text mb-3">
-                                                The selected dealer has no available hosts at the moment.
-                                            </p>
-                                            <button mat-button mat-raised-button class="theme-btn mr-2" (click)="addHostButton()">
-                                                Add Host
-                                                <span class="fas fa-plus ml-2 sm-text"></span>
-                                            </button>
-                                        </div>
-                                    </ng-template>
-                                </div>
+								<div class="mb-3">
+									<ng-container *ngIf="hostId && is_host_present; else no_host">
+										<mat-form-field class="full-width mt-3">
+											<mat-label class="text-dark">You are creating a screen for:</mat-label>
+											<input matInput disabled value="{{ is_host_present.name }}" class="text-dark" />
+										</mat-form-field>
+									</ng-container>
+									<ng-template #no_host>
+										<app-autocomplete-field
+											[data_reference]="hosts_data"
+											[primary_keyword]="'name'"
+											[key_of_value]="'hostId'"
+											(data_value)="setToHost($event)"
+											[required]="true"
+											[label]="'Type in a Host'"
+											[paging]="paging_host"
+											(call_next_page)="hostSearchBoxTrigger($event)"
+											(searched)="searchHostData($event)"
+											[loading_data]="loading_data_host"
+											[loading_search]="loading_search_host"
+											[initial_load]="initial_load"
+											*ngIf="hosts.length > 0; else add_host">
+										</app-autocomplete-field>
+									</ng-template>
+									<ng-template #add_host>
+										<div class="text-left">
+											<h3>Oh Snap!</h3>
+											<p class="sm-text mb-3">The selected dealer has no available hosts at the moment.</p>
+											<button mat-button mat-raised-button class="theme-btn mr-2" (click)="addHostButton()">
+												Add Host
+												<span class="fas fa-plus ml-2 sm-text"></span>
+											</button>
+										</div>
+									</ng-template>
+								</div>
 
-                                <ng-container *ngIf="licenses && licenses.length > 0; else no_license">
-                                    <div class="text-left" *ngIf="!has_no_licenses; else no_license">
+								<ng-container *ngIf="licenses && licenses.length > 0; else no_license">
+									<div class="text-left" *ngIf="!has_no_licenses; else no_license">
 										<div class="licenses-heading">
 											<h4 class="font-weight-bold mb-3">Assign to Licenses</h4>
-											<button mat-button mat-raised-button class="col-lg-6 theme-btn flex-even mx-1" (click)="onBulkSetInstallDate()" [disabled]="!assigned_licenses || assigned_licenses.length <= 0">
+											<button
+												mat-button
+												mat-raised-button
+												class="col-lg-6 theme-btn flex-even mx-1"
+												(click)="onBulkSetInstallDate()"
+												[disabled]="!assigned_licenses || assigned_licenses.length <= 0">
 												Bulk Set Installation Date
 												<span class="fas fa-calendar ml-2 sm-text"></span>
 											</button>
 										</div>
-                                        <div *ngFor="let l of licenses; let i = index">
-                                            <ng-container *ngIf="l.screenId != null; else unused_license">
-                                                <mat-slide-toggle class="mb-3"
+										<div *ngFor="let l of licenses; let i = index">
+											<ng-container *ngIf="l.screenId != null; else unused_license">
+												<mat-slide-toggle
+													class="mb-3"
 													(change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
 													[checked]="true"
 													[disabled]="true">
-                                                    <span class="md-text">{{ l.licenseKey }}</span>
-                                                </mat-slide-toggle>
-                                            </ng-container>
+													<span class="md-text">{{ l.licenseKey }}</span>
+												</mat-slide-toggle>
+											</ng-container>
 
-                                            <ng-template #unused_license>
+											<ng-template #unused_license>
 												<div class="row">
 													<div class="col-lg-7">
-														<mat-slide-toggle class="mb-3" 
+														<mat-slide-toggle
+															class="mb-3"
 															(change)="licenseSelected(slide_toggle_status[i], l.licenseId, i)"
 															[(ngModel)]="slide_toggle_status[i]">
 															<span class="md-text">{{ l.licenseKey }}</span>
 														</mat-slide-toggle>
 													</div>
-													<div class="col-lg-5 install-date" [ngClass]="{ 'disabled' : !assigned_licenses || !assigned_licenses.includes(l.licenseId) }">
-														<span>Installed: {{ l.installDate ? (l.installDate | date: 'MMM dd, y') : '--' }}</span>
+													<div
+														class="col-lg-5 install-date"
+														[ngClass]="{ disabled: !assigned_licenses || !assigned_licenses.includes(l.licenseId) }">
+														<span>Installed: {{ l.installDate ? (l.installDate | date : 'MMM dd, y') : '--' }}</span>
 														<mat-icon (click)="onSetInstallDate(l.licenseId, l.installDate, i)">calendar_today</mat-icon>
 													</div>
 												</div>
-                                            </ng-template>
-                                        </div>
-                                    </div>
-                                </ng-container>
+											</ng-template>
+										</div>
+									</div>
+								</ng-container>
 
-                                <ng-template #no_license>
-                                    <h4 class="font-weight-bold">No License Available</h4>
-                                    <p class="sm-text">Assign a License to this Host to continue.</p>
-                                </ng-template>
-                                
-                                <button *ngIf="hostId" mat-button mat-raised-button matStepperNext class="theme-btn mt-4" (click)="publishScreen()" [disabled]="creating_screen">
-                                    Publish Screen
-                                </button>
+								<ng-template #no_license>
+									<h4 class="font-weight-bold">No License Available</h4>
+									<p class="sm-text">Assign a License to this Host to continue.</p>
+								</ng-template>
 
-                            </div>
-                        </div>
-                        <ng-template #assign_to_host_error>
-                            <div class="pt-5 text-center">
-                                <h2 class="mb-2">Your Screen Is Not Valid</h2>
-                                <p>
-                                    Your screen does not have the minimum requirements to be published, 
-                                    <br>make sure you have completed the <strong>first</strong> and <strong>second</strong> steps.
-                                </p>
-                            </div>
-                        </ng-template>
-                    </mat-step>
-                </mat-horizontal-stepper>
-            </div>
-        </div>
-    </div>
+								<button
+									*ngIf="hostId"
+									mat-button
+									mat-raised-button
+									matStepperNext
+									class="theme-btn mt-4"
+									(click)="publishScreen()"
+									[disabled]="creating_screen">
+									Publish Screen
+								</button>
+							</div>
+						</div>
+						<ng-template #assign_to_host_error>
+							<div class="pt-5 text-center">
+								<h2 class="mb-2">Your Screen Is Not Valid</h2>
+								<p>
+									Your screen does not have the minimum requirements to be published,
+									<br />make sure you have completed the <strong>first</strong> and <strong>second</strong> steps.
+								</p>
+							</div>
+						</ng-template>
+					</mat-step>
+				</mat-horizontal-stepper>
+			</div>
+		</div>
+	</div>
 </div>
 
 <ng-template #loading>

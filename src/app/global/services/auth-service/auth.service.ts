@@ -47,9 +47,7 @@ export class AuthService {
 	//Login - Authenticate User
 	authenticate_user(data) {
 		return this._http
-			.post<USER_LOGIN>(`${environment.base_uri}${environment.auth.api_login}?username=${data.username}&password=${data.password}`, {
-				withCredentials: true
-			})
+            .post<USER_LOGIN>(`${environment.base_uri}${environment.auth.api_login}`, data, this.http_options)
 			.pipe(
 				map((current_user) => {
 					let currentUser = new UI_CURRENT_USER();

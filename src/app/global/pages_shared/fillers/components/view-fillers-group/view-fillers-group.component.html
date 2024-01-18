@@ -1,267 +1,239 @@
 <div class="theme-container mt-3" *ngIf="filler_group_data">
-	<div class="row no-gutters">
-		<div class="col-lg-6">
-			<h1 class="page-title">{{ filler_group_data.name }}</h1>
-			<span class="sm-text text-gray">
-				<i>Total of {{ filler_group_data.count }} fillers</i>
-			</span>
-		</div>
-		<div class="col-lg-6 text-right">
-			<div *ngIf="isActiveTab == 0">
-				<button
-					*ngIf="!restricted"
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control _info sm-text mr-2"
-					(click)="addFillerContent(filler_group_data)"
-					[disabled]="restricted"
-					title="Upload Filler">
-					<span class="fas fa-upload"></span>
-					<span class="ml-2 button_text_animation">Upload Filler</span>
-				</button>
-				<button
-					mat-button
-					mat-raised-button
-					class="theme-btn pi-control _cool sm-text mr-2"
-					(click)="createFillerFeed(filler_group_data, true)"
-					title="Create Filler Feed"
-					[disabled]="filler_group_contents.length == 0">
-					<span class="fas fa-list-ol"></span>
-					<span class="ml-2 button_text_animation">Create Filler Feed</span>
-				</button>
-			</div>
-		</div>
-	</div>
-	<hr class="my-4" />
+    <div class="row no-gutters">
+        <div class="col-lg-6">
+            <h1 class="page-title">{{ filler_group_data.name }}</h1>
+            <i class="sm-text text-gray">Total of {{ filler_group_data.count }} fillers</i>
+        </div>
+        <div class="col-lg-6 text-right">
+            <div *ngIf="isActiveTab == 0">
+                <button
+                    *ngIf="!restricted"
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _info sm-text mr-2"
+                    (click)="addFillerContent(filler_group_data)"
+                    [disabled]="restricted"
+                    title="Upload Filler"
+                >
+                    <span class="fas fa-upload"></span>
+                    <span class="ml-2 button_text_animation">Upload Filler</span>
+                </button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn pi-control _cool sm-text mr-2"
+                    (click)="createFillerFeed(filler_group_data, true)"
+                    title="Create Filler Feed"
+                    [disabled]="filler_group_contents.length == 0"
+                >
+                    <span class="fas fa-list-ol"></span>
+                    <span class="ml-2 button_text_animation">Create Filler Feed</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <hr class="my-4" />
 
-	<div class="custom-mat-tab mt-30">
-		<mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event.index)" [selectedIndex]="isActiveTab">
-			<mat-tab label="Contents">
-				<div class="row mt-3 mb-2" *ngIf="filler_group_contents.length > 0">
-					<div class="col-lg-8">
-						<button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn mt-2" [disabled]="no_search_result">
-							<span class="button-label">Order by Filename</span>
-							<span class="fas fa-sort ml-2"></span>
-						</button>
-						<mat-menu #orderSort="matMenu">
-							<button mat-menu-item (click)="sortFillerGroup('asc')">
-								<i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending
-							</button>
-							<button mat-menu-item (click)="sortFillerGroup('desc')">
-								<i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending
-							</button>
-						</mat-menu>
-					</div>
-					<div class="col-lg-4">
-						<app-search-field
-							[form_title]="'Search Filename'"
-							[placeholder]="'Example: Trivia.jpg'"
-							[data_reference]=""
-							[primary_keyword]="'name'"
-							[secondary_keyword]="'name'"
-							(searched)="onSearchFiller($event)"
-							[api_search]="true">
-						</app-search-field>
-					</div>
-				</div>
-				<div class="row mb-3 no-gutters p-2 bg-gray" *ngIf="sorting_order != ''">
-					<div class="col-lg-11">
-						<div class="filter-pills pt-1">
-							<div class="filetype-pill pill">
-								Ordered by Filename : <strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
-							</div>
-						</div>
-					</div>
-					<div class="control col-lg-1 text-right">
-						<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-							<span class="button-label"> Clear Filter </span>
-							<span class="fas fa-times ml-2 sm-text"></span>
-						</button>
-					</div>
-				</div>
+    <div class="custom-mat-tab mt-30">
+        <mat-tab-group dynamicHeight #tabGroup (selectedTabChange)="onTabChanged($event.index)" [selectedIndex]="isActiveTab">
+            <mat-tab label="Contents">
+                <div class="d-flex mt-3 mb-2" *ngIf="filler_group_contents.length > 0">
+                    <div class="filter-container">
+                        <button mat-button mat-raised-button [matMenuTriggerFor]="orderSort" class="theme-btn mt-2" [disabled]="no_search_result">
+                            <span class="button-label">Order by Filename</span>
+                            <span class="fas fa-sort ml-2"></span>
+                        </button>
+                        <mat-menu #orderSort="matMenu">
+                            <button mat-menu-item (click)="sortFillerGroup('asc')"><i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending</button>
+                            <button mat-menu-item (click)="sortFillerGroup('desc')"><i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending</button>
+                        </mat-menu>
+                    </div>
+                    <div class="search-container flex-even">
+                        <app-search-field
+                            [form_title]="'Search Filename'"
+                            [placeholder]="'Example: Trivia.jpg'"
+                            [data_reference]=""
+                            [primary_keyword]="'name'"
+                            [secondary_keyword]="'name'"
+                            (searched)="onSearchFiller($event)"
+                            [api_search]="true"
+                        >
+                        </app-search-field>
+                    </div>
+                </div>
+                <div class="d-flex mb-3 p-2 bg-gray" *ngIf="sorting_order != ''">
+                    <div class="flex-even">
+                        <div class="filter-pills pt-1">
+                            <div class="filetype-pill pill">
+                                Ordered by Filename : <strong>{{ sorting_order == "asc" ? "Ascending" : "Descending" }}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="control text-right">
+                        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+                            <span class="button-label"> Clear Filter </span>
+                            <span class="fas fa-times ml-2 sm-text"></span>
+                        </button>
+                    </div>
+                </div>
 
-				<div *ngIf="filler_group_contents.length > 0; else noContent">
-					<div *ngIf="!no_search_result; else noResultsFound">
-						<div class="row" *ngIf="!is_loading; else loader">
-							<div class="col-lg-2" *ngFor="let data of filler_group_contents">
-								<div class="box-shadowing mb-4">
-									<div class="row no-gutters">
-										<div class="col-lg-6 text-left bg-dark p-2">
-											<span class="fa fa-image text-primary" *ngIf="data.fileType | isimage" title="Image"></span>
-											<span class="fa fa-video text-primary" *ngIf="data.fileType | isvideo" title="Video"></span>
-											<span class="fa fa-wifi text-primary" *ngIf="data.fileType === 'feed'" title="Feed"></span>
-										</div>
-										<div class="col-lg-6 text-right bg-dark p-2">
-											<span
-												*ngIf="!restricted"
-												class="fas fa-times text-danger clickable"
-												title="Delete Content"
-												(click)="deleteContent(data.fillerContentId)"></span>
-										</div>
-										<div class="col-lg-12 bg-white">
-											<img
-												[src]="data.url"
-												class="clickable full-width br-5 h-130-px cover-bg"
-												(click)="gotoFileURL(data.url)"
-												*ngIf="data.fileType | isimage; else video" />
-											<ng-template #video>
-												<div class="h-130-px">
-													<object [attr.data]="data.url | sanitize" class="text-center full-width h-130-px br-5"></object>
-												</div>
-											</ng-template>
-										</div>
-										<div class="col-lg-12 bg-white p-2">
-											<span
-												(click)="gotoFileURL(data.url)"
-												class="sm-text p-3 full-width clickable"
-												title="{{ splitOriginalFilename(data.filename) }}"
-												*ngIf="data.fileType != 'feed'; else videotitle">
-												{{ splitOriginalFilename(data.filename) | slice : 0 : 25
-												}}{{ splitOriginalFilename(data.filename).length > 25 ? '...' : '' }}</span
-											>
-											<ng-template #videotitle>
-												<span class="sm-text p-3 full-width clickable" title="data.title" (click)="gotoFileURL(data.url)">
-													{{ data.title | slice : 0 : 25 }}{{ data.title.length > 25 ? '...' : '' }}</span
-												>
-											</ng-template>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-
-				<div class="row" *ngIf="filler_group_contents.length > 0 && filler_group_pagination.hasNextPage">
-					<div class="col-lg-12 text-center p-0 mt-3">
-						<button
-							class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
-							(click)="getFillerGroupContents(filler_group_id, filler_group_pagination.page + 1)"
-							[disabled]="is_loading">
-							<span>SHOW MORE</span>
-						</button>
-					</div>
-				</div>
-			</mat-tab>
-			<mat-tab label="Playing Where">
-				<div *ngIf="!loading_playing_where; else loading">
-					<div class="row mt-3 mb-2" *ngIf="playing_where.length > 0; else notInUse">
-						<div class="col-lg-3">
-							<mat-card>
-								<div class="md-text font-weight-bold text-gray pl-3">FILLER FEEDS</div>
-								<hr />
-								<ul class="list-unstyled">
-									<li
-										class="sm-text p-3 clickable"
-										*ngFor="let playwhere of playing_where; let i = index"
-										[ngClass]="selected_filler_feed_index == i ? 'active-selection' : ''"
-										(click)="selectFillerFeeds(playwhere, i)">
-										{{ playwhere.fillerFeedName }}
-									</li>
-								</ul>
-							</mat-card>
-						</div>
-						<div class="col-lg-3" *ngIf="playing_where_selected">
-							<mat-card>
-								<div class="md-text font-weight-bold text-gray pl-3">PLAYLISTS</div>
-								<hr />
-								<ul class="list-unstyled">
-									<li
-										class="sm-text p-3 clickable"
-										*ngFor="let playlist of playing_where_selected; let i = index"
-										[ngClass]="selected_playlist_index == i ? 'active-selection' : ''"
-										(click)="selectPlaylist(playlist, i)">
-										{{ playlist.playlistName }}
-									</li>
-								</ul>
-							</mat-card>
-						</div>
-						<div class="col-lg-3" *ngIf="playlist_selected">
-							<mat-card>
-								<div class="md-text font-weight-bold text-gray pl-3">HOSTS</div>
-								<hr />
-								<ul class="list-unstyled">
-									<li
-										class="sm-text p-3 clickable"
-										*ngFor="let host of playlist_selected; let i = index"
-										[ngClass]="selected_host_index == i ? 'active-selection' : ''"
-										(click)="selectHost(host, i)">
-										{{ host.hostName }}
-									</li>
-								</ul>
-							</mat-card>
-						</div>
-						<div class="col-lg-3" *ngIf="host_selected">
-							<mat-card>
-								<div class="md-text font-weight-bold text-gray pl-3">LICENSES</div>
-								<hr />
-								<ul class="list-unstyled">
-									<li
-										class="sm-text p-3 clickable"
-										*ngFor="let license of host_selected; let i = index"
-										[ngClass]="selected_license_index == i ? 'active-selection' : ''"
-										(click)="selectLicenses(license, i)">
-										{{ license.licenseAlias ? license.licenseAlias : license.licenseId }}
-									</li>
-								</ul>
-							</mat-card>
-						</div>
-					</div>
-				</div>
-			</mat-tab>
-		</mat-tab-group>
-	</div>
+                <div *ngIf="filler_group_contents.length > 0; else noContent">
+                    <div *ngIf="!no_search_result; else noResultsFound">
+                        <ng-container *ngIf="!is_loading; else loader">
+                            <div class="d-flex flex-row thumbnail-parent-container">
+                                <div class="thumbnail-container m-2" *ngFor="let data of filler_group_contents">
+                                    <app-thumbnail-card
+                                        (click)="gotoFileURL(data.url)"
+                                        [content_id]="data.fillerContentId"
+                                        [disconnect_to_socket]="thumb_no_socket"
+                                        [file_url]="data.url"
+                                        [filename]="data.title"
+                                        [filetype]="data.fileType"
+                                        [handle]="data.handlerId"
+                                        [image_uri]="data.screenshotURL"
+                                        [is_converted]="data.isConverted"
+                                        [is_view_only]="false"
+                                        [is_filler]="true"
+                                        (filler_delete)="deleteContent(data.fillerContentId)"
+                                        (converted)="videoConverted($event)"
+                                    ></app-thumbnail-card>
+                                </div>
+                            </div>
+                            <div class="full-width text-center">
+                                <button
+                                    class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
+                                    (click)="getFillerGroupContents(filler_group_id, filler_group_pagination.page + 1)"
+                                    [disabled]="is_loading"
+                                    *ngIf="filler_group_contents.length > 0 && filler_group_pagination.hasNextPage"
+                                >
+                                    <span>SHOW MORE</span>
+                                </button>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </mat-tab>
+            <mat-tab label="Playing Where">
+                <div *ngIf="!loading_playing_where; else loading">
+                    <div class="row mt-3 mb-2" *ngIf="playing_where.length > 0; else notInUse">
+                        <div class="col-lg-3">
+                            <mat-card>
+                                <div class="md-text font-weight-bold text-gray pl-3">FILLER FEEDS</div>
+                                <hr />
+                                <ul class="list-unstyled">
+                                    <li
+                                        class="sm-text p-3 clickable"
+                                        *ngFor="let playwhere of playing_where; let i = index"
+                                        [ngClass]="selected_filler_feed_index == i ? 'active-selection' : ''"
+                                        (click)="selectFillerFeeds(playwhere, i)"
+                                    >
+                                        {{ playwhere.fillerFeedName }}
+                                    </li>
+                                </ul>
+                            </mat-card>
+                        </div>
+                        <div class="col-lg-3" *ngIf="playing_where_selected">
+                            <mat-card>
+                                <div class="md-text font-weight-bold text-gray pl-3">PLAYLISTS</div>
+                                <hr />
+                                <ul class="list-unstyled">
+                                    <li
+                                        class="sm-text p-3 clickable"
+                                        *ngFor="let playlist of playing_where_selected; let i = index"
+                                        [ngClass]="selected_playlist_index == i ? 'active-selection' : ''"
+                                        (click)="selectPlaylist(playlist, i)"
+                                    >
+                                        {{ playlist.playlistName }}
+                                    </li>
+                                </ul>
+                            </mat-card>
+                        </div>
+                        <div class="col-lg-3" *ngIf="playlist_selected">
+                            <mat-card>
+                                <div class="md-text font-weight-bold text-gray pl-3">HOSTS</div>
+                                <hr />
+                                <ul class="list-unstyled">
+                                    <li
+                                        class="sm-text p-3 clickable"
+                                        *ngFor="let host of playlist_selected; let i = index"
+                                        [ngClass]="selected_host_index == i ? 'active-selection' : ''"
+                                        (click)="selectHost(host, i)"
+                                    >
+                                        {{ host.hostName }}
+                                    </li>
+                                </ul>
+                            </mat-card>
+                        </div>
+                        <div class="col-lg-3" *ngIf="host_selected">
+                            <mat-card>
+                                <div class="md-text font-weight-bold text-gray pl-3">LICENSES</div>
+                                <hr />
+                                <ul class="list-unstyled">
+                                    <li
+                                        class="sm-text p-3 clickable"
+                                        *ngFor="let license of host_selected; let i = index"
+                                        [ngClass]="selected_license_index == i ? 'active-selection' : ''"
+                                        (click)="selectLicenses(license, i)"
+                                    >
+                                        {{ license.licenseAlias ? license.licenseAlias : license.licenseId }}
+                                    </li>
+                                </ul>
+                            </mat-card>
+                        </div>
+                    </div>
+                </div>
+            </mat-tab>
+        </mat-tab-group>
+    </div>
 </div>
 
 <ng-template #noContent>
-	<div class="row">
-		<div class="col-lg-12 mt-3">
-			<i class="md-text"
-				>There are no contents right now. <span *ngIf="!restricted">Click on the Upload Filler button above if you wish to add one.</span></i
-			>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12 mt-3">
+            <i class="md-text">There are no contents right now. <span *ngIf="!restricted">Click on the Upload Filler button above if you wish to add one.</span></i>
+        </div>
+    </div>
 </ng-template>
 <ng-template #noResultsFound>
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="bg-white text-gray pt-5 pb-5 text-center">
-				<i class="fa-5x far fa-file-alt mb-4"></i>
-				<h3>No Results Found.</h3>
-				<span>Try adjusting your search to find what you're looking for.</span>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="bg-white text-gray pt-5 pb-5 text-center">
+                <i class="fa-5x far fa-file-alt mb-4"></i>
+                <h3>No Results Found.</h3>
+                <span>Try adjusting your search to find what you're looking for.</span>
+            </div>
+        </div>
+    </div>
 </ng-template>
 <ng-template #notInUse>
-	<div class="row no-gutters">
-		<div class="col-lg-12">
-			<mat-card class="pt-5 pb-5 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Records Found.</h3>
-				<span class="text-gray col-lg-12">Make sure to use this Filler Group in Filler Feeds >> Playlists >> Screen.</span>
-			</mat-card>
-		</div>
-	</div>
+    <div class="row no-gutters">
+        <div class="col-lg-12">
+            <mat-card class="pt-5 pb-5 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Records Found.</h3>
+                <span class="text-gray col-lg-12">Make sure to use this Filler Group in Filler Feeds >> Playlists >> Screen.</span>
+            </mat-card>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #loader>
-	<div class="py-4 h-500">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="py-4 h-500">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #loading>
-	<div class="vh-50 white-bg">
-		<div class="row">
-			<div class="col-lg-12 p-0 text-center text-gray pt-5">
-				<strong>P R O C E S S I N G</strong>
-				<br />
-				<span class="sm-text">Please wait while we filter our database for you. Filtering may take up to 30 seconds.</span>
-			</div>
-		</div>
-		<app-spinner></app-spinner>
-	</div>
+    <div class="vh-50 white-bg">
+        <div class="row">
+            <div class="col-lg-12 p-0 text-center text-gray pt-5">
+                <strong>P R O C E S S I N G</strong>
+                <br />
+                <span class="sm-text">Please wait while we filter our database for you. Filtering may take up to 30 seconds.</span>
+            </div>
+        </div>
+        <app-spinner></app-spinner>
+    </div>
 </ng-template>

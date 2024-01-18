@@ -1,0 +1,10 @@
+.filter-container {
+    flex: 2;
+}
+
+.thumbnail-parent-container {
+    flex-wrap: wrap;
+    .thumbnail-container {
+        width: 166px;
+    }
+}
