@@ -43,7 +43,6 @@ import { dateFormat } from 'highcharts';
 import { DeleteFillerFeedsComponent } from 'src/app/global/pages_shared/fillers/components/delete-filler-feeds/delete-filler-feeds.component';
 import { InformationModalComponent } from '../../page_components/information-modal/information-modal.component';
 import { EditTicketComponent } from '../../host_components/edit-ticket/edit-ticket.component';
-
 @Component({
 	selector: 'app-data-table',
 	templateUrl: './data-table.component.html',

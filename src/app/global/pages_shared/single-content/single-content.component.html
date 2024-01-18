@@ -13,7 +13,10 @@
             <div class="col-lg-6">
                 <div class="d-flex align-items-center content-wrapper">
                     <ng-container *ngIf="data.content.fileType | isvideo">
-                        <video autoplay muted [src]="data.content.url + data.content.fileName"></video>
+                        <video *ngIf="data.content.classification != 'filler-v2'; else forFiller" autoplay muted [src]="data.content.url + data.content.fileName"></video>
+                        <ng-template #forFiller>
+                            <video autoplay muted [src]="data.content.url"></video>
+                        </ng-template>
                     </ng-container>
                     <ng-container *ngIf="data.content.fileType | isimage">
                         <img [src]="data.content.url + data.content.fileName" />

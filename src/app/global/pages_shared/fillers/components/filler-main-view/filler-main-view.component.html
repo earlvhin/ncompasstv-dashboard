@@ -1,277 +1,269 @@
 <div class="row mt-3 mb-2" *ngIf="filler_data.length > 0">
-	<div class="col-lg-7" *ngIf="active_view == 'folder'; else gridMenu">
-		<button mat-button mat-raised-button [matMenuTriggerFor]="orderBy" class="theme-btn mt-2">
-			<span class="button-label">Sort by :</span>
-			<span class="fas fa-sort ml-2"></span>
-		</button>
-		<mat-menu #orderBy="matMenu">
-			<button mat-menu-item [matMenuTriggerFor]="nameSort"><i class="fa fa-list mr-3" aria-hidden="true"></i>Name</button>
-			<button mat-menu-item [matMenuTriggerFor]="dateSort"><i class="fa fa-clock mr-3" aria-hidden="true"></i>Date Created</button>
-		</mat-menu>
-		<mat-menu #nameSort="matMenu">
-			<button mat-menu-item (click)="sortFillerGroup('Name', 'asc')">
-				<i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending
-			</button>
-			<button mat-menu-item (click)="sortFillerGroup('Name', 'desc')">
-				<i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending
-			</button>
-		</mat-menu>
-		<mat-menu #dateSort="matMenu">
-			<button mat-menu-item (click)="sortFillerGroup('DateCreated', 'asc')">
-				<i class="fa fa-sort-numeric-asc mr-3" aria-hidden="true"></i>Oldest
-			</button>
-			<button mat-menu-item (click)="sortFillerGroup('DateCreated', 'desc')">
-				<i class="fa fa-sort-numeric-desc mr-3" aria-hidden="true"></i>Newest
-			</button>
-		</mat-menu>
-	</div>
-	<ng-template #gridMenu>
-		<div class="col-lg-7 pt-2">
-			<div *ngIf="!no_search_result" class="d-flex">
-				<div class="bg-dark text-white sm-text h-35 p-2 mr-2" *ngFor="let data of grid_data.slice(0, 6)">
-					<span class="mr-2">{{ data.name }}</span
-					><span class="fas fa-times clickable" (click)="removeFromGrid(data.id)"></span>
-				</div>
-				<div class="bg-dark text-white text-center h-35 p-2 mr-2" *ngIf="grid_data.length > 6">
-					<span class="pl-2 pr-2 clickable" (click)="showMoreFillerCategory()"><i class="fa fa-ellipsis-h"></i></span>
-				</div>
-			</div>
-		</div>
-	</ng-template>
-	<div class="col-lg-1">
-		<div class="row mt-2 no-gutters">
-			<div class="col-lg-6 text-center">
-				<div
-					class="text-white p-2 clickable"
-					[ngClass]="active_view == 'folder' ? 'bg-dark' : 'bg-gray-2'"
-					title="Folder View"
-					(click)="changeView('folder')">
-					<span class="fas fa-folder"></span>
-				</div>
-			</div>
-			<div class="col-lg-6 text-center">
-				<div
-					class="text-white p-2 clickable"
-					[ngClass]="active_view == 'grid' ? 'bg-dark' : 'bg-gray-2'"
-					title="Grid View"
-					(click)="changeView('grid')">
-					<span class="fa fa-th"></span>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-4">
-		<app-search-field
-			[form_title]="'Search Filler Group Name or Owner'"
-			[placeholder]="'Example: Trivia'"
-			[data_reference]=""
-			[primary_keyword]="'name'"
-			[secondary_keyword]="'name'"
-			(searched)="onSearchFiller($event)"
-			[api_search]="true">
-		</app-search-field>
-	</div>
+    <div class="col-lg-7" *ngIf="active_view == 'folder'; else gridMenu">
+        <button mat-button mat-raised-button [matMenuTriggerFor]="orderBy" class="theme-btn mt-2">
+            <span class="button-label">Sort by :</span>
+            <span class="fas fa-sort ml-2"></span>
+        </button>
+        <mat-menu #orderBy="matMenu">
+            <button mat-menu-item [matMenuTriggerFor]="nameSort"><i class="fa fa-list mr-3" aria-hidden="true"></i>Name</button>
+            <button mat-menu-item [matMenuTriggerFor]="dateSort"><i class="fa fa-clock mr-3" aria-hidden="true"></i>Date Created</button>
+        </mat-menu>
+        <mat-menu #nameSort="matMenu">
+            <button mat-menu-item (click)="sortFillerGroup('Name', 'asc')"><i class="fa fa-sort-alpha-asc mr-3" aria-hidden="true"></i>Ascending</button>
+            <button mat-menu-item (click)="sortFillerGroup('Name', 'desc')"><i class="fa fa-sort-alpha-desc mr-3" aria-hidden="true"></i>Descending</button>
+        </mat-menu>
+        <mat-menu #dateSort="matMenu">
+            <button mat-menu-item (click)="sortFillerGroup('DateCreated', 'asc')"><i class="fa fa-sort-numeric-asc mr-3" aria-hidden="true"></i>Oldest</button>
+            <button mat-menu-item (click)="sortFillerGroup('DateCreated', 'desc')"><i class="fa fa-sort-numeric-desc mr-3" aria-hidden="true"></i>Newest</button>
+        </mat-menu>
+    </div>
+    <ng-template #gridMenu>
+        <div class="col-lg-7 pt-2">
+            <div *ngIf="!no_search_result" class="d-flex">
+                <div class="bg-dark text-white sm-text h-35 p-2 mr-2" *ngFor="let data of grid_data.slice(0, 6)">
+                    <span class="mr-2">{{ data.name }}</span
+                    ><span class="fas fa-times clickable" (click)="removeFromGrid(data.id)"></span>
+                </div>
+                <div class="bg-dark text-white text-center h-35 p-2 mr-2" *ngIf="grid_data.length > 6">
+                    <span class="pl-2 pr-2 clickable" (click)="showMoreFillerCategory()"><i class="fa fa-ellipsis-h"></i></span>
+                </div>
+            </div>
+        </div>
+    </ng-template>
+    <div class="col-lg-1">
+        <div class="row mt-2 no-gutters">
+            <div class="col-lg-6 text-center">
+                <div class="text-white p-2 clickable" [ngClass]="active_view == 'folder' ? 'bg-dark' : 'bg-gray-2'" title="Folder View" (click)="changeView('folder')">
+                    <span class="fas fa-folder"></span>
+                </div>
+            </div>
+            <div class="col-lg-6 text-center">
+                <div class="text-white p-2 clickable" [ngClass]="active_view == 'grid' ? 'bg-dark' : 'bg-gray-2'" title="Grid View" (click)="changeView('grid')">
+                    <span class="fa fa-th"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <app-search-field
+            [form_title]="'Search Filler Group Name or Owner'"
+            [placeholder]="'Example: Trivia'"
+            [data_reference]=""
+            [primary_keyword]="'name'"
+            [secondary_keyword]="'name'"
+            (searched)="onSearchFiller($event)"
+            [api_search]="true"
+        >
+        </app-search-field>
+    </div>
 </div>
 <div class="row mb-3 no-gutters p-2 bg-gray" *ngIf="sorting_order != ''">
-	<div class="col-lg-11">
-		<div class="filter-pills pt-1">
-			<div class="filetype-pill pill">
-				Sorted by {{ sorting_column }} :
-				<strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{ sorting_order == 'asc' ? 'Oldest' : 'Newest' }}</strong>
-			</div>
-			<ng-template #nameFilter>
-				<strong>{{ sorting_order == 'asc' ? 'Ascending' : 'Descending' }}</strong>
-			</ng-template>
-		</div>
-	</div>
-	<div class="control col-lg-1 text-right">
-		<button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
-			<span class="button-label"> Clear Filter </span>
-			<span class="fas fa-times ml-2 sm-text"></span>
-		</button>
-	</div>
+    <div class="col-lg-11">
+        <div class="filter-pills pt-1">
+            <div class="filetype-pill pill">
+                Sorted by {{ sorting_column }} :
+                <strong *ngIf="sorting_column == 'DateCreated'; else nameFilter">{{ sorting_order == "asc" ? "Oldest" : "Newest" }}</strong>
+            </div>
+            <ng-template #nameFilter>
+                <strong>{{ sorting_order == "asc" ? "Ascending" : "Descending" }}</strong>
+            </ng-template>
+        </div>
+    </div>
+    <div class="control col-lg-1 text-right">
+        <button mat-button mat-raised-button class="theme-btn" (click)="clearFilter()">
+            <span class="button-label"> Clear Filter </span>
+            <span class="fas fa-times ml-2 sm-text"></span>
+        </button>
+    </div>
 </div>
 
 <ng-container *ngIf="active_view == 'folder'; else gridView">
-	<div *ngIf="!is_loading; else loader">
-		<div *ngIf="!no_search_result; else noResultsFound">
-			<div class="row pb-2 mt-3">
-				<div class="col-lg-2 mb-4" *ngIf="!restricted">
-					<div class="black-opacity black-solid-hover h-100 text-center cursor-pointer box-shadowing" (click)="onAddFillerGroup()">
-						<i class="fas fa-plus text-white f-50 mt-5 pt-5 mb-5 pb-4" title="Add New Filler Group"></i>
-					</div>
-				</div>
-				<div class="col-lg-2 mb-4" *ngFor="let group of filler_data; let i = index">
-					<div class="bg-white p-3 full-width text-center br-5 box-shadowing">
-						<div class="album-preview" [ngClass]="no_preview ? 'hidden' : ''" *ngIf="selected_preview_index == i">
-							<div class="row mt-3 no-gutters" *ngIf="!initial_loading; else filler_loader">
-								<div class="col-lg-12" *ngIf="!no_preview_available; else no_prev">
-									<div class="items" *ngFor="let filler of selected_preview">
-										<div *ngIf="filler.fileType | isFeed; else imagePrev">
-											<object
-												[attr.data]="filler.url | sanitize"
-												[ngStyle]="{ width: filler.dimension, height: filler.dimension }"></object>
-										</div>
-										<ng-template #imagePrev>
-											<img
-												class="cover-bg"
-												[src]="filler.url"
-												[ngStyle]="{ width: filler.dimension, height: filler.dimension }" />
-										</ng-template>
-									</div>
-								</div>
-							</div>
-							<div class="row no-gutters controls">
-								<div class="col-lg-6">
-									<button class="theme-btn _cool sm-text" (click)="navigateToFillerGroup(group.fillerGroupId)">View Album</button>
-								</div>
-								<div class="col-lg-6">
-									<button class="theme-btn _caution sm-text" (click)="hidePreview()">Close</button>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-lg-12 text-center text-primary uppercase">
-								<span
-									class="sm-text f-500 clickable hover-prime"
-									title="{{ group.name }}"
-									(click)="navigateToFillerGroup(group.fillerGroupId)"
-									>{{ group.name | slice : 0 : 20 }}{{ group.name.length > 20 ? '...' : '' }}</span
-								>
-							</div>
-							<div class="col-lg-12 mt-2">
-								<div *ngIf="group.coverPhoto != ''; else defaultphoto">
-									<img
-										[src]="group.coverPhoto"
-										class="clickable full-width h-130-px br-5 cover-bg"
-										title="Click to Preview Album"
-										(click)="showAlbumPreview(group.fillerGroupId, 4, '', i)" />
-								</div>
-								<ng-template #defaultphoto>
-									<div>
-										<img
-											[src]="'assets/media-files/filler-group-placeholder.png'"
-											class="clickable full-width h-130-px br-5"
-											title="Click to Preview Album"
-											(click)="showAlbumPreview(group.fillerGroupId, 1, '', i)" />
-									</div>
-								</ng-template>
-							</div>
-						</div>
-						<div class="row mt-3">
-							<div class="col-lg-6 text-left d-inline-flex">
-								<div class="pr-2" *ngIf="group.paired == 1">
-									<span class="font-weight-bold sm-text text-orange" title="In Pairs"><i class="fas fa-times"> 2</i></span>
-								</div>
-								<div class="hover-prime clickable" title="View Filler Group" (click)="navigateToFillerGroup(group.fillerGroupId)">
-									<span class="text-dark sm-text">{{ group.count }} Fillers</span>
-								</div>
-							</div>
-							<div class="col-lg-6 text-right">
-								<ng-container *ngIf="!restricted; else createdbyarea">
-									<span
-										class="fas fa-upload text-gray ml-3 clickable hover-prime"
-										title="Upload Filler"
-										(click)="addFillerContent(group)"></span>
+    <div *ngIf="!is_loading; else loader">
+        <div *ngIf="!no_search_result; else noResultsFound">
+            <div class="row m-0">
+                <div class="col-lg-2 mb-4" *ngIf="!restricted">
+                    <div class="black-opacity black-solid-hover h-100 text-center cursor-pointer box-shadowing" (click)="onAddFillerGroup()">
+                        <i class="fas fa-plus text-white f-50 mt-5 pt-5 mb-5 pb-4" title="Add New Filler Group"></i>
+                    </div>
+                </div>
+                <div class="col-lg-2 mb-4" *ngFor="let group of filler_data; let i = index">
+                    <!-- Card Component -->
+                    <div class="bg-white p-3 full-width text-center br-5 box-shadowing position-relative overflow-hidden">
+                        <!-- Added position-relative and overflow-hidden -->
+                        <div class="album-preview p-3" [ngClass]="no_preview ? 'hidden' : ''" *ngIf="selected_preview_index == i">
+                            <div class="items-wrapper text-left mb-3" *ngIf="!no_preview_available && !initial_loading; else loading">
+                                <div class="items" *ngFor="let filler of selected_preview">
+                                    <img class="cover-bg w-100 h-100" [src]="'assets/media-files/feeds.jpg'" *ngIf="filler.fileType | isFeed; else imagePrev" title="Feeds" />
+                                    <!-- Todo: thumbnail for object/feed -->
 
-									<span
-										class="fas fa-cog text-light-gray ml-3 clickable hover-prime"
-										title="Edit Filler Group"
-										(click)="onEditFillerGroup(group.fillerGroupId)"></span>
+                                    <ng-template #imagePrev>
+                                        <img class="cover-bg w-100 h-100" [src]="filler.url" />
+                                    </ng-template>
+                                </div>
+                            </div>
 
-									<span
-										class="fas fa-trash text-danger ml-3 clickable"
-										title="Delete Filler Group"
-										(click)="onDeleteFillerGroup(group.fillerGroupId)"></span>
-								</ng-container>
-								<ng-template #createdbyarea>
-									<span class="sm-text text-dark" title="{{ group.createdByName }}">{{
-										group.createdByName.length > 10 ? (group.createdByName | slice : 0 : 10) + '...' : group.createdByName
-									}}</span>
-								</ng-template>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="row" *ngIf="filler_group.hasNextPage">
-				<div class="col-lg-12 text-center p-0 mt-3">
-					<button
-						class="text-white p-3 bg-primary btn md-text pl-5 pr-5"
-						(click)="callNextPage(filler_group.page + 1)"
-						[disabled]="is_loading">
-						<span>SHOW MORE</span>
-					</button>
-				</div>
-			</div>
-		</div>
-	</div>
+                            <!-- Loader and No Album Preview -->
+                            <ng-template #loading>
+                                <div class="items-wrapper mb-3" [ngClass]="initial_loading ? 'text-center pt-4' : 'text-left'">
+                                    <div class="items">
+                                        <div class="py-4" *ngIf="initial_loading">
+                                            <app-spinner [diameter]="60"></app-spinner>
+                                        </div>
+                                        <img
+                                            class="cover-bg w-100 h-100"
+                                            [src]="'assets/media-files/no-ss.png'"
+                                            title="No Album Preview"
+                                            *ngIf="no_preview_available && !initial_loading"
+                                        />
+                                    </div>
+                                </div>
+                            </ng-template>
+
+                            <!-- To fixed buttoncontainer at the bottom , even when data is loading-->
+                            <div class="d-flex">
+                                <button class="theme-btn _cool flex-even mr-2" (click)="navigateToFillerGroup(group.fillerGroupId)">View</button>
+                                <button class="theme-btn _caution flex-even" (click)="hidePreview()">Close</button>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12 text-center text-primary uppercase">
+                                <span class="sm-text f-500 clickable hover-prime" title="{{ group.name }}" (click)="navigateToFillerGroup(group.fillerGroupId)"
+                                    >{{ group.name | slice : 0 : 20 }}{{ group.name.length > 20 ? "..." : "" }}</span
+                                >
+                            </div>
+                            <div class="col-lg-12 mt-2">
+                                <div *ngIf="group.coverPhoto != ''; else defaultphoto">
+                                    <img
+                                        [src]="group.coverPhoto"
+                                        class="clickable full-width h-130-px br-5 cover-bg"
+                                        title="Click to Preview Album"
+                                        (click)="showAlbumPreview(group.fillerGroupId, 4, '', i)"
+                                    />
+                                </div>
+                                <ng-template #defaultphoto>
+                                    <div>
+                                        <img
+                                            [src]="'assets/media-files/filler-group-placeholder.png'"
+                                            class="clickable full-width h-130-px br-5"
+                                            title="Click to Preview Album"
+                                            (click)="showAlbumPreview(group.fillerGroupId, 4, '', i)"
+                                        />
+                                    </div>
+                                </ng-template>
+                            </div>
+                        </div>
+                        <div class="row mt-3 no-gutters">
+                            <div class="col-lg-5 text-left d-inline-flex">
+                                <div class="pr-2" *ngIf="group.paired == 1">
+                                    <span class="font-weight-bold sm-text text-orange" title="In Pairs"><i class="fas fa-times"> 2</i></span>
+                                </div>
+                                <div class="hover-prime clickable" title="View Filler Group" (click)="navigateToFillerGroup(group.fillerGroupId)">
+                                    <span class="text-dark sm-text">{{ group.count }} Fillers</span>
+                                </div>
+                            </div>
+                            <div class="col-lg-7 text-right">
+                                <ng-container *ngIf="!restricted; else createdbyarea">
+                                    <span class="sm-text fas fa-upload text-gray ml-2 clickable hover-prime" title="Upload Filler" (click)="addFillerContent(group)"></span>
+
+                                    <span
+                                        class="sm-text fas fa-cog text-light-gray ml-2 clickable hover-prime"
+                                        title="Edit Filler Group"
+                                        (click)="onEditFillerGroup(group.fillerGroupId)"
+                                    ></span>
+
+                                    <span
+                                        class="sm-text fas fa-trash text-danger ml-2 clickable"
+                                        title="Delete Filler Group"
+                                        (click)="onDeleteFillerGroup(group.fillerGroupId)"
+                                    ></span>
+                                </ng-container>
+                                <ng-template #createdbyarea>
+                                    <span class="sm-text text-dark" title="{{ group.createdByName }}">{{
+                                        group.createdByName.length > 10 ? (group.createdByName | slice : 0 : 10) + "..." : group.createdByName
+                                    }}</span>
+                                </ng-template>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card Component -->
+                </div>
+            </div>
+            <div class="row" *ngIf="filler_group.hasNextPage">
+                <div class="col-lg-12 text-center p-0 mt-3">
+                    <button class="text-white p-3 bg-primary btn md-text pl-5 pr-5" (click)="callNextPage(filler_group.page + 1)" [disabled]="is_loading">
+                        <span>SHOW MORE</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </ng-container>
 
 <ng-template #gridView>
-	<div *ngIf="!is_loading; else loader">
-		<div *ngIf="!no_search_result; else noResultsFound">
-			<div class="row" *ngFor="let grid of grid_data">
-				<div class="col-lg-10">
-					<div class="row mb-3">
-						<div class="col-lg-2" *ngFor="let filler of grid.fillers">
-							<div class="black-opacity text-center text-white sm-text p-1" [title]="filler.title">
-								<span class="fa fa-image text-primary mr-2" *ngIf="filler.fileType | isimage" title="Image"></span>
-								<span class="fa fa-video text-primary mr-2" *ngIf="filler.fileType | isvideo" title="Video"></span>
-								<span class="fa fa-wifi text-primary mr-2" *ngIf="filler.fileType === 'feed'" title="Feed"></span>
-								{{ filler.title.length > 15 ? (filler.title | slice : 0 : 20) + '...' : filler.title }}
-							</div>
-							<img [src]="filler.url" class="full-width cover-bg h-150" />
-							<div class="filler-name position-absolute bg-white p-1 sm-text font-bold bottom-0 text-center border-top">
-								{{ grid.name }}
-							</div>
-						</div>
-						<div class="col-lg-2" *ngIf="grid.fillers.length == 0">
-							<div class="full-width bg-white h-150 text-dark lh-150 text-center clickable">
-								<h4><i>No Content Available</i></h4>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="col-lg-2">
-					<div class="full-width black-opacity black-solid-hover h-150 text-white lh-150 text-center clickable">
-						<h3 title="View Filler {{ grid.name }}" (click)="navigateToFillerGroup(grid.id)">more ...</h3>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div *ngIf="!is_loading; else loader">
+        <div *ngIf="!no_search_result; else noResultsFound">
+            <div class="row" *ngFor="let grid of grid_data">
+                <div class="col-lg-10">
+                    <div class="row mb-3">
+                        <div class="col-lg-2" *ngFor="let filler of grid.fillers">
+                            <div class="black-opacity text-center text-white sm-text p-1" [title]="filler.title">
+                                <span class="fa fa-image text-primary mr-2" *ngIf="filler.fileType | isimage" title="Image"></span>
+                                <span class="fa fa-video text-primary mr-2" *ngIf="filler.fileType | isvideo" title="Video"></span>
+                                <span class="fa fa-wifi text-primary mr-2" *ngIf="filler.fileType === 'feed'" title="Feed"></span>
+                                {{ filler.title.length > 15 ? (filler.title | slice : 0 : 20) + "..." : filler.title }}
+                            </div>
+                            <img [src]="filler.url" class="full-width cover-bg h-150" />
+                            <div class="filler-name position-absolute bg-white p-1 sm-text font-bold bottom-0 text-center border-top">
+                                {{ grid.name }}
+                            </div>
+                        </div>
+                        <div class="col-lg-2" *ngIf="grid.fillers.length == 0">
+                            <div class="full-width bg-white h-150 text-dark lh-150 text-center clickable">
+                                <h4><i>No Content Available</i></h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <div class="full-width black-opacity black-solid-hover h-150 text-white lh-150 text-center clickable">
+                        <h3 title="View Filler {{ grid.name }}" (click)="navigateToFillerGroup(grid.id)">more ...</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </ng-template>
 
 <ng-template #filler_loader>
-	<div>
-		<div class="pt-5 mt-3 bg-dark">
-			<app-spinner [diameter]="60"></app-spinner>
-		</div>
-	</div>
+    <div>
+        <div class="pt-5 mt-3 bg-dark">
+            <app-spinner [diameter]="60"></app-spinner>
+        </div>
+    </div>
 </ng-template>
 <ng-template #no_prev>
-	<div class="text-center full-width">
-		<img src="assets/media-files/no-ss.png" [ngStyle]="{ width: dimension, height: dimension }" />
-	</div>
+    <div class="text-center full-width">
+        <img src="assets/media-files/no-ss.png" />
+    </div>
 </ng-template>
 
 <ng-template #loader>
-	<div class="py-4 h-500">
-		<app-spinner [diameter]="60"></app-spinner>
-	</div>
+    <div class="py-4 h-500">
+        <app-spinner [diameter]="60"></app-spinner>
+    </div>
 </ng-template>
 
 <ng-template #noResultsFound>
-	<div class="row">
-		<div class="col-lg-12">
-			<div class="full-width bg-white pt-5 pb-5 col-lg-12 text-center">
-				<div class="mb-4">
-					<i class="text-gray fa-5x far fa-file-alt"></i>
-				</div>
-				<h3 class="text-gray col-lg-12">No Results Found.</h3>
-				<span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="full-width bg-white pt-5 pb-5 col-lg-12 text-center">
+                <div class="mb-4">
+                    <i class="text-gray fa-5x far fa-file-alt"></i>
+                </div>
+                <h3 class="text-gray col-lg-12">No Results Found.</h3>
+                <span class="text-gray col-lg-12">Try adjusting your search to find what you're looking for.</span>
+            </div>
+        </div>
+    </div>
 </ng-template>
