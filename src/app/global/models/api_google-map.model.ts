@@ -44,3 +44,14 @@ export interface GOOGLE_MAP_SEARCH_RESULT {
 	};
 	status: string;
 }
+
+export interface GOOGLE_MAP_SEARCH_RESULT_V2{
+    address: string,
+    latitude: number,
+    longitude: number,
+    placeId: string,
+    thumbnail: string,
+    title: string,
+    type: string
+}
+
