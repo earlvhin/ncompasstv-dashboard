@@ -39,8 +39,10 @@ export class BaseService {
 		overrideOptions = false
 	): Observable<any> {
         if (!options) {
-            options.global = false;
-            options.plain = false;
+            options = {
+                global: false,
+                plain: false
+            }
         }
 
 		let headers: any = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
