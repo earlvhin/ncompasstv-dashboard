@@ -30,28 +30,20 @@ export class BaseService {
 
 	protected getRequest(
 		endpoint: string,
-		options: any = {
-            global: false,
-            plain: false
-        },
+		options: any = null,
 		isApplicationRequestOnly = false,
 		overrideUrl = false,
-		overrideOptions = false
+		overrideOptions = false,
+        plain?: boolean,
+        global?: boolean
 	): Observable<any> {
-        if (!options) {
-            options = {
-                global: false,
-                plain: false
-            }
-        }
-
 		let headers: any = isApplicationRequestOnly ? this.applicationOnlyHeaders : this.headers;
 		let baseUri = this.baseUri;
 
-        if (options && options.plain) return this._http.get(endpoint);
+        if (plain) return this._http.get(endpoint);
 		if (options) headers = { ...this.headers, ...options };
 		if (overrideOptions) headers = { headers: new HttpHeaders(options) };
-		if (this._auth.current_role === 'dealeradmin' && !options.global) baseUri += 'dealeradmin/';
+		if (this._auth.current_role === 'dealeradmin' && !global) baseUri += 'dealeradmin/';
 
 		const url = overrideUrl ? endpoint : `${baseUri}${endpoint}`;
 		return this._http.get(url, headers);
