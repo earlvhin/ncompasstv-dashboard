@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { FillerService } from 'src/app/global/services';
-import { Subject } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -14,6 +14,7 @@ import { UI_TABLE_FILLER_FEED } from 'src/app/global/models/ui_table-filler-feed
 })
 export class FillerFeedsTableComponent implements OnInit {
     @Input() reloads: any = false;
+	@Input() reload$: Observable<void>;
 
     initial_load = true;
     filtered_data = [];
@@ -39,6 +40,14 @@ export class FillerFeedsTableComponent implements OnInit {
 
     ngOnInit() {
         this.getAllFillerFeeds();
+
+        this.reload$
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe({
+                next: () => {
+                    this.getAllFillerFeeds();
+                }
+            })
     }
 
     getAllFillerFeeds(page?) {

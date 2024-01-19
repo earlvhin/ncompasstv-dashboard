@@ -28,6 +28,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 	no_feeds = false;
 	paging_data: any;
 	reload_detected: boolean = false;
+    reload_trigger: Subject<any> = new Subject<any>();
 	search_data = '';
 	searching = false;
 	sort_column = 'DateCreated';
@@ -260,8 +261,7 @@ export class FeedsComponent implements OnInit, OnDestroy {
 			})
 			.afterClosed()
 			.subscribe(() => {
-				this._route.navigateByUrl(`/${this.roleRoute}/feeds?tab=1`);
-				this.ngOnInit();
+                this.reload_trigger.next();
 			});
 	}
 

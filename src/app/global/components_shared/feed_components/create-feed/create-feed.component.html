@@ -72,11 +72,11 @@
 			</ng-template>
 		</div>
 
-		<div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true">
+		<div class="alert alert-success" *ngIf="is_invalid_url === false && isUrlValidType === true !has_selected_widget_feed_type">
 			<p class="sm-text font-weight-bold">Entered Feed URL is a supported format.</p>
 		</div>
 
-		<ng-container *ngIf="is_invalid_url && !is_validating_url">
+		<ng-container *ngIf="is_invalid_url && !is_validating_url && !has_selected_widget_feed_type">
 			<ng-container *ngIf="is_invalid_url && isUrlValidType; else isInvalidType">
 				<div class="alert alert-warning">
 					<p class="sm-text font-weight-bold">Entered Feed URL may be invalid.</p>
@@ -94,14 +94,23 @@
 			</ng-template>
 		</ng-container>
 
-		<div class="d-flex flex-even align-items-center">
-			<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="is_validating_url && disabled_submit || !isUrlValidType">
-				<ng-container *ngIf="is_creating_feed"> Creating feed... </ng-container>
-				<ng-container *ngIf="!is_creating_feed" > Submit </ng-container>
-			</button>
+			<div class="d-flex flex-even align-items-center" >
+				<ng-container *ngIf="!has_selected_widget_feed_type; else widgetButton">
+					<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="is_validating_url && disabled_submit || !isUrlValidType">
+						<ng-container *ngIf="is_creating_feed"> Creating feed... </ng-container>
+						<ng-container *ngIf="!is_creating_feed" > Submit </ng-container>
+					</button>
+				</ng-container>
 
-			<button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>Cancel</button>
-		</div>
+				<ng-template #widgetButton>
+						<button mat-button mat-raised-button class="theme-btn mr-2">
+							<ng-container *ngIf="is_creating_feed"> Creating feed... </ng-container>
+							<ng-container *ngIf="!is_creating_feed" > Submit </ng-container>
+						</button>
+				</ng-template>
+
+				<button mat-button mat-raised-button class="theme-btn btn-danger" mat-dialog-close>Cancel</button>
+			</div>
 	</form>
 
 	<ng-template #loading>

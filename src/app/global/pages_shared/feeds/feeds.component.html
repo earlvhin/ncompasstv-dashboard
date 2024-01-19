@@ -131,7 +131,7 @@
 					</mat-tab>
 					<mat-tab id="fillers-view-tab" label="Fillers">
 						<div *ngIf="isActiveTab == 1">
-							<app-filler-feeds-table [reloads]="reload_detected" (reload_page)="reloadPage($event)"></app-filler-feeds-table>
+							<app-filler-feeds-table [reload$]="reload_trigger.asObservable()" [reloads]="reload_detected" (reload_page)="reloadPage($event)"></app-filler-feeds-table>
 						</div>
 					</mat-tab>
 				</mat-tab-group>
