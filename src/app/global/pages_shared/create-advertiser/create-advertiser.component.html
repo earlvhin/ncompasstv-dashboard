@@ -4,211 +4,198 @@
 		<hr class="my-4" />
 	</div>
 
-	<div class="content-section">
-		<div class="row">
-			<div class="col-lg-6">
-				<mat-card class="p-5">
-					<ng-container *ngIf="is_page_ready; else loading">
-						<h3 class="mb-1">Advertiser Information</h3>
-						<p class="sm-text mb-4">You can fill on the forms manually or search all these information via Google Scrape.</p>
-						<p class="sm-text mb-2 text-danger">
-							<b>NOTE: </b>Default address selection is within United States only, If you wish to search within Canada click the tick
-							box below.
-						</p>
-						<div class="col-lg-12 mb-3 sm-text p-0">
-							<mat-checkbox (change)="getCanadaAddress($event)">Search within Canada</mat-checkbox>
-						</div>
-						<form [formGroup]="new_advertiser_form" (ngSubmit)="newAdvertiserProfile()" class="text-left">
-							<div class="row mb-2">
-								<div class="col-lg-12">
-									<app-autocomplete-field
-										(data_value)="setToDealer($event)"
-										[data_reference]="dealers_data"
-										[primary_keyword]="'businessName'"
-										[key_of_value]="'dealerId'"
-										(data_value)="setToDealer($event)"
-										[required]="true"
-										[label]="'Type in a Dealer Business Name'"
-										[initial_value]="dealer_name"
-										[new_value]="dealer_name"
-										[disabled]="is_dealer"
-										[paging]="paging"
-										(call_next_page)="searchBoxTrigger($event)"
-										[loading_data]="loading_data"
-										(searched)="searchData($event)"
-										[loading_search]="loading_search">
-									</app-autocomplete-field>
-								</div>
-								<div *ngFor="let field of new_advertiser_form_fields" class="{{ field.col }} mb-3">
-									<mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
-										<mat-label>{{ field.label }}</mat-label>
-										<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" />
-									</mat-form-field>
-
-									<ng-template #autocomplete_field>
-										<app-autocomplete-field
-											*ngIf="field.control == 'category' && !no_category; else no_category_selected"
-											(data_value)="setToCategory($event)"
-											[data_reference]="categories_data"
-											[primary_keyword]="'categoryName'"
-											[key_of_value]="'categoryName'"
-											[required]="field.is_required"
-											[label]="field.label"
-											[initial_value]="category_selected">
-										</app-autocomplete-field>
-
-										<app-autocomplete-field
-											*ngIf="field.control == 'category2' && !no_category2; else no_category_selected2"
-											(data_value)="setToGeneralCategory($event)"
-											[data_reference]="gen_categories_data"
-											[primary_keyword]="'generalCategory'"
-											[key_of_value]="'generalCategory'"
-											[required]="false"
-											[label]="field.label"
-											[initial_value]="category_selected"
-											[disabled]="true">
-										</app-autocomplete-field>
-
-										<app-autocomplete-field
-											*ngIf="field.control === 'city'"
-											(data_value)="setCity($event)"
-											[key_of_value]="'city_state'"
-											[placeholder]="field.placeholder"
-											[label]="field.label"
-											[data_reference]="city_state"
-											[search_keyword]="'city_state'"
-											[primary_keyword]="'city_state'"
-											[new_value]="city_selected"
-											[initial_value]="city_selected"
-											[is_city]="true">
-										</app-autocomplete-field>
-
-										<ng-template #no_category_selected>
-											<mat-form-field
-												*ngIf="field.control === 'category'"
-												[hideRequiredMarker]="false"
-												[floatLabel]="'auto'"
-												class="full-width">
-												<mat-label>Choose Category</mat-label>
-												<input matInput formControlName="category" placeholder="Category" [required]="field.is_required" />
-											</mat-form-field>
-										</ng-template>
-
-										<ng-template #no_category_selected2>
-											<mat-form-field
-												*ngIf="field.control === 'category2'"
-												[hideRequiredMarker]="false"
-												[floatLabel]="'auto'"
-												class="full-width">
-												<mat-label>Choose General Category</mat-label>
-												<input
-													matInput
-													formControlName="category2"
-													placeholder="General Category"
-													[required]="false"
-													[disabled]="true" />
-											</mat-form-field>
-										</ng-template>
-									</ng-template>
-								</div>
-							</div>
-							<button
-								mat-button
-								mat-raised-button
-								class="theme-btn mr-2"
-								[disabled]="form_invalid || (canada_selected && new_advertiser_form.get('zip').value.length !== 6) || (!canada_selected && new_advertiser_form.get('zip').value.length !== 5)"
-								*ngIf="!is_creating_advertiser; else publishing">
-								Save Advertiser Profile
-							</button>
-
-							<ng-template #publishing>
-								<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="true">Saving Advertiser Profile . . .</button>
-							</ng-template>
-						</form>
-					</ng-container>
-
-					<ng-template #loading>
-						<div class="py-5">
-							<app-spinner></app-spinner>
-						</div>
-					</ng-template>
-				</mat-card>
-			</div>
-			<div class="col-lg-6">
-				<div class="d-flex justify-content-between p-0">
-					<div class="flex-basis-auto p-0">
-						<ng-container>
-							<div class="d-flex flex-column align-items-center p-0 pt-4">
-								<div class="image-container text-center">
-									<img [src]="current_host_image" class="w-100-px h-100-px br-100" alt="admin" />
-								</div>
-								<button
-									mat-raised-button
-									class="mt-1 select-image-button"
-									color="primary"
-									(click)="onChoosePhotos()"
-									[disabled]="!place_id">
-									Upload Image
-								</button>
-							</div>
-						</ng-container>
+	<div class="row">
+		<div class="col-lg-6">
+			<mat-card class="p-5">
+				<ng-container *ngIf="is_page_ready; else loading">
+					<h3 class="mb-1">Advertiser Information</h3>
+					<p class="sm-text mb-4">You can fill on the forms manually or search all these information via Google Scrape.</p>
+					<p class="sm-text mb-2 text-danger">
+						<b>NOTE: </b>Default address selection is within United States only, If you wish to search within Canada click the tick
+						box below.
+					</p>
+					<div class="col-lg-12 mb-3 sm-text p-0">
+						<mat-checkbox (change)="getCanadaAddress($event)">Search within Canada</mat-checkbox>
 					</div>
-					<div class="p-0 flex-basis-80 pt-5">
-						<label for="ng-scrape-form" class="pt-4 mb-3">Enter an Advertiser Name</label>
-						<div class="ng-form-field">
-							<form [formGroup]="google_place_form" (ngSubmit)="googleMap()">
-								<input
-									formControlName="location"
-									autocomplete="off"
-									type="text"
-									name="ng-scrape-form"
-									class="ng-input-form no-border full-width no-outline"
-									placeholder="Search Advertiser Name" />
-								<button
-									class="ng-scrape-form-btn no-border right-0 top-0"
-									[ngClass]="location_field ? 'disabled' : ''"
-									[disabled]="location_field">
-									<span class="fas fa-search"></span>
-								</button>
-							</form>
-							<div class="location-candidates material-shadow" *ngIf="location_candidate_fetched">
-								<ul *ngIf="google_result.length != 0; else loading">
-									<li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
-										<div class="d-flex align-items-center">
-											<div class="mr-3">
-												<span class="fas fa-map-marker-alt text-danger"></span>
-											</div>
-											<div class="flex-even">
-												<h5>{{ loc.title }}</h5>
-												<p class="sm-text mb-0">{{ loc.address | titlecase }}</p>
-											</div>
-										</div>
-									</li>
-								</ul>
-								<ng-template #loading>
-									<div class="bg-light py-5" *ngIf="!no_result">
-										<app-spinner></app-spinner>
-									</div>
-									<div class="bg-light py-5" *ngIf="no_result">
-										<span class="pl-3"> No Results Found. </span>
-									</div>
+					<form [formGroup]="new_advertiser_form" (ngSubmit)="newAdvertiserProfile()" class="text-left">
+						<div class="row mb-2">
+							<div class="col-lg-12">
+								<app-autocomplete-field
+									(data_value)="setToDealer($event)"
+									[data_reference]="dealers_data"
+									[primary_keyword]="'businessName'"
+									[key_of_value]="'dealerId'"
+									(data_value)="setToDealer($event)"
+									[required]="true"
+									[label]="'Type in a Dealer Business Name'"
+									[initial_value]="dealer_name"
+									[new_value]="dealer_name"
+									[disabled]="is_dealer"
+									[paging]="paging"
+									(call_next_page)="searchBoxTrigger($event)"
+									[loading_data]="loading_data"
+									(searched)="searchData($event)"
+									[loading_search]="loading_search">
+								</app-autocomplete-field>
+							</div>
+							<div *ngFor="let field of new_advertiser_form_fields" class="{{ field.col }} mb-3">
+								<mat-form-field class="full-width" *ngIf="!field.autocomplete; else autocomplete_field">
+									<mat-label>{{ field.label }}</mat-label>
+									<input formControlName="{{ field.control }}" matInput placeholder="{{ field.placeholder }}" />
+								</mat-form-field>
+
+								<ng-template #autocomplete_field>
+									<app-autocomplete-field
+										*ngIf="field.control == 'category' && !no_category; else no_category_selected"
+										(data_value)="setToCategory($event)"
+										[data_reference]="categories_data"
+										[primary_keyword]="'categoryName'"
+										[key_of_value]="'categoryName'"
+										[required]="field.is_required"
+										[label]="field.label"
+										[initial_value]="category_selected">
+									</app-autocomplete-field>
+
+									<app-autocomplete-field
+										*ngIf="field.control == 'category2' && !no_category2; else no_category_selected2"
+										(data_value)="setToGeneralCategory($event)"
+										[data_reference]="gen_categories_data"
+										[primary_keyword]="'generalCategory'"
+										[key_of_value]="'generalCategory'"
+										[required]="false"
+										[label]="field.label"
+										[initial_value]="category_selected"
+										[disabled]="true">
+									</app-autocomplete-field>
+
+									<app-autocomplete-field
+										*ngIf="field.control === 'city'"
+										(data_value)="setCity($event)"
+										[key_of_value]="'city_state'"
+										[placeholder]="field.placeholder"
+										[label]="field.label"
+										[data_reference]="city_state"
+										[search_keyword]="'city_state'"
+										[primary_keyword]="'city_state'"
+										[new_value]="city_selected"
+										[initial_value]="city_selected"
+										[is_city]="true">
+									</app-autocomplete-field>
+
+									<ng-template #no_category_selected>
+										<mat-form-field
+											*ngIf="field.control === 'category'"
+											[hideRequiredMarker]="false"
+											[floatLabel]="'auto'"
+											class="full-width">
+											<mat-label>Choose Category</mat-label>
+											<input matInput formControlName="category" placeholder="Category" [required]="field.is_required" />
+										</mat-form-field>
+									</ng-template>
+
+									<ng-template #no_category_selected2>
+										<mat-form-field
+											*ngIf="field.control === 'category2'"
+											[hideRequiredMarker]="false"
+											[floatLabel]="'auto'"
+											class="full-width">
+											<mat-label>Choose General Category</mat-label>
+											<input
+												matInput
+												formControlName="category2"
+												placeholder="General Category"
+												[required]="false"
+												[disabled]="true" />
+										</mat-form-field>
+									</ng-template>
 								</ng-template>
 							</div>
 						</div>
-					</div>
-				</div>
+						<button
+							mat-button
+							mat-raised-button
+							class="theme-btn mr-2"
+							[disabled]="form_invalid || (canada_selected && new_advertiser_form.get('zip').value.length !== 6) || (!canada_selected && new_advertiser_form.get('zip').value.length !== 5)"
+							*ngIf="!is_creating_advertiser; else publishing">
+							Save Advertiser Profile
+						</button>
 
-				<div class="map-wrapper mt-3">
-					<agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
-						<agm-marker
-							*ngIf="selected_location"
-							[latitude]="selected_location.latitude"
-							[longitude]="selected_location.longitude"
-							[agmFitBounds]="true">
-						</agm-marker>
-					</agm-map>
+						<ng-template #publishing>
+							<button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="true">Saving Advertiser Profile . . .</button>
+						</ng-template>
+					</form>
+				</ng-container>
+
+				<ng-template #loading>
+					<div class="py-5">
+						<app-spinner></app-spinner>
+					</div>
+				</ng-template>
+			</mat-card>
+		</div>
+		<div class="col-lg-6">
+			<div class="google-form-wrapper">
+				<form [formGroup]="google_place_form" (ngSubmit)="googleMap()">
+					<div class="d-flex">
+						<input
+							formControlName="location"
+							autocomplete="off"
+							type="text"
+							name="ng-scrape-form"
+							class="ng-input-form no-border full-width no-outline"
+							placeholder="Search Advertiser Name" />
+						<button
+							class="ng-scrape-form-btn no-border right-0 top-0"
+							[ngClass]="location_field ? 'disabled' : ''"
+							[disabled]="location_field">
+							<span class="fas fa-search"></span>
+						</button>
+					</div>
+				</form>
+				<div class="location-candidates material-shadow" *ngIf="location_candidate_fetched && isListVisible">
+					<ul *ngIf="google_result.length != 0; else loading">
+						<div class="google-result-close-wrapper">
+							<button class="modal-close-btn no-border no-background" (click)="closeGoogleDropdownList()">
+								<span class="fas fa-times"></span>
+							</button>
+						</div>
+						<li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
+							<div class="d-flex align-items-center">
+								<div class="mr-3">
+									<span class="fas fa-map-marker-alt text-danger"></span>
+								</div>
+								<div class="flex-even">
+									<h5>{{ loc.title }}</h5>
+									<p class="sm-text mb-0">{{ loc.address | titlecase }}</p>
+								</div>
+							</div>
+						</li>
+					</ul>
+					<ng-template #loading>
+						<div class="bg-light py-5" *ngIf="!no_result">
+							<app-spinner></app-spinner>
+						</div>
+						<div class="bg-light py-5" *ngIf="no_result">
+							<span class="pl-3"> No Results Found. </span>
+						</div>
+					</ng-template>
 				</div>
 			</div>
+
+			<div class="map-wrapper position-relative mt-3">
+                <div class="business-profile-image material-shadow">
+                    <div class="d-flex justify-content-center mb-3">
+                        <div class="image-container text-center">
+							<img [src]="current_host_image" class="w-100-px h-100-px br-100" alt="admin" />
+						</div>
+                    </div>
+                    <button mat-raised-button class="theme-btn sm-text w-100" (click)="onChoosePhotos()" [disabled]="!place_id">Upload Image</button>
+                </div>
+
+                <agm-map class="height-100" [latitude]="lat" [longitude]="lng" [fitBounds]="location_selected" [maxZoom]="19">
+                    <agm-marker *ngIf="selected_location" [latitude]="selected_location.latitude" [longitude]="selected_location.longitude" [agmFitBounds]="true"> </agm-marker>
+                </agm-map>
+            </div>
 		</div>
 	</div>
 </div>

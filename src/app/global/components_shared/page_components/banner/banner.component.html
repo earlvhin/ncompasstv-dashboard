@@ -118,13 +118,13 @@
 					</mat-card>
 				</div>
 			</ng-container>
-			<div class="flex-even px-3">
+			<div class="flex-even text-center px-3">
 				<ng-container *ngIf="page === 'single-host'">
-					<div class="control-buttons host-btn-container">
+					<div class="control-buttons">
 						<button
 							mat-button
 							mat-raised-button
-							class="theme-btn mb-2 host-btn"
+							class="theme-btn mb-2"
 							[class.disabled]="!editable"
 							(click)="onAssignLicense()"
 							[disabled]="!editable"
@@ -135,7 +135,7 @@
 						<button
 							mat-button
 							mat-raised-button
-							class="theme-btn host-btn"
+							class="theme-btn"
 							[class.disabled]="!editable"
 							(click)="onCreateScreen(dealer.dealerId, host.hostId)"
 							[disabled]="!editable"

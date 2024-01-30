@@ -7,8 +7,13 @@
     <div class="icon-overlay">
         <div class="sm-text ml-1 mr-1 mt-1">
             <div class="d-flex">
-                <i class="far fa-image text-primary mr-1" *ngIf="filetype != 'webm' && filetype != 'feed'" title="Image"></i>
-                <i class="fas fa-video text-primary mr-1" *ngIf="filetype == 'webm' || filetype == 'mp4'" title="Video"></i>
+                <i class="far fa-image mr-1" 
+                [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'" 
+                *ngIf="filetype != 'webm' && filetype != 'feed' && filetype != 'mp4'" title="Image"
+                ></i>
+                <i class="fas fa-video text-primary mr-1" 
+                [ngClass]="classification === 'filler-v2' ? 'text-warning' : 'text-primary'" 
+                *ngIf="filetype == 'webm' || filetype == 'mp4'" title="Video"></i>
                 <i class="fas fa-rss-square text-primary mr-1" *ngIf="filetype == 'feed'" title="Feed"></i>
                 <i
                     class="fas fa-user-circle mr-1"

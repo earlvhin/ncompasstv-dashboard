@@ -3,7 +3,8 @@ export const environment = {
 	base_uri: 'http://3.212.225.229:30082/api/',
 	base_uri_old: 'http://3.212.225.229:30082/api/',
 	socket_server: 'http://3.212.225.229:30083',
-	google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
+    google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
+    tinymce_key: 'abs5vx4ocdaeymfu6a4m3vg4jjz3rkqcra1v48azbvttca7l',
 	s3: 'https://n-compass-filestack.s3.amazonaws.com/',
     fastedge: 'https://fastedgeapidev.n-compass.online/nc/googleapi/searchplaces?place=',
 	auth: {

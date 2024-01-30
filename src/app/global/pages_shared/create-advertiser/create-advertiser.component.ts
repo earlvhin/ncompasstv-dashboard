@@ -78,6 +78,7 @@ export class CreateAdvertiserComponent implements OnInit {
 	selected_location: any;
 	subscription: Subscription = new Subscription();
 	title: string = 'Create Advertiser Profile';
+	isListVisible : boolean = true;
 
 	protected default_host_image = 'assets/media-files/admin-icon.png';
 	private logo_data: { images: string[]; logo: string };
@@ -444,6 +445,7 @@ export class CreateAdvertiserComponent implements OnInit {
 					console.error(error);
 				}
 			);
+		this.isListVisible = true;
 	}
 
 	plotToMap(data: any) {
@@ -648,6 +650,10 @@ export class CreateAdvertiserComponent implements OnInit {
 				this.new_advertiser_form.controls['zip'].setValue(data.substring(0, 5), { emitEvent: false });
 			}
 		});
+	}
+
+	closeGoogleDropdownList(){
+		this.isListVisible = false;
 	}
 
 	protected get currentRole() {

@@ -13,25 +13,26 @@
 
 	<hr>
 
-	<div class="sections d-flex">
+	<div class="sections">
 
 		<div class="text-editor-section">
 
 			<ng-container *ngIf="isFormLoaded">
 				<form [formGroup]="notesForm">
+                    <div class="d-flex">
+                        <!-- VERSION -->
+                        <mat-form-field class="flex-even mr-4" appearance="fill">
+                            <mat-label>Version</mat-label>
+                            <input formControlName="version" matInput placeholder="e.g. v1.2.3" type="text">
+                        </mat-form-field>
 
-                    <mat-form-field class="full-width">
-						<mat-label>Title</mat-label>
-						<input formControlName="title" matInput placeholder="e.g. Release Notes for 2022" type="text">
-					</mat-form-field>
 
-					<!-- VERSION -->
-					<mat-form-field class="full-width">
-						<mat-label>Version</mat-label>
-						<input formControlName="version" matInput placeholder="e.g. v1.2.3" type="text">
-					</mat-form-field>
-
-                    <div class="pt-5">
+                        <mat-form-field class="flex-even" appearance="fill">
+                            <mat-label>Title</mat-label>
+                            <input formControlName="title" matInput placeholder="e.g. Release Notes for 2024" type="text">
+                        </mat-form-field>
+                    </div>
+                    <div>
                         <app-wysiwyg
                         (tynimce_value)="fetchingValue($event)"
                         [description]="description"></app-wysiwyg>
@@ -41,17 +42,17 @@
 
 		</div>
 
-		<div class="preview-section d-flex flex-column content-section">
-			<h4><u>Text Preview</u></h4>
-            <div #dataContainer></div>
-		</div>
-
 	</div>
 
 	<!-- SUBMIT BUTTON -->
 	<div mat-dialog-actions>
 		<button mat-button mat-raised-button class="submit theme-btn _primary" type="submit" (click)="onSubmit()"
-			[disabled]="notesForm.invalid">Submit</button>
+			[disabled]="notesForm.invalid">
+            Submit
+        </button>
+        <button mat-button mat-raised-button class="theme-btn bg-danger" [mat-dialog-close]="true">
+            Cancel
+        </button>
 	</div>
 
 </div>

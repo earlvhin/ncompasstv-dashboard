@@ -135,7 +135,7 @@ export class ScreensComponent implements OnInit {
 					editable: false,
 					hidden: false
 				},
-				{ value: this._titlecase.transform(screen.hostName), link: '/sub-dealer/hosts/' + screen.hostId, editable: false, hidden: false },
+				{ value: screen.hostName ? this._titlecase.transform(screen.hostName) : '--', link: '/sub-dealer/hosts/' + screen.hostId, editable: false, hidden: false },
 				{ value: screen.templateId ? this._titlecase.transform(screen.templateName) : null, link: null, editable: false, hidden: false },
 				{ value: this._date.transform(screen.dateCreated, 'MMM d, y, h:mm a'), link: null, editable: false, hidden: false },
 				{ value: this._titlecase.transform(screen.createByName), link: null, editable: false, hidden: false }

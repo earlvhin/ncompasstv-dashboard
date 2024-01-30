@@ -1,64 +1,67 @@
 <mat-form-field class="full-width custom-autocomplete p-relative" [appearance]="isLocator ? 'fill' : 'standard'">
-	<mat-label [ngClass]="white_label ? 'text-white' : ''">{{ label }}</mat-label>
+    <mat-label [ngClass]="white_label ? 'text-white' : ''">{{ label }}</mat-label>
 
-	<input
-		id="autocomplete-field-paginated"
-		type="text"
-		[autocomplete]="autocompleteSetting"
-		[formControl]="paginated_input_field_control"
-		matInput
-		appearance="fill"
-		class="skip-blur"
-		*ngIf="!paging"
-		[(ngModel)]="view_value"
-		[placeholder]="placeholder"
-		(keyup)="search($event)"
-		(click)="initializeSearch($event)"
-		[required]="required" />
+    <input
+        id="autocomplete-field-paginated"
+        type="text"
+        [autocomplete]="autocompleteSetting"
+        [formControl]="paginated_input_field_control"
+        matInput
+        appearance="fill"
+        class="skip-blur"
+        *ngIf="!paging"
+        [(ngModel)]="view_value"
+        [placeholder]="placeholder"
+        (keyup)="search($event)"
+        (click)="initializeSearch($event)"
+        [required]="required"
+    />
 
-	<input
-		id="autocomplete-field"
-		type="text"
-		[autocomplete]="autocompleteSetting"
-		[formControl]="input_field_control"
-		matInput
-		appearance="fill"
-		class="skip-blur"
-		*ngIf="paging"
-		[(ngModel)]="view_value"
-		[placeholder]="placeholder"
-		(keyup)="search_by_api()"
-		(click)="initializeSearch($event)"
-		[required]="required" />
+    <input
+        id="autocomplete-field"
+        type="text"
+        [autocomplete]="autocompleteSetting"
+        [formControl]="input_field_control"
+        matInput
+        appearance="fill"
+        class="skip-blur"
+        *ngIf="paging"
+        [(ngModel)]="view_value"
+        [placeholder]="placeholder"
+        (keyup)="search_by_api()"
+        (click)="initializeSearch($event)"
+        [required]="required"
+    />
 
-	<div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
-		<div *ngIf="loading_search">
-			<div class="py-4 white-bg">
-				<app-spinner [diameter]="60"></app-spinner>
-			</div>
-		</div>
-		<div *ngIf="!loading_search && !disabled" class="skip-blur">
-			<ul class="m-0 p-0 text-dark list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
-				<li
-					class="cursor-pointer p-3"
-					*ngFor="let s of search_result"
-					(click)="dataSelected($event)"
-					[attr.data-text]="s[primary_keyword]"
-					[attr.data-value]="s[key_of_value]">
-					<span *ngIf="display_role">{{ s[role] == 1 ? 'A- ' : s[role] == 2 ? 'D- ' : 'DA- ' }}</span
-					>{{ s[primary_keyword] }}
-				</li>
-				<div *ngIf="loading_data">
-					<div class="py-4 white-bg">
-						<app-spinner [diameter]="60"></app-spinner>
-					</div>
-				</div>
-			</ul>
-		</div>
-		<ng-template #no_results>
-			<ul class="m-0 p-0 list-unstyled" *ngIf="!old">
-				<li class="p-3">No results found.</li>
-			</ul>
-		</ng-template>
-	</div>
+    <div class="ac-options p-absolute full-width material-shadow" (scroll)="onScroll($event)">
+        <div *ngIf="loading_search">
+            <div class="py-4 white-bg">
+                <app-spinner [diameter]="60"></app-spinner>
+            </div>
+        </div>
+        <div *ngIf="!loading_search && !disabled" class="skip-blur">
+            <ul class="m-0 playlist-search-padding text-dark list-unstyled" *ngIf="data_reference.length > 0 && !initial_load; else no_results">
+                <li
+                    class="cursor-pointer p-3"
+                    *ngFor="let s of search_result"
+                    (click)="dataSelected($event)"
+                    [attr.data-text]="s[primary_keyword]"
+                    [attr.data-value]="s[key_of_value]"
+                >
+                    <span *ngIf="display_role">{{ s[role] == 1 ? "A- " : s[role] == 2 ? "D- " : "DA- " }}</span
+                    >{{ s[primary_keyword] }}
+                </li>
+                <div *ngIf="loading_data">
+                    <div class="py-4 white-bg">
+                        <app-spinner [diameter]="60"></app-spinner>
+                    </div>
+                </div>
+            </ul>
+        </div>
+        <ng-template #no_results>
+            <ul class="m-0 playlist-search-padding list-unstyled" *ngIf="!old">
+                <li class="p-3">No results found.</li>
+            </ul>
+        </ng-template>
+    </div>
 </mat-form-field>

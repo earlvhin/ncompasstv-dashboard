@@ -84,6 +84,7 @@ export class CreateHostComponent implements OnInit {
     title = 'Create Host Place';
     trigger_data: Subject<any> = new Subject<any>();
     create_host_data: UI_AUTOCOMPLETE = { label: 'City', placeholder: 'Type anything', data: [] };
+    isListVisible: boolean = false;
 
     private dealer_id: string;
     private logo_data: { images: string[]; logo: string };
@@ -301,6 +302,7 @@ export class CreateHostComponent implements OnInit {
                     console.error(error);
                 }
             );
+        this.isListVisible = true;
     }
 
     onSelectDay(data: UI_STORE_HOUR) {
@@ -493,6 +495,10 @@ export class CreateHostComponent implements OnInit {
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);
     }
+
+    closeGoogleDropdownList(){
+		this.isListVisible = false;
+	}
 
     private formatTime(data: number): string {
         const parsed = `${data}`;

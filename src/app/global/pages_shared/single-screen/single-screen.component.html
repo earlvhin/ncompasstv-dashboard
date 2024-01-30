@@ -60,13 +60,13 @@
 								<a
 									[ngClass]="{ 'text-danger': playlist_id === z.screen_template.playlist_id }"
 									(click)="openPlaylistInNewTab(playlist_route, z.screen_template.playlist_id)"
-									class="sm-text font-weight-bold ml-2 text-primary">
+									class="sm-text font-weight-bold mx-2 text-primary">
 									{{ z.screen_template.playlist_name }}
 								</a>
 
 								<div *ngIf="playlist_id === z.screen_template.playlist_id">
 									<i
-										class="pt-3 cursor-pointer fa fa-times text-danger"
+										class="cursor-pointer fa fa-times text-danger"
 										data-toggle="tooltip"
 										title="Unassign Playlist"
 										(click)="unassignPlaylist(z.screen_template.zone_id)">

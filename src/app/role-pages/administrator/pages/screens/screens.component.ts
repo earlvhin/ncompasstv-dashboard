@@ -121,7 +121,7 @@ export class ScreensComponent implements OnInit {
 					{ value: s.screenId, link: null , editable: false, hidden: true},
 					{ value: counter++, link: null , editable: false, hidden: false},
 					{ value: this._titlecase.transform(s.screenName), link: '/administrator/screens/' +  s.screenId, editable: false, hidden: false, new_tab_link: true},
-					{ value: this._titlecase.transform(s.businessName), link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false, new_tab_link: true},
+					{ value: s.businessName ? this._titlecase.transform(s.businessName) : '--', link: '/administrator/dealers/' + s.dealerId, editable: false, hidden: false, new_tab_link: true},
 					{ value: s.hostName != null ? this._titlecase.transform(s.hostName) : '--', link: s.hostName ? '/administrator/hosts/' + s.hostId : null, editable: false, hidden: false, new_tab_link: true},
 					{ value: s.screenTypeName != '' ? this._titlecase.transform(s.screenTypeName) : '--', link: null, editable: true, dropdown_edit: true, label:'Screen Type', id: s.screenId, name: s.screenName, hidden: false},
 					{ value: s.templateName != '' ? this._titlecase.transform(s.templateName) : null, link: null, editable: false, hidden: false},

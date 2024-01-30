@@ -35,6 +35,7 @@ export class CreateUpdateDialogComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.initializeForm();
+        if (this.dialogMode === 'update') this.title = 'Update Release Notes';
 	}
 
 	ngOnDestroy(): void {

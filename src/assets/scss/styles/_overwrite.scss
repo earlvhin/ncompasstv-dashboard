@@ -1,323 +1,329 @@
 @media screen {
-	label {
-		margin: 0;
-	}
-	// .cdk-global-overlay-wrapper {
-	//     padding-left: 200px !important;
-	// }
+    label {
+        margin: 0;
+    }
+    // .cdk-global-overlay-wrapper {
+    //     padding-left: 200px !important;
+    // }
 
-	.cdk-drag {
-		display: block;
-	}
+    .cdk-drag {
+        display: block;
+    }
 
-	.mat-card {
-		.host-list {
-			.mat-divider-horizontal {
-				position: relative !important;
-			}
-		}
-	}
+    .mat-card {
+        .host-list {
+            .mat-divider-horizontal {
+                position: relative !important;
+            }
+        }
+    }
 
-	.mat-spinner {
-		margin: auto;
-	}
+    .mat-spinner {
+        margin: auto;
+    }
 
-	.mat-slide-toggle.mat-checked .mat-ripple-element,
-	.mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
-		background-color: rgba($primary, 0.54) !important;
-	}
+    .mat-slide-toggle.mat-checked .mat-ripple-element,
+    .mat-slide-toggle.mat-checked .mat-slide-toggle-bar {
+        background-color: rgba($primary, 0.54) !important;
+    }
 
-	.mat-slide-toggle-bar {
-		width: 30px !important;
-	}
+    .mat-slide-toggle-bar {
+        width: 30px !important;
+    }
 
-	.mat-progress-spinner circle,
-	.mat-spinner circle {
-		stroke: #8ec641 !important;
-	}
+    .mat-progress-spinner circle,
+    .mat-spinner circle {
+        stroke: #8ec641 !important;
+    }
 
-	.template-zone-information {
-		.color-picker.open {
-			position: relative !important;
-			left: 0 !important;
-			top: 0 !important;
-		}
-	}
+    .template-zone-information {
+        .color-picker.open {
+            position: relative !important;
+            left: 0 !important;
+            top: 0 !important;
+        }
+    }
 
-	.mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
-		background-color: $primary !important;
-	}
+    .mat-slide-toggle.mat-checked .mat-slide-toggle-thumb {
+        background-color: $primary !important;
+    }
 
-	.mat-checkbox-checked.mat-accent .mat-checkbox-background,
-	.mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
-		background: $primary !important;
-	}
+    .mat-checkbox-checked.mat-accent .mat-checkbox-background,
+    .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+        background: $primary !important;
+    }
 
-	.mat-checkbox-checked:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element,
-	.mat-checkbox:active:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element {
-		background: $primary !important;
-	}
+    .mat-checkbox-checked:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element,
+    .mat-checkbox:active:not(.mat-checkbox-disabled).mat-accent .mat-ripple-element {
+        background: $primary !important;
+    }
 
-	.app-media-viewer-dialog .mat-dialog-container {
-		padding: 0;
-	}
+    .app-media-viewer-dialog .mat-dialog-container {
+        padding: 0;
+    }
 
-	.app-media-modal .mat-dialog-container {
-		overflow: visible;
-	}
+    .app-media-modal .mat-dialog-container {
+        overflow: visible;
+    }
 
-	.information-modal .mat-dialog-container {
-		overflow: hidden !important;
-		position: relative;
-	}
+    .information-modal .mat-dialog-container {
+        overflow: hidden !important;
+        position: relative;
+    }
 
-	.position-relative {
-		position: relative;
-	}
+    .position-relative {
+        position: relative;
+    }
 
-	.scheduling {
-		.settings {
-			.ngx-timepicker {
-				.ngx-timepicker-control {
-					input {
-						font-size: 12px !important;
-					}
-				}
+    .scheduling {
+        .settings {
+            .ngx-timepicker {
+                .ngx-timepicker-control {
+                    input {
+                        font-size: 12px !important;
+                    }
+                }
 
-				.period {
-					.period-control {
-						button {
-							font-size: 12px !important;
-						}
-					}
-				}
-			}
-		}
-	}
+                .period {
+                    .period-control {
+                        button {
+                            font-size: 12px !important;
+                        }
+                    }
+                }
+            }
+        }
+    }
 
-	.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-		border-color: #8ec641 !important;
-	}
+    .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+        border-color: #8ec641 !important;
+    }
 
-	.mat-radio-button.mat-accent .mat-radio-inner-circle {
-		color: #8ec641;
-		background-color: #8ec641 !important;
-	}
+    .mat-radio-button.mat-accent .mat-radio-inner-circle {
+        color: #8ec641;
+        background-color: #8ec641 !important;
+    }
 
-	.mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
-		background-color: #8ec641 !important;
-	}
+    .mat-radio-button.mat-accent .mat-radio-ripple .mat-ripple-element {
+        background-color: #8ec641 !important;
+    }
 
-	.mat-dialog-container {
-		overflow: initial !important;
-		max-height: 800px !important;
-		overflow-y: auto !important;
-	}
-	.timepicker-overlay {
-		z-index: 1100 !important;
-	}
+    .mat-dialog-container {
+        overflow: initial !important;
+        max-height: 800px !important;
+        overflow-y: auto !important;
+    }
+    .timepicker-overlay {
+        z-index: 1100 !important;
+    }
 
-	.timepicker-backdrop-overlay {
-		z-index: 1100 !important;
-	}
-	.fsp-picker {
-		z-index: 999 !important;
-	}
+    .timepicker-backdrop-overlay {
+        z-index: 1100 !important;
+    }
+    .fsp-picker {
+        z-index: 999 !important;
+    }
 
-	.custom-autocomplete {
-		.mat-form-field-flex {
-			padding-top: 0px !important;
-			.mat-form-field-infix {
-				padding: 0.4375em 0 !important;
-			}
-		}
-	}
+    .custom-autocomplete {
+        .mat-form-field-flex {
+            padding-top: 0px !important;
+            .mat-form-field-infix {
+                padding: 0.4375em 0 !important;
+            }
+        }
+    }
 
-	.prevent-tooltip-truncate {
-		word-break: break-all !important;
-		white-space: normal !important;
-		max-width: unset !important;
-	}
+    .prevent-tooltip-truncate {
+        word-break: break-all !important;
+        white-space: normal !important;
+        max-width: unset !important;
+    }
 
-	.mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
-		border-color: $primary !important;
-	}
+    .mat-radio-button.mat-accent.mat-radio-checked .mat-radio-outer-circle {
+        border-color: $primary !important;
+    }
 
-	.mat-radio-inner-circle {
-		background-color: $primary !important;
-	}
+    .mat-radio-inner-circle {
+        background-color: $primary !important;
+    }
 
-	// .mat-expansion-panel-body {
-	// 	display: flex;
-	// }
+    // .mat-expansion-panel-body {
+    // 	display: flex;
+    // }
 
-	.mat-tab-header,
-	.mat-tab-nav-bar {
-		border-bottom: 2px solid $dark;
-	}
+    .mat-tab-header,
+    .mat-tab-nav-bar {
+        border-bottom: 2px solid $dark;
+    }
 
-	.mat-tab-list {
-		padding-bottom: 10px;
-	}
+    .mat-tab-list {
+        padding-bottom: 10px;
+    }
 }
 
 breadcrumb {
-	.container-fluid {
-		background: none;
-		padding: 0px;
-		// margin-bottom: 10px;
-		.container {
-			max-width: 97% !important;
-			background: none;
-			padding: 0px;
-			.breadcrumb {
-				background: none;
-				padding-left: 0px;
-				font-size: 12px;
-				font-weight: 600;
-			}
-			li {
-				&:before {
-					content: '>';
-				}
-				&:first-child {
-					&:before {
-						content: '\f015';
-						font-family: FontAwesome;
-						margin-right: 5px;
-					}
-				}
-			}
-			.active {
-				color: $primary;
-			}
-		}
-	}
+    .container-fluid {
+        background: none;
+        padding: 0px;
+        // margin-bottom: 10px;
+        .container {
+            max-width: 97% !important;
+            background: none;
+            padding: 0px;
+            .breadcrumb {
+                background: none;
+                padding-left: 0px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            li {
+                &:before {
+                    content: ">";
+                }
+                &:first-child {
+                    &:before {
+                        content: "\f015";
+                        font-family: FontAwesome;
+                        margin-right: 5px;
+                    }
+                }
+            }
+            .active {
+                color: $primary;
+            }
+        }
+    }
 }
 
 #reports {
-	.theme-table {
-		overflow: visible;
-	}
-	.mat-tab-body-wrapper {
-		min-height: 500px;
-	}
-	.mat-expansion-panel-header-description,
-	.mat-expansion-panel-header-title {
-		vertical-align: middle;
-		line-height: 35px;
-	}
-	.mat-expansion-panel-header:not([aria-disabled='true']) {
-		cursor: context-menu;
-	}
+    .theme-table {
+        overflow: visible;
+    }
+    .mat-tab-body-wrapper {
+        min-height: 500px;
+    }
+    .mat-expansion-panel-header-description,
+    .mat-expansion-panel-header-title {
+        vertical-align: middle;
+        line-height: 35px;
+    }
+    .mat-expansion-panel-header:not([aria-disabled="true"]) {
+        cursor: context-menu;
+    }
 }
 
 #reportsDrop {
-	max-height: 235px;
-	overflow-y: auto;
-	// transform: translate3d(5px, 35px, 0px)!important;
+    max-height: 235px;
+    overflow-y: auto;
+    // transform: translate3d(5px, 35px, 0px)!important;
 }
 
 .custom-mat-tab {
-	.mat-tab-label {
-		color: $lighten_white;
-		&:before {
-			width: 120px;
-			height: 50px;
-			background: #2c3e50;
-			border-radius: 5px;
-			transform: perspective(5px) rotateX(2deg);
-			transform-origin: left;
-			content: '';
-			position: absolute;
-			z-index: -1;
-			left: 0;
-		}
-		.mat-tab-label-content {
-			position: relative;
-			left: -20px;
-			top: 2px;
-		}
-	}
+    .mat-tab-label {
+        color: $lighten_white;
+        &:before {
+            width: 120px;
+            height: 50px;
+            background: #2c3e50;
+            border-radius: 5px;
+            transform: perspective(5px) rotateX(2deg);
+            transform-origin: left;
+            content: "";
+            position: absolute;
+            z-index: -1;
+            left: 0;
+        }
+        .mat-tab-label-content {
+            position: relative;
+            left: -20px;
+            top: 2px;
+        }
+    }
 
-	.mat-tab-label-active {
-		opacity: 1;
-		&:before {
-			background: #2c3e50;
-		}
-	}
-	.mat-ink-bar {
-		display: none !important;
-	}
+    .mat-tab-label-active {
+        opacity: 1;
+        &:before {
+            background: #2c3e50;
+        }
+    }
+    .mat-ink-bar {
+        display: none !important;
+    }
 }
 
 .custom-modalbox {
-	mat-dialog-container {
-		background: $dark;
-		.mat-checkbox-inner-container {
-			background: $light;
-		}
-	}
+    mat-dialog-container {
+        background: $dark;
+        .mat-checkbox-inner-container {
+            background: $light;
+        }
+    }
 }
 .mat-menu-item {
-	line-height: 40px !important;
+    line-height: 40px !important;
 }
 
 .new-order-color {
-	color: #8ec641 !important;
+    color: #8ec641 !important;
 }
 
 #licenseSearch {
-	.mat-form-field-appearance-fill .mat-form-field-flex {
-		background: none !important;
-		padding: 0px !important;
-	}
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        background: none !important;
+        padding: 0px !important;
+    }
 }
 
 #edit-dealer-form {
-	.mat-form-field-appearance-fill .mat-form-field-flex {
-		background: none;
-		padding: 0px;
-	}
+    .mat-form-field-appearance-fill .mat-form-field-flex {
+        background: none;
+        padding: 0px;
+    }
 }
 
 #billing-controls {
-	.mat-radio-outer-circle,
-	.mat-radio-inner-circle {
-		width: 15px;
-		height: 15px;
-	}
+    .mat-radio-outer-circle,
+    .mat-radio-inner-circle {
+        width: 15px;
+        height: 15px;
+    }
 }
 
 #billing-tab {
-	.custom-mat-tab {
-		.mat-tab-label {
-			&:before {
-				width: 160px;
-			}
-		}
-	}
+    .custom-mat-tab {
+        .mat-tab-label {
+            &:before {
+                width: 160px;
+            }
+        }
+    }
 }
 
 #billingTable {
-	table {
-		margin-bottom: 3em;
-	}
+    table {
+        margin-bottom: 3em;
+    }
 }
 .uppercase {
-	text-transform: uppercase;
+    text-transform: uppercase;
 }
 
 #login {
-	.mat-form-field-wrapper {
-		padding-bottom: 14px !important;
-	}
+    .mat-form-field-wrapper {
+        padding-bottom: 14px !important;
+    }
 }
 
 .ck.ck-editor__main > .ck-editor__editable {
-	padding-left: 30px;
+    padding-left: 30px;
 }
 
 .mat-tab-body-content {
-	overflow-x: hidden !important;
+    overflow-x: hidden !important;
+}
+
+#edit-host {
+    .mat-tab-body.mat-tab-body-active {
+        overflow-y: hidden !important;
+    }
 }

@@ -485,7 +485,7 @@ button {
 
 .page {
     padding: 65px 0 20px 0;
-    // transition: padding-left .5s;
+    transition: padding-left 0.7s;
     &.sidebar-full {
         padding-left: 200px;
     }

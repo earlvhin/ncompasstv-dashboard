@@ -211,7 +211,7 @@
 									<!-- Screenshots -->
 									<div class="col-lg-12 tab-card">
 										<mat-card class="p-3 h-100">
-											<!-- Screenshot Area -->	
+											<!-- Screenshot Area -->
 												<div class="d-flex w-100 w-left">
 													<div class="m-auto px-2">
 														<div class="d-flex flex-column">
@@ -235,10 +235,10 @@
 																	Clear
 																</button>
 														</div>
-													</div>		
-													
+													</div>
+
 													<div class="vl mr-3 ml-4"></div>
-													
+
 													<div class="m-auto horizontal-panel w-right">
 														<ng-container *ngIf="screenshots.length != 0; else no_screenshots">
 															<div class="screenshots" *ngFor="let s of screenshots">
@@ -246,20 +246,20 @@
 																<p class="screenshots__text text-center mb-0">{{ s | screenshot }}</p>
 															</div>
 														</ng-container>
-		
+
 														<ng-template #no_screenshots>
 															<div class="p-3 text-center">
 																<h5 class="text-muted mb-0">No Available Screenshots</h5>
 															</div>
 														</ng-template>
-		
+
 														<div class="loading-overlay d-flex align-items-center" *ngIf="screenshot_timeout">
 															<div class="flex-even text-center">
 																<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
 																<h6 class="text-primary">{{ screenshot_message }}</h6>
 															</div>
 														</div>
-		
+
 														<div class="loading-overlay d-flex align-items-center" *ngIf="clear_screenshots">
 															<div class="flex-even text-center">
 																<h2 class="text-primary"><span class="fas fa-camera"></span></h2>
@@ -704,6 +704,13 @@
 																	{{ license_data.prevPublicIP ? license_data.prevPublicIP : 'N/A' }}
 																</h5>
 															</div>
+                                                            <div class="flex-even">
+                                                                <span class="title">MAC Address</span>
+                                                                <br />
+                                                                <h5 class="title">
+                                                                    {{ license_data.macAddress ? license_data.macAddress : 'N/A' }}
+                                                                </h5>
+                                                            </div>
 														</ng-container>
 													</div>
 												</mat-card>

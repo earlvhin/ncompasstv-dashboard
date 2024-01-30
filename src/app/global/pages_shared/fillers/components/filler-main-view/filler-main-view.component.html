@@ -1,6 +1,6 @@
-<div class="row mt-3 mb-2" *ngIf="filler_data.length > 0">
+<div class="row mt-3 mb-2">
     <div class="col-lg-7" *ngIf="active_view == 'folder'; else gridMenu">
-        <button mat-button mat-raised-button [matMenuTriggerFor]="orderBy" class="theme-btn mt-2">
+        <button mat-button mat-raised-button [matMenuTriggerFor]="orderBy" class="theme-btn mt-2" [disabled]="filler_data.length == 0">
             <span class="button-label">Sort by :</span>
             <span class="fas fa-sort ml-2"></span>
         </button>
@@ -31,16 +31,28 @@
         </div>
     </ng-template>
     <div class="col-lg-1">
-        <div class="row mt-2 no-gutters">
-            <div class="col-lg-6 text-center">
-                <div class="text-white p-2 clickable" [ngClass]="active_view == 'folder' ? 'bg-dark' : 'bg-gray-2'" title="Folder View" (click)="changeView('folder')">
+        <div class="flex mt-2">
+            <div class="flex-even text-center">
+                <button
+                    class="no-border text-white p-2 full-width"
+                    [ngClass]="active_view == 'folder' ? 'bg-dark' : 'bg-gray-2'"
+                    title="Folder View"
+                    (click)="changeView('folder')"
+                    [disabled]="filler_data.length == 0"
+                >
                     <span class="fas fa-folder"></span>
-                </div>
+                </button>
             </div>
-            <div class="col-lg-6 text-center">
-                <div class="text-white p-2 clickable" [ngClass]="active_view == 'grid' ? 'bg-dark' : 'bg-gray-2'" title="Grid View" (click)="changeView('grid')">
+            <div class="flex-even text-center">
+                <button
+                    class="no-border text-white p-2 full-width"
+                    [ngClass]="active_view == 'grid' ? 'bg-dark' : 'bg-gray-2'"
+                    title="Grid View"
+                    (click)="changeView('grid')"
+                    [disabled]="filler_data.length == 0"
+                >
                     <span class="fa fa-th"></span>
-                </div>
+                </button>
             </div>
         </div>
     </div>
@@ -80,7 +92,7 @@
 <ng-container *ngIf="active_view == 'folder'; else gridView">
     <div *ngIf="!is_loading; else loader">
         <div *ngIf="!no_search_result; else noResultsFound">
-            <div class="row m-0">
+            <div class="row">
                 <div class="col-lg-2 mb-4" *ngIf="!restricted">
                     <div class="black-opacity black-solid-hover h-100 text-center cursor-pointer box-shadowing" (click)="onAddFillerGroup()">
                         <i class="fas fa-plus text-white f-50 mt-5 pt-5 mb-5 pb-4" title="Add New Filler Group"></i>

@@ -85,7 +85,13 @@
 					<div class="mt-3 p-3 d-flex flex-column">
 						<p class="sm-text"><span class="font-weight-bold">Owner:</span> {{ file_data.selected.owner_name }}</p>
 						<p class="sm-text"><span class="font-weight-bold">Role:</span> {{ file_data.selected.owner_type }}</p>
-						<p class="sm-text"><span class="font-weight-bold">Type:</span> {{ file_data.selected.file_type }}</p>
+						<ng-container *ngIf="file_data.selected.classification === 'filler-v2'; else notFiller">
+							<p class="sm-text"><span class="font-weight-bold">Type:</span> {{ file_data.selected.file_type }} | Filler</p>
+						</ng-container>
+
+						<ng-template #notFiller>
+							<p class="sm-text"><span class="font-weight-bold">Type:</span> {{  file_data.selected.file_type }}</p>
+						</ng-template>
 						<p class="sm-text" *ngIf="!(file_data.selected.file_type | isFeed)">
 							<span class="font-weight-bold">Size:</span> {{ file_size_formatted != null ? file_size_formatted : '--' }}
 						</p>

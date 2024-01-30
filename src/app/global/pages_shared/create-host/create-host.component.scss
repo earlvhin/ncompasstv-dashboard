@@ -29,3 +29,21 @@
     top: 15px;
     left: 15px;
 }
+
+.google-result-close-wrapper{
+	z-index: 7;
+	border-radius: 5px;
+	background: #c6c4c4;
+	margin: 5px;
+	position: absolute;
+	top: 0;
+	right: 0;
+	button{
+		color : #ffffff;
+		padding-left: 8px;
+		padding-right: 8px;
+		padding-top: 2px;
+		padding-bottom: 1px;
+		
+	}
+}

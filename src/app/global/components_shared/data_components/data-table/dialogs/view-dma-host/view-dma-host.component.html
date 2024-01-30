@@ -1,27 +1,25 @@
-<div class="p2">
-    <div class="d-flex justify-content-end">
-        <div>
-            <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
-                <span class="fas fa-times"></span>
-            </button>
-        </div>
+<div class="flex justify-content-end">
+    <div class="flex-even">
+        <h3 class="mb-1 mt-2 text-primary">Hosts</h3>
     </div>
-    <div class="d-flex align-items-center justify-content-center">
-        <div class="text-center container">
-            <div class="row">
-                <h3 class="mb-1 mt-2 text-primary">Hosts</h3>
-            </div>
-            <hr>
-            <div class="row">
-                <ol class="col-lg-12" *ngIf="hosts_of_dma.length > 0; else loading">
-                    <li class="col-lg-12 text-gray mb-2 md-text text-left" *ngFor="let host of hosts_of_dma">
-                        <a class="sm-text" [routerLink]="getLink('hosts', host.hostId)" target="_blank">
-                            {{host.hostName}}
-                        </a>
-                    </li>
-                </ol>
-            </div>
-        </div>
+    <div class="flex-even text-right">
+        <button class="modal-close-btn no-border no-background" [mat-dialog-close]="false">
+            <span class="fas fa-times"></span>
+        </button>
+    </div>
+</div>
+<div class="flex">
+    <hr class="full-width" />
+</div>
+<div class="flex">
+    <div class="dma-container p-3 full-width">
+        <ol *ngIf="hosts_of_dma.length > 0; else loading">
+            <li class="text-gray mb-2 md-text text-left" *ngFor="let host of hosts_of_dma">
+                <a class="sm-text" [routerLink]="getLink('hosts', host.hostId)" target="_blank">
+                    {{ host.hostName }}
+                </a>
+            </li>
+        </ol>
     </div>
 </div>
 

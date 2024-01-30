@@ -1,28 +1,40 @@
 <div id="release-notes-page" class="theme-container">
     <div class="title-section">
         <div class="d-flex align-items-center">
-            <h1 class="page-title flex-even">Recent Release Notes</h1>
-            <div class="text-right flex-even">
-                <button mat-button mat-raised-button class="theme-btn mr-2" [routerLink]="['/administrator/release-notes']">
-                    All Releases
-                    <span class="fas fa-file-invoice ml-2 sm-text"></span>
-                </button>
-            </div>
+            <h1 class="page-title flex-even">Dashboard Releases</h1>
+            <ng-container *ngIf="is_current_user_admin">
+                <div class="text-right flex-even">
+                    <button mat-button mat-raised-button class="theme-btn" (click)="onAdd()">
+                        <span class="button-label">Add New</span>
+                        <span class="fas fa-plus ml-2 sm-text"></span>
+                    </button>
+                </div>
+            </ng-container>
         </div>
     </div>
     <hr class="my-4" />
-    <div *ngIf="recent_releases.length; else loading">
+    <div *ngIf="release_notes.length; else loading">
         <div class="row">
             <div class="col-lg-8">
                 <mat-accordion>
-                    <mat-expansion-panel *ngFor="let release of recent_releases; first as isFirst" [expanded]="isFirst">
+                    <mat-expansion-panel *ngFor="let release of release_notes; index as i" [expanded]="i === release_expanded_panel_index">
                         <mat-expansion-panel-header>
-                            <mat-panel-title>
-                                <h4 class="col-8">{{ release.version }}</h4>
-                                <div class="col-4 text-right">{{ release.dateCreated }}</div>
+                            <mat-panel-title *ngIf="is_current_user_admin; else non_admin_panel_title">
+                                <h4 class="col-4">{{ release.version }}</h4>
+                                <div class="col-4 text-center">{{ release.dateCreated }}</div>
+                                <div class="col-4 text-right">
+                                    <i class="clickable text-gray fa fa-edit mr-3" title="Edit Note" (click)="onEdit($event, release.releaseNoteId)"></i>
+                                    <i class="clickable text-danger fas fa-trash" title="Delete Note" (click)="onDelete($event, release.releaseNoteId)"></i>
+                                </div>
                             </mat-panel-title>
+                            <ng-template #non_admin_panel_title>
+                                <mat-panel-title>
+                                    <h4 class="col-8">{{ release.version }}</h4>
+                                    <div class="col-4 text-right">{{ release.dateCreated }}</div>
+                                </mat-panel-title>
+                            </ng-template>
                         </mat-expansion-panel-header>
-                        <div #dataContainer class="content-section pt-0 pl-4"></div>
+                        <div #dataContainer class="content-section p-4"></div>
                     </mat-expansion-panel>
                 </mat-accordion>
             </div>

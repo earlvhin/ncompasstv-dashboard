@@ -1,17 +1,17 @@
 @property --bg {
-	syntax: '<color>';
-	inherits: true;
-	initial-value: #1c2731;
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #1c2731;
 }
 
 @media screen {
     .sidebar {
         background-color: $dark;
         z-index: 8;
-        transition: width .5s;
         .logo {
+            display: flex;
             padding: 15px 20px;
-            img {
+            &-image {
                 width: 140px;
             }
         }
@@ -23,9 +23,10 @@
                 font-size: $md;
                 transition: 0.1s linear;
 
-				.count, .badge {
-					background-color: $primary;					
-				}
+                .count,
+                .badge {
+                    background-color: $primary;
+                }
 
                 &:hover {
                     background-color: rgb(142 198 65 / 20%);
@@ -39,9 +40,10 @@
                         color: $primary;
                     }
 
-					.count, .badge {
-						background-color: $dark;
-					}
+                    .count,
+                    .badge {
+                        background-color: $dark;
+                    }
                 }
             }
         }
@@ -56,41 +58,80 @@
     }
 
     .sidebar-menu {
+        transition: width 0.7s;
         width: 200px;
-    }
 
-    .menu {
-		transition: --bg 0.7s;
-		height: calc(100vh - 55px);
-		overflow-y: hidden;
-	}
-
-	.menu:hover {
-		overflow-y: auto;
-		--bg: #f1f1f1;
-	}
-
-	.menu::-webkit-scrollbar {
-		width: 10px;
-	}
-
-	.menu::-webkit-scrollbar-thumb {
-		border-radius: 10px;
-		-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-		background: var(--bg);
-		border: solid 3px #1c2731;
-	}
-    
-    .sidebar-icons-only {
-        width: 50px;
         .logo {
-            position: relative;
-            left: -15px;
-            img{
+            display: flex;
+            align-items: center;
+
+            &-image {
+                opacity: 1;
+                transition: 0.6s ease-in-out;
+                margin-left: -25px;
+            }
+
+            &-icon {
+                opacity: 0;
+                margin-left: -10px;
                 width: 35px;
             }
         }
+
+        .url-text {
+            opacity: 1;
+            transition: 0.5s ease-in-out;
+            margin-left: 10px;
+        }
+    }
+
+    .menu {
+        transition: --bg 0.8s;
+        height: calc(100vh - 55px);
+        overflow-y: hidden;
+    }
+
+    .menu:hover {
+        overflow-y: auto;
+        --bg: #f1f1f1;
+    }
+
+    .menu::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    .menu::-webkit-scrollbar-thumb {
+        border-radius: 10px;
+        -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+        background: var(--bg);
+        border: solid 3px #1c2731;
+    }
+
+    .sidebar-icons-only {
+        transition: width 0.8s;
+        width: 50px;
+
+        .logo-icon {
+            position: relative;
+            transition: 0.6s ease-in-out;
+            opacity: 1;
+            left: -15px;
+            width: 35px;
+        }
+
+        .logo-image {
+            transition: margin-left 0.6s;
+            opacity: 0;
+            margin-left: 25px;
+        }
+
         .menu {
+            .url-text {
+                opacity: 0;
+                transition: 0.4s ease-in-out;
+                margin-left: -120px;
+            }
+
             a {
                 &:hover {
                     padding-left: 20px;

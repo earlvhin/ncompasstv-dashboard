@@ -239,8 +239,13 @@
                     </div>
                 </form>
 
-                <div class="location-candidates material-shadow" *ngIf="location_candidate_fetched">
+                <div class="location-candidates material-shadow" *ngIf="location_candidate_fetched && isListVisible">
                     <ul *ngIf="google_result.length != 0; else loading">
+                        <div class="google-result-close-wrapper">
+							<button class="modal-close-btn no-border no-background" (click)="closeGoogleDropdownList()">
+								<span class="fas fa-times"></span>
+							</button>
+                        </div>
                         <li *ngFor="let loc of google_result" (click)="plotToMap(loc)">
                             <div class="d-flex align-items-center">
                                 <div class="mr-3">
