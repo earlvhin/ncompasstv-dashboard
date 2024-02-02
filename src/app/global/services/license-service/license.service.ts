@@ -594,7 +594,8 @@ export class LicenseService extends BaseService {
 
 	get_activities(id: string) {
 		const base = `${this.getters.api_get_activities_by_license_id}`;
-		const url = `${base}${id}`;
+        const sortUrl = `&sortOrder=desc&sortColumn=DateCreated`;
+		const url = `${base}${id}${sortUrl}`;
 		return this.getRequest(url);
 	}
 
@@ -623,6 +624,10 @@ export class LicenseService extends BaseService {
 	set_tvdisplay_status(data: { licenseId: string; tvdisplaySettings: number }) {
 		return this.postRequest(this.updaters.api_update_tvdisplay_settings, data);
 	}
+
+    set_display_control_settings(data: {licenseId: string, displayControlSettings: number}) {
+        return this.postRequest(this.updaters.api_update_display_control_settings, data);
+    }
 
 	set_fast_edge_tool_status(data: { licenseId: string; fastEdgeMonitoringTool: number }) {
 		return this.postRequest(this.updaters.api_update_fastedge_tool_settings, data);

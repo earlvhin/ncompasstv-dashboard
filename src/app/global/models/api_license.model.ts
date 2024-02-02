@@ -88,6 +88,7 @@ export interface API_LICENSE_PROPS {
 	zone?: string;
 	tvDisplaySettings?: number;
 	fastEdgeMonitoringTool?: number;
+    displayControlSettings?: number;
 }
 
 interface screenInfo {

@@ -32,6 +32,7 @@ import { AuthService, DealerService, FastEdgeService, CategoryService, HelperSer
 import { CITIES_STATE } from '../../models/api_cities_state.model';
 import { AUTOCOMPLETE_ACTIONS } from '../../constants/autocomplete';
 import { STATES_PROVINCES } from '../../constants/states';
+import { TimezoneService } from '../../services/timezone-service/timezone.service';
 
 @Component({
     selector: 'app-create-host',
@@ -78,6 +79,7 @@ export class CreateHostComponent implements OnInit {
     paging: PAGING;
     place_id: string;
     search_keyword: string;
+    selected_timezone: string;
     selected_location: any;
     state_provinces: { state: string; abbreviation: string; region: string }[] = STATES_PROVINCES;
     timezone: API_TIMEZONE[];
@@ -114,7 +116,8 @@ export class CreateHostComponent implements OnInit {
         private _map: MapService,
         private _router: Router,
         private _titlecase: TitleCasePipe,
-        private _location: LocationService
+        private _location: LocationService,
+        private _timezone: TimezoneService
     ) {}
 
     ngOnInit() {
@@ -384,31 +387,33 @@ export class CreateHostComponent implements OnInit {
         let state;
         let city;
         let country;
+        const pacific = 'Pacific';
+        const eastern = 'Eastern';
+        const central = 'Central';
+        const mountain = 'Mountain';
 
-        if (data.address.includes('USA')  || data.address.includes('Canada') || data.address.includes('United States')) {
+        if (data.address.includes('USA') || data.address.includes('Canada') || data.address.includes('United States')) {
             country = sliced_address[sliced_address.length - 1];
         }
-
-        console.log(sliced_address)
 
         // Address Mapping
         if (sliced_address.length == 5) {
             // We are sure that this here includes a country, and it is the last index (4)
             zipState = sliced_address[3].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            zip = country && country == 'Canada' ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[2];
             address = `${sliced_address[0]}, ${sliced_address[1]}`;
         } else if (sliced_address.length == 4) {
             zipState = country ? sliced_address[2].split(' ') : sliced_address[3].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            zip = country && country == 'Canada' ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
             address = sliced_address[0];
         } else if (sliced_address.length == 3) {
             zipState = sliced_address[2].split(' ');
             state = zipState[0];
-            zip = (country && country == 'Canada') ? `${zipState[1]}${zipState[2]}` : zipState[1];
+            zip = country && country == 'Canada' ? `${zipState[1]}${zipState[2]}` : zipState[1];
             city = sliced_address[1];
             address = sliced_address[0];
         }
@@ -436,6 +441,40 @@ export class CreateHostComponent implements OnInit {
         this.getMoreBusinessPlaceDetails(this.selected_location);
         this.new_host_form.markAllAsTouched();
         this._helper.onTouchPaginatedAutoCompleteField.next();
+
+        this._timezone.getTimezoneByCoordinates(data.latitude, data.longitude).subscribe(
+            (timezone: string) => {
+                this.selected_timezone = timezone;
+                const timezoneControl = this.newHostFormControls.timezone;
+                let timezoneData;
+
+                // Set the value based on the detected timezone
+                switch (timezone) {
+                    case pacific:
+                        const pacific_zone = this.timezone.filter((data) => data.name == 'US/Pacific');
+                        this.setTimezone(pacific_zone[0].id, pacific_zone[0].name);
+                        this.newHostFormControls.timezone.setValue(pacific_zone[0].name);
+                        break;
+                    case eastern:
+                        timezoneData = this.timezone.filter((data) => data.name == 'US/Eastern');
+                        break;
+                    case central:
+                        timezoneData = this.timezone.filter((data) => data.name == 'US/Central');
+                        break;
+                    case mountain:
+                        timezoneData = this.timezone.filter((data) => data.name == 'US/Mountain');
+                        break;
+                    default:
+                        timezoneControl.setValue('Unknown Timezone');
+                        break;
+                }
+
+                this.setTimezone(timezoneData[0].id, timezoneData[0].name);
+            },
+            (error) => {
+                console.error('Error getting timezone:', error);
+            }
+        );
     }
 
     removeHours(data: UI_OPERATION_DAYS, index: number) {
@@ -444,7 +483,7 @@ export class CreateHostComponent implements OnInit {
 
     setZipValidatorRule(googleAddress: string) {
         const zipLength = googleAddress.includes('Canada') ? 6 : 5;
-        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)])
+        this.newHostFormControls.zip.setValidators([Validators.required, Validators.maxLength(zipLength), Validators.maxLength(zipLength)]);
     }
 
     searchStateAndRegion(state: string) {
@@ -488,17 +527,18 @@ export class CreateHostComponent implements OnInit {
             });
     }
 
-    setTimezone(data) {
+    setTimezone(data, name) {
         this.newHostFormControls.timezone.setValue(data);
+        this.newHostFormControls.zone.setValue(name);
     }
 
     setToDealer(id: string) {
         this.newHostFormControls.dealerId.setValue(id);
     }
 
-    closeGoogleDropdownList(){
-		this.isListVisible = false;
-	}
+    closeGoogleDropdownList() {
+        this.isListVisible = false;
+    }
 
     private formatTime(data: number): string {
         const parsed = `${data}`;
@@ -559,6 +599,7 @@ export class CreateHostComponent implements OnInit {
             long: ['', Validators.required],
             lat: ['', Validators.required],
             timezone: ['', Validators.required],
+            zone: [''],
             createdBy: this._auth.current_user_value.user_id,
         });
 
@@ -1023,7 +1064,7 @@ export class CreateHostComponent implements OnInit {
         return this.currentRole === 'sub-dealer';
     }
 
-    protected get newHostFormControls() {
+    public get newHostFormControls() {
         return this.new_host_form.controls;
     }
 

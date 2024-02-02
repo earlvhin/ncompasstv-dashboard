@@ -121,12 +121,13 @@
 
                                     <app-autocomplete-field
                                         *ngIf="field.control == 'timezone'"
-                                        (data_value)="setTimezone($event)"
+                                        (data_value)="setTimezone($event.data, $event.name)"
                                         [data_reference]="timezone"
                                         [primary_keyword]="'name'"
                                         [key_of_value]="'id'"
                                         [required]="field.is_required"
                                         [label]="field.label"
+                                        [control]="newHostFormControls.zone"
                                     >
                                     </app-autocomplete-field>
                                 </ng-template>
@@ -200,15 +201,7 @@
                                 </div>
                             </div>
                         </div>
-                        <button
-                            mat-button
-                            mat-raised-button
-                            class="theme-btn mr-2"
-                            [disabled]="
-                                new_host_form.invalid ||
-                                is_creating_host
-                            "
-                        >
+                        <button mat-button mat-raised-button class="theme-btn mr-2" [disabled]="new_host_form.invalid || is_creating_host">
                             {{ is_creating_host ? "Saving Host Place..." : "Submit" }}
                         </button>
                     </form>

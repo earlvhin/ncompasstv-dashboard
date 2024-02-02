@@ -6,6 +6,7 @@ export const environment = {
     socket_server: 'https://dev-socket.n-compass.online',
     google_key: 'AIzaSyCtQeUg0lbyHkv-NwmlOKuR0AVYFOJ1VWY',
     tinymce_key: 'abs5vx4ocdaeymfu6a4m3vg4jjz3rkqcra1v48azbvttca7l',
+    timezone_key: 'VDREUWGAR8QT',
     s3: 'https://n-compass-filestack.s3.amazonaws.com/',
     fastedge: 'https://fastedgeapidev.n-compass.online/nc/googleapi/searchplaces?place=',
     auth: API_ENDPOINTS.auth,

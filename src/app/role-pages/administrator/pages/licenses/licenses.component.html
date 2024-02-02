@@ -85,8 +85,8 @@
                         <!-- LICENSES TAB -->
                         <mat-tab id="licenses-view-tab" label="Licenses View">
                             <div class="licenses-view-tab-container mt-30" *ngIf="tabGroup.selectedIndex === 0">
-                                <div class="row">
-                                    <div class="col-lg-6">
+                                <div class="flex">
+                                    <div class="flex-2 d-inline-flex">
                                         <button
                                             id="filter-by-license-status-btn"
                                             mat-button
@@ -221,7 +221,7 @@
                                             <button class="md-text" mat-menu-item (click)="toggleFavorites('false')">Hide</button>
                                         </mat-menu>
                                     </div>
-                                    <div class="col-lg-2 text-right">
+                                    <div class="mr-3 text-right">
                                         <button
                                             mat-button
                                             mat-raised-button
@@ -243,7 +243,7 @@
                                             <span class="button-label mr-0"><i class="fas fa-th"></i></span>
                                         </button>
                                     </div>
-                                    <div class="col-lg-4">
+                                    <div class="flex-even">
                                         <app-search-field
                                             id="licenses-tab-search-field"
                                             [form_title]="'Search License ID, Host name, Anydesk, or #Tag'"

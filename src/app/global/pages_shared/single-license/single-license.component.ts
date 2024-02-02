@@ -25,7 +25,7 @@ import {
     LicenseService,
     ScreenService,
     TagService,
-    TemplateService
+    TemplateService,
 } from 'src/app/global/services';
 
 import {
@@ -52,7 +52,7 @@ import {
     PAGING,
     API_HOST_FILE,
     UI_HOST_FILE,
-    UI_HOST_SUPPORT
+    UI_HOST_SUPPORT,
 } from 'src/app/global/models';
 import { UpdateTvBrandDialogComponent } from './components/update-tv-brand-dialog/update-tv-brand-dialog.component';
 
@@ -167,6 +167,11 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     tooltipMessage: string = 'Copy license key';
     showCopiedTooltip: boolean = false;
 
+    pacificTime: string;
+    easternTime: string;
+    centralTime: string;
+    mountainTime: string;
+
     private contents_array: any = [];
     private contents_backup: UI_CONTENT_PER_ZONE[] = [];
     private current_tab = 'Details';
@@ -178,6 +183,20 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
     private unsaved_additional_settings = { bootDelayChanged: false, rebootTimeChanged: false };
     protected _socket: any;
     protected _unsubscribe = new Subject<void>();
+
+    private formatTime(date: Date, timeZone: string): string {
+        const options: Intl.DateTimeFormatOptions = {
+            timeZone,
+            hour12: true,
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit',
+        };
+        return date.toLocaleTimeString('en-US', options);
+    }
 
     constructor(
         private _auth: AuthService,
@@ -218,6 +237,14 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         });
 
         this.subscribeToContentSearch();
+
+        setInterval(() => {
+            const now = new Date();
+            this.pacificTime = this.formatTime(now, 'America/Los_Angeles');
+            this.easternTime = this.formatTime(now, 'America/New_York');
+            this.centralTime = this.formatTime(now, 'America/Chicago');
+            this.mountainTime = this.formatTime(now, 'America/Denver');
+        }, 1000);
     }
 
     ngAfterViewInit() {
@@ -452,6 +479,23 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                     }
                 );
         });
+    }
+
+    onDisplayControlSettingsSet(event: { checked: boolean }): void {
+        this._license
+            .set_display_control_settings({
+                licenseId: this.license_id,
+                displayControlSettings: event.checked ? 1 : 0,
+            })
+            .pipe(takeUntil(this._unsubscribe))
+            .subscribe(
+                () => {
+                    alert(`Display Control Settings ${event.checked ? 'Enabled' : 'Disabled'} for this license`);
+                },
+                (error) => {
+                    console.error(error);
+                }
+            );
     }
 
     onFilterContent(type: string, filter: string): void {
@@ -1008,7 +1052,7 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
                 (response) => {
                     this.pagingData = response;
 
-                    if (!response.entities || response.entities.length <= 0) return this.hasNoData = true;  
+                    if (!response.entities || response.entities.length <= 0) return (this.hasNoData = true);
                     const images = response.entities as API_HOST_FILE[];
                     this.images = [...images];
                 },
@@ -1029,9 +1073,9 @@ export class SingleLicenseComponent implements OnInit, OnDestroy {
         this.showCopiedTooltip = false;
 
         setTimeout(() => {
-        this.tooltipMessage = 'Copy license key';
-        this.showCopiedTooltip = true;
-        }, 1000); 
+            this.tooltipMessage = 'Copy license key';
+            this.showCopiedTooltip = true;
+        }, 1000);
     }
 
     private getLicenseById() {

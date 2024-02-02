@@ -33,7 +33,7 @@ export class ScreensComponent implements OnInit {
 	//Name = Column Name, Sortable: If Sortable, Column: For BE Key to sort, Key: Column to be exported as per API, No_export: Dont Include to Export
 	tbl_screen_columns = [ 
 		{ name: '#', sortable: false, no_export: true},
-		{ name: 'Screeen Name', sortable: true, column:'ScreenName', no_export: true},
+		{ name: 'Screen Name', sortable: true, column:'ScreenName', no_export: true},
 		{ name: 'Dealer', sortable: true, column:'BusinessName', no_export: true},
 		{ name: 'Hosts', sortable: true, column:'HostName', no_export: true},
 		{ name: 'Type', sortable: true, column:'ScreenTypeName', no_export: true},

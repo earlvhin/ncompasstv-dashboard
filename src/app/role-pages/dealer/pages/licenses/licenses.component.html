@@ -70,8 +70,8 @@
 
         <hr class="my-4" *ngIf="!no_header" />
 
-        <div class="row pt-2">
-            <div class="col-lg-6">
+        <div class="flex pt-2">
+            <div class="flex-2 d-inline-flex">
                 <button mat-button mat-raised-button class="theme-btn sm-text mr-2 h-45" [matMenuTriggerFor]="licenseStatus">
                     <span class="button-label">License Status</span>
                     <span class="fas fa-circle xsm-text"></span>
@@ -163,32 +163,31 @@
                 </mat-menu>
             </div>
 
-            <div class="col-lg-2">
-                <div class="text-right">
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn sm-text h-45 mr-2"
-                        [ngClass]="active_view === 'list' ? 'active-button' : ''"
-                        title="List View"
-                        (click)="changeView('list')"
-                    >
-                        <span class="button-label mr-0"><i class="fas fa-list"></i></span>
-                    </button>
-                    <button
-                        mat-button
-                        mat-raised-button
-                        class="theme-btn sm-text h-45"
-                        [ngClass]="active_view === 'grid' ? 'active-button' : ''"
-                        title="Grid View"
-                        (click)="changeView('grid')"
-                    >
-                        <span class="button-label mr-0"><i class="fas fa-th"></i></span>
-                    </button>
-                </div>
+            <div class="mr-3 text-right">
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text h-45 mr-2"
+                    [ngClass]="active_view === 'list' ? 'active-button' : ''"
+                    title="List View"
+                    (click)="changeView('list')"
+                >
+                    <span class="button-label mr-0"><i class="fas fa-list"></i></span>
+                </button>
+                <button
+                    mat-button
+                    mat-raised-button
+                    class="theme-btn sm-text h-45"
+                    [ngClass]="active_view === 'grid' ? 'active-button' : ''"
+                    title="Grid View"
+                    (click)="changeView('grid')"
+                >
+                    <span class="button-label mr-0"><i class="fas fa-th"></i></span>
+                </button>
             </div>
 
-            <div class="col-lg-4">
+
+            <div class="flex-even">
                 <app-search-field
                     *ngIf="!initial_load_license"
                     [form_title]="'Search License ID, Hostname, Anydesk Id, or #Tag'"

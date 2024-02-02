@@ -28,6 +28,8 @@ import {
     UI_ROLE_DEFINITION,
     ACTIVITY_LOGS,
     UI_ACTIVITY_LOGS,
+    API_ADVERTISER,
+    UI_ADVERTISER,
 } from 'src/app/global/models';
 import { MatSnackBar } from '@angular/material';
 
@@ -166,10 +168,13 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
     adv_table_col = [
         { name: '#', sortable: false },
         { name: 'Name', sortable: true, column: 'Name' },
-        { name: 'Region', sortable: true, column: 'Region' },
+        { name: 'Total Assets', column: 'Total Assets' },
+        { name: 'Address', column: 'Address' },
+        { name: 'City', column: 'City' },
         { name: 'State', sortable: true, column: 'State' },
-        { name: 'Status', sortable: true, column: 'Status' },
-        { name: 'Assigned User', sortable: true, column: 'AdvertiserUser' },
+        { name: 'Date Created', column: 'Date Created' },
+        { name: 'Category', column: 'Category' },
+        { name: 'Postal Code', key: 'Postal Code' },
     ];
 
     activity_table_column = [
@@ -426,18 +431,23 @@ export class SingleDealerComponent implements AfterViewInit, OnInit, OnDestroy {
         }
     }
 
-    advertiser_mapToUI(data: any[]): DEALER_UI_TABLE_ADVERTISERS[] {
+    advertiser_mapToUI(data: API_ADVERTISER[]): UI_ADVERTISER[] {
         let count = this.paging_data_advertiser.pageStart;
-        return data.map((i) => {
-            return new DEALER_UI_TABLE_ADVERTISERS(
-                { value: i.id, link: null, editable: false, hidden: true },
-                { value: count++, link: null, editable: false, hidden: false },
-                { value: i.name, link: '/administrator/advertisers/' + i.id, editable: false, hidden: false, new_tab_link: true },
-                { value: i.region ? i.region : '--', link: null, editable: false, hidden: false },
-                { value: i.state, link: null, editable: false, hidden: false },
-                { value: i.status, link: null, editable: false, hidden: false },
-                { value: i.userId ? i.advertiserUser : 'Unassigned', link: null, editable: false, hidden: false }
-            );
+
+        return data.map((a) => {
+            return {
+                advertiserId: { value: a.id, link: null, editable: false, hidden: true },
+                index: { value: count++, link: null, editable: false, hidden: false },
+                name: { value: a.name, link: '/administrator/advertisers/' + a.id, editable: false, hidden: false },
+                totalAssets: { value: a.totalAssets },
+                address: { value: a.address },
+                city: { value: a.city ? a.city : '--', link: null, editable: false, hidden: false },
+                state: { value: a.state ? a.state : '--', link: null, editable: false, hidden: false },
+                dateCreated: { value: this._date.transform(a.dateCreated, 'MMMM d, y'), hidden: false },
+                category: { value: a.category, hidden: false },
+                status: { value: a.status, link: null, editable: false, hidden: true },
+                postalCode: { value: a.postalCode },
+            };
         });
     }
 

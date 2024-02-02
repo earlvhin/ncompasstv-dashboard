@@ -20,31 +20,24 @@ import { TechnicalModule } from './role-pages/technical/technical.module';
 import { ViewContentListModule } from './global/components_shared/playlist_components/view-content-list/view-content-list.module';
 
 @NgModule({
-	declarations: [
-		AppComponent,
-	],
-	imports: [
-		BrowserModule,
-		BrowserAnimationsModule,
-		HttpClientModule,
-		NotfoundModule,
-		AdministratorModule,
-		DealerModule,
-		HostOwnerModule,
-		AdvertiserModule,
-		TechnicalModule,
+    declarations: [AppComponent],
+    imports: [
+        BrowserModule,
+        BrowserAnimationsModule,
+        HttpClientModule,
+        NotfoundModule,
+        AdministratorModule,
+        DealerModule,
+        HostOwnerModule,
+        AdvertiserModule,
+        TechnicalModule,
         SubDealerModule,
-		UserLoginModule,
-		AppRoutingModule,
-		ReassignDealerModule,
-		ViewContentListModule,
-	],
-	providers: [
-		{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true },
-		AuthService, 
-		AuthGuard
-	],
-	bootstrap: [AppComponent]
+        UserLoginModule,
+        AppRoutingModule,
+        ReassignDealerModule,
+        ViewContentListModule,
+    ],
+    providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpErrorInterceptor, multi: true }, AuthService, AuthGuard],
+    bootstrap: [AppComponent],
 })
-
-export class AppModule { }
+export class AppModule {}

@@ -1,3 +1,12 @@
 .mt-30 {
     margin-top: 30px;
 }
+
+.pi-control {
+    &:hover {
+        .button_text_animation {
+            font-size: 0.9em;
+        }
+     }
+}
+
